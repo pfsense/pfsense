@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec
-	pfSense_MODULE: ipsec
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-leases
 ##|*NAME=Status: IPsec: Leases

@@ -53,10 +53,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: auth
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-authentication
 ##|*NAME=Diagnostics: Authentication

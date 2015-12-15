@@ -56,11 +56,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
-	pfSense_MODULE:	arp
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-arptable
 ##|*NAME=Diagnostics: ARP Table

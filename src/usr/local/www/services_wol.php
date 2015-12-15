@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/wol
-	pfSense_MODULE:	wol
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan

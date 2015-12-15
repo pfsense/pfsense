@@ -31,13 +31,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php-cgi
-	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
-	pfSense_BUILDER_BINARIES:	/sbin/kldload
-	pfSense_MODULE:	utils
-*/
-
 /****f* pfsense-utils/have_natpfruleint_access
  * NAME
  *   have_natpfruleint_access

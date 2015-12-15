@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall-dynamic
 ##|*NAME=Status: System Logs: Firewall (Dynamic View)

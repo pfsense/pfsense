@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/host
-	pfSense_MODULE: dyndns
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclients

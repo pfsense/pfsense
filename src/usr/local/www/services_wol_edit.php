@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	wol
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan-edit

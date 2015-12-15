@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-gatewaygroups

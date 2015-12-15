@@ -55,9 +55,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	aliases
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-aliases

@@ -57,10 +57,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: ipsec
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-ipsec
 ##|*NAME=Status: IPsec

@@ -64,10 +64,6 @@
 
 */
 
-/*
-	pfSense_MODULE:	pkgs
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-packagelogs
 ##|*NAME=Status: Package logs

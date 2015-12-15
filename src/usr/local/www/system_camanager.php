@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: certificate_manager
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-camanager

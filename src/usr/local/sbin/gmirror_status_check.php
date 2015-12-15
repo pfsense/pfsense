@@ -27,12 +27,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/gmirror	/sbin/geom	/usr/bin/grep	/usr/bin/egrep	/usr/bin/cut	/usr/bin/head
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/usr/bin/awk	/usr/bin/sed
-	pfSense_MODULE:	gmirror
-*/
-
 require_once("config.inc");
 require_once("notices.inc");
 require_once("globals.inc");

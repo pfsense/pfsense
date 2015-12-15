@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: base
-*/
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */

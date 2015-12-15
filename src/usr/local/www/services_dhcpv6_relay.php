@@ -54,9 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	dhcpv6relay
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpv6relay

@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan-edit

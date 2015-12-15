@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayctl
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-virtualserver

@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgateway

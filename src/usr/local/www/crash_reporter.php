@@ -52,9 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	header
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-crash-reporter

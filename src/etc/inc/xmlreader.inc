@@ -29,10 +29,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_MODULE:	utils
-*/
-
 /* The following items will be treated as arrays in config.xml */
 function listtags() {
 	/*

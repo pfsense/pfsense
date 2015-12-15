@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraphs

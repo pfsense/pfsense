@@ -57,9 +57,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	graph
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-interfacetraffic

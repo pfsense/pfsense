@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal

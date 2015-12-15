@@ -54,11 +54,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-statessummary
 ##|*NAME=Diagnostics: States Summary

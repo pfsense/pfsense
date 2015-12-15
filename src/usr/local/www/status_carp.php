@@ -60,10 +60,6 @@
 ##|*MATCH=status_carp.php*
 ##|-PRIV
 
-/*
-	pfSense_MODULE:	carp
-*/
-
 require_once("guiconfig.inc");
 require_once("globals.inc");
 

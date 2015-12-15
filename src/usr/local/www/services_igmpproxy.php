@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	igmpproxy
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-igmpproxy

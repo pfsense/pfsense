@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/fetch
-	pfSense_MODULE: firmware
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-update-settings

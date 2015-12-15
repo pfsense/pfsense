@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-firewall

@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall
 ##|*NAME=Status: Logs: Firewall

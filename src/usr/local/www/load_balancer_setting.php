@@ -54,9 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-setting

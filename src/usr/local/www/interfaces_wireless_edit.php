@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-wireless-edit

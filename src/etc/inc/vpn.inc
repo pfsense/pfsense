@@ -32,13 +32,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
-	pfSense_MODULE:	vpn
-*/
-
 require_once("ipsec.inc");
 require_once("filter.inc");
 

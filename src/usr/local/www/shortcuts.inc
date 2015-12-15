@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	system
-*/
 
 // On the page, add in like so:
 //   $shortcut_section = "relayd";

@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-groups-edit

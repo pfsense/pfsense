@@ -54,10 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /usr/local/bin/rrdtool
-	pfSense_MODULE: system
-*/
 
 require_once("globals.inc");
 require_once("guiconfig.inc");

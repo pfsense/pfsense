@@ -56,11 +56,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/setkey
-	pfSense_MODULE: ipsec
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-spd
 ##|*NAME=Status: IPsec: SPD

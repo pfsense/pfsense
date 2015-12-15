@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/arp
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces

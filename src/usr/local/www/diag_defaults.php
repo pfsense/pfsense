@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE:	config
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-factorydefaults
 ##|*NAME=Diagnostics: Factory defaults

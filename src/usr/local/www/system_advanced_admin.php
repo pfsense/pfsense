@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-admin

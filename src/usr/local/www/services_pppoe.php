@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: pppoe
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-pppoeserver

@@ -31,10 +31,6 @@
 
 */
 /*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	openvpn
-*/
-/*
  * ipsec calls this script to authenticate a user
  * based on a username and password. We lookup these
  * in our config.xml file and check the credentials.

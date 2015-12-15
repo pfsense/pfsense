@@ -1,10 +1,6 @@
 <?php
 
 /*
-	pfSense_MODULE:	utils
-*/
-
-/*
 	Copyright (C) 2009 Janne Enberg <janne.enberg@lietu.net>
 	All rights reserved.
 

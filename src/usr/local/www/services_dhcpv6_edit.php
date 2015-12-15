@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/arp
-	pfSense_MODULE: dhcpserver
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpserverv6-editstaticmapping

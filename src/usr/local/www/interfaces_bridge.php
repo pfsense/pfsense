@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: interfaces_assign
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-bridge

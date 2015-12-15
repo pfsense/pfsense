@@ -55,9 +55,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: header
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-haltsystem

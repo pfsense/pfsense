@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: dnsresolver
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsresolver

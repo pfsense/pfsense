@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/kill	/usr/bin/tar
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup

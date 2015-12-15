@@ -53,10 +53,6 @@
  *
  */
 
-/*
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-system-pftop
 ##|*NAME=Diagnostics: pfTop

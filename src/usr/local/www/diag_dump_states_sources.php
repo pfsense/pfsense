@@ -54,11 +54,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-sourcetracking
 ##|*NAME=Diagnostics: Show Source Tracking

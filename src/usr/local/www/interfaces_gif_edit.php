@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif-edit

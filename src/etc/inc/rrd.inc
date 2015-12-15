@@ -28,11 +28,6 @@
 
   */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm	/usr/bin/nice	/usr/local/bin/rrdtool	/bin/cd
-	pfSense_MODULE:	rrd
-*/
-
 /* include all configuration functions */
 
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {

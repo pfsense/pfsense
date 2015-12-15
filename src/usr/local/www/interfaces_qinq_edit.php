@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl
-	pfSense_MODULE:	interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-qinq-edit

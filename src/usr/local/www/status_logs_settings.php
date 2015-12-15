@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: system
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-settings
 ##|*NAME=Status: Logs: Settings

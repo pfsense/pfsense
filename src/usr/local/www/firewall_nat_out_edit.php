@@ -55,9 +55,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound-edit

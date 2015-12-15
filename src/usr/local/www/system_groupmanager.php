@@ -57,9 +57,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: auth
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager

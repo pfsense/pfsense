@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-resetstate
 ##|*NAME=Diagnostics: Reset states

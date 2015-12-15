@@ -56,11 +56,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/nc
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-testport
 ##|*NAME=Diagnostics: Test Port

@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: dnsforwarder
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder-editdomainoverride

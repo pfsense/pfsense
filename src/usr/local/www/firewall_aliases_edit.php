@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /bin/mkdir	/usr/bin/fetch
-	pfSense_MODULE: aliases
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-edit

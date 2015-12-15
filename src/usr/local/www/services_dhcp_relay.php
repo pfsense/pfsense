@@ -53,9 +53,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	dhcprelay
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcprelay

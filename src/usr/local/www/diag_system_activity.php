@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/top
-	pfSense_MODULE: system
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-system-activity
 ##|*NAME=Diagnostics: System Activity

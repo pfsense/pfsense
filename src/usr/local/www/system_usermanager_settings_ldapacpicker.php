@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	auth
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings-ldappicker

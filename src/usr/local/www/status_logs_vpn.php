@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/local/sbin/clog
-	pfSense_MODULE: vpn
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
 ##|*NAME=Status: Logs: VPN

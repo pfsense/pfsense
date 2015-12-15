@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: dnsupdate
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-rfc2136edit

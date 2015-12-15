@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	openvpn
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn

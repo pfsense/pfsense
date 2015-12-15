@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-rules-edit

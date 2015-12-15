@@ -53,9 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/sockstat
-*/
 ##|+PRIV
 ##|*IDENT=page-diagnostics-sockets
 ##|*NAME=Diagnostics: Sockets

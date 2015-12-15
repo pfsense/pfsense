@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-firewall-summary
 ##|*NAME=Status: System Logs: Firewall Log Summary

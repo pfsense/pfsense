@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	ntpd_pps
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-pps

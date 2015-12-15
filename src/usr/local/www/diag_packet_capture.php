@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/ps /usr/bin/grep	/usr/sbin/tcpdump
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-packetcapture
 ##|*NAME=Diagnostics: Packet Capture

@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn /usr/bin/killall	/bin/ps
-	pfSense_MODULE: services
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-services

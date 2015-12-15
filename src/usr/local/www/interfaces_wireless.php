@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces_assign
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-wireless

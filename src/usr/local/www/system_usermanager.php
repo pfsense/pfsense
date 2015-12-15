@@ -57,10 +57,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE: auth
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager

@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/host
-	pfSense_MODULE:	dyndns
-*/
 
 $nocsrf = true;
 

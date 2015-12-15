@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: upnp
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-upnpstatus

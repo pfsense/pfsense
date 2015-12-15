@@ -52,10 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper

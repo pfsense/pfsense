@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraph-settings

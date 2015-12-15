@@ -57,9 +57,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit

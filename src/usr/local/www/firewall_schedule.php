@@ -55,9 +55,7 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: schedules
-*/
+
 ##|+PRIV
 ##|*IDENT=page-firewall-schedules
 ##|*NAME=Firewall: Schedules

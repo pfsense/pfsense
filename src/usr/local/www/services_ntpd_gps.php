@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: ntpd_gps
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-gps

@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher	/usr/bin/openssl
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-vouchers

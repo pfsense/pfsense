@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-traceroute
 ##|*NAME=Diagnostics: Traceroute

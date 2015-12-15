@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/ndp	/usr/bin/wc	/usr/bin/grep
-	pfSense_MODULE:	dhcpserver
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-dhcpv6leases
 ##|*NAME=Status: DHCPv6 leases

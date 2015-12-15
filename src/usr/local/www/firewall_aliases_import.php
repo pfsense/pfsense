@@ -52,9 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-import

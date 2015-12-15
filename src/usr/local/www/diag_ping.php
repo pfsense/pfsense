@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ping /sbin/ping6
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ping
 ##|*NAME=Diagnostics: Ping

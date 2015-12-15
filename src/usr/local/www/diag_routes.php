@@ -53,10 +53,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
-	pfSense_MODULE:	routing
-*/
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
 ##|*NAME=Diagnostics: Routing tables

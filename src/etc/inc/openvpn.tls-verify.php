@@ -30,10 +30,6 @@
 
 */
 /*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	openvpn
-*/
-/*
  * OpenVPN calls this script to validate a certificate
  *  This script is called ONCE per DEPTH of the certificate chain
  *  Normal operation would have two runs - one for the server certificate

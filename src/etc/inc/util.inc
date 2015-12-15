@@ -55,12 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/ps	/bin/kill	/usr/bin/killall	/sbin/ifconfig	/usr/bin/netstat
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/sbin/dmesg		/sbin/ping /usr/sbin/arp
-	pfSense_BUILDER_BINARIES:	/sbin/conscontrol	/sbin/devd	/bin/ps
-	pfSense_MODULE:	utils
-*/
 
 /* kill a process by pid file */
 function killbypid($pidfile) {

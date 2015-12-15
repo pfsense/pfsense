@@ -56,11 +56,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/shutdown
-	pfSense_MODULE: backup
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup/restore
 ##|*NAME=Diagnostics: Backup/restore

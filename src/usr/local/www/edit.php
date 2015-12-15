@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: shell
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-edit

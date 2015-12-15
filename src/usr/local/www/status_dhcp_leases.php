@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/arp	/usr/bin/wc /usr/bin/grep
-	pfSense_MODULE: dhcpserver
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpleases

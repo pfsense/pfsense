@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/cd	/usr/local/bin/rrdtool	/usr/bin/nice
-	pfSense_MODULE:	config
-*/
 
 if (!function_exists("dump_rrd_to_xml")) {
 	require("rrd.inc");

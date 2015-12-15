@@ -62,11 +62,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/vmstat	/usr/bin/netstat	/sbin/dmesg	/sbin/mount	/sbin/setkey	/usr/local/sbin/pftop
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl	/sbin/sysctl	/usr/bin/top	/sbin/pfctl	/sbin/ifconfig
-	pfSense_MODULE:	support
-*/
 
 ##|+PRIV
 ##|*IDENT=page-hidden-detailedstatus

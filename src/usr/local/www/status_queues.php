@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficshaper-queues

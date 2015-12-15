@@ -505,7 +505,7 @@ if (!$rawfilter) { // Advanced log filter form
 
 	$group->add(new Form_Select(
 		'interface',
-		'Interface',
+		null,
 		$interfacefilter,
 		build_if_list()
 	))->setWidth(2)->setHelp('Interface');

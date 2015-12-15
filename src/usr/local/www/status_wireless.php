@@ -72,13 +72,13 @@ include("head.inc");
 
 $if = $_POST['if'];
 
-if($_GET['if'] != "")
+if ($_GET['if'] != "") {
 	$if = $_GET['if'];
+}
 
 $ciflist = get_configured_interface_with_descr();
 if (empty($if)) {
-	/* Find the first interface
-	   that is wireless */
+	/* Find the first interface that is wireless */
 	foreach ($ciflist as $interface => $ifdescr) {
 		if (is_interface_wireless(get_real_interface($interface))) {
 			$if = $interface;
@@ -89,11 +89,12 @@ if (empty($if)) {
 
 $tab_array = array();
 
-foreach($ciflist as $interface => $ifdescr) {
+foreach ($ciflist as $interface => $ifdescr) {
 	if (is_interface_wireless(get_real_interface($interface))) {
 		$enabled = false;
-		if($if == $interface)
+		if ($if == $interface) {
 			$enabled = true;
+		}
 
 		$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
 	}
@@ -101,13 +102,14 @@ foreach($ciflist as $interface => $ifdescr) {
 
 $rwlif = get_real_interface($if);
 
-if($_POST['rescanwifi'] != "") {
+if ($_POST['rescanwifi'] != "") {
 	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
 	$savemsg = gettext("Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.");
 }
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 display_top_tabs($tab_array);
 ?>
@@ -209,13 +211,13 @@ display_top_tabs($tab_array);
 
 	$counter=0;
 
-	foreach($states as $state) {
+	foreach ($states as $state) {
 		$split = preg_split("/[ ]+/i", $state);
 ?>
 					<tr>
 <?php
 		/* Split the rest by using spaces for this line using the 2nd part */
-		for($idx=0; $idx<10; $idx++) {
+		for ($idx=0; $idx<10; $idx++) {
 ?>
 						<td>
 							<?=$split[$idx]?>

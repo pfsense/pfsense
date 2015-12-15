@@ -281,9 +281,9 @@ if ($save_settings) {
 	# Firewall Specific
 		if ($logfile == 'filter') {
 			if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-				($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-				($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-				($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
+			    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+			    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+			    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 
 				require_once("filter.inc");
 				$retval |= filter_configure();
@@ -297,11 +297,9 @@ if ($save_settings) {
 # Formatted/Raw Display
 if ($config['syslog'][$specific_log]['format'] == 'formatted') {
 	$rawfilter = false;
-}
-else if ($config['syslog'][$specific_log]['format'] == 'raw') {
+} else if ($config['syslog'][$specific_log]['format'] == 'raw') {
 	$rawfilter = true;
-}	
-else {	# Use the general logging options setting (global).
+} else {	# Use the general logging options setting (global).
 	$rawfilter = isset($config['syslog']['rawfilter']);
 }
 
@@ -341,30 +339,36 @@ function build_if_list() {
 	//$iflist = get_interface_list();
 	// Allow extending of the firewall edit interfaces
 	pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
-	foreach ($iflist as $if => $ifdesc)
+	foreach ($iflist as $if => $ifdesc) {
 		$interfaces[$if] = $ifdesc;
+	}
 
-	if ($config['l2tp']['mode'] == "server")
+	if ($config['l2tp']['mode'] == "server") {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
 
-	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 		$interfaces['pppoe'] = "PPPoE Server";
+	}
 
 	/* add ipsec interfaces */
-	if (ipsec_enabled())
+	if (ipsec_enabled()) {
 		$interfaces["enc0"] = "IPsec";
+	}
 
 	/* add openvpn/tun interfaces */
-	if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 		$interfaces["openvpn"] = "OpenVPN";
+	}
 
 	return($interfaces);
 }
 
 $Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
-if ($filterfieldsarray['interface'] == "All")
-	$interface = "";
 
+if ($filterfieldsarray['interface'] == "All") {
+	$interface = "";
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("System"), ($logfile == 'system'), "status_logs.php");
@@ -386,10 +390,11 @@ $tab_array[] = array(gettext("Dynamic View"), false, "/status_logs_filter_dynami
 $tab_array[] = array(gettext("Summary View"), false, "/status_logs_filter_summary.php");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
 
-if ($filter_active)
+if ($filter_active) {
 	$filter_state = SEC_OPEN;
-else
+} else {
 	$filter_state = SEC_CLOSED;
+}
 
 if (!$rawfilter) { // Advanced log filter form
 	$form = new Form(false);
@@ -491,8 +496,7 @@ if (!$rawfilter) { // Advanced log filter form
 		null,
 		'fa-filter'
 	);
-}
-else { // Simple log filter form
+} else { // Simple log filter form
 	$form = new Form(false);
 
 	$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
@@ -549,23 +553,26 @@ print($form);
 if (!$rawfilter) {
 	$iflist = get_configured_interface_with_descr(false, true);
 
-	if ($iflist[$interfacefilter])
+	if ($iflist[$interfacefilter]) {
 		$interfacefilter = $iflist[$interfacefilter];
+	}
 
-	if ($filterlogentries_submit)
+	if ($filterlogentries_submit) {
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filterfieldsarray);
-	else
+	} else {
 		$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+	}
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if ((!$filtertext) && (!$filterfieldsarray))
+	if ((!$filtertext) && (!$filterfieldsarray)) {
 		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	else
+	} else {
 		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+	}
 
 	printf(" (" . gettext("Maximum %d") . ")", $nentries);
 ?>
@@ -595,8 +602,9 @@ if (!$rawfilter) {
 			</thead>
 			<tbody>
 <?php
-	if ($config['syslog']['filterdescriptions'])
+	if ($config['syslog']['filterdescriptions']) {
 		buffer_rules_load();
+	}
 
 	foreach ($filterlog as $filterent) {
 ?>
@@ -611,8 +619,9 @@ if (!$rawfilter) {
 ?>
 						<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
-		if ($filterent['count'])
+		if ($filterent['count']) {
 			echo $filterent['count'];
+		}
 ?>
 					</td>
 					<td style="white-space:nowrap;">
@@ -620,8 +629,9 @@ if (!$rawfilter) {
 					</td>
 					<td style="white-space:nowrap;">
 <?php
-		if ($filterent['direction'] == "out")
+		if ($filterent['direction'] == "out") {
 			print('&#x25ba;' . ' ');
+		}
 ?>
 		<?=htmlspecialchars($filterent['interface'])?>
 					</td>
@@ -668,8 +678,9 @@ if (!$rawfilter) {
 						<?=$dststr . '<span class="RESOLVE-' . $dst_htmlclass . '"></span>'?>
 					</td>
 <?php
-		if ($filterent['proto'] == "TCP")
+		if ($filterent['proto'] == "TCP") {
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
+		}
 ?>
 					<td style="white-space:nowrap;">
 						<?=htmlspecialchars($filterent['proto'])?>
@@ -680,7 +691,7 @@ if (!$rawfilter) {
 ?>
 				<tr>
 					<td colspan="2" />
-					<td colspan="4"><?=find_rule_by_number_buffer($filterent['rulenum'],$filterent['tracker'],$filterent['act'])?></td>
+					<td colspan="4"><?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?></td>
 				</tr>
 <?php
 		}
@@ -690,17 +701,16 @@ if (!$rawfilter) {
 			</tbody>
 		</table>
 <?php
-	if (count($filterlog) == 0)
+	if (count($filterlog) == 0) {
 		print_info_box(gettext('No logs to display'));
+	}
 ?>
 		</div>
 	</div>
 </div>
 
 <?php
-}
-else
-{
+} else {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
@@ -714,16 +724,18 @@ else
 			</thead>
 			<tbody>
 <?php
-	if ($filtertext)
+	if ($filtertext) {
 		$rows = dump_clog($filter_logfile, $nentries, true, array("$filtertext"));
-	else
+	} else {
 		$rows = dump_clog($filter_logfile, $nentries, true, array());
+	}
 ?>
 			</tbody>
 		</table>
 <?php
-	if ($rows == 0)
+	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
+	}
 ?>
 	</div>
 </div>
@@ -750,10 +762,11 @@ if ($input_errors) {
 	$manage_log_active = true;
 }
 
-if ($manage_log_active)
+if ($manage_log_active) {
 	$manage_log_state = SEC_OPEN;
-else
+} else {
 	$manage_log_state = SEC_CLOSED;
+}
 
 $form = new Form(false);
 
@@ -1018,7 +1031,7 @@ if (typeof getURL == 'undefined') {
 	};
 }
 
-events.push(function(){
+events.push(function() {
     $('.fa').tooltip();
 });
 //]]>

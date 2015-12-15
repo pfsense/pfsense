@@ -292,7 +292,7 @@ function parse_system_log_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $errline));
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}
@@ -433,7 +433,7 @@ function parse_firewall_log_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $errline));
+			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}

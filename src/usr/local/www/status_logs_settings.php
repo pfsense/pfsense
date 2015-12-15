@@ -462,14 +462,6 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['hostapd']
 ));
 
-// Ugly hack to prevent the "Toggle all" button from being automatically created
-$group->add(new Form_MultiCheckbox(
-	'notoggleall',
-	null,
-	'No toggle all',
-	$pconfig['hostapd']
-))->displayAsRadio();
-
 $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote '.
 	'syslog server, unless another port is specified. Be sure to set syslogd on '.
 	'the remote server to accept syslog messages from pfSense.');
@@ -484,7 +476,8 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
-	hideMultiCheckbox('notoggleall', true);
+	// We don't want to see the automatically generated "Toggle all" button
+	$('[name=btntoggleall]').hide();
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
@@ -496,7 +489,6 @@ events.push(function() {
 		hideClass('remotelogging', !this.checked);
 		hideSelect('sourceip', !this.checked);
 		hideSelect('ipproto', !this.checked);
-		hideMultiCheckbox('notoggleall', true);
 	});
 
 	function disableEverything() {

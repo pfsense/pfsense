@@ -106,9 +106,9 @@ function hideSelect(id, hide) {
 
 function hideMultiCheckbox(id, hide) {
 	if(hide)
-		$('#' + id).parent().addClass('hidden');
+		$("[name=" + id + "]").parent().addClass('hidden');
 	else
-		$('#' + id).parent().removeClass('hidden');
+		$("[name=" + id + "]").parent().removeClass('hidden');
 }
 
 // Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden

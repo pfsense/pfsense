@@ -181,7 +181,24 @@ if ($pkg['custom_php_command_before_form'] != "") {
 	eval($pkg['custom_php_command_before_form']);
 }
 
-$pgtitle = array($pkg['title']);
+// Breadcrumb
+if ($pkg['title'] != "") {
+	if (!$only_edit) {
+ 		$pkg['title'] = $pkg['title'] . '/Edit';
+	}
+	if (strpos($pkg['title'], '/')) {
+		$title = explode('/', $pkg['title']);
+
+		foreach ($title as $subtitle) {
+			$pgtitle[] = gettext($subtitle);
+		}
+	} else {
+		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+	}
+} else {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
+}
+
 include("head.inc");
 
 ?>

@@ -1518,7 +1518,11 @@ function captiveportal_write_elements() {
 	if (is_array($cpcfg['element'])) {
 		conf_mount_rw();
 		foreach ($cpcfg['element'] as $data) {
-			if (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
+			/* Do not attempt to decode or write out empty files. */
+			if (empty($data['content']) || empty(base64_decode($data['content']))) {
+				unlink_if_exists("{$g['captiveportal_element_path']}/{$data['name']}");
+				touch("{$g['captiveportal_element_path']}/{$data['name']}");
+			} elseif (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
 				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}

@@ -2043,7 +2043,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_require_options',
-	'Request options',
+	'Require options',
 	'text',
 	$pconfig['adv_dhcp_require_options']
 ))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.	 [option [, ...]]');

@@ -435,25 +435,25 @@ if (!$rawfilter) {
 	   <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr>
+				<tr style="white-space:nowrap;">
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("Process")?></th>
-					<th class="col-md-1"><?=gettext("PID")?></th>
-					<th><?=gettext("Message")?></th>
+					<th><?=gettext("PID")?></th>
+					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>
 			</thead>
 			<tbody>
 <?php
 	foreach ($filterlog as $filterent) {
 ?>
-				<tr>
-					<td style="white-space:nowrap;">
+				<tr style="white-space:nowrap;">
+					<td>
 						<?=htmlspecialchars($filterent['time'])?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td>
 						<?=htmlspecialchars($filterent['process'])?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td>
 						<?=htmlspecialchars($filterent['pid'])?>
 					</td>
 					<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
@@ -480,9 +480,9 @@ else
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
 	<div class="table table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr>
+				<tr style="white-space:nowrap;">
 					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>

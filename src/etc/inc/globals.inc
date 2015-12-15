@@ -54,9 +54,9 @@
  */
 
 
-// GLobal defines
+// Global defines
 
-// Automactic panel collapse
+// Automatic panel collapse
 define(COLLAPSIBLE, 0x08);
 define(SEC_CLOSED, 0x04);
 define(SEC_OPEN, 0x00);

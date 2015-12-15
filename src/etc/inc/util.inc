@@ -57,7 +57,7 @@
  */
 /*
 	pfSense_BUILDER_BINARIES:	/bin/ps	/bin/kill	/usr/bin/killall	/sbin/ifconfig	/usr/bin/netstat
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/sbin/dmesg		/sbin/ping /usr/local/sbin/gzsig	/usr/sbin/arp
+	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/sbin/dmesg		/sbin/ping /usr/sbin/arp
 	pfSense_BUILDER_BINARIES:	/sbin/conscontrol	/sbin/devd	/bin/ps
 	pfSense_MODULE:	utils
 */
@@ -1580,17 +1580,6 @@ function alias_expand_urltable($name) {
 		}
 	}
 	return null;
-}
-
-/* verify (and remove) the digital signature on a file - returns 0 if OK */
-function verify_digital_signature($fname) {
-	global $g;
-
-	if (!file_exists("/usr/local/sbin/gzsig")) {
-		return 4;
-	}
-
-	return mwexec("/usr/local/sbin/gzsig verify {$g['etc_path']}/pubkey.pem < " . escapeshellarg($fname));
 }
 
 /* obtain MAC address given an IP address by looking at the ARP table */

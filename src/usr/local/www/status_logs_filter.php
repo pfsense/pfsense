@@ -575,7 +575,7 @@ if (!$rawfilter) {
 	   <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr>
+				<tr style="white-space:nowrap;">
 					<th><?=gettext("Act")?></th>
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("IF")?></th>
@@ -600,25 +600,31 @@ if (!$rawfilter) {
 
 	foreach ($filterlog as $filterent) {
 ?>
-				<tr>
-					<td style="white-space:nowrap;">
+				<tr style="white-space:nowrap;">
+					<td>
 <?php
 		if ($filterent['act'] == "block") {
 			$icon_act = "fa-times text-danger";
 		} else {
 			$icon_act = "fa-check text-success";
 		}
+
+		if ($filterent['count']) {
+			$margin_left = '0em';
+		} else {
+			$margin_left = '0.4em';
+		}
 ?>
-						<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+						<i style="margin-left:<?php echo $margin_left;?>" class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
 		if ($filterent['count'])
 			echo $filterent['count'];
 ?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td>
 		<?=htmlspecialchars($filterent['time'])?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td>
 <?php
 		if ($filterent['direction'] == "out")
 			print('&#x25ba;' . ' ');
@@ -628,7 +634,7 @@ if (!$rawfilter) {
 <?php
 		if ($config['syslog']['filterdescriptions'] === "1") {
 ?>
-					<td>
+					<td style="white-space:normal;">
 			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
 					</td>
 <?php
@@ -650,7 +656,7 @@ if (!$rawfilter) {
 		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 ?>
-					<td style="white-space:nowrap;">
+					<td>
 						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>" alt="Reverse Resolve with DNS"/>
 						</i>
 
@@ -659,7 +665,7 @@ if (!$rawfilter) {
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td>
 						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>" class="ICON-<?= $dst_htmlclass; ?>" alt="Reverse Resolve with DNS"/>
 						</i>
 
@@ -671,7 +677,7 @@ if (!$rawfilter) {
 		if ($filterent['proto'] == "TCP")
 			$filterent['proto'] .= ":{$filterent['tcpflags']}";
 ?>
-					<td style="white-space:nowrap;">
+					<td>
 						<?=htmlspecialchars($filterent['proto'])?>
 					</td>
 				</tr>
@@ -705,9 +711,9 @@ else
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
 	<div class="table table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr>
+				<tr style="white-space:nowrap;">
 					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>

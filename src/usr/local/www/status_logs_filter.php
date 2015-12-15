@@ -608,8 +608,14 @@ if (!$rawfilter) {
 		} else {
 			$icon_act = "fa-check text-success";
 		}
+
+		if ($filterent['count']) {
+			$margin_left = '0em';
+		} else {
+			$margin_left = '0.4em';
+		}
 ?>
-						<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+						<i style="margin-left:<?php echo $margin_left;?>" class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
 		if ($filterent['count'])
 			echo $filterent['count'];

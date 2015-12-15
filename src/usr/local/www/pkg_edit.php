@@ -1432,8 +1432,9 @@ print($form);
 
 if ($pkg['note'] != "") {
 	print_info_box($pkg['note']);
+}
 
-if ($pkg['custom_php_after_form_command'])
+if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 

@@ -54,7 +54,7 @@ class Form extends Form_Element
 			$this->addGlobal($submit);
 
 		if (!isset($this->_attributes['action']))
-			$this->_attributes['action'] = htmlspecialchars($_SERVER['REQUEST_URI']);
+			$this->_attributes['action'] = $_SERVER['REQUEST_URI'];
 	}
 
 	public function add(Form_Section $section)

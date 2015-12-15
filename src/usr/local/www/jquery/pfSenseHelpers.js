@@ -408,11 +408,6 @@ $('tbody').each(function(){
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
-// Automactic panel collapse
-define(COLLAPSIBLE, 0x08);
-define(SEC_CLOSED, 0x04);
-define(SEC_OPEN, 0x00);
-
 // Hide configuration button for panels without configuration
 $('.container .panel-heading a.config').each(function (idx, el){
 	var config = $(el).parents('.panel').children('.panel-footer');

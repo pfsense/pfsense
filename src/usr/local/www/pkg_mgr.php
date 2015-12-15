@@ -217,6 +217,12 @@ if (!$pkg_info || !is_array($pkg_info)):
 ?>
 					<td>
 						<?=$index['desc']?>
+<?php if (is_array($index['deps']) && count($index['deps'])): ?>
+						<br /><br /><?= gettext("Package Dependencies") ?>:
+	<?php foreach ($index['deps'] as $pdep): ?>
+						<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
+	<?php endforeach; ?>
+<?php endif; ?>
 					</td>
 					<td>
 						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>

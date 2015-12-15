@@ -410,8 +410,9 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	}
 } else {
 	unset($delbtn);
-	if (!empty($_POST['del']))
+	if (!empty($_POST['del'])) {
 		$delbtn = key($_POST['del']);
+	}
 
 	if (isset($delbtn)) {
 		$id = $delbtn;
@@ -507,8 +508,9 @@ if (file_exists("/tmp/reload_interfaces")) {
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
@@ -535,10 +537,11 @@ display_top_tabs($tab_array);
 	<tbody>
 <?php
 	foreach ($config['interfaces'] as $ifname => $iface):
-		if ($iface['descr'])
+		if ($iface['descr']) {
 			$ifdescr = $iface['descr'];
-		else
+		} else {
 			$ifdescr = strtoupper($ifname);
+		}
 ?>
 		<tr>
 			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>

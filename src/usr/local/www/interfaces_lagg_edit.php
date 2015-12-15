@@ -65,8 +65,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['laggs']['lagg']))
+if (!is_array($config['laggs']['lagg'])) {
 	$config['laggs']['lagg'] = array();
+}
 
 $a_laggs = &$config['laggs']['lagg'];
 
@@ -209,8 +210,9 @@ if ($_POST) {
 			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
-			if ($confif != "")
+			if ($confif != "") {
 				interface_configure($confif);
+			}
 
 			header("Location: interfaces_lagg.php");
 			exit;
@@ -226,19 +228,21 @@ function build_member_list() {
 
 	$members_array = explode(',', $pconfig['members']);
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (array_key_exists($ifn, $realifchecklist))
+		if (array_key_exists($ifn, $realifchecklist)) {
 			continue;
+		}
 
 		$memberlist['list'][$ifn] = $ifn . '(' . $ifinfo['mac'] . ')';
 
-		if (stristr($pconfig['members'], $ifn))
+		if (stristr($pconfig['members'], $ifn)) {
 			array_push($memberlist['selected'], $ifn);
+		}
 	}
 
 	return($memberlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("LAGG"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("LAGG"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 $form = new Form();

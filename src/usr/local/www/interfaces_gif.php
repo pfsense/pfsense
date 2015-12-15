@@ -108,8 +108,9 @@ $pgtitle = array(gettext("Interfaces"), gettext("GIF"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");

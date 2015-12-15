@@ -628,7 +628,7 @@ if (!$rawfilter) {
 <?php
 		if ($config['syslog']['filterdescriptions'] === "1") {
 ?>
-					<td>
+					<td style="white-space:normal;">
 			<?=find_rule_by_number_buffer($filterent['rulenum'], $filterent['tracker'], $filterent['act'])?>
 					</td>
 <?php

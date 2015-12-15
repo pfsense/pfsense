@@ -222,12 +222,12 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 <?php
 		}
 ?>
-		<p>
 			<form action="status_logs_vpn.php" method="post">
 				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
 				<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
 				<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
 			</form>
+		<p>
 		</p>
 	</div>
 </div>

@@ -534,22 +534,22 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 
 	The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
 	These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
-	
-	As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules 
+
+	As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
 	to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
 
-	(a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point  is _always guaranteed_ to be optimally 
-	represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's 
-	low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2 
+	(a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
+	represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
+	low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
 	adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
-	Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its 
+	Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
 	low bits can now be ignored.
-	
-	(b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can 
-	*always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can 
-	_always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending 
-	in 0 (ie can now apply (a) again) or the entire range has vanished and we're done. 
-	We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted) 
+
+	(b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
+	*always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
+	_always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
+	in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
+	We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
 	range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
 */
 
@@ -565,18 +565,21 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 		$bits = 128;
 		$ip1bin = Net_IPv6::_ip2Bin($ip1);
 		$ip2bin = Net_IPv6::_ip2Bin($ip2);
-	} else
+	} else {
 		return array();
+	}
 
 	// it's *crucial* that binary strings are guaranteed the expected length;  do this for certainty even though for IPv6 it's redundant
 	$ip1bin = str_pad($ip1bin, $bits, '0', STR_PAD_LEFT);
 	$ip2bin = str_pad($ip2bin, $bits, '0', STR_PAD_LEFT);
 
-	if ($ip1bin == $ip2bin)
+	if ($ip1bin == $ip2bin) {
 		return array($ip1 . '/' . $bits); // exit if ip1=ip2 (trivial case)
-	
-	if ($ip1bin > $ip2bin))
+	}
+
+	if ($ip1bin > $ip2bin) {
 		list ($ip1bin, $ip2bin) = array($ip2bin, $ip1bin);  // swap if needed (ensures ip1 < ip2)
+	}
 
 	$rangesubnets = array();
 	$netsize = 0;
@@ -586,17 +589,17 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 		// which means the assignments $ip1 += 1 and $ip2 -= 1 will always be "binary-wrapround-safe"
 
 		// step #1 if start ip (as shifted) ends in any '1's, then it must have a single cidr to itself (any cidr would include the '0' below it)
-		
+
 		if (substr($ip1bin, -1, 1) == '1') {
 			// the start ip must be in a separate one-IP cidr range
 			$new_subnet_ip = substr($ip1bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
 			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
 			$n = strrpos($ip1bin, '0');  //can't be all 1's
 			$ip1bin = ($n == 0 ? '' : substr($ip1bin, 0, $n)) . '1' . str_repeat('0', $bits - $n - 1);  // BINARY VERSION OF $ip1 += 1
-		} 
+		}
 
 		// step #2, if end ip (as shifted) ends in any zeros then that must have a cidr to itself (as cidr cant span the 1->0 gap)
-		
+
 		if (substr($ip2bin, -1, 1) == '0') {
 			// the end ip must be in a separate one-IP cidr range
 			$new_subnet_ip = substr($ip2bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
@@ -606,11 +609,12 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 			// already checked for the edge case where end = start+1 and start ends in 0x1, above, so it's safe
 		}
 
-		// this is the only edge case arising from increment/decrement. 
+		// this is the only edge case arising from increment/decrement.
 		// it happens if the range at start of loop is exactly 2 adjacent ips, that spanned the 1->0 gap. (we will have enumerated both by now)
-		
-		if ($ip2bin < $ip1bin)
+
+		if ($ip2bin < $ip1bin) {
 			continue;
+		}
 
 		// step #3 the start and end ip MUST now end in '0's and '1's respectively
 		// so we have a non-trivial range AND the last N bits are no longer important for CIDR purposes.
@@ -625,7 +629,7 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
 			continue;
 		}
-		
+
 		// at this point there's still a remaining range, and either startip ends with '1', or endip ends with '0'. So repeat cycle.
 	} while ($ip1bin < $ip2bin);
 
@@ -637,9 +641,10 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 	foreach ($rangesubnets as $ip => $netmask) {
 		if ($proto == 'ipv4') {
 			$i = str_split($ip, 8);
-			$out[] = implode('.', array( bindec($i[0]),bindec($i[1]),bindec($i[2]),bindec($i[3]))) . '/' . $netmask;
-		} else
+			$out[] = implode('.', array(bindec($i[0]), bindec($i[1]), bindec($i[2]), bindec($i[3]))) . '/' . $netmask;
+		} else {
 			$out[] = Net_IPv6::compress(Net_IPv6::_bin2Ip($ip)) . '/' . $netmask;
+		}
 	}
 
 	return $out;
@@ -812,12 +817,10 @@ function subnet_size($subnet) {
 	if (is_subnetv4($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (32 - $bits)));
-	}
-	else if (is_subnetv6($subnet)) {
+	} else if (is_subnetv6($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (128 - $bits)));
-	}
-	else {
+	} else {
 		return 0;
 	}
 }

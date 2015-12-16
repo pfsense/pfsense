@@ -233,7 +233,7 @@ include("head.inc"); ?>
 	<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
 		<br /><br />
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default" id="tabroute-<?=$i?>" style="display: none;">
 		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext("Routing Table"); ?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -384,7 +384,7 @@ include("head.inc"); ?>
 				</tbody>
 			</table>
 		</div>
-</div>
+	</div>
 
 <?php
 }
@@ -398,15 +398,17 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 }
 ?>
 </form>
+
 <?php include("foot.inc"); ?>
+
 <script type="text/javascript">
 //<![CDATA[
+
 function show_routes(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
 	aodiv.style.display = "block";
 }
+
 //]]>
 </script>
-</body>
-</html>

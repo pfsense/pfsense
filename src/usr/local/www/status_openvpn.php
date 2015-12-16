@@ -208,7 +208,7 @@ include("head.inc"); ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td>
+						<td colspan="2">
 							<table>
 								<tr>
 									<td>
@@ -218,6 +218,8 @@ include("head.inc"); ?>
 									</td>
 								</tr>
 							</table>
+						</td>
+						<td colspan="5">
 						</td>
 					</tr>
 				</tfoot>
@@ -260,7 +262,7 @@ include("head.inc"); ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
+						<td colspan="4"><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
 					</tr>
 				</tfoot>
 			</table>
@@ -286,6 +288,7 @@ include("head.inc"); ?>
 				<thead>
 					<tr>
 						<th><?=gettext("Name"); ?></th>
+						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Addr"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>

@@ -229,7 +229,7 @@ events.push(function(){
 			<label for="filterlogentries" class="col-sm-4 control-label">Number
 				of entries</label>
 			<div class="col-sm-6">
-				<input type="number" name="filterlogentries" value="<?=$nentries?>"
+				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$nentries?>"
 					min="1" max="20" class="form-control" />
 			</div>
 		</div>
@@ -251,7 +251,7 @@ events.push(function(){
 			<label for="filterlogentriesinterfaces"
 				class="col-sm-4 control-label">Filter interface</label>
 			<div class="col-sm-6 checkbox">
-				<select name="filterlogentriesinterfaces" class="form-control">
+				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>

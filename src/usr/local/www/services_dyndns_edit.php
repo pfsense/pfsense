@@ -170,7 +170,7 @@ if ($_POST) {
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
 		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
 		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
-		/* In this place enable means disabled */
+		// In this place enable means disabled
 		if ($_POST['enable']) {
 			unset($dyndns['enable']);
 		} else {
@@ -415,7 +415,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function setVisible(service) {
 		switch(service) {

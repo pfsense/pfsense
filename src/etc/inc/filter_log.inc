@@ -61,7 +61,7 @@ $buffer_rules_normal = array();
 
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
-	global $config, $g;
+	global $config, $g, $pattern;
 
 	/* Make sure this is a number before using it in a system call */
 	if (!(is_numeric($tail))) {
@@ -97,43 +97,57 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 	else 														{ $logfile_type = "unknown"; }
 
+
+# Common Regular Expression Patterns
+	$month_pattern = "[a-zA-Z]{3}";
+	$day_pattern = "[0-9]{1,2}";
+	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
+	$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
+
+	$host_pattern = "\(.*?\)";
+#	$host_pattern = "\([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]\)";
+
+	$process_pattern = "\(.*?\)\(?::\ +\)?";
+	$pid_pattern = "\(?:\\\[\([0-9:]*\)\\\]\)?:?";
+	$process_pid_pattern = $process_pattern . $pid_pattern;
+
+	$log_message_pattern = "\(.*\)";
+
+
+	# Construct RegEx for specific log file type.
 	     if ($logfile_type == 'firewall')	{
 		$pattern = "filterlog:";
 	}
 	else if ($logfile_type == 'system')		{
-
-		$month_pattern = "[a-zA-Z]{3}";
-		$day_pattern = "[0-9]{1,2}";
-		$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
-
-		$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
-
-		$host_pattern = "\(.*?\)";
-#		$host_pattern = "\([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]\)";
-
-		$process_pattern = "\(.*?\)\(?::\ +\)?";
-		$pid_pattern = "\(?:\[[0-9:]*\]\)?:?";
-		$process_pid_pattern = $process_pattern . $pid_pattern;
-
-		$log_message_pattern = "\(.*\)";
-
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
 	else if ($logfile_type == 'tbd')		{
 		$pattern = "^\(.*\)$";
 	}
 	else if ($logfile_type == 'unknown')	{
-		$pattern = "^\(.*\)$";
+		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
 	}
 	else									{
 		$pattern = "^\(.*\)$";
 	}
 
+
+	# Get a bunch of log entries.
 	if (isset($config['system']['usefifolog'])) {
 		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 	} else {
 		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 	}
+
+
+	# Remove escapes and fix up the pattern for preg_match.
+	$pattern = '/' . $pattern . '/';
+	$pattern = str_replace('\(', '(', $pattern);
+	$pattern = str_replace('\)', ')', $pattern);
+	$pattern = str_replace('\[', '[', $pattern);
+	$pattern = str_replace('\]', ']', $pattern);
+
 
 	$filterlog = array();
 	$counter = 0;
@@ -221,20 +235,10 @@ function in_arrayi($needle, $haystack) {
 }
 
 function parse_unknown_log_line($line) {
-	global $config, $g;
+	global $config, $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
-
-	$month_pattern = "[a-zA-Z]{3}";
-	$day_pattern = "[0-9]{1,2}";
-	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
-
-	$date_pattern = "(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . ")";
-
-	$log_message_pattern = "(.*)";
-
-	$pattern = "/^" . $date_pattern . "\ +" . $log_message_pattern . "$/";
 
 	if (!preg_match($pattern, $line, $log_split)) {
 		return "";
@@ -254,27 +258,10 @@ function parse_unknown_log_line($line) {
 }
 
 function parse_system_log_line($line) {
-	global $config, $g;
+	global $config, $g, $pattern;
 
 	$flent = array();
 	$log_split = "";
-
-	$month_pattern = "[a-zA-Z]{3}";
-	$day_pattern = "[0-9]{1,2}";
-	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
-
-	$date_pattern = "(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . ")";
-
-	$host_pattern = "(.*?)";
-#	$host_pattern = "([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])";
-
-	$process_pattern = "(.*?)(?::\ +)?";
-	$pid_pattern = "(?:\[([0-9:]*)\])?:?";
-	$process_pid_pattern = $process_pattern . $pid_pattern;
-
-	$log_message_pattern = "(.*)";
-
-	$pattern = "/^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$/";
 
 	if (!preg_match($pattern, $line, $log_split)) {
 		return "";

@@ -128,7 +128,29 @@ ul.context-links li a {
 }
 /* end navigation */
 
-/* common button colors */
+/* start common colors */
+.alert-warning {
+    border-top: 1px solid #FFECB3;
+}
+
+.alert-success {
+    border-top: 1px solid #DCEDC8;
+}
+
+.alert-info {
+    border-top: 1px solid #B2EBF2;
+}
+
+.bg-primary {
+    color: #000;
+    background-color: #009688;
+}
+
+.bg-success {
+    color: #000;
+    background-color: #80CBC4;
+}
+
 .btn-default {
     color: #ffffff;
     background-color: #757575;
@@ -167,18 +189,7 @@ ul.context-links li a {
     background-color: #455A64;
     border-color: #37474F;
 }
-
-.alert-warning {
-    border-top: 1px solid #FFECB3;
-}
-
-.alert-success {
-    border-top: 1px solid #DCEDC8;
-}
-
-.alert-info {
-    border-top: 1px solid #B2EBF2;
-}
+/* end common colors */
 
 caption {
     color: #E0E0E0;
@@ -303,17 +314,6 @@ a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-he
 
 .progress-bar {
     background-color: #009688;
-}
-
-/** create icon colors */
-.bg-primary {
-    color: #000;
-    background-color: #009688;
-}
-
-.bg-success {
-    color: #000;
-    background-color: #80CBC4;
 }
 
 .icon-embed-btn

@@ -284,7 +284,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'requestif',
 	'Interface to send update from',
-	$pconfig['request'],
+	$pconfig['requestif'],
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 

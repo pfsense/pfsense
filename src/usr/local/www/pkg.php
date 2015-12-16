@@ -214,9 +214,8 @@ events.push(function() {
 	<?php
 		if ($pkg['adddeleteeditpagefields']['movable']) {
 	?>
-			jQuery(document).ready(function() {
-				jQuery('#mainarea table tbody').sortable({
-					items: 'tr.sortable',
+				$('#mainarea table tbody').sortable({
+				items: 'tr.sortable',
 					cursor: 'move',
 					distance: 10,
 					opacity: 0.8,
@@ -227,24 +226,25 @@ events.push(function() {
 					return ui;
 					},
 				});
-			});
+
+
 			function save_changes_to_xml(xml) {
-				var ids=jQuery('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
+				var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
 				var strloading="<?=gettext('Saving changes...')?>";
 				if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
-					jQuery.ajax({
+					$.ajax({
 						type: 'get',
 						cache: false,
 						url: "<?=$_SERVER['SCRIPT_NAME']?>",
 						data: {xml:'<?=$xml?>', act:'update', ids: ids},
 						beforeSend: function() {
-							jQuery('#savemsg').empty().html(strloading);
+							$('#savemsg').empty().html(strloading);
 						},
 						error: function(data) {
-							jQuery('#savemsg').empty().html('Error:' + data);
+							$('#savemsg').empty().html('Error:' + data);
 						},
 						success: function(data) {
-							jQuery('#savemsg').empty().html(data);
+							$('#savemsg').empty().html(data);
 						}
 					});
 				}
@@ -317,8 +317,9 @@ if ($savemsg) {
 		}
 	}
 ?>
-
-			<table class="table table-striped table-hover table-condensed">
+		<div id="mainarea">
+			<table id="mainarea" class="table table-striped table-hover table-condensed">
+				<tbody>
 <?php
 	/* Handle filtering bar A-Z */
 	$include_filtering_inputbox = false;
@@ -530,8 +531,10 @@ if ($savemsg) {
 ?>
 								<td><a class="btn btn-xs btn-danger" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>"><?=gettext("Delete")?></a></td>
 							</tr>
+							</tbody>
 						</table>
-					</td>
+					</div>
+				</td>
 <?php
 			echo "</tr>\n"; // Pairs with an echo tr some way above
 			// Handle pagination and display_maximum_rows

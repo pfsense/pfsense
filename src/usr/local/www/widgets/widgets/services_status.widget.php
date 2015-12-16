@@ -129,7 +129,7 @@ if (count($services) > 0) {
 	<div class="form-group">
 		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
 		<div class="col-sm-6">
-			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control" height="5">
+			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php foreach ($services as $service): ?>
 				<option <?=(in_array($service['name'], $skipservices)?'selected':'')?>><?=$service['name']?></option>
 			<?php endforeach; ?>

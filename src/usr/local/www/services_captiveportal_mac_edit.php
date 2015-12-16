@@ -211,12 +211,13 @@ if ($_POST) {
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -295,7 +296,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Make the ‘Copy My MAC’ button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
 

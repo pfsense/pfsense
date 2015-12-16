@@ -94,11 +94,13 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Zones"
 $shortcut_section = "captiveportal";
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 
-if (is_subsystem_dirty('captiveportal'))
+if (is_subsystem_dirty('captiveportal')) {
 	print_info_box_np(gettext("The Captive Portal entry list has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 ?>
 <form action="services_captiveportal_zones.php" method="post">
 	<div class="panel panel-default">

@@ -127,8 +127,9 @@ if ($_POST) {
 
 	// Look for duplicate roll #
 	foreach ($a_roll as $re) {
-		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re)
+		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re) {
 			continue;
+		}
 		if ($re['number'] == $_POST['number']) {
 			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;
@@ -164,11 +165,11 @@ if ($_POST) {
 		if ($_POST['count'] != $rollent['count']) {
 			$rollent['count'] = $_POST['count'];
 			$len = ($rollent['count']>>3) + 1;	 // count / 8 +1
-			$rollent['used'] = base64_encode(str_repeat("\000",$len)); // 4 bitmask
+			$rollent['used'] = base64_encode(str_repeat("\000", $len)); // 4 bitmask
 			$rollent['active'] = array();
 			voucher_write_used_db($rollent['number'], $rollent['used']);
 			voucher_write_active_db($rollent['number'], array());	// create empty DB
-			voucher_log(LOG_INFO,sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
+			voucher_log(LOG_INFO, sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
 		} else {
 			// existing roll has been modified but without changing the count
 			// read active and used DB from ramdisk and store it in XML config
@@ -176,7 +177,7 @@ if ($_POST) {
 			$activent = array();
 			$db = array();
 			$active_vouchers = voucher_read_active_db($rollent['number'], $rollent['minutes']);
-			foreach($active_vouchers as $voucher => $line) {
+			foreach ($active_vouchers as $voucher => $line) {
 				list($timestamp, $minutes) = explode(",", $line);
 				$activent['voucher'] = $voucher;
 				$activent['timestamp'] = $timestamp;
@@ -188,10 +189,11 @@ if ($_POST) {
 
 		unlock($voucherlck);
 
-		if (isset($id) && $a_roll[$id])
+		if (isset($id) && $a_roll[$id]) {
 			$a_roll[$id] = $rollent;
-		else
+		} else {
 			$a_roll[] = $rollent;
+		}
 
 		write_config();
 
@@ -202,11 +204,13 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form();
 

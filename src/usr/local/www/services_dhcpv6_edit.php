@@ -76,7 +76,7 @@ function staticmaps_sort($ifgui) {
 
 require_once('globals.inc');
 
-if(!$g['services_dhcp_server_enable']) {
+if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
 }
@@ -219,8 +219,9 @@ $shortcut_section = "dhcp6";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

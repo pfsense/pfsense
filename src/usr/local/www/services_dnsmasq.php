@@ -117,7 +117,7 @@ if ($_POST) {
 	} else {
 		$pconfig = $_POST;
 		unset($input_errors);
-	
+
 		$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
 		$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
 		$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
@@ -127,13 +127,13 @@ if ($_POST) {
 		$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
 		$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
 		$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
-	
+
 		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
 			if ($_POST['port'] == $config['unbound']['port']) {
 				$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
 			}
 		}
-	
+
 		if ($_POST['port']) {
 			if (is_port($_POST['port'])) {
 				$config['dnsmasq']['port'] = $_POST['port'];
@@ -143,13 +143,13 @@ if ($_POST) {
 		} else if (isset($config['dnsmasq']['port'])) {
 			unset($config['dnsmasq']['port']);
 		}
-	
+
 		if (is_array($_POST['interface'])) {
 			$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
 		} elseif (isset($config['dnsmasq']['interface'])) {
 			unset($config['dnsmasq']['interface']);
 		}
-	
+
 		if ($config['dnsmasq']['custom_options']) {
 			$args = '';
 			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
@@ -160,7 +160,7 @@ if ($_POST) {
 				$input_errors[] = gettext("Invalid custom options");
 			}
 		}
-	
+
 		if (!$input_errors) {
 			write_config();
 			mark_subsystem_dirty('hosts');
@@ -177,8 +177,7 @@ if ($_GET['act'] == "del") {
 			header("Location: services_dnsmasq.php");
 			exit;
 		}
-	}
-	elseif ($_GET['type'] == 'doverride') {
+	} elseif ($_GET['type'] == 'doverride') {
 		if ($a_domainOverrides[$_GET['id']]) {
 			unset($a_domainOverrides[$_GET['id']]);
 			write_config();
@@ -194,14 +193,16 @@ function build_if_list() {
 	$iflist = array('options' => array(), 'selected' => array());
 
 	$iflist['options'][""]	= "All";
-	if (empty($pconfig['interface']) || empty($pconfig['interface'][0]))
+	if (empty($pconfig['interface']) || empty($pconfig['interface'][0])) {
 		array_push($iflist['selected'], "");
+	}
 
 	foreach ($interface_addresses as $laddr => $ldescr) {
 		$iflist['options'][$laddr] = htmlspecialchars($ldescr);
 
-		if ($pconfig['interface'] && in_array($laddr, $pconfig['interface']))
+		if ($pconfig['interface'] && in_array($laddr, $pconfig['interface'])) {
 			array_push($iflist['selected'], $laddr);
+		}
 	}
 
 	unset($interface_addresses);
@@ -214,14 +215,17 @@ $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"));
 $shortcut_section = "forwarder";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('hosts'))
+if (is_subsystem_dirty('hosts')) {
 	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $form = new Form();
 
@@ -479,7 +483,7 @@ endforeach;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// On clicking the "Apply" button, submit the main form, not the little form the button lives in
 //	$('[name=apply]').prop('type', 'button');
 

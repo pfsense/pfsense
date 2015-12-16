@@ -63,8 +63,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
-function filterDestinationServers(array $destinationServers)
-{
+function filterDestinationServers(array $destinationServers) {
 	return array_unique(
 		array_filter($destinationServers)
 	);
@@ -113,8 +112,9 @@ if ($_POST) {
 
 	unset($input_errors);
 
-	if ($_POST['server'])
+	if ($_POST['server']) {
 		$_POST['server'] = filterDestinationServers($_POST['server']);
+	}
 
 	$pconfig = $_POST;
 
@@ -127,8 +127,9 @@ if ($_POST) {
 
 		if ($_POST['server']) {
 			foreach ($_POST['server'] as $srv) {
-				if (!is_ipaddrv6($srv))
+				if (!is_ipaddrv6($srv)) {
 					$input_errors[] = gettext("A valid Destination Server IPv6 address  must be specified.");
+				}
 			}
 		}
 	}
@@ -152,18 +153,19 @@ $pgtitle = array(gettext("Services"), gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
 include("head.inc");
 
-if ($dhcpd_enabled)
-{
+if ($dhcpd_enabled) {
 	echo '<div class="alert alert-danger">DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.</div>';
 	include("foot.inc");
 	exit;
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $form = new Form;
 
@@ -196,8 +198,7 @@ $section->addInput(new Form_Checkbox(
 	[$g['product_name']]
 );
 
-function createDestinationServerInputGroup($value = null)
-{
+function createDestinationServerInputGroup($value = null) {
 	$group = new Form_Group('Destination server');
 	$group->enableDuplication();
 
@@ -212,11 +213,13 @@ function createDestinationServerInputGroup($value = null)
 	return $group;
 }
 
-if (!isset($pconfig['server']) || count($pconfig['server']) < 1)
+if (!isset($pconfig['server']) || count($pconfig['server']) < 1) {
 	$section->add(createDestinationServerInputGroup());
-else
-	foreach ($pconfig['server'] as $idx => $server)
+} else {
+	foreach ($pconfig['server'] as $idx => $server) {
 		$section->add(createDestinationServerInputGroup($server));
+	}
+}
 
 $form->add($section);
 print $form;

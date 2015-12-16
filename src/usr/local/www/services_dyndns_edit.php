@@ -217,8 +217,9 @@ function build_type_list() {
 	$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 	$typelist = array();
 
-	for ($j = 0; $j < count($vals); $j++)
+	for ($j = 0; $j < count($vals); $j++) {
 		$typelist[$vals[$j]] = htmlspecialchars($types[$j]);
+	}
 
 	return($typelist);
 }
@@ -228,15 +229,17 @@ function build_if_list() {
 
 	$iflist = get_configured_interface_with_descr();
 
-	foreach ($iflist as $if => $ifdesc)
+	foreach ($iflist as $if => $ifdesc) {
 		$list[$if] = $ifdesc;
+	}
 
 	unset($iflist);
 
 	$grouplist = return_gateway_groups_array();
 
-	foreach ($grouplist as $name => $group)
+	foreach ($grouplist as $name => $group) {
 		$list[$name] = 'GW Group ' . $name;
+	}
 
 	unset($grouplist);
 
@@ -246,11 +249,13 @@ function build_if_list() {
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Client"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form;
 
@@ -418,7 +423,7 @@ print($form);
 events.push(function() {
 
 	function setVisible(service) {
-		switch(service) {
+		switch (service) {
 			case "custom" :
 			case "custom-v6" :
 				hideInput('resultmatch', false);
@@ -463,7 +468,7 @@ events.push(function() {
 
 	// When the 'Service type" selector is changed, we show/hide certain elements
 	$('#type').on('change', function() {
-		setVisible( this.value );
+		setVisible(this.value);
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------

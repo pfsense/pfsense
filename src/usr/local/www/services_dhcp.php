@@ -95,7 +95,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
 		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-			(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+		    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
 			continue;
 		}
 
@@ -307,7 +307,7 @@ if (isset($_POST['submit'])) {
 			$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
 		}
 		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-			($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
+		    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
 			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 		}
 		if ($_POST['domainsearchlist']) {
@@ -404,7 +404,7 @@ if (isset($_POST['submit'])) {
 			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 
 			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
-				(ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
+			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
 				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 
@@ -427,7 +427,7 @@ if (isset($_POST['submit'])) {
 				}
 
 				if (is_inrange_v4($_POST['range_from'], $p['range']['from'], $p['range']['to']) ||
-					is_inrange_v4($_POST['range_to'], $p['range']['from'], $p['range']['to'])) {
+				    is_inrange_v4($_POST['range_to'], $p['range']['from'], $p['range']['to'])) {
 					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
 					break;
 				}
@@ -446,7 +446,7 @@ if (isset($_POST['submit'])) {
 						continue;
 					}
 					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+					    (ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}
@@ -701,11 +701,13 @@ $shortcut_section = "dhcp";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 if (isset($config['dhcrelay']['enable'])) {
 	print_info_box(gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface."));
@@ -713,8 +715,9 @@ if (isset($config['dhcrelay']['enable'])) {
 	exit;
 }
 
-if (is_subsystem_dirty('staticmaps'))
+if (is_subsystem_dirty('staticmaps')) {
 	print_info_box_np(gettext("The static mapping configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -724,7 +727,7 @@ $i = 0;
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 	if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-		(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+	    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
 		continue;
 	}
 
@@ -886,7 +889,7 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['wins2']
 ))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 2');
 
-for($idx=1; $idx<=4; $idx++) {
+for ($idx=1; $idx<=4; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
@@ -1183,7 +1186,7 @@ $section->addInput(new Form_StaticText(
 	'For a list of available options please visit this ') . '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">' . gettext("URL") . '</a></div>'
 ));
 
-if(!$pconfig['numberoptions']) {
+if (!$pconfig['numberoptions']) {
 	$pconfig['numberoptions']['item']  = array(array('number' => '', 'type' => 'text', 'value' => ''));
 }
 
@@ -1346,7 +1349,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Show advanced DNS options ======================================================================================
 	var showadvdns = false;
@@ -1354,12 +1357,13 @@ events.push(function(){
 	function show_advdns() {
 <?php
 		if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
-		    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey']))
+		    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideCheckbox('ddnsupdate', !showadvdns && !hide);
 		hideInput('ddnsdomain', !showadvdns && !hide);
@@ -1381,12 +1385,13 @@ events.push(function(){
 
 	function show_advmac() {
 <?php
-		if (empty($pconfig['mac_allow']) && empty($pconfig['mac_deny']))
+		if (empty($pconfig['mac_allow']) && empty($pconfig['mac_deny'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('mac_allow', !showadvmac && !hide);
 		hideInput('mac_deny', !showadvmac && !hide);
@@ -1406,12 +1411,13 @@ events.push(function(){
 
 	function show_advntp() {
 <?php
-		if (empty($pconfig['ntp1']) && empty($pconfig['ntp2']))
+		if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('ntp1', !showadvntp && !hide);
 		hideInput('ntp2', !showadvntp && !hide);
@@ -1431,12 +1437,13 @@ events.push(function(){
 
 	function show_advtftp() {
 <?php
-		if (empty($pconfig['tftp']))
+		if (empty($pconfig['tftp'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('tftp', !showadvtftp && !hide);
 		hideInput('btnadvtftp', hide);
@@ -1455,12 +1462,13 @@ events.push(function(){
 
 	function show_advldap() {
 <?php
-		if (empty($pconfig['ldap']))
+		if (empty($pconfig['ldap'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideInput('ldap', !showadvldap && !hide);
 		hideInput('btnadvldap', hide);
@@ -1480,12 +1488,13 @@ events.push(function(){
 	function show_advboot() {
 <?php
 		if (!$pconfig['netboot'] && empty($pconfig['nextserver']) && empty($pconfig['filename']) && empty($pconfig['filename32']) &&
-		    empty($pconfig['filename64']) && empty($pconfig['rootpath']))
+		    empty($pconfig['filename64']) && empty($pconfig['rootpath'])) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideCheckbox('netboot', !showadvboot && !hide);
 		hideInput('nextserver', !showadvboot && !hide);
@@ -1509,13 +1518,14 @@ events.push(function(){
 
 	function show_advopts() {
 <?php
-		if ( empty($pconfig['numberoptions']) ||
-		    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value']))))
+		if (empty($pconfig['numberoptions']) ||
+		    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value'])))) {
 			$hide = false;
-		else
+		} else {
 			$hide = true;
+		}
 ?>
-		var hide = <?php if($hide) {echo 'true';} else {echo 'false';} ?>;
+		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
 		hideClass('adnlopts', !showadvopts && !hide);
 		hideInput('btnadvopts', hide);

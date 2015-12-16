@@ -84,8 +84,9 @@ require("guiconfig.inc");
 
 $if = $_GET['if'];
 
-if ($_POST['if'])
+if ($_POST['if']) {
 	$if = $_POST['if'];
+}
 
 if (!$if) {
 	header("Location: services_dhcp.php");
@@ -398,7 +399,7 @@ if ($_POST) {
 // Get our MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 $closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DHCP"), gettext("Edit static mapping"));
@@ -406,8 +407,9 @@ $shortcut_section = "dhcp";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -455,7 +457,7 @@ $section->addInput(new Form_Input(
 	$pconfig['hostname']
 ))->setHelp('Name of the host, without domain part.');
 
-if($netboot_enabled) {
+if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
 		'filename',
 		'Netboot filename',
@@ -682,7 +684,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function hideDDNS(hide) {
 		hideCheckbox('ddnsupdate', hide);

@@ -88,7 +88,6 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
 
 	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
-	else if ($logfile == "{$g['varlog_path']}/pptps.log")		{ $logfile_type = "tbd"; }
 	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "tbd"; }
 	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
 

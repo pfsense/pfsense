@@ -612,12 +612,23 @@ if ($pkg['savetext'] != "") {
 	$savevalue = $pkg['savetext'];
 }
 
+$savehelp = gettext("");
+if ($pkg['savehelp'] != "") {
+	$savehelp = $pkg['savehelp'];
+}
+
 $grouping = false; // Indicates the elements we are composing are part of a combined group
 
-$form = new Form(new Form_Button(
+$savebutton = new Form_Button(
 	'submit',
 	$savevalue
-));
+);
+
+if ($savehelp) {
+	$savebutton->setHelp($savehelp);
+}
+
+$form = new Form($savebutton);
 
 $form->addGlobal(new Form_Input(
 	'xml',

@@ -716,9 +716,7 @@
 							$hostData = array(
 								"content" => "{$this->_dnsIP}",
 								"type" => "A",
-								"name" => "{$this->_dnsHost}",
-								"proxiable" => false,
-								"proxied" => false
+								"name" => "{$this->_dnsHost}"
 							);
 							$data_json = json_encode($hostData);
 							$updateHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records/{$host}";

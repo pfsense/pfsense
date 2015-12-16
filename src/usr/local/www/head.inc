@@ -438,6 +438,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<?php
 					endif;
 				?>
+					<li class="dropdown">
+						<a href="/index.php?logout">
+							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
+						</a>
+					</li>
 			</ul>
 		</div>
 	</div>

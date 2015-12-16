@@ -2737,7 +2737,6 @@ function pfSense_handle_custom_code($src_dir) {
 }
 
 function set_language($lang = 'en_US', $encoding = "UTF-8") {
-	putenv("LANG={$lang}.{$encoding}");
 	setlocale(LC_ALL, "{$lang}.{$encoding}");
 	textdomain("pfSense");
 	bindtextdomain("pfSense", "/usr/local/share/locale");

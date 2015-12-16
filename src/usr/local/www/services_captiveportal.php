@@ -703,7 +703,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'bwdefaultup',
-	'Default download (Kbit/s)',
+	'Default upload (Kbit/s)',
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
@@ -1118,7 +1118,7 @@ if ($pconfig['page']['errtext']) {
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
+		'Restore default error page',
 		'?zone=' . $cpzone . '&amp;act=delerrhtml'
 	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
 }
@@ -1145,7 +1145,7 @@ if ($pconfig['page']['logouttext']) {
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
+		'Restore default logout page',
 		'?zone=' . $cpzone . '&amp;act=dellogouthtml'
 	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
 }

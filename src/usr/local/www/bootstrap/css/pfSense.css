@@ -276,7 +276,7 @@ ul.context-links li a {
 }
 
 .table>tbody>tr>td {
-    padding: 4px 4px 4px 10px;
+    padding: 6px 4px 6px 10px;
 }
 
 /* active table row */
@@ -502,8 +502,8 @@ footer a {
 }
 
 .bg-info {
-    color: #000;
-    background-color: #80DEEA;
+    color: #01579B;
+    background-color: #E1F5FE;
 }
 
 .bg-danger {
@@ -519,6 +519,21 @@ footer a {
 .bg-success {
     color: #000;
     background-color: #A5D6A7;
+}
+
+.table-hover>tbody>tr.hover-success:hover {
+    color: #000;
+    background-color: #A5D6A7;   
+}
+
+.table-hover>tbody>tr.hover-danger:hover {
+    color: #000;
+    background-color: #EF9A9A;   
+}
+
+.table-hover>tbody>tr.hover-warning:hover {
+    color: #000;
+    background-color: #FFF9C4;
 }
 
 /** icons are often used with onclick actions, so we need the cursor to change to a pointer */

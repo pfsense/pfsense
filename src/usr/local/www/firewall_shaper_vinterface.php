@@ -368,7 +368,6 @@ $output .= $output_form;
 $closehead = false;
 include("head.inc");
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" property="stylesheet" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <script type="text/javascript">

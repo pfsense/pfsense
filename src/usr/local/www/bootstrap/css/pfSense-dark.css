@@ -343,3 +343,8 @@ button.close {
 input, select, textarea {
     color: #212121;
 }
+
+/* tree css */
+ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
+    color : #ffffff;
+}

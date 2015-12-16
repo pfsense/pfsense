@@ -402,7 +402,7 @@ for ($i=1; $i<5; $i++) {
 
 		$group->add(new Form_Select(
 			'dns' . $i . 'gw',
-			'Gateway',
+			null,
 			$pconfig['dns' . $i . 'gw'],
 			$options
 		))->setHelp(($i == 4) ? 'Gateway':null);;
@@ -505,5 +505,8 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
-
+?>
+</div>
+<?php
 include("foot.inc");
+?>

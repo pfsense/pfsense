@@ -377,54 +377,57 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 ?>
 
 <div class="row">
-	<?php
+<?php
 	$columnWidth = 12 / $numColumns;
 	$columnCounter = 0;
-	?>
-<?php foreach ($widgetColumns as $column => $columnWidgets):?>
-	<div class="col-md-<?=$columnWidth?>" id="widgets-<?=$column?>">
-<?php foreach ($columnWidgets as $widgetname => $widgetconfig):
 
-		// Compose the widget title and include the title link if available
-		$widgetlink = ${$widgetname . '_title_link'};
+	for($i=1; $i<=$numColumns; $i++) {
+		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '">';
 
-		if ((strlen($widgetlink) > 0)) {
-			$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';
+		//if col$i exists
+		if(isset($widgetColumns['col'.$i])) {
+
+			$columnWidgets = $widgetColumns['col'.$i];
+
+			foreach ($columnWidgets as $widgetname => $widgetconfig) {
+				// Compose the widget title and include the title link if available
+				$widgetlink = ${$widgetname . '_title_link'};
+
+				if ((strlen($widgetlink) > 0)) {
+					$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';
+				} else {
+					$wtitle = $widgetconfig['name'];
+				}
+				?>
+					<div class="panel panel-default" id="widget-<?=$widgetname?>">
+					<div class="panel-heading">
+						<?=$wtitle?>
+						<span class="widget-heading-icon">
+							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
+								<i class="fa fa-wrench"></i>
+							</a>
+							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
+								<!--  actual icon is determined in css based on state of body -->
+								<i class="fa fa-plus-circle"></i>
+							</a>
+							<a data-toggle="close" href="#widget-<?=$widgetname?>">
+								<i class="fa fa-times-circle"></i>
+							</a>
+						</span>
+					</div>
+					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
+						<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
+					</div>
+				</div>
+				<?php
+			}
 		} else {
-			$wtitle = $widgetconfig['name'];
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '"></div>';
 		}
-
-?>
-		<div class="panel panel-default" id="widget-<?=$widgetname?>">
-			<div class="panel-heading">
-				<?=$wtitle?>
-				<span class="widget-heading-icon">
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="fa fa-wrench"></i>
-					</a>
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
-						<!--  actual icon is determined in css based on state of body -->
-						<i class="fa fa-plus-circle"></i>
-					</a>
-					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="fa fa-times-circle"></i>
-					</a>
-				</span>
-			</div>
-			<div class="panel-body collapse<?=($widgetconfig['display']=='close' ? '' : ' in')?>">
-				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
-			</div>
-		</div>
-<?php endforeach;
-	  $columnCounter++;
-?>
-	</div>
-<?php endforeach; ?>
-<?php
-	for ($n = 1; $n <= ($numColumns - $columnCounter); $n++) {
-		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . ($n + $columnCounter) . '"></div>';
+		echo "</div>";
 	}
 ?>
+
 </div>
 
 <script type="text/javascript">

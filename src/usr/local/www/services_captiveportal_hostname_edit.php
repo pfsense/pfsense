@@ -183,7 +183,7 @@ if ($_POST) {
 }
 
 function build_dir_list() {
-	$dirs = array(gettext("Both"),gettext("From"),gettext("To"));
+	$dirs = array(gettext("Both"), gettext("From"), gettext("To"));
 	$dirlist = array();
 
 	foreach ($dirs as $dir) {
@@ -195,8 +195,9 @@ function build_dir_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',

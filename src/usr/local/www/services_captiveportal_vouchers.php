@@ -74,8 +74,9 @@ require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];
 
-if (isset($_POST['zone']))
-		$cpzone = $_POST['zone'];
+if (isset($_POST['zone'])) {
+	$cpzone = $_POST['zone'];
+}
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
@@ -314,13 +315,13 @@ if ($_POST) {
 			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
 			$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
 			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
-				$newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
+			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node
 				require_once("xmlrpc.inc");
 
 				$protocol = "http";
 				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-					$config['system']['webgui']['protocol'] == "https") {
+				    $config['system']['webgui']['protocol'] == "https") {
 					$protocol = "https";
 				}
 				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443") {
@@ -419,11 +420,13 @@ EOF;
 $closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg. 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -453,7 +456,7 @@ display_top_tabs($tab_array, true);
 				<tbody>
 <?php
 $i = 0;
-foreach($a_roll as $rollent):
+foreach ($a_roll as $rollent):
 ?>
 					<tr>
 						<td>
@@ -636,23 +639,25 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hides all elements of the specified class. This will usually be a section or group
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide) {
 			$('.' + s_class).hide();
-		else
+		} else {
 			$('.' + s_class).show();
+		}
 	}
 
 	function setShowHide (show) {
 		hideClass('rolledit', !show);
 
-		if(show)
+		if (show) {
 			$('td:nth-child(5),th:nth-child(5)').show();
-		else
+		} else {
 			$('td:nth-child(5),th:nth-child(5)').hide();
+		}
 	}
 
 	// Show/hide on checkbox change
@@ -664,12 +669,12 @@ events.push(function(){
 	setShowHide($('#enable').is(":checked"));
 
 	var generateButton = $('<a class="btn btn-xs btn-default">Generate new keys</a>');
-	generateButton.on('click', function(){
+	generateButton.on('click', function() {
 		$.ajax({
 			type: 'get',
 			url: 'services_captiveportal_vouchers.php?generatekey=true',
 			dataType: 'json',
-			success: function(data){
+			success: function(data) {
 				$('#publickey').val(data.public.replace(/\\n/g, '\n'));
 				$('#privatekey').val(data.private.replace(/\\n/g, '\n'));
 			}

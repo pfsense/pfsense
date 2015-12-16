@@ -164,8 +164,9 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -237,7 +238,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 		$i++;
 	endforeach;
 
-	if($total_size > 0) :
+	if ($total_size > 0) :
 ?>
 						<tr>
 							<th>

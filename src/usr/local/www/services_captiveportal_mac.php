@@ -184,11 +184,13 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('passthrumac'))
+if (is_subsystem_dirty('passthrumac')) {
 	print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -237,7 +239,7 @@ endforeach; ?>
 		<tbody>
 	</table>
 <?php
-else :
+else:
 ?>
 		</tbody>
 	</table>

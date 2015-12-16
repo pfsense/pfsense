@@ -101,7 +101,7 @@ if (!$if || !isset($iflist[$if])) {
 		$oc = $config['interfaces'][$ifent];
 
 		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 			continue;
 		}
 		$if = $ifent;
@@ -160,7 +160,7 @@ $dhcrelaycfg = $config['dhcrelay6'];
 if (is_array($dhcrelaycfg)) {
 	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
 		if (isset($dhcrelayifconf['enable']) && isset($iflist[$dhcrelayif]) &&
-			(!link_interface_to_bridge($dhcrelayif))) {
+		    (!link_interface_to_bridge($dhcrelayif))) {
 			$dhcrelay_enabled = true;
 		}
 	}
@@ -210,9 +210,9 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
 		}
 		if (($_POST['dns1'] && !is_ipaddrv6($_POST['dns1'])) ||
-			($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])) ||
-			($_POST['dns3'] && !is_ipaddrv6($_POST['dns3'])) ||
-			($_POST['dns4'] && !is_ipaddrv6($_POST['dns4']))) {
+		    ($_POST['dns2'] && !is_ipaddrv6($_POST['dns2'])) ||
+		    ($_POST['dns3'] && !is_ipaddrv6($_POST['dns3'])) ||
+		    ($_POST['dns4'] && !is_ipaddrv6($_POST['dns4']))) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 		}
 
@@ -229,7 +229,7 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
 		}
 		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
-			($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
+		    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
 			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
 		}
 		if ($_POST['domainsearchlist']) {
@@ -281,7 +281,7 @@ if ($_POST) {
 
 			if (is_ipaddrv6($ifcfgip)) {
 				if ((!is_inrange_v6($_POST['range_from'], $subnet_start, $subnet_end)) ||
-					(!is_inrange_v6($_POST['range_to'], $subnet_start, $subnet_end))) {
+				    (!is_inrange_v6($_POST['range_to'], $subnet_start, $subnet_end))) {
 					$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 				}
 			}
@@ -308,7 +308,7 @@ if ($_POST) {
 						continue;
 					}
 					if ((inet_pton($map['ipaddrv6']) > $dynsubnet_start) &&
-						(inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
+					    (inet_pton($map['ipaddrv6']) < $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}
@@ -437,18 +437,19 @@ if ($_GET['act'] == "del") {
 }
 
 // Delete a row in the options table
-if($_GET['act'] == "delopt") {
+if ($_GET['act'] == "delopt") {
 	$idx = $_GET['id'];
 
-	if($pconfig['numberoptions'] && is_array($pconfig['numberoptions']['item'][$idx])) {
+	if ($pconfig['numberoptions'] && is_array($pconfig['numberoptions']['item'][$idx])) {
 	   unset($pconfig['numberoptions']['item'][$idx]);
 	}
 }
 
 // Add an option row
-if($_GET['act'] == "addopt") {
-	if(!is_array($pconfig['numberoptions']['item']))
+if ($_GET['act'] == "addopt") {
+	if (!is_array($pconfig['numberoptions']['item'])) {
 		$pconfig['numberoptions']['item'] = array();
+	}
 
 	array_push($pconfig['numberoptions']['item'], array('number' => null, 'value' => null));
 }
@@ -459,11 +460,13 @@ $shortcut_section = "dhcp6";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 if ($dhcrelay_enabled) {
 	print_info_box(gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface."), 'danger');
@@ -471,8 +474,9 @@ if ($dhcrelay_enabled) {
 	exit;
 }
 
-if (is_subsystem_dirty('staticmaps'))
+if (is_subsystem_dirty('staticmaps')) {
 	print_info_box_np(gettext('The static mapping configuration has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -483,14 +487,16 @@ foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 
 
-	if((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))))
+	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
+	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 		continue;
+	}
 
-	if ($ifent == $if)
+	if ($ifent == $if) {
 		$active = true;
-	else
+	} else {
 		$active = false;
+	}
 
 	$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
 	$tabscounter++;
@@ -499,15 +505,16 @@ foreach ($iflist as $ifent => $ifname) {
 /* tack on PPPoE or PPtP servers here */
 /* pppoe server */
 if (is_array($config['pppoes']['pppoe'])) {
-	foreach($config['pppoes']['pppoe'] as $pppoe) {
+	foreach ($config['pppoes']['pppoe'] as $pppoe) {
 		if ($pppoe['mode'] == "server") {
 			$ifent = "poes". $pppoe['pppoeid'];
 			$ifname = strtoupper($ifent);
 
-			if ($ifent == $if)
+			if ($ifent == $if) {
 				$active = true;
-			else
+			} else {
 				$active = false;
+			}
 
 			$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
 			$tabscounter++;
@@ -526,7 +533,7 @@ display_top_tabs($tab_array);
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
-display_top_tabs($tab_array, false, 'nav nav-tabs' );
+display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -542,7 +549,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['enable']
 ))->toggles('.form-group:not(:first-child)');
 
-if(is_ipaddrv6($ifcfgip)) {
+if (is_ipaddrv6($ifcfgip)) {
 
 	$section->addInput(new Form_StaticText(
 		'Subnet',
@@ -560,7 +567,7 @@ if(is_ipaddrv6($ifcfgip)) {
 		));
 }
 
-if($is_olsr_enabled) {
+if ($is_olsr_enabled) {
 	$section->addInput(new Form_Select(
 	'netmask',
 	'Subnet Mask',
@@ -635,7 +642,7 @@ $section->addInput(new Form_Select(
 
 $group = new Form_Group('DNS Servers');
 
-for($i=1;$i<=4; $i++) {
+for ($i=1;$i<=4; $i++) {
 	$group->add(new Form_input(
 		'dns' . $i,
 		null,
@@ -645,7 +652,7 @@ for($i=1;$i<=4; $i++) {
 	));
 }
 
-$group->setHelp('Leave blank to use the system default DNS servers,this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
+$group->setHelp('Leave blank to use the system default DNS servers, this interface\'s IP if DNS forwarder is enabled, or the servers configured on the "General" page.');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -828,11 +835,11 @@ $form->add($section);
 
 $title = 'Show Additional BOOTP/DHCP Options';
 
-if($pconfig['numberoptions']) {
+if ($pconfig['numberoptions']) {
 	$counter = 0;
 	$last = count($pconfig['numberoptions']['item']) - 1;
 
-	foreach($pconfig['numberoptions']['item'] as $item) {
+	foreach ($pconfig['numberoptions']['item'] as $item) {
 		$group = new Form_Group(null);
 
 		$group->add(new Form_Input(
@@ -904,10 +911,10 @@ print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' 
 			</thead>
 			<tbody>
 <?php
-if(is_array($a_maps)):
+if (is_array($a_maps)):
 	$i = 0;
 	foreach ($a_maps as $mapent):
-		if($mapent['duid'] != "" or $mapent['ipaddrv6'] != ""):
+		if ($mapent['duid'] != "" or $mapent['ipaddrv6'] != ""):
 ?>
 				<tr>
 					<td>
@@ -947,7 +954,7 @@ endif;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function hideDDNS(hide) {
 		hideCheckBox('ddnsupdate', hide);

@@ -92,46 +92,46 @@ if (isset($id) && $a_domainOverrides[$id]) {
 }
 
 if ($_POST) {
-	   unset($input_errors);
-	   $pconfig = $_POST;
+		unset($input_errors);
+		$pconfig = $_POST;
 
-	   /* input validation */
-	   $reqdfields = explode(" ", "domain ip");
-	   $reqdfieldsn = array(gettext("Domain"),gettext("IP address"));
+		/* input validation */
+		$reqdfields = explode(" ", "domain ip");
+		$reqdfieldsn = array(gettext("Domain"), gettext("IP address"));
 
-	   do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	   function String_Begins_With($needle, $haystack) {
-		   return (substr($haystack, 0, strlen($needle))==$needle);
-	   }
+		function String_Begins_With($needle, $haystack) {
+			return (substr($haystack, 0, strlen($needle)) == $needle);
+		}
 
-	   if (String_Begins_With(_msdcs, $_POST['domain'])) {
-			   $subdomainstr = substr($_POST['domain'], 7);
+		if (String_Begins_With(_msdcs, $_POST['domain'])) {
+			$subdomainstr = substr($_POST['domain'], 7);
 
-			   if ($subdomainstr && !is_domain($subdomainstr)) {
-				  $input_errors[] = gettext("A valid domain must be specified after _msdcs.");
-			   }
-	   }
-	   elseif ($_POST['domain'] && !is_domain($_POST['domain'])) {
-			   $input_errors[] = gettext("A valid domain must be specified.");
-	   }
+			if ($subdomainstr && !is_domain($subdomainstr)) {
+				$input_errors[] = gettext("A valid domain must be specified after _msdcs.");
+			}
+		} elseif ($_POST['domain'] && !is_domain($_POST['domain'])) {
+			$input_errors[] = gettext("A valid domain must be specified.");
+		}
 
-	   if ($_POST['ip'] && !is_ipaddr($_POST['ip']) && ($_POST['ip'] != '#') && ($_POST['ip'] != '!')) {
-			  $input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion or ! to not forward at all.");
-	   }
+		if ($_POST['ip'] && !is_ipaddr($_POST['ip']) && ($_POST['ip'] != '#') && ($_POST['ip'] != '!')) {
+			$input_errors[] = gettext("A valid IP address must be specified, or # for an exclusion or ! to not forward at all.");
+		}
 
-	   if ($_POST['dnssrcip'] && !in_array($_POST['dnssrcip'], get_configured_ip_addresses())) {
-			  $input_errors[] = gettext("An interface IP address must be specified for the DNS query source.");
-	   }
+		if ($_POST['dnssrcip'] && !in_array($_POST['dnssrcip'], get_configured_ip_addresses())) {
+			$input_errors[] = gettext("An interface IP address must be specified for the DNS query source.");
+		}
 
-	   if (!$input_errors) {
+		if (!$input_errors) {
 			$doment = array();
 			$doment['domain'] = $_POST['domain'];
 
-			if (empty($_POST['dnssrcip']))
+			if (empty($_POST['dnssrcip'])) {
 				$doment['ip'] = $_POST['ip'];
-			else
-			   $doment['ip'] = $_POST['ip'] . "@" . $_POST['dnssrcip'];
+			} else {
+				$doment['ip'] = $_POST['ip'] . "@" . $_POST['dnssrcip'];
+			}
 
 			$doment['descr'] = $_POST['descr'];
 
@@ -154,8 +154,9 @@ $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Do
 $shortcut_section = "forwarder";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

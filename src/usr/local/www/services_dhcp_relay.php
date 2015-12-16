@@ -114,13 +114,15 @@ if ($_POST) {
 		$svrlist = '';
 
 		if ($_POST['server']) {
-			foreach($_POST['server'] as $checksrv => $srv) {
-				if (!is_ipaddr($srv[0]))
+			foreach ($_POST['server'] as $checksrv => $srv) {
+				if (!is_ipaddr($srv[0])) {
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
+				}
 
-				if(!empty($srv[0])) { // Filter out any empties
-					if(!empty($svrlist))
+				if (!empty($srv[0])) { // Filter out any empties
+					if (!empty($svrlist)) {
 						$svrlist .= ',';
+					}
 
 					$svrlist .= $srv[0];
 				}
@@ -157,11 +159,13 @@ if ($dhcpd_enabled) {
 	exit;
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form;
 
@@ -194,8 +198,7 @@ $section->addInput(new Form_Checkbox(
 );
 
 //Small function to prevent duplicate code
-function createDestinationServerInputGroup($value = null)
-{
+function createDestinationServerInputGroup($value = null) {
 	$group = new Form_Group('Destination server');
 
 	$group->add(new Form_IpAddress(
@@ -210,9 +213,9 @@ function createDestinationServerInputGroup($value = null)
 	return $group;
 }
 
-if (!isset($pconfig['server']) || count($pconfig['server']) < 1)
+if (!isset($pconfig['server']) || count($pconfig['server']) < 1) {
 	$section->add(createDestinationServerInputGroup());
-else {
+} else {
 	foreach (explode(',', $pconfig['server']) as $server) {
 			$section->add(createDestinationServerInputGroup($server));
 	}

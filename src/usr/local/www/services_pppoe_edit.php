@@ -88,8 +88,8 @@ $a_pppoes = &$config['pppoes']['pppoe'];
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 

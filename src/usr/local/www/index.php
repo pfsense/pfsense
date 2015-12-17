@@ -263,8 +263,9 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 
 		// be backwards compatible
 		$offset = strpos($file, '-container');
-		if (false !== $offset)
+		if (false !== $offset) {
 			$file = substr($file, 0, $offset);
+		}
 
 		// Get the widget title that should be in a var defined in the widget's inc file.
 		$widgettitle = ${$file . '_title'};
@@ -380,11 +381,11 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 <?php
 	$columnWidth = 12 / $numColumns;
 
-	for($i=1; $i<=$numColumns; $i++) {
+	for ($i=1; $i<=$numColumns; $i++) {
 		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '">';
 
 		//if col$i exists
-		if(isset($widgetColumns['col'.$i])) {
+		if (isset($widgetColumns['col'.$i])) {
 
 			$columnWidgets = $widgetColumns['col'.$i];
 
@@ -438,7 +439,7 @@ function updateWidgets(newWidget) {
 		$('.panel', col).each(function(idx, widget) {
 			var isOpen = $('.panel-body', widget).hasClass('in');
 
-			sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +',';
+			sequence += widget.id.split('-')[1] + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ',';
 		});
 	});
 

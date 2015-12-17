@@ -1333,7 +1333,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 <?php
 	}
 ?>
-		<table>
+		</table>
 	</div>
 </div>
 

@@ -1941,7 +1941,8 @@ $group->add(new Form_Input(
 	'adv_dhcp_pt_select_timeout',
 	null,
 	'number',
-	$pconfig['adv_dhcp_pt_select_timeout']
+	$pconfig['adv_dhcp_pt_select_timeout'],
+	['min' => 0]
 ))->setHelp('Select timeout');
 
 $group->add(new Form_Input(

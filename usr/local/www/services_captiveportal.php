@@ -415,7 +415,7 @@ if ($_POST) {
 		if (!empty($toremove)) {
 			foreach ($toremove as $removeif) {
 				$removeif = get_real_interface($removeif);
-				mwexec("/sbin/ipfw zone {$cpzoneid} mdel {$removeif}");
+				mwexec("/sbin/ipfw -x {$cpzoneid} mdel {$removeif}");
 			}
 		}
 		captiveportal_configure_zone($newcp);

@@ -105,8 +105,8 @@ if ($_REQUEST['getdyndnsstatus']) {
 		<td width="20%" class="listhdrr"><?=gettext("Hostname");?></td>
 		<td width="20%" class="listhdrr"><?=gettext("Cached IP");?></td>
 	</tr>
-	<?php $i = 0; foreach ($a_dyndns as $dyndns): ?>
-	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$i;?>'">
+	<?php $dyndnsid = 0; foreach ($a_dyndns as $dyndns): ?>
+	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'">
 		<td class="listlr">
 		<?php $iflist = get_configured_interface_with_descr();
 		foreach ($iflist as $if => $ifdesc) {
@@ -158,10 +158,10 @@ if ($_REQUEST['getdyndnsstatus']) {
 		?>
 		</td>
 		<td class="listr">
-		<div id='dyndnsstatus<?= $i;?>'><?= gettext("Checking ...");?></div>
+		<div id='dyndnsstatus<?= $dyndnsid;?>'><?= gettext("Checking ...");?></div>
 		</td>
 	</tr>
-	<?php $i++; endforeach;?>
+	<?php $dyndnsid++; endforeach;?>
 </table>
 </div>
 <script type="text/javascript">

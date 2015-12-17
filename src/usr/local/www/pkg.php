@@ -206,53 +206,60 @@ include("head.inc");
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
 	function setFilter(filtertext) {
 		jQuery('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
 	}
 
-	<?php
-		if ($pkg['adddeleteeditpagefields']['movable']) {
-	?>
-				$('#mainarea table tbody').sortable({
-				items: 'tr.sortable',
-					cursor: 'move',
-					distance: 10,
-					opacity: 0.8,
-					helper: function(e, ui) {
-						ui.children().each(function() {
-							jQuery(this).width(jQuery(this).width());
-						});
-					return ui;
-					},
+<?php
+	if ($pkg['adddeleteeditpagefields']['movable']) {
+?>
+		$('#mainarea table tbody').sortable({
+		items: 'tr.sortable',
+			cursor: 'move',
+			distance: 10,
+			opacity: 0.8,
+			helper: function(e, ui) {
+				ui.children().each(function() {
+					jQuery(this).width(jQuery(this).width());
 				});
-
-
-			function save_changes_to_xml(xml) {
-				var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
-				var strloading="<?=gettext('Saving changes...')?>";
-				if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
-					$.ajax({
-						type: 'get',
-						cache: false,
-						url: "<?=$_SERVER['SCRIPT_NAME']?>",
-						data: {xml:'<?=$xml?>', act:'update', ids: ids},
-						beforeSend: function() {
-							$('#savemsg').empty().html(strloading);
-						},
-						error: function(data) {
-							$('#savemsg').empty().html('Error:' + data);
-						},
-						success: function(data) {
-							$('#savemsg').empty().html(data);
-						}
-					});
-				}
-			}
-	<?php
-		}
-	?>
+			return ui;
+			},
+		});
+<?php
+	}
+?>
 });
+
+<?php
+if ($pkg['adddeleteeditpagefields']['movable']) {
+?>
+	function save_changes_to_xml(xml) {
+		var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
+		var strloading="<?=gettext('Saving changes...')?>";
+		if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
+			$.ajax({
+				type: 'get',
+				cache: false,
+				url: "<?=$_SERVER['SCRIPT_NAME']?>",
+				data: {xml:'<?=$xml?>', act:'update', ids: ids},
+				beforeSend: function() {
+					$('#savemsg').empty().html(strloading);
+				},
+				error: function(data) {
+					$('#savemsg').empty().html('Error:' + data);
+				},
+				success: function(data) {
+					$('#savemsg').empty().html(data);
+				}
+			});
+		}
+	}
+<?php
+}
+?>
+
 //]]>
 </script>
 
@@ -412,7 +419,7 @@ if ($savemsg) {
 		echo "</table>";
 		echo "</th></tr>";
 	}
-	
+
 	$cols = 0;
 	if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 		foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {

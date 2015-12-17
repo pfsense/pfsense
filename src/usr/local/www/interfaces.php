@@ -2041,10 +2041,10 @@ $section->addInput(new Form_Input(
 			'Some ISPs may require certain options be or not be requested.');
 
 $section->addInput(new Form_Input(
-	'adv_dhcp_require_options',
+	'adv_dhcp_required_options',
 	'Require options',
 	'text',
-	$pconfig['adv_dhcp_require_options']
+	$pconfig['adv_dhcp_required_options']
 ))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.	 [option [, ...]]');
 
 $section->addInput(new Form_Input(

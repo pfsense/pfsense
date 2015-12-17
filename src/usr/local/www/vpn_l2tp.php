@@ -127,7 +127,7 @@ if ($_POST) {
 			$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['n_l2tp_units'] - 1;
 
 			if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-				(ip2ulong($_POST['localip']) <= $subnet_end)) {
+			    (ip2ulong($_POST['localip']) <= $subnet_end)) {
 				$input_errors[] = gettext("The specified server address lies in the remote subnet.");
 			}
 			if ($_POST['localip'] == get_interface_ip("lan")) {
@@ -206,11 +206,13 @@ $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Configuration"));
 $shortcut_section = "l2tps";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), true, "vpn_l2tp.php");
@@ -354,7 +356,7 @@ print_info_box(gettext("Don't forget to add a firewall rule to permit traffic fr
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function setL2TP () {
 		hide = ! $('#mode').prop('checked');

@@ -420,6 +420,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 		$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
+			$idx = 0;
 			foreach ($a_schedules as $schedule) {
 				if ($schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
@@ -515,10 +516,12 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					}
 					#FIXME
 					$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
-					$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>{$sched_caption_escaped}</h1><p>{$sched_content}</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-					$schedule_span_end = "</u></span>";
+					$schedule_span_begin = '<a href="/firewall_schedule_edit.php?id=' . $idx . '" data-toggle="popover" data-trigger="hover focus" title="' . $schedule['name'] . '" data-content="' .
+					    $sched_caption_escaped . '" data-html="true">';
+					$schedule_span_end = "";
 				}
 			}
+			$idx++;
 		}
 		$printicon = false;
 		$alttext = "";
@@ -527,9 +530,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			if ($schedstatus) {
 				if ($iconfn == "block" || $iconfn == "reject") {
 					$image = "times-circle";
+					$dispcolor = "text-danger";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
 				} else {
 					$image = "play-circle";
+					$dispcolor = "text-success";
 					$alttext = gettext("Traffic matching this rule is currently being allowed");
 				}
 				$printicon = true;
@@ -540,6 +545,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					$image = "times-circle";
 				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
+				$dispcolor = "text-danger";
 				$printicon = true;
 			}
 		}
@@ -624,7 +630,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if ($printicon) { ?>
-								<i class="fa fa-<?=$image;?>" title="<?=$alttext;?>" alt="icon" />
+								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>" alt="icon"></i>
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>

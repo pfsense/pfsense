@@ -123,7 +123,7 @@ if (count($services) > 0) {
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">

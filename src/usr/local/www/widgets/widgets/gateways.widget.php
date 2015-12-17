@@ -220,7 +220,7 @@ if ($_POST) {
 //]]>
 </script>
 
-<div class="panel-footer collapse">
+<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 <input type="hidden" id="gateways-config" name="gateways-config" value="" />
 
 <div id="gateways-settings" class="widgetconfigdiv" >

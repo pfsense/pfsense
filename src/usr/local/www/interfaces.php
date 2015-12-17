@@ -3556,6 +3556,8 @@ events.push(function() {
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
 	if (sv == "") {
 		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
+	} else {
+		$("input[name=adv_dhcp_pt_values][value="+sv+"]").prop('checked', true);
 	}
 
 	// Set preset from value
@@ -3616,7 +3618,7 @@ events.push(function() {
 	});
 
 	// On click . .
-	$('[id=adv_dhcp_pt_values]').click(function () {
+	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
 

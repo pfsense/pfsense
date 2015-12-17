@@ -533,7 +533,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 ?>
 				</tbody>
 			</table>
-<?php } ?>
+<?php
+	}
+?>
 		</div>
 	</div>
 <?php
@@ -545,56 +547,57 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		}
 	}
 
-	if (count($ca_certs) == 0)
+	if (count($ca_certs) == 0) {
 		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
-	else
+	} else {
+		$section = new Form_Section('Choose a certificate to revoke');
+		$group = new Form_Group(null);
 
-	$section = new Form_Section('Choose a certificate to revoke');
-	$group = new Form_Group(null);
+		$group->add(new Form_Select(
+			'certref',
+			null,
+			$pconfig['certref'],
+			build_cacert_list()
+			))->setWidth(4)->setHelp('Certificate');
 
-	$group->add(new Form_Select(
-		'certref',
-		null,
-		$pconfig['certref'],
-		build_cacert_list()
-		))->setWidth(4)->setHelp('Certificate');
+		$group->add(new Form_Select(
+			'crlreason',
+			null,
+			-1,
+			$openssl_crl_status
+			))->setHelp('Reason');
 
-	$group->add(new Form_Select(
-		'crlreason',
-		null,
-		-1,
-		$openssl_crl_status
-		))->setHelp('Reason');
+		$group->add(new Form_Button(
+			'submit',
+			'Add'
+			))->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-	$group->add(new Form_Button(
-		'submit',
-		'Add'
-		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+		$section->add($group);
 
-	$section->add($group);
+		$section->addInput(new Form_Input(
+			'id',
+			null,
+			'hidden',
+			$crl['refid']
+		));
 
-	$section->addInput(new Form_Input(
-		'id',
-		null,
-		'hidden',
-		$crl['refid']
-	));
+		$section->addInput(new Form_Input(
+			'act',
+			null,
+			'hidden',
+			'addcert'
+		));
 
-	$section->addInput(new Form_Input(
-		'act',
-		null,
-		'hidden',
-		'addcert'
-	));
+		$section->addInput(new Form_Input(
+			'crlref',
+			null,
+			'hidden',
+			$crl['refid']
+		));
 
-	$section->addInput(new Form_Input(
-		'crlref',
-		null,
-		'hidden',
-		$crl['refid']
-	));
+		$form->add($section);
+	}
 
-	$form->add($section);
 	print($form);
 } else {
 ?>

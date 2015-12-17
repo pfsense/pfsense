@@ -308,19 +308,19 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <div class="panel panel-default" id="widget-available">
 	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
 		<span class="widget-heading-icon">
-			<a data-toggle="collapse" href="#widget-available .panel-body" name="widgets-available">
+			<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
 				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
-	<div class="panel-body collapse out">
+	<div id="widget-available_panel-body" class="panel-body collapse out">
 		<div class="content">
 			<div class="row">
 <?php
 foreach ($widgets as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):
 ?>
-		<div class="col-sm-3"><a href="#" name="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
+		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
 			</div>
@@ -351,7 +351,7 @@ foreach ($widgets as $widgetname => $widgetconfig):
 </div>
 
 <div class="hidden" id="widgetSequence">
-	<form action="/" method="post" id="widgetSequence" name="widgetForm">
+	<form action="/" method="post" id="widgetSequence_form" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
 
 		<button type="submit" id="btnstore" class="btn btn-primary">Store widget configuration</button>
@@ -448,7 +448,7 @@ function updateWidgets(newWidget) {
 	}
 
 	$('#widgetSequence').removeClass('hidden');
-	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
+	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
 events.push(function() {
@@ -470,9 +470,9 @@ events.push(function() {
 	});
 
 	// On clicking a widget to install . .
-	$('[name^=btnadd-]').click(function(event) {
+	$('[id^=btnadd-]').click(function(event) {
 		// Add the widget name to the list of displayed widgets
-		updateWidgets(this.name.replace('btnadd-', ''));
+		updateWidgets(this.id.replace('btnadd-', ''));
 
 		// We don't want to see the "Store" button because we are doing that automatically
 		$('#btnstore').hide();

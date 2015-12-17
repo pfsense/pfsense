@@ -323,7 +323,7 @@ $group->add(new Form_MultiCheckbox(
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizednsforwarder',
-	'Synchronize traffic shaper (Forwarder/Resolver)',
+	'Synchronize DNS (Forwarder/Resolver)',
 	'DNS Forwarder and DNS Resolver configurations ',
 	($pconfig['synchronizednsforwarder'] === 'on'),
 	'on'

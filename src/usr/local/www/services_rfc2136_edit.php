@@ -224,7 +224,7 @@ $group->add(new Form_Checkbox(
 	'zone'
 ))->displayAsRadio();
 
-$group->add($input = new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'keytype',
 	'Key Type',
 	'Host',
@@ -232,7 +232,7 @@ $group->add($input = new Form_Checkbox(
 	'host'
 ))->displayAsRadio();
 
-$group->add($input = new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'keytype',
 	'Key Type',
 	'User',
@@ -280,7 +280,7 @@ $group->add(new Form_Checkbox(
 	'A'
 ))->displayAsRadio();
 
-$group->add($input = new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'AAAA (IPv6)',
@@ -288,7 +288,7 @@ $group->add($input = new Form_Checkbox(
 	'AAAA'
 ))->displayAsRadio();
 
-$group->add($input = new Form_Checkbox(
+$group->add(new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'Both',

@@ -381,13 +381,12 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 <?php
 	$columnWidth = 12 / $numColumns;
 
-	for ($i=1; $i<=$numColumns; $i++) {
-		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '">';
+	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
+		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
 
-		//if col$i exists
-		if (isset($widgetColumns['col'.$i])) {
-
-			$columnWidgets = $widgetColumns['col'.$i];
+		//if col$currentColumnNumber exists
+		if (isset($widgetColumns['col'.$currentColumnNumber])) {
+			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
 
 			foreach ($columnWidgets as $widgetname => $widgetconfig) {
 				// Compose the widget title and include the title link if available
@@ -422,7 +421,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 				<?php
 			}
 		} else {
-			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '"></div>';
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
 		}
 		echo "</div>";
 	}

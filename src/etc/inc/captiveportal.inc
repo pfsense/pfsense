@@ -1406,11 +1406,13 @@ function captiveportal_opendb() {
 
 	try {
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 	} catch (Exception $e) {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Trying again.");
 		unlink_if_exists($db_path);
 		try {
 			$DB = new SQLite3($db_path);
+			$DB->busyTimeout(60000);
 		} catch (Exception $e) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1421,6 +1423,7 @@ function captiveportal_opendb() {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if (!$DB) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1435,6 +1438,7 @@ function captiveportal_opendb() {
 		unset($DB);
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if ($DB->exec($createquery)) {
 			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
 		} else {

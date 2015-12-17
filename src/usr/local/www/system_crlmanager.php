@@ -324,9 +324,10 @@ function build_method_list() {
 
 	$list = array();
 
-	foreach($crl_methods as $method => $desc) {
-		if (($_GET['importonly'] == "yes") && ($method != "existing"))
+	foreach ($crl_methods as $method => $desc) {
+		if (($_GET['importonly'] == "yes") && ($method != "existing")) {
 			continue;
+		}
 
 		$list[$method] = $desc;
 	}
@@ -339,8 +340,9 @@ function build_ca_list() {
 
 	$list = array();
 
-	foreach($a_ca as $ca)
+	foreach ($a_ca as $ca) {
 		$list[$ca['refid']] = $ca['descr'];
+	}
 
 	return($list);
 }
@@ -350,17 +352,20 @@ function build_cacert_list() {
 
 	$list = array();
 
-	foreach($ca_certs as $cert)
+	foreach($ca_certs as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
+	}
 
 	return($list);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'sucess');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
@@ -489,9 +494,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']?></h2></div>
 		<div class="panel-body table-responsive">
 <?php
-	if (!is_array($crl['cert']) || (count($crl['cert']) == 0))
+	if (!is_array($crl['cert']) || (count($crl['cert']) == 0)) {
 		print_info_box(gettext("No Certificates Found for this CRL."), 'danger');
-	else {
+	} else {
 ?>
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -504,7 +509,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
-		foreach($crl['cert'] as $i => $cert):
+		foreach ($crl['cert'] as $i => $cert):
 			$name = htmlspecialchars($cert['descr']);
 ?>
 					<tr>
@@ -534,9 +539,11 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php
 
 	$ca_certs = array();
-	foreach($a_cert as $cert)
-		if ($cert['caref'] == $crl['caref'])
+	foreach ($a_cert as $cert) {
+		if ($cert['caref'] == $crl['caref']) {
 			$ca_certs[] = $cert;
+		}
+	}
 
 	if (count($ca_certs) == 0)
 		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
@@ -609,17 +616,19 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 <?php
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
-	foreach($a_crl as $crl)
+	foreach ($a_crl as $crl) {
 		$ca_crl_map[$crl['caref']][] = $crl['refid'];
+	}
 
 	$i = 0;
-	foreach($a_ca as $ca):
+	foreach ($a_ca as $ca):
 		$name = htmlspecialchars($ca['descr']);
 
-		if($ca['prv']) {
+		if ($ca['prv']) {
 			$cainternal = "YES";
-		} else
+		} else {
 			$cainternal = "NO";
+		}
 ?>
 					<tr>
 						<td colspan="4">
@@ -627,22 +636,25 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						</td>
 						<td>
 <?php
-		if ($cainternal == "YES"): ?>
+		if ($cainternal == "YES"):
+?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
-		else: ?>
+		else:
+?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
-		endif; ?>
+		endif;
+?>
 						</td>
 					</tr>
 <?php
 		if (is_array($ca_crl_map[$ca['refid']])):
-			foreach($ca_crl_map[$ca['refid']] as $crl):
+			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
 				$inuse = crl_in_use($tmpcrl['refid']);
@@ -662,17 +674,20 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 								<?=gettext("Edit CRL")?>
 							</a>
 <?php
-				else: ?>
+				else:
+?>
 							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
 								<?=gettext("Edit CRL")?>
 							</a>
 <?php			endif;
-				if (!$inuse): ?>
+				if (!$inuse):
+?>
 							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-danger">
 								<?=gettext("Delete CRL")?>
 							</a>
 <?php
-				endif; ?>
+				endif;
+?>
 						</td>
 					</tr>
 <?php
@@ -694,14 +709,15 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 <script>
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hides all elements of the specified class. This will usually be a section or group
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide) {
 			$('.' + s_class).hide();
-		else
+		} else {
 			$('.' + s_class).show();
+		}
 	}
 
 	// When the 'method" selector is changed, we show/hide certain sections

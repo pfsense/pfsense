@@ -317,8 +317,7 @@ if ($_POST) {
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
 				}
-			}
-			else if ($pconfig['method'] == "intermediate") {
+			} else if ($pconfig['method'] == "intermediate") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
 					'stateOrProvinceName' => $pconfig['dn_state'],
@@ -353,17 +352,19 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 // Load valid country codes
 $dn_cc = array();
-if (file_exists("/etc/ca_countries")){
+if (file_exists("/etc/ca_countries")) {
 	$dn_cc_file=file("/etc/ca_countries");
-	foreach($dn_cc_file as $line) {
+	foreach ($dn_cc_file as $line) {
 		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
 			$dn_cc[$matches[1]] = $matches[1];
 		}
@@ -376,8 +377,7 @@ $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors))
-{
+if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors)) {
 ?>
 <div class="table-responsive">
 <table class="table table-striped table-hover">
@@ -398,28 +398,34 @@ foreach ($a_ca as $i => $ca):
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
 	list($startdate, $enddate) = cert_get_dates($ca['crt']);
-	if ($subj == $issuer)
+	if ($subj == $issuer) {
 		$issuer_name = gettext("self-signed");
-	else
+	} else {
 		$issuer_name = gettext("external");
+	}
 	$subj = htmlspecialchars($subj);
 	$issuer = htmlspecialchars($issuer);
 	$certcount = 0;
 
 	$issuer_ca = lookup_ca($ca['caref']);
-	if ($issuer_ca)
+	if ($issuer_ca) {
 		$issuer_name = $issuer_ca['descr'];
+	}
 
 	// TODO : Need gray certificate icon
 	$internal = (!!$ca['prv']);
 
-	foreach ($a_cert as $cert)
-		if ($cert['caref'] == $ca['refid'])
+	foreach ($a_cert as $cert) {
+		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
+		}
+	}
 
-	foreach ($a_ca as $cert)
-		if ($cert['caref'] == $ca['refid'])
+	foreach ($a_ca as $cert) {
+		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
+		}
+	}
 ?>
 		<tr>
 			<td><?=$name?></td>
@@ -459,8 +465,7 @@ foreach ($a_ca as $i => $ca):
 
 $form = new Form;
 //$form->setAction('system_camanager.php?act=edit');
-if (isset($id) && $a_ca[$id])
-{
+if (isset($id) && $a_ca[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -469,8 +474,7 @@ if (isset($id) && $a_ca[$id])
 	));
 }
 
-if ($act == "edit")
-{
+if ($act == "edit") {
 	$form->addGlobal(new Form_Input(
 		'refid',
 		null,
@@ -488,8 +492,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-if (!isset($id) || $act == "edit")
-{
+if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
 		'method',
 		'Method',
@@ -531,10 +534,10 @@ $section = new Form_Section('Internal Certificate Authority');
 $section->addClass('toggle-internal', 'toggle-intermediate', 'collapse');
 
 $allCas = array();
-foreach ($a_ca as $ca)
-{
-	if (!$ca['prv'])
+foreach ($a_ca as $ca) {
+	if (!$ca['prv']) {
 			continue;
+	}
 
 	$allCas[ $ca['refid'] ] = $ca['descr'];
 }

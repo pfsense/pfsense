@@ -4188,4 +4188,11 @@ function upgrade_130_to_131() {
 	}
 }
 
+function upgrade_131_to_132() {
+	global $config;
+	if (isset($config['system']['usefifolog'])) {
+		unset($config['system']['usefifolog']);
+		clear_all_log_files(false);
+	}
+}
 ?>

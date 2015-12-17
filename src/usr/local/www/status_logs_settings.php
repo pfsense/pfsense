@@ -107,7 +107,7 @@ function is_valid_syslog_server($target) {
 }
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
-	clear_all_log_files();
+	clear_all_log_files(true);
 	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
 	unset($input_errors);

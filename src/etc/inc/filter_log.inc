@@ -134,11 +134,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Get a bunch of log entries.
-	if (isset($config['system']['usefifolog'])) {
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
-	}
+	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
 
 
 	# Remove escapes and fix up the pattern for preg_match.

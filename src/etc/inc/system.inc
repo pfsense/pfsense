@@ -792,6 +792,41 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	return $remote_servers;
 }
 
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
+	global $config, $g;
+	if ($restart_syslogd) {
+		exec("/usr/bin/killall syslogd");
+	}
+	if (isset($config['system']['disablesyslogclog'])) {
+		unlink($logfile);
+		touch($logfile);
+	} else {
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
+		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
+		exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
+	}
+	if ($restart_syslogd) {
+		system_syslogd_start();
+	}
+}
+
+function clear_all_log_files($restart = false) {
+	global $g;
+	exec("/usr/bin/killall syslogd");
+
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	foreach ($log_files as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	}
+
+	if ($restart) {
+		system_syslogd_start();
+		killbyname("dhcpd");
+		services_dhcpd_configure();
+	}
+	return;
+}
+
 function system_syslogd_start() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -807,19 +842,11 @@ function system_syslogd_start() {
 		echo gettext("Starting syslog...");
 	}
 
-	if (is_process_running("fifolog_writer")) {
-		mwexec('/bin/pkill fifolog_writer');
-	}
-
 	// Which logging type are we using this week??
 	if (isset($config['system']['disablesyslogclog'])) {
 		$log_directive = "";
 		$log_create_directive = "/usr/bin/touch ";
 		$log_size = "";
-	} else if (isset($config['system']['usefifolog'])) {
-		$log_directive = "|/usr/sbin/fifolog_writer ";
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
-		$log_create_directive = "/usr/sbin/fifolog_create -s ";
 	} else { // Defaults to CLOG
 		$log_directive = "%";
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";

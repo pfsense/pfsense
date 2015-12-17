@@ -555,43 +555,6 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
-	global $config, $g;
-	if ($restart_syslogd) {
-		exec("/usr/bin/killall syslogd");
-	}
-	if (isset($config['system']['disablesyslogclog'])) {
-		unlink($logfile);
-		touch($logfile);
-	} else {
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
-		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
-		if (isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_create -s {$log_size} " . escapeshellarg($logfile));
-		} else {
-			exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
-		}
-	}
-	if ($restart_syslogd) {
-		system_syslogd_start();
-	}
-}
-
-function clear_all_log_files() {
-	global $g;
-	exec("/usr/bin/killall syslogd");
-
-	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
-	foreach ($log_files as $lfile) {
-		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
-	}
-
-	system_syslogd_start();
-	killbyname("dhcpd");
-	services_dhcpd_configure();
-	return;
-}
-
 // This version of dump_clog() does not output <td></td> or any other table elements.
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
@@ -615,11 +578,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if (isset($config['system']['usefifolog'])) {
-				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			} else {
-				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			}
+			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	echo "\n";
@@ -630,14 +589,9 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		$logent = preg_split("/\s+/", $logent, 6);
 
 		if ($withorig) {
-				if (isset($config['system']['usefifolog'])) {
-					$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
-					$entry_text = htmlspecialchars($logent[5]);
-				} else {
-					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
-					$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-				}
+				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+				$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
+				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 				echo "{$entry_date_time}";
 				echo " " . "{$entry_text}"	. "\n";
 		} else {
@@ -670,11 +624,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if (isset($config['system']['usefifolog'])) {
-				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			} else {
-				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			}
+			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 
@@ -684,14 +634,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		$logent = preg_split("/\s+/", $logent, 6);
 		echo "<tr>\n";
 		if ($withorig) {
-			if (isset($config['system']['usefifolog'])) {
-				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
-				$entry_text = htmlspecialchars($logent[5]);
-			} else {
-				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
-				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-			}
+			$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+			$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
+			$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 			echo "<td style=\"white-space:nowrap;\">{$entry_date_time}</td>\n";
 			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
 		} else {
@@ -719,11 +664,7 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if ($config['system']['disablesyslogclog']) {
 		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {
-		if (isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 	return($logarr);
 }

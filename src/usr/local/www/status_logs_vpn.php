@@ -114,11 +114,7 @@ function dump_clog_vpn($logfile, $tail) {
 
 	$logarr = "";
 
-	if (isset($config['system']['usefifolog'])) {
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	}
+	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 
 	$rows = 0;
 	foreach ($logarr as $logent) {

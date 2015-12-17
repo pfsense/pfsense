@@ -187,16 +187,16 @@ display_top_tabs($tab_array);
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th>ADDR</font></th>
-						<th>AID</font></th>
-						<th>CHAN</font></th>
-						<th>RATE</font></th>
-						<th>RSSI</font></th>
-						<th>IDLE</font></th>
-						<th>TXSEQ</font></th>
-						<th>RXSEQ</font></th>
-						<th>CAPS</font></th>
-						<th>ERP</font></th>
+						<th>ADDR</th>
+						<th>AID</th>
+						<th>CHAN</th>
+						<th>RATE</th>
+						<th>RSSI</th>
+						<th>IDLE</th>
+						<th>TXSEQ</th>
+						<th>RXSEQ</th>
+						<th>CAPS</th>
+						<th>ERP</th>
 					</tr>
 				</thead>
 				<tbody>

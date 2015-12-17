@@ -379,7 +379,6 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 <div class="row">
 <?php
 	$columnWidth = 12 / $numColumns;
-	$columnCounter = 0;
 
 	for($i=1; $i<=$numColumns; $i++) {
 		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $i . '">';

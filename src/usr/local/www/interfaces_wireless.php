@@ -107,8 +107,9 @@ $shortcut_section = "wireless";
 include("head.inc");
 
 if ($input_errors) {
-	print_input_errors($input_errors); ?>
+	print_input_errors($input_errors);
 }
+?>
 
 <?php
 $tab_array = array();

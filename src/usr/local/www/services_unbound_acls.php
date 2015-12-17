@@ -109,12 +109,14 @@ if ($act == "edit") {
 	}
 }
 
-if(!is_array($networkacl))
+if (!is_array($networkacl)) {
 	$networkacl = array();
+}
 
 // Add a row to the networks table
-if($act == 'new')
+if ($act == 'new') {
 	$networkacl = array('0' => array('acl_network' => '', 'mask' => '', 'description' => ''));
+}
 
 if ($_POST) {
 	unset($input_errors);
@@ -122,8 +124,8 @@ if ($_POST) {
 	$deleting = false;
 
 	// Delete a row from the networks table
-	for($idx = 0; $idx<50; $idx++) {
-		if($pconfig['dlt' . $idx] == 'Delete') {
+	for ($idx = 0; $idx < 50; $idx++) {
+		if ($pconfig['dlt' . $idx] == 'Delete') {
 			unset($networkacl[$idx]);
 			$deleting = true;
 			break;
@@ -133,9 +135,10 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
-		if ($retval == 0)
+		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
-	} else if(!$deleting) {
+		}
+	} else if (!$deleting) {
 
 		// input validation - only allow 50 entries in a single ACL
 		for ($x = 0; $x < 50; $x++) {
@@ -208,14 +211,17 @@ $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access L
 $shortcut_section = "resolver";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('unbound'))
+if (is_subsystem_dirty('unbound')) {
 	print_info_box_np(gettext("The configuration of the DNS Resolver, has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("General settings"), false, "/services_unbound.php");
@@ -223,7 +229,7 @@ $tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_adva
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-if($act=="new" || $act=="edit") {
+if ($act == "new" || $act == "edit") {
 
 	$form = new Form();
 
@@ -251,10 +257,10 @@ if($act=="new" || $act=="edit") {
 	))->setHelp('Provide an Access List name.');
 
 	$section->addInput(new Form_Select(
-	'aclaction',
-	'Action',
-	strtolower($pconfig['aclaction']),
-	array('allow' => 'Allow','deny' => 'Deny','refuse' => 'Refuse','allow snoop' => 'Allow Snoop')
+		'aclaction',
+		'Action',
+		strtolower($pconfig['aclaction']),
+		array('allow' => 'Allow', 'deny' => 'Deny', 'refuse' => 'Refuse', 'allow snoop' => 'Allow Snoop')
 	))->setHelp($actionHelp);
 
 	$section->addInput(new Form_Input(
@@ -267,7 +273,7 @@ if($act=="new" || $act=="edit") {
 	$numrows = count($networkacl) - 1;
 	$counter = 0;
 
-	foreach($networkacl as $item) {
+	foreach ($networkacl as $item) {
 		$network = $item['acl_network'];
 		$cidr = $item['mask'];
 		$description = $item['description'];
@@ -305,9 +311,8 @@ if($act=="new" || $act=="edit") {
 
 	$form->add($section);
 	print($form);
-}
-else // NOT 'edit' or 'add'
-{
+} else {
+	// NOT 'edit' or 'add'
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Access Lists to control access to the DNS Resolver')?></h2></div>
@@ -325,7 +330,7 @@ else // NOT 'edit' or 'add'
 				<tbody>
 <?php
 	$i = 0;
-	foreach($a_acls as $acl):
+	foreach ($a_acls as $acl):
 ?>
 					<tr ondblclick="document.location='services_unbound_acls.php?act=edit&amp;id=<?=$i?>'">
 						<td>
@@ -361,7 +366,7 @@ else // NOT 'edit' or 'add'
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();
 });

@@ -72,7 +72,7 @@ if (!is_array($config['ntpd'])) {
 
 if (empty($config['ntpd']['interface'])) {
 	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-		is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
+	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 		write_config("Upgraded settings from openttpd");
@@ -269,10 +269,12 @@ $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("NTP"), true, "services_ntpd.php");
@@ -296,7 +298,7 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
 
-$timeservers = explode( ' ', $config['system']['timeservers']);
+$timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time servers':'');
@@ -504,7 +506,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Make the ‘clear’ button a plain button, not a submit button
 	$('#btnadvstats').prop('type','button');

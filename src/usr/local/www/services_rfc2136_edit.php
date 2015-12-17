@@ -160,11 +160,13 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $form = new Form;
 
@@ -180,8 +182,9 @@ $section->addInput(new Form_Checkbox(
 $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
-foreach ($iflist as $ifnam => $ifdescr)
+foreach ($iflist as $ifnam => $ifdescr) {
 	$optionlist[$ifnam] = $ifdescr;
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -217,7 +220,7 @@ $group->add(new Form_Checkbox(
 	'keytype',
 	'Key Type',
 	'Zone',
-	($pconfig['keytype']=='zone'),
+	($pconfig['keytype'] == 'zone'),
 	'zone'
 ))->displayAsRadio();
 
@@ -225,7 +228,7 @@ $group->add($input = new Form_Checkbox(
 	'keytype',
 	'Key Type',
 	'Host',
-	($pconfig['keytype']=='host'),
+	($pconfig['keytype'] == 'host'),
 	'host'
 ))->displayAsRadio();
 
@@ -233,7 +236,7 @@ $group->add($input = new Form_Checkbox(
 	'keytype',
 	'Key Type',
 	'User',
-	($pconfig['keytype']=='user'),
+	($pconfig['keytype'] == 'user'),
 	'user'
 ))->displayAsRadio();
 
@@ -273,7 +276,7 @@ $group->add(new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'A (IPv4)',
-	($pconfig['recordtype']=='A'),
+	($pconfig['recordtype'] == 'A'),
 	'A'
 ))->displayAsRadio();
 
@@ -281,7 +284,7 @@ $group->add($input = new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'AAAA (IPv6)',
-	($pconfig['recordtype']=='AAAA'),
+	($pconfig['recordtype'] == 'AAAA'),
 	'AAAA'
 ))->displayAsRadio();
 
@@ -289,7 +292,7 @@ $group->add($input = new Form_Checkbox(
 	'recordtype',
 	'Record Type',
 	'Both',
-	($pconfig['recordtype']=='both'),
+	($pconfig['recordtype'] == 'both'),
 	'both'
 ))->displayAsRadio();
 
@@ -302,7 +305,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
-if (isset($id) && $a_rfc2136[$id]){
+if (isset($id) && $a_rfc2136[$id]) {
     	$section->addInput(new Form_Input(
     	'id',
     	null,

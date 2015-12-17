@@ -445,7 +445,7 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
 			$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
-			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '">Delete</a>';
+			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
 			$i++;
@@ -754,82 +754,58 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 		$form->add($section);
 	}
-else;
-		$section = new Form_Section('User Certificates');
 
-		foreach ((array)$a_user[$id]['cert'] as $i => $certref) {
-			$cert = lookup_cert($certref);
-			$ca = lookup_ca($cert['caref']);
+	// ==== Add user certificate for a new user
+	if (is_array($config['ca']) && count($config['ca']) > 0) {
+		$section = new Form_Section('Create certificate for user');
+		$section->addClass('cert-options');
 
-			// We reverse name and action for readability of longer names
-			$section->addInput(new Form_Checkbox(
-				'certid[]',
-				'Delete certificate',
-				$cert['descr']. (is_cert_revoked($cert) ? ' <b>revoked</b>' : ''),
-				false,
-				$i
+		$nonPrvCas = array();
+		foreach($config['ca'] as $ca) {
+			if (!$ca['prv']) {
+				continue;
+			}
+
+			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
+		}
+
+		if (!empty($nonPrvCas)) {
+			$section->addInput(new Form_Input(
+				'name',
+				'Descriptive name',
+				'text',
+				$pconfig['name']
+			));
+
+			$section->addInput(new Form_Select(
+				'caref',
+				'Certificate authority',
+				null,
+				$nonPrvCas
+			));
+
+			$section->addInput(new Form_Select(
+				'keylen',
+				'Key length',
+				2048,
+				array(
+					512 => '512 bits',
+					1024 => '1024 bits',
+					2048 => '2049 bits',
+					4096 => '4096 bits',
+				)
+			));
+
+			$section->addInput(new Form_Input(
+				'lifetime',
+				'Lifetime',
+				'number',
+				$pconfig['lifetime']
 			));
 		}
 
-		#FIXME; old ui supplied direct export links to each certificate
-
-		$section->addInput(new Form_StaticText(
-			null,
-			new Form_Button(null, 'add certificate', 'system_certmanager.php?act=new&userid='. $id).
-			new Form_Button(null, 'export certificates', 'system_certmanager.php')
-		));
-
-		// ==== Add user certificate for a new user
-		if (is_array($config['ca']) && count($config['ca']) > 0) {
-			$section = new Form_Section('Create certificate for user');
-			$section->addClass('cert-options');
-
-			$nonPrvCas = array();
-			foreach($config['ca'] as $ca) {
-				if (!$ca['prv']) {
-					continue;
-				}
-
-				$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
-			}
-
-			if (!empty($nonPrvCas)) {
-				$section->addInput(new Form_Input(
-					'name',
-					'Descriptive name',
-					'text',
-					$pconfig['name']
-				));
-
-				$section->addInput(new Form_Select(
-					'caref',
-					'Certificate authority',
-					null,
-					$nonPrvCas
-				));
-
-				$section->addInput(new Form_Select(
-					'keylen',
-					'Key length',
-					2048,
-					array(
-						512 => '512 bits',
-						1024 => '1024 bits',
-						2048 => '2049 bits',
-						4096 => '4096 bits',
-					)
-				));
-
-				$section->addInput(new Form_Input(
-					'lifetime',
-					'Lifetime',
-					'number',
-					$pconfig['lifetime']
-				));
-			}
-
-			$form->add($section);
-		}
+		$form->add($section);
+	}
 
 endif;
 // ==== Paste a key for the new user

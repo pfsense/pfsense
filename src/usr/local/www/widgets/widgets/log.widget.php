@@ -221,7 +221,7 @@ events.push(function(){
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
-<div class="panel-footer collapse">
+<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">

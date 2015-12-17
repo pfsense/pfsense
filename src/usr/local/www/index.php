@@ -403,7 +403,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 					<div class="panel-heading">
 						<?=$wtitle?>
 						<span class="widget-heading-icon">
-							<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
+							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
 								<i class="fa fa-wrench"></i>
 							</a>
 							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">

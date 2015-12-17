@@ -71,7 +71,7 @@ if ($_POST) {
 
 ?>
 <a href="/widgets/widgets/picture.widget.php?getpic=true" target="_blank">
-	<img width="100%" height="100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
+	<img style="width:100%; height:100%" src="/widgets/widgets/picture.widget.php?getpic=true" alt="picture" />
 </a>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -79,6 +79,6 @@ if ($_POST) {
 
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
 	<label for="pictfile">New picture: </label>
-	<input name="pictfile" type="file" class="form-control" />
+	<input id="pictfile" name="pictfile" type="file" class="form-control" />
 	<button type="submit" class="btn btn-default">Upload</button>
 </form>

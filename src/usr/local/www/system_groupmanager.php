@@ -245,7 +245,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
 		$privhtml .=		'</tr>';
-		
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -261,10 +261,12 @@ function build_priv_table() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -273,8 +275,7 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
-{
+if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 ?>
 	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -288,11 +289,12 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 			</thead>
 			<tbody>
 <?php
-	foreach($a_group as $i => $group):
-		if ($group["name"] == "all")
+	foreach ($a_group as $i => $group):
+		if ($group["name"] == "all") {
 			$groupcount = count($config['system']['user']);
-		else
+		} else {
 			$groupcount = count($group['member']);
+		}
 ?>
 				<tr>
 					<td>
@@ -306,7 +308,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
 					</td>
 					<td>
 						<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
-						<?php if($group['scope'] != "system"): ?>
+						<?php if ($group['scope'] != "system"): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
 						<?php endif;?>
 					</td>
@@ -356,8 +358,7 @@ if (isset($id) && $a_group[$id]){
 
 $section = new Form_Section('Group properties');
 
-if ($_GET['act'] != "new")
-{
+if ($_GET['act'] != "new") {
 	$section->addInput(new Form_StaticText(
 		'Defined by',
 		strtoupper($pconfig['gtype'])
@@ -371,8 +372,9 @@ $section->addInput($input = new Form_Input(
 	$pconfig['name']
 ));
 
-if ($pconfig['gtype'] == "system")
+if ($pconfig['gtype'] == "system") {
 	$input->setReadonly();
+}
 
 $section->addInput(new Form_Input(
 	'description',
@@ -382,8 +384,8 @@ $section->addInput(new Form_Input(
 ))->setHelp('Group description, for your own information only');
 
 $form->add($section);
-if ($pconfig['gid'] != 1998) // all users group
-{
+if ($pconfig['gid'] != 1998) { // all users group
+
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
@@ -393,10 +395,11 @@ if ($pconfig['gid'] != 1998) // all users group
 	$usersGroups = array();
 
 	foreach ($config['system']['user'] as $user) {
-		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members']))
+		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members'])) {
 			$usersGroups[ $user['uid'] ] = $user['name'];	// Add it to the user's list
-		else
+		} else {
 			$systemGroups[ $user['uid'] ] = $user['name']; // Add it to the 'not a member of' list
+		}
 	}
 
 	$group->add(new Form_Select(
@@ -434,8 +437,7 @@ if ($pconfig['gid'] != 1998) // all users group
 
 }
 
-if ($_GET['act'] != "new")
-{
+if ($_GET['act'] != "new") {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(
@@ -451,7 +453,7 @@ print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Select every option in the specified multiselect
 	function AllServers(id, selectAll) {
@@ -465,9 +467,9 @@ events.push(function(){
 		var len = From.length;
 		var option, value;
 
-		if(len > 1) {
-			for(i=0; i<len; i++) {
-				if(From.eq(i).is(':selected')) {
+		if (len > 1) {
+			for (i=0; i<len; i++) {
+				if (From.eq(i).is(':selected')) {
 					option = From.eq(i).val();
 					value = From.eq(i).text();
 					To.append(new Option(value, option));
@@ -492,7 +494,7 @@ events.push(function(){
 	});
 
 	// On submit mark all the user's groups as "selected"
-	$('form').submit(function(){
+	$('form').submit(function() {
 		AllServers($('[name="members[]"] option'), true);
 	});
 });

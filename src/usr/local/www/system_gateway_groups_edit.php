@@ -65,8 +65,9 @@ require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['gateways']['gateway_group']))
+if (!is_array($config['gateways']['gateway_group'])) {
 	$config['gateways']['gateway_group'] = array();
+}
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
@@ -193,11 +194,13 @@ function build_carp_list() {
 
 	$list = array('address' => gettext('Interface Address'));
 
-	foreach($carplist as $vip => $address) {
-		if(($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address)))
+	foreach ($carplist as $vip => $address) {
+		if (($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address))) {
 			continue;
-		if(($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address)))
+		}
+		if (($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address))) {
 			continue;
+		}
 
 		$list[$vip] = "$vip - $address";
 	}
@@ -212,8 +215,9 @@ $gateway_array	= array_keys($a_gateways);
 $protocol_array	  = array_values($gateway_protocol);
 $protocol_array	  = array_values(array_unique($gateway_protocol));
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -231,11 +235,11 @@ $carplist = get_configured_carp_interface_list($interface);
 $row = 0;
 $numrows = count($a_gateways) - 1;
 
-foreach($a_gateways as $gwname => $gateway) {
-	if(!empty($pconfig['item'])) {
+foreach ($a_gateways as $gwname => $gateway) {
+	if (!empty($pconfig['item'])) {
 		$af = explode("|", $pconfig['item'][0]);
 		$family = $a_gateways[$af[0]]['ipprotocol'];
-		if($gateway['ipprotocol'] != $family) {
+		if ($gateway['ipprotocol'] != $family) {
 			$rows++;
 			continue;
 		}
@@ -243,9 +247,9 @@ foreach($a_gateways as $gwname => $gateway) {
 
 	$interface = $gateway['friendlyiface'];
 
-	foreach((array)$pconfig['item'] as $item) {
+	foreach ((array)$pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
-		if($itemsplit[0] == $gwname) {
+		if ($itemsplit[0] == $gwname) {
 			$selected = $itemsplit[1];
 			break;
 		} else {
@@ -355,28 +359,29 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Hides all elements of the specified class. This will usually be a section or group
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide) {
 			$('.' + s_class).hide();
-		else
+		} else {
 			$('.' + s_class).show();
+		}
 	}
 
 	// On changing a Tier selector on any row, find which protocol it uses (class)
 	// and disable the opposite
 	$('.row').on('change', function() {
 		// If user selects 'Never', unhide all rows
-		if($(this).find(":selected").index() == 0) {
+		if ($(this).find(":selected").index() == 0) {
 			hideClass('inet', false);
 			hideClass('inet6', false);
-		}
-		else { // Otherwise hide the rows that are ont of 'this' protocol
-			if($(this).hasClass('inet6'))
+		} else { // Otherwise hide the rows that are not of 'this' protocol
+			if ($(this).hasClass('inet6')) {
 				hideClass('inet', true);
-			else
+			} else {
 				hideClass('inet6', true);
+			}
 		}
 	});
 });

@@ -66,8 +66,7 @@ require("guiconfig.inc");
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
 if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
-}
-else {
+} else {
 	$pconfig['authmode'] = "Local Database";
 }
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
@@ -88,7 +87,7 @@ if ($_POST) {
 		}
 	}
 
-	if(($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
+	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
 		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
 	}
 
@@ -123,13 +122,15 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 
-if($save_and_test) {
+if ($save_and_test) {
 	echo "<script>\n";
 	echo "//<![CDATA[\n";
 	echo "myRef = window.open('system_usermanager_settings_test.php?authserver=".$pconfig['authmode']."','mywin','left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
@@ -146,8 +147,9 @@ $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 /* Default to pfsense backend type if none is defined */
-if(!$pconfig['backend'])
+if (!$pconfig['backend']) {
 	$pconfig['backend'] = "pfsense";
+}
 
 $form = new Form;
 
@@ -164,8 +166,9 @@ $section->addInput(new Form_Input(
 	'risk!');
 
 $auth_servers = array();
-foreach (auth_get_authserver_list() as $auth_server)
+foreach (auth_get_authserver_list() as $auth_server) {
 	$auth_servers[ $auth_server['name'] ] = $auth_server['name'];
+}
 
 $section->addInput(new Form_Select(
 	'authmode',

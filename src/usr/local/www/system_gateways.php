@@ -153,9 +153,9 @@ function delete_gateway_item($id) {
 	}
 
 	/* NOTE: Cleanup static routes for the interface route if any */
-	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) && 
-		$gateway['gateway'] != $a_gateways[$id]['gateway'] &&
-		isset($a_gateways[$id]["nonlocalgateway"])) {
+	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
+	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
+	    isset($a_gateways[$id]["nonlocalgateway"])) {
 		$realif = get_real_interface($a_gateways[$id]['interface']);
 		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? "-inet6" : "-inet");
 		$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateways[$id]['gateway']) . " -iface " . escapeshellarg($realif);
@@ -163,9 +163,9 @@ function delete_gateway_item($id) {
 	}
 	/* NOTE: Cleanup static routes for the monitor ip if any */
 	if (!empty($a_gateways[$id]['monitor']) &&
-		$a_gateways[$id]['monitor'] != "dynamic" &&
-		is_ipaddr($a_gateways[$id]['monitor']) &&
-		$a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
+	    $a_gateways[$id]['monitor'] != "dynamic" &&
+	    is_ipaddr($a_gateways[$id]['monitor']) &&
+	    $a_gateways[$id]['gateway'] != $a_gateways[$id]['monitor']) {
 		if (is_ipaddrv4($a_gateways[$id]['monitor'])) {
 			mwexec("/sbin/route delete " . escapeshellarg($a_gateways[$id]['monitor']));
 		} else {
@@ -246,13 +246,16 @@ $shortcut_section = "gateways";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('staticroutes'))
+if (is_subsystem_dirty('staticroutes')) {
 	print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Gateways"), true, "system_gateways.php");
@@ -276,25 +279,28 @@ display_top_tabs($tab_array);
 <tbody>
 <?php
 foreach ($a_gateways as $i => $gateway):
-	if (isset($gateway['inactive']))
+	if (isset($gateway['inactive'])) {
 		$icon = 'fa-times-circle-o';
-	elseif (isset($gateway['disabled']))
+	} elseif (isset($gateway['disabled'])) {
 		$icon = 'fa-ban';
-	else
+	} else {
 		$icon = 'fa-check-circle-o';
+	}
 
-	if (isset($gateway['inactive']))
+	if (isset($gateway['inactive'])) {
 		$title = gettext("This gateway is inactive because interface is missing");
-	else
+	} else {
 		$title = '';
+	}
 ?>
 	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
 		<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 		<td>
 			<?=$gateway['name']?>
 <?php
-			if (isset($gateway['defaultgw']))
+			if (isset($gateway['defaultgw'])) {
 				echo " <strong>(default)</strong>";
+			}
 ?>
 		</td>
 		<td>

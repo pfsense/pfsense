@@ -869,7 +869,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'csr_dn_country',
 	'Country Code',
-	$pconfig['dn_country'],
+	$pconfig['csr_dn_country'],
 	$dn_cc
 ));
 

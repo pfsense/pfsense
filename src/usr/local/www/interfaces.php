@@ -2010,7 +2010,7 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_config_file_override_path',
-	'Option modifiers',
+	'Config file override',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
 ))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .

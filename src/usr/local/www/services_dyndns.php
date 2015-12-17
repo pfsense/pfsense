@@ -122,7 +122,7 @@ display_top_tabs($tab_array);
 $i = 0;
 foreach ($a_dyndns as $dyndns):
 ?>
-				<tr<?=!isset($dyndns['enable'])?' class="disabled""':''?>>
+				<tr<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 					<td>
 <?php
 	$iflist = get_configured_interface_with_descr();
@@ -203,13 +203,13 @@ foreach ($a_dyndns as $dyndns):
 ?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
 						<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php } else {
 ?>
-						<a class="fa fa-check-square-o"	title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" ></a>
+						<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php }
 ?>
 						<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>

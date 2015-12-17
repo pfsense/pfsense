@@ -461,6 +461,9 @@
 /usr/local/lib/event2
 /usr/local/lib/event2/libevent_core-2.0.so.6
 /usr/local/lib/event2/libevent_pthreads-2.0.so.6
+/usr/local/lib/ipsec/plugins/libstrongswan-eap-aka-3gpp2.so
+/usr/local/lib/ipsec/plugins/libstrongswan-eap-aka.so
+/usr/local/lib/ipsec/plugins/libstrongswan-gmp.so
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.so
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.a
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.la

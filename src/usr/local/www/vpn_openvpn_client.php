@@ -603,7 +603,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert Manager &gt; Certificate Revocation</a>')
 		));
 	}
 

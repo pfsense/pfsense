@@ -119,7 +119,7 @@ if (is_subsystem_dirty('igmpproxy')) {
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("Values")?></th>
 					<th><?=gettext("Description")?></th>
-					<th</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>

@@ -261,11 +261,13 @@ if ($_POST) {
 				$entered = array();
 				$entered['type'] = $pconfig['localid_type'];
 
-				if (isset($pconfig['localid_address']))
+				if (isset($pconfig['localid_address'])) {
 					$entered['address'] = $pconfig['localid_address'];
+				}
 
-				if (isset($pconfig['localid_netbits']))
+				if (isset($pconfig['localid_netbits'])) {
 					$entered['netbits'] = $pconfig['localid_netbits'];
+				}
 
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data) {
@@ -466,7 +468,7 @@ function pconfig_to_ealgos(& $pconfig) {
 	return $ealgos;
 }
 
-function ealgos_to_pconfig(& $ealgos,& $pconfig) {
+function ealgos_to_pconfig(& $ealgos, & $pconfig) {
 
 	$pconfig['ealgos'] = array();
 	foreach ($ealgos as $algo_data) {
@@ -479,7 +481,7 @@ function ealgos_to_pconfig(& $ealgos,& $pconfig) {
 	return $ealgos;
 }
 
-function pconfig_to_idinfo($prefix,& $pconfig) {
+function pconfig_to_idinfo($prefix, & $pconfig) {
 
 	$type = $pconfig[$prefix."id_type"];
 	$address = $pconfig[$prefix."id_address"];
@@ -495,7 +497,7 @@ function pconfig_to_idinfo($prefix,& $pconfig) {
 	}
 }
 
-function idinfo_to_pconfig($prefix,& $idinfo,& $pconfig) {
+function idinfo_to_pconfig($prefix, & $idinfo, & $pconfig) {
 
 	switch ($idinfo['type']) {
 		case "address":
@@ -513,8 +515,9 @@ function idinfo_to_pconfig($prefix,& $idinfo,& $pconfig) {
 	}
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), !$editing_mobile, "vpn_ipsec.php");
@@ -545,8 +548,9 @@ $group = new Form_Group('Local Network');
 $group->addClass('opt_localid');
 
 $subnetarray = get_configured_interface_with_descr();
-foreach($subnetarray as $ifname => $ifdescr)
+foreach ($subnetarray as $ifname => $ifdescr) {
 	$subnetarray[$ifname] = $ifdescr . ' subnet';
+}
 
 $group->add(new Form_Select(
 	'localid_type',
@@ -567,8 +571,9 @@ $group = new Form_Group('NAT/BINAT translation');
 $group->addClass('opt_natid');
 
 $subnetarray = get_configured_interface_with_descr();
-foreach($subnetarray as $ifname => $ifdescr)
+foreach ($subnetarray as $ifname => $ifdescr) {
 	$subnetarray[$ifname] = $ifdescr . ' subnet';
+}
 
 // Tack none, address & network on the beginning
 $subnetarray = array('none' => gettext('None'), 'address' => 'Address', 'network' => 'Network') + $subnetarray;
@@ -638,11 +643,11 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		'ealgos[]',
 		null,
 		$algodata['name'],
-		(is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos'])),
+		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
 	))->addClass('multi');
 
-	if(is_array($algodata['keysel'])) {
+	if (is_array($algodata['keysel'])) {
 		$list = array();
 		$key_hi = $algodata['keysel']['hi'];
 		$key_lo = $algodata['keysel']['lo'];
@@ -660,8 +665,9 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	}
 
 
-	if($i == $rows)
+	if ($i == $rows) {
 		$group->setHelp('Use 3DES for best compatibility or if you have a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
+	}
 
 	$i++;
 	$section->add($group);
@@ -748,7 +754,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// ---------- On changing "Mode" ----------------------------------------------------------------------------------
 	function change_mode() {
@@ -779,8 +785,7 @@ events.push(function(){
 		if (typeof(bits) === "undefined") {
 			if (value === "tunnel") {
 				bits = 24;
-			}
-			else if (value === "tunnel6") {
+			} else if (value === "tunnel6") {
 				bits = 64;
 			}
 		}
@@ -830,8 +835,7 @@ events.push(function(){
 		if (typeof(bits) === "undefined") {
 			if (value === "tunnel") {
 				bits = 24;
-			}
-			else if (value === "tunnel6") {
+			} else if (value === "tunnel6") {
 				bits = 64;
 			}
 		}
@@ -886,8 +890,7 @@ events.push(function(){
 			if (typeof(bits) === "undefined") {
 				if (value === "tunnel") {
 					bits = 24;
-				}
-				else if (value === "tunnel6") {
+				} else if (value === "tunnel6") {
 					bits = 64;
 				}
 			}

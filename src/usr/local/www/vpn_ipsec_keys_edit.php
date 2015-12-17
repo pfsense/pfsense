@@ -188,8 +188,7 @@ $section->addInput(new Form_Input(
 	$pconfig['psk']
 ));
 
-if (isset($id) && $a_secret[$id])
-{
+if (isset($id) && $a_secret[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		false,

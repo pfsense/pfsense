@@ -310,11 +310,13 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -324,7 +326,7 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-if($act=="new" || $act=="edit"):
+if ($act == "new" || $act == "edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
@@ -610,11 +612,11 @@ if($act=="new" || $act=="edit"):
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hide/show that section, but have to also respect the wins_server_enable checkbox
 	function setNetbios() {
-		if($('#netbios_enable').prop('checked')) {
+		if ($('#netbios_enable').prop('checked')) {
 			hideInput('netbios_ntype', false);
 			hideInput('netbios_scope', false);
 			hideCheckbox('wins_server_enable', false);
@@ -669,7 +671,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 			<tbody>
 <?php
 	$i = 0;
-	foreach($a_csc as $csc):
+	foreach ($a_csc as $csc):
 		$disabled = isset($csc['disable']) ? "Yes":"No";
 ?>
 				<tr>

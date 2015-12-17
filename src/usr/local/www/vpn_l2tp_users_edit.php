@@ -178,8 +178,9 @@ include("head.inc");
 ?>
 
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 ?>
 
 <form class="form-horizontal" action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">

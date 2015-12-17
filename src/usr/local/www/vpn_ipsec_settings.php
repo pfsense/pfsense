@@ -252,11 +252,13 @@ function maxmss_checked(obj) {
 </script>
 
 <?php
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
@@ -269,8 +271,7 @@ $form = new Form;
 
 $section = new Form_Section('Start IPsec in debug mode based on sections selected');
 
-foreach ($ipsec_log_cats as $cat => $desc)
-{
+foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
 		$cat,
 		$desc,
@@ -338,8 +339,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Maximum MSS');
 $group->addClass('toggle-maxmss collapse');
 
-if (!empty($pconfig['maxmss_enable']))
+if (!empty($pconfig['maxmss_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'maxmss',

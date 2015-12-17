@@ -110,12 +110,13 @@ include("head.inc");
 ?>
 
 <?php
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
-if (is_subsystem_dirty('ipsec'))
+if (is_subsystem_dirty('ipsec')) {
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-
+}
 ?>
 
 <?php
@@ -143,18 +144,20 @@ if (is_subsystem_dirty('ipsec'))
 			<tr>
 				<td>
 					<?php
-					if ($secretent['ident'] == 'allusers')
+					if ($secretent['ident'] == 'allusers') {
 						echo gettext("ANY USER");
-					else
+					} else {
 						echo htmlspecialchars($secretent['ident']);
+					}
 					?>
 				</td>
 				<td>
 					<?php
-					if (empty($secretent['type']))
+					if (empty($secretent['type'])) {
 						echo 'PSK';
-					else
+					} else {
 						echo htmlspecialchars($secretent['type']);
+					}
 					?>
 				</td>
 				<td>
@@ -173,10 +176,11 @@ if (is_subsystem_dirty('ipsec'))
 				</td>
 				<td>
 					<?php
-					if (empty($secretent['type']))
+					if (empty($secretent['type'])) {
 						echo 'PSK';
-					else
+					} else {
 						echo htmlspecialchars($secretent['type']);
+					}
 					?>
 				</td>
 				<td>

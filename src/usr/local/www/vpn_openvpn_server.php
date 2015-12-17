@@ -890,7 +890,7 @@ if($act=="new" || $act=="edit") :
 		'gwredir',
 		'Redirect Gateway',
 		'Force all client generated traffic through the tunnel.',
-		$pconfig['gwredit']
+		$pconfig['gwredir']
 	));
 
 	$section->addInput(new Form_Input(
@@ -1086,13 +1086,13 @@ if($act=="new" || $act=="edit") :
 		'netbios_enable',
 		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
-		$pconfig['ntp_server_enable']
+		$pconfig['netbios_enable']
 	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled');
 
 	$section->addInput(new Form_Select(
 		'netbios_ntype',
 		'Node Type',
-		$pconfig['nbios_ntype'],
+		$pconfig['netbios_ntype'],
 		$netbios_nodetypes
 		))->setHelp('Possible options: b-node (broadcasts), p-node (point-to-point name queries to a WINS server), ' .
 					'm-node (broadcast then query name server), and h-node (query name server, then broadcast)');

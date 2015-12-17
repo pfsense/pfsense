@@ -114,7 +114,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		<?php $iflist = get_configured_interface_with_descr();
 		foreach ($iflist as $if => $ifdesc) {
 			if ($dyndns['interface'] == $if) {
-				print('$ifdesc');
+				print($ifdesc);
 				break;
 			}
 		}

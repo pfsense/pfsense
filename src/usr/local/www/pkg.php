@@ -232,33 +232,27 @@ events.push(function() {
 ?>
 });
 
-<?php
-if ($pkg['adddeleteeditpagefields']['movable']) {
-?>
-	function save_changes_to_xml(xml) {
-		var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
-		var strloading="<?=gettext('Saving changes...')?>";
-		if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
-			$.ajax({
-				type: 'get',
-				cache: false,
-				url: "<?=$_SERVER['SCRIPT_NAME']?>",
-				data: {xml:'<?=$xml?>', act:'update', ids: ids},
-				beforeSend: function() {
-					$('#savemsg').empty().html(strloading);
-				},
-				error: function(data) {
-					$('#savemsg').empty().html('Error:' + data);
-				},
-				success: function(data) {
-					$('#savemsg').empty().html(data);
-				}
-			});
-		}
+function save_changes_to_xml(xml) {
+	var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
+	var strloading="<?=gettext('Saving changes...')?>";
+	if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
+		$.ajax({
+			type: 'get',
+			cache: false,
+			url: "<?=$_SERVER['SCRIPT_NAME']?>",
+			data: {xml:'<?=$xml?>', act:'update', ids: ids},
+			beforeSend: function() {
+				$('#savemsg').empty().html(strloading);
+			},
+			error: function(data) {
+				$('#savemsg').empty().html('Error:' + data);
+			},
+			success: function(data) {
+				$('#savemsg').empty().html(data);
+			}
+		});
 	}
-<?php
 }
-?>
 
 //]]>
 </script>

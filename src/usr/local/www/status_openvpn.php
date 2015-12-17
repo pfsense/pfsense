@@ -75,50 +75,13 @@ if ($_GET['action']) {
 		$port  = $_GET['port'];
 		$remipp  = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
 		exit;
 	}
-}
-
-
-function kill_client($port, $remipp) {
-	global $g;
-
-	//$tcpsrv = "tcp://127.0.0.1:{$port}";
-	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
-	$errval = null;
-	$errstr = null;
-
-	/* open a tcp connection to the management port of each server */
-	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
-	$killed = -1;
-	if ($fp) {
-		stream_set_timeout($fp, 1);
-		fputs($fp, "kill {$remipp}\n");
-		while (!feof($fp)) {
-			$line = fgets($fp, 1024);
-
-			$info = stream_get_meta_data($fp);
-			if ($info['timed_out']) {
-				break;
-			}
-
-			/* parse header list line */
-			if (strpos($line, "INFO:") !== false) {
-				continue;
-			}
-			if (strpos($line, "SUCCESS") !== false) {
-				$killed = 0;
-			}
-			break;
-		}
-		fclose($fp);
-	}
-	return $killed;
 }
 
 $servers = openvpn_get_active_servers();

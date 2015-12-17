@@ -62,7 +62,7 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 function getServerDateItems($inDate) {
-	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
+	return date('Y,n,j,G,', $inDate) . intval(date('i', $inDate)) . ',' . intval(date('s', $inDate));
 	// year (4-digit),month,day,hours (0-23),minutes,seconds
 	// use intval to strip leading zero from minutes and seconds
 	// so JavaScript won't try to interpret them in octal
@@ -70,7 +70,7 @@ function getServerDateItems($inDate) {
 }
 
 function clockTimeString($inDate, $showSeconds) {
-	return date($showSeconds ? 'G:i:s' : 'g:i',$inDate).' ';
+	return date($showSeconds ? 'G:i:s' : 'g:i', $inDate) . ' ';
 }
 
 if ($_REQUEST['updateme']) {
@@ -159,9 +159,9 @@ if ($_REQUEST['updateme']) {
 		$gpsport = fopen("/dev/gps0", "r+");
 		while ($gpsport) {
 			$buffer = fgets($gpsport);
-			if (substr($buffer, 0, 6)=='$GPGSV') {
+			if (substr($buffer, 0, 6) == '$GPGSV') {
 				//echo $buffer."\n";
-				$gpgsv = explode(',',$buffer);
+				$gpgsv = explode(',', $buffer);
 				$gps_satview = $gpgsv[3];
 				break;
 			}
@@ -169,7 +169,7 @@ if ($_REQUEST['updateme']) {
 	}
 ?>
 
-<table class="table" id="ntp_status_widget">
+<table id="ntp_status_widget" class="table table-striped table-hover">
 	<tr>
 		<th>Server Time</th>
 		<td id="ClockTime"> <!-- ntpStatusClock -->
@@ -484,31 +484,15 @@ clockUpdate();
 //]]>
 </script>
 
-<!--
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
+<table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<td width="40%" class="vncellt">Server Time</td>
-			<td width="60%" class="listr">
-				<div id="ClockTime">
-					<b><?php echo(clockTimeString($gDate,$gClockShowsSeconds));?></b>
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
--->
-<div id="ntpstatus">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
-	<tbody>
-		<tr>
-			<td width="100%" class="listr">
+			<td>
 				Updating...
 			</td>
 		</tr>
 	</tbody>
 </table>
-</div>
 
 <script type="text/javascript">
 //<![CDATA[

@@ -63,8 +63,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['hasync']))
+if (!is_array($config['hasync'])) {
 	$config['hasync'] = array();
+}
 
 $a_hasync = &$config['hasync'];
 

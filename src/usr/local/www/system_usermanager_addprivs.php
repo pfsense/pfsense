@@ -141,9 +141,10 @@ function build_priv_list() {
 
 	$list = array();
 
-	foreach($spriv_list as $pname => $pdata) {
-		if (in_array($pname, $a_user['priv']))
+	foreach ($spriv_list as $pname => $pdata) {
+		if (in_array($pname, $a_user['priv'])) {
 			continue;
+		}
 
 		$list[$pname] = $pdata['name'];
 	}
@@ -158,11 +159,13 @@ if (isAjax()) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -201,7 +204,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 <?php
 

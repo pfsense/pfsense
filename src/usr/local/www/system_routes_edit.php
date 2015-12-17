@@ -199,17 +199,17 @@ if ($_POST) {
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $if) {
 			if (is_ipaddrv4($_POST['network']) &&
-				isset($if['ipaddr']) && isset($if['subnet']) &&
-				is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
-				($_POST['network_subnet'] == $if['subnet']) &&
-				(gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
-					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
+			    isset($if['ipaddr']) && isset($if['subnet']) &&
+			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
+			    ($_POST['network_subnet'] == $if['subnet']) &&
+			    (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
+				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			} else if (is_ipaddrv6($_POST['network']) &&
-				isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
-				is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
-				($_POST['network_subnet'] == $if['subnetv6']) &&
-				(gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
-					$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
+			    isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
+			    is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
+			    ($_POST['network_subnet'] == $if['subnetv6']) &&
+			    (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
+				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			}
 		}
 	}
@@ -258,8 +258,9 @@ $pgtitle = array(gettext("System"), gettext("Static Routes"), gettext("Edit rout
 $shortcut_section = "routing";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
 
@@ -314,7 +315,7 @@ print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network"))) ?>;
 

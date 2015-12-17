@@ -126,11 +126,13 @@ $shortcut_section = "gateway-groups";
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('staticroutes'))
+if (is_subsystem_dirty('staticroutes')) {
 	print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Gateways"), false, "system_gateways.php");
@@ -161,7 +163,7 @@ foreach ($a_gateway_groups as $gateway_group):
 				</td>
 				<td>
 <?php
-	foreach($gateway_group['item'] as $item) {
+	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
 	}
@@ -169,7 +171,7 @@ foreach ($a_gateway_groups as $gateway_group):
 				</td>
 				<td>
 <?php
-	foreach($gateway_group['item'] as $item) {
+	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
 	}

@@ -247,12 +247,15 @@ $shortcut_section = "routing";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
-if (is_subsystem_dirty('staticroutes'))
+}
+if (is_subsystem_dirty('staticroutes')) {
 	print_info_box_np(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Gateways"), false, "system_gateways.php");
@@ -275,10 +278,11 @@ display_top_tabs($tab_array);
 <tbody>
 <?php
 foreach ($a_routes as $i => $route):
-	if (isset($route['disabled']))
+	if (isset($route['disabled'])) {
 		$icon = 'fa-ban';
-	else
+	} else {
 		$icon = 'fa-check-circle-o';
+	}
 ?>
 	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
 		<td><i class="fa <?=$icon?>"></i></td>

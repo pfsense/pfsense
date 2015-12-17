@@ -75,9 +75,9 @@ if ($_POST) {
 	if (!$input_errors) {
 		// Set the firmware branch, but only if we are not using it already
 		if ($_POST['fwbranch']) {
-			if(($_POST['fwbranch'] == "development") && is_pkg_installed($g['product_name'] . "-repo")) {
+			if (($_POST['fwbranch'] == "development") && is_pkg_installed($g['product_name'] . "-repo")) {
 				pkg_switch_repo(true);
-			} else if(($_POST['fwbranch'] == "stable") && is_pkg_installed($g['product_name'] . "-repo-devel")) {
+			} else if (($_POST['fwbranch'] == "stable") && is_pkg_installed($g['product_name'] . "-repo-devel")) {
 				pkg_switch_repo(false);
 			}
 		}
@@ -113,11 +113,13 @@ if (file_exists("{$g['tmp_path']}/manifest")) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("System Update"), false, "pkg_mgr_install.php?id=firmware");
@@ -156,7 +158,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
+if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 	$section = new Form_Section('GitSync');
 
 	$section->addInput(new Form_Checkbox(
@@ -166,10 +168,11 @@ if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		isset($gitcfg['synconupgrade'])
 		))->setHelp('After updating, sync with the following repository/branch before reboot');
 
-	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
-		if(is_array($output_str) && !empty($output_str[0]))
+		if (is_array($output_str) && !empty($output_str[0])) {
 			$lastrepositoryurl = $output_str[0];
+		}
 		unset($output_str);
 	}
 
@@ -180,11 +183,11 @@ if(file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
 		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', [$lastrepositoryurl]);
 
-	if(is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
+	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
-		if(is_array($output_str)) {
-			foreach($output_str as $output_line) {
-				if(strstr($output_line, '* ')) {
+		if (is_array($output_str)) {
+			foreach ($output_str as $output_line) {
+				if (strstr($output_line, '* ')) {
 					$lastbranch = substr($output_line, 2);
 					break;
 				}
@@ -210,7 +213,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Update firmwareurl from preseturls or from the saved alternate if "Unofficial" is checked
 	function update_firmwareurl() {
 		if (!$('#alturlenable').prop('checked')) {
@@ -224,7 +227,7 @@ events.push(function(){
 
 	// Call it when preseturls changes
 
-	$('#preseturls, #alturlenable').on('change', function(){
+	$('#preseturls, #alturlenable').on('change', function() {
 	update_firmwareurl();
 	})
 

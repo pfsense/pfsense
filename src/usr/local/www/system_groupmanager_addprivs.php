@@ -158,9 +158,10 @@ function build_priv_list() {
 
 	$list = array();
 
-	foreach($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_group['priv']))
+	foreach ($priv_list as $pname => $pdata) {
+		if (in_array($pname, $a_group['priv'])) {
 			continue;
+		}
 
 		$list[$pname] = $pdata;
 	}
@@ -170,11 +171,13 @@ function build_priv_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -184,8 +187,7 @@ $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
-if (isset($groupid))
-{
+if (isset($groupid)) {
 	$form->addGlobal(new Form_Input(
 		'groupid',
 		null,
@@ -216,7 +218,7 @@ print $form;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 <?php
 

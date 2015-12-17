@@ -536,17 +536,17 @@ if ($_POST) {
 
 		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
-			$gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
-			isset($a_gateway_item[$realid]["nonlocalgateway"])) {
+		    $gateway['gateway'] != $a_gateway_item[$realid]['gateway'] &&
+		    isset($a_gateway_item[$realid]["nonlocalgateway"])) {
 			$realif = get_real_interface($a_gateway_item[$realid]['interface']);
 			$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? "-inet6" : "-inet");
 			$cmd = "/sbin/route delete $inet " . escapeshellarg($a_gateway_item[$realid]['gateway']) . " -iface " . escapeshellarg($realif);
 			mwexec($cmd);
 		}
-		
+
 		/* NOTE: If monitor ip is changed need to cleanup the old static route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['monitor']) &&
-			$_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
+		    $_POST['monitor'] != $a_gateway_item[$realid]['monitor'] && $gateway['gateway'] != $a_gateway_item[$realid]['monitor']) {
 			if (is_ipaddrv4($a_gateway_item[$realid]['monitor'])) {
 				mwexec("/sbin/route delete " . escapeshellarg($a_gateway_item[$realid]['monitor']));
 			} else {
@@ -634,13 +634,14 @@ $shortcut_section = "gateways";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
 
 /* If this is a system gateway we need this var */
-if(($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
+if (($pconfig['attribute'] == "system") || is_numeric($pconfig['attribute'])) {
 	$form->addGlobal(new Form_Input(
 		'attribute',
 		null,
@@ -781,7 +782,7 @@ if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 $form->add($section);
 $section = new Form_Section('Advanced');
 
-if(isset($advdflt)) {
+if (isset($advdflt)) {
 	$section->addClass('collapse');
 }
 

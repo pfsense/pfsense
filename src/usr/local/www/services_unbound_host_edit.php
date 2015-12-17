@@ -213,28 +213,30 @@ if ($_POST) {
 }
 
 // Delete a row in the options table
-if($_GET['act'] == "delopt") {
+if ($_GET['act'] == "delopt") {
 	$idx = $_GET['id'];
 
-	if($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
+	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
 	   unset($pconfig['aliases']['item'][$idx]);
 	}
 }
 
 // Add an option row
-if($_GET['act'] == "addopt") {
-	if(!is_array($pconfig['aliases']['item']))
+if ($_GET['act'] == "addopt") {
+	if (!is_array($pconfig['aliases']['item'])) {
 		$pconfig['aliases']['item'] = array();
+	}
 
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit Host Override"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Host Override"));
 $shortcut_section = "resolver";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -283,15 +285,15 @@ $form->add($section);
 
 $section = new Form_Section('Additional names for this host');
 
-if(!$pconfig['aliases']['item']) {
+if (!$pconfig['aliases']['item']) {
 	$pconfig['aliases']['item'] = array('host' => "");
 }
 
-if( $pconfig['aliases']['item']) {
+if ($pconfig['aliases']['item']) {
 	$counter = 0;
 	$last = count($pconfig['aliases']['item']) - 1;
 
-	foreach($pconfig['aliases']['item'] as $item) {
+	foreach ($pconfig['aliases']['item'] as $item) {
 		$group = new Form_Group(null);
 		$group->addClass('repeatable');
 

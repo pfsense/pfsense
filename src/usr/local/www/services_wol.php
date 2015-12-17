@@ -69,7 +69,7 @@ if (!is_array($config['wol']['wolentry'])) {
 }
 $a_wol = &$config['wol']['wolentry'];
 
-if($_GET['wakeall'] != "") {
+if ($_GET['wakeall'] != "") {
 	$i = 0;
 	$savemsg = "";
 	foreach ($a_wol as $wolent) {
@@ -149,11 +149,13 @@ print_info_box(gettext('This service can be used to wake up (power on) computers
 
 <?php
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $form = new Form('Send');
 

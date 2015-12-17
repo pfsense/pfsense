@@ -113,15 +113,17 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("PPPoE Server"));
+$pgtitle = array(gettext("Services"), gettext("PPPoE Server"));
 $shortcut_section = "pppoes";
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('vpnpppoe'))
+if (is_subsystem_dirty('vpnpppoe')) {
 	print_info_box_np(gettext('The PPPoE entry list has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
+}
 ?>
 
 <div class="table-responsive">

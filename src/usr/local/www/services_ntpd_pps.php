@@ -137,11 +137,13 @@ $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("PPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
     print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
     print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
@@ -168,7 +170,7 @@ if (!empty($serialports)) {
     $splist = array();
 
     foreach ($serialports as $port) {
-    	$shortport = substr($port,5);
+    	$shortport = substr($port, 5);
     	$splist[$shortport] = $shortport;
     }
 

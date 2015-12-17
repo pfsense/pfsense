@@ -67,8 +67,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['unbound']['domainoverrides']))
+if (!is_array($config['unbound']['domainoverrides'])) {
 	$config['unbound']['domainoverrides'] = array();
+}
 
 $a_domainOverrides = &$config['unbound']['domainoverrides'];
 

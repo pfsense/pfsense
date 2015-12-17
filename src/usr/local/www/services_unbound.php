@@ -238,8 +238,9 @@ function build_if_list($selectedifs) {
 	foreach ($interface_addresses as $laddr => $ldescr) {
 		$iflist['options'][$laddr] = htmlspecialchars($ldescr);
 
-		if ($selectedifs && in_array($laddr, $selectedifs))
+		if ($selectedifs && in_array($laddr, $selectedifs)) {
 			array_push($iflist['selected'], $laddr);
+		}
 	}
 
 	unset($interface_addresses);
@@ -253,11 +254,13 @@ $shortcut_section = "resolver";
 
 include_once("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 if (is_subsystem_dirty('unbound')) {
 	print_info_box_np(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
@@ -374,7 +377,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// If the enable checkbox is not checked, disable the next three checkboxes
 	function disableDHCP() {
@@ -407,7 +410,7 @@ events.push(function(){
 	});
 
 	// On initial load
-	if($('#custom_options').val().length == 0) {
+	if ($('#custom_options').val().length == 0) {
 		hideInput('custom_options', true);
 	}
 
@@ -551,7 +554,7 @@ endforeach;
 		" entered in %sSystem: General setup%s".
 		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-		" is checked."),'<a href="system.php">','</a>'), info)?>
+		" is checked."), '<a href="system.php">', '</a>'), info)?>
 </div>
 
 <?php include("foot.inc");

@@ -101,11 +101,13 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"), gettext("IGMP Proxy"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('igmpproxy'))
+if (is_subsystem_dirty('igmpproxy')) {
 	print_info_box_np(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
+}
 ?>
 
 <form action="services_igmpproxy.php" method="post">
@@ -137,7 +139,7 @@ foreach ($a_igmpproxy as $igmpentry):
 	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
 	print($addresses);
 
-	if(count($addresses) < 10) {
+	if (count($addresses) < 10) {
 		print(' ');
 	} else {
 		print('...');

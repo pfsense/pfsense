@@ -114,7 +114,7 @@ if ($_POST) {
 
 	/* item is a normal igmpentry type */
 	$x = 0;
-	while($_POST["address{$x}"]) {
+	while ($_POST["address{$x}"]) {
 
 		if ($isfirst > 0) {
 			$address .= " ";
@@ -151,8 +151,9 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 // These two inputs appear in the original file. Don't know what they are for
 // but they are here just in case.
@@ -178,8 +179,9 @@ $section = new Form_Section('IGMP Proxy Edit');
 $optionlist = array();
 $iflist = get_configured_interface_with_descr();
 
-foreach ($iflist as $ifnam => $ifdescr)
+foreach ($iflist as $ifnam => $ifdescr) {
 	$optionlist[$ifnam] = $ifdescr;
+}
 
 $section->addInput(new Form_Select(
 	'ifname',
@@ -202,7 +204,7 @@ $section->addInput(new Form_Select(
 	['upstream' => gettext('Upstream Interface'), 'downstream' => gettext('Downstream Interface')]
 ))->setHelp('The upstream network interface is the outgoing interface which is responsible for communicating to available multicast data sources .' .
 			'There can only be one upstream interface.' . '<br />' .
-			'Downstream network interfaces are the distribution	 interfaces to	the destination	 networks, where multicast clients can join groups and '.
+			'Downstream network interfaces are the distribution	interfaces to the destination networks, where multicast clients can join groups and '.
 			'receive multicast data. One or more downstream interfaces must be configured.');
 
 $section->addInput(new Form_Input(
@@ -213,7 +215,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Defines the TTL threshold for the network interface. Packets with a lower TTL than the threshold value will be ignored. ' .
 			'This setting is optional, and by default the threshold is 1.');
 
-if (isset($id) && $a_igmpproxy[$id]){
+if (isset($id) && $a_igmpproxy[$id]) {
 		$section->addInput(new Form_Input(
 		'id',
 		null,
@@ -232,13 +234,13 @@ $address = $pconfig['address'];
 $item = explode(" ", $address);
 $rows = count($item) -1;
 
-foreach($item as $ww) {
+foreach ($item as $ww) {
 	$address = $item[$counter];
 	$address_subnet = "";
 	$item2 = explode("/", $address);
 
-	foreach($item2 as $current) {
-		if($item2[1] != "") {
+	foreach ($item2 as $current) {
+		if ($item2[1] != "") {
 			$address = $item2[0];
 			$address_subnet = $item2[1];
 		}

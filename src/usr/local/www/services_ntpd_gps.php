@@ -208,12 +208,14 @@ function build_nmea_list() {
 	$nmealist['options'][4] = 'GLL';
 	$nmealist['options'][8] = 'ZDA or ZDG';
 
-	if(!$pconfig['nmea'])
+	if (!$pconfig['nmea']) {
 		array_push($nmealist['selected'], 0);
+	}
 
-	foreach($nmealist['options'] as $val => $opt) {
-		if($pconfig['nmea'] & $val)
+	foreach ($nmealist['options'] as $val => $opt) {
+		if ($pconfig['nmea'] & $val) {
 		  array_push($nmealist['selected'], $val);
+		}
 	}
 
 	return($nmealist);
@@ -261,7 +263,7 @@ if (!empty($serialports)) {
 	$splist = array();
 
 	foreach ($serialports as $port) {
-		$shortport = substr($port,5);
+		$shortport = substr($port, 5);
 		$splist[$shortport] = $shortport;
 	}
 
@@ -424,13 +426,13 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function NMEAChecksum(cmd) {
 		// Compute the checksum by XORing all the character values in the string.
 		var checksum = 0;
 
-		for(var i = 0; i < cmd.length; i++) {
+		for (var i = 0; i < cmd.length; i++) {
 			checksum = checksum ^ cmd.charCodeAt(i);
 		}
 		// Convert it to hexadecimal (base-16, upper case, most significant byte first).

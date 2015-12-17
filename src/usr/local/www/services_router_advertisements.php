@@ -103,7 +103,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
 		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 			continue;
 		}
 		$if = $ifent;
@@ -227,11 +227,13 @@ $pgtitle = array(gettext("Services"), gettext("Router Advertisements"));
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 /* active tabs */
 $tab_array = array();
@@ -241,7 +243,7 @@ foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 	// We need at least one interface configured with a NON-LOCAL IPv6 static address. fd80:8dba:82e1::/64 fits the bill
 	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 		continue;
 	}
 
@@ -324,8 +326,9 @@ $section->addInput(new Form_StaticText(
 ));
 
 
-if(empty($pconfig['subnets']))
+if (empty($pconfig['subnets'])) {
 	$pconfig['subnets'] = array('0' => '/128');
+}
 
 $counter = 0;
 $numrows = count($pconfig['subnets']) - 1;
@@ -364,7 +367,7 @@ $form->add($section);
 
 $section = new Form_Section('DNS Configuration');
 
-for($idx=1; $idx<=3; $idx++) {
+for ($idx=1; $idx<=3; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		'Server ' . $idx,
@@ -400,7 +403,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();
 

@@ -252,11 +252,20 @@ if ($_POST) {
 			}
 		}
 
-		$lansubnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-		$lansubnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-		if ((ip2ulong($_POST['ipaddr']) < $lansubnet_start) ||
-		    (ip2ulong($_POST['ipaddr']) > $lansubnet_end)) {
+		$lansubnet_start = ip2ulong(gen_subnetv4($ifcfgip, $ifcfgsn));
+		$lansubnet_end = ip2ulong(gen_subnetv4_max($ifcfgip, $ifcfgsn));
+		$ipaddr_int = ip2ulong($_POST['ipaddr']);
+		if (($ipaddr_int < $lansubnet_start) ||
+		    ($ipaddr_int > $lansubnet_end)) {
 			$input_errors[] = sprintf(gettext("The IP address must lie in the %s subnet."), $ifcfgdescr);
+		}
+
+		if ($ipaddr_int == $lansubnet_start) {
+			$input_errors[] = sprintf(gettext("The IP address cannot be the %s network address."), $ifcfgdescr);
+		}
+
+		if ($ipaddr_int == $lansubnet_end) {
+			$input_errors[] = sprintf(gettext("The IP address cannot be the %s broadcast address."), $ifcfgdescr);
 		}
 	}
 

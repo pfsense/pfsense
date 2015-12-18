@@ -1392,7 +1392,7 @@ function radius($username, $password, $clientip, $clientmac, $type, $radiusctx =
 }
 
 function captiveportal_opendb() {
-	global $g, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
 	$createquery = "CREATE TABLE IF NOT EXISTS captiveportal (" .
@@ -1441,6 +1441,19 @@ function captiveportal_opendb() {
 		$DB->busyTimeout(60000);
 		if ($DB->exec($createquery)) {
 			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
+			if (!is_numericint($cpzoneid)) {
+				if (is_array($config['captiveportal'])) {
+					foreach ($config['captiveportal'] as $cpkey => $cp) {
+						if ($cpzone == $cp['zone']) {
+							$cpzoneid = $cp['zoneid'];
+						}
+					}
+				}
+			}
+			if (is_numericint($cpzoneid)) {
+				mwexec("/sbin/ipfw -x $cpzoneid table all flush");
+				captiveportal_syslog("Flushed tables for {$cpzone} after database reset.");
+			}
 		} else {
 			captiveportal_syslog("Still unable to create tables for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and try again.");
 		}

@@ -54,8 +54,18 @@ function running_dpinger_processes() {
 	}
 
 	foreach ($pidfiles as $pidfile) {
-		$result[] = preg_replace('/^dpinger_(\w+)\.pid$/', "$1",
-		    basename($pidfile));
+		if (preg_match('/^dpinger_(\w+)_([\d\.:]+)_([\d\.:]+)\.pid$/',
+		    basename($pidfile), $matches)) {
+			$socket_file = preg_replace('/\.pid$/', '.sock',
+			    $pidfile);
+			$result[$matches[1]] = array(
+			    'srcip'    => $matches[2],
+			    'targetip' => $matches[3],
+			    'pidfile'  => basename($pidfile),
+			    'socket'   => $socket_file
+			);
+			unset($gwinfo);
+		}
 	}
 
 	return $result;
@@ -66,20 +76,20 @@ function running_dpinger_processes() {
  * default parameter $gwname is '*' that will kill all running sessions
  * If a gateway name is passed, only this one will be killed
  */
-function stop_dpinger($gwname = '*') {
+function stop_dpinger($gwname = '') {
 	global $g;
 
-	$pidfiles = glob("{$g['varrun_path']}/dpinger_{$gwname}.pid");
+	$running_processes = running_dpinger_processes();
 
-	if ($pidfiles === FALSE) {
-		return;
-	}
+	foreach ($running_processes as $running_gwname => $process) {
+		if ($gwname != '' && $running_gwname != $gwname) {
+			continue;
+		}
 
-	foreach ($pidfiles as $pidfile) {
-		if (isvalidpid($pidfile)) {
-			killbypid($pidfile);
+		if (isvalidpid($process['pidfile'])) {
+			killbypid($process['pidfile']);
 		} else {
-			@unlink($pidfile);
+			@unlink($process['pidfile']);
 		}
 	}
 }
@@ -87,17 +97,24 @@ function stop_dpinger($gwname = '*') {
 function start_dpinger($gateway) {
 	global $g;
 
+	if (!isset($gateway['gwifip'])) {
+		return;
+	}
+
 	$dpinger_defaults = return_dpinger_defaults();
 
-	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}.pid";
-	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}.sock";
-	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm {$gateway['name']}";
+	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
+	    "{$gateway['gwifip']}_{$gateway['monitor']}.pid";
+	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
+	    "{$gateway['gwifip']}_{$gateway['monitor']}.sock";
+	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm";
 
-	$params  = "-S "; /* Log warnings via syslog */
-	$params .= "-B {$gateway['gwifip']} "; /* Bind src address */
-	$params .= "-p {$pidfile} "; /* PID filename */
-	$params .= "-U {$socket} "; /* Status Socket */
-	$params .= "-C \"{$alarm_cmd}\" "; /* Command to run on alarm */
+	$params  = "-S ";			/* Log warnings via syslog */
+	$params .= "-i {$gateway['name']} ";	/* Identifier */
+	$params .= "-B {$gateway['gwifip']} ";	/* Bind src address */
+	$params .= "-p {$pidfile} ";		/* PID filename */
+	$params .= "-u {$socket} ";		/* Status Socket */
+	$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
 
 	$params .= "-s " .
 	    (isset($gateway['interval']) && is_numeric($gateway['interval'])
@@ -280,16 +297,24 @@ function setup_gateways_monitor() {
 function get_dpinger_status($gwname) {
 	global $g;
 
-	$socket = "{$g['varrun_path']}/dpinger_{$gwname}.sock";
+	$running_processes = running_dpinger_processes();
 
-	if (!file_exists($socket)) {
-		log_error("dpinger: status socket {$socket} not found");
+	if (!isset($running_processes[$gwname])) {
+		log_error("dpinger: No dpinger session running for gateway {$gwname}");
 		return false;
 	}
 
-	$fp = stream_socket_client("unix://{$socket}", $errno, $errstr, 10);
+	$proc = $running_processes[$gwname];
+	unset($running_processes);
+
+	if (!file_exists($proc['socket'])) {
+		log_error("dpinger: status socket {$proc['socket']} not found");
+		return false;
+	}
+
+	$fp = stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
 	if (!$fp) {
-		log_error("dpinger: cannot connect to status socket {$socket} - $errstr ($errno)");
+		log_error("dpinger: cannot connect to status socket {$proc['socket']} - $errstr ($errno)");
 		return false;
 	}
 
@@ -301,13 +326,14 @@ function get_dpinger_status($gwname) {
 
 	$r = array();
 	list(
+	    $r['gwname'],
 	    $r['latency_avg'],
 	    $r['latency_stddev'],
-	    $r['loss'],
-	    $r['alarm_on'],
-	    $r['srcip'],
-	    $r['targetip']
+	    $r['loss']
 	) = explode(' ', preg_replace('/\n/', '', $status));
+
+	$r['srcip'] = $proc['srcip'];
+	$r['targetip'] = $proc['targetip'];
 
 	$gateways_arr = return_gateways_array();
 	unset($gw);
@@ -321,30 +347,30 @@ function get_dpinger_status($gwname) {
 	$r['status'] = "none";
 	if (isset($gw) && isset($gw['force_down'])) {
 		$r['status'] = "force_down";
-	} else if ($r['alarm_on'] == 1) {
-		$r['status'] = "down";
 	} else if (isset($gw)) {
-		$dpinger_defaults = return_dpinger_defaults();
-		if (isset($gw['latencylow']) &&
-		    is_numeric($gw['latencylow'])) {
-			$latencylow = $gw['latencylow'];
-		} else {
-			$latencylow = $dpinger_defaults['latencylow'];
+		$settings = return_dpinger_defaults();
+
+		$keys = array(
+		    'latencylow',
+		    'latencyhigh',
+		    'losslow',
+		    'losshigh'
+		);
+
+		/* Replace default values by user-defined */
+		foreach ($keys as $key) {
+			if (isset($gw[$key]) && is_numeric($gw[$key])) {
+				$settings[$key] = $gw[$key];
+			}
 		}
 
-		if ($r['latency_avg'] > $latencylow) {
+		if ($r['latency_avg'] > $settings['latencyhigh'] ||
+		    $r['loss'] > $settings['losshigh']) {
+			$r['status'] = "down";
+		} else if ($r['latency_avg'] > $settings['latencylow']) {
 			$r['status'] = "delay";
-		} else {
-			if (isset($gw['losslow']) &&
-			    is_numeric($gw['losslow'])) {
-				$losslow = $gw['losslow'];
-			} else {
-				$losslow = $dpinger_defaults['losslow'];
-			}
-
-			if ($r['loss'] > $losslow) {
-				$r['status'] = "loss";
-			}
+		} else if ($r['loss'] > $settings['losslow']) {
+			$r['status'] = "loss";
 		}
 	}
 
@@ -360,7 +386,7 @@ function return_gateways_status($byname = false) {
 
 	$gateways_arr = return_gateways_array();
 
-	foreach ($dpinger_gws as $gwname) {
+	foreach ($dpinger_gws as $gwname => $gwdata) {
 		$dpinger_status = get_dpinger_status($gwname);
 		if ($dpinger_status === false) {
 			continue;

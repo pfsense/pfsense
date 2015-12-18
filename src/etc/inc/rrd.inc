@@ -959,8 +959,15 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 	if [ ! -S "\$sock" ]; then
 		continue
 	fi
-	loss=\$(/usr/bin/nc -U \$sock | awk '{ print \$3 }')
-	delay=\$(/usr/bin/nc -U \$sock | awk '{ print \$1 }')
+
+	gw=\$(/usr/bin/nc -U \$sock | awk '{ print \$1 }')
+
+	if [ -z "\$gw" ]; then
+		continue
+	fi
+
+	delay=\$(/usr/bin/nc -U \$sock | awk '{ print \$2 }')
+	loss=\$(/usr/bin/nc -U \$sock | awk '{ print \$4 }')
 
 	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
 		loss="U"
@@ -972,7 +979,6 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
 	fi
 
-	gw=\$(echo \$sock | sed 's,^.*dpinger_,,; s,\.sock,,')
 	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
 		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
 		DS:loss:GAUGE:120:0:100 \\

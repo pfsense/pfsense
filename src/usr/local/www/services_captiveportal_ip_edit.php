@@ -144,6 +144,14 @@ if ($_POST) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
 
+	if ($_POST['bw_up'] && ($_POST['bw_up'] > 999999 || $_POST['bw_up'] < 1)) {
+		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
+	}
+
+	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
+		$input_errors[] = gettext("Download speed must be between 1 and 999999");
+	}
+
 	foreach ($a_allowedips as $ipent) {
 		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent)) {
 			continue;

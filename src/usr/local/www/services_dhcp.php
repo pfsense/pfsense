@@ -798,10 +798,10 @@ $section->addInput(new Form_StaticText(
 ));
 
 // Compose a string to display the required address ranges
-$range_from = ip2long(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
+$range_from = ip2long(gen_subnetv4($ifcfgip, $ifcfgsn));
 $range_from++;
 
-$range_to = ip2long(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+$range_to = ip2long(gen_subnetv4_max($ifcfgip, $ifcfgsn));
 $range_to--;
 
 $rangestr = long2ip32($range_from) . ' - ' . long2ip32($range_to);

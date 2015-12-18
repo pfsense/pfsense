@@ -571,7 +571,7 @@ $group->add(new Form_Input(
 	'GUI Log Entries',
 	'number',
 	$pconfig['nentries'],
-	['placeholder' => $config['syslog']['nentries']]
+	['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries']]
 ))->setWidth(2);
 
 $group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
@@ -585,7 +585,7 @@ $group->add(new Form_Input(
 	'Log file size (Bytes)',
 	'number',
 	$pconfig['logfilesize'],
-	['placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
+	['min' => 100000, 'placeholder' => $config['syslog']['logfilesize'] ? $config['syslog']['logfilesize'] : "511488"]
 ))->setWidth(2);
 $group->setHelp("The log is held in a constant-size circular log file. This field controls how large the log file is, and thus how many entries may exist inside the log. The default is approximately 500KB." .
 					'<br /><br />' .

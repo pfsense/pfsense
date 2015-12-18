@@ -251,10 +251,10 @@ display_top_tabs($tab_array);
 		if ($show_alias):
 ?>
 		<tr>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($alias['name'])?>
 			</td>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 <?php
 	if ($alias["url"]) {
 		echo $alias["url"] . "<br />";
@@ -276,7 +276,7 @@ display_top_tabs($tab_array);
 	}
 ?>
 			</td>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($alias['descr'])?>&nbsp;
 			</td>
 			<td>

@@ -90,10 +90,10 @@ if (count($wolcomputers) > 0) {
 		if ($status == 'expires') {
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
 		} else if ($status == 'permanent') {
-			echo '<td align="center">' . "\n";
+			echo '<td style="text-align:center">' . "\n";
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
 		} else {
-			echo '<td" align="center">' . "\n";
+			echo '<td" style="text-align:center">' . "\n";
 			echo '<i class="fa fa-ban" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
 		}
 
@@ -103,10 +103,10 @@ if (count($wolcomputers) > 0) {
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"4\" align=\"center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"4\" style=\"text-align:center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
 	</tbody>
 </table>
-<center><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></center>
+<p style="text-align:center"><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></p>
 </div>

@@ -147,10 +147,6 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 	$widgets[ $name ] = array('name' => $widgettitle, 'display' => 'none');
 }
 
-##insert the system information widget as first, so as to be displayed first
-unset($widgets['system_information']);
-$widgets = array_merge(array('system_information' => array('name' => 'System Information')), $widgets);
-
 ##if no config entry found, initialize config entry
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
@@ -443,7 +439,12 @@ function updateWidgets(newWidget) {
 	});
 
 	if (typeof newWidget !== 'undefined') {
+		// The system_information widget is always added to column one. Others go in column two
+		if (newWidget == "system_information") {
+			sequence += newWidget + ':' + 'col1:open';
+		} else {
 		sequence += newWidget + ':' + 'col2:open';
+		}
 	}
 
 	$('#widgetSequence').removeClass('hidden');

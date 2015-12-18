@@ -153,6 +153,12 @@ if ($_POST) {
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down'])) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
+	if ($_POST['bw_up'] && ($_POST['bw_up'] > 999999 || $_POST['bw_up'] < 1)) {
+		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
+	}
+	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
+		$input_errors[] = gettext("Download speed must be between 1 and 999999"); 
+	}
 
 	foreach ($a_passthrumacs as $macent) {
 		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent)) {

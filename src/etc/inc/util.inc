@@ -392,7 +392,7 @@ function gen_subnetv4_max($ipaddr, $bits) {
 		if ($bits == 32) {
 			return $ipaddr;
 		}
-		return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+		return long2ip32(ip2long($ipaddr) | (~gen_subnet_mask_long($bits) & 0xFFFFFFFF));
 	}
 	return "";
 }

@@ -66,7 +66,8 @@ class Form_Select extends Form_Input
 				$selected = ($sval == $value);
 			}
 
-			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. htmlspecialchars(gettext($name)) .'</option>';
+			if (!empty($name) || $name == '0')
+				$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. htmlspecialchars(gettext($name)) .'</option>';
 		}
 
 		return <<<EOT

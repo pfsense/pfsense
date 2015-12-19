@@ -258,6 +258,16 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		list($file, $col, $display) = explode(':', $line);
 
 		// be backwards compatible
+		// If the display column information is missing, we will assign a temporary
+		// column here. Next time the user saves the dashboard it will fix itself
+		if ($col == "") {
+			if ($file == "system_information") {
+				$col = "col1";
+			} else {
+				$col = "col2";
+			}
+		}
+
 		$offset = strpos($file, '-container');
 		if (false !== $offset) {
 			$file = substr($file, 0, $offset);

@@ -578,7 +578,7 @@ if (!$rawfilter) {
 	   <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Act")?></th>
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("IF")?></th>
@@ -604,7 +604,7 @@ if (!$rawfilter) {
 
 	foreach ($filterlog as $filterent) {
 ?>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<td>
 <?php
 		if ($filterent['act'] == "block") {
@@ -662,7 +662,7 @@ if (!$rawfilter) {
 		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 ?>
-					<td style="white-space:nowrap;">
+					<td class="text-nowrap">
 						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
@@ -671,7 +671,7 @@ if (!$rawfilter) {
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td class="text-nowrap">
 						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
@@ -719,7 +719,7 @@ if (!$rawfilter) {
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>

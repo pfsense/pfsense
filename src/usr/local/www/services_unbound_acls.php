@@ -206,7 +206,6 @@ $actionHelp =
 					'<span class="text-success"><strong>Allow Snoop:</strong></span> Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.';
 
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 $shortcut_section = "resolver";
 include("head.inc");

@@ -207,7 +207,6 @@ function build_iplist() {
 	return($iplist);
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("SNMP"));
 $shortcut_section = "snmp";
 

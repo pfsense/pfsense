@@ -391,7 +391,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));
-$closehead = false;
 include("head.inc");
 
 function build_target_list() {

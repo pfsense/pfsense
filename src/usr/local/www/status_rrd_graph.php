@@ -299,8 +299,6 @@ $graph_length = array(
 
 $pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
 
-$closehead = false;
-
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
 	$cp_zones_tab_array = array();

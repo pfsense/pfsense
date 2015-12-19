@@ -258,7 +258,6 @@ function build_interface_list() {
 	return($iflist);
 }
 
-$closehead = false;
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();

@@ -454,7 +454,6 @@ if ($_GET['act'] == "addopt") {
 	array_push($pconfig['numberoptions']['item'], array('number' => null, 'value' => null));
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
 $shortcut_section = "dhcp6";
 

@@ -1016,8 +1016,6 @@ function build_if_list() {
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
 $shortcut_section = "firewall";
 
-$closehead = false;
-
 $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 

@@ -584,12 +584,9 @@ if ($pkg['tabs'] != "") {
 	ksort($tab_array);
 }
 
+include("head.inc");
 if ($pkg['custom_php_after_head_command']) {
-	$closehead = false;
-	include("head.inc");
 	eval($pkg['custom_php_after_head_command']);
-} else {
-	include("head.inc");
 }
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {

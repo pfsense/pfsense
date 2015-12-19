@@ -417,7 +417,6 @@ EOF;
 		}
 	}
 }
-$closehead = false;
 include("head.inc");
 
 if ($input_errors) {

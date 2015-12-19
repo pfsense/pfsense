@@ -218,7 +218,6 @@ if ($_POST['apply']) {
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
-$closehead = false;
 
 include("head.inc");
 ?>

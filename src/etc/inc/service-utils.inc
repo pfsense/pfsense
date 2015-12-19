@@ -32,10 +32,6 @@
 
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
-	pfSense_MODULE:	utils
-*/
 require_once("globals.inc");
 require_once("captiveportal.inc");
 require_once("openvpn.inc");
@@ -527,7 +523,7 @@ function get_service_control_GET_links($service, $addname = false) {
 			default:
 				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}\">";
 		}
-		$output .= "<i class=\"fa fa-stop\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
@@ -581,7 +577,7 @@ function get_service_control_links($service, $addname = false) {
 				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
 		}
 
-		$output .= "<i class=\"fa fa-stop\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
 
 	} else {
 		$service_enabled = is_service_enabled($service['name']);

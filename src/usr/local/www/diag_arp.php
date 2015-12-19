@@ -56,11 +56,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
-	pfSense_MODULE:	arp
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-arptable
 ##|*NAME=Diagnostics: ARP Table
@@ -349,7 +344,7 @@ $mac_man = load_mac_manufacturer_table();
 			</tr>
 		</thead>
 		<tbody>
-		
+
 <?php
 		foreach ($data as $entry): ?>
 			<tr>
@@ -376,7 +371,7 @@ $mac_man = load_mac_manufacturer_table();
 <script type="text/javascript">
 //<![CDATA[
 // Clear the "loading" div once the page has loaded"
-events.push(function(){
+events.push(function() {
 	$('#loading').empty();
 });
 //]]>

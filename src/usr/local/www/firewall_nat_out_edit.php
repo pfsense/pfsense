@@ -55,9 +55,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound-edit
@@ -71,8 +68,9 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-if (!is_array($config['nat']['outbound']))
+if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
+}
 
 if (!is_array($config['nat']['outbound']['rule'])) {
 	$config['nat']['outbound']['rule'] = array();
@@ -404,8 +402,9 @@ function build_target_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
+			if (isset($sn['noexpand'])) {
 				continue;
+			}
 
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
@@ -425,8 +424,9 @@ function build_target_list() {
 	}
 
 	foreach ($a_aliases as $alias) {
-		if ($alias['type'] != "host")
+		if ($alias['type'] != "host") {
 			continue;
+		}
 
 		$list[$alias['name']] = 'Host Alias: ' . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
@@ -436,8 +436,9 @@ function build_target_list() {
 	return($list);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -462,24 +463,31 @@ $section->addInput(new Form_Checkbox(
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 	$interfaces['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
 	$interfaces["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = "OpenVPN";
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -683,7 +691,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	var portsenabled = 1;
 
 	function staticportchange() {
@@ -699,8 +707,7 @@ events.push(function(){
 		if ($('#source_type').find(":selected").val() == "network") {
 			disableInput('source', false);
 			disableInput('source_subnet', false);
-		}
-		else {
+		} else {
 			$('#source').val("");
 			disableInput('source', true);
 			$('#source_subnet').val("24");
@@ -712,8 +719,7 @@ events.push(function(){
 		if ($('#destination_type').find(":selected").val() == "network") {
 			disableInput('destination', false);
 			disableInput('destination_subnet', false);
-		}
-		else {
+		} else {
 			$('#destination').val("");
 			disableInput('destination', true);
 			$('#destination_subnet').val("24");

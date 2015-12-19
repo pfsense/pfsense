@@ -52,10 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper
@@ -443,7 +439,6 @@ $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" property="stylesheet" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <div class="table-responsive">

@@ -56,9 +56,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt
@@ -72,8 +69,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['npt']))
+if (!is_array($config['nat']['npt'])) {
 	$config['nat']['npt'] = array();
+}
 
 $a_npt = &$config['nat']['npt'];
 
@@ -106,11 +104,13 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
@@ -142,10 +142,11 @@ foreach ($a_npt as $natent):
 				<td>
 					<input type="hidden" name="rule[]" value="<?=$i?>" />
 <?php
-	if (!$natent['interface'])
+	if (!$natent['interface']) {
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan")));
-	else
+	} else {
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])));
+	}
 ?>
 				</td>
 <?php

@@ -53,12 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/gmirror	/sbin/geom	/usr/bin/grep	/usr/bin/egrep	/usr/bin/cut	/usr/bin/head
-	pfSense_BUILDER_BINARIES:	/sbin/mount /usr/bin/awk	/usr/bin/sed
-	pfSense_MODULE: gmirror
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-gmirror
 ##|*NAME=Diagnostics: GEOM Mirrors

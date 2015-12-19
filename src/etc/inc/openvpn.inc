@@ -37,12 +37,8 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn	/usr/bin/openssl	/sbin/ifconfig
-	pfSense_MODULE:	openvpn
-
 */
+
 require_once('config.inc');
 require_once("certs.inc");
 require_once('pfsense-utils.inc');
@@ -1613,6 +1609,42 @@ function openvpn_get_client_status($client, $socket) {
 		$client['connect_time'] = 0;
 	}
 	return $client;
+}
+
+function openvpn_kill_client($port, $remipp) {
+	global $g;
+
+	//$tcpsrv = "tcp://127.0.0.1:{$port}";
+	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
+	$errval = null;
+	$errstr = null;
+
+	/* open a tcp connection to the management port of each server */
+	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
+	$killed = -1;
+	if ($fp) {
+		stream_set_timeout($fp, 1);
+		fputs($fp, "kill {$remipp}\n");
+		while (!feof($fp)) {
+			$line = fgets($fp, 1024);
+
+			$info = stream_get_meta_data($fp);
+			if ($info['timed_out']) {
+				break;
+			}
+
+			/* parse header list line */
+			if (strpos($line, "INFO:") !== false) {
+				continue;
+			}
+			if (strpos($line, "SUCCESS") !== false) {
+				$killed = 0;
+			}
+			break;
+		}
+		fclose($fp);
+	}
+	return $killed;
 }
 
 function openvpn_refresh_crls() {

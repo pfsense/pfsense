@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward
@@ -79,18 +76,20 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if(array_key_exists('order-store', $_POST)) {
+if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_nat_new[] = $a_nat[$id];
+		}
 
 		$a_nat = $a_nat_new;
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('filter');
+		}
 
 		header("Location: firewall_nat.php");
 		exit;
@@ -171,12 +170,14 @@ $closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
 					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), true, "firewall_nat.php");
@@ -222,8 +223,9 @@ foreach ($a_nat as $natent):
 	);
 
 	/* if user does not have access to edit an interface skip on to the next record */
-	if (!have_natpfruleint_access($natent['interface']))
+	if (!have_natpfruleint_access($natent['interface'])) {
 		continue;
+	}
 ?>
 
 					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
@@ -246,10 +248,11 @@ foreach ($a_nat as $natent):
 						<td>
 							<?=$textss?>
 <?php
-	if (!$natent['interface'])
+	if (!$natent['interface']) {
 		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
-	else
+	} else {
 		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+	}
 ?>
 							<?=$textse?>
 						</td>

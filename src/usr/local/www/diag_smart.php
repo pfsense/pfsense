@@ -76,8 +76,7 @@ $closehead = false;
 include("head.inc");
 
 // Highlights the words "PASSED", "FAILED", and "WARNING".
-function add_colors($string)
-{
+function add_colors($string) {
 	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
@@ -230,9 +229,7 @@ switch ($action) {
 			smartmonctl("stop");
 			smartmonctl("start");
 			$style = 'warning';
-		}
-		else if (isset($_POST['save']))
-		{
+		} else if (isset($_POST['save'])) {
 			$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 			write_config();
 
@@ -242,8 +239,7 @@ switch ($action) {
 			if (stristr($retval, "error") != true) {
 				$savemsg = get_std_save_message($retval);
 				$style = 'success';
-				}
-			else {
+			} else {
 				$savemsg = $retval;
 				$style='danger';
 			}
@@ -258,8 +254,9 @@ switch ($action) {
 		}
 
 	// Was the config changed? if so, print the message
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg, $style);
+	}
 
 	// Get users email from the xml file
 	$pconfig['smartmonemail'] = $config['system']['smartmonemail'];

@@ -53,10 +53,6 @@
  *
  */
 
-/*
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-system-pftop
 ##|*NAME=Diagnostics: pfTop
@@ -115,8 +111,9 @@ if ($_REQUEST['sorttype'] && in_array($_REQUEST['sorttype'], $sorttypes) &&
 	$numstate = "100";
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(false);
 $form->addGlobal(new Form_Input(
@@ -187,7 +184,7 @@ print $form;
 		);
 	}
 
-	events.push(function(){
+	events.push(function() {
 		setInterval('getpftopactivity()', 2500);
 		getpftopactivity();
 	});
@@ -204,12 +201,13 @@ print $form;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$('#viewtype').on('change', function(){
-		if (['queue', 'label', 'rules'].indexOf($(this).val()) > -1)
+events.push(function() {
+	$('#viewtype').on('change', function() {
+		if (['queue', 'label', 'rules'].indexOf($(this).val()) > -1) {
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').hide();
-		else
+		} else {
 			$("#sorttype, #sorttypediv, #statesdiv, #states").parents('.form-group').show();
+		}
 	});
 });
 //]]>

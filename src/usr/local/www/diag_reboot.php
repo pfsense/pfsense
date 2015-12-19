@@ -73,15 +73,14 @@ require("captiveportal.inc");
 $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
-$pgtitle = array(gettext("Diagnostics"),gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
 include("head.inc");
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-	if(DEBUG) {
+	if (DEBUG) {
 	   print_info_box("Not actually rebooting (DEBUG is set true)", success);
-	}
-	else {
+	} else {
 		print('<div><pre>');
 		system_reboot();
 		print('</pre></div>');
@@ -93,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	var timeoutmsg = '<h4>Rebooting<br />Page will automatically reload in ';
 	var time = 0;
@@ -109,8 +108,8 @@ events.push(function(){
 	}
 
 	function startCountdown() {
-		setInterval(function(){
-			if(time > 0) {
+		setInterval(function() {
+			if (time > 0) {
 				$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
 				time--;
 			} else {

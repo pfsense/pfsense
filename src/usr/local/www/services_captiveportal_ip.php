@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedips
@@ -127,8 +123,9 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
@@ -175,11 +172,11 @@ if (is_array($a_cp[$cpzone]['allowedip'])): ?>
 		<tbody>
 	</table>
 
-	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>','</u>') . ', '?>
-	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>','</u>') . ', '?>
-	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>','</u>')?>
+	<?=$directionicons['to']   . ' = ' . sprintf(gettext('All connections %sto%s the address are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the address are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>', '</u>')?>
 <?php
-else :
+else:
 ?>
 		</tbody>
 	</table>

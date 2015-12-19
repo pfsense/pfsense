@@ -27,12 +27,6 @@
 
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayd
-	pfSense_MODULE:	routing
-*/
-
-
 /* include all configuration functions */
 
 class Monitor {

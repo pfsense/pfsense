@@ -482,7 +482,7 @@ $form->addGlobal(new Form_Input(
 
 $section = new Form_Section(fixup_string($title));
 
-if($description) {
+if ($description) {
 	$section->addInput(new Form_StaticText(
 		null,
 		fixup_string($description)
@@ -523,7 +523,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 		}
 
 
-		if(DEBUG) {
+		if (DEBUG) {
 			print('Step: ' . $pkg['step'][$stepid]['id'] . ', Field: ' . $field['type'] . ', Name: ' . $name . '<br />');
 		}
 
@@ -585,10 +585,11 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				$etitle = (fixup_string($field['displayname'])) ? $field['displayname'] : $field['name'];
 
-				if (($field['multiple'] != "") && ($field['multiple'] != "0"))
+				if (($field['multiple'] != "") && ($field['multiple'] != "0")) {
 					$multiple = true;
-				else
+				} else {
 					$multiple = false;
+				}
 
 				if ($field['add_to_interfaces_selection'] != "") {
 					if ($field['add_to_interfaces_selection'] == $value) {
@@ -612,8 +613,9 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 						}
 					}
 
-					if ($value == $ifname)
+					if ($value == $ifname) {
 						array_push($selected, $value);
+					}
 
 					$canecho = 0;
 					if ($field['interface_filter'] != "") {
@@ -673,8 +675,9 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				foreach ($config['ca'] as $ca) {
 					$caname = htmlspecialchars($ca['descr']);
 
-					if ($value == $caname)
+					if ($value == $caname) {
 						$selected = $value;
+					}
 
 					$canecho = 0;
 					if ($field['certca_filter'] != "") {
@@ -998,7 +1001,7 @@ if ($pkg['step'][$stepid]['disableallfieldsbydefault'] != "") {
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	enablechange();
 	disablechange();
 	showchange();

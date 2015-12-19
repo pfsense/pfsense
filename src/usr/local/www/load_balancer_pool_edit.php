@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-pool-edit
@@ -76,10 +73,12 @@ if (!is_array($config['load_balancer']['lbpool'])) {
 
 $a_pool = &$config['load_balancer']['lbpool'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_pool[$id]) {
 	$pconfig['name'] = $a_pool[$id]['name'];
@@ -105,55 +104,61 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "name mode port monitor servers");
-	$reqdfieldsn = array(gettext("Name"),gettext("Mode"),gettext("Port"),gettext("Monitor"),gettext("Server List"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Mode"), gettext("Port"), gettext("Monitor"), gettext("Server List"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	/* Ensure that our pool names are unique */
-	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++)
-		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id))
+	for ($i=0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
+		if (($_POST['name'] == $config['load_balancer']['lbpool'][$i]['name']) && ($i != $id)) {
 			$input_errors[] = gettext("This pool name has already been used.  Pool names must be unique.");
+		}
+	}
 
-	if (preg_match('/[ \/]/', $_POST['name']))
+	if (preg_match('/[ \/]/', $_POST['name'])) {
 		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+	}
 
-	if (strlen($_POST['name']) > 16)
+	if (strlen($_POST['name']) > 16) {
 		$input_errors[] = gettext("The 'name' field must be 16 characters or less.");
+	}
 
-	if (in_array($_POST['name'], $reserved_table_names))
+	if (in_array($_POST['name'], $reserved_table_names)) {
 		$input_errors[] = sprintf(gettext("The name '%s' is a reserved word and cannot be used."), $_POST['name']);
+	}
 
-	if (is_alias($_POST['name']))
+	if (is_alias($_POST['name'])) {
 		$input_errors[] = sprintf(gettext("Sorry, an alias is already named %s."), $_POST['name']);
+	}
 
-	if (!is_portoralias($_POST['port']))
+	if (!is_portoralias($_POST['port'])) {
 		$input_errors[] = gettext("The port must be an integer between 1 and 65535, or a port alias.");
+	}
 
 	// May as well use is_port as we want a positive integer and such.
-	if (!empty($_POST['retry']) && !is_port($_POST['retry']))
+	if (!empty($_POST['retry']) && !is_port($_POST['retry'])) {
 		$input_errors[] = gettext("The retry value must be an integer between 1 and 65535.");
+	}
 
 	if (!in_array($_POST['mode'], $allowed_modes)) {
 		$input_errors[] = gettext("The submitted mode is not valid.");
 	}
 
 	if (is_array($_POST['servers'])) {
-		foreach($pconfig['servers'] as $svrent) {
+		foreach ($pconfig['servers'] as $svrent) {
 			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
 				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"enabled\" list)."), $svrent);
-			}
-			else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
+			} else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
 				$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses (in \"enabled\" list)."), $svrent);
 			}
 		}
 	}
 
 	if (is_array($_POST['serversdisabled'])) {
-		foreach($pconfig['serversdisabled'] as $svrent) {
+		foreach ($pconfig['serversdisabled'] as $svrent) {
 			if (!is_ipaddr($svrent) && !is_subnetv4($svrent)) {
 				$input_errors[] = sprintf(gettext("%s is not a valid IP address or IPv4 subnet (in \"disabled\" list)."), $svrent);
-			}
-			else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
+			} else if (is_subnetv4($svrent) && subnet_size($svrent) > 64) {
 				$input_errors[] = sprintf(gettext("%s is a subnet containing more than 64 IP addresses (in \"disabled\" list)."), $svrent);
 			}
 		}
@@ -161,19 +166,23 @@ if ($_POST) {
 
 	$m = array();
 
-	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++)
+	for ($i=0; isset($config['load_balancer']['monitor_type'][$i]); $i++) {
 		$m[$config['load_balancer']['monitor_type'][$i]['name']] = $config['load_balancer']['monitor_type'][$i];
+	}
 
-	if (!isset($m[$_POST['monitor']]))
+	if (!isset($m[$_POST['monitor']])) {
 		$input_errors[] = gettext("Invalid monitor chosen.");
+	}
 
 	if (!$input_errors) {
 		$poolent = array();
-		if(isset($id) && $a_pool[$id])
+		if (isset($id) && $a_pool[$id]) {
 			$poolent = $a_pool[$id];
+		}
 
-		if($poolent['name'] != "")
+		if ($poolent['name'] != "") {
 			$changedesc .= sprintf(gettext(" modified '%s' pool:"), $poolent['name']);
+		}
 
 		update_if_changed("name", $poolent['name'], $_POST['name']);
 		update_if_changed("mode", $poolent['mode'], $_POST['mode']);
@@ -187,12 +196,14 @@ if ($_POST) {
 		if (isset($id) && $a_pool[$id]) {
 			/* modify all virtual servers with this name */
 			for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
-				if ($config['load_balancer']['virtual_server'][$i]['lbpool'] == $a_pool[$id]['name'])
+				if ($config['load_balancer']['virtual_server'][$i]['lbpool'] == $a_pool[$id]['name']) {
 					$config['load_balancer']['virtual_server'][$i]['lbpool'] = $poolent['name'];
+				}
 			}
 			$a_pool[$id] = $poolent;
-		} else
+		} else {
 			$a_pool[] = $poolent;
+		}
 
 		if ($changecount > 0) {
 			/* Mark pool dirty */
@@ -205,7 +216,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"),gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -213,7 +224,7 @@ include("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Disables the specified input element
 	function disableInput(id, disable) {
@@ -232,9 +243,9 @@ events.push(function(){
 		var len = From.length;
 		var option;
 
-		if(len > 1) {
-			for(i=0; i<len; i++) {
-				if(From.eq(i).is(':selected')) {
+		if (len > 1) {
+			for (i=0; i<len; i++) {
+				if (From.eq(i).is(':selected')) {
 					option = From.eq(i).val();
 					value  = From.eq(i).text();
 					To.append(new Option(value, option));
@@ -249,7 +260,7 @@ events.push(function(){
 		if ($("#mode").val() == "failover") {
 			disableInput('movetoenabled', $('[name="servers[]"] option').length > 0);
 		} else {
-			disableInput('movetoenabled',false);
+			disableInput('movetoenabled', false);
 		}
 	}
 
@@ -262,8 +273,8 @@ events.push(function(){
 		var len = $('[name="servers[]"] option').length;
 		var option;
 
-		if(len > 1) {
-			for(i=len-1; i>0; i--) {
+		if (len > 1) {
+			for (i=len-1; i>0; i--) {
 				option = $('[name="servers[]"] option').eq(i).val();
 				$('[name="serversdisabled[]"]').append(new Option(option, option));
 				$('[name="servers[]"] option').eq(i).remove();
@@ -310,7 +321,7 @@ events.push(function(){
 	checkPoolControls();
 
 	// On submit
-	$('form').submit(function(){
+	$('form').submit(function() {
 		AllServers($('[name="servers[]"] option'), true);
 		AllServers($('[name="serversdisabled[]"] option'), true);
 	});
@@ -320,8 +331,9 @@ events.push(function(){
 </script>
 
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -375,10 +387,11 @@ $section = new Form_Section('Add item to the pool');
 
 $monitorlist = array();
 
-foreach ($config['load_balancer']['monitor_type'] as $monitor)
+foreach ($config['load_balancer']['monitor_type'] as $monitor) {
 	$monitorlist[$monitor['name']] = $monitor['name'];
+}
 
-if(count($config['load_balancer']['monitor_type'])) {
+if (count($config['load_balancer']['monitor_type'])) {
 	$section->addInput(new Form_Select(
 		'monitor',
 		'Monitor',
@@ -417,8 +430,9 @@ $list = array();
 
 if (is_array($pconfig['serversdisabled'])) {
 	foreach ($pconfig['serversdisabled'] as $svrent) {
-		if ($svrent != '')
+		if ($svrent != '') {
 			$list[$svrent] = $svrent;
+		}
 	}
 }
 
@@ -483,7 +497,7 @@ print($form);
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;

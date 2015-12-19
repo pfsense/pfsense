@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/cd	/usr/local/bin/rrdtool	/usr/bin/nice
-	pfSense_MODULE:	config
-*/
 
 if (!function_exists("dump_rrd_to_xml")) {
 	require("rrd.inc");
@@ -4192,4 +4188,11 @@ function upgrade_130_to_131() {
 	}
 }
 
+function upgrade_131_to_132() {
+	global $config;
+	if (isset($config['system']['usefifolog'])) {
+		unset($config['system']['usefifolog']);
+		clear_all_log_files(false);
+	}
+}
 ?>

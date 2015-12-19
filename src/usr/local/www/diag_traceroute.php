@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-traceroute
 ##|*NAME=Diagnostics: Traceroute
@@ -90,8 +85,9 @@ function create_sourceaddresslist() {
 
 	$sourceips = get_possible_traffic_source_addresses(true);
 
-	foreach ($sourceips as $sipvalue => $sipname)
+	foreach ($sourceips as $sipvalue => $sipname) {
 		$list[$sipvalue] = $sipname;
+	}
 
 	return($list);
 }
@@ -135,8 +131,9 @@ if ($_POST || $_REQUEST['host']) {
 	$useicmp = false;
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form('Traceroute');
 
@@ -212,10 +209,11 @@ if (!$input_errors && $do_traceroute) {
 		<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
 		<div class="panel-body">
 <?php
-		if ($result = shell_exec($cmd))
+		if ($result = shell_exec($cmd)) {
 			print(nl2br($result));
-		else
+		} else {
 			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
+		}
 ?>
 		</div>
 	</div>

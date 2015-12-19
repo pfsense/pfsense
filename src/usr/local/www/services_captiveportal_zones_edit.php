@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editzones
@@ -113,8 +110,9 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'submit',

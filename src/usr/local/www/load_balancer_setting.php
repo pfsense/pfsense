@@ -54,9 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-setting
@@ -120,20 +117,23 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Settings"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Settings"));
 $shortcut_section = "relayd";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('loadbalancer'))
+if (is_subsystem_dirty('loadbalancer')) {
 	print_info_box_np(gettext("The load balancer configuration has been changed") . ' ' .
 					  gettext("You must apply the changes in order for them to take effect."), 'Apply', null, false, 'danger');
+}
 
 /* active tabs */
 $tab_array = array();

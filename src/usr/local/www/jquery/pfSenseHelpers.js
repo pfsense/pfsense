@@ -106,9 +106,9 @@ function hideSelect(id, hide) {
 
 function hideMultiCheckbox(id, hide) {
 	if(hide)
-		$('#' + id).parent().addClass('hidden');
+		$("[name=" + id + "]").parent().addClass('hidden');
 	else
-		$('#' + id).parent().removeClass('hidden');
+		$("[name=" + id + "]").parent().removeClass('hidden');
 }
 
 // Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
@@ -138,7 +138,7 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
-// Toggle table row chackboxes and background colors on the pages that use sortable tables:
+// Toggle table row checkboxes and background colors on the pages that use sortable tables:
 //	/usr/local/www/firewall_nat.php
 //	/usr/local/www/firewall_nat_1to1.php
 //	/usr/local/www/firewall_nat_out.php
@@ -214,13 +214,18 @@ function moveHelpText(id) {
 		var helpSpan;
 
 		if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
-
-			helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+			if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
+			} else {
+				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
+			}
 			if($(helpSpan).hasClass('help-block')) {
-				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
+				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
-				else
+				}
+				else {
 					$('#' + decrStringInt(fromId)).after(helpSpan);
+				}
 			}
 		}
 	});
@@ -341,6 +346,21 @@ function add_row() {
 			}
 		});
 	}
+
+	// Now that we are no longer cloning the event handlers, we need to remove and re-add after a new row
+	// has been added to the table
+	$('[id^=delete]').unbind();
+	$('[id^=delete]').click(function(event) {
+		if($('.repeatable').length > 1) {
+			if((typeof retainhelp) == "undefined")
+				moveHelpText(event.target.id);
+
+			delete_row(event.target.id);
+		}
+		else
+			alert('You may not delete the last row!');
+	});
+
 }
 
 // These are action buttons, not submit buttons
@@ -388,36 +408,36 @@ $('tbody').each(function(){
 
 $('tbody:empty').html("<tr><td></td></tr>");
 
-	// Hide configuration button for panels without configuration
-	$('.container .panel-heading a.config').each(function (idx, el){
-		var config = $(el).parents('.panel').children('.panel-footer');
-		if (config.length == 1)
-			$(el).removeClass('hidden');
+// Hide configuration button for panels without configuration
+$('.container .panel-heading a.config').each(function (idx, el){
+	var config = $(el).parents('.panel').children('.panel-footer');
+	if (config.length == 1)
+		$(el).removeClass('hidden');
+});
+
+// Initial state & toggle icons of collapsed panel
+$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+	var body = $(el).parents('.panel').children('.panel-body')
+	var isOpen = body.hasClass('in');
+
+	$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+	$(el).children('i').toggleClass('fa-minus-circle', isOpen);
+
+	body.on('shown.bs.collapse', function(){
+		$(el).children('i').toggleClass('fa-minus-circle', true);
+		$(el).children('i').toggleClass('fa-plus-circle', false);
+
+		if($(el).closest('a').attr('id') != 'widgets-available') {
+			updateWidgets();
+		}
 	});
 
-	// Initial state & toggle icons of collapsed panel
-	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body')
-		var isOpen = body.hasClass('in');
+	body.on('hidden.bs.collapse', function(){
+		$(el).children('i').toggleClass('fa-minus-circle', false);
+		$(el).children('i').toggleClass('fa-plus-circle', true);
 
-		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
-		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
-
-		body.on('shown.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', true);
-			$(el).children('i').toggleClass('fa-plus-circle', false);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
-
-		body.on('hidden.bs.collapse', function(){
-			$(el).children('i').toggleClass('fa-minus-circle', false);
-			$(el).children('i').toggleClass('fa-plus-circle', true);
-
-			if($(el).closest('a').attr('name') != 'widgets-available') {
-				updateWidgets();
-			}
-		});
+		if($(el).closest('a').attr('id') != 'widgets-available') {
+			updateWidgets();
+		}
 	});
+});

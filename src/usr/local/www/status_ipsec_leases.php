@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec
-	pfSense_MODULE: ipsec
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-ipsec-leases
 ##|*NAME=Status: IPsec: Leases
@@ -141,8 +136,7 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 <?php
 
 					}
-				}
-				else {
+				} else {
 ?>
 					<td colspan="3" class="warning"><?=gettext('No leases from this pool yet.')?></td>
 				</tr>
@@ -154,9 +148,9 @@ if (isset($mobile['pool']) && is_array($mobile['pool'])) {
 		</table>
 	</div>
 <?php
-}
-else
+} else {
 	print_info_box(gettext('No IPsec pools.'));
+}
 
 print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
 

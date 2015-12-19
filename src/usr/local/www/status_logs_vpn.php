@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/local/sbin/clog
-	pfSense_MODULE: vpn
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-pptpvpn
 ##|*NAME=Status: Logs: VPN
@@ -119,11 +114,7 @@ function dump_clog_vpn($logfile, $tail) {
 
 	$logarr = "";
 
-	if (isset($config['system']['usefifolog'])) {
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
-	}
+	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | tail {$sor} -n " . $tail, $logarr);
 
 	$rows = 0;
 	foreach ($logarr as $logent) {
@@ -202,32 +193,33 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 <?php
 					$rows = dump_clog_vpn("/var/log/vpn.log", $nentries);	// dump_clog_vpn provides all the need <td></td>/<tr></tr> tags
 ?>
-					</tbody>
-				</table>
+				</tbody>
+			</table>
 <?php
-			if ($rows == 0)
+			if ($rows == 0) {
 				print_info_box('No logs to display');
+			}
 ?>
 		</div>
 <?php
-		}
-		else {
+		} else {
 ?>
 		<pre>
 <?php
-		if (dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0)
+		if (dump_clog_no_table("/var/log/{$logname}.log", $nentries) == 0) {
 			print('No logs to display');
+		}
 ?>
 		</pre>
 <?php
 		}
 ?>
+		<form action="status_logs_vpn.php" method="post">
+			<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
+			<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
+			<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
+		</form>
 		<p>
-			<form action="status_logs_vpn.php" method="post">
-				<input type="hidden" name="vpntype" id="vpntype" value="<?=$vpntype?>" />
-				<input type="hidden" name="mode" id="mode" value="<?=$mode?>" />
-				<input name="clear" type="submit" class="btn btn-danger" value="<?=gettext("Clear log")?>" />
-			</form>
 		</p>
 	</div>
 </div>

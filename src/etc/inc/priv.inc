@@ -39,10 +39,6 @@
 
 */
 
-/*
-	pfSense_MODULE:	auth
-*/
-
 require_once("priv.defs.inc");
 
 /* Load and process custom privs. */

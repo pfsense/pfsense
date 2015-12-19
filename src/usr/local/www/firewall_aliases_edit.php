@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /bin/mkdir	/usr/bin/fetch
-	pfSense_MODULE: aliases
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-edit
@@ -116,7 +112,7 @@ function alias_same_type($name, $type) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
-				in_array($alias['type'], array("host", "network"))) {
+			    in_array($alias['type'], array("host", "network"))) {
 				return true;
 			}
 
@@ -426,7 +422,7 @@ if ($_POST) {
 				if (!alias_same_type($input_address, $_POST['type'])) {
 					// But alias type network can include alias type urltable. Feature#1603.
 					if (!($_POST['type'] == 'network' &&
-						preg_match("/urltable/i", alias_get_type($input_address)))) {
+					    preg_match("/urltable/i", alias_get_type($input_address)))) {
 						$wrongaliases .= " " . $input_address;
 					}
 				}
@@ -436,7 +432,7 @@ if ($_POST) {
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 				if (is_subnet($input_address) ||
-					(!is_ipaddr($input_address) && !is_hostname($input_address))) {
+				    (!is_ipaddr($input_address) && !is_hostname($input_address))) {
 					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $_POST['type']);
 				}
 			}
@@ -606,25 +602,20 @@ $types = array(
 );
 
 if (empty($tab)) {
-	if (preg_match("/url/i", $pconfig['type']))
+	if (preg_match("/url/i", $pconfig['type'])) {
 		$tab = 'url';
-	else if ($pconfig['type'] == 'host')
+	} else if ($pconfig['type'] == 'host') {
 		$tab = 'ip';
-	else
+	} else {
 		$tab = $pconfig['type'];
+	}
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
-
-$form->addGlobal(new Form_Input(
-	'tab',
-	null,
-	'hidden',
-	$tab
-));
 
 $form->addGlobal(new Form_Input(
 	'tab',
@@ -640,8 +631,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['name']
 ));
 
-if (isset($id) && $a_aliases[$id])
-{
+if (isset($id) && $a_aliases[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -741,7 +731,7 @@ print $form;
 //<![CDATA[
 addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
 
-events.push(function(){
+events.push(function() {
 
 	var disable_subnets;
 
@@ -771,7 +761,7 @@ events.push(function(){
 		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));
 
 		// The add button and delete buttons must not show on  URL Table IP or URL table ports
-		if((tab == 'urltable') || (tab == 'urltable_ports')) {
+		if ((tab == 'urltable') || (tab == 'urltable_ports')) {
 			hideClass('addbtn', true);
 			$('[id^=deleterow]').hide();
 		} else {
@@ -785,7 +775,7 @@ events.push(function(){
 		var idx = 0;
 
 		$('.repeatable').each(function(el) {
-			if ( idx >= row ) {
+			if (idx >= row) {
 				hideRow(idx, hide);
 			}
 
@@ -815,7 +805,7 @@ events.push(function(){
 
 	// Autocomplete
 	$('[id^=address]').each(function() {
-		if(this.id.substring(0, 8) != "address_") {
+		if (this.id.substring(0, 8) != "address_") {
 			$(this).autocomplete({
 				source: addressarray
 			});

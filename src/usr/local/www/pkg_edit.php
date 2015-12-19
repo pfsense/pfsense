@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-package-edit
@@ -129,8 +125,9 @@ if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_s
 }
 
 // If the first entry in the array is an empty <config/> tag, kill it.
-if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0)
-	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
+if ($config['installedpackages'] &&
+    (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
+    ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 }
 
@@ -285,20 +282,6 @@ if ($_POST) {
 	}
 }
 
-if ($pkg['title'] != "") {
-	$edit = ($only_edit ? '' : ": " . gettext("Edit"));
-	$pgtitle = $pkg['title'] . $edit;
-} else {
-	$pgtitle = gettext("Package Editor");
-}
-
-if ($pkg['custom_php_after_head_command']) {
-	$closehead = false;
-	include("head.inc");
-	eval($pkg['custom_php_after_head_command']);
-} else {
-	include("head.inc");
-}
 
 // Turn an embedded table into a bootstrap class table. This is for backward compatibility.
 // We remove any table attributes in the XML and replace them with Bootstrap table classes
@@ -307,7 +290,7 @@ function bootstrapTable($text) {
 	$c = strpos($text, '>', $t);						// And its closing bracket
 
 	// Substitute everything inbetween with our new classes
-	if($t && $c && (($c - $t) < 200) ) {
+	if ($t && $c && (($c - $t) < 200)) {
 		return(substr_replace($text, ' class="table table-striped table-hover table-condensed"', $t, ($c - $t)));
 	}
 }
@@ -395,7 +378,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 			foreach ($ifaces as $ifname => $iface) {
 				$options[$ifname] = $iface;
 
-				if(in_array($ifname, $values)) {
+				if (in_array($ifname, $values)) {
 					array_push($selected, $ifname);
 				}
 			}
@@ -426,7 +409,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 				$source_value = ($rowhelper['source_value'] ? $opt[$rowhelper['source_value']] : $opt[$rowhelper['value']]);
 				$options[$source_value] = $source_name;
 
-				if($source_value == $value) {
+				if ($source_value == $value) {
 					array_push($selected, $value);
 				}
 			}
@@ -529,12 +512,24 @@ function parse_package_templates() {
 	}
 }
 
-// Start of page display
-if ($input_errors)
-	print_input_errors($input_errors);
+//breadcrumb
+if ($pkg['title'] != "") {
+	if (!$only_edit) {
+		$pkg['title'] = $pkg['title'] . '/Edit';
+	}
 
-if ($savemsg)
-	print_info_box($savemsg, 'success');
+	if (strpos($pkg['title'], '/')) {
+		$title = explode('/', $pkg['title']);
+
+		foreach ($title as $subtitle) {
+			$pgtitle[] = gettext($subtitle);
+		}
+	} else {
+		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+	}
+} else {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
+}
 
 // Create any required tabs
 if ($pkg['tabs'] != "") {
@@ -548,6 +543,7 @@ if ($pkg['tabs'] != "") {
 
 		if (isset($tab['active'])) {
 			$active = true;
+			$pgtitle[] = $tab['text'] ;
 		} else {
 			$active = false;
 		}
@@ -586,10 +582,28 @@ if ($pkg['tabs'] != "") {
 	}
 
 	ksort($tab_array);
+}
 
+if ($pkg['custom_php_after_head_command']) {
+	$closehead = false;
+	include("head.inc");
+	eval($pkg['custom_php_after_head_command']);
+} else {
+	include("head.inc");
+}
+if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
 		display_top_tabs($tab); //, $no_drop_down, $tabid);
 	}
+}
+
+// Start of page display
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $cols = 0;
@@ -598,12 +612,23 @@ if ($pkg['savetext'] != "") {
 	$savevalue = $pkg['savetext'];
 }
 
+$savehelp = gettext("");
+if ($pkg['savehelp'] != "") {
+	$savehelp = $pkg['savehelp'];
+}
+
 $grouping = false; // Indicates the elements we are composing are part of a combined group
 
-$form = new Form(new Form_Button(
+$savebutton = new Form_Button(
 	'submit',
 	$savevalue
-));
+);
+
+if ($savehelp) {
+	$savebutton->setHelp($savehelp);
+}
+
+$form = new Form($savebutton);
 
 $form->addGlobal(new Form_Input(
 	'xml',
@@ -643,8 +668,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$advfield_count++;
 		}  else {
-			if(isset($section))
+			if (isset($section)) {
 				$form->add($section);
+			}
 
 			$section = new Form_Section(strip_tags($pkga['name']));
 		}
@@ -681,8 +707,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 	// If we get here but have no $section, the package config file probably had no listtopic field
 	// We can create a section with a generic name to fix that
-	if(!$section)
+	if (!$section) {
 		$section = new Form_Section(gettext('General options'));
+	}
 
 	switch ($pkga['type']) {
 		// Create an input element. The format is slightly different depending on whether we are composing a group,
@@ -755,10 +782,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		case "info":
 			// If the info contains a table we should detect and Bootstrap it
 
-			if (strpos($pkga['description'], '<table') !== FALSE)
+			if (strpos($pkga['description'], '<table') !== FALSE) {
 				$info = bootstrapTable($pkga['description']);
-			else
+			} else {
 				$info = $pkga['description'];
+			}
 
 			if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 				$advanced->addInput(new Form_StaticText(
@@ -800,12 +828,13 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if (isset($pkga['advancedfield']) && isset($advfield_count))
+			if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 				$function = $grouping ? $advanced->add:$advanced->addInput;
-			else
+			} else {
 				$function = ($grouping) ? $section->add:$section->addInput;
+			}
 
-			if($grouping) {
+			if ($grouping) {
 					$group->add(new Form_Select(
 						$pkga['fieldname'],
 						strip_tags($pkga['fielddescr']),
@@ -863,11 +892,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 				$srcoptions[$source_value] = $source_name;
 
-				if(in_array($source_value, $items))
+				if (in_array($source_value, $items)) {
 					array_push($srcselected, $source_value);
+				}
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					strip_tags($pkga['fielddescr']),
@@ -905,7 +935,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					null,
@@ -935,12 +965,13 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		// Create a checkbox element
 		case "checkbox":
 			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
-			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
+			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields'])) {
 				$onclick = 'javascript:enablechange();';
-			else
+			} else {
 				$onclick = '';
+			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1046,7 +1077,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if(grouping) {
+			if (grouping) {
 				$group->add(new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1163,7 +1194,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$optionlist[$iface['ip']] = $iface['description'];
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1195,7 +1226,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create radio button
 		case "radio":
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1232,22 +1263,22 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$pkga['fieldname']
 			);
 
-			if(grouping) {
+			if (grouping) {
 				$group->add(new Form_StaticText(
 					null,
 					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
 				));
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-				$advanced->addInput(new Form_StaticText(
-					null,
-					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
-				));
+					$advanced->addInput(new Form_StaticText(
+						null,
+						$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
+					));
 				} else {
-				$section->addInput(new Form_StaticText(
-					null,
-					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
-				));
+					$section->addInput(new Form_StaticText(
+						null,
+						$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
+					));
 				}
 			}
 
@@ -1274,7 +1305,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1335,7 +1366,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						}
 
 						$type = $rowhelper['type'];
-						if ($type == "input" || $type == "password" || $type == "textarea" ) {
+						if ($type == "input" || $type == "password" || $type == "textarea") {
 							if (($rowhelper['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
 								$value = base64_decode($value);
 							}
@@ -1382,10 +1413,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				null
 			));
 
-			if($advanced)
+			if ($advanced) {
 				$advanced->add($group);
-			else
+			} else {
 				$section->add($group);
+			}
 
 			$grouping = false;
 		}
@@ -1404,7 +1436,7 @@ $form->addGlobal(new Form_Input(
 ));
 
 // If we created an advanced section, add it (and a button) to the form here
-if(!empty($advanced)) {
+if (!empty($advanced)) {
 	$form->addGlobal(new Form_Button(
 		'showadv',
 		'Show advanced options'
@@ -1417,15 +1449,16 @@ print($form);
 
 if ($pkg['note'] != "") {
 	print_info_box($pkg['note']);
+}
 
-if ($pkg['custom_php_after_form_command'])
+if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 
 if ($pkg['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
-	events.push(function(){
+	events.push(function() {
 
 	// Hide the advanced section
 	var advanced_visible = false;
@@ -1442,11 +1475,10 @@ if ($pkg['fields']['field'] != "") { ?>
 	$("#showadv").click(function() {
 		advanced_visible = !advanced_visible;
 
-		if(advanced_visible) {
+		if (advanced_visible) {
 			$('.advancedoptions').show();
 			$("#showadv").prop('value', 'Hide advanced Options');
-		}
-		else {
+		} else {
 			$('.advancedoptions').hide();
 			$("#showadv").prop('value', 'Show advanced Options');
 		}

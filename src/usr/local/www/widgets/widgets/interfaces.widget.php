@@ -105,7 +105,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		</td>
 		<td>
 			<?php if ($known_status):?>
-				<i class="fa fa-<?=$icon?>" alt="<?=htmlspecialchars($ifinfo['status'])?>"></i>
+				<i class="fa fa-<?=$icon?>" title="<?=htmlspecialchars($ifinfo['status'])?>"></i>
 			<?php else: ?>
 				<?=htmlspecialchars($ifinfo['status'])?>
 			<?php endif; ?>
@@ -114,7 +114,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?=htmlspecialchars($ifinfo['media']);?>
 		</td>
 
-		<td<?=($ifinfo['dhcplink'] ? ' title="via dhcp"':'')?>>
+		<td <?=($ifinfo['dhcplink'] ? ' title="via dhcp"':'')?>>
 			<?php if (empty($ifinfo['ipaddr']) && empty($ifinfo['ipaddrv6'])): ?>
 				n/a
 			<?php else: ?>

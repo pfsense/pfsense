@@ -139,21 +139,19 @@ $(function() {
 		}
 	});
 
-	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons
+	// Add toggle-all when there are multiple checkboxes
 	$('.control-label + .checkbox.multi').each(function() {
 		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
 
-		if(($(this).html().indexOf("type=\"radio\"") == -1)) {
-			a.on('click', function() {
-				var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
-					all = wrap.find('input[type=checkbox]'),
-					checked = wrap.find('input[type=checkbox]:checked');
+		a.on('click', function() {
+			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
+				all = wrap.find('input[type=checkbox]'),
+				checked = wrap.find('input[type=checkbox]:checked');
 
-				all.prop('checked', (all.length != checked.length));
-			});
+			all.prop('checked', (all.length != checked.length));
+		});
 
-			a.appendTo($(this));
-		}
+		a.appendTo($(this));
 	});
 
 	// The need to NOT hide the advanced options if the elements therein are not set to the system

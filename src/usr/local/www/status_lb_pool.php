@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-pool
@@ -90,8 +87,9 @@ $lb_logfile = "{$g['varlog_path']}/relayd.log";
 
 $nentries = $config['syslog']['nentries'];
 
-if (!$nentries)
+if (!$nentries) {
 	$nentries = 50;
+}
 
 $now = time();
 $year = date("Y");
@@ -146,8 +144,9 @@ if ($_POST) {
 	}
 }
 
-if (is_subsystem_dirty('loadbalancer'))
+if (is_subsystem_dirty('loadbalancer')) {
 	print_info_box_np('The load balancer configuration has been changed You must apply the changes in order for them to take effect.');
+}
 
 /* active tabs */
 $tab_array = array();
@@ -183,7 +182,7 @@ foreach ($a_pool as $pool):
 						</td>
 						<td>
 <?php
-	switch($pool['mode']) {
+	switch ($pool['mode']) {
 		case "loadbalance":
 			echo "Load balancing";
 			break;
@@ -217,7 +216,7 @@ foreach ($a_pool as $pool):
 	asort($pool_hosts);
 
 	foreach ((array) $pool_hosts as $server) {
-		if($server['ip']['addr']!="") {
+		if ($server['ip']['addr'] != "") {
 			switch ($server['ip']['state']) {
 				case 'up':
 					$bgcolor = LIGHTGREEN;	// lightgreen
@@ -245,8 +244,9 @@ foreach ($a_pool as $pool):
 
 			print("<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;");
 
-			if($server['ip']['avail'])
+			if ($server['ip']['avail']) {
 				print(" ({$server['ip']['avail']}) ");
+			}
 ?>
 									</td>
 								</tr>
@@ -273,7 +273,7 @@ endforeach;
 </form>
 
 <?php
-if($rowsprinted > 0) {
+if ($rowsprinted > 0) {
 ?>
 			<nav class="action-buttons">
 				<button name="Submit" type="submit" class="btn btn-primary btn-sm" value="<?= gettext("Save"); ?>" >

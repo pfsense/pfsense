@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager
@@ -72,8 +68,8 @@ require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
 /* if upgrade in progress, alert user */
-if(is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+if (is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
 	print_info_box_np("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
@@ -82,7 +78,7 @@ if(is_subsystem_dirty('packagelock')) {
 
 $pkg_info = get_pkg_info();
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"),gettext("Available Packages"));
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Available Packages"));
 
 include("head.inc");
 
@@ -91,7 +87,7 @@ $tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-if($pkg_info) {
+if ($pkg_info) {
 	//Check categories
 	$categories=array();
 	foreach ($pkg_info as $pkg_data) {
@@ -108,32 +104,34 @@ if($pkg_info) {
 	$categories_max_display=($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
 
 	/* check selected category or define default category to show */
-	if (isset($_REQUEST['category']))
+	if (isset($_REQUEST['category'])) {
 		$menu_category = $_REQUEST['category'];
-	else if (isset($g['pkg_default_category']))
+	} else if (isset($g['pkg_default_category'])) {
 		$menu_category = $g['pkg_default_category'];
-	else
+	} else {
 		$menu_category = "All";
+	}
 
 	$menu_category = (isset($_REQUEST['category']) ? $_REQUEST['category'] : "All");
 	$show_category = ($menu_category == "Other" || $menu_category == "All");
 
-	$tab_array[] = array(gettext("All"), $menu_category=="All" ? true : false, "pkg_mgr.php?category=All");
+	$tab_array[] = array(gettext("All"), $menu_category == "All" ? true : false, "pkg_mgr.php?category=All");
 	foreach ($categories as $category => $c_count) {
 		if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
-			$tab_array[] = array(gettext($category) , $menu_category==$category ? true : false, "pkg_mgr.php?category={$category}");
+			$tab_array[] = array(gettext($category) , $menu_category == $category ? true : false, "pkg_mgr.php?category={$category}");
 			$visible_categories[]=$category;
 			$cm_count++;
 		}
 	}
 
-	$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
+	$tab_array[] = array(gettext("Other Categories"), $menu_category == "Other" ? true : false, "pkg_mgr.php?category=Other");
 
 //	if (count($categories) > 1)
 //		display_top_tabs($tab_array);
 }
 
-if(!$pkg_info || !is_array($pkg_info)):?>
+if (!$pkg_info || !is_array($pkg_info)):
+?>
 <div class="alert alert-warning">
 	<?=gettext("There are currently no packages available for installation.")?>
 </div>
@@ -189,7 +187,7 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 			<tbody>
 <?php
 
-	foreach($pkg_info as $index):
+	foreach ($pkg_info as $index):
 		if (isset($index['installed'])) {
 			continue;
 		}
@@ -209,26 +207,38 @@ if(!$pkg_info || !is_array($pkg_info)):?>
 					</td>
 
 <?php
-	 if (!$g['disablepackagehistory']):?>
+		if (!$g['disablepackagehistory']):
+?>
 					<td>
 						<?=htmlspecialchars($index['version'])?>
 					</td>
 <?php
-endif;
+		endif;
 ?>
 					<td>
 						<?=$index['desc']?>
+<?php if (is_array($index['deps']) && count($index['deps'])): ?>
+						<br /><br /><?= gettext("Package Dependencies") ?>:
+	<?php foreach ($index['deps'] as $pdep): ?>
+						<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
+	<?php endforeach; ?>
+<?php endif; ?>
 					</td>
 					<td>
 						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
-<?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
+<?php
+		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):
+?>
 						<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
-<?php endif;?>
+<?php
+		endif;
+?>
 					</td>
 				</tr>
 <?php
 	endforeach;
-endif;?>
+endif;
+?>
 			</tbody>
 		</table>
 	</div>
@@ -236,25 +246,25 @@ endif;?>
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Initial state & toggle icons of collapsed panel
-	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el){
+	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el) {
 		var body = $(el).parents('.panel').children('.panel-body')
 		var isOpen = body.hasClass('in');
 
 		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
 		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
 
-		body.on('shown.bs.collapse', function(){
+		body.on('shown.bs.collapse', function() {
 			$(el).children('i').toggleClass('fa-minus-circle', true);
 			$(el).children('i').toggleClass('fa-plus-circle', false);
 		});
 	});
 
 	// Make these controls plain buttons
-	$("#btnsearch").prop('type' ,'button');
-	$("#btnclear").prop('type' ,'button');
+	$("#btnsearch").prop('type', 'button');
+	$("#btnclear").prop('type', 'button');
 
 	// Search for a term in the package name and/or description
 	$("#btnsearch").click(function() {
@@ -268,8 +278,8 @@ events.push(function(){
 				descr = $tds.eq(2).text().trim().toLowerCase();
 
 			regexp = new RegExp(searchstr);
-			if(searchstr.length > 0) {
-				if( !(regexp.test(shortname) && (where != 1)) && !(regexp.test(descr) && (where != 0))) {
+			if (searchstr.length > 0) {
+				if (!(regexp.test(shortname) && (where != 1)) && !(regexp.test(descr) && (where != 0))) {
 					$(this).hide();
 				} else {
 					$(this).show();
@@ -293,7 +303,7 @@ events.push(function(){
 
 	// Hitting the enter key will do the same as clicking the search button
 	$("#searchstr").on("keyup", function (event) {
-	    if (event.keyCode==13) {
+	    if (event.keyCode == 13) {
 	        $("#btnsearch").get(0).click();
 	    }
 	});

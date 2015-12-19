@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficgraph
@@ -86,8 +83,10 @@ if ($_POST['height']) {
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
-if (ipsec_enabled())
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
+}
+
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -148,7 +147,7 @@ function iflist() {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
+$pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
 
@@ -207,7 +206,7 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 
-function updateBandwidth(){
+function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',
 		{
@@ -219,7 +218,7 @@ function updateBandwidth(){
 				$('#top10-hosts').empty();
 
 				//parse top ten bandwidth abuser hosts
-				for (var y=0; y<10; y++){
+				for (var y=0; y<10; y++) {
 					if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
 						hostinfo = hosts_split[y].split(";");
 
@@ -234,8 +233,8 @@ function updateBandwidth(){
 	});
 }
 
-events.push(function(){
-	$('form.auto-submit').on('change', function(){
+events.push(function() {
+	$('form.auto-submit').on('change', function() {
 		$(this).submit();
 	});
 
@@ -248,8 +247,9 @@ events.push(function(){
 <?php
 
 /* link the ipsec interface magically */
-if (ipsec_enabled())
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
+}
 
 ?>
 <div class="panel panel-default">
@@ -270,7 +270,7 @@ if (ipsec_enabled())
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
+						<th><?=(($curhostipformat == "") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
 						<th><?=gettext("Bandwidth In"); ?></th>
 						<th><?=gettext("Bandwidth Out"); ?></th>
 					</tr>

@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gif-edit
@@ -65,8 +62,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['gifs']['gif']))
+if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();
+}
 
 $a_gifs = &$config['gifs']['gif'];
 
@@ -161,20 +159,22 @@ if ($_POST) {
 		$gif['gifif'] = $_POST['gifif'];
 		$gif['gifif'] = interface_gif_configure($gif);
 
-		if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif"))
+		if ($gif['gifif'] == "" || !stristr($gif['gifif'], "gif")) {
 			$input_errors[] = gettext("Error occurred creating interface, please retry.");
-		else {
-			if (isset($id) && $a_gifs[$id])
+		} else {
+			if (isset($id) && $a_gifs[$id]) {
 				$a_gifs[$id] = $gif;
-			else
+			} else {
 				$a_gifs[] = $gif;
+			}
 
 			write_config();
 
 			$confif = convert_real_interface_to_friendly_interface_name($gif['gifif']);
 
-			if ($confif != "")
+			if ($confif != "") {
 				interface_configure($confif);
+			}
 
 			header("Location: interfaces_gif.php");
 			exit;
@@ -185,18 +185,20 @@ if ($_POST) {
 function build_parent_list() {
 	$parentlist = array();
 	$portlist = get_possible_listen_ips();
-	foreach ($portlist as $ifn => $ifinfo)
+	foreach ($portlist as $ifn => $ifinfo) {
 		$parentlist[$ifn] = $ifinfo;
+	}
 
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GIF"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIF"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

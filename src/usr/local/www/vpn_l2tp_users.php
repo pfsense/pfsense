@@ -101,20 +101,23 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 
-if (isset($config['l2tp']['radius']['enable']))
+if (isset($config['l2tp']['radius']['enable'])) {
 	print_info_box(gettext("Warning: RADIUS is enabled. The local user database will not be used."));
+}
 
-if (is_subsystem_dirty('l2tpusers'))
+if (is_subsystem_dirty('l2tpusers')) {
 	print_info_box_np(gettext("The l2tp user list has been modified") . ".<br />" . gettext("You must apply the changes in order for them to take effect") . ".<br /><b>" . gettext("Warning: this will terminate all current l2tp sessions!") . "</b>");
+}
 
 
-	$tab_array = array();
-	$tab_array[] = array(gettext("Configuration"), false, "vpn_l2tp.php");
-	$tab_array[] = array(gettext("Users"), true, "vpn_l2tp_users.php");
-	display_top_tabs($tab_array);
+$tab_array = array();
+$tab_array[] = array(gettext("Configuration"), false, "vpn_l2tp.php");
+$tab_array[] = array(gettext("Users"), true, "vpn_l2tp_users.php");
+display_top_tabs($tab_array);
 ?>
 <div class="table-responsive">
 	<table class="table table-striped table-hover">
@@ -132,7 +135,7 @@ if (is_subsystem_dirty('l2tpusers'))
 					<?=htmlspecialchars($secretent['name'])?>
 				</td>
 				<td>
-					<?php if($secretent['ip'] == "") $secretent['ip'] = "Dynamic"?>
+					<?php if ($secretent['ip'] == "") $secretent['ip'] = "Dynamic"?>
 					<?=htmlspecialchars($secretent['ip'])?>&nbsp;
 				</td>
 				<td>

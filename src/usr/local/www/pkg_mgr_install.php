@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installpackage
@@ -228,7 +224,7 @@ if ($_POST) {
 		case 'reinstallall':
 			$headline = gettext("Reinstall all packages");
 		case 'reinstallpkg':
-			if($_GET['from'] && $_GET['from']) {
+			if ($_GET['from'] && $_GET['from']) {
 				$headline = gettext("Upgrade package");
 			} else {
 				$headline = gettext("Reinstall package");
@@ -244,7 +240,7 @@ if ($_POST) {
 	}
 }
 
-if($_GET && $_GET['id'] == "firmware") {
+if ($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
 	$firmwareversion = get_system_pkg_version();
 	$headline = gettext("System update") ;
@@ -252,12 +248,12 @@ if($_GET && $_GET['id'] == "firmware") {
 
 $tab_array = array();
 
-if($firmwareupdate) {
-	$pgtitle = array(gettext("System"),gettext("Update"), $headline);
+if ($firmwareupdate) {
+	$pgtitle = array(gettext("System"), gettext("Update"), $headline);
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"), $headline);
+	$pgtitle = array(gettext("System"), gettext("Package Manager"), $headline);
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
@@ -266,8 +262,9 @@ if($firmwareupdate) {
 include("head.inc");
 display_top_tabs($tab_array);
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
@@ -342,10 +339,17 @@ if ($input_errors)
 			</div>
 		</div>
 <?php
-		if ($firmwareversion['version'] != $firmwareversion['installed_version'] ) {
+		if ($firmwareversion['version'] != $firmwareversion['installed_version']) {
 ?>
-			<input type="hidden" name="id" value="firmware" />
-			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Confirm Upgrade")?>
+			</label>
+			<div class="col-sm-10">
+				<input type="hidden" name="id" value="firmware" />
+				<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			</div>
+		</div>
 <?php
 		} else {
 ?>
@@ -369,7 +373,7 @@ if ($input_errors)
 	</div>
 <?php endif;
 
-if($firmwareupdate && !$firmwareversion) {
+if ($firmwareupdate && !$firmwareversion) {
 	print_info_box(gettext("Unable to retrieve system versions"), danger);
 }
 
@@ -401,7 +405,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-<?php if($firmwareupdate) {
+<?php if ($firmwareupdate) {
 ?>
 			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
 <?php } else {
@@ -428,7 +432,7 @@ if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
 }
 
-if ($_POST && ($_POST['completed'] != "true") ) {
+if ($_POST && ($_POST['completed'] != "true")) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
@@ -469,11 +473,11 @@ if ($_POST && ($_POST['completed'] != "true") ) {
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
 if ($_POST && $_POST['completed'] == "true"):
-	if($pkgid == 'firmware'):
+	if ($pkgid == 'firmware'):
 ?>
 <script>
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	time = "<?=$guitimeout?>";
 	startCountdown();
 });
@@ -501,14 +505,15 @@ function setProgress(barName, percent, transition) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if("<?=$_POST['mode']?>" != "reinstallall") {
-		if("<?=$pkgid?>" == "firmware") {
+	if ("<?=$_POST['mode']?>" != "reinstallall") {
+		if ("<?=$pkgid?>" == "firmware") {
 			$('#final').html("<b>" + "System update" + " " + "<?=gettext(' successfully completed')?>");
 		} else {
 			$('#final').html("<b>" + "<?=$pkgid?>" + " </b>" + "<?=$modetxt?>" + " " + "<?=gettext(' successfully completed')?>");
 		}
-	} else
+	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
+	}
 
 	$('#final').show();
 }
@@ -516,22 +521,24 @@ function show_success() {
 // Display a failure banner
 function show_failure() {
 	$('#final').addClass("alert-danger");
-	if("<?=$_POST['mode']?>" != "reinstallall")
+	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");
-	else
+	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages failed')?>");
+	}
 	$('#final').show();
 }
 
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	if("<?=$_POST['mode']?>" != "reinstallall")
+	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("Please wait while the " + "<?=$modetxt?>" + " of " + "<?=$pkgid?>" + " " + "completes." + "<br />" +
 			"<?=gettext("(Some packages may take several minutes!)")?>");
-	else
+	} else {
 		$('#final').html("Please wait while the reinstallation of all packages completes." + "<br />" +
 			"<?=gettext("(Some packages may take several minutes!)")?>");
+	}
 	$('#final').show();
 }
 
@@ -565,7 +572,7 @@ function getLogsStatus() {
 			// Update the progress bar
 			progress = 0;
 
-			if("<?=$progbar?>") {
+			if ("<?=$progbar?>") {
 				if (json.data) {
 					/*
 					 * XXX: There appears to be a bug in pkg that can cause "total"
@@ -622,8 +629,8 @@ function checkonline() {
 }
 
 function startCountdown() {
-	setInterval(function(){
-		if(time > 0) {
+	setInterval(function() {
+		if (time > 0) {
 			$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
 			time--;
 		} else {
@@ -634,7 +641,7 @@ function startCountdown() {
 	}, 1000);
 }
 
-events.push(function(){
+events.push(function() {
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
 		show_info();
@@ -642,7 +649,7 @@ events.push(function(){
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,
 	// we only meed to re-populate the progress indicator and the status banner
-	if ( "<?=$_POST['completed']?>" == "true") {
+	if ("<?=$_POST['completed']?>" == "true") {
 		setProgress('progressbar', 100, false);
 		show_success();
 		setTimeout(scrollToBottom, 200);

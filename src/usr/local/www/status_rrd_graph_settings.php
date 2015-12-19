@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraph-settings
@@ -153,32 +149,32 @@ $tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_gra
 $tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
 $tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
-if($queues) {
+if ($queues) {
 	$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
 	$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 }
 
-if($wireless) {
+if ($wireless) {
 	$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
 }
 
-if($cellular) {
+if ($cellular) {
 	$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
 }
 
-if($vpnusers) {
+if ($vpnusers) {
 	$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 }
 
-if($captiveportal) {
+if ($captiveportal) {
 	$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
 }
 
-if($ntpd) {
+if ($ntpd) {
 	$tab_array[] = array(gettext("NTPD"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 }
 
-if($dhcpd) {
+if ($dhcpd) {
 	$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
 }
 
@@ -187,11 +183,13 @@ $tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_g
 
 display_top_tabs($tab_array);
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form;
 

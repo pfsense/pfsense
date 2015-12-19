@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddresses
@@ -275,12 +271,13 @@ $types = array('proxyarp' => 'Proxy ARP',
 $pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else if ($savemsg)
+} else if ($savemsg) {
 	print_info_box($savemsg, 'success');
-else if (is_subsystem_dirty('vip'))
+} else if (is_subsystem_dirty('vip')) {
 	print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+}
 
 /* active tabs
 $tab_array = array();
@@ -307,8 +304,9 @@ display_top_tabs($tab_array);
 $interfaces = get_configured_interface_with_descr(false, true);
 $carplist = get_configured_carp_interface_list();
 
-foreach ($carplist as $cif => $carpip)
+foreach ($carplist as $cif => $carpip) {
 	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+}
 
 $interfaces['lo0'] = "Localhost";
 
@@ -320,15 +318,19 @@ foreach ($a_vip as $vipent):
 				<tr>
 					<td>
 <?php
-	if (($vipent['type'] == "single") || ($vipent['type'] == "network"))
-		if ($vipent['subnet_bits'])
+	if (($vipent['type'] == "single") || ($vipent['type'] == "network")) {
+		if ($vipent['subnet_bits']) {
 			print("{$vipent['subnet']}/{$vipent['subnet_bits']}");
+		}
+	}
 
-		if ($vipent['type'] == "range")
-			print("{$vipent['range']['from']}-{$vipent['range']['to']}");
+	if ($vipent['type'] == "range") {
+		print("{$vipent['range']['from']}-{$vipent['range']['to']}");
+	}
 
-		if ($vipent['mode'] == "carp")
-			print(" (vhid: {$vipent['vhid']})");
+	if ($vipent['mode'] == "carp") {
+		print(" (vhid: {$vipent['vhid']})");
+	}
 ?>
 					</td>
 					<td>

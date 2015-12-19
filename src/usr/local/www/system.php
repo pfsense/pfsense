@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/kill	/usr/bin/tar
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup
@@ -80,7 +76,7 @@ list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $
 $arr_gateways = return_gateways_array();
 
 // set default colmns to two if unset
-if(!isset($config['system']['webgui']['dashboardcolumns'])) {
+if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }
 
@@ -149,7 +145,7 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguicss']);
 	}
-	
+
 	if ($_POST['webguifixedmenu']) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
 	} else {
@@ -160,8 +156,8 @@ if ($_POST) {
 		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
 	} else {
 		unset($config['system']['webgui']['dashboardcolumns']);
-	}	
-	
+	}
+
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'. It may not start or end with '-'.");
@@ -340,11 +336,13 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("General Setup"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 ?>
 <div id="container">
 <?php
@@ -371,8 +369,7 @@ $form->add($section);
 
 $section = new Form_Section('DNS server settings');
 
-for ($i=1; $i<5; $i++)
-{
+for ($i=1; $i<5; $i++) {
 //	if (!isset($pconfig['dns'.$i]))
 //		continue;
 
@@ -391,12 +388,12 @@ for ($i=1; $i<5; $i++)
 	if ($multiwan)	{
 		$options = array('none' => 'none');
 
-		foreach($arr_gateways as $gwname => $gwitem) {
-			if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
+		foreach ($arr_gateways as $gwname => $gwitem) {
+			if ((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
 				continue;
 			}
 
-			if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
+			if ((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
 				continue;
 			}
 
@@ -405,7 +402,7 @@ for ($i=1; $i<5; $i++)
 
 		$group->add(new Form_Select(
 			'dns' . $i . 'gw',
-			'Gateway',
+			null,
 			$pconfig['dns' . $i . 'gw'],
 			$options
 		))->setHelp(($i == 4) ? 'Gateway':null);;
@@ -414,8 +411,9 @@ for ($i=1; $i<5; $i++)
 			"When using multiple WAN connections there should be at least one unique DNS server per gateway.";
 	}
 
-	if($i == 4)
+	if ($i == 4) {
 		$group->setHelp($help);
+	}
 
 	$section->add($group);
 }
@@ -469,7 +467,7 @@ $csslist = array();
 $css = glob("/usr/local/www/bootstrap/css/*.css");
 foreach ($css as $file) {
 	$file = basename($file);
-	if(substr($file, 0, 9) !== 'bootstrap') {
+	if (substr($file, 0, 9) !== 'bootstrap') {
 		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
 	}
 }
@@ -487,14 +485,14 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span> Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Top Navigation',
 	$pconfig['webguifixedmenu'],
 	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
-))->setHelp("<span class=\"badge bg-danger\" title=\"This feature is in BETA\">BETA</span>");
+))->setHelp("The fixed option is intended for large screens only.");
 
 $section->addInput(new Form_Input(
 	'dashboardcolumns',
@@ -507,5 +505,8 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
-
+?>
+</div>
+<?php
 include("foot.inc");
+?>

@@ -35,9 +35,6 @@
 	clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
 	clog -f /var/log/filter.log | /usr/local/www/filterparser.php
 */
-/*
-	pfSense_MODULE:	logs
-*/
 
 include_once("functions.inc");
 include_once("filter_log.inc");

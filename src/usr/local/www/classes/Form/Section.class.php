@@ -26,9 +26,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-define(COLLAPSIBLE, 0x08);
-define(SEC_CLOSED, 0x04);
-define(SEC_OPEN, 0x00);
 
 class Form_Section extends Form_Element
 {
@@ -81,11 +78,11 @@ class Form_Section extends Form_Element
 
 		if ($this->_collapsible & COLLAPSIBLE) {
 			$hdricon = '<span class="widget-heading-icon">' .
-				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . ' .panel-body">' .
+				'<a data-toggle="collapse" href="#' . $this->_attributes['id'] . '_panel-body">' .
 					'<i class="fa fa-plus-circle"></i>' .
 				'</a>' .
 			'</span>';
-			$bodyclass = '<div class="panel-body collapse ';
+			$bodyclass = '<div id="' . $this->_attributes['id'] . '_panel-body" class="panel-body collapse ';
 			if (($this->_collapsible & SEC_CLOSED)) {
 				$bodyclass .= 'out">';
 			} else {

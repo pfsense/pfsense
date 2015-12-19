@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound
@@ -87,7 +84,7 @@ $a_out = &$config['nat']['outbound']['rule'];
 // update rule order, POST[rule] is an array of ordered IDs
 // All rule are 'checked' before posting
 if (isset($_POST['order-store'])) {
-	if(is_array($_POST['rule']) && !empty($_POST['rule'])) {
+	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 
 		$a_out_new = array();
 
@@ -98,8 +95,9 @@ if (isset($_POST['order-store'])) {
 
 		$a_out = $a_out_new;
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 
 		header("Location: firewall_nat_out.php");
 		exit;
@@ -107,8 +105,9 @@ if (isset($_POST['order-store'])) {
 	}
 }
 
-if (!isset($config['nat']['outbound']['mode']))
+if (!isset($config['nat']['outbound']['mode'])) {
 	$config['nat']['outbound']['mode'] = "automatic";
+}
 
 $mode = $config['nat']['outbound']['mode'];
 
@@ -159,10 +158,10 @@ if ($_POST['save']) {
 				$found = false;
 				foreach ($a_out as $rule) {
 					if ($rule['interface'] == $natent['interface'] &&
-						$rule['source']['network'] == $natent['source']['network'] &&
-						$rule['dstport'] == $natent['dstport'] &&
-						$rule['target'] == $natent['target'] &&
-						$rule['descr'] == $natent['descr']) {
+					    $rule['source']['network'] == $natent['source']['network'] &&
+					    $rule['dstport'] == $natent['dstport'] &&
+					    $rule['target'] == $natent['target'] &&
+					    $rule['descr'] == $natent['descr']) {
 						$found = true;
 						break;
 					}
@@ -240,11 +239,13 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext("The NAT configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
@@ -325,8 +326,9 @@ print($form);
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
-				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled']))
+				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
 					$iconfn .= "_d";
+				}
 
 
 				$alias = rule_columns_with_alias(
@@ -413,8 +415,9 @@ print($form);
 						if (isset($natent['destination']['any'])) {
 							echo "*";
 						} else {
-							if (isset($natent['destination']['not']))
+							if (isset($natent['destination']['not'])) {
 								echo "!&nbsp;";
+							}
 
 
 							if (isset($alias['dst'])):
@@ -461,32 +464,35 @@ print($form);
 
 						<td>
 <?php
-						if (isset($natent['nonat']))
+						if (isset($natent['nonat'])) {
 							echo '<I>NO NAT</I>';
-						elseif (!$natent['target'])
+						} elseif (!$natent['target']) {
 							echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-						elseif ($natent['target'] == "other-subnet")
+						} elseif ($natent['target'] == "other-subnet") {
 							echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-						else
+						} else {
 							echo $natent['target'];
+						}
 ?>
 						</td>
 
 						<td>
 <?php
-						if (!$natent['natport'])
+						if (!$natent['natport']) {
 							echo "*";
-						else
+						} else {
 							echo $natent['natport'];
+						}
 ?>
 						</td>
 
 						<td>
 <?php
-						if (isset($natent['staticnatport']))
+						if (isset($natent['staticnatport'])) {
 							echo gettext("YES");
-						else
+						} else {
 							echo gettext("NO");
+						}
 ?>
 						</td>
 
@@ -531,11 +537,13 @@ print($form);
 
 <?php
 if ($mode == "automatic" || $mode == "hybrid"):
-	if (empty($FilterIflist))
+	if (empty($FilterIflist)) {
 		filter_generate_optcfg_array();
+	}
 
-	if (empty($GatewaysList))
+	if (empty($GatewaysList)) {
 		filter_generate_gateways();
+	}
 
 	$automatic_rules = filter_nat_rules_outbound_automatic(implode(" ", filter_nat_rules_automatic_tonathosts()));
 	unset($FilterIflist, $GatewaysList);
@@ -577,10 +585,11 @@ if ($mode == "automatic" || $mode == "hybrid"):
 <?php
 		echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
 
-		if (!$natent['sourceport'])
+		if (!$natent['sourceport']) {
 			echo "*";
-		else
+		} else {
 			echo $natent['sourceport'];
+		}
 ?>
 						</td>
 						<td>
@@ -588,8 +597,9 @@ if ($mode == "automatic" || $mode == "hybrid"):
 		if (isset($natent['destination']['any'])) {
 			echo "*";
 		} else {
-			if (isset($natent['destination']['not']))
+			if (isset($natent['destination']['not'])) {
 				echo "!&nbsp;";
+			}
 
 			echo $natent['destination']['address'];
 		}
@@ -598,38 +608,42 @@ if ($mode == "automatic" || $mode == "hybrid"):
 						<td>
 <?php
 		echo ($natent['protocol']) ? $natent['protocol'] . '/' : "" ;
-		if (!$natent['dstport'])
+		if (!$natent['dstport']) {
 			echo "*";
-		else
+		} else {
 			echo $natent['dstport'];
+		}
 ?>
 						</td>
 						<td>
 <?php
-		if (isset($natent['nonat']))
+		if (isset($natent['nonat'])) {
 			echo 'NO NAT';
-		elseif (!$natent['target'])
+		} elseif (!$natent['target']) {
 			echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])) . " address";
-		elseif ($natent['target'] == "other-subnet")
+		} elseif ($natent['target'] == "other-subnet") {
 			echo $natent['targetip'] . '/' . $natent['targetip_subnet'];
-		else
+		} else {
 			echo $natent['target'];
+		}
 ?>
 						</td>
 						<td>
 <?php
-		if (!$natent['natport'])
+		if (!$natent['natport']) {
 			echo "*";
-		else
+		} else {
 			echo $natent['natport'];
+		}
 ?>
 						</td>
 						<td>
 <?php
-		if (isset($natent['staticnatport']))
+		if (isset($natent['staticnatport'])) {
 			echo gettext("YES");
-		else
+		} else {
 			echo gettext("NO");
+		}
 ?>
 						</td>
 						<td>

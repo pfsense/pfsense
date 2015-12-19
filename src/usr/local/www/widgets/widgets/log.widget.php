@@ -150,13 +150,13 @@ if (isset($_POST['lastsawtime'])) {
 		}
 
 		if ($filterent['act'] == "block") {
-			$iconfn = "times icon-danger";
+			$iconfn = "times text-danger";
 		} else if ($filterent['act'] == "reject") {
-			$iconfn = "hand-stop-o icon-warning";
+			$iconfn = "hand-stop-o text-warning";
 		} else if ($filterent['act'] == "match") {
 			$iconfn = "filter";
 		} else {
-			$iconfn = "check icon-success";
+			$iconfn = "check text-success";
 		}
 
 		$rule = find_rule_by_number($filterent['rulenum'], $filterent['tracker'], $filterent['act']);
@@ -221,7 +221,7 @@ events.push(function(){
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
-<div class="panel-footer collapse">
+<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
@@ -229,7 +229,7 @@ events.push(function(){
 			<label for="filterlogentries" class="col-sm-4 control-label">Number
 				of entries</label>
 			<div class="col-sm-6">
-				<input type="number" name="filterlogentries" value="<?=$nentries?>"
+				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$nentries?>"
 					min="1" max="20" class="form-control" />
 			</div>
 		</div>
@@ -251,7 +251,7 @@ events.push(function(){
 			<label for="filterlogentriesinterfaces"
 				class="col-sm-4 control-label">Filter interface</label>
 			<div class="col-sm-6 checkbox">
-				<select name="filterlogentriesinterfaces" class="form-control">
+				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>

@@ -57,11 +57,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
-	pfSense_MODULE: arp
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ndptable
 ##|*NAME=Diagnostics: NDP Table
@@ -165,10 +160,11 @@ include("head.inc");
 					</td>
 					<td>
 						<?php
-						if (isset($hwif[$entry['interface']]))
+						if (isset($hwif[$entry['interface']])) {
 							echo $hwif[$entry['interface']];
-						else
+						} else {
 							echo $entry['interface'];
+						}
 						?>
 					</td>
 				</tr>

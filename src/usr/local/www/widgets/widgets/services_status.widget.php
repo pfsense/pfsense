@@ -108,7 +108,7 @@ if (count($services) > 0) {
 		$service_desc = explode(".",$service['description']);
 ?>
 		<tr>
-			<td><i class="fa fa-<?=get_service_status($service)? 'check' : 'times'?>-circle"></i></td>
+			<td><i class="fa fa-<?=get_service_status($service) ? 'check-circle text-success' : 'times-circle text-warning'?>"></i></td>
 			<td><?=$service['name']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_GET_links($service)?></td>
@@ -123,13 +123,13 @@ if (count($services) > 0) {
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
 		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
 		<div class="col-sm-6">
-			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control" height="5">
+			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php foreach ($services as $service): ?>
 				<option <?=(in_array($service['name'], $skipservices)?'selected':'')?>><?=$service['name']?></option>
 			<?php endforeach; ?>

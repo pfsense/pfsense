@@ -88,8 +88,8 @@ $a_pppoes = &$config['pppoes']['pppoe'];
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
-
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+}
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
@@ -162,7 +162,7 @@ if ($_POST) {
 		$subnet_start = ip2ulong($_POST['remoteip']);
 		$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
 		if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-			(ip2ulong($_POST['localip']) <= $subnet_end)) {
+		    (ip2ulong($_POST['localip']) <= $subnet_end)) {
 			$input_errors[] = gettext("The specified server address lies in the remote subnet.");
 		}
 		if ($_POST['localip'] == get_interface_ip($_POST['interface'])) {
@@ -292,21 +292,24 @@ function build_interface_list() {
 
 	$interfaces = get_configured_interface_with_descr();
 
-	foreach ($interfaces as $iface => $ifacename)
+	foreach ($interfaces as $iface => $ifacename) {
 		$list[$iface] = $ifacename;
+	}
 
 	return($list);
 }
 
-$pgtitle = array(gettext("Services"),gettext("PPPoE Server"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("PPPoE Server"), gettext("Edit"));
 $shortcut_section = "pppoes";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form();
 
@@ -431,7 +434,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['radiusserverport']
-))->setHelp('Authentication port ');
+))->setHelp('Authentication port');
 
 $group->add(new Form_Input(
 	'radiusserveracctport',
@@ -464,7 +467,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['radiusserver2port']
-))->setHelp('Authentication port ');
+))->setHelp('Authentication port');
 
 $group->add(new Form_Input(
 	'radiusserver2acctport',
@@ -492,15 +495,16 @@ $usernames = $pconfig['username'];
 //DEBUG
 //$usernames = 'sbeaver:TXlQYXNzd2Q=:192.168.1.1 smith:TXlQYXNzd2Q=:192.168.2.1 sjones:TXlQYXNzd2Q=:192.168.3.1 salpha:TXlQYXNzd2Q=:192.168.4.1';
 
-if($usernames == "")
+if ($usernames == "") {
 	$usernames = '::';
+}
 
-if ($usernames != ""){
+if ($usernames != "") {
 	$item = explode(" ", $usernames);
 
 	$numrows = count($item) -1;
 
-	foreach($item as $ww) {
+	foreach ($item as $ww) {
 		$wws = explode(":", $ww);
 		$user = $wws[0];
 		$passwd = base64_decode($wws[1]);
@@ -553,7 +557,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 // Hidden fields
-if(isset($id)) {
+if (isset($id)) {
 	$section->addInput(new Form_Input(
 		'id',
 		null,
@@ -579,7 +583,7 @@ print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic f
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// show/hide radius server controls
 	function hide_radius(hide) {
@@ -607,10 +611,11 @@ events.push(function(){
 	// When the RADIUS checkbox is clicked . .
 	$('#radiusenable').click(function () {
 		hide_radius(!$('#radiusenable').prop('checked'));
-		if(!$('#radiusenable').prop('checked'))
+		if (!$('#radiusenable').prop('checked')) {
 			hide_radius2(true);
-		else
+		} else {
 			hide_radius2(!$('#radiussecenable').prop('checked'));
+		}
 	});
 
 	// When the 'Use backup RADIUS' checkbox is clicked . .

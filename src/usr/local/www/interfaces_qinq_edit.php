@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/ngctl
-	pfSense_MODULE:	interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-qinq-edit
@@ -151,18 +147,18 @@ if ($_POST) {
 		$member = explode("-", $memb);
 
 		if (count($member) > 1) {
-			if (preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match))
+			if (preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match)) {
 				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+			}
 
 			for ($i = $member[0]; $i <= $member[1]; $i++) {
 				$members .= ($isfirst == 0 ? '':' ') . $i;
 				$isfirst++;
 			}
-		}
-		else { // Just a single number
-			if (preg_match("/([^0-9])+/", $memb, $match))
+		} else { // Just a single number
+			if (preg_match("/([^0-9])+/", $memb, $match)) {
 				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
-			else {
+			} else {
 				$members .= ($isfirst == 0 ? '':' ') . $memb;
 				$isfirst++;
 			}
@@ -246,8 +242,9 @@ function build_parent_list() {
 	$list = array();
 
 	foreach ($portlist as $ifn => $ifinfo) {
-		if (is_jumbo_capable($ifn))
+		if (is_jumbo_capable($ifn)) {
 			$list[$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
+		}
 	}
 
 	return($list);
@@ -255,8 +252,9 @@ function build_parent_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -313,12 +311,13 @@ $counter = 0;
 $members = $pconfig['members'];
 
 // List each of the member tags from the space-separated list
-if ($members != "")
+if ($members != "") {
 	$item = explode(" ", $members);
-else
+} else {
 	$item = array('');
+}
 
-foreach($item as $ww) {
+foreach ($item as $ww) {
 	$member = $item[$counter];
 
 	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');

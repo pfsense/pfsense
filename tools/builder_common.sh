@@ -1912,8 +1912,14 @@ poudriere_init() {
 
 	# Check if zfs rootfs exists
 	if ! zfs list ${ZFS_TANK}${ZFS_ROOT} >/dev/null 2>&1; then
-		echo ">>> ERROR: ZFS filesystem ${ZFS_TANK}${ZFS_ROOT} not found, please create it and try again..." | tee -a ${LOGFILE}
-		print_error_pfS
+		echo -n ">>> Creating ZFS filesystem ${ZFS_TANK}${ZFS_ROOT}... "
+		if zfs create -o atime=off -o mountpoint=/usr/local${ZFS_ROOT} \
+		    ${ZFS_TANK}${ZFS_ROOT} >/dev/null 2>&1; then
+			echo "Done!"
+		else
+			echo "Failed!"
+			print_error_pfS
+		fi
 	fi
 
 	# Make sure poudriere is installed
@@ -1946,6 +1952,11 @@ ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
 GIT_URL="${POUDRIERE_PORTS_GIT_URL}"
 EOF
+
+	# Create DISTFILES_CACHE if it doesn't exist
+	if [ ! -d /usr/ports/distfiles ]; then
+		mkdir -p /usr/ports/distfiles
+	fi
 
 	# Remove old jails
 	for jail_arch in ${_archs}; do

@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/chmod
-	pfSense_MODULE:	pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-restart-httpd

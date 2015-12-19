@@ -52,9 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-notifications
@@ -183,7 +180,7 @@ if ($_POST) {
 	if (isset($_POST['test-growl'])) {
 		// Send test message via growl
 		if ($config['notifications']['growl']['ipaddress'] &&
-			$config['notifications']['growl']['password'] = $_POST['password']) {
+		    $config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
@@ -202,11 +199,13 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Notifications"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");

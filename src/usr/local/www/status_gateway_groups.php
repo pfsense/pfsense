@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-gatewaygroups
@@ -116,7 +113,7 @@ display_top_tabs($tab_array);
 <?php
 						/* process which priorities we have */
 						$priorities = array();
-						foreach($gateway_group['item'] as $item) {
+						foreach ($gateway_group['item'] as $item) {
 							$itemsplit = explode("|", $item);
 							$priorities[$itemsplit[1]] = true;
 						}
@@ -127,7 +124,7 @@ display_top_tabs($tab_array);
 							<tr>
 <?php
 							// Make a column for each tier
-							foreach($priorities as $number => $tier) {
+							foreach ($priorities as $number => $tier) {
 								echo "<th>" . sprintf(gettext("Tier %s"), $number) . "</th>";
 							}
 ?>
@@ -137,23 +134,23 @@ display_top_tabs($tab_array);
 <?php
 							/* inverse gateway group to gateway priority */
 							$priority_arr = array();
-							foreach($gateway_group['item'] as $item) {
+							foreach ($gateway_group['item'] as $item) {
 								$itemsplit = explode("|", $item);
 								$priority_arr[$itemsplit[1]][] = $itemsplit[0];
 							}
 							ksort($priority_arr);
 							$p = 1;
-							foreach($priority_arr as $number => $tier) {
+							foreach ($priority_arr as $number => $tier) {
 								/* for each priority process the gateways */
-								foreach($tier as $member) {
+								foreach ($tier as $member) {
 									/* we always have $priority_count fields */
 ?>
 							<tr>
 <?php
 									$c = 1;
-									while($c <= $priority_count) {
+									while ($c <= $priority_count) {
 										$monitor = lookup_gateway_monitor_ip_by_name($member);
-										if($p == $c) {
+										if ($p == $c) {
 											$status = $gateways_status[$monitor]['status'];
 											if (stristr($status, "down")) {
 													$online = gettext("Offline");
@@ -172,11 +169,12 @@ display_top_tabs($tab_array);
 												$bgcolor = LIGHTBLUE;
 											}
 
-											if(!COLOR)
+											if (!COLOR) {
 												$bgcolor = WHITE;
+											}
 ?>
 								<td bgcolor="<?=$bgcolor?>">
-									<?=htmlspecialchars($member);?>,<br /><?=$online?>
+									<?=htmlspecialchars($member);?>,<br/><?=$online?>
 								</td>
 
 <?php

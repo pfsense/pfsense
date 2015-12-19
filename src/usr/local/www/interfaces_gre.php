@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gre
@@ -108,8 +104,9 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Interfaces"), gettext("GRE"));
 $shortcut_section = "interfaces";
 include("head.inc");
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");

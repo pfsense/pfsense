@@ -57,9 +57,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit
@@ -92,14 +89,17 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	}
 }
 
-if($_GET && $_GET['type'])
+if ($_GET && $_GET['type']) {
 	$pconfig['type'] = $_GET['type'];
+}
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
+}
 
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
@@ -114,13 +114,14 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
-	$pconfig['bandwidth'] = explode(",",$a_ppps[$id]['bandwidth']);
-	$pconfig['mtu'] = explode(",",$a_ppps[$id]['mtu']);
-	$pconfig['mru'] = explode(",",$a_ppps[$id]['mru']);
-	$pconfig['mrru'] = explode(",",$a_ppps[$id]['mrru']);
+	$pconfig['bandwidth'] = explode(",", $a_ppps[$id]['bandwidth']);
+	$pconfig['mtu'] = explode(",", $a_ppps[$id]['mtu']);
+	$pconfig['mru'] = explode(",", $a_ppps[$id]['mru']);
+	$pconfig['mrru'] = explode(",", $a_ppps[$id]['mrru']);
 
-	if (isset($a_ppps[$id]['shortseq']))
+	if (isset($a_ppps[$id]['shortseq'])) {
 		$pconfig['shortseq'] = true;
+	}
 
 	if (isset($a_ppps[$id]['acfcomp'])) {
 		$pconfig['acfcomp'] = true;
@@ -449,7 +450,7 @@ $types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE"
 
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);
-$serviceproviders_attr = xml2array($serviceproviders_contents,1,"attr");
+$serviceproviders_attr = xml2array($serviceproviders_contents, 1, "attr");
 
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
 
@@ -463,7 +464,7 @@ function build_country_list() {
 	// get_country_name is in pfSense-utils.inc
 	$country_list = get_country_name("ALL");
 
-	foreach($country_list as $country) {
+	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];
 	}
 
@@ -481,14 +482,15 @@ function build_link_list() {
 
 	$selected_ports = array();
 
-	if($pconfig['interfaces']) {
-		$selected_ports = explode(',',$pconfig['interfaces']);
+	if ($pconfig['interfaces']) {
+		$selected_ports = explode(',', $pconfig['interfaces']);
 	}
 
-	if (!is_dir("/var/spool/lock"))
+	if (!is_dir("/var/spool/lock")) {
 		mwexec("/bin/mkdir -p /var/spool/lock");
+	}
 
-	if($pconfig['type'] == 'ppp') {
+	if ($pconfig['type'] == 'ppp') {
 		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 		$serport_count = 0;
 
@@ -497,38 +499,43 @@ function build_link_list() {
 
 			$linklist['list'][$port] = trim($port);
 
-			if (in_array($port, $selected_ports))
+			if (in_array($port, $selected_ports)) {
 				array_push($linklist['selected'], $port);
+			}
 		}
-	}
-	else {
+	} else {
 		$port_count = 0;
-		foreach ($portlist as $ifn => $ifinfo){
+		foreach ($portlist as $ifn => $ifinfo) {
 			$port_count++;
 			$string = "";
 
 			if (is_array($ifinfo)) {
 				$string .= $ifn;
-				if ($ifinfo['mac'])
-				$string .= " ({$ifinfo['mac']})";
-			} else
+				if ($ifinfo['mac']) {
+					$string .= " ({$ifinfo['mac']})";
+				}
+			} else {
 				$string .= $ifinfo;
+			}
 
 			$linklist['list'][$ifn] = $string;
 
-			if (in_array($ifn, $selected_ports))
+			if (in_array($ifn, $selected_ports)) {
 				array_push($linklist['selected'], $ifn);
+			}
 		}
 
-		if($serport_count > $port_count)
-			$port_count=$serport_count;
+		if ($serport_count > $port_count) {
+			$port_count = $serport_count;
+		}
 	}
 
 	return($linklist);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $linkparamstr = gettext('Bandwidth is set only for MLPPP connections and when links have different bandwidths' . '<br />' .
 						'MTU defaults to 1492' . '<br />' .
@@ -599,9 +606,9 @@ $section->addInput(new Form_Input(
 ));
 
 // These elements are hidden by default, and un-hidden in Javascript
-if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
+if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	$j = 0;
-	foreach($linklist['list'] as $ifnm =>$nm) {
+	foreach ($linklist['list'] as $ifnm => $nm) {
 
 		$group = new Form_Group('IP/Gateway (' . $ifnm . ')');
 
@@ -625,7 +632,7 @@ if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	}
 }
 
-if($pconfig['type'] == 'ppp') {
+if ($pconfig['type'] == 'ppp') {
 	$section->addInput(new Form_Input(
 		'phone',
 		'Phone number',
@@ -863,7 +870,7 @@ $section->addInput(new Form_Checkbox(
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
 
-foreach($linklist['list'] as $ifnm =>$nm) {
+foreach ($linklist['list'] as $ifnm =>$nm) {
 
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
 
@@ -933,16 +940,15 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	var showadvanced = false;
 
 	function setAdvVisible() {
 		// Update the button text and toggle showadvanced
-		if(showadvanced) {
+		if (showadvanced) {
 			$("#btnadvanced").prop('value', 'Hide');
 			showadvanced = false;
-		}
-		else {
+		} else {
 			$("#btnadvanced").prop('value', 'Show');
 			showadvanced = true;
 		}
@@ -975,8 +981,8 @@ events.push(function(){
 		hideClass('pppoe-reset-date', true);
 		hideClass('pppoe-reset-cron', true);
 
-		if(!hide) {
-			switch($('#pppoe-reset-type').val()) {
+		if (!hide) {
+			switch ($('#pppoe-reset-type').val()) {
 				case 'custom' :
 					hideClass('pppoe-reset-date', false);
 					break;
@@ -995,10 +1001,10 @@ events.push(function(){
 		var selected = $('#interfaces').val();
 		var length = $("#interfaces :selected").length;
 
-		for(var i=0; i<length; i++) {
+		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
-			if(!showadvanced) {
+			if (!showadvanced) {
 				hideClass('linkparam' + selected[i], false);
 				hideInput('linkparamhelp', false);
 			}
@@ -1063,7 +1069,7 @@ events.push(function(){
 				var provider = xmldoc.getElementsByTagName('connection')[0];
 				$('#username').val('');
 				$('#password').val('');
-				if(provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+				if (provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
 					$('#phone').val('#777');
 					$('#apn').val('');
 				} else {
@@ -1118,11 +1124,13 @@ events.push(function(){
 	hideClass('linkparam', true);
 
 	hideProviders($('#type').val() != "ppp");
-	if ($('provider').size() == 0)
+	if ($('provider').size() == 0) {
 		hideInput('provider', true);
+	}
 
-	if ($('providerplan').size() == 0)
+	if ($('providerplan').size() == 0) {
 		hideInput('providerplan', true);
+	}
 });
 //]]>
 

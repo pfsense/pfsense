@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-monitor
@@ -107,19 +104,22 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"),gettext("Load Balancer"),gettext("Monitor"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"));
 $shortcut_section = "relayd";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('loadbalancer'))
+if (is_subsystem_dirty('loadbalancer')) {
 	print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -146,7 +146,7 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 $idx = 0;
-foreach($a_monitor as $monitor) {
+foreach ($a_monitor as $monitor) {
 ?>
 					<tr>
 						<td>

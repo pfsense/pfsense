@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editmacaddresses
@@ -156,6 +153,12 @@ if ($_POST) {
 	if ($_POST['bw_down'] && !is_numeric($_POST['bw_down'])) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
+	if ($_POST['bw_up'] && ($_POST['bw_up'] > 999999 || $_POST['bw_up'] < 1)) {
+		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
+	}
+	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
+		$input_errors[] = gettext("Download speed must be between 1 and 999999"); 
+	}
 
 	foreach ($a_passthrumacs as $macent) {
 		if (isset($id) && ($a_passthrumacs[$id]) && ($a_passthrumacs[$id] === $macent)) {
@@ -214,12 +217,13 @@ if ($_POST) {
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
-$mymac = str_replace("\n","",$mymac);
+$mymac = str_replace("\n", "", $mymac);
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -298,7 +302,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Make the ‘Copy My MAC’ button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
 

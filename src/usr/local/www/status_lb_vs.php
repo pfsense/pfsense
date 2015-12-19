@@ -53,10 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayctl
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-loadbalancer-virtualserver
@@ -94,9 +90,9 @@ $tab_array[] = array(gettext("Pools"), false, "status_lb_pool.php");
 $tab_array[] = array(gettext("Virtual Servers"), true, "status_lb_vs.php");
 display_top_tabs($tab_array);
 
-if(empty($a_vs))
+if (empty($a_vs)) {
 	print('<div class="alert alert-danger">No load balancers have been configured!</div>');
-else {
+} else {
 ?>
 <div class="table-responsive"></div>
 	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -148,8 +144,9 @@ else {
 					  $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
 				  }
 
-				if(!COLOR)
+				if (!COLOR) {
 					$bgcolor = WHITE;
+				}
 ?>
 				<td bgcolor="<?=$bgcolor?>">
 					<?=$rdr_a[$vsent['name']]['status']?>

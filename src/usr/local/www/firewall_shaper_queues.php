@@ -52,10 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-queues
@@ -160,8 +156,9 @@ if ($_GET) {
 						$config['shaper']['queue'][] = $newroot;
 					}
 
-					if (write_config())
+					if (write_config()) {
 						mark_subsystem_dirty('shaper');
+					}
 
 					break;
 					}
@@ -177,17 +174,19 @@ if ($_GET) {
 				if ($altq) {
 					$qtmp =& $altq->find_queue("", $qname);
 
-					if ($qtmp)
+					if ($qtmp) {
 						$output .= $qtmp->build_shortform();
-					else
+					} else {
 						$output .= build_iface_without_this_queue($if, $qname);
-
+					}
 				} else {
-					if (!is_altq_capable($ifdesc['if']))
+					if (!is_altq_capable($ifdesc['if'])) {
 						continue;
+					}
 
-					if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
+					if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan") {
 						continue;
+					}
 
 					$output .= build_iface_without_this_queue($if, $qname);
 				}
@@ -224,18 +223,20 @@ $closehead = false;
 include("head.inc");
 ?>
 
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
-if (is_subsystem_dirty('shaper'))
+if (is_subsystem_dirty('shaper')) {
 	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");

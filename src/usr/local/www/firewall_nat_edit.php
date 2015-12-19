@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward-edit
@@ -158,8 +155,9 @@ unset($input_errors);
 foreach ($_POST as $key => $value) {
 	$temp = $value;
 	$newpost = htmlentities($temp);
-	if ($newpost != $temp)
+	if ($newpost != $temp) {
 		$input_errors[] = sprintf(gettext("Invalid characters detected %s. Please remove invalid characters and save again."), $temp);
+	}
 }
 
 if ($_POST) {
@@ -310,7 +308,7 @@ if ($_POST) {
 
 	/* if user enters an alias and selects "network" then disallow. */
 	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
-		($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
+	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
 		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
 	}
 
@@ -373,7 +371,7 @@ if ($_POST) {
 		}
 
 		if (!((($_POST['dstbeginport'] < $begp) && ($_POST['dstendport'] < $begp)) ||
-			 (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
+		      (($_POST['dstbeginport'] > $endp) && ($_POST['dstendport'] > $endp)))) {
 			$input_errors[] = gettext("The destination port range overlaps with an existing entry.");
 			break;
 		}
@@ -446,8 +444,8 @@ if ($_POST) {
 		}
 		// If creating a new rule, where we want to add the filter rule, associated or not
 		else if (isset($_POST['filter-rule-association']) &&
-			($_POST['filter-rule-association'] == 'add-associated' ||
-			 $_POST['filter-rule-association'] == 'add-unassociated')) {
+		    ($_POST['filter-rule-association'] == 'add-associated' ||
+		     $_POST['filter-rule-association'] == 'add-unassociated')) {
 			$need_filter_rule = true;
 		}
 
@@ -537,11 +535,13 @@ function build_srctype_list() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
@@ -579,11 +579,13 @@ function build_dsttype_list() {
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
@@ -645,8 +647,9 @@ $closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -671,24 +674,31 @@ $section->addInput(new Form_Checkbox(
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 	$interfaces['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
 	$interfaces["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = "OpenVPN";
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -745,8 +755,9 @@ $section->add($group);
 
 $portlist = array("" => 'Other', 'any' => 'Any');
 
-foreach ($wkports as $wkport => $wkportdesc)
+foreach ($wkports as $wkport => $wkportdesc) {
 	$portlist[$wkport] = $wkportdesc;
+}
 
 $group = new Form_Group('Source port range');
 $group->addClass('srcportrange');
@@ -927,8 +938,9 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 		}
 	}
 
-	if (isset($pconfig['associated-rule-id']))
+	if (isset($pconfig['associated-rule-id'])) {
 		$rulelist['new'] = 'Create new associated filter rule';
+	}
 
 	$section->addInput(new Form_Select(
 		'associated-rule-id',
@@ -996,7 +1008,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	var portsenabled = 1;
 	var dstenabled = 1;
 	var showsource = 0;
@@ -1050,7 +1062,7 @@ events.push(function(){
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);
 			disableInput('localbeginport_cust', false);
-			if ( dstenabled ) {
+			if (dstenabled) {
 				disableInput('dstbeginport', false);
 				disableInput('dstendport', false);
 			}
@@ -1058,7 +1070,7 @@ events.push(function(){
 	}
 
 	function nordr_change() {
-		if ( $('#nordr').prop('checked') ) {
+		if ($('#nordr').prop('checked')) {
 			hideInput('localip', true);
 			hideClass('lclportrange', true);
 			hideInput('associated-rule-id', true);
@@ -1192,8 +1204,8 @@ events.push(function(){
 		$('#dstendport').prop("selectedIndex", $('#dstbeginport').find(":selected").index());
 	}
 
-	function dst_change( iface, old_iface, old_dst ) {
-		if ( ( old_dst == "" ) || ( old_iface.concat("ip") == old_dst ) ) {
+	function dst_change(iface, old_iface, old_dst) {
+		if ((old_dst == "") || (old_iface.concat("ip") == old_dst)) {
 			$('#dsttype').val(iface + "ip");
 		}
 	}
@@ -1256,7 +1268,7 @@ events.push(function(){
     });
 	// ---------- On initial page load --------------------------------------------------------------------------------
 
-	$("#srcadv").prop('type' ,'button');
+	$("#srcadv").prop('type', 'button');
 	ext_change();
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	iface_old = $('#interface').val();

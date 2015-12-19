@@ -300,14 +300,14 @@ if ($_POST) {
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 		}
 	}
@@ -406,14 +406,17 @@ if ($_POST) {
 
 include("head.inc");
 
-if (!$savemsg)
+if (!$savemsg) {
 	$savemsg = "";
+}
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -423,7 +426,7 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-if($act=="new" || $act=="edit") :
+if ($act=="new" || $act=="edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
@@ -573,8 +576,9 @@ if($act=="new" || $act=="edit") :
 
 	if (count($a_ca)) {
 		$list = array();
-		foreach ($a_ca as $ca)
+		foreach ($a_ca as $ca) {
 			$list[$ca['refid']] = $ca['descr'];
+		}
 
 		$section->addInput(new Form_Select(
 			'caref',
@@ -599,7 +603,7 @@ if($act=="new" || $act=="edit") :
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert Manager &gt; Certificate Revocation</a>')
 		));
 	}
 
@@ -788,7 +792,7 @@ else:
 			<tbody>
 <?php
 	$i = 0;
-	foreach($a_client as $client):
+	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
@@ -827,15 +831,15 @@ endif;
 
 // Note:
 // The following *_change() functions were converted from Javascript/DOM to JQuery but otherwise
-// mostly left unchanged. The logic on this form is complex andthis works!
+// mostly left unchanged. The logic on this form is complex and this works!
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function mode_change() {
-		switch($('#mode').val()) {
+		switch ($('#mode').val()) {
 			case "p2p_tls":
 				hideCheckbox('tlsauth_enable', false);
 				hideInput('caref', false);

@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1
@@ -78,18 +75,20 @@ if (!is_array($config['nat']['onetoone'])) {
 $a_1to1 = &$config['nat']['onetoone'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if($_POST['order-store']) {
+if ($_POST['order-store']) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_1to1_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_1to1_new[] = $a_1to1[$id];
+		}
 
 		$a_1to1 = $a_1to1_new;
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 
 		header("Location: firewall_nat_1to1.php");
 		exit;
@@ -156,12 +155,14 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
 					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");

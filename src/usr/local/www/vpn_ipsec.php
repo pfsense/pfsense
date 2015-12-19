@@ -314,10 +314,11 @@ display_top_tabs($tab_array);
 						</td>
 						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 <?php
-			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 				echo "V1";
-			else
+			} else {
 				echo "V2";
+			}
 ?>
 						</td>
 						<td>
@@ -326,37 +327,42 @@ display_top_tabs($tab_array);
 				$iflabels = get_configured_interface_with_descr();
 
 				$carplist = get_configured_carp_interface_list();
-				foreach ($carplist as $cif => $carpip)
+				foreach ($carplist as $cif => $carpip) {
 					$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
+				}
 
 				$aliaslist = get_configured_ip_aliases_list();
-				foreach ($aliaslist as $aliasip => $aliasif)
+				foreach ($aliaslist as $aliasip => $aliasif) {
 					$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+				}
 
 				$grouplist = return_gateway_groups_array();
 				foreach ($grouplist as $name => $group) {
-					if($group[0]['vip'] != "")
+					if ($group[0]['vip'] != "") {
 						$vipif = $group[0]['vip'];
-					else
+					} else {
 						$vipif = $group[0]['int'];
+					}
 					$iflabels[$name] = "GW Group {$name}";
 				}
 				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
-			}
-			else
+			} else {
 				$if = "WAN";
+			}
 
-			if (!isset($ph1ent['mobile']))
+			if (!isset($ph1ent['mobile'])) {
 				echo $if."<br />".$ph1ent['remote-gateway'];
-			else
+			} else {
 				echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
+			}
 ?>
 						</td>
 						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
 					<?=$spans?>
 					<?php
-					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 						echo "{$ph1ent['mode']}";
+					}
 					?>
 					<?=$spane?>
 				</td>
@@ -364,10 +370,11 @@ display_top_tabs($tab_array);
 					<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name']?>
 <?php
 			if ($ph1ent['encryption-algorithm']['keylen']) {
-				if ($ph1ent['encryption-algorithm']['keylen']=="auto")
+				if ($ph1ent['encryption-algorithm']['keylen'] == "auto") {
 					echo " (" . gettext("auto") . ")";
-				else
+				} else {
 					echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+				}
 			}
 ?>
 						</td>
@@ -393,10 +400,11 @@ display_top_tabs($tab_array);
 						<td colspan="2"></td>
 						<td colspan="7" class="contains-table">
 <?php
-			if (isset($_POST["tdph2-{$i}-visible"]))
+			if (isset($_POST["tdph2-{$i}-visible"])) {
 				$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
-			else
+			} else {
 				$tdph2_visible = 0;
+			}
 ?>
 							<input type="hidden" name="tdph2-<?=$i?>-visible" id="tdph2-<?=$i?>-visible" value="<?=$tdph2_visible?>" />
 							<div id="shph2but-<?=$i?>" <?=($tdph2_visible == '1' ? 'style="display:none"' : '')?>>
@@ -404,8 +412,9 @@ display_top_tabs($tab_array);
 				$phase2count=0;
 
 				foreach ($a_phase2 as $ph2ent) {
-					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
+					}
 					$phase2count++;
 				}
 				$fr_prefix = "frp2{$i}";
@@ -431,8 +440,9 @@ display_top_tabs($tab_array);
 									<tbody class="p2-entries">
 <?php $j = 0; foreach ($a_phase2 as $ph2index => $ph2ent): ?>
 <?php
-						if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;
+						}
 
 						$fr_c = $fr_prefix . "c" . $j;
 						$fr_d = $fr_prefix . "d" . $j;
@@ -440,9 +450,9 @@ display_top_tabs($tab_array);
 						$iconfn = "pass";
 						$entryStatus = (isset($ph2ent['disabled']) || isset($ph1ent['disabled']) ? 'disabled' : 'enabled');
 
-						if ($entryStatus == 'disabled')
+						if ($entryStatus == 'disabled') {
 							$iconfn .= "_d";
-
+						}
 ?>
 										<tr id="<?=$fr_prefix . $j?>" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>'" class="<?= $entryStatus ?>">
 											<td>
@@ -455,7 +465,7 @@ display_top_tabs($tab_array);
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=$ph2ent['mode']?>
 											</td>
-<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
 											</td>
@@ -471,14 +481,16 @@ display_top_tabs($tab_array);
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 <?php
 								foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
-									if ($k)
+									if ($k) {
 										echo ", ";
+									}
 									echo $p2_ealgos[$ph2ea['name']]['name'];
 									if ($ph2ea['keylen']) {
-										if ($ph2ea['keylen']=="auto")
+										if ($ph2ea['keylen'] == "auto") {
 											echo " (" . gettext("auto") . ")";
-										else
+										} else {
 											echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";
+										}
 									}
 								}
 ?>
@@ -487,8 +499,9 @@ display_top_tabs($tab_array);
 <?php
 								if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
 									foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
-										if ($k)
+										if ($k) {
 											echo ", ";
+										}
 										echo $p2_halgos[$ph2ha];
 									}
 								}
@@ -570,13 +583,13 @@ events.push(function() {
 	});
 
 	$('[id^=Xdel_]').click(function (event) {
-		if(confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
+		if (confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});
 
 	$('[id^=Xdelp2_]').click(function (event) {
-		if(confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
+		if (confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});

@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: pkg
-*/
 
 require_once("globals.inc");
 require_once("service-utils.inc");

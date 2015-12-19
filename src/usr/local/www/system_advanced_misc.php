@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-misc
@@ -301,11 +298,13 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, success);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -561,7 +560,7 @@ if ($g['platform'] == "pfSense") {
 	$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
 	$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
 
-	$section->addINput(new Form_Select(
+	$section->addInput(new Form_Select(
 		'harddiskstandby',
 		'Hard disk standby time',
 		$pconfig['harddiskstandby'],

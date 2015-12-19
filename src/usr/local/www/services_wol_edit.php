@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	wol
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan-edit
@@ -140,8 +137,9 @@ if ($_POST) {
 $pgtitle = array(gettext("Services"), gettext("Wake on LAN"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
 

@@ -5,8 +5,6 @@
 
 	PPP IPv6 helper
 
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/usr/local/sbin/dhcp6c
-
 */
 
 require_once("globals.inc");

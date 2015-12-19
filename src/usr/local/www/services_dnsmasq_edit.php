@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: dnsforwarder
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder-edithost
@@ -83,8 +80,9 @@ function hosts_sort() {
 
 require("guiconfig.inc");
 
-if (!is_array($config['dnsmasq']['hosts']))
+if (!is_array($config['dnsmasq']['hosts'])) {
 	$config['dnsmasq']['hosts'] = array();
+}
 
 $a_hosts = &$config['dnsmasq']['hosts'];
 
@@ -133,47 +131,47 @@ if ($_POST) {
 
 	/* collect aliases */
 	$aliases = array();
-	foreach ($_POST as $key => $value) {
-		$entry = '';
-		if (!substr_compare('aliashost', $key, 0, 9)) {
-			$entry = substr($key, 9);
-			$field = 'host';
-		}
-		elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
-			$entry = substr($key, 11);
-			$field = 'domain';
-		}
-		elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
-			$entry = substr($key, 16);
-			$field = 'description';
-		}
-		if (ctype_digit($entry)) {
-			$aliases[$entry][$field] = $value;
-		}
-	}
-	$pconfig['aliases']['item'] = $aliases;
 
-	/* validate aliases */
-	foreach ($aliases as $idx => $alias) {
-		$aliasreqdfields = array('aliasdomain' . $idx);
-		$aliasreqdfieldsn = array(gettext("Alias Domain"));
-
-		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
-		if ($alias['host']) {
-			if (!is_hostname($alias['host'])) {
-				$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
-			} else {
-				if (!is_unqualified_hostname($alias['host'])) {
-					$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
-				}
+	if (!empty($_POST['aliashost0'])) {
+		foreach ($_POST as $key => $value) {
+			$entry = '';
+			if (!substr_compare('aliashost', $key, 0, 9)) {
+				$entry = substr($key, 9);
+				$field = 'host';
+			} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
+				$entry = substr($key, 11);
+				$field = 'domain';
+			} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
+				$entry = substr($key, 16);
+				$field = 'description';
+			}
+			if (ctype_digit($entry)) {
+				$aliases[$entry][$field] = $value;
 			}
 		}
+		$pconfig['aliases']['item'] = $aliases;
 
-		if (($alias['domain'] && !is_domain($alias['domain']))) {
-			$input_errors[] = gettext("A valid domain must be specified in alias list.");
+		/* validate aliases */
+		foreach ($aliases as $idx => $alias) {
+			$aliasreqdfields = array('aliasdomain' . $idx);
+			$aliasreqdfieldsn = array(gettext("Alias Domain"));
+
+			do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
+			if ($alias['host']) {
+				if (!is_hostname($alias['host'])) {
+					$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
+				} else {
+					if (!is_unqualified_hostname($alias['host'])) {
+						$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
+					}
+				}
+			}
+
+			if (($alias['domain'] && !is_domain($alias['domain']))) {
+				$input_errors[] = gettext("A valid domain must be specified in alias list.");
+			}
 		}
 	}
-
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
 		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
@@ -214,28 +212,30 @@ if ($_POST) {
 }
 
 // Delete a row in the options table
-if($_GET['act'] == "delopt") {
+if ($_GET['act'] == "delopt") {
 	$idx = $_GET['id'];
 
-	if($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
+	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
 	   unset($pconfig['aliases']['item'][$idx]);
 	}
 }
 
 // Add an option row
-if($_GET['act'] == "addopt") {
-    if(!is_array($pconfig['aliases']['item']))
+if ($_GET['act'] == "addopt") {
+    if (!is_array($pconfig['aliases']['item'])) {
         $pconfig['aliases']['item'] = array();
+	}
 
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Forwarder"),gettext("Edit Host Override"));
+$pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Host Override"));
 $shortcut_section = "forwarder";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -284,12 +284,17 @@ $form->add($section);
 
 $section = new Form_Section('Additional names for this host');
 
-if( $pconfig['aliases']['item']) {
+if (!$pconfig['aliases']['item']) {
+	$pconfig['aliases']['item'] = array('host' => "");
+}
+
+if ($pconfig['aliases']['item']) {
 	$counter = 0;
 	$last = count($pconfig['aliases']['item']) - 1;
 
-	foreach($pconfig['aliases']['item'] as $item) {
+	foreach ($pconfig['aliases']['item'] as $item) {
 		$group = new Form_Group(null);
+		$group->addClass('repeatable');
 
 		$group->add(new Form_Input(
 			'aliashost' . $counter,
@@ -312,28 +317,22 @@ if( $pconfig['aliases']['item']) {
 			$item['description']
 		))->setHelp($counter == $last ? 'Description':null);
 
-		$btn = new Form_Button(
-			'btn' . $counter,
-			'Delete',
-			'services_dnsmasq_edit.php?act=delopt' . '&id=' . $counter
-		);
+		$group->add(new Form_Button(
+			'deleterow' . $counter,
+			'Delete'
+		))->removeClass('btn-primary')->addClass('btn-warning');
 
-		$btn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-		$group->add($btn);
 		$section->add($group);
 		$counter++;
 	}
 }
 
-$btnaddopt = new Form_Button(
-	'btnaddopt',
-	'Add Host name',
-	'services_dnsmasq_edit.php?act=addopt'
-);
-
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$section->addInput($btnaddopt);
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add host name',
+	null,
+	'fa-plus'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 print($form);

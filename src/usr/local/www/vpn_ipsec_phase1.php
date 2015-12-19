@@ -134,7 +134,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
-		($pconfig['authentication_method'] == "xauth_psk_server")) {
+	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
@@ -526,21 +526,24 @@ function build_interface_list() {
 
 	$carplist = get_configured_carp_interface_list();
 
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+	foreach ($carplist as $cif => $carpip) {
+		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) . ")";
+	}
 
 	$aliaslist = get_configured_ip_aliases_list();
 
-	foreach ($aliaslist as $aliasip => $aliasif)
+	foreach ($aliaslist as $aliasip => $aliasif) {
 		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	}
 
 	$grouplist = return_gateway_groups_array();
 
 	foreach ($grouplist as $name => $group) {
-		if($group[0]['vip'] != "")
+		if ($group[0]['vip'] != "") {
 			$vipif = $group[0]['vip'];
-		else
+		} else {
 			$vipif = $group[0]['int'];
+		}
 
 		$interfaces[$name] = "GW Group {$name}";
 	}
@@ -554,9 +557,10 @@ function build_auth_method_list() {
 
 	$list = array();
 
-	foreach ($p1_authentication_methods as $method_type => $method_params){
-		if (!$pconfig['mobile'] && $method_params['mobile'])
+	foreach ($p1_authentication_methods as $method_type => $method_params) {
+		if (!$pconfig['mobile'] && $method_params['mobile']) {
 			continue;
+		}
 
 		$list[$method_type] = htmlspecialchars($method_params['name']);
 	}
@@ -569,8 +573,9 @@ function build_myid_list() {
 
 	$list = array();
 
-	foreach ($my_identifier_list as $id_type => $id_params)
+	foreach ($my_identifier_list as $id_type => $id_params) {
 		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
 
 	return($list);
 }
@@ -580,8 +585,9 @@ function build_peerid_list() {
 
 	$list = array();
 
-	foreach ($peer_identifier_list as $id_type => $id_params)
+	foreach ($peer_identifier_list as $id_type => $id_params) {
 		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
 
 	return($list);
 }
@@ -591,9 +597,10 @@ function build_cert_list() {
 
 	$list = array();
 
-	if(is_array($config['cert'])) {
-		foreach ($config['cert'] as $cert)
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as $cert) {
 			$list[$cert['refid']] = $cert['descr'];
+		}
 	}
 
 	return($list);
@@ -604,9 +611,10 @@ function build_ca_list() {
 
 	$list = array();
 
-	if(is_array($config['ca'])) {
-		foreach ($config['ca'] as $ca)
-			$list[$ca['refid']] =  $ca['descr'];
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as $ca) {
+			$list[$ca['refid']] = $ca['descr'];
+		}
 	}
 
 	return($list);
@@ -617,9 +625,10 @@ function build_eal_list() {
 
 	$list = array();
 
-	if(is_array($p1_ealgos)) {
-		foreach ($p1_ealgos as $algo => $algodata)
+	if (is_array($p1_ealgos)) {
+		foreach ($p1_ealgos as $algo => $algodata) {
 			$list[$algo] = htmlspecialchars($algodata['name']);
+		}
 	}
 
 	return($list);
@@ -749,8 +758,9 @@ $group->add(new Form_Input(
 	$pconfig['peerid_data']
 ));
 
-if($pconfig['mobile'])
+if ($pconfig['mobile']) {
 	$group->setHelp('This is known as the "group" setting on some VPN client implementations');
+}
 
 $section->add($group);
 
@@ -910,9 +920,11 @@ print($form);
 
 /* determine if we should init the key length */
 $keyset = '';
-if (isset($pconfig['ealgo']['keylen']))
-	if (is_numeric($pconfig['ealgo']['keylen']))
+if (isset($pconfig['ealgo']['keylen'])) {
+	if (is_numeric($pconfig['ealgo']['keylen'])) {
 		$keyset = $pconfig['ealgo']['keylen'];
+	}
+}
 ?>
 
 
@@ -920,7 +932,7 @@ if (isset($pconfig['ealgo']['keylen']))
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function myidsel_change() {
 		hideGroupInput('myid_data', ($('#myid_type').val() == 'myaddress'));
@@ -1028,21 +1040,24 @@ events.push(function(){
 ?>
 		}
 
-		if( bits )
+		if (bits) {
 			$('#ealgo_keylen').val(bits);
+		}
 	}
 
 	function dpdchkbox_change() {
-		hide = ! $('#dpd_enable').prop('checked');
+		hide = !$('#dpd_enable').prop('checked');
 
 		hideInput('dpd_delay', hide);
 		hideInput('dpd_maxfail', hide);
 
-		if(! $('#dpd_delay').val())
+		if (!$('#dpd_delay').val()) {
 			$('#dpd_delay').val('10')
+		}
 
-		if(! $('#dpd_maxfail').val())
+		if (!$('#dpd_maxfail').val()) {
 			$('#dpd_maxfail').val('5')
+		}
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------

@@ -53,9 +53,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	ajax
-*/
 
 ##|+PRIV
 ##|*IDENT=page-getserviceproviders

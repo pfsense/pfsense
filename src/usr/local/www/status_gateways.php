@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-gateways
@@ -115,27 +112,30 @@ display_top_tabs($tab_array);
 					<?php echo lookup_gateway_ip_by_name($gname);?>
 				</td>
 				<td>
-<?php				if ($gateways_status[$gname])
+<?php
+					if ($gateways_status[$gname]) {
 						echo $gateways_status[$gname]['monitorip'];
-					else
+					} else {
 						echo $gateway['monitorip'];
+					}
 ?>
 				</td>
 				<td>
-<?php			if ($gateways_status[$gname])
-					echo $gateways_status[$gname]['delay'];
-				else
-					echo gettext("Pending");
-?>
-				<?php $counter++; ?>
-				</td>
-				<td>
-<?php				if ($gateways_status[$gname])
-						echo $gateways_status[$gname]['loss'];
-					else
+<?php
+					if ($gateways_status[$gname]) {
+						echo $gateways_status[$gname]['delay'];
+					} else {
 						echo gettext("Pending");
-
-					$counter++;
+					}
+?>
+				</td>
+				<td>
+<?php
+					if ($gateways_status[$gname]) {
+						echo $gateways_status[$gname]['loss'];
+					} else {
+						echo gettext("Pending");
+					}
 ?>
 				</td>
 <?php
@@ -167,13 +167,14 @@ display_top_tabs($tab_array);
 
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 
-				if(!COLOR)
+				if (!COLOR) {
 				   $bgcolor = WHITE;
+				}
 ?>
 
 				<td bgcolor="<?=$bgcolor?>">
 					<strong><?=$online?></strong> <?php
-					if(!empty($lastchange)) { ?>
+					if (!empty($lastchange)) { ?>
 						<br /><i>Last checked <?=$lastchange?></i>
 <?php				} ?>
 				</td>

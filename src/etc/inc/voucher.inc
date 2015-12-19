@@ -29,11 +29,6 @@
 
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/bin/voucher
-	pfSense_MODULE:	captiveportal
-*/
-
 /* include all configuration functions */
 if (!function_exists('captiveportal_syslog')) {
 	require_once("captiveportal.inc");

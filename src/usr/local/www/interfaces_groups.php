@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-groups
@@ -128,13 +124,14 @@ display_top_tabs($tab_array);
 		$members_arr = explode(" ", $ifgroupentry['members']);
 		$iflist = get_configured_interface_with_descr(false, true);
 		$memberses_arr = array();
-		foreach ($members_arr as $memb)
+		foreach ($members_arr as $memb) {
 			$memberses_arr[] = $iflist[$memb] ? $iflist[$memb] : $memb;
+		}
 
 		unset($iflist);
 		$memberses = implode(", ", $memberses_arr);
 		echo $memberses;
-		if(count($members_arr) >= 10) {
+		if (count($members_arr) >= 10) {
 			echo '&hellip;';
 		}
 ?>

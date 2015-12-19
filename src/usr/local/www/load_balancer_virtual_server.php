@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-virtualservers
@@ -126,14 +123,17 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
-if (is_subsystem_dirty('loadbalancer'))
+if (is_subsystem_dirty('loadbalancer')) {
 	print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -163,9 +163,9 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody>
 <?php
-if(!empty($a_vs)) {
+if (!empty($a_vs)) {
 	$i = 0;
-	foreach($a_vs as $a_v) {
+	foreach ($a_vs as $a_v) {
 ?>
 					<tr>
 						<td><?=htmlspecialchars($a_v['name'])?></td>

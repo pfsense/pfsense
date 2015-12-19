@@ -172,27 +172,6 @@ ul.context-links li a {
     box-shadow: 0px 1px 10px rgba(0,0,0,0.1);
 }
 
-.alert-warning {
-    color: #FF6F00;
-    background-color: #FFFDE7;
-    border-color: #FFECB3;
-    border-top: 5px solid #FFD600;
-}
-
-.alert-success {
-    color: #1B5E20;
-    background-color: #E8F5E9;
-    border-color: #DCEDC8;
-    border-top: 5px solid #1B5E20;
-}
-
-.alert-info {
-    color: #01579B;
-    background-color: #E1F5FE;
-    border-color: #B2EBF2;
-    border-top: 5px solid #01579B;
-}
-
 .panel {
     margin-bottom: 10px;
     border-radius: 0; 
@@ -276,7 +255,7 @@ ul.context-links li a {
 }
 
 .table>tbody>tr>td {
-    padding: 4px 4px 4px 10px;
+    padding: 6px 4px 6px 10px;
 }
 
 /* active table row */
@@ -471,33 +450,51 @@ footer a {
     overflow-x: auto;
 }
 
-/** create icon colors */
-.icon-black
-{
-    color: #000000;
+/** start common colors */
+.alert-warning {
+    color: #FF6F00;
+    background-color: #FFFDE7;
+    border-color: #FFECB3;
+    border-top: 5px solid #FFD600;
 }
 
-.icon-danger
-{
-    color: #D9534F;
+.alert-success {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+    border-color: #DCEDC8;
+    border-top: 5px solid #1B5E20;
 }
 
-.icon-success
-{
-    color: #5CB85C;
+.alert-info {
+    color: #01579B;
+    background-color: #E1F5FE;
+    border-color: #B2EBF2;
+    border-top: 5px solid #01579B;
 }
 
-.icon-primary
-{
-    color: #337AB7;
+.bg-primary {
+    color: #000;
+    background-color: #009688;
 }
 
-.icon-warning {
-    color: #FDD835;
+.bg-info {
+    color: #01579B;
+    background-color: #E1F5FE;
 }
 
-.text-warning {
-    color: #F57F17;
+.bg-danger {
+    color: #000;
+    background-color: #EF9A9A;
+}
+
+.bg-warning {
+    color: #000;
+    background-color: #FFF9C4;
+}
+
+.bg-success {
+    color: #1B5E20;
+    background-color: #E8F5E9;
 }
 
 .btn-success {
@@ -512,29 +509,32 @@ footer a {
     background-color: #1976D2;
 }
 
-.bg-primary {
-    color: #000;
-    background-color: #009688;
+.text-warning {
+    color: #F57F17;
 }
 
-.bg-info {
-    color: #000;
-    background-color: #80DEEA;
+.text-success {
+    color: #4CAF50;
 }
 
-.bg-danger {
+.text-danger {
+    color: #B71C1C;
+}
+/** end common colors */
+
+.table-hover>tbody>tr.hover-success:hover {
     color: #000;
-    background-color: #EF9A9A;
+    background-color: #A5D6A7;   
 }
 
-.bg-warning {
+.table-hover>tbody>tr.hover-danger:hover {
+    color: #000;
+    background-color: #EF9A9A;   
+}
+
+.table-hover>tbody>tr.hover-warning:hover {
     color: #000;
     background-color: #FFF9C4;
-}
-
-.bg-success {
-    color: #000;
-    background-color: #A5D6A7;
 }
 
 /** icons are often used with onclick actions, so we need the cursor to change to a pointer */
@@ -548,6 +548,10 @@ footer a {
     font-size: 15px;
     vertical-align: middle;
     color: white;
+    padding-right: 15px;
+    padding-bottom: 17px;
+    margin-top: -0.125em
+
 }
 
 /* Used when you need an icon to act as a submit button **/
@@ -596,6 +600,139 @@ textarea
     -moz-tab-size: 4;
     -o-tab-size: 4;
 }
+
+/*
+ * CSS for Standard tree layout
+ * Copyright (C) 2005 SilverStripe Limited
+ * Feel free to use this on your websites, but please leave this message in the fies
+ * http://www.silverstripe.com/blog
+ */
+ 
+ul.tree{
+    width: auto;
+    padding-left : 0px;
+    margin-left : 0px;
+}
+
+ul.tree img{
+    border : none;
+}
+
+ul.tree, ul.tree ul {
+    padding-left: 0;
+}
+
+ul.tree ul {
+    margin-left: 16px;
+        
+}
+
+ul.tree li.closed ul {
+    display: none;
+}
+
+ul.tree li {
+    list-style: none;
+    background: url(../../tree/i-repeater.gif) 0 0 repeat-y;
+    display: block;
+    width: auto;
+}
+
+ul.tree li.last {
+    list-style: none;
+    background-image: none;
+}
+
+/* Span-A: I/L/I glpyhs */
+ul.tree span.a {
+    background: url(../../tree/t.gif) 0 50% no-repeat;
+    display: block;
+}
+
+ul.tree span.a.last {
+    background: url(../../tree/l.gif) 0 50% no-repeat;
+}
+
+/* Span-B: Plus/Minus icon */
+ul.tree span.b {
+
+}
+
+ul.tree span.a.children span.b {
+    background: url(../../tree/minus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+ul.tree li.closed span.a.children span.b {
+    background: url(../../tree/plus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+/* Span-C: Spacing and extending tree line below the icon */
+ul.tree span.c {
+    margin-left: 16px;
+}
+
+ul.tree span.a.children span.c {
+    background: url(../../tree/i-bottom.gif) 0 50% no-repeat;
+}
+
+ul.tree span.a.spanClosed span.c {
+    background-image: none;
+}
+
+/* Anchor tag: Page icon */
+ul.tree a  {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 3px 0px 3px 18px;
+    line-height: 16px;
+    background: url(../../tree/page-file.png) 0 0 no-repeat;
+}
+
+ul.tree span.a.children a {
+    background-image: url(../../tree/page-openfoldericon.png);
+}
+
+ul.tree span.a.children.spanClosed a {
+    background-image: url(../../tree/page-foldericon.png);
+}
+
+/* Unformatted tree */
+ul.tree.unformatted li {
+    background-image: none;
+    padding-left: 16px;
+}
+
+ul.tree.unformatted li li {
+    background-image: none;
+    padding-left: 0px;
+}
+
+/* Divs, by default store vertically aligned data */
+
+ul.tree li div {
+    float: right;
+    clear: right;
+    height: 1em;
+    margin-top: -26px;
+}
+
+/* As inside DIVs should be treated normally */
+ul.tree div a  {
+    padding: 0;
+    background-image: none;
+    min-height: auto;
+    height: auto;
+}
+
+ul.tree li .over{
+    background-color : pink;
+}
+
+/*
+ * End of CSS for Standard tree layout
+ */
 
 @media (max-width: 1199px) {
     .nav>li>a {

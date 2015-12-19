@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: interfaces_assign
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-bridge
@@ -110,13 +106,13 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Bridge"));
+$pgtitle = array(gettext("Interfaces"), gettext("Bridge"));
 $shortcut_section = "interfaces";
 include("head.inc");
-if ($input_errors)
-	print_input_errors($input_errors); ?>
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
-<?php
 $tab_array = array();
 $tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
@@ -162,8 +158,9 @@ foreach ($a_bridges as $bridge) {
 			echo $ifdescrs[$member];
 			$j++;
 		}
-		if ($j > 0 && $j < count($members))
+		if ($j > 0 && $j < count($members)) {
 			echo ", ";
+		}
 	}
 ?>
 				</td>

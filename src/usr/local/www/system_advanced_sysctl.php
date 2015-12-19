@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-sysctl
@@ -143,7 +140,7 @@ if ($_POST) {
 
 		$tunableent = array();
 
-		if(!$_POST['tunable'] || !isset($_POST['value'])) {
+		if (!$_POST['tunable'] || !isset($_POST['value'])) {
 			$input_errors[] = gettext("Both a name and a value must be specified.");
 		} else if (!ctype_alnum($_POST['value'])) {
 			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
@@ -169,14 +166,17 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
+if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {
 	print_info_box_np(gettext("The firewall tunables have changed. You must apply the configuration for them to take affect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -187,7 +187,7 @@ $tab_array[] = array(gettext("System Tunables"), true, "system_advanced_sysctl.p
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 display_top_tabs($tab_array);
 
-if ($act != "edit" ): ?>
+if ($act != "edit"): ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title"><?=gettext('System Tunables'); ?></h2>
@@ -204,15 +204,21 @@ if ($act != "edit" ): ?>
 						<th><a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit"><?=gettext('New'); ?></a></th>
 					</tr>
 				</thead>
-				<?php foreach ($tunables as $i => $tunable):
-					if (!isset($tunable['modified']))
-						$i = $tunable['tunable']; ?>
+				<?php
+					foreach ($tunables as $i => $tunable):
+						if (!isset($tunable['modified'])) {
+							$i = $tunable['tunable'];
+						}
+				?>
 				<tr>
 					<td><?=$tunable['tunable']; ?></td>
 					<td><?=$tunable['descr']; ?></td>
 					<td><?=$tunable['value']; ?>
-					<?php if($tunable['value'] == "default")
-						echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; ?>
+					<?php
+						if ($tunable['value'] == "default") {
+							echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
+						}
+					?>
 					</td>
 					<td>
 					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>

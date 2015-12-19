@@ -139,7 +139,7 @@ if ($config['widgets']['rssfeed']) {
 ?>
 	<a href="<?=$item->get_permalink()?>" target="_blank" class="list-group-item">
 		<h4 class="list-group-item-heading">
-			<img src="pfs-mini.png" title="Source: <?=$feed->get_title()?>" width="16" height="16" />
+			<img src="pfs-mini.png" title="Source: <?=$feed->get_title()?>" alt="" width="16" height="16" />
 			<?=$item->get_title()?>
 		</h4>
 		<p class="list-group-item-text">
@@ -154,34 +154,34 @@ if ($config['widgets']['rssfeed']) {
 </div>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
 		<label for="rssfeed" class="col-sm-3 control-label">Feeds</label>
 		<div class="col-sm-6">
-			<textarea name="rssfeed" class="form-control"><?=$textarea_txt;?></textarea>
+			<textarea id="rssfeed" name="rssfeed" class="form-control"><?=$textarea_txt;?></textarea>
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label for="rssmaxitems" class="col-sm-3 control-label"># Stories</label>
 		<div class="col-sm-6">
-			<input type="number" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
+			<input type="number" id="rssmaxitems" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label for="rsswidgetheight" class="col-sm-3 control-label">Widget height</label>
 		<div class="col-sm-6">
-			<input type="number" name="rsswidgetheight" value="<?=$rsswidgetheight?>" min="100" max="2500" step="100" class="form-control" />
+			<input type="number" id="rsswidgetheight" name="rsswidgetheight" value="<?=$rsswidgetheight?>" min="100" max="2500" step="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label for="rsswidgettextlength" class="col-sm-3 control-label">Content limit</label>
 		<div class="col-sm-6">
-			<input type="number" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="10" class="form-control" />
+			<input type="number" id="rsswidgettextlength" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="10" class="form-control" />
 		</div>
 	</div>
 

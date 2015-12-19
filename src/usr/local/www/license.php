@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-license
@@ -115,7 +112,7 @@ include("head.inc");
 			<?= "{$g['product_name']} " . gettext("is based upon/includes various free software packages, ".
 			"listed below.")?><br />
 			<?php printf(gettext("The authors of %s would like to thank the authors of these " .
-			"software packages for their efforts"),$g['product_name'])?>.
+			"software packages for their efforts"), $g['product_name'])?>.
 		</p>
 		<p>
 			FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br />

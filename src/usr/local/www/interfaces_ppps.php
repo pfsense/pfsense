@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps
@@ -107,7 +103,7 @@ if (!is_array($config['ppps']['ppp'])) {
 }
 $a_ppps = $config['ppps']['ppp'];
 
-$pgtitle = array(gettext("Interfaces"),gettext("PPPs"));
+$pgtitle = array(gettext("Interfaces"), gettext("PPPs"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -149,8 +145,9 @@ foreach ($a_ppps as $id => $ppp) {
 <?php
 	$portlist = explode(",", $ppp['ports']);
 	foreach ($portlist as $portid => $port) {
-		if ($port != get_real_interface($port) && $ppp['type'] != "ppp")
+		if ($port != get_real_interface($port) && $ppp['type'] != "ppp") {
 			$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
+		}
 	}
 					echo htmlspecialchars(implode(",", $portlist));
 ?>

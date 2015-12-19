@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-gre-edit
@@ -66,8 +63,9 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 
-if (!is_array($config['gres']['gre']))
+if (!is_array($config['gres']['gre'])) {
 	$config['gres']['gre'] = array();
+}
 
 $a_gres = &$config['gres']['gre'];
 
@@ -168,8 +166,9 @@ if ($_POST) {
 
 			$confif = convert_real_interface_to_friendly_interface_name($gre['greif']);
 
-			if ($confif != "")
+			if ($confif != "") {
 				interface_configure($confif);
+			}
 
 			header("Location: interfaces_gre.php");
 			exit;
@@ -180,18 +179,20 @@ if ($_POST) {
 function build_parent_list() {
 	$parentlist = array();
 	$portlist = get_possible_listen_ips();
-	foreach ($portlist as $ifn => $ifinfo)
+	foreach ($portlist as $ifn => $ifinfo) {
 		$parentlist[$ifn] = $ifinfo;
+	}
 
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("GRE"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GRE"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

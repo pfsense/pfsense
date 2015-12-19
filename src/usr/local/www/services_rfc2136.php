@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	dnsupdate
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-rfc2136clients
@@ -78,8 +75,7 @@ if ($_GET['act'] == "del") {
 
 	header("Location: services_rfc2136.php");
 	exit;
-}
-else if ($_GET['act'] == "toggle") {
+} else if ($_GET['act'] == "toggle") {
 	if ($a_rfc2136[$_GET['id']]) {
 		if (isset($a_rfc2136[$_GET['id']]['enable'])) {
 			unset($a_rfc2136[$_GET['id']]['enable']);
@@ -101,8 +97,9 @@ $tab_array[] = array(gettext("Dynamic DNS"), false, "services_dyndns.php");
 $tab_array[] = array(gettext("RFC 2136"), true, "services_rfc2136.php");
 display_top_tabs($tab_array);
 
-if ($input_errors)
+if ($input_errors) {
     print_input_errors($input_errors);
+}
 ?>
 
 <form action="services_rfc2136.php" method="post" name="iform" id="iform">
@@ -127,7 +124,7 @@ $iflist = get_configured_interface_with_descr();
 $i = 0;
 foreach ($a_rfc2136 as $rfc2136):
 ?>
-		        <tr <?=(isset($rfc2136['enable']) ? '' : 'class="disabled"')?>">
+		        <tr<?=(isset($rfc2136['enable']) ? '' : ' class="disabled"')?>>
 		            <td>
 <?php
 	foreach ($iflist as $if => $ifdesc) {
@@ -150,18 +147,20 @@ foreach ($a_rfc2136 as $rfc2136):
 
 	if (file_exists($filename)) {
 		print('IPv4: ');
-		if (isset($rfc2136['usepublicip']))
+		if (isset($rfc2136['usepublicip'])) {
 			$ipaddr = dyndnsCheckIP($rfc2136['interface']);
-		else
+		} else {
 			$ipaddr = get_interface_ip($rfc2136['interface']);
+		}
 
 		$cached_ip_s = explode("|", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
-		if ($ipaddr != $cached_ip)
+		if ($ipaddr != $cached_ip) {
 			print('<span class="text-danger">');
-		else
+		} else {
 			print('<span class="text-success">');
+		}
 
 		print(htmlspecialchars($cached_ip));
 		print('</span>');
@@ -177,10 +176,11 @@ foreach ($a_rfc2136 as $rfc2136):
 		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
 		$cached_ip = $cached_ip_s[0];
 
-		if ($ipaddr != $cached_ip)
+		if ($ipaddr != $cached_ip) {
 			print('<span class="text-danger">');
-		else
+		} else {
 			print('<span class="text-success">');
+		}
 
 		print(htmlspecialchars($cached_ip));
 		print('</span>');
@@ -194,13 +194,13 @@ foreach ($a_rfc2136 as $rfc2136):
 				<?=htmlspecialchars($rfc2136['descr'])?>
 			</td>
 			<td>
-				<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="services_rfc2136_edit.php?id=<?=$i?>"></a>
+				<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>" href="services_rfc2136_edit.php?id=<?=$i?>"></a>
 			<?php if (isset($rfc2136['enable'])) {
 			?>
 				<a  class="fa fa-ban" title="<?=gettext('Disable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 			<?php } else {
 			?>
-				<a class="fa fa-check-square-o"	title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>" ></a>
+				<a class="fa fa-check-square-o" title="<?=gettext('Enable client')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 			<?php }
 			?>
 				<a class="fa fa-trash" title="<?=gettext('Delete client')?>" href="services_rfc2136.php?act=del&amp;id=<?=$i?>"></a>

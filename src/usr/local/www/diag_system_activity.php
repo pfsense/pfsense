@@ -53,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/top
-	pfSense_MODULE: system
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-system-activity
 ##|*NAME=Diagnostics: System Activity
@@ -77,8 +72,9 @@ if ($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 ?>
 <script type="text/javascript">
@@ -99,7 +95,7 @@ function getcpuactivity() {
 	);
 }
 
-events.push(function(){
+events.push(function() {
 	setInterval('getcpuactivity()', 2500);
 	getcpuactivity();
 });

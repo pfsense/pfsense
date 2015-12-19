@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-rules
@@ -136,8 +133,9 @@ if (is_array($config['pppoes']['pppoe'])) {
 }
 
 /* add ipsec interfaces */
-if (ipsec_enabled() && have_ruleint_access("enc0"))
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
 	$iflist["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
@@ -201,7 +199,7 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 		}
 
-		if($deleted) {
+		if ($deleted) {
 			if (write_config()) {
 				mark_subsystem_dirty('filter');
 			}
@@ -224,14 +222,15 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_rules.php?if=" . htmlspecialchars($if));
 		exit;
 	}
-} else if($_POST['order-store']) {
+} else if ($_POST['order-store']) {
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_filter_new[] = $a_filter[$id];
+		}
 
 		$a_filter = $a_filter_new;
 		if (write_config()) {
@@ -245,11 +244,12 @@ if (isset($_POST['del_x'])) {
 
 $tab_array = array(array(gettext("Floating"), ("FloatingRules" == $if), "firewall_rules.php?if=FloatingRules"));
 
-foreach ($iflist as $ifent => $ifname)
+foreach ($iflist as $ifent => $ifname) {
 	$tab_array[] = array($ifname, ($ifent == $if), "firewall_rules.php?if={$ifent}");
+}
 
 foreach ($tab_array as $dtab) {
-	if($dtab[1]) {
+	if ($dtab[1]) {
 		$bctab = $dtab[0];
 		break;
 	}
@@ -261,13 +261,13 @@ $shortcut_section = "firewall";
 include("head.inc");
 $nrules = 0;
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('filter'))
+if (is_subsystem_dirty('filter')) {
 	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
-
-
+}
 
 display_top_tabs($tab_array);
 
@@ -297,13 +297,13 @@ display_top_tabs($tab_array);
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 	if (!isset($config['system']['webgui']['noantilockout']) &&
-		(((count($config['interfaces']) > 1) && ($if == 'lan')) ||
-		 ((count($config['interfaces']) == 1) && ($if == 'wan')))):
+	    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
-					<tr id="antilockout">
+					<tr id="antilockout" class="hover-success">
 						<td></td>
-						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check icon-success"></i></td>
+						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -312,16 +312,16 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td><?=gettext("Anti-Lockout Rule");?></td>
+						<td class="bg-info"><?=gettext("Anti-Lockout Rule");?></td>
 						<td>
-							<a href="system_advanced_admin.php" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
+							<a href="system_advanced_admin.php" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
-					<tr id="frrfc1918">
+					<tr id="frrfc1918" class="hover-danger">
 						<td></td>
-						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times icon-danger"></i></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -330,16 +330,16 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td><?=gettext("Block private networks");?></td>
+						<td class="bg-info"><?=gettext("Block private networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
-					<tr id="frrfc1918">
+					<tr id="frrfc1918" class="hover-danger">
 					<td></td>
-						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times icon-danger"></i></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td>*</td>
 						<td><?=gettext("Reserved/not assigned by IANA");?></td>
 						<td>*</td>
@@ -348,9 +348,9 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td><?=gettext("Block bogon networks");?></td>
+						<td class="bg-info"><?=gettext("Block bogon networks");?></td>
 						<td>
-							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" class="fa fa-cog" title="<?=gettext("Settings");?>"></a>
+							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php endif;?>
@@ -362,7 +362,7 @@ $nrules = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if ( ($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if) ) {
+	if (($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if)) {
 		$display = 'style="display: none;"';
 	} else {
 		$display = "";
@@ -375,16 +375,16 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 
 	<?php
 		if ($filterent['type'] == "block") {
-			$iconfn = "times icon-danger";
+			$iconfn = "times text-danger";
 			$title_text = gettext("traffic is blocked");
 		} else if ($filterent['type'] == "reject") {
-			$iconfn = "hand-stop-o icon-warning";
+			$iconfn = "hand-stop-o text-warning";
 			$title_text = gettext("traffic is rejected");
 		} else if ($filterent['type'] == "match") {
 			$iconfn = "filter";
 			$title_text = gettext("traffic is matched");
 		} else {
-			$iconfn = "check icon-success";
+			$iconfn = "check text-success";
 			$title_text = gettext("traffic is passed");
 		}
 	?>
@@ -393,11 +393,13 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<i class="fa fa-<?=$iconfn?>"></i>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
-		if ($isadvset)
+		if ($isadvset) {
 			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
+		}
 
-		if (isset($filterent['log']))
+		if (isset($filterent['log'])) {
 			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'"></i>';
+		}
 	?>
 						</td>
 	<?php
@@ -418,8 +420,8 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 		$monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 		if ($config['schedules']['schedule'] != "" && is_array($config['schedules']['schedule'])) {
-			foreach ($a_schedules as $schedule)
-			{
+			$idx = 0;
+			foreach ($a_schedules as $schedule) {
 				if ($schedule['name'] == $filterent['sched']) {
 					$schedstatus = filter_get_time_based_rule_status($schedule);
 
@@ -448,8 +450,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 									$month = $tempmontharray[$arraycounter];
 									$day = $tempdayarray[$arraycounter];
 
-									if (!$firstDayFound)
-									{
+									if (!$firstDayFound) {
 										$firstDay = $day;
 										$firstmonth = $month;
 										$firstDayFound = true;
@@ -459,21 +460,21 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 									$nextDay = $tempdayarray[$arraycounter+1];
 									$currentDay++;
 									if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
-										if ($firstPrint)
+										if ($firstPrint) {
 											$dayFriendly .= ", ";
+										}
 										$currentDay--;
-										if ($currentDay != $firstDay)
+										if ($currentDay != $firstDay) {
 											$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-										else
+										} else {
 											$dayFriendly .=	 $monthArray[$month-1] . " " . $day;
+										}
 										$firstDayFound = false;
 										$firstPrint = true;
 									}
 									$arraycounter++;
 								}
-							}
-							else
-							{
+							} else {
 								$tempdayFriendly = $timerange['position'];
 								$firstDayFound = false;
 								$tempFriendlyDayArray = explode(",", $tempdayFriendly);
@@ -483,8 +484,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								$counter = 0;
 								foreach ($tempFriendlyDayArray as $day) {
 									if ($day != "") {
-										if (!$firstDayFound)
-										{
+										if (!$firstDayFound) {
 											$firstDay = $tempFriendlyDayArray[$counter];
 											$firstDayFound = true;
 										}
@@ -493,13 +493,15 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 										$nextDay = $tempFriendlyDayArray[$counter+1];
 										$currentDay++;
 										if ($currentDay != $nextDay) {
-											if ($firstprint)
+											if ($firstprint) {
 												$dayFriendly .= ", ";
+											}
 											$currentDay--;
-											if ($currentDay != $firstDay)
+											if ($currentDay != $firstDay) {
 												$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-											else
+											} else {
 												$dayFriendly .= $dayArray[$firstDay-1];
+											}
 											$firstDayFound = false;
 											$firstprint = true;
 										}
@@ -514,10 +516,12 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					}
 					#FIXME
 					$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
-					$schedule_span_begin = "<span style=\"cursor: help;\" onmouseover=\"domTT_activate(this, event, 'content', '<h1>{$sched_caption_escaped}</h1><p>{$sched_content}</p>', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\" onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\"><u>";
-					$schedule_span_end = "</u></span>";
+					$schedule_span_begin = '<a href="/firewall_schedule_edit.php?id=' . $idx . '" data-toggle="popover" data-trigger="hover focus" title="' . $schedule['name'] . '" data-content="' .
+					    $sched_caption_escaped . '" data-html="true">';
+					$schedule_span_end = "";
 				}
 			}
+			$idx++;
 		}
 		$printicon = false;
 		$alttext = "";
@@ -526,18 +530,22 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			if ($schedstatus) {
 				if ($iconfn == "block" || $iconfn == "reject") {
 					$image = "times-circle";
+					$dispcolor = "text-danger";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
 				} else {
 					$image = "play-circle";
+					$dispcolor = "text-success";
 					$alttext = gettext("Traffic matching this rule is currently being allowed");
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
-				if ($iconfn == "block" || $iconfn == "reject")
+				if ($iconfn == "block" || $iconfn == "reject") {
 					$image = "times-circle";
-				else
+				} else {
 					$image = "times-circle";
+				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
+				$dispcolor = "text-danger";
 				$printicon = true;
 			}
 		}
@@ -615,20 +623,21 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								} else if (isset($filterent['defaultqueue'])) {
 									$desc = $filterent['defaultqueue'];
 									echo "<a href=\"firewall_shaper_queues.php?queue={$filterent['defaultqueue']}&amp;action=show\">{$desc}</a>";
-								} else
+								} else {
 									echo gettext("none");
+								}
 							?>
 						</td>
 						<td>
 							<?php if ($printicon) { ?>
-								<i class="fa fa-<?=$image;?>" title="<?=$alttext;?>" alt="icon" />
+								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>" alt="icon"></i>
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>
-						<td>
+						<td class="bg-info">
 							<?=htmlspecialchars($filterent['descr']);?>
 						</td>
-						<td>
+						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
 							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
@@ -691,27 +700,28 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		<dl class="dl-horizontal responsive">
 		<!-- Legend -->
 			<dt><?=gettext('Legend')?></dt>				<dd></dd>
-			<dt><i class="fa fa-check icon-success"></i></dt>		<dd><?=gettext("Pass");?></dd>
+			<dt><i class="fa fa-check text-success"></i></dt>		<dd><?=gettext("Pass");?></dd>
 			<dt><i class="fa fa-filter"></i></dt>	<dd><?=gettext("Match");?></dd>
-			<dt><i class="fa fa-times icon-danger"></i></dt>	<dd><?=gettext("Block");?></dd>
-			<dt><i class="fa fa-hand-stop-o icon-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
+			<dt><i class="fa fa-times text-danger"></i></dt>	<dd><?=gettext("Block");?></dd>
+			<dt><i class="fa fa-hand-stop-o text-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="fa fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
 		</dl>
 
 <?php
-	if ("FloatingRules" != $if)
+	if ("FloatingRules" != $if) {
 		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
 			gettext("This means that if you use block rules, you'll have to pay attention " .
 			"to the rule order. Everything that isn't explicitly passed is blocked " .
 			"by default. "));
-	else
+	} else {
 		print(gettext("Floating rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed) only " .
 			"if the 'quick' option is checked on a rule. Otherwise they will only match if no " .
 			"other rules match. Pay close attention to the rule order and options " .
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
+	}
 ?>
 	</div>
 </div>

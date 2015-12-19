@@ -35,8 +35,6 @@ class Form extends Form_Element
 	protected $_attributes = array(
 		'class' => array('form-horizontal' => true),
 		'method' => 'post',
-		// Empty is interpreted by all browsers to submit to the current URI
-		'action' => '',
 	);
 	protected $_sections = array();
 	protected $_global = array();
@@ -54,6 +52,9 @@ class Form extends Form_Element
 
 		if (false !== $submit)
 			$this->addGlobal($submit);
+
+		if (!isset($this->_attributes['action']))
+			$this->_attributes['action'] = $_SERVER['REQUEST_URI'];
 	}
 
 	public function add(Form_Section $section)

@@ -54,10 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /usr/local/bin/rrdtool
-	pfSense_MODULE: system
-*/
 
 require_once("globals.inc");
 require_once("guiconfig.inc");
@@ -1270,7 +1266,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } else {
 	$data = false;
-	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
+	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"), $curdatabase));
 }
 
 /* check modification time to see if we need to generate image */

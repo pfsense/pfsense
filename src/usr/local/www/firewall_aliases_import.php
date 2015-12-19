@@ -52,9 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-import
@@ -191,8 +188,9 @@ if ($_POST['aliasimport'] != "") {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
 $section = new Form_Section('Alias details');

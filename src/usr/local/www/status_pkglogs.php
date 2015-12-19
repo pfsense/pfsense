@@ -64,10 +64,6 @@
 
 */
 
-/*
-	pfSense_MODULE:	pkgs
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-packagelogs
 ##|*NAME=Status: Package logs
@@ -114,8 +110,9 @@ if ($pkgwithlogging == false) {
 	$tab_array = array();
 	foreach ($config['installedpackages']['package'] as $package) {
 		if (is_array($package['logging'])) {
-			if (!($logtab = $package['logging']['logtab']))
+			if (!($logtab = $package['logging']['logtab'])) {
 				$logtab = $package['name'];
+			}
 
 			if ($apkg == $package['name']) {
 				$curtab = $logtab;

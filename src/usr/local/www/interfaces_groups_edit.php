@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-groups-edit
@@ -127,15 +123,15 @@ if ($_POST) {
 	}
 
 	if (isset($_POST['members'])) {
-		foreach ($_POST['members'] as $member ) {
-			if ($isfirst > 0) 
+		foreach ($_POST['members'] as $member) {
+			if ($isfirst > 0) {
 				$members .= " ";
+			}
 
 			$members .= $member[0];
 			$isfirst++;
 		}
-	}
-	else {
+	} else {
 		$members = "";
 	}
 

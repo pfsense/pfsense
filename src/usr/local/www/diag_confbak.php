@@ -54,10 +54,6 @@
  *
  */
 
-/*
-	pfSense_MODULE:	config
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-configurationhistory
 ##|*NAME=Diagnostics: Configuration History

@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan-edit
@@ -68,8 +65,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['vlans']['vlan']))
+if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
+}
 
 $a_vlans = &$config['vlans']['vlan'];
 
@@ -155,8 +153,9 @@ if ($_POST) {
 					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
 					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
 				}
-				if ($confif != "")
+				if ($confif != "") {
 					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+				}
 			}
 		}
 		$vlan = array();
@@ -177,8 +176,9 @@ if ($_POST) {
 
 			write_config();
 
-			if ($confif != "")
+			if ($confif != "") {
 				interface_configure($confif);
+			}
 			header("Location: interfaces_vlan.php");
 			exit;
 		}

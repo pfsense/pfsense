@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/host
-	pfSense_MODULE: dyndns
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclients
@@ -82,8 +78,7 @@ if ($_GET['act'] == "del") {
 
 	header("Location: services_dyndns.php");
 	exit;
-}
-else if ($_GET['act'] == "toggle") {
+} else if ($_GET['act'] == "toggle") {
 	if ($a_dyndns[$_GET['id']]) {
 		if (isset($a_dyndns[$_GET['id']]['enable'])) {
 			unset($a_dyndns[$_GET['id']]['enable']);
@@ -100,8 +95,9 @@ else if ($_GET['act'] == "toggle") {
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Dynamic DNS"), true, "services_dyndns.php");
@@ -126,7 +122,7 @@ display_top_tabs($tab_array);
 $i = 0;
 foreach ($a_dyndns as $dyndns):
 ?>
-				<tr<?=!isset($dyndns['enable'])?' class="disabled""':''?>>
+				<tr<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 					<td>
 <?php
 	$iflist = get_configured_interface_with_descr();
@@ -175,10 +171,11 @@ foreach ($a_dyndns as $dyndns):
 		$cached_ip_s = explode(":", file_get_contents($filename));
 		$cached_ip = $cached_ip_s[0];
 
-		if ($ipaddr != $cached_ip)
+		if ($ipaddr != $cached_ip) {
 			print('<span class="text-danger">');
-		else
+		} else {
 			print('<span class="text-success">');
+		}
 
 		print(htmlspecialchars($cached_ip));
 		print('</span>');
@@ -187,10 +184,11 @@ foreach ($a_dyndns as $dyndns):
 		$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
 		$cached_ipv6 = $cached_ipv6_s[0];
 
-		if ($ipv6addr != $cached_ipv6)
+		if ($ipv6addr != $cached_ipv6) {
 			print('<span class="text-danger">');
-		else
+		} else {
 			print('<span class="text-success">');
+		}
 
 		print(htmlspecialchars($cached_ipv6));
 		print('</span>');
@@ -205,13 +203,13 @@ foreach ($a_dyndns as $dyndns):
 ?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
 						<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php } else {
 ?>
-						<a class="fa fa-check-square-o"	title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>" ></a>
+						<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php }
 ?>
 						<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>

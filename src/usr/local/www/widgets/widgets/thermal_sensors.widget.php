@@ -191,19 +191,19 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 </div>
 <input type="hidden" id="thermal_sensors-config" name="thermal_sensors-config" value="" />
 
-<div id="thermal_sensors-settings" class="widgetconfigdiv panel-footer collapse" >
+<div id="widget-<?=$widgetname?>_panel-footer" class="widgetconfigdiv panel-footer collapse" >
 	<form action="/widgets/widgets/thermal_sensors.widget.php" method="post" id="iform_thermal_sensors_settings" name="iform_thermal_sensors_settings">
 	<table>
 		<tr>
-			<td align="left" colspan="2">
+			<td style="text-align:left" colspan="2">
 				<span style="font-weight: bold" >Thresholds in &deg;C (1 to 100):</span>
 			</td>
-			<td align="right" colspan="1">
+			<td style="text-align:right" colspan="1">
 				<span style="font-weight: bold" >Display settings:</span>
 			</td>
 		</tr>
 		<tr>
-			<td align="right">
+			<td style="text-align:right">
 				Zone Warning:
 			</td>
 			<td>
@@ -212,7 +212,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					id="thermal_sensors_widget_zone_warning_threshold"
 					value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
 			</td>
-			<td align="right">
+			<td style="text-align:right">
 				<label for="thermal_sensors_widget_show_raw_output">Show raw output (no graph): </label>
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_raw_output"
@@ -221,7 +221,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 			</td>
 		</tr>
 		<tr>
-			<td align="right">
+			<td style="text-align:right">
 				Zone Critical:
 			</td>
 			<td>
@@ -230,7 +230,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					id="thermal_sensors_widget_zone_critical_threshold"
 					value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
 			</td>
-			<td align="right">
+			<td style="text-align:right">
 				<label for="thermal_sensors_widget_show_full_sensor_name">Show full sensor name: </label>
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_full_sensor_name"
@@ -239,7 +239,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 			</td>
 		</tr>
 		<tr>
-			<td align="right">
+			<td style="text-align:right">
 				Core Warning:
 			</td>
 			<td>
@@ -248,12 +248,12 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					id="thermal_sensors_widget_core_warning_threshold"
 					value="<?= $thermal_sensors_widget_coreWarningTempThreshold ?>" />
 			</td>
-			<td align="right">
+			<td style="text-align:right">
 
 			</td>
 		</tr>
 		<tr>
-			<td align="right">
+			<td style="text-align:right">
 				Core Critical:
 			</td>
 			<td>
@@ -262,17 +262,17 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					id="thermal_sensors_widget_core_critical_threshold"
 					value="<?= $thermal_sensors_widget_coreCriticalTempThreshold ?>" />
 			</td>
-			<td align="right">
+			<td style="text-align:right">
 
 			</td>
 		</tr>
 		<tr>
-			<td align="right" colspan="3">
+			<td style="text-align:right" colspan="3">
 				<input type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="formbtn" value="Save" />
 			</td>
 		</tr>
 		<tr>
-			<td align="left" colspan="3">
+			<td style="text-align:left" colspan="3">
 				<span>* You can configure a proper Thermal Sensor / Module under <br />
 				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php">System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>
 			</td>

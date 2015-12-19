@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/arp	/usr/bin/wc /usr/bin/grep
-	pfSense_MODULE: dhcpserver
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpleases
@@ -305,7 +301,7 @@ if (count($pools) > 0) {
 
 foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
-		is_array($config['dhcpd'][$ifname]['staticmap'])) {
+	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		$staticmap_array_index = 0;
 		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
@@ -385,23 +381,26 @@ $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 $iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
 
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
+	if ($data['act'] == 'active') {
 		$icon = 'fa-check-circle-o';
-	elseif ($data['act'] == 'expired')
+	} elseif ($data['act'] == 'expired') {
 		$icon = 'fa-ban';
-	else
+	} else {
 		$icon = 'fa-times-circle-o';
+	}
 
 	$lip = ip2ulong($data['ip']);
 
 	if ($data['act'] != "static") {
 		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (!is_array($dhcpifconf['range']))
+			if (!is_array($dhcpifconf['range'])) {
 				continue;
+			}
 			if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 				$data['if'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
@@ -424,7 +423,7 @@ foreach ($leases as $data):
 					<td>
 						<?=$mac?>
 
-						<? if(isset($mac_man[$mac_hi])):?>
+						<? if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
 						<?endif?>
 					</td>

@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-wireless-edit
@@ -66,11 +63,13 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['wireless']))
+if (!is_array($config['wireless'])) {
 	$config['wireless'] = array();
+}
 
-if (!is_array($config['wireless']['clone']))
+if (!is_array($config['wireless']['clone'])) {
 	$config['wireless']['clone'] = array();
+}
 
 $a_clones = &$config['wireless']['clone'];
 
@@ -192,17 +191,19 @@ function build_parent_list() {
 		}
 	}
 
-	if($count > 0)
+	if ($count > 0) {
 		return($parentlist);
-	else
+	} else {
 		return(array('0' => gettext('None available')));
+	}
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Wireless"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

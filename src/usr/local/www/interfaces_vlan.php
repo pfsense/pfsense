@@ -55,10 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-vlan
@@ -177,11 +173,11 @@ display_top_tabs($tab_array);
 	<?=print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'),$g['product_name']), info)?>
+		'%s handbook for information on supported cards.'), $g['product_name']), info)?>
 </div>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
 		$('#act').val('del');

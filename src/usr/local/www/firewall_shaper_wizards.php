@@ -52,10 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-wizard
@@ -107,8 +103,9 @@ $wizards = array(
 $closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
@@ -117,11 +114,13 @@ $tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php"
 $tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('shaper'))
+if (is_subsystem_dirty('shaper')) {
 	print_info_box_np(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 ?>
 <div class="panel panel-default">

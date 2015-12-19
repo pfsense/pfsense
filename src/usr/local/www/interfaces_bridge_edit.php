@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-bridge-edit
@@ -65,8 +62,9 @@
 
 require("guiconfig.inc");
 
-if (!is_array($config['bridges']['bridged']))
+if (!is_array($config['bridges']['bridged'])) {
 	$config['bridges']['bridged'] = array();
+}
 
 $a_bridges = &$config['bridges']['bridged'];
 
@@ -211,13 +209,15 @@ if ($_POST) {
 			if ($_POST['span'] != "none" && $_POST['span'] == $ifmembers) {
 				$input_errors[] = gettext("Span interface cannot be part of the bridge. Remove the span interface from bridge members to continue.");
 			}
-			foreach($a_bridges as $a_bridge) {
-				if ($_POST['bridgeif'] === $a_bridge['bridgeif'])
+			foreach ($a_bridges as $a_bridge) {
+				if ($_POST['bridgeif'] === $a_bridge['bridgeif']) {
 					continue;
+				}
 				$a_members = explode(',', $a_bridge['members']);
 				foreach ($a_members as $a_member) {
-					if ($ifmembers === $a_member)
+					if ($ifmembers === $a_member) {
 						$input_errors[] = $ifmembers . gettext(" is part of another bridge. Remove the interface from bridge members to continue.");
+					}
 				}
 			}
 		}
@@ -317,8 +317,9 @@ function build_spanport_list() {
 
 	$splist = array('none' => 'None');
 
-	foreach ($ifacelist as $ifn => $ifdescr)
+	foreach ($ifacelist as $ifn => $ifdescr) {
 		$splist[$ifn] = $ifdescr;
+	}
 
 	return($splist);
 }
@@ -357,12 +358,13 @@ function build_port_list($selecton) {
 	return($portlist);
 }
 
-$pgtitle = array(gettext("Interfaces"),gettext("Bridge"),gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Bridge"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -397,10 +399,11 @@ $form->add($section);
 $section = new Form_Section('Advanced Configuration');
 
 // Set initial toggle state manually for now
-if($pconfig['showadvanced'])
+if ($pconfig['showadvanced']) {
 	$section->addClass('toggle-advanced in');
-else
+} else {
 	$section->addClass('toggle-advanced collapse');
+}
 
 $section->addInput(new Form_Input(
 	'maxaddr',
@@ -500,10 +503,11 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if($pconfig['showadvanced'])
+if ($pconfig['showadvanced']) {
 	$section->addClass('toggle-advanced in');
-else
+} else {
 	$section->addClass('toggle-advanced collapse');
+}
 
 $section->addInput(new Form_Select(
 	'proto',

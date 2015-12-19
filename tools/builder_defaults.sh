@@ -262,7 +262,7 @@ fi
 echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 
 # Poudriere
-export ZFS_TANK=${ZFS_TANK:-"tank"}
+export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
 export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 

@@ -3,7 +3,6 @@
 require_once("guiconfig.inc");
 
 /*
-	pfSense_MODULE:	shell
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 */

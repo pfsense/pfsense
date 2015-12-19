@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-rules-edit
@@ -86,16 +83,16 @@ function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
 	if ((isset($rule_config['allowopts'])) ||
-		(isset($rule_config['disablereplyto'])) ||
-		($rule_config['tag'] != "") ||
-		($rule_config['tagged'] != "") ||
-		($rule_config['max'] != "") ||
-		($rule_config['max-src-nodes'] != "") ||
-		($rule_config['max-src-conn'] != "") ||
-		($rule_config['max-src-states'] != "") ||
-		($rule_config['max-src-conn-rate'] != "") ||
-		($rule_config['max-src-conn-rates'] != "") ||
-		($rule_config['statetimeout'] != "")) {
+	    (isset($rule_config['disablereplyto'])) ||
+	    ($rule_config['tag'] != "") ||
+	    ($rule_config['tagged'] != "") ||
+	    ($rule_config['max'] != "") ||
+	    ($rule_config['max-src-nodes'] != "") ||
+	    ($rule_config['max-src-conn'] != "") ||
+	    ($rule_config['max-src-states'] != "") ||
+	    ($rule_config['max-src-conn-rate'] != "") ||
+	    ($rule_config['max-src-conn-rates'] != "") ||
+	    ($rule_config['statetimeout'] != "")) {
 		return true;
 	}
 
@@ -448,12 +445,12 @@ if ($_POST) {
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-		(!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
+	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
 		$reqdfieldsn[] = "Source bit count";
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
-		(!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
+	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
 		$reqdfields[] = "dstmask";
 		$reqdfieldsn[] = gettext("Destination bit count");
 	}
@@ -491,7 +488,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
-			((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
+		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
 		}
 	}
@@ -505,7 +502,7 @@ if ($_POST) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
-			((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
+		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
 			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
 		}
 	}
@@ -692,7 +689,7 @@ if ($_POST) {
 	}
 
 	if ((($_POST['max-src-conn-rate'] <> "" and $_POST['max-src-conn-rates'] == "")) ||
-		(($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
+	    (($_POST['max-src-conn-rate'] == "" and $_POST['max-src-conn-rates'] <> ""))) {
 		$input_errors[] = gettext("Both maximum new connections per host and the interval (per second(s)) must be specified");
 	}
 
@@ -1024,14 +1021,14 @@ $closehead = false;
 $page_filename = "firewall_rules_edit.php";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form;
 $section = new Form_Section('Edit Firewall rule');
 
-if (isset($id))
-{
+if (isset($id)) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		'ID',
@@ -1040,8 +1037,7 @@ if (isset($id))
 	));
 }
 
-if (isset($a_filter[$id]))
-{
+if (isset($a_filter[$id])) {
 	$form->addGlobal(new Form_Input(
 		'tracker',
 		'Tracker',
@@ -1073,8 +1069,9 @@ $values = array(
 	'reject' => 'Reject',
 );
 
-if ($if == "FloatingRules" || isset($pconfig['floating']))
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$values['match'] = 'Match';
+}
 
 $section->addInput(new Form_Select(
 	'type',
@@ -1095,8 +1092,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Set this option to disable this rule without removing it from the '.
 	'list.');
 
-if ($if == "FloatingRules" || isset($pconfig['floating']))
-{
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput(new Form_Checkbox(
 		'quick',
 		'Quick',
@@ -1108,13 +1104,12 @@ if ($if == "FloatingRules" || isset($pconfig['floating']))
 
 $edit_disabled = isset($pconfig['associated-rule-id']);
 
-if ($edit_disabled)
-{
+if ($edit_disabled) {
 	$extra = '';
-	foreach ($config['nat']['rule'] as $index => $nat_rule)
-	{
-		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id'])
+	foreach ($config['nat']['rule'] as $index => $nat_rule) {
+		if ($nat_rule['associated-rule-id'] === $pconfig['associated-rule-id']) {
 			$extra = '<br/><a href="firewall_nat_edit.php?id='. $index .'">'. gettext('View the NAT rule') .'</a>';
+		}
 	}
 
 	$section->addInput(new Form_StaticText(
@@ -1133,8 +1128,7 @@ if ($edit_disabled)
 		$pconfig['associated-rule-id']
 	));
 
-	if (!empty($pconfig['interface']))
-	{
+	if (!empty($pconfig['interface'])) {
 		$form->addGlobal(new Form_Input(
 			'interface',
 			null,
@@ -1269,17 +1263,20 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$ruleValues['(self)'] = "This firewall (self)";
 	}
 
-	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules")
+	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
 		$ruleValues['(self)'] = 'This Firewall (self)';
-	if (have_ruleint_access("pppoe"))
+	}
+	if (have_ruleint_access("pppoe")) {
 		$ruleValues['pppoe'] = 'PPPoE clients';
-	if (have_ruleint_access("l2tp"))
+	}
+	if (have_ruleint_access("l2tp")) {
 		$ruleValues['l2tp'] = 'L2TP clients';
+	}
 
-	foreach ($ifdisp as $ifent => $ifdesc)
-	{
-		if (!have_ruleint_access($ifent))
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (!have_ruleint_access($ifent)) {
 			continue;
+		}
 
 		$ruleValues[$ifent] = $ifdesc.' net';
 		$ruleValues[$ifent.'ip'] = $ifdesc.' address';
@@ -1309,8 +1306,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	$portValues = ['' => '(other)', 'any' => 'any'];
 
-	foreach ($wkports as $port => $portName)
+	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
+	}
 
 	$group = new Form_Group($name .' port range');
 
@@ -1387,7 +1385,7 @@ $btnadvanced = new Form_Button(
 
 $btnadvanced->removeClass('btn-primary')->addClass('btn-default');
 
-if(!$adv_open) {
+if (!$adv_open) {
 	$section->addInput(new Form_StaticText(
 		null,
 		$btnadvanced
@@ -1476,7 +1474,7 @@ $section->addInput(new Form_Input(
 	'Max. src. conn. Rate',
 	'number',
 	$pconfig['max-src-conn-rate']
-))->setHelp('Maximum state entries per host');
+))->setHelp('Maximum new connections per host (TCP only)');
 
 $section->addInput(new Form_Input(
 	'max-src-conn-rates',
@@ -1484,7 +1482,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['max-src-conn-rates'],
 	['min' => 1, 'max' => 255]
-))->setHelp('Maximum new connections per host / per second(s) (TCP only)');
+))->setHelp('/ per how many second(s) (TCP only)');
 
 $section->addInput(new Form_Input(
 	'statetimeout',
@@ -1543,10 +1541,10 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose 802.1p priority to apply');
 
 $schedules = array();
-foreach ((array)$config['schedules']['schedule'] as $schedule)
-{
-	if ($schedule['name'] != "")
+foreach ((array)$config['schedules']['schedule'] as $schedule) {
+	if ($schedule['name'] != "") {
 		$schedules[] = $schedule['name'];
+	}
 }
 
 $section->addInput(new Form_Select(
@@ -1557,24 +1555,27 @@ $section->addInput(new Form_Select(
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
 
 $gateways = array("" => 'default');
-foreach (return_gateways_array() as $gwname => $gw)
-{
-	if (($pconfig['ipprotocol'] == "inet46"))
+foreach (return_gateways_array() as $gwname => $gw) {
+	if (($pconfig['ipprotocol'] == "inet46")) {
 		continue;
-	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway']))))
+	}
+	if (($pconfig['ipprotocol'] == "inet6") && !(($gw['ipprotocol'] == "inet6") || (is_ipaddrv6($gw['gateway'])))) {
 		continue;
-	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway']))))
+	}
+	if (($pconfig['ipprotocol'] == "inet") && !(($gw['ipprotocol'] == "inet") || (is_ipaddrv4($gw['gateway'])))) {
 		continue;
-	if ($gw == "")
+	}
+	if ($gw == "") {
 		continue;
+	}
 
 	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gateway_addr_str);
 }
 
-foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data)
-{
-	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol']))
+foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
+	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
 		$gateways[ $gwg_name ] = $gwg_name;
+	}
 }
 
 $section->addInput(new Form_Select(
@@ -1612,14 +1613,16 @@ $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '
 $group = new Form_Group('Ackqueue / Queue');
 
 $list = array('' => 'none');
-if(!is_array($qlist))
+if (!is_array($qlist)) {
 	$qlist = array();
+}
 
 foreach ($qlist as $q => $qkey) {
-	if (isset($ifdisp[$q]))
+	if (isset($ifdisp[$q])) {
 		$list[$q] = $ifdisp[$q];
-	else
+	} else {
 		$list[$q] = $q;
+	}
 }
 
 $group->add(new Form_Select(
@@ -1644,21 +1647,18 @@ $has_created_time = (isset($a_filter[$id]['created']) && is_array($a_filter[$id]
 $has_updated_time = (isset($a_filter[$id]['updated']) && is_array($a_filter[$id]['updated']));
 
 
-if ($has_created_time || $has_updated_time)
-{
+if ($has_created_time || $has_updated_time) {
 	$form->add($section);
 	$section = new Form_Section('Rule Information');
 
-	if ($has_created_time)
-	{
+	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
 			date('n/j/y H:i:s', $a_filter[$id]['created']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['created']['username'] .'</b>'
 		));
 	}
 
-	if ($has_updated_time)
-	{
+	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
 			date('n/j/y H:i:s', $a_filter[$id]['updated']['time']) . gettext(' by ') .'<b>'. $a_filter[$id]['updated']['username'] .'</b>'
@@ -1672,7 +1672,7 @@ echo $form;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	var portsenabled = 1;
 	var editenabled = 1;
@@ -1683,8 +1683,9 @@ events.push(function(){
 		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('srcbeginport_cust', false);
 		} else {
-			if (editenabled)
+			if (editenabled) {
 				$('#srcbeginport_cust').val("");
+			}
 
 			disableInput('srcbeginport_cust', true);
 		}
@@ -1692,8 +1693,9 @@ events.push(function(){
 		if (($('#srcendport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('srcendport_cust', false);
 		} else {
-			if (editenabled)
+			if (editenabled) {
 				$('#srcendport_cust').val("");
+			}
 
 			disableInput('srcendport_cust', true);
 		}
@@ -1701,8 +1703,9 @@ events.push(function(){
 		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('dstbeginport_cust', false);
 		} else {
-			if (editenabled)
+			if (editenabled) {
 				$('#dstbeginport_cust').val("");
+			}
 
 			disableInput('dstbeginport_cust', true);
 		}
@@ -1710,8 +1713,9 @@ events.push(function(){
 		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('dstendport_cust', false);
 		} else {
-			if (editenabled)
+			if (editenabled) {
 				$('#dstendport_cust').val("");
+			}
 
 			disableInput('dstendport_cust', true);
 		}
@@ -1900,15 +1904,17 @@ events.push(function(){
 	$('#toggle-advanced').click(function() {
 		optionsvisible = 1;
 		hideClass('advanced-options', false);
-		if ($('#tcpflags_any').prop('checked'))
+		if ($('#tcpflags_any').prop('checked')) {
 			$('.table-flags').addClass('hidden');
+		}
 	});
 
 	$('#tcpflags_any').click(function () {
-		if (this.checked)
+		if (this.checked) {
 			$('.table-flags').addClass('hidden');
-		else
+		} else {
 			$('.table-flags').removeClass('hidden');
+		}
 	});
 
 	// Change help text based on the selector value
@@ -1919,14 +1925,15 @@ events.push(function(){
 	function setOptText(target, val) {
 		var dispstr = '<span class="text-success">';
 
-		if (val == 'keep state')
+		if (val == 'keep state') {
 			dispstr += 'Keep: works with all IP protocols';
-		else if (val == 'sloppy state')
+		} else if (val == 'sloppy state') {
 			dispstr += 'Sloppy: works with all IP protocols';
-		else if (val == 'synproxy state')
+		} else if (val == 'synproxy state') {
 			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
-		else if (val == 'none')
+		} else if (val == 'none') {
 			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';
+		}
 
 		dispstr += '</span>';
 		setHelpText(target, dispstr);

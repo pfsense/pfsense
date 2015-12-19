@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-virtualserver-edit
@@ -198,8 +195,9 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
@@ -307,7 +305,7 @@ print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual ser
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
     // --------- Autocomplete -----------------------------------------------------------------------------------------
     var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
     var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;

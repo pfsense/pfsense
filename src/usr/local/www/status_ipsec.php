@@ -57,10 +57,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: ipsec
-*/
-
 ##|+PRIV
 ##|*IDENT=page-status-ipsec
 ##|*NAME=Status: IPsec
@@ -356,8 +352,8 @@ if (is_array($status)) {
 									<td>
 <?php
 				print(gettext("Rekey: ") . htmlspecialchars($childsa['rekey-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['rekey-time']) . ")");
-				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['life-time']) . ")" );
-				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['install-time']) . ")" );
+				print('<br/>' . gettext('Life: ') . htmlspecialchars($childsa['life-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['life-time']) . ")");
+				print('<br/>' . gettext('Install: ') .htmlspecialchars($childsa['install-time']) . gettext(" seconds (") . convert_seconds_to_hms($childsa['install-time']) . ")");
 
 ?>
 									</td>
@@ -435,38 +431,42 @@ foreach ($a_phase1 as $ph1ent) {
 					<td>
 <?php
 	list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
-	if (empty($myid_data))
+	if (empty($myid_data)) {
 		print(gettext("Unknown"));
-	else
+	} else {
 		print(htmlspecialchars($myid_data));
+	}
 ?>
 					</td>
 					<td>
 <?php
 	$ph1src = ipsec_get_phase1_src($ph1ent);
 
-	if (empty($ph1src))
+	if (empty($ph1src)) {
 		print(gettext("Unknown"));
-	else
+	} else {
 		print(htmlspecialchars($ph1src));
+	}
 ?>
 					</td>
 					<td>
 <?php
 	list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
-	if (empty($peerid_data))
+	if (empty($peerid_data)) {
 		print(gettext("Unknown"));
-	else
+	} else {
 		print(htmlspecialchars($peerid_data));
+	}
 ?>
 					</td>
 					<td>
 <?php
 	$ph1src = ipsec_get_phase1_dst($ph1ent);
-	if (empty($ph1src))
+	if (empty($ph1src)) {
 		print(gettext("Unknown"));
-	else
+	} else {
 		print(htmlspecialchars($ph1src));
+	}
 ?>
 					</td>
 					<td>

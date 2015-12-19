@@ -56,9 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-firewall
@@ -388,7 +385,7 @@ if ($_POST) {
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-			isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
@@ -405,10 +402,12 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Firewall and NAT"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -522,7 +521,7 @@ $section->addInput(new Form_Input(
 	'default. On your system the default size is: %d',
 	[pfsense_default_table_entries_size()]);
 
-$section->addINput(new Form_Input(
+$section->addInput(new Form_Input(
 	'maximumfrags',
 	'Firewall Maximum Fragment Entries',
 	'text',
@@ -602,16 +601,16 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-if (count($config['interfaces']) > 1)
-{
+if (count($config['interfaces']) > 1) {
 	$section = new Form_Section('Network Address Translation');
 
-	if (isset($config['system']['disablenatreflection']))
+	if (isset($config['system']['disablenatreflection'])) {
 		$value = 'disable';
-	elseif (!isset($config['system']['enablenatreflectionpurenat']))
+	} elseif (!isset($config['system']['enablenatreflectionpurenat'])) {
 		$value = 'proxy';
-	else
+	} else {
 		$value = 'purenat';
+	}
 
 	$section->addInput(new Form_Select(
 		'natreflection',
@@ -679,73 +678,60 @@ if (count($config['interfaces']) > 1)
 	$form->add($section);
 }
 
-$section = new Form_Section('State Timeouts');
+$section = new Form_Section('State Timeouts in seconds. (Leave blank for default)');
 
-$group = new Form_Group('TCP Timeouts');
-$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN', 'closed');
-foreach ($tcpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'tcp'. strtolower($name) .'timeout',
+$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
+foreach ($tcpTimeouts as $name) {
+	$keyname = 'tcp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'TCP '. $name,
 		'number',
-		$config['system']['tcp'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for TCP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('UDP Timeouts');
 $udpTimeouts = array('First', 'Single', 'Multiple');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'udp'. strtolower($name) .'timeout',
+foreach ($udpTimeouts as $name) {
+	$keyname = 'udp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'UDP '. $name,
 		'number',
-		$config['system']['udo'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for UDP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('ICMP Timeouts');
-$udpTimeouts = array('First', 'Error');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'icmp'. strtolower($name) .'timeout',
-		'UDP '. $name,
+$icmpTimeouts = array('First', 'Error');
+foreach ($icmpTimeouts as $name) {
+	$keyname = 'icmp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
+		'ICMP '. $name,
 		'number',
-		$config['system']['icmp'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('Other Timeouts');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'other'. strtolower($name) .'timeout',
+$otherTimeouts = array('First', 'Single', 'Multiple');
+foreach ($otherTimeouts as $name) {
+	$keyname = 'other'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'Other '. $name,
 		'number',
-		$config['system']['other'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
+$form->add($section);
 
 print $form;
 
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Change help text based on the selector value
 	function setHelpText(id, text) {
 		$('#' + id).parent().parent('div').find('span').html(text);
@@ -754,14 +740,15 @@ events.push(function(){
 	function setOptText(val) {
 		var htext = '<span class="text-success">';
 
-		if(val == 'normal')
+		if (val == 'normal') {
 			htext += 'The default optimization algorithm';
-		else if (val == 'high-latency')
+		} else if (val == 'high-latency') {
 			htext += 'Used for eg. satellite links. Expires idle connections later than default';
-		else if (val == 'aggressive')
+		} else if (val == 'aggressive') {
 			htext += 'Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections';
-		else if (val == 'conservative')
+		} else if (val == 'conservative') {
 			htext += 'Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization';
+		}
 
 		htext += '</span>';
 		setHelpText('optimization', htext);

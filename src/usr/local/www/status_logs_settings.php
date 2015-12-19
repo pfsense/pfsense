@@ -56,10 +56,6 @@
  *
  */
 
-/*
-	pfSense_MODULE: system
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-logs-settings
 ##|*NAME=Status: Logs: Settings
@@ -111,7 +107,7 @@ function is_valid_syslog_server($target) {
 }
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
-	clear_all_log_files();
+	clear_all_log_files(true);
 	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
 	unset($input_errors);
@@ -190,9 +186,9 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$retval = 0;
 		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-			($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-			($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-			($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
+		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
+		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
+		    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
 			$retval |= filter_configure();
 		}
 
@@ -224,10 +220,11 @@ $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a
 					gettext("If you pick a single IP, remote syslog servers must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
 					"<br /><br />" .
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else if ($savemsg)
+} else if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "status_logs.php");
@@ -461,14 +458,6 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['hostapd']
 ));
 
-// Ugly hack to prevent the "Toggle all" button from being automatically created
-$group->add(new Form_MultiCheckbox(
-	'notoggleall',
-	null,
-	'No toggle all',
-	$pconfig['hostapd']
-))->displayAsRadio();
-
 $group->setHelp('Syslog sends UDP datagrams to port 514 on the specified remote '.
 	'syslog server, unless another port is specified. Be sure to set syslogd on '.
 	'the remote server to accept syslog messages from pfSense.');
@@ -481,9 +470,10 @@ print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
-	hideMultiCheckbox('notoggleall', true);
+	// We don't want to see the automatically generated "Toggle all" button
+	$('[name=btntoggleall]').hide();
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
@@ -495,7 +485,6 @@ events.push(function(){
 		hideClass('remotelogging', !this.checked);
 		hideSelect('sourceip', !this.checked);
 		hideSelect('ipproto', !this.checked);
-		hideMultiCheckbox('notoggleall', true);
 	});
 
 	function disableEverything() {

@@ -55,9 +55,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: header
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-haltsystem
@@ -91,8 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <?php
 	if (DEBUG) {
 	   print("Not actually halting (DEBUG is set true)<br>");
-	}
-	else {
+	} else {
 		print('<pre>');
 		system_halt();
 		print('</pre>');

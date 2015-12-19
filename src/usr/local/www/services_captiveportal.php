@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal
@@ -529,8 +526,9 @@ function build_radiusnas_list() {
 					$snip = long2ip32($start+$i);
 					$list[$snip] = $sn['descr'] . ' - ' . $snip;
 				}
-			} else
+			} else {
 				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			}
 		}
 	}
 
@@ -542,8 +540,9 @@ function build_cert_list() {
 
 	$list = array();
 
-	foreach($a_cert as $cert)
+	foreach ($a_cert as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
+	}
 
 	return($list);
 }
@@ -551,11 +550,13 @@ function build_cert_list() {
 $closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), true, "services_captiveportal.php?zone={$cpzone}");
@@ -706,7 +707,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'bwdefaultup',
-	'Default download (Kbit/s)',
+	'Default upload (Kbit/s)',
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
@@ -1121,7 +1122,7 @@ if ($pconfig['page']['errtext']) {
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
+		'Restore default error page',
 		'?zone=' . $cpzone . '&amp;act=delerrhtml'
 	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
 }
@@ -1148,7 +1149,7 @@ if ($pconfig['page']['logouttext']) {
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
+		'Restore default logout page',
 		'?zone=' . $cpzone . '&amp;act=dellogouthtml'
 	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
 }
@@ -1170,7 +1171,7 @@ print_info_box(gettext('Warning:' . '<br />' . 'Don\'t forget to enable the DHCP
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
 	function hideSections(hide) {

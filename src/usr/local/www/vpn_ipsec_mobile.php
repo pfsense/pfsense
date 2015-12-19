@@ -369,18 +369,20 @@ include("head.inc");
 
 		function dns_domain_change() {
 
-			if (document.iform.dns_domain_enable.checked)
+			if (document.iform.dns_domain_enable.checked) {
 				document.iform.dns_domain.disabled = 0;
-			else
+			} else {
 				document.iform.dns_domain.disabled = 1;
+			}
 		}
 
 		function dns_split_change() {
 
-			if (document.iform.dns_split_enable.checked)
+			if (document.iform.dns_split_enable.checked) {
 				document.iform.dns_split.disabled = 0;
-			else
+			} else {
 				document.iform.dns_split.disabled = 1;
+			}
 		}
 
 		function dns_server_change() {
@@ -411,35 +413,43 @@ include("head.inc");
 
 		function pfs_group_change() {
 
-			if (document.iform.pfs_group_enable.checked)
+			if (document.iform.pfs_group_enable.checked) {
 				document.iform.pfs_group.disabled = 0;
-			else
+			} else {
 				document.iform.pfs_group.disabled = 1;
+			}
 		}
 
 		function login_banner_change() {
 
-			if (document.iform.login_banner_enable.checked)
+			if (document.iform.login_banner_enable.checked) {
 				document.iform.login_banner.disabled = 0;
-			else
+			} else {
 				document.iform.login_banner.disabled = 1;
+			}
 		}
 
 		//]]>
 	</script>
 
 <?php
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
-if (is_subsystem_dirty('ipsec'))
+}
+if (is_subsystem_dirty('ipsec')) {
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-foreach ($a_phase1 as $ph1ent)
-	if (isset($ph1ent['mobile']))
+}
+foreach ($a_phase1 as $ph1ent) {
+	if (isset($ph1ent['mobile'])) {
 		$ph1found = true;
-if ($pconfig['enable'] && !$ph1found)
-	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
-if ($input_errors)
+	}
+}
+if ($pconfig['enable'] && !$ph1found) {
+	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), gettext("create"), gettext("Create Phase1"));
+}
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
@@ -464,8 +474,9 @@ $section = new Form_Section('Extended Authentication (Xauth)');
 
 $authServers = array();
 
-foreach (auth_get_authserver_list() as $authServer)
+foreach (auth_get_authserver_list() as $authServer) {
 	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+}
 
 $section->addInput(new Form_Select(
 	'user_source',
@@ -500,8 +511,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-pool_enable collapse');
 
-if (!empty($pconfig['pool_enable']))
+if (!empty($pconfig['pool_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'pool_address',
@@ -512,8 +524,9 @@ $group->add(new Form_Input(
 
 $netBits = array();
 
-for ($i = 32; $i >= 0; $i--)
+for ($i = 32; $i >= 0; $i--) {
 	$netBits[$i] = $i;
+}
 
 $group->add(new Form_Select(
 	'pool_netbits',
@@ -535,8 +548,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-pool_enable_v6 collapse');
 
-if (!empty($pconfig['pool_enable_v6']))
+if (!empty($pconfig['pool_enable_v6'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'pool_address_v6',
@@ -547,8 +561,9 @@ $group->add(new Form_Input(
 
 $netBits = array();
 
-for ($i = 128; $i >= 0; $i--)
+for ($i = 128; $i >= 0; $i--) {
 	$netBitsv6[$i] = $i;
+}
 
 $group->add(new Form_Select(
 	'pool_netbits_v6',
@@ -583,8 +598,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-dns_domain collapse');
 
-if (!empty($pconfig['dns_domain_enable']))
+if (!empty($pconfig['dns_domain_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'dns_domain',
@@ -605,8 +621,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-dns_split collapse');
 
-if (!empty($pconfig['dns_split_enable']))
+if (!empty($pconfig['dns_split_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'dns_split',
@@ -624,13 +641,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dns_server_enable']
 ))->toggles('.toggle-dns_server_enable');
 
-for ($i = 1; $i <= 4; $i++)
-{
+for ($i = 1; $i <= 4; $i++) {
 	$group = new Form_Group('Server #' . $i);
 	$group->addClass('toggle-dns_server_enable collapse');
 
-	if (!empty($pconfig['dns_server_enable']))
+	if (!empty($pconfig['dns_server_enable'])) {
 		$group->addClass('in');
+	}
 
 	$group->add(new Form_Input(
 		'dns_server' . $i,
@@ -649,13 +666,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['wins_server_enable']
 ))->toggles('.toggle-wins_server_enable');
 
-for ($i = 1; $i <= 2; $i++)
-{
+for ($i = 1; $i <= 2; $i++) {
 	$group = new Form_Group('Server #' . $i);
 	$group->addClass('toggle-wins_server_enable collapse');
 
-	if (!empty($pconfig['wins_server_enable']))
+	if (!empty($pconfig['wins_server_enable'])) {
 		$group->addClass('in');
+	}
 
 	$group->add(new Form_Input(
 		'wins_server' . $i,
@@ -678,8 +695,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Group');
 $group->addClass('toggle-pfs_group collapse');
 
-if (!empty($pconfig['pfs_group_enable']))
+if (!empty($pconfig['pfs_group_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Select(
 	'pfs_group',
@@ -700,8 +718,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-login_banner collapse');
 
-if (!empty($pconfig['login_banner_enable']))
+if (!empty($pconfig['login_banner_enable'])) {
 	$group->addClass('in');
+}
 
 // TODO: should be a textarea
 $group->add(new Form_Input(

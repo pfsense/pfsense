@@ -53,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-pool
@@ -121,19 +118,22 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 	$a_pool[$i]['monitor'] = "<a href=\"/load_balancer_monitor_edit.php?id={$mondex[$a_pool[$i]['monitor']]}\">" . htmlspecialchars($a_pool[$i]['monitor']) . "</a>";
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"),gettext("Pool"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"));
 $shortcut_section = "relayd";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
-if (is_subsystem_dirty('loadbalancer'))
+if (is_subsystem_dirty('loadbalancer')) {
 	print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -164,7 +164,7 @@ display_top_tabs($tab_array);
 <?php
 
 $idx = 0;
-foreach($a_pool as $pool) {
+foreach ($a_pool as $pool) {
 ?>
 					<tr>
 						<td>

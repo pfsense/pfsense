@@ -1,8 +1,4 @@
 <?PHP
-/*
-	pfSense_MODULE:	notifications
-*/
-
 	class Growl
 	{
 		const GROWL_PRIORITY_LOW = -2;

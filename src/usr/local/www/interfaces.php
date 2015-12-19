@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/arp
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces
@@ -466,7 +462,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||
-						isset($config['dhcpdv6'][$ifapply]['enable'])) {
+					    isset($config['dhcpdv6'][$ifapply]['enable'])) {
 						services_dhcpd_configure();
 					}
 				}
@@ -675,8 +671,8 @@ if ($_POST['apply']) {
 							continue;
 						}
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
-							$config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
-							$config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
+						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
+						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}
@@ -784,12 +780,12 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	}
 	if ($_POST['pppoe_resethour'] != "" && !is_numericint($_POST['pppoe_resethour']) &&
-		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
-			$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
+	    $_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
+		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
 	}
 	if ($_POST['pppoe_resetminute'] != "" && !is_numericint($_POST['pppoe_resetminute']) &&
-		$_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
-			$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
+	    $_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
+		$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
 	}
 	if ($_POST['pppoe_resetdate'] != "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
@@ -1670,15 +1666,18 @@ function build_gatewayv6_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if (is_subsystem_dirty('interfaces'))
+if (is_subsystem_dirty('interfaces')) {
 	print_info_box_np(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
 					  gettext("You must apply the changes in order for them to take effect. Don't forget to adjust the DHCP Server range if needed after applying."));
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 
 $form = new Form(new Form_Button(
@@ -1942,7 +1941,8 @@ $group->add(new Form_Input(
 	'adv_dhcp_pt_select_timeout',
 	null,
 	'number',
-	$pconfig['adv_dhcp_pt_select_timeout']
+	$pconfig['adv_dhcp_pt_select_timeout'],
+	['min' => 0]
 ))->setHelp('Select timeout');
 
 $group->add(new Form_Input(
@@ -2010,7 +2010,7 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_config_file_override_path',
-	'Option modifiers',
+	'Config file override',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
 ))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
@@ -2042,10 +2042,10 @@ $section->addInput(new Form_Input(
 			'Some ISPs may require certain options be or not be requested.');
 
 $section->addInput(new Form_Input(
-	'adv_dhcp_require_options',
-	'Request options',
+	'adv_dhcp_required_options',
+	'Require options',
 	'text',
-	$pconfig['adv_dhcp_require_options']
+	$pconfig['adv_dhcp_required_options']
 ))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.	 [option [, ...]]');
 
 $section->addInput(new Form_Input(
@@ -2729,8 +2729,9 @@ if (isset($wancfg['wireless'])) {
 		}
 	}
 
-	if (count($mode_list) == 1)
+	if (count($mode_list) == 1) {
 		$mode_list[''] = '';
+	}
 
 	$section->addInput(new Form_Select(
 		'standard',
@@ -2746,9 +2747,7 @@ if (isset($wancfg['wireless'])) {
 			$pconfig['protmode'],
 			['off' => 'Off', 'cts' => 'CTS to self', 'rtscts' => 'RTS and CTS']
 		))->setHelp('For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.');
-	}
-	else
-	{
+	} else {
 		$section->addInput(new Form_Input(
 			'protmode',
 			null,
@@ -3086,7 +3085,7 @@ $section->addInput(new Form_Checkbox(
 			' as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network ' .
 			'lies in such a private address space, too.');
 
-	$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'blockbogons',
 	'Block bogon networks',
 	'',
@@ -3177,7 +3176,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	function updateType(t) {
 
 		switch (t) {
@@ -3220,8 +3219,9 @@ events.push(function(){
 	}
 
 	function updateTypeSix(t) {
-		if (!isNaN(t[0]))
+		if (!isNaN(t[0])) {
 			t = '_' + t;
+		}
 
 		switch (t) {
 			case "none": {
@@ -3333,8 +3333,7 @@ events.push(function(){
 		$("#newgateway").modal('hide');
 	}
 
-	function addOption(selectbox, text, value)
-	{
+	function addOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3365,8 +3364,7 @@ events.push(function(){
 	}
 
 
-	function addOption_v6(selectbox, text, value)
-	{
+	function addOption_v6(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3505,7 +3503,7 @@ events.push(function(){
 		var adv = $('#dhcpadv').prop('checked');
 		var ovr = $('#dhcpovr').prop('checked');
 
-		if(ovr) {
+		if (ovr) {
 			hideInput('dhcphostname', true);
 			hideIpAddress('alias-address', true);
 			hideInput('dhcprejectfrom', true);
@@ -3544,12 +3542,12 @@ events.push(function(){
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
 	show_reset_settings($('#pppoe-reset-type').val());
-	$("#add").prop('type' ,'button');
-	$("#cnx").prop('type' ,'button');
-	$("#addgw").prop('type' ,'button');
-	$("#add6").prop('type' ,'button');
-	$("#cnx6").prop('type' ,'button');
-	$("#addgw6").prop('type' ,'button');
+	$("#add").prop('type', 'button');
+	$("#cnx").prop('type', 'button');
+	$("#addgw").prop('type', 'button');
+	$("#add6").prop('type', 'button');
+	$("#cnx6").prop('type', 'button');
+	$("#addgw6").prop('type', 'button');
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
@@ -3557,24 +3555,27 @@ events.push(function(){
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
-	if(sv == "")
+	if (sv == "") {
 		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
+	} else {
+		$("input[name=adv_dhcp_pt_values][value="+sv+"]").prop('checked', true);
+	}
 
 	// Set preset from value
 	setPresets(sv);
-	
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#type').on('change', function() {
-		updateType( this.value );
+		updateType(this.value);
 	});
 
 	$('#type6').on('change', function() {
-		updateTypeSix( this.value );
+		updateTypeSix(this.value);
 	});
 
 	$('#pppoe-reset-type').on('change', function() {
-		show_reset_settings( this.value );
+		show_reset_settings(this.value);
 	});
 
 	$("#add").click(function() {
@@ -3618,7 +3619,7 @@ events.push(function(){
 	});
 
 	// On click . .
-	$('[id=adv_dhcp_pt_values]').click(function () {
+	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
 

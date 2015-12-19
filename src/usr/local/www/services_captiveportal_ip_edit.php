@@ -56,10 +56,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedips
@@ -148,6 +144,14 @@ if ($_POST) {
 		$input_errors[] = gettext("Download speed needs to be an integer");
 	}
 
+	if ($_POST['bw_up'] && ($_POST['bw_up'] > 999999 || $_POST['bw_up'] < 1)) {
+		$input_errors[] = gettext("Upload speed must be between 1 and 999999");
+	}
+
+	if ($_POST['bw_down'] && ($_POST['bw_down'] > 999999 || $_POST['bw_down'] < 1)) {
+		$input_errors[] = gettext("Download speed must be between 1 and 999999");
+	}
+
 	foreach ($a_allowedips as $ipent) {
 		if (isset($id) && ($a_allowedips[$id]) && ($a_allowedips[$id] === $ipent)) {
 			continue;
@@ -222,7 +226,7 @@ if ($_POST) {
 }
 
 function build_dir_list() {
-	$dirs = array(gettext("Both"),gettext("From"),gettext("To"));
+	$dirs = array(gettext("Both"), gettext("From"), gettext("To"));
 	$dirlist = array();
 
 	foreach ($dirs as $dir) {
@@ -234,8 +238,9 @@ function build_dir_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

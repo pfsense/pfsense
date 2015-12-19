@@ -53,12 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
-	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/bin/dd	/sbin/tunefs
-	pfSense_MODULE:	nanobsd
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-nanobsd
 ##|*NAME=Diagnostics: NanoBSD
@@ -90,10 +84,11 @@ $NANOBSD_SIZE = nanobsd_get_size();
 $class='alert-warning';
 
 if ($_POST['bootslice']) {
-	if (!DEBUG)
+	if (!DEBUG) {
 	   nanobsd_switch_boot_slice();
-	else
+	} else {
 	   sleep(4);
+	}
 
 	$savemsg = gettext("The boot slice has been set to") . " " . nanobsd_get_active_slice();
 	$class='alert-success';
@@ -126,15 +121,15 @@ if ($_POST['changero']) {
 if ($_POST['setrw']) {
 	if (!DEBUG) {
 		conf_mount_rw();
-		if (isset($_POST['nanobsd_force_rw']))
+		if (isset($_POST['nanobsd_force_rw'])) {
 			$config['system']['nanobsd_force_rw'] = true;
-		else
+		} else {
 			unset($config['system']['nanobsd_force_rw']);
+		}
 
 		write_config("Changed Permanent Read/Write Setting");
 		conf_mount_ro();
-	}
-	else {
+	} else {
 		$savemsg = 'Saved r/w permanently';
 		$class = 'alert-success';
 	}
@@ -142,8 +137,9 @@ if ($_POST['setrw']) {
 
 print_info_box("The options on this page are intended for use by advanced users only.");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, $class);
+}
 
 $form = new Form(false);
 
@@ -173,12 +169,14 @@ if (is_writable("/")) {
 		$refdisplay = " (Reference count " . $refcount . ")";
 	}
 	$lbl = gettext("Read/Write") . $refdisplay;
-	if (!isset($config['system']['nanobsd_force_rw']))
+	if (!isset($config['system']['nanobsd_force_rw'])) {
 		$btnlbl = gettext("Switch to Read-Only");
+	}
 } else {
 	$lbl = gettext("Read-Only");
-	if (!isset($config['system']['nanobsd_force_rw']))
+	if (!isset($config['system']['nanobsd_force_rw'])) {
 		$btnlbl = gettext("Switch to Read/Write");
+	}
 }
 
 $robtn = new Form_Button('changero', $btnlbl);

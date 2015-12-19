@@ -32,11 +32,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/echo
-	pfSense_MODULE:	notifications
-*/
-
 require_once("globals.inc");
 require_once("led.inc");
 

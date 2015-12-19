@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
@@ -151,8 +148,9 @@ if (count($a_cp) >	1) {
 
 	$zonelist = array("" => 'None');
 
-	foreach ($a_cp as $cpkey => $cp)
+	foreach ($a_cp as $cpkey => $cp) {
 		$zonelist[$cpkey] = $cp['zone'];
+	}
 
 	$section->addInput(new Form_Select(
 		'zone',
@@ -211,7 +209,7 @@ if (!empty($cpzone)): ?>
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])) {
+			if (isset($mac_man[$mac_hi])) {
 				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
 			}
 		}
@@ -228,8 +226,11 @@ if (!empty($cpzone)): ?>
 				</td>
 				<td>
 <?php
-		if ($last_act != 0)
-			echo htmlspecialchars(date("m/d/Y H:i:s", $last_act))?>
+			if ($last_act != 0) {
+				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+			}
+?>
+
 				</td>
 <?php
 	   else:

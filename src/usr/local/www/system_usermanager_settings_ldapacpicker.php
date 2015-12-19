@@ -52,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE:	auth
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-settings-ldappicker
@@ -156,7 +153,7 @@ function post_choices() {
 				</table>
 			</div>
 			<p/>
-	
+
 			<input type='button' class="btn btn-sm btn-primary" value='<?=gettext("Save");?>' onClick="post_choices();">
 <?php endif; ?>
 		</form>

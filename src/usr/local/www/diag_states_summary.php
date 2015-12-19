@@ -54,11 +54,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-statessummary
 ##|*NAME=Diagnostics: States Summary
@@ -167,10 +162,10 @@ function build_port_info($portarr, $proto) {
 	return implode($ports, ', ');
 }
 
-function print_summary_table($label, $iparr, $sort = TRUE)
-{
-	if ($sort)
+function print_summary_table($label, $iparr, $sort = TRUE) {
+	if ($sort) {
 		uksort($iparr, "sort_by_ip");
+	}
 
 ?>
 	<div class="panel panel-default">
@@ -196,8 +191,9 @@ function print_summary_table($label, $iparr, $sort = TRUE)
 	$rowSpan = '';
 	$i = 0;
 
-	if ($protocolCount > 1)
+	if ($protocolCount > 1) {
 		$rowSpan = ' rowspan="' . $protocolCount . '"';
+	}
 ?>
 						<tr>
 							<td<?= $rowSpan ?>><?php echo $ip; ?></td>

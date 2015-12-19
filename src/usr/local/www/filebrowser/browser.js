@@ -1,7 +1,3 @@
-/*
-	pfSense_MODULE:	shell
-*/
-
 jQuery(document).ready(
 	function() {
 		jQuery("#fbOpen").click(

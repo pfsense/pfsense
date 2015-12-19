@@ -52,10 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn /usr/bin/killall	/bin/ps
-	pfSense_MODULE: services
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-services
@@ -104,8 +100,9 @@ if ($_GET['batch']) {
 $pgtitle = array(gettext("Status"), gettext("Services"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $services = get_services();
 
@@ -195,7 +192,7 @@ if (count($services) > 0) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// If a restart button is clicked, populate the hidden inputs and submit the form (via POST)
 	$('[id^=restartservice-]').click(function(event) {
 		$('#mode').val('restartservice');

@@ -53,9 +53,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt-edit
@@ -92,8 +89,9 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['npt']))
+if (!is_array($config['nat']['npt'])) {
 	$config['nat']['npt'] = array();
+}
 
 $a_npt = &$config['nat']['npt'];
 
@@ -180,25 +178,32 @@ function build_if_list() {
 	global $ifdisp;
 
 	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if))
+		if (have_ruleint_access($if)) {
 			$interfaces[$if] = $ifdesc;
+		}
 	}
 
-	if ($config['l2tp']['mode'] == "server")
-		if (have_ruleint_access("l2tp"))
+	if ($config['l2tp']['mode'] == "server") {
+		if (have_ruleint_access("l2tp")) {
 			$interfaces['l2tp'] = "L2TP VPN";
+		}
+	}
 
-	if ($config['pppoe']['mode'] == "server")
-		if (have_ruleint_access("pppoe"))
+	if ($config['pppoe']['mode'] == "server") {
+		if (have_ruleint_access("pppoe")) {
 			$interfaces['pppoe'] = "PPPoE Server";
+		}
+	}
 
 	/* add ipsec interfaces */
-	if (ipsec_enabled() && have_ruleint_access("enc0"))
+	if (ipsec_enabled() && have_ruleint_access("enc0")) {
 		$interfaces["enc0"] = "IPsec";
+	}
 
 	/* add openvpn/tun interfaces */
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 		$interfaces["openvpn"] = "OpenVPN";
+	}
 
 	return($interfaces);
 }
@@ -206,8 +211,9 @@ function build_if_list() {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $form = new Form();
 

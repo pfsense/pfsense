@@ -54,11 +54,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-sourcetracking
 ##|*NAME=Diagnostics: Show Source Tracking
@@ -102,8 +97,8 @@ display_top_tabs($tab_array);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$('a[data-entry]').on('click', function(){
+events.push(function() {
+	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 		var data = $(this).data('entry').split('|');
 
@@ -116,7 +111,7 @@ events.push(function(){
 					srcip: data[0],
 					dstip: data[1]
 				},
-				success: function(){
+				success: function() {
 					el.parents('tr').remove();
 				},
 		});

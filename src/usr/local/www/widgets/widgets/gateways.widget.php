@@ -188,7 +188,7 @@ if ($_POST) {
 ?>
 
 <table id="gwtbl" class="table table-striped table-hover">
-		<tr><td><?=gettext("Retrieving gateway data")?></td></tr>
+	<tr><td><?=gettext("Retrieving gateways data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
@@ -220,7 +220,7 @@ if ($_POST) {
 //]]>
 </script>
 
-<div class="panel-footer collapse">
+<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 <input type="hidden" id="gateways-config" name="gateways-config" value="" />
 
 <div id="gateways-settings" class="widgetconfigdiv" >

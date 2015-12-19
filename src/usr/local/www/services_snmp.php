@@ -55,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: snmp
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-snmp
@@ -216,11 +213,13 @@ $shortcut_section = "snmp";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $form = new Form();
 
@@ -280,10 +279,11 @@ $form->add($section);
 
 $section = new Form_Section('SNMP Trap settings');
 
-if($pconfig['trapenable'])
+if ($pconfig['trapenable']) {
 	$section->addClass('toggle-traps', 'in');
-else
+} else {
 	$section->addClass('toggle-traps', 'collapse');
+}
 
 $section->addInput(new Form_Input(
 	'trapserver',
@@ -354,13 +354,6 @@ $group->add(new Form_MultiCheckbox(
 	$pconfig['regex']
 ));
 
-$group->add(new Form_MultiCheckbox(
-	'junk',
-	null,
-	null,
-	$pconfig['regex']
-))->displayAsRadio();
-
 $section->add($group);
 $form->add($section);
 
@@ -382,7 +375,7 @@ print($form);
 //<![CDATA[
 
 // hostres requires mibii so we force that here
-events.push(function(){
+events.push(function() {
 
 	noMibii = false;
 
@@ -390,7 +383,7 @@ events.push(function(){
 	hostresChange();
 
 	function hostresChange() {
-		if($('#hostres').prop('checked')) {
+		if ($('#hostres').prop('checked')) {
 			$('#mibii').prop('checked', true);
 			noMibii = true;
 		} else {
@@ -398,17 +391,18 @@ events.push(function(){
 		}
 	}
 
-	$('#hostres').change(function(){
+	$('#hostres').change(function() {
 		hostresChange();
 	});
 
 
-	$('#mibii').change(function(){
-		if(noMibii) {
+	$('#mibii').change(function() {
+		if (noMibii) {
 			$('#mibii').prop('checked', 'true');
 		}
 	});
 
+	$('[name=btntoggleall]').hide();
 });
 //]]>
 </script>

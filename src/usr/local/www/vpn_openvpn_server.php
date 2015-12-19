@@ -221,9 +221,9 @@ if ($_GET['act'] == "edit") {
 		$pconfig['dns_server4'] = $a_server[$id]['dns_server4'];
 
 		if ($pconfig['dns_server1'] ||
-			$pconfig['dns_server2'] ||
-			$pconfig['dns_server3'] ||
-			$pconfig['dns_server4']) {
+		    $pconfig['dns_server2'] ||
+		    $pconfig['dns_server3'] ||
+		    $pconfig['dns_server4']) {
 			$pconfig['dns_server_enable'] = true;
 		}
 
@@ -231,7 +231,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['ntp_server2'] = $a_server[$id]['ntp_server2'];
 
 		if ($pconfig['ntp_server1'] ||
-			$pconfig['ntp_server2']) {
+		    $pconfig['ntp_server2']) {
 			$pconfig['ntp_server_enable'] = true;
 		}
 
@@ -243,7 +243,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['wins_server2'] = $a_server[$id]['wins_server2'];
 
 		if ($pconfig['wins_server1'] ||
-			$pconfig['wins_server2']) {
+		    $pconfig['wins_server2']) {
 			$pconfig['wins_server_enable'] = true;
 		}
 
@@ -345,14 +345,14 @@ if ($_POST) {
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 		}
 	}
@@ -438,7 +438,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Using a tunnel network and server bridge settings together is not allowed.");
 		}
 		if (($pconfig['serverbridge_dhcp_start'] && !$pconfig['serverbridge_dhcp_end']) ||
-			(!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
+		    (!$pconfig['serverbridge_dhcp_start'] && $pconfig['serverbridge_dhcp_end'])) {
 			$input_errors[] = gettext("Server Bridge DHCP Start and End must both be empty, or defined.");
 		}
 		if (($pconfig['serverbridge_dhcp_start'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_start']))) {
@@ -594,14 +594,17 @@ $shortcut_section = "openvpn";
 
 include("head.inc");
 
-if (!$savemsg)
+if (!$savemsg) {
 	$savemsg = "";
+}
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box_np($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Server"), true, "vpn_openvpn_server.php");
@@ -613,7 +616,7 @@ display_top_tabs($tab_array);
 
 $form = new Form();
 
-if($act=="new" || $act=="edit") :
+if ($act=="new" || $act=="edit"):
 
 
 	$section = new Form_Section('General Information');
@@ -642,8 +645,9 @@ if($act=="new" || $act=="edit") :
 		$authmodes[0] = key($auth_servers);
 	}
 
-	foreach ($auth_servers as $auth_server_key => $auth_server)
+	foreach ($auth_servers as $auth_server_key => $auth_server) {
 		$options[$auth_server_key] = $auth_server['name'];
+	}
 
 	$section->addInput(new Form_Select(
 		'authmode',
@@ -717,8 +721,9 @@ if($act=="new" || $act=="edit") :
 	if (count($a_ca)) {
 
 		$list = array();
-		foreach ($a_ca as $ca)
+		foreach ($a_ca as $ca) {
 			$list[$ca['refid']] = $ca['descr'];
+		}
 
 		$section->addInput(new Form_Select(
 			'caref',
@@ -776,7 +781,7 @@ if($act=="new" || $act=="edit") :
 		'dh_length',
 		'DH Parameter length (bits)',
 		$pconfig['dh_length'],
-		array_combine($openvpn_dh_lengths,$openvpn_dh_lengths)
+		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
 
 	if (!$pconfig['shared_key']) {
@@ -890,7 +895,7 @@ if($act=="new" || $act=="edit") :
 		'gwredir',
 		'Redirect Gateway',
 		'Force all client generated traffic through the tunnel.',
-		$pconfig['gwredit']
+		$pconfig['gwredir']
 	));
 
 	$section->addInput(new Form_Input(
@@ -1086,13 +1091,13 @@ if($act=="new" || $act=="edit") :
 		'netbios_enable',
 		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
-		$pconfig['ntp_server_enable']
+		$pconfig['netbios_enable']
 	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled');
 
 	$section->addInput(new Form_Select(
 		'netbios_ntype',
 		'Node Type',
-		$pconfig['nbios_ntype'],
+		$pconfig['netbios_ntype'],
 		$netbios_nodetypes
 		))->setHelp('Possible options: b-node (broadcasts), p-node (point-to-point name queries to a WINS server), ' .
 					'm-node (broadcast then query name server), and h-node (query name server, then broadcast)');
@@ -1202,7 +1207,7 @@ else:
 			<tbody>
 <?php
 	$i = 0;
-	foreach($a_server as $server):
+	foreach ($a_server as $server):
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
 					<td>
@@ -1246,7 +1251,7 @@ endif;
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function mode_change() {
 		value = $('#mode').val();
@@ -1257,7 +1262,7 @@ events.push(function(){
 		hideInput('crlref', false);
 		hideLabel('Peer Certificate Revocation list', false);
 
-		switch(value) {
+		switch (value) {
 			case "p2p_tls":
 			case "server_tls":
 			case "server_user":
@@ -1297,7 +1302,7 @@ events.push(function(){
 				break;
 		}
 
-		switch(value) {
+		switch (value) {
 			case "p2p_shared_key":
 				hideClass('advanced', true);
 				hideInput('remote_network', false);
@@ -1360,7 +1365,7 @@ events.push(function(){
 	// Hide 'autotls_enable' AND 'tls' if mode == p2p_shared_key
 	// Otherwise hide 'tls' based on state of 'autotls_enable'
 	function autotls_change() {
-		if(($('#mode').val() == 'p2p_shared_key') || (!$('#tlsauth_enable').prop('checked'))){
+		if (($('#mode').val() == 'p2p_shared_key') || (!$('#tlsauth_enable').prop('checked'))) {
 			hideInput('tls', true);
 			hideInput('autotls_enable', true);
 		} else {
@@ -1372,7 +1377,7 @@ events.push(function(){
 	function autokey_change() {
 		var hide  = $('#autokey_enable').prop('checked')
 
-		if($('#mode').val() != 'p2p_shared_key') {
+		if ($('#mode').val() != 'p2p_shared_key') {
 			hideCheckbox('autokey_enable', true);
 			hideInput('shared_key', true);
 		} else {
@@ -1442,7 +1447,7 @@ events.push(function(){
 
 		mvalue = $('#mode').val();
 
-		switch(mvalue) {
+		switch (mvalue) {
 			case "p2p_shared_key":
 				sharedkey = true;
 				p2p = true;
@@ -1459,7 +1464,7 @@ events.push(function(){
 
 		value = $('#dev_mode').val();
 
-		switch(value) {
+		switch (value) {
 			case "tun":
 				hideCheckbox('no_tun_ipv6', false);
 				hideInput('tunnel_network', false);
@@ -1490,7 +1495,7 @@ events.push(function(){
 					hideInput('serverbridge_dhcp_end', false);
 					hideInput('topology', true);
 
-					if( $('#serverbridge_dhcp').prop('checked')) {
+					if ($('#serverbridge_dhcp').prop('checked')) {
 						disableInput('serverbridge_interface', false);
 						disableInput('serverbridge_dhcp_start', false);
 						disableInput('serverbridge_dhcp_end', false);

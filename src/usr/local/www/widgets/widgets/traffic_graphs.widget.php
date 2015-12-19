@@ -158,7 +158,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 <?php endforeach; ?>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
@@ -166,7 +166,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<div class="col-sm-6 checkbox">
 <?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
 			<label>
-				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
+				<input type="checkbox" name="shown[<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
 				<?=$ifname?>
 			</label>
 <?php endforeach; ?>
@@ -189,7 +189,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 	<div class="form-group">
 		<label for="refreshinterval" class="col-sm-3 control-label">Refresh Interval</label>
 		<div class="col-sm-6">
-			<input type="number" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
+			<input type="number" id="refreshinterval" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
 		</div>
 	</div>
 

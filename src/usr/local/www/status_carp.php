@@ -60,10 +60,6 @@
 ##|*MATCH=status_carp.php*
 ##|-PRIV
 
-/*
-	pfSense_MODULE:	carp
-*/
-
 require_once("guiconfig.inc");
 require_once("globals.inc");
 
@@ -152,8 +148,9 @@ $pgtitle = array(gettext("Status"), gettext("CARP"));
 $shortcut_section = "carp";
 
 include("head.inc");
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $carpcount = 0;
 if (is_array($config['virtualip']['vip'])) {
@@ -177,15 +174,15 @@ if ($carpcount == 0) {
 				   '<a href="system_hasync.php" class="alert-link">' .
 				   gettext("You can configure high availability sync settings here") .
 				   '</a>');
-} else
-{
+} else {
 ?>
 <form action="status_carp.php" method="post">
 <?php
-	if($status > 0)
+	if ($status > 0) {
 		$carp_enabled = true;
-	else
+	} else {
 		$carp_enabled = false;
+	}
 
 	// Sadly this needs to be here so that it is inside the form
 	if ($carp_detected_problems > 0) {
@@ -231,7 +228,7 @@ if ($carpcount == 0) {
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 
-		if($carp_enabled == false) {
+		if ($carp_enabled == false) {
 			$icon = 'times-circle';
 			$status = "DISABLED";
 		} else {

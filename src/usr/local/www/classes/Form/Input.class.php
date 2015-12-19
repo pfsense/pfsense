@@ -145,7 +145,9 @@ class Form_Input extends Form_Element
 
 	public function setPlaceholder($text)
 	{
-		$this->_attributes['placeholder'] = $text;
+		$placeholder_input_types = array('email', 'number', 'password', 'search', 'tel', 'text', 'url');
+		if (in_array(strtolower($this->_attributes['type']), $placeholder_input_types))
+			$this->_attributes['placeholder'] = $text;
 
 		return $this;
 	}

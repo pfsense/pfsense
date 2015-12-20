@@ -183,9 +183,9 @@ if ($pkg['custom_php_command_before_form'] != "") {
 
 // Breadcrumb
 if ($pkg['title'] != "") {
-	if (!$only_edit) {
- 		$pkg['title'] = $pkg['title'] . '/Edit';
-	}
+	/*if (!$only_edit) {						// Is any package still making use of this?? Is this something that is still wanted, considering the breadcrumb policy https://redmine.pfsense.org/issues/5527
+ 		$pkg['title'] = $pkg['title'] . '/Edit';		// If this needs to live on, then it has to be moved to run AFTER "foreach ($pkg['tabs']['tab'] as $tab)"-loop. This due to $pgtitle[] = $tab['text']; 
+	}*/
 	if (strpos($pkg['title'], '/')) {
 		$title = explode('/', $pkg['title']);
 
@@ -199,7 +199,58 @@ if ($pkg['title'] != "") {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
 }
 
+if ($pkg['tabs'] != "") {
+	$tab_array = array();
+	foreach ($pkg['tabs']['tab'] as $tab) {
+		if ($tab['tab_level']) {
+			$tab_level = $tab['tab_level'];
+		} else {
+			$tab_level = 1;
+		}
+		if (isset($tab['active'])) {
+			$active = true;
+			$pgtitle[] = $tab['text'];
+		} else {
+			$active = false;
+		}
+		if (isset($tab['no_drop_down'])) {
+			$no_drop_down = true;
+		}
+		$urltmp = "";
+		if ($tab['url'] != "") {
+			$urltmp = $tab['url'];
+		}
+		if ($tab['xml'] != "") {
+			$urltmp = "pkg_edit.php?xml=" . $tab['xml'];
+		}
+
+		$addresswithport = getenv("HTTP_HOST");
+		$colonpos = strpos($addresswithport, ":");
+		if ($colonpos !== False) {
+			//my url is actually just the IP address of the pfsense box
+			$myurl = substr($addresswithport, 0, $colonpos);
+		} else {
+			$myurl = $addresswithport;
+		}
+		// eval url so that above $myurl item can be processed if need be.
+		$url = str_replace('$myurl', $myurl, $urltmp);
+
+		$tab_array[$tab_level][] = array(
+			$tab['text'],
+			$active,
+			$url
+		);
+	}
+
+	ksort($tab_array);
+}
+
 include("head.inc");
+if (isset($tab_array)) {
+	foreach ($tab_array as $tabid => $tab) {
+		display_top_tabs($tab); //, $no_drop_down, $tabid);
+	}
+}
 
 ?>
 
@@ -269,55 +320,6 @@ if ($savemsg) {
 
 <form action="pkg.php" name="pkgform" method="get">
 	<input type='hidden' name='xml' value='<?=$_REQUEST['xml']?>' />
-<?php
-	if ($pkg['tabs'] != "") {
-		$tab_array = array();
-		foreach ($pkg['tabs']['tab'] as $tab) {
-			if ($tab['tab_level']) {
-				$tab_level = $tab['tab_level'];
-			} else {
-				$tab_level = 1;
-			}
-			if (isset($tab['active'])) {
-				$active = true;
-			} else {
-				$active = false;
-			}
-			if (isset($tab['no_drop_down'])) {
-				$no_drop_down = true;
-			}
-			$urltmp = "";
-			if ($tab['url'] != "") {
-				$urltmp = $tab['url'];
-			}
-			if ($tab['xml'] != "") {
-				$urltmp = "pkg_edit.php?xml=" . $tab['xml'];
-			}
-
-			$addresswithport = getenv("HTTP_HOST");
-			$colonpos = strpos($addresswithport, ":");
-			if ($colonpos !== False) {
-				//my url is actually just the IP address of the pfsense box
-				$myurl = substr($addresswithport, 0, $colonpos);
-			} else {
-				$myurl = $addresswithport;
-			}
-			// eval url so that above $myurl item can be processed if need be.
-			$url = str_replace('$myurl', $myurl, $urltmp);
-
-			$tab_array[$tab_level][] = array(
-				$tab['text'],
-				$active,
-				$url
-			);
-		}
-
-		ksort($tab_array);
-		foreach ($tab_array as $tab) {
-			display_top_tabs($tab, $no_drop_down);
-		}
-	}
-?>
 		<div id="mainarea" class="panel panel-default">
 			<table id="mainarea" class="table table-striped table-hover table-condensed">
 				<thead>

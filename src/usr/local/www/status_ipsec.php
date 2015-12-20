@@ -497,8 +497,6 @@ foreach ($a_phase1 as $ph1ent) {
 <?php
 	}
 ?>
-					<td>
-					</td>
 				</tr>
 <?php
 }

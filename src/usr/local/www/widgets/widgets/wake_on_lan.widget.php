@@ -86,7 +86,6 @@ if (count($wolcomputers) > 0) {
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 
-		echo "<td>\n";
 		if ($status == 'expires') {
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
 		} else if ($status == 'permanent') {

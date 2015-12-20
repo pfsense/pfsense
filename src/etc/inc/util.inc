@@ -1547,15 +1547,20 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
+function unlink_silent($fn) {
+	@unlink($fn);
+}
+
 /* unlink a file, or pattern-match of a file, if it exists
    if the file/path contains glob() compatible wildcards, all matching files will be unlinked
-   if no matches, no error occurs */
+   if no matches, no error occurs
+   attempts to unlink directories will fail silently */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		array_map("unlink", $to_do);
+		array_map("unlink_silent", $to_do);
 	} else {
-		@unlink($fn);
+		unlink_silent($fn);
 	}
 }
 /* make a global alias table (for faster lookups) */

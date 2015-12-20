@@ -93,7 +93,7 @@ if (count($wolcomputers) > 0) {
 			echo '<td style="text-align:center">' . "\n";
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
 		} else {
-			echo '<td" style="text-align:center">' . "\n";
+			echo '<td style="text-align:center">' . "\n";
 			echo '<i class="fa fa-ban" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
 		}
 

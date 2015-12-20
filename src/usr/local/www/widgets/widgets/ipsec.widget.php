@@ -227,10 +227,12 @@ if (isset($config['ipsec']['phase2'])): ?>
 <div class="table-responsive" id="ipsec-tunnel" style="display:none;">
 	<table class="table table-striped table-hover">
 	<thead>
+	<tr>
 		<th>Source</th>
 		<th>Destination</th>
 		<th>Description</th>
 		<th>Status</th>
+	</tr>
 	</thead>
 	<tbody>
 		<tr><td colspan="4"><?=gettext("Retrieving tunnel data ")?><i class="fa fa-cog fa-spin"></i></td></tr>
@@ -242,9 +244,11 @@ if (isset($config['ipsec']['phase2'])): ?>
 <div id="ipsec-mobile" style="display:none;" class="table-responsive">
 		<table class="table table-striped table-hover">
 		<thead>
+		<tr>
 			<th>User</th>
 			<th>IP</th>
 			<th>Status</th>
+		</tr>
 		</thead>
 		<tbody>
 			<tr><td colspan="3"><?=gettext("Retrieving mobile data ")?><i class="fa fa-cog fa-spin"></i></td></tr>

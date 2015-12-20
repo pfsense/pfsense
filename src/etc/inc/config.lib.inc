@@ -618,7 +618,7 @@ function reset_factory_defaults($lock = false) {
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
-		if (($filename != ".") && ($filename != "..")) {
+		if (($filename != ".") && ($filename != "..") && (!is_dir($g['conf_path'] . "/" . $filename))) {
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}

@@ -81,9 +81,9 @@ function add_colors($string) {
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
-	$replacements[0] = '<b><font color="#00ff00">' . gettext("PASSED") .  '</font></b>';
-	$replacements[1] = '<b><font color="#ff0000">' . gettext("FAILED") .  '</font></b>';
-	$replacements[2] = '<font color="#ff0000">'	   . gettext("Warning") . '</font>';
+	$replacements[0] = '<span class="text-success">' . gettext("PASSED") . '</span>';
+	$replacements[1] = '<span class="text-alert">' . gettext("FAILED") . '</span>';
+	$replacements[2] = '<span class="text-warning">' . gettext("Warning") . '</span>';
 	ksort($patterns);
 	ksort($replacements);
 	return preg_replace($patterns, $replacements, $string);

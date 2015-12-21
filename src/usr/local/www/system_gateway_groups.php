@@ -136,8 +136,8 @@ if (is_subsystem_dirty('staticroutes')) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Gateways"), false, "system_gateways.php");
-$tab_array[] = array(gettext("Routes"), false, "system_routes.php");
-$tab_array[] = array(gettext("Groups"), true, "system_gateway_groups.php");
+$tab_array[] = array(gettext("Static Routes"), false, "system_routes.php");
+$tab_array[] = array(gettext("Gateway Groups"), true, "system_gateway_groups.php");
 display_top_tabs($tab_array);
 ?>
 

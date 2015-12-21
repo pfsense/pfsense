@@ -434,7 +434,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
-		'Disable this server',
+		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list');
 

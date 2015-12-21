@@ -365,7 +365,6 @@ $tree .= "</ul>";
 
 $output = "<table summary=\"output form\">";
 $output .= $output_form;
-$closehead = false;
 include("head.inc");
 ?>
 <script type="text/javascript" src="./tree/tree.js"></script>

@@ -166,7 +166,6 @@ if (isset($_POST['del_x'])) {
 	}
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 include("head.inc");
 

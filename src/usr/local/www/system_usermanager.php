@@ -464,7 +464,6 @@ function build_cert_table() {
 	return($certhtml);
 }
 
-$closehead = false;
 include("head.inc");
 
 if ($input_errors) {

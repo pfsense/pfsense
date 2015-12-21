@@ -122,7 +122,6 @@ $ScriptName = $REQUEST['SCRIPT_NAME'];
 $arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>

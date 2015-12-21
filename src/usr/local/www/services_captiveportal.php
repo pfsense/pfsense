@@ -547,7 +547,6 @@ function build_cert_list() {
 	return($list);
 }
 
-$closehead = false;
 include("head.inc");
 
 if ($input_errors) {

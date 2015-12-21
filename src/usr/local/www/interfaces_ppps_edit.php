@@ -441,7 +441,6 @@ if ($_POST) {
 	}
 } // end if ($_POST)
 
-$closehead = false;
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");

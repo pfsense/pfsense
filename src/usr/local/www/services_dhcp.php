@@ -695,7 +695,6 @@ function build_pooltable() {
 	return($pooltbl);
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
 $shortcut_section = "dhcp";
 

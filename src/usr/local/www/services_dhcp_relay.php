@@ -148,7 +148,6 @@ if ($_POST) {
 	}
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");

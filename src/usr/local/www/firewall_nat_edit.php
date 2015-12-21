@@ -643,7 +643,6 @@ function dsttype_selected() {
 	return($selected);
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
 include("head.inc");
 

@@ -511,7 +511,7 @@ $section->addInput(new Form_Checkbox(
 	'Left Column Labels',
 	'Active',
 	$pconfig['webguileftcolumnhyper']
-))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
+))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.<br /><span class="badge" title="This feature is in BETA">BETA</span>');
 
 $form->add($section);
 

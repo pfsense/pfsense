@@ -497,7 +497,7 @@ if (!$rawfilter) {
 	if ($logfile == "vpn") {
 ?>
 				<thead>
-					<tr style="white-space:nowrap;">
+					<tr class="text-nowrap">
 						<th><?=gettext("Time")?></th>
 						<th><?=gettext("Action")?></th>
 						<th><?=gettext("User")?></th>
@@ -509,7 +509,7 @@ if (!$rawfilter) {
 		if ($logfile != "vpn") {	# Needs to be tested with a vpn.log file before enabling.
 			foreach ($filterlog as $filterent) {
 ?>
-					<tr style="white-space:nowrap;">
+					<tr class="text-nowrap">
 						<td>
 							<?=htmlspecialchars($filterent['time'])?>
 						</td>
@@ -539,7 +539,7 @@ if (!$rawfilter) {
 	} else {
 ?>
 				<thead>
-					<tr style="white-space:nowrap;">
+					<tr class="text-nowrap">
 						<th><?=gettext("Time")?></th>
 						<th><?=gettext("Type")?></th>
 						<th><?=gettext("PID")?></th>
@@ -550,7 +550,7 @@ if (!$rawfilter) {
 <?php
 		foreach ($filterlog as $filterent) {
 ?>
-					<tr style="white-space:nowrap;">
+					<tr class="text-nowrap">
 						<td>
 							<?=htmlspecialchars($filterent['time'])?>
 						</td>

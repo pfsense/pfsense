@@ -61,9 +61,9 @@ header('Content-Type: text/html; charset=utf-8');
 $pagetitle = gentitle($pgtitle);
 
 if (isset($config['system']['webgui']['pagenamefirst'])) {
-	$tabtitle = $pagetitle . " - " . $config['system']['hostname'] . "." . $config['system']['domain'];
+	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 } else {
-	$tabtitle = $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pagetitle;
+	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
 }
 
 $cssfile = "/bootstrap/css/pfSense.css";

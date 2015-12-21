@@ -71,11 +71,6 @@ require_once("system.inc");
 // This causes the step #, field type and field name to be printed at the top of the page
 define(DEBUG, false);
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 global $g;
 
 $stepid = htmlspecialchars($_GET['stepid']);

@@ -285,7 +285,7 @@ include("head.inc");
 						<td class="listlr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 <?php
 							echo $textss;
-							echo $gateway['name'];
+							echo htmlspecialchars($gateway['name']);
 							if(isset($gateway['defaultgw']))
 								echo " <strong>(default)</strong>";
 							echo $textse;
@@ -301,7 +301,7 @@ include("head.inc");
 						<td class="listr" onclick="fr_toggle(<?=$i;?>)" id="frd<?=$i;?>" ondblclick="document.location='system_gateways_edit.php?id=<?=$i;?>';">
 <?php
 							echo $textss;
-							echo $gateway['gateway'] . " ";
+							echo htmlspecialchars($gateway['gateway']) . " ";
 							echo $textse;
 ?>
 						</td>

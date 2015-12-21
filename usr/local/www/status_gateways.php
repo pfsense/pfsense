@@ -83,7 +83,7 @@ include("head.inc");
 			?>
                 <tr>
                   <td class="listlr">
-				<?=$gateway['name'];?>
+				<?=htmlspecialchars($gateway['name']);?>
                   </td>
                   <td class="listr" align="center" >
                                 <?php echo lookup_gateway_ip_by_name($gname);?>
@@ -92,7 +92,7 @@ include("head.inc");
                                 <?php 	if ($gateways_status[$gname]) 
 						echo $gateways_status[$gname]['monitorip'];
 					else
-						echo $gateway['monitor'];
+						echo htmlspecialchars($gateway['monitor']);
 				?>
                   </td>
 		<td class="listr" align="center">
@@ -148,7 +148,7 @@ include("head.inc");
                         ?>
 			</table>
                   </td>
-		  <td class="listbg"> <?=$gateway['descr']; ?></td>
+		  <td class="listbg"> <?=htmlspecialchars($gateway['descr']); ?></td>
                 </tr>
 		<?php } ?>
               </table>

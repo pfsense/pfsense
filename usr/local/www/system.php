@@ -347,7 +347,7 @@ include("head.inc");
 							?>
 							<tr>
 								<td>
-									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo $pconfig['dns'.$dnscounter];?>" />
+									<input name="dns<?php echo $dnscounter;?>" type="text" class="formfld unknown" id="dns<?php echo $dnscounter;?>" size="28" value="<?php echo htmlspecialchars($pconfig['dns'.$dnscounter]);?>" />
 								</td>
 								<td>
 <?php if ($multiwan): ?>
@@ -374,7 +374,7 @@ include("head.inc");
 												} else {
 													$selected = "";
 												}
-												echo "<option value='$gwname' $selected>$gwname - {$gwitem['friendlyiface']} - {$gwitem['gateway']}</option>\n";
+												echo "<option value='" . htmlspecialchars($gwname) . "' $selected>" . htmlspecialchars("{$gwname} - {$gwitem['friendlyiface']} - {$gwitem['gateway']}") . " </option>\n";
 											}
 										?>
 									</select>

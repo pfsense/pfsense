@@ -214,8 +214,8 @@ do {
 	}
 } while ($oldstepid != $stepid);
 
-$pgtitle = array($title);
-$notitle = true;
+$pgtitle = array(gettext("Wizard"), gettext($pkg['step'][0]['title']));	//First step is main title of the wizard in the breadcrumb
+$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'');		//Following steps are sub-level breadcrumbs.
 include("head.inc");
 
 if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>

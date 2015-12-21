@@ -522,7 +522,7 @@ if ($savemsg) {
 				} // foreach columnitem
 			} // if columnitem
 ?>
-					<td valign="middle" class="list nowrap">
+					<td valign="middle" class="list text-nowrap">
 						<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 							<tr>
 <?php

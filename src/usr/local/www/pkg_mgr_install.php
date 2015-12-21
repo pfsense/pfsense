@@ -397,7 +397,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
 	<input type="hidden" name="completed" value="true" />
 
-	<div id="countdown" style="text-align: center;"></div>
+	<div id="countdown" class="text-center"></div>
 
 	<div class="progress" style="display: none;">
 		<div id="progressbar" class="progress-bar progress-bar-striped" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 1%"></div>

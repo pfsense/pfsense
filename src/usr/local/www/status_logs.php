@@ -431,7 +431,7 @@ if (!$rawfilter) {
 	   <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("Process")?></th>
 					<th><?=gettext("PID")?></th>
@@ -442,7 +442,7 @@ if (!$rawfilter) {
 <?php
 	foreach ($filterlog as $filterent) {
 ?>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<td>
 						<?=htmlspecialchars($filterent['time'])?>
 					</td>
@@ -477,7 +477,7 @@ if (!$rawfilter) {
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>

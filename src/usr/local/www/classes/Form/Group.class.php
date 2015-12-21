@@ -108,6 +108,8 @@ EOT;
 
 	public function __toString()
 	{
+		global $config;
+
 		$element = parent::__toString();
 
 		// Automatically determine width for inputs without explicit set
@@ -139,6 +141,9 @@ EOT;
 
 		$inputs = implode('', $this->_inputs);
 		$help = $this->_getHelp();
+
+		if (!isset($config['system']['webgui']['webguileftcolumnhyper']))
+			$target = null;
 
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');

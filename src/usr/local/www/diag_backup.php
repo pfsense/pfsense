@@ -69,7 +69,9 @@ ini_set('max_input_time', '0');
 
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
-$nocsrf = true;
+if (stristr($_POST['Submit'], gettext("Download"))) {
+	$nocsrf = true;
+}
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");

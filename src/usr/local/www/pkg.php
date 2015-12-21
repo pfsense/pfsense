@@ -526,12 +526,12 @@ if ($savemsg) {
 			#Show custom description to edit button if defined
 			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:"Edit this item");
 ?>
-								<td><a class="btn btn-xs btn-info" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>"><?=$edit_msg?></a></td>
+								<td><a class="fa fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
 <?php
 			#Show custom description to delete button if defined
 			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:"Delete this item");
 ?>
-								<td>&nbsp;<a class="btn btn-xs btn-danger" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>"><?=gettext("Delete")?></a></td>
+								<td>&nbsp;<a class="fa fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=gettext("Delete")?>"></a></td>
 							</tr>
 						</tbody>
 					</table>

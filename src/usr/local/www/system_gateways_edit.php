@@ -628,8 +628,7 @@ if ($_POST) {
 	}
 }
 
-
-$pgtitle = array(gettext("System"), gettext("Gateways"), gettext("Edit gateway"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"), gettext("Edit"));
 $shortcut_section = "gateways";
 
 include("head.inc");

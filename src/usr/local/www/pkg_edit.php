@@ -849,13 +849,22 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						isset($pkga['multiple'])
 					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
 				} else {
-					$section->addInput(new Form_Select(
+
+					$selector = new Form_Select(
 						$pkga['fieldname'],
 						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
 						$optionlist,
 						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					);
+
+					$selector->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+
+					if ($pkga['width']) {
+						$selector->setWidth($pkga['width']);
+					}
+
+					$section->addInput($selector);
 				}
 			}
 

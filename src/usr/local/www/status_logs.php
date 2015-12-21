@@ -214,17 +214,27 @@ if ($save_settings) {
 		if ($logfile == 'system') {
 			$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 			$config['syslog']['nologlighttpd'] = $loglighttpd ? false : true;
+
+			if ($oldnologlighttpd !== $config['syslog']['nologlighttpd']) {
+				$logging_changed = $lighttpd_logging_changed = true;
+			}
 		}
 
 
-		write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]));
+		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
+		if ($logging_changed) {
+			write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+			$retval = 0;
+			$retval = system_syslogd_start();
+		} else {
+			write_config($desc = "Log Display Settings Saved (no backup, no sync): " . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+		}
 
-		$retval = 0;
-		$savemsg = get_std_save_message($retval);
+		$savemsg = gettext("The changes have been applied successfully.");
 
 	# System General (main) Specific
 		if ($logfile == 'system') {
-			if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
+			if ($lighttpd_logging_changed) {
 				ob_flush();
 				flush();
 				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));

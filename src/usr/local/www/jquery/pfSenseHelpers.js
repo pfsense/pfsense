@@ -268,7 +268,7 @@ function renumber() {
 			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
 		});
 
-		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
+//		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
 
 		idx++;
 	});
@@ -320,7 +320,8 @@ function add_row() {
 	});
 
 	// And for "for" tags
-	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+//	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+
 	$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
 
 	// Insert the updated/cloned row

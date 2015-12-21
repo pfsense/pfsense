@@ -176,8 +176,8 @@ if ($_POST) {
 		exit;
 	}
 }
-
-$pgtitle = array(gettext("System"), gettext("Gateways"), gettext("Edit gateway group"));
+//    SystemRoutingGateway Groups
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"), gettext("Edit"));
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {

@@ -799,7 +799,11 @@ events.push(function() {
 	});
 
 	$('#conffile').change(function () {
-		$('.restore').prop('disabled', false);
+		if (document.getElementById("conffile").value) {
+			$('.restore').prop('disabled', false);
+		} else {
+			$('.restore').prop('disabled', true);
+		}
     });
 	// ---------- On initial page load ------------------------------------------------------------
 

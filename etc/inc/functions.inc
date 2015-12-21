@@ -119,7 +119,7 @@ if(!function_exists("get_menu_messages")) {
 			}
 		else {
 			$menu_messages='<div id="hostname">';
-			$menu_messages.=$config['system']['hostname'] . "." . $config['system']['domain']; 
+			$menu_messages.=htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 			$menu_messages.='</div>';
 			}
 		return ($menu_messages);

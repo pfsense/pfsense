@@ -50,11 +50,6 @@ require_once("pkg-utils.inc");
 /* dummy stubs needed by some code that was MFC'd */
 function pfSenseHeader($location) { header("Location: " . $location); }
 
-function gentitle_pkg($pgname) {
-	global $pfSense_config;
-	return $pfSense_config['system']['hostname'] . "." . $pfSense_config['system']['domain'] . " - " . $pgname;
-}
-
 function domTT_title($title_msg){
 	if (!empty($title_msg)){
 		$title_msg=preg_replace("/\s+/"," ",$title_msg);

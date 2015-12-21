@@ -44,11 +44,6 @@ require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 global $g;
 
 $stepid = htmlspecialchars($_GET['stepid']);

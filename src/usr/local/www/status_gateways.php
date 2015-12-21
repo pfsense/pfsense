@@ -106,7 +106,7 @@ display_top_tabs($tab_array);
 ?>
 			<tr>
 				<td>
-					<?=$gateway['name'];?>
+					<?=htmlspecialchars($gateway['name']);?>
 				</td>
 				<td>
 					<?php echo lookup_gateway_ip_by_name($gname);?>
@@ -116,7 +116,7 @@ display_top_tabs($tab_array);
 					if ($gateways_status[$gname]) {
 						echo $gateways_status[$gname]['monitorip'];
 					} else {
-						echo $gateway['monitorip'];
+						echo htmlspecialchars($gateway['monitorip']);
 					}
 ?>
 				</td>
@@ -180,7 +180,7 @@ display_top_tabs($tab_array);
 				</td>
 
 				<td>
-					<?=$gateway['descr']; ?>
+					<?=htmlspecialchars($gateway['descr']); ?>
 				</td>
 			</tr>
 <?php	} ?>	<!-- End-of-foreach -->

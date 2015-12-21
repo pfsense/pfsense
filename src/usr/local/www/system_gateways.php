@@ -296,7 +296,7 @@ foreach ($a_gateways as $i => $gateway):
 	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
 		<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
 		<td>
-			<?=$gateway['name']?>
+			<?=htmlspecialchars($gateway['name'])?>
 <?php
 			if (isset($gateway['defaultgw'])) {
 				echo " <strong>(default)</strong>";
@@ -307,7 +307,7 @@ foreach ($a_gateways as $i => $gateway):
 			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
 		</td>
 		<td>
-			<?=$gateway['gateway']?>
+			<?=htmlspecialchars($gateway['gateway'])?>
 		</td>
 		<td>
 			<?=htmlspecialchars($gateway['monitor'])?>

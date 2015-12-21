@@ -1015,37 +1015,47 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create a textarea element
 		case "textarea":
+			$rows = $cols = 0;
+
 			if ($pkga['rows']) {
-				$rows = " rows='{$pkga['rows']}' ";
+				$rows = $pkga['rows'];
 			}
 			if ($pkga['cols']) {
-				$cols = " cols='{$pkga['cols']}' ";
+				$cols = $pkga['cols'];
 			}
+
 			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
 				$value = base64_decode($value);
 			}
 
-			$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');
-
-			if ($grouping) {
-				$group->add(new Form_Textarea(
+			$grp = new Form_Textarea(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					$value
-				))->setHelp(fixup_string($pkga['description']));
+			);
+
+			$grp->setHelp(fixup_string($pkga['description']));
+
+			if ($rows > 0) {
+				$grp->setRows($rows);
+			}
+
+			if ($cols > 0) {
+				$grp->setCols($cols);
+			}
+
+			if ($pkga['wrap'] == "off") {
+				$grp->setAttribute("wrap", "off");
+				$grp->setAttribute("style", "white-space:nowrap;");
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Textarea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Textarea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$section->addInput($grp);
 				}
 			}
 

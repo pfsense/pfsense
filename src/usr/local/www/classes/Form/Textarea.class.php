@@ -42,6 +42,20 @@ class Form_Textarea extends Form_Input
 		$this->_value = $value;
 	}
 
+	public function setRows($size)
+	{
+		$this->_attributes['rows'] = $size;
+
+		return $this;
+	}
+
+	public function setNoWrap()
+	{
+		$this->_attributes['wrap'] = 'none';
+
+		return $this;
+	}
+
 	protected function _getInput()
 	{
 		$element = parent::_getInput();

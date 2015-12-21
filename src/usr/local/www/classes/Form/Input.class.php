@@ -122,6 +122,13 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
+	public function setCols($size)
+	{
+		$this->_attributes['cols'] = $size;
+
+		return $this;
+	}
+
 	public function setReadonly()
 	{
 		$this->_attributes['readonly'] = 'readonly';

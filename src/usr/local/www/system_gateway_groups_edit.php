@@ -176,7 +176,7 @@ if ($_POST) {
 		exit;
 	}
 }
-//    SystemRoutingGateway Groups
+
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"), gettext("Edit"));
 $shortcut_section = "gateway-groups";
 

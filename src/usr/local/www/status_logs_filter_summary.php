@@ -94,8 +94,8 @@ if ($view == 'dynamic') { $view_title = gettext("Dynamic View"); }
 if ($view == 'summary') { $view_title = gettext("Summary View"); }
 
 
-// Miscellaneous Common - Code
-miscellaneous_common_code();
+// Status Logs Common - Code
+status_logs_common_code();
 
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);

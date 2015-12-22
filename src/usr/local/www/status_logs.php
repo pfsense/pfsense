@@ -117,8 +117,8 @@ log_filter_form_system_submit();
 manage_log_code();
 
 
-// Miscellaneous Common - Code
-miscellaneous_common_code();
+// Status Logs Common - Code
+status_logs_common_code();
 
 
 if ($filtertext) {

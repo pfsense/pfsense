@@ -73,8 +73,8 @@ function getGETPOSTsettingvalue($settingname, $default) {
 }
 
 
-// Miscellaneous Common - Code
-function miscellaneous_common_code() {
+// Status Logs Common - Code
+function status_logs_common_code() {
 	global $g, $config, $specific_log, $nentries, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
@@ -452,7 +452,7 @@ function filter_form_firewall() {
 			'interface',
 			'Interface',
 			$interfacefilter,
-			build_if_list()
+			status_logs_build_if_list()
 		))->setWidth(2)->setHelp('Interface');
 
 		$group->add(new Form_Input(
@@ -496,7 +496,7 @@ function filter_form_firewall() {
 }
 
 
-function build_if_list() {
+function status_logs_build_if_list() {
 	$iflist = get_configured_interface_with_descr(false, true);
 	//$iflist = get_interface_list();
 	// Allow extending of the firewall edit interfaces

@@ -128,8 +128,8 @@ log_filter_form_firewall_submit();
 manage_log_code();
 
 
-// Miscellaneous Common - Code
-miscellaneous_common_code();
+// Status Logs Common - Code
+status_logs_common_code();
 
 
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);

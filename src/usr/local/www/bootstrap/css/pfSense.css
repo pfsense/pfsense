@@ -330,11 +330,9 @@ form .btn + .btn {
     margin-top: 5px;
 }
 
-/**
 .col-sm-10 .form-control {
     width: calc(50% - 15px);
 }
-*/
 
 @media (max-width: 991px) {
     .col-sm-10 .form-control {

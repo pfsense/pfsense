@@ -236,7 +236,6 @@ function fetch_new_rules() {
 	}
 	isBusy = true;
 	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
-//	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback + '&amp;logfile=filter&amp;view=dynamic');
 }
 
 function fetch_new_rules_callback(callback_data) {

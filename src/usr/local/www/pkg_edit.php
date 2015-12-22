@@ -299,7 +299,7 @@ function bootstrapTable($text) {
  * ROW helper function. Creates one element in the row from a PHP table by adding
  * the specified element to $group
  */
-function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $width = null) {
+function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
 	global $text, $group;
 
 	switch ($type) {
@@ -313,8 +313,8 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 
 			$inpt->setHelp($description);
 
-			if ($width) {
-				$inpt->setWidth($width);
+			if ($ewidth) {
+				$inpt->setWidth($ewidth);
 			}
 
 			$group->add($inpt);

@@ -1041,7 +1041,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			if ($pkga['wrap'] == "off") {
 				$grp->setAttribute("wrap", "off");
-				$grp->setAttribute("style", "white-space:nowrap;");
+				$grp->setAttribute("style", "white-space:nowrap; width: auto;");
+			} else {
+				$grp->setAttribute("style", "width: auto;");
 			}
 
 			if ($grouping) {

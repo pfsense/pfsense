@@ -304,13 +304,20 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 
 	switch ($type) {
 		case "input":
-			$group->add(new Form_Input(
+			$inpt = new Form_Input(
 				$fieldname . $trc,
 				null,
 				'text',
 				$value
-			))->setHelp($description);
+			);
 
+			$inpt->setHelp($description);
+
+			if ($width) {
+				$inpt->setWidth($width);
+			}
+
+			$group->add($inpt);
 			break;
 		case "checkbox":
 			$group->add(new Form_Checkbox(

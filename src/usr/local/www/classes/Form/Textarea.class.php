@@ -33,6 +33,7 @@ class Form_Textarea extends Form_Input
 	protected $_attributes = array(
 		'rows' => 5,
 		'class' => array('form-control' => true),
+		'style' => "width: auto;"
 	);
 
 	public function __construct($name, $title, $value)

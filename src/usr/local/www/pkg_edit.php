@@ -299,7 +299,7 @@ function bootstrapTable($text) {
  * ROW helper function. Creates one element in the row from a PHP table by adding
  * the specified element to $group
  */
-function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) {
+function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $width = null) {
 	global $text, $group;
 
 	switch ($type) {
@@ -344,12 +344,20 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 				$options[$rowopt['value']] = $rowopt['name'];
 			}
 
-			$group->add(new Form_Select(
+			$grp = new Form_Select(
 				$fieldname . $trc,
 				null,
 				$value,
 				$options
-			))->setHelp($description);
+			);
+
+			$grp->setHelp($description);
+
+			if ($width) {
+				$grp->setWidth($width);
+			}
+
+			$group->add($grp);
 
 			break;
 		case "interfaces_selection":
@@ -831,26 +839,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$function = ($grouping) ? $section->add:$section->addInput;
 			}
 
-			if ($grouping) {
-					$group->add(new Form_Select(
-						$pkga['fieldname'],
-						strip_tags($pkga['fielddescr']),
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
-			} else {
-				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Select(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
-				} else {
-
-					$selector = new Form_Select(
+			$grp = new Form_Select(
 						$pkga['fieldname'],
 						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
@@ -858,13 +847,19 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						isset($pkga['multiple'])
 					);
 
-					$selector->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+			$grp ->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
 
-					if ($pkga['width']) {
-						$selector->setWidth($pkga['width']);
-					}
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
 
-					$section->addInput($selector);
+			if ($grouping) {
+				$group->add($grp);
+			} else {
+				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
+					$advanced->addInput($grp);
+				} else {
+					$section->addInput($grp);
 				}
 			}
 
@@ -1370,6 +1365,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 					foreach ($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						unset($value);
+						$width = null;
+
 						if ($rowhelper['value'] != "") {
 							$value = $rowhelper['value'];
 						}
@@ -1397,7 +1394,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$size = "8";
 						}
 
-						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null);
+						if ($rowhelper['width']) {
+							$width = $rowhelper['width'];
+						}
+
+						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null, $width);
 
 						$text = "";
 						$trc++;

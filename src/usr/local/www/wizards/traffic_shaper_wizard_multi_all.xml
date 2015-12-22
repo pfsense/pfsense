@@ -55,10 +55,10 @@
 	<totalsteps>9</totalsteps>
 	<step>
 		<id>1</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>pfSense Traffic Shaper</title>
 		<disableheader>true</disableheader>
-		<description>This wizard will guide you through setting up the pfSense traffic shaper.
-			Please be aware that Custom Bandwidths should not exceed 30% of the interface/link bandwidth. Keep this in mind during the wizard.
+		<description>This wizard will guide you through setting up the pfSense traffic shaper. &lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.
+			&lt;br/&gt;&lt;br/&gt; Please be aware that Custom Bandwidths should not exceed 30% of the interface/link bandwidth. Keep this in mind during the wizard.
 		</description>
 		<fields>
 			<field>
@@ -92,7 +92,7 @@
 	</step>
 	<step>
 		<id>2</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Shaper configuration</title>
 		<description>Shaper configuration</description>
 		<javascriptafterformdisplay/>
 		<stepbeforeformdisplay>step2_stepbeforeformdisplay();</stepbeforeformdisplay>
@@ -107,7 +107,7 @@
 	</step>
 	<step>
 		<id>3</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Voice over IP</title>
 		<description>Voice over IP</description>
 		<fields>
 			<field>
@@ -171,7 +171,7 @@
 	</step>
 	<step>
 		<id>4</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Penalty Box</title>
 		<description>Penalty Box</description>
 		<disableallfieldsbydefault>true</disableallfieldsbydefault>
 		<fields>
@@ -245,7 +245,7 @@
 	</step>
 	<step>
 		<id>5</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Peer to Peer networking</title>
 		<description>Peer to Peer networking</description>
 		<disableallfieldsbydefault>true</disableallfieldsbydefault>
 		<fields>
@@ -448,7 +448,7 @@
 	</step>
 	<step>
 		<id>6</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Network Games</title>
 		<disableallfieldsbydefault>true</disableallfieldsbydefault>
 		<description>Network Games</description>
 		<fields>
@@ -766,7 +766,7 @@
 	</step>
 	<step>
 		<id>7</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Raise or lower other Applications</title>
 		<disableallfieldsbydefault>true</disableallfieldsbydefault>
 		<description>Raise or lower other Applications</description>
 		<fields>
@@ -1640,7 +1640,7 @@
 	</step>
 	<step>
 		<id>8</id>
-		<title>pfSense Traffic Shaper Wizard</title>
+		<title>Reload Profile</title>
 		<field>
 			<name>Reload profile notice</name>
 			<type>listtopic</type>

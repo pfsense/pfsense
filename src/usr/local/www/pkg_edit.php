@@ -1416,7 +1416,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					// Delete row button
 					$group->add(new Form_Button(
 						'deleterow' . $rowcounter,
-						'Delete'
+						'Delete',
+						null,
+						'fa-trash'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
 
 					$rowcounter++;

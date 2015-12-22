@@ -148,9 +148,8 @@ function tab_array_logs_common() {
 	}
 	display_top_tabs($tab_array, false, 'nav nav-tabs');
 }
-?>
 
-<?php
+
 // Log Filter Submit - System
 function log_filter_form_system_submit() {
 
@@ -286,9 +285,8 @@ function filter_form_system() {
 	$form->add($section);
 	print $form;
 }
-?>
 
-<?php
+
 // Log Filter Submit - Firewall
 function log_filter_form_firewall_submit() {
 
@@ -496,9 +494,8 @@ function filter_form_firewall() {
 	$form->add($section);
 	print($form);
 }
-?>
 
-<?php
+
 function build_if_list() {
 	$iflist = get_configured_interface_with_descr(false, true);
 	//$iflist = get_interface_list();
@@ -528,9 +525,8 @@ function build_if_list() {
 
 	return($interfaces);
 }
-?>
 
-<?php
+
 // Manage Log Section - Code
 function manage_log_code() {
 	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors;

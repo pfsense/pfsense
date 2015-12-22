@@ -66,7 +66,14 @@ class Form_Select extends Form_Input
 				$selected = ($sval == $value);
 			}
 
-			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. htmlspecialchars(gettext($name)) .'</option>';
+			if (!empty(trim($name)) || is_numeric($name)) {
+				$name_str = htmlspecialchars(gettext($name));
+			} else {
+				// Fixes HTML5 validation: Element option without attribute label must not be empty
+				$name_str = "&nbsp;";
+			}
+
+			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. $name_str .'</option>';
 		}
 
 		return <<<EOT

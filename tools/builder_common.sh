@@ -1707,8 +1707,21 @@ pkg_repo_rsync() {
 	fi
 
 	if [ -n "${PKG_REPO_SIGNING_COMMAND}" ]; then
+
+		# Detect poudriere directory structure
+		if [ -L "${_repo_path}/.latest" ]; then
+			local _real_repo_path=$(readlink -f ${_repo_path}/.latest)
+		else
+			local _real_repo_path=${_repo_path}
+		fi
+
 		echo -n ">>> Signing repository... " | tee -a ${_logfile}
-		if script -aq ${_logfile} pkg repo ${_repo_path} \
+		############ ATTENTION ##############
+		#
+		# For some reason pkg-repo fail without / in the end of directory name
+		# so removing it will break command
+		#
+		if script -aq ${_logfile} pkg repo ${_real_repo_path}/ \
 		    signing_command: ${PKG_REPO_SIGNING_COMMAND} >/dev/null 2>&1; then
 			echo "Done!" | tee -a ${_logfile}
 		else

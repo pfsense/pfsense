@@ -990,7 +990,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
-	'number',
+	'text',
 	$pconfig['ddnsdomain']
 ))->setHelp('Leave blank to disable dynamic DNS registration.' . '<br />' .
 			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.');

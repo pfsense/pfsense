@@ -54,7 +54,7 @@ function running_dpinger_processes() {
 	}
 
 	foreach ($pidfiles as $pidfile) {
-		if (preg_match('/^dpinger_(\w+)_([\d\.:]+)_([\d\.:]+)\.pid$/',
+		if (preg_match('/^dpinger_(.+)_([^_]+)_([^_]+)\.pid$/',
 		    basename($pidfile), $matches)) {
 			$socket_file = preg_replace('/\.pid$/', '.sock',
 			    $pidfile);

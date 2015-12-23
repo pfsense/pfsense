@@ -731,28 +731,26 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$value = base64_decode($value);
 			}
 
-			if ($grouping) {
-				$group->add(new Form_Input(
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -1096,28 +1094,26 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if (grouping) {
-				$group->add(new Form_Input(
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if (grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 

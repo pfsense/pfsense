@@ -1696,7 +1696,7 @@ finish() {
 pkg_repo_rsync() {
 	local _repo_path="${1}"
 
-	if [ -n "${DO_NOT_UPLOAD}" -o -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
+	if [ -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
 		return
 	fi
 
@@ -1704,6 +1704,36 @@ pkg_repo_rsync() {
 		local _logfile="/dev/null"
 	else
 		local _logfile="${LOGFILE}"
+	fi
+
+	if [ -n "${PKG_REPO_SIGNING_COMMAND}" ]; then
+		echo -n ">>> Signing repository... " | tee -a ${_logfile}
+		if script -aq ${_logfile} pkg repo ${_repo_path} \
+		    signing_command: ${PKG_REPO_SIGNING_COMMAND} >/dev/null 2>&1; then
+			echo "Done!" | tee -a ${_logfile}
+		else
+			echo "Failed!" | tee -a ${_logfile}
+			echo ">>> ERROR: An error occurred trying to sign repo"
+			print_error_pfS
+		fi
+
+		local _pkgfile="${_repo_path}/Latest/pkg.txz"
+		if [ -e ${_pkgfile} ]; then
+			echo -n ">>> Signing Latest/pkg.txz for bootstraping... " | tee -a ${_logfile}
+
+			if sha256 -q ${_pkgfile} | ${PKG_REPO_SIGNING_COMMAND} \
+			    > ${_pkgfile}.sig 2>/dev/null; then
+				echo "Done!" | tee -a ${_logfile}
+			else
+				echo "Failed!" | tee -a ${_logfile}
+				echo ">>> ERROR: An error occurred trying to sign Latest/pkg.txz"
+				print_error_pfS
+			fi
+		fi
+	fi
+
+	if [ -n "${DO_NOT_UPLOAD}" ]; then
+		return
 	fi
 
 	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}

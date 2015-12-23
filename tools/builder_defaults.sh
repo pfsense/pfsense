@@ -278,6 +278,9 @@ export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/usr/local/www/beta"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
 
+# Command used to sign pkg repo
+export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
+
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING
 export TIMESTAMP_SUFFIX="-${DATESTRING}"

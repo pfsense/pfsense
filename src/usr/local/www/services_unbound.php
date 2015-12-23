@@ -298,7 +298,7 @@ $section->addInput(new Form_Select(
 	$activeiflist['selected'],
 	$activeiflist['options'],
 	true
-))->setHelp('Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. ' .
+))->addClass('general')->setHelp('Interface IPs used by the DNS Resolver for responding to queries from clients. If an interface has both IPv4 and IPv6 IPs, both are used. Queries to other interface IPs not selected below are discarded. ' .
 			'The default behavior is to respond to queries on every available IPv4 and IPv6 address.');
 
 $outiflist = build_if_list($pconfig['outgoing_interface']);
@@ -309,7 +309,7 @@ $section->addInput(new Form_Select(
 	$outiflist['selected'],
 	$outiflist['options'],
 	true
-))->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
+))->addClass('general')->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
 
 $unbound_local_zone_types = array("deny" => gettext("Deny"), "refuse" => gettext("Refuse"), "static" => gettext("Static"), "transparent" => gettext("Transparent"), "typetransparent" => gettext("Type Transparent"), "redirect" => gettext("Redirect"), "inform" => gettext("Inform"), "inform_deny" => gettext("Inform Deny"), "nodefault" => gettext("No Default"));
 
@@ -378,20 +378,18 @@ print($form);
 //<![CDATA[
 events.push(function() {
 
-	// If the enable checkbox is not checked, disable the next three checkboxes
-	function disableDHCP() {
+	// If the enable checkbox is not checked, hide all inputs
+	function hideGeneral() {
 		var hide = ! $('#enable').prop('checked');
 
-		disableInput('port', hide);
-		disableInput('active_interface', hide);
-		disableInput('outgoing_interface', hide);
-		disableInput('system_domain_local_zone_type', hide);
-		disableInput('regdhcpstatic', hide);
-		disableInput('dnssec', hide);
-		disableInput('forwarding', hide);
-		disableInput('regdhcp', hide);
-		disableInput('regdhcpstatic', hide);
-		disableInput('btnadvdns', hide);
+		hideMultiClass('general', hide);
+		hideInput('port', hide);
+		hideSelect('system_domain_local_zone_type', hide);
+		hideCheckbox('dnssec', hide);
+		hideCheckbox('forwarding', hide);
+		hideCheckbox('regdhcp', hide);
+		hideCheckbox('regdhcpstatic', hide);
+		hideInput('btnadvdns', hide);
 	}
 
 	// Make the 'additional options' button a plain button, not a submit button
@@ -400,12 +398,11 @@ events.push(function() {
 	// Un-hide additional  controls
 	$("#btnadvdns").click(function() {
 		hideInput('custom_options', false);
-
 	});
 
-	// When 'enable' is clicked, disable/enable the following three checkboxes
+	// When 'enable' is clicked, disable/enable the following hide inputs
 	$('#enable').click(function() {
-		disableDHCP();
+		hideGeneral();
 	});
 
 	// On initial load
@@ -413,7 +410,7 @@ events.push(function() {
 		hideInput('custom_options', true);
 	}
 
-	disableDHCP();
+	hideGeneral();
 
 });
 //]]>

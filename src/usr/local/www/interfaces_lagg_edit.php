@@ -163,6 +163,7 @@ if (isset($id) && $a_laggs[$id]) {
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
+	$pconfig['members'] = implode(',', $_POST['members']);
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");
@@ -223,7 +224,6 @@ function build_member_list() {
 	$memberlist = array('list' => array(),
 						'selected' => array());
 
-	$members_array = explode(',', $pconfig['members']);
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (array_key_exists($ifn, $realifchecklist)) {
 			continue;
@@ -242,6 +242,11 @@ function build_member_list() {
 $pgtitle = array(gettext("Interfaces"), gettext("LAGG"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
 $form = new Form();
 
 $section = new Form_Section('LAGG Configuration');

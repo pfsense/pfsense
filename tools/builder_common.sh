@@ -63,17 +63,32 @@ git_last_commit() {
 
 # Create core pkg repository
 core_pkg_create_repo() {
-	if [ ! -d "${CORE_PKG_PATH}/All" ]; then
+	if [ ! -d "${CORE_PKG_REAL_PATH}/All" ]; then
 		return
 	fi
 
+	############ ATTENTION ##############
+	#
+	# For some reason pkg-repo fail without / in the end of directory name
+	# so removing it will break command
+	#
+	# https://github.com/freebsd/pkg/issues/1364
+	#
 	echo -n ">>> Creating core packages repository... "
-	if pkg repo -q "${CORE_PKG_PATH}"; then
+	if pkg repo -q "${CORE_PKG_REAL_PATH}/"; then
 		echo "Done!"
 	else
 		echo "Failed!"
 		print_error_pfS
 	fi
+
+	# Use the same directory structure as poudriere does to avoid
+	# breaking snapshot repositories during rsync
+	ln -sf $(basename ${CORE_PKG_REAL_PATH}) ${CORE_PKG_PATH}/.latest
+	ln -sf .latest/All ${CORE_PKG_PATH}/All
+	ln -sf .latest/digests.txz ${CORE_PKG_PATH}/digests.txz
+	ln -sf .latest/meta.txz ${CORE_PKG_PATH}/meta.txz
+	ln -sf .latest/packagesite.txz ${CORE_PKG_PATH}/packagesite.txz
 }
 
 # Create core pkg (base, kernel)
@@ -136,8 +151,8 @@ core_pkg_create() {
 		rm -f ${_plist}.tmp ${plist}.exclude
 	fi
 
-	mkdir -p ${CORE_PKG_PATH}/All
-	if ! pkg create -o ${CORE_PKG_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
+	mkdir -p ${CORE_PKG_REAL_PATH}/All
+	if ! pkg create -o ${CORE_PKG_REAL_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
 		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
 		print_error_pfS
 	fi
@@ -262,7 +277,7 @@ build_all_kernels() {
 			print_error_pfS
 		fi
 
-		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
+		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
@@ -313,10 +328,10 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
-		cp ${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
+		cp ${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
-				_EXTRA_KERNEL_PATH=${CORE_PKG_PATH}/All/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
+				_EXTRA_KERNEL_PATH=${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
 				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
 					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
 					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
@@ -1187,7 +1202,7 @@ customize_stagearea_for_image() {
 	     "${1}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
+		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
 	if [ "${1}" = "nanobsd" -o \
@@ -1564,12 +1579,12 @@ pkg_chroot_add() {
 		print_error_pfS
 	fi
 
-	if [ ! -f ${CORE_PKG_PATH}/All/${_pkg} ]; then
+	if [ ! -f ${CORE_PKG_REAL_PATH}/All/${_pkg} ]; then
 		echo ">>> ERROR: Package ${_pkg} not found"
 		print_error_pfS
 	fi
 
-	cp ${CORE_PKG_PATH}/All/${_pkg} ${_target}
+	cp ${CORE_PKG_REAL_PATH}/All/${_pkg} ${_target}
 	pkg_chroot ${_target} add /${_pkg}
 	rm -f ${_target}/${_pkg}
 }
@@ -1722,7 +1737,6 @@ pkg_repo_rsync() {
 		# so removing it will break command
 		#
 		# https://github.com/freebsd/pkg/issues/1364
-		#
 		#
 		if script -aq ${_logfile} pkg repo ${_real_repo_path}/ \
 		    signing_command: ${PKG_REPO_SIGNING_COMMAND} >/dev/null 2>&1; then
@@ -2294,7 +2308,7 @@ snapshots_scp_files() {
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
 	# Add ./ before last directory, it's an rsync trick to make it chdir to parent directory before sending
-	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	pkg_repo_rsync $(echo "${CORE_PKG_REAL_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
 	snapshots_update_status ">>> Finished copying core pkg repo"
 
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"

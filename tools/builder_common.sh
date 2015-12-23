@@ -1721,6 +1721,9 @@ pkg_repo_rsync() {
 		# For some reason pkg-repo fail without / in the end of directory name
 		# so removing it will break command
 		#
+		# https://github.com/freebsd/pkg/issues/1364
+		#
+		#
 		if script -aq ${_logfile} pkg repo ${_real_repo_path}/ \
 		    signing_command: ${PKG_REPO_SIGNING_COMMAND} >/dev/null 2>&1; then
 			echo "Done!" | tee -a ${_logfile}

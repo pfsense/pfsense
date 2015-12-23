@@ -61,7 +61,7 @@ function running_dpinger_processes() {
 			$result[$matches[1]] = array(
 			    'srcip'    => $matches[2],
 			    'targetip' => $matches[3],
-			    'pidfile'  => basename($pidfile),
+			    'pidfile'  => $pidfile,
 			    'socket'   => $socket_file
 			);
 			unset($gwinfo);

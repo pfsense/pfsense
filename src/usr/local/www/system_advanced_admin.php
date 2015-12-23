@@ -556,6 +556,7 @@ $form->add($section);
 print $form;
 
 ?>
+</div>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -596,3 +597,4 @@ if ($restart_webgui) {
 	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 	send_event("service restart webgui");
 }
+?>

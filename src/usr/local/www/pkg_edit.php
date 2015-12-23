@@ -1073,7 +1073,6 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$a_aliases = &$config['aliases']['alias'];
 			$addrisfirst = 0;
 			$aliasesaddr = "";
-			$value = "value='{$value}'";
 
 			if (isset($a_aliases)) {
 				if (!empty($pkga['typealiases'])) {

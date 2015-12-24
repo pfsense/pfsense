@@ -156,8 +156,7 @@ function start_dpinger($gateway) {
 }
 
 /*
- * Creates monitoring configuration file and
- * adds appropriate static routes.
+ * Starts dpinger processes and adds appropriate static routes for monitor IPs
  */
 function setup_gateways_monitor() {
 	global $config, $g;
@@ -190,7 +189,7 @@ function setup_gateways_monitor() {
 
 		/* Interface ip is needed since dpinger will bind a socket to it.
 		 * However the config GUI should already have checked this and when
-		 * PPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
+		 * PPPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
 		 * or is_ipaddrv6 to identify packet type would be wrong, especially as
 		 * further checks (that can cope with the "dynamic" case) are present inside
 		 * the if block. So using $gateway['ipprotocol'] is the better option.

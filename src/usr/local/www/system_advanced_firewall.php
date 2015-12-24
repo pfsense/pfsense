@@ -621,7 +621,7 @@ if (count($config['interfaces']) > 1) {
 			'proxy' => 'NAT + proxy',
 			'purenat' => 'Pure NAT',
 		)
-	))->setHelp('<ul><li>The pure NAT mode uses a set of NAT rules to direct '.
+	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
 		'but it must be possible to accurately determine the interface and '.
 		'gateway IP used for communication with the target at the time the '.
@@ -634,7 +634,7 @@ if (count($config['interfaces']) > 1) {
 		'the time the rules are loaded. Reflection rules are not created for '.
 		'ranges larger than 500 ports and will not be used for more than 1000 '.
 		'ports total between all port forwards. Only TCP and UDP protocols are '.
-		'supported.</li></ul>Individual rules may be configured to override '.
+		'supported.</li></ul><span class="help-block">Individual rules may be configured to override '.
 		'this system setting on a per-rule basis.');
 
 	$section->addInput(new Form_Input(
@@ -728,7 +728,7 @@ $form->add($section);
 
 print $form;
 
-?>
+?></div>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -768,3 +768,4 @@ events.push(function() {
 </script>
 <?php
 include("foot.inc");
+?>

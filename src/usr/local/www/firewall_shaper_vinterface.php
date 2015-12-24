@@ -455,6 +455,7 @@ if ($dfltmsg) {
 	}
 
 	// Print the form
+	$sform->setAction("firewall_shaper_vinterface.php");
 	print($sform);
 
 }

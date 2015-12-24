@@ -360,8 +360,8 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, 
 
 			$grp->setHelp($description);
 
-			if ($width) {
-				$grp->setWidth($width);
+			if ($ewidth) {
+				$grp->setWidth($ewidth);
 			}
 
 			$group->add($grp);

@@ -535,24 +535,39 @@ function find_action_image($action) {
 }
 
 /* AJAX specific handlers */
-function handle_ajax($nentries, $tail = 50) {
+function handle_ajax() {
 	global $config;
-	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile, $filterent;
-		if ($_GET['lastsawtime']) {
-			$lastsawtime = $_GET['lastsawtime'];
+	if (($_GET['lastsawtime'] or $_POST['lastsawtime']) and ($_GET['logfile'] or $_POST['logfile'])) {
+
+		$lastsawtime = getGETPOSTsettingvalue('lastsawtime', null);
+		$logfile = getGETPOSTsettingvalue('logfile', null);
+		$nentries = getGETPOSTsettingvalue('nentries', null);
+		$type = getGETPOSTsettingvalue('type', null);
+		$filter = getGETPOSTsettingvalue('filter', null);
+		$interfacefilter = getGETPOSTsettingvalue('interfacefilter', null);
+
+		if (!empty(trim($filter)) || is_numeric($filter)) {
+			$filter = json_decode($filter, true);	# Filter Fields Array or Filter Text
 		}
-		if ($_POST['lastsawtime']) {
-			$lastsawtime = $_POST['lastsawtime'];
-		}
+
 		/* compare lastsawrule's time stamp to filter logs.
 		 * afterwards return the newer records so that client
 		 * can update AJAX interface screen.
 		 */
 		$new_rules = "";
-		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
+
+		$filterlog = conv_log_filter($logfile, $nentries, $nentries + 100, $filter, $interfacefilter);
+
 		/* We need this to always be in forward order for the AJAX update to work properly */
-		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
+		/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
+		# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+		$reverse = isset($config['syslog']['reverse']);
+		$specific_log = basename($logfile, '.log') . '_settings';
+		if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+		if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+		$filterlog = ($reverse) ? array_reverse($filterlog) : $filterlog;
+
 		foreach ($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
 			if ($row_time > $lastsawtime) {

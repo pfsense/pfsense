@@ -1183,6 +1183,24 @@ function get_flash_message() {
 	}
 }
 
+/* Retrieve GET or POST Value/State
+ * Eample Usage:
+ * $value = getGETPOSTsettingvalue('get/post parameter name', "");
+ * $value = getGETPOSTsettingvalue('get/post parameter name', null);
+ * $state = getGETPOSTsettingvalue('get/post parameter name', null);
+ * $state = getGETPOSTsettingvalue('get/post parameter name', false);
+ */
+function getGETPOSTsettingvalue($settingname, $default) {
+	$settingvalue = $default;
+	if ($_GET[$settingname]) {
+		$settingvalue = $_GET[$settingname];
+	}
+	if ($_POST[$settingname]) {
+		$settingvalue = $_POST[$settingname];
+	}
+	return $settingvalue;
+}
+
 /* set timezone */
 if (isset($config['system']['timezone']) &&
     !empty($config['system']['timezone'])) {

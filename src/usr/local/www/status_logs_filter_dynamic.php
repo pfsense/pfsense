@@ -63,14 +63,14 @@
 ##|*MATCH=status_logs_filter_dynamic.php*
 ##|-PRIV
 
-require_once("status_logs_common.inc");
-
-/* Hardcode this. AJAX doesn't do so well with large numbers */
-$nentries = 50;
 
 /* AJAX related routines */
-handle_ajax($nentries, $nentries + 20);
+require_once("guiconfig.inc");
+require_once("filter_log.inc");
+handle_ajax();
 
+
+require_once("status_logs_common.inc");
 
 /*
 Build a list of allowed log files so we can reject others to prevent the page
@@ -135,7 +135,6 @@ if ($filterlogentries_submit) {
 } else {
 	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
 }
-#$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100);
 ?>
 
 <script type="text/javascript">
@@ -147,13 +146,31 @@ if ($filterlogentries_submit) {
 	var isBusy = false;
 	var isPaused = false;
 	var nentries = <?=$nentries; ?>;
+
 <?php
-	if (isset($config['syslog']['reverse'])) {
+	# Build query string.
+	if ($filterlogentries_submit) {	# Formatted mode.
+		$filter_query_string = "type=formatted&filter=" . urlencode(json_encode($filterfieldsarray ));
+	}
+	if ($filtersubmit) {	# Raw mode.
+		$filter_query_string = "type=raw&filter=" . urlencode(json_encode($filtertext )) . "&interfacefilter=" . $interfacefilter;
+	}
+
+
+	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+	$reverse = isset($config['syslog']['reverse']);
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+	if ($reverse) {
 		echo "var isReverse = true;\n";
 	} else {
 		echo "var isReverse = false;\n";
 	}
 ?>
+	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
+
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
 		if (row[8] == '6') {
@@ -235,7 +252,7 @@ function fetch_new_rules() {
 		return;
 	}
 	isBusy = true;
-	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
+	getURL('status_logs_filter_dynamic.php?' + filter_query_string + '&lastsawtime=' + lastsawtime, fetch_new_rules_callback);
 }
 
 function fetch_new_rules_callback(callback_data) {

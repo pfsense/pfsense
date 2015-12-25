@@ -60,19 +60,6 @@ require_once("guiconfig.inc");
 require_once("filter_log.inc");
 
 
-// Retrieve GET or POST Value
-function getGETPOSTsettingvalue($settingname, $default) {
-	$settingvalue = $default;
-	if ($_GET[$settingname]) {
-		$settingvalue = $_GET[$settingname];
-	}
-	if ($_POST[$settingname]) {
-		$settingvalue = $_POST[$settingname];
-	}
-	return $settingvalue;
-}
-
-
 // Status Logs Common - Code
 function status_logs_common_code() {
 	global $g, $config, $specific_log, $nentries, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;

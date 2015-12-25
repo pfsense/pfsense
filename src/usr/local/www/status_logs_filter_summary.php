@@ -170,7 +170,7 @@ foreach (array_keys($fields) as $field) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=$fields[$field]?></h2></div>
 	<div class="panel-body">
-		<div id="pieChart<?=$chartnum?>" align="center">
+		<div id="pieChart<?=$chartnum?>" class="text-center">
 <?php
 			pie_block($summary, $field , $entriesperblock, $chartnum);
 			stat_block($summary, $field , $entriesperblock);

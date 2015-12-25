@@ -295,5 +295,8 @@ if (get_freebsd_version() == 8) {
 
 $form->add($section);
 print $form;
-
+?>
+</div>
+<?php
 include("foot.inc");
+?>

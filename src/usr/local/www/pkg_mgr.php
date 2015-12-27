@@ -237,12 +237,14 @@ if (!$pkg_info || !is_array($pkg_info)):
 				</tr>
 <?php
 	endforeach;
-endif;
 ?>
 			</tbody>
 		</table>
 	</div>
 </div>
+<?php
+endif;
+?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -312,3 +314,4 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");
+?>

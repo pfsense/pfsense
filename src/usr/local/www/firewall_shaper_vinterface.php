@@ -478,8 +478,8 @@ events.push(function() {
     }
 
 	function change_masks() {
-		disableInput('maskbits', ($('#scheduler').val() == 'none'));
-		disableInput('maskbitsv6', ($('#scheduler').val() == 'none'));
+		disableInput('maskbits', ($('#mask').val() == 'none'));
+		disableInput('maskbitsv6', ($('#mask').val() == 'none'));
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------
@@ -488,7 +488,7 @@ events.push(function() {
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-    $('#scheduler').on('change', function() {
+    $('#mask').on('change', function() {
         change_masks();
     });
 });

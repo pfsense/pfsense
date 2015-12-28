@@ -58,6 +58,9 @@ define(COLLAPSIBLE, 0x08);
 define(SEC_CLOSED, 0x04);
 define(SEC_OPEN, 0x00);
 
+// AddPassword method defines
+define(DMYPWD, "********");
+
 global $g;
 $g = array(
 	"base_packages" => "siproxd",

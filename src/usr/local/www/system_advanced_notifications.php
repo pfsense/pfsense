@@ -153,7 +153,15 @@ if ($_POST) {
 
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
-		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+
+		if ($_POST['smtppassword'] != DMYPWD) {
+			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
+				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+			} else {
+				$input_errors[] = gettext("SMTP passwords must match");
+			}
+		}
+
 		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
@@ -170,10 +178,12 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 
-		write_config();
+		if (!$input_errors) {
+			write_config();
 
-		pfSenseHeader("system_advanced_notifications.php");
-		return;
+			pfSenseHeader("system_advanced_notifications.php");
+			return;
+		}
 
 	}
 
@@ -337,12 +347,12 @@ $section->addInput(new Form_Input(
 	['autocomplete' => 'off']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'smtppassword',
 	'Notification E-Mail auth password',
 	'password',
 	$pconfig['smtppassword']
-))->setHelp('Enter the e-mail address password for SMTP authentication.');
+))->setHelp('Enter the e-mail account password for SMTP authentication.');
 
 $section->addInput(new Form_Select(
 	'smtpauthmech',

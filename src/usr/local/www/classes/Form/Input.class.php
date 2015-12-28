@@ -80,6 +80,22 @@ class Form_Input extends Form_Element
 		return $this->_attributes['name'];
 	}
 
+	public function setName($nm)
+	{
+		$this->_attributes['name'] = $nm;
+		$this->_attributes['id'] = $nm;
+	}
+
+	public function setValue($val)
+	{
+		$this->_attributes['value'] = $val;
+	}
+
+	public function setType($tp)
+	{
+		$this->_attributes['type'] = $tp;
+	}
+
 	public function getId()
 	{
 		return $this->_attributes['id'];

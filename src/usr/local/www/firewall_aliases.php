@@ -207,10 +207,14 @@ if (is_subsystem_dirty('aliases')) {
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
-
 display_top_tabs($tab_array);
 
 ?>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">Firewall Aliases <?=$bctab?></h2></div>
+	<div class="panel-body">
+
 <div class="table-responsive">
 <table class="table table-striped table-hover">
 	<thead>
@@ -289,6 +293,9 @@ display_top_tabs($tab_array);
 	</tbody>
 </table>
 </div>
+
+	</div><!-- panel body -->
+</div><!-- panel default -->
 
 <nav class="action-buttons">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">

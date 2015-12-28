@@ -932,11 +932,13 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		$need_syslog_restart = true;
 	}
 
-	/* remove config.xml entries */
-	update_status(gettext("Configuration... "));
-	unset($config['installedpackages']['package'][$pkgid]);
-	update_status(gettext("done.") . "\n");
-	write_config("Removed {$package_name} package.\n");
+	if ($when == "post-deinstall") {
+		/* remove config.xml entries */
+		update_status(gettext("Configuration... "));
+		unset($config['installedpackages']['package'][$pkgid]);
+		update_status(gettext("done.") . "\n");
+		write_config("Removed {$package_name} package.\n");
+	}
 
 	/* remove package entry from /etc/syslog.conf if needed */
 	/* this must be done after removing the entries from config.xml */

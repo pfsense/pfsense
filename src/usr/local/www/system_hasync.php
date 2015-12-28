@@ -95,13 +95,15 @@ if ($_POST) {
 	foreach ($checkbox_names as $name) {
 		$a_hasync[$name] = $pconfig[$name] ? $pconfig[$name] : false;
 	}
-	$a_hasync['pfsyncpeerip']	= $pconfig['pfsyncpeerip'];
+	$a_hasync['pfsyncpeerip'] = $pconfig['pfsyncpeerip'];
 	$a_hasync['pfsyncinterface'] = $pconfig['pfsyncinterface'];
 	$a_hasync['synchronizetoip'] = $pconfig['synchronizetoip'];
-	$a_hasync['username']		= $pconfig['username'];
+	$a_hasync['username'] = $pconfig['username'];
 
 	if ($pconfig['passwordfld'] == $pconfig['passwordfld_confirm']) {
-		$a_hasync['password']		= $pconfig['passwordfld'];
+		if ($pconfig['passwordfld'] != DMYPWD) {
+				$a_hasync['password'] = $pconfig['passwordfld'];
+		}
 	} else {
 		$input_errors[] = gettext("Password and confirmation must match.");
 	}

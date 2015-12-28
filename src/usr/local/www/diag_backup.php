@@ -225,11 +225,8 @@ if ($_POST) {
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
-				if (!$_POST['encrypt_password'] || !$_POST['encrypt_password_confirm']) {
+				if (!$_POST['encrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
-				}
-				if ($_POST['encrypt_password'] != $_POST['encrypt_password_confirm']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -303,11 +300,8 @@ if ($_POST) {
 
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
-				if (!$_POST['decrypt_password'] || !$_POST['decrypt_password_confirm']) {
+				if (!$_POST['decrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
-				}
-				if ($_POST['decrypt_password'] != $_POST['decrypt_password_confirm']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -659,7 +653,7 @@ $section->addInput(new Form_Checkbox(
 	false
 ));
 
-$section->addPassword(new Form_Input(
+$section->addInput(new Form_Input(
 	'encrypt_password',
 	'Password',
 	'password',
@@ -703,7 +697,7 @@ $section->addInput(new Form_Checkbox(
 	false
 ));
 
-$section->addPassword(new Form_Input(
+$section->addInput(new Form_Input(
 	'decrypt_password',
 	'Password',
 	'password',

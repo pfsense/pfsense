@@ -323,7 +323,9 @@ if ($_POST) {
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
-		$ppp['password'] = base64_encode($_POST['passwordfld']);
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$ppp['password'] = base64_encode($_POST['passwordfld']);
+		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {
 			$ppp['idletimeout'] = $_POST['idletimeout'];

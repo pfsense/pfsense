@@ -316,7 +316,9 @@ if ($_POST) {
 			$newvoucher['vouchersyncdbip'] = $_POST['vouchersyncdbip'];
 			$newvoucher['vouchersyncport'] = $_POST['vouchersyncport'];
 			$newvoucher['vouchersyncusername'] = $_POST['vouchersyncusername'];
-			$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
+			if ($_POST['vouchersyncpass'] != DMYPWD ) {
+				$newvoucher['vouchersyncpass'] = $_POST['vouchersyncpass'];
+			}
 			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
 			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
 				// Synchronize the voucher DB from the master node

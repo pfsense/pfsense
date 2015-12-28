@@ -181,7 +181,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['proxypass'] <> "") {
-			$config['system']['proxypass'] = $_POST['proxypass'];
+			if ($_POST['proxypass'] != DMYPWD) {
+				$config['system']['proxypass'] = $_POST['proxypass'];
+			}
 		} else {
 			unset($config['system']['proxypass']);
 		}

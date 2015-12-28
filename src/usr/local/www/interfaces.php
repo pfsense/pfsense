@@ -1138,7 +1138,9 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
 				$a_ppps[$pppid]['username'] = $_POST['ppp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				if ($_POST['ppp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				}
 				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
@@ -1155,7 +1157,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				if ($_POST['pppoe_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				}
 				if (!empty($_POST['provider'])) {
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				} else {
@@ -1191,7 +1195,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				if ($_POST['pptp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				}
 				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
 				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
 				$a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);

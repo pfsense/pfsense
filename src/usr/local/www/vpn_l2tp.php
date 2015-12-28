@@ -158,8 +158,14 @@ if ($_POST) {
 		$l2tpcfg['interface'] = $_POST['interface'];
 		$l2tpcfg['n_l2tp_units'] = $_POST['n_l2tp_units'];
 		$l2tpcfg['radius']['server'] = $_POST['radiusserver'];
-		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
-		$l2tpcfg['secret'] = $_POST['secret'];
+		if ($_POST['radiussecret'] != DMYPWD) {
+			$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
+		}
+
+		if ($_POST['secret'] != DMYPWD) {
+			$l2tpcfg['secret'] = $_POST['secret'];
+		}
+
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
 
 

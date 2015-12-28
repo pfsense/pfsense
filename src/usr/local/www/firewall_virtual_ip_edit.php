@@ -275,7 +275,10 @@ if ($_POST) {
 			$vipent['uniqid'] = $_POST['uniqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
-			$vipent['password'] = $_POST['password'];
+
+			if ($_POST['password'] != DMYPWD) {
+				$vipent['password'] = $_POST['password'];
+			}
 		}
 
 		/* Common fields */

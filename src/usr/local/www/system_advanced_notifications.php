@@ -126,7 +126,14 @@ if ($_POST) {
 
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
-		$config['notifications']['growl']['password'] = $_POST['password'];
+		if ($_POST['password'] != DMYPWD) {
+			if ($_POST['password'] == $_POST['password_confirm']) {
+				$config['notifications']['growl']['password'] = $_POST['password'];
+			} else {
+				$input_errors[] = gettext("Growl passwords must match");
+			}
+		}
+
 		$config['notifications']['growl']['name'] = $_POST['name'];
 		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
@@ -263,7 +270,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('This is the IP address that you would like to send growl '.
 	'notifications to.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'password',
 	'Password',
 	'text',

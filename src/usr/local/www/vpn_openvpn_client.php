@@ -136,7 +136,11 @@ if ($_GET['act'] == "new") {
 }
 
 global $simplefields;
-$simplefields = array('auth_user', 'auth_pass');
+if ($_POST['auth_pass'] == DMYPWD) {
+	$simplefields = array('auth_user');
+} else {
+	$simplefields = array('auth_user', 'auth_pass');
+}
 
 if ($_GET['act'] == "edit") {
 
@@ -364,7 +368,9 @@ if ($_POST) {
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
 		$client['proxy_user'] = $pconfig['proxy_user'];
-		$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		if ($pconfig['proxy_passwd'] != DMYPWD) {
+			$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);

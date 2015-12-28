@@ -136,6 +136,10 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
+	}
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
@@ -349,7 +353,7 @@ $section->addInput(new Form_Input(
 			'GleSYS: Enter your API user.' . '<br />' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',

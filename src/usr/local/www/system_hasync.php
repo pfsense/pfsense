@@ -99,11 +99,19 @@ if ($_POST) {
 	$a_hasync['pfsyncinterface'] = $pconfig['pfsyncinterface'];
 	$a_hasync['synchronizetoip'] = $pconfig['synchronizetoip'];
 	$a_hasync['username']		= $pconfig['username'];
-	$a_hasync['password']		= $pconfig['passwordfld'];
-	write_config("Updated High Availability Sync configuration");
-	interfaces_sync_setup();
-	header("Location: system_hasync.php");
-	exit();
+
+	if ($pconfig['passwordfld'] == $pconfig['passwordfld_confirm']) {
+		$a_hasync['password']		= $pconfig['passwordfld'];
+	} else {
+		$input_errors[] = gettext("Password and confirmation must match.");
+	}
+
+	if (!$input_errors) {
+		write_config("Updated High Availability Sync configuration");
+		interfaces_sync_setup();
+		header("Location: system_hasync.php");
+		exit();
+	}
 }
 
 foreach ($checkbox_names as $name) {
@@ -128,6 +136,10 @@ foreach ($ifaces as $ifname => $iface) {
 }
 
 include("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $form = new Form;
 
@@ -184,7 +196,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing your configuration.<br />' .
 			'Do not use the Synchronize Config to IP and username option on backup cluster members!');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Remote System Password',
 	'password',

@@ -257,6 +257,9 @@ if ($_POST) {
 			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
 	}
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
+	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
@@ -597,7 +600,7 @@ $section->addInput(new Form_Input(
 	$pconfig['username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',

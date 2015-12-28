@@ -267,6 +267,10 @@ if ($_POST) {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
 				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 			}
+
+			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
+				$input_errors[] = gettext("Password and confirmation must match.");
+			}
 		}
 	}
 
@@ -326,6 +330,10 @@ if ($_POST) {
 
 	if (($pconfig['mode'] != "p2p_shared_key") && empty($pconfig['certref']) && empty($pconfig['auth_user']) && empty($pconfig['auth_pass'])) {
 		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
+	}
+
+	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
+		$input_errors[] = gettext("Password and confirmation must match.");
 	}
 
 	if (!$input_errors) {
@@ -508,7 +516,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['proxy_user']
 	));
 
-	$section->addInput(new Form_Input(
+	$section->addPassword(new Form_Input(
 		'proxy_passwd',
 		'Password',
 		'password',
@@ -541,7 +549,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['auth_user']
 	))->setHelp('Leave empty when no user name is needed');
 
-	$section->addInput(new Form_Input(
+	$section->addPassword(new Form_Input(
 		'auth_pass',
 		'Password',
 		'password',

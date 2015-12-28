@@ -947,6 +947,19 @@ if ($_POST['apply']) {
 			}
 		}
 	}
+
+	if ($_POST['ppp_password'] != $_POST['ppp_password_confirm']) {
+		$input_errors[] = gettext("PPP Password and confirmed password must match!");
+	}
+
+	if ($_POST['pppoe_password'] != $_POST['ppoep_password_confirm']) {
+		$input_errors[] = gettext("PPPoE Password and confirmed password must match!");
+	}
+
+	if ($_POST['pptp_password'] != $_POST['pptp_password_confirm']) {
+		$input_errors[] = gettext("PTPP Password and confirmed password must match!");
+	}
+
 	if (!$input_errors) {
 		// These 3 fields can be a list of multiple data items when used for MLPPP.
 		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
@@ -2452,7 +2465,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'ppp_password',
 	'Password',
 	'password',
@@ -2518,7 +2531,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pppoe_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pppoe_password',
 	'Password',
 	'password',
@@ -2649,7 +2662,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pptp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pptp_password',
 	'Password',
 	'password',

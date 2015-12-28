@@ -74,7 +74,10 @@ class Form_Section extends Form_Element
 	public function addPassword(Form_Input $input)
 	{
 		$group = new Form_Group($input->getTitle());
-		$input->setValue(DMYPWD);
+		if($input->getValue() != "") {
+			$input->setValue(DMYPWD);
+		}
+
 		$input->setType("password");
 		$group->add($input);
 		$confirm = clone $input;

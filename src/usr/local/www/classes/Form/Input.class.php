@@ -75,6 +75,11 @@ class Form_Input extends Form_Element
 		return $this->_title;
 	}
 
+	public function getValue()
+	{
+		return $this->_attributes['value'];
+	}
+
 	public function getName()
 	{
 		return $this->_attributes['name'];

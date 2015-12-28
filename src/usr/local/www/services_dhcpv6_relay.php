@@ -163,7 +163,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $form = new Form;

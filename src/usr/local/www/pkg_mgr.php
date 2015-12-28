@@ -140,12 +140,12 @@ if (!$pkg_info || !is_array($pkg_info)):
 <div class="panel panel-default" id="search-panel">
 	<div class="panel-heading"><?=gettext('Search')?>
 		<span class="widget-heading-icon pull-right">
-			<a data-toggle="collapse" href="#search-panel .panel-body" name="search-panel">
+			<a data-toggle="collapse" href="#search-panel_panel-body">
 				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
-	<div class="panel-body collapse in">
+	<div id='search-panel_panel-body' class="panel-body collapse in">
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
 				Search term
@@ -159,8 +159,8 @@ if (!$pkg_info || !is_array($pkg_info)):
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
-				<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>

@@ -4119,6 +4119,14 @@ function upgrade_128_to_129() {
 	/* IPSEC is always on in 2.3. */
 	if (isset($config['ipsec']['enable'])) {
 		unset($config['ipsec']['enable']);
+	} else if (is_array($config['ipsec']['phase1'])) {
+		/*
+		 * If IPsec was globally disabled, disable all
+		 * phase1 entries
+		 */
+		foreach ($config['ipsec']['phase1'] as $idx => $p1) {
+			$config['ipsec']['phase1'][$idx]['disabled'] = true;
+		}
 	}
 }
 

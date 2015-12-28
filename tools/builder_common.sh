@@ -2308,7 +2308,7 @@ snapshots_scp_files() {
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
 	# Add ./ before last directory, it's an rsync trick to make it chdir to parent directory before sending
-	pkg_repo_rsync $(echo "${CORE_PKG_REAL_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
 	snapshots_update_status ">>> Finished copying core pkg repo"
 
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"

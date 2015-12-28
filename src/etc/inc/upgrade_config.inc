@@ -4203,4 +4203,40 @@ function upgrade_131_to_132() {
 		clear_all_log_files(false);
 	}
 }
+
+function upgrade_132_to_133() {
+	global $config;
+
+	if (isset($config['ipsec']['phase1']) &&
+	    is_array($config['ipsec']['phase1'])) {
+		foreach ($config['ipsec']['phase1'] as &$p1) {
+			if (isset($p1['encryption-algorithm']['name']) &&
+			    $p1['encryption-algorithm']['name'] == 'des') {
+				$p1['disabled'] = true;
+				file_notice("IPsec",
+				    "DES is no longer supported, IPsec phase 1 " .
+				    "item '{$p1['descr']}' is being disabled.");
+			}
+		}
+	}
+
+	if (isset($config['ipsec']['phase2']) &&
+	    is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase2'] as &$p2) {
+			if (!isset($p2['encryption-algorithm-option']) ||
+			    !is_array($p2['encryption-algorithm-option'])) {
+				continue;
+			}
+
+			foreach ($p2['encryption-algorithm-option'] as $ealgo) {
+				if ($ealgo['name'] == 'des') {
+					$p2['disabled'] = true;
+					file_notice("IPsec",
+					    "DES is no longer supported, IPsec phase 2 " .
+					    "item '{$p2['descr']}' is being disabled.");
+				}
+			}
+		}
+	}
+}
 ?>

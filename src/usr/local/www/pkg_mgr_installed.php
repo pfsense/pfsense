@@ -96,7 +96,7 @@ if (empty($installed_packages)):?>
 	</div>
 <?php else: ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed packages')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
 		<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -181,7 +181,7 @@ if (empty($installed_packages)):?>
 <?php if (is_array($pkg['deps']) && count($pkg['deps'])): ?>
 			<br /><br /><?= gettext("Package Dependencies") ?>:
 	<?php foreach ($pkg['deps'] as $pdep): ?>
-			<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
+			&emsp;<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>"><i class="fa fa-paperclip"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></i></a>
 	<?php endforeach; ?>
 <?php endif; ?>
 		</td>

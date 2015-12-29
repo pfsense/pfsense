@@ -292,7 +292,7 @@ function setup_gateways_monitor() {
 		}
 	}
 
-	return 0;
+	return;
 }
 
 function get_dpinger_status($gwname) {

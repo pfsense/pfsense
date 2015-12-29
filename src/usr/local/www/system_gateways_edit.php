@@ -699,12 +699,20 @@ $section->addInput(new Form_Input(
 	$pconfig['name']
 ))->setHelp('Gateway name');
 
-$section->addInput(new Form_Input(
+$egw = new Form_Input(
 	'gateway',
 	'Gateway',
 	'text',
 	($pconfig['dynamic'] ? 'dynamic' : $pconfig['gateway'])
-))->setHelp('Gateway IP address');
+);
+
+$egw->setHelp('Gateway IP address');
+
+if ($pconfig['dynamic']) {
+	$egw->setReadonly();
+}
+
+$section->addInput($egw);
 
 $section->addInput(new Form_Checkbox(
 	'defaultgw',

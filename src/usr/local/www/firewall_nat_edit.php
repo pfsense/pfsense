@@ -1056,7 +1056,7 @@ events.push(function() {
 			disableInput('srcendport', true);
 			disableInput('dstbeginport', true);
 			disableInput('dstendport', true);
-//			disableInput('localbeginport_cust', true);
+			disableInput('localbeginport_cust', true);
 		} else {
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);

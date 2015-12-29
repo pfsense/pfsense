@@ -2157,10 +2157,6 @@ function upgrade_054_to_055() {
 		@unlink("{$g['tmp_path']}/{$xmldump}");
 		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	/* let apinger recreate required files */
-	if (!platform_booting()) {
-		setup_gateways_monitor();
-	}
 
 	/* build a list of traffic and packets databases */
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');

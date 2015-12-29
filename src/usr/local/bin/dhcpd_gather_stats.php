@@ -187,8 +187,8 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	}
 	$ifcfgip = get_interface_ip($dhcpif);
 	$ifcfgsn = get_interface_subnet($dhcpif);
-	$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-	$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+	$subnet_start = ip2ulong(gen_subnetv4($ifcfgip, $ifcfgsn));
+	$subnet_end = ip2ulong(gen_subnetv4_max($ifcfgip, $ifcfgsn));
 	
 	$result['range'] = (ip2ulong($config['dhcpd'][$dhcpif]['range']['to'])) - (ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) ;
 	

@@ -169,6 +169,8 @@ if ($_POST) {
 		$dyndns['username'] = $_POST['username'];
 		if ($_POST['passwordfld'] != DMYPWD) {
 			$dyndns['password'] = $_POST['passwordfld'];
+		} else {
+			$dyndns['password'] = $a_dyndns[$id]['password'];;
 		}
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];

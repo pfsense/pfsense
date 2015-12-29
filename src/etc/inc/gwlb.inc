@@ -286,9 +286,32 @@ function setup_gateways_monitor() {
 	stop_dpinger();
 
 	/* Start new processes */
+	$failed = array();
 	foreach ($gateways_arr as $gateway) {
-		if (isset($gateway['enable_dpinger'])) {
-			start_dpinger($gateway);
+		if (!isset($gateway['enable_dpinger'])) {
+			continue;
+		}
+
+		if (start_dpinger($gateway) != 0) {
+			/*
+			 * Save process didn't start and try
+			 * again later
+			 */
+			$failed[] = $gateway['name'];
+		}
+	}
+
+	if (!empty($failed)) {
+		/* 1 second is enough for IPv6 DAD to finish */
+		sleep(1);
+		foreach ($gateways_arr as $gateway) {
+			if (!in_array($gateway['name'], $failed)) {
+				continue;
+			}
+			if (start_dpinger($gateway) != 0) {
+				log_error("Error starting gateway monitor " .
+				    "for {$gateway['name']}");
+			}
 		}
 	}
 

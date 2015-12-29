@@ -278,6 +278,8 @@ if ($_POST) {
 
 			if ($_POST['password'] != DMYPWD) {
 				$vipent['password'] = $_POST['password'];
+			} else {
+				$vipent['password'] = $a_vip[$id]['password'];
 			}
 		}
 

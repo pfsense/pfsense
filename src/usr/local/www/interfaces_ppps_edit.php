@@ -325,6 +325,8 @@ if ($_POST) {
 		$ppp['username'] = $_POST['username'];
 		if ($_POST['passwordfld'] != DMYPWD) {
 			$ppp['password'] = base64_encode($_POST['passwordfld']);
+		} else {
+			$ppp['password'] = $a_ppps[$id]['password'];
 		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {

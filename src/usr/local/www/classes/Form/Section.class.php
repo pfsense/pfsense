@@ -82,7 +82,7 @@ class Form_Section extends Form_Element
 		$group->add($input);
 		$confirm = clone $input;
 		$confirm->setName($confirm->getName() . "_confirm");
-		$confirm->setHelp("Confirm password");
+		$confirm->setHelp("Confirm");
 		$group->add($confirm);
 		$this->add($group);
 

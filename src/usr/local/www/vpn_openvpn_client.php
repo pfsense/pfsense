@@ -136,11 +136,7 @@ if ($_GET['act'] == "new") {
 }
 
 global $simplefields;
-if ($_POST['auth_pass'] == DMYPWD) {
-	$simplefields = array('auth_user');
-} else {
-	$simplefields = array('auth_user', 'auth_pass');
-}
+$simplefields = array('auth_user', 'auth_pass');
 
 if ($_GET['act'] == "edit") {
 
@@ -345,7 +341,11 @@ if ($_POST) {
 		$client = array();
 
 		foreach ($simplefields as $stat) {
-			update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
+				$client[$stat] = $a_client[$id]['auth_pass'];
+			} else {
+				update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			}
 		}
 
 		if ($vpnid) {

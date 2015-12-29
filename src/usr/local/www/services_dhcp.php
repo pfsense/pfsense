@@ -400,8 +400,8 @@ if (isset($_POST['submit'])) {
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+			$subnet_start = ip2ulong(gen_subnetv4($ifcfgip, $ifcfgsn));
+			$subnet_end = ip2ulong(gen_subnetv4_max($ifcfgip, $ifcfgsn));
 
 			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
 			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {

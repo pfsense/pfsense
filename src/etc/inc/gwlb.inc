@@ -110,6 +110,7 @@ function start_dpinger($gateway) {
 	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm";
 
 	$params  = "-S ";			/* Log warnings via syslog */
+	$params  = "-r 0 ";			/* Disable unused reporting thread */
 	$params .= "-i {$gateway['name']} ";	/* Identifier */
 	$params .= "-B {$gateway['gwifip']} ";	/* Bind src address */
 	$params .= "-p {$pidfile} ";		/* PID filename */

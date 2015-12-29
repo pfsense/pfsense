@@ -153,6 +153,9 @@ function start_dpinger($gateway) {
 	    : $dpinger_defaults['losshigh']
 	    ) . " ";
 
+	/* Make sure we don't end up with 2 process for the same GW */
+	stop_dpinger($gateway['name']);
+
 	/* Redirect stdout to /dev/null to avoid exec() to wait for dpinger */
 	return mwexec("/usr/local/bin/dpinger {$params} {$gateway['monitor']} >/dev/null");
 }

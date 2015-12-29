@@ -464,12 +464,12 @@ function find_smallest_cidr_v4($number) {
 
 /* Return the previous IP address before the given address */
 function ip_before($ip, $offset = 1) {
-	return long2ip32(ip2long($ip) - $offset);
+	return long2ip32(ip2ulong($ip) - $offset);
 }
 
 /* Return the next IP address after the given address */
 function ip_after($ip, $offset = 1) {
-	return long2ip32(ip2long($ip) + $offset);
+	return long2ip32(ip2ulong($ip) + $offset);
 }
 
 /* Return true if the first IP is 'before' the second */

@@ -140,7 +140,7 @@ foreach ($databases as $database) {
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext("Settings"));
 include("head.inc");
 
 $tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");

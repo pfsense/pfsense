@@ -297,7 +297,7 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext(ucfirst($curcat)." Graphs"));
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {

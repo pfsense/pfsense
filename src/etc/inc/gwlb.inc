@@ -181,7 +181,7 @@ function setup_gateways_monitor() {
 		}
 		if (empty($gateway['monitor']) || !is_ipaddr($gateway['monitor'])) {
 			if (is_ipaddr($gateway['gateway'])) {
-				$gateway['monitor'] = $gateway['gateway'];
+				$gateways_arr[$gwname]['monitor'] = $gateway['gateway'];
 			} else { /* No chance to get an ip to monitor skip target. */
 				continue;
 			}
@@ -228,31 +228,23 @@ function setup_gateways_monitor() {
 				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
-			if ($gateway['monitor'] == $gateway['gateway']) {
-				/* link locals really need a different src ip */
-				if (is_linklocal($gateway['gateway'])) {
-					if (!strpos($gateway['gateway'], '%')) {
-						$gateway['gateway'] .= '%' . $gateway['interface'];
-					}
-					$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
-				} else {
-					$gwifip = find_interface_ipv6($gateway['interface'], true);
-				}
-			} else {
-				/* 'monitor' has been set, so makes sure it has precedence over
-				 * 'gateway' in defining the source IP. Otherwise if 'gateway'
-				 * is a local link and 'monitor' is global routable then the
-				 * ICMP6 response would not find its way back home...
-				 */
-				$gwifip = find_interface_ipv6($gateway['interface'], true);
+			if (is_linklocal($gateway['gateway']) &&
+			    get_ll_scope($gateway['gateway']) == '') {
+				$gateways_arr[$gwname]['gateway'] .= '%' . $gateway['interface'];
 			}
 
-			/* Make sure srcip and target have scope defined when they are ll */
-			if (is_linklocal($gwifip) && !strpos($gwifip, '%')) {
-				$gwifip .= '%' . $gateway['interface'];
-			}
-			if (is_linklocal($gateway['monitor']) && !strpos($gateway['monitor'], '%')) {
-				$gateway['monitor'] .= "%{$gateway['interface']}";
+			if (is_linklocal($gateway['monitor'])) {
+				if (get_ll_scope($gateway['monitor']) == '') {
+					$gateways_arr[$gwname]['monitor'] .= '%' . $gateway['interface'];
+				}
+
+				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
+
+				if (get_ll_scope($gwifip) == '') {
+					$gwifip .= '%' . $gateway['interface'];
+				}
+			} else {
+				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
 
 			if (!is_ipaddrv6($gwifip)) {

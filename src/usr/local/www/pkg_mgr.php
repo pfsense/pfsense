@@ -189,7 +189,7 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 	}
 
 	if ($menu_category != "All" && $index['categories'][0] != $menu_category &&
-	  !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
+	    !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
 		continue;
 	}
 ?>

@@ -952,7 +952,7 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("PPP Password and confirmed password must match!");
 	}
 
-	if ($_POST['pppoe_password'] != $_POST['ppoep_password_confirm']) {
+	if ($_POST['pppoe_password'] != $_POST['pppoe_password_confirm']) {
 		$input_errors[] = gettext("PPPoE Password and confirmed password must match!");
 	}
 

@@ -218,7 +218,6 @@ if ($_POST) {
 	}
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced"));
 $shortcut_section = "resolver";
 include_once("head.inc");

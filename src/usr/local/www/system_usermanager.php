@@ -464,7 +464,6 @@ function build_cert_table() {
 	return($certhtml);
 }
 
-$closehead = false;
 include("head.inc");
 
 if ($input_errors) {
@@ -494,6 +493,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				<th><?=gettext("Full name")?></th>
 				<th><?=gettext("Disabled")?></th>
 				<th><?=gettext("Groups")?></th>
+				<th>&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -540,6 +540,7 @@ foreach ($a_user as $i => $userent):
 		<?=gettext("Delete")?>
 	</button>
 </nav>
+</form>
 
 <div id="infoblock">
 	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
@@ -918,5 +919,5 @@ events.push(function() {
 //]]>
 </script>
 <?php
-
 include('foot.inc');
+?>

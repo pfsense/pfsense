@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 ?>
 
-<div id="countdown" style="text-align: center;"></div>
+<div id="countdown" class="text-center"></div>
 
 <script type="text/javascript">
 //<![CDATA[

@@ -138,6 +138,12 @@ if (file_exists('/conf/needs_package_sync_after_reboot')) {
 	@unlink('/conf/needs_package_sync_after_reboot');
 }
 
+/* Triggering of the initial setup wizard after reboot has been requested */
+if (file_exists('/conf/trigger_initial_wizard_after_reboot')) {
+	touch('/conf/trigger_initial_wizard');
+	@unlink('/conf/trigger_initial_wizard_after_reboot');
+}
+
 /* start devd (dhclient now uses it) */
 echo "Starting device manager (devd)...";
 mute_kernel_msgs();

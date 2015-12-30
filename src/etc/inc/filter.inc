@@ -1322,12 +1322,12 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	return $natrules;
 }
 
-function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, &$starting_localhost_port, &$reflection_rules) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
-	$reflection_txt = array();
+	$reflection_rules = array();
 
 	if (!empty($rdr_ifs)) {
 		if ($config['system']['reflectiontimeout']) {
@@ -1502,17 +1502,27 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 							if ($reflect_proto == "udp") {
 								$socktype = "dgram";
 								$dash_u = "-u ";
-								$wait = "wait\t";
+								$wait = "yes";
 							} else {
 								$socktype = "stream";
 								$dash_u = "";
-								$wait = "nowait/0";
+								$wait = "no";
 							}
 							foreach ($rtarget as $targip) {
 								if (empty($targip)) {
 									continue;
 								}
-								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\t{$wait}\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
+								$reflection_rule = array(
+									'port' => $inetdport,
+									'socket_type' => $socktype,
+									'protocol' => $reflect_proto,
+									'wait' => $wait,
+									'user' => 'nobody',
+									'server' => '/usr/bin/nc',
+									'server_args' => "{$dash_u}-w {$reflectiontimeout} {$targip} {$tda}"
+								);
+								$reflection_rules[] = $reflection_rule;
+								unset($reflection_rule);
 							}
 						}
 						$inetdport++;
@@ -1525,8 +1535,6 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 				break;
 			}
 		}
-
-		$reflection_txt = array_unique($reflection_txt);
 	}
 
 	return $natrules;
@@ -1778,6 +1786,26 @@ function filter_nat_rules_generate_if ($if, $src = "any", $srcport = "", $dst = 
 		$natrule .= "# Could not convert {$if} to friendly name(alias)\n";
 	}
 	return $natrule;
+}
+
+function xinetd_service_entry($entry_array) {
+	$entry = <<<EOD
+service {$entry_array['port']}-{$entry_array['protocol']}
+{
+	type = unlisted
+	bind = 127.0.0.1
+	port = {$entry_array['port']}
+	socket_type = {$entry_array['socket_type']}
+	protocol = {$entry_array['protocol']}
+	wait = {$entry_array['wait']}
+	user = {$entry_array['user']}
+	server = {$entry_array['server']}
+	server_args = {$entry_array['server_args']}
+}
+
+
+EOD;
+	return $entry;
 }
 
 function filter_nat_rules_generate() {
@@ -2069,13 +2097,21 @@ function filter_nat_rules_generate() {
 		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
-	if (file_exists("/var/etc/inetd.conf")) {
-		@unlink("/var/etc/inetd.conf");
-	}
-	// Open inetd.conf write handle
-	$inetd_fd = fopen("/var/etc/inetd.conf", "w");
+	unlink_if_exists("{$g['varetc_path']}/xinetd.conf");
+	// Open xinetd.conf write handle
+	$xinetd_fd = fopen("{$g['varetc_path']}/xinetd.conf", "w");
+
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
+	$ftp_proxy_entry = array(
+		'port' => 6969,
+		'socket_type' => 'dgram',
+		'protocol' => 'udp',
+		'wait' => 'yes',
+		'user' => 'root',
+		'server' => '/usr/libexec/tftp-proxy',
+		'server_args' => '-v'
+	);
+	fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
 
 	if (isset($config['nat']['rule'])) {
 		/* start reflection redirects on port 19000 of localhost */
@@ -2257,8 +2293,8 @@ function filter_nat_rules_generate() {
 					if ($reflection_type == "proxy" && !isset($rule['nordr'])) {
 						$natrules .= filter_generate_reflection_proxy($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
 						$nat_if_list = array($natif);
-						foreach ($reflection_rules as $txtline) {
-							fwrite($inetd_fd, $txtline);
+						foreach ($reflection_rules as $reflection_rule) {
+							fwrite($xinetd_fd, xinetd_service_entry($reflection_rule));
 						}
 					} else if ($reflection_type == "purenat" || isset($rule['nordr'])) {
 						$rdr_if_list = implode(" ", $nat_if_list);
@@ -2282,7 +2318,7 @@ function filter_nat_rules_generate() {
 			}
 		}
 	}
-	fclose($inetd_fd);		// Close file handle
+	fclose($xinetd_fd);		// Close file handle
 
 	$natrules .= discover_pkg_rules("nat");
 
@@ -2293,13 +2329,15 @@ function filter_nat_rules_generate() {
 		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
 	}
 
-	// Check if inetd is running, if not start it.	If so, restart it gracefully.
-	$helpers = isvalidproc("inetd");
-	if (file_exists("/var/etc/inetd.conf")) {
-		if (!$helpers) {
-			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+	// Check if xinetd is running, if not start it.	If so, restart it gracefully.
+	if (file_exists("{$g['varetc_path']}/xinetd.conf")) {
+		if (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
+			sigkillbypid("{$g['varrun_path']}/xinetd.pid", "HUP");
 		} else {
-			sigkillbypid("/var/run/inetd.pid", "HUP");
+			mwexec("/usr/local/sbin/xinetd " .
+			    "-syslog daemon " .
+			    "-f {$g['varetc_path']}/xinetd.conf " .
+			    "-pidfile {$g['varrun_path']}/xinetd.pid");
 		}
 	}
 

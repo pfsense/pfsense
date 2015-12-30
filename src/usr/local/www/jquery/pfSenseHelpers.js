@@ -208,7 +208,7 @@ function setMasks() {
 // Complicated function to move all help text associated with this input id to the same id
 // on the row above. That way if you delete the last row, you don't lose the help
 function moveHelpText(id) {
-	$('#' + id).parent('div').parent('div').find('input').each(function() {	 // For each <span></span>
+	$('#' + id).parent('div').parent('div').find('input, select, checkbox').each(function() {	 // For each <span></span>
 		var fromId = this.id;
 		var toId = decrStringInt(fromId);
 		var helpSpan;
@@ -268,7 +268,7 @@ function renumber() {
 			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
 		});
 
-		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
+//		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
 
 		idx++;
 	});
@@ -320,7 +320,8 @@ function add_row() {
 	});
 
 	// And for "for" tags
-	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+//	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
+
 	$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
 
 	// Insert the updated/cloned row

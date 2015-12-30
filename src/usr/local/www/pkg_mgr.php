@@ -67,7 +67,7 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-/* if upgrade in progress, alert user */
+// if upgrade in progress, alert user
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
@@ -76,10 +76,7 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-$pkg_info = get_pkg_info();
-
 $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Available Packages"));
-
 include("head.inc");
 
 $tab_array = array();
@@ -87,9 +84,10 @@ $tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
+$pkg_info = get_pkg_info();
 if ($pkg_info) {
-	//Check categories
-	$categories=array();
+	// Check categories
+	$categories = array();
 	foreach ($pkg_info as $pkg_data) {
 		if (isset($pkg_data['categories'][0])) {
 			$categories[$pkg_data['categories'][0]]++;
@@ -97,16 +95,16 @@ if ($pkg_info) {
 	}
 
 	ksort($categories, SORT_STRING|SORT_FLAG_CASE);
-	$cm_count=0;
+	$cm_count = 0;
 	$tab_array = array();
-	$visible_categories=array();
-	$categories_min_count=($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
-	$categories_max_display=($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
+	$visible_categories = array();
+	$categories_min_count = ($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
+	$categories_max_display = ($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
 
-	/* check selected category or define default category to show */
+	// check selected category or define default category to show
 	if (isset($_REQUEST['category'])) {
 		$menu_category = $_REQUEST['category'];
-	} else if (isset($g['pkg_default_category'])) {
+	} elseif (isset($g['pkg_default_category'])) {
 		$menu_category = $g['pkg_default_category'];
 	} else {
 		$menu_category = "All";
@@ -119,7 +117,7 @@ if ($pkg_info) {
 	foreach ($categories as $category => $c_count) {
 		if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
 			$tab_array[] = array(gettext($category) , $menu_category == $category ? true : false, "pkg_mgr.php?category={$category}");
-			$visible_categories[]=$category;
+			$visible_categories[] = $category;
 			$cm_count++;
 		}
 	}
@@ -130,25 +128,25 @@ if ($pkg_info) {
 //		display_top_tabs($tab_array);
 }
 
-if (!$pkg_info || !is_array($pkg_info)):
-?>
+if (!$pkg_info || !is_array($pkg_info)):?>
+
 <div class="alert alert-warning">
 	<?=gettext("There are currently no packages available for installation.")?>
 </div>
-<?php else: ?>
+<?php else:?>
 
 <div class="panel panel-default" id="search-panel">
 	<div class="panel-heading"><?=gettext('Search')?>
 		<span class="widget-heading-icon pull-right">
-			<a data-toggle="collapse" href="#search-panel .panel-body" name="search-panel">
+			<a data-toggle="collapse" href="#search-panel_panel-body">
 				<i class="fa fa-plus-circle"></i>
 			</a>
 		</span>
 	</div>
-	<div class="panel-body collapse in">
+	<div id="search-panel_panel-body" class="panel-body collapse in">
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				Search term
+				<?=gettext("Search term")?>
 			</label>
 			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
 			<div class="col-sm-2">
@@ -159,8 +157,8 @@ if (!$pkg_info || !is_array($pkg_info)):
 				</select>
 			</div>
 			<div class="col-sm-3">
-				<a id="btnsearch" type="button" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
-				<a id="btnclear" type="button" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
 				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>
@@ -179,70 +177,58 @@ if (!$pkg_info || !is_array($pkg_info)):
 <?php if (!$g['disablepackagehistory']):?>
 					<th><?=gettext("Version")?></th>
 <?php endif;?>
-
 					<th><?=gettext("Description")?></th>
 					<th></th>
 				</tr>
 			</thead>
 			<tbody>
-<?php
 
-	foreach ($pkg_info as $index):
-		if (isset($index['installed'])) {
-			continue;
-		}
+<?php foreach ($pkg_info as $index):
+	if (isset($index['installed'])) {
+		continue;
+	}
 
-		if ($menu_category != "All" && $index['categories'][0] != $menu_category && !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
-			continue;
-		}
-
+	if ($menu_category != "All" && $index['categories'][0] != $menu_category &&
+	    !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
+		continue;
+	}
 ?>
 				<tr>
 					<td>
 <?php if ($index['www']):?>
 						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
-<?php endif; ?>
+<?php endif;?>
 							<?=htmlspecialchars($index['shortname'])?>
 						</a>
 					</td>
 
-<?php
-		if (!$g['disablepackagehistory']):
-?>
+<?php if (!$g['disablepackagehistory']):?>
 					<td>
 						<?=htmlspecialchars($index['version'])?>
 					</td>
-<?php
-		endif;
-?>
+<?php endif;?>
 					<td>
 						<?=$index['desc']?>
-<?php if (is_array($index['deps']) && count($index['deps'])): ?>
-						<br /><br /><?= gettext("Package Dependencies") ?>:
-	<?php foreach ($index['deps'] as $pdep): ?>
-						<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
-	<?php endforeach; ?>
-<?php endif; ?>
+<?php if (is_array($index['deps']) && count($index['deps'])):?>
+						<br /><br /><?= gettext("Package Dependencies")?>:<ul>
+	<?php foreach ($index['deps'] as $pdep):?>
+						<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>" class="fa fa-globe"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
+	<?php endforeach;?></ul>
+<?php endif;?>
 					</td>
 					<td>
 						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
-<?php
-		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):
-?>
+<?php if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
 						<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
-<?php
-		endif;
-?>
+<?php endif;?>
 					</td>
 				</tr>
-<?php
-	endforeach;
-endif;
-?>
+<?php endforeach;?>
 			</tbody>
 		</table>
 	</div>
 </div>
+<?php endif;?>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -312,3 +298,4 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");
+?>

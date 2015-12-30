@@ -121,7 +121,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The password contains invalid characters.");
 	}
 
-	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld2'])) {
+	if (($_POST['passwordfld']) && ($_POST['passwordfld'] != $_POST['passwordfld_confirm'])) {
 		$input_errors[] = gettext("The passwords do not match.");
 	}
 	if (($_POST['ip'] && !is_ipaddr($_POST['ip']))) {
@@ -153,7 +153,7 @@ if ($_POST) {
 		$secretent['name'] = $_POST['usernamefld'];
 		$secretent['ip'] = $_POST['ip'];
 
-		if ($_POST['passwordfld']) {
+		if ($_POST['passwordfld'] && ($_POST['passwordfld'] != DMYPWD)) {
 			$secretent['password'] = $_POST['passwordfld'];
 		}
 
@@ -175,60 +175,52 @@ if ($_POST) {
 }
 
 include("head.inc");
-?>
 
-<?php
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-?>
 
-<form class="form-horizontal" action="vpn_l2tp_users_edit.php" method="post" name="iform" id="iform">
-	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h2 class="panel-title"><?=gettext('User'); ?></h2>
-		</div>
+$form = new Form();
 
-		<div class="panel-body">
-			<div class="form-group">
-				<label for="usernamefld" class="col-sm-2 control-label"><?=gettext("Username")?></label>
-				<div class="col-sm-10">
-					<?=$mandfldhtml?><input name="usernamefld" type="text" class="formfld user form-control" id="usernamefld" size="20" value="<?=htmlspecialchars($pconfig['usernamefld'])?>" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="passwordfld" class="col-sm-2 control-label"><?=gettext("Password")?></label>
-				<div class="col-sm-10">
-					<?=$mandfldhtml?><input name="passwordfld" type="password" class="formfld pwd form-control" id="passwordfld" size="20" />
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="passwordfld2" class="col-sm-2 control-label"><?=gettext('Confirm')?></label>
-				<div class="col-sm-10">
-					<?=$mandfldhtml?><input name="passwordfld2" type="password" class="formfld pwd form-control" id="passwordfld2" size="20" />
-<?php if (isset($id) && $a_secret[$id]):?>
-					<span class="help-block"><?=gettext("If you want to change the users password, enter it here twice.")?></span>
-<?php endif?>
-				</div>
-			</div>
-			<div class="form-group">
-				<label for="ip" class="col-sm-2 control-label"><?=gettext("IP address")?></label>
-				<div class="col-sm-10">
-					<input name="ip" type="text" class="formfld unknown form-control" id="ip" size="20" value="<?=htmlspecialchars($pconfig['ip'])?>" />
-					<span class="help-block"><?=gettext("If you want the user to be assigned a specific IP address, enter it here.")?></span>
-				</div>
-			</div>
-		</div>
-	</div>
+$section = new Form_Section("User");
 
-	<div class="col-sm-10 col-sm-offset-2">
-		<input id="submit" name="Submit" type="submit" class="formbtn btn btn-primary" value="<?=gettext('Save')?>" />
-	</div>
+$section->addInput(new Form_Input(
+	'usernamefld',
+	'Username',
+	'text',
+	$pconfig['usernamefld']
+));
 
-<?php if (isset($id) && $a_secret[$id]):?>
-	<input name="id" type="hidden" value="<?=htmlspecialchars($id)?>" />
-<?php endif?>
-</form>
+$pwd = new Form_Input(
+	'passwordfld',
+	'Password',
+	'text',
+	$pconfig['passwordfld']
+);
 
-<?php
+if (isset($id) && $a_secret[$id]) {
+	$pwd->setHelp('If you want to change the users password, enter it here.');
+}
+
+$section->addPassword($pwd);
+
+$section->addInput(new Form_IpAddress(
+	'ip',
+	'IP Address',
+	$pconfig['ip']
+))->setHelp('If you want the user to be assigned a specific IP address, enter it here.');
+
+$form->add($section);
+
+if (isset($id) && $a_secret[$id]) {
+	$form->addGlobal(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$i
+	));
+}
+
+print($form);
+
 include("foot.inc");

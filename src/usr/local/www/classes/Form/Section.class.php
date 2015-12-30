@@ -68,6 +68,27 @@ class Form_Section extends Form_Element
 		return $input;
 	}
 
+	// Shortcut, adds a group with a password and a confirm password field.
+	// The confirm password element is created by apprnding "_confirm" to the name supplied
+	// The value is overwritten with a default pattern (So the user cannot see it)
+	public function addPassword(Form_Input $input)
+	{
+		$group = new Form_Group($input->getTitle());
+		if($input->getValue() != "") {
+			$input->setValue(DMYPWD);
+		}
+
+		$input->setType("password");
+		$group->add($input);
+		$confirm = clone $input;
+		$confirm->setName($confirm->getName() . "_confirm");
+		$confirm->setHelp("Confirm");
+		$group->add($confirm);
+		$this->add($group);
+
+		return $input;
+	}
+
 	public function __toString()
 	{
 		$element = parent::__toString();

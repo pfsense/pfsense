@@ -86,14 +86,13 @@ if (count($wolcomputers) > 0) {
 		$is_active = exec("/usr/sbin/arp -an |/usr/bin/grep {$wolent['mac']}| /usr/bin/wc -l|/usr/bin/awk '{print $1;}'");
 		$status = exec("/usr/sbin/arp -an | /usr/bin/awk '$4 == \"{$wolent['mac']}\" { print $7 }'");
 
-		echo "<td>\n";
 		if ($status == 'expires') {
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Online") . '"></i>';
 		} else if ($status == 'permanent') {
-			echo '<td style="text-align:center">' . "\n";
+			echo '<td class="text-center">' . "\n";
 			echo '<i class="fa fa-arrow-right" data-toggle="tooltip" title="' . gettext("Static ARP") . '"></i>';
 		} else {
-			echo '<td" style="text-align:center">' . "\n";
+			echo '<td class="text-center">' . "\n";
 			echo '<i class="fa fa-ban" data-toggle="tooltip" title="' . gettext("Offline") . '"></i>';
 		}
 
@@ -103,10 +102,10 @@ if (count($wolcomputers) > 0) {
 		echo "</td></tr>\n";
 	}
 } else {
-	echo "<tr><td colspan=\"4\" style=\"text-align:center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
+	echo "<tr><td colspan=\"4\" class=\"text-center\">" . gettext("No saved WoL addresses") . ".</td></tr>\n";
 }
 ?>
 	</tbody>
 </table>
-<p style="text-align:center"><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></p>
+<p class="text-center"><a href="status_dhcp_leases.php" class="navlink">DHCP Leases Status</a></p>
 </div>

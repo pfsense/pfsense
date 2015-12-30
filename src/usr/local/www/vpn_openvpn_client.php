@@ -267,6 +267,10 @@ if ($_POST) {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
 				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 			}
+
+			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
+				$input_errors[] = gettext("Password and confirmation must match.");
+			}
 		}
 	}
 
@@ -328,12 +332,20 @@ if ($_POST) {
 		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
 	}
 
+	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
+		$input_errors[] = gettext("Password and confirmation must match.");
+	}
+
 	if (!$input_errors) {
 
 		$client = array();
 
 		foreach ($simplefields as $stat) {
-			update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
+				$client[$stat] = $a_client[$id]['auth_pass'];
+			} else {
+				update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			}
 		}
 
 		if ($vpnid) {
@@ -356,7 +368,9 @@ if ($_POST) {
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
 		$client['proxy_user'] = $pconfig['proxy_user'];
-		$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		if ($pconfig['proxy_passwd'] != DMYPWD) {
+			$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
@@ -434,7 +448,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
-		'Disable this server',
+		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list');
 
@@ -508,7 +522,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['proxy_user']
 	));
 
-	$section->addInput(new Form_Input(
+	$section->addPassword(new Form_Input(
 		'proxy_passwd',
 		'Password',
 		'password',
@@ -541,7 +555,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['auth_user']
 	))->setHelp('Leave empty when no user name is needed');
 
-	$section->addInput(new Form_Input(
+	$section->addPassword(new Form_Input(
 		'auth_pass',
 		'Password',
 		'password',

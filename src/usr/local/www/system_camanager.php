@@ -451,6 +451,7 @@ foreach ($a_ca as $i => $ca):
 <?php endforeach; ?>
 	</tbody>
 </table>
+</div>
 
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-success btn-sm">
@@ -633,3 +634,4 @@ foreach ($a_ca as $ca) {
 }
 
 include('foot.inc');
+?>

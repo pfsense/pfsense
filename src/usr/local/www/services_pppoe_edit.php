@@ -206,7 +206,9 @@ if ($_POST) {
 			$pppoecfg['radius']['server'] = array();
 
 			$pppoecfg['radius']['server']['ip'] = $_POST['radiusserver'];
-			$pppoecfg['radius']['server']['secret'] = $_POST['radiussecret'];
+			if ($_POST['radiussecret'] != DMYPWD) {
+				$pppoecfg['radius']['server']['secret'] = $_POST['radiussecret'];
+			}
 			$pppoecfg['radius']['server']['port'] = $_POST['radiusserverport'];
 			$pppoecfg['radius']['server']['acctport'] = $_POST['radiusserveracctport'];
 		}
@@ -215,7 +217,9 @@ if ($_POST) {
 			$pppoecfg['radius']['server2'] = array();
 
 			$pppoecfg['radius']['server2']['ip'] = $_POST['radiusserver2'];
-			$pppoecfg['radius']['server2']['secret2'] = $_POST['radiussecret2'];
+			if ($_POST['radiussecret2'] != DMYPWD) {
+				$pppoecfg['radius']['server2']['secret2'] = $_POST['radiussecret2'];
+			}
 			$pppoecfg['radius']['server2']['port'] = $_POST['radiusserver2port'];
 			$pppoecfg['radius']['server2']['acctport'] = $_POST['radiusserver2acctport'];
 		}
@@ -447,7 +451,7 @@ $group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting)'
 
 $section->add($group);
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'radiussecret',
 	'RADIUS primary shared secret',
 	'password',
@@ -480,7 +484,7 @@ $group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting)'
 
 $section->add($group);
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'radiussecret2',
 	'RADIUS secondary shared secret',
 	'password',
@@ -590,6 +594,7 @@ events.push(function() {
 		disableInput('radacct_enable', hide);
 		disableInput('radiusserver', hide);
 		disableInput('radiussecret', hide);
+		disableInput('radiussecret_confirm', hide);
 		disableInput('radiusserverport', hide);
 		disableInput('radiusserveracctport', hide);
 		disableInput('radiusissueips', hide);
@@ -604,6 +609,7 @@ events.push(function() {
 	function hide_radius2(hide) {
 		disableInput('radiusserver2', hide);
 		disableInput('radiussecret2', hide);
+		disableInput('radiussecret2_confirm', hide);
 		disableInput('radiusserver2port', hide);
 		disableInput('radiusserver2acctport', hide);
 	}

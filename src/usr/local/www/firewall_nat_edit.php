@@ -643,7 +643,6 @@ function dsttype_selected() {
 	return($selected);
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"), gettext("Edit"));
 include("head.inc");
 
@@ -1061,7 +1060,7 @@ events.push(function() {
 		} else {
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);
-			disableInput('localbeginport_cust', false);
+//			disableInput('localbeginport_cust', false);
 			if (dstenabled) {
 				disableInput('dstbeginport', false);
 				disableInput('dstendport', false);

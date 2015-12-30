@@ -236,6 +236,10 @@ if ($save_settings) {
 		if ($logfile == 'system') {
 			$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 			$config['syslog']['nologlighttpd'] = $loglighttpd ? false : true;
+
+			if ($oldnologlighttpd !== $config['syslog']['nologlighttpd']) {
+				$logging_changed = $lighttpd_logging_changed = true;
+			}
 		}
 
 	# Firewall Specific
@@ -255,17 +259,31 @@ if ($save_settings) {
 			} else {
 				unset($config['syslog']['filterdescriptions']);
 			}
+
+			if (
+			    ($oldnologdefaultblock !== $config['syslog']['nologdefaultblock']) ||
+			    ($oldnologdefaultpass !== $config['syslog']['nologdefaultpass']) ||
+			    ($oldnologbogons !== $config['syslog']['nologbogons']) ||
+			    ($oldnologprivatenets !== $config['syslog']['nologprivatenets'])) {
+				$logging_changed = $firewall_logging_changed = true;
+			}
 		}
 
 
-		write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]));
+		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
+		if ($logging_changed) {
+			write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+			$retval = 0;
+			$retval = system_syslogd_start();
+		} else {
+			write_config($desc = "Log Display Settings Saved (no backup, no sync): " . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+		}
 
-		$retval = 0;
-		$savemsg = get_std_save_message($retval);
+		$savemsg = gettext("The changes have been applied successfully.");
 
 	# System General (main) Specific
 		if ($logfile == 'system') {
-			if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
+			if ($lighttpd_logging_changed) {
 				ob_flush();
 				flush();
 				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
@@ -276,14 +294,12 @@ if ($save_settings) {
 
 	# Firewall Specific
 		if ($logfile == 'filter') {
-			if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
-			    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
-			    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
-			    ($oldnologprivatenets !== isset($config['syslog']['nologprivatenets']))) {
-
+			if ($firewall_logging_changed) {
 				require_once("filter.inc");
 				$retval |= filter_configure();
 				filter_pflog_start(true);
+
+				$savemsg = get_std_save_message($retval);
 			}
 		}
 	}
@@ -578,7 +594,7 @@ if (!$rawfilter) {
 	   <div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Act")?></th>
 					<th><?=gettext("Time")?></th>
 					<th><?=gettext("IF")?></th>
@@ -604,7 +620,7 @@ if (!$rawfilter) {
 
 	foreach ($filterlog as $filterent) {
 ?>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<td>
 <?php
 		if ($filterent['act'] == "block") {
@@ -662,7 +678,7 @@ if (!$rawfilter) {
 		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
 		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
 ?>
-					<td style="white-space:nowrap;">
+					<td class="text-nowrap">
 						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
@@ -671,7 +687,7 @@ if (!$rawfilter) {
 
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
-					<td style="white-space:nowrap;">
+					<td class="text-nowrap">
 						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
@@ -719,7 +735,7 @@ if (!$rawfilter) {
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
-				<tr style="white-space:nowrap;">
+				<tr class="text-nowrap">
 					<th><?=gettext("Time")?></th>
 					<th style="width:100%"><?=gettext("Message")?></th>
 				</tr>

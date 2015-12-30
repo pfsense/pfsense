@@ -246,7 +246,7 @@ function parse_config_bootup() {
 			if (strstr($g['platform'], "cdrom")) {
 				/* try copying the default config. to the floppy */
 				echo gettext("Resetting factory defaults...") . "\n";
-				reset_factory_defaults(true);
+				reset_factory_defaults(true, false);
 				if (!file_exists("{$g['conf_path']}/config.xml")) {
 					echo gettext("No XML configuration file found - using factory defaults.\n" .
 								 "Make sure that the configuration floppy disk with the conf/config.xml\n" .
@@ -604,7 +604,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
  * RESULT
  *   integer	- indicates completion
  ******/
-function reset_factory_defaults($lock = false) {
+function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
 	conf_mount_rw();
@@ -618,7 +618,7 @@ function reset_factory_defaults($lock = false) {
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
-		if (($filename != ".") && ($filename != "..")) {
+		if (($filename != ".") && ($filename != "..") && (!is_dir($g['conf_path'] . "/" . $filename))) {
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}
@@ -631,7 +631,12 @@ function reset_factory_defaults($lock = false) {
 	disable_security_checks();
 
 	/* call the wizard */
-	touch("/conf/trigger_initial_wizard");
+	if ($reboot_required) {
+		// If we need a reboot first then touch a different trigger file.
+		touch("/conf/trigger_initial_wizard_after_reboot");
+	} else {
+		touch("/conf/trigger_initial_wizard");
+	}
 	if (!$lock) {
 		unlock($lockkey);
 	}

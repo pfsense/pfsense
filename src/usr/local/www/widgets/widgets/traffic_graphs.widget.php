@@ -86,7 +86,7 @@ if (ipsec_enabled()) {
 }
 
 if ($_POST) {
-	if (isset($_POST["refreshinterval"]) && is_numeric($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numericint($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
 
@@ -117,7 +117,7 @@ if ($first_time) {
 	$shown[$keys[0]] = true;
 }
 
-if (isset($a_config["refreshinterval"])) {
+if (isset($a_config["refreshinterval"]) && is_numericint($a_config["refreshinterval"])) {
 	$refreshinterval = $a_config["refreshinterval"];
 } else {
 	$refreshinterval = 10;

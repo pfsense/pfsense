@@ -3887,7 +3887,7 @@ EOD;
 		$mask = $this->GetMask();
 
 		$section->addInput(new Form_Select(
-			'scheduler',
+			'mask',
 			'Mask',
 			$mask['type'],
 			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')

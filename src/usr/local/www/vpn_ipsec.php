@@ -524,7 +524,7 @@ display_top_tabs($tab_array);
 													<?=gettext("Add P2")?>
 												</a>
 											</td>
-											<td colspan="8"></td>
+											<td colspan="7"></td>
 										</tr>
 									</tbody>
 								</table>

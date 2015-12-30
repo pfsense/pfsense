@@ -257,6 +257,9 @@ if ($_POST) {
 			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
 	}
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
+	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
 	}
@@ -320,7 +323,11 @@ if ($_POST) {
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
-		$ppp['password'] = base64_encode($_POST['passwordfld']);
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$ppp['password'] = base64_encode($_POST['passwordfld']);
+		} else {
+			$ppp['password'] = $a_ppps[$id]['password'];
+		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {
 			$ppp['idletimeout'] = $_POST['idletimeout'];
@@ -441,7 +448,6 @@ if ($_POST) {
 	}
 } // end if ($_POST)
 
-$closehead = false;
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
@@ -598,7 +604,7 @@ $section->addInput(new Form_Input(
 	$pconfig['username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',

@@ -1553,7 +1553,7 @@ function mwexec_bg($command, $clearsigmask = false) {
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		array_map("unlink", $to_do);
+		@array_map("unlink", $to_do);
 	} else {
 		@unlink($fn);
 	}

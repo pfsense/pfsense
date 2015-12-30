@@ -63,11 +63,6 @@
 require_once("guiconfig.inc");
 require_once("globals.inc");
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 unset($interface_arr_cache);
 unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);

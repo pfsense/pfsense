@@ -32,9 +32,9 @@
 <totalsteps>12</totalsteps>
 <step>
 	<id>1</id>
-	<title>OpenVPN Wizard: Authentication Type Selection</title>
-	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<title>OpenVPN Remote Access Server Setup</title>
+	<description>This wizard will guide you through an OpenVPN Remote Access Server Setup .&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -71,9 +71,9 @@
 </step>
 <step>
 	<id>2</id>
-	<title>OpenVPN Wizard: LDAP Server Selection</title>
+	<title>LDAP Server Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -107,9 +107,9 @@
 </step>
 <step>
 	<id>3</id>
-	<title>OpenVPN Wizard: Add LDAP Server</title>
+	<title>Add LDAP Server</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -234,9 +234,9 @@
 </step>
 <step>
 	<id>4</id>
-	<title>OpenVPN Wizard: RADIUS Server Selection</title>
+	<title>RADIUS Server Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -270,9 +270,9 @@
 </step>
 <step>
 	<id>5</id>
-	<title>OpenVPN Wizard: Add RADIUS Server</title>
+	<title>Add RADIUS Server</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -319,9 +319,9 @@
 </step>
 <step>
 	<id>6</id>
-	<title>OpenVPN Wizard: Certificate Authority Selection</title>
+	<title>Certificate Authority Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<name>Choose a Certificate Authority (CA)</name>
@@ -348,9 +348,9 @@
 </step>
 <step>
 	<id>7</id>
-	<title>OpenVPN Wizard: Add Certificate Authority</title>
+	<title>Add Certificate Authority</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<name>Create a New Certificate Authority (CA) Certificate</name>
@@ -450,9 +450,9 @@
 </step>
 <step>
 	<id>8</id>
-	<title>OpenVPN Wizard: Server Certificate Selection</title>
+	<title>Server Certificate Selection</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<name>Choose a Server Certificate</name>
@@ -479,9 +479,9 @@
 </step>
 <step>
 	<id>9</id>
-	<title>OpenVPN Wizard: Add a Server Certificate</title>
+	<title>Add a Server Certificate</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<name>Create a New Server Certificate</name>
@@ -581,9 +581,9 @@
 </step>
 <step>
 	<id>10</id>
-	<title>OpenVPN Wizard: Server Setup</title>
+	<title>Server Setup</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -936,9 +936,9 @@
 </step>
 <step>
 	<id>11</id>
-	<title>OpenVPN Wizard: Firewall Rule Configuration</title>
+	<title>Firewall Rule Configuration</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>
@@ -978,9 +978,9 @@
 </step>
 <step>
 	<id>12</id>
-	<title>OpenVPN Wizard: Finished!</title>
+	<title>Finished!</title>
 	<description>OpenVPN Remote Access Server Setup Wizard</description>
-	<disableheader>on</disableheader>
+	<disableheader>true</disableheader>
 	<fields>
 		<field>
 			<type>listtopic</type>

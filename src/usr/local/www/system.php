@@ -92,6 +92,7 @@ $pconfig['language'] = $config['system']['language'];
 $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+$pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -230,6 +231,9 @@ if ($_POST) {
 			$config['system']['language'] = $_POST['language'];
 			set_language($config['system']['language']);
 		}
+
+		unset($config['system']['webgui']['webguileftcolumnhyper']);
+		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -501,6 +505,13 @@ $section->addInput(new Form_Input(
 	$pconfig['dashboardcolumns'],
 	[min => 1, max => 4]
 ))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+
+$section->addInput(new Form_Checkbox(
+	'webguileftcolumnhyper',
+	'Left Column Labels',
+	'Active',
+	$pconfig['webguileftcolumnhyper']
+))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.<br /><span class="badge" title="This feature is in BETA">BETA</span>');
 
 $form->add($section);
 

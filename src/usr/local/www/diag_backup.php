@@ -69,7 +69,6 @@ ini_set('max_input_time', '0');
 
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
-$nocsrf = true;
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -226,11 +225,8 @@ if ($_POST) {
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
-				if (!$_POST['encrypt_password'] || !$_POST['encrypt_passconf']) {
+				if (!$_POST['encrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
-				}
-				if ($_POST['encrypt_password'] != $_POST['encrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -304,11 +300,8 @@ if ($_POST) {
 
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
-				if (!$_POST['decrypt_password'] || !$_POST['decrypt_passconf']) {
+				if (!$_POST['decrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
-				}
-				if ($_POST['decrypt_password'] != $_POST['decrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -662,18 +655,9 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'encrypt_password',
-	null,
+	'Password',
 	'password',
-	null,
-	['placeholder' => 'Password']
-));
-
-$section->addInput(new Form_Input(
-	'encrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
+	null
 ));
 
 $group = new Form_Group('');
@@ -715,18 +699,10 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'decrypt_password',
-	null,
+	'Password',
 	'password',
 	null,
 	['placeholder' => 'Password']
-));
-
-$section->addInput(new Form_Input(
-	'decrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
 ));
 
 $group = new Form_Group('');
@@ -783,9 +759,9 @@ events.push(function() {
 		decryptHide = !($('input[name="decrypt"]').is(':checked'));
 
 		hideInput('encrypt_password', encryptHide);
-		hideInput('encrypt_passconf', encryptHide);
+		hideInput('encrypt_password_confirm', encryptHide);
 		hideInput('decrypt_password', decryptHide);
-		hideInput('decrypt_passconf', decryptHide);
+		hideInput('decrypt_password_confirm', decryptHide);
 	}
 
 	// ---------- Click handlers ------------------------------------------------------------------
@@ -799,7 +775,11 @@ events.push(function() {
 	});
 
 	$('#conffile').change(function () {
-		$('.restore').prop('disabled', false);
+		if (document.getElementById("conffile").value) {
+			$('.restore').prop('disabled', false);
+		} else {
+			$('.restore').prop('disabled', true);
+		}
     });
 	// ---------- On initial page load ------------------------------------------------------------
 

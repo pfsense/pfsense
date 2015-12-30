@@ -947,6 +947,19 @@ if ($_POST['apply']) {
 			}
 		}
 	}
+
+	if ($_POST['ppp_password'] != $_POST['ppp_password_confirm']) {
+		$input_errors[] = gettext("PPP Password and confirmed password must match!");
+	}
+
+	if ($_POST['pppoe_password'] != $_POST['pppoe_password_confirm']) {
+		$input_errors[] = gettext("PPPoE Password and confirmed password must match!");
+	}
+
+	if ($_POST['pptp_password'] != $_POST['pptp_password_confirm']) {
+		$input_errors[] = gettext("PTPP Password and confirmed password must match!");
+	}
+
 	if (!$input_errors) {
 		// These 3 fields can be a list of multiple data items when used for MLPPP.
 		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
@@ -1125,7 +1138,9 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
 				$a_ppps[$pppid]['username'] = $_POST['ppp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				if ($_POST['ppp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				}
 				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
@@ -1142,7 +1157,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				if ($_POST['pppoe_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				}
 				if (!empty($_POST['provider'])) {
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				} else {
@@ -1178,7 +1195,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				if ($_POST['pptp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				}
 				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
 				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
 				$a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);
@@ -1616,8 +1635,6 @@ $shortcut_section = "interfaces";
 
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
-
-$closehead = false;
 
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
@@ -2454,7 +2471,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'ppp_password',
 	'Password',
 	'password',
@@ -2520,7 +2537,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pppoe_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pppoe_password',
 	'Password',
 	'password',
@@ -2651,7 +2668,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pptp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pptp_password',
 	'Password',
 	'password',

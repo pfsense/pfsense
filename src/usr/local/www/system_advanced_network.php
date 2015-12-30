@@ -187,8 +187,6 @@ $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 display_top_tabs($tab_array);
 
-?><div id="container"><?php
-
 $form = new Form;
 $section = new Form_Section('IPv6 Options');
 

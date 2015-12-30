@@ -149,6 +149,10 @@ if ($_POST) {
 		$input_errors[] = gettext("The proxy username contains invalid characters.");
 	}
 
+	if($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
 	if (!$input_errors) {
 
 		if ($_POST['harddiskstandby'] <> "") {
@@ -177,7 +181,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['proxypass'] <> "") {
-			$config['system']['proxypass'] = $_POST['proxypass'];
+			if ($_POST['proxypass'] != DMYPWD) {
+				$config['system']['proxypass'] = $_POST['proxypass'];
+			}
 		} else {
 			unset($config['system']['proxypass']);
 		}
@@ -341,7 +347,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Username for authentication to proxy server. Optional, '.
 	'leave blank to not use authentication.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'proxypass',
 	'Proxy Password',
 	'password',

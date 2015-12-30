@@ -299,18 +299,25 @@ function bootstrapTable($text) {
  * ROW helper function. Creates one element in the row from a PHP table by adding
  * the specified element to $group
  */
-function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) {
+function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
 	global $text, $group;
 
 	switch ($type) {
 		case "input":
-			$group->add(new Form_Input(
+			$inpt = new Form_Input(
 				$fieldname . $trc,
 				null,
 				'text',
 				$value
-			))->setHelp($description);
+			);
 
+			$inpt->setHelp($description);
+
+			if ($ewidth) {
+				$inpt->setWidth($ewidth);
+			}
+
+			$group->add($inpt);
 			break;
 		case "checkbox":
 			$group->add(new Form_Checkbox(
@@ -344,12 +351,20 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 				$options[$rowopt['value']] = $rowopt['name'];
 			}
 
-			$group->add(new Form_Select(
+			$grp = new Form_Select(
 				$fieldname . $trc,
 				null,
 				$value,
 				$options
-			))->setHelp($description);
+			);
+
+			$grp->setHelp($description);
+
+			if ($ewidth) {
+				$grp->setWidth($ewidth);
+			}
+
+			$group->add($grp);
 
 			break;
 		case "interfaces_selection":
@@ -584,12 +599,9 @@ if ($pkg['tabs'] != "") {
 	ksort($tab_array);
 }
 
+include("head.inc");
 if ($pkg['custom_php_after_head_command']) {
-	$closehead = false;
-	include("head.inc");
 	eval($pkg['custom_php_after_head_command']);
-} else {
-	include("head.inc");
 }
 if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
@@ -719,28 +731,26 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$value = base64_decode($value);
 			}
 
-			if ($grouping) {
-				$group->add(new Form_Input(
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -834,31 +844,27 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$function = ($grouping) ? $section->add:$section->addInput;
 			}
 
-			if ($grouping) {
-					$group->add(new Form_Select(
+			$grp = new Form_Select(
 						$pkga['fieldname'],
 						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
 						$optionlist,
 						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					);
+
+			$grp ->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Select(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Select(
-						$pkga['fieldname'],
-						strip_tags($pkga['fielddescr']),
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -1009,37 +1015,49 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create a textarea element
 		case "textarea":
+			$rows = $cols = 0;
+
 			if ($pkga['rows']) {
-				$rows = " rows='{$pkga['rows']}' ";
+				$rows = $pkga['rows'];
 			}
 			if ($pkga['cols']) {
-				$cols = " cols='{$pkga['cols']}' ";
+				$cols = $pkga['cols'];
 			}
+
 			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
 				$value = base64_decode($value);
 			}
 
-			$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');
-
-			if ($grouping) {
-				$group->add(new Form_Textarea(
+			$grp = new Form_Textarea(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					$value
-				))->setHelp(fixup_string($pkga['description']));
+			);
+
+			$grp->setHelp(fixup_string($pkga['description']));
+
+			if ($rows > 0) {
+				$grp->setRows($rows);
+			}
+
+			if ($cols > 0) {
+				$grp->setCols($cols);
+			}
+
+			if ($pkga['wrap'] == "off") {
+				$grp->setAttribute("wrap", "off");
+				$grp->setAttribute("style", "white-space:nowrap; width: auto;");
+			} else {
+				$grp->setAttribute("style", "width: auto;");
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Textarea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Textarea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$section->addInput($grp);
 				}
 			}
 
@@ -1053,7 +1071,6 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$a_aliases = &$config['aliases']['alias'];
 			$addrisfirst = 0;
 			$aliasesaddr = "";
-			$value = "value='{$value}'";
 
 			if (isset($a_aliases)) {
 				if (!empty($pkga['typealiases'])) {
@@ -1077,28 +1094,26 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if (grouping) {
-				$group->add(new Form_Input(
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if (grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -1354,6 +1369,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 					foreach ($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						unset($value);
+						$width = null;
+
 						if ($rowhelper['value'] != "") {
 							$value = $rowhelper['value'];
 						}
@@ -1381,7 +1398,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$size = "8";
 						}
 
-						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null);
+						if ($rowhelper['width']) {
+							$width = $rowhelper['width'];
+						}
+
+						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null, $width);
 
 						$text = "";
 						$trc++;
@@ -1390,7 +1411,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					// Delete row button
 					$group->add(new Form_Button(
 						'deleterow' . $rowcounter,
-						'Delete'
+						'Delete',
+						null,
+						'fa-trash'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
 
 					$rowcounter++;

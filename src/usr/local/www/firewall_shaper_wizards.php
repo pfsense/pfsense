@@ -100,7 +100,6 @@ $wizards = array(
 	gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
 );
 
-$closehead = false;
 include("head.inc");
 
 if ($input_errors) {

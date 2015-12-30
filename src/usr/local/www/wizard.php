@@ -71,11 +71,6 @@ require_once("system.inc");
 // This causes the step #, field type and field name to be printed at the top of the page
 define(DEBUG, false);
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 global $g;
 
 $stepid = htmlspecialchars($_GET['stepid']);
@@ -219,9 +214,8 @@ do {
 	}
 } while ($oldstepid != $stepid);
 
-$closehead = false;
-$pgtitle = array($title);
-$notitle = true;
+$pgtitle = array(gettext("Wizard"), gettext($pkg['step'][0]['title']));	//First step is main title of the wizard in the breadcrumb
+$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'');		//Following steps are sub-level breadcrumbs.
 include("head.inc");
 
 if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
@@ -454,7 +448,7 @@ $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
 
 <!-- Present the pfSense logo -->
-<div style="text-align:center"><p><a href="<?=$ip?>"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
+<div class="text-center"><p><a href="<?=$ip?>"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">

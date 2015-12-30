@@ -331,7 +331,7 @@ form .btn + .btn {
 }
 
 .col-sm-10 .form-control {
-    width: calc(50% - 15px); /* substract 15px to match a .col-sm-5; which satisfies my OCD */
+    width: calc(50% - 15px);
 }
 
 @media (max-width: 991px) {

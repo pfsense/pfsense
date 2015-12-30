@@ -115,6 +115,14 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 		}
 
+		if ($_POST['secret'] != $_POST['secret_confirm']) {
+			$input_errors[] = gettext("Secret and confirmation must match");
+		}
+
+		if ($_POST['radiussecret'] != $_POST['radiussecret_confirm']) {
+			$input_errors[] = gettext("Secret and confirmation must match");
+		}
+
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
@@ -150,8 +158,14 @@ if ($_POST) {
 		$l2tpcfg['interface'] = $_POST['interface'];
 		$l2tpcfg['n_l2tp_units'] = $_POST['n_l2tp_units'];
 		$l2tpcfg['radius']['server'] = $_POST['radiusserver'];
-		$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
-		$l2tpcfg['secret'] = $_POST['secret'];
+		if ($_POST['radiussecret'] != DMYPWD) {
+			$l2tpcfg['radius']['secret'] = $_POST['radiussecret'];
+		}
+
+		if ($_POST['secret'] != DMYPWD) {
+			$l2tpcfg['secret'] = $_POST['secret'];
+		}
+
 		$l2tpcfg['paporchap'] = $_POST['paporchap'];
 
 
@@ -276,7 +290,7 @@ $section->addInput(new Form_Input(
 	['min' => 0, 'max' => 255]
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'secret',
 	'Secret',
 	'password',
@@ -333,7 +347,7 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['radiusserver']
 ))->setHelp('Enter the IP address of the RADIUS server.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'radiussecret',
 	'Secret',
 	'password',

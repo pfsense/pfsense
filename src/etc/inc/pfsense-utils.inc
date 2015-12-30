@@ -1512,7 +1512,7 @@ function pfsense_default_tables_size() {
 
 function pfsense_default_table_entries_size() {
 	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
-	return $current;
+	return (trim($current));
 }
 
 /* Compare the current hostname DNS to the DNS cache we made

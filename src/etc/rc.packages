@@ -76,11 +76,9 @@ switch ($when) {
 	case "post-install":
 		install_package_xml($pkg);
 		break;
+	case "deinstall":
 	case "post-deinstall":
 		delete_package_xml($pkg, $when);
-		break;
-	case "pre-install":
-	case "deinstall":
 		break;
 	default:
 		usage();

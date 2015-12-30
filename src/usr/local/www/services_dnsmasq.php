@@ -210,7 +210,6 @@ function build_if_list() {
 	return($iflist);
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"));
 $shortcut_section = "forwarder";
 include("head.inc");

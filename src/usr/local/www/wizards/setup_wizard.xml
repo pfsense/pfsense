@@ -55,7 +55,7 @@
 <totalsteps>10</totalsteps>
 <step>
 	<id>1</id>
-	<title>pfSense Setup Wizard</title>
+	<title>pfSense Setup</title>
 	<disableheader>true</disableheader>
 	<description>This wizard will guide you through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
 	<fields>

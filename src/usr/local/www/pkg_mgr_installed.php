@@ -72,10 +72,7 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
-$closehead = false;
-
 $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Installed Packages"));
-
 include("head.inc");
 
 $tab_array = array();
@@ -96,9 +93,9 @@ if (empty($installed_packages)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
-<?php else: ?>
+<?php else:?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed packages')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
 		<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -155,13 +152,13 @@ if (empty($installed_packages)):?>
 ?>
 	<tr>
 		<td>
-<?php if ($upgradeavail) { ?>
+<?php if ($upgradeavail):?>
 			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
-<?php } else if ($missing) { ?>
-			<font color="red"><i title="<?=$status?>" class="fa fa-exclamation"></i></font>
-<?php } else { ?>
+<?php elseif ($missing):?>
+			<span class="text-danger"><i title="<?=$status?>" class="fa fa-exclamation"></i></span>
+<?php else:?>
 			<i title="<?=$status?>" class="fa fa-check"></i>
-<?php } ?>
+<?php endif;?>
 		</td>
 		<td>
 			<span class="<?=$txtcolor?>"><?=$pkg['shortname']?></span>
@@ -180,24 +177,26 @@ if (empty($installed_packages)):?>
 		</td>
 		<td>
 			<?=$pkg['desc']?>
-<?php if (is_array($pkg['deps']) && count($pkg['deps'])): ?>
-			<br /><br /><?= gettext("Package Dependencies") ?>:
-	<?php foreach ($pkg['deps'] as $pdep): ?>
-			<br /><i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) ?>-<?= $pdep['version'] ?>
-	<?php endforeach; ?>
-<?php endif; ?>
+<?php if (is_array($pkg['deps']) && count($pkg['deps'])):?>
+			<br /><br /><?= gettext("Package Dependencies")?>:<ul>
+	<?php foreach ($pkg['deps'] as $pdep):?>
+			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>" class="fa fa-globe"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
+	<?php endforeach;?></ul>
+<?php endif;?>
 		</td>
 		<td>
-			<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
-<?php if ($upgradeavail) { ?>
-			<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
-<?php } else { ?>
-			<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
-<?php } ?>
+			<div class="row">
+				<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
+<?php if ($upgradeavail):?>
+				<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php else:?>
+				<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
+<?php endif;?>
 
 <?php if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
-			<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
-<?php endif; ?>
+				<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
+<?php endif;?>
+			</div>
 		</td>
 	</tr>
 <?php endforeach;?>

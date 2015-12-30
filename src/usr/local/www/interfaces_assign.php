@@ -528,6 +528,7 @@ display_top_tabs($tab_array);
 		<tr>
 			<th><?=gettext("Interface")?></th>
 			<th><?=gettext("Network port")?></th>
+			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>

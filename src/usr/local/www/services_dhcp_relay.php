@@ -100,6 +100,7 @@ if (is_array($config['dhcpd'])) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 
 	$pconfig = $_POST;
@@ -137,7 +138,7 @@ if ($_POST) {
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay']['server'] = $pconfig['server'];
+		$config['dhcrelay']['server'] = $svrlist;
 
 		write_config();
 
@@ -189,7 +190,6 @@ $section->addInput(new Form_Checkbox(
 	'agentoption',
 	'',
 	'Append circuit ID and agent ID to requests',
-	'yes',
 	$pconfig['agentoption']
 ))->setHelp(
 	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
@@ -204,9 +204,9 @@ function createDestinationServerInputGroup($value = null) {
 		'server',
 		'Destination server',
 		$value
-	))->setWidth(4)->setHelp(
-		'This is the IP address of the server to which DHCP requests are relayed.'
-	)->setIsRepeated();
+	))->setWidth(4)
+	  ->setHelp('This is the IP address of the server to which DHCP requests are relayed.')
+	  ->setIsRepeated();
 
 	$group->enableDuplication(null, true); // Buttons are in-line with the input
 	return $group;

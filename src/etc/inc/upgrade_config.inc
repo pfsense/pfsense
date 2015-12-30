@@ -4235,4 +4235,29 @@ function upgrade_132_to_133() {
 		}
 	}
 }
+
+// Determine the highest column number in use and set dashboardcolumns accordingly
+function upgrade_133_to_134() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence']) || isset($config['system']['webgui']['dashboardcolumns'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$maxcols = 2;
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		if (($display != 'none') && ($display != 'hide')) {
+			preg_match('#[0-9]+$#', $col, $column);
+			if ($column[0] > $maxcols) {
+				$maxcols = $column[0];
+			}
+		}
+	}
+
+	$config['system']['webgui']['dashboardcolumns'] = $maxcols % 10;
+}
 ?>

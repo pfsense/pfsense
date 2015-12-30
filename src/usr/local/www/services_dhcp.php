@@ -403,13 +403,12 @@ if (isset($_POST['submit'])) {
 			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
 			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
 
-			if ((ip2ulong($_POST['range_from']) < $subnet_start) || (ip2ulong($_POST['range_from']) > $subnet_end) ||
-			    (ip2ulong($_POST['range_to']) < $subnet_start) || (ip2ulong($_POST['range_to']) > $subnet_end)) {
-				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
-			}
-
 			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to'])) {
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
+			}
+
+			if (ip2ulong($_POST['range_from']) < $subnet_start || ip2ulong($_POST['range_to']) > $subnet_end) {
+				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 
 			if (is_numeric($pool) || ($act == "newpool")) {

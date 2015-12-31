@@ -1,16 +1,15 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_out_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004 Scott Ullrich
- *  Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -18,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -39,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -56,23 +55,22 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-outbound-edit
-##|*NAME=Firewall: NAT: Outbound: Edit page
+##|*NAME=Firewall: NAT: Outbound: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: Outbound: Edit' page.
 ##|*MATCH=firewall_nat_out_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 require_once("filter.inc");
 require("shaper.inc");
 
-if (!is_array($config['nat']['outbound']))
+if (!is_array($config['nat']['outbound'])) {
 	$config['nat']['outbound'] = array();
+}
 
 if (!is_array($config['nat']['outbound']['rule'])) {
 	$config['nat']['outbound']['rule'] = array();
@@ -122,7 +120,7 @@ if (isset($id) && $a_out[$id]) {
 	address_to_pconfig($a_out[$id]['destination'], $pconfig['destination'],
 		$pconfig['destination_subnet'], $pconfig['destination_not'],
 		$none, $none);
-		
+
 	$pconfig['dstport'] = $a_out[$id]['dstport'];
 	$pconfig['natport'] = $a_out[$id]['natport'];
 	$pconfig['target'] = $a_out[$id]['target'];
@@ -130,11 +128,11 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
-	
+
 	if (!$pconfig['interface']) {
 		$pconfig['interface'] = "wan";
 	}
-	
+
 	$pconfig['descr'] = $a_out[$id]['descr'];
 	$pconfig['nonat'] = $a_out[$id]['nonat'];
 	$pconfig['disabled'] = isset($a_out[$id]['disabled']);
@@ -156,7 +154,7 @@ if ($_POST) {
 		$_POST['destination'] = "any";
 		$_POST['destination_subnet'] = 24;
 	}
-	
+
 	if ($_POST['source_type'] == "any") {
 		$_POST['source'] = "any";
 		$_POST['source_subnet'] = 24;
@@ -222,21 +220,21 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid source must be specified.");
 		}
 	}
-	
+
 	if ($_POST['source_subnet'] && !is_numericint($_POST['source_subnet'])) {
 		$input_errors[] = gettext("A valid source bit count must be specified.");
 	}
-	
+
 	if ($_POST['destination_type'] != "any") {
 		if ($_POST['destination'] && !is_ipaddroralias($_POST['destination'])) {
 			$input_errors[] = gettext("A valid destination must be specified.");
 		}
 	}
-	
+
 	if ($_POST['destination_subnet'] && !is_numericint($_POST['destination_subnet'])) {
 		$input_errors[] = gettext("A valid destination bit count must be specified.");
 	}
-	
+
 	if ($_POST['destination_type'] == "any") {
 		if ($_POST['destination_not']) {
 			$input_errors[] = gettext("Negating destination address of \"any\" is invalid.");
@@ -251,7 +249,7 @@ if ($_POST) {
 		if (!is_ipaddr($_POST['targetip'])) {
 			$input_errors[] = gettext("A valid target IP must be specified when using the 'Other Subnet' type.");
 		}
-		
+
 		if (!is_numericint($_POST['targetip_subnet'])) {
 			$input_errors[] = gettext("A valid target bit count must be specified when using the 'Other Subnet' type.");
 		}
@@ -393,7 +391,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"), gettext("Edit"));
-$closehead = false;
 include("head.inc");
 
 function build_target_list() {
@@ -404,8 +401,9 @@ function build_target_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
+			if (isset($sn['noexpand'])) {
 				continue;
+			}
 
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
@@ -425,8 +423,9 @@ function build_target_list() {
 	}
 
 	foreach ($a_aliases as $alias) {
-		if ($alias['type'] != "host")
+		if ($alias['type'] != "host") {
 			continue;
+		}
 
 		$list[$alias['name']] = 'Host Alias: ' . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
@@ -436,10 +435,9 @@ function build_target_list() {
 	return($list);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -464,25 +462,31 @@ $section->addInput(new Form_Checkbox(
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 	$interfaces['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	$interfaces["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
-if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = "OpenVPN";
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -505,7 +509,7 @@ $group = new Form_Group('Source');
 $group->add(new Form_Select(
 	'source_type',
 	null,
-	$pconfig['source_type'],
+	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
 	array('any' => 'Any', '(self)' => 'This Firewall (self)', 'network' => 'Network')
 ))->setHelp('Type')->setWidth('3');
 
@@ -666,14 +670,14 @@ if ($has_created_time || $has_updated_time) {
 	if ($has_created_time) {
 		$section->addInput(new Form_StaticText(
 			'Created',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext("by") . $a_out[$id]['created']['username']
+			date(gettext("n/j/y H:i:s"), $a_out[$id]['created']['time']) . gettext(" by ") . $a_out[$id]['created']['username']
 		));
 	}
 
 	if ($has_updated_time) {
 		$section->addInput(new Form_StaticText(
 			'Updated',
-			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext("by") . $a_out[$id]['updated']['username']
+			date(gettext("n/j/y H:i:s"), $a_out[$id]['updated']['time']) . gettext(" by ") . $a_out[$id]['updated']['username']
 		));
 	}
 
@@ -686,7 +690,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	var portsenabled = 1;
 
 	function staticportchange() {
@@ -702,8 +706,7 @@ events.push(function(){
 		if ($('#source_type').find(":selected").val() == "network") {
 			disableInput('source', false);
 			disableInput('source_subnet', false);
-		}
-		else {
+		} else {
 			$('#source').val("");
 			disableInput('source', true);
 			$('#source_subnet').val("24");
@@ -715,8 +718,7 @@ events.push(function(){
 		if ($('#destination_type').find(":selected").val() == "network") {
 			disableInput('destination', false);
 			disableInput('destination_subnet', false);
-		}
-		else {
+		} else {
 			$('#destination').val("");
 			disableInput('destination', true);
 			$('#destination_subnet').val("24");
@@ -729,7 +731,7 @@ events.push(function(){
 	}
 
 	function proto_change() {
-		if (($('#protocol').find(":selected").index() > 0) && ($('#protocol').find(":selected").index() <= 3)) {
+		if (($('#protocol').find(":selected").index() >= 0) && ($('#protocol').find(":selected").index() <= 3)) {
 			hideGroupInput('sourceport', false);
 			hideGroupInput('dstport', false);
 			hideClass('natportgrp', false);

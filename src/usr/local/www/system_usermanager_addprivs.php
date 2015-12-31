@@ -1,42 +1,62 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager_addprivs.php
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Copyright (C) 2006 Daniel S. Haischt.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: auth
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2006 Daniel S. Haischt.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager-addprivs
-##|*NAME=System: User Manager: Add Privileges page
+##|*NAME=System: User Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: User Manager: Add Privileges' page.
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
@@ -47,7 +67,7 @@ function admusercmp($a, $b) {
 
 require("guiconfig.inc");
 
-$pgtitle = array("System", "User manager", "Add privileges");
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Add Privileges"));
 
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
@@ -67,6 +87,10 @@ $a_user = & $config['system']['user'][$userid];
 if (!is_array($a_user['priv'])) {
 	$a_user['priv'] = array();
 }
+
+// Make a local copy and sort it
+$spriv_list = $priv_list;
+uasort($spriv_list, admusercmp);
 
 if ($_POST) {
 	conf_mount_rw();
@@ -113,13 +137,14 @@ if ($_POST) {
 }
 
 function build_priv_list() {
-	global $priv_list, $a_user;
+	global $spriv_list, $a_user;
 
 	$list = array();
 
-	foreach($priv_list as $pname => $pdata) {
-		if (in_array($pname, $a_user['priv']))
+	foreach ($spriv_list as $pname => $pdata) {
+		if (in_array($pname, $a_user['priv'])) {
 			continue;
+		}
 
 		$list[$pname] = $pdata['name'];
 	}
@@ -134,11 +159,13 @@ if (isAjax()) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -147,19 +174,17 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('User privileges');
 
 $section->addInput(new Form_Select(
 	'sysprivs',
-	'System',
+	'Assigned privileges',
 	null,
 	build_priv_list(),
 	true
-))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
+))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items')->setAttribute('style', 'height:400px;');
 
 if (isset($userid)) {
 	$section->addInput(new Form_Input(
@@ -175,20 +200,20 @@ $form->add($section);
 print($form);
 ?>
 
-<div class="panel panel-body alert-info" id="pdesc">Select a privilege from the list above for a description"</div>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 <?php
 
 	// Build a list of privilege descriptions
-	if (is_array($priv_list)) {
+	if (is_array($spriv_list)) {
 		$id = 0;
 
 		$jdescs = "var descs = new Array();\n";
-		foreach ($priv_list as $pname => $pdata) {
+		foreach ($spriv_list as $pname => $pdata) {
 			if (in_array($pname, $a_user['priv'])) {
 				continue;
 			}
@@ -205,7 +230,7 @@ events.push(function(){
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html(descs[$(this).children('option:selected').index()]);
+		$('#pdesc').html('<span style="color: green;">' + descs[$(this).children('option:selected').index()] + '</span>');
 	});
 });
 //]]>

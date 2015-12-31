@@ -1,5 +1,4 @@
 <?php
-
 /*
 	vpn.inc
 	Copyright (C) 2004 Scott Ullrich
@@ -33,32 +32,36 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ipsec	/usr/local/libexec/ipsec/charon /usr/local/libexec/ipsec/starter
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns	/usr/local/sbin/mpd4
-	pfSense_MODULE:	vpn
-*/
-
 require_once("ipsec.inc");
 require_once("filter.inc");
 
-function vpn_ipsec_configure_loglevels($forconfig = false) {
-	global $config, $ipsec_loglevels;
+function vpn_update_daemon_loglevel($category, $level) {
+	global $ipsec_log_cats, $ipsec_log_sevs;
+
+	if (in_array($category, array_keys($ipsec_log_cats), true) && in_array(intval($level), array_keys($ipsec_log_sevs), true)) {
+
+		/* if you're setting to -1, need to add "--" to args */
+		$argterm = "";
+		if ($level == "-1") {
+			$argterm = "--";
+		}
+
+		mwexec("/usr/local/sbin/ipsec stroke loglevel {$category} {$argterm} {$level}");
+	}
+}
+
+function vpn_logging_cfgtxt() {
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$cfgtext = array();
-	foreach ($ipsec_loglevels as $lkey => $ldescr) {
-		if (!isset($config['ipsec']["ipsec_{$lkey}"]) && !$forconfig) {
-			mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} -- -1", false);
-		} else if (is_numeric($config['ipsec']["ipsec_{$lkey}"]) &&
-		    intval($config['ipsec']["ipsec_{$lkey}"]) >= 0 && intval($config['ipsec']["ipsec_{$lkey}"]) <= 5) {
-			$forconfig ? $cfgtext[] = "${lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) :
-				mwexec("/usr/local/sbin/ipsec stroke loglevel {$lkey} " . (intval($config['ipsec']["ipsec_{$lkey}"]) - 1) , false);
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (is_numeric($config['ipsec']['logging'][$cat]) &&
+		    in_array(intval($config['ipsec']['logging'][$cat]), array_keys($ipsec_log_sevs), true)) {
+			$cfgtext[] = "${cat} = {$config['ipsec']['logging'][$cat]}";
 		}
 	}
-	if ($forconfig) {
-		return implode(',', $cfgtext);
-	}
+
+	return $cfgtext;
 }
 
 /* include all configuration functions */
@@ -128,13 +131,14 @@ function vpn_ipsec_configure($restart = false) {
 	/* get the automatic ping_hosts.sh ready */
 	unlink_if_exists("{$g['vardb_path']}/ipsecpinghosts");
 	touch("{$g['vardb_path']}/ipsecpinghosts");
+	$ipsecpinghostsactive = false;
 
 	/* service may have been enabled, disabled, or otherwise changed in a way requiring rule updates */
 	filter_configure();
 
 	$syscfg = $config['system'];
 	$ipseccfg = $config['ipsec'];
-	if (!isset($ipseccfg['enable'])) {
+	if (!ipsec_enabled()) {
 		/* try to stop charon */
 		mwexec("/usr/local/sbin/ipsec stop");
 		/* Stop dynamic monitoring */
@@ -143,9 +147,8 @@ function vpn_ipsec_configure($restart = false) {
 		/* wait for process to die */
 		sleep(2);
 
-		/* disallow IPSEC, it is off */
+		/* IPSEC is off, shutdown enc interface.*/
 		mwexec("/sbin/ifconfig enc0 down");
-		set_single_sysctl("net.inet.ip.ipsec_in_use", "0");
 
 		return 0;
 	}
@@ -160,7 +163,6 @@ function vpn_ipsec_configure($restart = false) {
 	$crlpath = "{$g['varetc_path']}/ipsec/ipsec.d/crls";
 
 	mwexec("/sbin/ifconfig enc0 up");
-	set_single_sysctl("net.inet.ip.ipsec_in_use", "1");
 	if (php_uname('m') != "amd64") {
 		set_single_sysctl("net.inet.ipsec.directdispatch", "0");
 	}
@@ -172,6 +174,11 @@ function vpn_ipsec_configure($restart = false) {
 	if (!is_dir("{$g['varetc_path']}/ipsec/ipsec.d")) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d");
 	}
+	// delete these paths first to ensure old CAs, certs and CRLs aren't left behind. redmine #5238
+	rmdir_recursive($capath);
+	rmdir_recursive($keypath);
+	rmdir_recursive($crlpath);
+	rmdir_recursive($certpath);
 	if (!is_dir($capath)) {
 		mkdir($capath);
 	}
@@ -197,13 +204,48 @@ function vpn_ipsec_configure($restart = false) {
 		mkdir("{$g['varetc_path']}/ipsec/ipsec.d/reqs");
 	}
 
+	if (!file_exists("/usr/local/etc/ipsec.d") ||
+	    !is_link("/usr/local/etc/ipsec.d")) {
+		conf_mount_rw();
+		if (file_exists("/usr/local/etc/ipsec.d")) {
+			rmdir_recursive("/usr/local/etc/ipsec.d");
+		}
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
+		    "/usr/local/etc/ipsec.d");
+		conf_mount_ro();
+	}
+	if (!file_exists("{$g['varetc_path']}/etc/strongswan.d") ||
+	    !is_link("{$g['varetc_path']}/etc/strongswan.d")) {
+		conf_mount_rw();
+		if (is_link("{$g['varetc_path']}/etc/strongswan.d")) {
+			@unlink("{$g['varetc_path']}/etc/strongswan.d");
+		} else {
+			rmdir_recursive("{$g['varetc_path']}/etc/strongswan.d");
+		}
+		@symlink("/usr/local/etc/strongswan.d",
+		    "{$g['varetc_path']}/ipsec/strongswan.d");
+		conf_mount_ro();
+	}
+	if (!file_exists("/usr/local/etc/strongswan.conf") ||
+	    !is_link("/usr/local/etc/strongswan.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/strongswan.conf");
+		@symlink("{$g['varetc_path']}/ipsec/strongswan.conf",
+		    "/usr/local/etc/strongswan.conf");
+		conf_mount_ro();
+	}
+	if (!file_exists("/usr/local/etc/ipsec.conf") ||
+	    !is_link("/usr/local/etc/ipsec.conf")) {
+		conf_mount_rw();
+		@unlink("/usr/local/etc/ipsec.conf");
+		@symlink("{$g['varetc_path']}/ipsec/ipsec.conf",
+		    "/usr/local/etc/ipsec.conf");
+		conf_mount_ro();
+	}
 
 	if (platform_booting()) {
 		echo gettext("Configuring IPsec VPN... ");
 	}
-
-	/* fastforwarding is not compatible with ipsec tunnels */
-	set_single_sysctl("net.inet.ip.fastforwarding", "0");
 
 	/* resolve all local, peer addresses and setup pings */
 	$ipmap = array();
@@ -213,6 +255,7 @@ function vpn_ipsec_configure($restart = false) {
 	$aggressive_mode_psk = false;
 	unset($iflist);
 	$ifacesuse = array();
+	$mobile_ipsec_auth = "";
 	if (is_array($a_phase1) && count($a_phase1)) {
 
 		$ipsecpinghosts = "";
@@ -256,6 +299,7 @@ function vpn_ipsec_configure($restart = false) {
 			   try to resolve it now and add it to the list for filterdns */
 
 			if (isset ($ph1ent['mobile'])) {
+				$mobile_ipsec_auth = $ph1ent['authentication_method'];
 				continue;
 			}
 
@@ -336,6 +380,7 @@ function vpn_ipsec_configure($restart = false) {
 						}
 						if (is_ipaddr($srcip)) {
 							$ipsecpinghosts[] = "{$srcip}|{$dstip}|3|||||{$family}|\n";
+							$ipsecpinghostsactive = true;
 						}
 					}
 				}
@@ -396,11 +441,19 @@ function vpn_ipsec_configure($restart = false) {
 
 	unset($stronconf);
 
+	$strongswanlog = "";
+	$ipsecloglevels = vpn_logging_cfgtxt();
+	if (is_array($ipsecloglevels)) {
+		foreach ($ipsecloglevels as $loglevel) {
+			$strongswanlog .= "\t\t" . $loglevel . "\n";
+		}
+	}
 	$strongswan = <<<EOD
 
 # Automatically generated config file - DO NOT MODIFY. Changes will be overwritten.
 starter {
-load_warning = no
+	load_warning = no
+	config_file = {$g['varetc_path']}/ipsec/ipsec.conf
 }
 
 charon {
@@ -416,53 +469,61 @@ cisco_unity = {$unity_enabled}
 {$ifacesuse}
 {$makebeforebreak}
 
-# And two loggers using syslog. The subsections define the facility to log
-# to, currently one of: daemon, auth.
 syslog {
 	identifier = charon
-	# default level to the LOG_DAEMON facility
+	# log everything under daemon since it ends up in the same place regardless with our syslog.conf
 	daemon {
 		ike_name = yes
+{$strongswanlog}
 	}
-	# very minimalistic IKE auditing logs to LOG_AUTHPRIV
+	# disable logging under auth so logs aren't duplicated
 	auth {
 		default = -1
-		ike = 1
-		ike_name = yes
 	}
 }
 
+	plugins {
+		stroke {
+			secrets_file = {$g['varetc_path']}/ipsec/ipsec.secrets
+		}
+
 EOD;
 
-	$strongswan .= "\tplugins {\n";
+	/* Find RADIUS servers designated for Mobile IPsec user auth */
+	$radius_server_txt = "";
+	$user_sources = explode(',', $config['ipsec']['client']['user_source']);
+	foreach ($user_sources as $user_source) {
+		$auth_server = auth_get_authserver($user_source);
+		$nice_user_source = strtolower(preg_replace('/\s+/', '_', $user_source));
+		if ($auth_server && $auth_server['type'] === 'radius') {
+			$radius_server_txt .= <<<EOD
+				{$nice_user_source} {
+					address = {$auth_server['host']}
+					secret = "{$auth_server['radius_secret']}"
+					auth_port = {$auth_server['radius_auth_port']}
+					acct_port = {$auth_server['radius_acct_port']}
+				}
 
-	$a_servers = auth_get_authserver_list();
-	foreach ($a_servers as $id => $pconfig) {
-		if ($id == $config['ipsec']['client']['user_source'] && $pconfig['type'] == "radius") {
-			$strongswan .= <<<EOD
+EOD;
+		}
+	}
+
+	/* write an eap-radius config section if appropriate */
+	if (strlen($radius_server_txt) && ($mobile_ipsec_auth === "eap-radius")) {
+		$strongswan .= <<<EOD
 		eap-radius {
 			class_group = yes
 			eap_start = no
 			servers {
-				primary {
-					address = {$pconfig['host']}
-					secret = {$pconfig['radius_secret']}
-					auth_port = {$pconfig['radius_auth_port']}
-					acct_port = {$pconfig['radius_acct_port']}
-				}
+{$radius_server_txt}
 			}
 		}
 
 EOD;
-			break;
-		}
 	}
 
 	if (is_array($a_client) && isset($a_client['enable'])) {
 		$strongswan .= "\t\tattr {\n";
-		if ($a_client['pool_address'] && $a_client['pool_netbits']) {
-			$strongswan .= "\t\t\tsubnet = {$a_client['pool_address']}/{$a_client['pool_netbits']}\n";
-		}
 
 		$cfgservers = array();
 		if (!empty($a_client['dns_server1'])) {
@@ -514,6 +575,7 @@ EOD;
 			}
 
 			if (!empty($net_list)) {
+				$strongswan .= "\t\t\tsubnet = {$net_list}\n";
 				$strongswan .= "\t\t\tsplit-include = {$net_list}\n";
 				unset($net_list);
 			}
@@ -570,28 +632,6 @@ EOD;
 	@file_put_contents("{$g['varetc_path']}/ipsec/strongswan.conf", $strongswan);
 	unset($strongswan);
 
-	/* generate CA certificates files */
-	if (is_array($config['ca']) && count($config['ca'])) {
-		foreach ($config['ca'] as $ca) {
-			if (!isset($ca['crt'])) {
-				log_error(sprintf(gettext("Error: Invalid certificate info for %s"), $ca['descr']));
-				continue;
-			}
-			$cert = base64_decode($ca['crt']);
-			$x509cert = openssl_x509_parse(openssl_x509_read($cert));
-			if (!is_array($x509cert) || !isset($x509cert['hash'])) {
-				log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $ca['descr']));
-				continue;
-			}
-			$fname = "{$capath}/{$x509cert['hash']}.0.crt";
-			if (!@file_put_contents($fname, $cert)) {
-				log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $ca['descr']));
-				continue;
-			}
-			unset($cert);
-		}
-	}
-
 	/* write out CRL files */
 	if (is_array($config['crl']) && count($config['crl'])) {
 		foreach ($config['crl'] as $crl) {
@@ -609,6 +649,7 @@ EOD;
 
 	$pskconf = "";
 
+	$vpncas = array();
 	if (is_array($a_phase1) && count($a_phase1)) {
 		foreach ($a_phase1 as $ph1ent) {
 
@@ -626,6 +667,16 @@ EOD;
 				if (!$cert) {
 					log_error(sprintf(gettext("Error: Invalid phase1 certificate reference for %s"), $ph1ent['name']));
 					continue;
+				}
+
+				/* add signing CA cert chain of server cert
+				 * to the list of CAs to write
+				 */
+				$cachain = ca_chain_array($cert);
+				if ($cachain && is_array($cachain)) {
+					foreach ($cachain as $cacrt) {
+						$vpncas[$cacrt['refid']] = $cacrt;
+					}
 				}
 
 				@chmod($certpath, 0600);
@@ -676,6 +727,41 @@ EOD;
 					}
 				}
 			}
+
+			/* if the client authenticates with a cert add the
+			 * client cert CA chain to the list of CAs to write
+			 */
+			if (in_array($ph1ent['authentication_method'],
+			array('rsasig', 'eap-tls', 'xauth_rsa_server'))) {
+
+				if (!empty($ph1ent['caref']) && !array_key_exists($ph1ent['caref'], $vpncas)) {
+					$thisca = lookup_ca($ph1ent['caref']);
+					$vpncas[$ph1ent['caref']] = $thisca;
+
+					/* follow chain up to root */
+					$cachain = ca_chain_array($thisca);
+					if ($cachain and is_array($cachain)) {
+						foreach ($cachain as $cacrt) {
+							$vpncas[$cacrt['refid']] = $cacrt;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* write the required CAs */
+	foreach ($vpncas as $carefid => $cadata) {
+		$cacrt = base64_decode($cadata['crt']);
+		$cacrtattrs = openssl_x509_parse($cacrt);
+		if (!is_array($cacrtattrs) || !isset($cacrtattrs['hash'])) {
+			log_error(sprintf(gettext("Error: Invalid certificate hash info for %s"), $cadata['descr']));
+			continue;
+		}
+		$cafilename = "{$capath}/{$cacrtattrs['hash']}.0.crt";
+		if (!@file_put_contents($cafilename, $cacrt)) {
+				log_error(sprintf(gettext("Error: Cannot write IPsec CA file for %s"), $cadata['descr']));
+				continue;
 		}
 	}
 
@@ -724,7 +810,6 @@ EOD;
 
 		$ipsecconf .= "# This file is automatically generated. Do not edit\n";
 		$ipsecconf .= "config setup\n\tuniqueids = {$uniqueids}\n";
-		$ipsecconf .= "\tcharondebug=\"" . vpn_ipsec_configure_loglevels(true) . "\"\n";
 
 		if (isset($config['ipsec']['strictcrlpolicy'])) {
 			$ipsecconf .= "\tstrictcrlpolicy = yes \n";
@@ -942,6 +1027,21 @@ EOD;
 				}
 			}
 
+			if (!empty($ph1ent['caref'])) {
+				$ca = lookup_ca($ph1ent['caref']);
+				if ($ca) {
+					$casubarr = cert_get_subject_array($ca['crt']);
+					$casub = "";
+					foreach ($casubarr as $casubfield) {
+						if (empty($casub)) {
+							$casub = "/";
+						}
+						$casub .= "{$casubfield['a']}={$casubfield['v']}/";
+					}
+
+				}
+			}
+
 			$authentication = "";
 			switch ($ph1ent['authentication_method']) {
 				case 'eap-mschapv2':
@@ -950,6 +1050,7 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-mschapv2";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;
@@ -959,12 +1060,17 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-tls\n\trightauth=eap-tls";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
+					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
 					}
 					break;
 				case 'eap-radius':
@@ -973,11 +1079,13 @@ EOD;
 						$authentication .= "leftauth=pubkey\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					} else {
 						$authentication = "leftauth=eap-radius\n\trightauth=eap-radius";
 						if (!empty($ph1ent['certref'])) {
 							$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+							$authentication .= "\n\tleftsendcert=always";
 						}
 					}
 					break;
@@ -986,6 +1094,9 @@ EOD;
 					$authentication .= "\n\trightauth2 = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
 					}
 					break;
 				case 'xauth_psk_server':
@@ -999,6 +1110,9 @@ EOD;
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+					}
+					if (isset($casub)) {
+						$authentication .= "\n\trightca=\"$casub\"";
 					}
 					break;
 				case 'hybrid_rsa_server':
@@ -1102,7 +1216,8 @@ EOD;
 					$tunneltype = "type = transport";
 
 					if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
-					    ($ph1ent['authentication_method'] == "pre_shared_key")) && isset($ph1ent['mobile'])) {
+					     ($ph1ent['authentication_method'] == "pre_shared_key")) &&
+					    isset($ph1ent['mobile'])) {
 						$left_spec = "%any";
 					} else {
 						$tmpsubnet = ipsec_get_phase1_src($ph1ent);
@@ -1316,6 +1431,11 @@ EOD;
 		} else {
 			mwexec("/usr/local/sbin/ipsec start", false);
 		}
+	}
+
+	// run ping_hosts.sh once if it's enabled to avoid wait for minicron
+	if ($ipsecpinghostsactive == true) {
+		mwexec_bg("/usr/local/bin/ping_hosts.sh");
 	}
 
 	if ($natfilterrules == true) {
@@ -1677,10 +1797,16 @@ function vpn_l2tp_configure() {
 				$l2tp_listen="set l2tp self $ipaddr";
 			}
 
-			if ($l2tpcfg['paporchap'] == "chap") {
-				$paporchap = "set link enable chap";
-			} else {
-				$paporchap = "set link enable pap";
+			switch ($l2tpcfg['paporchap']) {
+				case 'chap':
+					$paporchap = "set link enable chap";
+					break;
+				case 'chap-msv2':
+					$paporchap = "set link enable chap-msv2";
+					break;
+				default:
+					$paporchap = "set link enable pap";
+					break;
 			}
 
 			/* write mpd.conf */

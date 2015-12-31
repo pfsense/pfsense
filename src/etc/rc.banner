@@ -1,8 +1,6 @@
 #!/usr/local/bin/php-cgi -f
 <?php
 /*
-	$Id$
-
 	rc.banner
 	part of pfSense
 	Copyright (C) 2005 Scott Ullrich and Colin Smith

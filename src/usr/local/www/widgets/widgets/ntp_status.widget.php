@@ -1,9 +1,9 @@
 <?php
 /*
 	ntp_status.widget.php
-*//* ====================================================================
+*/
+/* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -62,15 +62,15 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/ntp_status.inc");
 
 function getServerDateItems($inDate) {
-	return date('Y,n,j,G,',$inDate).intval(date('i',$inDate)).','.intval(date('s',$inDate));
+	return date('Y,n,j,G,', $inDate) . intval(date('i', $inDate)) . ',' . intval(date('s', $inDate));
 	// year (4-digit),month,day,hours (0-23),minutes,seconds
 	// use intval to strip leading zero from minutes and seconds
-	//	 so JavaScript won't try to interpret them in octal
-	//	 (use intval instead of ltrim, which translates '00' to '')
+	// so JavaScript won't try to interpret them in octal
+	// (use intval instead of ltrim, which translates '00' to '')
 }
 
 function clockTimeString($inDate, $showSeconds) {
-	return date($showSeconds ? 'G:i:s' : 'g:i',$inDate).' ';
+	return date($showSeconds ? 'G:i:s' : 'g:i', $inDate) . ' ';
 }
 
 if ($_REQUEST['updateme']) {
@@ -110,7 +110,7 @@ if ($_REQUEST['updateme']) {
 			$tmp = $tmp[1];
 			if (substr($tmp, 0, 6) == '$GPRMC') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[2] == "A");
+				$gps_ok	= ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
 				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
@@ -121,9 +121,9 @@ if ($_REQUEST['updateme']) {
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
 				$gps_la = $gps_vars[4];
 				$gps_lo = $gps_vars[6];
-			}elseif (substr($tmp, 0, 6) == '$GPGGA') {
+			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = $gps_vars[6];
+				$gps_ok	= $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
 				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
@@ -137,9 +137,9 @@ if ($_REQUEST['updateme']) {
 				$gps_sat = $gps_vars[7];
 				$gps_la = $gps_vars[3];
 				$gps_lo = $gps_vars[5];
-			}elseif (substr($tmp, 0, 6) == '$GPGLL') {
+			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = explode(",", $tmp);
-				$gps_ok	 = ($gps_vars[6] == "A");
+				$gps_ok	= ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
@@ -157,11 +157,11 @@ if ($_REQUEST['updateme']) {
 	if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
 		//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
 		$gpsport = fopen("/dev/gps0", "r+");
-		while($gpsport){
+		while ($gpsport) {
 			$buffer = fgets($gpsport);
-			if(substr($buffer, 0, 6)=='$GPGSV'){
+			if (substr($buffer, 0, 6) == '$GPGSV') {
 				//echo $buffer."\n";
-				$gpgsv = explode(',',$buffer);
+				$gpgsv = explode(',', $buffer);
 				$gps_satview = $gpgsv[3];
 				break;
 			}
@@ -169,11 +169,15 @@ if ($_REQUEST['updateme']) {
 	}
 ?>
 
-<table class="table" id="ntp_status_widget">
+<table id="ntp_status_widget" class="table table-striped table-hover">
 	<tr>
 		<th>Server Time</th>
 		<td id="ClockTime"> <!-- ntpStatusClock -->
-			<script>var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');</script>
+			<script type="text/javascript">
+			//<![CDATA[
+			var ntpServerTime = new Date('<?=date_format(date_create(), 'c')?>');
+			//]]>
+			</script>
 			<!-- display initial value before javascript takes over -->
 			<?=gmdate('D j Y H:i:s \G\M\T O (T)');?>
 		</td>
@@ -218,7 +222,8 @@ if ($_REQUEST['updateme']) {
 	exit;
 }
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function ntpWidgetUpdateFromServer(){
 	$.ajax({
 		type: 'get',
@@ -241,7 +246,9 @@ function ntpWidgetUpdateDisplay(){
 
 	$('#ntpStatusClock').html(ntpServerTime.toString());
 }
+//]]>
 </script>
+
 <script type="text/javascript">
 //<![CDATA[
 /* set up variables used to init clock in BODY's onLoad handler;
@@ -255,7 +262,6 @@ function clockInit() {
 }
 //]]>
 </script>
-
 
 <script type="text/javascript">
 //<![CDATA[
@@ -478,31 +484,15 @@ clockUpdate();
 //]]>
 </script>
 
-<!--
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
+<table id="ntpstatus" class="table table-striped table-hover">
 	<tbody>
 		<tr>
-			<td width="40%" class="vncellt">Server Time</td>
-			<td width="60%" class="listr">
-				<div id="ClockTime">
-					<b><?php echo(clockTimeString($gDate,$gClockShowsSeconds));?></b>
-				</div>
-			</td>
-		</tr>
-	</tbody>
-</table>
--->
-<div id='ntpstatus'>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="clock">
-	<tbody>
-		<tr>
-			<td width="100%" class="listr">
+			<td>
 				Updating...
 			</td>
 		</tr>
 	</tbody>
 </table>
-</div>
 
 <script type="text/javascript">
 //<![CDATA[

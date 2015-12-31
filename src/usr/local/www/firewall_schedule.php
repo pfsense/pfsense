@@ -4,9 +4,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,17 +55,15 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: schedules
-*/
+
 ##|+PRIV
 ##|*IDENT=page-firewall-schedules
-##|*NAME=Firewall: Schedules page
+##|*NAME=Firewall: Schedules
 ##|*DESCR=Allow access to the 'Firewall: Schedules' page.
 ##|*MATCH=firewall_schedule.php*
 ##|-PRIV
 
-define('CLOCK', '&#x1f550;');
+define('CLOCK', '<i class="fa fa-clock-o icon-black"></i>');
 
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
@@ -113,8 +111,9 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 ?>
 
 <div class="panel panel-default">
@@ -183,23 +182,24 @@ foreach ($a_schedules as $schedule):
 					$currentDay++;
 
 					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
-						if ($firstPrint)
+						if ($firstPrint) {
 							$dayFriendly .= "<br />";
+						}
 
 						$currentDay--;
 
-						if ($currentDay != $firstDay)
+						if ($currentDay != $firstDay) {
 							$dayFriendly .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-						else
+						} else {
 							$dayFriendly .=	 $monthArray[$month-1] . " " . $day;
+						}
 
 						$firstDayFound = false;
 						$firstPrint = true;
 					}
 					$arraycounter++;
 				}
-			}
-			else {
+			} else {
 				$tempdayFriendly = $timerange['position'];
 				$firstDayFound = false;
 				$tempFriendlyDayArray = explode(",", $tempdayFriendly);
@@ -210,8 +210,7 @@ foreach ($a_schedules as $schedule):
 
 				foreach ($tempFriendlyDayArray as $day) {
 					if ($day != "") {
-						if (!$firstDayFound)
-						{
+						if (!$firstDayFound) {
 							$firstDay = $tempFriendlyDayArray[$counter];
 							$firstDayFound = true;
 						}
@@ -222,15 +221,17 @@ foreach ($a_schedules as $schedule):
 						$currentDay++;
 
 						if ($currentDay != $nextDay) {
-							if ($firstprint)
+							if ($firstprint) {
 								$dayFriendly .= "<br />";
+							}
 
 							$currentDay--;
 
-							if ($currentDay != $firstDay)
+							if ($currentDay != $firstDay) {
 								$dayFriendly .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-							else
+							} else {
 								$dayFriendly .= $dayArray[$firstDay-1];
+							}
 
 							$firstDayFound = false;
 							$firstprint = true;
@@ -255,8 +256,8 @@ foreach ($a_schedules as $schedule):
 					</td>
 
 					<td>
-						<a href="firewall_schedule_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-						<a href="firewall_schedule.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+						<a class="fa fa-pencil" title="<?=gettext("Edit schedule"); ?>" href="firewall_schedule_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete schedule")?>" href="firewall_schedule.php?act=del&amp;id=<?=$i?>"></a>
 
 					</td>
 				</tr>
@@ -269,14 +270,19 @@ endforeach;
 	</div>
 </div>
 
-<?=($i > 0) ? gettext(CLOCK . ' Indicates that the schedule is currently active.'):''?>
+<?=($i > 0) ? CLOCK . gettext(' Indicates that the schedule is currently active.'):''?>
 
 <nav class="action-buttons">
-	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success"><?=gettext("Add new schedule")?></a>
+	<a href="firewall_schedule_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 
-<?php
+<div id="infoblock">
+	<?=print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'), info)?>
+</div>
 
-print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'));
+<?php
 
 include("foot.inc");

@@ -10,25 +10,15 @@ if (is_array($command_split)) {
 	$args = array_slice($argv, 2);
 }
 
-$pkg_name = $args[0];
-$pkg_info = array();
+$pkg_name = $args[1];
+pkg_remove_prefix($pkg_name);
 
-echo "Removing package \"{$pkg_name}\"...\n";
+echo "Removing package \"{$pkg_name}\"... ";
 
-foreach ($config['installedpackages']['package'] as $package) {
-	if ($pkg_name == $package['name']) {
-		$pkg_info = $package;
-	}
+if (mwexec("/usr/local/sbin/{$g['product_name']}-upgrade -y -r {$g['pkg_prefix']}{$pkg_name}") == 0) {
+	echo "Done.\n";
+	return true;
+} else {
+	echo "Failed.\n";
+	return false;
 }
-
-$static_output = "";
-$pkg_interface = "console";
-
-if (empty($pkg_info)) {
-	echo "\nPackage not installed.\n";
-	return;
-}
-
-uninstall_package($pkg_name);
-
-echo "\nDone.\n";

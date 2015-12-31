@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	system.php
-	part of m0n0wall (http://m0n0.ch/wall)
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -56,14 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/kill	/usr/bin/tar
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-generalsetup
-##|*NAME=System: General Setup page
+##|*NAME=System: General Setup
 ##|*DESCR=Allow access to the 'System: General Setup' page.
 ##|*MATCH=system.php*
 ##|-PRIV
@@ -80,6 +75,11 @@ list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $
 
 $arr_gateways = return_gateways_array();
 
+// set default colmns to two if unset
+if (!isset($config['system']['webgui']['dashboardcolumns'])) {
+	$config['system']['webgui']['dashboardcolumns'] = 2;
+}
+
 $pconfig['dns1gw'] = $config['system']['dns1gw'];
 $pconfig['dns2gw'] = $config['system']['dns2gw'];
 $pconfig['dns3gw'] = $config['system']['dns3gw'];
@@ -87,19 +87,22 @@ $pconfig['dns4gw'] = $config['system']['dns4gw'];
 
 $pconfig['dnsallowoverride'] = isset($config['system']['dnsallowoverride']);
 $pconfig['timezone'] = $config['system']['timezone'];
-$pconfig['timeupdateinterval'] = $config['system']['time-update-interval'];
 $pconfig['timeservers'] = $config['system']['timeservers'];
-$pconfig['theme'] = $config['system']['theme'];
 $pconfig['language'] = $config['system']['language'];
-
+$pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
+$pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
+$pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+$pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
-if (!isset($pconfig['timeupdateinterval'])) {
-	$pconfig['timeupdateinterval'] = 300;
-}
 if (!$pconfig['timezone']) {
-	$pconfig['timezone'] = "Etc/UTC";
+	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+		$pconfig['timezone'] = $g['default_timezone'];
+	} else {
+		$pconfig['timezone'] = "Etc/UTC";
+	}
 }
+
 if (!$pconfig['timeservers']) {
 	$pconfig['timeservers'] = "pool.ntp.org";
 }
@@ -137,6 +140,24 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Hostname"), gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($_POST['webguicss']) {
+		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
+	} else {
+		unset($config['system']['webgui']['webguicss']);
+	}
+
+	if ($_POST['webguifixedmenu']) {
+		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
+	} else {
+		unset($config['system']['webgui']['webguifixedmenu']);
+	}
+
+	if ($_POST['dashboardcolumns']) {
+		$config['system']['webgui']['dashboardcolumns'] = $_POST['dashboardcolumns'];
+	} else {
+		unset($config['system']['webgui']['dashboardcolumns']);
+	}
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -191,10 +212,6 @@ if ($_POST) {
 		}
 	}
 
-	$t = (int)$_POST['timeupdateinterval'];
-	if (($t < 0) || (($t > 0) && ($t < 6)) || ($t > 1440)) {
-		$input_errors[] = gettext("The time update interval must be either 0 (disabled) or between 6 and 1440.");
-	}
 	# it's easy to have a little too much whitespace in the field, clean it up for the user before processing.
 	$_POST['timeservers'] = preg_replace('/[[:blank:]]+/', ' ', $_POST['timeservers']);
 	$_POST['timeservers'] = trim($_POST['timeservers']);
@@ -209,17 +226,14 @@ if ($_POST) {
 		update_if_changed("domain", $config['system']['domain'], $_POST['domain']);
 		update_if_changed("timezone", $config['system']['timezone'], $_POST['timezone']);
 		update_if_changed("NTP servers", $config['system']['timeservers'], strtolower($_POST['timeservers']));
-		update_if_changed("NTP update interval", $config['system']['time-update-interval'], $_POST['timeupdateinterval']);
 
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
 			set_language($config['system']['language']);
 		}
 
-		/* pfSense themes */
-		if (!$g['disablethemeselection']) {
-			update_if_changed("System Theme", $config['theme'], $_POST['theme']);
-		}
+		unset($config['system']['webgui']['webguileftcolumnhyper']);
+		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -288,10 +302,8 @@ if ($_POST) {
 				// Remove the route. Later calls will add the correct new route if needed.
 				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
 					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				} else {
-					if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
-						mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
-					}
+				} else if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
+					mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 				}
 			}
 		}
@@ -328,15 +340,17 @@ if ($_POST) {
 $pgtitle = array(gettext("System"), gettext("General Setup"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
-	print_info_box($savemsg);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, success);
+}
 ?>
 <div id="container">
 <?php
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('System');
 $section->addInput(new Form_Input(
@@ -359,8 +373,7 @@ $form->add($section);
 
 $section = new Form_Section('DNS server settings');
 
-for ($i=1; $i<5; $i++)
-{
+for ($i=1; $i<5; $i++) {
 //	if (!isset($pconfig['dns'.$i]))
 //		continue;
 
@@ -379,12 +392,12 @@ for ($i=1; $i<5; $i++)
 	if ($multiwan)	{
 		$options = array('none' => 'none');
 
-		foreach($arr_gateways as $gwname => $gwitem) {
-			if((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
+		foreach ($arr_gateways as $gwname => $gwitem) {
+			if ((is_ipaddrv4(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv6($gwitem['gateway'])))) {
 				continue;
 			}
 
-			if((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
+			if ((is_ipaddrv6(lookup_gateway_ip_by_name($pconfig[$dnsgw])) && (is_ipaddrv4($gwitem['gateway'])))) {
 				continue;
 			}
 
@@ -393,7 +406,7 @@ for ($i=1; $i<5; $i++)
 
 		$group->add(new Form_Select(
 			'dns' . $i . 'gw',
-			'Gateway',
+			null,
 			$pconfig['dns' . $i . 'gw'],
 			$options
 		))->setHelp(($i == 4) ? 'Gateway':null);;
@@ -402,8 +415,9 @@ for ($i=1; $i<5; $i++)
 			"When using multiple WAN connections there should be at least one unique DNS server per gateway.";
 	}
 
-	if($i == 4)
+	if ($i == 4) {
 		$group->setHelp($help);
+	}
 
 	$section->add($group);
 }
@@ -453,6 +467,57 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-print $form;
+$csslist = array();
+$css = glob("/usr/local/www/bootstrap/css/*.css");
+foreach ($css as $file) {
+	$file = basename($file);
+	if (substr($file, 0, 9) !== 'bootstrap') {
+		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
+	}
+}
 
+asort($csslist);
+
+if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
+	$pconfig['webguicss'] = "pfSense.css";
+}
+
+$section = new Form_Section('Web Configurator');
+
+$section->addInput(new Form_Select(
+	'webguicss',
+	'Theme',
+	$pconfig['webguicss'],
+	$csslist
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+
+$section->addInput(new Form_Select(
+	'webguifixedmenu',
+	'Top Navigation',
+	$pconfig['webguifixedmenu'],
+	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
+))->setHelp("The fixed option is intended for large screens only.");
+
+$section->addInput(new Form_Input(
+	'dashboardcolumns',
+	'Dashboard Columns',
+	'number',
+	$pconfig['dashboardcolumns'],
+	[min => 1, max => 4]
+))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+
+$section->addInput(new Form_Checkbox(
+	'webguileftcolumnhyper',
+	'Left Column Labels',
+	'Active',
+	$pconfig['webguileftcolumnhyper']
+))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+
+$form->add($section);
+
+print $form;
+?>
+</div>
+<?php
 include("foot.inc");
+?>

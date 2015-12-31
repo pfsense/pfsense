@@ -1,42 +1,65 @@
 <?php
-/* $Id$ */
 /*
 	status_rrd_graph.php
-	Part of pfSense
-	Copyright (C) 2007 Seth Mos <seth.mos@dds.nl>
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE:	system
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2007 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraphs
-##|*NAME=Status: RRD Graphs page
+##|*NAME=Status: RRD Graphs
 ##|*DESCR=Allow access to the 'Status: RRD Graphs' page.
 ##|*MATCH=status_rrd_graph.php*
+##|*MATCH=status_rrd_graph_img.php*
 ##|-PRIV
 
 require("guiconfig.inc");
@@ -45,7 +68,6 @@ require("shaper.inc");
 require_once("rrd.inc");
 
 unset($input_errors);
-
 /* if the rrd graphs are not enabled redirect to settings page */
 if (!isset($config['rrd']['enable'])) {
 	header("Location: status_rrd_graph_settings.php");
@@ -71,10 +93,11 @@ if ($_POST['cat']) {
 	$curcat = htmlspecialchars($_POST['cat']);
 }
 
-if ($_GET['zone'])
+if ($_GET['zone']) {
 	$curzone = $_GET['zone'];
-else
+} else {
 	$curzone = '';
+}
 
 if ($_POST['period']) {
 	$curperiod = $_POST['period'];
@@ -89,7 +112,7 @@ if ($_POST['period']) {
 if ($_POST['style']) {
 	$curstyle = $_POST['style'];
 } else {
-	if(! empty($config['rrd']['style'])) {
+	if (!empty($config['rrd']['style'])) {
 		$curstyle = $config['rrd']['style'];
 	} else {
 		$curstyle = "absolute";
@@ -99,7 +122,7 @@ if ($_POST['style']) {
 if ($_POST['option']) {
 	$curoption = $_POST['option'];
 } else {
-	switch($curcat) {
+	switch ($curcat) {
 		case "system":
 			$curoption = "processor";
 			break;
@@ -140,6 +163,15 @@ if ($_POST['option']) {
 			foreach ($databases as $database) {
 				if (preg_match("/[-]vpnusers\.rrd/i", $database)) {
 					/* pick off the 1st database we find that matches the VPN graphs */
+					$name = explode("-", $database);
+					$curoption = "$name[0]";
+					continue 2;
+				}
+			}
+		case "dhcpd":
+			foreach ($databases as $database) {
+				if (preg_match("/[-]dhcpd\.rrd/i", $database)) {
+					/* pick off the 1st database we find that matches the dhcpd graph */
 					$name = explode("-", $database);
 					$curoption = "$name[0]";
 					continue 2;
@@ -245,6 +277,10 @@ foreach ($databases as $database) {
 	if (stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
 		$ntpd = true;
 	}
+	if (stristr($database, "-dhcpd") && is_array($config['dhcpd'])) {
+		$dhcpd = true;
+	}
+
 }
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
@@ -261,9 +297,7 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
-
-$closehead = false;
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext(ucfirst($curcat)." Graphs"));
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
@@ -387,7 +421,7 @@ function get_dates($curperiod, $graph) {
 }
 
 function make_tabs() {
-	global $curcat;
+	global $curcat, $queues, $wireless, $cellular, $vpnusers, $captiveportal, $dhcpd, $ntpd;
 
 	$tab_array = array();
 	$tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
@@ -395,29 +429,34 @@ function make_tabs() {
 	$tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
 	$tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
-	if($queues) {
+
+	if ($queues) {
 		$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
 		$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 	}
 
-	if($wireless) {
+	if ($wireless) {
 		$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
 	}
 
-	if($cellular) {
+	if ($cellular) {
 		$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
 	}
 
-	if($vpnusers) {
+	if ($vpnusers) {
 		$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 	}
 
-	if($captiveportal) {
+	if ($captiveportal) {
 		$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
 	}
 
-	if(isset($config['ntpd']['statsgraph'])) {
-		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+	if ($ntpd) {
+		$tab_array[] = array("NTPD", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+	}
+
+	if ($dhcpd) {
+		$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
 	}
 
 	$tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
@@ -432,7 +471,7 @@ function build_options() {
 
 	$optionslist = array();
 
-	if($curcat == "custom") {
+	if ($curcat == "custom") {
 		foreach ($custom_databases as $db => $database) {
 			$optionc = explode("-", $database);
 			$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc[0]));
@@ -448,17 +487,19 @@ function build_options() {
 		}
 
 	foreach ($ui_databases as $db => $database) {
-		if(! preg_match("/($curcat)/i", $database))
+		if (!preg_match("/($curcat)/i", $database)) {
 			continue;
+		}
 
-		if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database))
+		if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $database)) {
 			continue;
+		}
 
 		$optionc = explode("-", $database);
 		$search = array("-", ".rrd", $optionc);
 		$replace = array(" :: ", "", $friendly);
 
-		switch($curcat) {
+		switch ($curcat) {
 			case "captiveportal":
 				$optionc = str_replace($search, $replace, $optionc[2]);
 				$prettyprint = ucwords(str_replace($search, $replace, $optionc));
@@ -473,7 +514,7 @@ function build_options() {
 				/* Deduce an interface if possible and use the description */
 				$optionc = "$optionc[0]";
 				$friendly = convert_friendly_interface_to_friendly_descr(strtolower($optionc));
-				if(empty($friendly)) {
+				if (empty($friendly)) {
 					$friendly = $optionc;
 				}
 				$search = array("-", ".rrd", $optionc);
@@ -490,10 +531,9 @@ include("head.inc");
 
 display_top_tabs(make_tabs());
 
-if ($input_errors && count($input_errors))
+if ($input_errors && count($input_errors)) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(false);
 
@@ -522,12 +562,13 @@ $group->add(new Form_Select(
 	$periods
 ))->setHelp('Period');
 
-if($curcat == 'custom')
+if ($curcat == 'custom') {
 	$group->setHelp('Any changes to these option may not take affect until the next auto-refresh.');
+}
 
 $section->add($group);
 
-if($curcat == 'custom') {
+if ($curcat == 'custom') {
 	$section->addInput(new Form_Input(
 		'cat',
 		null,
@@ -556,8 +597,9 @@ if($curcat == 'custom') {
 		$end_fmt
 	))->setHelp('End');
 
-	if($curcat != 'custom')
+	if ($curcat != 'custom') {
 		$group->setHelp('Any changes to these option may not take affect until the next auto-refresh');
+	}
 
 	$section->add($group);
 
@@ -566,12 +608,12 @@ if($curcat == 'custom') {
 
 	$curdatabase = $curoption;
 	$graph = "custom-$curdatabase";
-	if(in_array($curdatabase, $custom_databases)) {
+	if (in_array($curdatabase, $custom_databases)) {
 		$id = "{$graph}-{$curoption}-{$curdatabase}";
 		$id = preg_replace('/\./', '_', $id);
 ?>
 		<div class="panel panel-default">
-			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 		</div>
 <?php
 
@@ -580,33 +622,36 @@ if($curcat == 'custom') {
 	$form->add($section);
 	print($form);
 
-	foreach($graphs as $graph) {
+	foreach ($graphs as $graph) {
 		/* check which databases are valid for our category */
-		foreach($ui_databases as $curdatabase) {
-			if(! preg_match("/($curcat)/i", $curdatabase))
+		foreach ($ui_databases as $curdatabase) {
+			if (!preg_match("/($curcat)/i", $curdatabase)) {
 				continue;
+			}
 
-			if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase))
+			if (($curcat == "captiveportal") && !empty($curzone) && !preg_match("/captiveportal-{$curzone}/i", $curdatabase)) {
 				continue;
+			}
 
 			$optionc = explode("-", $curdatabase);
 			$search = array("-", ".rrd", $optionc);
 			$replace = array(" :: ", "", $friendly);
 
-			switch($curoption) {
+			switch ($curoption) {
 				case "outbound":
 					/* make sure we do not show the placeholder databases in the outbound view */
-					if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+					if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 						continue 2;
 					}
 					/* only show interfaces with a gateway */
 					$optionc = "$optionc[0]";
-					if(!interface_has_gateway($optionc)) {
-						if(!isset($gateways_arr)) {
-							if(preg_match("/quality/i", $curdatabase))
+					if (!interface_has_gateway($optionc)) {
+						if (!isset($gateways_arr)) {
+							if (preg_match("/quality/i", $curdatabase)) {
 								$gateways_arr = return_gateways_array();
-							else
+							} else {
 								$gateways_arr = array();
+							}
 						}
 						$found_gateway = false;
 						foreach ($gateways_arr as $gw) {
@@ -615,29 +660,29 @@ if($curcat == 'custom') {
 								break;
 							}
 						}
-						if(!$found_gateway) {
+						if (!$found_gateway) {
 							continue 2;
 						}
 					}
 
-					if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+					if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 						continue 2;
 					}
 					break;
 				case "allgraphs":
 					/* make sure we do not show the placeholder databases in the all view */
-					if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+					if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 						continue 2;
 					}
 					break;
 				default:
 					/* just use the name here */
-					if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+					if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 						continue 2;
 					}
 			}
 
-			if(in_array($curdatabase, $ui_databases)) {
+			if (in_array($curdatabase, $ui_databases)) {
 				$id = "{$graph}-{$curoption}-{$curdatabase}";
 				$id = preg_replace('/\./', '_', $id);
 
@@ -646,7 +691,7 @@ if($curcat == 'custom') {
 				$end = $dates['end'];
 ?>
 				<div class="panel panel-default" align="center">
-					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end={<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 				</div>
 <?php
 			}
@@ -662,29 +707,31 @@ if($curcat == 'custom') {
 		//alert('updating');
 		var randomid = Math.floor(Math.random()*11);
 		<?php
-		foreach($graphs as $graph) {
+		foreach ($graphs as $graph) {
 			/* check which databases are valid for our category */
-			foreach($ui_databases as $curdatabase) {
-				if(! stristr($curdatabase, $curcat)) {
+			foreach ($ui_databases as $curdatabase) {
+				if (!stristr($curdatabase, $curcat)) {
 					continue;
 				}
 				$optionc = explode("-", $curdatabase);
 				$search = array("-", ".rrd", $optionc);
 				$replace = array(" :: ", "", $friendly);
-				switch($curoption) {
+				switch ($curoption) {
 					case "outbound":
 						/* make sure we do not show the placeholder databases in the outbound view */
-						if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 							continue 2;
 						}
 						/* only show interfaces with a gateway */
 						$optionc = "$optionc[0]";
-						if(!interface_has_gateway($optionc)) {
-							if(!isset($gateways_arr))
-								if(preg_match("/quality/i", $curdatabase))
+						if (!interface_has_gateway($optionc)) {
+							if (!isset($gateways_arr)) {
+								if (preg_match("/quality/i", $curdatabase)) {
 									$gateways_arr = return_gateways_array();
-								else
+								} else {
 									$gateways_arr = array();
+								}
+							}
 							$found_gateway = false;
 							foreach ($gateways_arr as $gw) {
 								if ($gw['name'] == $optionc) {
@@ -692,29 +739,29 @@ if($curcat == 'custom') {
 									break;
 								}
 							}
-							if(!$found_gateway) {
+							if (!$found_gateway) {
 								continue 2;
 							}
 						}
-						if(! preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
+						if (!preg_match("/(^$optionc-|-$optionc\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 						break;
 					case "allgraphs":
 						/* make sure we do not show the placeholder databases in the all view */
-						if((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
+						if ((stristr($curdatabase, "outbound")) || (stristr($curdatabase, "allgraphs"))) {
 							continue 2;
 						}
 						break;
 					default:
 						/* just use the name here */
-						if(! preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
+						if (!preg_match("/(^$curoption-|-$curoption\\.)/i", $curdatabase)) {
 							continue 2;
 						}
 				}
 				$dates = get_dates($curperiod, $graph);
 				$start = $dates['start'];
-				if($curperiod == "current") {
+				if ($curperiod == "current") {
 					$end = $dates['end'];
 				}
 				/* generate update events utilizing jQuery('') feature */
@@ -734,8 +781,8 @@ if($curcat == 'custom') {
 
 <script>
 //<![CDATA[
-events.push(function(){
-	$('#option, #style, #period').on('change', function(){
+events.push(function() {
+	$('#option, #style, #period').on('change', function() {
 		$(this).parents('form').submit();
 	});
 });

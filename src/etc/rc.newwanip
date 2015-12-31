@@ -216,8 +216,8 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
-	 * route-to rules have the old ip set in 'from' and connection
-	 * do not go through correct link
+	 * route-to rules have the old ip set in 'from' and connections
+	 * do not go through the correct link
 	 */
 	filter_configure_sync();
 

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	certs.inc
 	Copyright (C) 2008 Shrew Soft Inc
@@ -26,8 +25,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-	pfSense_MODULE:	certificate_manager
 */
 
 define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
@@ -284,6 +281,7 @@ function ca_inter_create(& $ca, $keylen, $lifetime, $dn, $caref, $digest_alg = "
 	$ca['crt'] = base64_encode($str_crt);
 	$ca['prv'] = base64_encode($str_key);
 	$ca['serial'] = 0;
+	$ca['caref'] = $caref;
 
 	return true;
 }

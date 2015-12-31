@@ -1,15 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_shaper_wizards.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2008 Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +52,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-wizard
-##|*NAME=Firewall: Traffic Shaper: Wizard page
+##|*NAME=Firewall: Traffic Shaper: Wizard
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Wizard' page.
 ##|*MATCH=firewall_shaper_wizards.php*
 ##|-PRIV
@@ -107,25 +100,26 @@ $wizards = array(
 	gettext("Dedicated Links") => "traffic_shaper_wizard_dedicated.xml",
 );
 
-$closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
 $tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
 $tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('shaper'))
+if (is_subsystem_dirty('shaper')) {
 	print_info_box_np(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 ?>
 <div class="panel panel-default">

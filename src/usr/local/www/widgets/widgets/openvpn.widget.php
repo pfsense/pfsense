@@ -1,11 +1,9 @@
 <?php
-
 /*
 	openvpn.widget.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -62,58 +60,18 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
 /* Handle AJAX */
-if($_GET)
-	print_r($_GET);
-
 if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
 		$port = $_GET['port'];
 		$remipp = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
 		exit;
 	}
-}
-
-
-function kill_client($port, $remipp) {
-	global $g;
-
-	//$tcpsrv = "tcp://127.0.0.1:{$port}";
-	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
-	$errval = null;
-	$errstr = null;
-
-	/* open a tcp connection to the management port of each server */
-	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
-	$killed = -1;
-	if ($fp) {
-		stream_set_timeout($fp, 1);
-		fputs($fp, "kill {$remipp}\n");
-		while (!feof($fp)) {
-			$line = fgets($fp, 1024);
-
-			$info = stream_get_meta_data($fp);
-			if ($info['timed_out']) {
-				break;
-			}
-
-			/* parse header list line */
-			if (strpos($line, "INFO:") !== false) {
-				continue;
-			}
-			if (strpos($line, "SUCCESS") !== false) {
-				$killed = 0;
-			}
-			break;
-		}
-		fclose($fp);
-	}
-	return $killed;
 }
 
 $servers = openvpn_get_active_servers();
@@ -148,10 +106,10 @@ $clients = openvpn_get_active_clients();
 <div class="content">
 <?php foreach ($servers as $server): ?>
 
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Name/Time</th>
@@ -165,7 +123,7 @@ $clients = openvpn_get_active_clients();
 			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 			$rowIndex++;
 			?>
-				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 					<td>
 						<?=$conn['common_name'];?>
 					</td>
@@ -173,13 +131,13 @@ $clients = openvpn_get_active_clients();
 						<?=$conn['remote_host'];?>
 					</td>
 					<td>
-						<i class="icon icon-remove-sign" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style='cursor:pointer;'
-							name='<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>'
+						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style="cursor:pointer;"
+							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							title='Kill client connection from <?php echo $conn['remote_host']; ?>'>
 						</i>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>' class="<?=$evenRowClass?>">
+				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 					<td>
 						<?=$conn['connect_time'];?>
 					</td>
@@ -190,24 +148,19 @@ $clients = openvpn_get_active_clients();
 				</tr>
 		<?php endforeach; ?>
 			</tbody>
-			<tfoot>
-				<tr>
-					<td colspan="3" class="list" height="12"></td>
-				</tr>
-			</tfoot>
 		</table>
 	</div>
 </div>
 
 <?php endforeach; ?>
 <?php if (!empty($sk_servers)) { ?>
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics");?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th>Remote/Virtual IP</th>
+					<th>Name/Time</th>
 					<th>Remote/Virtual IP</th>
 					<th></th>
 				</tr>
@@ -222,18 +175,18 @@ $clients = openvpn_get_active_clients();
 						<?=$sk_server['remote_host'];?>
 					</td>
 					<td>
-					<?php
+<?php
 					if ($sk_server['status'] == "up") {
 						/* tunnel is up */
-						echo '<i class="icon icon-arrow-up"></i>';
+						echo '<i class="fa fa-arrow-up"></i>';
 					} else {
 						/* tunnel is down */
-						echo '<i class="icon icon-arrow-down"></i>';
+						echo '<i class="fa fa-arrow-down"></i>';
 					}
 ?>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>">
 					<td>
 						<?=$sk_server['connect_time'];?>
 					</td>
@@ -251,10 +204,10 @@ $clients = openvpn_get_active_clients();
 <?php
 } ?>
 <?php if (!empty($clients)) { ?>
-<div class="panel panel-default">
+<div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics");?></h2></div>
 	<div class="table-responsive">
-		<table class="table table striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th>Name/Time</th>
@@ -264,7 +217,7 @@ $clients = openvpn_get_active_clients();
 			</thead>
 			<tbody>
 	<?php foreach ($clients as $client): ?>
-				<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 					<td>
 						<?=$client['name'];?>
 					</td>
@@ -272,19 +225,19 @@ $clients = openvpn_get_active_clients();
 					<?=$client['remote_host'];?>
 					</td>
 					<td>
-				<?php
+<?php
 				if ($client['status'] == "up") {
 					/* tunnel is up */
-					echo '<i class="icon icon-arrow-up"></i>';
+					echo '<i class="fa fa-arrow-up"></i>';
 				} else {
 					/* tunnel is down */
-					echo '<i class="icon icon-arrow-down"></i>';
+					echo '<i class="fa fa-arrow-down"></i>';
 				}
 
 ?>
 					</td>
 				</tr>
-				<tr name='<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>'>
+				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 					<td>
 						<?=$client['connect_time'];?>
 					</td>

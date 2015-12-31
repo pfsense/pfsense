@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	priv.inc
 	Copyright (C) 2008 Shrew Soft Inc
@@ -38,10 +37,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-*/
-
-/*
-	pfSense_MODULE:	auth
 */
 
 require_once("priv.defs.inc");

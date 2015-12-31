@@ -3,12 +3,11 @@
 	diag_states_summary.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2005-2009 Scott Ullrich
- *	Copyright (c) 2005 Colin Smith
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2005 Colin Smith
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +54,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: filter
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-statessummary
-##|*NAME=Diagnostics: States Summary page
+##|*NAME=Diagnostics: States Summary
 ##|*DESCR=Allow access to the 'Diagnostics: States Summary' page.
 ##|*MATCH=diag_states_summary.php*
 ##|-PRIV
@@ -168,10 +162,10 @@ function build_port_info($portarr, $proto) {
 	return implode($ports, ', ');
 }
 
-function print_summary_table($label, $iparr, $sort = TRUE)
-{
-	if ($sort)
+function print_summary_table($label, $iparr, $sort = TRUE) {
+	if ($sort) {
 		uksort($iparr, "sort_by_ip");
+	}
 
 ?>
 	<div class="panel panel-default">
@@ -197,8 +191,9 @@ function print_summary_table($label, $iparr, $sort = TRUE)
 	$rowSpan = '';
 	$i = 0;
 
-	if ($protocolCount > 1)
+	if ($protocolCount > 1) {
 		$rowSpan = ' rowspan="' . $protocolCount . '"';
+	}
 ?>
 						<tr>
 							<td<?= $rowSpan ?>><?php echo $ip; ?></td>

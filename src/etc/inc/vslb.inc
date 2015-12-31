@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	vslb.inc
 	Copyright (C) 2005-2008 Bill Marquette
@@ -27,12 +26,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 
  */
-
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/relayd
-	pfSense_MODULE:	routing
-*/
-
 
 /* include all configuration functions */
 

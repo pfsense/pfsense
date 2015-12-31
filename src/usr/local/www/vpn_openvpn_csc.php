@@ -1,36 +1,62 @@
 <?php
 /*
 	vpn_openvpn_csc.php
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2008 Shrew Soft Inc.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-csc
-##|*NAME=OpenVPN: Client Specific Override page
+##|*NAME=OpenVPN: Client Specific Override
 ##|*DESCR=Allow access to the 'OpenVPN: Client Specific Override' page.
 ##|*MATCH=vpn_openvpn_csc.php*
 ##|-PRIV
@@ -39,7 +65,9 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Client Specific Override"));
+global $openvpn_tls_server_modes;
+
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-csc'])) {
@@ -75,6 +103,7 @@ if ($_GET['act'] == "del") {
 if ($_GET['act'] == "edit") {
 
 	if (isset($id) && $a_csc[$id]) {
+		$pconfig['server_list'] = explode(",", $a_csc[$id]['server_list']);
 		$pconfig['custom_options'] = $a_csc[$id]['custom_options'];
 		$pconfig['disable'] = isset($a_csc[$id]['disable']);
 		$pconfig['common_name'] = $a_csc[$id]['common_name'];
@@ -214,6 +243,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$csc = array();
 
+		$csc['server_list'] = implode(",", $pconfig['server_list']);
 		$csc['custom_options'] = $pconfig['custom_options'];
 		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;
@@ -261,14 +291,14 @@ if ($_POST) {
 		}
 
 		if (isset($id) && $a_csc[$id]) {
-			$old_csc_cn = $a_csc[$id]['common_name'];
+			$old_csc = $a_csc[$id];
 			$a_csc[$id] = $csc;
 		} else {
 			$a_csc[] = $csc;
 		}
 
-		if (!empty($old_csc_cn)) {
-			openvpn_cleanup_csc($old_csc_cn);
+		if (!empty($old_csc['common_name'])) {
+			openvpn_delete_csc($old_csc);
 		}
 		openvpn_resync_csc($csc);
 		write_config();
@@ -280,11 +310,13 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -294,12 +326,28 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-if($act=="new" || $act=="edit"):
-	require_once('classes/Form.class.php');
-
+if ($act == "new" || $act == "edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
+
+	$serveroptionlist = array();
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
+			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
+				$serveroptionlist[$serversettings['vpnid']] = "OpenVPN Server {$serversettings['vpnid']}: {$serversettings['description']}";
+			}
+		}
+	}
+
+	$section->addInput(new Form_Select(
+		'server_list',
+		'Server List',
+		$pconfig['server_list'],
+		$serveroptionlist,
+		true
+		))->setHelp('Select the servers for which the override will apply. Selecting no servers will also apply the override to all servers.');
+
 
 	$section->addInput(new Form_Checkbox(
 		'disable',
@@ -533,7 +581,7 @@ if($act=="new" || $act=="edit"):
 
 	$section->add($group);
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
@@ -562,13 +610,13 @@ if($act=="new" || $act=="edit"):
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hide/show that section, but have to also respect the wins_server_enable checkbox
 	function setNetbios() {
-		if($('#netbios_enable').prop('checked')) {
+		if ($('#netbios_enable').prop('checked')) {
 			hideInput('netbios_ntype', false);
 			hideInput('netbios_scope', false);
 			hideCheckbox('wins_server_enable', false);
@@ -623,7 +671,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 			<tbody>
 <?php
 	$i = 0;
-	foreach($a_csc as $csc):
+	foreach ($a_csc as $csc):
 		$disabled = isset($csc['disable']) ? "Yes":"No";
 ?>
 				<tr>
@@ -637,8 +685,8 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 						<?=htmlspecialchars($csc['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>" class="btn btn-info btn-xs"><?=gettext('Edit')?></a>
-						<a href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>" class="btn btn-danger btn-xs"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit CSC Override')?>"	href="vpn_openvpn_csc.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete CSC Override')?>"	href="vpn_openvpn_csc.php?act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -647,13 +695,15 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 ?>
 			</tbody>
 		</table>
-
-		<nav class="action-buttons">
-			<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm"><?=gettext('Add CSC')?></a>
-		</nav>
-
 	</div>
 </div>
+
+<nav class="action-buttons">
+	<a href="vpn_openvpn_csc.php?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext('Add')?>
+	</a>
+</nav>
 
 <?php
 endif;

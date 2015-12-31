@@ -1,20 +1,15 @@
 <?php
 /*
 	traffic_graphs.widget.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	Copyright 2007 Scott Dale
-	Part of pfSense widgets (https://www.pfsense.org)
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-	and Jonathan Watt <jwatt@jwatt.org>.
+*/
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2007 Scott Dale
  *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
  *	and Jonathan Watt <jwatt@jwatt.org>.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -68,6 +63,7 @@ $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;
@@ -85,12 +81,12 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
 
 if ($_POST) {
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numericint($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
 
@@ -101,7 +97,7 @@ if ($_POST) {
 	$a_config["shown"]["item"] = array();
 
 	foreach ($ifdescrs as $ifname => $ifdescr) {
-		if(in_array($ifname, $_POST["shown"])) {
+		if (in_array($ifname, $_POST["shown"])) {
 			$a_config["shown"]["item"][] = $ifname;
 		}
 	}
@@ -121,7 +117,7 @@ if ($first_time) {
 	$shown[$keys[0]] = true;
 }
 
-if (isset($a_config["refreshinterval"])) {
+if (isset($a_config["refreshinterval"]) && is_numericint($a_config["refreshinterval"])) {
 	$refreshinterval = $a_config["refreshinterval"];
 } else {
 	$refreshinterval = 10;
@@ -156,15 +152,13 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<object data="graph.php?ifnum=<?=$ifname?>&amp;ifname=<?=rawurlencode($ifdescr)?>&amp;timeint=<?=$refreshinterval?>&amp;initdelay=<?=$graphcounter * 2?>">
 			<param name="id" value="graph" />
 			<param name="type" value="image/svg+xml" />
-			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 		</object>
 	</div>
-	<br />
 <?php endif; ?>
 <?php endforeach; ?>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
@@ -172,7 +166,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<div class="col-sm-6 checkbox">
 <?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
 			<label>
-				<input type="checkbox" name="shown[]"<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
+				<input type="checkbox" name="shown[<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
 				<?=$ifname?>
 			</label>
 <?php endforeach; ?>
@@ -182,11 +176,11 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		<label for="scale_type_up" class="col-sm-3 control-label">Default Autoscale</label>
 		<div class="col-sm-6 checkbox">
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked="checked"')?> />
+				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked')?> />
 				up
 			</label>
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked="checked"' : '')?> />
+				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked' : '')?> />
 				follow
 			</label>
 		</div>
@@ -195,7 +189,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 	<div class="form-group">
 		<label for="refreshinterval" class="col-sm-3 control-label">Refresh Interval</label>
 		<div class="col-sm-6">
-			<input type="number" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
+			<input type="number" id="refreshinterval" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
 		</div>
 	</div>
 

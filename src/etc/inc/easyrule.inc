@@ -27,15 +27,12 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	filter
-*/
 
 $blockaliasname = 'EasyRuleBlockHosts';
 $protocols_with_ports = array('tcp', 'udp');
 require_once("functions.inc");
 require_once("util.inc");
+require_once("ipsec.inc");
 require_once("config.inc");
 
 function easyrule_find_rule_interface($int) {
@@ -52,7 +49,7 @@ function easyrule_find_rule_interface($int) {
 	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (ipsec_enabled()) {
 		$iflist["enc0"] = "IPSEC";
 	}
 

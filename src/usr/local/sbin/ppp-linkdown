@@ -1,6 +1,7 @@
 #!/bin/sh
 
 IF="${1}"
+PROTOCOL="${2}"
 LOCAL_IP="${3}"
 
 if [ -f /tmp/${IF}up ] && [ -f /conf/${IF}.log ]; then
@@ -10,17 +11,20 @@ fi
 
 /etc/rc.kill_states ${IF} ${LOCAL_IP}
 
-if [ -s "/tmp/${IF}_defaultgw" ]; then
+if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
 	GW=`head -n 1 /tmp/${IF}_defaultgw`
 	[ -n "${GW}" ] \
-		&& /sbin/route delete default ${GW}
+		&& /sbin/route -q delete default ${GW}
+fi
+if [ "${PROTOCOL}" == "inet6" ]; then
+	/usr/local/sbin/ppp-ipv6 ${IF} down
 fi
 # delete the node just in case mpd cannot do that
 /usr/sbin/ngctl shutdown ${IF}:
 if [ -f "/var/etc/nameserver_${IF}" ]; then
 	# Remove old entries
 	for nameserver in `cat /var/etc/nameserver_${IF}`; do
-		/sbin/route delete ${nameserver} >/dev/null 2>&1
+		/sbin/route -q delete ${nameserver} >/dev/null 2>&1
 	done
 	/bin/rm -f /var/etc/nameserver_${IF}
 fi

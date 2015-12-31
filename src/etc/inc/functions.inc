@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	functions.inc
 	Copyright (C) 2004-2006 Scott Ullrich
@@ -29,9 +28,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-	pfSense_MODULE:	utils
-
 */
 
 /* BEGIN compatibility goo with HEAD */

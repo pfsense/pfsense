@@ -4,10 +4,11 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
- *	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>.
- *	Copyright (c)  2014 Ermal Luçi
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
  *
@@ -58,7 +59,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-editphase1
-##|*NAME=VPN: IPsec: Edit Phase 1 page
+##|*NAME=VPN: IPsec: Edit Phase 1
 ##|*DESCR=Allow access to the 'VPN: IPsec: Edit Phase 1' page.
 ##|*MATCH=vpn_ipsec_phase1.php*
 ##|-PRIV
@@ -133,7 +134,7 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 	$pconfig['authentication_method'] = $a_phase1[$p1index]['authentication_method'];
 
 	if (($pconfig['authentication_method'] == "pre_shared_key") ||
-		($pconfig['authentication_method'] == "xauth_psk_server")) {
+	    ($pconfig['authentication_method'] == "xauth_psk_server")) {
 		$pconfig['pskey'] = $a_phase1[$p1index]['pre-shared-key'];
 	} else {
 		$pconfig['certref'] = $a_phase1[$p1index]['certref'];
@@ -199,10 +200,11 @@ if ($_POST) {
 	$method = $pconfig['authentication_method'];
 	// Unset ca and cert if not required to avoid storing in config
 	if ($method == "pre_shared_key" || $method == "xauth_psk_server") {
-		unset($pconfig['caref']);
 		unset($pconfig['certref']);
 	}
-
+	if ($method != "rsasig" && $method != "xauth_rsa_server" && $method != "eap-tls") {
+		unset($pconfig['caref']);
+	}
 	// Only require PSK here for normal PSK tunnels (not mobile) or xauth.
 	// For RSA methods, require the CA/Cert.
 	switch ($method) {
@@ -414,6 +416,19 @@ if ($_POST) {
 		}
 	}
 
+	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
+	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
+		if (!empty($config['ipsec']['client']['user_source'])) {
+			$auth_server_list  = explode(',', $config['ipsec']['client']['user_source']);
+			foreach ($auth_server_list as $auth_server_name) {
+				$auth_server       = auth_get_authserver($auth_server_name);
+				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+					$input_errors[] = gettext("A valid RADIUS server must be selected for user authentication on the Mobile Clients tab in order to set EAP-RADIUS as the authentication method.");
+				}
+			}
+		}
+	}
+
 	/* build our encryption algorithms array */
 	$pconfig['ealgo'] = array();
 	$pconfig['ealgo']['name'] = $_POST['ealgo'];
@@ -511,21 +526,24 @@ function build_interface_list() {
 
 	$carplist = get_configured_carp_interface_list();
 
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+	foreach ($carplist as $cif => $carpip) {
+		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) . ")";
+	}
 
 	$aliaslist = get_configured_ip_aliases_list();
 
-	foreach ($aliaslist as $aliasip => $aliasif)
+	foreach ($aliaslist as $aliasip => $aliasif) {
 		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	}
 
 	$grouplist = return_gateway_groups_array();
 
 	foreach ($grouplist as $name => $group) {
-		if($group[0]['vip'] != "")
+		if ($group[0]['vip'] != "") {
 			$vipif = $group[0]['vip'];
-		else
+		} else {
 			$vipif = $group[0]['int'];
+		}
 
 		$interfaces[$name] = "GW Group {$name}";
 	}
@@ -539,9 +557,10 @@ function build_auth_method_list() {
 
 	$list = array();
 
-	foreach ($p1_authentication_methods as $method_type => $method_params){
-		if (!$pconfig['mobile'] && $method_params['mobile'])
+	foreach ($p1_authentication_methods as $method_type => $method_params) {
+		if (!$pconfig['mobile'] && $method_params['mobile']) {
 			continue;
+		}
 
 		$list[$method_type] = htmlspecialchars($method_params['name']);
 	}
@@ -554,8 +573,9 @@ function build_myid_list() {
 
 	$list = array();
 
-	foreach ($my_identifier_list as $id_type => $id_params)
+	foreach ($my_identifier_list as $id_type => $id_params) {
 		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
 
 	return($list);
 }
@@ -565,8 +585,9 @@ function build_peerid_list() {
 
 	$list = array();
 
-	foreach ($peer_identifier_list as $id_type => $id_params)
+	foreach ($peer_identifier_list as $id_type => $id_params) {
 		$list[$id_type] = htmlspecialchars($id_params['desc']);
+	}
 
 	return($list);
 }
@@ -576,9 +597,10 @@ function build_cert_list() {
 
 	$list = array();
 
-	if(is_array($config['cert'])) {
-		foreach ($config['cert'] as $cert)
+	if (is_array($config['cert'])) {
+		foreach ($config['cert'] as $cert) {
 			$list[$cert['refid']] = $cert['descr'];
+		}
 	}
 
 	return($list);
@@ -589,9 +611,10 @@ function build_ca_list() {
 
 	$list = array();
 
-	if(is_array($config['ca'])) {
-		foreach ($config['ca'] as $ca)
-			$list[$ca['refid']] =  $ca['descr'];
+	if (is_array($config['ca'])) {
+		foreach ($config['ca'] as $ca) {
+			$list[$ca['refid']] = $ca['descr'];
+		}
 	}
 
 	return($list);
@@ -602,18 +625,21 @@ function build_eal_list() {
 
 	$list = array();
 
-	if(is_array($p1_ealgos)) {
-		foreach ($p1_ealgos as $algo => $algodata)
+	if (is_array($p1_ealgos)) {
+		foreach ($p1_ealgos as $algo => $algodata) {
 			$list[$algo] = htmlspecialchars($algodata['name']);
+		}
 	}
 
 	return($list);
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 1"), gettext("Mobile Client"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 1"));
+	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 1"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 1"));
+	$editing_mobile = false;
 }
 
 $shortcut_section = "ipsec";
@@ -625,13 +651,11 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Tunnels"), !$editing_mobile, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), $editing_mobile, "vpn_ipsec_mobile.php");
 $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -734,8 +758,9 @@ $group->add(new Form_Input(
 	$pconfig['peerid_data']
 ));
 
-if($pconfig['mobile'])
+if ($pconfig['mobile']) {
 	$group->setHelp('This is known as the "group" setting on some VPN client implementations');
+}
 
 $section->add($group);
 
@@ -755,7 +780,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'caref',
-	'My Certificate Authority',
+	'Peer Certificate Authority',
 	$pconfig['caref'],
 	build_ca_list()
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
@@ -895,9 +920,11 @@ print($form);
 
 /* determine if we should init the key length */
 $keyset = '';
-if (isset($pconfig['ealgo']['keylen']))
-	if (is_numeric($pconfig['ealgo']['keylen']))
+if (isset($pconfig['ealgo']['keylen'])) {
+	if (is_numeric($pconfig['ealgo']['keylen'])) {
 		$keyset = $pconfig['ealgo']['keylen'];
+	}
+}
 ?>
 
 
@@ -905,7 +932,7 @@ if (isset($pconfig['ealgo']['keylen']))
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function myidsel_change() {
 		hideGroupInput('myid_data', ($('#myid_type').val() == 'myaddress'));
@@ -935,8 +962,15 @@ events.push(function(){
 		switch ($('#authentication_method').val()) {
 			case 'eap-mschapv2':
 			case 'eap-radius':
-			case 'eap-tls':
 			case 'hybrid_rsa_server':
+				hideInput('pskey', true);
+				hideClass('peeridgroup', false);
+				hideInput('certref', false);
+				hideInput('caref', true);
+				disableInput('certref', false);
+				disableInput('caref', true);
+				break;
+			case 'eap-tls':
 			case 'xauth_rsa_server':
 			case 'rsasig':
 				hideInput('pskey', true);
@@ -1006,21 +1040,24 @@ events.push(function(){
 ?>
 		}
 
-		if( bits )
+		if (bits) {
 			$('#ealgo_keylen').val(bits);
+		}
 	}
 
 	function dpdchkbox_change() {
-		hide = ! $('#dpd_enable').prop('checked');
+		hide = !$('#dpd_enable').prop('checked');
 
 		hideInput('dpd_delay', hide);
 		hideInput('dpd_maxfail', hide);
 
-		if(! $('#dpd_delay').val())
+		if (!$('#dpd_delay').val()) {
 			$('#dpd_delay').val('10')
+		}
 
-		if(! $('#dpd_maxfail').val())
+		if (!$('#dpd_maxfail').val()) {
 			$('#dpd_maxfail').val('5')
+		}
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
@@ -1063,8 +1100,8 @@ events.push(function(){
 	ealgosel_change(<?=$keyset?>);
 	dpdchkbox_change();
 
-	// ---------- On initial page load ------------------------------------------------------------ 
-	
+	// ---------- On initial page load ------------------------------------------------------------
+
 	hideInput('ikeid', true);
 });
 //]]>

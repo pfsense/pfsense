@@ -32,10 +32,6 @@
 
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
-	pfSense_MODULE:	utils
-*/
 require_once("globals.inc");
 require_once("captiveportal.inc");
 require_once("openvpn.inc");
@@ -138,6 +134,8 @@ function stop_service($name) {
 				}
 				if (!empty($service['stopcmd'])) {
 					eval($service['stopcmd']);
+				} elseif (!empty($service['executable'])) {
+					mwexec("/usr/bin/killall " . escapeshellarg($service['executable']));
 				}
 
 				break;
@@ -153,7 +151,9 @@ function restart_service($name) {
 		return;
 	}
 
-	stop_service($name);
+	if (is_service_running($name)) {
+		stop_service($name);
+	}
 	start_service($name);
 
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
@@ -318,7 +318,7 @@ function get_services() {
 	$gateways_arr = return_gateways_array();
 	if (is_array($gateways_arr)) {
 		$pconfig = array();
-		$pconfig['name'] = "apinger";
+		$pconfig['name'] = "dpinger";
 		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
 		$services[] = $pconfig;
 	}
@@ -344,7 +344,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['ipsec']['enable'])) {
+	if (ipsec_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
@@ -465,7 +465,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-play" : "icon icon-large icon-play";
+		$output .= ($smallicon) ? "fa fa-play" : "fa fa-lg fa-play";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -474,7 +474,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-remove" : "icon icon-large icon-remove";
+		$output .= ($smallicon) ? "fa fa-times" : "fa fa-lg fa-times";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -504,32 +504,32 @@ function get_service_control_GET_links($service, $addname = false) {
 	if (get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}\">";
 		}
-		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}\">";
 		}
-		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
 			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="icon icon-play-circle"></i></a> ';
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
 		}
 	}
 
@@ -549,7 +549,7 @@ function get_service_control_links($service, $addname = false) {
 			$link = '<a title="%s" href="#" id="captiveportal-%s-' . $service['zone'] . '">';
 		break;
 		default:
-			$link = '<a title="%s" href="#" value="" id="%s-' . $service['name'] . '">';
+			$link = '<a title="%s" href="#" id="%s-' . $service['name'] . '">';
 	}
 
 	if (get_service_status($service)) {
@@ -558,33 +558,33 @@ function get_service_control_links($service, $addname = false) {
 				$output .= '<a href="#" id="openvpn-restartservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
 				break;
 			case "captiveportal":
-				$output .= '<a href="#" value="" id=captiveportal-restartservice-' . $service['zone'] . '">';
+				$output .= '<a href="#" id="captiveportal-restartservice-' . $service['zone'] . '">';
 				break;
 			default:
 				$output .= '<a href="#" id="restartservice-' . $service['name'] . '" >';
 		}
 
-		$output .= "<i class=\"icon-large icon-repeat\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' alt='restart'></i></a>\n";
+		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
 
 		switch ($service['name']) {
 			case "openvpn":
 				$output .= '<a href="#" id="openvpn-stopservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
 				break;
 			case "captiveportal":
-				$output .= '<a href="#" value="" id=captiveportal-stopservice-' . $service['zone'] . '">';
+				$output .= '<a href="#" id="captiveportal-stopservice-' . $service['zone'] . '">';
 				break;
 			default:
 				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
 		}
 
-		$output .= "<i class=\"icon-large icon-stop\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' alt='stop'></i></a>";
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
 
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
 			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="icon icon-play-circle"></i></a> ';
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
 		}
 	}
 
@@ -605,7 +605,7 @@ function service_control_start($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':
@@ -674,8 +674,8 @@ function service_control_stop($name, $extras) {
 		case 'openntpd':
 			killbyname("openntpd");
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
+			stop_dpinger();
 			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
@@ -744,8 +744,7 @@ function service_control_restart($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':

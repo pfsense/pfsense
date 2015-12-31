@@ -3,11 +3,10 @@
 	diag_nanobsd.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2009 Scott Ullrich <sullrich@gmail.com>
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,12 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/glabel	/usr/bin/grep	/usr/bin/cut	/usr/bin/head	/bin/cp
-	pfSense_BUILDER_BINARIES:	/usr/sbin/boot0cfg	/bin/mkdir	/sbin/fsck_ufs	/sbin/mount	/bin/dd	/sbin/tunefs
-	pfSense_MODULE:	nanobsd
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-nanobsd
 ##|*NAME=Diagnostics: NanoBSD
@@ -74,9 +67,9 @@ ini_set('max_input_time', '9999');
 require_once("guiconfig.inc");
 require_once("config.inc");
 
-// Setting DEBUG to true causes the dangerous stuff on this page to be simulated rather than exectued.
+// Setting DEBUG to true causes the dangerous stuff on this page to be simulated rather than executed.
 // MUST be set to false for production of course
-define(DEBUG, true);
+define(DEBUG, false);
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NanoBSD"));
 include("head.inc");
@@ -91,10 +84,11 @@ $NANOBSD_SIZE = nanobsd_get_size();
 $class='alert-warning';
 
 if ($_POST['bootslice']) {
-	if (!DEBUG)
+	if (!DEBUG) {
 	   nanobsd_switch_boot_slice();
-	else
+	} else {
 	   sleep(4);
+	}
 
 	$savemsg = gettext("The boot slice has been set to") . " " . nanobsd_get_active_slice();
 	$class='alert-success';
@@ -127,30 +121,29 @@ if ($_POST['changero']) {
 if ($_POST['setrw']) {
 	if (!DEBUG) {
 		conf_mount_rw();
-		if (isset($_POST['nanobsd_force_rw']))
+		if (isset($_POST['nanobsd_force_rw'])) {
 			$config['system']['nanobsd_force_rw'] = true;
-		else
+		} else {
 			unset($config['system']['nanobsd_force_rw']);
+		}
 
 		write_config("Changed Permanent Read/Write Setting");
 		conf_mount_ro();
-	}
-	else {
-		$savemsg = 'Saved r/w permanantly';
+	} else {
+		$savemsg = 'Saved r/w permanently';
 		$class = 'alert-success';
 	}
 }
 
 print_info_box("The options on this page are intended for use by advanced users only.");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, $class);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(false);
 
-$section = new Form_Section('NanoBSD Option');
+$section = new Form_Section('NanoBSD Options');
 
 $section->addInput(new Form_StaticText(
 	'Image Size',
@@ -168,18 +161,22 @@ $section->addInput(new Form_StaticText(
 if (is_writable("/")) {
 	$refcount = refcount_read(1000);
 	/* refcount_read returns -1 when shared memory section does not exist */
-	if ($refcount == 1 || $refcount == -1) {
+	/* refcount can be zero here when the user has set nanobsd_force_rw */
+	/* refcount 1 is normal, so only display the count for abnormal values */
+	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
 		$refdisplay = " (Reference count " . $refcount . ")";
 	}
 	$lbl = gettext("Read/Write") . $refdisplay;
-	if (!isset($config['system']['nanobsd_force_rw']))
+	if (!isset($config['system']['nanobsd_force_rw'])) {
 		$btnlbl = gettext("Switch to Read-Only");
+	}
 } else {
 	$lbl = gettext("Read-Only");
-	if (!isset($config['system']['nanobsd_force_rw']))
+	if (!isset($config['system']['nanobsd_force_rw'])) {
 		$btnlbl = gettext("Switch to Read/Write");
+	}
 }
 
 $robtn = new Form_Button('changero', $btnlbl);

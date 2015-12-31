@@ -30,16 +30,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall	/bin/pgrep	/bin/sh	/usr/local/sbin/dhcpd	/usr/local/sbin/igmpproxy
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig		/usr/local/sbin/dnsmasq
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/miniupnpd	/usr/sbin/radvd
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/dhcleases6	/usr/sbin/bsnmpd
-	pfSense_MODULE:	utils
-*/
-
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdns spdns-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDNS,SPDNS (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -1583,8 +1575,7 @@ EOD;
 	fclose($igmpfl);
 	unset($igmpconf);
 
-	/* NOTE: -d4 means everything LOG_WARNING and smaller */
-	mwexec("/usr/local/sbin/igmpproxy -d4 -c {$g['tmp_path']}/igmpproxy.conf");
+	mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['tmp_path']}/igmpproxy.conf");
 	log_error(gettext("Started IGMP proxy service."));
 
 	return 0;
@@ -1628,12 +1619,81 @@ function services_dhcrelay_configure() {
 		}
 	}
 
+	/*
+	 * In order for the relay to work, it needs to be active
+	 * on the interface in which the destination server sits.
+	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
 	if (!is_array($srvips)) {
 		log_error("No destination IP has been configured!");
 		return;
 	}
 
+	foreach ($srvips as $srcidx => $srvip) {
+		unset($destif);
+		foreach ($iflist as $ifname) {
+			$subnet = get_interface_ip($ifname);
+			if (!is_ipaddr($subnet)) {
+				continue;
+			}
+			$subnet .= "/" . get_interface_subnet($ifname);
+			if (ip_in_subnet($srvip, $subnet)) {
+				$destif = get_real_interface($ifname);
+				break;
+			}
+		}
+		if (!isset($destif)) {
+			foreach (get_staticroutes() as $rtent) {
+				if (ip_in_subnet($srvip, $rtent['network'])) {
+					$a_gateways = return_gateways_array(true);
+					$destif = $a_gateways[$rtent['gateway']]['interface'];
+					break;
+				}
+			}
+		}
+
+		if (!isset($destif)) {
+			/* Create a array from the existing route table */
+			exec("/usr/bin/netstat -rnWf inet", $route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			$route_arr = array();
+			foreach ($route_str as $routeline) {
+				$items = preg_split("/[ ]+/i", $routeline);
+				if (is_subnetv4($items[0])) {
+					$subnet = $items[0];
+				} elseif (is_ipaddrv4($items[0])) {
+					$subnet = "{$items[0]}/32";
+				} else {
+					// Not a subnet or IP address, skip to the next line.
+					continue;
+				}
+				if (ip_in_subnet($srvip, $subnet)) {
+					$destif = trim($items[6]);
+					break;
+				}
+			}
+		}
+
+		if (!isset($destif)) {
+			if (is_array($config['gateways']['gateway_item'])) {
+				foreach ($config['gateways']['gateway_item'] as $gateway) {
+					if (isset($gateway['defaultgw'])) {
+						$destif = get_real_interface($gateway['interface']);
+						break;
+					}
+				}
+			} else {
+				$destif = get_real_interface("wan");
+			}
+		}
+
+		if (!empty($destif)) {
+			$dhcrelayifs[] = $destif;
+		}
+	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
 	/* fire up dhcrelay */
@@ -1694,10 +1754,70 @@ function services_dhcrelay6_configure() {
 	}
 	$dhcrelayifs = array_unique($dhcrelayifs);
 
+	/*
+	 * In order for the relay to work, it needs to be active
+	 * on the interface in which the destination server sits.
+	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
-	if (!is_array($srvips)) {
-		log_error("No destination IP has been configured!");
-		return;
+	$srvifaces = array();
+	foreach ($srvips as $srcidx => $srvip) {
+		unset($destif);
+		foreach ($iflist as $ifname) {
+			$subnet = get_interface_ipv6($ifname);
+			if (!is_ipaddrv6($subnet)) {
+				continue;
+			}
+			$subnet .= "/" . get_interface_subnetv6($ifname);
+			if (ip_in_subnet($srvip, $subnet)) {
+				$destif = get_real_interface($ifname);
+				break;
+			}
+		}
+		if (!isset($destif)) {
+			if (is_array($config['staticroutes']['route'])) {
+				foreach ($config['staticroutes']['route'] as $rtent) {
+					if (ip_in_subnet($srvip, $rtent['network'])) {
+						$a_gateways = return_gateways_array(true);
+						$destif = $a_gateways[$rtent['gateway']]['interface'];
+						break;
+					}
+				}
+			}
+		}
+
+		if (!isset($destif)) {
+			/* Create a array from the existing route table */
+			exec("/usr/bin/netstat -rnWf inet6", $route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			array_shift($route_str);
+			$route_arr = array();
+			foreach ($route_str as $routeline) {
+				$items = preg_split("/[ ]+/i", $routeline);
+				if (ip_in_subnet($srvip, $items[0])) {
+					$destif = trim($items[6]);
+					break;
+				}
+			}
+		}
+
+		if (!isset($destif)) {
+			if (is_array($config['gateways']['gateway_item'])) {
+				foreach ($config['gateways']['gateway_item'] as $gateway) {
+					if (isset($gateway['defaultgw'])) {
+						$destif = get_real_interface($gateway['interface']);
+						break;
+					}
+				}
+			} else {
+				$destif = get_real_interface("wan");
+			}
+		}
+
+		if (!empty($destif)) {
+			$srvifaces[] = "{$srvip}%{$destif}";
+		}
 	}
 
 	/* fire up dhcrelay */
@@ -2148,10 +2268,6 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$config['snmpd']['bindip'] = 'lan';
-			unset($config['snmpd']['bindlan']);
-		}
 		$bind_to_ip = "0.0.0.0";
 		if (isset($config['snmpd']['bindip'])) {
 			if (is_ipaddr($config['snmpd']['bindip'])) {
@@ -2210,17 +2326,10 @@ EOD;
 			}
 
 			if (isset($config['snmpd']['modules']['hostres'])) {
-				/* XXX: hostres module crashes APU - ticket #4403 */
-				$specplatform = system_identify_specific_platform();
-				if ($specplatform['name'] == 'APU') {
-					log_error("'Host Resources' SNMP module was ignored because it can potentially crash system on APU boards");
-				} else {
-					$snmpdconf .= <<<EOD
+				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 
 EOD;
-				}
-				unset($specplatform);
 			}
 
 			if (isset($config['snmpd']['modules']['bridge'])) {
@@ -2248,13 +2357,9 @@ EOD;
 		fclose($fd);
 		unset($snmpdconf);
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$bindlan = "";
-		}
-
 		/* run bsnmpd */
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
-			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
+			" -p {$g['varrun_path']}/snmpd.pid");
 
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";
@@ -2490,7 +2595,7 @@ function upnp_action ($action) {
 		case "stop":
 			killbypid("{$g['varrun_path']}/miniupnpd.pid");
 			while ((int)exec("/bin/pgrep -a miniupnpd | wc -l") > 0) {
-				mwexec('killall miniupnpd 2>/dev/null', true);
+				mwexec('/usr/bin/killall miniupnpd 2>/dev/null', true);
 			}
 			mwexec('/sbin/pfctl -aminiupnpd -Fr 2>&1 >/dev/null');
 			mwexec('/sbin/pfctl -aminiupnpd -Fn 2>&1 >/dev/null');

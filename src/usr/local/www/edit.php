@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -36,7 +35,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -53,13 +52,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: shell
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-edit
-##|*NAME=Diagnostics: Edit FIle
+##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
 ##|*MATCH=edit.php*
 ##|*MATCH=browser.php*
@@ -139,7 +135,7 @@ require("head.inc");
 			<div style="background:#eeeeee;" id="fileOutput">
 				<script type="text/javascript">
 				//<![CDATA[
-				window.onload=function(){
+				window.onload=function() {
 					document.getElementById("fileContent").wrap='off';
 				}
 				//]]>
@@ -150,7 +146,8 @@ require("head.inc");
 	</div>
 </div>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function loadFile() {
 		jQuery("#fileStatus").html("");
 		jQuery("#fileStatusBox").show(500);
@@ -173,8 +170,7 @@ require("head.inc");
 			var fileContent = window.atob(values.join("|"));
 
 			jQuery("#fileContent").val(fileContent);
-		}
-		else {
+		} else {
 			jQuery("#fileStatus").html(values[0]);
 			jQuery("#fileContent").val("");
 		}
@@ -296,12 +292,10 @@ var Base64 = {
 
 			if (c < 128) {
 				utftext += String.fromCharCode(c);
-			}
-			else if((c > 127) && (c < 2048)) {
+			} else if ((c > 127) && (c < 2048)) {
 				utftext += String.fromCharCode((c >> 6) | 192);
 				utftext += String.fromCharCode((c & 63) | 128);
-			}
-			else {
+			} else {
 				utftext += String.fromCharCode((c >> 12) | 224);
 				utftext += String.fromCharCode(((c >> 6) & 63) | 128);
 				utftext += String.fromCharCode((c & 63) | 128);
@@ -318,20 +312,18 @@ var Base64 = {
 		var i = 0;
 		var c = c1 = c2 = 0;
 
-		while ( i < utftext.length ) {
+		while (i < utftext.length) {
 
 			c = utftext.charCodeAt(i);
 
 			if (c < 128) {
 				string += String.fromCharCode(c);
 				i++;
-			}
-			else if((c > 191) && (c < 224)) {
+			} else if ((c > 191) && (c < 224)) {
 				c2 = utftext.charCodeAt(i+1);
 				string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
 				i += 2;
-			}
-			else {
+			} else {
 				c2 = utftext.charCodeAt(i+1);
 				c3 = utftext.charCodeAt(i+2);
 				string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
@@ -351,6 +343,7 @@ var Base64 = {
 			loadFile();
 		});
 	<?php endif; ?>
+//]]>
 </script>
 
 <?php include("foot.inc");

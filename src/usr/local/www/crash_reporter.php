@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	crash_reporter.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,9 +52,6 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	header
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-crash-reporter
@@ -82,6 +77,7 @@ function upload_crash_report($files) {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_HEADER, 0);
 	curl_setopt($ch, CURLOPT_VERBOSE, 0);
+	curl_setopt($ch, CURLOPT_SAFE_UPLOAD, false);
 	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 	curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
 	curl_setopt($ch, CURLOPT_URL, $g['crashreporterurl']);
@@ -154,23 +150,23 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			echo "Could not locate any crash data.";
 		}
 ?>
-	<div class="jumbotron">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h3><?=gettext("Unfortunately we have detected a programming bug.")?></h3></div>
+		<div class="panel-heading"><?=gettext("Unfortunately we have detected a programming bug.")?></div>
 		<div class="panel-body">
-		<p>
-			<?=gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?")?>
-			<i><?=gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.")?></i>
-		</p>
-		<textarea readonly="readonly" style="width: 100%; height: 350px;">
-			<?=$crash_reports?>
-		</textarea>
-		<form action="crash_reporter.php" method="post">
-			<button class="btn btn-primary" name="Submit" type="submit" value="Yes"><?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?></button>
-			<button class="btn btn-default" name="Submit" type="submit" value="No"><?=gettext("No")?> - <?=gettext("Just delete the crash report and take me back to the Dashboard")?></button>
-		</form>
-	</div>
-	</div>
+			<div class="content">
+				<p>
+					<?=gettext("Would you like to submit the programming debug logs to the pfSense developers for inspection?")?>
+					<i><?=gettext("Please double check the contents to ensure you are comfortable sending this information before clicking Yes.")?></i>
+				</p>
+				<textarea readonly style="width: 100%; height: 350px;">
+					<?=$crash_reports?>
+				</textarea>
+				<form action="crash_reporter.php" method="post">
+					<button class="btn btn-primary" name="Submit" type="submit" value="Yes"><?=gettext("Yes")?> - <?=gettext("Submit this to the developers for inspection")?></button>
+					<button class="btn btn-default" name="Submit" type="submit" value="No"><?=gettext("No")?> - <?=gettext("Just delete the crash report and take me back to the Dashboard")?></button>
+				</form>
+			</div>
+		</div>
 <?php
 	}
 ?>

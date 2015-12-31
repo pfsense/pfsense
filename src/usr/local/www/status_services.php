@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -53,14 +52,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/openvpn /usr/bin/killall	/bin/ps
-	pfSense_MODULE: services
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-services
-##|*NAME=Status: Services page
+##|*NAME=Status: Services
 ##|*DESCR=Allow access to the 'Status: Services' page.
 ##|*MATCH=status_services.php*
 ##|-PRIV
@@ -71,8 +66,9 @@ require_once("shortcuts.inc");
 
 // Leave GET enabled in case any other pages use it.
 // ToDo: Check other pages and remove GET completely
-if(!$_GET && $_POST)
+if (!$_GET && $_POST) {
 	$_GET = $_POST;
+}
 
 $service_name = '';
 if (isset($_GET['service'])) {
@@ -104,8 +100,9 @@ if ($_GET['batch']) {
 $pgtitle = array(gettext("Status"), gettext("Services"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $services = get_services();
 
@@ -123,7 +120,7 @@ if (count($services) > 0) {
 
 	<div class="panel-body panel-default">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Service")?></th>
@@ -137,9 +134,10 @@ if (count($services) > 0) {
 
 	uasort($services, "service_name_compare");
 
-	foreach($services as $service) {
-		if (empty($service['name']))
+	foreach ($services as $service) {
+		if (empty($service['name'])) {
 			continue;
+		}
 
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
@@ -163,7 +161,7 @@ if (count($services) > 0) {
 		}
 ?>
 						<td>
-							<?=$running ? '<font color="green">Running</font>':'<font color="red">Stopped</font>'?>
+							<?=$running ? '<span class="text-success">Running</span>':'<span class="text-danger">Stopped</span>'?>
 						</td>
 						<td>
 							<?=get_service_control_links($service)?>
@@ -192,9 +190,9 @@ if (count($services) > 0) {
 	print_info_box(gettext("No services found"), 'danger');
 }
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// If a restart button is clicked, populate the hidden inputs and submit the form (via POST)
 	$('[id^=restartservice-]').click(function(event) {
 		$('#mode').val('restartservice');

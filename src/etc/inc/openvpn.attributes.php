@@ -128,7 +128,7 @@ function parse_cisco_acl($attribs) {
 					$isblock = false;
 				}
 			} else if (trim($rule[$index]) == "any") {
-				$tmprule .= "from any";
+				$tmprule .= "from any ";
 				$index++;
 			} else {
 				$tmprule .= "from {$rule[$index]}";

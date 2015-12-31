@@ -1,243 +1,381 @@
 @import url("/bootstrap/css/bootstrap.min.css");
 @import url("/bootstrap/glyphicons/glyphicons-halflings.css");
-
-h1 a:link{
-	color: #000000;
-	text-decoration: none !important;
-}
-
-
-h1 a:visited { color: #000000; }
-h1 a:hover, h1 a:active { color: #000000; text-decoration: none !important; }
+@import url("/bootstrap/fonts/roboto.css");
 
 html {
-	position: relative;
-	min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-	padding-top: 0px;
-	margin-bottom: 80px;
-}
-
-.navbar-brand {
-	padding-top: 0;
+    margin-bottom: 80px;
+    background-color: #F5F5F5;
+    font-family: 'Roboto', sans-serif;
 }
 
 body.no-menu #jumbotron {
-	padding: 100px 0;
-	background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
+    padding: 100px 0;
+    background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
 }
 
 body.no-menu {
-	background: url("/logo-black.png") no-repeat center 30px;
-	padding-top: 70px;
+    background: url("/logo-black.png") no-repeat center 30px;
+    padding-top: 70px;
 }
 
 body.no-menu #jumbotron {
-	margin-top: 75px;
+    margin-top: 75px;
 }
 
 body#index .icons {
-	float: right;
+    float: right;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a.fa, i.fa {
+    font-size: 18px;
+}
+
+h1 a:link, h1 a:visited {
+    color: #000000;
+    text-decoration: none !important;
+}
+
+h1.page-header {
+    display: none;
+}
+
+h1 a:hover, h1 a:active { 
+    color: #000000; 
+    text-decoration: none !important; 
+}
+
+.container.fixed {
+    padding-top: 60px;
+}
+
+.breadcrumb {
+    font-size: 22px;
+    background-color: #E0E0E0;
+    margin-bottom: 10px;
+    border-radius: 0; 
+    box-shadow: 0px 1px 10px rgba(0,0,0,.4);
+}
+
+.breadcrumb>li+li:before {
+    color: #B71C1C;
+}
+
+ul.context-links li a {
+    color: #B71C1C;
 }
 
 .ui-sortable-handle {
-	cursor: move;
+    cursor: move;
 }
 
 tr.disabled td,
 tr.disabled th {
-	opacity: .5;
+    opacity: .5;
 }
 
 .contains-table table {
-	border: 1px solid #ddd;
-}
-
-.nav-pills {
-	margin-bottom: 20px;
+    border: 1px solid #ddd;
 }
 
 /** Content structure */
 .table-responsive {
-	clear: both;
-	margin-bottom: 0px;
-}
-
-.navbar {
-	margin-bottom: 10px;
+    clear: both;
+    margin-bottom: 0px;
 }
 
 .page-header {
-	padding-bottom: 4px;
-	margin-bottom: 10px;
+    padding-bottom: 4px;
+    margin-bottom: 10px;
 }
 
-.breadcrumb {
-	margin-bottom: 10px;
+ul.context-links li a {
+
+}
+
+/* navigation */
+.navbar {
+    margin-bottom: 10px;
+}
+
+.navbar-inverse {
+    background-color: #212121;
+}
+
+.navbar-brand {
+    padding-top: 3px;
+}
+
+.nav>li>a {
+    padding: 14px 19px 10px 19px;
+    border-bottom: 5px solid #F5F5F5;
+    border-radius: 0;
+    color: #B71C1C;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    background-color: #f5f5f5;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav li.open>a, .nav li.open>a:focus, .nav-pills>li.active>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    color: #B71C1C;
+    background-color: #F5F5F5;
+}
+
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #212121;
+    color: #BDBDBD;
+}
+
+.nav-tabs>li>a {
+    border-bottom: 5px solid #F5F5F5;
+    margin-bottom: 1px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
+    border-left: 1px solid #F5F5F5;
+    border-right: 1px solid #F5F5F5;
+    border-top: 1px solid #F5F5F5;
+    background-color: #F5F5F5;
+    border-bottom: 5px solid #B71C1C;
+    margin-bottom: 0;
+    color: #B71C1C;
+    box-shadow: none;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #B71C1C;
+    margin-bottom: 15px;
+}
+
+.nav-pills {
+    margin-bottom: 20px;
+}
+
+.dropdown-menu>li>a {
+    padding: 5px 20px; 
+}
+/* end navigation */
+
+.alert {
+    border-radius: 0;
+    box-shadow: 0px 1px 10px rgba(0,0,0,0.1);
+}
+
+.panel {
+    margin-bottom: 10px;
+    border-radius: 0; 
+    box-shadow: 0px 3px 7px rgba(0,0,0,.1);
+}
+
+.panel-default>.panel-heading {
+    color: #fff;
+    background-color: #424242;
+    letter-spacing: 1px;
 }
 
 .panel-heading {
-	padding: 5px 15px;
+    padding: 5px 15px;
+    border-radius: 0; 
+}
+
+.panel-heading a:link, .panel-heading a:visited {
+    color: white;
+}
+
+.panel-title {
+    font-size: 20px;
+}
+
+.panel-body {
+    padding: 0px;
 }
 
 #login .panel-heading {
-	padding: 10px 15px
+    padding: 10px 15px
 }
 
 .content {
-	padding: 10px;
+    padding: 10px;
 }
 
 .form-horizontal {
-	margin-bottom: 10px;
-	overflow: hidden;
+    margin-bottom: 10px;
+    overflow: hidden;
 }
 
 .form-horizontal .checkbox {
-	padding: 3px 16px;
+    padding: 3px 16px;
 }
 
 .form-control {
     height: 24px;
-    padding: 0 12px;
+    padding: 0 6px;
     margin-bottom: 5px;
 }
 
+.form-control option {
+    padding: inherit;
+}
+
 #login .form-control {
-	height: 34px;
+    height: 34px;
 }
 
 #login .form-group {
-	border: none;
+    border: none;
 }
 
 .form-group {
     margin: 0;
     padding: 7px 5px 5px 5px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #E0E0E0;
 }
 
 .form-group:last-child {
-	border-bottom: none;
+    border-bottom: none;
 }
 
 .input-group-addon {
-	padding: 0 12px;
-}
-
-.panel-default>.panel-heading {
-	color: #fff;
-	background-color: #424242;
-	letter-spacing: 1px;
-}
-
-.panel {
-	margin-bottom: 10px;
-}
-
-.panel-body {
-	padding: 0px;
+    padding: 0 12px;
 }
 
 .table {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .table>tbody>tr>td {
-	padding: 4px;
+    padding: 6px 4px 6px 10px;
+}
+
+/* active table row */
+.table>tbody>tr.active>td, .table>tbody>tr.active>th, .table>tbody>tr>td.active, .table>tbody>tr>th.active, .table>tfoot>tr.active>td, .table>tfoot>tr.active>th, .table>tfoot>tr>td.active, .table>tfoot>tr>th.active, .table>thead>tr.active>td, .table>thead>tr.active>th, .table>thead>tr>td.active, .table>thead>tr>th.active {
+    background-color: #BDBDBD;
+}
+
+/* active table row on hover */
+.table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
+    background-color: #BDBDBD;
+}
+
+.popover {
+    max-width: none;
 }
 
 .help-block {
-	margin-bottom: 0;
+    margin-bottom: 0;
 }
 
 .action-buttons {
-	text-align: right;
-	margin-bottom: 20px;
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 20px;
 }
 
 /** Form validation */
 .input-errors ul {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 /** Page header with title and breadcrumb */
 .header {
-	position: relative;
+    position: relative;
+    margin: 10px 0 20px 0;
 }
 
 .header .page-header {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 .header .context-links {
-	position: absolute;
-	right: 0;
-	top: 15px;
+    position: absolute;
+    right: 15px;
+    top: 15px;
 }
 
 .header .context-links li {
-	float: left;
-	display: inline;
-	margin-left: 10px;
+    float: left;
+    display: inline;
+    margin-left: 10px;
 }
 
 /** Form tweaks */
 form .btn + .btn {
-	margin-left: 5px;
+    margin-left: 5px;
 }
 
 .input-group-inbetween {
-	border-left: 0;
+    border-left: 0;
 }
 
 .user-duplication .controls {
-	margin-top: 10px;
+    margin-top: 10px;
 }
 
 .checkbox.multi label {
-	display: block;
+    display: block;
 }
 
 .checkbox.multi .btn {
-	margin-top: 5px;
+    margin-top: 5px;
 }
 
 .col-sm-10 .form-control {
-	width: calc(50% - 15px); /* substract 15px to match a .col-sm-5; which satisfies my OCD */
+    width: calc(50% - 15px);
 }
 
 @media (max-width: 991px) {
-	.col-sm-10 .form-control {
-		width: 100%;
-	}
+    .col-sm-10 .form-control {
+        width: 100%;
+    }
 }
 
 /** Page footer */
 .footer {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	height: 60px;
-	background-color: #f5f5f5;
-	padding-top: 10px;
-	text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #212121;
+    padding-top: 10px;
+    text-align: center;
 }
 
+footer a {
+    color: #ffffff;
+}
+
+
 /** Homepage / dashboard */
+[id^="widgets-col"] {
+    min-height: 300px;
+}
+
+.widget .panel-heading {
+    background-color: #757575;
+}
+
 #widgetSequence {
-	position: fixed;
-	left: 0;
-	bottom: 0;
-	padding: 20px 0;
-	width: 100%;
-	z-index: 100;
-	text-align: center;
-	background: rgba(255, 255, 255, 0.6);
-	border-top: 1px solid #ddd;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 20px 0;
+    width: 100%;
+    z-index: 100;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid #ddd;
 }
 
 /** Styling for jQuery autocomplete widget */
@@ -284,5 +422,362 @@ form .btn + .btn {
 
 /** Override the bootstrap progress bar margins */
 .progress {
-	margin-bottom: 0px;
+    margin-bottom: 0px;
+    height: 14px;
+}
+
+#wizard .progress {
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    background-color: #B71C1C;
+}
+
+.progress-bar.progress-bar-success {
+    background-color: #4CAF50;
+}
+
+.progress-bar.progress-bar-warning {
+    background-color: #FBC02D;
+}
+
+.progress-bar.progress-bar-danger {
+    background-color: #B71C1C;
+}
+
+.panel-body.collapse.in {
+    overflow-x: auto;
+}
+
+/** start common colors */
+.alert-warning {
+    color: #FF6F00;
+    background-color: #FFFDE7;
+    border-color: #FFECB3;
+    border-top: 5px solid #FFD600;
+}
+
+.alert-success {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+    border-color: #DCEDC8;
+    border-top: 5px solid #1B5E20;
+}
+
+.alert-info {
+    color: #01579B;
+    background-color: #E1F5FE;
+    border-color: #B2EBF2;
+    border-top: 5px solid #01579B;
+}
+
+.bg-primary {
+    color: #000;
+    background-color: #009688;
+}
+
+.bg-info {
+    color: #01579B;
+    background-color: #E1F5FE;
+}
+
+.bg-danger {
+    color: #000;
+    background-color: #EF9A9A;
+}
+
+.bg-warning {
+    color: #000;
+    background-color: #FFF9C4;
+}
+
+.bg-success {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+}
+
+.btn-success {
+    background-color: #43A047;
+}
+
+.btn-danger {
+    background-color: #B71C1C;
+}
+
+.btn-primary {
+    background-color: #1976D2;
+}
+
+.text-warning {
+    color: #F57F17;
+}
+
+.text-success {
+    color: #4CAF50;
+}
+
+.text-danger {
+    color: #B71C1C;
+}
+/** end common colors */
+
+.table-hover>tbody>tr.hover-success:hover {
+    color: #000;
+    background-color: #A5D6A7;   
+}
+
+.table-hover>tbody>tr.hover-danger:hover {
+    color: #000;
+    background-color: #EF9A9A;   
+}
+
+.table-hover>tbody>tr.hover-warning:hover {
+    color: #000;
+    background-color: #FFF9C4;
+}
+
+/** icons are often used with onclick actions, so we need the cursor to change to a pointer */
+.icon-pointer
+{
+    cursor: pointer;
+}
+
+.icon-embed-btn
+{
+    font-size: 15px;
+    vertical-align: middle;
+    color: white;
+    padding-right: 15px;
+    padding-bottom: 17px;
+    margin-top: -0.125em
+
+}
+
+/* Used when you need an icon to act as a submit button **/
+.button-icon
+{
+    color: #337AB7;
+    background: none;
+    border: 0px;
+}
+
+.btn
+{
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+.list-group {
+    margin-bottom: 0;
+}
+
+/* icons in the dashboard panel headings should pull-right **/
+.widget-heading-icon
+{
+    display: block;
+    float:  right;  
+}
+
+.widget-heading-icon .fa {
+    color: #fff;
+}
+
+.widget-heading-icon .fa:hover {
+    color: #e0e0e0;
+}
+
+/* ipsec widget placeholder */
+#ipsec-Overview, #ipsec-tunnel, #ipsec-mobile {
+    background-color:#EEEEEE;
+}
+
+/* All pfSense textareas benefit from using a fixed width font **/
+textarea
+{
+    font-family: monospace;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+}
+
+/*
+ * CSS for Standard tree layout
+ * Copyright (C) 2005 SilverStripe Limited
+ * Feel free to use this on your websites, but please leave this message in the fies
+ * http://www.silverstripe.com/blog
+ */
+ 
+ul.tree{
+    width: auto;
+    padding-left : 0px;
+    margin-left : 0px;
+}
+
+ul.tree img{
+    border : none;
+}
+
+ul.tree, ul.tree ul {
+    padding-left: 0;
+}
+
+ul.tree ul {
+    margin-left: 16px;
+        
+}
+
+ul.tree li.closed ul {
+    display: none;
+}
+
+ul.tree li {
+    list-style: none;
+    background: url(../../tree/i-repeater.gif) 0 0 repeat-y;
+    display: block;
+    width: auto;
+}
+
+ul.tree li.last {
+    list-style: none;
+    background-image: none;
+}
+
+/* Span-A: I/L/I glpyhs */
+ul.tree span.a {
+    background: url(../../tree/t.gif) 0 50% no-repeat;
+    display: block;
+}
+
+ul.tree span.a.last {
+    background: url(../../tree/l.gif) 0 50% no-repeat;
+}
+
+/* Span-B: Plus/Minus icon */
+ul.tree span.b {
+
+}
+
+ul.tree span.a.children span.b {
+    background: url(../../tree/minus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+ul.tree li.closed span.a.children span.b {
+    background: url(../../tree/plus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+/* Span-C: Spacing and extending tree line below the icon */
+ul.tree span.c {
+    margin-left: 16px;
+}
+
+ul.tree span.a.children span.c {
+    background: url(../../tree/i-bottom.gif) 0 50% no-repeat;
+}
+
+ul.tree span.a.spanClosed span.c {
+    background-image: none;
+}
+
+/* Anchor tag: Page icon */
+ul.tree a  {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 3px 0px 3px 18px;
+    line-height: 16px;
+    background: url(../../tree/page-file.png) 0 0 no-repeat;
+}
+
+ul.tree span.a.children a {
+    background-image: url(../../tree/page-openfoldericon.png);
+}
+
+ul.tree span.a.children.spanClosed a {
+    background-image: url(../../tree/page-foldericon.png);
+}
+
+/* Unformatted tree */
+ul.tree.unformatted li {
+    background-image: none;
+    padding-left: 16px;
+}
+
+ul.tree.unformatted li li {
+    background-image: none;
+    padding-left: 0px;
+}
+
+/* Divs, by default store vertically aligned data */
+
+ul.tree li div {
+    float: right;
+    clear: right;
+    height: 1em;
+    margin-top: -26px;
+}
+
+/* As inside DIVs should be treated normally */
+ul.tree div a  {
+    padding: 0;
+    background-image: none;
+    min-height: auto;
+    height: auto;
+}
+
+ul.tree li .over{
+    background-color : pink;
+}
+
+/*
+ * End of CSS for Standard tree layout
+ */
+
+@media (max-width: 1199px) {
+    .nav>li>a {
+        padding: 14px 9px 10px 9px;
+    }
+ }
+
+ @media (max-width: 991px) {
+    /* change top navbar from horizontal to vertical */
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in { 
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+    .navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
+        max-height: none !important;
+    }
 }

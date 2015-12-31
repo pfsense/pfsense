@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	services_router_advertisements.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,14 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-router-advertisements
-##|*NAME=Services: Router advertisementspage
+##|*NAME=Services: Router Advertisements
 ##|*DESCR=Allow access to the 'Services: Router Advertisements' page.
 ##|*MATCH=services_router_advertisements.php*
 ##|-PRIV
@@ -106,7 +103,7 @@ if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
 		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-			(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 			continue;
 		}
 		$if = $ifent;
@@ -123,7 +120,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	}
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
-	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3'], $pconfig['radns4']) = $config['dhcpdv6'][$if]['radnsserver'];
+	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
 
 	$pconfig['subnets'] = $config['dhcpdv6'][$if]['subnets']['item'];
@@ -178,7 +175,7 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3'])) || ($_POST['radns4'] && !is_ipaddrv6($_POST['radns4']))) {
+	if (($_POST['radns1'] && !is_ipaddrv6($_POST['radns1'])) || ($_POST['radns2'] && !is_ipaddrv6($_POST['radns2'])) || ($_POST['radns3'] && !is_ipaddrv6($_POST['radns3']))) {
 		$input_errors[] = gettext("A valid IPv6 address must be specified for each of the DNS servers.");
 	}
 	if ($_POST['radomainsearchlist']) {
@@ -211,9 +208,6 @@ if ($_POST) {
 		if ($_POST['radns3']) {
 			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns3'];
 		}
-		if ($_POST['radns4']) {
-			$config['dhcpdv6'][$if]['radnsserver'][] = $_POST['radns4'];
-		}
 
 		$config['dhcpdv6'][$if]['rasamednsasdhcp6'] = ($_POST['rasamednsasdhcp6']) ? true : false;
 
@@ -229,15 +223,17 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Router advertisements"));
+$pgtitle = array(gettext("Services"), gettext("Router Advertisements"));
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 /* active tabs */
 $tab_array = array();
@@ -247,7 +243,7 @@ foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 	// We need at least one interface configured with a NON-LOCAL IPv6 static address. fd80:8dba:82e1::/64 fits the bill
 	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		(!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
 		continue;
 	}
 
@@ -257,7 +253,7 @@ foreach ($iflist as $ifent => $ifname) {
 		$active = false;
 	}
 
-	$tab_array[] = array($ifname, $active, "services_dhcpv6.php?if={$ifent}");
+	$tab_array[] = array($ifname, $active, "services_router_advertisements.php?if={$ifent}");
 	$tabscounter++;
 }
 
@@ -271,9 +267,7 @@ display_top_tabs($tab_array);
 $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 false, "services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), true,  "services_router_advertisements.php?if={$if}");
-display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
+display_top_tabs($tab_array, false, 'nav nav-tabs');
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -332,8 +326,9 @@ $section->addInput(new Form_StaticText(
 ));
 
 
-if(empty($pconfig['subnets']))
+if (empty($pconfig['subnets'])) {
 	$pconfig['subnets'] = array('0' => '/128');
+}
 
 $counter = 0;
 $numrows = count($pconfig['subnets']) - 1;
@@ -372,12 +367,12 @@ $form->add($section);
 
 $section = new Form_Section('DNS Configuration');
 
-for($idx=1; $idx<=4; $idx++) {
+for ($idx=1; $idx<=3; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 4) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[0-9, a-z, A-Z and .')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(
@@ -406,14 +401,16 @@ $form->add($section);
 print($form);
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 
-	$('#radns1, #radns2, #radns3, #radns4').autocomplete({
+	$('#radns1, #radns2, #radns3').autocomplete({
 		source: addressarray
 	});
 

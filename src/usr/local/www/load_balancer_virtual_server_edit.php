@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_virtual_server_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -55,13 +53,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-loadbalancer-virtualserver-edit
-##|*NAME=Load Balancer: Virtual Server: Edit page
+##|*NAME=Load Balancer: Virtual Server: Edit
 ##|*DESCR=Allow access to the 'Load Balancer: Virtual Server: Edit' page.
 ##|*MATCH=load_balancer_virtual_server_edit.php*
 ##|-PRIV
@@ -200,10 +195,9 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form();
 
@@ -309,9 +303,9 @@ print($form);
 
 print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
     // --------- Autocomplete -----------------------------------------------------------------------------------------
     var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
     var customarray = <?= json_encode(get_alias_list(array("port", "url_ports", "urltable_ports"))) ?>;

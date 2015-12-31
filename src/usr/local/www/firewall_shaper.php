@@ -1,15 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_shaper.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2008 Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,19 +52,13 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper
-##|*NAME=Firewall: Traffic Shaper page
+##|*NAME=Firewall: Traffic Shaper
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper' page.
 ##|*MATCH=firewall_shaper.php*
 ##|-PRIV
-
-require_once('classes/Form.class.php');
 
 require("guiconfig.inc");
 require_once("functions.inc");
@@ -81,7 +72,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Interfaces"));
 $shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();
@@ -127,7 +118,6 @@ if ($interface) {
 
 $dontshow = false;
 $newqueue = false;
-$output_form = "";
 $dfltmsg = false;
 
 if ($_GET) {
@@ -209,44 +199,50 @@ if ($_GET) {
 			$q = new altq_root_queue();
 		} else {
 			$input_errors[] = gettext("Could not create new queue/discipline!");
-			}
+		}
 
-			if ($q) {
-				$q->SetInterface($interface);
-				$sform = $q->build_form();
-				$newjavascript = $q->build_javascript();
-				unset($q);
-				$newqueue = true;
-			}
-			break;
+		if ($q) {
+			$q->SetInterface($interface);
+			$sform = $q->build_form();
+			$sform->addGlobal(new Form_Input(
+				'parentqueue',
+				null,
+				'hidden',
+				$qname
+			));
+
+			$newjavascript = $q->build_javascript();
+			unset($q);
+			$newqueue = true;
+		}
+		break;
 		case "show":
 			if ($queue) {
 				$sform = $queue->build_form();
-				//$output_form .= $queue->build_form();
-			}
-			else
+			} else {
 				$input_errors[] = gettext("Queue not found!");
+			}
 		break;
 		case "enable":
 			if ($queue) {
-					$queue->SetEnabled("on");
-					$output_form .= $queue->build_form();
-					if (write_config()) {
-						mark_subsystem_dirty('shaper');
-					}
+				$queue->SetEnabled("on");
+				$sform = $queue->build_form();
+				if (write_config()) {
+					mark_subsystem_dirty('shaper');
+				}
 			} else {
-					$input_errors[] = gettext("Queue not found!");
+				$input_errors[] = gettext("Queue not found!");
 			}
 			break;
 		case "disable":
 			if ($queue) {
 				$queue->SetEnabled("");
-				$output_form .= $queue->build_form();
+				$sform = $queue->build_form();
 				if (write_config()) {
 					mark_subsystem_dirty('shaper');
 				}
 			} else {
-					$input_errors[] = gettext("Queue not found!");
+				$input_errors[] = gettext("Queue not found!");
 			}
 			break;
 		default:
@@ -298,8 +294,7 @@ if ($_POST) {
 		}
 
 		read_altq_config();
-		$output_form .= $altq->build_form();
-
+		$sform = $altq->build_form();
 	} else if ($parentqueue) { /* Add a new queue */
 		$qtmp =& $altq->find_queue($interface, $parentqueue);
 		if ($qtmp) {
@@ -332,7 +327,7 @@ if ($_POST) {
 				}
 			}
 			read_altq_config();
-			$output_form .= $tmp->build_form();
+			$sform = $tmp->build_form();
 		} else {
 			$input_errors[] = gettext("Could not add new queue.");
 		}
@@ -357,10 +352,10 @@ if ($_POST) {
 		clear_subsystem_dirty('shaper');
 
 		if ($queue) {
-			$output_form .= $queue->build_form();
+			$sform = $queue->build_form();
 			$dontshow = false;
 		} else {
-			$output_form .= $default_shaper_message;
+			$sform = $default_shaper_message;
 			$dontshow = true;
 		}
 	} else if ($queue) {
@@ -374,7 +369,7 @@ if ($_POST) {
 			$dontshow = false;
 		}
 		read_altq_config();
-		$output_form .= $queue->build_form();
+		$sform = $queue->build_form();
 	} else	{
 		$dfltmsg = true;
 		$dontshow = true;
@@ -405,7 +400,6 @@ if ($queue) {
 }
 
 //$pgtitle = "Firewall: Shaper: By Interface View";
-$closehead = false;
 include("head.inc");
 
 $tree = '<ul class="tree" >';
@@ -418,30 +412,32 @@ if (is_array($altq_list_queues)) {
 
 $tree .= "</ul>";
 
-if ($queue)
+if ($queue) {
 	print($queue->build_javascript());
+}
 
 print($newjavascript);
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('shaper'))
+if (is_subsystem_dirty('shaper')) {
 	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), true, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
 $tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
 ?>
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <div class="table-responsive">
@@ -455,7 +451,7 @@ print($tree);
 
 if (count($altq_list_queues) > 0) {
 ?>
-					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger"/>
+					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger">
 						<?=gettext('Remove Shaper')?>
 					</a>
 <?php
@@ -465,37 +461,38 @@ if (count($altq_list_queues) > 0) {
 				<td>
 <?php
 
-if ($dfltmsg)
-	print_info_box($default_shaper_msg);
-else {
+if (!$dfltmsg)  {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
-			if ($queue)
+			if ($queue) {
 				$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=add';
-			else
+			} else {
 				$url = 'firewall_shaper.php?interface='. $interface . '&action=add';
+			}
 
 			$sform->addGlobal(new Form_Button(
 				'add',
 				'Add new Queue',
 				$url
 			))->removeClass('btn-default')->addClass('btn-success');
+
 		}
 
-		if ($queue)
+		if ($queue) {
 			$url = 'firewall_shaper.php?interface='. $interface . '&queue=' . $queue->GetQname() . '&action=delete';
-		else
+		} else {
 			$url = 'firewall_shaper.php?interface='. $interface . '&action=delete';
+		}
 
 		$sform->addGlobal(new Form_Button(
 			'delete',
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url
 		))->removeClass('btn-default')->addClass('btn-danger');
+
 	}
 
-	// Print the form
 	print($sform);
 }
 ?>
@@ -506,4 +503,13 @@ else {
 </div>
 
 <?php
+if ($dfltmsg) {
+?>
+<div>
+	<div id="infoblock">
+		<?=print_info_box($default_shaper_msg, info)?>
+	</div>
+</div>
+<?php
+}
 include("foot.inc");

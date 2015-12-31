@@ -1,2 +1,0 @@
-swf
-swf\x21\x1a\x07

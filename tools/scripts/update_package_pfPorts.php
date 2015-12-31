@@ -55,7 +55,7 @@ $opts .= "t:"; // Path to ports tree repo
 
 $options = getopt($opts);
 
-if(!isset($options['x']))
+if (!isset($options['x']))
 	usage();
 
 // Set the XML filename that we are processing
@@ -85,7 +85,7 @@ if (is_dir("{$src_dir}/etc/inc")) {
 }
 
 $pkgs = parse_xml_config_pkg($xml_filename, "pfsensepkgs");
-if(!$pkgs) {
+if (!$pkgs) {
 	echo "!!! An error occurred while trying to process {$xml_filename}.  Exiting.\n";
 	exit;
 }
@@ -101,7 +101,7 @@ if (isset($options['p'])) {
 
 $pfs_version = trim(file_get_contents("{$src_dir}/etc/version"));
 
-foreach($pkgs['packages']['package'] as $pkg) {
+foreach ($pkgs['packages']['package'] as $pkg) {
 	if (isset($pkg_list) && !in_array(strtolower($pkg['name']), $pkg_list))
 		continue;
 
@@ -391,7 +391,9 @@ function create_port($pkg) {
 		$conflicts = $product_name . '-base-nanobsd-[0-9]*';
 	}
 	if (isset($pkg['conflicts']) && !empty($pkg['conflicts'])) {
-		$conflicts = trim($conflicts . ' ' . $port_name_prefix . $pkg['conflicts'] . '-[0-9]*');
+		foreach (preg_split('/[\s\t]+/', $pkg['conflicts']) as $conflict) {
+			$conflicts = trim($conflicts . ' ' . $port_name_prefix . $conflict . '-[0-9]*');
+		}
 	}
 	if (!empty($conflicts)) {
 		$makefile[] = "";
@@ -429,12 +431,7 @@ function create_port($pkg) {
 
 function usage() {
 	global $argv;
-	echo "Usage: {$argv[0]} -x <path to pkg xml> [-p <package name>]\n";
-	echo "  Flags:\n";
-	echo "    -s Product version to pass to set_version.sh during chroot build\n";
-	echo "    -U Do NOT run build.sh --update-sources\n";
-	echo "  Examples:\n";
-	echo "     {$argv[0]} -x /home/packages/pkg_info.10.xml -p squid -s RELENG_2_2\n";
+	echo "Usage: {$argv[0]} -x <path to pkg xml> -t <path to ports tree> [-p <package name>]\n";
 	exit;
 }
 ?>

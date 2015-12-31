@@ -1,14 +1,14 @@
 <?php
-/* $Id$ */
 /*
 	system_usermanager.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>
  *	Copyright (c)  2008 Shrew Soft Inc.
  *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -57,14 +57,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE: auth
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-usermanager
-##|*NAME=System: User Manager page
+##|*NAME=System: User Manager
 ##|*DESCR=Allow access to the 'System: User Manager' page.
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
@@ -73,7 +69,7 @@ require("certs.inc");
 require("guiconfig.inc");
 
 // start admin user code
-$pgtitle = array(gettext("System"), gettext("User Manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
 
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
@@ -124,8 +120,7 @@ if ($_GET['act'] == "deluser") {
 	write_config();
 	$savemsg = gettext("User")." {$userdeleted} ".
 				gettext("successfully deleted")."<br />";
-}
-else if ($act == "new") {
+} else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
 	 * and the user should not be able to mess with this
@@ -135,7 +130,7 @@ else if ($act == "new") {
 	$pconfig['lifetime'] = 3650;
 }
 
-if (isset($_POST['dellall_x'])) {
+if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
 
@@ -144,7 +139,7 @@ if (isset($_POST['dellall_x'])) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
 				conf_mount_rw();
 				local_user_del($a_user[$userid]);
-				conf_mount_ro();
+ 			    conf_mount_ro();
 				unset($a_user[$userid]);
 			}
 		}
@@ -166,6 +161,15 @@ if ($_POST['act'] == "delcert") {
 	write_config();
 	$_POST['act'] = "edit";
 	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+}
+
+if ($_POST['act'] == "delprivid") {
+	$privdeleted = $priv_list[$a_user[$id]['priv'][$_POST['privid']]]['name'];
+	unset($a_user[$id]['priv'][$_POST['privid']]);
+	local_user_set($a_user[$id]);
+	write_config();
+	$_POST['act'] = "edit";
+	$savemsg = gettext("Privilege ") . $privdeleted . gettext(" removed") . "<br />";
 }
 
 if ($_POST['save']) {
@@ -270,14 +274,7 @@ if ($_POST['save']) {
 	}
 
 	if (!$input_errors) {
-		// This used to be a separate act=delpriv
-		if ($a_user[$id] && !empty($_POST['privid'])) {
-			foreach ($_POST['privid'] as $i)
-				unset($a_user[$id]['priv'][$i]);
 
-			local_user_set($a_user[$id]);
-			write_config();
-		}
 
 		conf_mount_rw();
 		$userent = array();
@@ -355,7 +352,7 @@ if ($_POST['save']) {
 		}
 
 		/* Add user to groups so PHP can see the memberships properly or else the user's shell account does not get proper permissions (if applicable) See #5152. */
-		local_user_set_groups($userent,$_POST['groups']);
+		local_user_set_groups($userent, $_POST['groups']);
 		local_user_set($userent);
 		/* Add user to groups again to ensure they are set everywhere, otherwise the user may not appear to be a member of the group. See commit:5372d26d9d25d751d16865ed9d46869d3b0ec5e1. */
 		local_user_set_groups($userent, $_POST['groups']);
@@ -385,12 +382,29 @@ function build_priv_table() {
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
-	foreach (get_user_privdesc($a_user[$id]) as $i => $priv) {
+	$i = 0;
+
+	foreach (get_user_privdesc($a_user[$id]) as $priv) {
+		$group = false;
+		if ($priv['group']) {
+			$group = $priv['group'];
+		}
+
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td>';
+		if (!$group) {
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+		}
+
+		$privhtml .=			'</td>';
 		$privhtml .=		'</tr>';
+
+		if (!$group) {
+			$i++;
+		}
 	}
 
 	$privhtml .=		'</tbody>';
@@ -430,8 +444,8 @@ function build_cert_table() {
 			$certhtml .=		'<td>' . htmlspecialchars($cert['descr']) . $revokedstr . '</td>';
 			$certhtml .=		'<td>' . htmlspecialchars($ca['descr']) . '</td>';
 			$certhtml .=		'<td>';
-			$certhtml .=			'<a id="delcert' . $i .'" class="btn btn-xs btn-warning" title="';
-			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '">Delete</a>';
+			$certhtml .=			'<a id="delcert' . $i .'" class="fa fa-trash no-confirm icon-pointer" title="';
+			$certhtml .=			gettext('Remove this certificate association? (Certificate will not be deleted)') . '"></a>';
 			$certhtml .=		'</td>';
 			$certhtml .=	'</tr>';
 			$i++;
@@ -450,14 +464,15 @@ function build_cert_table() {
 	return($certhtml);
 }
 
-$closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
@@ -468,9 +483,9 @@ display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $input_errors)) {
 ?>
-
+<form method="post">
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th>&nbsp;</th>
@@ -478,35 +493,35 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 				<th><?=gettext("Full name")?></th>
 				<th><?=gettext("Disabled")?></th>
 				<th><?=gettext("Groups")?></th>
+				<th>&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
-		</tbody>
-		<tbody>
 <?php
-foreach($a_user as $i => $userent):
+foreach ($a_user as $i => $userent):
 	?>
 			<tr>
 				<td>
-					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled="disabled"' : '')?>/>
+					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
 				</td>
 				<td>
 <?php
-	if($userent['scope'] != "user")
+	if ($userent['scope'] != "user") {
 		$usrimg = 'eye-open';
-	else
+	} else {
 		$usrimg = 'user';
+	}
 ?>
-					<i class="icon icon-<?=$usrimg?>"></i>
+					<i class="fa fa-<?=$usrimg?>"></i>
 					<?=htmlspecialchars($userent['name'])?>
 				</td>
 				<td><?=htmlspecialchars($userent['descr'])?></td>
-				<td><?php if(isset($userent['disabled'])) echo "*"?></td>
-				<td><?=implode(",",local_user_get_groups($userent))?></td>
+				<td><?php if (isset($userent['disabled'])) echo "*"?></td>
+				<td><?=implode(",", local_user_get_groups($userent))?></td>
 				<td>
-					<a href="?act=edit&amp;userid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-<?php if($userent['scope'] != "system"): ?>
-					<a href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>" class="btn btn-xs btn-danger">delete</a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
+<?php if ($userent['scope'] != "system"): ?>
+					<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 				</td>
 			</tr>
@@ -515,23 +530,33 @@ foreach($a_user as $i => $userent):
 	</table>
 </div>
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">add new</a>
+	<a href="?act=new" class="btn btn-sm btn-success">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+
+	<button type="submit" class="btn btn-sm btn-danger" name="dellall" value="dellall" title="<?=gettext('Delete selected users')?>">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Delete")?>
+	</button>
 </nav>
-<p>
-	<?=gettext("Additional users can be added here. User permissions for accessing " .
+</form>
+
+<div id="infoblock">
+	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
 	"the webConfigurator can be assigned directly or inherited from group memberships. " .
 	"An icon that appears grey indicates that it is a system defined object. " .
-	"Some system object properties can be modified but they cannot be deleted.")?>
-	<br /><br />
-	<?=gettext("Accounts created here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal.")?>
-</p>
+	"Some system object properties can be modified but they cannot be deleted.") .
+	'<br /><br />' .
+	gettext("Accounts added here are also used for other parts of the system " .
+	"such as OpenVPN, IPsec, and Captive Portal."), info)?>
+</div>
+
 <?php
 	include("foot.inc");
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 if ($act == "new" || $act == "edit" || $input_errors):
@@ -566,7 +591,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$ro = "";
 	if ($pconfig['utype'] == "system") {
-		$ro = "readonly=\"readonly\"";
+		$ro = "readonly";
 	}
 
 	$section = new Form_Section('User Properties');
@@ -597,8 +622,9 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$pconfig['usernamefld']
 	));
 
-	if ($ro)
+	if ($ro) {
 		$input->setReadonly();
+	}
 
 	$form->addGlobal(new Form_Input(
 		'oldusername',
@@ -628,8 +654,9 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		htmlspecialchars($pconfig['descr'])
 	))->setHelp('User\'s full name, for your own information only');
 
-	if ($ro)
+	if ($ro) {
 		$input->setDisabled();
+	}
 
 	$section->addInput(new Form_Input(
 		'expires',
@@ -650,11 +677,12 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$usergid = [$pconfig['usernamefld']];
 
 	foreach ($config['system']['group'] as $Ggroup) {
-		if($Ggroup['name'] != "all") {
-			if(($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member']))
+		if ($Ggroup['name'] != "all") {
+			if (($act == 'edit') && $Ggroup['member'] && in_array($pconfig['uid'], $Ggroup['member'])) {
 				$usersGroups[ $Ggroup['name'] ] = $Ggroup['name'];	// Add it to the user's list
-			else
+			} else {
 				$systemGroups[ $Ggroup['name'] ] = $Ggroup['name']; // Add it to the 'not a member of' list
+			}
 		}
 	}
 
@@ -692,7 +720,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$section->add($group);
 
 	// ==== Button for adding user certificate ================================
-	if($act == 'new') {
+	if ($act == 'new') {
 		$section->addInput(new Form_Checkbox(
 			'showcert',
 			'Certificate',
@@ -727,81 +755,58 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 		$form->add($section);
 	}
-else;
-		$section = new Form_Section('User Certificates');
 
-		foreach ((array)$a_user[$id]['cert'] as $i => $certref) {
-			$cert = lookup_cert($certref);
-			$ca = lookup_ca($cert['caref']);
+	// ==== Add user certificate for a new user
+	if (is_array($config['ca']) && count($config['ca']) > 0) {
+		$section = new Form_Section('Create certificate for user');
+		$section->addClass('cert-options');
 
-			// We reverse name and action for readability of longer names
-			$section->addInput(new Form_Checkbox(
-				'certid[]',
-				'Delete certificate',
-				$cert['descr']. (is_cert_revoked($cert) ? ' <b>revoked</b>' : ''),
-				false,
-				$i
+		$nonPrvCas = array();
+		foreach($config['ca'] as $ca) {
+			if (!$ca['prv']) {
+				continue;
+			}
+
+			$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
+		}
+
+		if (!empty($nonPrvCas)) {
+			$section->addInput(new Form_Input(
+				'name',
+				'Descriptive name',
+				'text',
+				$pconfig['name']
+			));
+
+			$section->addInput(new Form_Select(
+				'caref',
+				'Certificate authority',
+				null,
+				$nonPrvCas
+			));
+
+			$section->addInput(new Form_Select(
+				'keylen',
+				'Key length',
+				2048,
+				array(
+					512 => '512 bits',
+					1024 => '1024 bits',
+					2048 => '2049 bits',
+					4096 => '4096 bits',
+				)
+			));
+
+			$section->addInput(new Form_Input(
+				'lifetime',
+				'Lifetime',
+				'number',
+				$pconfig['lifetime']
 			));
 		}
 
-		#FIXME; old ui supplied direct export links to each certificate
-
-		$section->addInput(new Form_StaticText(
-			null,
-			new Form_Button(null, 'add certificate', 'system_certmanager.php?act=new&userid='. $id).
-			new Form_Button(null, 'export certificates', 'system_certmanager.php')
-		));
-
-		// ==== Add user certificate for a new user
-		if (is_array($config['ca']) && count($config['ca']) > 0) {
-			$section = new Form_Section('Create certificate for user');
-			$section->addClass('cert-options');
-
-			$nonPrvCas = array();
-			foreach( $config['ca'] as $ca) {
-				if (!$ca['prv'])
-					continue;
-
-				$nonPrvCas[ $ca['refid'] ] = $ca['descr'];
-			}
-
-			if (!empty($nonPrvCas)) {
-				$section->addInput(new Form_Input(
-					'name',
-					'Descriptive name',
-					'text',
-					$pconfig['name']
-				));
-
-				$section->addInput(new Form_Select(
-					'caref',
-					'Certificate authority',
-					null,
-					$nonPrvCas
-				));
-
-				$section->addInput(new Form_Select(
-					'keylen',
-					'Key length',
-					2048,
-					array(
-						512 => '512 bits',
-						1024 => '1024 bits',
-						2048 => '2049 bits',
-						4096 => '4096 bits',
-					)
-				));
-
-				$section->addInput(new Form_Input(
-					'lifetime',
-					'Lifetime',
-					'number',
-					$pconfig['lifetime']
-				));
-			}
-
-			$form->add($section);
-		}
+		$form->add($section);
+	}
 
 endif;
 // ==== Paste a key for the new user
@@ -831,35 +836,10 @@ $form->add($section);
 
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	//---------- "Standard" show/hide functions ---------------------------------------------------
-	
-	// Hides all elements of the specified class.
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
+events.push(function() {
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-    // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-    function hideCheckbox(id, hide) {
-        if(hide)
-            $('#' + id).parent().parent().parent('div').addClass('hidden');
-        else
-            $('#' + id).parent().parent().parent('div').removeClass('hidden');
-    }
-    
 	// Select every option in the specified multiselect
 	function AllServers(id, selectAll) {
 	   for (i = 0; i < id.length; i++)	   {
@@ -872,11 +852,12 @@ events.push(function(){
 		var len = From.length;
 		var option;
 
-		if(len > 0) {
-			for(i=0; i<len; i++) {
-				if(From.eq(i).is(':selected')) {
+		if (len > 0) {
+			for (i=0; i<len; i++) {
+				if (From.eq(i).is(':selected')) {
 					option = From.eq(i).val();
-					To.append(new Option(option, option));
+					value  = From.eq(i).text();
+					To.append(new Option(value, option));
 					From.eq(i).remove();
 				}
 			}
@@ -906,13 +887,23 @@ events.push(function(){
 	});
 
 	$('[id^=delcert]').click(function(event) {
-		if(confirm(event.target.title)) {
+		if (confirm(event.target.title)) {
 			$('#certid').val(event.target.id.match(/\d+$/)[0]);
 			$('#userid').val('<?=$id;?>');
 			$('#act').val('delcert');
 			$('form').submit();
 		}
 	});
+
+	$('[id^=delprivid]').click(function(event) {
+		if (confirm(event.target.title)) {
+			$('#privid').val(event.target.id.match(/\d+$/)[0]);
+			$('#userid').val('<?=$id;?>');
+			$('#act').val('delprivid');
+			$('form').submit();
+		}
+	});
+
 
 	// ---------- On initial page load ------------------------------------------------------------
 
@@ -921,12 +912,12 @@ events.push(function(){
 	hideCheckbox('showkey', true);
 
 	// On submit mark all the user's groups as "selected"
-	$('form').submit(function(){
+	$('form').submit(function() {
 		AllServers($('[name="groups[]"] option'), true);
 	});
 });
 //]]>
 </script>
 <?php
-
 include('foot.inc');
+?>

@@ -1,52 +1,67 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr_installed.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2004-2012 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE:	pkgs
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager-installed
-##|*NAME=System: Package Manager: Installed page
+##|*NAME=System: Package Manager: Installed
 ##|*DESCR=Allow access to the 'System: Package Manager: Installed' page.
 ##|*MATCH=pkg_mgr_installed.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
-
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
-	$timezone = "Etc/UTC";
-}
-
-date_default_timezone_set($timezone);
 
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock')) {
@@ -57,126 +72,152 @@ if (is_subsystem_dirty('packagelock')) {
 	exit;
 }
 
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Installed Packages"));
 include("head.inc");
-
-if(is_array($config['installedpackages']['package'])) {
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$tocheck[] = $instpkg['name'];
-	}
-
-	$currentvers = get_pkg_info($tocheck, array('version', 'xmlver', 'pkginfolink', 'descr'));
-}
-$closehead = false;
-$pgtitle = array(gettext("System"), gettext("Package Manager"));
-
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers())
-	print_info_box(package_server_mismatch_message());
-
-/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-if (check_package_server_ssl() === false)
-	print_info_box(package_server_ssl_failure_message());
 
 $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("{$g['product_version']} " . gettext("packages"), false, "pkg_mgr.php");
-//	$tab_array[] = array("Packages for any platform", false, "pkg_mgr.php?ver=none");
-//	$tab_array[] = array("Packages for a different platform", $requested_version == "other" ? true : false, "pkg_mgr.php?ver=other");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
-if(!is_array($config['installedpackages']['package'])):?>
+$installed_packages = array();
+$package_list = get_pkg_info();
+foreach ($package_list as $pkg) {
+	if (!isset($pkg['installed']) && !isset($pkg['broken'])) {
+		continue;
+	}
+	$installed_packages[] = $pkg;
+}
+
+if (empty($installed_packages)):?>
 	<div class="alert alert-warning">
 		<?=gettext("There are no packages currently installed.")?>
 	</div>
-<?php else: ?>
-	<div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th><span class="sr-only"><?=gettext("Status")?></span></th>
-			<th><?=gettext("Name")?></th>
-			<th><?=gettext("Category")?></th>
-			<th><?=gettext("Version")?></th>
-			<th><?=gettext("Description")?></th>
-		</tr>
-	</thead>
-	<tbody>
+<?php else:?>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
+		<div class="table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><!-- Status icon --></th>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Category")?></th>
+					<th><?=gettext("Version")?></th>
+					<th><?=gettext("Description")?></th>
+					<th><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+		<tbody>
 <?php
-	$instpkgs = array();
-	foreach($config['installedpackages']['package'] as $instpkg) {
-		$instpkgs[] = $instpkg['name'];
-	}
-	natcasesort($instpkgs);
-
-	foreach ($instpkgs as $index => $pkgname):
-		$pkg = $config['installedpackages']['package'][$index];
-		if(!$pkg['name'])
+	foreach ($installed_packages as $pkg):
+		if (!$pkg['name']) {
 			continue;
+		}
 
-		$full_name = $g['pkg_prefix'] . get_package_internal_name($pkg);
-
-		// get history/changelog git dir
-		$commit_dir=explode("/",$pkg['config_file']);
-		$changeloglink ="https://github.com/pfsense/pfsense-packages/commits/master/config/".$commit_dir[(count($commit_dir)-2)];
 		#check package version
-		$latest_package = $currentvers[$pkg['name']]['version'];
-		if ($latest_package) {
-			// we're running a newer version of the package
-			if(strcmp($pkg['version'], $latest_package) > 0) {
-				$status = 'Newer then available ('. $latest_package .')';
-				$statusicon = 'exclamation';
-			}
-			// we're running an older version of the package
-			if(strcmp($pkg['version'], $latest_package) < 0) {
-				$status = 'Upgrade available to '.$latest_package;
-				$statusicon = 'plus';
-			}
-			// we're running the current version
-			if(!strcmp($pkg['version'], $latest_package)) {
+		$txtcolor = "";
+		$upgradeavail = false;
+		$missing = false;
+		$vergetstr = "";
+
+		if (isset($pkg['broken'])) {
+			// package is configured, but does not exist in the system
+			$txtcolor = "text-danger";
+			$missing = true;
+			$status = 'Package is configured, but not installed!';
+		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
+			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
+
+			if ($version_compare == '>') {
+				// we're running a newer version of the package
+				$status = 'Newer than available ('. $pkg['version'] .')';
+			} else if ($version_compare == '<') {
+				// we're running an older version of the package
+				$status = 'Upgrade available to '.$pkg['version'];
+				$txtcolor = "text-warning";
+				$upgradeavail = true;
+				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
+			} else if ($version_compare == '=') {
+				// we're running the current version
 				$status = 'Up-to-date';
-				$statusicon = 'ok';
+			} else {
+				$status = 'Error comparing version';
 			}
-			$pkgdescr = $currentvers[$pkg['name']]['descr'];
 		} else {
 			// unknown available package version
 			$status = 'Unknown';
 			$statusicon = 'question';
-			$pkgdescr = $pkg['descr'];
 		}
 ?>
 	<tr>
 		<td>
-			<i title="<?=$status?>" class="icon icon-<?=$statusicon?>-sign"></i>
+<?php if ($upgradeavail):?>
+			<a title="<?=$status?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php elseif ($missing):?>
+			<span class="text-danger"><i title="<?=$status?>" class="fa fa-exclamation"></i></span>
+<?php else:?>
+			<i title="<?=$status?>" class="fa fa-check"></i>
+<?php endif;?>
 		</td>
 		<td>
-			<?=$pkg['name']?>
+			<span class="<?=$txtcolor?>"><?=$pkg['shortname']?></span>
 		</td>
 		<td>
-			<?=$pkg['category']?>
+			<?=implode(" ", $pkg['categories'])?>
 		</td>
 		<td>
 <?php if (!$g['disablepackagehistory']):?>
-			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
+			<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($pkg['changeloglink'])?>">
 <?php endif;?>
-				<?=htmlspecialchars($pkg['version'])?>
+				<?=htmlspecialchars($pkg['installed_version'])?>
+<?php if (!$g['disablepackagehistory']):?>
 			</a>
-		</td>
-		<td>
-			<?=$pkgdescr?>
-		</td>
-		<td>
-			<a href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$full_name?>" class="btn btn-danger">remove</a>
-			<a href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$full_name?>" class="btn btn-info">reinstall</a>
-			<a href="pkg_mgr_install.php?mode=reinstallxml&amp;pkg=<?=$full_name?>" class="btn btn-info"><?=gettext("reinstall GUI")?></a>
-<?php if(!$g['disablepackageinfo'] && $pkg['pkginfolink'] && $pkg['pkginfolink'] != $pkg['website']):?>
-			<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($pkg['pkginfolink'])?>" class="btn btn-default">info</a>
 <?php endif;?>
+		</td>
+		<td>
+			<?=$pkg['desc']?>
+<?php if (is_array($pkg['deps']) && count($pkg['deps'])):?>
+			<br /><br /><?= gettext("Package Dependencies")?>:<ul>
+	<?php foreach ($pkg['deps'] as $pdep):?>
+			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>" class="fa fa-globe"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
+	<?php endforeach;?></ul>
+<?php endif;?>
+		</td>
+		<td>
+			<div class="row">
+				<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
+<?php if ($upgradeavail):?>
+				<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+<?php else:?>
+				<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
+<?php endif;?>
+
+<?php if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
+				<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($pkg['www'])?>" class="fa fa-info"></a>
+<?php endif;?>
+			</div>
 		</td>
 	</tr>
 <?php endforeach;?>
 	</tbody>
 </table>
 </div>
+</div>
+<br />
+<div class="text-center">
+	<p>
+		<i class="fa fa-refresh"></i> = Update &nbsp;
+		<i class="fa fa-check"></i> = Current &nbsp;
+	</p>
+	<p>
+		<i class="fa fa-trash"></i> = Remove &nbsp;
+		<i class="fa fa-info"></i> = Information &nbsp;
+		<i class="fa fa-retweet"></i> = Reinstall
+	</p>
+	<p><span class="text-warning"><?=gettext("Newer version available")?></span></p>
+	<p><span class="text-danger"><?=gettext("Package is configured but not (fully) installed")?></span></p>
+</div>
+
 <?php endif; ?>
 <?php include("foot.inc")?>

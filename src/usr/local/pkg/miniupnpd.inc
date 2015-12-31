@@ -241,9 +241,11 @@
 				$config_text .= "model_number=" . $g['product_version'] . "\n";
 
 				/* upnp access restrictions */
-				foreach ($upnp_config['row'] as $row) {
-					if ($row['permuser']) {
-						$config_text .= "{$row["permuser"]}\n";
+				if (is_array($upnp_config['row'])) {
+					foreach ($upnp_config['row'] as $row) {
+						if ($row['permuser']) {
+							$config_text .= "{$row["permuser"]}\n";
+						}
 					}
 				}
 

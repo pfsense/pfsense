@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id:  */
 /*
 	rc.ntpdate
 	part of m0n0wall (http://m0n0.ch/wall)

@@ -30,7 +30,7 @@ class Form_Input extends Form_Element
 {
 	public $column;
 	protected $_tagName = 'input';
-	protected $_tagSelfClosing = true;
+	protected $_tagSelfClosing = false;
 	protected $_attributes = array(
 		'class' => array('form-control' => true),
 		'name' => null,
@@ -75,14 +75,45 @@ class Form_Input extends Form_Element
 		return $this->_title;
 	}
 
+	public function getValue()
+	{
+		return $this->_attributes['value'];
+	}
+
 	public function getName()
 	{
 		return $this->_attributes['name'];
 	}
 
+	public function setName($nm)
+	{
+		$this->_attributes['name'] = $nm;
+		$this->_attributes['id'] = $nm;
+	}
+
+	public function setValue($val)
+	{
+		$this->_attributes['value'] = $val;
+	}
+
+	public function setType($tp)
+	{
+		$this->_attributes['type'] = $tp;
+	}
+
 	public function getId()
 	{
 		return $this->_attributes['id'];
+	}
+
+	public function get_Type()
+	{
+		return $this->_attributes['type'];
+	}
+
+	public function gettagName()
+	{
+		return $this->_tagName;
 	}
 
 	public function setHelp($help, array $params = array())
@@ -108,6 +139,13 @@ class Form_Input extends Form_Element
 		$this->_columnWidth = (int)$size;
 
 		$this->column->addClass('col-sm-'. $this->_columnWidth);
+
+		return $this;
+	}
+
+	public function setCols($size)
+	{
+		$this->_attributes['cols'] = $size;
 
 		return $this;
 	}
@@ -145,7 +183,9 @@ class Form_Input extends Form_Element
 
 	public function setPlaceholder($text)
 	{
-		$this->_attributes['placeholder'] = $text;
+		$placeholder_input_types = array('email', 'number', 'password', 'search', 'tel', 'text', 'url');
+		if (in_array(strtolower($this->_attributes['type']), $placeholder_input_types))
+			$this->_attributes['placeholder'] = $text;
 
 		return $this;
 	}

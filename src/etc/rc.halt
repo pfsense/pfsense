@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id$
+# /etc/rc.halt
 
 if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	echo "Cannot halt at this moment, a config write operation is in progress and 30 seconds have passed."

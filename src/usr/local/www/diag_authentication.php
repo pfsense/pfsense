@@ -3,11 +3,10 @@
 	diag_authentication.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2010 Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,19 +53,14 @@
  *
  */
 
-/*
-	pfSense_MODULE: auth
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-authentication
-##|*NAME=Diagnostics: Authentication page
+##|*NAME=Diagnostics: Authentication
 ##|*DESCR=Allow access to the 'Diagnostics: Authentication' page.
 ##|*MATCH=diag_authentication.php*
 ##|-PRIV
 
 require("guiconfig.inc");
-require_once("PEAR.inc");
 require_once("radius.inc");
 
 if ($_POST) {
@@ -89,35 +83,44 @@ if ($_POST) {
 			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
 			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br />";
 			$savemsg .= "<ul>";
-			foreach ($groups as $group)
+			foreach ($groups as $group) {
 				$savemsg .= "<li>" . "{$group} " . "</li>";
+			}
 			$savemsg .= "</ul>";
 
 		} else {
 			$input_errors[] = gettext("Authentication failed.");
 		}
 	}
+} else {
+	if (isset($config['system']['webgui']['authmode'])) {
+		$pconfig['authmode'] = $config['system']['webgui']['authmode'];
+	} else {
+		$pconfig['authmode'] = "Local Database";
+	}
 }
+
 $pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
 $shortcut_section = "authentication";
 include("head.inc");
 
 ?>
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form('Test');
 
 $section = new Form_Section('Authentication Test');
 
-foreach (auth_get_authserver_list() as $auth_server)
+foreach (auth_get_authserver_list() as $auth_server) {
 	$serverlist[$auth_server['name']] = $auth_server['name'];
+}
 
 $section->addInput(new Form_Select(
 	'authmode',

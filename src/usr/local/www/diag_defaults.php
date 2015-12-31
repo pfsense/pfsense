@@ -1,14 +1,15 @@
 <?php
-/* $Id$ */
 /*
 	diag_defaults.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +56,9 @@
  *
  */
 
-/*
-	pfSense_MODULE:	config
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-factorydefaults
-##|*NAME=Diagnostics: Factory defaults page
+##|*NAME=Diagnostics: Factory defaults
 ##|*DESCR=Allow access to the 'Diagnostics: Factory defaults' page.
 ##|*MATCH=diag_defaults.php*
 ##|-PRIV
@@ -86,22 +83,31 @@ include("head.inc");
 ?>
 </pre>
 <?php else:?>
-<form action="diag_defaults.php" method="post">
-	<p><strong><?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?></strong></p>
-	<ul>
-		<li><?=gettext("Reset to factory defaults")?></li>
-		<li><?=gettext("LAN IP address will be reset to 192.168.1.1")?></li>
-		<li><?=gettext("System will be configured as a DHCP server on the default LAN interface")?></li>
-		<li><?=gettext("Reboot after changes are installed")?></li>
-		<li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server")?></li>
-		<li><?=gettext("webConfigurator admin username will be reset to 'admin'")?></li>
-		<li><?=gettext("webConfigurator admin password will be reset to")?> '<?=$g['factory_shipped_password']?>'</li>
-	</ul>
-	<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
-	<p>
-		<input name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("Yes")?> " />
-		<input name="Submit" type="submit" class="btn btn-sm btn-default" value=" <?=gettext("No")?> " />
-	</p>
-</form>
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h2 class="panel-title">Are you sure you want to reset the system to the factory defaults?</h2>
+	</div>
+	<div class="panel-body">
+		<div class="content">
+			<form action="diag_defaults.php" method="post">
+				<p><strong><?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?></strong></p>
+				<ul>
+					<li><?=gettext("Reset to factory defaults")?></li>
+					<li><?=gettext("LAN IP address will be reset to 192.168.1.1")?></li>
+					<li><?=gettext("System will be configured as a DHCP server on the default LAN interface")?></li>
+					<li><?=gettext("Reboot after changes are installed")?></li>
+					<li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server")?></li>
+					<li><?=gettext("webConfigurator admin username will be reset to 'admin'")?></li>
+					<li><?=gettext("webConfigurator admin password will be reset to")?> '<?=$g['factory_shipped_password']?>'</li>
+				</ul>
+				<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
+				<p>
+					<input name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("Yes")?> " />
+					<input name="Submit" type="submit" class="btn btn-sm btn-default" value=" <?=gettext("No")?> " />
+				</p>
+			</form>
+		</div>
+	</div>
+</div>
 <?php endif?>
 <?php include("foot.inc")?>

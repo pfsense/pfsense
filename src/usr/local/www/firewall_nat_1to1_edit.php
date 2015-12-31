@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_1to1_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1-edit
-##|*NAME=Firewall: NAT: 1:1: Edit page
+##|*NAME=Firewall: NAT: 1:1: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: 1:1: Edit' page.
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
@@ -69,6 +66,7 @@
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
+require_once("ipsec.inc");
 require("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
@@ -142,8 +140,9 @@ if ($_POST) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
-		if ($newpost != $temp)
+		if ($newpost != $temp) {
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
+		}
 	}
 
 	/* input validation */
@@ -282,11 +281,13 @@ function build_srctype_list() {
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
@@ -304,8 +305,9 @@ function srctype_selected() {
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
-		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask'])))
+		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask']))) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -319,11 +321,13 @@ function build_dsttype_list() {
 	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
 
-	if (have_ruleint_access("pppoe"))
+	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = 'PPPoE clients';
+	}
 
-	if (have_ruleint_access("l2tp"))
+	if (have_ruleint_access("l2tp")) {
 		$list['l2tp'] = 'L2TP clients';
+	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
@@ -334,8 +338,9 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
+			if (isset($sn['noexpand'])) {
 				continue;
+			}
 
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
@@ -361,12 +366,14 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if (empty($pconfig['dst'] || $pconfig['dst'] == "any"))
+	if (empty($pconfig['dst'] || $pconfig['dst'] == "any")) {
 		return('any');
+	}
 
 	if (!$sel) {
-		if ($pconfig['dstmask'] == 32)
+		if ($pconfig['dstmask'] == 32) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -374,10 +381,9 @@ function dsttype_selected() {
 	return($pconfig['dst']);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -395,25 +401,31 @@ $section->addInput(new Form_Checkbox(
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
 		$interfaces['l2tp'] = "L2TP VPN";
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
 	$interfaces['pppoe'] = "PPPoE Server";
+}
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	$interfaces["enc0"] = "IPsec";
+}
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 	$interfaces["openvpn"] = "OpenVPN";
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -462,7 +474,7 @@ $group->add(new Form_Checkbox(
 	'dstnot',
 	null,
 	'Not',
-	$pconfig['srcnot']
+	$pconfig['dstnot']
 ))->setHelp('Invert the sense of the match.');
 
 $group->add(new Form_Select(
@@ -507,7 +519,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Disables the specified input element
 	function disableInput(id, disable) {

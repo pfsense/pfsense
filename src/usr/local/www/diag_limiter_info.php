@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	diag_limiter_info.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2010 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,11 +53,6 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/top
-	pfSense_MODULE: system
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-limiter-info
 ##|*NAME=Diagnostics: Limiter Info
@@ -69,7 +62,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = gettext("Diagnostics: Limiter Info");
+$pgtitle = array(gettext("Diagnostics"), gettext("Limiter Info"));
 $shortcut_section = "trafficshaper-limiters";
 
 if ($_REQUEST['getactivity']) {
@@ -89,11 +82,13 @@ if ($_REQUEST['getactivity']) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	function getlimiteractivity() {
 		$.ajax(
 			'/diag_limiter_info.php',
@@ -108,10 +103,11 @@ if ($input_errors)
 		});
 	}
 
-	events.push(function(){
+	events.push(function() {
 		setInterval('getlimiteractivity()', 2500);
 		getlimiteractivity();
 	});
+//]]>
 </script>
 
 <div class="panel panel-default">

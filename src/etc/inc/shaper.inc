@@ -3,11 +3,13 @@
 	shaper.inc
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -749,6 +751,8 @@ class altq_root_queue {
 			'Save'
 		));
 
+		$sform->setAction("firewall_shaper.php");
+
 		$section = new Form_Section(null);
 
 		$section->addInput(new Form_Checkbox(
@@ -1306,9 +1310,14 @@ class priq_queue {
 
 	function build_form() {
 
-		$sform = new Form();
+		$sform = new Form(new Form_Button(
+			'Submit',
+			'Save'
+		));
 
-		$section = new Form_Section(null);
+		$sform->setAction("firewall_shaper.php");
+
+		$section = new Form_Section("");
 
 		$section->addInput(new Form_Checkbox(
 			'enabled',
@@ -1318,10 +1327,19 @@ class priq_queue {
 			'on'
 		));
 
-		$section->addInput(new Form_StaticText(
+		$section->addInput(new Form_Input(
+			'newname',
 			'Name',
+			'text',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
+
+		$section->addInput(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		$section->addInput(new Form_Input(
 			'priority',
@@ -1345,7 +1363,8 @@ class priq_queue {
 				'default',
 				null,
 				null,
-				$this->GetDefault()
+				$this->GetDefault(),
+				'default'
 			))->setHelp('Default Queue');
 		}
 
@@ -1375,7 +1394,7 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -1388,14 +1407,21 @@ class priq_queue {
 			$this->GetDescription()
 		));
 
-		$section->addInput(new Form_Input(
+		$sform->add($section);
+
+		$sform->addGlobal(new Form_Input(
 			'interface',
 			null,
 			'hidden',
 			$this->GetInterface()
 		));
 
-		$sform->add($section);
+		$sform->addGlobal(new Form_Input(
+			'name',
+			null,
+			'hidden',
+			$this->GetQname()
+		));
 
 		return($sform);
 	}
@@ -2227,7 +2253,7 @@ EOJS;
 			'text',
 			$this->GetU_d()
 		))->setHelp('d');
-		
+
 		$group->add(new Form_Input(
 			'upperlimit3',
 			null,
@@ -2260,7 +2286,7 @@ EOJS;
 			'text',
 			$this->GetR_d()
 		))->setHelp('d');
-		
+
 		$group->add(new Form_Input(
 			'realtime3',
 			null,
@@ -2292,7 +2318,7 @@ EOJS;
 			'text',
 			$this->GetL_d()
 		))->setHelp('d');
-		
+
 		$group->add(new Form_Input(
 			'linkshare3',
 			null,
@@ -3735,9 +3761,10 @@ EOD;
 		$form .= "<tbody>";
 
 		// If there are no bandwidths defined, make a blank one for convenience
-		if(empty($bandwidth))
+		if (empty($bandwidth)) {
 			$bandwidth = array(0 => array('bw' => '', 'bwscale' => 'Kb', 'bwsched' => 'none'));
-			
+		}
+
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= '<tr>';
@@ -3748,31 +3775,31 @@ EOD;
 				$form .= "</td>";
 				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"form-control\">";
-				
+
 				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
 					$form .= "<option value=\"{$bwsidx}\"";
-					
+
 					if ($bw['bwscale'] == $bwsidx) {
-						$form .= " selected=\"selected\"";
+						$form .= " selected";
 					}
-					
+
 					$form .= ">{$bwscale}</option>";
 				}
-				
+
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwsched{$bwidx}\" name=\"bwsched{$bwidx}\" class=\"form-control\">";
-				
+
 				foreach ($schedules as $schd) {
 					$selected = "";
 					if ($bw['bwsched'] == $schd) {
-						$selected = "selected=\"selected\"";
+						$selected = "selected";
 					}
-					
+
 					$form .= "<option value='{$schd}' {$selected}>{$schd}</option>";
 				}
-				
+
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td>';
@@ -3804,6 +3831,7 @@ EOD;
 
 
 		$sform = new Form();
+		$sform->setAction("firewall_shaper.php");
 
 		$section = new Form_Section('Limiters');
 
@@ -3848,7 +3876,7 @@ EOD;
 //		if($_GET['newbwrow']) {
 //			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
 //		}
-		
+
 		if (is_array($bandwidth)) {
 				$section->addInput(new Form_StaticText(
 				'Bandwidth',
@@ -3859,7 +3887,7 @@ EOD;
 		$mask = $this->GetMask();
 
 		$section->addInput(new Form_Select(
-			'scheduler',
+			'mask',
 			'Mask',
 			$mask['type'],
 			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')
@@ -4126,7 +4154,7 @@ class dnqueue_class extends dummynet_class {
 
 
 		$sform = new Form();
-
+		$sform->setAction("firewall_shaper.php");
 		$section = new Form_Section('Limiters');
 
 		$section->addInput(new Form_Checkbox(
@@ -4163,11 +4191,12 @@ class dnqueue_class extends dummynet_class {
 		$bandwidth = $this->GetBandwidth();
 
 		// Delete a row
-		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
+		if (isset($_GET['delbwrow']) && (count($bandwidth) > 0)) {
 			unset($bandwidth[$_GET['delbwrow']]);
+		}
 
 		// Add a row
-		if($_GET['newbwrow']) {
+		if ($_GET['newbwrow']) {
 			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
 
 		}
@@ -4176,7 +4205,7 @@ class dnqueue_class extends dummynet_class {
 			$row = 0;
 			$numrows = count($bandwidth) - 1;
 
-			if($numrows >= 0) {
+			if ($numrows >= 0) {
 				foreach ($bandwidth as $bwidx => $bw) {
 					$group = new Form_Group($row == 0 ? 'Bandwidth':null);
 
@@ -4207,8 +4236,9 @@ class dnqueue_class extends dummynet_class {
 						'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&delbwrow=' . $bwidx
 					))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
 
-					if($row == $numrows)
+					if ($row == $numrows) {
 						$group->setHelp('Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.');
+					}
 
 					$section->add($group);
 					$row++;
@@ -4333,461 +4363,6 @@ class dnqueue_class extends dummynet_class {
 		$cflink['mask'] = $mask['type'];
 		$cflink['maskbits'] = $mask['bits'];
 		$cflink['maskbitsv6'] = $mask['bitsv6'];
-	}
-}
-
-// List of layer7 objects
-$layer7_rules_list = array();
-
-class layer7 {
-
-	var $rname; //alias
-	var $rdescription; //alias description
-	var $rport; //divert port
-	var $renabled; //rule enabled
-	var $rsets = array(); //array of l7 associations
-
-	// Auxiliary functions
-
-	function GetRName() {
-		return $this->rname;
-	}
-	function SetRName($rname) {
-		$this->rname = $rname;
-	}
-	function GetRDescription() {
-		return $this->rdescription;
-	}
-	function SetRDescription($rdescription) {
-		$this->rdescription = $rdescription;
-	}
-	function GetRPort() {
-		return $this->rport;
-	}
-	function SetRPort($rport) {
-		$this->rport = $rport;
-	}
-	function GetREnabled() {
-		return $this->renabled;
-	}
-	function SetREnabled($value) {
-		$this->renabled = $value;
-	}
-	function GetRl7() {
-		return $this->rsets;
-	}
-	function SetRl7($rsets) {
-		$this->rsets = $rsets;
-	}
-
-	//Add a tuple (rule,structure,element) to the $rsets
-
-	function add_rule($l7set) {
-		$this->rsets[] = $l7set;
-	}
-
-	// Build the layer7 rules
-	function build_l7_rules() {
-		if ($this->GetREnabled() == "") {
-			return;
-		}
-		//$l7rules = "#" . $this->rdescription . "\n";
-		foreach ($this->rsets as $rl7) {
-			$l7rules .= $rl7->build_rules();
-		}
-		return $l7rules;
-	}
-
-	// Read the config from array
-	function ReadConfig(&$qname, &$q) {
-		$this->SetRName($qname);
-		$this->SetREnabled($q['enabled']);
-		$this->SetRPort($q['divert_port']);
-		if (isset($q['description']) && $q['description'] <> "") {
-			$this->SetRDescription($q['description']);
-		}
-		$rsets = $q['l7rules'];
-		//Put individual rules in the array
-		if (is_array($rsets)) {
-			$this->rsets = array(); // XXX: ugly hack
-			foreach ($rsets as $l7r) {
-				$l7obj = new l7rule();
-				$l7obj->SetRProtocol($l7r['protocol']);
-				$l7obj->SetRStructure($l7r['structure']);
-				$l7obj->SetRBehaviour($l7r['behaviour']);
-				$this->add_rule($l7obj);
-			}
-		}
-	}
-
-	//Generate a random port for the divert socket
-	function gen_divert_port() {
-		$dports = get_divert_ports(); //array of used ports
-		$divert_port = 1; // Initialize
-		while (($divert_port % 2) != 0 || in_array($divert_port, $dports)) {
-			$divert_port = rand(40000, 60000);
-		}
-		return $divert_port;
-	}
-
-	//Helps building the left tree
-	function build_tree() {
-		$tree = " <li><a href=\"firewall_shaper_layer7.php?container=" . $this->GetRName() ."&amp;action=show\">";
-		$tree .= $this->GetRName() . "</a>";
-		$tree .= "</li>";
-
-		return $tree;
-	}
-
-	function build_form() {
-
-		$form = new Form(new Form_Button(
-			'Submit',
-			'Save'
-		));
-
-		$section = new Form_Section('Traffic Shaper');
-
-		$section->addInput(new Form_Checkbox(
-			'enabled',
-			'Enable/Disable',
-			'Enable/disable discipline and its children',
-			($this->GetREnabled() == "on"),
-			'on'
-		));
-
-		$section->addInput(new Form_Input(
-			'container',
-			'Name',
-			'text',
-			$this->GetRName()
-		));
-
-		$section->addInput(new Form_Input(
-			'description',
-			'Description',
-			'text',
-			$this->GetRDescription()
-		))->setHelp('You may enter a description here for your reference (not parsed).');
-
-		$form->add($section);
-
-		return $form;
-	}
-
-	//Write the setting to the $config array
-	function wconfig() {
-		global $config;
-
-		if (!is_array($config['l7shaper']['container'])) {
-			$config['l7shaper']['container'] = array();
-		}
-		//
-		$cflink =& get_l7c_reference_to_me_in_config($this->GetRName());
-		// Test if this rule exists already
-		if (!$cflink) {
-			$cflink =& $config['l7shaper']['container'][];
-		}
-		$cflink['name'] = $this->GetRName();
-		$cflink['enabled'] = $this->GetREnabled();
-		$cflink['description'] = $this->GetRDescription();
-		$cflink['divert_port'] = $this->GetRPort();
-
-		// Destroy previously existent rules
-		if (is_array($cflink['rules'])) {
-			unset($cflink['l7rules']);
-		}
-
-		$cflink['l7rules'] = array();
-
-		$i = 0;
-		foreach ($this->rsets as $rulel7) {
-			$cflink['l7rules'][$i]['protocol'] = $rulel7->GetRProtocol();
-			$cflink['l7rules'][$i]['structure'] = $rulel7->GetRStructure();
-			$cflink['l7rules'][$i]['behaviour'] = $rulel7->GetRBehaviour();
-			$i++;
-		}
-	}
-
-	//This function is necessary to help producing the overload options for keep state
-	function get_unique_structures() {
-
-		$unique_structures = array("action" => false, "dummynet" => false, "altq" => false);
-		foreach ($this->rsets as $l7rule) {
-			if ($l7rule->GetRStructure() == "action") {
-				$unique_structures['action'] = true;
-			} else if ($l7rule->GetRStructure() == "limiter") {
-				$unique_structures['dummynet'] = true;
-			} else {
-				$unique_structures['altq'] = true;
-			}
-		}
-		//Delete non used structures so we don't have to check this in filter.inc
-		foreach ($unique_structures as $key => $value) {
-			if (!$value) {
-				unset($unique_structures[$key]);
-			}
-		}
-		return $unique_structures;
-	}
-
-	function validate_input($data, &$input_errors) {
-		$reqdfields[] = "container";
-		$reqdfieldsn[] = gettext("Name");
-
-		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if (!preg_match("/^[a-zA-Z0-9_-]+$/", $data['container'])) {
-			$input_errors[] = gettext("Queue names must be alphanumeric and _ or - only.");
-		}
-	}
-
-	function delete_l7c() {
-		mwexec("/bin/pkill -f 'ipfw-classifyd .* -p ". $this->GetRPort() . "'", true);
-		unset_l7_object_by_reference($this->GetRName());
-		cleanup_l7_from_rules($this->GetRName());
-	}
-}
-
-class l7rule {
-
-	var $rprotocol; //protocol
-	var $rstructure; //action, limiter, queue
-	var $rbehaviour; //allow, block, queue_name, pipe_number ...
-
-	//Auxiliary Functions
-
-	function GetRProtocol() {
-		return $this->rprotocol;
-	}
-	function SetRProtocol($rprotocol) {
-		$this->rprotocol = $rprotocol;
-	}
-	function GetRStructure() {
-		return $this->rstructure;
-	}
-	function SetRStructure($rstructure) {
-		$this->rstructure = $rstructure;
-	}
-	function GetRBehaviour() {
-		return $this->rbehaviour;
-	}
-	function SetRBehaviour($rbehaviour) {
-		$this->rbehaviour = $rbehaviour;
-	}
-
-	//XXX Do we need to test any particularity for AltQ queues?
-	function build_rules() {
-		global $dummynet_pipe_list;
-		switch ($this->GetRStructure()) {
-		case "limiter":
-			read_dummynet_config();
-			$dn_list =& get_unique_dnqueue_list();
-			$found = false;
-			if (is_array($dn_list)) {
-				foreach ($dn_list as $key => $value) {
-					if ($key == $this->GetRBehaviour()) {
-						if ($value[0] == "?") {
-							$l7rule = $this->GetRProtocol() . " = dnqueue " . substr($value, 1) . "\n";
-						} else {
-							$l7rule = $this->GetRProtocol() . " = dnpipe " . $value . "\n";
-						}
-						$found = true;
-					}
-					if ($found) {
-						break;
-					}
-				}
-			}
-			break;
-		default: //This is for action and for altq
-			$l7rule = $this->GetRProtocol() . " = " . $this->GetRStructure() . " " . $this->GetRBehaviour() . "\n";
-			break;
-		}
-		return $l7rule;
-	}
-}
-
-/*
- * This function allows to return an array with all the used divert socket ports
- */
-function get_divert_ports() {
-	global $layer7_rules_list;
-	$dports = array();
-
-	foreach ($layer7_rules_list as $l7r) {
-		$dports[] = $l7r->GetRPort();
-	}
-
-	return $dports;
-}
-
-function &get_l7c_reference_to_me_in_config(&$name) {
-	global $config;
-
-	$ptr = NULL;
-
-	if (is_array($config['l7shaper']['container'])) {
-		foreach ($config['l7shaper']['container'] as $key => $value) {
-			if ($value['name'] == $name) {
-				$ptr =& $config['l7shaper']['container'][$key];
-			}
-		}
-	}
-	return $ptr;
-	// $ptr can be null. has to be checked later
-}
-
-function unset_l7_object_by_reference(&$name) {
-	global $config;
-
-	if (is_array($config['l7shaper']['container'])) {
-		foreach ($config['l7shaper']['container'] as $key => $value) {
-			if ($value['name'] == $name) {
-				unset($config['l7shaper']['container'][$key]['l7rules']);
-				unset($config['l7shaper']['container'][$key]);
-				break;
-			}
-		}
-	}
-}
-
-function read_layer7_config() {
-	global $layer7_rules_list, $config;
-
-	if (!is_array($config['l7shaper']['container']) || !count($config['l7shaper']['container'])) {
-		$layer7_rules_list = array();
-		return;
-	}
-
-	$l7cs = &$config['l7shaper']['container'];
-
-	$layer7_rules_list = array();
-
-	foreach ($l7cs as $conf) {
-		if (empty($conf['name'])) {
-			continue; /* XXX: grrrrrr at php */
-		}
-		$root =& new layer7();
-		$root->ReadConfig($conf['name'], $conf);
-		$layer7_rules_list[$root->GetRName()] = &$root;
-	}
-}
-
-function update_layer7_custom_patterns() {
-	global $config;
-
-	if (!is_array($config['l7shaper']['custom_pat'])) {
-		return;
-	}
-
-	foreach ($config['l7shaper']['custom_pat'] as $filename => $filecontent) {
-		if (!file_exists("/usr/local/share/protocols/" . $filename)) {
-			@file_put_contents("/usr/local/share/protocols/" . $filename, base64_decode($filecontent));
-		}
-	}
-}
-
-function generate_layer7_files() {
-	global $layer7_rules_list, $g;
-
-	read_layer7_config();
-
-	if (!empty($layer7_rules_list)) {
-		if (!is_module_loaded("ipdivert.ko")) {
-			mwexec("/sbin/kldload ipdivert.ko");
-		}
-
-		array_map('unlink', glob("{$g['tmp_path']}/*.l7"));
-	}
-
-	update_layer7_custom_patterns();
-
-	foreach ($layer7_rules_list as $l7rules) {
-		if ($l7rules->GetREnabled()) {
-			$filename = $l7rules->GetRName() . ".l7";
-			$path = "{$g['tmp_path']}/" . $filename;
-
-			$rules = $l7rules->build_l7_rules();
-
-			$fp = fopen($path, 'w');
-			fwrite($fp, $rules);
-			fclose($fp);
-		}
-	}
-}
-
-function layer7_start_l7daemon() {
-	global $layer7_rules_list, $g;
-
-	/*
-	 * XXX: ermal - Needed ?!
-	 * read_layer7_config();
-	 */
-
-	foreach ($layer7_rules_list as $l7rules) {
-		if ($l7rules->GetREnabled()) {
-			$filename = $l7rules->GetRName() . ".l7";
-			$path = "{$g['tmp_path']}/" . $filename;
-
-			unset($l7pid);
-			/* Only reread the configuration rather than restart to avoid losing information. */
-			exec("/bin/pgrep -f 'ipfw-classifyd .* -p ". $l7rules->GetRPort() . "'", $l7pid);
-			if (count($l7pid) > 0) {
-				log_error(sprintf(gettext("Sending HUP signal to %s"), $l7pid[0]));
-				mwexec("/bin/kill -HUP {$l7pid[0]}");
-			} else {
-				// XXX: Hardcoded number of packets to garbage collect and queue length.
-				$ipfw_classifyd_init = "/usr/local/sbin/ipfw-classifyd -n 8 -q 700 -c {$path} -p " . $l7rules->GetRPort() . " -P /usr/local/share/protocols";
-				mwexec_bg($ipfw_classifyd_init);
-			}
-		}
-	}
-}
-
-// This function uses /usr/local/share/protocols as a default directory for searching .pat files
-function generate_protocols_array() {
-
-	update_layer7_custom_patterns();
-
-	$protocols = return_dir_as_array("/usr/local/share/protocols");
-	$protocols_new = array();
-	if (is_array($protocols)) {
-		foreach ($protocols as $key => $proto) {
-			if (strstr($proto, ".pat")) {
-				$protocols_new[$key] =& str_replace(".pat", "", $proto);
-			}
-		}
-		sort($protocols_new);
-	}
-	return $protocols_new;
-}
-
-function get_l7_unique_list() {
-	global $layer7_rules_list;
-
-	$l7list = array();
-	if (is_array($layer7_rules_list)) {
-		foreach ($layer7_rules_list as $l7c) {
-			if ($l7c->GetREnabled()) {
-				$l7list[] = $l7c->GetRName();
-			}
-		}
-	}
-
-	return $l7list;
-}
-
-// Disable a removed l7 container from the filter
-function cleanup_l7_from_rules(&$name) {
-	global $config;
-
-	if (is_array($config['filter']['rule'])) {
-		foreach ($config['filter']['rule'] as $key => $rule) {
-			if ($rule['l7container'] == $name) {
-				unset($config['filter']['rule'][$key]['l7container']);
-			}
-		}
 	}
 }
 
@@ -5149,7 +4724,7 @@ function build_iface_without_this_queue($iface, $qname) {
 
 }
 
-$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "</b><br />";
+$default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
 $default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
 	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 

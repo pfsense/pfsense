@@ -36,10 +36,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
-	pfSense_MODULE:	config
 */
 
 require_once("globals.inc");
@@ -80,8 +76,12 @@ if (file_exists("/debugging")) {
 $config = parse_config();
 
 /* set timezone */
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
+if (isset($config['system']['timezone']) &&
+    !empty($config['system']['timezone'])) {
+	$timezone = $config['system']['timezone'];
+} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+	$timezone = $g['default_timezone'];
+} else {
 	$timezone = "Etc/UTC";
 }
 date_default_timezone_set("$timezone");

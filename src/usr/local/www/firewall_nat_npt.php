@@ -1,15 +1,16 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_npt.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
- *	part of m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +18,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +39,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +56,11 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt
-##|*NAME=Firewall: NAT: NPT page
-##|*DESCR=Allow access to the 'Firewall: NAT: NPT' page.
+##|*NAME=Firewall: NAT: NPt
+##|*DESCR=Allow access to the 'Firewall: NAT: NPt' page.
 ##|*MATCH=firewall_nat_npt.php*
 ##|-PRIV
 
@@ -71,8 +69,9 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-if (!is_array($config['nat']['npt']))
+if (!is_array($config['nat']['npt'])) {
 	$config['nat']['npt'] = array();
+}
 
 $a_npt = &$config['nat']['npt'];
 
@@ -105,11 +104,13 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
+if (is_subsystem_dirty('natconf')) {
 	print_info_box_np(gettext("The NAT configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
@@ -141,10 +142,11 @@ foreach ($a_npt as $natent):
 				<td>
 					<input type="hidden" name="rule[]" value="<?=$i?>" />
 <?php
-	if (!$natent['interface'])
+	if (!$natent['interface']) {
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan")));
-	else
+	} else {
 		print(htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface'])));
+	}
 ?>
 				</td>
 <?php
@@ -173,15 +175,22 @@ endforeach;
 ?>
 		</tbody>
 	</table>
-</div>
+</form>
 
 <nav class="action-buttons">
-	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success"><?=gettext("Add rule")?></a>
-	<input type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+	<a href="firewall_nat_npt_edit.php" class="btn btn-sm btn-success">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+	<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="store changes" disabled>
+		<i class="fa fa-save icon-embed-btn"></i>
+		<?=gettext("Save")?>
+	</button>
 </nav>
 
-</form>
-<script>
+</div>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
 	// Make rules draggable/sortable
 	$('table tbody.user-entries').sortable({
@@ -191,6 +200,7 @@ events.push(function() {
 		}
 	});
 });
+//]]>
 </script>
 
 <?php

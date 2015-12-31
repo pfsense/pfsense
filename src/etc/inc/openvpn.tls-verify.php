@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	openvpn.tls-verify.php
 
@@ -29,10 +28,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-*/
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	openvpn
 */
 /*
  * OpenVPN calls this script to validate a certificate

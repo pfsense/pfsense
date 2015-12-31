@@ -36,10 +36,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
-	pfSense_MODULE:	config
 */
 
 if (!function_exists('platform_booting')) {
@@ -191,9 +187,6 @@ if (platform_booting(true)) {
 				}
 			}
 
-			/* write device name to a file for rc.firmware */
-			file_put_contents("{$g['varetc_path']}/cfdevice", $cfgdevice . "\n");
-
 			/* write out an fstab */
 
 			$fstab = "/dev/{$cfgpartition} {$g['cf_path']} {$cfgfstype} ro,noatime 1 1\n";
@@ -210,11 +203,27 @@ if (platform_booting(true)) {
 $config = parse_config();
 
 /* set timezone */
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
+if (isset($config['system']['timezone']) &&
+    !empty($config['system']['timezone'])) {
+	$timezone = $config['system']['timezone'];
+} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+	$timezone = $g['default_timezone'];
+} else {
 	$timezone = "Etc/UTC";
 }
 date_default_timezone_set("$timezone");
+
+/* Set the default interface language */
+if ($config['system']['language'] <> "") {
+	$g['language'] = $config['system']['language'];
+} elseif ($g['language'] == "") {
+	$g['language'] = 'en_US';
+}
+
+if (!function_exists('set_language')) {
+	require_once("pfsense-utils.inc");
+}
+set_language($g['language']);
 
 if ($config_parsed == true) {
 	/* process packager manager custom rules */

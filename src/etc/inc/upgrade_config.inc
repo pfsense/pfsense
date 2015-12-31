@@ -1,39 +1,57 @@
 <?php
 /*
 	upgrade_config.inc
-	Copyright (C) 2004-2009 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find	/bin/cd	/usr/local/bin/rrdtool	/usr/bin/nice
-	pfSense_MODULE:	config
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 if (!function_exists("dump_rrd_to_xml")) {
 	require("rrd.inc");
@@ -378,7 +396,6 @@ function upgrade_017_to_018() {
 
 function upgrade_018_to_019() {
 	global $config;
-	$config['theme'] = "metallic";
 }
 
 
@@ -694,53 +711,49 @@ function upgrade_040_to_041() {
 		$config['sysctl']['item'][8]['descr'] =    gettext("Maximum outgoing TCP datagram size");
 		$config['sysctl']['item'][8]['value'] =   "default";
 
-		$config['sysctl']['item'][9]['tunable'] = "net.inet.ip.fastforwarding";
-		$config['sysctl']['item'][9]['descr'] =    gettext("Fastforwarding (see http://lists.freebsd.org/pipermail/freebsd-net/2004-January/002534.html)");
+		$config['sysctl']['item'][9]['tunable'] = "net.inet.tcp.delayed_ack";
+		$config['sysctl']['item'][9]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
 		$config['sysctl']['item'][9]['value'] =   "default";
 
-		$config['sysctl']['item'][10]['tunable'] = "net.inet.tcp.delayed_ack";
-		$config['sysctl']['item'][10]['descr'] =    gettext("Do not delay ACK to try and piggyback it onto a data packet");
+		$config['sysctl']['item'][10]['tunable'] = "net.inet.udp.maxdgram";
+		$config['sysctl']['item'][10]['descr'] =    gettext("Maximum outgoing UDP datagram size");
 		$config['sysctl']['item'][10]['value'] =   "default";
 
-		$config['sysctl']['item'][11]['tunable'] = "net.inet.udp.maxdgram";
-		$config['sysctl']['item'][11]['descr'] =    gettext("Maximum outgoing UDP datagram size");
+		$config['sysctl']['item'][11]['tunable'] = "net.link.bridge.pfil_onlyip";
+		$config['sysctl']['item'][11]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
 		$config['sysctl']['item'][11]['value'] =   "default";
 
-		$config['sysctl']['item'][12]['tunable'] = "net.link.bridge.pfil_onlyip";
-		$config['sysctl']['item'][12]['descr'] =    gettext("Handling of non-IP packets which are not passed to pfil (see if_bridge(4))");
+		$config['sysctl']['item'][12]['tunable'] = "net.link.tap.user_open";
+		$config['sysctl']['item'][12]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
 		$config['sysctl']['item'][12]['value'] =   "default";
 
-		$config['sysctl']['item'][13]['tunable'] = "net.link.tap.user_open";
-		$config['sysctl']['item'][13]['descr'] =    gettext("Allow unprivileged access to tap(4) device nodes");
+		$config['sysctl']['item'][13]['tunable'] = "kern.randompid";
+		$config['sysctl']['item'][13]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
 		$config['sysctl']['item'][13]['value'] =   "default";
 
-		$config['sysctl']['item'][15]['tunable'] = "kern.randompid";
-		$config['sysctl']['item'][15]['descr'] =    gettext("Randomize PID's (see src/sys/kern/kern_fork.c: sysctl_kern_randompid())");
+		$config['sysctl']['item'][14]['tunable'] = "net.inet.tcp.inflight.enable";
+		$config['sysctl']['item'][14]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][14]['value'] =   "default";
+
+		$config['sysctl']['item'][15]['tunable'] = "net.inet.icmp.icmplim";
+		$config['sysctl']['item'][15]['descr'] =    gettext("Set ICMP Limits");
 		$config['sysctl']['item'][15]['value'] =   "default";
 
-		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.inflight.enable";
-		$config['sysctl']['item'][16]['descr'] =    gettext("The system will attempt to calculate the bandwidth delay product for each connection and limit the amount of data queued to the network to just the amount required to maintain optimum throughput. ");
+		$config['sysctl']['item'][16]['tunable'] = "net.inet.tcp.tso";
+		$config['sysctl']['item'][16]['descr'] =    gettext("TCP Offload engine");
 		$config['sysctl']['item'][16]['value'] =   "default";
 
-		$config['sysctl']['item'][17]['tunable'] = "net.inet.icmp.icmplim";
-		$config['sysctl']['item'][17]['descr'] =    gettext("Set ICMP Limits");
+		$config['sysctl']['item'][17]['tunable'] = "net.inet.ip.portrange.first";
+		$config['sysctl']['item'][17]['descr'] =    "Set the ephemeral port range starting port";
 		$config['sysctl']['item'][17]['value'] =   "default";
 
-		$config['sysctl']['item'][18]['tunable'] = "net.inet.tcp.tso";
-		$config['sysctl']['item'][18]['descr'] =    gettext("TCP Offload engine");
+		$config['sysctl']['item'][18]['tunable'] = "hw.syscons.kbd_reboot";
+		$config['sysctl']['item'][18]['descr'] =    "Enables ctrl+alt+delete";
 		$config['sysctl']['item'][18]['value'] =   "default";
 
-		$config['sysctl']['item'][19]['tunable'] = "net.inet.ip.portrange.first";
-		$config['sysctl']['item'][19]['descr'] =    "Set the ephemeral port range starting port";
+		$config['sysctl']['item'][19]['tunable'] = "kern.ipc.maxsockbuf";
+		$config['sysctl']['item'][19]['descr'] =    "Maximum socket buffer size";
 		$config['sysctl']['item'][19]['value'] =   "default";
-
-		$config['sysctl']['item'][20]['tunable'] = "hw.syscons.kbd_reboot";
-		$config['sysctl']['item'][20]['descr'] =    "Enables ctrl+alt+delete";
-		$config['sysctl']['item'][20]['value'] =   "default";
-
-		$config['sysctl']['item'][21]['tunable'] = "kern.ipc.maxsockbuf";
-		$config['sysctl']['item'][21]['descr'] =    "Maximum socket buffer size";
-		$config['sysctl']['item'][21]['value'] =   "default";
 
 	}
 }
@@ -2144,10 +2157,6 @@ function upgrade_054_to_055() {
 		@unlink("{$g['tmp_path']}/{$xmldump}");
 		@unlink("{$g['tmp_path']}/{$xmldumpnew}");
 	}
-	/* let apinger recreate required files */
-	if (!platform_booting()) {
-		setup_gateways_monitor();
-	}
 
 	/* build a list of traffic and packets databases */
 	$databases = return_dir_as_array($rrddbpath, '/-(traffic|packets)\.rrd$/');
@@ -2428,13 +2437,7 @@ function upgrade_061_to_062() {
 
 function upgrade_062_to_063() {
 	/* Upgrade legacy Themes to the new pfsense_ng */
-	global $config;
-
-	switch ($config['theme']) {
-		case "nervecenter":
-			$config['theme'] = "pfsense_ng";
-			break;
-	}
+	// Not supported in 2.3+
 
 }
 
@@ -3809,10 +3812,6 @@ function upgrade_117_to_118() {
 			$ph1_entry['peerid_data'] =
 			    preg_replace('/\/\s*emailAddress\s*=\s*/', ', E=', $ph1_entry['peerid_data']);
 		}
-		// iketype 'auto' was removed and is really v2, update accordingly
-		if ($ph1_entry['iketype'] == "auto") {
-			$ph1_entry['iketype'] = "ikev2";
-		}
 	}
 }
 
@@ -3834,6 +3833,24 @@ function upgrade_118_to_119() {
 }
 
 function upgrade_119_to_120() {
+	require_once("ipsec.inc");
+	global $config, $ipsec_log_cats;
+
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	// add 1 to configured log levels as part of redmine #5340
+	foreach ($ipsec_log_cats as $lkey => $ldescr) {
+		if (isset($config['ipsec']["ipsec_{$lkey}"])) {
+			$config['ipsec']["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"] + 1;
+		}
+	}
+
+}
+
+
+function upgrade_120_to_121() {
 	global $config;
 
 	if (!isset($config['installedpackages']['miniupnpd']['config'][0])) {
@@ -3852,7 +3869,7 @@ function upgrade_119_to_120() {
 	}
 }
 
-function upgrade_120_to_121() {
+function upgrade_121_to_122() {
 	global $config;
 	foreach ($config['system']['user'] as &$user) {
 		if (isset($user['nt-hash'])) {
@@ -3861,7 +3878,7 @@ function upgrade_120_to_121() {
 	}
 }
 
-function upgrade_121_to_122() {
+function upgrade_122_to_123() {
 	global $config;
 
 	// PPTP server was removed
@@ -3959,4 +3976,288 @@ function upgrade_121_to_122() {
 	}
 }
 
+function upgrade_123_to_124() {
+	if (isset($config['system']['altpkgrepo'])) {
+		unset($config['system']['altpkgrepo']);
+	}
+
+	if (isset($config['theme'])) {
+		unset($config['theme']);
+	}
+}
+
+function upgrade_124_to_125() {
+	global $config;
+
+	/* Find interfaces with WEP configured. */
+	foreach ($config['interfaces'] as $ifname => $intf) {
+		if (!is_array($intf['wireless'])) {
+			continue;
+		}
+
+		/* Generate a notice, disable interface, remove WEP settings */
+		if (isset($intf['wireless']['wep']['enable'])) {
+			if (!function_exists("file_notice")) {
+				require_once("notices.inc");
+			}
+			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
+			unset($config['interfaces'][$ifname]['wireless']['wep']);
+			if (isset($intf['enable'])) {
+				unset($config['interfaces'][$ifname]['enable']);
+			}
+		}
+	}
+}
+
+function upgrade_125_to_126() {
+	require_once("ipsec.inc");
+	global $config, $ipsec_log_cats, $ipsec_log_sevs;
+
+	$def_loglevel = 1;
+	if (!is_array($config['ipsec'])) {
+		return;
+	}
+
+	if (!isset($config['ipsec']['logging']) || !is_array($config['ipsec']['logging'])) {
+		$config['ipsec']['logging'] = array();
+	}
+
+	/* subtract 2 from ipsec log levels. the value stored in the config.xml
+	 * will now match the strongswan level exactly.
+	 */
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (!isset($config['ipsec']["ipsec_{$cat}"])) {
+			$new_level = $def_loglevel;
+		} else {
+			$new_level = intval($config['ipsec']["ipsec_{$cat}"]) - 2;
+		}
+
+		if (in_array($new_level, array_keys($ipsec_log_sevs))) {
+			$config['ipsec']['logging'][$cat] = $new_level;
+		} else {
+			$config['ipsec']['logging'][$cat] = $def_loglevel;
+		}
+		unset($config['ipsec']["ipsec_{$cat}"]);
+	}
+}
+
+// prior to v2.3 <widgets><sequence> contains a list of widgets with display types:
+//		none, close, hide, & show
+// v2.3 & later uses:
+//		close & open
+// widgets not in use are simply not in the list
+function upgrade_126_to_127() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$new_widgets = array();
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		switch ($display) {
+			case 'hide':
+				$display = 'close';
+				break;
+			case 'show':
+				$display = 'open';
+				break;
+			case 'open':
+				break;
+			default:
+				continue 2;
+		}
+
+		/* Remove '-container' from widget name */
+		$file = preg_replace('/-container$/', '', $file);
+
+		$new_widgets[] = "{$file}:{$col}:{$display}";
+	}
+
+	$config['widgets']['sequence'] = implode(',', $new_widgets);
+
+}
+
+function upgrade_127_to_128() {
+	global $config;
+
+	// If bindip is not already specified then migrate the old SNMP bindlan flag to a bindip setting
+	if (isset($config['snmpd']['bindlan'])) {
+		if (!isset($config['snmpd']['bindip'])) {
+			$config['snmpd']['bindip'] = 'lan';
+		}
+		unset($config['snmpd']['bindlan']);
+	}
+}
+
+function upgrade_128_to_129() {
+	global $config;
+
+	/* net.inet.ip.fastforwarding does not exist in 2.3. */
+	if (!isset($config['sysctl']['item']) ||
+	    !is_array($config['sysctl']['item'])) {
+		return;
+	}
+
+	foreach ($config['sysctl']['item'] as $idx => $sysctl) {
+		if ($sysctl['tunable'] == "net.inet.ip.fastforwarding") {
+			unset($config['sysctl']['item'][$idx]);
+		}
+		if ($sysctl['tunable'] == "net.inet.ipsec.debug") {
+			$config['sysctl']['item'][$idx]['value'] = "0";
+		}
+	}
+
+	/* IPSEC is always on in 2.3. */
+	if (isset($config['ipsec']['enable'])) {
+		unset($config['ipsec']['enable']);
+	} else if (is_array($config['ipsec']['phase1'])) {
+		/*
+		 * If IPsec was globally disabled, disable all
+		 * phase1 entries
+		 */
+		foreach ($config['ipsec']['phase1'] as $idx => $p1) {
+			$config['ipsec']['phase1'][$idx]['disabled'] = true;
+		}
+	}
+}
+
+function upgrade_129_to_130() {
+	global $config;
+
+	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
+	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
+			if (isset($serversettings['topology_subnet'])) {
+				unset($serversettings['topology_subnet']);
+				$serversettings['topology'] = "subnet";
+			} else {
+				$serversettings['topology'] = "net30";
+			}
+		}
+	}
+}
+
+function upgrade_130_to_131() {
+	global $config;
+
+	if (isset($config['syslog']['apinger'])) {
+		$config['syslog']['dpinger'] = true;
+		unset($config['syslog']['apinger']);
+	}
+
+	if (isset($config['system']['apinger_debug'])) {
+		unset($config['system']['apinger_debug']);
+	}
+
+	if (!isset($config['gateways']['gateway_item']) ||
+	    !is_array($config['gateways']['gateway_item'])) {
+		return;
+	}
+
+	foreach ($config['gateways']['gateway_item'] as &$gw) {
+		// dpinger uses milliseconds
+		if (isset($gw['interval']) &&
+		    is_numeric($gw['interval'])) {
+			$gw['interval'] = $gw['interval'] * 1000;
+		}
+		if (isset($gw['down']) &&
+		    is_numeric($gw['down'])) {
+			$gw['loss_interval'] = $gw['down'] * 1000;
+			unset($gw['down']);
+		}
+
+		if (isset($gw['avg_delay_samples'])) {
+			unset($gw['avg_delay_samples']);
+		}
+		if (isset($gw['avg_delay_samples_calculated'])) {
+			unset($gw['avg_delay_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_samples'])) {
+			unset($gw['avg_loss_samples']);
+		}
+		if (isset($gw['avg_loss_samples_calculated'])) {
+			unset($gw['avg_loss_samples_calculated']);
+		}
+		if (isset($gw['avg_loss_delay_samples'])) {
+			unset($gw['avg_loss_delay_samples']);
+		}
+		if (isset($gw['avg_loss_delay_samples_calculated'])) {
+			unset($gw['avg_loss_delay_samples_calculated']);
+		}
+	}
+}
+
+function upgrade_131_to_132() {
+	global $config;
+	if (isset($config['system']['usefifolog'])) {
+		unset($config['system']['usefifolog']);
+		clear_all_log_files(false);
+	}
+}
+
+function upgrade_132_to_133() {
+	global $config;
+
+	if (isset($config['ipsec']['phase1']) &&
+	    is_array($config['ipsec']['phase1'])) {
+		foreach ($config['ipsec']['phase1'] as &$p1) {
+			if (isset($p1['encryption-algorithm']['name']) &&
+			    $p1['encryption-algorithm']['name'] == 'des') {
+				$p1['disabled'] = true;
+				file_notice("IPsec",
+				    "DES is no longer supported, IPsec phase 1 " .
+				    "item '{$p1['descr']}' is being disabled.");
+			}
+		}
+	}
+
+	if (isset($config['ipsec']['phase2']) &&
+	    is_array($config['ipsec']['phase2'])) {
+		foreach ($config['ipsec']['phase2'] as &$p2) {
+			if (!isset($p2['encryption-algorithm-option']) ||
+			    !is_array($p2['encryption-algorithm-option'])) {
+				continue;
+			}
+
+			foreach ($p2['encryption-algorithm-option'] as $ealgo) {
+				if ($ealgo['name'] == 'des') {
+					$p2['disabled'] = true;
+					file_notice("IPsec",
+					    "DES is no longer supported, IPsec phase 2 " .
+					    "item '{$p2['descr']}' is being disabled.");
+				}
+			}
+		}
+	}
+}
+
+// Determine the highest column number in use and set dashboardcolumns accordingly
+function upgrade_133_to_134() {
+	global $config;
+
+	if (!isset($config['widgets']['sequence']) || isset($config['system']['webgui']['dashboardcolumns'])) {
+		return;
+	}
+
+	$cur_widgets = explode(',', trim($config['widgets']['sequence']));
+	$maxcols = 2;
+
+	foreach ($cur_widgets as $widget) {
+		list($file, $col, $display) = explode(':', $widget);
+
+		if (($display != 'none') && ($display != 'hide')) {
+			preg_match('#[0-9]+$#', $col, $column);
+			if ($column[0] > $maxcols) {
+				$maxcols = $column[0];
+			}
+		}
+	}
+
+	$config['system']['webgui']['dashboardcolumns'] = $maxcols % 10;
+}
 ?>

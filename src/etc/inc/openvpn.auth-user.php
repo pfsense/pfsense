@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	openvpn.auth-user.php
 
@@ -30,10 +29,6 @@
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
 
-*/
-/*
-	pfSense_BUILDER_BINARIES:
-	pfSense_MODULE:	openvpn
 */
 /*
  * OpenVPN calls this script to authenticate a user
@@ -118,7 +113,7 @@ if (file_exists("{$g['varetc_path']}/openvpn/{$modeid}.ca")) {
 
 $authenticated = false;
 
-if (($strictusercn === true) && ($common_name != $username)) {
+if (($strictusercn === true) && (mb_strtolower($common_name) !== mb_strtolower($username))) {
 	syslog(LOG_WARNING, "Username does not match certificate common name ({$username} != {$common_name}), access denied.\n");
 	if (isset($_GET['username'])) {
 		echo "FAILED";
@@ -145,7 +140,7 @@ if (!is_array($authmodes)) {
 $attributes = array();
 foreach ($authmodes as $authmode) {
 	$authcfg = auth_get_authserver($authmode);
-	if (!$authcfg && $authmode != "local") {
+	if (!$authcfg && $authmode != "Local Database") {
 		continue;
 	}
 

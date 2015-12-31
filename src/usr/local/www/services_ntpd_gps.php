@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	services_ntpd_gps.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Dagorlad
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -55,14 +53,11 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: ntpd_gps
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-gps
-##|*NAME=Services: NTP Serial GPS page
-##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page..
+##|*NAME=Services: NTP Serial GPS
+##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page.
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV
 
@@ -213,20 +208,21 @@ function build_nmea_list() {
 	$nmealist['options'][4] = 'GLL';
 	$nmealist['options'][8] = 'ZDA or ZDG';
 
-	if(!$pconfig['nmea'])
+	if (!$pconfig['nmea']) {
 		array_push($nmealist['selected'], 0);
+	}
 
-	foreach($nmealist['options'] as $val => $opt) {
-		if($pconfig['nmea'] & $val)
+	foreach ($nmealist['options'] as $val => $opt) {
+		if ($pconfig['nmea'] & $val) {
 		  array_push($nmealist['selected'], $val);
+		}
 	}
 
 	return($nmealist);
 }
 
-$closehead = false;
 $pconfig = &$config['ntpd']['gps'];
-$pgtitle = array(gettext("Services"), gettext("NTP GPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -235,8 +231,6 @@ $tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form;
 
@@ -258,9 +252,9 @@ $section->addInput(new Form_Select(
 	'GPS',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
-))->setHelp('This option allows you to select a predefined configuration.' .
+))->setHelp('This option allows you to select a predefined configuration. ' .
 			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if your GPS is not listed.' . '<br /><br />' .
-			'The perdefined configurations assume your GPS has already been set to NMEA mode.');
+			'The predefined configurations assume your GPS has already been set to NMEA mode.');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
@@ -268,7 +262,7 @@ if (!empty($serialports)) {
 	$splist = array();
 
 	foreach ($serialports as $port) {
-		$shortport = substr($port,5);
+		$shortport = substr($port, 5);
 		$splist[$shortport] = $shortport;
 	}
 
@@ -276,7 +270,7 @@ if (!empty($serialports)) {
 		'gpsport',
 		'Serial port',
 		$pconfig['port'],
-			$splist
+		$splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(
@@ -329,7 +323,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'gpsselect',
 	null,
-	'NTP should not use this clock, it will be displayed for reference only(default: disabled).',
+	'NTP should not use this clock, it will be displayed for reference only (default: disabled).',
 	$pconfig['noselect']
 ));
 
@@ -429,15 +423,15 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function NMEAChecksum(cmd) {
 		// Compute the checksum by XORing all the character values in the string.
 		var checksum = 0;
 
-		for(var i = 0; i < cmd.length; i++) {
+		for (var i = 0; i < cmd.length; i++) {
 			checksum = checksum ^ cmd.charCodeAt(i);
 		}
 		// Convert it to hexadecimal (base-16, upper case, most significant byte first).

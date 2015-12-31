@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	services_dyndns_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -54,14 +52,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: dyndns
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclient
-##|*NAME=Services: Dynamic DNS client page
+##|*NAME=Services: Dynamic DNS client
 ##|*DESCR=Allow access to the 'Services: Dynamic DNS client' page.
 ##|*MATCH=services_dyndns_edit.php*
 ##|-PRIV
@@ -142,6 +136,10 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
+	}
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
@@ -169,14 +167,18 @@ if ($_POST) {
 		$dyndns = array();
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
-		$dyndns['password'] = $_POST['passwordfld'];
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$dyndns['password'] = $_POST['passwordfld'];
+		} else {
+			$dyndns['password'] = $a_dyndns[$id]['password'];;
+		}
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
 		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
 		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
-		/* In this place enable means disabled */
+		// In this place enable means disabled
 		if ($_POST['enable']) {
 			unset($dyndns['enable']);
 		} else {
@@ -223,8 +225,9 @@ function build_type_list() {
 	$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 	$typelist = array();
 
-	for ($j = 0; $j < count($vals); $j++)
+	for ($j = 0; $j < count($vals); $j++) {
 		$typelist[$vals[$j]] = htmlspecialchars($types[$j]);
+	}
 
 	return($typelist);
 }
@@ -234,31 +237,33 @@ function build_if_list() {
 
 	$iflist = get_configured_interface_with_descr();
 
-	foreach ($iflist as $if => $ifdesc)
+	foreach ($iflist as $if => $ifdesc) {
 		$list[$if] = $ifdesc;
+	}
 
 	unset($iflist);
 
 	$grouplist = return_gateway_groups_array();
 
-	foreach ($grouplist as $name => $group)
+	foreach ($grouplist as $name => $group) {
 		$list[$name] = 'GW Group ' . $name;
+	}
 
 	unset($grouplist);
 
 	return($list);
 }
 
-$pgtitle = array(gettext("Services"),gettext("Dynamic DNS client"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Client"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form;
 
@@ -292,7 +297,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'requestif',
 	'Interface to send update from',
-	$pconfig['request'],
+	$pconfig['requestif'],
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 
@@ -352,7 +357,7 @@ $section->addInput(new Form_Input(
 			'GleSYS: Enter your API user.' . '<br />' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
@@ -421,12 +426,12 @@ print($form);
 // Certain input elements are hidden/shown based on the service type in the following script
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function setVisible(service) {
-		switch(service) {
+		switch (service) {
 			case "custom" :
 			case "custom-v6" :
 				hideInput('resultmatch', false);
@@ -471,11 +476,11 @@ events.push(function(){
 
 	// When the 'Service type" selector is changed, we show/hide certain elements
 	$('#type').on('change', function() {
-		setVisible( this.value );
+		setVisible(this.value);
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	setVisible($('#type').val());
 
 });

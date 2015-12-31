@@ -4,7 +4,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -53,9 +55,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: base
-*/
 
 /* Include authentication routines */
 /* THIS MUST BE ABOVE ALL OTHER CODE */
@@ -82,23 +81,8 @@ require_once("authgui.inc");
 /* parse the configuration and include all configuration functions */
 require_once("functions.inc");
 
-/* Pull in all the gui related display classes) */
-foreach (scandir("/usr/local/www/classes/") as $file) {
-	if (substr($file, -4) == ".inc") {
-		require_once("classes/{$file}");
-	}
-}
-
-$g['theme'] = get_current_theme();
-
-/* Set the default interface language */
-if ($config['system']['language'] <> "") {
-	$g['language'] = $config['system']['language'];
-} elseif ($g['language'] == "") {
-	$g['language'] = 'en_US';
-}
-
-set_language($g['language']);
+/* Include the autoloader for all the GUI display classes */
+require_once("classes/autoload.inc.php");
 
 /* used by progress bar */
 $lastseen = "-1";
@@ -111,7 +95,7 @@ $mandfldhtmlspc = "";	/* same as above, but with spacing */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
 		if (!$d_isfwfile) {
-			header("Location: system_firmware.php");
+			header("Location: system_update.php");
 			exit;
 		} else {
 			return;
@@ -317,8 +301,9 @@ function verify_gzip_file($fname) {
 function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning") {
 	global $g;
 
-	if (strpos($class, "alert-") !== 0)
+	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
+	}
 
 	if (empty($value)) {
 		$value = gettext("Apply changes");
@@ -329,12 +314,14 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="'.$value.'">'.$name.'</button>';
 
-		if ($_POST['if'])
+		if ($_POST['if']) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
+		}
 
 		$msg .= '</form>';
-	} else
+	} else {
 		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
+	}
 
 	echo '<div class="alert ' . $class . ' clearfix" role="alert">'.$msg.'</div>';
 }
@@ -343,7 +330,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 	global $g;
 
 	if (stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
-		$savebutton = "<td class=\"infoboxsave nowrap\">";
+		$savebutton = "<td class=\"infoboxsave text-nowrap\">";
 		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
 		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
 		$savebutton .= "</td>";
@@ -351,21 +338,9 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 	}
+
 	$nifty_redbox = "#990000";
 	$nifty_blackbox = "#000000";
-
-	$themename = $g['theme'];
-
-	if (file_exists("/usr/local/www/themes/{$themename}/tabcontrols.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/tabcontrols.php");
-		eval($toeval);
-	}
-
-	if (file_exists("/usr/local/www/themes/{$themename}/infobox.php")) {
-		$toeval = file_get_contents("/usr/local/www/themes/{$themename}/infobox.php");
-		eval($toeval);
-	}
-
 
 	if (!$savebutton) {
 		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
@@ -379,7 +354,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 					<table class="infoboxnptable2" summary="message">
 						<tr>
 							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<img class="infoboxnpimg" src="/themes/{$g['theme']}/images/icons/icon_exclam.gif" alt="exclamation" />
+								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
 							</td>
 							<td class="infoboxnptd2">
 								<b>{$msg}</b>
@@ -395,12 +370,6 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 			</td>
 		</tr>
 	</table>
-	<script type="text/javascript">
-	//<![CDATA[
-		Rounded("div#redbox","all","#FFF","{$nifty_redbox}","smooth");
-		Rounded("td#blackbox","all","#FFF","{$nifty_blackbox}","smooth");
-	//]]>
-	</script>
 EOFnp;
 
 }
@@ -525,9 +494,6 @@ function firewall_check_for_advanced_options(&$item) {
 	if ($item['defaultqueue']) {
 		$item_set .= "defaultqueue {$item['defaultqueue']} ";
 	}
-	if ($item['l7container']) {
-		$item_set .= "layer7 {$item['l7container']} ";
-	}
 	if ($item['tag']) {
 		$item_set .= "tag {$item['tag']} ";
 	}
@@ -557,18 +523,20 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	if (!is_array($title))
+	if (!is_array($title)) {
 		return '<h1 class="page-header"><a href="">' . $title . '</a></h1>';
+	}
 
 	$heading = '<h1 class="page-header"><a href="">' . end($title) . '</a></h1>';
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
-	if(count($title) > 1) {
+	if (count($title) > 1) {
 		$bc = '<ol class="breadcrumb">';
 
-		foreach ($title as $el)
+		foreach ($title as $el) {
 			$bc .= '<li>'.$el.'</li>';
+		}
 
 		$bc .= '</ol>';
 	} else {
@@ -587,53 +555,21 @@ function update_changedesc($update) {
 	$changecount++;
 }
 
-function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
-	global $config, $g;
-	if ($restart_syslogd) {
-		exec("/usr/bin/killall syslogd");
-	}
-	if (isset($config['system']['disablesyslogclog'])) {
-		unlink($logfile);
-		touch($logfile);
-	} else {
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
-		if (isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_create -s {$log_size} " . escapeshellarg($logfile));
-		} else {
-			exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
-		}
-	}
-	if ($restart_syslogd) {
-		system_syslogd_start();
-	}
-}
-
-function clear_all_log_files() {
-	global $g;
-	exec("/usr/bin/killall syslogd");
-
-	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
-	foreach ($log_files as $lfile) {
-		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
-	}
-
-	system_syslogd_start();
-	killbyname("dhcpd");
-	services_dhcpd_configure();
-	return;
-}
-
-// This version of dump_clog() does not output <td></td> or any other table elements. It can be renamed
-// and the dump_clog() removed once all of the diag_log*.php files have been converted to Bootstrap
+// This version of dump_clog() does not output <td></td> or any other table elements.
 function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
-	if (is_array($grepfor))
+	if (is_array($grepfor)) {
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
-	if (is_array($grepinvert))
+	}
+	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
+	}
 	if (is_dir($logfile)) {
 		$logarr = array("File $logfile is a directory.");
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
@@ -642,10 +578,7 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if (isset($config['system']['usefifolog']))
-				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			else
-				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
+			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
 	echo "\n";
@@ -656,14 +589,9 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		$logent = preg_split("/\s+/", $logent, 6);
 
 		if ($withorig) {
-				if (isset($config['system']['usefifolog'])) {
-					$entry_date_time = htmlspecialchars(date("F j, Y, g:i a","" . $logent[1] . ""));
-					$entry_text = htmlspecialchars($logent[5]);
-				} else {
-					$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-					$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
-					$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-				}
+				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+				$entry_text = ($logent[3] ==  $config['system']['hostname']) ? "" : $logent[3] . " ";
+				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 				echo "{$entry_date_time}";
 				echo " " . "{$entry_text}"	. "\n";
 		} else {
@@ -677,6 +605,9 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "") {
 	global $g, $config;
 	$sor = isset($config['syslog']['reverse']) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {
@@ -693,37 +624,35 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		} else {
-			if (isset($config['system']['usefifolog'])) {
-				exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			} else {
-				exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-			}
+			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 		}
 	}
+
+	$rows = 0;
 	foreach ($logarr as $logent) {
+		$rows++;
 		$logent = preg_split("/\s+/", $logent, 6);
-		echo "<tr valign=\"top\">\n";
+		echo "<tr>\n";
 		if ($withorig) {
-			if (isset($config['system']['usefifolog'])) {
-				$entry_date_time = htmlspecialchars(date("F j, Y, g:i a", "" . $logent[1] . ""));
-				$entry_text = htmlspecialchars($logent[5]);
-			} else {
-				$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
-				$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
-				$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
-			}
-			echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
-			echo "<td class=\"listr\">{$entry_text}</td>\n";
+			$entry_date_time = htmlspecialchars(join(" ", array_slice($logent, 0, 3)));
+			$entry_text = ($logent[3] == $config['system']['hostname']) ? "" : $logent[3] . " ";
+			$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
+			echo "<td class=\"text-nowrap\">{$entry_date_time}</td>\n";
+			echo "<td style=\"word-wrap:break-word; word-break:break-all; white-space:normal\">{$entry_text}</td>\n";
 		} else {
-				echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";
+				echo "<td>" . htmlspecialchars($logent[5]) . "</td>\n";
 		}
 		echo "</tr>\n";
 	}
+	return($rows);
 }
 
 function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert = "", $grepreverse = false) {
 	global $g, $config;
 	$sor = (isset($config['syslog']['reverse']) || $grepreverse) ? "-r" : "";
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
+	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {
@@ -735,11 +664,7 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	if ($config['system']['disablesyslogclog']) {
 		exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	} else {
-		if (isset($config['system']['usefifolog'])) {
-			exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		} else {
-			exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
-		}
+		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . "{$grepline}| grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
 	}
 	return($logarr);
 }
@@ -884,13 +809,6 @@ function display_widget_tabs(& $tab_array) {
 		echo "&nbsp;&nbsp;&nbsp;</b>";
 		echo "</div>";
 	}
-
-	echo "<script type=\"text/javascript\">";
-	echo "\n//<![CDATA[\n";
-	echo "Rounded(\"div.{$tabclass}-tabactive\",\"top\",\"#CCCCCC\",\"#EEEEEE\",\"smooth\");\n";
-	echo "Rounded(\"div.{$tabclass}-tabdeactive\",\"top\",\"#CCCCCC\",\"#777777\",\"smooth\");\n";
-	echo "//]]>\n";
-	echo "</script>";
 	echo "</div>";
 }
 
@@ -994,7 +912,7 @@ function print_rfc2616_select($tag, $current) {
 	echo "<select id=\"{$tag}\" name=\"{$tag}\">\n";
 	foreach ($rfc2616 as $code => $message) {
 		if ($code == $current) {
-			$sel = " selected=\"selected\"";
+			$sel = " selected";
 		} else {
 			$sel = "";
 		}
@@ -1076,8 +994,9 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 	$font_color = "white";
 
 	$tabcharcount = 0;
-	foreach ($tab_array as $ta)
+	foreach ($tab_array as $ta) {
 		$tabcharcount = $tabcharcount + strlen($ta[0]);
+	}
 
 	if ($no_drop_down == true) {
 		$tabcharcount = 0;
@@ -1086,55 +1005,65 @@ function display_top_tabs(& $tab_array, $no_drop_down = false, $type = 'pills') 
 
 	// If the character count of the tab names is > 670
 	// then show a select item dropdown menubox.
-	if ($tabcharcount > $tab_array_char_limit): ?>
+	if ($tabcharcount > $tab_array_char_limit) {
 		echo gettext("Currently viewing: ");
 		echo "<select name=\"TabSelect\" onchange=\"tabs_will_go(this)\">\n";
+
 		foreach ($tab_array as $ta) {
-			if ($ta[1] == "true")
-				$selected = " selected=\"selected\"";
-			else
+			if ($ta[1] == "true") {
+				$selected = " selected";
+			} else {
 				$selected = "";
+			}
 			// Onclick in option will not work in some browser
 			// echo "<option onclick=\"document.location='{$ta[2]}';\"{$selected}>{$ta['0']}</option>\n";
 			echo "<option value=\"{$ta[2]}\"{$selected}>{$ta['0']}</option>\n";
 		}
+
 		echo "</select>\n<p>&nbsp;</p>";
 		echo "<script type=\"text/javascript\">";
 		echo "\n//<![CDATA[\n";
 		echo " function tabs_will_go(obj){ document.location = obj.value; }\n";
 		echo "//]]>\n";
 		echo "</script>";
-<? else: ?>
-	<ul class="nav nav-<?= $type ?>">
-		<?php foreach ($tab_array as $ta): ?>
-			<li role="presentation"<?=($ta[1] ? ' class="active"' : '')?>><a href="<?=$ta[2]?>"><?=$ta[0]?></a></li>
-		<?php endforeach; ?>
-	</ul>
-<?php endif;
+	} else {
+		echo '<ul class="nav nav-' . $type . '">';
+
+		foreach ($tab_array as $ta) {
+			echo '<li role="presentation"';
+			if ($ta[1]) {
+				echo ' class="active"';
+			}
+
+			echo '><a href="' . $ta[2] . '">' . $ta[0] . '</a></li>';
+		}
+
+		echo '</ul>';
+	}
 }
 
-function add_package_tabs($pkgname, &$tab_array) {
+function add_package_tabs($tabgroup, &$tab_array) {
 	global $config, $g;
 
-//	$pkg = get_pkg_data($pkgname);
-
-	if (!isset($pkg['configurationfile']) || !file_exists('/usr/local/pkg/' . $pkg['configurationfile'])) {
+	if (!isset($config['installedpackages']['package'])) {
 		return;
 	}
 
-	$pkg_config = parse_xml_config_pkg('/usr/local/pkg/' . $pkg['configurationfile'], "packagegui");
+	foreach ($config['installedpackages']['package'] as $pkg) {
+		$pkg_config = read_package_configurationfile($pkg['name']);
 
-	if (!isset($pkg_config['tabs']['tab'])) {
-		return;
-	}
+		if (!isset($pkg_config['tabs']['tab'])) {
+			continue;
+		}
 
-	foreach ($pkg_config['tabs']['tab'] as $tab) {
-		$tab_entry = array();
-		if ($tab['name']) {
-			$tab_entry[] = $tab['name'];
-			$tab_entry[] = false;
-			$tab_entry[] = $tab['url'];
-			$tab_array[] = $tab_entry;
+		foreach ($pkg_config['tabs']['tab'] as $tab) {
+			$tab_entry = array();
+			if ($tab['name']) {
+				$tab_entry[] = $tab['name'];
+				$tab_entry[] = false;
+				$tab_entry[] = $tab['url'];
+				$tab_array[] = $tab_entry;
+			}
 		}
 	}
 }
@@ -1142,19 +1071,19 @@ function add_package_tabs($pkgname, &$tab_array) {
 function alias_info_popup($alias_id) {
 	global $config;
 
-	if (!is_array($config['aliases']['alias'][$alias_id]))
+	if (!is_array($config['aliases']['alias'][$alias_id])) {
 		return;
+	}
 
 	$maxlength = 60;
 	$alias = $config['aliases']['alias'][$alias_id];
 	$content = "";
 
-	if ($alias['url'])
-	{
+	if ($alias['url']) {
 		// TODO: Change it when pf supports tables with ports
 		if ($alias['type'] == "urltable") {
 			exec("/sbin/pfctl -t {$alias['name']} -T show | wc -l", $total_entries);
-			$counter=preg_replace("/\D/","",$total_entries[0]);
+			$counter=preg_replace("/\D/", "", $total_entries[0]);
 			exec("/sbin/pfctl -t {$alias['name']} -T show | head -10002", $alias_addresses);
 		} else {
 			$urlfn = alias_expand_urltable($alias['name']);
@@ -1162,13 +1091,11 @@ function alias_info_popup($alias_id) {
 			$counter = count($alias_addresses);
 		}
 
-		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_ports_address) .'</li></ul>';
-
-		if ($counter > 10002)
+		$content .= '<h5>'. $alias['url'] .'</h5><ul><li>'. implode('</li><li>', $alias_addresses) .'</li></ul>';
+		if ($counter > 10002) {
 			$content .= '<i>'. gettext("listing only first 10k items") .'</i>';
-	}
-	else
-	{
+		}
+	} else {
 		$alias_addresses = explode (" ", $alias['address']);
 		$alias_details = explode ("||", $alias['detail']);
 		$idx = 0;
@@ -1196,8 +1123,9 @@ function alias_info_popup($alias_id) {
 		$content .= "<table>\n";
 	}
 
-	if (strlen($alias['descr']) >= $maxlength)
+	if (strlen($alias['descr']) >= $maxlength) {
 		$alias['descr'] = substr($alias['descr'], 0, $maxlength) . '&hellip;';
+	}
 
 	return $content;
 }
@@ -1205,19 +1133,24 @@ function alias_info_popup($alias_id) {
 function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 	global $config;
 
-	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias']))
+	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias'])) {
 		return;
+	}
 
 	$columns = array();
 	foreach ($config['aliases']['alias'] as $alias_id => $alias_name) {
-		if ($alias_name['name'] == $src)
+		if ($alias_name['name'] == $src) {
 			$columns['src'] = $alias_id;
-		if ($alias_name['name'] == $srcport)
+		}
+		if ($alias_name['name'] == $srcport) {
 			$columns['srcport'] = $alias_id;
-		if ($alias_name['name'] == $dst )
+		}
+		if ($alias_name['name'] == $dst) {
 			$columns['dst'] = $alias_id;
-		if ($alias_name['name'] == $dstport)
+		}
+		if ($alias_name['name'] == $dstport) {
 			$columns['dstport'] = $alias_id;
+		}
 	}
 
 	return $columns;
@@ -1235,8 +1168,28 @@ var_dump($content);die;
 <?php
 }
 
-$timezone = $config['system']['timezone'];
-if (!$timezone) {
+function set_flash_message($class, $msg) {
+	@session_start();
+	$_SESSION['flash_messages'][$class][] = $msg;
+}
+
+function get_flash_message() {
+	@session_start();
+	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
+		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
+			print_info_box_np(implode("<br />", $flash_message), null, null, false, $class);
+		}
+		unset($_SESSION['flash_messages']);
+	}
+}
+
+/* set timezone */
+if (isset($config['system']['timezone']) &&
+    !empty($config['system']['timezone'])) {
+	$timezone = $config['system']['timezone'];
+} elseif (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
+	$timezone = $g['default_timezone'];
+} else {
 	$timezone = "Etc/UTC";
 }
 

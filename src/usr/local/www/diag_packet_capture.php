@@ -3,10 +3,10 @@
 	diag_packet_capture.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -14,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -35,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -53,14 +53,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/ps /usr/bin/grep	/usr/sbin/tcpdump
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-packetcapture
-##|*NAME=Diagnostics: Packet Capture page
+##|*NAME=Diagnostics: Packet Capture
 ##|*DESCR=Allow access to the 'Diagnostics: Packet Capture' page.
 ##|*MATCH=diag_packet_capture.php*
 ##|-PRIV
@@ -123,6 +118,7 @@ if ($_POST['downloadbtn'] == gettext("Download Capture")) {
 $pgtitle = array(gettext("Diagnostics"), gettext("Packet Capture"));
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 
 $fp = "/root/";
 $fn = "packetcapture.cap";
@@ -136,9 +132,10 @@ $protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
 $input_errors = array();
 
 $interfaces = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
-	$interfaces['ipsec'] = "IPsec";
+if (ipsec_enabled()) {
+	$interfaces['enc0'] = "IPsec";
 }
+
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -285,14 +282,13 @@ $protocollist = array(
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(false); // No button yet. We add those later depending on the required action
 
-$section = new Form_Section('General Logging Options');
+$section = new Form_Section('Packet Capture Options');
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -365,8 +361,7 @@ $section->addInput(new Form_Select(
 	'detail',
 	'Level of detail',
 	$detail,
-	array('' => 'Any',
-		  'normal' => 'Normal',
+	array('normal' => 'Normal',
 		  'medium' => 'Medium',
 		  'high' => 'High',
 		  'full' => 'Full',
@@ -377,7 +372,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'dnsquery',
 	'Reverse DNS Lookup',
-	null,
+	'Do reverse DNS lookup',
 	$_POST['dnsquery']
 ))->setHelp('This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
 			'This option can cause delays for large packet captures.');
@@ -394,8 +389,7 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 		'startbtn',
 		'Start'
 	))->removeClass('btn-primary')->addClass('btn-success');
-}
-else {
+} else {
 	$form->addGlobal(new Form_Button(
 		'stopbtn',
 		'Stop'
@@ -424,14 +418,17 @@ print($form);
 if ($do_tcpdump) :
 	$matches = array();
 
-	if (in_array($fam, $fams))
+	if (in_array($fam, $fams)) {
 		$matches[] = $fam;
+	}
 
-	if (in_array($proto, $protos))
+	if (in_array($proto, $protos)) {
 		$matches[] = fixup_not($proto);
+	}
 
-	if ($port != "")
+	if ($port != "") {
 		$matches[] = "port ".fixup_not($port);
+	}
 
 	if ($host != "") {
 		$hostmatch = "";
@@ -440,15 +437,17 @@ if ($do_tcpdump) :
 		foreach ($hosts as $h) {
 			$h = fixup_host($h, $hostcount++);
 
-			if (!empty($h))
+			if (!empty($h)) {
 				$hostmatch .= " " . $h;
+			}
 		}
 
-		if (!empty($hostmatch))
+		if (!empty($hostmatch)) {
 			$matches[] = "({$hostmatch})";
+		}
 	}
 
-	if ($count != "0" ) {
+	if ($count != "0") {
 		$searchcount = "-c " . $count;
 	} else {
 		$searchcount = "";
@@ -471,7 +470,7 @@ if ($do_tcpdump) :
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packets Captured')?></h2></div>
 	<div class="panel-body">
-
+		<div class="form-group">
 <?php
 		$detail_args = "";
 		switch ($detail) {
@@ -490,12 +489,13 @@ if ($do_tcpdump) :
 				break;
 		}
 
-		print('<pre>');
+		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
-		print('</pre>');
+		print('</textarea>');
 
 		conf_mount_ro();
 ?>
+		</div>
 	</div>
 </div>
 <?php

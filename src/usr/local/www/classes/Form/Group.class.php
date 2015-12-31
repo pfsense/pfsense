@@ -108,6 +108,8 @@ EOT;
 
 	public function __toString()
 	{
+		global $config;
+
 		$element = parent::__toString();
 
 		// Automatically determine width for inputs without explicit set
@@ -130,9 +132,18 @@ EOT;
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		$target = $this->_labelTarget->getId();
+		if (strtolower($this->_labelTarget->get_Type()) == 'hidden')
+			$hidden = true;
+
+		$form_controls = array('input', 'select', 'button', 'textarea', 'option', 'optgroup', 'fieldset', 'label');
+		if (in_array(strtolower($this->_labelTarget->gettagName()), $form_controls) && !$hidden)
+			$target = $this->_labelTarget->getId();
+
 		$inputs = implode('', $this->_inputs);
 		$help = $this->_getHelp();
+
+		if (!isset($config['system']['webgui']['webguileftcolumnhyper']))
+			$target = null;
 
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');

@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	diag_backup.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -37,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +56,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/shutdown
-	pfSense_MODULE: backup
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup/restore
-##|*NAME=Diagnostics: Backup/restore page
+##|*NAME=Diagnostics: Backup/restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
@@ -73,7 +69,6 @@ ini_set('max_input_time', '0');
 
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
-$nocsrf = true;
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -178,8 +173,6 @@ function add_base_packages_menu_items() {
 						$modified_config = true;
 					}
 				}
-				$static_output .= "done.\n";
-				update_output_window($static_output);
 			}
 		}
 	}
@@ -232,11 +225,8 @@ if ($_POST) {
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
-				if (!$_POST['encrypt_password'] || !$_POST['encrypt_passconf']) {
+				if (!$_POST['encrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
-				}
-				if ($_POST['encrypt_password'] != $_POST['encrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -310,11 +300,8 @@ if ($_POST) {
 
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
-				if (!$_POST['decrypt_password'] || !$_POST['decrypt_passconf']) {
+				if (!$_POST['decrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
-				}
-				if ($_POST['decrypt_password'] != $_POST['decrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -373,7 +360,7 @@ if ($_POST) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync");
+								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
@@ -606,19 +593,21 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 if (is_subsystem_dirty('restore')):
 ?>
 	<br/>
-	<form action="reboot.php" method="post">
+	<form action="diag_reboot.php" method="post">
 		<input name="Submit" type="hidden" value="Yes" />
 		<?=print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?>
 		<br />
@@ -630,8 +619,6 @@ $tab_array = array();
 $tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
 $tab_array[] = array(gettext("Backup/Restore"), true, "diag_backup.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form(false);
 $form->setMultipartEncoding();	// Allow file uploads
@@ -668,18 +655,9 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'encrypt_password',
-	null,
+	'Password',
 	'password',
-	null,
-	['placeholder' => 'Password']
-));
-
-$section->addInput(new Form_Input(
-	'encrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
+	null
 ));
 
 $group = new Form_Group('');
@@ -721,25 +699,17 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'decrypt_password',
-	null,
+	'Password',
 	'password',
 	null,
 	['placeholder' => 'Password']
 ));
 
-$section->addInput(new Form_Input(
-	'decrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
-));
-
 $group = new Form_Group('');
 $group->add(new Form_Button(
 	'Submit',
-	'Restore configuration'
-))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger');
+	'Restore Configuration'
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore');
 
 $section->add($group);
 
@@ -752,8 +722,8 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		$group->add(new Form_Button(
 			'Submit',
-			'Reinstall packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-warning');
+			'Reinstall Packages'
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success');
 
 		$section->add($group);
 	}
@@ -775,10 +745,10 @@ print($form);
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
-	
+
 	function hideSections(hide) {
 		hidePasswords();
 	}
@@ -789,12 +759,12 @@ events.push(function(){
 		decryptHide = !($('input[name="decrypt"]').is(':checked'));
 
 		hideInput('encrypt_password', encryptHide);
-		hideInput('encrypt_passconf', encryptHide);
+		hideInput('encrypt_password_confirm', encryptHide);
 		hideInput('decrypt_password', decryptHide);
-		hideInput('decrypt_passconf', decryptHide);
+		hideInput('decrypt_password_confirm', decryptHide);
 	}
 
-	// ---------- Click checkbox handlers ---------------------------------------------------------
+	// ---------- Click handlers ------------------------------------------------------------------
 
 	$('input[name="encrypt"]').on('change', function() {
 		hidePasswords();
@@ -804,9 +774,17 @@ events.push(function(){
 		hidePasswords();
 	});
 
+	$('#conffile').change(function () {
+		if (document.getElementById("conffile").value) {
+			$('.restore').prop('disabled', false);
+		} else {
+			$('.restore').prop('disabled', true);
+		}
+    });
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideSections();
+	$('.restore').prop('disabled', true);
 });
 //]]>
 </script>

@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	system.inc
 	part of m0n0wall (http://m0n0.ch/wall)
@@ -27,16 +26,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/powerd	/usr/bin/killall	/sbin/route
-	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/ls	/usr/sbin/syslogd
-	pfSense_BUILDER_BINARIES:	/usr/sbin/pccardd	/usr/local/sbin/lighttpd	/bin/chmod 	/bin/mkdir
-	pfSense_BUILDER_BINARIES:	/usr/bin/tar		/usr/local/sbin/ntpd	/usr/local/sbin/ntpdate
-	pfSense_BUILDER_BINARIES:	/usr/bin/nohup	/sbin/dmesg	/usr/local/sbin/atareinit	/sbin/kldload
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/filterdns
-	pfSense_MODULE:	utils
 */
 
 function activate_powerd() {
@@ -587,6 +576,24 @@ function system_routing_configure($interface = "") {
 		}
 	}
 
+	$gateways_arr = return_gateways_array(false, true);
+	foreach ($gateways_arr as $gateway) {
+		// setup static interface routes for nonlocal gateways
+		if (isset($gateway["nonlocalgateway"])) {
+			$srgatewayip = $gateway['gateway'];
+			$srinterfacegw = $gateway['interface'];
+			if (is_ipaddr($srgatewayip) && !empty($srinterfacegw)) {
+				$inet = (!is_ipaddrv4($srgatewayip) ? "-inet6" : "-inet");
+				$cmd = "/sbin/route change {$inet} " . escapeshellarg($srgatewayip) . " ";
+				mwexec($cmd . "-iface " . escapeshellarg($srinterfacegw));
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - $cmd -iface $srinterfacegw ");
+				}
+			}
+		}
+	}
+
 	if ($dont_add_route == false) {
 		if (!empty($interface) && $interface != $interfacegw) {
 			;
@@ -771,7 +778,7 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	// Rather than repeatedly use the same code, use this function to build a list of remote servers.
 	$facility .= " ".
 	$remote_servers = "";
-	$pad_to = 56;
+	$pad_to  = max(strlen($facility), 56);
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
 	if ($syslogcfg['remoteserver']) {
 		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
@@ -783,6 +790,41 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver3']) . "\n";
 	}
 	return $remote_servers;
+}
+
+function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = true) {
+	global $config, $g;
+	if ($restart_syslogd) {
+		exec("/usr/bin/killall syslogd");
+	}
+	if (isset($config['system']['disablesyslogclog'])) {
+		unlink($logfile);
+		touch($logfile);
+	} else {
+		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "511488";
+		$log_size = isset($config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize']) ? $config['syslog'][basename($logfile, '.log') . '_settings']['logfilesize'] : $log_size;
+		exec("/usr/local/sbin/clog -i -s {$log_size} " . escapeshellarg($logfile));
+	}
+	if ($restart_syslogd) {
+		system_syslogd_start();
+	}
+}
+
+function clear_all_log_files($restart = false) {
+	global $g;
+	exec("/usr/bin/killall syslogd");
+
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	foreach ($log_files as $lfile) {
+		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
+	}
+
+	if ($restart) {
+		system_syslogd_start();
+		killbyname("dhcpd");
+		services_dhcpd_configure();
+	}
+	return;
 }
 
 function system_syslogd_start() {
@@ -800,19 +842,11 @@ function system_syslogd_start() {
 		echo gettext("Starting syslog...");
 	}
 
-	if (is_process_running("fifolog_writer")) {
-		mwexec('/bin/pkill fifolog_writer');
-	}
-
 	// Which logging type are we using this week??
 	if (isset($config['system']['disablesyslogclog'])) {
 		$log_directive = "";
 		$log_create_directive = "/usr/bin/touch ";
 		$log_size = "";
-	} else if (isset($config['system']['usefifolog'])) {
-		$log_directive = "|/usr/sbin/fifolog_writer ";
-		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
-		$log_create_directive = "/usr/sbin/fifolog_create -s ";
 	} else { // Defaults to CLOG
 		$log_directive = "%";
 		$log_size = isset($config['syslog']['logfilesize']) ? $config['syslog']['logfilesize'] : "10240";
@@ -821,7 +855,7 @@ function system_syslogd_start() {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'pptps', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'apinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'pptps', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
@@ -881,11 +915,11 @@ function system_syslogd_start() {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		$syslogconf .= "!apinger\n";
+		$syslogconf .= "!dpinger\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/gateways.log\n";
 		}
-		if (isset($syslogcfg['apinger'])) {
+		if (isset($syslogcfg['dpinger'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
@@ -930,11 +964,7 @@ function system_syslogd_start() {
 local3.*							{$log_directive}{$g['varlog_path']}/vpn.log
 local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
 local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
-*.notice;kern.debug;lpr.info;mail.crit;daemon.none;		{$log_directive}{$g['varlog_path']}/system.log
-news.err;local0.none;local3.none;local4.none;			{$log_directive}{$g['varlog_path']}/system.log
-local7.none							{$log_directive}{$g['varlog_path']}/system.log
-security.*							{$log_directive}{$g['varlog_path']}/system.log
-auth.info;authpriv.info;daemon.info				{$log_directive}{$g['varlog_path']}/system.log
+*.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$log_directive}{$g['varlog_path']}/system.log
 auth.info;authpriv.info 					|exec /usr/local/sbin/sshlockout_pf 15
 *.emerg								*
 
@@ -950,11 +980,7 @@ EOD;
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "local7.*");
 		}
 		if (isset($syslogcfg['system'])) {
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.notice;kern.debug;lpr.info;mail.crit;");
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "news.err;local0.none;local3.none;local7.none");
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "security.*");
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "auth.info;authpriv.info;daemon.info");
-			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg");
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.emerg;*.notice;kern.debug;lpr.info;mail.crit;news.err;local0.none;local3.none;local7.none;security.*;auth.info;authpriv.info;daemon.info");
 		}
 		if (isset($syslogcfg['logall'])) {
 			// Make everything mean everything, including facilities excluded above.
@@ -1501,13 +1527,27 @@ EOD;
 function system_get_timezone_list() {
 	global $g;
 
-	$file_list = glob("/usr/share/zoneinfo/*/*");
+	$file_list = array_merge(
+		glob("/usr/share/zoneinfo/[A-Z]*"),
+		glob("/usr/share/zoneinfo/*/*"),
+		glob("/usr/share/zoneinfo/*/*/*")
+	);
 
 	if (empty($file_list)) {
 		$file_list[] = $g['default_timezone'];
+	} else {
+		/* Remove directories from list */
+		$file_list = array_filter($file_list, function($v) {
+			return !is_dir($v);
+		});
 	}
 
-	return str_replace('/usr/share/zoneinfo/', '', $file_list);
+	/* Remove directory prefix */
+	$file_list = str_replace('/usr/share/zoneinfo/', '', $file_list);
+
+	sort($file_list);
+
+	return $file_list;
 }
 
 function system_timezone_configure() {
@@ -1740,6 +1780,10 @@ function system_ntp_configure($start_ntpd=true) {
 		if (!empty($config['ntpd']['gps']['refid'])) {
 			$ntpcfg .= ' refid ';
 			$ntpcfg .= $config['ntpd']['gps']['refid'];
+		}
+		if (!empty($config['ntpd']['gps']['stratum'])) {
+			$ntpcfg .= ' stratum ';
+			$ntpcfg .= $config['ntpd']['gps']['stratum'];
 		}
 		$ntpcfg .= "\n";
 	} elseif (is_array($config['ntpd']) && !empty($config['ntpd']['gpsport']) &&

@@ -911,37 +911,27 @@ class XML_RPC_Client extends XML_RPC_Base {
             print "\n---END---</pre>\n";
         }
 
-        /*
-         * If we're using a proxy open a socket to the proxy server
-         * instead to the xml-rpc server
-         */
+        $ctx_options = array();
+
+        /* Add proxy to context when it's set */
         if ($this->proxy) {
-            if ($this->proxy_protocol == 'http://') {
-                $protocol = '';
-            } else {
-                $protocol = $this->proxy_protocol;
-            }
-            if ($timeout > 0) {
-                $fp = @fsockopen($protocol . $this->proxy, $this->proxy_port,
-                                 $this->errno, $this->errstr, $timeout);
-            } else {
-                $fp = @fsockopen($protocol . $this->proxy, $this->proxy_port,
-                                 $this->errno, $this->errstr);
-            }
-        } else {
-            if ($this->protocol == 'http://') {
-                $protocol = '';
-            } else {
-                $protocol = $this->protocol;
-            }
-            if ($timeout > 0) {
-                $fp = @fsockopen($protocol . $server, $port,
-                                 $this->errno, $this->errstr, $timeout);
-            } else {
-                $fp = @fsockopen($protocol . $server, $port,
-                                 $this->errno, $this->errstr);
-            }
+            $ctx_options['http'] = array(
+                'proxy' => "{$this->proxy_protocol}{$this->proxy}:{$this->proxy_port}"
+            );
         }
+
+        /* Disable SSL certificate check since it's used only by HA nowadays */
+        $ctx_options['ssl'] = array(
+            'verify_peer' => false,
+            'verify_peer_name' => false
+        );
+
+        $ctx = stream_context_create($ctx_options);
+
+        $fp = stream_socket_client("{$this->protocol}{$server}:{$port}",
+            $this->errno, $this->errstr,
+            ($timeout > 0 ? $timeout : ini_get("default_socket_timeout")),
+            STREAM_CLIENT_CONNECT, $ctx);
 
         /*
          * Just raising the error without returning it is strange,
@@ -959,14 +949,6 @@ class XML_RPC_Client extends XML_RPC_Base {
                               ,$server,$port,$this->errstr),
                               XML_RPC_ERROR_CONNECTION_FAILED);
             return 0;
-        }
-
-        if ($timeout) {
-            /*
-             * Using socket_set_timeout() because stream_set_timeout()
-             * was introduced in 4.3.0, but we need to support 4.2.0.
-             */
-            socket_set_timeout($fp, $timeout);
         }
 
         if (!fputs($fp, $op, strlen($op))) {

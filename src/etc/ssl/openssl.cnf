@@ -275,7 +275,7 @@ authorityKeyIdentifier=keyid:always,issuer:always
 # So we do this instead.
 basicConstraints = CA:true
 
-# Key usage: this is typical for a CA certificate. 
+# Key usage: this is typical for a CA certificate.
 keyUsage = cRLSign, keyCertSign
 
 # Some might want this also

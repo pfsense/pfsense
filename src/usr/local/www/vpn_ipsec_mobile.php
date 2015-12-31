@@ -1,36 +1,65 @@
 <?php
 /*
 	vpn_ipsec_mobile.php
-
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2008 Shrew Soft Inc
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-mobile
-##|*NAME=VPN: IPsec: Mobile page
+##|*NAME=VPN: IPsec: Mobile
 ##|*DESCR=Allow access to the 'VPN: IPsec: Mobile' page.
 ##|*MATCH=vpn_ipsec_mobile.php*
 ##|-PRIV
@@ -147,6 +176,11 @@ if ($_POST['save']) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	foreach ($a_phase1 as $ph1ent) {
+		if (isset($ph1ent['mobile'])) {
+			$mobileph1 = $ph1ent;
+		}
+	}
 	/* input consolidation */
 
 	/* input validation */
@@ -222,6 +256,18 @@ if ($_POST['save']) {
 		}
 	}
 
+	if ($pconfig['user_source']) {
+		if (isset($mobileph1) && $mobileph1['authentication_method'] == 'eap-radius') {
+			foreach ($pconfig['user_source'] as $auth_server_name) {
+				$auth_server       = auth_get_authserver($auth_server_name);
+				if (!is_array($auth_server) || ($auth_server['type'] != 'radius')) {
+					$input_errors[] = gettext("Only valid RADIUS servers may be selected as a user source when using EAP-RADIUS for authentication on the Mobile IPsec VPN.");
+					$pconfig['user_source'] = implode(',', $pconfig['user_source']);
+				}
+			}
+		}
+	}
+
 	if (!$input_errors) {
 		$client = array();
 
@@ -290,7 +336,7 @@ if ($_POST['save']) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -323,18 +369,20 @@ include("head.inc");
 
 		function dns_domain_change() {
 
-			if (document.iform.dns_domain_enable.checked)
+			if (document.iform.dns_domain_enable.checked) {
 				document.iform.dns_domain.disabled = 0;
-			else
+			} else {
 				document.iform.dns_domain.disabled = 1;
+			}
 		}
 
 		function dns_split_change() {
 
-			if (document.iform.dns_split_enable.checked)
+			if (document.iform.dns_split_enable.checked) {
 				document.iform.dns_split.disabled = 0;
-			else
+			} else {
 				document.iform.dns_split.disabled = 1;
+			}
 		}
 
 		function dns_server_change() {
@@ -365,44 +413,51 @@ include("head.inc");
 
 		function pfs_group_change() {
 
-			if (document.iform.pfs_group_enable.checked)
+			if (document.iform.pfs_group_enable.checked) {
 				document.iform.pfs_group.disabled = 0;
-			else
+			} else {
 				document.iform.pfs_group.disabled = 1;
+			}
 		}
 
 		function login_banner_change() {
 
-			if (document.iform.login_banner_enable.checked)
+			if (document.iform.login_banner_enable.checked) {
 				document.iform.login_banner.disabled = 0;
-			else
+			} else {
 				document.iform.login_banner.disabled = 1;
+			}
 		}
 
 		//]]>
 	</script>
 
 <?php
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg);
-if (isset($config['ipsec']['enable']) && is_subsystem_dirty('ipsec'))
+}
+if (is_subsystem_dirty('ipsec')) {
 	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-foreach ($a_phase1 as $ph1ent)
-	if (isset($ph1ent['mobile']))
+}
+foreach ($a_phase1 as $ph1ent) {
+	if (isset($ph1ent['mobile'])) {
 		$ph1found = true;
-if ($pconfig['enable'] && !$ph1found)
-	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."),gettext("create"),gettext("Create Phase1"));
-if ($input_errors)
+	}
+}
+if ($pconfig['enable'] && !$ph1found) {
+	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), gettext("create"), gettext("Create Phase1"));
+}
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), true, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[1] = array(gettext("Mobile Clients"), true, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 $section = new Form_Section('Enable IPsec Mobile Client Support');
@@ -419,8 +474,9 @@ $section = new Form_Section('Extended Authentication (Xauth)');
 
 $authServers = array();
 
-foreach (auth_get_authserver_list() as $authServer)
+foreach (auth_get_authserver_list() as $authServer) {
 	$authServers[$authServer['name']] = $authServer['name']; // Value == name
+}
 
 $section->addInput(new Form_Select(
 	'user_source',
@@ -455,8 +511,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-pool_enable collapse');
 
-if (!empty($pconfig['pool_enable']))
+if (!empty($pconfig['pool_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'pool_address',
@@ -467,8 +524,9 @@ $group->add(new Form_Input(
 
 $netBits = array();
 
-for ($i = 32; $i >= 0; $i--)
+for ($i = 32; $i >= 0; $i--) {
 	$netBits[$i] = $i;
+}
 
 $group->add(new Form_Select(
 	'pool_netbits',
@@ -490,8 +548,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-pool_enable_v6 collapse');
 
-if (!empty($pconfig['pool_enable_v6']))
+if (!empty($pconfig['pool_enable_v6'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'pool_address_v6',
@@ -502,8 +561,9 @@ $group->add(new Form_Input(
 
 $netBits = array();
 
-for ($i = 128; $i >= 0; $i--)
+for ($i = 128; $i >= 0; $i--) {
 	$netBitsv6[$i] = $i;
+}
 
 $group->add(new Form_Select(
 	'pool_netbits_v6',
@@ -538,8 +598,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-dns_domain collapse');
 
-if (!empty($pconfig['dns_domain_enable']))
+if (!empty($pconfig['dns_domain_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'dns_domain',
@@ -560,8 +621,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-dns_split collapse');
 
-if (!empty($pconfig['dns_split_enable']))
+if (!empty($pconfig['dns_split_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'dns_split',
@@ -579,13 +641,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dns_server_enable']
 ))->toggles('.toggle-dns_server_enable');
 
-for ($i = 1; $i <= 4; $i++)
-{
+for ($i = 1; $i <= 4; $i++) {
 	$group = new Form_Group('Server #' . $i);
 	$group->addClass('toggle-dns_server_enable collapse');
 
-	if (!empty($pconfig['dns_server_enable']))
+	if (!empty($pconfig['dns_server_enable'])) {
 		$group->addClass('in');
+	}
 
 	$group->add(new Form_Input(
 		'dns_server' . $i,
@@ -604,13 +666,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['wins_server_enable']
 ))->toggles('.toggle-wins_server_enable');
 
-for ($i = 1; $i <= 2; $i++)
-{
+for ($i = 1; $i <= 2; $i++) {
 	$group = new Form_Group('Server #' . $i);
 	$group->addClass('toggle-wins_server_enable collapse');
 
-	if (!empty($pconfig['wins_server_enable']))
+	if (!empty($pconfig['wins_server_enable'])) {
 		$group->addClass('in');
+	}
 
 	$group->add(new Form_Input(
 		'wins_server' . $i,
@@ -633,8 +695,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Group');
 $group->addClass('toggle-pfs_group collapse');
 
-if (!empty($pconfig['pfs_group_enable']))
+if (!empty($pconfig['pfs_group_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Select(
 	'pfs_group',
@@ -655,8 +718,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('');
 $group->addClass('toggle-login_banner collapse');
 
-if (!empty($pconfig['login_banner_enable']))
+if (!empty($pconfig['login_banner_enable'])) {
 	$group->addClass('in');
+}
 
 // TODO: should be a textarea
 $group->add(new Form_Input(

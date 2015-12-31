@@ -1,14 +1,15 @@
 <?php
-/* $Id$ */
 /*
 	firewall_aliases.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +17,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +38,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,13 +55,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	aliases
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-aliases
-##|*NAME=Firewall: Aliases page
+##|*NAME=Firewall: Aliases
 ##|*DESCR=Allow access to the 'Firewall: Aliases' page.
 ##|*MATCH=firewall_aliases.php*
 ##|-PRIV
@@ -183,25 +181,40 @@ function find_alias_reference($section, $field, $origname, &$is_alias_referenced
 	}
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"));
+$tab_array = array();
+$tab_array[] = array(gettext("IP"),    ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
+$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
+$tab_array[] = array(gettext("URLs"),  ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
+$tab_array[] = array(gettext("All"),   ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
+
+foreach ($tab_array as $dtab) {
+	if ($dtab[1] == true) {
+		$bctab = $dtab[0];
+		break;
+	}
+}
+
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), $bctab);
 $shortcut_section = "aliases";
 
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('aliases'))
+if (is_subsystem_dirty('aliases')) {
 	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
-$tab_array = array();
-$tab_array[] = array(gettext("IP"), ($tab == "ip" ? true : ($tab == "host" ? true : ($tab == "network" ? true : false))), "/firewall_aliases.php?tab=ip");
-$tab_array[] = array(gettext("Ports"), ($tab == "port"? true : false), "/firewall_aliases.php?tab=port");
-$tab_array[] = array(gettext("URLs"), ($tab == "url"? true : false), "/firewall_aliases.php?tab=url");
-$tab_array[] = array(gettext("All"), ($tab == "all"? true : false), "/firewall_aliases.php?tab=all");
 display_top_tabs($tab_array);
 
 ?>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title">Firewall Aliases <?=$bctab?></h2></div>
+	<div class="panel-body">
+
 <div class="table-responsive">
 <table class="table table-striped table-hover">
 	<thead>
@@ -209,6 +222,7 @@ display_top_tabs($tab_array);
 			<th><?=gettext("Name")?></th>
 			<th><?=gettext("Values")?></th>
 			<th><?=gettext("Description")?></th>
+			<th><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -223,25 +237,28 @@ display_top_tabs($tab_array);
 		case "ip":
 		case "host":
 		case "network":
-			if (preg_match("/(host|network)/", $alias["type"]))
+			if (preg_match("/(host|network)/", $alias["type"])) {
 				$show_alias= true;
+			}
 			break;
 		case "url":
-			if (preg_match("/(url)/i", $alias["type"]))
+			if (preg_match("/(url)/i", $alias["type"])) {
 				$show_alias= true;
+			}
 			break;
 		case "port":
-			if ($alias["type"] == "port")
+			if ($alias["type"] == "port") {
 				$show_alias= true;
+			}
 			break;
 		}
 		if ($show_alias):
 ?>
 		<tr>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($alias['name'])?>
 			</td>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 <?php
 	if ($alias["url"]) {
 		echo $alias["url"] . "<br />";
@@ -263,34 +280,44 @@ display_top_tabs($tab_array);
 	}
 ?>
 			</td>
-			<td>
+			<td ondblclick="document.location='firewall_aliases_edit.php?id=<?=$i;?>';">
 				<?=htmlspecialchars($alias['descr'])?>&nbsp;
 			</td>
 			<td>
-				<a href="firewall_aliases_edit.php?id=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-				<a href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>" class="btn btn-xs btn-danger">delete</a>
-				</td>
-			</tr>
+				<a class="fa fa-pencil" title="<?=gettext("Edit alias"); ?>" href="firewall_aliases_edit.php?id=<?=$i?>"></a>
+				<a class="fa fa-trash"	title="<?=gettext("Delete alias")?>" href="?act=del&amp;tab=<?=$tab?>&amp;id=<?=$i?>"></a>
+			</td>
+		</tr>
 <?php endif?>
 <?php endforeach?>
 	</tbody>
 </table>
 </div>
 
+	</div><!-- panel body -->
+</div><!-- panel default -->
+
 <nav class="action-buttons">
-	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success">
-		<?=gettext("add new alias");?>
+	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add");?>
 	</a>
-	<a href="firewall_aliases_import.php" role="button" class="btn btn-default">
-		<?=gettext("bulk import");?>
+	<a href="firewall_aliases_import.php" role="button" class="btn btn-default btn-sm">
+		<i class="fa fa-download icon-embed-btn"></i>
+		<?=gettext("Import");?>
 	</a>
 </nav>
 
+<!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".
+	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
+<div>
+	<div id="infoblock">
+		<?=print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
+			'of changes that have to be made if a host, network or port changes. <br />' .
+			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
+			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), info)?>
+	</div>
+</div>
+
 <?php
-
-print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
-			   'of changes that have to be made if a host, network or port changes.' . '<br />' .
-			   'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			   'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'));
-
 include("foot.inc");

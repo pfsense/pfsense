@@ -5,7 +5,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2009 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -55,10 +54,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /usr/local/bin/rrdtool
-	pfSense_MODULE: system
-*/
 
 require_once("globals.inc");
 require_once("guiconfig.inc");
@@ -227,8 +222,7 @@ if ($altq_list_queues[$curif]) {
 
 $speedlimit = ($upstream + $downstream);
 
-/* Set default colors explicitly, the theme can then override them below.
-   This prevents missing colors in themes from crashing the graphs. */
+/* Set default colors explicitly.*/
 /* Traffic Outbound		Out-P-4,  Out-B-4,	Out-P-6,  Out-B-6 */
 $colortrafficup		= array('666666', 'CCCCCC', '2217AA', '625AE7');
 
@@ -287,16 +281,7 @@ $colorntpd		= array('0080FF', '00E344', 'FF0000', '000000');
 /* Captive Portal Concurrent	Concurrent Users */
 $colorcaptiveportalusers = array('990000');
 
-/* select theme colors if the include file exists
-   Note: Themes are no longer used in pfSense 2.3.x so don't try this any more
-
-$rrdcolors = "{$g['www_path']}/themes/{$g['theme']}/rrdcolors.inc.php";
-if (file_exists($rrdcolors)) {
-	include($rrdcolors);
-} else {
-	log_error(sprintf(gettext("rrdcolors.inc.php for theme %s does not exist, using defaults!"), $g['theme']));
-}
-*/
+$colordhcpd = array('990000', '0000FF', '000000');
 
 switch ($curstyle) {
 	case "absolute":
@@ -1247,9 +1232,41 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S	\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
+} elseif ((strstr($curdatabase, "-dhcpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
+	/* define graphcmd for dhcpd stats */
+	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd .= "--start $start --end $end --step $step ";
+	$graphcmd .= "--vertical-label \"DHCP Leases\" ";
+	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
+	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
+	$graphcmd .= "--height 200 --width 620 ";
+	$graphcmd .= "DEF:\"$curif-leases=$rrddbpath$curdatabase:leases:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"$curif-staticleases=$rrddbpath$curdatabase:staticleases:AVERAGE:step=$step\" ";
+	$graphcmd .= "DEF:\"$curif-dhcprange=$rrddbpath$curdatabase:dhcprange:AVERAGE:step=$step\" ";
+	$graphcmd .= "AREA:\"$curif-leases#{$colordhcpd[0]}:Active Leases\" ";
+	$graphcmd .= "LINE2:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
+	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:DHCP Range\" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t\tmaximum\\n\" ";
+	$graphcmd .= "COMMENT:\"Active Leases\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"Static Leases\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"DHCP Range\t\t\" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:MAX:%8.0lf \" ";
+	$graphcmd .= "COMMENT:\"\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } else {
 	$data = false;
-	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"),$curdatabase));
+	log_error(sprintf(gettext("Sorry we do not have data to graph for %s"), $curdatabase));
 }
 
 /* check modification time to see if we need to generate image */
@@ -1291,8 +1308,8 @@ if (($graphcmdreturn <> 0) || (!$data)) {
 	header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
 	header("Cache-Control: no-cache, no-store, must-revalidate");
 	header("Pragma: no-cache");
-	$file= "/usr/local/www/themes/{$g['theme']}/images/misc/rrd_error.png";
-	readfile($file);
+	$input_errors[] = gettext("There has been an error in rendering the graph. Please check your system logs.");
+	print_input_errors($input_errors);
 } else {
 	$file = "$rrdtmppath$curdatabase-$curgraph.png";
 	if (file_exists("$file")) {

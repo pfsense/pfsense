@@ -1,36 +1,62 @@
 <?php
 /*
 	vpn_openvpn_client.php
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2008 Shrew Soft Inc.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-client
-##|*NAME=OpenVPN: Client page
+##|*NAME=OpenVPN: Client
 ##|*DESCR=Allow access to the 'OpenVPN: Client' page.
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
@@ -39,7 +65,7 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-$pgtitle = array(gettext("OpenVPN"), gettext("Client"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-client'])) {
@@ -241,6 +267,10 @@ if ($_POST) {
 			if (empty($pconfig['proxy_user']) || empty($pconfig['proxy_passwd'])) {
 				$input_errors[] = gettext("User name and password are required for proxy with authentication.");
 			}
+
+			if ($pconfig['proxy_passwd'] != $pconfig['proxy_passwd_confirm']) {
+				$input_errors[] = gettext("Password and confirmation must match.");
+			}
 		}
 	}
 
@@ -274,14 +304,14 @@ if ($_POST) {
 
 	if (!$tls_mode && !$pconfig['autokey_enable']) {
 		if (!strstr($pconfig['shared_key'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['shared_key'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'Shared Key' does not appear to be valid");
 		}
 	}
 
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
-			!strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
+		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
 			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
 		}
 	}
@@ -302,12 +332,20 @@ if ($_POST) {
 		$input_errors[] = gettext("If no Client Certificate is selected, a username and/or password must be entered.");
 	}
 
+	if ($pconfig['auth_pass'] != $pconfig['auth_pass_confirm']) {
+		$input_errors[] = gettext("Password and confirmation must match.");
+	}
+
 	if (!$input_errors) {
 
 		$client = array();
 
 		foreach ($simplefields as $stat) {
-			update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
+				$client[$stat] = $a_client[$id]['auth_pass'];
+			} else {
+				update_if_changed($stat, $client[$stat], $_POST[$stat]);
+			}
 		}
 
 		if ($vpnid) {
@@ -330,7 +368,9 @@ if ($_POST) {
 		$client['proxy_port'] = $pconfig['proxy_port'];
 		$client['proxy_authtype'] = $pconfig['proxy_authtype'];
 		$client['proxy_user'] = $pconfig['proxy_user'];
-		$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		if ($pconfig['proxy_passwd'] != DMYPWD) {
+			$client['proxy_passwd'] = $pconfig['proxy_passwd'];
+		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
 		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
@@ -380,80 +420,17 @@ if ($_POST) {
 
 include("head.inc");
 
-function build_if_list() {
-	$list = array();
-
-	$interfaces = get_configured_interface_with_descr();
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip)
-		$interfaces[$cif.'|'.$carpip] = $carpip." (".get_vip_descr($carpip).")";
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif)
-		$interfaces[$aliasif.'|'.$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-
-	$grouplist = return_gateway_groups_array();
-
-	foreach ($grouplist as $name => $group) {
-		if($group['ipprotocol'] != inet)
-			continue;
-
-		if($group[0]['vip'] != "")
-			$vipif = $group[0]['vip'];
-		else
-			$vipif = $group[0]['int'];
-
-		$interfaces[$name] = "GW Group {$name}";
-	}
-
-	$interfaces['lo0'] = "Localhost";
-	$interfaces['any'] = "any";
-
-	foreach ($interfaces as $iface => $ifacename)
-	   $list[$iface] = $ifacename;
-
-	return($list);
-}
-
-function build_cert_list() {
-	global $a_cert;
-
-	$list = array('' => 'None (Username and/or Password required)');
-
-	foreach ($a_cert as $cert) {
-		$caname = "";
-		$inuse = "";
-		$revoked = "";
-		$ca = lookup_ca($cert['caref']);
-
-		if ($ca)
-			$caname = " (CA: {$ca['descr']})";
-
-		if ($pconfig['certref'] == $cert['refid'])
-			$selected = "selected=\"selected\"";
-
-		if (cert_in_use($cert['refid']))
-			$inuse = " *In Use";
-
-		if (is_cert_revoked($cert))
-		   $revoked = " *Revoked";
-
-		$list[$cert['refid']] = $cert['descr'] . $caname . $inuse . $revoked;
-	}
-
-	return($list);
-}
-
-if (!$savemsg)
+if (!$savemsg) {
 	$savemsg = "";
+}
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
@@ -463,17 +440,15 @@ $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.x
 add_package_tabs("OpenVPN", $tab_array);
 display_top_tabs($tab_array);
 
-if($act=="new" || $act=="edit") :
-	require_once('classes/Form.class.php');
-
+if ($act=="new" || $act=="edit"):
 	$form = new Form();
 
 	$section = new Form_Section('General Information');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'disable',
 		'Disabled',
-		'Disable this server',
+		'Disable this client',
 		$pconfig['disable']
 	))->setHelp('Set this option to disable this client without removing it from the list');
 
@@ -502,7 +477,7 @@ if($act=="new" || $act=="edit") :
 		'interface',
 		'Interface',
 		$pconfig['interface'],
-		build_if_list()
+		openvpn_build_if_list()
 		));
 
 	$section->addInput(new Form_Input(
@@ -547,14 +522,14 @@ if($act=="new" || $act=="edit") :
 		$pconfig['proxy_user']
 	));
 
-	$section->addInput(new Form_Input(
+	$section->addPassword(new Form_Input(
 		'proxy_passwd',
 		'Password',
 		'password',
 		$pconfig['proxy_passwd']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'resolve_retry',
 		'Server hostname resolution',
 		'Infinitely resolve server ',
@@ -580,18 +555,18 @@ if($act=="new" || $act=="edit") :
 		$pconfig['auth_user']
 	))->setHelp('Leave empty when no user name is needed');
 
-	$section->addInput(new Form_Input(
-		'auth_passwd',
+	$section->addPassword(new Form_Input(
+		'auth_pass',
 		'Password',
 		'password',
-		$pconfig['auth_passwd']
+		$pconfig['auth_pass']
 	))->setHelp('Leave empty when no password is needed');
 
 	$form->add($section);
 
 	$section = new Form_Section('Cryptographic settings');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
 		'TLS authentication',
 		'Enable authentication of TLS packets.',
@@ -599,7 +574,7 @@ if($act=="new" || $act=="edit") :
 	));
 
 	if (!$pconfig['tls']) {
-		$section->addInput(new Form_checkbox(
+		$section->addInput(new Form_Checkbox(
 			'autotls_enable',
 			null,
 			'Automatically generate a shared TLS authentication key.',
@@ -607,7 +582,7 @@ if($act=="new" || $act=="edit") :
 		));
 	}
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'tls',
 		'Key',
 		$pconfig['tls']
@@ -615,8 +590,9 @@ if($act=="new" || $act=="edit") :
 
 	if (count($a_ca)) {
 		$list = array();
-		foreach ($a_ca as $ca)
+		foreach ($a_ca as $ca) {
 			$list[$ca['refid']] = $ca['descr'];
+		}
 
 		$section->addInput(new Form_Select(
 			'caref',
@@ -636,33 +612,35 @@ if($act=="new" || $act=="edit") :
 			'crlref',
 			'Peer Certificate Revocation list',
 			$pconfig['crlref'],
-			build_crl_list()
+			openvpn_build_crl_list()
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert Manager &gt; Certificate Revocation</a>')
 		));
 	}
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'autokey_enable',
 		'Auto generate',
 		'Automatically generate a shared key',
 		$pconfig['autokey_enable'] && empty($pconfig['shared_key'])
 	));
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'shared_key',
 		'Shared Key',
 		$pconfig['shared_key']
 	))->setHelp('Paste your shared key here');
 
+	$cl = openvpn_build_cert_list(true);
+
 	$section->addInput(new Form_Select(
 		'certref',
 		'Client Certificate',
 		$pconfig['certref'],
-		build_cert_list()
+		$cl['server']
 		));
 
 	$section->addInput(new Form_Select(
@@ -741,28 +719,28 @@ $section->addInput(new Form_Input(
 		$openvpn_compression_modes
 		))->setHelp('Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'passtos',
 		'Type-of-Service',
 		'Set the TOS IP header value of tunnel packets to match the encapsulated packet value.',
 		$pconfig['passtos']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'no_tun_ipv6',
 		'Disable IPv6',
 		'Don\'t forward IPv6 traffic. ',
 		$pconfig['no_tun_ipv6']
 	));
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'route_no_pull',
 		'Don\'t pull routes',
 		'Bars the server from adding routes to the client\'s routing table',
 		$pconfig['route_no_pull']
 	))->setHelp('This option still allows the server to set the TCP/IP properties of the client\'s TUN/TAP interface. ');
 
-	$section->addInput(new Form_checkbox(
+	$section->addInput(new Form_Checkbox(
 		'route_no_exec',
 		'Don\'t add/remove routes',
 		'Don\'t add or remove routes automatically',
@@ -774,7 +752,7 @@ $section->addInput(new Form_Input(
 	$section = new Form_Section('Advanced Configuration');
 	$section->addClass('advanced');
 
-	$section->addInput(new Form_TextArea(
+	$section->addInput(new Form_Textarea(
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
@@ -815,7 +793,7 @@ else:
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Clients')?></h2></div>
 		<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Protocol")?></th>
@@ -828,7 +806,7 @@ else:
 			<tbody>
 <?php
 	$i = 0;
-	foreach($a_client as $client):
+	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
 				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
@@ -842,8 +820,8 @@ else:
 						<?=htmlspecialchars($client['description'])?>
 					</td>
 					<td>
-						<a href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-						<a href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit client')?>"	href="vpn_openvpn_client.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete client')?>" href="vpn_openvpn_client.php?act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -857,7 +835,8 @@ else:
 
 <nav class="action-buttons">
 	<a href="vpn_openvpn_client.php?act=new" class="btn btn-sm btn-success">
-		<?=gettext("Add client")?>
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
 	</a>
 </nav>
 
@@ -866,15 +845,15 @@ endif;
 
 // Note:
 // The following *_change() functions were converted from Javascript/DOM to JQuery but otherwise
-// mostly left unchanged. The logic on this form is complex andthis works!
+// mostly left unchanged. The logic on this form is complex and this works!
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function mode_change() {
-		switch($('#mode').val()) {
+		switch ($('#mode').val()) {
 			case "p2p_tls":
 				hideCheckbox('tlsauth_enable', false);
 				hideInput('caref', false);

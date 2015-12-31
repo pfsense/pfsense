@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_firewall.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,13 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-firewall
-##|*NAME=System: Advanced: Firewall and NAT page
+##|*NAME=System: Advanced: Firewall and NAT
 ##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
 ##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
@@ -387,7 +385,7 @@ if ($_POST) {
 
 		// Kill filterdns when value changes, filter_configure() will restart it
 		if (($old_aliasesresolveinterval != $config['system']['aliasesresolveinterval']) &&
-			isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
+		    isvalidpid("{$g['varrun_path']}/filterdns.pid")) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
@@ -401,13 +399,15 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Firewall and NAT"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -420,7 +420,6 @@ display_top_tabs($tab_array);
 
 ?><div id="container"><?php
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Firewall Advanced');
 
@@ -430,14 +429,14 @@ $section->addInput(new Form_Checkbox(
 	'Clear invalid DF bits instead of dropping the packets',
 	isset($config['system']['scrubnodf'])
 ))->setHelp('This allows for communications with hosts that generate fragmented '.
-	'packets with the don"t fragment (DF) bit set. Linux NFS is known to do this. '.
-	'This will cause the filter to not drop such packets but instead clear the don"t '.
+	'packets with the don\'t fragment (DF) bit set. Linux NFS is known to do this. '.
+	'This will cause the filter to not drop such packets but instead clear the don\'t '.
 	'fragment bit.');
 
 $section->addInput(new Form_Checkbox(
 	'scrubrnid',
 	'IP Random id generation',
-	'Insert a stronger id into IP header of packets passing through the filter.',
+	'Insert a stronger ID into IP header of packets passing through the filter.',
 	isset($config['system']['scrubrnid'])
 ))->setHelp('Replaces the IP identification field of packets with random values to '.
 	'compensate for operating systems that use predictable values. This option only '.
@@ -522,7 +521,7 @@ $section->addInput(new Form_Input(
 	'default. On your system the default size is: %d',
 	[pfsense_default_table_entries_size()]);
 
-$section->addINput(new Form_Input(
+$section->addInput(new Form_Input(
 	'maximumfrags',
 	'Firewall Maximum Fragment Entries',
 	'text',
@@ -602,16 +601,16 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-if (count($config['interfaces']) > 1)
-{
+if (count($config['interfaces']) > 1) {
 	$section = new Form_Section('Network Address Translation');
 
-	if (isset($config['system']['disablenatreflection']))
+	if (isset($config['system']['disablenatreflection'])) {
 		$value = 'disable';
-	elseif (!isset($config['system']['enablenatreflectionpurenat']))
+	} elseif (!isset($config['system']['enablenatreflectionpurenat'])) {
 		$value = 'proxy';
-	else
+	} else {
 		$value = 'purenat';
+	}
 
 	$section->addInput(new Form_Select(
 		'natreflection',
@@ -622,7 +621,7 @@ if (count($config['interfaces']) > 1)
 			'proxy' => 'NAT + proxy',
 			'purenat' => 'Pure NAT',
 		)
-	))->setHelp('<ul><li>The pure NAT mode uses a set of NAT rules to direct '.
+	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
 		'but it must be possible to accurately determine the interface and '.
 		'gateway IP used for communication with the target at the time the '.
@@ -635,7 +634,7 @@ if (count($config['interfaces']) > 1)
 		'the time the rules are loaded. Reflection rules are not created for '.
 		'ranges larger than 500 ports and will not be used for more than 1000 '.
 		'ports total between all port forwards. Only TCP and UDP protocols are '.
-		'supported.</li></ul>Individual rules may be configured to override '.
+		'supported.</li></ul><span class="help-block">Individual rules may be configured to override '.
 		'this system setting on a per-rule basis.');
 
 	$section->addInput(new Form_Input(
@@ -679,91 +678,79 @@ if (count($config['interfaces']) > 1)
 	$form->add($section);
 }
 
-$section = new Form_Section('State Timeouts');
+$section = new Form_Section('State Timeouts in seconds. (Leave blank for default)');
 
-$group = new Form_Group('TCP Timeouts');
-$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN', 'closed');
-foreach ($tcpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'tcp'. strtolower($name) .'timeout',
+$tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
+foreach ($tcpTimeouts as $name) {
+	$keyname = 'tcp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'TCP '. $name,
 		'number',
-		$config['system']['tcp'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for TCP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('UDP Timeouts');
 $udpTimeouts = array('First', 'Single', 'Multiple');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'udp'. strtolower($name) .'timeout',
+foreach ($udpTimeouts as $name) {
+	$keyname = 'udp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'UDP '. $name,
 		'number',
-		$config['system']['udo'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for UDP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('ICMP Timeouts');
-$udpTimeouts = array('First', 'Error');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'icmp'. strtolower($name) .'timeout',
-		'UDP '. $name,
+$icmpTimeouts = array('First', 'Error');
+foreach ($icmpTimeouts as $name) {
+	$keyname = 'icmp'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
+		'ICMP '. $name,
 		'number',
-		$config['system']['icmp'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
-
-$group = new Form_Group('Other Timeouts');
-foreach ($udpTimeouts as $name)
-{
-	$group->add(new Form_Input(
-		'other'. strtolower($name) .'timeout',
+$otherTimeouts = array('First', 'Single', 'Multiple');
+foreach ($otherTimeouts as $name) {
+	$keyname = 'other'. strtolower(str_replace(" ", "", $name)) .'timeout';
+	$section->addInput(new Form_Input(
+		$keyname,
 		'Other '. $name,
 		'number',
-		$config['system']['other'. strtolower($name) .'timeout']
-	))->setHelp('Enter value for ICMP '. $name .' timeout in seconds. Leave blank for '.
-		'default (recommended).');
+		$config['system'][$keyname]
+	));
 }
 
-$section->add($group);
+$form->add($section);
 
 print $form;
 
-?>
-<script>
+?></div>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Change help text based on the selector value
 	function setHelpText(id, text) {
 		$('#' + id).parent().parent('div').find('span').html(text);
 	}
 
 	function setOptText(val) {
-		var htext = '<font color="green">';
+		var htext = '<span class="text-success">';
 
-		if(val == 'normal')
+		if (val == 'normal') {
 			htext += 'The default optimization algorithm';
-		else if (val == 'high-latency')
+		} else if (val == 'high-latency') {
 			htext += 'Used for eg. satellite links. Expires idle connections later than default';
-		else if (val == 'aggressive')
+		} else if (val == 'aggressive') {
 			htext += 'Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections';
-		else if (val == 'conservative')
+		} else if (val == 'conservative') {
 			htext += 'Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization';
+		}
 
-		htext += '</font>';
+		htext += '</span>';
 		setHelpText('optimization', htext);
 	}
 
@@ -774,10 +761,11 @@ events.push(function(){
 	});
 
 	// ---------- On initial page load ------------------------------------------------------------
-	
+
 	setOptText($('#optimization').val())
 });
 //]]>
 </script>
 <?php
 include("foot.inc");
+?>

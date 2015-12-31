@@ -46,9 +46,15 @@ class Form_Checkbox extends Form_Input
 		$this->column->addClass('checkbox');
 	}
 
-	public function displayAsRadio()
+	public function displayAsRadio($id = null)
 	{
 		$this->_attributes['type'] = 'radio';
+
+		if ($id != null) {
+			$this->_attributes['id'] = $id;
+		} else {
+			$this->_attributes['id'] = $this->_attributes['name'] . '_' . $this->_attributes['value'] . ':' .substr(uniqid(), 9);
+		}
 
 		return $this;
 	}

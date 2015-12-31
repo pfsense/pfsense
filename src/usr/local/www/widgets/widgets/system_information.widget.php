@@ -2,10 +2,12 @@
 /*
 	system_information.widget.php
 */
-/* ====================================================================
+/*
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2007 Scott Dale
+ *	Copyright (c)  2007 Scott Dale
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -51,8 +53,6 @@
  *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
  *	OF THE POSSIBILITY OF SUCH DAMAGE.
  *
- *	====================================================================
- *
  */
 
 require_once("functions.inc");
@@ -61,58 +61,48 @@ require_once('notices.inc');
 include_once("includes/functions.inc.php");
 
 if ($_REQUEST['getupdatestatus']) {
-	if (isset($config['system']['firmware']['disablecheck'])) {
+	require_once("pkg-utils.inc");
+
+	$system_version = get_system_pkg_version();
+
+	if ($system_version === false) {
+		print(gettext("<i>Unable to check for updates</i>"));
 		exit;
 	}
-	if (isset($config['system']['firmware']['alturl']['enable'])) {
-		$updater_url = "{$config['system']['firmware']['alturl']['firmwareurl']}";
-	} else {
-		$updater_url = $g['update_url'];
+
+	if (!is_array($system_version) ||
+	    !isset($system_version['version']) ||
+	    !isset($system_version['installed_version'])) {
+		print(gettext("<i>Error in version information</i>"));
+		exit;
 	}
 
-	$nanosize = "";
-	if ($g['platform'] == "nanobsd") {
-		if (!isset($g['enableserial_force'])) {
-			$nanosize = "-nanobsd-vga-";
-		} else {
-			$nanosize = "-nanobsd-";
-		}
-		$nanosize .= strtolower(trim(file_get_contents("/etc/nanosize.txt")));
-	}
+	$version_compare = pkg_version_compare(
+	    $system_version['installed_version'], $system_version['version']);
 
-	@unlink("/tmp/{$g['product_name']}_version");
-	if (download_file_with_progress_bar("{$updater_url}/version{$nanosize}", "/tmp/{$g['product_name']}_version", 'read_body', 5, 5) === true) {
-		$remote_version = trim(@file_get_contents("/tmp/{$g['product_name']}_version"));
-	}
-
-	if(empty($remote_version))
-		echo "<i>Unable to check for updates</i>";
-	else {
-		$current_installed_buildtime = trim(file_get_contents("/etc/version.buildtime"));
-
-		if(!$remote_version) {
-			echo "<i>Unable to check for updates</i>";
-		}
-		else {
-			$needs_system_upgrade = false;
-			$version_compare = pfs_version_compare($current_installed_buildtime, $g['product_version'], $remote_version);
-			if ($version_compare == -1) {
+	switch ($version_compare) {
+	case '<':
 ?>
-<div class="alert alert-warning" role="alert">
-	Version <?=$remote_version?> is available. <a href="/system_firmware_check.php" class="alert-link">Click Here to view.</a>
-</div>
+		<div>
+			<?=gettext("Version ")?>
+			<span class="text-success"><?=$system_version['version']?></span> <?=gettext("is available.")?>
+			<a class="fa fa-cloud-download fa-lg" href="/pkg_mgr_install.php?id=firmware"></a>
+		</div>
 <?php
-			} elseif ($version_compare == 1) {
-				echo "You are on a later version than<br />the official release.";
-			} else {
-				echo "You are on the latest version.";
-			}
-		}
+		break;
+	case '=':
+		print(gettext("You are on the latest version."));
+		break;
+	case '>':
+		print(gettext("You are on a later version than<br />the official release."));
+		break;
+	default:
+		print(gettext( "<i>Error comparing installed version<br />with latest available</i>"));
+		break;
 	}
+
 	exit;
 }
-
-$curcfg = $config['system']['firmware'];
 
 $filesystems = get_mounted_filesystems();
 ?>
@@ -121,7 +111,7 @@ $filesystems = get_mounted_filesystems();
 	<tbody>
 		<tr>
 			<th><?=gettext("Name");?></th>
-			<td><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
+			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
 		<tr>
 			<th><?=gettext("Version");?></th>
@@ -130,13 +120,13 @@ $filesystems = get_mounted_filesystems();
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				built on <?php readfile("/etc/version.buildtime"); ?>
-			<?php if(!$g['hideuname']): ?>
+			<?php if (!$g['hideuname']): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
 			<br/><br/>
-			<?php if(!isset($config['system']['firmware']['disablecheck'])): ?>
-				<div id='updatestatus'><?php echo gettext("Obtaining update status"); ?> ...</div>
+			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
 			<?php endif; ?>
 			</td>
 		</tr>
@@ -173,12 +163,13 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
-			<div id="cpufreq"><?= get_cpufreq(); ?></div>
+				<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
-			<div id="cpucount">
-				<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?></div>
+				<div id="cpucount">
+					<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?>
+				</div>
 		<?php endif; ?>
 			</td>
 		</tr>
@@ -218,7 +209,8 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("State table size");?></th>
 			<td>
-				<?php	$pfstatetext = get_pfstate();
+				<?php
+					$pfstatetext = get_pfstate();
 					$pfstateusage = get_pfstate(true);
 				?>
 				<div class="progress">
@@ -255,7 +247,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
-			<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
+				<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -273,11 +265,11 @@ $filesystems = get_mounted_filesystems();
 			<td>
 				<?php $memUsage = mem_usage(); ?>
 
-					<div class="progress" >
-						<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
-						</div>
+				<div class="progress" >
+					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
-					<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
+				</div>
+				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
 			</td>
 		</tr>
 		<?php if ($showswap == true): ?>
@@ -289,7 +281,7 @@ $filesystems = get_mounted_filesystems();
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-			<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -297,31 +289,24 @@ $filesystems = get_mounted_filesystems();
 			<th><?=gettext("Disk usage");?></th>
 			<td>
 				<table class="table">
-<?PHP foreach ($filesystems as $fs): ?>
-				<tr>
-					<th><?=$fs['mountpoint']?></th>
-					<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
-					<td><?=$fs['total_size']?></td>
-					<td>
-						<span><?=$fs['percent_used']?>%</span>
-<!--
-						<div class="progress">
-							<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
-								<span><?=$fs['percent_used']?>%</span>
-							</div>
-						</div>
--->
-					</td>
-				</tr>
-<?PHP endforeach; ?>
+<?php foreach ($filesystems as $fs): ?>
+					<tr>
+						<th><?=$fs['mountpoint']?></th>
+						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
+						<td><?=$fs['total_size']?></td>
+						<td>
+							<span><?=$fs['percent_used']?>%</span>
+						</td>
+					</tr>
+<?php endforeach; ?>
 				</table>
 			</td>
 		</tr>
 	</tbody>
 </table>
 
-<script>
-
+<script type="text/javascript">
+//<![CDATA[
 function systemStatusGetUpdateStatus() {
 	$.ajax({
 		type: 'get',
@@ -349,10 +334,12 @@ function updateMeters() {
 				stats(data);
 		}
 	});
-        setTimer();
+
+	setTimer();
+
 }
 
-events.push(function(){ 
+events.push(function(){
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
 
@@ -369,7 +356,7 @@ function setProgress(barName, percent) {
 }
 
 function setTimer() {
-         timeout = window.setTimeout('updateMeters()', update_interval); 
+	timeout = window.setTimeout('updateMeters()', update_interval);
 }
 
 function stats(x) {
@@ -381,92 +368,105 @@ function stats(x) {
 			return false;
 	}))
 
-        updateUptime(values[2]);
-        updateDateTime(values[5]);
-        updateCPU(values[0]);
-        updateMemory(values[1]);
-        updateState(values[3]);
-        updateTemp(values[4]);
-        updateInterfaceStats(values[6]);
-        updateInterfaces(values[7]);
-        updateGatewayStats(values[8]);
-        updateCpuFreq(values[9]);
-        updateLoadAverage(values[10]);
-        updateMbuf(values[11]);
-        updateMbufMeter(values[12]);
-        updateStateMeter(values[13]);
+	updateUptime(values[2]);
+	updateDateTime(values[5]);
+	updateCPU(values[0]);
+	updateMemory(values[1]);
+	updateState(values[3]);
+	updateTemp(values[4]);
+	updateInterfaceStats(values[6]);
+	updateInterfaces(values[7]);
+	updateGatewayStats(values[8]);
+	updateCpuFreq(values[9]);
+	updateLoadAverage(values[10]);
+	updateMbuf(values[11]);
+	updateMbufMeter(values[12]);
+	updateStateMeter(values[13]);
 }
 
 function updateMemory(x) {
-	if(jQuery('#memusagemeter'))
+	if (jQuery('#memusagemeter')) {
 		jQuery("#memusagemeter").html(x);
-	if(jQuery('#memUsagePB')) {
+	}
+	if (jQuery('#memUsagePB')) {
 		setProgress('memUsagePB', parseInt(x));
 	}
 }
 
 function updateMbuf(x) {
-	if(jQuery('#mbuf'))
+	if (jQuery('#mbuf')) {
 		jQuery("#mbuf").html(x);
+	}
 }
 
 function updateMbufMeter(x) {
-	if(jQuery('#mbufusagemeter'))
+	if (jQuery('#mbufusagemeter')) {
 		jQuery("#mbufusagemeter").html(x + '%');
-	if(jQuery('#mbufPB'))
+	}
+	if (jQuery('#mbufPB')) {
 		setProgress('mbufPB', parseInt(x));
+	}
 }
 
 function updateCPU(x) {
 
-	if(jQuery('#cpumeter'))
+	if (jQuery('#cpumeter')) {
 		jQuery("#cpumeter").html(x + '%');
-	if(jQuery('#cpuPB'))
+	}
+	if (jQuery('#cpuPB')) {
 		setProgress('cpuPB', parseInt(x));
+	}
 
 	/* Load CPU Graph widget if enabled */
-	if(widgetActive('cpu_graphs')) {
+	if (widgetActive('cpu_graphs')) {
 		GraphValue(graph[0], x);
 	}
 }
 
 function updateTemp(x) {
-	if(jQuery("#tempmeter"))
+	if (jQuery("#tempmeter")) {
 		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
-        if(jQuery('#tempPB'))
+	}
+	if (jQuery('#tempPB')) {
 		jQuery("#tempPB").progressbar( { value: parseInt(x) } );
+	}
 }
 
 function updateDateTime(x) {
-	if(jQuery('#datetime'))
+	if (jQuery('#datetime')) {
 		jQuery("#datetime").html(x);
+	}
 }
 
 function updateUptime(x) {
-	if(jQuery('#uptime'))
+	if (jQuery('#uptime')) {
 		jQuery("#uptime").html(x);
+	}
 }
 
 function updateState(x) {
-	if(jQuery('#pfstate'))
+	if (jQuery('#pfstate')) {
 		jQuery("#pfstate").html('(' + x + ')');
+	}
 }
 
 function updateStateMeter(x) {
-	if(jQuery('#pfstateusagemeter'))
+	if (jQuery('#pfstateusagemeter')) {
 		jQuery("#pfstateusagemeter").html(x + '%');
-	if(jQuery('#statePB'))
+	}
+	if (jQuery('#statePB')) {
 		setProgress('statePB', parseInt(x));
+	}
 }
 
-function updateGatewayStats(x){
-	if (widgetActive("gateways")){
+function updateGatewayStats(x) {
+	if (widgetActive("gateways")) {
 		gateways_split = x.split(",");
-		for (var y=0; y<gateways_split.length; y++){
+		for (var y=0; y<gateways_split.length; y++) {
 			gateways_field_split = gateways_split[y].split("^");
-			if(jQuery('#gateway' + (y + 1))) {
+			if (jQuery('#gateway' + (y + 1))) {
 				jQuery('#gateway' + (y + 1)).html(gateways_field_split[0]);
-				if(gateways_field_split[1]) {
+				if (gateways_field_split[1]) {
 					jQuery('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
 				}
 			}
@@ -475,37 +475,40 @@ function updateGatewayStats(x){
 }
 
 function updateCpuFreq(x) {
-	if(jQuery('#cpufreq'))
+	if (jQuery('#cpufreq')) {
 		jQuery("#cpufreq").html(x);
+	}
 }
 
 function updateLoadAverage(x) {
-	if(jQuery('#load_average'))
+	if (jQuery('#load_average')) {
 		jQuery("#load_average").html(x);
+	}
 }
 
-function updateInterfaceStats(x){
-	if (widgetActive("interface_statistics")){
+function updateInterfaceStats(x) {
+	if (widgetActive("interface_statistics")) {
 		statistics_split = x.split(",");
 		var counter = 1;
-		for (var y=0; y<statistics_split.length-1; y++){
-			if(jQuery('#stat' + counter)) {
+		for (var y=0; y<statistics_split.length-1; y++) {
+			if (jQuery('#stat' + counter)) {
 				jQuery('#stat' + counter).html(statistics_split[y]);
-				counter++;	
+				counter++;
 			}
 		}
 	}
 }
 
-function updateInterfaces(x){
-	if (widgetActive("interfaces")){
+function updateInterfaces(x) {
+	if (widgetActive("interfaces")) {
 		interfaces_split = x.split("~");
 		interfaces_split.each(function(iface){
 			details = iface.split("^");
-			if (details[2] == '')
+			if (details[2] == '') {
 				ipv4_details = '';
-			else
+			} else {
 				ipv4_details = details[2] + '<br />';
+			}
 			switch(details[1]) {
 				case "up":
 					jQuery('#' + details[0] + '-up').css("display","inline");
@@ -535,15 +538,16 @@ function updateInterfaces(x){
 
 function widgetActive(x) {
 	var widget = jQuery('#' + x + '-container');
-	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none"))
+	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none")) {
 		return true;
-	else
+	} else {
 		return false;
+	}
 }
 
 /* start updater */
 events.push(function(){
 	setTimer();
 });
-
+//]]>
 </script>

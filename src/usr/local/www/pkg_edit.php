@@ -1,10 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	pkg_edit.php
-*//* ====================================================================
+*/
+/* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -53,14 +52,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-package-edit
-##|*NAME=Package: Edit page
+##|*NAME=Package: Edit
 ##|*DESCR=Allow access to the 'Package: Edit' page.
 ##|*MATCH=pkg_edit.php*
 ##|-PRIV
@@ -130,8 +125,9 @@ if ($config['installedpackages'] && !is_array($config['installedpackages'][xml_s
 }
 
 // If the first entry in the array is an empty <config/> tag, kill it.
-if ($config['installedpackages'] && (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0)
-	&& ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
+if ($config['installedpackages'] &&
+    (count($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']) > 0) &&
+    ($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config'][0] == "")) {
 	array_shift($config['installedpackages'][xml_safe_fieldname($pkg['name'])]['config']);
 }
 
@@ -152,7 +148,7 @@ if ($_POST) {
 	$reqfields = array();
 	$reqfieldsn = array();
 	foreach ($pkg['fields']['field'] as $field) {
-		if (($field['type'] == 'input') && isset($field['required'])) {
+		if (isset($field['required'])) {
 			if ($field['fieldname']) {
 				$reqfields[] = $field['fieldname'];
 			}
@@ -286,20 +282,6 @@ if ($_POST) {
 	}
 }
 
-if ($pkg['title'] != "") {
-	$edit = ($only_edit ? '' : ": " . gettext("Edit"));
-	$pgtitle = $pkg['title'] . $edit;
-} else {
-	$pgtitle = gettext("Package Editor");
-}
-
-if ($pkg['custom_php_after_head_command']) {
-	$closehead = false;
-	include("head.inc");
-	eval($pkg['custom_php_after_head_command']);
-} else {
-	include("head.inc");
-}
 
 // Turn an embedded table into a bootstrap class table. This is for backward compatibility.
 // We remove any table attributes in the XML and replace them with Bootstrap table classes
@@ -308,7 +290,7 @@ function bootstrapTable($text) {
 	$c = strpos($text, '>', $t);						// And its closing bracket
 
 	// Substitute everything inbetween with our new classes
-	if($t && $c && (($c - $t) < 200) ) {
+	if ($t && $c && (($c - $t) < 200)) {
 		return(substr_replace($text, ' class="table table-striped table-hover table-condensed"', $t, ($c - $t)));
 	}
 }
@@ -317,18 +299,25 @@ function bootstrapTable($text) {
  * ROW helper function. Creates one element in the row from a PHP table by adding
  * the specified element to $group
  */
-function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) {
+function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
 	global $text, $group;
 
 	switch ($type) {
 		case "input":
-			$group->add(new Form_Input(
+			$inpt = new Form_Input(
 				$fieldname . $trc,
 				null,
 				'text',
 				$value
-			))->setHelp($description);
+			);
 
+			$inpt->setHelp($description);
+
+			if ($ewidth) {
+				$inpt->setWidth($ewidth);
+			}
+
+			$group->add($inpt);
 			break;
 		case "checkbox":
 			$group->add(new Form_Checkbox(
@@ -349,7 +338,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 			))->setHelp($description);
 			break;
 		case "textarea":
-			$group->add(new Form_TextArea(
+			$group->add(new Form_Textarea(
 				$fieldname . $trc,
 				null,
 				$value
@@ -362,19 +351,27 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 				$options[$rowopt['value']] = $rowopt['name'];
 			}
 
-			$group->add(new Form_Select(
+			$grp = new Form_Select(
 				$fieldname . $trc,
 				null,
 				$value,
 				$options
-			))->setHelp($description);
+			);
+
+			$grp->setHelp($description);
+
+			if ($ewidth) {
+				$grp->setWidth($ewidth);
+			}
+
+			$group->add($grp);
 
 			break;
 		case "interfaces_selection":
 			$size = ($size ? "size=\"{$size}\"" : '');
 			$multiple = '';
 			if (isset($rowhelper['multiple'])) {
-				$multiple = "multiple=\"multiple\"";
+				$multiple = "multiple";
 			}
 			echo "<select style='height:22px;' id='{$fieldname}{$trc}' name='{$fieldname}{$trc}' {$size} {$multiple}>\n";
 			$ifaces = get_configured_interface_with_descr();
@@ -396,7 +393,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 			foreach ($ifaces as $ifname => $iface) {
 				$options[$ifname] = $iface;
 
-				if(in_array($ifname, $values)) {
+				if (in_array($ifname, $values)) {
 					array_push($selected, $ifname);
 				}
 			}
@@ -427,7 +424,7 @@ function display_row($trc, $value, $fieldname, $type, $rowhelper, $description) 
 				$source_value = ($rowhelper['source_value'] ? $opt[$rowhelper['source_value']] : $opt[$rowhelper['value']]);
 				$options[$source_value] = $source_name;
 
-				if($source_value == $value) {
+				if ($source_value == $value) {
 					array_push($selected, $value);
 				}
 			}
@@ -530,14 +527,24 @@ function parse_package_templates() {
 	}
 }
 
-// Start of page display
-require_once('classes/Form.class.php');
+//breadcrumb
+if ($pkg['title'] != "") {
+	if (!$only_edit) {
+		$pkg['title'] = $pkg['title'] . '/Edit';
+	}
 
-if ($input_errors)
-	print_input_errors($input_errors);
+	if (strpos($pkg['title'], '/')) {
+		$title = explode('/', $pkg['title']);
 
-if ($savemsg)
-	print_info_box($savemsg, 'success');
+		foreach ($title as $subtitle) {
+			$pgtitle[] = gettext($subtitle);
+		}
+	} else {
+		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+	}
+} else {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
+}
 
 // Create any required tabs
 if ($pkg['tabs'] != "") {
@@ -551,6 +558,7 @@ if ($pkg['tabs'] != "") {
 
 		if (isset($tab['active'])) {
 			$active = true;
+			$pgtitle[] = $tab['text'] ;
 		} else {
 			$active = false;
 		}
@@ -589,10 +597,25 @@ if ($pkg['tabs'] != "") {
 	}
 
 	ksort($tab_array);
+}
 
+include("head.inc");
+if ($pkg['custom_php_after_head_command']) {
+	eval($pkg['custom_php_after_head_command']);
+}
+if (isset($tab_array)) {
 	foreach ($tab_array as $tabid => $tab) {
 		display_top_tabs($tab); //, $no_drop_down, $tabid);
 	}
+}
+
+// Start of page display
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $cols = 0;
@@ -601,12 +624,23 @@ if ($pkg['savetext'] != "") {
 	$savevalue = $pkg['savetext'];
 }
 
+$savehelp = gettext("");
+if ($pkg['savehelp'] != "") {
+	$savehelp = $pkg['savehelp'];
+}
+
 $grouping = false; // Indicates the elements we are composing are part of a combined group
 
-$form = new Form(new Form_Button(
+$savebutton = new Form_Button(
 	'submit',
 	$savevalue
-));
+);
+
+if ($savehelp) {
+	$savebutton->setHelp($savehelp);
+}
+
+$form = new Form($savebutton);
 
 $form->addGlobal(new Form_Input(
 	'xml',
@@ -616,7 +650,7 @@ $form->addGlobal(new Form_Input(
 ));
 
 /* If a package's XML has <advanced_options/> configured, then setup
- * ta section for the fields that have <advancedfield/> set.
+ * the section for the fields that have <advancedfield/> set.
  * These fields will be placed below other fields in a separate area titled 'Advanced Features'.
  * These advanced fields are not normally configured and generally left to default to 'default settings'.
  */
@@ -629,7 +663,7 @@ if ($pkg['advanced_options'] == "enabled") {
 
 $js_array = array();
 
-// Now loop through all of hte fields defined in the XML
+// Now loop through all of the fields defined in the XML
 foreach ($pkg['fields']['field'] as $pkga) {
 
 	if ($pkga['type'] == "sorting") {
@@ -646,8 +680,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			$advfield_count++;
 		}  else {
-			if(isset($section))
+			if (isset($section)) {
 				$form->add($section);
+			}
 
 			$section = new Form_Section(strip_tags($pkga['name']));
 		}
@@ -684,43 +719,50 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 	// If we get here but have no $section, the package config file probably had no listtopic field
 	// We can create a section with a generic name to fix that
-	if(!$section)
+	if (!$section) {
 		$section = new Form_Section(gettext('General options'));
+	}
 
 	switch ($pkga['type']) {
 		// Create an input element. The format is slightly different depending on whether we are composing a group,
 		// section, or advanced section. This is true for every element type
 		case "input":
-			if($grouping) {
-				$group->add(new Form_Input(
+			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
+				$value = base64_decode($value);
+			}
+
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 
 			break;
 
 		case "password":
-		// Creat a password element
-			if($grouping) {
+			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
+				$value = base64_decode($value);
+			}
+
+			// Create a password element
+			if ($grouping) {
 				$group->add(new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -748,12 +790,13 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			break;
 
 		case "info":
-			// If the info containe a table we should detect and Bootstrap it
+			// If the info contains a table we should detect and Bootstrap it
 
-			if (strpos($pkga['description'], '<table') !== FALSE)
+			if (strpos($pkga['description'], '<table') !== FALSE) {
 				$info = bootstrapTable($pkga['description']);
-			else
+			} else {
 				$info = $pkga['description'];
+			}
 
 			if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 				$advanced->addInput(new Form_StaticText(
@@ -777,7 +820,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$fieldname = $pkga['fieldname'];
 
 			if (isset($pkga['multiple'])) {
-				$multiple = 'multiple="multiple"';
+				$multiple = 'multiple';
 				$items = explode(',', $value);
 				$fieldname .= "[]";
 			} else {
@@ -795,36 +838,33 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if (isset($pkga['advancedfield']) && isset($advfield_count))
+			if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 				$function = $grouping ? $advanced->add:$advanced->addInput;
-			else
+			} else {
 				$function = ($grouping) ? $section->add:$section->addInput;
+			}
 
-			if($grouping) {
-					$group->add(new Form_Select(
+			$grp = new Form_Select(
 						$pkga['fieldname'],
 						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
 						$optionlist,
 						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					);
+
+			$grp ->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Select(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Select(
-						$pkga['fieldname'],
-						strip_tags($pkga['fielddescr']),
-						isset($pkga['multiple']) ? $selectedlist:$selectedlist[0],
-						$optionlist,
-						isset($pkga['multiple'])
-					))->setHelp($pkga['description'])->setOnchange($onchange)->setAttribute('size', $pkga['size']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -858,14 +898,15 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$source_value =($pkga['source_value'] ? $opt[$pkga['source_value']] : $opt[$pkga['value']]);
 				$srcoptions[$source_value] = $source_name;
 
-				if(in_array($source_value, $items))
+				if (in_array($source_value, $items)) {
 					array_push($srcselected, $source_value);
+				}
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
-					$pkga['name'],
+					strip_tags($pkga['fielddescr']),
 					isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 					$srcoptions,
 					isset($pkga['multiple'])
@@ -874,7 +915,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Select(
 						$pkga['fieldname'],
-						$pkga['name'],
+						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])
@@ -882,7 +923,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				} else {
 					$section->addInput(new Form_Select(
 						$pkga['fieldname'],
-						$pkga['name'],
+						strip_tags($pkga['fielddescr']),
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])
@@ -900,7 +941,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					null,
@@ -930,80 +971,93 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		// Create a checkbox element
 		case "checkbox":
 			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
-			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields']))
+			if (isset($pkga['enablefields']) || isset($pkga['checkenablefields'])) {
 				$onclick = 'javascript:enablechange();';
-			else
+			} else {
 				$onclick = '';
+			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
-					'Show log entries in reverse order (newest entries on top)',
+					fixup_string($pkga['description']),
 					($value == "on"),
 					'on'
-				))->setHelp(fixup_string($pkga['description']))
-				  ->setOnclick($onclick)
-				  ->setOnchange($onchange);
+				))->setOnclick($onclick)
+				  ->setOnchange($onchange)
+				  ->setHelp($pkga['sethelp']);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))
-					  ->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					))->setOnclick($onclick)
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['sethelp']);
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))
-					  ->setOnclick($onclick)
-					  ->setOnchange($onchange);
+					))->setOnclick($onclick)
+					  ->setOnchange($onchange)
+					  ->setHelp($pkga['sethelp']);
 				}
 			}
 
 			break;
 
-		// Creat textarea element
+		// Create a textarea element
 		case "textarea":
+			$rows = $cols = 0;
+
 			if ($pkga['rows']) {
-				$rows = " rows='{$pkga['rows']}' ";
+				$rows = $pkga['rows'];
 			}
 			if ($pkga['cols']) {
-				$cols = " cols='{$pkga['cols']}' ";
+				$cols = $pkga['cols'];
 			}
+
 			if (($pkga['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
 				$value = base64_decode($value);
 			}
 
-			$wrap =($pkga['wrap'] == "off" ? 'wrap="off" style="white-space:nowrap;"' : '');
-
-			if ($grouping) {
-				$group->add(new Form_TextArea(
+			$grp = new Form_Textarea(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					$value
-				))->setHelp(fixup_string($pkga['description']));
+			);
+
+			$grp->setHelp(fixup_string($pkga['description']));
+
+			if ($rows > 0) {
+				$grp->setRows($rows);
+			}
+
+			if ($cols > 0) {
+				$grp->setCols($cols);
+			}
+
+			if ($pkga['wrap'] == "off") {
+				$grp->setAttribute("wrap", "off");
+				$grp->setAttribute("style", "white-space:nowrap; width: auto;");
+			} else {
+				$grp->setAttribute("style", "width: auto;");
+			}
+
+			if ($grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_TextArea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_TextArea(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						$value
-					))->setHelp(fixup_string($pkga['description']));
+					$section->addInput($grp);
 				}
 			}
 
@@ -1017,7 +1071,6 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$a_aliases = &$config['aliases']['alias'];
 			$addrisfirst = 0;
 			$aliasesaddr = "";
-			$value = "value='{$value}'";
 
 			if (isset($a_aliases)) {
 				if (!empty($pkga['typealiases'])) {
@@ -1041,28 +1094,26 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if(grouping) {
-				$group->add(new Form_Input(
+			$grp = new Form_Input(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
 					'text',
 					$value
-				))->setHelp($pkga['description']);
+				);
+
+			$grp->setHelp($pkga['description']);
+
+			if ($pkga['width']) {
+				$grp->setWidth($pkga['width']);
+			}
+
+			if (grouping) {
+				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-					$advanced->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$advanced->addInput($grp);
 				} else {
-					$section->addInput(new Form_Input(
-						$pkga['fieldname'],
-						$pkga['fielddescr'],
-						'text',
-						$value
-					))->setHelp($pkga['description']);
+					$section->addInput($grp);
 				}
 			}
 
@@ -1138,7 +1189,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			$fieldname = $pkga['fieldname'];
 			if (isset($pkga['multiple'])) {
 				$fieldname .= '[]';
-				$multiple = 'multiple="multiple"';
+				$multiple = 'multiple';
 			}
 
 			$selectedlist = array();
@@ -1158,7 +1209,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$optionlist[$iface['ip']] = $iface['description'];
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1190,31 +1241,31 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create radio button
 		case "radio":
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Checkbox(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
-					'Show log entries in reverse order (newest entries on top)',
+					fixup_string($pkga['description']),
 					($value == "on"),
 					'on'
-				))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+				))->displayAsRadio();
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+					))->displayAsRadio();
 				} else {
 					$section->addInput(new Form_Checkbox(
 						$pkga['fieldname'],
 						$pkga['fielddescr'],
-						'Show log entries in reverse order (newest entries on top)',
+						fixup_string($pkga['description']),
 						($value == "on"),
 						'on'
-					))->setHelp(fixup_string($pkga['description']))->displayAsRadio();
+					))->displayAsRadio();
 				}
 			}
 
@@ -1227,22 +1278,22 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$pkga['fieldname']
 			);
 
-			if(grouping) {
+			if (grouping) {
 				$group->add(new Form_StaticText(
 					null,
 					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
 				));
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
-				$advanced->addInput(new Form_StaticText(
-					null,
-					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
-				));
+					$advanced->addInput(new Form_StaticText(
+						null,
+						$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
+					));
 				} else {
-				$section->addInput(new Form_StaticText(
-					null,
-					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
-				));
+					$section->addInput(new Form_StaticText(
+						null,
+						$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'
+					));
 				}
 			}
 
@@ -1269,7 +1320,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
-			if($grouping) {
+			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
 					$pkga['fielddescr'],
@@ -1318,6 +1369,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 					foreach ($pkga['rowhelper']['rowhelperfield'] as $rowhelper) {
 						unset($value);
+						$width = null;
+
 						if ($rowhelper['value'] != "") {
 							$value = $rowhelper['value'];
 						}
@@ -1330,6 +1383,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						}
 
 						$type = $rowhelper['type'];
+						if ($type == "input" || $type == "password" || $type == "textarea") {
+							if (($rowhelper['encoding'] == 'base64') && !$get_from_post && !empty($value)) {
+								$value = base64_decode($value);
+							}
+						}
 						$fieldname = $rowhelper['fieldname'];
 
 						if ($rowhelper['size']) {
@@ -1340,7 +1398,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$size = "8";
 						}
 
-						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null);
+						if ($rowhelper['width']) {
+							$width = $rowhelper['width'];
+						}
+
+						display_row($rowcounter, $value, $fieldname, $type, $rowhelper, ($numrows == $rowcounter) ? $fielddescr:null, $width);
 
 						$text = "";
 						$trc++;
@@ -1349,7 +1411,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					// Delete row button
 					$group->add(new Form_Button(
 						'deleterow' . $rowcounter,
-						'Delete'
+						'Delete',
+						null,
+						'fa-trash'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
 
 					$rowcounter++;
@@ -1372,10 +1436,11 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				null
 			));
 
-			if($advanced)
+			if ($advanced) {
 				$advanced->add($group);
-			else
+			} else {
 				$section->add($group);
+			}
 
 			$grouping = false;
 		}
@@ -1394,7 +1459,7 @@ $form->addGlobal(new Form_Input(
 ));
 
 // If we created an advanced section, add it (and a button) to the form here
-if(!empty($advanced)) {
+if (!empty($advanced)) {
 	$form->addGlobal(new Form_Button(
 		'showadv',
 		'Show advanced options'
@@ -1407,15 +1472,16 @@ print($form);
 
 if ($pkg['note'] != "") {
 	print_info_box($pkg['note']);
+}
 
-if ($pkg['custom_php_after_form_command'])
+if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 
 if ($pkg['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
-	events.push(function(){
+	events.push(function() {
 
 	// Hide the advanced section
 	var advanced_visible = false;
@@ -1423,17 +1489,19 @@ if ($pkg['fields']['field'] != "") { ?>
 	// Hide on page load
 	$('.advancedoptions').hide();
 
-	// But show it if you click the showadv button
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
+	// Show advanced section if you click the showadv button
 	$('#showadv').prop('type', 'button');
 
 	$("#showadv").click(function() {
 		advanced_visible = !advanced_visible;
 
-		if(advanced_visible) {
+		if (advanced_visible) {
 			$('.advancedoptions').show();
 			$("#showadv").prop('value', 'Hide advanced Options');
-		}
-		else {
+		} else {
 			$('.advancedoptions').hide();
 			$("#showadv").prop('value', 'Show advanced Options');
 		}

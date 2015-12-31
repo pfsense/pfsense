@@ -5,7 +5,7 @@
 PFSENSETYPE=`cat /etc/platform`
 
 if [ "${PFSENSETYPE}" = "pfSense" -o "${PFSENSETYPE}" = "nanobsd" ]; then
-	touch /conf/needs_package_sync
+	touch /conf/needs_package_sync_after_reboot
 fi
 
 if [ "${PFSENSETYPE}" = "nanobsd" ]; then

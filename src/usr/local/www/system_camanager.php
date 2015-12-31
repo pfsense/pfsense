@@ -1,35 +1,58 @@
 <?php
 /*
 	system_camanager.php
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: certificate_manager
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2008 Shrew Soft Inc.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-camanager
@@ -49,7 +72,7 @@ $ca_methods = array(
 $ca_keylens = array("512", "1024", "2048", "4096");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
-$pgtitle = array(gettext("System"), gettext("Certificate Authority Manager"));
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
@@ -294,8 +317,7 @@ if ($_POST) {
 						array_push($input_errors, "openssl library returns: " . $ssl_err);
 					}
 				}
-			}
-			else if ($pconfig['method'] == "intermediate") {
+			} else if ($pconfig['method'] == "intermediate") {
 				$dn = array(
 					'countryName' => $pconfig['dn_country'],
 					'stateOrProvinceName' => $pconfig['dn_state'],
@@ -330,19 +352,21 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 // Load valid country codes
 $dn_cc = array();
-if (file_exists("/etc/ca_countries")){
+if (file_exists("/etc/ca_countries")) {
 	$dn_cc_file=file("/etc/ca_countries");
-	foreach($dn_cc_file as $line) {
+	foreach ($dn_cc_file as $line) {
 		if (preg_match('/^(\S*)\s(.*)$/', $line, $matches)) {
-			$dn_cc[$matches[1]] = $matches[1];		
+			$dn_cc[$matches[1]] = $matches[1];
 		}
 	}
 }
@@ -353,8 +377,7 @@ $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), false, "system_crlmanager.php");
 display_top_tabs($tab_array);
 
-if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors))
-{
+if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors)) {
 ?>
 <div class="table-responsive">
 <table class="table table-striped table-hover">
@@ -365,7 +388,7 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 			<th><?=gettext("Issuer")?></th>
 			<th><?=gettext("Certificates")?></th>
 			<th><?=gettext("Distinguished Name")?></th>
-			<th></th>
+			<th><?=gettext("Actions")?></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -375,28 +398,34 @@ foreach ($a_ca as $i => $ca):
 	$subj = cert_get_subject($ca['crt']);
 	$issuer = cert_get_issuer($ca['crt']);
 	list($startdate, $enddate) = cert_get_dates($ca['crt']);
-	if ($subj == $issuer)
+	if ($subj == $issuer) {
 		$issuer_name = gettext("self-signed");
-	else
+	} else {
 		$issuer_name = gettext("external");
+	}
 	$subj = htmlspecialchars($subj);
 	$issuer = htmlspecialchars($issuer);
 	$certcount = 0;
 
 	$issuer_ca = lookup_ca($ca['caref']);
-	if ($issuer_ca)
+	if ($issuer_ca) {
 		$issuer_name = $issuer_ca['descr'];
+	}
 
 	// TODO : Need gray certificate icon
 	$internal = (!!$ca['prv']);
 
-	foreach ($a_cert as $cert)
-		if ($cert['caref'] == $ca['refid'])
+	foreach ($a_cert as $cert) {
+		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
+		}
+	}
 
-	foreach ($a_ca as $cert)
-		if ($cert['caref'] == $ca['refid'])
+	foreach ($a_ca as $cert) {
+		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
+		}
+	}
 ?>
 		<tr>
 			<td><?=$name?></td>
@@ -411,39 +440,33 @@ foreach ($a_ca as $i => $ca):
 				</small>
 			</td>
 			<td>
-				<a href="system_camanager.php?act=edit&amp;id=<?=$i?>" class="btn btn-xs btn-primary">
-					<?=gettext("edit")?>
-				</a>
-				<a href="system_camanager.php?act=exp&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-					<?=gettext("export cert")?>
-				</a>
-				<?php if ($ca['prv']): ?>
-					<a href="system_camanager.php?act=expkey&amp;id=<?=$i?>" class="btn btn-xs btn-default">
-						<?=gettext("export private key")?>
-					</a>
-				<?php endif?>
-				<a href="system_camanager.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger">
-					<?=gettext("delete")?>
-				</a>
+				<a class="fa fa-pencil"	title="<?=gettext("Edit")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
+				<a class="fa fa-sign-in"	title="<?=gettext("Export")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+			<?php if ($ca['prv']): ?>
+				<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
+			<?php endif?>
+				<a class="fa fa-trash" 	title="<?=gettext("Delete")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
 			</td>
 		</tr>
 <?php endforeach; ?>
 	</tbody>
 </table>
+</div>
 
 <nav class="action-buttons">
-	<a href="?act=new" class="btn btn-success">add new</a>
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
 </nav>
 <?
 	include("foot.inc");
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 //$form->setAction('system_camanager.php?act=edit');
-if (isset($id) && $a_ca[$id])
-{
+if (isset($id) && $a_ca[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -452,8 +475,7 @@ if (isset($id) && $a_ca[$id])
 	));
 }
 
-if ($act == "edit")
-{
+if ($act == "edit") {
 	$form->addGlobal(new Form_Input(
 		'refid',
 		null,
@@ -471,8 +493,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-if (!isset($id) || $act == "edit")
-{
+if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
 		'method',
 		'Method',
@@ -514,10 +535,10 @@ $section = new Form_Section('Internal Certificate Authority');
 $section->addClass('toggle-internal', 'toggle-intermediate', 'collapse');
 
 $allCas = array();
-foreach ($a_ca as $ca)
-{
-	if (!$ca['prv'])
+foreach ($a_ca as $ca) {
+	if (!$ca['prv']) {
 			continue;
+	}
 
 	$allCas[ $ca['refid'] ] = $ca['descr'];
 }
@@ -613,3 +634,4 @@ foreach ($a_ca as $ca) {
 }
 
 include('foot.inc');
+?>

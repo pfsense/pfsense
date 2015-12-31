@@ -4,7 +4,7 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2007 Sam Wenham
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -65,23 +65,31 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
-if(isset($_POST['servicestatusfilter'])) {
+if ($_POST) {
 	$validNames = array();
-	foreach ($services as $service)
-		array_push($validNames, $service['name']);
 
-	$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+	foreach ($services as $service) {
+		array_push($validNames, $service['name']);
+	}
+
+	if (isset($_POST['servicestatusfilter'])) {
+		$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+	} else {
+		$config['widgets']['servicestatusfilter'] = "";
+	}
+
 	write_config("Saved Service Status Filter via Dashboard");
-	header("Location: /");
+	header("Location: /index.php");
 }
+
 ?>
 <table class="table table-striped table-hover">
 <thead>
 	<tr>
 		<th></th>
-		<th>Service</td>
-		<th>Description</td>
-		<th>Action</td>
+		<th>Service</th>
+		<th>Description</th>
+		<th>Action</th>
 	</tr>
 </thead>
 <tbody>
@@ -100,7 +108,7 @@ if (count($services) > 0) {
 		$service_desc = explode(".",$service['description']);
 ?>
 		<tr>
-			<td><i class="icon icon-<?=get_service_status($service)? 'ok' : 'remove'?>-sign"></i></td>
+			<td><i class="fa fa-<?=get_service_status($service) ? 'check-circle text-success' : 'times-circle text-warning'?>"></i></td>
 			<td><?=$service['name']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_GET_links($service)?></td>
@@ -115,15 +123,15 @@ if (count($services) > 0) {
 </table>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
 		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
 		<div class="col-sm-6">
-			<select multiple="multiple" name="servicestatusfilter[]" class="form-control" height="5">
+			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php foreach ($services as $service): ?>
-				<option <?=(in_array($service['name'], $skipservices)?'selected="selected"':'')?>><?=$service['name']?></option>
+				<option <?=(in_array($service['name'], $skipservices)?'selected':'')?>><?=$service['name']?></option>
 			<?php endforeach; ?>
 			</select>
 		</div>
@@ -131,7 +139,29 @@ if (count($services) > 0) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-primary">Save</button>
+			<button id="clearall" type="button" class="btn btn-default">Clear</button>
 		</div>
 	</div>
 </form>
+
+<script>
+//<![CDATA[
+events.push(function(){
+	$("select[multiple] option").mousedown(function(){
+	   var $self = $(this);
+
+	   if ($self.prop("selected"))
+	          $self.prop("selected", false);
+	   else
+	       $self.prop("selected", true);
+
+	   return false;
+	});
+
+    $("#clearall").click(function() {
+        $('select#servicestatusfilter option').removeAttr("selected");
+    });
+});
+//]]>
+</script>

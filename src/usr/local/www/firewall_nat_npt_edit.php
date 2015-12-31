@@ -1,15 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_npt_edit.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2011 Seth Mos <seth.mos@dds.nl>
- *	part of pfSense (https://www.pfsense.org)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,16 +53,15 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-npt-edit
-##|*NAME=Firewall: NAT: NPt: Edit page
+##|*NAME=Firewall: NAT: NPt: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: NPt: Edit' page.
 ##|*MATCH=firewall_nat_npt_edit.php*
 ##|-PRIV
+
+require_once("ipsec.inc");
 
 function natnptcmp($a, $b) {
 	return ipcmp($a['external'], $b['external']);
@@ -92,8 +89,9 @@ foreach ($ifdisp as $kif => $kdescr) {
 	$specialsrcdst[] = "{$kif}ip";
 }
 
-if (!is_array($config['nat']['npt']))
+if (!is_array($config['nat']['npt'])) {
 	$config['nat']['npt'] = array();
+}
 
 $a_npt = &$config['nat']['npt'];
 
@@ -180,27 +178,32 @@ function build_if_list() {
 	global $ifdisp;
 
 	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if))
+		if (have_ruleint_access($if)) {
 			$interfaces[$if] = $ifdesc;
+		}
 	}
 
-	if ($config['l2tp']['mode'] == "server")
-		if (have_ruleint_access("l2tp"))
+	if ($config['l2tp']['mode'] == "server") {
+		if (have_ruleint_access("l2tp")) {
 			$interfaces['l2tp'] = "L2TP VPN";
+		}
+	}
 
-	if ($config['pppoe']['mode'] == "server")
-		if (have_ruleint_access("pppoe"))
+	if ($config['pppoe']['mode'] == "server") {
+		if (have_ruleint_access("pppoe")) {
 			$interfaces['pppoe'] = "PPPoE Server";
+		}
+	}
 
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['mobileclients']['enable'])) {
-		if (have_ruleint_access("enc0"))
-			$interfaces["enc0"] = "IPsec";
+	if (ipsec_enabled() && have_ruleint_access("enc0")) {
+		$interfaces["enc0"] = "IPsec";
 	}
 
 	/* add openvpn/tun interfaces */
-	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
 		$interfaces["openvpn"] = "OpenVPN";
+	}
 
 	return($interfaces);
 }
@@ -208,10 +211,9 @@ function build_if_list() {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form();
 

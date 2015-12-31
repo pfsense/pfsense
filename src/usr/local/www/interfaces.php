@@ -1,13 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	interfaces.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004-2008 Scott Ullrich
  *	Copyright (c) 2006 Daniel S. Haischt
- *	Copyright (c) 2008-2010 Ermal Luçi
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -56,14 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/arp
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-interfaces
-##|*NAME=Interfaces: WAN page
+##|*NAME=Interfaces: WAN
 ##|*DESCR=Allow access to the 'Interfaces' page.
 ##|*MATCH=interfaces.php*
 ##|-PRIV
@@ -78,7 +74,6 @@ require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
 
-define("ALLOWWEP", false);
 define("ANTENNAS", false);
 
 if (isset($_POST['referer'])) {
@@ -124,12 +119,14 @@ function remove_bad_chars($string) {
 if (!is_array($config['gateways']['gateway_item'])) {
 	$config['gateways']['gateway_item'] = array();
 }
+
 $a_gateways = &$config['gateways']['gateway_item'];
 
 $wancfg = &$config['interfaces'][$if];
 $old_wancfg = $wancfg;
 $old_wancfg['realif'] = get_real_interface($if);
 $old_ppps = $a_ppps;
+
 // Populate page descr if it does not exist.
 if ($if == "wan" && !$wancfg['descr']) {
 	$wancfg['descr'] = "WAN";
@@ -144,7 +141,7 @@ foreach ($a_ppps as $pppid => $ppp) {
 	}
 }
 
-$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled="disabled"' : '';
+$type_disabled = (substr($wancfg['if'], 0, 3) == 'gre') ? 'disabled' : '';
 
 if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['pppid'] = $pppid;
@@ -220,6 +217,7 @@ if ($wancfg['if'] == $a_ppps[$pppid]['if']) {
 	$pconfig['ptpid'] = interfaces_ptpid_next();
 	$pppid = count($a_ppps);
 }
+
 $pconfig['dhcphostname'] = $wancfg['dhcphostname'];
 $pconfig['alias-address'] = $wancfg['alias-address'];
 $pconfig['alias-subnet'] = $wancfg['alias-subnet'];
@@ -361,8 +359,6 @@ switch ($wancfg['ipaddrv6']) {
 		break;
 }
 
-// print_r($pconfig);
-
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
@@ -432,7 +428,6 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['debug_mode'] = $wancfg['wireless']['wpa']['debug_mode'];
 		$pconfig['macaddr_acl'] = $wancfg['wireless']['wpa']['macaddr_acl'];
 		$pconfig['mac_acl_enable'] = isset($wancfg['wireless']['wpa']['mac_acl_enable']);
-		$pconfig['auth_algs'] = $wancfg['wireless']['wpa']['auth_algs'];
 		$pconfig['wpa_mode'] = $wancfg['wireless']['wpa']['wpa_mode'];
 		$pconfig['wpa_key_mgmt'] = $wancfg['wireless']['wpa']['wpa_key_mgmt'];
 		$pconfig['wpa_pairwise'] = $wancfg['wireless']['wpa']['wpa_pairwise'];
@@ -448,23 +443,6 @@ if (isset($wancfg['wireless'])) {
 
 	$pconfig['mac_acl'] = $wancfg['wireless']['mac_acl'];
 
-	if(ALLOWWEP) {
-		$pconfig['wep_enable'] = isset($wancfg['wireless']['wep']['enable']);
-
-		if (is_array($wancfg['wireless']['wep']) && is_array($wancfg['wireless']['wep']['key'])) {
-			$i = 1;
-			foreach ($wancfg['wireless']['wep']['key'] as $wepkey) {
-				$pconfig['key' . $i] = $wepkey['value'];
-				if (isset($wepkey['txkey'])) {
-					$pconfig['txkey'] = $i;
-				}
-				$i++;
-			}
-			if (!isset($wepkey['txkey'])) {
-				$pconfig['txkey'] = 1;
-			}
-		}
-	}
 }
 
 if ($_POST['apply']) {
@@ -484,7 +462,7 @@ if ($_POST['apply']) {
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||
-						isset($config['dhcpdv6'][$ifapply]['enable'])) {
+					    isset($config['dhcpdv6'][$ifapply]['enable'])) {
 						services_dhcpd_configure();
 					}
 				}
@@ -693,8 +671,8 @@ if ($_POST['apply']) {
 							continue;
 						}
 						if ($config['interfaces'][$ifent]['ipaddrv6'] == 'track6' &&
-							$config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
-							$config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
+						    $config['interfaces'][$ifent]['track6-interface'] == $_POST['track6-interface'] &&
+						    $config['interfaces'][$ifent]['track6-prefix-id'] == $track6_prefix_id) {
 							$input_errors[] = sprintf(gettext("This track6 prefix ID is already being used in %s."), $ifdescr);
 						}
 					}
@@ -802,12 +780,12 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The idle timeout value must be an integer.");
 	}
 	if ($_POST['pppoe_resethour'] != "" && !is_numericint($_POST['pppoe_resethour']) &&
-		$_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
-			$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
+	    $_POST['pppoe_resethour'] >= 0 && $_POST['pppoe_resethour'] <=23) {
+		$input_errors[] = gettext("A valid PPPoE reset hour must be specified (0-23).");
 	}
 	if ($_POST['pppoe_resetminute'] != "" && !is_numericint($_POST['pppoe_resetminute']) &&
-		$_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
-			$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
+	    $_POST['pppoe_resetminute'] >= 0 && $_POST['pppoe_resetminute'] <=59) {
+		$input_errors[] = gettext("A valid PPPoE reset minute must be specified (0-59).");
 	}
 	if ($_POST['pppoe_resetdate'] != "" && !is_numeric(str_replace("/", "", $_POST['pppoe_resetdate']))) {
 		$input_errors[] = gettext("A valid PPPoE reset date must be specified (mm/dd/yyyy).");
@@ -956,54 +934,6 @@ if ($_POST['apply']) {
 			$input_errors[] = gettext("Invalid option chosen for OFDM Protection Mode");
 		}
 
-		if(ALLOWWEP) {
-			/* loop through keys and enforce size */
-			for ($i = 1; $i <= 4; $i++) {
-				if ($_POST['key' . $i]) {
-					/* 64 bit */
-					if (strlen($_POST['key' . $i]) == 5) {
-						continue;
-					}
-
-					if (strlen($_POST['key' . $i]) == 10) {
-						/* hex key */
-						if (stristr($_POST['key' . $i], "0x") == false) {
-							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
-						}
-						continue;
-					}
-
-					if (strlen($_POST['key' . $i]) == 12) {
-						/* hex key */
-						if (stristr($_POST['key' . $i], "0x") == false) {
-							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
-						}
-						continue;
-					}
-
-					/* 128 bit */
-					if (strlen($_POST['key' . $i]) == 13) {
-						continue;
-					}
-
-					if (strlen($_POST['key' . $i]) == 26) {
-						/* hex key */
-						if (stristr($_POST['key' . $i], "0x") == false) {
-							$_POST['key' . $i] = "0x" . $_POST['key' . $i];
-						}
-						continue;
-					}
-
-					if (strlen($_POST['key' . $i]) == 28) {
-						continue;
-					}
-
-					$input_errors[] = gettext("Invalid WEP key. Enter a valid 40, 64, 104 or 128 bit WEP key.");
-					break;
-				}
-			}
-		}
-
 		if ($_POST['passphrase']) {
 			$passlen = strlen($_POST['passphrase']);
 			if ($passlen < 8 || $passlen > 63) {
@@ -1017,6 +947,19 @@ if ($_POST['apply']) {
 			}
 		}
 	}
+
+	if ($_POST['ppp_password'] != $_POST['ppp_password_confirm']) {
+		$input_errors[] = gettext("PPP Password and confirmed password must match!");
+	}
+
+	if ($_POST['pppoe_password'] != $_POST['pppoe_password_confirm']) {
+		$input_errors[] = gettext("PPPoE Password and confirmed password must match!");
+	}
+
+	if ($_POST['pptp_password'] != $_POST['pptp_password_confirm']) {
+		$input_errors[] = gettext("PTPP Password and confirmed password must match!");
+	}
+
 	if (!$input_errors) {
 		// These 3 fields can be a list of multiple data items when used for MLPPP.
 		// The UI in this code only processes the first of the list, so save the data here then we can preserve any other entries.
@@ -1195,7 +1138,9 @@ if ($_POST['apply']) {
 				$a_ppps[$pppid]['if'] = $_POST['type'].$_POST['ptpid'];
 				$a_ppps[$pppid]['ports'] = $_POST['port'];
 				$a_ppps[$pppid]['username'] = $_POST['ppp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				if ($_POST['ppp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['ppp_password']);
+				}
 				$a_ppps[$pppid]['phone'] = $_POST['phone'];
 				$a_ppps[$pppid]['apn'] = $_POST['apn'];
 				$wancfg['if'] = $_POST['type'] . $_POST['ptpid'];
@@ -1212,7 +1157,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pppoe_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				if ($_POST['pppoe_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pppoe_password']);
+				}
 				if (!empty($_POST['provider'])) {
 					$a_ppps[$pppid]['provider'] = $_POST['provider'];
 				} else {
@@ -1248,7 +1195,9 @@ if ($_POST['apply']) {
 					$a_ppps[$pppid]['ports'] = $wancfg['if'];
 				}
 				$a_ppps[$pppid]['username'] = $_POST['pptp_username'];
-				$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				if ($_POST['pptp_password'] != DMYPWD) {
+					$a_ppps[$pppid]['password'] = base64_encode($_POST['pptp_password']);
+				}
 				// Replace the first (0) entry with the posted data. Preserve any other entries that might be there.
 				$poriginal['pptp_localip'][0] = $_POST['pptp_local0'];
 				$a_ppps[$pppid]['localip'] = implode(',', $poriginal['pptp_localip']);
@@ -1509,7 +1458,6 @@ function handle_wireless_post() {
 		$wancfg['wireless']['wpa'] = array();
 	}
 	$wancfg['wireless']['wpa']['macaddr_acl'] = $_POST['macaddr_acl'];
-	$wancfg['wireless']['wpa']['auth_algs'] = $_POST['auth_algs'];
 	$wancfg['wireless']['wpa']['wpa_mode'] = $_POST['wpa_mode'];
 	$wancfg['wireless']['wpa']['wpa_key_mgmt'] = $_POST['wpa_key_mgmt'];
 	$wancfg['wireless']['wpa']['wpa_pairwise'] = $_POST['wpa_pairwise'];
@@ -1588,17 +1536,6 @@ function handle_wireless_post() {
 		unset($wancfg['wireless']['wpa']['enable']);
 	}
 
-	if(ALLOWWEP) {
-		if ($_POST['wep_enable'] == "yes") {
-			if (!is_array($wancfg['wireless']['wep'])) {
-				$wancfg['wireless']['wep'] = array();
-			}
-			$wancfg['wireless']['wep']['enable'] = $_POST['wep_enable'] = true;
-		} else if (isset($wancfg['wireless']['wep'])) {
-			unset($wancfg['wireless']['wep']);
-		}
-	}
-
 	if ($_POST['wme_enable'] == "yes") {
 		if (!is_array($wancfg['wireless']['wme'])) {
 			$wancfg['wireless']['wme'] = array();
@@ -1640,20 +1577,6 @@ function handle_wireless_post() {
 		$wancfg['wireless']['turbo']['enable'] = true;
 	} else if (isset($wancfg['wireless']['turbo']['enable'])) {
 		unset($wancfg['wireless']['turbo']['enable']);
-	}
-
-	if(ALLOWWEP) {
-		$wancfg['wireless']['wep']['key'] = array();
-		for ($i = 1; $i <= 4; $i++) {
-			if ($_POST['key' . $i]) {
-				$newkey = array();
-				$newkey['value'] = $_POST['key' . $i];
-				if ($_POST['txkey'] == $i) {
-					$newkey['txkey'] = true;
-				}
-				$wancfg['wireless']['wep']['key'][] = $newkey;
-			}
-		}
 	}
 
 	interface_sync_wireless_clones($wancfg, true);
@@ -1713,8 +1636,6 @@ $shortcut_section = "interfaces";
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));
 $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"), "dhcp6" => gettext("DHCP6"), "slaac" => gettext("SLAAC"), "6rd" => gettext("6rd Tunnel"), "6to4" => gettext("6to4 Tunnel"), "track6" => gettext("Track Interface"));
 
-$closehead = false;
-
 // Get the MAC address
 $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | head -n 1 | cut -d" " -f4`;
@@ -1762,19 +1683,19 @@ function build_gatewayv6_list() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if (is_subsystem_dirty('interfaces'))
+if (is_subsystem_dirty('interfaces')) {
 	print_info_box_np(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
 					  gettext("You must apply the changes in order for them to take effect. Don't forget to adjust the DHCP Server range if needed after applying."));
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-
-require_once('classes/Form.class.php');
-require_once('classes/Modal.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -1813,10 +1734,10 @@ $section->addInput(new Form_Select(
 ));
 
 $macaddress = new Form_Input(
-	'mac',
+	'spoofmac',
 	'MAC Address',
 	'text',
-	$pconfig['mac'],
+	$pconfig['spoofmac'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx']
 );
 
@@ -1892,56 +1813,6 @@ $group->setHelp('If this interface is an Internet connection, select an existing
 $section->add($group);
 
 $form->add($section);
-
-// Add new gateway modal pop-up
-$modal = new Modal('New gateway', 'newgateway', 'large');
-
-$modal->addInput(new Form_Checkbox(
-	'defaultgw',
-	'Default',
-	'Default gateway',
-	($if == "wan" || $if == "WAN")
-));
-
-$modal->addInput(new Form_Input(
-	'name',
-	'Gateway name',
-	'text',
-	$wancfg['descr'] . "GW"
-));
-
-$modal->addInput(new Form_IpAddress(
-	'gatewayip',
-	'Gateway IPv4',
-	null
-));
-
-$modal->addInput(new Form_Input(
-	'gatewaydescr',
-	'Description',
-	'text'
-));
-
-$btnaddgw = new Form_Button(
-	'add',
-	'Add'
-);
-
-$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
-
-$btncnxgw = new Form_Button(
-	'cnx',
-	'Cancel'
-);
-
-$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
-
-$modal->addInput(new Form_StaticText(
-	null,
-	$btnaddgw . $btncnxgw
-));
-
-$form->add($modal);
 
 $section = new Form_Section('Static IPv6 configuration');
 $section->addClass('staticv6');
@@ -2087,7 +1958,8 @@ $group->add(new Form_Input(
 	'adv_dhcp_pt_select_timeout',
 	null,
 	'number',
-	$pconfig['adv_dhcp_pt_select_timeout']
+	$pconfig['adv_dhcp_pt_select_timeout'],
+	['min' => 0]
 ))->setHelp('Select timeout');
 
 $group->add(new Form_Input(
@@ -2155,7 +2027,7 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'adv_dhcp_config_file_override_path',
-	'Option modifiers',
+	'Config file override',
 	'text',
 	$pconfig['adv_dhcp_config_file_override_path']
 ))->sethelp('The value in this field is the full absolute path to a DHCP client configuration file.	 [/[dirname/[.../]]filename[.ext]]' . '<br />' .
@@ -2187,10 +2059,10 @@ $section->addInput(new Form_Input(
 			'Some ISPs may require certain options be or not be requested.');
 
 $section->addInput(new Form_Input(
-	'adv_dhcp_require_options',
-	'Request options',
+	'adv_dhcp_required_options',
+	'Require options',
 	'text',
-	$pconfig['adv_dhcp_require_options']
+	$pconfig['adv_dhcp_required_options']
 ))->sethelp('The values in this field are DHCP options required by the client when requesting a DHCP lease.	 [option [, ...]]');
 
 $section->addInput(new Form_Input(
@@ -2599,7 +2471,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ppp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'ppp_password',
 	'Password',
 	'password',
@@ -2665,7 +2537,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pppoe_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pppoe_password',
 	'Password',
 	'password',
@@ -2796,7 +2668,7 @@ $section->addInput(new Form_Input(
 	$pconfig['pptp_username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'pptp_password',
 	'Password',
 	'password',
@@ -2874,8 +2746,9 @@ if (isset($wancfg['wireless'])) {
 		}
 	}
 
-	if (count($mode_list) == 1)
+	if (count($mode_list) == 1) {
 		$mode_list[''] = '';
+	}
 
 	$section->addInput(new Form_Select(
 		'standard',
@@ -2891,9 +2764,7 @@ if (isset($wancfg['wireless'])) {
 			$pconfig['protmode'],
 			['off' => 'Off', 'cts' => 'CTS to self', 'rtscts' => 'RTS and CTS']
 		))->setHelp('For IEEE 802.11g, use the specified technique for protecting OFDM frames in a mixed 11b/11g network.');
-	}
-	else
-	{
+	} else {
 		$section->addInput(new Form_Input(
 			'protmode',
 			null,
@@ -3085,50 +2956,6 @@ if (isset($wancfg['wireless'])) {
 
 	$form->add($section);
 
-	if(ALLOWWEP) {
-		// WEP Section
-		$section = new Form_Section('WEP');
-
-		$section->addInput(new Form_Checkbox(
-			'wep_enable',
-			'Enable',
-			'Enable WEP',
-			$pconfig['wep_enable'],
-			'yes'
-		));
-
-		for($idx=1; $idx <= 4; $idx++) {
-			$group = new Form_Group('Key' . $idx);
-
-			$group->add(new Form_Input(
-				'key' . $idx,
-				null,
-				'text',
-				$pconfig['key' . $idx]
-			));
-
-			$group->add(new Form_Checkbox(
-				'txkey',
-				null,
-				null,
-				$pconfig['txkey'],
-				$idx
-			))->displayAsRadio()->setHelp($idx == 4 ? 'Tx key':'');
-
-			$section->add($group);
-		}
-
-		$section->addInput(new Form_StaticText(
-			null,
-			'<span class="help-block">' .
-			gettext('40 (64) bit keys may be entered as 5 ASCII characters or 10 hex digits preceded by "0x"') . '<br />' .
-			gettext('104 (128) bit keys may be entered as 13 ASCII characters or 26 hex digits preceded by "0x"') .
-			'</span>'
-		));
-
-		$form->add($section);
-	}
-
 	// WPA Section
 	$section = new Form_Section('WPA');
 
@@ -3160,22 +2987,6 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['wpa_key_mgmt'],
 		['WPA-PSK' => 'Pre-Shared Key', 'WPA-EAP' => 'Extensible Authentication Protocol', 'WPA-PSK WPA-EAP' => 'Both']
 	));
-
-	if(ALLOWWEP) {
-		$section->addInput(new Form_Select(
-			'auth_algs',
-			'Authentication',
-			$pconfig['auth_algs'],
-			['1' => 'Open System Authentication', '2' => 'Shared Key Authentication', '3' => 'Both']
-		))->setHelp('Shared Key Authentication requires WEP');
-	} else {
-		$section->addInput(new Form_Input(
-			'auth_algs',
-			null,
-			'hidden',
-			'1'
-		));;
-	}
 
 	$section->addInput(new Form_Select(
 		'wpa_pairwise',
@@ -3291,7 +3102,7 @@ $section->addInput(new Form_Checkbox(
 			' as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network ' .
 			'lies in such a private address space, too.');
 
-	$section->addInput(new Form_Checkbox(
+$section->addInput(new Form_Checkbox(
 	'blockbogons',
 	'Block bogon networks',
 	'',
@@ -3326,25 +3137,80 @@ $form->addGlobal(new Form_Input(
 	$pconfig['ptpid']
 ));
 
+
+// Add new gateway modal pop-up
+$modal = new Modal('New gateway', 'newgateway', 'large');
+
+$modal->addInput(new Form_Checkbox(
+	'defaultgw',
+	'Default',
+	'Default gateway',
+	($if == "wan" || $if == "WAN")
+));
+
+$modal->addInput(new Form_Input(
+	'name',
+	'Gateway name',
+	'text',
+	$wancfg['descr'] . "GW"
+));
+
+$modal->addInput(new Form_IpAddress(
+	'gatewayip',
+	'Gateway IPv4',
+	null
+));
+
+$modal->addInput(new Form_Input(
+	'gatewaydescr',
+	'Description',
+	'text'
+));
+
+$btnaddgw = new Form_Button(
+	'add',
+	'Add'
+);
+
+$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
+
+$btncnxgw = new Form_Button(
+	'cnx',
+	'Cancel'
+);
+
+$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
+
+$modal->addInput(new Form_StaticText(
+	null,
+	$btnaddgw . $btncnxgw
+));
+
+$form->add($modal);
+
 print($form);
 ?>
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-
+events.push(function() {
 	function updateType(t) {
+
 		switch (t) {
 			case "none": {
 				$('.dhcpadvanced, .staticv4, .dhcp, .pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "staticv4": {
-				$('.dhcpadvanced, .none, .dhcp, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none, .dhcp').hide();
+				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "dhcp": {
-				$('.dhcpadvanced, .none, .staticv4, .pppoe, .pptp, .ppp').hide();
+				$('.dhcpadvanced, .none').hide();
+				$('.staticv4').hide();	// MYSTERY: This line makes the page very slow to load, but why? There is nothing special
+										//			about the staticv4 class
+				$('.pppoe, .pptp, .ppp').hide();
 				break;
 			}
 			case "ppp": {
@@ -3370,8 +3236,9 @@ events.push(function(){
 	}
 
 	function updateTypeSix(t) {
-		if (!isNaN(t[0]))
+		if (!isNaN(t[0])) {
 			t = '_' + t;
+		}
 
 		switch (t) {
 			case "none": {
@@ -3483,8 +3350,7 @@ events.push(function(){
 		$("#newgateway").modal('hide');
 	}
 
-	function addOption(selectbox, text, value)
-	{
+	function addOption(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3515,8 +3381,7 @@ events.push(function(){
 	}
 
 
-	function addOption_v6(selectbox, text, value)
-	{
+	function addOption_v6(selectbox, text, value) {
 		var optn = document.createElement("OPTION");
 		optn.text = text;
 		optn.value = value;
@@ -3547,7 +3412,6 @@ events.push(function(){
 	}
 
 	function country_list() {
-
 		$('#country').children().remove();
 		$('#provider_list').children().remove();
 		$('#providerplan').children().remove();
@@ -3656,7 +3520,7 @@ events.push(function(){
 		var adv = $('#dhcpadv').prop('checked');
 		var ovr = $('#dhcpovr').prop('checked');
 
-		if(ovr) {
+		if (ovr) {
 			hideInput('dhcphostname', true);
 			hideIpAddress('alias-address', true);
 			hideInput('dhcprejectfrom', true);
@@ -3671,34 +3535,64 @@ events.push(function(){
 		}
 	}
 
+	// DHCP preset actions
+	// Set presets from value of radio buttons
+	function setPresets(val) {
+		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
+		if (val == "DHCP")		setPresetsnow("60", "300", "0", "10", "120", "10");
+		if (val == "pfSense")	setPresetsnow("60", "15", "0", "", "", "1");
+		if (val == "SavedCfg")	setPresetsnow("<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
+		if (val == "Clear")		setPresetsnow("", "", "", "", "", "");
+	}
+
+	function setPresetsnow(timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
+		$('#adv_dhcp_pt_timeout').val(timeout);
+		$('#adv_dhcp_pt_retry').val(retry);
+		$('#adv_dhcp_pt_select_timeout').val(selecttimeout);
+		$('#adv_dhcp_pt_reboot').val(reboot);
+		$('#adv_dhcp_pt_backoff_cutoff').val(backoffcutoff);
+		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
 	show_reset_settings($('#pppoe-reset-type').val());
-	$("#add").prop('type' ,'button');
-	$("#cnx").prop('type' ,'button');
-	$("#addgw").prop('type' ,'button');
-	$("#add6").prop('type' ,'button');
-	$("#cnx6").prop('type' ,'button');
-	$("#addgw6").prop('type' ,'button');
+	$("#add").prop('type', 'button');
+	$("#cnx").prop('type', 'button');
+	$("#addgw").prop('type', 'button');
+	$("#add6").prop('type', 'button');
+	$("#cnx6").prop('type', 'button');
+	$("#addgw6").prop('type', 'button');
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
 	setDHCPoptions()
 
+	// Set preset buttons on page load
+	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
+	if (sv == "") {
+		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
+	} else {
+		$("input[name=adv_dhcp_pt_values][value="+sv+"]").prop('checked', true);
+	}
+
+	// Set preset from value
+	setPresets(sv);
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-   $('#type').on('change', function() {
-		updateType( this.value );
+	$('#type').on('change', function() {
+		updateType(this.value);
 	});
 
 	$('#type6').on('change', function() {
-		updateTypeSix( this.value );
+		updateTypeSix(this.value);
 	});
 
 	$('#pppoe-reset-type').on('change', function() {
-		show_reset_settings( this.value );
+		show_reset_settings(this.value);
 	});
 
 	$("#add").click(function() {
@@ -3741,37 +3635,11 @@ events.push(function(){
 		show_dhcp6adv();
 	});
 
-	// DHCP preset actions
-	// Set presets from value of radio buttons
-	function setPresets(val) {
-		// timeout, retry, select-timeout, reboot, backoff-cutoff, initial-interval
-		if (val == "DHCP")		setPresetsnow("60", "300", "0", "10", "120", "10");
-		if (val == "pfSense")	setPresetsnow("60", "15", "0", "", "", "1");
-		if (val == "SavedCfg")	setPresetsnow("<?=htmlspecialchars($pconfig['adv_dhcp_pt_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_retry']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_select_timeout']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_reboot']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_backoff_cutoff']);?>", "<?=htmlspecialchars($pconfig['adv_dhcp_pt_initial_interval']);?>");
-		if (val == "Clear")		setPresetsnow("", "", "", "", "", "");
-	}
-
-	function setPresetsnow(timeout, retry, selecttimeout, reboot, backoffcutoff, initialinterval) {
-		$('#adv_dhcp_pt_timeout').val(timeout);
-		$('#adv_dhcp_pt_retry').val(retry);
-		$('#adv_dhcp_pt_select_timeout').val(selecttimeout);
-		$('#adv_dhcp_pt_reboot').val(reboot);
-		$('#adv_dhcp_pt_backoff_cutoff').val(backoffcutoff);
-		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
-	}
-
-	// Set preset buttons on page load
-	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
-	if(sv == "")
-		$("input[name=adv_dhcp_pt_values][value='SavedCfg']").prop('checked', true);
-
-	// Set preset from value
-	setPresets(sv);
-
 	// On click . .
-	$('[id=adv_dhcp_pt_values]').click(function () {
+	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
+
 });
 //]]>
 </script>

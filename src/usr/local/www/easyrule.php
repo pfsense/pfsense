@@ -3,12 +3,11 @@
 	easyrule.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2009-2010 Jim Pingle (jpingle@gmail.com)
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Originally Sponsored By Anathematic @ pfSense Forums
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,13 +53,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-easyrule
-##|*NAME=Firewall: Easy Rule add/status page
+##|*NAME=Firewall: Easy Rule add/status
 ##|*DESCR=Allow access to the 'Firewall: Easy Rule' add/status page.
 ##|*MATCH=easyrule.php*
 ##|-PRIV
@@ -92,14 +88,18 @@ if (stristr($retval, "error") == true) {
 }
 
 include("head.inc"); ?>
-<body link="#0000CC" vlink="#0000CC" alink="#0000CC">
-<?php include("fbegin.inc"); ?>
+
+include("fbegin.inc");
+?>
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td>
-<?php if ($input_errors) print_input_errors($input_errors); ?>
+<?php
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
-<?php if ($message) { ?>
+if ($message) { ?>
 <br />
 <?=gettext("Message"); ?>: <?php echo $message; ?>
 <br />
@@ -107,9 +107,9 @@ include("head.inc"); ?>
 <?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .
 "If you are seeing this, there apparently was not an error, and you navigated to the " .
 "page directly without telling it what to do"); ?>.<br /><br />
-<?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="diag_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
+<?=gettext("This page is meant to be called from the block/pass buttons on the Firewall Logs page"); ?>, <a href="status_logs_filter.php"><?=gettext("Status"); ?> &gt; <?=gettext("System Logs, " .
 "Firewall Tab"); ?></a>.
 <br />
 <?php } ?>
 </td></tr></table>
-<?php include("fend.inc"); ?>
+<?php include("foot.inc"); ?>

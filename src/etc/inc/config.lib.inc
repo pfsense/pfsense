@@ -37,10 +37,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt
-	pfSense_MODULE:	config
 */
 
 /****f* config/encrypted_configxml
@@ -250,7 +246,7 @@ function parse_config_bootup() {
 			if (strstr($g['platform'], "cdrom")) {
 				/* try copying the default config. to the floppy */
 				echo gettext("Resetting factory defaults...") . "\n";
-				reset_factory_defaults(true);
+				reset_factory_defaults(true, false);
 				if (!file_exists("{$g['conf_path']}/config.xml")) {
 					echo gettext("No XML configuration file found - using factory defaults.\n" .
 								 "Make sure that the configuration floppy disk with the conf/config.xml\n" .
@@ -515,7 +511,7 @@ function safe_write_file($file, $content, $force_binary) {
  *   null
  ******/
 /* save the system configuration */
-function write_config($desc="Unknown", $backup = true) {
+function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $config, $g;
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
@@ -580,6 +576,12 @@ function write_config($desc="Unknown", $backup = true) {
 
 	unlock($lockkey);
 
+	if ($write_config_only) {
+		/* tell kernel to sync fs data */
+		conf_mount_ro();
+		return $config;
+	}
+
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 
 	/* tell kernel to sync fs data */
@@ -602,7 +604,7 @@ function write_config($desc="Unknown", $backup = true) {
  * RESULT
  *   integer	- indicates completion
  ******/
-function reset_factory_defaults($lock = false) {
+function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
 	conf_mount_rw();
@@ -616,7 +618,7 @@ function reset_factory_defaults($lock = false) {
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
-		if (($filename != ".") && ($filename != "..")) {
+		if (($filename != ".") && ($filename != "..") && (!is_dir($g['conf_path'] . "/" . $filename))) {
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}
@@ -629,7 +631,12 @@ function reset_factory_defaults($lock = false) {
 	disable_security_checks();
 
 	/* call the wizard */
-	touch("/conf/trigger_initial_wizard");
+	if ($reboot_required) {
+		// If we need a reboot first then touch a different trigger file.
+		touch("/conf/trigger_initial_wizard_after_reboot");
+	} else {
+		touch("/conf/trigger_initial_wizard");
+	}
 	if (!$lock) {
 		unlock($lockkey);
 	}

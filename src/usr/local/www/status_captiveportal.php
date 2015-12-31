@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	status_captiveportal.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: captiveportal
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
-##|*NAME=Status: Captive portal page
+##|*NAME=Status: Captive portal
 ##|*DESCR=Allow access to the 'Status: Captive portal' page.
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
@@ -77,9 +74,6 @@ if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
 
-
-$pgtitle = array(gettext("Status: Captive portal"));
-$shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
@@ -105,10 +99,6 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	exit;
 }
 
-include("head.inc");
-
-flush();
-
 function clientcmp($a, $b) {
 	global $order;
 	return strcmp($a[$order], $b[$order]);
@@ -133,6 +123,11 @@ if (!empty($cpzone)) {
 	}
 }
 
+$pgtitle = array(gettext("Status"), gettext("Captive portal"));
+$shortcut_section = "captiveportal";
+
+include("head.inc");
+
 if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])):
 	$tab_array = array();
 	$tab_array[] = array(gettext("Active Users"), true, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
@@ -146,8 +141,6 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-require_once('classes/Form.class.php');
-
 if (count($a_cp) >	1) {
 	$form = new Form(false);
 
@@ -155,8 +148,9 @@ if (count($a_cp) >	1) {
 
 	$zonelist = array("" => 'None');
 
-	foreach ($a_cp as $cpkey => $cp)
+	foreach ($a_cp as $cpkey => $cp) {
 		$zonelist[$cpkey] = $cp['zone'];
+	}
 
 	$section->addInput(new Form_Select(
 		'zone',
@@ -169,17 +163,14 @@ if (count($a_cp) >	1) {
 
 	print($form);
 }
-?>
+
+if (!empty($cpzone)): ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</h2></div>
 	<div class="panel-body table-responsive">
 
 		<table class="table table-striped table-hover table-condensed">
-
-<?php
-if (!empty($cpzone)): ?>
-
 			<tr>
 				<th>
 					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("IP address")?></a>
@@ -218,7 +209,7 @@ if (!empty($cpzone)): ?>
 		if (!empty($mac)) {
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
-			if(isset($mac_man[$mac_hi])) {
+			if (isset($mac_man[$mac_hi])) {
 				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
 			}
 		}
@@ -235,8 +226,11 @@ if (!empty($cpzone)): ?>
 				</td>
 				<td>
 <?php
-		if ($last_act != 0)
-			echo htmlspecialchars(date("m/d/Y H:i:s", $last_act))?>
+			if ($last_act != 0) {
+				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+			}
+?>
+
 				</td>
 <?php
 	   else:
@@ -253,10 +247,26 @@ if (!empty($cpzone)): ?>
 			</tr>
 <?php
 	endforeach;
+?>
+		</table>
+	</div>
+</div>
+<?php
+else:
+	// If no zones have been defined . .
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
+	<div class="panel-body"><br />
+<?php
+	print_info_box(gettext("No captive portal zones have been configured. You may add new zones here: ") . '<a href="services_captiveportal_zones.php">' . 'Services->Captive portal' . '</a>');
+?>
+	</div>
+</div>
+<?php
 endif;
 ?>
 
-</table>
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
 	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order'])?>" />

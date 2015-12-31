@@ -1,12 +1,10 @@
 <?php
-/* $Id$ */
 /*
 	status_rrd_graph_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c) 2007 Seth Mos <seth.mos@dds.nl>
+ *	Copyright (c)  2007 Seth Mos <seth.mos@dds.nl>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,15 +53,11 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/find
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-rrdgraph-settings
-##|*NAME=Status: RRD Graphs settings page
-##|*DESCR=Allow access to the 'Status: RRD Graphs: settings' page.
+##|*NAME=Status: RRD Graphs: Settings
+##|*DESCR=Allow access to the 'Status: RRD Graphs: Settings' page.
 ##|*MATCH=status_rrd_graph_settings.php*
 ##|-PRIV
 
@@ -98,7 +92,6 @@ $periods = array("absolute" => gettext("Absolute Timespans"),
 if ($_POST['ResetRRD']) {
 	mwexec('/bin/rm /var/db/rrd/*');
 	enable_rrd_graphing();
-	setup_gateways_monitor();
 	$savemsg = "RRD data has been cleared. New RRD files have been generated.";
 } elseif ($_POST) {
 	unset($input_errors);
@@ -139,9 +132,15 @@ foreach ($databases as $database) {
 	if (stristr($database, "captiveportal-") && is_array($config['captiveportal'])) {
 		$captiveportal = true;
 	}
+	if (stristr($database, "ntpd") && isset($config['ntpd']['statsgraph'])) {
+		$ntpd = true;
+	}
+	if (stristr($database, "-dhcpd") && is_array($config['dhcpd'])) {
+		$dhcpd = true;
+	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext("Settings"));
 include("head.inc");
 
 $tab_array[] = array(gettext("System"), ($curcat == "system"), "status_rrd_graph.php?cat=system");
@@ -149,38 +148,47 @@ $tab_array[] = array(gettext("Traffic"), ($curcat == "traffic"), "status_rrd_gra
 $tab_array[] = array(gettext("Packets"), ($curcat == "packets"), "status_rrd_graph.php?cat=packets");
 $tab_array[] = array(gettext("Quality"), ($curcat == "quality"), "status_rrd_graph.php?cat=quality");
 
-if($queues) {
+if ($queues) {
 	$tab_array[] = array(gettext("Queues"), ($curcat == "queues"), "status_rrd_graph.php?cat=queues");
 	$tab_array[] = array(gettext("QueueDrops"), ($curcat == "queuedrops"), "status_rrd_graph.php?cat=queuedrops");
 }
 
-if($wireless)
+if ($wireless) {
 	$tab_array[] = array(gettext("Wireless"), ($curcat == "wireless"), "status_rrd_graph.php?cat=wireless");
+}
 
-if($cellular)
+if ($cellular) {
 	$tab_array[] = array(gettext("Cellular"), ($curcat == "cellular"), "status_rrd_graph.php?cat=cellular");
+}
 
-if($vpnusers)
+if ($vpnusers) {
 	$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
+}
 
-if($captiveportal)
+if ($captiveportal) {
 	$tab_array[] = array(gettext("Captive Portal"), ($curcat == "captiveportal"), "status_rrd_graph.php?cat=captiveportal");
+}
 
-if(isset($config['ntpd']['statsgraph']))
-	$tab_array[] = array(gettext("NTP"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+if ($ntpd) {
+	$tab_array[] = array(gettext("NTPD"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+}
+
+if ($dhcpd) {
+	$tab_array[] = array(gettext("DHCP Server"), ($curcat == "dhcpd"), "status_rrd_graph.php?cat=dhcpd");
+}
 
 $tab_array[] = array(gettext("Custom"), ($curcat == "custom"), "status_rrd_graph.php?cat=custom");
 $tab_array[] = array(gettext("Settings"), ($curcat == "settings"), "status_rrd_graph_settings.php");
 
 display_top_tabs($tab_array);
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form;
 

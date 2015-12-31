@@ -1,5 +1,4 @@
 <?php
-/* $Id$ */
 /*
 	xmlreader.inc
 	functions to parse/dump configuration files in XML format
@@ -28,10 +27,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-*/
-
-/*
-	pfSense_MODULE:	utils
 */
 
 /* The following items will be treated as arrays in config.xml */

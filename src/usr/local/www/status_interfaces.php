@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	status_interfaces.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -54,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-interfaces
-##|*NAME=Status: Interfaces page
+##|*NAME=Status: Interfaces
 ##|*DESCR=Allow access to the 'Status: Interfaces' page.
 ##|*MATCH=status_interfaces.php*
 ##|-PRIV
@@ -89,7 +87,7 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 
 // Display a term/definition pair
 function showDef($show, $term, $def) {
-	if($show) {
+	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>' . htmlspecialchars($def) . '</dd>');
 	}
@@ -99,15 +97,15 @@ function showDef($show, $term, $def) {
 function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
 	global $formtemplate;
 
-	if($show) {
+	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifvalue, $show, htmlspecialchars($def)	. ' ', $btnlbl);
+		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl);
 		print('</dd>');
 	}
 }
 
-$pgtitle = array(gettext("Status"),gettext("Interfaces"));
+$pgtitle = array(gettext("Status"), gettext("Interfaces"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -159,7 +157,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")) {
 					$dns_servers = get_dns_servers();
 					$dnscnt = 0;
-					foreach($dns_servers as $dns) {
+					foreach ($dns_servers as $dns) {
 						showDef(true, $dnscnt == 0 ? gettext('ISP DNS servers'):'', $dns);
 						$dnscnt++;
 					}
@@ -169,22 +167,22 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
 			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);
-			showDef($ifinfo['laggport'],gettext("LAGG Ports"),$laggport);
-			showDef($ifinfo['channel'],gettext("Channel"),$ifinfo['channel']);
-			showDef($ifinfo['ssid'],gettext("SSID"),$ifinfo['ssid']);
-			showDef($ifinfo['bssid'],gettext("BSSID"),$ifinfo['bssid']);
-			showDef($ifinfo['rate'],gettext("Rate"),$ifinfo['rate']);
-			showDef($ifinfo['rssi'],gettext("RSSI"),$ifinfo['rssi']);
-			showDef(true,gettext("In/out packets"),$ifinfo['inpkts'] . '/' . $ifinfo['outpkts']);
-			showDef(true,gettext("In/out packets (pass)"),$ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass']);
-			showDef(true,gettext("In/out packets (block)"),$ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock']);
-			showDef(isset($ifinfo['inerrs']),gettext("In/out errors"),$ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);
-			showDef(isset($ifinfo['collisions']),gettext("Collisions"),$ifinfo['collisions']);
+			showDef($ifinfo['laggport'], gettext("LAGG Ports"), $laggport);
+			showDef($ifinfo['channel'], gettext("Channel"), $ifinfo['channel']);
+			showDef($ifinfo['ssid'], gettext("SSID"), $ifinfo['ssid']);
+			showDef($ifinfo['bssid'], gettext("BSSID"), $ifinfo['bssid']);
+			showDef($ifinfo['rate'], gettext("Rate"), $ifinfo['rate']);
+			showDef($ifinfo['rssi'], gettext("RSSI"), $ifinfo['rssi']);
+			showDef(true, gettext("In/out packets"), $ifinfo['inpkts'] . '/' . $ifinfo['outpkts']);
+			showDef(true, gettext("In/out packets (pass)"), $ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass']);
+			showDef(true, gettext("In/out packets (block)"), $ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock']);
+			showDef(isset($ifinfo['inerrs']), gettext("In/out errors"), $ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);
+			showDef(isset($ifinfo['collisions']), gettext("Collisions"), $ifinfo['collisions']);
 		} // e-o-if ($ifinfo['status'] != "down")
 
 		showDef($ifinfo['bridge'], gettext('Bridge (') . $ifinfo['bridgeint'] . ')', $ifinfo['bridge']);
 
-		if(file_exists("/usr/bin/vmstat")) {
+		if (file_exists("/usr/bin/vmstat")) {
 			$real_interface = "";
 			$interrupt_total = "";
 			$interrupt_sec = "";
@@ -192,7 +190,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $3 }'`;
 			$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
 
-			if(strstr($interrupt_total, "hci")) {
+			if (strstr($interrupt_total, "hci")) {
 				$interrupt_total = `vmstat -i | grep $real_interface | awk '{ print $4 }'`;
 				$interrupt_sec = `vmstat -i | grep $real_interface | awk '{ print $5 }'`;
 			}

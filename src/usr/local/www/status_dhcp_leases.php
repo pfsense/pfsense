@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	status_dhcp_leases.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -54,14 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/arp	/usr/bin/wc /usr/bin/grep
-	pfSense_MODULE: dhcpserver
-*/
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpleases
-##|*NAME=Status: DHCP leases page
+##|*NAME=Status: DHCP leases
 ##|*DESCR=Allow access to the 'Status: DHCP leases' page.
 ##|*MATCH=status_dhcp_leases.php*
 ##|-PRIV
@@ -304,7 +301,7 @@ if (count($pools) > 0) {
 
 foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
-		is_array($config['dhcpd'][$ifname]['staticmap'])) {
+	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		$staticmap_array_index = 0;
 		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
@@ -334,7 +331,7 @@ if (count($pools) > 0) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("Failover Group")?></a></th>
@@ -365,7 +362,7 @@ if (count($pools) > 0) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><!-- icon --></th>
@@ -384,23 +381,26 @@ $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 $iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
 
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
-		$icon = 'icon-ok-circle';
-	elseif ($data['act'] == 'expired')
-		$icon = 'icon-ban-circle';
-	else
-		$icon = 'icon-remove-circle';
+	if ($data['act'] == 'active') {
+		$icon = 'fa-check-circle-o';
+	} elseif ($data['act'] == 'expired') {
+		$icon = 'fa-ban';
+	} else {
+		$icon = 'fa-times-circle-o';
+	}
 
 	$lip = ip2ulong($data['ip']);
 
 	if ($data['act'] != "static") {
 		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-			if (!is_array($dhcpifconf['range']))
+			if (!is_array($dhcpifconf['range'])) {
 				continue;
+			}
 			if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 				$data['if'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
@@ -418,12 +418,12 @@ foreach ($leases as $data):
 	$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 ?>
 				<tr>
-					<td><i class="icon <?=$icon?>"></i></td>
+					<td><i class="fa <?=$icon?>"></i></td>
 					<td><?=$data['ip']?></td>
 					<td>
 						<?=$mac?>
 
-						<? if(isset($mac_man[$mac_hi])):?>
+						<? if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
 						<?endif?>
 					</td>
@@ -439,27 +439,17 @@ foreach ($leases as $data):
 					<td><?=$data['act']?></td>
 					<td>
 <? if ($data['type'] == "dynamic"): ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>">
-							<?=gettext("add static mapping")?>
-						</a>
+						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <? else: ?>
-						<a class="btn btn-xs btn-primary" href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>">
-							<?=gettext("edit static mapping")?>
-						</a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <? endif; ?>
-						<a class="btn btn-xs btn-success" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>">
-							add WOL mapping
-						</a>
+						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <? if ($data['online'] != "online"):?>
-						<a class="btn btn-xs btn-warning" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>">
-							send WOL packet
-						</a>
+						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <? endif; ?>
 
 <? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
-						<a class="btn btn-xs btn-danger" href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>">
-							delete lease
-						</a>
+						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <? endif?>
 					</td>
 <? endforeach; ?>
@@ -472,7 +462,7 @@ foreach ($leases as $data):
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases in use')?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Interface")?></th>

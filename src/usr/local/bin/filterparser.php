@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
 	filterparser.php
 	part of pfSesne by Scott Ullrich
@@ -35,9 +34,6 @@
  Examples:
 	clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
 	clog -f /var/log/filter.log | /usr/local/www/filterparser.php
-*/
-/*
-	pfSense_MODULE:	logs
 */
 
 include_once("functions.inc");

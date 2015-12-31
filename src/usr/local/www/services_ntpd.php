@@ -4,7 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Dagorlad
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -54,9 +53,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: ntpd
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd
@@ -76,7 +72,7 @@ if (!is_array($config['ntpd'])) {
 
 if (empty($config['ntpd']['interface'])) {
 	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-		is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
+	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
 		write_config("Upgraded settings from openttpd");
@@ -108,7 +104,7 @@ if ($_POST) {
 		unset($config['ntpd']['noselect']);
 		$timeservers = '';
 
-		for ($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
@@ -262,29 +258,28 @@ function build_interface_list() {
 	return($iflist);
 }
 
-$closehead = false;
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-$pgtitle = array(gettext("Services"), gettext("NTP"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("NTP"), true, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form;
 
@@ -302,8 +297,8 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
 
-$maxrows = 3;
-$timeservers = explode( ' ', $config['system']['timeservers']);
+$timeservers = explode(' ', $config['system']['timeservers']);
+$maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time servers':'');
 	$group->addClass('repeatable');
@@ -501,15 +496,16 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	// If this variable is declared, any help text will not be deleted when rows are added
 	// IOW the help text will appear on every row
 	retainhelp = true;
 </script>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Make the ‘clear’ button a plain button, not a submit button
 	$('#btnadvstats').prop('type','button');
@@ -554,6 +550,9 @@ events.push(function(){
 	hideCheckbox('notrap', true);
 	hideInput('leaptext', true);
 	hideInput('leapfile', true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

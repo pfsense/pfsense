@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <packagegui>
-	<title>Services: UPnP &amp; NAT-PMP</title>
+	<title>Services/UPnP &amp; NAT-PMP</title>
 	<name>miniupnpd</name>
 	<version>20100712</version>
 	<savetext>Change</savetext>

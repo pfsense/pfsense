@@ -310,7 +310,7 @@ EOD;
 		/* write elements */
 		captiveportal_write_elements();
 
-		/* kill any running mini_httpd */
+		/* kill any running CP nginx instances */
 		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
 		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 

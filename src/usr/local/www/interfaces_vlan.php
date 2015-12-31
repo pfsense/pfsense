@@ -138,6 +138,7 @@ display_top_tabs($tab_array);
 					<th><?=gettext('VLAN tag');?></th>
 					<th><?=gettext('Priority');?></th>
 					<th><?=gettext('Description');?></th>
+					<th></th>
 				</tr>
 			</thead>
 <?php

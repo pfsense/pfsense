@@ -401,7 +401,7 @@ foreach ($leases as $data):
 			if (!is_array($dhcpifconf['range'])) {
 				continue;
 			}
-			if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
+			if (is_inrange_v4($lip, $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
 				$data['if'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];

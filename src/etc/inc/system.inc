@@ -814,7 +814,7 @@ function clear_all_log_files($restart = false) {
 	global $g;
 	exec("/usr/bin/killall syslogd");
 
-	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "lighttpd", "ntpd", "gateways", "resolver", "routing");
+	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
 	foreach ($log_files as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}
@@ -874,6 +874,8 @@ function system_syslogd_start() {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
 		}
 
+		$syslogconf .= "!nginx\n";
+		$syslogconf .= "*.*		{$log_directive}{$g['varlog_path']}/nginx.log\n";
 		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
@@ -1124,20 +1126,20 @@ function system_webgui_start() {
 		$ca = ca_chain($cert);
 	}
 
-	/* generate lighttpd configuration */
-	system_generate_lighty_config("{$g['varetc_path']}/lighty-webConfigurator.conf",
-		$crt, $key, $ca, "lighty-webConfigurator.pid", $portarg, "/usr/local/www/",
-		"cert.pem", "ca.pem");
+	/* generate nginx configuration */
+	system_generate_nginx_config("{$g['varetc_path']}/nginx-webConfigurator.conf",
+		$crt, $key, "nginx-webConfigurator.pid", $portarg, "/usr/local/www/",
+		"cert.crt", "cert.key");
 
-	/* kill any running lighttpd */
-	killbypid("{$g['varrun_path']}/lighty-webConfigurator.pid");
+	/* kill any running nginx */
+	killbypid("{$g['varrun_path']}/nginx-webConfigurator.pid");
 
 	sleep(1);
 
-	@unlink("{$g['varrun_path']}/lighty-webConfigurator.pid");
+	@unlink("{$g['varrun_path']}/nginx-webConfigurator.pid");
 
-	/* attempt to start lighthttpd */
-	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-webConfigurator.conf");
+	/* start nginx */
+	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-webConfigurator.conf");
 
 	if (platform_booting()) {
 		if ($res == 0) {
@@ -1150,26 +1152,26 @@ function system_webgui_start() {
 	return $res;
 }
 
-function system_generate_lighty_config($filename,
+function system_generate_lighty_config() {
+	// XXX: remove me
+	return true;
+}
+
+function system_generate_nginx_config($filename,
 	$cert,
 	$key,
-	$ca,
 	$pid_file,
 	$port = 80,
 	$document_root = "/usr/local/www/",
-	$cert_location = "cert.pem",
-	$ca_location = "ca.pem",
+	$cert_location = "cert.crt",
+	$key_location = "cert.key",
 	$captive_portal = false) {
 
 	global $config, $g;
 
-	if (!is_dir("{$g['tmp_path']}/lighttpdcompress")) {
-		mkdir("{$g['tmp_path']}/lighttpdcompress");
-	}
-
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
-		echo "system_generate_lighty_config() being called $mt\n";
+		echo "system_generate_nginx_config() being called $mt\n";
 	}
 
 	if ($captive_portal !== false) {
@@ -1198,9 +1200,9 @@ function system_generate_lighty_config($filename,
 	}
 
 	if (empty($port)) {
-		$lighty_port = "80";
+		$nginx_port = "80";
 	} else {
-		$lighty_port = $port;
+		$nginx_port = $port;
 	}
 
 	$memory = get_memory();
@@ -1237,7 +1239,7 @@ function system_generate_lighty_config($filename,
 	}
 
 	if (!isset($config['syslog']['nologlighttpd'])) {
-		$lighty_use_syslog = <<<EOD
+		$nginx_use_syslog = <<<EOD
 ## where to send error-messages to
 server.errorlog-use-syslog="enable"
 EOD;
@@ -1281,243 +1283,124 @@ fastcgi.server = ( ".php" =>
 EOD;
 	}
 
-
-	$lighty_config = <<<EOD
+	$nginx_config = <<<EOD
 #
-# lighttpd configuration file
-#
-# use a it as base for lighttpd 1.0.0 and above
-#
-############ Options you really have to take care of ####################
+# nginx configuration file
 
-## FreeBSD!
-server.event-handler	= "freebsd-kqueue"
-server.network-backend 	= "writev"
-#server.use-ipv6 = "enable"
+pid {$g['varrun_path']}/{$pid_file};
 
-## modules to load
-server.modules              =   ( "mod_access", "mod_expire", "mod_compress", "mod_redirect",
-	{$captiveportal}, "mod_fastcgi"
-)
+user  root wheel;
+worker_processes  {$max_procs};
 
-server.max-keep-alive-requests = 15
-server.max-keep-alive-idle = 30
+error_log  syslog:server=unix:/var/run/log;
 
-## a static document-root, for virtual-hosting take look at the
-## server.virtual-* options
-server.document-root        = "{$document_root}"
-{$captive_portal_rewrite}
+events {
+    worker_connections  1024;
+}
 
-# Maximum idle time with nothing being written (php downloading)
-server.max-write-idle = 999
+http {
+	include       /usr/local/etc/nginx/mime.types;
+	default_type  application/octet-stream;
+	add_header X-Frame-Options SAMEORIGIN;
+	server_tokens off;
 
-{$lighty_use_syslog}
+	sendfile        on;
+	keepalive_timeout  65;
 
-# files to check for if .../ is requested
-server.indexfiles           = ( "index.php", "index.html",
-                                "index.htm", "default.htm" )
+	access_log      syslog:server=unix:/var/run/log combined;
 
-# mimetype mapping
-mimetype.assign             = (
-  ".pdf"          =>      "application/pdf",
-  ".sig"          =>      "application/pgp-signature",
-  ".spl"          =>      "application/futuresplash",
-  ".class"        =>      "application/octet-stream",
-  ".ps"           =>      "application/postscript",
-  ".torrent"      =>      "application/x-bittorrent",
-  ".dvi"          =>      "application/x-dvi",
-  ".gz"           =>      "application/x-gzip",
-  ".pac"          =>      "application/x-ns-proxy-autoconfig",
-  ".swf"          =>      "application/x-shockwave-flash",
-  ".tar.gz"       =>      "application/x-tgz",
-  ".tgz"          =>      "application/x-tgz",
-  ".tar"          =>      "application/x-tar",
-  ".zip"          =>      "application/zip",
-  ".mp3"          =>      "audio/mpeg",
-  ".m3u"          =>      "audio/x-mpegurl",
-  ".wma"          =>      "audio/x-ms-wma",
-  ".wax"          =>      "audio/x-ms-wax",
-  ".ogg"          =>      "audio/x-wav",
-  ".wav"          =>      "audio/x-wav",
-  ".gif"          =>      "image/gif",
-  ".jpg"          =>      "image/jpeg",
-  ".jpeg"         =>      "image/jpeg",
-  ".png"          =>      "image/png",
-  ".svg"          =>      "image/svg+xml",
-  ".xbm"          =>      "image/x-xbitmap",
-  ".xpm"          =>      "image/x-xpixmap",
-  ".xwd"          =>      "image/x-xwindowdump",
-  ".css"          =>      "text/css",
-  ".html"         =>      "text/html",
-  ".htm"          =>      "text/html",
-  ".js"           =>      "text/javascript",
-  ".asc"          =>      "text/plain",
-  ".c"            =>      "text/plain",
-  ".conf"         =>      "text/plain",
-  ".text"         =>      "text/plain",
-  ".txt"          =>      "text/plain",
-  ".dtd"          =>      "text/xml",
-  ".xml"          =>      "text/xml",
-  ".mpeg"         =>      "video/mpeg",
-  ".mpg"          =>      "video/mpeg",
-  ".mov"          =>      "video/quicktime",
-  ".qt"           =>      "video/quicktime",
-  ".avi"          =>      "video/x-msvideo",
-  ".asf"          =>      "video/x-ms-asf",
-  ".asx"          =>      "video/x-ms-asf",
-  ".wmv"          =>      "video/x-ms-wmv",
-  ".bz2"          =>      "application/x-bzip",
-  ".tbz"          =>      "application/x-bzip-compressed-tar",
-  ".tar.bz2"      =>      "application/x-bzip-compressed-tar"
- )
-
-# Use the "Content-Type" extended attribute to obtain mime type if possible
-#mimetypes.use-xattr        = "enable"
-
-## deny access the file-extensions
-#
-# ~    is for backupfiles from vi, emacs, joe, ...
-# .inc is often used for code includes which should in general not be part
-#      of the document-root
-url.access-deny             = ( "~", ".inc" )
-
-
-######### Options that are good to be but not necessary to be changed #######
-
-## disable server header
-server.tag = ""
-
-## bind to port (default: 80)
+	server {
+		listen {$nginx_port};
+		listen [::]:{$nginx_port};
 
 EOD;
 
-	$lighty_config .= "server.bind  = \"0.0.0.0\"\n";
-	$lighty_config .= "server.port  = {$lighty_port}\n";
-	$lighty_config .= "\$SERVER[\"socket\"]  == \"0.0.0.0:{$lighty_port}\" { }\n";
-	$lighty_config .= "\$SERVER[\"socket\"]  == \"[::]:{$lighty_port}\" { \n";
 	if ($cert <> "" and $key <> "") {
-		$lighty_config .= "\n";
-		$lighty_config .= "## ssl configuration\n";
-		$lighty_config .= "ssl.engine = \"enable\"\n";
-		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-		if ($ca <> "") {
-			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
+		$nginx_config .= "\t\tssl             on;\n";
+		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
+		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";
+        $nginx_config .= "\t\tssl_session_timeout     10m;\n";
+        $nginx_config .= "\t\tkeepalive_timeout       70;\n";
+		$nginx_config .= "\t\tssl_session_cache       shared:SSL:100m;\n";
+        $nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
+		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
+		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";
+		$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000; preload\";\n";
+		$nginx_config .= "\t\tadd_header X-Frame-Options DENY;\n";
+		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
+		$nginx_config .= "\t\tssl_session_tickets off;\n";
+		$nginx_config .= "\t\tssl_stapling on;\n";
+		$nginx_config .= "\t\tssl_stapling_verify on;\n";
+		$nginx_config .= "\n";
+	}
+
+	$nginx_config .= <<<EOD
+		root "{$document_root}";
+		location / {
+			index  index.html index.htm index.php;
+		}
+
+		location ~ \.php$ {
+			try_files \$uri =404; #  This line closes a potential security hole
+                                    #  ensuring users can't execute uploaded files
+     								# see: http://forum.nginx.org/read.php?2,88845,page=3 
+			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
+			fastcgi_index  index.php;
+			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+			include        /usr/local/etc/nginx/fastcgi_params;
 		}
 	}
-	$lighty_config .= " }\n";
-
-
-	$lighty_config .= <<<EOD
-
-## error-handler for status 404
-#server.error-handler-404   = "/error-handler.html"
-#server.error-handler-404   = "/error-handler.php"
-
-## to help the rc.scripts
-server.pid-file            = "{$g['varrun_path']}/{$pid_file}"
-
-## virtual directory listings
-server.dir-listing         = "disable"
-
-## enable debugging
-debug.log-request-header   = "disable"
-debug.log-response-header  = "disable"
-debug.log-request-handling = "disable"
-debug.log-file-not-found   = "disable"
-
-# gzip compression
-compress.cache-dir = "{$g['tmp_path']}/lighttpdcompress/"
-compress.filetype  = ("text/plain","text/css", "text/xml", "text/javascript" )
-
-{$server_upload_dirs}
-
-{$server_max_request_size}
-
-{$fastcgi_config}
-
-{$cgi_config}
-
-{$captive_portal_mod_evasive}
-
-expire.url = (
-		"" => "access 50 hours",
-	)
 
 EOD;
 
 	$cert = str_replace("\r", "", $cert);
 	$key = str_replace("\r", "", $key);
-	$ca = str_replace("\r", "", $ca);
 
 	$cert = str_replace("\n\n", "\n", $cert);
 	$key = str_replace("\n\n", "\n", $key);
-	$ca = str_replace("\n\n", "\n", $ca);
 
 	if ($cert <> "" and $key <> "") {
 		$fd = fopen("{$g['varetc_path']}/{$cert_location}", "w");
 		if (!$fd) {
-			printf(gettext("Error: cannot open cert.pem in system_webgui_start().%s"), "\n");
+			printf(gettext("Error: cannot open certificate file in system_webgui_start().%s"), "\n");
 			return 1;
 		}
 		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
 		fwrite($fd, $cert);
-		fwrite($fd, "\n");
+		fclose($fd);
+		$fd = fopen("{$g['varetc_path']}/{$key_location}", "w");
+		if (!$fd) {
+			printf(gettext("Error: cannot open certificate key file in system_webgui_start().%s"), "\n");
+			return 1;
+		}
+		chmod("{$g['varetc_path']}/{$key_location}", 0600);
 		fwrite($fd, $key);
 		fclose($fd);
-		if (!(empty($ca) || (strlen(trim($ca)) == 0))) {
-			$fd = fopen("{$g['varetc_path']}/{$ca_location}", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open ca.pem in system_webgui_start().%s"), "\n");
-				return 1;
-			}
-			chmod("{$g['varetc_path']}/{$ca_location}", 0600);
-			fwrite($fd, $ca);
-			fclose($fd);
-		}
-		$lighty_config .= "\n";
-		$lighty_config .= "## " . gettext("ssl configuration") . "\n";
-		$lighty_config .= "ssl.engine = \"enable\"\n";
-		$lighty_config .= "ssl.pemfile = \"{$g['varetc_path']}/{$cert_location}\"\n\n";
-
-		// SSLv2/3 is deprecated, force use of TLS
-		$lighty_config .= "ssl.use-sslv2 = \"disable\"\n";
-		$lighty_config .= "ssl.use-sslv3 = \"disable\"\n";
-
-		// where ssl.cipher-list is set, this is automatically enabled, but set it explicitly anyway.
-		$lighty_config .= "ssl.honor-cipher-order = \"enable\"\n";
-
-		$lighty_config .= "ssl.cipher-list = \"AES128+EECDH:AES256+EECDH:AES128+EDH:AES256+EDH:AES128-SHA:AES256-SHA:!aNULL:!eNULL:!DSS\"\n";
-
-		if (!(empty($ca) || (strlen(trim($ca)) == 0))) {
-			$lighty_config .= "ssl.ca-file = \"{$g['varetc_path']}/{$ca_location}\"\n\n";
-		}
 	}
 
 	// Add HTTP to HTTPS redirect
 	if ($captive_portal === false && $config['system']['webgui']['protocol'] == "https" && !isset($config['system']['webgui']['disablehttpredirect'])) {
-		if ($lighty_port != "443") {
-			$redirectport = ":{$lighty_port}";
+		if ($nginx_port != "443") {
+			$redirectport = ":{$nginx_port}";
 		}
-		$lighty_config .= <<<EOD
-\$SERVER["socket"] == ":80" {
-	\$HTTP["host"] =~ "(.*)" {
-		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
+		$nginx_config .= <<<EOD
+	server {
+		listen 80;
+		listen [::]:80;
+		rewrite         ^ https://\$http_host$redirectport\$request_uri? permanent;
 	}
-}
-\$SERVER["socket"] == "[::]:80" {
-	\$HTTP["host"] =~ "(.*)" {
-		url.redirect = ( "^/(.*)" => "https://%1{$redirectport}/$1" )
-	}
-}
+
 EOD;
 	}
+	
+	$nginx_config .= "}\n";
 
 	$fd = fopen("{$filename}", "w");
 	if (!$fd) {
-		printf(gettext("Error: cannot open %s in system_generate_lighty_config().%s"), $filename, "\n");
+		printf(gettext("Error: cannot open %s in system_generate_nginx_config().%s"), $filename, "\n");
 		return 1;
 	}
-	fwrite($fd, $lighty_config);
+	fwrite($fd, $nginx_config);
 	fclose($fd);
 
 	return 0;

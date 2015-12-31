@@ -305,8 +305,6 @@ if (isset($args["--minimal"])) {
 // Save new commit ID for later minimal file copies
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
 
-exec("mkdir -p /tmp/lighttpd/cache/compress/");
-
 // Remove files that we do not want to overwrite the system with
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab");
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd");
@@ -359,7 +357,7 @@ if (!$upgrading) {
 echo "===> Checkout complete.\n";
 echo "\n";
 if (!$upgrading) {
-	echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
+	echo "Your system is now sync'd and PHP and nginx will be restarted in 5 seconds.\n\n";
 } else {
 	echo "Your system is now sync'd.\n\n";
 }
@@ -389,16 +387,13 @@ function post_cvssync_commands() {
 	echo "===> Locking down the console if needed...\n";
 	reload_ttys();
 
-	echo "===> Signaling PHP and Lighty restart...";
-	$fd = fopen("/tmp/restart_lighty", "w");
+	echo "===> Signaling PHP and nginx restart...";
+	$fd = fopen("/tmp/restart_nginx", "w");
 	fwrite($fd, "#!/bin/sh\n");
 	fwrite($fd, "sleep 5\n");
 	fwrite($fd, "/usr/local/sbin/pfSctl -c 'service restart webgui'\n");
-	if (file_exists("/var/etc/lighty-CaptivePortal.conf")) {
-		fwrite($fd, "/usr/local/sbin/lighttpd -f /var/etc/lighty-CaptivePortal.conf\n");
-	}
 	fclose($fd);
-	mwexec_bg("sh /tmp/restart_lighty");
+	mwexec_bg("sh /tmp/restart_nginx");
 	echo "\n";
 
 }

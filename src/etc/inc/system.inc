@@ -874,8 +874,6 @@ function system_syslogd_start() {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
 		}
 
-		$syslogconf .= "!nginx\n";
-		$syslogconf .= "*.*		{$log_directive}{$g['varlog_path']}/nginx.log\n";
 		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
@@ -965,6 +963,7 @@ function system_syslogd_start() {
 			$syslogconf .= <<<EOD
 local3.*							{$log_directive}{$g['varlog_path']}/vpn.log
 local4.*							{$log_directive}{$g['varlog_path']}/portalauth.log
+local5.*							{$log_directive}{$g['varlog_path']}/nginx.log
 local7.*							{$log_directive}{$g['varlog_path']}/dhcpd.log
 *.notice;kern.debug;lpr.info;mail.crit;daemon.none;news.err;local0.none;local3.none;local4.none;local7.none;security.*;auth.info;authpriv.info;daemon.info	{$log_directive}{$g['varlog_path']}/system.log
 auth.info;authpriv.info 					|exec /usr/local/sbin/sshlockout_pf 15
@@ -1292,7 +1291,7 @@ pid {$g['varrun_path']}/{$pid_file};
 user  root wheel;
 worker_processes  {$max_procs};
 
-error_log  syslog:server=unix:/var/run/log;
+error_log  syslog:server=unix:/var/run/log,facility=local5;
 
 events {
     worker_connections  1024;
@@ -1307,7 +1306,7 @@ http {
 	sendfile        on;
 	keepalive_timeout  65;
 
-	access_log      syslog:server=unix:/var/run/log combined;
+	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 
 	server {
 		listen {$nginx_port};

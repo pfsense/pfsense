@@ -1237,6 +1237,14 @@ function system_generate_nginx_config($filename,
 		}
 	}
 
+	if (!isset($config['syslog']['nologlighttpd'])) {
+		$nginx_use_syslog = <<<EOD
+## where to send error-messages to
+server.errorlog-use-syslog="enable"
+EOD;
+	}
+
+
 	if ($captive_portal !== false) {
 		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
 		$fastcgi_config = <<<EOD

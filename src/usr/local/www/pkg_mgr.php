@@ -174,9 +174,7 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>
-<?php if (!$g['disablepackagehistory']):?>
 					<th><?=gettext("Version")?></th>
-<?php endif;?>
 					<th><?=gettext("Description")?></th>
 					<th></th>
 				</tr>
@@ -201,12 +199,14 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 							<?=htmlspecialchars($index['shortname'])?>
 						</a>
 					</td>
-
-<?php if (!$g['disablepackagehistory']):?>
 					<td>
-						<?=htmlspecialchars($index['version'])?>
-					</td>
+<?php if (!$g['disablepackagehistory']):?>
+						<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($index['changeloglink'])?>">
+							<?=htmlspecialchars($index['version'])?></a>
+<?php else:?>
+						<?=htmlspecialchars($index['version'])?>					
 <?php endif;?>
+					</td>
 					<td>
 						<?=$index['desc']?>
 <?php if (is_array($index['deps']) && count($index['deps'])):?>

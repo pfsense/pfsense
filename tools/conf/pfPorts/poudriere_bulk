@@ -1,5 +1,4 @@
 databases/rrdtool
-databases/pecl-rrd
 benchmarks/iperf
 benchmarks/iperf3
 security/%%PRODUCT_NAME%%

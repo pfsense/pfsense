@@ -1283,7 +1283,13 @@ pid {$g['varrun_path']}/{$pid_file};
 user  root wheel;
 worker_processes  {$max_procs};
 
-error_log  syslog:server=unix:/var/run/log,facility=local5;
+EOD;
+
+if (!isset($config['syslog']['nolognginx'])) {
+	$nginx_config .= "error_log  syslog:server=unix:/var/run/log,facility=local5;\n";
+}
+
+$nginx_config .= <<<EOD
 
 events {
     worker_connections  1024;

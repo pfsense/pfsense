@@ -388,7 +388,6 @@ export fcgipath=/var/run/php-fpm.socket
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
-/bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
 
 if [ "${PLATFORM}" = "nanobsd" ]; then

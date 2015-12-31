@@ -24029,10 +24029,6 @@ msgstr "本製品は、から無料で入手PHPを含み"
 msgid "1999 - 2003 The PHP Group. All rights reserved"
 msgstr "1999 - 2003ザ· PHPのグループ。無断複写·転載を禁じます"
 
-#: usr/local/www/license.php:163 usr/local/www/license.php:163
-msgid "LightTPD"
-msgstr "lighttpdの"
-
 #: usr/local/www/license.php:164
 msgid " 2004 by Jan Kneschke "
 msgstr "2004ヤンKneschkeによる"

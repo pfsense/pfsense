@@ -165,7 +165,7 @@ $pconfig['logfilesize'] = $config['syslog'][$specific_log]['logfilesize'];
 $pconfig['format'] = $config['syslog'][$specific_log]['format'];
 
 # System General (main) Specific
-$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
+$pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 
 # Firewall Specific
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
@@ -185,7 +185,7 @@ if ($save_settings) {
 	$format  = getGETPOSTsettingvalue('format',  null);
 
 	# System General (main) Specific
-	$loglighttpd  = getGETPOSTsettingvalue('loglighttpd',  null);
+	$lognginx  = getGETPOSTsettingvalue('lognginx',  null);
 
 	# Firewall Specific
 	$logdefaultblock = getGETPOSTsettingvalue('logdefaultblock',  null);
@@ -236,11 +236,11 @@ if ($save_settings) {
 
 	# System General (main) Specific
 		if ($logfile == 'system') {
-			$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
-			$config['syslog']['nologlighttpd'] = $loglighttpd ? false : true;
+			$oldnolognginx = isset($config['syslog']['nolognginx']);
+			$config['syslog']['nolognginx'] = $lognginx ? false : true;
 
-			if ($oldnologlighttpd !== $config['syslog']['nologlighttpd']) {
-				$logging_changed = $lighttpd_logging_changed = true;
+			if ($oldnolognginx !== $config['syslog']['nolognginx']) {
+				$logging_changed = $nginx_logging_changed = true;
 			}
 		}
 
@@ -285,7 +285,7 @@ if ($save_settings) {
 
 	# System General (main) Specific
 		if ($logfile == 'system') {
-			if ($lighttpd_logging_changed) {
+			if ($nginx_logging_changed) {
 				ob_flush();
 				flush();
 				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
@@ -890,11 +890,11 @@ $section->add($group);
 # System General (main) Specific
 if ($logfile == 'system') {
 	$section->addInput(new Form_Checkbox(
-		'loglighttpd',
+		'lognginx',
 		'Web Server Log',
 		'Log errors from the web server process',
-		$pconfig['loglighttpd']
-	))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the system log.');
+		$pconfig['lognginx']
+	))->setHelp('If this is checked, errors from the web server process for the GUI or Captive Portal will appear in the system log.');
 }
 
 

@@ -311,8 +311,8 @@ EOD;
 		captiveportal_write_elements();
 
 		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 
 		/* start up the webserving daemon */
 		captiveportal_init_webgui_zone($cpcfg);
@@ -337,8 +337,8 @@ EOD;
 		}
 
 	} else {
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 		@unlink("{$g['varetc_path']}/captiveportal_{$cpzone}.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
@@ -440,7 +440,7 @@ function captiveportal_init_webgui_zone($cpcfg) {
 
 	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
 	/* attempt to start nginx */
-	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
+	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
 	if (isset($cpcfg['httpslogin'])) {

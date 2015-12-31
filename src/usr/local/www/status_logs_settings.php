@@ -89,7 +89,6 @@ $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 $pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 $pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
-$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
@@ -163,12 +162,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
 		$oldnologbogons = isset($config['syslog']['nologbogons']);
 		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
-		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
 		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? true : false;
 		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
-		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
@@ -193,14 +190,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		}
 
 		$savemsg = get_std_save_message($retval);
-
-		if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
-			ob_flush();
-			flush();
-			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
-			send_event("service restart webgui");
-			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
-		}
 
 		filter_pflog_start(true);
 	}
@@ -297,13 +286,6 @@ $section->addInput(new Form_Checkbox(
 	'Log packets blocked by \'Block Private Networks\' rules',
 	$pconfig['logprivatenets']
 ));
-
-$section->addInput(new Form_Checkbox(
-	'loglighttpd',
-	'Web Server Log',
-	'Log errors from the web server process',
-	$pconfig['loglighttpd']
-))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log');
 
 $section->addInput(new Form_Checkbox(
 	'rawfilter',

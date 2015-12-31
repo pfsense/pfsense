@@ -118,11 +118,11 @@ include("head.inc");
 			FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br />
 			<?=gettext("Copyright")?> &copy;<?=gettext("1992-2015 The FreeBSD Project. All rights reserved")?>.<br />
 			<br />
-			<?=gettext("This product includes PHP, freely available from")?><a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br />
-			<?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2015 The PHP Group. All rights reserved.")?>.<br />
+			<?=gettext("This product includes PHP, freely available from")?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br />
+			<?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2015 The PHP Group. All rights reserved.")?><br />
 			<br />
-			<?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br />
-			<?=gettext("Copyright"); ?> &copy;<?=gettext("2004, Jan Knescke, incremental")?><jan@kneschke.de>
+			<?=gettext("nginx"); ?> (<a href="http://www.nginx.org" target="_blank">http://www.nginx.org)</a><br />
+			<?=gettext("Copyright"); ?> &copy;<?=gettext("2011-2015 Nginx, Inc.")?>
 			<?=gettext("All rights reserved.")?><br />
 			<br />
 			<?=gettext("ISC DHCP server ")?>(<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br />

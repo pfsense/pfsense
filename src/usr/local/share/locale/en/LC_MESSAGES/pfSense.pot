@@ -8258,12 +8258,6 @@ msgstr ""
 msgid "Log errors from the web server process."
 msgstr ""
 
-#: usr/local/www/diag_logs_settings.php:333
-msgid ""
-"Hint: If this is checked, errors from the lighttpd web server process for "
-"the GUI or Captive Portal will appear in the main system log."
-msgstr ""
-
 #: usr/local/www/diag_logs_settings.php:338
 msgid "Show raw filter logs"
 msgstr ""
@@ -16464,10 +16458,6 @@ msgstr ""
 
 #: usr/local/www/license.php:94
 msgid "1999-2014 The PHP Group. All rights reserved."
-msgstr ""
-
-#: usr/local/www/license.php:96
-msgid "LightTPD"
 msgstr ""
 
 #: usr/local/www/license.php:97

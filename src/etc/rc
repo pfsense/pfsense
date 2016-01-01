@@ -185,7 +185,7 @@ echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version} ${platformbanner} ..."
+echo "Welcome to ${product} ${version}${platformbanner}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null

@@ -149,6 +149,8 @@ if ($_POST) {
 	}
 }
 
+$pconfig['server'] = $config['dhcrelay']['server'];
+
 $pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");
@@ -212,7 +214,7 @@ function createDestinationServerInputGroup($value = null) {
 	return $group;
 }
 
-if (!isset($pconfig['server']) || count($pconfig['server']) < 1) {
+if (!isset($pconfig['server'])) {
 	$section->add(createDestinationServerInputGroup());
 } else {
 	foreach (explode(',', $pconfig['server']) as $server) {

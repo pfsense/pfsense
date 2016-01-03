@@ -701,7 +701,7 @@ events.push(function() {
 	$('[id^=Delete]').prop('type', 'button');
 
 	$('[id^=Delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 });
 //]]>
@@ -1170,7 +1170,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	$(rowhtml.replace(/@/g, counter)).insertBefore(node);
 
 	$('[id^=delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 
 	counter++;
@@ -1184,7 +1184,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 }
 
 // If only everything were this simple
-function delete_row(row) {
+function fse_delete_row(row) {
 	$('.schedulegrp' + row).remove();
 }
 //]]>

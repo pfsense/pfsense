@@ -1127,7 +1127,7 @@ function system_webgui_start() {
 
 	/* generate nginx configuration */
 	system_generate_nginx_config("{$g['varetc_path']}/nginx-webConfigurator.conf",
-		$crt, $key, "nginx-webConfigurator.pid", $portarg, "/usr/local/www/",
+		$crt, $key, $ca, "nginx-webConfigurator.pid", $portarg, "/usr/local/www/",
 		"cert.crt", "cert.key");
 
 	/* kill any running nginx */
@@ -1154,6 +1154,7 @@ function system_webgui_start() {
 function system_generate_nginx_config($filename,
 	$cert,
 	$key,
+	$ca,
 	$pid_file,
 	$port = 80,
 	$document_root = "/usr/local/www/",

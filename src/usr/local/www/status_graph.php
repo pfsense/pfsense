@@ -193,6 +193,7 @@ $group->add(new Form_Select(
 	array (
 		''			=> 'IP Address',
 		'hostname'	=> 'Host Name',
+		'descr'		=> 'Description',
 		'fqdn'		=> 'FQDN'
 	)
 ))->setHelp('Display');

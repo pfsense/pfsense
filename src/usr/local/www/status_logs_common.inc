@@ -585,7 +585,9 @@ function manage_log_code() {
 		if (!$input_errors) {
 
 			# Clear out the specific log settings and leave only the applied settings to override the general logging options (global) settings.
-			unset($config['syslog'][$specific_log]);
+			if (isset($config['syslog'][$specific_log])) {
+				unset($config['syslog'][$specific_log]);
+			}
 
 		// Common to All Logs
 			if ($cronorder != '') { # if not using the general logging options setting (global)

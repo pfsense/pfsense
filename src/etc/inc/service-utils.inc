@@ -439,9 +439,9 @@ function get_service_status($service) {
 			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
 			break;
 		case "captiveportal":
-			$running = is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal.pid");
+			$running = is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal.pid");
 			if (isset($config['captiveportal'][$service['zone']]['httpslogin'])) {
-				$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
+				$running = $running && is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal-SSL.pid");
 			}
 			break;
 		case "vhosts-http":
@@ -665,8 +665,8 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'captiveportal':
 			$zone = htmlspecialchars($extras['zone']);
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
 			break;
 		case 'ntpd':
 			killbyname("ntpd");
@@ -736,8 +736,8 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'captiveportal':
 			$zone = htmlspecialchars($extras['zone']);
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':

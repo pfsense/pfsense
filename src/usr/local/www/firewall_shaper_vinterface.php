@@ -189,8 +189,6 @@ if ($_GET) {
 		if ($dnpipe) {
 			$q = new dnqueue_class();
 			$q->SetPipe($pipe);
-			$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-			$output_form .= " value=\"".$pipe."\" />";
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
@@ -200,10 +198,19 @@ if ($_GET) {
 
 		if ($q) {
 			$sform = $q->build_form();
+			if ($dnpipe) {
+				$sform->addGlobal(new Form_Input(
+					'parentqueue',
+					null,
+					'hidden',
+					$pipe
+				));
+			}
 			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
+
 		break;
 	case "show":
 		if ($queue) {
@@ -429,7 +436,7 @@ if ($dfltmsg) {
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
 			if ($queue) {
-				$url = 'href="firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
+				$url = 'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
 			} else {
 				$url = 'firewall_shaper.php?pipe='. $pipe . '&action=add';
 			}

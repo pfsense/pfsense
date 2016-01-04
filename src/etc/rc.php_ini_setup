@@ -285,7 +285,7 @@ daemonize = yes
 events.mechanism = kqueue
 process.max = ${PHPFPMMAX}
 
-[lighty]
+[nginx]
 user = root
 group = wheel
 ;mode = 0600

@@ -1151,11 +1151,6 @@ function system_webgui_start() {
 	return $res;
 }
 
-function system_generate_lighty_config() {
-	// XXX: remove me
-	return true;
-}
-
 function system_generate_nginx_config($filename,
 	$cert,
 	$key,

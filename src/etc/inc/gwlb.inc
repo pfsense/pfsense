@@ -38,8 +38,8 @@ function return_dpinger_defaults() {
 		"losslow" => "10",
 		"losshigh" => "20",
 		"interval" => "250",
-		"loss_interval" => "1000",
-		"time_period" => "25000",
+		"loss_interval" => "1250",
+		"time_period" => "30000",
 		"alert_interval" => "1000");
 }
 

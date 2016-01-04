@@ -51,7 +51,7 @@ class Form_Textarea extends Form_Input
 
 	public function setNoWrap()
 	{
-		$this->_attributes['wrap'] = 'none';
+		$this->_attributes['style'] = 'white-space: nowrap; width: auto;';
 
 		return $this;
 	}

@@ -1818,17 +1818,24 @@ EOD;
 			unlink("{$g['var_path']}/spool/lock/LCK..{$port}");
 	}
 
-	/* Set temporary bogon (RFC 5737) IPv4 address to work round mpd5 IPv6CP issue causing */
+	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
 	/* random IPv6 interface identifier during boot. More details at */
 	/* https://forum.pfsense.org/index.php?topic=101967.msg570519#msg570519 */
-	/* N.B. The current work round only supports PPPoE */
-	$tempaddr = false;
-	if (platform_booting() && $type == "pppoe" && is_array($ports) && !empty($ports[0])) {
-		$tempaddr = true;
-		$tempaddr_iface = get_real_interface($ports[0]);
-		if (!empty($tempaddr_iface)) {
-			mwexec("/sbin/ifconfig " . escapeshellarg($tempaddr_iface) . " inet 192.0.2.248/31 alias", true);
+	if (platform_booting() && is_array($config['interfaces'])) {
+		$count = 0;
+		foreach ($config['interfaces'] as $tempifacename => $tempiface) {
+			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
+				$tempaddr[$count]['if'] = $tempiface['if'];
+				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempaddr[$count]['if']) . ' inet ' . escapeshellarg($tempaddr[$count]['ipaddr']) . ' alias', true);
+				$count++;
+			}
+			// Maximum /31 is is x.y.z.254/31
+			if ($count > 122) {
+				break;
+			}
 		}
+		unset($count);
 	}
 
 	/* fire up mpd */
@@ -1851,12 +1858,15 @@ EOD;
 		$i++;
 	}
 
-	/* Remove work round temporary address */
-	if ($tempaddr && !empty($tempaddr_iface)) {
-		mwexec("/sbin/ifconfig " . escapeshellarg($tempaddr_iface) . " inet 192.0.2.248/31 -alias", true);
-		unset ($tempaddr_iface);
+	/* Remove all temporary bogon IPv4 addresses */
+	if (is_array($tempaddr)) {
+		foreach ($tempaddr as $tempiface) {
+			if (isset($tempiface['if']) && isset($tempiface['ipaddr'])) {
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempiface['if']) . ' inet ' . escapeshellarg($tempiface['ipaddr']) . ' -alias', true);
+			}
+		}
+		unset ($tempaddr);
 	}
-	unset ($tempaddr);
 
 	/* we only support the 3gstats.php for huawei modems for now. Will add more later. */
 	/* We should be able to launch the right version for each modem */

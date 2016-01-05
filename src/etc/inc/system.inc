@@ -1170,8 +1170,25 @@ function system_generate_nginx_config($filename,
 	}
 
 	if ($captive_portal !== false) {
-		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
-		
+		$cp_interfaces = explode(",", $config['captiveportal'][$captive_portal]['interface']);
+		$cp_hostcheck = "";
+		foreach ($cp_interfaces as $cpint) {
+			$cpint_ip = get_interface_ip($cpint);
+			if (is_ipaddr($cpint_ip)) {
+				$cp_hostcheck .= "\t\tif (\$http_host = $cpint_ip) {\n";
+				$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
+				$cp_hostcheck .= "\t\t}\n";	
+			}
+		}
+		if (isset($config['captiveportal'][$captive_portal]['httpsname'])) {
+			$cp_hostcheck .= "\t\tif (\$http_host = {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
+			$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
+			$cp_hostcheck .= "\t\t}\n";
+		}
+		$cp_rewrite = "\t\tif (\$cp_redirect = '') {\n";
+		$cp_rewrite .= "\t\t\trewrite	^ /index.php?zone=$captive_portal&redirurl=\$scheme://\$http_host\$request_uri break;\n";
+		$cp_rewrite .= "\t\t}\n";
+
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
@@ -1262,6 +1279,15 @@ EOD;
 		$nginx_config .= "\t\tssl_stapling on;\n";
 		$nginx_config .= "\t\tssl_stapling_verify on;\n";
 		$nginx_config .= "\n";
+	}
+
+	if ($captive_portal !== false) {
+		$nginx_config .= <<<EOD
+$cp_hostcheck
+$cp_rewrite
+
+EOD;
+
 	}
 
 	$nginx_config .= <<<EOD

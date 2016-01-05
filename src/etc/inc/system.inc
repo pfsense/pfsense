@@ -1364,6 +1364,9 @@ EOD;
 	fwrite($fd, $nginx_config);
 	fclose($fd);
 
+	/* nginx will fail to start if this directory does not exist. */
+	safe_mkdir("/var/tmp/nginx/");
+
 	return 0;
 
 }

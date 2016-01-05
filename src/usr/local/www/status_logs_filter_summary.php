@@ -60,14 +60,58 @@
 ##|*MATCH=status_logs_filter_summary.php*
 ##|-PRIV
 
-require_once("guiconfig.inc");
-include_once("filter_log.inc");
+require_once("status_logs_common.inc");
 
-$filter_logfile = "{$g['varlog_path']}/filter.log";
 $lines = 5000;
 $entriesperblock = 5;
 
-$filterlog = conv_log_filter($filter_logfile, $lines, $lines);
+
+/*
+Build a list of allowed log files so we can reject others to prevent the page
+from acting on unauthorized files.
+*/
+$allowed_logs = array(
+	"filter" => array("name" => "Firewall",
+		    "shortcut" => "filter"),
+);
+
+// The logs to display are specified in a GET argument. Default to 'system' logs
+if (!$_GET['logfile']) {
+	$logfile = 'filter';
+	$view = 'normal';
+} else {
+	$logfile = $_GET['logfile'];
+	$view = $_GET['view'];
+	if (!array_key_exists($logfile, $allowed_logs)) {
+		/* Do not let someone attempt to load an unauthorized log. */
+		$logfile = 'filter';
+		$view = 'normal';
+	}
+}
+
+if ($view == 'normal')  { $view_title = gettext("Normal View"); }
+if ($view == 'dynamic') { $view_title = gettext("Dynamic View"); }
+if ($view == 'summary') { $view_title = gettext("Summary View"); }
+
+
+// Status Logs Common - Code
+status_logs_common_code();
+
+
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+include("head.inc");
+
+if (!$input_errors && $savemsg) {
+	print_info_box($savemsg);
+	$manage_log_active = false;
+}
+
+
+// Tab Array
+tab_array_logs_common();
+
+
+$filterlog = conv_log_filter($logfile_path, $lines, $lines);
 $gotlines = count($filterlog);
 $fields = array(
 	'act'	   => gettext("Actions"),
@@ -88,6 +132,58 @@ foreach (array_keys($fields) as $f) {
 
 $totals = array();
 
+
+foreach ($filterlog as $fe) {
+	$specialfields = array('srcport', 'dstport');
+	foreach (array_keys($fields) as $field) {
+		if (!in_array($field, $specialfields)) {
+			$summary[$field][$fe[$field]]++;
+		}
+	}
+	/* Handle some special cases */
+	if ($fe['srcport']) {
+		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
+	} else {
+		$summary['srcport'][$fe['srcport']]++;
+	}
+	if ($fe['dstport']) {
+		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
+	} else {
+		$summary['dstport'][$fe['dstport']]++;
+	}
+}
+
+
+print("<br />");
+$infomsg = sprintf('This is a summary of the last %1$s lines of the firewall log (Max %2$s).', $gotlines, $lines);
+print_info_box($infomsg, info);
+?>
+
+<script src="d3pie/d3pie.min.js"></script>
+<script src="d3pie/d3.min.js"></script>
+
+<?php
+
+$chartnum=0;
+foreach (array_keys($fields) as $field) {
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=$fields[$field]?></h2></div>
+	<div class="panel-body">
+		<div id="pieChart<?=$chartnum?>" class="text-center">
+<?php
+			pie_block($summary, $field , $entriesperblock, $chartnum);
+			stat_block($summary, $field , $entriesperblock);
+			$chartnum++;
+?>
+		</div>
+	</div>
+</div>
+<?php
+}
+?>
+
+<?php
 function cmp($a, $b) {
 	if ($a == $b) {
 		return 0;
@@ -132,7 +228,9 @@ function stat_block($summary, $stat, $num) {
 	print "</table>";
 	print('</div>');
 }
+?>
 
+<?php
 // Create the JSON document for the chart to be displayed
 // Todo: Be good to investigate building this with json_encode and friends some time
 function pie_block($summary, $stat, $num, $chartnum) {
@@ -248,77 +346,8 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 </script>
 <?php
 }
-
-foreach ($filterlog as $fe) {
-	$specialfields = array('srcport', 'dstport');
-	foreach (array_keys($fields) as $field) {
-		if (!in_array($field, $specialfields)) {
-			$summary[$field][$fe[$field]]++;
-		}
-	}
-	/* Handle some special cases */
-	if ($fe['srcport']) {
-		$summary['srcport'][$fe['proto'].'/'.$fe['srcport']]++;
-	} else {
-		$summary['srcport'][$fe['srcport']]++;
-	}
-	if ($fe['dstport']) {
-		$summary['dstport'][$fe['proto'].'/'.$fe['dstport']]++;
-	} else {
-		$summary['dstport'][$fe['dstport']]++;
-	}
-}
-
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Summary View"));
-$shortcut_section = "firewall";
-include("head.inc");
-
-$tab_array = array();
-$tab_array[] = array(gettext("System"), false, "status_logs.php");
-$tab_array[] = array(gettext("Firewall"), true, "status_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
-display_top_tabs($tab_array);
-
-$tab_array = array();
-$tab_array[] = array(gettext("Normal View"), false, "/status_logs_filter.php");
-$tab_array[] = array(gettext("Dynamic View"), false, "/status_logs_filter_dynamic.php");
-$tab_array[] = array(gettext("Summary View"), true, "/status_logs_filter_summary.php");
-display_top_tabs($tab_array, false, 'nav nav-tabs');
-
-print("<br />");
-$infomsg = sprintf('This is a summary of the last %1$s lines of the firewall log (Max %2$s).', $gotlines, $lines);
-print_info_box($infomsg, info);
 ?>
 
-<script src="d3pie/d3pie.min.js"></script>
-<script src="d3pie/d3.min.js"></script>
-
 <?php
-
-$chartnum=0;
-foreach (array_keys($fields) as $field) {
-?>
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=$fields[$field]?></h2></div>
-	<div class="panel-body">
-		<div id="pieChart<?=$chartnum?>" align="center">
-<?php
-			pie_block($summary, $field , $entriesperblock, $chartnum);
-			stat_block($summary, $field , $entriesperblock);
-			$chartnum++;
-?>
-		</div>
-	</div>
-</div>
-<?php
-}
-
 include("foot.inc");
+?>

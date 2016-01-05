@@ -63,27 +63,78 @@
 ##|*MATCH=status_logs_filter_dynamic.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require_once("filter_log.inc");
-
-$filter_logfile = "{$g['varlog_path']}/filter.log";
-
-/* Hardcode this. AJAX doesn't do so well with large numbers */
-$nentries = 50;
 
 /* AJAX related routines */
-handle_ajax($nentries, $nentries + 20);
+require_once("guiconfig.inc");
+require_once("filter_log.inc");
+handle_ajax();
 
-if ($_POST['clear']) {
-	clear_log_file($filter_logfile);
+
+require_once("status_logs_common.inc");
+
+/*
+Build a list of allowed log files so we can reject others to prevent the page
+from acting on unauthorized files.
+*/
+$allowed_logs = array(
+	"filter" => array("name" => "Firewall",
+		    "shortcut" => "filter"),
+);
+
+// The logs to display are specified in a GET argument. Default to 'system' logs
+if (!$_GET['logfile']) {
+	$logfile = 'filter';
+	$view = 'normal';
+} else {
+	$logfile = $_GET['logfile'];
+	$view = $_GET['view'];
+	if (!array_key_exists($logfile, $allowed_logs)) {
+		/* Do not let someone attempt to load an unauthorized log. */
+		$logfile = 'filter';
+		$view = 'normal';
+	}
 }
 
-$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 100);
+if ($view == 'normal')  { $view_title = gettext("Normal View"); }
+if ($view == 'dynamic') { $view_title = gettext("Dynamic View"); }
+if ($view == 'summary') { $view_title = gettext("Summary View"); }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("Firewall"), gettext("Dynamic View"));
-$shortcut_section = "firewall";
+
+// Log Filter Submit - Firewall
+log_filter_form_firewall_submit();
+
+
+// Manage Log Section - Code
+manage_log_code();
+
+
+// Status Logs Common - Code
+status_logs_common_code();
+
+
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
+if (!$input_errors && $savemsg) {
+	print_info_box($savemsg);
+	$manage_log_active = false;
+}
+
+
+// Tab Array
+tab_array_logs_common();
+
+
+// Log Filter Submit - Firewall
+filter_form_firewall();
+
+
+// Now the forms are complete we can draw the log table and its controls
+if ($filterlogentries_submit) {
+	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
+} else {
+	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+}
 ?>
 
 <script type="text/javascript">
@@ -95,13 +146,31 @@ include("head.inc");
 	var isBusy = false;
 	var isPaused = false;
 	var nentries = <?=$nentries; ?>;
+
 <?php
-	if (isset($config['syslog']['reverse'])) {
+	# Build query string.
+	if ($filterlogentries_submit) {	# Formatted mode.
+		$filter_query_string = "type=formatted&filter=" . urlencode(json_encode($filterfieldsarray ));
+	}
+	if ($filtersubmit) {	# Raw mode.
+		$filter_query_string = "type=raw&filter=" . urlencode(json_encode($filtertext )) . "&interfacefilter=" . $interfacefilter;
+	}
+
+
+	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+	$reverse = isset($config['syslog']['reverse']);
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+	if ($reverse) {
 		echo "var isReverse = true;\n";
 	} else {
 		echo "var isReverse = false;\n";
 	}
 ?>
+	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
+
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
 		if (row[8] == '6') {
@@ -183,7 +252,7 @@ function fetch_new_rules() {
 		return;
 	}
 	isBusy = true;
-	getURL('status_logs_filter_dynamic.php?lastsawtime=' + lastsawtime, fetch_new_rules_callback);
+	getURL('status_logs_filter_dynamic.php?' + filter_query_string + '&lastsawtime=' + lastsawtime, fetch_new_rules_callback);
 }
 
 function fetch_new_rules_callback(callback_data) {
@@ -325,27 +394,6 @@ function toggleListDescriptions() {
 //]]>
 </script>
 
-<?php
-$tab_array = array();
-$tab_array[] = array(gettext("System"), false, "status_logs.php");
-$tab_array[] = array(gettext("Firewall"), true, "status_logs_filter.php");
-$tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
-$tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
-$tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
-$tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");
-$tab_array[] = array(gettext("Load Balancer"), false, "status_logs.php?logfile=relayd");
-$tab_array[] = array(gettext("OpenVPN"), false, "status_logs.php?logfile=openvpn");
-$tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
-$tab_array[] = array(gettext("Settings"), false, "status_logs_settings.php");
-display_top_tabs($tab_array);
-
-$tab_array = array();
-$tab_array[] = array(gettext("Normal View"), false, "/status_logs_filter.php");
-$tab_array[] = array(gettext("Dynamic View"), true, "/status_logs_filter_dynamic.php");
-$tab_array[] = array(gettext("Summary View"), false, "/status_logs_filter_summary.php");
-display_top_tabs($tab_array, false, 'nav nav-tabs');
-?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
@@ -357,7 +405,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
-					<tr>
+					<tr class="text-nowrap">
 						<th><?=gettext("Act")?></th>
 						<th><?=gettext("Time")?></th>
 						<th><?=gettext("IF")?></th>
@@ -394,7 +442,7 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 						$dstPort = "";
 					}
 ?>
-					<tr>
+					<tr class="text-nowrap">
 						<td>
 <?php
 							if ($filterent['act'] == "block") {
@@ -425,12 +473,23 @@ display_top_tabs($tab_array, false, 'nav nav-tabs');
 		</div>
 	</div>
 </div>
-<?php
 
+<?php
 if ($tcpcnt > 0) {
+?>
+<div id="infoblock">
+<?php
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
+?>
+</div>
+<?php
 }
+?>
+
+<?php
+# Manage Log - Section/Form
+manage_log_section();
 ?>
 
 <script type="text/javascript">

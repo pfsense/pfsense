@@ -517,7 +517,7 @@ $group->add(new Form_IpAddress(
 	'source',
 	null,
 	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[0-9, a-z, A-Z and .');
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
 
 $group->add(new Form_Input(
 	'sourceport',
@@ -541,7 +541,7 @@ $group->add(new Form_IpAddress(
 	'destination',
 	null,
 	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[0-9, a-z, A-Z and .');
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
 
 $group->add(new Form_Input(
 	'dstport',
@@ -596,13 +596,13 @@ $section->addInput(new Form_Select(
 		'bitmask' => 'Bit mask'
 	)
 ))->setHelp('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.' . '<br />' .
-			'<ul>' .
-				'<li>' . 'Round Robin: Loops through the translation addresses.' . '</li>' . '<br />' .
-				'<li>' . 'Random: Selects an address from the translation address pool at random.' . '</li>' . '<br />' .
-				'<li>' . 'Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.' . '</li>' . '<br />' .
-				'<li>' . 'Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.' . '</li>' . '<br />' .
+			'</span><ul class="help-block">' .
+				'<li>' . 'Round Robin: Loops through the translation addresses.' . '</li>' .
+				'<li>' . 'Random: Selects an address from the translation address pool at random.' . '</li>' .
+				'<li>' . 'Source Hash: Uses a hash of the source address to determine the translation address, ensuring that the redirection address is always the same for a given source.' . '</li>' .
+				'<li>' . 'Bitmask: Applies the subnet mask and keeps the last portion identical; 10.0.1.50 -&gt; x.x.x.50.' . '</li>' .
 				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
-			'</ul>');
+			'</ul><span class="help-block">');
 
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');

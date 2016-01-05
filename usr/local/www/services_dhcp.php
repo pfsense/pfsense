@@ -104,6 +104,11 @@ if (is_array($config['dhcpd'][$if])){
 		$dhcpdconf = array();
 	else
 		$dhcpdconf = &$config['dhcpd'][$if];
+
+	if (!is_array($config['dhcpd'][$if]['staticmap'])) {
+		$dhcpdconf['staticmap'] = array();
+	}
+	$a_maps = &$config['dhcpd'][$if]['staticmap'];
 }
 if (is_array($dhcpdconf)) {
 	// Global Options
@@ -123,10 +128,6 @@ if (is_array($dhcpdconf)) {
 		}
 
 		$pconfig['dhcpleaseinlocaltime'] = $dhcpleaseinlocaltime;
-
-		if (!is_array($dhcpdconf['staticmap']))
-			$dhcpdconf['staticmap'] = array();
-		$a_maps = &$dhcpdconf['staticmap'];
 	} else {
 		// Options that exist only in pools
 		$pconfig['descr'] = $dhcpdconf['descr'];
@@ -341,16 +342,18 @@ if (isset($_POST['submit'])) {
 				$rfrom = $config['dhcpd'][$if]['range']['from'];
 				$rto = $config['dhcpd'][$if]['range']['to'];
 
-				if (is_inrange_v4($_POST['range_from'], $rfrom, $rto) || is_inrange_v4($_POST['range_to'], $rfrom, $rto))
+				if (!((ip2ulong($_POST['range_from']) > ip2ulong($rto)) ||
+				      (ip2ulong($_POST['range_to']) < ip2ulong($rfrom)))) {
 					$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
+				}
 			}
 
 			foreach ($a_pools as $id => $p) {
 				if (is_numeric($pool) && ($id == $pool))
 					continue;
 
-				if (is_inrange_v4($_POST['range_from'], $p['range']['from'], $p['range']['to']) ||
-				    is_inrange_v4($_POST['range_to'], $p['range']['from'], $p['range']['to'])) {
+				if (!((ip2ulong($_POST['range_from']) > ip2ulong($p['range']['to'])) ||
+				      (ip2ulong($_POST['range_to']) < ip2ulong($p['range']['from'])))) {
 					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
 					break;
 				}
@@ -366,8 +369,8 @@ if (isset($_POST['submit'])) {
 				foreach ($a_maps as $map) {
 					if (empty($map['ipaddr']))
 						continue;
-					if ((ip2ulong($map['ipaddr']) > $dynsubnet_start) &&
-						(ip2ulong($map['ipaddr']) < $dynsubnet_end)) {
+					if ((ip2ulong($map['ipaddr']) >= $dynsubnet_start) &&
+						(ip2ulong($map['ipaddr']) <= $dynsubnet_end)) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}

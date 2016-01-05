@@ -189,6 +189,8 @@ if ($_GET['act'] == "del") {
 }
 
 function build_if_list() {
+	global $pconfig;
+
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 

@@ -1322,7 +1322,12 @@ EOD;
 			return 1;
 		}
 		chmod("{$g['varetc_path']}/{$cert_location}", 0600);
-		fwrite($fd, $cert);
+		if ($ca <> "") {
+			$cert_chain = $cert . "\n" . $ca;
+		} else {
+			$cert_chain = $cert;
+		}
+		fwrite($fd, $cert_chain);
 		fclose($fd);
 		$fd = fopen("{$g['varetc_path']}/{$key_location}", "w");
 		if (!$fd) {

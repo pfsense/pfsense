@@ -541,7 +541,7 @@ $group->add(new Form_IpAddress(
 	'destination',
 	null,
 	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[[a-zA-Z0-9\_\.\:]+');
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
 
 $group->add(new Form_Input(
 	'dstport',

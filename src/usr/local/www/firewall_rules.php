@@ -301,7 +301,7 @@ display_top_tabs($tab_array);
 	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
-					<tr id="antilockout" class="hover-success">
+					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
 						<td>*</td>
@@ -312,14 +312,14 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td class="bg-info"><?=gettext("Anti-Lockout Rule");?></td>
+						<td><?=gettext("Anti-Lockout Rule");?></td>
 						<td>
 							<a href="system_advanced_admin.php" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
-					<tr id="frrfc1918" class="hover-danger">
+					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td>*</td>
@@ -330,14 +330,14 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td class="bg-info"><?=gettext("Block private networks");?></td>
+						<td><?=gettext("Block private networks");?></td>
 						<td>
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
 <?php endif;?>
 <?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
-					<tr id="frrfc1918" class="hover-danger">
+					<tr id="frrfc1918">
 					<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td>*</td>
@@ -348,7 +348,7 @@ display_top_tabs($tab_array);
 						<td>*</td>
 						<td>*</td>
 						<td></td>
-						<td class="bg-info"><?=gettext("Block bogon networks");?></td>
+						<td><?=gettext("Block bogon networks");?></td>
 						<td>
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
@@ -634,7 +634,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>
-						<td class="bg-info">
+						<td>
 							<?=htmlspecialchars($filterent['descr']);?>
 						</td>
 						<td class="action-icons">

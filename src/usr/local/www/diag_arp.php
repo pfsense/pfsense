@@ -333,6 +333,10 @@ $data = msort($data, "dnsresolve");
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 ?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('ARP Table')?></h2></div>
+	<div class="panel-body">
+
 <div class="table-responsive">
 	<table class="sortable-theme-bootstrap table table-striped table-hover" data-sortable>
 		<thead>
@@ -366,6 +370,9 @@ $mac_man = load_mac_manufacturer_table();
 		<?php endforeach?>
 		</tbody>
 	</table>
+</div>
+
+	</div>
 </div>
 
 <script type="text/javascript">

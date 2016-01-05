@@ -118,6 +118,10 @@ if (count($services) > 0) {
 	<input id="id" type="hidden" name="id" value=""/>
 	<input id="zone" type="hidden" name="zone" value=""/>
 
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Services')?></h2></div>
+	<div class="panel-body">
+
 	<div class="panel-body panel-default">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -184,6 +188,10 @@ if (count($services) > 0) {
 			</table>
 		</div>
 	</div>
+
+	</div>
+</div>
+
 </form>
 <?php
 } else {

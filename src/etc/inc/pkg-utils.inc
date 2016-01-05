@@ -113,7 +113,7 @@ function pkg_update($force = false) {
 		}
 	}
 
-	$rc = pkg_call("update");
+	$rc = pkg_call("update -f");
 
 	if ($rc) {
 		file_put_contents($last_update_file, $now . "\n");
@@ -122,8 +122,27 @@ function pkg_update($force = false) {
 	return $rc;
 }
 
+/* return an array with necessary environment vars for pkg */
+function pkg_env() {
+	global $config, $g;
+
+	$pkg_env_vars = array(
+		"HTTP_USER_AGENT" => $user_agent,
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
+	);
+
+	if ($g['platform'] == "nanobsd" ||
+	    isset($config['system']['use_mfs_tmpvar'])) {
+		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
+		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
+	}
+
+	return $pkg_env_vars;
+}
+
 /* Execute a pkg call */
-function pkg_call($params, $mute = false) {
+function pkg_call($params, $mute = false, $readonly = false) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -135,21 +154,23 @@ function pkg_call($params, $mute = false) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	if (!$readonly) {
+		conf_mount_rw();
+	}
+
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		if (!$readonly) {
+			conf_mount_ro();
+		}
 		return false;
 	}
 
@@ -201,6 +222,10 @@ function pkg_call($params, $mute = false) {
 	fclose($pipes[2]);
 	proc_close($process);
 
+	if (!$readonly) {
+		conf_mount_ro();
+	}
+
 	if (!isset($rc)) {
 		$rc = $status['exitcode'];
 	}
@@ -221,7 +246,7 @@ function pkg_call($params, $mute = false) {
 }
 
 /* Execute pkg with $params, fill stdout and stderr and return pkg rc */
-function pkg_exec($params, &$stdout, &$stderr) {
+function pkg_exec($params, &$stdout, &$stderr, $readonly = false) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -233,21 +258,23 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	if (!$readonly) {
+		conf_mount_rw();
+	}
+
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		if (!$readonly) {
+			conf_mount_ro();
+		}
 		return -1;
 	}
 
@@ -263,6 +290,10 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	}
 	fclose($pipes[2]);
 
+	if (!$readonly) {
+		conf_mount_ro();
+	}
+
 	return proc_close($process);
 }
 
@@ -277,7 +308,7 @@ function pkg_version_compare($v1, $v2) {
 		return '?';
 	}
 
-	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr);
+	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr, true);
 
 	if ($rc != 0) {
 		return '?';
@@ -294,7 +325,7 @@ function is_pkg_installed($pkg_name) {
 		return false;
 	}
 
-	return pkg_call("info -e " . $pkg_name, true);
+	return pkg_call("info -e " . $pkg_name, true, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */
@@ -404,7 +435,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		return array();
 	}
 
-	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
+	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err, true);
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(
@@ -439,7 +470,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
 
-			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err);
+			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err, true);
 
 			if ($rc != 0) {
 				update_status("\n" . gettext(

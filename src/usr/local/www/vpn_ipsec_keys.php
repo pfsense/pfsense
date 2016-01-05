@@ -128,6 +128,10 @@ if (is_subsystem_dirty('ipsec')) {
 	display_top_tabs($tab_array);
 ?>
 
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pre-Shared Keys')?></h2></div>
+	<div class="panel-body">
+
 <div class="table-responsive">
 	<table class="table table-striped table-hover">
 		<thead>
@@ -194,6 +198,9 @@ if (is_subsystem_dirty('ipsec')) {
 <?php $i++; endforeach; ?>
 		</tbody>
 	</table>
+</div>
+
+	</div>
 </div>
 
 <nav class="action-buttons">

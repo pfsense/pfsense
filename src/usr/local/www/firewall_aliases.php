@@ -212,7 +212,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Firewall Aliases <?=$bctab?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Firewall Aliases') . " " . $bctab?></h2></div>
 	<div class="panel-body">
 
 <div class="table-responsive">
@@ -294,8 +294,8 @@ display_top_tabs($tab_array);
 </table>
 </div>
 
-	</div><!-- panel body -->
-</div><!-- panel default -->
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">

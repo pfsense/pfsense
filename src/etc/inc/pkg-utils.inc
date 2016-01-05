@@ -122,6 +122,25 @@ function pkg_update($force = false) {
 	return $rc;
 }
 
+/* return an array with necessary environment vars for pkg */
+function pkg_env() {
+	global $config, $g;
+
+	$pkg_env_vars = array(
+		"HTTP_USER_AGENT" => $user_agent,
+		"ASSUME_ALWAYS_YES" => "true",
+		"REPO_AUTOUPDATE" => "false"
+	);
+
+	if ($g['platform'] == "nanobsd" ||
+	    isset($config['system']['use_mfs_tmpvar'])) {
+		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
+		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
+	}
+
+	return $pkg_env_vars;
+}
+
 /* Execute a pkg call */
 function pkg_call($params, $mute = false) {
 	global $g, $config;
@@ -135,19 +154,14 @@ function pkg_call($params, $mute = false) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
 		return false;
@@ -233,19 +247,14 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
 		return -1;

@@ -159,11 +159,14 @@ function pkg_call($params, $mute = false) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	conf_mount_rw();
+
 	pkg_debug("pkg_call(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		conf_mount_ro();
 		return false;
 	}
 
@@ -215,6 +218,8 @@ function pkg_call($params, $mute = false) {
 	fclose($pipes[2]);
 	proc_close($process);
 
+	conf_mount_ro();
+
 	if (!isset($rc)) {
 		$rc = $status['exitcode'];
 	}
@@ -252,11 +257,14 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	conf_mount_rw();
+
 	pkg_debug("pkg_exec(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		conf_mount_ro();
 		return -1;
 	}
 
@@ -271,6 +279,8 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		$stderr .= $l;
 	}
 	fclose($pipes[2]);
+
+	conf_mount_ro();
 
 	return proc_close($process);
 }

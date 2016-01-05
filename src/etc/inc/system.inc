@@ -1177,7 +1177,7 @@ function system_generate_nginx_config($filename,
 			if (is_ipaddr($cpint_ip)) {
 				$cp_hostcheck .= "\t\tif (\$http_host = $cpint_ip) {\n";
 				$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
-				$cp_hostcheck .= "\t\t}\n";	
+				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
 		if (isset($config['captiveportal'][$captive_portal]['httpsname'])) {
@@ -1196,7 +1196,7 @@ function system_generate_nginx_config($filename,
 		$captive_portal_maxprocperip = "limit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
 		$captive_portal_maxprocperip .= "limit_conn addr $maxprocperip\n";
 
-	} 
+	}
 
 	if (empty($port)) {
 		$nginx_port = "80";
@@ -1223,7 +1223,7 @@ function system_generate_nginx_config($filename,
 		} else if ($realmem > 512) {
 			$max_procs += 4; // 6 worker processes
 		}
-	} 
+	}
 
 	$nginx_config = <<<EOD
 #
@@ -1267,10 +1267,10 @@ EOD;
 		$nginx_config .= "\t\tssl             on;\n";
 		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";
-        $nginx_config .= "\t\tssl_session_timeout     10m;\n";
-        $nginx_config .= "\t\tkeepalive_timeout       70;\n";
+		$nginx_config .= "\t\tssl_session_timeout     10m;\n";
+		$nginx_config .= "\t\tkeepalive_timeout       70;\n";
 		$nginx_config .= "\t\tssl_session_cache       shared:SSL:100m;\n";
-        $nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
+		$nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
 		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
 		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";
 		$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000; preload\";\n";
@@ -1298,8 +1298,8 @@ EOD;
 
 		location ~ \.php$ {
 			try_files \$uri =404; #  This line closes a potential security hole
-                                    #  ensuring users can't execute uploaded files
-     								# see: http://forum.nginx.org/read.php?2,88845,page=3 
+			# ensuring users can't execute uploaded files
+			# see: http://forum.nginx.org/read.php?2,88845,page=3
 			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
 			fastcgi_index  index.php;
 			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
@@ -1353,7 +1353,7 @@ EOD;
 
 EOD;
 	}
-	
+
 	$nginx_config .= "}\n";
 
 	$fd = fopen("{$filename}", "w");
@@ -2060,11 +2060,12 @@ EOD;
 	return 0;
 }
 
-/* attempt to identify the specific platform (for embedded systems)
-   Returns an array with two elements:
-	name => platform string (e.g. 'wrap', 'alix' etc.)
-	descr => human-readable description (e.g. "PC Engines WRAP")
-*/
+/*
+ * attempt to identify the specific platform (for embedded systems)
+ * Returns an array with two elements:
+ * name => platform string (e.g. 'wrap', 'alix' etc.)
+ * descr => human-readable description (e.g. "PC Engines WRAP")
+ */
 function system_identify_specific_platform() {
 	global $g;
 

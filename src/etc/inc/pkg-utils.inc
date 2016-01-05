@@ -142,7 +142,7 @@ function pkg_env() {
 }
 
 /* Execute a pkg call */
-function pkg_call($params, $mute = false) {
+function pkg_call($params, $mute = false, $readonly = false) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -159,14 +159,18 @@ function pkg_call($params, $mute = false) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-	conf_mount_rw();
+	if (!$readonly) {
+		conf_mount_rw();
+	}
 
 	pkg_debug("pkg_call(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env());
 
 	if (!is_resource($process)) {
-		conf_mount_ro();
+		if (!$readonly) {
+			conf_mount_ro();
+		}
 		return false;
 	}
 
@@ -218,7 +222,9 @@ function pkg_call($params, $mute = false) {
 	fclose($pipes[2]);
 	proc_close($process);
 
-	conf_mount_ro();
+	if (!$readonly) {
+		conf_mount_ro();
+	}
 
 	if (!isset($rc)) {
 		$rc = $status['exitcode'];
@@ -240,7 +246,7 @@ function pkg_call($params, $mute = false) {
 }
 
 /* Execute pkg with $params, fill stdout and stderr and return pkg rc */
-function pkg_exec($params, &$stdout, &$stderr) {
+function pkg_exec($params, &$stdout, &$stderr, $readonly = false) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -257,14 +263,18 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-	conf_mount_rw();
+	if (!$readonly) {
+		conf_mount_rw();
+	}
 
 	pkg_debug("pkg_exec(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env());
 
 	if (!is_resource($process)) {
-		conf_mount_ro();
+		if (!$readonly) {
+			conf_mount_ro();
+		}
 		return -1;
 	}
 
@@ -280,7 +290,9 @@ function pkg_exec($params, &$stdout, &$stderr) {
 	}
 	fclose($pipes[2]);
 
-	conf_mount_ro();
+	if (!$readonly) {
+		conf_mount_ro();
+	}
 
 	return proc_close($process);
 }
@@ -296,7 +308,7 @@ function pkg_version_compare($v1, $v2) {
 		return '?';
 	}
 
-	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr);
+	$rc = pkg_exec("version -t '{$v1}' '{$v2}'", $stdout, $stderr, true);
 
 	if ($rc != 0) {
 		return '?';
@@ -313,7 +325,7 @@ function is_pkg_installed($pkg_name) {
 		return false;
 	}
 
-	return pkg_call("info -e " . $pkg_name, true);
+	return pkg_call("info -e " . $pkg_name, true, true);
 }
 
 /* Install package, $pkg_name should not contain prefix */
@@ -423,7 +435,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		return array();
 	}
 
-	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
+	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err, true);
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(
@@ -458,7 +470,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		if (is_pkg_installed($pkg_info['name'])) {
 			$pkg_info['installed'] = true;
 
-			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err);
+			$rc = pkg_exec("query %v {$pkg_info['name']}", $out, $err, true);
 
 			if ($rc != 0) {
 				update_status("\n" . gettext(

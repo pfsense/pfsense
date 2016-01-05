@@ -1186,7 +1186,7 @@ function system_generate_nginx_config($filename,
 			$cp_hostcheck .= "\t\t}\n";
 		}
 		$cp_rewrite = "\t\tif (\$cp_redirect = '') {\n";
-		$cp_rewrite .= "\t\t\trewrite	^ /index.php?zone=$captive_portal&redirurl=\$scheme://\$http_host\$request_uri break;\n";
+		$cp_rewrite .= "\t\t\trewrite	^ /index.php?zone=$captive_portal&redirurl=\$request_uri break;\n";
 		$cp_rewrite .= "\t\t}\n";
 
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];

@@ -1171,7 +1171,7 @@ function system_generate_nginx_config($filename,
 
 	if ($captive_portal !== false) {
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
-
+		
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
@@ -1206,19 +1206,7 @@ function system_generate_nginx_config($filename,
 		} else if ($realmem > 512) {
 			$max_procs += 4; // 6 worker processes
 		}
-		if ($max_procs > 1) {
-			$max_php_children = intval($max_procs/2);
-		} else {
-			$max_php_children = 1;
-		}
-
-	} else {
-		if ($realmem < 78) {
-			$max_php_children = 0;
-		} else {
-			$max_php_children = 1;
-		}
-	}
+	} 
 
 	$nginx_config = <<<EOD
 #

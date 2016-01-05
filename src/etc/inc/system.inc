@@ -1170,29 +1170,16 @@ function system_generate_nginx_config($filename,
 	}
 
 	if ($captive_portal !== false) {
-		$captiveportal = ",\"mod_rewrite\",\"mod_evasive\"";
 		$captive_portal_rewrite = "url.rewrite-once = ( \"(.*captiveportal.*)\" => \"$1\", \"(.*)\" => \"/index.php?zone={$captive_portal}&redirurl=$1\" )\n";
 
 		$maxprocperip = $config['captiveportal'][$captive_portal]['maxprocperip'];
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
 		}
-		$captive_portal_mod_evasive = "evasive.max-conns-per-ip = {$maxprocperip}";
+		$captive_portal_maxprocperip = "limit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
+		$captive_portal_maxprocperip .= "limit_conn addr $maxprocperip\n";
 
-		$server_upload_dirs = "server.upload-dirs = ( \"{$g['tmp_path']}/captiveportal/\" )\n";
-		if (!is_dir("{$g['tmp_path']}/captiveportal")) {
-			@mkdir("{$g['tmp_path']}/captiveportal", 0555);
-		}
-		$server_max_request_size = "server.max-request-size    = 384";
-		$cgi_config = "";
-	} else {
-		$captiveportal = ",\"mod_cgi\"";
-		$captive_portal_rewrite = "";
-		$captive_portal_mod_evasive = "";
-		$server_upload_dirs = "server.upload-dirs = ( \"{$g['upload_path']}/\", \"{$g['tmp_path']}/\", \"/var/\" )\n";
-		$server_max_request_size = "server.max-request-size    = 2097152";
-		$cgi_config = "cgi.assign                 = ( \".cgi\" => \"\" )";
-	}
+	} 
 
 	if (empty($port)) {
 		$nginx_port = "80";
@@ -1231,43 +1218,6 @@ function system_generate_nginx_config($filename,
 		} else {
 			$max_php_children = 1;
 		}
-	}
-
-	if ($captive_portal !== false) {
-		$fast_cgi_path = "{$g['tmp_path']}/php-fastcgi-{$captive_portal}.socket";
-		$fastcgi_config = <<<EOD
-#### fastcgi module
-## read fastcgi.txt for more info
-fastcgi.server = ( ".php" =>
-	( "localhost" =>
-		(
-			"socket" => "{$fast_cgi_path}",
-			"max-procs" => {$max_procs},
-			"bin-environment" => (
-				"PHP_FCGI_CHILDREN" => "{$max_php_children}",
-				"PHP_FCGI_MAX_REQUESTS" => "500"
-			),
-			"bin-path" => "/usr/local/bin/php-cgi"
-		)
-	)
-)
-
-EOD;
-	} else {
-		$fast_cgi_path = "{$g['varrun_path']}/php-fpm.socket";
-		$fastcgi_config = <<<EOD
-#### fastcgi module
-## read fastcgi.txt for more info
-fastcgi.server = ( ".php" =>
-	( "localhost" =>
-		(
-			"socket" => "{$fast_cgi_path}",
-			"broken-scriptfilename" => "enable"
-		)
-	)
-)
-
-EOD;
 	}
 
 	$nginx_config = <<<EOD

@@ -101,18 +101,6 @@ if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = "L2TP Logins"; }
 $vpn_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
 
-function getGETPOSTsettingvalue($settingname, $default) {
-	$settingvalue = $default;
-	if ($_GET[$settingname]) {
-		$settingvalue = $_GET[$settingname];
-	}
-	if ($_POST[$settingname]) {
-		$settingvalue = $_POST[$settingname];
-	}
-	return $settingvalue;
-}
-
-
 $filtersubmit = getGETPOSTsettingvalue('filtersubmit', null);
 
 if ($filtersubmit) {

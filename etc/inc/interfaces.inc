@@ -3050,8 +3050,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	case 'slaac':
 	case 'dhcp6':
 		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
-		// calls interface_dhcpv6_configure() for these connections after IPv6CP is up
-		if (!(interface_isppp_type($interface) && isset($wancfg['dhcp6usev4iface']))) {
+		// calls interface_dhcpv6_configure() for these connections after IPv6CP is up, whilst rc.newwanip
+		// handles all non-PPP connections with 'dhcp6usev4iface' set
+		if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
 			interface_dhcpv6_configure($interface, $wancfg);
 		}
 		break;

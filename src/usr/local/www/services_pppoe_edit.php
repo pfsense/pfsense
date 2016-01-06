@@ -157,6 +157,9 @@ if ($_POST) {
 		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {
 			$input_errors[] = gettext("A valid RADIUS server address must be specified.");
 		}
+		if (!is_numericint($_POST['n_pppoe_units']) || $_POST['n_pppoe_units'] > 255) {
+			$input_errors[] = gettext("Number of PPPoE users must be between 1 and 255");
+		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
 		$subnet_start = ip2ulong($_POST['remoteip']);
@@ -346,7 +349,7 @@ $section->addInput(new Form_Select(
 	'n_pppoe_units',
 	'No. of PPPoE Users',
 	$pconfig['n_pppoe_units'],
-	array_combine(range(0, 255, 1), range(0, 255, 1))
+	array_combine(range(1, 255, 1), range(1, 255, 1))
 ));
 
 $section->addInput(new Form_IpAddress(

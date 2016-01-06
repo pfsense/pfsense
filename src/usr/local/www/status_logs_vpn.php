@@ -97,8 +97,6 @@ if (!$_GET['logfile']) {
 if ($vpntype == 'poes') { $allowed_logs['vpn']['name'] = "PPPoE Logins"; }
 if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = "L2TP Logins"; }
 
-$vpn_logfile = "{$g['varlog_path']}/" . basename($logfile) . ".log";
-
 
 // Log Filter Submit - VPN
 log_filter_form_vpn_submit();
@@ -137,9 +135,16 @@ filter_form_vpn();
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
 	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filterfieldsarray);
+		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
 	} else {
-		$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filtertext);
+		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext);
+	}
+
+	// Remove those not of the selected vpn type (poes / l2tp).
+	foreach ($filterlog as $key => $filterent) {
+		if (!preg_match('/' . $vpntype . '/', $filterent['type'])) {
+			unset($filterlog[$key]);
+		}
 	}
 ?>
 
@@ -174,7 +179,6 @@ if (!$rawfilter) {
 				<tbody>
 <?php
 		foreach ($filterlog as $filterent) {
-			if (preg_match('/' . $vpntype . '/', $filterent['type'])) {
 ?>
 					<tr class="text-nowrap">
 						<td>
@@ -195,7 +199,6 @@ if (!$rawfilter) {
 						</td>
 					</tr>
 <?php
-			}
 		} // e-o-foreach
 ?>
 				</tbody>
@@ -251,7 +254,7 @@ if (!$rawfilter) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
 	<div class="panel-body">
 		<pre><?php 
-			$rows = dump_clog_no_table($vpn_logfile, $nentries, true, array($filtertext));
+			$rows = dump_clog_no_table($logfile_path, $nentries, true, array($filtertext));
 		?></pre>
 <?php
 	if ($rows == 0) {

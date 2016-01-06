@@ -164,6 +164,13 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
+	public function setRequired()
+	{
+		$this->_attributes['required'] = true;
+
+		return $this;
+	}
+
 	public function toggles($selector = null, $type = 'collapse')
 	{
 		if (isset($selector))

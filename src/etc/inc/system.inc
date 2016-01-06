@@ -780,14 +780,16 @@ function system_syslogd_get_remote_servers($syslogcfg, $facility = "*.*") {
 	$remote_servers = "";
 	$pad_to  = max(strlen($facility), 56);
 	$padding = ceil(($pad_to - strlen($facility))/8)+1;
-	if ($syslogcfg['remoteserver']) {
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
-	}
-	if ($syslogcfg['remoteserver2']) {
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver2']) . "\n";
-	}
-	if ($syslogcfg['remoteserver3']) {
-		$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver3']) . "\n";
+	if (isset($syslogcfg['enable'])) {
+		if ($syslogcfg['remoteserver']) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver']) . "\n";
+		}
+		if ($syslogcfg['remoteserver2']) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver2']) . "\n";
+		}
+		if ($syslogcfg['remoteserver3']) {
+			$remote_servers .= "{$facility}" . str_repeat("\t", $padding) . "@" . system_syslogd_fixup_server($syslogcfg['remoteserver3']) . "\n";
+		}
 	}
 	return $remote_servers;
 }

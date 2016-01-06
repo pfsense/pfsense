@@ -164,7 +164,7 @@ class Form_Input extends Form_Element
 		return $this;
 	}
 
-	public function setRequired()
+	public function setIsRequired()
 	{
 		$this->_attributes['required'] = true;
 

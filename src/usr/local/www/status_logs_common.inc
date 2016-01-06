@@ -528,7 +528,7 @@ function manage_log_code() {
 
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
-		$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
+		$pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 	}
 
 	// Specific to Firewall Log
@@ -552,7 +552,7 @@ function manage_log_code() {
 
 		// Specific to System General (main) Log
 		if ($logfile == 'system') {
-			$loglighttpd  = getGETPOSTsettingvalue('loglighttpd',  null);
+			$lognginx  = getGETPOSTsettingvalue('lognginx',  null);
 		}
 
 		// Specific to Firewall Log
@@ -608,11 +608,11 @@ function manage_log_code() {
 
 		// Specific to System General (main) Log
 			if ($logfile == 'system') {
-				$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
-				$config['syslog']['nologlighttpd'] = $loglighttpd ? false : true;
+				$oldnolognginx = isset($config['syslog']['nolognginx']);
+				$config['syslog']['nolognginx'] = $lognginx ? false : true;
 
-				if ($oldnologlighttpd !== $config['syslog']['nologlighttpd']) {
-					$logging_changed = $lighttpd_logging_changed = true;
+				if ($oldnolognginx !== $config['syslog']['nolognginx']) {
+					$logging_changed = $nginx_logging_changed = true;
 				}
 			}
 
@@ -657,7 +657,7 @@ function manage_log_code() {
 
 		// Specific to System General (main) Log
 		if ($logfile == 'system') {
-			if ($lighttpd_logging_changed) {
+			if ($nginx_logging_changed) {
 				ob_flush();
 				flush();
 				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
@@ -807,11 +807,11 @@ function manage_log_section() {
 	// Specific to System General (main) Log
 	if ($logfile == 'system') {
 		$section->addInput(new Form_Checkbox(
-			'loglighttpd',
+			'lognginx',
 			'Web Server Log',
 			'Log errors from the web server process',
-			$pconfig['loglighttpd']
-		))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the system log.');
+			$pconfig['lognginx']
+		))->setHelp('If this is checked, errors from the web server process for the GUI or Captive Portal will appear in the system log.');
 	}
 
 

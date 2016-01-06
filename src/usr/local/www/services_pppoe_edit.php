@@ -151,7 +151,7 @@ if ($_POST) {
 		if (($_POST['localip'] && !is_ipaddr($_POST['localip']))) {
 			$input_errors[] = gettext("A valid server address must be specified.");
 		}
-		if (($_POST['pppoe_subnet'] && !is_ipaddr($_POST['remoteip']))) {
+		if (($_POST['remoteip'] && !is_ipaddr($_POST['remoteip']))) {
 			$input_errors[] = gettext("A valid remote start address must be specified.");
 		}
 		if (($_POST['radiusserver'] && !is_ipaddr($_POST['radiusserver']))) {

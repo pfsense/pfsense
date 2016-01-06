@@ -163,6 +163,7 @@ switch($config['interfaces'][$interface]['ipaddrv6']) {
 		// interface_dhcpv6_configure() for these connections after IPv6CP is up
 		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']) && !interface_isppp_type($interface)) {
 			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
+        }
 		break;
 }
 

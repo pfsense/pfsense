@@ -40,10 +40,13 @@ CsrfMagic.prototype = {
     send: function(data) {
         if (!this.csrf_isPost) return this.csrf_send(data);
         prepend = csrfMagicName + '=' + csrfMagicToken + '&';
-        if (this.csrf_purportedLength === undefined) {
-            this.csrf_setRequestHeader("Content-length", this.csrf_purportedLength + prepend.length);
-            delete this.csrf_purportedLength;
-        }
+
+ //		Removed to eliminate 'Refused to set unsafe header "Content-length" ' errors in modern browsers
+ //       if (this.csrf_purportedLength === undefined) {
+ //           this.csrf_setRequestHeader("Content-length", this.csrf_purportedLength + prepend.length);
+ //           delete this.csrf_purportedLength;
+ //       }
+
         delete this.csrf_isPost;
         return this.csrf_send(prepend + data);
     },

@@ -123,6 +123,10 @@ if ($_POST) {
 			$input_errors[] = gettext("Secret and confirmation must match");
 		}
 
+		if (!is_numericint($_POST['n_l2tp_units']) || $_POST['n_l2tp_units'] > 255) {
+			$input_errors[] = gettext("Number of L2TP users must be between 1 and 255");
+		}
+
 		/* if this is an AJAX caller then handle via JSON */
 		if (isAjax() && is_array($input_errors)) {
 			input_errors2Ajax($input_errors);
@@ -282,12 +286,11 @@ $section->addInput(new Form_IpAddress(
 ))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Select(
 	'n_l2tp_units',
 	'Number of L2TP users',
-	'number',
 	$pconfig['n_l2tp_units'],
-	['min' => 0, 'max' => 255]
+	array_combine(range(1, 255, 1), range(1, 255, 1))
 ));
 
 $section->addPassword(new Form_Input(

@@ -114,7 +114,6 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-#$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"));
 $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 

@@ -141,9 +141,11 @@ if (!$rawfilter) {
 	}
 
 	// Remove those not of the selected vpn type (poes / l2tp).
-	foreach ($filterlog as $key => $filterent) {
-		if (!preg_match('/' . $vpntype . '/', $filterent['type'])) {
-			unset($filterlog[$key]);
+	if ($logfile == "vpn") {
+		foreach ($filterlog as $key => $filterent) {
+			if (!preg_match('/' . $vpntype . '/', $filterent['type'])) {
+				unset($filterlog[$key]);
+			}
 		}
 	}
 ?>

@@ -276,7 +276,7 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><?=gettext("Rules (Drag to change order)")?></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table name="ruletable" class="table table-hover table-striped table-condensed">
+			<table class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -723,6 +723,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
 	}
 ?>
+	</div>
 	</div>
 </div>
 

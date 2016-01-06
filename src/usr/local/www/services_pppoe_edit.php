@@ -160,6 +160,11 @@ if ($_POST) {
 		if (!is_numericint($_POST['n_pppoe_units']) || $_POST['n_pppoe_units'] > 255) {
 			$input_errors[] = gettext("Number of PPPoE users must be between 1 and 255");
 		}
+		if (!is_numeric($_POST['pppoe_subnet']) ||
+		    $_POST['pppoe_subnet'] < 0 ||
+		    $_POST['pppoe_subnet'] > 32) {
+			$input_errors[] = gettext("Subnet mask must be an interger between 0 and 32");
+		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
 		$subnet_start = ip2ulong($_POST['remoteip']);

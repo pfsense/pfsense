@@ -364,7 +364,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'sucess');
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

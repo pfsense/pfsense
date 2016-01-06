@@ -102,7 +102,7 @@ if ($_GET['act'] == "del") {
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg, success);
+	print_info_box($savemsg, 'success');
 }
 
 if (isset($config['l2tp']['radius']['enable'])) {

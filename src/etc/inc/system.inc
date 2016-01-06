@@ -1195,8 +1195,7 @@ function system_generate_nginx_config($filename,
 		if (empty($maxprocperip)) {
 			$maxprocperip = 10;
 		}
-		$captive_portal_maxprocperip = "limit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
-		$captive_portal_maxprocperip .= "limit_conn addr $maxprocperip\n";
+		$captive_portal_maxprocperip = "\t\tlimit_conn addr $maxprocperip;\n";
 
 	}
 
@@ -1259,6 +1258,14 @@ http {
 
 	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 
+EOD;
+
+if ($captive_portal !== false) {
+	$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
+}
+
+$nginx_config .= <<<EOD
+
 	server {
 		listen {$nginx_port};
 		listen [::]:{$nginx_port};
@@ -1285,6 +1292,7 @@ EOD;
 
 	if ($captive_portal !== false) {
 		$nginx_config .= <<<EOD
+$captive_portal_maxprocperip
 $cp_hostcheck
 $cp_rewrite
 

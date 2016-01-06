@@ -345,7 +345,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, success);
+	print_info_box($savemsg, 'success');
 }
 ?>
 <div id="container">

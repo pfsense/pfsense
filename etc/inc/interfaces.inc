@@ -3049,8 +3049,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	switch ($wancfg['ipaddrv6']) {
 	case 'slaac':
 	case 'dhcp6':
-		// The ppp-ipv6 script calls interface_dhcpv6_configure() for PPP connections after IPv6CP is up
-		if (!interface_isppp_type($interface)) {
+		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
+		// calls interface_dhcpv6_configure() for these connections after IPv6CP is up
+		if (!(interface_isppp_type($interface) && isset($wancfg['dhcp6usev4iface']))) {
 			interface_dhcpv6_configure($interface, $wancfg);
 		}
 		break;

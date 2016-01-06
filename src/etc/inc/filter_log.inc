@@ -87,8 +87,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
 	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
 
-# Needs to be tested with a vpn.log file before enabling.
-#	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "vpn_login"; }
+	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "vpn_login"; }
 	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "vpn_service"; }
 	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "vpn_service"; }
 
@@ -124,16 +123,13 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
 
-# Needs to be tested with a vpn.log file before enabling.
-# These regex patterns are nearly certain to be incorrect.
-/*	else if ($logfile_type == 'vpn_login')	{
+	else if ($logfile_type == 'vpn_login')	{
 		$action_pattern = "\(.*?\)";
 		$type_pattern = "\(.*?\)";
 		$ip_address_pattern = "\(.*?\)";
 		$user_pattern = "\(.*?\)";
-		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $action_pattern . "\ +" . $type_pattern . "\ +" . $ip_address_pattern . "\ +" . $user_pattern . "$";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
 	}
-*/
 	else if ($logfile_type == 'vpn_service')	{
 		$type_pattern = "\(.*?\):";
 		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
@@ -170,8 +166,7 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 		     if ($logfile_type == 'firewall')		{ $flent = parse_firewall_log_line($logent); }
 		else if ($logfile_type == 'system')			{ $flent = parse_system_log_line($logent); }
-# Needs to be tested with a vpn.log file before enabling.
-#		else if ($logfile_type == 'vpn_login')		{ $flent = parse_vpn_login_log_line($logent); }
+		else if ($logfile_type == 'vpn_login')		{ $flent = parse_vpn_login_log_line($logent); }
 		else if ($logfile_type == 'vpn_service')	{ $flent = parse_vpn_service_log_line($logent); }
 		else if ($logfile_type == 'unknown')		{ $flent = parse_unknown_log_line($logent); }
 		else 										{ $flent = array(); }
@@ -255,8 +250,7 @@ function parse_vpn_login_log_line($line) {
 	if (!preg_match($pattern, $line, $log_split))
 		return "";
 
-# Needs to be tested with a vpn.log file before enabling.
-#	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['action'], $flent['type'], $flent['ip_address'], $flent['user']) = $log_split;
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['action'], $flent['type'], $flent['ip_address'], $flent['user']) = $log_split;
 
 	/* If there is time, action, user, and IP address fields, then the line should be usable/good */
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {

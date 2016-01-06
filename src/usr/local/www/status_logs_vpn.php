@@ -136,17 +136,14 @@ filter_form_vpn();
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
-	if ($logfile != "vpn") {	# Needs to be tested with a vpn.log file before enabling.
-		if ($filterlogentries_submit) {
-			$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filterfieldsarray);
-		} else {
-			$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filtertext);
-		}
+	if ($filterlogentries_submit) {
+		$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filterfieldsarray);
+	} else {
+		$filterlog = conv_log_filter($vpn_logfile, $nentries, $nentries + 100, $filtertext);
 	}
 ?>
 
 <div class="panel panel-default">
-<?php if ($logfile != "vpn") {	# Needs to be tested with a vpn.log file before enabling. ?>
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
@@ -160,9 +157,6 @@ if (!$rawfilter) {
 ?>
 		</h2>
 	</div>
-<?php } else { ?>
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
-<?php } ?>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -179,8 +173,8 @@ if (!$rawfilter) {
 				</thead>
 				<tbody>
 <?php
-		if ($logfile != "vpn") {	# Needs to be tested with a vpn.log file before enabling.
-			foreach ($filterlog as $filterent) {
+		foreach ($filterlog as $filterent) {
+			if (preg_match('/' . $vpntype . '/', $filterent['type'])) {
 ?>
 					<tr class="text-nowrap">
 						<td>
@@ -188,9 +182,9 @@ if (!$rawfilter) {
 						</td>
 						<td>
 							<? if ($filterent['action'] == "login") { ?>
-							<i class=\"fa fa-arrow-left\" alt=\"in\"></i>
+							<i class="fa fa-arrow-left" title="in"></i>
 							<? } else { ?>
-							<i class=\"fa fa-arrow-right\" alt=\"out\"></i>
+							<i class="fa fa-arrow-right" title="out"></i>
 							<? } ?>
 						</td>
 						<td>
@@ -201,11 +195,8 @@ if (!$rawfilter) {
 						</td>
 					</tr>
 <?php
-			} // e-o-foreach
-		} else {	# Continue using dump clog function until tested with a vpn.log file.
-			$rows = dump_clog_vpn($vpn_logfile, $nentries); // dump_clog_vpn provides all the need <td></td>/<tr></tr> tags
-			if ($rows > 0) $filterlog[0] = '';
-		}
+			}
+		} // e-o-foreach
 ?>
 				</tbody>
 <?php
@@ -501,9 +492,7 @@ function filter_form_vpn() {
 	$group->setHelp('<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">' . gettext('Regular expression reference') . '</a> ' . gettext('Precede with exclamation (!) to exclude match.'));
 	$section->add($group);
 	$form->add($section);
-	if ($logfile != "vpn") {	# Needs to be tested with a vpn.log file before enabling.
-		print $form;
-	}
+	print $form;
 }
 ?>
 

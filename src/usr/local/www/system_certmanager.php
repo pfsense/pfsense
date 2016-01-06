@@ -777,7 +777,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'dn_email',
 	'Email Address',
-	'email',
+	'text',
 	$pconfig['dn_email'],
 	['placeholder' => 'e.g. admin@mycompany.com']
 ));
@@ -892,7 +892,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'csr_dn_email',
 	'Email Address',
-	'email',
+	'text',
 	$pconfig['csr_dn_email'],
 	['placeholder' => 'e.g. admin@mycompany.com']
 ));

@@ -220,10 +220,13 @@ $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a
 					gettext("If you pick a single IP, remote syslog servers must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
 					"<br /><br />" .
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
+
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else if ($savemsg) {
-	print_info_box($savemsg);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, success);
 }
 
 $tab_array = array();

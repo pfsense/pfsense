@@ -507,7 +507,7 @@ if ($dfltmsg) {
 ?>
 <div>
 	<div id="infoblock">
-		<?=print_info_box($default_shaper_msg, info)?>
+		<?=print_info_box($default_shaper_msg, 'info')?>
 	</div>
 </div>
 <?php

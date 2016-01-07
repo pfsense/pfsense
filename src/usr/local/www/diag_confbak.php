@@ -206,9 +206,18 @@ $form->add($section);
 print($form);
 
 if (is_array($confvers)) {
-	print_info_box(gettext('To view the differences between an older configuration and a newer configuration, ' .
-						   'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
-						   'then press the "Diff" button.'));
+?>
+<div>
+	<div id="infoblock">
+		<?=print_info_box(
+			gettext(
+				'To view the differences between an older configuration and a newer configuration, ' .
+				'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
+				'then press the "Diff" button.'),
+			'info')?>
+	</div>
+</div>
+<?php
 }
 ?>
 

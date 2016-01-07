@@ -1182,7 +1182,8 @@ function system_generate_nginx_config($filename,
 				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
-		if (isset($config['captiveportal'][$captive_portal]['httpsname'])) {
+		if (isset($config['captiveportal'][$captive_portal]['httpsname']) &&
+		    is_domain($config['captiveportal'][$captive_portal]['httpsname'])) {
 			$cp_hostcheck .= "\t\tif (\$http_host = {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
 			$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 			$cp_hostcheck .= "\t\t}\n";

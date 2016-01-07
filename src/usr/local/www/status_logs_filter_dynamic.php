@@ -477,7 +477,7 @@ function toggleListDescriptions() {
 <?php
 if ($tcpcnt > 0) {
 ?>
-<div id="infoblock">
+<div class="infoblock">
 <?php
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
 					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');

@@ -271,7 +271,7 @@ endif;
 // The notes displayed on the page are large, the page content comparitively small. A "Note" button
 // is provided so that you only see the notes if you ask for them
 ?>
-<div id="infoblock" class="panel panel-default">
+<div class="infoblock" class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">Notes</h2></div>
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .

@@ -196,7 +196,7 @@ endif;
 	</a>
 </nav>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box($notestr)?>
 </div>
 

@@ -183,7 +183,7 @@ endforeach;
 	</a>
 </nav>
 
-<div id="infoblock">
+<div class="infoblock">
 <?=print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
 					   'Only one "upstream" interface can be configured.'), 'info')?>
 </div>

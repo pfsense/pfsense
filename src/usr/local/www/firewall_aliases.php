@@ -311,7 +311,7 @@ display_top_tabs($tab_array);
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".
 	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
 <div>
-	<div id="infoblock">
+	<div class="infoblock">
 		<?=print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .
 			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .

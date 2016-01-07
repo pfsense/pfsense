@@ -199,6 +199,8 @@ log_errors=on
 error_log=/tmp/PHP_errors.log
 extension_dir=${EXTENSIONSDIR}
 date.timezone="${TIMEZONE}"
+session.hash_bits_per_character = 5
+session.hash_function = 1
 
 ; Extensions
 

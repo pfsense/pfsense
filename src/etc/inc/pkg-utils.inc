@@ -113,7 +113,7 @@ function pkg_update($force = false) {
 		}
 	}
 
-	$rc = pkg_call("update -f");
+	$rc = pkg_call("update");
 
 	if ($rc) {
 		file_put_contents($last_update_file, $now . "\n");

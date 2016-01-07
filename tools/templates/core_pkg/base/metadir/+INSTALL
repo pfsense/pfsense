@@ -37,7 +37,7 @@ IFS="
 PLATFORM=$(cat /etc/platform)
 
 # Process obsolete files
-if [ "${PLATFORM}" != "nanobsd" -a -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
+if [ -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
 	for f in $(cat /etc/%%PRODUCT_NAME%%.obsoletedfiles); do
 		if [ -n "${f}" -a -d "${f}" ]; then
 			chflags -R noschg "${f}"

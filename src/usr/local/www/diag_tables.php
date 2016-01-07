@@ -82,7 +82,7 @@ if ($_REQUEST['delete']) {
 	exit;
 }
 
-if ($_POST['deleteall']) {
+if ($_POST['clearall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if (is_array($entries)) {
 		foreach ($entries as $entryA) {
@@ -215,7 +215,7 @@ if ($bogons || !empty($entries)) {
 		))->setHelp('Download the latest bogon data')->addClass('btn-warning');
 	} elseif (!empty($entries)) {
 		$section->addInput(new Form_Button(
-			'deleteall',
+			'clearall',
 			'Clear Table'
 		))->setHelp('Clear all of the entries in this table')->addClass('btn-danger');
 	}

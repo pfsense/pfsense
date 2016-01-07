@@ -181,6 +181,7 @@ implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 900
 max_input_time = 1800
+max_input_vars = 5000
 register_argc_argv = On
 register_long_arrays = Off
 variables_order = "GPCS"

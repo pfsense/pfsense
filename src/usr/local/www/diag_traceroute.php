@@ -210,7 +210,7 @@ if (!$input_errors && $do_traceroute) {
 		<div class="panel-body">
 <?php
 		if ($result = shell_exec($cmd)) {
-			print(nl2br($result));
+			print('<pre>'.$result.'</pre>');
 		} else {
 			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
 		}

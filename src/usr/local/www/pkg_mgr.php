@@ -84,7 +84,17 @@ $tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
 
+// A crude way to display a "Please wait" message while hte page is loading
+ob_implicit_flush(true);
+print('<div class="temp">');
+print_info_box(gettext("Please wait while the package data is being retrieved."));
+echo str_repeat("<!--           -->", 1000);
+print('</div>');
+ob_end_flush();
+//flush();
+
 $pkg_info = get_pkg_info();
+
 if ($pkg_info) {
 	// Check categories
 	$categories = array();
@@ -123,9 +133,6 @@ if ($pkg_info) {
 	}
 
 	$tab_array[] = array(gettext("Other Categories"), $menu_category == "Other" ? true : false, "pkg_mgr.php?category=Other");
-
-//	if (count($categories) > 1)
-//		display_top_tabs($tab_array);
 }
 
 if (!$pkg_info || !is_array($pkg_info)):?>
@@ -204,7 +211,7 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 						<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($index['changeloglink'])?>">
 							<?=htmlspecialchars($index['version'])?></a>
 <?php else:?>
-						<?=htmlspecialchars($index['version'])?>					
+						<?=htmlspecialchars($index['version'])?>
 <?php endif;?>
 					</td>
 					<td>
@@ -271,7 +278,7 @@ events.push(function() {
 					$(this).show();
 				}
 			} else {
-				 $(this).show();	// A blank search string shows all
+				$(this).show();	// A blank search string shows all
 			}
 		});
 	});
@@ -293,6 +300,8 @@ events.push(function() {
 	        $("#btnsearch").get(0).click();
 	    }
 	});
+
+	$('.temp').hide();
 });
 //]]>
 </script>

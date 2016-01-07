@@ -695,7 +695,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</nav>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 	<div class="alert alert-info clearfix" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><div class="pull-left">
 		<dl class="dl-horizontal responsive">
 		<!-- Legend -->

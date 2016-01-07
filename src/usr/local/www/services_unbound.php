@@ -542,7 +542,7 @@ endforeach;
 	</a>
 </nav>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
 		" service (if enabled) will automatically serve the LAN IP".
 		" address as a DNS server to DHCP clients so they will use".

@@ -506,7 +506,7 @@ if (!$dfltmsg && $sform)  {
 if ($dfltmsg) {
 ?>
 <div>
-	<div id="infoblock">
+	<div class="infoblock">
 		<?=print_info_box($default_shaper_msg, 'info')?>
 	</div>
 </div>

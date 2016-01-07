@@ -660,7 +660,7 @@ endif;
 	</div>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 <?php
 	print_info_box(gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
 							'on the "Mappings" section of this page are ignored.' . '<br />' .

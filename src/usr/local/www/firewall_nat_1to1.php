@@ -277,7 +277,7 @@ display_top_tabs($tab_array);
 	</nav>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 <?=print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
 			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .

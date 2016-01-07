@@ -133,7 +133,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 ?>
 
 <div>
-<div id="infoblock">
+<div class="infoblock">
 <?php
 print_info_box(gettext('Socket information - explanation.') . '<br /><br />' .
 gettext('This page shows the output for the commands: "sockstat -4lL" and "sockstat -6lL".' . '<br />' .

@@ -364,7 +364,7 @@ endforeach;
 	</a>
 </nav>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box(gettext('The virtual IP addresses defined on this page may be used in ') . '<a href="firewall_nat.php">' . gettext('NAT') . '</a>' . gettext(' mappings.') . '<br />' .
 			   gettext('You can check the status of your CARP Virtual IPs and interfaces ') . '<a href="status_carp.php">' . gettext('here') . '</a>', 'info')?>
 </div>

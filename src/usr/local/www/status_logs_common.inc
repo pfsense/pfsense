@@ -119,17 +119,17 @@ function tab_array_logs_common() {
 		$tab_array[] = array(gettext("Dynamic View"), ($view == 'dynamic'), "/status_logs_filter_dynamic.php?logfile=filter&amp;view=dynamic");
 		$tab_array[] = array(gettext("Summary View"), ($view == 'summary'), "/status_logs_filter_summary.php?logfile=filter&amp;view=summary");
 	}
-	else if (in_array($logfile, array('poes', 'l2tp', 'vpn')))	 {
+	else if (in_array($logfile, array('poes', 'l2tps', 'vpn')))	 {
 		$tab_array[] = array(gettext("PPPoE Logins"),
 					(($logfile == 'vpn') && ($vpntype == "poes")),
 					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=poes");
-		$tab_array[] = array(gettext("PPPoE Raw"),
+		$tab_array[] = array(gettext("PPPoE Service"),
 					(($logfile == 'poes') && ($vpntype == "poes")),
 					"/status_logs_vpn.php?logfile=poes&amp;vpntype=poes");
 		$tab_array[] = array(gettext("L2TP Logins"),
 					(($logfile == 'vpn') && ($vpntype == "l2tp")),
 					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=l2tp");
-		$tab_array[] = array(gettext("L2TP Raw"),
+		$tab_array[] = array(gettext("L2TP Service"),
 					(($logfile == 'l2tps') && ($vpntype == "l2tp")),
 					"/status_logs_vpn.php?logfile=l2tps&amp;vpntype=l2tp");
 	}

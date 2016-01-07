@@ -157,7 +157,7 @@ print("<br />");
 $infomsg = sprintf(gettext('This is a summary of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines);
 ?>
 <div>
-	<div id="infoblock_open">
+	<div class="infoblock_open">
 		<?=print_info_box($infomsg, 'info');?>
 	</div>
 </div>

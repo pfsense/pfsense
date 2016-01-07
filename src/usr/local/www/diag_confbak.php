@@ -208,7 +208,7 @@ print($form);
 if (is_array($confvers)) {
 ?>
 <div>
-	<div id="infoblock_open">
+	<div class="infoblock_open">
 		<?=print_info_box(
 			gettext(
 				'To view the differences between an older configuration and a newer configuration, ' .

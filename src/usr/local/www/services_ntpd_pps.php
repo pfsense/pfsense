@@ -167,24 +167,24 @@ $section->addInput(new Form_StaticText(
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
 if (!empty($serialports)) {
-    $splist = array();
+	$splist = array();
 
-    foreach ($serialports as $port) {
-    	$shortport = substr($port, 5);
-    	$splist[$shortport] = $shortport;
-    }
+	foreach ($serialports as $port) {
+		$shortport = substr($port, 5);
+		$splist[$shortport] = $shortport;
+	}
 
-    $section->addInput(new Form_Select(
-    	'ppsport',
-    	'Serial port',
-    	$pconfig['port'],
-    		$splist
-    ))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
+	$section->addInput(new Form_Select(
+		'ppsport',
+		'Serial Port',
+		$pconfig['port'],
+			$splist
+	))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
 }
 
 $section->addInput(new Form_Input(
 	'ppsfudge1',
-	'Fudge time',
+	'Fudge Time',
 	'text',
 	$pconfig['fudge1']
 ))->setHelp('Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver. (default: 0.0).');
@@ -199,21 +199,21 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'ppsflag2',
 	'Flags',
-	'Enable falling edge PPS signal processing (default: rising edge).',
+	'Enable falling edge PPS signal processing (default: unchecked, rising edge).',
 	$pconfig['flag2']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'ppsflag3',
 	null,
-	'Enable kernel PPS clock discipline (default: disabled).',
+	'Enable kernel PPS clock discipline (default: unchecked).',
 	$pconfig['flag3']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'ppsflag4',
 	null,
-	'Record a timestamp once for each second, useful for constructing Allan deviation plots (default: disabled).',
+	'Record a timestamp once for each second, useful for constructing Allan deviation plots (default: unchecked).',
 	$pconfig['flag4']
 ));
 

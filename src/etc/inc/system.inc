@@ -1279,7 +1279,7 @@ EOD;
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";
 		$nginx_config .= "\t\tssl_session_timeout     10m;\n";
 		$nginx_config .= "\t\tkeepalive_timeout       70;\n";
-		$nginx_config .= "\t\tssl_session_cache       shared:SSL:100m;\n";
+		$nginx_config .= "\t\tssl_session_cache       shared:SSL:10m;\n";
 		$nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
 		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
 		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";

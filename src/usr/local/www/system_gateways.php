@@ -319,7 +319,7 @@ foreach ($a_gateways as $i => $gateway):
 			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
 			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 
-<? if (is_numeric($gateway['attribute'])): ?>
+<?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
 			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
@@ -330,10 +330,10 @@ foreach ($a_gateways as $i => $gateway):
 	?>
 			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 
-<? endif?>
+<?php endif; ?>
 		</td>
 	</tr>
-<? endforeach?>
+<?php endforeach; ?>
 </tbody>
 </table>
 

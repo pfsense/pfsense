@@ -260,7 +260,7 @@ if (!$input_errors && $type) {
 		</ul>
 	</div>
 </div>
-<? endif?>
+<?php endif; ?>
 
 <!-- Second table displays the server resolution times -->
 <div class="panel panel-default">
@@ -275,11 +275,11 @@ if (!$input_errors && $type) {
 		</thead>
 
 		<tbody>
-<? foreach ((array)$dns_speeds as $qt):?>
+<?php foreach ((array)$dns_speeds as $qt):?>
 		<tr>
 			<td><?=$qt['dns_server']?></td><td><?=$qt['query_time']?></td>
 		</tr>
-<? endforeach?>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>

@@ -154,7 +154,7 @@ include("head.inc");
 						?>
 						<?=$mac?>
 
-						<? if (isset($mac_man[$mac_hi])):?>
+						<?php if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
 						<?endif?>
 

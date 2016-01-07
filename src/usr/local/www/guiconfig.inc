@@ -380,7 +380,6 @@ function print_info_box($msg, $class="alert-warning") {
 }
 
 function get_std_save_message($ok) {
-	global $d_sysrebootreqd_path;
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
 	$to_return = gettext("The changes have been applied successfully.");

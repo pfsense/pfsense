@@ -204,8 +204,10 @@ if ($_POST['apply']) {
 	$savemsg = get_std_save_message($retval);
 	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
+		$class = 'alert-success';
 	} else {
 		$savemsg = $retval;
+		$class = 'alert-danger';
 	}
 
 	/* reset rrd queues */
@@ -230,7 +232,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {

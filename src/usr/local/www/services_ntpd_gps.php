@@ -249,7 +249,7 @@ $gpstypes = array('Custom', 'Default', 'Generic', 'Garmin', 'MediaTek', 'SiRF', 
 
 $section->addInput(new Form_Select(
 	'gpstype',
-	'GPS',
+	'GPS Type',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
 ))->setHelp('This option allows you to select a predefined configuration. ' .
@@ -268,7 +268,7 @@ if (!empty($serialports)) {
 
 	$section->addInput(new Form_Select(
 		'gpsport',
-		'Serial port',
+		'Serial Port',
 		$pconfig['port'],
 		$splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
@@ -294,14 +294,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'gpsfudge1',
-	'Fudge time 1',
+	'Fudge Time 1',
 	'text',
 	$pconfig['fudge1']
 ))->setHelp('Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0).');
 
 $section->addInput(new Form_Input(
 	'gpsfudge2',
-	'Fudge time 2',
+	'Fudge Time 2',
 	'text',
 	$pconfig['fudge2']
 ))->setHelp('Fudge time 2 is used to specify the GPS time offset (default: 0.0).');
@@ -316,49 +316,49 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
 	'Flags',
-	'NTP should prefer this clock (default: enabled).',
+	'Prefer this clock (default: checked).',
 	!$pconfig['prefer']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsselect',
 	null,
-	'NTP should not use this clock, it will be displayed for reference only (default: disabled).',
+	'Do not use this clock, display for reference only (default: unchecked).',
 	$pconfig['noselect']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag1',
 	null,
-	'Enable PPS signal processing (default: enabled).',
+	'Enable PPS signal processing (default: checked).',
 	$pconfig['flag1']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag2',
 	null,
-	'Enable falling edge PPS signal processing (default: rising edge).',
+	'Enable falling edge PPS signal processing (default: unchecked, rising edge).',
 	$pconfig['flag2']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag3',
 	null,
-	'Enable kernel PPS clock discipline (default: enabled).',
+	'Enable kernel PPS clock discipline (default: checked).',
 	$pconfig['flag3']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag4',
 	null,
-	'Obscure location in timestamp (default: unobscured).',
+	'Obscure location in timestamp (default: unchecked, unobscured).',
 	$pconfig['flag4']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpssubsec',
 	null,
-	'Log the sub-second fraction of the received time stamp (default: Not logged).',
+	'Log the sub-second fraction of the received time stamp (default: unchecked, not logged).',
 	$pconfig['subsec']
 ))->setHelp('Enabling this will rapidly fill the log, but is useful for tuning Fudge time 2.');
 

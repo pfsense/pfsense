@@ -300,7 +300,7 @@ $section->addInput(new Form_Select(
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
-	$group = new Form_Group($counter == 0 ? 'Time servers':'');
+	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
@@ -347,7 +347,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Input(
 	'ntporphan',
-	'Orphan mode',
+	'Orphan Mode',
 	'text',
 	$pconfig['ntporphan']
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
@@ -363,15 +363,15 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'logpeer',
-	'Syslog logging',
-	'Enable logging of peer messages (default: disabled).',
+	'Logging',
+	'Log peer messages (default: disabled).',
 	$pconfig['logpeer']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'logsys',
 	null,
-	'Enable logging of system messages (default: disabled).',
+	'Log system messages (default: disabled).',
 	$pconfig['logsys']
 ))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
 			'<a href="diag_logs_ntpd.php">' . 'Status > System Logs > NTP' . '</a>');
@@ -385,28 +385,28 @@ $btnadvstats = new Form_Button(
 $btnadvstats->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Statistics logging',
+	'Statistics Logging',
 	$btnadvstats
 ))->setHelp('Warning: These options will create persistent daily log files in /var/log/ntp.');
 
 $section->addInput(new Form_Checkbox(
 	'clockstats',
 	null,
-	'Enable logging of reference clock statistics (default: disabled).',
+	'Log reference clock statistics (default: disabled).',
 	$pconfig['clockstats']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'loopstats',
 	null,
-	'Enable logging of clock discipline statistics (default: disabled).',
+	'Log clock discipline statistics (default: disabled).',
 	$pconfig['loopstats']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'peerstats',
 	null,
-	'Enable logging of NTP peer statistics (default: disabled).',
+	'Log NTP peer statistics (default: disabled).',
 	$pconfig['peerstats']
 ));
 
@@ -426,43 +426,43 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'kod',
 	null,
-	'Enable Kiss-o\'-death packets (default: enabled).',
-	$pconfig['kod']
+	'Enable Kiss-o\'-death packets (default: checked).',
+	!$pconfig['kod']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'nomodify',
 	null,
-	'Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: enabled).',
-	$pconfig['nomodify']
+	'Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: checked).',
+	!$pconfig['nomodify']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'noquery',
 	null,
-	'Disable ntpq and ntpdc queries (default: disabled).',
+	'Disable ntpq and ntpdc queries (default: unchecked).',
 	$pconfig['noquery']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'noserve',
 	null,
-	'Disable all except ntpq and ntpdc queries (default: disabled).',
+	'Disable all except ntpq and ntpdc queries (default: unchecked).',
 	$pconfig['noserve']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'nopeer',
 	null,
-	'Deny packets that attempt a peer association (default: enabled).',
-	$pconfig['nopeer']
+	'Deny packets that attempt a peer association (default: checked).',
+	!$pconfig['nopeer']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'notrap',
 	null,
-	'Deny mode 6 control message trap service (default: enabled).',
-	$pconfig['notrap']
+	'Deny mode 6 control message trap service (default: checked).',
+	!$pconfig['notrap']
 ))->addClass('advrestrictions');
 
 // Leap seconds section
@@ -522,6 +522,7 @@ events.push(function() {
 
 	// On click, show the controls in the restrictions section
 	$("#btnadvrestr").click(function() {
+		hideCheckbox('kod', false);
 		hideCheckbox('nomodify', false);
 		hideCheckbox('noquery', false);
 		hideCheckbox('noserve', false);

@@ -498,7 +498,7 @@ foreach ($leases as $data):
 
 					<?php if (isset($mac_man[$mac_hi])):?>
 						(<?=$mac_man[$mac_hi]?>)
-					<?endif?>
+					<?php endif; ?>
 				</td>
 				<td><?=htmlentities($data['hostname'])?></td>
 <?php if ($data['type'] != "static"):?>

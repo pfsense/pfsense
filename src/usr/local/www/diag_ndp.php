@@ -156,7 +156,7 @@ include("head.inc");
 
 						<?php if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
-						<?endif?>
+						<?php endif; ?>
 
 					</td>
 					<td>

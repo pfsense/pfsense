@@ -438,7 +438,7 @@ if ($dfltmsg) {
 			if ($queue) {
 				$url = 'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
 			} else {
-				$url = 'firewall_shaper.php?pipe='. $pipe . '&action=add';
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=add';
 			}
 
 			$sform->addGlobal(new Form_Button(
@@ -462,7 +462,7 @@ if ($dfltmsg) {
 	}
 
 	// Print the form
-	if($sform) {
+	if ($sform) {
 		$sform->setAction("firewall_shaper_vinterface.php");
 		print($sform);
 	}

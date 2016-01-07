@@ -387,8 +387,8 @@ $('[id^=delete]').click(function(event) {
 // "More information" handlers
 
 // If there is an infoblock, automatically add an info icon that toggles its display
-if($('#infoblock').length != 0) {
-	$('#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
+if($('#infoblock,#infoblock_open').length != 0) {
+	$('#infoblock,#infoblock_open').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
 
 	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
 	$('.close :last').remove();
@@ -399,7 +399,7 @@ $('#infoblock').hide();
 
 // Show the help on clicking the info icon
 $('#showinfo').click(function() {
-	$('#infoblock').toggle();
+	$('#infoblock,#infoblock_open').toggle();
 });
 
 // Put a dummy row into any empty table to keep IE happy

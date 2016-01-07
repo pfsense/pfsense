@@ -352,10 +352,10 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'n_pppoe_units',
-	'No. of PPPoE Users',
+	'PPPoE User Count',
 	$pconfig['n_pppoe_units'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
-));
+))->setHelp('The number of PPPoE users allowed to connect to this server simultaneously.');
 
 $section->addInput(new Form_IpAddress(
 	'localip',
@@ -394,22 +394,22 @@ $section->addInput(new Form_IpAddress(
 $section->addInput(new Form_Checkbox(
 	'radiusenable',
 	'RADIUS',
-	'Use a RADIUS Server for authentication',
+	'Use RADIUS Authentication',
 	$pconfig['radiusenable']
-))->setHelp('All users will be authenticated using the RADIUS server specified below. The local user database ' .
+))->setHelp('Users will be authenticated using the RADIUS server specified below. The local user database ' .
 			'will not be used');
 
 $section->addInput(new Form_Checkbox(
 	'radacct_enable',
 	null,
-	'Enable RADIUS Accounting',
+	'Use RADIUS Accounting',
 	$pconfig['radacct_enable']
 ))->setHelp('Sends accounting packets to the RADIUS server');
 
 $section->addInput(new Form_Checkbox(
 	'radiussecenable',
 	null,
-	'Use backup RADIUS server',
+	'Use a Backup RADIUS Authentication Server',
 	$pconfig['radiussecenable']
 ))->setHelp('If primary server fails all requests will be sent via backup server');
 
@@ -417,7 +417,7 @@ $section->addInput(new Form_IpAddress(
 	'radius_nasip',
 	'NAS IP Address',
 	$pconfig['radius_nasip']
-))->setHelp('RADIUS server NAS IP Address');
+))->setHelp('NAS IP Address sent to the RADIUS Server');
 
 $section->addInput(new Form_Input(
 	'radius_acct_update',
@@ -428,12 +428,12 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'radiusissueips',
-	'Radius Issued IPs',
-	'Issue IP Addresses via RADIUS server',
+	'Radius Issued IP Addresses',
+	'Assign IP Addresses to users via RADIUS server reply attributes',
 	$pconfig['radiusissueips']
 ));
 
-$group = new Form_Group('RADIUS server Primary');
+$group = new Form_Group('Primary RADIUS Server');
 
 $group->add(new Form_IpAddress(
 	'radiusserver',
@@ -461,12 +461,12 @@ $section->add($group);
 
 $section->addPassword(new Form_Input(
 	'radiussecret',
-	'RADIUS primary shared secret',
+	'Primary RADIUS Server Shared Secret',
 	'password',
 	$pconfig['radiussecret']
 ))->setHelp('Enter the shared secret that will be used to authenticate to the RADIUS server.');
 
-$group = new Form_Group('RADIUS server Secondary');
+$group = new Form_Group('Secondary RADIUS Server');
 
 $group->add(new Form_IpAddress(
 	'radiusserver2',
@@ -494,7 +494,7 @@ $section->add($group);
 
 $section->addPassword(new Form_Input(
 	'radiussecret2',
-	'RADIUS secondary shared secret',
+	'Secondary RADIUS Server Shared Secret',
 	'password',
 	$pconfig['radiussecret2']
 ))->setHelp('Enter the shared secret that will be used to authenticate to the backup RADIUS server.');
@@ -530,7 +530,7 @@ if ($usernames != "") {
 			null,
 			'text',
 			$user
-		))->setHelp($numrows == $counter ? 'User name':null);
+		))->setHelp($numrows == $counter ? 'Username':null);
 
 		$group->add(new Form_Input(
 			'password' . $counter,

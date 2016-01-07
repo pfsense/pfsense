@@ -434,7 +434,7 @@ if ($dfltmsg) {
 } else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
-		if ($can_add || $addnewaltq) {
+		if ($can_add && ($action != "add")) {
 			if ($queue) {
 				$url = 'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
 			} else {
@@ -448,17 +448,19 @@ if ($dfltmsg) {
 			))->removeClass('btn-default')->addClass('btn-success');
 		}
 
-		if ($queue) {
-			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
-		} else {
-			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
-		}
+		if ($action != "add") {
+			if ($queue) {
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
+			} else {
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
+			}
 
-		$sform->addGlobal(new Form_Button(
-			'delete',
-			$queue ? 'Delete this queue':'Delete',
-			$url
-		))->removeClass('btn-default')->addClass('btn-danger');
+			$sform->addGlobal(new Form_Button(
+				'delete',
+				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+				$url
+			))->removeClass('btn-default')->addClass('btn-danger');
+		}
 	}
 
 	// Print the form

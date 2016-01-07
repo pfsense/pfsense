@@ -317,7 +317,7 @@ $output_form .= gettext("Queue Actions");
 $output_form .= "</td><td valign=\"top\" class=\"vncellreq\" width=\"78%\">";
 
 $output_form .= "<input type=\"submit\" name=\"Submit\" value=\"" . gettext("Save") . "\" class=\"formbtn\" />";
-if ($can_add || $addnewaltq) {
+if ($can_add && ($action != "add")) {
 	$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
 	$output_form .= $pipe; 
 	if ($queue) {
@@ -327,18 +327,20 @@ if ($can_add || $addnewaltq) {
 	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"add\" value=\"" . gettext("Add new queue") ."\" />";
 	$output_form .= "</a>";
 }
-$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
-$output_form .= $pipe;
-if ($queue) {
-	$output_form .= "&amp;queue=" . $queue->GetQname();
+if ($action != "add") {
+	$output_form .= "<a href=\"firewall_shaper_vinterface.php?pipe=";
+	$output_form .= $pipe;
+	if ($queue) {
+		$output_form .= "&amp;queue=" . $queue->GetQname();
+	}
+	$output_form .= "&amp;action=delete\">";
+	$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
+	if (($queue) && ($qname != $pipe))
+		$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
+	else
+		$output_form .= " value=\"" . gettext("Delete Limiter") ."\" />";
+	$output_form .= "</a>";
 }
-$output_form .= "&amp;action=delete\">";
-$output_form .= "<input type=\"button\" class=\"formbtn\" name=\"delete\"";
-if ($queue)
-	$output_form .= " value=\"" . gettext("Delete this queue") ."\" />";
-else
-	$output_form .= " value=\"" . gettext("Delete Limiter") ."\" />";
-$output_form .= "</a>";  
 $output_form .= "</td></tr>";
 $output_form .= "</table>";
 } 

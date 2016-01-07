@@ -122,8 +122,12 @@ if ($_POST['setrw']) {
 	if (!DEBUG) {
 		conf_mount_rw();
 		if (isset($_POST['nanobsd_force_rw'])) {
+			$savemsg = gettext("Permanent read/write has been set successfully.");
+			$class='alert-success';
 			$config['system']['nanobsd_force_rw'] = true;
 		} else {
+			$savemsg = gettext('Permanent read/write has been cleared successfully.');
+			$class='alert-success';
 			unset($config['system']['nanobsd_force_rw']);
 		}
 
@@ -158,8 +162,9 @@ $section->addInput(new Form_StaticText(
 	$ACTIVE_SLICE . ' ' . $slicebtn
 ));
 
+$refcount = refcount_read(1000);
+
 if (is_writable("/")) {
-	$refcount = refcount_read(1000);
 	/* refcount_read returns -1 when shared memory section does not exist */
 	/* refcount can be zero here when the user has set nanobsd_force_rw */
 	/* refcount 1 is normal, so only display the count for abnormal values */
@@ -169,30 +174,31 @@ if (is_writable("/")) {
 		$refdisplay = " (Reference count " . $refcount . ")";
 	}
 	$lbl = gettext("Read/Write") . $refdisplay;
-	if (!isset($config['system']['nanobsd_force_rw'])) {
-		$btnlbl = gettext("Switch to Read-Only");
-	}
+	$btnlbl = gettext("Switch to Read-Only");
 } else {
 	$lbl = gettext("Read-Only");
-	if (!isset($config['system']['nanobsd_force_rw'])) {
-		$btnlbl = gettext("Switch to Read/Write");
-	}
+	$btnlbl = gettext("Switch to Read/Write");
 }
 
-$robtn = new Form_Button('changero', $btnlbl);
-$robtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+// Only show the changero button if force read/write is off, or the file system is not in writable state, or there is an unusual refcount.
+// If force read/write is on, and the file system is in writable state, and refcount is normal then the user has no reason to mess about.
+if (!isset($config['system']['nanobsd_force_rw']) || !is_writable("/") || ($refcount > 1)) {
+	$robtn = new Form_Button('changero', $btnlbl);
+	$robtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+	$lbl .= ' ' . $robtn;
+}
 
 $section->addInput(new Form_StaticText(
 	'Read/Write status',
-	$lbl . ' ' . $robtn
-));
+	$lbl
+))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
 
 $section->addInput(new Form_Checkbox(
 	'nanobsd_force_rw',
 	'Permanent Read/Write',
 	'Keep media mounted read/write at all times. ',
 	isset($config['system']['nanobsd_force_rw'])
-))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
+));
 
 $permbtn = new Form_Button('setrw', 'Save');
 $permbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');

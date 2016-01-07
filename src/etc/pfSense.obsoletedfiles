@@ -22,6 +22,7 @@
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php
 /etc/inc/zeromq.inc
+/etc/inetd.conf
 /etc/isdn
 /etc/locate.rc
 /etc/mail.rc
@@ -68,6 +69,7 @@
 /etc/rc.d/hcsecd
 /etc/rc.d/idmapd
 /etc/rc.d/ike
+/etc/rc.d/inetd
 /etc/rc.d/ip6fw
 /etc/rc.d/ipxrouted
 /etc/rc.d/isdnd
@@ -839,6 +841,7 @@
 /usr/sbin/config_lock.sh
 /usr/sbin/config_unlock.sh
 /usr/sbin/freebsd-update
+/usr/sbin/inetd
 /usr/sbin/ispcvt
 /usr/sbin/local-unbound-setup
 /usr/sbin/manctl

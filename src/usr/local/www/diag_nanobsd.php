@@ -81,7 +81,7 @@ global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
 nanobsd_detect_slice_info();
 
 $NANOBSD_SIZE = nanobsd_get_size();
-$class='alert-warning';
+$class = 'alert-warning';
 
 if ($_POST['bootslice']) {
 	if (!DEBUG) {
@@ -91,7 +91,7 @@ if ($_POST['bootslice']) {
 	}
 
 	$savemsg = gettext("The boot slice has been set to") . " " . nanobsd_get_active_slice();
-	$class='alert-success';
+	$class = 'alert-success';
 	// Survey slice info
 	nanobsd_detect_slice_info();
 }
@@ -101,10 +101,10 @@ if ($_POST['destslice'] && $_POST['duplicateslice']) {
 
 	if (!DEBUG && nanobsd_clone_slice($_POST['destslice'])) {
 		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
-		$class='alert-success';
+		$class = 'alert-success';
 	} else {
 		$savemsg = gettext("There was an error while duplicating the slice.	 Operation aborted.");
-		$class='alert-danger';
+		$class = 'alert-danger';
 	}
 	// Re-Survey slice info
 	nanobsd_detect_slice_info();
@@ -123,11 +123,11 @@ if ($_POST['setrw']) {
 		conf_mount_rw();
 		if (isset($_POST['nanobsd_force_rw'])) {
 			$savemsg = gettext("Permanent read/write has been set successfully.");
-			$class='alert-success';
+			$class = 'alert-success';
 			$config['system']['nanobsd_force_rw'] = true;
 		} else {
 			$savemsg = gettext('Permanent read/write has been cleared successfully.');
-			$class='alert-success';
+			$class = 'alert-success';
 			unset($config['system']['nanobsd_force_rw']);
 		}
 

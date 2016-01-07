@@ -352,7 +352,7 @@ print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" is checked. If you don't use that option (or if you use".
 	" a static IP address on WAN), you must manually specify at".
 	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), info);
+	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), 'info');
 ?>
 
 <div class="panel panel-default">
@@ -432,7 +432,7 @@ endforeach;
 
 <?php
 print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				gettext("Use these for changing DNS results or for adding custom DNS records."), info);
+				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info');
 ?>
 
 <div class="panel panel-default">
@@ -496,6 +496,6 @@ events.push(function() {
 </script>
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."), info);
+						" authoritative DNS server to be queried for that domain."), 'info');
 
 include("foot.inc");

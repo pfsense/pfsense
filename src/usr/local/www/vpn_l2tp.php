@@ -368,7 +368,7 @@ $form->add($section);
 
 print($form);
 
-print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), info);
+print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info');
 ?>
 
 <script type="text/javascript">

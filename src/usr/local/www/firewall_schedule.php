@@ -280,7 +280,7 @@ endforeach;
 </nav>
 
 <div id="infoblock">
-	<?=print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'), info)?>
+	<?=print_info_box(gettext('Schedules act as placeholders for time ranges to be used in Firewall Rules.'), 'info')?>
 </div>
 
 <?php

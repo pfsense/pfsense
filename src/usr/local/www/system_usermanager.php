@@ -549,7 +549,7 @@ foreach ($a_user as $i => $userent):
 	"Some system object properties can be modified but they cannot be deleted.") .
 	'<br /><br />' .
 	gettext("Accounts added here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal."), info)?>
+	"such as OpenVPN, IPsec, and Captive Portal."), 'info')?>
 </div>
 
 <?php

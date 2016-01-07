@@ -639,7 +639,7 @@ print($form);
 <div class="rolledit">
 <?php
 	print_info_box(gettext('Changing any Voucher parameter (apart from managing the list of Rolls) on this page will render existing vouchers useless if they were generated with different settings. ' .
-							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'), info);
+							'Specifying the Voucher Database Synchronization options will not record any other value from the other options. They will be retrieved/synced from the master.'), 'info');
 ?>
 </div>
 

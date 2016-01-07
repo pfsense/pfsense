@@ -292,7 +292,7 @@ class altq_root_queue {
 	var $interface;
 	var $tbrconfig ;
 	var $bandwidth;
-	var $bandwidthtype; /* b, Kb, Mb */
+	var $bandwidthtype; /* b, Kb, Mb, Gb, % */
 	var $scheduler;
 	var $qlimit;
 	var $queues = array();
@@ -381,6 +381,28 @@ class altq_root_queue {
 	}
 	function SetQlimit($limit) {
 		$this->qlimit = $limit;
+	}
+
+	function GetBwscaleText() {
+		switch ($this->bandwidthtype) {
+			case "b":
+				$bwscaletext = "Bit/s";
+				break;
+			case "Kb":
+				$bwscaletext = "Kbit/s";
+				break;
+			case "Mb":
+				$bwscaletext = "Mbit/s";
+				break;
+			case "Gb":
+				$bwscaletext = "Gbit/s";
+				break;
+			default:
+				/* For others that do not need translating like % */
+				$bwscaletext = $this->bandwidthtype;
+				break;
+		}
+		return $bwscaletext;
 	}
 
 	function validate_input($data, &$input_errors) {
@@ -719,7 +741,7 @@ class altq_root_queue {
 		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscaleText();
 		$form .= '	</dd>';
 
 		$form .= '	<dt>';
@@ -792,10 +814,10 @@ class altq_root_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -1020,6 +1042,28 @@ class priq_queue {
 	}
 	function SetAck($ack = false) {
 		$this->qack = $ack;
+	}
+
+	function GetBwscaleText() {
+		switch ($this->qbandwidthtype) {
+			case "b":
+				$bwscaletext = "Bit/s";
+				break;
+			case "Kb":
+				$bwscaletext = "Kbit/s";
+				break;
+			case "Mb":
+				$bwscaletext = "Mbit/s";
+				break;
+			case "Gb":
+				$bwscaletext = "Gbit/s";
+				break;
+			default:
+				/* For others that do not need translating like % */
+				$bwscaletext = $this->qbandwidthtype;
+				break;
+		}
+		return $bwscaletext;
 	}
 
 	function build_javascript() {
@@ -1449,7 +1493,7 @@ class priq_queue {
 		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscaleText();
 		$form .= '	</dd>';
 
 		$tmpvalue = $this->GetQpriority();
@@ -2220,10 +2264,10 @@ EOJS;
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -2778,10 +2822,10 @@ class cbq_queue extends priq_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -3079,10 +3123,10 @@ class fairq_queue extends priq_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 

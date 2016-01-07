@@ -122,7 +122,7 @@ exec("/sbin/pfctl -sT", $tables);
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $form = new Form('Show');

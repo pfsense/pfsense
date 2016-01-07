@@ -90,6 +90,7 @@ if ($_POST['clearall']) {
 			exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T delete " . escapeshellarg($entry), $delete);
 		}
 	}
+	unset($entries);
 }
 
 if (($tablename == "bogons") || ($tablename == "bogonsv6")) {

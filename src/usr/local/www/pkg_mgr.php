@@ -87,7 +87,7 @@ display_top_tabs($tab_array);
 // A crude way to display a "Please wait" message while hte page is loading
 ob_implicit_flush(true);
 print('<div class="temp">');
-print_info_box(gettext("Please wait while the package data is being retrieved."));
+print_info_box(gettext("Please wait while the package data is being retrieved.") . '&nbsp<i class="fa fa-cog fa-spin"></i>');
 echo str_repeat("<!--           -->", 1000);
 print('</div>');
 ob_end_flush();

@@ -41,6 +41,8 @@ $valid_args = array(
 	"--diff" => "\tPerform a copy of only the files that are different or missing.\n" .
 	    "\tRecommended for SSD if system has files modified by any method other\n" .
 	    "\tthan gitsync.\n",
+	"--verbose" => "\tDisplay constructed command.  In combination with the --diff\n" .
+	    "\toption, display the array of different and missing files.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();
@@ -373,6 +375,13 @@ if(isset($args["--diff"])) {
 	# Files to be copied.
 	$files_to_copy = trim($different_files . " " . $missing_files);
 	$tar_options = '-C ./src';
+
+	if(isset($args["--verbose"])) {
+		echo "===> Different Files: \n";
+		print_r($different_files_array[1]);
+		echo "===> Missing Files: \n";
+		print_r($missing_files_array[1]);
+	}
 }
 
 echo "===> Installing new files...\n";
@@ -384,6 +393,9 @@ if ($g['platform'] == $g['product_name']) {
 }
 
 if (!empty($files_to_copy)) {
+	if(isset($args["--verbose"])) {
+		echo "===> Command: \n$command\n";
+	}
 	exec($command);
 } else {
 	echo "Already up-to-date.\n";

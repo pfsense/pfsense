@@ -2091,7 +2091,8 @@ $section->addInput(new Form_Checkbox(
 	'adv_dhcp6_config_file_override',
 	'Config file override',
 	'Override the configuration from this file',
-	$pconfig['adv_dhcp6_config_file_override']
+	$pconfig['adv_dhcp6_config_file_override'],
+	'Selected'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -2143,7 +2144,8 @@ $section->addInput(new Form_Checkbox(
 	'adv_dhcp6_interface_statement_information_only_enable',
 	'Information only',
 	null,
-	$pconfig['adv_dhcp6_interface_statement_information_only_enable']
+	$pconfig['adv_dhcp6_interface_statement_information_only_enable'],
+	'Selected'
 ));
 
 $section->addInput(new Form_Input(
@@ -2178,7 +2180,8 @@ $group->add(new Form_Checkbox(
 	'adv_dhcp6_id_assoc_statement_address_enable',
 	null,
 	'Non-Temporary Address Allocation',
-	$pconfig['adv_dhcp6_id_assoc_statement_address_enable']
+	$pconfig['adv_dhcp6_id_assoc_statement_address_enable'],
+	'Selected'
 ));
 
 $group->add(new Form_Input(
@@ -2217,7 +2220,8 @@ $group->add(new Form_Checkbox(
 	'adv_dhcp6_id_assoc_statement_prefix_enable',
 	null,
 	'Prefix Delegation ',
-	$pconfig['adv_dhcp6_id_assoc_statement_prefix_enable']
+	$pconfig['adv_dhcp6_id_assoc_statement_prefix_enable'],
+	'Selected'
 ));
 
 $group->add(new Form_Input(

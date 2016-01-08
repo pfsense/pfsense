@@ -72,12 +72,12 @@ $pgtitle = gettext("Status: CPU Graph");
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">CPU Load graph</h2></div>
-	<div class="panel-body" align="center">
+	<div class="panel-body text-center">
 		<embed src="graph_cpu.php" type="image/svg+xml"
 			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 	</div>
 
-	<p align="center"><strong><?=gettext("Note"); ?>:</strong><?=gettext("if you can't see the graph, you may have to install the")?>
+	<p class="text-center"><strong><?=gettext("Note"); ?>:</strong><?=gettext("if you can't see the graph, you may have to install the")?>
 		<a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>
 	</p>
 </div>

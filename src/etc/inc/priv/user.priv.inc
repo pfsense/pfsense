@@ -131,4 +131,3 @@ $priv_list['page-status-systemlogs-wireless']['name'] = gettext("WebCfg - Status
 $priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access to the 'Status: System logs: System: Wireless' page.");
 $priv_list['page-status-systemlogs-wireless']['match'] = array();
 $priv_list['page-status-systemlogs-wireless']['match'][] = "status_logs.php?logfile=wireless";
-

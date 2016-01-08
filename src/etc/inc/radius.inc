@@ -1200,4 +1200,3 @@ class Auth_RADIUS_Acct_Off extends Auth_RADIUS_Acct
       */
     var $status_type = RADIUS_ACCOUNTING_OFF;
 }
-

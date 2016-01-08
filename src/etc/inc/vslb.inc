@@ -553,4 +553,3 @@ function cleanup_lb_marked() {
 	}
 	unlink_if_exists($filename);
 }
-

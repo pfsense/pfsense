@@ -208,4 +208,3 @@ function read_file_metadata($fpath, & $metadata, $taglist = false) {
 		$metadata[$fname] = $tags;
 	}
 }
-

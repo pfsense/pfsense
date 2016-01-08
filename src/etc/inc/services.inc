@@ -2676,4 +2676,3 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		configure_cron();
 	}
 }
-

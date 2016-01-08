@@ -602,4 +602,3 @@ function check_for_alternate_interfaces() {
 		write_config("Factory default boot detected WAN " . $config['interfaces']['wan']['if'] . " and LAN " . $config['interfaces']['lan']['if']);
 	}
 }
-

@@ -1821,4 +1821,3 @@ function openvpn_restart_by_vpnid($mode, $vpnid) {
 	$settings = openvpn_get_settings($mode, $vpnid);
 	openvpn_restart($mode, $settings);
 }
-

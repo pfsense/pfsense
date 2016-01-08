@@ -179,4 +179,3 @@ function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$cli
     return $retvalue;
 
 }
-

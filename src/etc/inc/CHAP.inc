@@ -458,5 +458,3 @@ class Crypt_CHAP_MSv2 extends Crypt_CHAP_MSv1
         return $this->_challengeResponse();
     }    
 }
-
-

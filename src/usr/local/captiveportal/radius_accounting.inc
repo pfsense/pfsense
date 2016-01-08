@@ -312,4 +312,3 @@ function remainder($bytes) {
     return $bytes;
 
 }
-

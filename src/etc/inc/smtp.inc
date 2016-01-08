@@ -854,4 +854,3 @@ class smtp_class
 	}
 
 };
-

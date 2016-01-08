@@ -96,4 +96,3 @@ function xmlrpc_auth(&$params) {
 	log_error("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']} during sync settings.");
 	return false;
 }
-

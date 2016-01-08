@@ -274,6 +274,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 		write_config();
 
 		$savemsg = gettext("Interface has been added.");
+		$class = "success";
 	}
 
 } else if (isset($_POST['apply'])) {
@@ -284,12 +285,13 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 		write_config();
 
 		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
+			$class = "success";
 		} else {
 			$savemsg = $retval;
+			$class = "danger";
 		}
 	}
 
@@ -461,6 +463,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 			link_interface_to_vlans($realid, "update");
 
 			$savemsg = gettext("Interface has been deleted.");
+			$class = "success";
 		}
 	}
 }
@@ -486,11 +489,14 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
 		if ($rebootingnow) {
 			$savemsg = gettext("The system is now rebooting.  Please wait.");
+			$class = "success";
 		} else {
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+			$class = "warning";
 		}
 	} else {
 		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
+		$class = "warning";
 	}
 }
 
@@ -499,7 +505,7 @@ if (file_exists("/tmp/reload_interfaces")) {
 	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
 	echo "<br /></p>\n";
 } elseif ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");

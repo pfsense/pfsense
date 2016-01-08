@@ -413,7 +413,7 @@ $section->addInput(new Form_Checkbox(
 	'this option).');
 
 $section->addInput(new Form_Checkbox(
-	'quietlogin',
+	'webgui-login-messages',
 	'WebGUI login messages',
 	'Disable logging of webConfigurator successful logins',
 	$pconfig['quietlogin']

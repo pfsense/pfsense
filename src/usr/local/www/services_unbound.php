@@ -310,23 +310,11 @@ $section->addInput(new Form_Select(
 	true
 ))->addClass('general')->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
 
-$unbound_local_zone_types = array(
-	"deny" => gettext("Deny"),
-	"refuse" => gettext("Refuse"),
-	"static" => gettext("Static"),
-	"transparent" => gettext("Transparent"),
-	"typetransparent" => gettext("Type Transparent"),
-	"redirect" => gettext("Redirect"),
-	"inform" => gettext("Inform"),
-	"inform_deny" => gettext("Inform Deny"),
-	"nodefault" => gettext("No Default"
-));
-
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
 	'System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
-	$unbound_local_zone_types
+	unbound_local_zone_types()
 ))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
 
 $section->addInput(new Form_Checkbox(

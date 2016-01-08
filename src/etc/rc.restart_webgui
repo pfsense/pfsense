@@ -10,7 +10,12 @@ require_once("rrd.inc");
 
 echo "Restarting webConfigurator...";
 
-sigkillbypid("{$g['varrun_path']}/nginx-webConfigurator.pid", "TERM");
+/* Stop all running nginx processes */
+$pidfiles = glob("{$g['varrun_path']}/nginx*.pid");
+
+foreach ($pidfiles as $pidfile) {
+	killbypid($pidfile);
+}
 
 system_webgui_start();
 

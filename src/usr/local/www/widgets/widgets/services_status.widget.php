@@ -116,7 +116,7 @@ if (count($services) > 0) {
 <?php
 	}
 } else {
-	echo "<tr><td colspan=\"3\" align=\"center\">" . gettext("No services found") . " . </td></tr>\n";
+	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . " . </td></tr>\n";
 }
 ?>
 </tbody>

@@ -298,7 +298,7 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 							}
 
 						if (isset($gps_sat) || isset($gps_satview)) { ?>
-							<td align="center"> <?php
+							<td class="text-center"> <?php
 								if (isset($gps_satview)) {
 									print('in view ' . intval($gps_satview));
 								}

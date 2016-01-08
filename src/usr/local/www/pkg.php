@@ -339,7 +339,7 @@ if ($savemsg) {
 						$display_maximum_rows = $field['display_maximum_rows'];
 					}
 				}
-				echo "<tr><td colspan='$colspan' align='center'>";
+				echo "<tr><td colspan='$colspan' class='text-center'>";
 				echo "Filter by: ";
 				$isfirst = true;
 				for ($char = 65; $char < 91; $char++) {
@@ -350,7 +350,7 @@ if ($savemsg) {
 					$isfirst = false;
 				}
 				echo "</td></tr>";
-				echo "<tr><td colspan='$colspan' align='center'>";
+				echo "<tr><td colspan='$colspan' class='text-center'>";
 				if ($field['sortablefields']) {
 					echo "Filter field: <select name='pkg_filter_type'>";
 					foreach ($field['sortablefields']['item'] as $si) {
@@ -395,8 +395,8 @@ if ($savemsg) {
 		echo "<tr><th colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
 		echo "<table width='100%' summary=''>";
 		echo "<tr>";
-		echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
-		echo "<td align='right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
+		echo "<td class='text-left'>Displaying page $page of $totalpages</b></td>";
+		echo "<td class='text-right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
 		for ($x = 0; $x < 250; $x++) {
 			if ($x == $display_maximum_rows) {
 				$SELECTED = "selected";
@@ -546,7 +546,7 @@ if ($savemsg) {
 					$final_footer = "";
 					$final_footer .= "<tr><td colspan='$colcount'>";
 					$final_footer .= "<table width='100%' summary=''><tr>";
-					$final_footer .= "<td align='left'>";
+					$final_footer .= "<td class='text-left'>";
 					$startingat = $startdisplayingat - $display_maximum_rows;
 					if ($startingat > -1) {
 						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat={$startingat}&amp;display_maximum_rows={$display_maximum_rows}'>";
@@ -559,10 +559,10 @@ if ($savemsg) {
 					} else {
 						$endingrecord = $tmppp + $display_maximum_rows;
 					}
-					$final_footer .= "</td><td align='center'>";
+					$final_footer .= "</td><td class='text-center'>";
 					$tmppp++;
 					$final_footer .= "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
-					$final_footer .= "</font></td><td align='right'>&nbsp;";
+					$final_footer .= "</font></td><td class='text-right'>&nbsp;";
 					if (($i+1) < count($evaledvar)) {
 						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&amp;display_maximum_rows={$display_maximum_rows}'>";
 					}

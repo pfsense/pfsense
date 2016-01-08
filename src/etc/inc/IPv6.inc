@@ -1103,4 +1103,3 @@ class Net_IPv6
  * End:
  */
 
-?>

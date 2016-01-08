@@ -305,4 +305,3 @@ $shortcuts['authentication']['status'] = "diag_authentication.php";
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";
 $shortcuts['aliases']['status'] = "diag_tables.php";
-?>

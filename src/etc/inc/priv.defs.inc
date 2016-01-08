@@ -1301,4 +1301,3 @@ $priv_list['page-xmlrpclibrary']['match'][] = "xmlrpc.php*";
 
 $priv_rmvd = array();
 
-?>

@@ -665,4 +665,3 @@ $othersplist = array();
 		/* subversion  */
 		$othersplist['subversion'][] = array('subversion', 'tcp', '3690', '3690', 'both');
 
-?>

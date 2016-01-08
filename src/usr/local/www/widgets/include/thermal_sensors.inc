@@ -26,4 +26,3 @@ function getThermalSensorsData() {
 	return join("|", $dfout_filtered);
 
 }
-?>

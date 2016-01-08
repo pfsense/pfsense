@@ -4269,4 +4269,3 @@ function upgrade_134_to_135() {
 		$config['syslog']['nolognginx'] = true;
 	}
 }
-?>

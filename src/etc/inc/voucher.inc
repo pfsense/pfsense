@@ -782,4 +782,3 @@ function voucher_save_db_to_config_zone() {
 	return;
 }
 
-?>

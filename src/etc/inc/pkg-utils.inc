@@ -1137,4 +1137,3 @@ function pkg_switch_repo($devel = false) {
 	return pkg_install($repo_target, true);
 }
 
-?>

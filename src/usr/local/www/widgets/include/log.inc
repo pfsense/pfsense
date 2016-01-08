@@ -3,4 +3,3 @@
 $log_title = "Firewall Logs";
 $log_title_link = "status_logs_filter.php";
 
-?>

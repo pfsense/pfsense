@@ -232,4 +232,3 @@ if ($config_parsed == true) {
 	}
 }
 
-?>

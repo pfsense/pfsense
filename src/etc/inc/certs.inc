@@ -862,4 +862,3 @@ function cert_get_cn($crt, $isref = false) {
 	return "";
 }
 
-?>

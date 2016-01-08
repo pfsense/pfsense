@@ -749,4 +749,3 @@ function unbound_hosts_generate() {
 	unbound_control("reload");
 }
 
-?>

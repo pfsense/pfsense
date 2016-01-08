@@ -64,4 +64,3 @@ class cram_md5_sasl_client_class
 	}
 };
 
-?>

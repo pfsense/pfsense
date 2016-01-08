@@ -603,4 +603,3 @@ function check_for_alternate_interfaces() {
 	}
 }
 
-?>

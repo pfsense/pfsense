@@ -675,4 +675,3 @@ function step12_submitphpaction() {
 	exit;
 }
 
-?>

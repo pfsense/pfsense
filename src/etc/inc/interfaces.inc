@@ -5913,4 +5913,3 @@ function remove_ifindex($ifname) {
 	return preg_replace("/[0-9]+$/", "", $ifname);
 }
 
-?>

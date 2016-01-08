@@ -132,4 +132,3 @@ $priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access t
 $priv_list['page-status-systemlogs-wireless']['match'] = array();
 $priv_list['page-status-systemlogs-wireless']['match'][] = "status_logs.php?logfile=wireless";
 
-?>

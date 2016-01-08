@@ -329,4 +329,3 @@ function sort_user_privs($privs) {
 
 	return array_merge($fprivs, $sprivs);
 }
-?>

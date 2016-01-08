@@ -1221,4 +1221,3 @@ function gateway_is_gwgroup_member($name) {
 
 	return $members;
 }
-?>

@@ -485,4 +485,3 @@ function easyrule_parse_pass($int, $proto, $src, $dst, $dstport = 0, $ipproto = 
 	return gettext("Unknown pass error.");
 }
 
-?>

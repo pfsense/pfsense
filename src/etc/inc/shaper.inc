@@ -4704,4 +4704,3 @@ $default_shaper_msg .= gettext("The tree on the left helps you navigate through 
 
 $dn_default_shaper_msg = $default_shaper_msg;
 
-?>

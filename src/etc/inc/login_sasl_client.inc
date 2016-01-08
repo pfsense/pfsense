@@ -66,4 +66,3 @@ class login_sasl_client_class
 	}
 };
 
-?>

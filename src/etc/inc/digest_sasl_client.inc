@@ -132,4 +132,3 @@ class digest_sasl_client_class
 	}
 };
 
-?>

@@ -269,4 +269,3 @@ function dump_xml_config_raw($arr, $rootobj) {
 	return $xmlconfig;
 }
 
-?>

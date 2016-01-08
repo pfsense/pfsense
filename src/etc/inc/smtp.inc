@@ -855,4 +855,3 @@ class smtp_class
 
 };
 
-?>

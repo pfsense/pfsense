@@ -2162,4 +2162,3 @@ function system_get_dmesg_boot() {
 	return file_get_contents("{$g['varlog_path']}/dmesg.boot");
 }
 
-?>

@@ -226,17 +226,15 @@ if (!isBlank($_POST['txtCommand'])):?>
 		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
 		<div class="panel-body">
 			<div class="content">
-				<pre>
 <?php
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
 	$output = array();
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
-	foreach ($output as $line) {
-		print(htmlspecialchars($line) . "\r\n");
-	}
+
+	$output = implode("\n", $output);
+	print("<pre>" . htmlspecialchars($output) . "</pre>");
 ?>
-				</pre>
 			</div>
 		</div>
 	</div>
@@ -289,7 +287,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
 		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
-		puts("<pre>");
+
 		$tmpname = tempnam("/tmp", "");
 		$phpfile = fopen($tmpname, "w");
 		fwrite($phpfile, "<?php\n");
@@ -299,16 +297,15 @@ if (!isBlank($_POST['txtCommand'])):?>
 		fwrite($phpfile, "?>\n");
 		fclose($phpfile);
 
+		$output = array();
 		exec("/usr/local/bin/php " . $tmpname, $output);
-
-		for ($i=0; $i < count($output); $i++) {
-			print($output[$i] . "\n");
-		}
 
 		unlink($tmpname);
 
+		$output = implode("\n", $output);
+		print("<pre>" . htmlspecialchars($output) . "</pre>");
+
 //		echo eval($_POST['txtPHPCommand']);
-		puts("&nbsp;</pre>");
 		puts("</div>");
 ?>
 <script type="text/javascript">

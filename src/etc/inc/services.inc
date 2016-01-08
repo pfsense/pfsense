@@ -659,15 +659,39 @@ EOPP;
 			} else {
 				$newzone['domain-name'] = $config['system']['domain'];
 			}
-			$revsubnet = explode(".", $subnet);
-			$revsubnet = array_reverse($revsubnet);
-			foreach ($revsubnet as $octet) {
-				if ($octet != "0") {
+
+			$revsubnet = array_reverse(explode('.',$subnet));
+
+			/* Take care of full classes first */
+			switch ($ifcfgsn) {
+				case 8:
+					$start_octet = 3;
 					break;
-				}
-				array_shift($revsubnet);
+				case 16:
+					$start_octet = 2;
+					break;
+				case 24:
+					$start_octet = 1;
+					break;
+				default:
+					$start_octet = 0;
+					/* Add subnet bitmask to first octet */
+					$revsubnet[0] .= '-' . $ifcfgsn;
+					break;
+
 			}
-			$newzone['ptr-domain'] = implode(".", $revsubnet) . ".in-addr.arpa";
+
+			$ptr_domain = '';
+			for ($octet = 0; $octet <= 3; $octet++) {
+				if ($octet < $start_octet) {
+					continue;
+				}
+				$ptr_domain .= (empty($ptr_domain) ? '' : '.');
+				$ptr_domain .= $revsubnet[$octet];
+			}
+			$ptr_domain .= ".in-addr.arpa";
+			$newzone['ptr-domain'] = $ptr_domain;
+			unset($ptr_domain, $revsubnet, $start_octet);
 		}
 
 		if (is_array($dhcpifconf['dnsserver']) && ($dhcpifconf['dnsserver'][0])) {

@@ -198,7 +198,7 @@ if ($_GET) {
 		} else if ($addnewaltq) {
 			$q = new altq_root_queue();
 		} else {
-			$input_errors[] = gettext("Could not create new queue/discipline!");
+			$input_errors[] = gettext("Could not create new queue/discipline! Did you remember to apply any recent changes?");
 		}
 
 		if ($q) {
@@ -461,7 +461,7 @@ if (count($altq_list_queues) > 0) {
 				<td>
 <?php
 
-if (!$dfltmsg)  {
+if (!$dfltmsg && $sform)  {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add || $addnewaltq) {
@@ -506,8 +506,8 @@ if (!$dfltmsg)  {
 if ($dfltmsg) {
 ?>
 <div>
-	<div id="infoblock">
-		<?=print_info_box($default_shaper_msg, info)?>
+	<div class="infoblock">
+		<?=print_info_box($default_shaper_msg, 'info')?>
 	</div>
 </div>
 <?php

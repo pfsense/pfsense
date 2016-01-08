@@ -209,6 +209,8 @@ if (isset($config['ipsec']['phase1'])) {
 	display_widget_tabs($tab_array);
 }
 
+$mobile = ipsec_dump_mobile();
+
 if (isset($config['ipsec']['phase2'])): ?>
 <div id="ipsec-Overview" style="display:block;"  class="table-responsive">
 	<table class="table table-striped table-hover">

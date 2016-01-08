@@ -96,30 +96,25 @@ function pkg_remove_prefix(&$pkg_name) {
 function pkg_update($force = false) {
 	global $g;
 
-	$now = strftime('%s');
-	$last_update_file="{$g['varrun_path']}/{$g['product_name']}-upgrade-last-update";
-	if (!$force) {
-		if (file_exists($last_update_file)) {
-			$last_update = rtrim(file_get_contents($last_update_file), "\n");
-			if (!is_numericint($last_update)) {
-				$last_update = 0;
-			}
-		}
+	return pkg_call("update" . ($force ? " -f" : ""));
+}
 
-		if ($last_update > 0) {
-			if ($now > $last_update && ($now - $last_update) <= (60 * 60)) {
-				return true;
-			}
-		}
+/* return an array with necessary environment vars for pkg */
+function pkg_env() {
+	global $config, $g;
+
+	$pkg_env_vars = array(
+		"HTTP_USER_AGENT" => $user_agent,
+		"ASSUME_ALWAYS_YES" => "true"
+	);
+
+	if ($g['platform'] == "nanobsd" ||
+	    isset($config['system']['use_mfs_tmpvar'])) {
+		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
+		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
 	}
 
-	$rc = pkg_call("update");
-
-	if ($rc) {
-		file_put_contents($last_update_file, $now . "\n");
-	}
-
-	return $rc;
+	return $pkg_env_vars;
 }
 
 /* Execute a pkg call */
@@ -135,21 +130,19 @@ function pkg_call($params, $mute = false) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	conf_mount_rw();
+
 	pkg_debug("pkg_call(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		conf_mount_ro();
 		return false;
 	}
 
@@ -201,6 +194,8 @@ function pkg_call($params, $mute = false) {
 	fclose($pipes[2]);
 	proc_close($process);
 
+	conf_mount_ro();
+
 	if (!isset($rc)) {
 		$rc = $status['exitcode'];
 	}
@@ -233,21 +228,19 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		$user_agent .= ' : ' . get_single_sysctl('kern.hostuuid');
 	}
 
-	$env = array(
-		"HTTP_USER_AGENT" => $user_agent,
-		"ASSUME_ALWAYS_YES" => "true",
-		"REPO_AUTOUPDATE" => "false"
-	);
-
 	$descriptorspec = array(
 		1 => array("pipe", "w"), /* stdout */
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
+	conf_mount_rw();
+
 	pkg_debug("pkg_exec(): {$params}\n");
-	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes, '/', $env);
+	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
+	    '/', pkg_env());
 
 	if (!is_resource($process)) {
+		conf_mount_ro();
 		return -1;
 	}
 
@@ -262,6 +255,8 @@ function pkg_exec($params, &$stdout, &$stderr) {
 		$stderr .= $l;
 	}
 	fclose($pipes[2]);
+
+	conf_mount_ro();
 
 	return proc_close($process);
 }
@@ -390,21 +385,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
 
-	/* Make sure repo metadata is up2date */
-	update_status("\n" .
-	    gettext("Updating package repository metadada...") . "\n");
-
-	if (!pkg_update()) {
-		$input_errors[] = gettext(
-		    "ERROR: An error occurred when updating packages repository. Aborting...")
-		    . "\n";
-		update_status("\n" . gettext(
-		    "ERROR: An error occurred when updating packages repository. Aborting...")
-		    . "\n");
-		return array();
-	}
-
-	$rc = pkg_exec("search -U --raw-format json-compact " . $pkgs, $out, $err);
+	$rc = pkg_exec("search --raw-format json-compact " . $pkgs, $out, $err);
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(
@@ -974,10 +955,6 @@ function package_reinstall_all() {
 			sleep(1);
 		}
 		update_status("\n");
-	} else {
-		if (!pkg_update()) {
-			return false;
-		}
 	}
 
 	$pkg_info = get_pkg_info();

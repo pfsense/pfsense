@@ -10,12 +10,7 @@ require_once("rrd.inc");
 
 echo "Restarting webConfigurator...";
 
-sigkillbyname("lighttpd", "KILL");
-
-while (is_process_running("lighttpd")) {
-	echo '.';
-	sleep(1);
-}
+sigkillbypid("{$g['varrun_path']}/nginx-webConfigurator.pid", "TERM");
 
 system_webgui_start();
 

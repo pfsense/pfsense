@@ -181,6 +181,7 @@ implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 900
 max_input_time = 1800
+max_input_vars = 5000
 register_argc_argv = On
 register_long_arrays = Off
 variables_order = "GPCS"
@@ -198,6 +199,8 @@ log_errors=on
 error_log=/tmp/PHP_errors.log
 extension_dir=${EXTENSIONSDIR}
 date.timezone="${TIMEZONE}"
+session.hash_bits_per_character = 5
+session.hash_function = 1
 
 ; Extensions
 
@@ -249,15 +252,12 @@ fi
 	/bin/cat >>/usr/local/etc/php.ini <<EOF
 
 [suhosin]
-suhosin.get.max_array_depth = 5000
 suhosin.get.max_array_index_length = 256
 suhosin.get.max_vars = 5000
 suhosin.get.max_value_length = 500000
-suhosin.post.max_array_depth = 5000
 suhosin.post.max_array_index_length = 256
 suhosin.post.max_vars = 5000
 suhosin.post.max_value_length = 500000
-suhosin.request.max_array_depth = 5000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
 suhosin.request.max_value_length = 500000
@@ -285,7 +285,7 @@ daemonize = yes
 events.mechanism = kqueue
 process.max = ${PHPFPMMAX}
 
-[lighty]
+[nginx]
 user = root
 group = wheel
 ;mode = 0600

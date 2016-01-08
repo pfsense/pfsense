@@ -255,8 +255,8 @@ endif;
 	</a>
 </nav>
 
-<div id="infoblock">
-	<?=print_info_box(gettext('Adding MAC addresses as "pass" MACs allows them access through the captive portal automatically without being taken to the portal page.'), info)?>
+<div class="infoblock">
+	<?=print_info_box(gettext('Adding MAC addresses as "pass" MACs allows them access through the captive portal automatically without being taken to the portal page.'), 'info')?>
 </div>
 <?php
 include("foot.inc");

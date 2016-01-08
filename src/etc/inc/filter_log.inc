@@ -87,9 +87,9 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
 	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
 
-	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "tbd"; }
-	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "tbd"; }
-	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "tbd"; }
+	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "vpn_login"; }
+	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "vpn_service"; }
+	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "vpn_service"; }
 
 	else if ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
 	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
@@ -122,8 +122,18 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	else if ($logfile_type == 'system')		{
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
-	else if ($logfile_type == 'tbd')		{
-		$pattern = "^\(.*\)$";
+
+	else if ($logfile_type == 'vpn_login')	{
+		$action_pattern = "\(.*?\)";
+		$type_pattern = "\(.*?\)";
+		$ip_address_pattern = "\(.*?\)";
+		$user_pattern = "\(.*?\)";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
+	}
+	else if ($logfile_type == 'vpn_service')	{
+		$type_pattern = "\(.*?\):";
+		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $type_pattern . "\ +" . $pid_pattern . "\ *" . $log_message_pattern . "$";
 	}
 	else if ($logfile_type == 'unknown')	{
 		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
@@ -154,11 +164,12 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 			break;
 		}
 
-		     if ($logfile_type == 'firewall')	{ $flent = parse_firewall_log_line($logent); }
-		else if ($logfile_type == 'system')		{ $flent = parse_system_log_line($logent); }
-		else if ($logfile_type == 'tbd')		{ $flent = array(); }
-		else if ($logfile_type == 'unknown')	{ $flent = parse_unknown_log_line($logent); }
-		else 									{ $flent = array(); }
+		     if ($logfile_type == 'firewall')		{ $flent = parse_firewall_log_line($logent); }
+		else if ($logfile_type == 'system')			{ $flent = parse_system_log_line($logent); }
+		else if ($logfile_type == 'vpn_login')		{ $flent = parse_vpn_login_log_line($logent); }
+		else if ($logfile_type == 'vpn_service')	{ $flent = parse_vpn_service_log_line($logent); }
+		else if ($logfile_type == 'unknown')		{ $flent = parse_unknown_log_line($logent); }
+		else 										{ $flent = array(); }
 
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
@@ -228,6 +239,50 @@ function match_filter_field($flent, $fields) {
 // Case Insensitive in_array function
 function in_arrayi($needle, $haystack) {
 	return in_array(strtolower($needle), array_map('strtolower', $haystack));
+}
+
+function parse_vpn_login_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['action'], $flent['type'], $flent['ip_address'], $flent['user']) = $log_split;
+
+	/* If there is time, action, user, and IP address fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
+}
+
+function parse_vpn_service_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['type'], $flent['pid'], $flent['message']) = $log_split;
+
+	/* If there is time, type, and message fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
 }
 
 function parse_unknown_log_line($line) {
@@ -535,24 +590,39 @@ function find_action_image($action) {
 }
 
 /* AJAX specific handlers */
-function handle_ajax($nentries, $tail = 50) {
+function handle_ajax() {
 	global $config;
-	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile, $filterent;
-		if ($_GET['lastsawtime']) {
-			$lastsawtime = $_GET['lastsawtime'];
+	if (($_GET['lastsawtime'] or $_POST['lastsawtime']) and ($_GET['logfile'] or $_POST['logfile'])) {
+
+		$lastsawtime = getGETPOSTsettingvalue('lastsawtime', null);
+		$logfile = getGETPOSTsettingvalue('logfile', null);
+		$nentries = getGETPOSTsettingvalue('nentries', null);
+		$type = getGETPOSTsettingvalue('type', null);
+		$filter = getGETPOSTsettingvalue('filter', null);
+		$interfacefilter = getGETPOSTsettingvalue('interfacefilter', null);
+
+		if (!empty(trim($filter)) || is_numeric($filter)) {
+			$filter = json_decode($filter, true);	# Filter Fields Array or Filter Text
 		}
-		if ($_POST['lastsawtime']) {
-			$lastsawtime = $_POST['lastsawtime'];
-		}
+
 		/* compare lastsawrule's time stamp to filter logs.
 		 * afterwards return the newer records so that client
 		 * can update AJAX interface screen.
 		 */
 		$new_rules = "";
-		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
+
+		$filterlog = conv_log_filter($logfile, $nentries, $nentries + 100, $filter, $interfacefilter);
+
 		/* We need this to always be in forward order for the AJAX update to work properly */
-		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
+		/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
+		# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+		$reverse = isset($config['syslog']['reverse']);
+		$specific_log = basename($logfile, '.log') . '_settings';
+		if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+		if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+		$filterlog = ($reverse) ? array_reverse($filterlog) : $filterlog;
+
 		foreach ($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
 			if ($row_time > $lastsawtime) {

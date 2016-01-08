@@ -5293,8 +5293,8 @@ msgstr "ssl yapılandırması"
 
 #: etc/inc/system.inc:1360
 #, php-format
-msgid "Error: cannot open %s in system_generate_lighty_config().%s"
-msgstr "Hata: system_generate_lighty_config().%s içindeki %s açılamadı"
+msgid "Error: cannot open %s in system_generate_nginx_config().%s"
+msgstr "Hata: system_generate_nginx_config().%s içindeki %s açılamadı"
 
 #: etc/inc/system.inc:1380
 msgid "Setting timezone..."
@@ -8531,7 +8531,7 @@ msgstr ""
 
 #: usr/local/www/diag_logs_settings.php:333
 msgid ""
-"Hint: If this is checked, errors from the lighttpd web server process for "
+"Hint: If this is checked, errors from the web server process for "
 "the GUI or Captive Portal will appear in the main system log."
 msgstr ""
 
@@ -17310,10 +17310,6 @@ msgstr "Bu ürün PHP içerir, ücretsiz olarak"
 #: usr/local/www/license.php:94
 msgid "1999-2014 The PHP Group. All rights reserved."
 msgstr ""
-
-#: usr/local/www/license.php:96
-msgid "LightTPD"
-msgstr "LightTPD"
 
 #: usr/local/www/license.php:97
 msgid "2004, Jan Knescke, incremental"

@@ -292,7 +292,7 @@ class altq_root_queue {
 	var $interface;
 	var $tbrconfig ;
 	var $bandwidth;
-	var $bandwidthtype; /* b, Kb, Mb */
+	var $bandwidthtype; /* b, Kb, Mb, Gb, % */
 	var $scheduler;
 	var $qlimit;
 	var $queues = array();
@@ -381,6 +381,28 @@ class altq_root_queue {
 	}
 	function SetQlimit($limit) {
 		$this->qlimit = $limit;
+	}
+
+	function GetBwscaleText() {
+		switch ($this->bandwidthtype) {
+			case "b":
+				$bwscaletext = "Bit/s";
+				break;
+			case "Kb":
+				$bwscaletext = "Kbit/s";
+				break;
+			case "Mb":
+				$bwscaletext = "Mbit/s";
+				break;
+			case "Gb":
+				$bwscaletext = "Gbit/s";
+				break;
+			default:
+				/* For others that do not need translating like % */
+				$bwscaletext = $this->bandwidthtype;
+				break;
+		}
+		return $bwscaletext;
 	}
 
 	function validate_input($data, &$input_errors) {
@@ -719,7 +741,7 @@ class altq_root_queue {
 		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscaleText();
 		$form .= '	</dd>';
 
 		$form .= '	<dt>';
@@ -792,10 +814,10 @@ class altq_root_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -1020,6 +1042,28 @@ class priq_queue {
 	}
 	function SetAck($ack = false) {
 		$this->qack = $ack;
+	}
+
+	function GetBwscaleText() {
+		switch ($this->qbandwidthtype) {
+			case "b":
+				$bwscaletext = "Bit/s";
+				break;
+			case "Kb":
+				$bwscaletext = "Kbit/s";
+				break;
+			case "Mb":
+				$bwscaletext = "Mbit/s";
+				break;
+			case "Gb":
+				$bwscaletext = "Gbit/s";
+				break;
+			default:
+				/* For others that do not need translating like % */
+				$bwscaletext = $this->qbandwidthtype;
+				break;
+		}
+		return $bwscaletext;
 	}
 
 	function build_javascript() {
@@ -1449,7 +1493,7 @@ class priq_queue {
 		$form .=		'Bandwidth';
 		$form .= '	</dt>';
 		$form .= '	<dd>';
-		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscale();
+		$form .=		$this->GetBandwidth() . '&nbsp;' . $this->GetBwscaleText();
 		$form .= '	</dd>';
 
 		$tmpvalue = $this->GetQpriority();
@@ -2220,10 +2264,10 @@ EOJS;
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -2778,10 +2822,10 @@ class cbq_queue extends priq_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -3079,10 +3123,10 @@ class fairq_queue extends priq_queue {
 			'bandwidthtype',
 			null,
 			$this->GetBwscale(),
-			array('Kb' => 'Kb',
-				  'Mb' => 'Mb',
-				  'Gb' => 'Gb',
-				  'b' => 'b',
+			array('Kb' => 'Kbit/s',
+				  'Mb' => 'Mbit/s',
+				  'Gb' => 'Gbit/s',
+				  'b' => 'Bit/s',
 				  '%' => '%')
 		));
 
@@ -4188,80 +4232,10 @@ class dnqueue_class extends dummynet_class {
 			));
 		}
 
-		$bandwidth = $this->GetBandwidth();
-
-		// Delete a row
-		if (isset($_GET['delbwrow']) && (count($bandwidth) > 0)) {
-			unset($bandwidth[$_GET['delbwrow']]);
-		}
-
-		// Add a row
-		if ($_GET['newbwrow']) {
-			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
-
-		}
-
-		if (is_array($bandwidth)) {
-			$row = 0;
-			$numrows = count($bandwidth) - 1;
-
-			if ($numrows >= 0) {
-				foreach ($bandwidth as $bwidx => $bw) {
-					$group = new Form_Group($row == 0 ? 'Bandwidth':null);
-
-					$group->add(new Form_Input(
-						'bandwidth' . $bwidx,
-						null,
-						'text',
-						$bw['bw']
-					))->setHelp($row == $numrows ? 'Bandwidth':null);
-
-					$group->add(new Form_Select(
-						'bwtype' . $bwidx,
-						null,
-						$bw['bwscale'],
-						array('Kb' => 'Kbit/s', 'Mb' => 'Mbit/s', 'Gb' => 'Gbit/s', 'b' => 'Bit/s')
-					))->setHelp($row == $numrows ? 'Bw Type':null);;
-
-					$group->add(new Form_Select(
-						'bwsched' . $bwidx,
-						null,
-						$bw['bwsched'],
-						$schedules
-					))->setHelp($row == $numrows ? 'Schedule':null);;
-
-					$group->add(new Form_Button(
-						'delete' + $bwidx,
-						'Delete',
-						'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&delbwrow=' . $bwidx
-					))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-
-					if ($row == $numrows) {
-						$group->setHelp('Bandwidth is the rate (e.g. Mbit/s) to which traffic in this limiter will be restricted.');
-					}
-
-					$section->add($group);
-					$row++;
-				}
-			}
-		else { // The $bandwidth array exists, but is empty
-			$section->addInput(new Form_StaticText(
-				'Bandwidth',
-				'No schedules configured for this limiter.'
-			));
-		}
-
-		$section->addInput(new Form_Button(
-			'addsched',
-			'Add new schedule',
-			'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $qname . '&action=' . $action . '&newbwrow=yes'
-			))->removeClass('btn-primary')->addClass('btn-success btn-sm');
-		}
-
 		$mask = $this->GetMask();
 
 		$section->addInput(new Form_Select(
-			'scheduler',
+			'mask',
 			'Mask',
 			$mask['type'],
 			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')

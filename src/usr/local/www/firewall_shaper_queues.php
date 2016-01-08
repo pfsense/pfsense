@@ -204,8 +204,10 @@ if ($_POST['apply']) {
 	$savemsg = get_std_save_message($retval);
 	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
+		$class = 'alert-success';
 	} else {
 		$savemsg = $retval;
+		$class = 'alert-danger';
 	}
 
 	/* reset rrd queues */
@@ -230,7 +232,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {
@@ -248,7 +250,7 @@ display_top_tabs($tab_array);
 
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 	<div class="panel panel-default">
-		<div class="panel-heading" align="center"><h2 class="panel-title"><?=$qname?></h2></div>
+		<div class="panel-heading text-center"><h2 class="panel-title"><?=$qname?></h2></div>
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="col-sm-2 ">
@@ -263,5 +265,5 @@ display_top_tabs($tab_array);
 </form>
 
 <?php
-
 include("foot.inc");
+?>

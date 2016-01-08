@@ -133,7 +133,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 ?>
 
 <div>
-<div id="infoblock">
+<div class="infoblock">
 <?php
 print_info_box(gettext('Socket information - explanation.') . '<br /><br />' .
 gettext('This page shows the output for the commands: "sockstat -4lL" and "sockstat -6lL".' . '<br />' .
@@ -148,7 +148,7 @@ gettext('This page shows the output for the commands: "sockstat -4lL" and "socks
 				'<dt>ADDRESS</dt>		<dd>(UNIX sockets only) For bound sockets, this is the file-name of the socket. For other sockets, it is the name, PID and file descriptor number of the peer, or "(none)" if the socket is neither bound nor connected.</dd>' .
 				'<dt>LOCAL ADDRESS</dt> <dd>(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</dd>' .
 				'<dt>FOREIGN ADDRESS</dt><dd>(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</dd>' .
-			'</dl>'), info);
+			'</dl>'), 'info');
 ?>
 </div>
 </div>

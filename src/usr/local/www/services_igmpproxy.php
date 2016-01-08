@@ -111,6 +111,11 @@ if (is_subsystem_dirty('igmpproxy')) {
 ?>
 
 <form action="services_igmpproxy.php" method="post">
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>
+	<div class="panel-body">
+
 	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -161,6 +166,10 @@ endforeach;
 			</tbody>
 		</table>
 	</div>
+
+	</div>
+</div>
+	
 </form>
 
 <nav class="action-buttons">
@@ -174,9 +183,9 @@ endforeach;
 	</a>
 </nav>
 
-<div id="infoblock">
+<div class="infoblock">
 <?=print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
-					   'Only one "upstream" interface can be configured.'), info)?>
+					   'Only one "upstream" interface can be configured.'), 'info')?>
 </div>
 <?php
 include("foot.inc");

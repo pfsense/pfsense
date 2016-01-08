@@ -138,6 +138,7 @@ display_top_tabs($tab_array);
 					<th><?=gettext('VLAN tag');?></th>
 					<th><?=gettext('Priority');?></th>
 					<th><?=gettext('Description');?></th>
+					<th></th>
 				</tr>
 			</thead>
 <?php
@@ -169,11 +170,11 @@ display_top_tabs($tab_array);
 	</div>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
 		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'), $g['product_name']), info)?>
+		'%s handbook for information on supported cards.'), $g['product_name']), 'info')?>
 </div>
 <script type="text/javascript">
 //<![CDATA[

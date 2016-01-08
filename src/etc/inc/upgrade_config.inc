@@ -4260,4 +4260,13 @@ function upgrade_133_to_134() {
 
 	$config['system']['webgui']['dashboardcolumns'] = $maxcols % 10;
 }
+
+function upgrade_134_to_135() {
+	global $config;
+
+	if (isset($config['syslog']['nologlighttpd'])) {
+		unset($config['syslog']['nologlighttpd']);
+		$config['syslog']['nolognginx'] = true;
+	}
+}
 ?>

@@ -286,8 +286,8 @@ function build_date_table() {
 		$mostr .= '" class="col-md-6">';
 
 		$mostr .=
-			'<table class="table table-condensed" border="1" cellspacing="1" cellpadding="1" id="calTable' . $monthcounter . $yearcounter . '" >
-				<thead><tr class="info"><td colspan="7" align="center" ><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
+			'<table class="table table-condensed table-bordered" id="calTable' . $monthcounter . $yearcounter . '" >
+				<thead><tr class="info"><td colspan="7" class="text-center"><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
 				</tr>
 				<tr>
 					<th class="text-center" style="cursor: pointer;" onclick="daytoggle(\'w1p1\');">' . gettext("Mon") . '</th>
@@ -325,7 +325,14 @@ function build_date_table() {
 						$mostr .= '<td class="text-center"></td>';
 					}
 
-					if ($positioncounter == 7 || $daycounter > $numberofdays) {
+					if ($daycounter > $numberofdays) {
+						while ($positioncounter < 7) {
+							$mostr .= '<td class="text-center"></td>';
+							$positioncounter++;
+						}
+					}
+
+					if ($positioncounter == 7) {
 						$positioncounter = 1;
 						$mostr .= "</tr>";
 					} else {
@@ -701,7 +708,7 @@ events.push(function() {
 	$('[id^=Delete]').prop('type', 'button');
 
 	$('[id^=Delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 });
 //]]>
@@ -1170,7 +1177,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	$(rowhtml.replace(/@/g, counter)).insertBefore(node);
 
 	$('[id^=delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 
 	counter++;
@@ -1184,7 +1191,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 }
 
 // If only everything were this simple
-function delete_row(row) {
+function fse_delete_row(row) {
 	$('.schedulegrp' + row).remove();
 }
 //]]>

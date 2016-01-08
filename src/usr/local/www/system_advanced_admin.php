@@ -393,7 +393,7 @@ $section->addInput(new Form_Input(
 	'users/browsers to access the GUI concurrently.');
 
 $section->addInput(new Form_Checkbox(
-	'disablehttpredirect',
+	'webgui-redirect',
 	'WebGUI redirect',
 	'Disable webConfigurator redirect rule',
 	$pconfig['disablehttpredirect']
@@ -413,7 +413,7 @@ $section->addInput(new Form_Checkbox(
 	'this option).');
 
 $section->addInput(new Form_Checkbox(
-	'quietlogin',
+	'webgui-login-messages',
 	'WebGUI login messages',
 	'Disable logging of webConfigurator successful logins',
 	$pconfig['quietlogin']

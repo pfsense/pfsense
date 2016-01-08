@@ -87,6 +87,9 @@ $tab_array[] = array(gettext("Gateways"), true, "status_gateways.php");
 $tab_array[] = array(gettext("Gateway Groups"), false, "status_gateway_groups.php");
 display_top_tabs($tab_array);
 ?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
+	<div class="panel-body">
 
 <div class="table-responsive">
 	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -186,6 +189,9 @@ display_top_tabs($tab_array);
 <?php	} ?>	<!-- End-of-foreach -->
 		</tbody>
 	</table>
+</div>
+
+	</div>
 </div>
 
 <?php include("foot.inc"); ?>

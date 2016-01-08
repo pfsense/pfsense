@@ -240,7 +240,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 			</div>
 		</div>
 	</div>
-<? endif ?>
+<?php endif; ?>
 
 <form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
 	<div class="panel panel-default">

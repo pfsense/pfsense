@@ -411,7 +411,7 @@ if (count($pools) > 0) {
 			</tr>
 		</thead>
 		<tbody>
-<? foreach ($pools as $data):?>
+<?php foreach ($pools as $data):?>
 			<tr>
 				<td><?=$data['name']?></td>
 				<td><?=$data['mystate']?></td>
@@ -419,7 +419,7 @@ if (count($pools) > 0) {
 				<td><?=$data['peerstate']?></td>
 				<td><?=adjust_gmt($data['peerdate'])?></td>
 			</tr>
-<? endforeach?>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>
@@ -496,30 +496,30 @@ foreach ($leases as $data):
 				<td>
 					<?=$mac?>
 
-					<? if (isset($mac_man[$mac_hi])):?>
+					<?php if (isset($mac_man[$mac_hi])):?>
 						(<?=$mac_man[$mac_hi]?>)
-					<?endif?>
+					<?php endif; ?>
 				</td>
 				<td><?=htmlentities($data['hostname'])?></td>
-<? if ($data['type'] != "static"):?>
+<?php if ($data['type'] != "static"):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
-<? else: ?>
+<?php else: ?>
 				<td>n/a</td>
 				<td>n/a</td>
-<? endif; ?>
+<?php endif; ?>
 				<td><?=$data['online']?></td>
 				<td><?=$data['act']?></td>
 				<td>
-<? if ($data['type'] == "dynamic"): ?>
+<?php if ($data['type'] == "dynamic"): ?>
 					<a <a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
-<? endif; ?>
+<?php endif; ?>
 					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
-<? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
+<?php if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
 					<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
-<? endif?>
+<?php endif; ?>
 				</td>
-<? endforeach; ?>
+<?php endforeach; ?>
 			</tr>
 		</tbody>
 		</table>
@@ -582,22 +582,22 @@ foreach ($prefixes as $data):
 				<td><i class="fa <?=$icon?>"></i></td>
 				<td>
 					<?=$data['prefix']?>
-<? if ($mappings[$data['iaid'] . $data['duid']]): ?>
+<?php if ($mappings[$data['iaid'] . $data['duid']]): ?>
 					<br />
 					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
-<? endif; ?>
+<?php endif; ?>
 				</td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
-<? if ($data['type'] != "static"):?>
+<?php if ($data['type'] != "static"):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
-<? else: ?>
+<?php else: ?>
 				<td>n/a</td>
 				<td>n/a</td>
-<? endif; ?>
+<?php endif; ?>
 				<td><?=$data['act']?></td>
-<? endforeach; ?>
+<?php endforeach; ?>
 			</tr>
 		</tbody>
 		</table>

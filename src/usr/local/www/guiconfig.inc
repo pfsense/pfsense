@@ -380,7 +380,6 @@ function print_info_box($msg, $class="alert-warning") {
 }
 
 function get_std_save_message($ok) {
-	global $d_sysrebootreqd_path;
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
 	$to_return = gettext("The changes have been applied successfully.");
@@ -1181,6 +1180,24 @@ function get_flash_message() {
 		}
 		unset($_SESSION['flash_messages']);
 	}
+}
+
+/* Retrieve GET or POST Value/State
+ * Eample Usage:
+ * $value = getGETPOSTsettingvalue('get/post parameter name', "");
+ * $value = getGETPOSTsettingvalue('get/post parameter name', null);
+ * $state = getGETPOSTsettingvalue('get/post parameter name', null);
+ * $state = getGETPOSTsettingvalue('get/post parameter name', false);
+ */
+function getGETPOSTsettingvalue($settingname, $default) {
+	$settingvalue = $default;
+	if ($_GET[$settingname]) {
+		$settingvalue = $_GET[$settingname];
+	}
+	if ($_POST[$settingname]) {
+		$settingvalue = $_POST[$settingname];
+	}
+	return $settingvalue;
 }
 
 /* set timezone */

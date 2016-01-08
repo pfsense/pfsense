@@ -224,6 +224,9 @@
 					$config_text .= "system_uptime=yes\n";
 				}
 
+				/* set secure_mode */
+				$config_text .= "secure_mode=yes\n";
+
 				/* set webgui url */
 				if (!empty($config['system']['webgui']['protocol'])) {
 					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";

@@ -2843,8 +2843,8 @@ msgstr "configuração ssl"
 #: etc/inc/system.inc:1161 etc/inc/system.inc:1213 etc/inc/system.inc:1193
 #: etc/inc/system.inc:1142 etc/inc/system.inc:1169
 #, php-format
-msgid "Error: cannot open %s in system_generate_lighty_config().%s"
-msgstr "Erro: não pôde abrir %s em system_generate_lighty_config().%s"
+msgid "Error: cannot open %s in system_generate_nginx_config().%s"
+msgstr "Erro: não pôde abrir %s em system_generate_nginx_config().%s"
 
 #: etc/inc/system.inc:1181 etc/inc/system.inc:1233 etc/inc/system.inc:1213
 #: etc/inc/system.inc:1162 etc/inc/system.inc:1189
@@ -20495,10 +20495,6 @@ msgstr "Esse produto inclui PHP, disponível de graça por"
 #: usr/local/www/license.php:161
 msgid "1999 - 2003 The PHP Group. All rights reserved"
 msgstr "1999 - 2003 The PHP Group. Todos os direitos reservados"
-
-#: usr/local/www/license.php:163
-msgid "LightTPD"
-msgstr "LightTPD"
 
 #: usr/local/www/license.php:164
 msgid " 2004 by Jan Kneschke "
@@ -40785,7 +40781,7 @@ msgid "Log errors from the web server process."
 msgstr ""
 
 #: usr/local/www/diag_logs_settings.php:291
-msgid "Hint: If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log."
+msgid "Hint: If this is checked, errors from the web server process for the GUI or Captive Portal will appear in the main system log."
 msgstr ""
 
 #: usr/local/www/interfaces_gre_edit.php:216

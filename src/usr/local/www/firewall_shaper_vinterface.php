@@ -170,27 +170,27 @@ if ($_GET) {
 			if (write_config()) {
 				$retval = 0;
 				$retval = filter_configure();
-				$savemsg = get_std_save_message($retval);
 
-			if (stristr($retval, "error") != true) {
-				$savemsg = get_std_save_message($retval);
+				if (stristr($retval, "error") != true) {
+					$savemsg = get_std_save_message($retval);
+					$class = 'success';
+				} else {
+					$savemsg = $retval;
+					$class = 'danger';
+				}
+
 			} else {
-				$savemsg = $retval;
+				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+				$class = 'danger';
 			}
 
-		} else {
-			$savemsg = gettext("Unable to write config.xml (Access Denied?)");
-		}
-
-		$dfltmsg = true;
+			$dfltmsg = true;
 
 		break;
 	case "add":
 		if ($dnpipe) {
 			$q = new dnqueue_class();
 			$q->SetPipe($pipe);
-			$output_form .= "<input type=\"hidden\" name=\"parentqueue\" id=\"parentqueue\"";
-			$output_form .= " value=\"".$pipe."\" />";
 		} else if ($addnewpipe) {
 			$q = new dnpipe_class();
 			$q->SetQname($pipe);
@@ -200,10 +200,19 @@ if ($_GET) {
 
 		if ($q) {
 			$sform = $q->build_form();
+			if ($dnpipe) {
+				$sform->addGlobal(new Form_Input(
+					'parentqueue',
+					null,
+					'hidden',
+					$pipe
+				));
+			}
 			$newjavascript = $q->build_javascript();
 			unset($q);
 			$newqueue = true;
 		}
+
 		break;
 	case "show":
 		if ($queue) {
@@ -298,12 +307,13 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		if (stristr($retval, "error") != true) {
 			$savemsg = get_std_save_message($retval);
+			$class = 'success';
 		} else {
 			$savemsg = $retval;
+			$class = 'danger';
 		}
 
 		/* XXX: TODO Make dummynet pretty graphs */
@@ -394,7 +404,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {
@@ -427,11 +437,11 @@ if ($dfltmsg) {
 } else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
-		if ($can_add || $addnewaltq) {
+		if ($can_add && ($action != "add")) {
 			if ($queue) {
-				$url = 'href="firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
+				$url = 'firewall_shaper_vinterface.php?pipe=' . $pipe . '&queue=' . $queue->GetQname() . '&action=add';
 			} else {
-				$url = 'firewall_shaper.php?pipe='. $pipe . '&action=add';
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=add';
 			}
 
 			$sform->addGlobal(new Form_Button(
@@ -441,21 +451,23 @@ if ($dfltmsg) {
 			))->removeClass('btn-default')->addClass('btn-success');
 		}
 
-		if ($queue) {
-			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
-		} else {
-			$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
-		}
+		if ($action != "add") {
+			if ($queue) {
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&queue=' . $queue->GetQname() . '&action=delete';
+			} else {
+				$url = 'firewall_shaper_vinterface.php?pipe='. $pipe . '&action=delete';
+			}
 
-		$sform->addGlobal(new Form_Button(
-			'delete',
-			$queue ? 'Delete this queue':'Delete',
-			$url
-		))->removeClass('btn-default')->addClass('btn-danger');
+			$sform->addGlobal(new Form_Button(
+				'delete',
+				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+				$url
+			))->removeClass('btn-default')->addClass('btn-danger');
+		}
 	}
 
 	// Print the form
-	if($sform) {
+	if ($sform) {
 		$sform->setAction("firewall_shaper_vinterface.php");
 		print($sform);
 	}

@@ -488,7 +488,7 @@ echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 ?>
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
-			<a href="<?=$helpurl?>" title="<?=gettext("Help for items on this page")?>" class="help-icon">
+			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>" class="help-icon">
 				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>

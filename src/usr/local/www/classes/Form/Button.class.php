@@ -64,6 +64,9 @@ class Form_Button extends Form_Input
 		}
 
 		parent::__construct($name, $title, null);
+
+		if (isset($link))
+			unset($this->_attributes['name']);
 	}
 
 	protected function _getInput()

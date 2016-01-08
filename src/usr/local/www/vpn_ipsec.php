@@ -306,13 +306,13 @@ display_top_tabs($tab_array);
 ?>
 					<tr id="fr<?=$i?>" onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="p1entry[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" />
+							<input type="checkbox" id="frc<?=$i?>" onclick="fr_toggle(<?=$i?>)" name="p1entry[]" value="<?=$i?>"  />
 							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
 						</td>
 						<td>
 							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled' ? 'enable' : 'disable') ?></button>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td id="frd<?=$i?>">
 <?php
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 				echo "V1";
@@ -357,7 +357,7 @@ display_top_tabs($tab_array);
 			}
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td id="frd<?=$i?>">
 					<?=$spans?>
 					<?php
 					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
@@ -366,7 +366,7 @@ display_top_tabs($tab_array);
 					?>
 					<?=$spane?>
 				</td>
-				<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+				<td id="frd<?=$i?>">
 					<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name']?>
 <?php
 			if ($ph1ent['encryption-algorithm']['keylen']) {
@@ -561,11 +561,11 @@ display_top_tabs($tab_array);
 	</nav>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
 	gettext("You can check your IPsec status at ") . '<a href="status_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
 	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
-	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', info)?>
+	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info')?>
 </div>
 
 <script type="text/javascript">

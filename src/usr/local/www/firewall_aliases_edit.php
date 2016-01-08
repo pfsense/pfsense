@@ -699,7 +699,7 @@ while ($counter < count($addresses)) {
 		'address' . $counter,
 		'Address',
 		$address
-	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern('[a-zA-Z0-9\-\.\:]+');
 
 	$group->add(new Form_Input(
 		'detail' . $counter,

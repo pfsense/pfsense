@@ -185,7 +185,7 @@ echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version} ${platformbanner} ..."
+echo "Welcome to ${product} ${version}${platformbanner}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null
@@ -308,7 +308,7 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 echo -n "."
 DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
-LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
+LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
 
 DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
 DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}
@@ -388,7 +388,6 @@ export fcgipath=/var/run/php-fpm.socket
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
-/bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
 
 if [ "${PLATFORM}" = "nanobsd" ]; then

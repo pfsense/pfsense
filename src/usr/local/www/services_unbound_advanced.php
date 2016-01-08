@@ -133,28 +133,28 @@ if ($_POST) {
 			$input_errors[] = "A valid value must be specified for EDNS Buffer Size.";
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of queries per thread.";
+			$input_errors[] = "A valid value must be specified for Number of Queries per Thread.";
 		}
 		if (isset($_POST['jostle_timeout']) && !in_array($_POST['jostle_timeout'], array('100', '200', '500', '1000'), true)) {
 			$input_errors[] = "A valid value must be specified for Jostle Timeout.";
 		}
 		if (isset($_POST['cache_max_ttl']) && (!is_numericint($_POST['cache_max_ttl']) || ($_POST['cache_max_ttl'] < 0))) {
-			$input_errors[] = "'Maximum TTL for RRsets and messages' must be a positive integer.";
+			$input_errors[] = "'Maximum TTL for RRsets and Messages' must be a positive integer.";
 		}
 		if (isset($_POST['cache_min_ttl']) && (!is_numericint($_POST['cache_min_ttl']) || ($_POST['cache_min_ttl'] < 0))) {
-			$input_errors[] = "'Minimum TTL for RRsets and messages' must be a positive integer.";
+			$input_errors[] = "'Minimum TTL for RRsets and Messages' must be a positive integer.";
 		}
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
-			$input_errors[] = "A valid value must be specified for TTL for Host cache entries.";
+			$input_errors[] = "A valid value must be specified for TTL for Host Cache Entries.";
 		}
 		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Hosts to cache.";
+			$input_errors[] = "A valid value must be specified for Number of Hosts to Cache.";
 		}
 		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
 			$input_errors[] = "A valid value must be specified for Unwanted Reply Threshold.";
 		}
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
-			$input_errors[] = "A valid value must be specified for Log level verbosity.";
+			$input_errors[] = "A valid value must be specified for Log Level.";
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
 			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
@@ -246,21 +246,21 @@ $section = new Form_Section('Advanced Resolver Options');
 
 $section->addInput(new Form_Checkbox(
 	'hideidentity',
-	'Hide identity',
+	'Hide Identity',
 	'id.server and hostname.bind queries are refused',
 	$pconfig['hideidentity']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'hideversion',
-	'Hide version',
+	'Hide Version',
 	'version.server and version.bind queries are refused',
 	$pconfig['hideversion']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'prefetch',
-	'Prefetch support',
+	'Prefetch Support',
 	'Message cache elements are prefetched before they expire to help keep the cache up to date',
 	$pconfig['prefetch']
 ))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache');
@@ -274,35 +274,35 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'dnssecstripped',
-	'Harden DNSSEC data',
+	'Harden DNSSEC Data',
 	'DNSSEC data is required for trust-anchored zones.',
 	$pconfig['dnssecstripped']
 ))->setHelp('If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC data is received, then the zone is made insecure. ');
 
 $section->addInput(new Form_Select(
 	'msgcachesize',
-	'Message Cache size',
+	'Message Cache Size',
 	$pconfig['msgcachesize'],
 	array_combine(array("4", "10", "20", "50", "100", "250", "512"), array("4 MB", "10 MB", "20 MB", "50 MB", "100 MB", "250 MB", "512 MB"))
-))->setHelp('Size of the message cache. The message cache stores DNS rcodes and validation statuses. The RRSet cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.');
+))->setHelp('Size of the message cache. The message cache stores DNS response codes and validation statuses. The Resource Record Set (RRSet) cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.');
 
 $section->addInput(new Form_Select(
 	'outgoing_num_tcp',
 	'Outgoing TCP Buffers',
 	$pconfig['outgoing_num_tcp'],
 	array_combine(array("0", "10", "20", "30", "50", "50"), array("0", "10", "20", "30", "50", "50"))
-))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
+))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then TCP queries are not sent to authoritative servers.');
 
 $section->addInput(new Form_Select(
 	'incoming_num_tcp',
 	'Incoming TCP Buffers',
 	$pconfig['incoming_num_tcp'],
 	array_combine(array("0", "10", "20", "30", "50", "50"), array("0", "10", "20", "30", "50", "50"))
-))->setHelp('The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
+))->setHelp('The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then TCP queries are not accepted from clients.');
 
 $section->addInput(new Form_Select(
 	'edns_buffer_size',
-	'EDNS Buffer size',
+	'EDNS Buffer Size',
 	$pconfig['edns_buffer_size'],
 	array_combine(array("512", "1480", "4096"), array("512", "1480", "4096"))
 ))->setHelp('Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. ' .
@@ -311,7 +311,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'num_queries_per_thread',
-	'Number of queries per thread',
+	'Number of Queries per Thread',
 	$pconfig['num_queries_per_thread'],
 	array_combine(array("512", "1024", "2048"), array("512", "1024", "2048"))
 ))->setHelp('The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped');
@@ -325,34 +325,34 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'cache_max_ttl',
-	'Maximum TTL for RRsets and messages',
+	'Maximum TTL for RRsets and Messages',
 	'text',
 	$pconfig['cache_max_ttl']
-))->setHelp('Configure a maximum Time to live for RRsets and messages in the cache. The default is 86400 seconds (1 day). ' .
+))->setHelp('The Maximum Time to Live for RRsets and messages in the cache. The default is 86400 seconds (1 day). ' .
 			'When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values');
 
 $section->addInput(new Form_Input(
 	'cache_min_ttl',
-	'Minimum TTL for RRsets and messages',
+	'Minimum TTL for RRsets and Messages',
 	'text',
 	$pconfig['cache_min_ttl']
-))->setHelp('Configure a minimum Time to live for RRsets and messages in the cache. ' .
+))->setHelp('The Minimum Time to Live for RRsets and messages in the cache. ' .
 			'The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. ' .
 			'The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.');
 
 $section->addInput(new Form_Select(
 	'infra_host_ttl',
-	'TTL for Host Cache entries',
+	'TTL for Host Cache Entries',
 	$pconfig['infra_host_ttl'],
 	array_combine(array("60", "120", "300", "600", "900"), array("1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"))
-))->setHelp('This timeout is used for when the server is very busy. This protects against denial of service by slow queries or high query rates. The default value is 200 milliseconds. ');
+))->setHelp('Time to Live, in seconds, for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
 
 $section->addInput(new Form_Select(
 	'infra_cache_numhosts',
 	'Number of Hosts to Cache',
 	$pconfig['infra_cache_numhosts'],
 	array_combine(array("1000", "5000", "10000", "20000", "50000"), array("1000", "5000", "10000", "20000", "50000"))
-))->setHelp('Number of hosts for which information is cached. The default is 10,000.');
+))->setHelp('Number of infrastructure hosts for which information is cached. The default is 10,000.');
 
 $section->addInput(new Form_Select(
 	'unwanted_reply_threshold',
@@ -366,14 +366,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'log_verbosity',
-	'Log level',
+	'Log Level',
 	$pconfig['log_verbosity'],
 	array_combine(array("0", "1", "2", "3", "4", "5"), array("Level 0", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"))
 ))->setHelp('Select the log verbosity.');
 
 $section->addInput(new Form_Checkbox(
 	'disable_auto_added_access_control',
-	'Disable auto-added access control',
+	'Disable Auto-added Access Control',
 	'disable the automatically-added access control entries',
 	$pconfig['disable_auto_added_access_control']
 ))->setHelp('By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. ' .

@@ -212,7 +212,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Firewall Aliases <?=$bctab?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Firewall Aliases') . " " . $bctab?></h2></div>
 	<div class="panel-body">
 
 <div class="table-responsive">
@@ -294,8 +294,8 @@ display_top_tabs($tab_array);
 </table>
 </div>
 
-	</div><!-- panel body -->
-</div><!-- panel default -->
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="firewall_aliases_edit.php?tab=<?=$tab?>" role="button" class="btn btn-success btn-sm">
@@ -311,11 +311,11 @@ display_top_tabs($tab_array);
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".
 	 That way jQuery (in pfenseHelpers.js) will automatically take care of the display. -->
 <div>
-	<div id="infoblock">
+	<div class="infoblock">
 		<?=print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .
 			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), info)?>
+			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info')?>
 	</div>
 </div>
 

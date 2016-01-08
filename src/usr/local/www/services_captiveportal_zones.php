@@ -95,7 +95,7 @@ $shortcut_section = "captiveportal";
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg, success);
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('captiveportal')) {

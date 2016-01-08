@@ -310,9 +310,9 @@ EOD;
 		/* write elements */
 		captiveportal_write_elements();
 
-		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		/* kill any running CP nginx instances */
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 
 		/* start up the webserving daemon */
 		captiveportal_init_webgui_zone($cpcfg);
@@ -337,8 +337,8 @@ EOD;
 		}
 
 	} else {
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 		@unlink("{$g['varetc_path']}/captiveportal_{$cpzone}.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
@@ -417,35 +417,35 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		$key = base64_decode($cert['prv']);
 		$ca = ca_chain($cert);
 
-		/* generate lighttpd configuration */
+		/* generate nginx configuration */
 		if (!empty($cpcfg['listenporthttps'])) {
 			$listenporthttps = $cpcfg['listenporthttps'];
 		} else {
 			$listenporthttps = 8001 + $cpcfg['zoneid'];
 		}
-		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
-			$crt, $key, $ca, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
+		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
+			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
 	}
 
-	/* generate lighttpd configuration */
+	/* generate nginx configuration */
 	if (!empty($cpcfg['listenporthttp'])) {
 		$listenporthttp = $cpcfg['listenporthttp'];
 	} else {
 		$listenporthttp = 8000 + $cpcfg['zoneid'];
 	}
-	system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf",
-		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
+	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
+		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
 		"", "", $cpzone);
 
-	@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal.pid");
-	/* attempt to start lighttpd */
-	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
+	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
+	/* attempt to start nginx */
+	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
 	if (isset($cpcfg['httpslogin'])) {
-		@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
-		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
+		@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
+		$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf");
 	}
 }
 

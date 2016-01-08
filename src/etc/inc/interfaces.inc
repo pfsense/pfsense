@@ -1855,10 +1855,18 @@ EOD;
 		if (empty($mtus[$pid])) {
 			$mtus[$pid] = $defaultmtu;
 		}
-		$mpdconf .= <<<EOD
+		if ($type == "pppoe") {
+			if ($mtus[$pid] > (get_interface_mtu($port) - 8)) {
+				$mtus[$pid] = get_interface_mtu($port) - 8;
+			}
+		}
+		if (! ($type == "pppoe" && $mtus[$pid] > 1492) ) {
+			// N.B. MTU for PPPoE with MTU > 1492 is set using pppoe max-payload - see below
+			$mpdconf .= <<<EOD
 	set link mtu {$mtus[$pid]}
 
 EOD;
+		}
 
 		if (!empty($mrus[$pid])) {
 			$mpdconf .= <<<EOD
@@ -1925,6 +1933,12 @@ EOD;
 			$provider = isset($ppp['provider']) ? $ppp['provider'] : "";
 			$mpdconf .= <<<EOD
 	set pppoe service "{$provider}"
+
+EOD;
+		}
+		if ($type == "pppoe" && $mtus[$pid] > 1492) {
+			$mpdconf .= <<<EOD
+	set pppoe max-payload {$mtus[$pid]}
 
 EOD;
 		}
@@ -3029,6 +3043,10 @@ function interface_vlan_mtu_configured($realhwif, $mtu) {
 					$mtu = $config['interfaces'][$assignedport]['mtu'];
 				}
 			}
+			$pppoe_mtu = interface_mtu_wanted_for_pppoe($vlan['vlanif']);
+			if ($pppoe_mtu > $mtu) {
+				$mtu = $pppoe_mtu;
+			}
 		}
 	}
 
@@ -3045,18 +3063,67 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 	/* All vlans need to use the same mtu value as their parent. */
 	foreach ($vlanifs as $vlan) {
 		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+		$pppoe_mtu = interface_mtu_wanted_for_pppoe($vlan['vlanif']);
 		if (!empty($assignedport)) {
 			if (!empty($config['interfaces'][$assignedport]['mtu'])) {
 				pfSense_interface_mtu($vlan['vlanif'], $config['interfaces'][$assignedport]['mtu']);
+			} else if ($pppoe_mtu != 0) {
+				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
 			} else {
-				if (get_interface_mtu($vlan['vlanif']) != $mtu) {
-					pfSense_interface_mtu($vlan['vlanif'], $mtu);
+				if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
+					pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
 				}
 			}
-		} else if (get_interface_mtu($vlan['vlanif']) != $mtu) {
-			pfSense_interface_mtu($vlan['vlanif'], $mtu);
+		} else {
+			if ($pppoe_mtu != 0) {
+				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
+			} else if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
+				pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
+			}
 		}
 	}
+}
+
+function interface_mtu_wanted_for_pppoe($realif) {
+	global $config;
+
+	$mtu = 0;
+
+	if (is_array($config['ppps']) && is_array($config['ppps']['ppp'])) {
+		foreach ($config['ppps']['ppp'] as $ppp) {
+			if ($ppp['type'] == "pppoe") {
+				$ports = explode(',',$ppp['ports']);
+				$mtu_wanted = 1500;
+				foreach ($ports as $pid => $port) {
+					if (get_real_interface($port) == $realif) {
+						// use the MTU configured on the interface ...
+						if (is_array($config['interfaces'])) {
+							foreach ($config['interfaces'] as $interface) {
+								if ($interface['if'] != $ppp['if']) {
+									continue;
+								}
+								if (!empty($interface['mtu'])) {
+									$mtu_wanted = intval($interface['mtu']) + 8;
+								}
+							}
+						}
+						// ... unless there is an MTU configured on the port in question
+						if (!empty($ppp['mtu'])) {
+							$mtus = explode(',',$ppp['mtu']);
+							if (!empty($mtus[$pid])) {
+								$mtu_wanted = intval($mtus[$pid]) + 8;
+							}
+						}
+						if ($mtu_wanted > $mtu) {
+							$mtu = $mtu_wanted;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return $mtu;
 }
 
 function interface_configure($interface = "wan", $reloadall = false, $linkupevent = false) {
@@ -3177,37 +3244,68 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		interfaces_bring_up($wancfg['if']);
 	}
 
-	if (isset($wancfg['mtu']) && is_numericint($wancfg['mtu'])) {
-		$mtu = $wancfg['mtu'];
-	} else {
-		$mtu = 1500; /* Default */
+	$mtuif = $realif;
+	$mtuhwif = $realhwif;
+	$wantedmtu = 0;
+
+	/* adjust MTU of parent interface of PPPoE interface if this does not violate explicit configuration */
+	if (interface_isppp_type($interface)) {
+		$mtuif = $realhwif;
+		$mtuhwif_array = get_parent_interface($mtuif);
+		$mtuhwif = $mtuhwif_array[0];
+		$parent_mtu_configured = false;
+		if (is_array($config['interfaces'])) {
+			foreach ($config['interfaces'] as $tmpinterface) {
+				if ($tmpinterface['if'] == $mtuif && !empty($tmpinterface['mtu'])) {
+					$parent_mtu_configured = true;
+					break;
+				}
+			}
+		}
+		if (!$parent_mtu_configured) {
+			$wantedmtu = interface_mtu_wanted_for_pppoe($mtuif);
+		}
 	}
 
-	if (stristr($realif, "_vlan")) {
-		$assignedparent = convert_real_interface_to_friendly_interface_name($realhwif);
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $mtuif && !empty($tmpinterface['mtu'])) {
+				$wantedmtu = $tmpinterface['mtu'];
+				break;
+			}
+		}
+	}
+
+	// Set the MTU to 1500 if no explicit MTU configured
+	if ($wantedmtu == 0) {
+		$wantedmtu = 1500; /* Default */
+	}
+
+	if (stristr($mtuif, "_vlan")) {
+		$assignedparent = convert_real_interface_to_friendly_interface_name($mtuhwif);
 		if (!empty($assignedparent) && !empty($config['interfaces'][$assignedparent]['mtu'])) {
 			$parentmtu = $config['interfaces'][$assignedparent]['mtu'];
-			if ($mtu > $parentmtu) {
-				log_error("There is a conflict on MTU between parent {$realhwif} and VLAN({$realif})");
+			if ($wancfg['mtu'] > $parentmtu) {
+				log_error("There is a conflict on MTU between parent {$mtuhwif} and VLAN({$mtuif})");
 			}
 		} else {
 			$parentmtu = 0;
 		}
 
-		$parentmtu = interface_vlan_mtu_configured($realhwif, $parentmtu);
+		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $parentmtu);
 
-		if (get_interface_mtu($realhwif) != $parentmtu) {
-			pfSense_interface_mtu($realhwif, $parentmtu);
+		if (get_interface_mtu($mtuhwif) != $parentmtu) {
+			pfSense_interface_mtu($mtuhwif, $parentmtu);
 		}
 
 		/* All vlans need to use the same mtu value as their parent. */
-		interface_vlan_adapt_mtu(link_interface_to_vlans($realhwif), $parentmtu);
-	} else if (substr($realif, 0, 4) == 'lagg') {
+		interface_vlan_adapt_mtu(link_interface_to_vlans($mtuhwif), $parentmtu);
+	} else if (substr($mtuif, 0, 4) == 'lagg') {
 		/* LAGG interface must be destroyed and re-created to change MTU */
-		if ($mtu != get_interface_mtu($realif)) {
+		if ($wantedmtu != get_interface_mtu($mtuif)) {
 			if (isset($config['laggs']['lagg']) && is_array($config['laggs']['lagg'])) {
 				foreach ($config['laggs']['lagg'] as $lagg) {
-					if ($lagg['laggif'] == $realif) {
+					if ($lagg['laggif'] == $mtuif) {
 						interface_lagg_configure($lagg);
 						break;
 					}
@@ -3215,14 +3313,14 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			}
 		}
 	} else {
-		if ($mtu != get_interface_mtu($realif)) {
-			pfSense_interface_mtu($realif, $mtu);
+		if ($wantedmtu != get_interface_mtu($mtuif)) {
+			pfSense_interface_mtu($mtuif, $wantedmtu);
 		}
 
 		/* This case is needed when the parent of vlans is being configured */
-		$vlans = link_interface_to_vlans($realif);
+		$vlans = link_interface_to_vlans($mtuif);
 		if (is_array($vlans)) {
-			interface_vlan_adapt_mtu($vlans, $mtu);
+			interface_vlan_adapt_mtu($vlans, $wantedmtu);
 		}
 		unset($vlans);
 	}
@@ -4522,6 +4620,20 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 					}
 				}
 				break;
+		}
+	}
+
+	if (empty($parents)) {
+		// Handle _vlans not assigned to an interface
+		if (strpos($realif, '_vlan') !== FALSE) {
+			if (is_array($config['vlans']['vlan'])) {
+				foreach ($config['vlans']['vlan'] as $vlanidx => $vlan) {
+					if ($realif == $vlan['vlanif']) {
+						$parents[0] = $vlan['if'];
+						break;
+					}
+				}
+			}
 		}
 	}
 

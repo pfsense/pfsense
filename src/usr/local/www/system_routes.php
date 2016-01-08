@@ -315,7 +315,7 @@ foreach ($a_routes as $i => $route):
 
 		</td>
 	</tr>
-<? endforeach?>
+<?php endforeach; ?>
 </table>
 
 <nav class="action-buttons">

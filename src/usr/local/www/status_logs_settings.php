@@ -89,7 +89,7 @@ $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 $pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
 $pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
-$pconfig['loglighttpd'] = !isset($config['syslog']['nologlighttpd']);
+$pconfig['lognginx'] = !isset($config['syslog']['nolognginx']);
 $pconfig['rawfilter'] = isset($config['syslog']['rawfilter']);
 $pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 $pconfig['disablelocallogging'] = isset($config['syslog']['disablelocallogging']);
@@ -163,12 +163,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
 		$oldnologbogons = isset($config['syslog']['nologbogons']);
 		$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
-		$oldnologlighttpd = isset($config['syslog']['nologlighttpd']);
+		$oldnolognginx = isset($config['syslog']['nolognginx']);
 		$config['syslog']['nologdefaultblock'] = $_POST['logdefaultblock'] ? false : true;
 		$config['syslog']['nologdefaultpass'] = $_POST['logdefaultpass'] ? true : false;
 		$config['syslog']['nologbogons'] = $_POST['logbogons'] ? false : true;
 		$config['syslog']['nologprivatenets'] = $_POST['logprivatenets'] ? false : true;
-		$config['syslog']['nologlighttpd'] = $_POST['loglighttpd'] ? false : true;
+		$config['syslog']['nolognginx'] = $_POST['lognginx'] ? false : true;
 		$config['syslog']['rawfilter'] = $_POST['rawfilter'] ? true : false;
 		if (is_numeric($_POST['filterdescriptions']) && $_POST['filterdescriptions'] > 0) {
 			$config['syslog']['filterdescriptions'] = $_POST['filterdescriptions'];
@@ -194,7 +194,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		$savemsg = get_std_save_message($retval);
 
-		if ($oldnologlighttpd !== isset($config['syslog']['nologlighttpd'])) {
+		if ($oldnolognginx !== isset($config['syslog']['nolognginx'])) {
 			ob_flush();
 			flush();
 			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
@@ -220,10 +220,13 @@ $remoteloghelp =	gettext("This option will allow the logging daemon to bind to a
 					gettext("If you pick a single IP, remote syslog servers must all be of that IP type. If you wish to mix IPv4 and IPv6 remote syslog servers, you must bind to all interfaces.") .
 					"<br /><br />" .
 					gettext("NOTE: If an IP address cannot be located on the chosen interface, the daemon will bind to all addresses.");
+
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else if ($savemsg) {
-	print_info_box($savemsg);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -299,11 +302,11 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'loglighttpd',
+	'lognginx',
 	'Web Server Log',
 	'Log errors from the web server process',
-	$pconfig['loglighttpd']
-))->setHelp('If this is checked, errors from the lighttpd web server process for the GUI or Captive Portal will appear in the main system log');
+	$pconfig['lognginx']
+))->setHelp('If this is checked, errors from the web server process for the GUI or Captive Portal will appear in the main system log');
 
 $section->addInput(new Form_Checkbox(
 	'rawfilter',

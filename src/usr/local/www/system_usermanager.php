@@ -542,14 +542,14 @@ foreach ($a_user as $i => $userent):
 </nav>
 </form>
 
-<div id="infoblock">
+<div class="infoblock">
 	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
 	"the webConfigurator can be assigned directly or inherited from group memberships. " .
 	"An icon that appears grey indicates that it is a system defined object. " .
 	"Some system object properties can be modified but they cannot be deleted.") .
 	'<br /><br />' .
 	gettext("Accounts added here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal."), info)?>
+	"such as OpenVPN, IPsec, and Captive Portal."), 'info')?>
 </div>
 
 <?php

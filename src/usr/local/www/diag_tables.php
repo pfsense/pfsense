@@ -82,7 +82,7 @@ if ($_REQUEST['delete']) {
 	exit;
 }
 
-if ($_POST['deleteall']) {
+if ($_POST['clearall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if (is_array($entries)) {
 		foreach ($entries as $entryA) {
@@ -90,6 +90,7 @@ if ($_POST['deleteall']) {
 			exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T delete " . escapeshellarg($entry), $delete);
 		}
 	}
+	unset($entries);
 }
 
 if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
@@ -122,22 +123,55 @@ exec("/sbin/pfctl -sT", $tables);
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
-$form = new Form('Show');
+$form = new Form(false);
 
 $section = new Form_Section('Table to display');
+$group = new Form_Group("Table");
 
-$section->addInput(new Form_Select(
+$group->add(new Form_Select(
 	'type',
-	'Table',
+	null,
 	$tablename,
 	array_combine($tables, $tables)
 ));
 
+if ($bogons || !empty($entries)) {
+	if ($bogons) {
+		$group->add(new Form_Button(
+			'Download',
+			'Update'
+		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+	} elseif (!empty($entries)) {
+		$group->add(new Form_Button(
+			'clearall',
+			'Clear Table'
+		))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+	}
+}
+
+$section->add($group);
 $form->add($section);
 print $form;
+
+if ($bogons || !empty($entries)) {
+?>
+<div>
+	<div class="infoblock_open">
+<?php
+	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
+	if ($last_updated != "") {
+		print_info_box(gettext("Table last updated on ") . $last_updated, 'info');
+	} else {
+		print_info_box(gettext("Date of last update of table is unknown"), 'info');
+	}
+?>
+	</div>
+</div>
+<?php
+}
 ?>
 
 <script type="text/javascript">
@@ -159,6 +193,11 @@ events.push(function() {
 				},
 		});
 	});
+
+	// Auto-submit the form on table selector change
+	$('#type').on('change', function() {
+        $('form').submit();
+    });
 });
 //]]>
 </script>
@@ -195,33 +234,5 @@ events.push(function() {
 <?php endif ?>
 
 <?php
-
-if ($bogons || !empty($entries)) {
-	$form = new Form;
-
-	$section = new Form_Section('Table Data');
-
-	if ($bogons) {
-		$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
-
-		$section->addInput(new Form_StaticText(
-			'Last update',
-			$last_updated
-		));
-
-		$section->addInput(new Form_Button(
-			'Download',
-			'Download'
-		))->setHelp('Download the latest bogon data')->addClass('btn-warning');
-	} elseif (!empty($entries)) {
-		$section->addInput(new Form_Button(
-			'deleteall',
-			'Clear Table'
-		))->setHelp('Clear all of the entries in this table')->addClass('btn-danger');
-	}
-
-	$form->add($section);
-	print $form;
-}
 
 include("foot.inc");

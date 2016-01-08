@@ -673,7 +673,7 @@ if ($act=="new" || $act=="edit"):
 		'IPv4 Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the IPv4 virtual network used for private communications between this client and the sercer ' .
+	))->setHelp('This is the IPv4 virtual network used for private communications between this client and the server ' .
 				'expressed using CIDR (eg. 10.0.8.0/24). The first network address will be assigned to ' .
 				'the client virtual interface.');
 

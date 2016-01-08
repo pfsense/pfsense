@@ -567,6 +567,7 @@ $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_fil
 display_top_tabs($tab_array, true);
 
 $form = new Form();
+$form->setMultipartEncoding();
 
 $section = new Form_Section('Captive Portal Configuration');
 
@@ -753,6 +754,7 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $group = new Form_Group('RADIUS protocol');
+$group->addClass("radiusproto");
 
 $group->add(new Form_Checkbox(
 	'radius_protocol',
@@ -1077,24 +1079,34 @@ $section->addInput(new Form_Input(
 			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />
 			 &lt;/form&gt;')->addClass('btn btn-info btn-sm');
 
+list($host) = explode(":", $_SERVER['HTTP_HOST']);
+$zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
+if ($pconfig['httpslogin_enable']) {
+	$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 8001);
+	$href = "https://{$host}:{$port}";
+} else {
+	$port = $pconfig['listenporthttp'] ? $pconfig['listenporthttp'] : ($zoneid + 8000);
+	$href = "http://{$host}:{$port}";
+}
+
 if ($pconfig['page']['htmltext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
 		$href
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
+	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=gethtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=gethtmlhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Restore default portal page',
-		'?zone=' . $cpzone . '&amp;act=delhtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'?zone=' . $cpzone . '&act=delhtmlhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 
 $section->addInput(new Form_Input(
@@ -1116,14 +1128,14 @@ if ($pconfig['page']['errtext']) {
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=geterrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=geterrhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Restore default error page',
-		'?zone=' . $cpzone . '&amp;act=delerrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'?zone=' . $cpzone . '&act=delerrhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 
 $section->addInput(new Form_Input(
@@ -1137,20 +1149,20 @@ if ($pconfig['page']['logouttext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
-		'?zone=' . $cpzone . '&amp;act=viewlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
+		'?zone=' . $cpzone . '&act=viewlogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=getlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=getlogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Restore default logout page',
-		'?zone=' . $cpzone . '&amp;act=dellogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'?zone=' . $cpzone . '&act=dellogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 $section->addInput(new Form_Input(
 	'zone',
@@ -1192,7 +1204,7 @@ events.push(function() {
 
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
-		hideCheckbox('radius_protocol', !($('input[name="auth_method"]:checked').val() == 'radius'));
+		hideClass("radiusproto", !($('input[name="auth_method"]:checked').val() == 'radius'));
 	}
 
 	function hideHTTPS() {

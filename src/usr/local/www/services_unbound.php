@@ -174,7 +174,6 @@ if ($_POST) {
 
 		if (isset($pconfig['system_domain_local_zone_type']) && !empty($pconfig['system_domain_local_zone_type'])) {
 			$display_system_domain_local_zone_type = $pconfig['system_domain_local_zone_type'];
-			$pconfig['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 		}
 
 		$test_output = array();

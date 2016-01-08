@@ -151,10 +151,6 @@ if ($_POST) {
 			$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
 		}
 
-		if (empty($pconfig['system_domain_local_zone_type'])) {
-			$input_errors[] = gettext("A System Domain Local-Zone Type must be selected.");
-		}
-
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
 			$input_errors[] = gettext("You must specify a valid port number.");
 		}
@@ -170,10 +166,6 @@ if ($_POST) {
 		if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
 			$display_outgoing_interface = $pconfig['outgoing_interface'];
 			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
-		}
-
-		if (isset($pconfig['system_domain_local_zone_type']) && !empty($pconfig['system_domain_local_zone_type'])) {
-			$display_system_domain_local_zone_type = $pconfig['system_domain_local_zone_type'];
 		}
 
 		$test_output = array();
@@ -200,7 +192,6 @@ if ($_POST) {
 
 		$pconfig['active_interface'] = $display_active_interface;
 		$pconfig['outgoing_interface'] = $display_outgoing_interface;
-		$pconfig['system_domain_local_zone_type'] = $display_system_domain_local_zone_type;
 		$pconfig['custom_options'] = $display_custom_options;
 	}
 }

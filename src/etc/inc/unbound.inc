@@ -606,7 +606,7 @@ function unbound_add_host_entries($cfgsubdir = "") {
 		$system_domain_local_zone_type = "transparent";
 	}
 
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" $system_domain_local_zone_type\n";
+	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
 
 	$hosts = read_hosts();
 	$added_ptr = array();

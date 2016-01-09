@@ -2081,10 +2081,11 @@ $section = new Form_Section('DHCP6 client configuration');
 $section->addClass('dhcp6');
 
 $section->addInput(new Form_Checkbox(
-	'dhcp6adv',
+	'adv_dhcp6_config_advanced',
 	'Advanced',
 	'Show DHCPv6 advanced options',
-	$pconfig['adv_dhcp6_config_advanced']
+	$pconfig['adv_dhcp6_config_advanced'],
+	'Selected'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -3509,7 +3510,7 @@ events.push(function() {
 
 	function show_dhcp6adv() {
 		var ovr = $('#adv_dhcp6_config_file_override').prop('checked');
-		var adv = $('#dhcp6adv').prop('checked');
+		var adv = $('#adv_dhcp6_config_advanced').prop('checked');
 
 		hideCheckbox('dhcp6usev4iface', ovr);
 		hideCheckbox('dhcp6prefixonly', ovr);
@@ -3631,7 +3632,7 @@ events.push(function() {
 		setDHCPoptions();
 	});
 
-	$('#dhcp6adv').click(function () {
+	$('#adv_dhcp6_config_advanced').click(function () {
 		show_dhcp6adv();
 	});
 

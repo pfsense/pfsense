@@ -181,6 +181,15 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\t\tAdvRouterAddr on;\n";
 				break;
 		}
+
+		if(is_numericint($dhcpv6ifconf['ravalidlifetime'])) {
+		  $radvdconf .= "\t\tAdvValidLifetime {$dhcpv6ifconf['ravalidlifetime']};\n";
+		}
+
+		if(is_numericint($dhcpv6ifconf['rapreferredlifetime'])) {
+		  $radvdconf .= "\t\tAdvPreferredLifetime {$dhcpv6ifconf['rapreferredlifetime']};\n";
+		}
+
 		$radvdconf .= "\t};\n";
 
 		if (is_array($dhcpv6ifconf['subnets']['item'])) {

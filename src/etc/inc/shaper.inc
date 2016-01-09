@@ -3847,13 +3847,13 @@ EOD;
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td>';
-				$form .= '<a type="button" class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
+				$form .= '<a class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
 				$form .= "</td></tr>";
 			}
 		}
 		$form .= "</tbody></table></div><br />";
 
-		$form .= '<a type="button" class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
+		$form .= '<a class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
 		$form .= gettext("Add another schedule") . "</a>";
 
 		return($form);
@@ -3953,7 +3953,7 @@ EOD;
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<font face="consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</font>');
+		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4257,7 +4257,7 @@ class dnqueue_class extends dummynet_class {
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<font face="consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</font>');
+		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 

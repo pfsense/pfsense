@@ -124,8 +124,8 @@ $filesystems = get_mounted_filesystems();
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
-			<br/><br/>
 			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+				<br /><br />
 				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
 			<?php endif; ?>
 			</td>
@@ -190,7 +190,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
 			<td>
-				<ul>
+				<ul style="margin-bottom:0px">
 				<?php
 					$dns_servers = get_dns_servers();
 					foreach($dns_servers as $dns) {

@@ -310,8 +310,10 @@ if(isset($args["--minimal"])) {
 	else if(file_exists("/etc/version.lastcommit"))
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
 	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+	$tar_options = '';
 } else
-	$files_to_copy = '--exclude .git .';
+	$files_to_copy = '.';
+	$tar_options = '--exclude .git';
 
 // Save new commit ID for later minimal file copies
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
@@ -382,10 +384,9 @@ if(isset($args["--diff"])) {
 	if (count($missing_files_array[1]) > 0)
 		$missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
 
-	# Remove files that are not to be included (copied).
-	$file_excludes = array('/".git"/');
-	$files_to_copy = preg_replace($file_excludes, "", $differentfiles . " " . $missing_files);
-	$files_to_copy = trim($files_to_copy);
+	# Files to be copied.
+	$files_to_copy = trim($different_files . " " . $missing_files);
+	$tar_options = '--exclude .git';
 
 	if(isset($args["--verbose"])) {
 		echo "===> Different Files: \n";
@@ -398,9 +399,9 @@ if(isset($args["--diff"])) {
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
 if(!empty($files_to_copy))
 	if(isset($args["--verbose"])) {
 		echo "===> Command: \n$command\n";

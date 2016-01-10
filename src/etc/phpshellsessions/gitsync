@@ -5,7 +5,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-require_once("/etc/phpshellsessions/gitsync.inc");
+require_once("gitsync.inc");
 
 $GIT_PKG = "git"; // Either "git" or the full package URL
 $GIT_BIN= "/usr/local/bin/git";

@@ -215,7 +215,8 @@ do {
 } while ($oldstepid != $stepid);
 
 $pgtitle = array(gettext("Wizard"), gettext($pkg['step'][0]['title']));	//First step is main title of the wizard in the breadcrumb
-$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'');		//Following steps are sub-level breadcrumbs.
+$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'&nbsp;');		//Following steps are sub-level breadcrumbs.
+$shortcut_section = "Wizard";
 include("head.inc");
 
 if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
@@ -448,7 +449,7 @@ $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
 
 <!-- Present the pfSense logo -->
-<div class="text-center"><p><a href="<?=$ip?>"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
+<div class="text-center"><p><a href="<?=$ip?>"><img src="logo-black.png" alt="logo-black" style="border:0px; vertical-align:middle" height="45" width="180" /></a></p></div><br /><br/>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">
@@ -536,7 +537,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'text',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
 			case "text":
@@ -557,7 +558,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$onchange = "";
 
 				if ($field['validate']) {
-					$onchange="FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")";
+					$onchange="FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")";
 				}
 
 				$section->addInput(new Form_Input(
@@ -647,7 +648,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'password',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] .")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] ."\")":"");
 
 				break;
 			case "certca_selection":
@@ -804,7 +805,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$value
 				))->setHelp($field['description'])
 				  ->setAttribute('rows', $field['rows'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
 			case "submit":

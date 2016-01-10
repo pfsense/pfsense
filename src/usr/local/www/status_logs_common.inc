@@ -753,7 +753,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries']]
+		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : "50"]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');

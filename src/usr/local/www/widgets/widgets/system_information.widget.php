@@ -190,7 +190,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
 			<td>
-				<ul>
+				<ul style="margin-bottom:0px">
 				<?php
 					$dns_servers = get_dns_servers();
 					foreach($dns_servers as $dns) {

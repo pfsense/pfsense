@@ -246,6 +246,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
+print_r(build_member_list());
 $form = new Form();
 
 $section = new Form_Section('LAGG Configuration');

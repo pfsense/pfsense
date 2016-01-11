@@ -666,6 +666,9 @@ $js_array = array();
 // Now loop through all of the fields defined in the XML
 foreach ($pkg['fields']['field'] as $pkga) {
 
+	$action = "";
+	$uid = "";
+
 	if ($pkga['type'] == "sorting") {
 		continue;
 	}
@@ -684,7 +687,19 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$form->add($section);
 			}
 
-			$section = new Form_Section(strip_tags($pkga['name']));
+			if (isset($pkga['collapse'])) {
+				$uid = uniqid("section");
+
+				$action = COLLAPSIBLE;
+
+				if ($pkga['collapse'] == "open") {
+					$action |= SEC_OPEN;
+				} else {
+					$action |= SEC_CLOSED;
+				}
+			}
+
+			$section = new Form_Section(strip_tags($pkga['name']), $uid, $action);
 		}
 
 		continue;

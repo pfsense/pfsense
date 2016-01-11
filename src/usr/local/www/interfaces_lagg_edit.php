@@ -253,7 +253,7 @@ $section = new Form_Section('LAGG Configuration');
 $memberslist = build_member_list();
 
 $section->addInput(new Form_Select(
-	'members[]',
+	'members',
 	'Parent Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],

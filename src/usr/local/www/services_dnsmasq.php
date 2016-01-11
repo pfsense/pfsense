@@ -341,7 +341,9 @@ $section->addInput(new Form_Textarea(
 
 $form->add($section);
 print($form);
-
+?>
+<div class="infoblock_open">
+<?php
 print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" service (if enabled) will automatically serve the LAN IP".
 	" address as a DNS server to DHCP clients so they will use".
@@ -354,6 +356,7 @@ print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" least one DNS server on the %sSystem:".
 	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), 'info');
 ?>
+</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
@@ -430,10 +433,12 @@ endforeach;
 	</a>
 </nav>
 
+<div class="infoblock_open">
 <?php
 print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
 				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info');
 ?>
+</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
@@ -494,8 +499,11 @@ events.push(function() {
 // });
 //]]>
 </script>
+<div class="infoblock_open">
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
 						" authoritative DNS server to be queried for that domain."), 'info');
-
+?>
+</div>
+<?php
 include("foot.inc");

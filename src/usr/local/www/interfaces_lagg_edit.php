@@ -221,8 +221,7 @@ if ($_POST) {
 function build_member_list() {
 	global $pconfig, $portlist, $realifchecklist;
 
-	$memberlist = array('list' => array(),
-						'selected' => array());
+	$memberlist = array('list' => array(), 'selected' => array());
 
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (array_key_exists($ifn, $realifchecklist)) {

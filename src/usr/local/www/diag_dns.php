@@ -247,11 +247,11 @@ if (!$input_errors && $type) {
 	<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
-<?
+<?php
 		foreach ((array)$resolved as $hostitem) {
 ?>
 			<li class="list-group-item"><?=$hostitem?></li>
-<?
+<?php
 			if ($hostitem != "") {
 				$found++;
 			}

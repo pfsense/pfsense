@@ -142,7 +142,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>
-			<?
+			<?php
 			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
 			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
 			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;

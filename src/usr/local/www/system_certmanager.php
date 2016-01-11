@@ -1104,7 +1104,7 @@ foreach ($a_cert as $i => $cert):
 		<?=gettext("Add")?>
 	</a>
 </nav>
-<?
+<?php
 	include("foot.inc");
 	exit;
 }

@@ -1270,6 +1270,7 @@ $nginx_config .= <<<EOD
 	server {
 		listen {$nginx_port};
 		listen [::]:{$nginx_port};
+		client_max_body_size 100m;
 
 EOD;
 

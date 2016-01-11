@@ -327,8 +327,7 @@ function build_spanport_list() {
 function build_member_list() {
 	global $pconfig, $ifacelist;
 
-	$memberlist = array('list' => array(),
-						'selected' => array());
+	$memberlist = array('list' => array(), 'selected' => array());
 
 	$members_array = explode(',', $pconfig['members']);
 	foreach ($ifacelist as $ifn => $ifinfo) {

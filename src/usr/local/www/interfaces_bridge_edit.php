@@ -431,7 +431,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['edge']);
 
 $section->addInput(new Form_Select(
-	'edge[]',
+	'edge',
 	'Edge Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -441,7 +441,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['autoedge']);
 
 $section->addInput(new Form_Select(
-	'autoedge[]',
+	'autoedge',
 	'Auto Edge Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -462,7 +462,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['autoptp']);
 
 $section->addInput(new Form_Select(
-	'autoptp[]',
+	'autoptp',
 	'Auto PTP Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -473,7 +473,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['static']);
 
 $section->addInput(new Form_Select(
-	'static[]',
+	'static',
 	'Sticky Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -484,7 +484,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['private']);
 
 $section->addInput(new Form_Select(
-	'private[]',
+	'privateprivate',
 	'Private Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -520,7 +520,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['stp']);
 
 $section->addInput(new Form_Select(
-	'stp[]',
+	'stp',
 	'STP Interfaces',
 	$edgelist['selected'],
 	$edgelist['list'],

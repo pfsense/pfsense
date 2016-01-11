@@ -109,28 +109,9 @@ if ($_POST) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 		}
 	}
-	$members = "";
-	$isfirst = 0;
-	/* item is a normal ifgroupentry type */
-	for ($x = 0; $x < 9999; $x++) {
-		if ($_POST["members{$x}"] <> "") {
-			if ($isfirst > 0) {
-				$members .= " ";
-			}
-			$members .= $_POST["members{$x}"];
-			$isfirst++;
-		}
-	}
 
 	if (isset($_POST['members'])) {
-		foreach ($_POST['members'] as $member) {
-			if ($isfirst > 0) {
-				$members .= " ";
-			}
-
-			$members .= $member[0];
-			$isfirst++;
-		}
+		$members = implode(" ", $_POST['members']);
 	} else {
 		$members = "";
 	}
@@ -259,7 +240,7 @@ $section->addInput(new Form_Input(
 	'here for your reference (not parsed)');
 
 $section->addInput(new Form_Select(
-	'members[]',
+	'members',
 	'Group Members',
 	explode(' ', $pconfig['members']),
 	$interface_list,

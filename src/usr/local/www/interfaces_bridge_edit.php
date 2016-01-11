@@ -342,7 +342,7 @@ function build_member_list() {
 }
 
 function build_port_list($selecton) {
-	global $pconfig, $ifacelist;
+	global $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
 

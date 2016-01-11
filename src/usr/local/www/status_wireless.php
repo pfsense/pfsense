@@ -242,10 +242,12 @@ display_top_tabs($tab_array);
 		</button>
 	</nav>
 </form>
-
+<div class="infoblock">
 <?php
 print_info_box('<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power saving mode<br />' .
 			   '<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), ' .
 			   'S = Short preamble, s = Short slot time', 'info');
-
+?>
+</div>
+<?php
 include("foot.inc");

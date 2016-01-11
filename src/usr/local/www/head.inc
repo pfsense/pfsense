@@ -499,14 +499,14 @@ echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 /* if upgrade in progress, alert user */
 if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' && platform_booting())) {
 	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
-		$info_text = sprintf(gettext("%s is booting then packages will be reinstalled in the background.<p>Do not make changes in the GUI until this is complete."), $g['product_name']);
+		$warning_text = sprintf(gettext("%s is booting then packages will be reinstalled in the background.<p>Do not make changes in the GUI until this is complete."), $g['product_name']);
 	} else {
 		$pgtitle = array(gettext("System"), gettext("Package Manager"));
-		$info_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
-		$info_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> and reinstall packages manually.");
+		$warning_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
+		$warning_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> and reinstall packages manually.");
 	}
 
-	print_info_box($info_text);
+	print_info_box($warning_text);
 }
 
 $pgtitle_output = true;

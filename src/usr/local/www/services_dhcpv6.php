@@ -887,14 +887,17 @@ $section->addInput(new Form_Input(
 ));
 
 print($form);
-
+?>
+<div class="infoblock_open">
+<?php
 print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' . gettext(' System: General setup') . '</a>' .
 			   gettext(' (or the ') . '<a href="services_dnsmasq.php"/>' . gettext('DNS forwarder') . '</a>, ' . gettext('if enabled) ') .
 			   gettext('will be assigned to clients by the DHCP server.') . '<br />' .
 			   gettext('The DHCP lease table can be viewed on the ') . '<a href="status_dhcpv6_leases.php">' .
-			   gettext('Status: DHCPv6 leases') . '</a>' . gettext(' page.'));
+			   gettext('Status: DHCPv6 leases') . '</a>' . gettext(' page.'),
+			   'info');
 ?>
-
+</div>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title">DHCPv6 Static Mappings for this interface.</h2></div>
 	<div class="panel-body table-responsive">

@@ -393,8 +393,10 @@ if ($_POST) {
 		$retval = filter_configure();
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
+			$class = 'success';
 		} else {
 			$savemsg = $retval;
+			$class = 'warning';
 		}
 	}
 }
@@ -406,7 +408,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();

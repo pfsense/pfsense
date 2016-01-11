@@ -1471,7 +1471,7 @@ if (!empty($advanced)) {
 print($form);
 
 if ($pkg['note'] != "") {
-	print_info_box($pkg['note']);
+	print_info_box($pkg['note'], 'info');
 }
 
 if ($pkg['custom_php_after_form_command']) {

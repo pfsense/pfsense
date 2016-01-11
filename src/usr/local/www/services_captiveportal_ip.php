@@ -124,7 +124,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

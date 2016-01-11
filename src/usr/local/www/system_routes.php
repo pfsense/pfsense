@@ -251,7 +251,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('staticroutes')) {
 	print_info_box_np(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));

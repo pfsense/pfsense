@@ -349,7 +349,7 @@ function build_port_list($selecton) {
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		$portlist['list'][$ifn] = $ifdescr;
 
-		if (stristr($selecton, $ifn)) {
+		if (in_array($ifn, explode(',', $selecton))) {
 			array_push($portlist['selected'], $ifn);
 		}
 	}

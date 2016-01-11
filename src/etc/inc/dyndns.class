@@ -439,7 +439,7 @@
 					break;
 				case 'dyns':
 					$needsIP = FALSE;
-					$server = "https://www.dyns.cx/postscript011.php";
+					$server = "http://www.dyns.net/postscript011.php";
 					$port = "";
 					if ($this->_dnsServer) {
 						$server = $this->_dnsServer;

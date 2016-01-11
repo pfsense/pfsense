@@ -186,13 +186,13 @@ if (!$rawfilter) {
 							<?=htmlspecialchars($filterent['time'])?>
 						</td>
 						<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
-							<? if ($filterent['action'] == "login") { ?>
+							<?php if ($filterent['action'] == "login") { ?>
 							<i class="fa fa-arrow-left" title="in"></i>
-							<? } else if ($filterent['action'] == "logout") { ?>
+							<?php } else if ($filterent['action'] == "logout") { ?>
 							<i class="fa fa-arrow-right" title="out"></i>
-							<? } else { ?>
+							<?php } else { ?>
 							<i><?=htmlspecialchars($filterent['action'])?></i>
-							<? } ?>
+							<?php } ?>
 						</td>
 						<td>
 							<?=htmlspecialchars($filterent['user'])?>

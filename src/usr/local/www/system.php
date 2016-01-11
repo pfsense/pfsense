@@ -406,7 +406,7 @@ for ($i=1; $i<5; $i++) {
 
 		$group->add(new Form_Select(
 			'dns' . $i . 'gw',
-			null,
+			'Gateway',
 			$pconfig['dns' . $i . 'gw'],
 			$options
 		))->setHelp(($i == 4) ? 'Gateway':null);;
@@ -427,7 +427,7 @@ $section->addInput(new Form_Checkbox(
 	'DNS server override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
-))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers'.
+))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
 	'the DNS forwarder). However, they will not be assigned to DHCP and PPTP '.
 	'VPN clients.'), $g['product_name']));
@@ -437,9 +437,9 @@ $section->addInput(new Form_Checkbox(
 	'Disable DNS forwarder',
 	'Do not use the DNS Forwarder as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
-))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS'.
+))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS '.
 	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
-	'listen on Localhost, so system can use the local DNS service to perform'.
+	'listen on Localhost, so system can use the local DNS service to perform '.
 	'lookups. Checking this box omits localhost from the list of DNS servers.');
 
 $form->add($section);

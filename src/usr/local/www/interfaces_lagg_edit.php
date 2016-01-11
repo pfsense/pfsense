@@ -228,7 +228,7 @@ function build_member_list() {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . '(' . $ifinfo['mac'] . ')';
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 
 		if (stristr($pconfig['members'], $ifn)) {
 			array_push($memberlist['selected'], $ifn);

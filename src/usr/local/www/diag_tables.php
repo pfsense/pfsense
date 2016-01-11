@@ -163,9 +163,9 @@ if ($bogons || !empty($entries)) {
 <?php
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 	if ($last_updated != "") {
-		print_info_box(gettext("Table last updated on ") . $last_updated, 'info');
+		print_info_box(gettext("Table last updated on ") . $last_updated, 'info', false);
 	} else {
-		print_info_box(gettext("Date of last update of table is unknown"), 'info');
+		print_info_box(gettext("Date of last update of table is unknown"), 'info', false);
 	}
 ?>
 	</div>

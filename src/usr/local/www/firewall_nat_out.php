@@ -670,7 +670,7 @@ endif;
 							'If disable outbound NAT is selected, no rules will be used.' . '<br />' .
 							'If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a ') .
 							'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a>' . gettext(" may also be required."),
-				   info);
+				   'info', false);
 ?>
 </div>
 

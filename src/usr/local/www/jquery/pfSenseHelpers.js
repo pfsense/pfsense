@@ -384,23 +384,36 @@ $('[id^=delete]').click(function(event) {
 		alert('You may not delete the last row!');
 });
 
-// "More information" handlers
+// "More information" handlers --------------------------------------------------------------------
 
 // If there is an infoblock, automatically add an info icon that toggles its display
-if($('.infoblock,.infoblock_open,#infoblock').length != 0) {
-	$('.infoblock,.infoblock_open,#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
+// If there is n=more than one infoblock on a page, each must use a unique class suffic. e.g.: infoblock_01 or infoblock_open_19
 
-	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
-	$('.close :last').remove();
-}
+$('[class^="infoblock"], [class^="infoblock_open"]').each(function() {
+	var classname = $(this).attr("class");
+	var sfx = '';
+
+	if (classname.indexOf("infoblock_open")) {
+		sfx = classname.substr(15);
+		$(this).hide();
+	} else {
+		sfx = "_" + classname.substr(10);
+	}
+
+	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx + '" title="More information"></i>');
+});
 
 // Hide information on page load
-$('.infoblock,#infoblock').hide();
+//$('.infoblock,#infoblock').hide();
 
 // Show the help on clicking the info icon
-$('#showinfo').click(function() {
-	$('.infoblock,.infoblock_open,#infoblock').toggle();
+$('[id^="showinfo"]').click(function() {
+	var id = $(this).attr("id");
+	var target = "infoblock" + id.substr(8); 
+
+	$('.' + target).toggle();
 });
+// ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
 $('tbody').each(function(){

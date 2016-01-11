@@ -158,7 +158,7 @@ $infomsg = sprintf(gettext('This is a summary of the last %1$s lines of the fire
 ?>
 <div>
 	<div class="infoblock_open">
-		<?=print_info_box($infomsg, 'info');?>
+		<?=print_info_box($infomsg, 'info', false);?>
 	</div>
 </div>
 

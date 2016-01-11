@@ -197,7 +197,7 @@ endif;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box($notestr)?>
+	<?=print_info_box($notestr, 'info', false)?>
 </div>
 
 <?php

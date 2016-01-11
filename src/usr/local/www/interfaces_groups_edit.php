@@ -100,11 +100,12 @@ if ($_POST) {
 			}
 		}
 	}
+
 	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match)) {
 		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
 	}
 
-	foreach ($iflist as $gif => $gdescr) {
+	foreach ($interface_list as $gif => $gdescr) {
 		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 		}

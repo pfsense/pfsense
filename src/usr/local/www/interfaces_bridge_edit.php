@@ -483,7 +483,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['private']);
 
 $section->addInput(new Form_Select(
-	'privateprivate',
+	'private',
 	'Private Ports',
 	$edgelist['selected'],
 	$edgelist['list'],

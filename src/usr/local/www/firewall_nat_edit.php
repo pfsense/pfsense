@@ -834,7 +834,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstbeginport_cust',
 	null,
-	'number',
+	'text',
 	is_numeric($pconfig['dstbeginport']) ? $pconfig['dstbeginport'] : null,
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -849,7 +849,7 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstendport_cust',
 	null,
-	'number',
+	'text',
 	is_numeric($pconfig['dstendport']) ? $pconfig['dstendport'] : null,
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -883,7 +883,7 @@ $group->setHelp('Specify the port on the machine with the IP address entered abo
 $group->add(new Form_Input(
 	'localbeginport_cust',
 	null,
-	'number',
+	'text',
 	is_numeric($pconfig['localbeginport']) ? $pconfig['localbeginport'] : null,
 	['min' => '1', 'max' => '65536']
 ))->setHelp('Custom');
@@ -1284,9 +1284,10 @@ events.push(function() {
 		source: addressarray
 	});
 
-	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, localbeginport_cust').autocomplete({
+	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, #localbeginport_cust').autocomplete({
 		source: customarray
 	});
+
 });
 //]]>
 </script>

@@ -238,7 +238,7 @@ if ($_POST) {
 
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
-		if (is_inrange_v4($_POST['ipaddr']), $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) { 
+		if (is_inrange_v4($_POST['ipaddr'], $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 

@@ -391,25 +391,19 @@ $('[id^=delete]').click(function(event) {
 
 $('[class^="infoblock"], [class^="infoblock_open"]').each(function() {
 	var classname = $(this).attr("class");
-	var sfx = '';
+	var sfx = classname.substr(9);
 
-	if (classname.indexOf("infoblock_open")) {
-		sfx = classname.substr(15);
+	if (classname.indexOf("infoblock_open") == -1) {
 		$(this).hide();
-	} else {
-		sfx = "_" + classname.substr(10);
 	}
 
 	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx + '" title="More information"></i>');
 });
 
-// Hide information on page load
-//$('.infoblock,#infoblock').hide();
-
 // Show the help on clicking the info icon
 $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
-	var target = "infoblock" + id.substr(8); 
+	var target = "infoblock" + id.substr(8);
 
 	$('.' + target).toggle();
 });

@@ -3098,7 +3098,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 			continue;
 		}
 
-		$ports = explode(',',$ppp['ports']);
+		$ports = explode(',', $ppp['ports']);
 		$mtu_wanted = 1500;
 		foreach ($ports as $pid => $port) {
 			if (get_real_interface($port) != $realif) {
@@ -3106,7 +3106,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 			}
 
 			if (!empty($ppp['mtu'])) {
-				$mtus = explode(',',$ppp['mtu']);
+				$mtus = explode(',', $ppp['mtu']);
 			} else {
 				$mtus == array();
 			}

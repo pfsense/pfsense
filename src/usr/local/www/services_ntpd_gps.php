@@ -380,7 +380,7 @@ $btnadvgps->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'GPS Initialization',
-	$btnadvgps . '&nbsp' . 'Show GPS Initialization commands'
+	$btnadvgps . '&nbsp;' . 'Show GPS Initialization commands'
 ));
 
 $section->addInput(new Form_Textarea(

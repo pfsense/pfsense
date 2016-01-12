@@ -391,14 +391,14 @@ $('[id^=delete]').click(function(event) {
 var sfx = 0;
 
 $('.infoblock').each(function() {
-	// If the block has hte class "blockopen" it is initiall open
+	// If the block has the class "blockopen" it is initially open
 	if (! $(this).hasClass("blockopen")) {
 		$(this).hide();
 	} else {
 		$(this).removeClass("blockopen");
 	}
 
-	// Add the "i" icon before the infoblock, incrementing hte icon id for each block (in case there are multiple infoblocks on a page)
+	// Add the "i" icon before the infoblock, incrementing the icon id for each block (in case there are multiple infoblocks on a page)
 	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
 	$(this).removeClass("infoblock");
 	$(this).addClass("infoblock" + sfx.toString());

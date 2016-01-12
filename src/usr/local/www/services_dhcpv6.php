@@ -888,7 +888,7 @@ $section->addInput(new Form_Input(
 
 print($form);
 ?>
-<div class="infoblock_open">
+<div class="infoblock blockopen">
 <?php
 print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' . gettext(' System: General setup') . '</a>' .
 			   gettext(' (or the ') . '<a href="services_dnsmasq.php"/>' . gettext('DNS forwarder') . '</a>, ' . gettext('if enabled) ') .

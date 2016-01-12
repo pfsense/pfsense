@@ -387,25 +387,29 @@ $('[id^=delete]').click(function(event) {
 // "More information" handlers --------------------------------------------------------------------
 
 // If there is an infoblock, automatically add an info icon that toggles its display
-// If there is n=more than one infoblock on a page, each must use a unique class suffic. e.g.: infoblock_01 or infoblock_open_19
 
-$('[class^="infoblock"], [class^="infoblock_open"]').each(function() {
-	var classname = $(this).attr("class");
-	var sfx = classname.substr(9);
+var sfx = 0;
 
-	if (classname.indexOf("infoblock_open") == -1) {
+$('.infoblock').each(function() {
+	// If the block has hte class "blockopen" it is initiall open
+	if (! $(this).hasClass("blockopen")) {
 		$(this).hide();
+	} else {
+		$(this).removeClass("blockopen");
 	}
 
-	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx + '" title="More information"></i>');
+	// Add the "i" icon before the infoblock, incrementing hte icon id for each block (in case there are multiple infoblocks on a page)
+	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
+	$(this).removeClass("infoblock");
+	$(this).addClass("infoblock" + sfx.toString());
+	sfx++;
 });
 
 // Show the help on clicking the info icon
 $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
-	var target = "infoblock" + id.substr(8);
 
-	$('.' + target).toggle();
+	$('.' + "infoblock" + id.substr(8)).toggle();
 });
 // ------------------------------------------------------------------------------------------------
 

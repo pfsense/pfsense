@@ -342,7 +342,7 @@ $section->addInput(new Form_Textarea(
 $form->add($section);
 print($form);
 ?>
-<div class="infoblock_open_01">
+<div class="infoblock blockopen">
 <?php
 print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
 	" service (if enabled) will automatically serve the LAN IP".
@@ -433,7 +433,7 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock_open_02">
+<div class="infoblock blockopen">
 <?php
 print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
 				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info', false);
@@ -487,19 +487,7 @@ endforeach;
 	</a>
 </nav>
 
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	// On clicking the "Apply" button, submit the main form, not the little form the button lives in
-//	$('[name=apply]').prop('type', 'button');
-
-//    $('[name=apply]').click(function() {
-//        $('form:last').submit();
-//    });
-// });
-//]]>
-</script>
-<div class="infoblock_open_03">
+<div class="infoblock blockopen">
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
 						" authoritative DNS server to be queried for that domain."), 'info', false);

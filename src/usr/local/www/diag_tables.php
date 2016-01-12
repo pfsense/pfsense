@@ -159,7 +159,7 @@ print $form;
 if ($bogons || !empty($entries)) {
 ?>
 <div>
-	<div class="infoblock_open">
+	<div class="infoblock blockopen">
 <?php
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 	if ($last_updated != "") {

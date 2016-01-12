@@ -212,7 +212,7 @@ else: ?>
 				</tbody>
 			</table>
 			<br />
-			<div class="infoblock_open">
+			<div class="infoblock blockopen">
 <?php
 	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info');
 ?>

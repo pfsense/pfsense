@@ -659,7 +659,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$group->add(new Form_Select(
 			'keylen_' . $algo,
 			null,
-			$keylen == $pconfig["keylen_".$algo],
+			$pconfig["keylen_".$algo],
 			['auto' => 'Auto'] + $list
 		));
 	}

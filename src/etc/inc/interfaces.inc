@@ -3108,7 +3108,7 @@ function interface_mtu_wanted_for_pppoe($realif) {
 			if (!empty($ppp['mtu'])) {
 				$mtus = explode(',', $ppp['mtu']);
 			} else {
-				$mtus == array();
+				$mtus = array();
 			}
 			// there is an MTU configured on the port in question
 			if (!empty($mtus[$pid])) {

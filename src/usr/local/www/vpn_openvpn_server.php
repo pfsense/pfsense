@@ -447,7 +447,7 @@ if ($_POST) {
 		if (($pconfig['serverbridge_dhcp_end'] && !is_ipaddrv4($pconfig['serverbridge_dhcp_end']))) {
 			$input_errors[] = gettext("Server Bridge DHCP End must be an IPv4 address.");
 		}
-		if (ip2ulong($pconfig['serverbridge_dhcp_start']) > ip2ulong($pconfig['serverbridge_dhcp_end'])) {
+		if (ip_greater_than($pconfig['serverbridge_dhcp_start'], $pconfig['serverbridge_dhcp_end'])) { 
 			$input_errors[] = gettext("The Server Bridge DHCP range is invalid (start higher than end).");
 		}
 	}

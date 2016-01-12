@@ -410,6 +410,7 @@ $('[id^="showinfo"]').click(function() {
 	var id = $(this).attr("id");
 
 	$('.' + "infoblock" + id.substr(8)).toggle();
+	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
 // ------------------------------------------------------------------------------------------------
 

@@ -147,8 +147,13 @@ if ($_POST) {
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface external");
-	$reqdfieldsn = array(gettext("Interface"), gettext("External subnet"));
+	if (isset($_POST['nobinat'])) {
+		$reqdfields = explode(" ", "interface");
+		$reqdfieldsn = array(gettext("Interface"));
+	} else {
+		$reqdfields = explode(" ", "interface external");
+		$reqdfieldsn = array(gettext("Interface"), gettext("External subnet"));
+	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
 		$reqdfields[] = "src";

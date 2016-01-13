@@ -400,7 +400,7 @@ foreach ($leases as $data):
 			if (!is_array($dhcpifconf['range'])) {
 				continue;
 			}
-			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) { 
+			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
 				$data['if'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
 				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];

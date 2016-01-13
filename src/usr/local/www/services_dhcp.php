@@ -401,7 +401,7 @@ if (isset($_POST['submit'])) {
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
 			$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);  
- 			$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);  
+			$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);  
 
 			if (ip_greater_than($_POST['range_from'], $_POST['range_to'])) {  
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");

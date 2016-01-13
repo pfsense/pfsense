@@ -242,7 +242,7 @@ events.push(function() {
 </div>
 
 <?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert">No entries exist in this table</div>
+	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
 <?php endif ?>
 
 <?php

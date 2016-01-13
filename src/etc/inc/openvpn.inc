@@ -1243,9 +1243,9 @@ function openvpn_resync_csc(& $settings) {
 							$csc_conf .= "ifconfig-push {$ip} " . gen_subnet_mask($mask) . "\n";
 						} else {
 							/* Because this is being pushed, the order from the client's point of view. */
-							$baselong = gen_subnetv4($ip, $mask);  
-							$serverip = ip_after($baselong, 1);  
-							$clientip = ip_after($baselong, 2);  
+							$baselong = gen_subnetv4($ip, $mask);
+							$serverip = ip_after($baselong, 1);
+							$clientip = ip_after($baselong, 2);
 							$csc_conf .= "ifconfig-push {$clientip} {$serverip}\n";
 						}
 					}

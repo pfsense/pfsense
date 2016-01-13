@@ -1863,22 +1863,27 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			/*
-			 * If reflection is enabled, turn on extra redirections
-			 * for this rule by adding other interfaces to an rdr rule.
-			 */
-			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
-			    ($rule['natreflection'] != "disable")) {
-				$nat_if_list = filter_get_reflection_interfaces($natif);
+			if (isset($rule['nobinat'])) {
+				$natrules .= "nobinat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
 			} else {
-				$nat_if_list = array();
-			}
+				/*
+				 * If reflection is enabled, turn on extra redirections
+				 * for this rule by adding other interfaces to an rdr rule.
+				 */
+				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
+				    ($rule['natreflection'] != "disable")) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
 
-			$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
-			if (!empty($nat_if_list)) {
-				$binat_if_list = implode(" ", $nat_if_list);
-				$binat_if_list = "{ {$binat_if_list} }";
-				$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
+
+				if (!empty($nat_if_list)) {
+					$binat_if_list = implode(" ", $nat_if_list);
+					$binat_if_list = "{ {$binat_if_list} }";
+					$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				}
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);

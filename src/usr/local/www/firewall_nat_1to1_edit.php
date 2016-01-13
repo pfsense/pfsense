@@ -103,6 +103,7 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_1to1[$id]) {
+	$pconfig['nobinat'] = isset($a_1to1[$id]['nobinat']);
 	$pconfig['disabled'] = isset($a_1to1[$id]['disabled']);
 
 	address_to_pconfig($a_1to1[$id]['source'], $pconfig['src'],
@@ -236,6 +237,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$natent = array();
 
+		$natent['nobinat'] = isset($_POST['nobinat']) ? true:false;
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['external'] = $_POST['external'];
 		$natent['descr'] = $_POST['descr'];
@@ -391,6 +393,13 @@ $form = new Form(new Form_Button(
 ));
 
 $section = new Form_Section('Edit NAT 1 to 1 entry');
+
+$section->addInput(new Form_Checkbox(
+	'nobinat',
+	'Negate',
+	'This rule will be excluded from the NAT',
+	$pconfig['nobinat']
+))->setHelp('Use this to exclude addresses from from a rule that follows this one');
 
 $section->addInput(new Form_Checkbox(
 	'nordr',

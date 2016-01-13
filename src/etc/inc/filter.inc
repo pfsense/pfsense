@@ -1864,7 +1864,7 @@ function filter_nat_rules_generate() {
 			$natif = $FilterIflist[$natif]['if'];
 
 			if (isset($rule['nobinat'])) {
-				$natrules .= "nobinat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
+				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
 			} else {
 				/*
 				 * If reflection is enabled, turn on extra redirections

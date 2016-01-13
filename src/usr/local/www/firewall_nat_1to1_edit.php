@@ -402,10 +402,10 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Use this to exclude addresses from a rule that follows this one');
 
 $section->addInput(new Form_Checkbox(
-	'nordr',
-	'No RDR (NOT)',
+	'disabled',
+	'No BINAT (NOT)',
 	'Disable redirection for traffic matching this rule',
-	$pconfig['nordr']
+	$pconfig['disabled']
 ))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
 
 $iflist = get_configured_interface_with_descr(false, true);

@@ -399,7 +399,7 @@ $section->addInput(new Form_Checkbox(
 	'Negate',
 	'This rule will be excluded from the NAT',
 	$pconfig['nobinat']
-))->setHelp('Use this to exclude addresses from from a rule that follows this one');
+))->setHelp('Use this to exclude addresses from a rule that follows this one');
 
 $section->addInput(new Form_Checkbox(
 	'nordr',

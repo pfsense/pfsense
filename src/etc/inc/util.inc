@@ -850,7 +850,7 @@ function subnetv4_expand($subnet) {
 /* find out whether two IPv4/IPv6 CIDR subnets overlap.
    Note: CIDR overlap implies one is identical or included so largest sn will be the same */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	if (is_ipaddrv4($ipaddr)) {
+	if (is_ipaddrv4($subnet1)) {
 		return check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2);
 	} else {
 		return check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2);

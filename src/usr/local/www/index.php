@@ -324,34 +324,17 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 		<div class="content">
 			<div class="row">
 <?php
-foreach ($widgets as $widgetname => $widgetconfig):
+
+// Build the Available Widgets table using a sorted copy of the $widgets array
+$available = $widgets;
+ksort($available);
+
+foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):
 ?>
 		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
-			</div>
-		</div>
-	</div>
-</div>
-
-<div class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title"><?=gettext("Welcome to the Dashboard page"); ?>!</h4>
-			</div>
-			<div class="modal-body">
-				<p>
-					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-					<?=gettext("To get started click the ");?> FIXME <?=gettext(" icon to add widgets.");?><br />
-					<br />
-					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
-				</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>

@@ -862,7 +862,7 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = max($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
-	$subnetv4_start2 = gen_subnetv4($subnet1, $largest_sn);
+	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
 	
 	if($subnetv4_start1 == '' || $subnetv4_start2 == '') {
 		// One or both args is not a valid IPv4 subnet
@@ -877,7 +877,7 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = max($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
-	$subnetv6_start2 = gen_subnetv6($subnet1, $largest_sn);
+	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
 	
 	if($subnetv6_start1 == '' || $subnetv6_start2 == '') {
 		// One or both args is not a valid IPv6 subnet

@@ -3562,6 +3562,10 @@ EOD;
 				continue;
 			}
 
+			if (isset($rule['separator']) {
+				continue;
+			}
+
 			if (!empty($rule['ipprotocol']) && $rule['ipprotocol'] == "inet46") {
 				if (isset($rule['floating'])) {
 					$rule['ipprotocol'] = "inet";

@@ -263,8 +263,6 @@ $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.ph
 display_top_tabs($tab_array);
 ?>
 
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
-
 <?php
 	if ($savemsg) {
 		print_info_box($savemsg, 'success');

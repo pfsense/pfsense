@@ -64,29 +64,118 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/gateways.inc");
 
-$a_gateways = return_gateways_array();
-$gateways_status = array();
-$gateways_status = return_gateways_status(true);
-
-if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-	$display_type = $config["widgets"]["gateways_widget"]["display_type"];
-} else {
-	$display_type = "gw_ip";
-}
-
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
-	global $a_gateways, $gateways_status;
+	compose_table_body_contents();
+	exit;
+}
 
-	print("<thead>\n");
-	print(	"<tr>\n");
-	print(		"<th>" . gettext("Name") . "</th>\n");
-	print(		"<th>RTT</th>\n");
-	print(		"<th>" . gettext("Loss") . "</th>\n");
-	print(		"<th>" . gettext("Status") . "</th>\n");
-	print(	"</tr>\n");
-	print("</thead>\n");
-	print("<tbody>\n");
+if ($_POST) {
+	if (!is_array($config["widgets"]["gateways_widget"])) {
+		$config["widgets"]["gateways_widget"] = array();
+	}
+	if (isset($_POST["display_type"])) {
+		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
+	}
+	write_config("Updated gateways widget settings via dashboard.");
+	header("Location: /");
+	exit(0);
+}
+?>
+
+<table class="table table-striped table-hover">
+	<thead>
+		<tr>
+			<th><?=gettext("Name")?></th>
+			<th>RTT</th>
+			<th><?=gettext("Loss")?></th>
+			<th><?=gettext("Status")?></th>
+		</tr>
+	</thead>
+	<tbody id="gwtblbody">
+<?PHP
+	compose_table_body_contents();
+?>
+	</tbody>
+</table>
+
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div>
+
+<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+<input type="hidden" id="gateways-config" name="gateways-config" value="" />
+
+<div id="gateways-settings" class="widgetconfigdiv" >
+	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
+		Display:
+			<?php
+				$display_type_gw_ip = "checked";
+				$display_type_monitor_ip = "";
+				$display_type_both_ip = "";
+				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
+					if ($selected_radio == "gw_ip") {
+						$display_type_gw_ip = "checked";
+						$display_type_monitor_ip = "";
+						$display_type_both_ip = "";
+					} else if ($selected_radio == "monitor_ip") {
+						$display_type_gw_ip = "";
+						$display_type_monitor_ip = "checked";
+						$display_type_both_ip = "";
+					} else if ($selected_radio == "both_ip") {
+						$display_type_gw_ip = "";
+						$display_type_monitor_ip = "";
+						$display_type_both_ip = "checked";
+					}
+				}
+			?>
+		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?php echo $display_type_gw_ip; ?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
+		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?php echo $display_type_monitor_ip; ?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
+		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?php echo $display_type_both_ip; ?> onchange="updateGatewayDisplays();" /> <span>Both</span>
+		<br /><br />
+		<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+	</form>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+
+	function get_gw_stats() {
+		var ajaxRequest;
+
+		ajaxRequest = $.ajax({
+				url: "/widgets/widgets/gateways.widget.php",
+				type: "post",
+				data: { ajax: "ajax"}
+			});
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#gwtblbody').html(response);
+			// and do it again
+			setTimeout(get_gw_stats, 5000);
+		});
+	}
+
+	events.push(function(){
+		get_gw_stats();
+	});
+//]]>
+</script>
+
+<?php
+function compose_table_body_contents() {
+	global $config;
+
+	$a_gateways = return_gateways_array();
+	$gateways_status = array();
+	$gateways_status = return_gateways_status(true);
+
+	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
+		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+	} else {
+		$display_type = "gw_ip";
+	}
 
 	foreach ($a_gateways as $gname => $gateway) {
 		print("<tr>\n");
@@ -168,89 +257,5 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		print('<td class="bg-' . $bgcolor . '">' . $online . "</td>\n");
 		print("</tr>\n");
 	}
-
-	print("</tbody>\n");
-
-	exit;
-}
-
-if ($_POST) {
-	if (!is_array($config["widgets"]["gateways_widget"])) {
-		$config["widgets"]["gateways_widget"] = array();
-	}
-	if (isset($_POST["display_type"])) {
-		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
-	}
-	write_config("Updated gateways widget settings via dashboard.");
-	header("Location: /");
-	exit(0);
 }
 ?>
-
-<table id="gwtbl" class="table table-striped table-hover">
-	<tr><td><?=gettext("Retrieving gateways data")?>&nbsp;<i class="fa fa-cog fa-spin"></i></td></tr>
-</table>
-
-<!-- close the body we're wrapped in and add a configuration-panel -->
-</div>
-
-<script type="text/javascript">
-//<![CDATA[
-
-	function get_gw_stats() {
-		var ajaxRequest;
-
-		ajaxRequest = $.ajax({
-				url: "/widgets/widgets/gateways.widget.php",
-				type: "post",
-				data: { ajax: "ajax"}
-			});
-
-		// Deal with the results of the above ajax call
-		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#gwtbl').html(response);
-			// and do it again
-			setTimeout(get_gw_stats, 5000);
-		});
-	}
-
-	events.push(function(){
-		get_gw_stats();
-	});
-//]]>
-</script>
-
-<div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
-<input type="hidden" id="gateways-config" name="gateways-config" value="" />
-
-<div id="gateways-settings" class="widgetconfigdiv" >
-	<form action="/widgets/widgets/gateways.widget.php" method="post" name="gateways_widget_iform" id="gateways_widget_iform">
-		Display:
-			<?php
-				$display_type_gw_ip = "checked";
-				$display_type_monitor_ip = "";
-				$display_type_both_ip = "";
-				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
-					if ($selected_radio == "gw_ip") {
-						$display_type_gw_ip = "checked";
-						$display_type_monitor_ip = "";
-						$display_type_both_ip = "";
-					} else if ($selected_radio == "monitor_ip") {
-						$display_type_gw_ip = "";
-						$display_type_monitor_ip = "checked";
-						$display_type_both_ip = "";
-					} else if ($selected_radio == "both_ip") {
-						$display_type_gw_ip = "";
-						$display_type_monitor_ip = "";
-						$display_type_both_ip = "checked";
-					}
-				}
-			?>
-		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?php echo $display_type_gw_ip; ?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
-		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?php echo $display_type_monitor_ip; ?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
-		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?php echo $display_type_both_ip; ?> onchange="updateGatewayDisplays();" /> <span>Both</span>
-		<br /><br />
-		<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
-	</form>
-</div>

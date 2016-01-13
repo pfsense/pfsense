@@ -742,9 +742,10 @@ function interface_lagg_configure($lagg) {
 		$smallermtu = 0;
 		foreach ($members as $member) {
 			$mtu = get_interface_mtu($member);
-			if ($smallermtu == 0 && !empty($mtu)) {
-				$smallermtu = $mtu;
-			} else if (!empty($mtu) && $mtu < $smallermtu) {
+			if (empty($mtu)) {
+				continue;
+			}
+			if ($smallermtu == 0 || $mtu < $smallermtu) {
 				$smallermtu = $mtu;
 			}
 		}

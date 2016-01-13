@@ -3562,7 +3562,8 @@ EOD;
 				continue;
 			}
 
-			if (isset($rule['separator']) {
+			// Webgui separator bar. Not a real rule
+			if (isset($rule['separator'])) {
 				continue;
 			}
 

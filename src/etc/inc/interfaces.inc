@@ -5589,7 +5589,9 @@ function interface_has_gateway($friendly) {
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
 				if ($tunnelif == "gif" || $tunnelif == "gre") {
-					return true;
+					if (find_interface_ip($ifname['if'])) {
+						return true;
+					}
 				}
 				if (!empty($ifname['gateway'])) {
 					return true;
@@ -5620,7 +5622,9 @@ function interface_has_gatewayv6($friendly) {
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
 				if ($tunnelif == "gif" || $tunnelif == "gre") {
-					return true;
+					if (find_interface_ipv6($ifname['if'])) {
+						return true;
+					}
 				}
 				if (!empty($ifname['gatewayv6'])) {
 					return true;

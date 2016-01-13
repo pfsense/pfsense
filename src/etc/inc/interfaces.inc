@@ -5074,8 +5074,8 @@ function interface_find_child_cfgmtu($realiface) {
 		}
 	}
 	if (is_array($gifs)) {
-		foreach ($gifs as $vlan) {
-			$ifass = convert_real_interface_to_friendly_interface_name($vlan['gifif']);
+		foreach ($gifs as $gif) {
+			$ifass = convert_real_interface_to_friendly_interface_name($gif['gifif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5087,8 +5087,8 @@ function interface_find_child_cfgmtu($realiface) {
 		}
 	}
 	if (is_array($gres)) {
-		foreach ($gres as $vlan) {
-			$ifass = convert_real_interface_to_friendly_interface_name($vlan['greif']);
+		foreach ($gres as $gre) {
+			$ifass = convert_real_interface_to_friendly_interface_name($gre['greif']);
 			if (empty($ifass)) {
 				continue;
 			}

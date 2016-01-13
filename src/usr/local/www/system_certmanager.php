@@ -994,18 +994,21 @@ print $form;
 	print($form);
 } else {
 ?>
-<div class="table-responsive">
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th><?=gettext("Name")?></th>
-			<th><?=gettext("Issuer")?></th>
-			<th><?=gettext("Distinguished Name")?></th>
-			<th><?=gettext("In Use")?></th>
-			<th class="col-sm-2"><?=gettext("Actions")?></th>
-		</tr>
-	</thead>
-	<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Certificates')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Issuer")?></th>
+					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("In Use")?></th>
+					<th class="col-sm-2"><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 foreach ($a_cert as $i => $cert):
 	$name = htmlspecialchars($cert['descr']);
@@ -1035,67 +1038,69 @@ foreach ($a_cert as $i => $cert):
 		$caname = $ca['descr'];
 	}
 ?>
-		<tr>
-			<td>
-				<?=$name?><br />
-				<?php if ($cert['type']): ?>
-					<i><?=$cert_types[$cert['type']]?></i><br />
-				<?php endif?>
-				<?php if (is_array($purpose)): ?>
-					CA: <b><?=$purpose['ca']?></b>, Server: <b><?=$purpose['server']?></b>
-				<?php endif?>
-			</td>
-			<td><?=$caname?></td>
-			<td>
-				<?=$subj?>
-				<?php if (!$cert['csr']): ?>
-				<br />
-				<small>
-					<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
-				</small>
-				<?php endif?>
-			</td>
-			<td>
-				<?php if (is_cert_revoked($cert)): ?>
-					<i>Revoked </i>
-				<?php endif?>
-				<?php if (is_webgui_cert($cert['refid'])): ?>
-					webConfigurator
-				<?php endif?>
-				<?php if (is_user_cert($cert['refid'])): ?>
-					User Cert
-				<?php endif?>
-				<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-					OpenVPN Server
-				<?php endif?>
-				<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-					OpenVPN Client
-				<?php endif?>
-				<?php if (is_ipsec_cert($cert['refid'])): ?>
-					IPsec Tunnel
-				<?php endif?>
-				<?php if (is_captiveportal_cert($cert['refid'])): ?>
-					Captive Portal
-				<?php endif?>
-			</td>
-			<td>
-				<?php if (!$cert['csr']): ?>
-					<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Certificate")?>"></a>
-					<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-					<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
-				<?php else: ?>
-					<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
-					<a href="system_certmanager.php?act=req&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
-					<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
-				<?php endif?>
-				<?php if (!cert_in_use($cert['refid'])): ?>
-					<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
-				<?php endif?>
-			</td>
-		</tr>
+				<tr>
+					<td>
+						<?=$name?><br />
+						<?php if ($cert['type']): ?>
+							<i><?=$cert_types[$cert['type']]?></i><br />
+						<?php endif?>
+						<?php if (is_array($purpose)): ?>
+							CA: <b><?=$purpose['ca']?></b>, Server: <b><?=$purpose['server']?></b>
+						<?php endif?>
+					</td>
+					<td><?=$caname?></td>
+					<td>
+						<?=$subj?>
+						<?php if (!$cert['csr']): ?>
+						<br />
+						<small>
+							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
+						</small>
+						<?php endif?>
+					</td>
+					<td>
+						<?php if (is_cert_revoked($cert)): ?>
+							<i>Revoked </i>
+						<?php endif?>
+						<?php if (is_webgui_cert($cert['refid'])): ?>
+							webConfigurator
+						<?php endif?>
+						<?php if (is_user_cert($cert['refid'])): ?>
+							User Cert
+						<?php endif?>
+						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
+							OpenVPN Server
+						<?php endif?>
+						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
+							OpenVPN Client
+						<?php endif?>
+						<?php if (is_ipsec_cert($cert['refid'])): ?>
+							IPsec Tunnel
+						<?php endif?>
+						<?php if (is_captiveportal_cert($cert['refid'])): ?>
+							Captive Portal
+						<?php endif?>
+					</td>
+					<td>
+						<?php if (!$cert['csr']): ?>
+							<a href="system_certmanager.php?act=exp&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Certificate")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+							<a href="system_certmanager.php?act=p12&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export P12")?>"> P12</a>
+						<?php else: ?>
+							<a href="system_certmanager.php?act=csr&amp;id=<?=$i?>" class="fa fa-pencil" title="<?=gettext("Update CSR")?>"></a>
+							<a href="system_certmanager.php?act=req&amp;id=<?=$i?>" class="fa fa-sign-in" title="<?=gettext("Export Request")?>"></a>
+							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
+						<?php endif?>
+						<?php if (!cert_in_use($cert['refid'])): ?>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
+						<?php endif?>
+					</td>
+				</tr>
 <?php endforeach; ?>
-	</tbody>
-</table>
+			</tbody>
+		</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

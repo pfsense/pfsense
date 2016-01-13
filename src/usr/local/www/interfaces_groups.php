@@ -103,23 +103,26 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext('Name');?></th>
-				<th><?=gettext('Members');?></th>
-				<th><?=gettext('Description');?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Interface groups')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext('Name');?></th>
+						<th><?=gettext('Members');?></th>
+						<th><?=gettext('Description');?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php foreach ($a_ifgroups as $i => $ifgroupentry): ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($ifgroupentry['ifname']); ?>
-				</td>
-				<td>
+					<tr>
+						<td>
+							<?=htmlspecialchars($ifgroupentry['ifname']); ?>
+						</td>
+						<td>
 <?php
 		$members_arr = explode(" ", $ifgroupentry['members']);
 		$iflist = get_configured_interface_with_descr(false, true);
@@ -135,18 +138,20 @@ display_top_tabs($tab_array);
 			echo '&hellip;';
 		}
 ?>
-				</td>
-				<td>
-					<?=htmlspecialchars($ifgroupentry['descr']);?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"></a>
-				</td>
-			</tr>
+						</td>
+						<td>
+							<?=htmlspecialchars($ifgroupentry['descr']);?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit group')?>"	href="interfaces_groups_edit.php?id=<?=$i; ?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete group')?>"	href="interfaces_groups.php?act=del&amp;id=<?=$i; ?>"></a>
+						</td>
+					</tr>
 <?php endforeach; ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

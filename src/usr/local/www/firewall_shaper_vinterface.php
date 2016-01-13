@@ -418,7 +418,6 @@ $tab_array[] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php")
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 ?>
-
 <div class="table-responsive">
 	<table class="table">
 		<tbody>

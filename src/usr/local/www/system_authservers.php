@@ -394,41 +394,46 @@ display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $input_errors))
 {
-	?>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext("Server Name")?></th>
-					<th><?=gettext("Type")?></th>
-					<th><?=gettext("Host Name")?></th>
-					<th><?=gettext("Actions")?></th>
-				</tr>
-			</thead>
-			<tbody>
-		<?php foreach($a_server as $i => $server): ?>
-				<tr>
-					<td><?=htmlspecialchars($server['name'])?></td>
-					<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
-					<td><?=htmlspecialchars($server['host'])?></td>
-					<td>
-					<?php if ($i < (count($a_server) - 1)): ?>
-						<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
-					<?php endif?>
-					</td>
-				</tr>
-		<?php endforeach; ?>
-			</tbody>
-		</table>
+?>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Authentication servers')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Server Name")?></th>
+						<th><?=gettext("Type")?></th>
+						<th><?=gettext("Host Name")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
+			<?php foreach($a_server as $i => $server): ?>
+					<tr>
+						<td><?=htmlspecialchars($server['name'])?></td>
+						<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
+						<td><?=htmlspecialchars($server['host'])?></td>
+						<td>
+						<?php if ($i < (count($a_server) - 1)): ?>
+							<a class="fa fa-pencil" title="<?=gettext("Edit server"); ?>" href="system_authservers.php?act=edit&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"  title="<?=gettext("Delete server")?>" href="system_authservers.php?act=del&amp;id=<?=$i?>"></a>
+						<?php endif?>
+						</td>
+					</tr>
+			<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
 	</div>
+</div>
 
-	<nav class="action-buttons">
-		<a href="?act=new" class="btn btn-success btn-sm">
-			<i class="fa fa-plus icon-embed-btn"></i>
-			<?=gettext("Add")?>
-		</a>
-	</nav>
+<nav class="action-buttons">
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 	include("foot.inc");
 	exit;

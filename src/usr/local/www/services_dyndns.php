@@ -92,7 +92,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Clients"));
 include("head.inc");
 
 if ($input_errors) {
@@ -105,25 +105,28 @@ $tab_array[] = array(gettext("RFC 2136"), false, "services_rfc2136.php");
 display_top_tabs($tab_array);
 ?>
 <form action="services_dyndns.php" method="post" name="iform" id="iform">
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
-			<thead>
-				<tr>
-					<th><?=gettext("Interface")?></th>
-					<th><?=gettext("Service")?></th>
-					<th><?=gettext("Hostname")?></th>
-					<th><?=gettext("Cached IP")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><?=gettext("Actions")?></th>
-				</tr>
-			</thead>
-			<tbody>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Dynamic DNS clients')?></h2></div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Interface")?></th>
+							<th><?=gettext("Service")?></th>
+							<th><?=gettext("Hostname")?></th>
+							<th><?=gettext("Cached IP")?></th>
+							<th><?=gettext("Description")?></th>
+							<th><?=gettext("Actions")?></th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
 $i = 0;
 foreach ($a_dyndns as $dyndns):
 ?>
-				<tr<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
-					<td>
+						<tr<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
+							<td>
 <?php
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdesc) {
@@ -142,8 +145,8 @@ foreach ($a_dyndns as $dyndns):
 		}
 	}
 ?>
-					</td>
-					<td>
+							</td>
+							<td>
 <?php
 	$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
 	$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
@@ -156,13 +159,13 @@ foreach ($a_dyndns as $dyndns):
 		}
 	}
 ?>
-					</td>
-					<td>
+							</td>
+							<td>
 <?php
 	print(htmlspecialchars($dyndns['host']));
 ?>
-					</td>
-					<td>
+							</td>
+							<td>
 <?php
 	$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
 	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}_v6.cache";
@@ -196,31 +199,33 @@ foreach ($a_dyndns as $dyndns):
 		print('N/A');
 	}
 ?>
-					</td>
-					<td>
+							</td>
+							<td>
 <?php
 	print(htmlspecialchars($dyndns['descr']));
 ?>
-					</td>
-					<td>
-						<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
+							</td>
+							<td>
+								<a class="fa fa-pencil" title="<?=gettext('Edit service')?>" href="services_dyndns_edit.php?id=<?=$i?>"></a>
 <?php if (isset($dyndns['enable'])) {
 ?>
-						<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-ban" title="<?=gettext('Disable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php } else {
 ?>
-						<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
+								<a class="fa fa-check-square-o" title="<?=gettext('Enable service')?>" href="?act=toggle&amp;id=<?=$i?>"></a>
 <?php }
 ?>
-						<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>
-					</td>
-				</tr>
+								<a class="fa fa-trash" title="<?=gettext('Delete service')?>"	href="services_dyndns.php?act=del&amp;id=<?=$i?>"></a>
+							</td>
+						</tr>
 <?php
 	$i++;
 	endforeach;
 ?>
-			</tbody>
-	  </table>
+					</tbody>
+			  </table>
+			</div>
+		</div>
 	</div>
 </form>
 

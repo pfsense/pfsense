@@ -264,18 +264,22 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
-<table class="table">
-<thead>
-	<tr>
-		<th></th>
-		<th><?=gettext("Network")?></th>
-		<th><?=gettext("Gateway")?></th>
-		<th><?=gettext("Interface")?></th>
-		<th><?=gettext("Description")?></th>
-		<th><?=gettext("Actions")?></th>
-	</tr>
-</thead>
-<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Static routes')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th><?=gettext("Network")?></th>
+						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 foreach ($a_routes as $i => $route):
 	if (isset($route['disabled'])) {
@@ -284,39 +288,42 @@ foreach ($a_routes as $i => $route):
 		$icon = 'fa-check-circle-o';
 	}
 ?>
-	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-		<td><i class="fa <?=$icon?>"></i></td>
-		<td>
-			<?=strtolower($route['network'])?>
-		</td>
-		<td>
-			<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
-		</td>
-		<td>
-			<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($route['descr'])?>
-		</td>
-		<td>
-			<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+					<td><i class="fa <?=$icon?>"></i></td>
+					<td>
+						<?=strtolower($route['network'])?>
+					</td>
+					<td>
+						<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
+					</td>
+					<td>
+						<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
+					</td>
+					<td>
+						<?=htmlspecialchars($route['descr'])?>
+					</td>
+					<td>
+						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 
-			<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 
-	<?php if (isset($route['disabled'])) {
-	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
-	<?php } else {
-	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
-	<?php }
-	?>
-			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+				<?php if (isset($route['disabled'])) {
+				?>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+				<?php } else {
+				?>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+				<?php }
+				?>
+						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 
-		</td>
-	</tr>
+					</td>
+				</tr>
 <?php endforeach; ?>
-</table>
+			</table>
+		</div>
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">

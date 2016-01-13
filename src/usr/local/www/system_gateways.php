@@ -264,19 +264,23 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
-<table class="table">
-<thead>
-	<tr>
-		<th></th>
-		<th><?=gettext("Name")?></th>
-		<th><?=gettext("Interface")?></th>
-		<th><?=gettext("Gateway")?></th>
-		<th><?=gettext("Monitor IP")?></th>
-		<th><?=gettext("Description")?></th>
-		<th><?=gettext("Actions")?></th>
-	</tr>
-</thead>
-<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped tabel-hover table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Monitor IP")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive'])) {
@@ -293,49 +297,52 @@ foreach ($a_gateways as $i => $gateway):
 		$title = '';
 	}
 ?>
-	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-		<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
-		<td>
-			<?=htmlspecialchars($gateway['name'])?>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+					<td>
+						<?=htmlspecialchars($gateway['name'])?>
 <?php
 			if (isset($gateway['defaultgw'])) {
 				echo " <strong>(default)</strong>";
 			}
 ?>
-		</td>
-		<td>
-			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['gateway'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['monitor'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['descr'])?>
-		</td>
-		<td>
-			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
-			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+						</td>
+						<td>
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['gateway'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['monitor'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['descr'])?>
+						</td>
+						<td>
+							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
 	<?php } else {
 	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 	<?php }
 	?>
-			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
 
 <?php endif; ?>
-		</td>
-	</tr>
+						</td>
+					</tr>
 <?php endforeach; ?>
-</tbody>
-</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">

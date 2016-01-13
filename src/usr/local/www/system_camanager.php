@@ -379,19 +379,22 @@ display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors)) {
 ?>
-<div class="table-responsive">
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th><?=gettext("Name")?></th>
-			<th><?=gettext("Internal")?></th>
-			<th><?=gettext("Issuer")?></th>
-			<th><?=gettext("Certificates")?></th>
-			<th><?=gettext("Distinguished Name")?></th>
-			<th><?=gettext("Actions")?></th>
-		</tr>
-	</thead>
-	<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Certificate Authorities')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+		<table class="table table-striped table-hover">
+			<thead>
+				<tr>
+					<th><?=gettext("Name")?></th>
+					<th><?=gettext("Internal")?></th>
+					<th><?=gettext("Issuer")?></th>
+					<th><?=gettext("Certificates")?></th>
+					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 foreach ($a_ca as $i => $ca):
 	$name = htmlspecialchars($ca['descr']);
@@ -427,30 +430,32 @@ foreach ($a_ca as $i => $ca):
 		}
 	}
 ?>
-		<tr>
-			<td><?=$name?></td>
-			<td><?=$internal?></td>
-			<td><i><?=$issuer_name?></i></td>
-			<td><?=$certcount?></td>
-			<td>
-				<?=$subj?>
-				<br />
-				<small>
-					<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
-				</small>
-			</td>
-			<td>
-				<a class="fa fa-pencil"	title="<?=gettext("Edit")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-				<a class="fa fa-sign-in"	title="<?=gettext("Export")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
-			<?php if ($ca['prv']): ?>
-				<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
-			<?php endif?>
-				<a class="fa fa-trash" 	title="<?=gettext("Delete")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
-			</td>
-		</tr>
+				<tr>
+					<td><?=$name?></td>
+					<td><?=$internal?></td>
+					<td><i><?=$issuer_name?></i></td>
+					<td><?=$certcount?></td>
+					<td>
+						<?=$subj?>
+						<br />
+						<small>
+							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
+						</small>
+					</td>
+					<td>
+						<a class="fa fa-pencil"	title="<?=gettext("Edit")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-sign-in"	title="<?=gettext("Export")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+					<?php if ($ca['prv']): ?>
+						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
+					<?php endif?>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+					</td>
+				</tr>
 <?php endforeach; ?>
-	</tbody>
-</table>
+			</tbody>
+		</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

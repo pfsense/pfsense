@@ -484,27 +484,30 @@ display_top_tabs($tab_array);
 if (!($act == "new" || $act == "edit" || $input_errors)) {
 ?>
 <form method="post">
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-		<thead>
-			<tr>
-				<th>&nbsp;</th>
-				<th><?=gettext("Username")?></th>
-				<th><?=gettext("Full name")?></th>
-				<th><?=gettext("Disabled")?></th>
-				<th><?=gettext("Groups")?></th>
-				<th>&nbsp;</th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Users')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th>&nbsp;</th>
+						<th><?=gettext("Username")?></th>
+						<th><?=gettext("Full name")?></th>
+						<th><?=gettext("Disabled")?></th>
+						<th><?=gettext("Groups")?></th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 foreach ($a_user as $i => $userent):
 	?>
-			<tr>
-				<td>
-					<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
-				</td>
-				<td>
+					<tr>
+						<td>
+							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
+						</td>
+						<td>
 <?php
 	if ($userent['scope'] != "user") {
 		$usrimg = 'eye-open';
@@ -512,22 +515,24 @@ foreach ($a_user as $i => $userent):
 		$usrimg = 'user';
 	}
 ?>
-					<i class="fa fa-<?=$usrimg?>"></i>
-					<?=htmlspecialchars($userent['name'])?>
-				</td>
-				<td><?=htmlspecialchars($userent['descr'])?></td>
-				<td><?php if (isset($userent['disabled'])) echo "*"?></td>
-				<td><?=implode(",", local_user_get_groups($userent))?></td>
-				<td>
-					<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
+							<i class="fa fa-<?=$usrimg?>"></i>
+							<?=htmlspecialchars($userent['name'])?>
+						</td>
+						<td><?=htmlspecialchars($userent['descr'])?></td>
+						<td><?php if (isset($userent['disabled'])) echo "*"?></td>
+						<td><?=implode(",", local_user_get_groups($userent))?></td>
+						<td>
+							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
 <?php if ($userent['scope'] != "system"): ?>
-					<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
-				</td>
-			</tr>
+						</td>
+					</tr>
 <?php endforeach; ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 <nav class="action-buttons">
 	<a href="?act=new" class="btn btn-sm btn-success">

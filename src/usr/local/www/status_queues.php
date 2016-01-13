@@ -211,19 +211,15 @@ else: ?>
 <?php endif; ?>
 				</tbody>
 			</table>
-		<br />
+			<br />
+			<div class="infoblock blockopen">
 <?php
-		print_info_box(gettext("Queue graphs take 5 seconds to sample data"));
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info');
 ?>
+			</div>
 		</div>
 	</div>
 <br/>
-
-<?php
-
-
-
-?>
 
 <script type="text/javascript">
 //<![CDATA[

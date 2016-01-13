@@ -238,10 +238,7 @@ if ($_POST) {
 
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
-		$dynsubnet_start = ip2ulong($config['dhcpd'][$if]['range']['from']);
-		$dynsubnet_end = ip2ulong($config['dhcpd'][$if]['range']['to']);
-		if ((ip2ulong($_POST['ipaddr']) >= $dynsubnet_start) &&
-		    (ip2ulong($_POST['ipaddr']) <= $dynsubnet_end)) {
+		if (is_inrange_v4($_POST['ipaddr'], $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) {
 			$input_errors[] = sprintf(gettext("The IP address must not be within the DHCP range for this interface."));
 		}
 

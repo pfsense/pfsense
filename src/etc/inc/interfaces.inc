@@ -3089,36 +3089,44 @@ function interface_mtu_wanted_for_pppoe($realif) {
 
 	$mtu = 0;
 
-	if (is_array($config['ppps']) && is_array($config['ppps']['ppp'])) {
-		foreach ($config['ppps']['ppp'] as $ppp) {
-			if ($ppp['type'] == "pppoe") {
-				$ports = explode(',',$ppp['ports']);
-				$mtu_wanted = 1500;
-				foreach ($ports as $pid => $port) {
-					if (get_real_interface($port) == $realif) {
-						// use the MTU configured on the interface ...
-						if (is_array($config['interfaces'])) {
-							foreach ($config['interfaces'] as $interface) {
-								if ($interface['if'] != $ppp['if']) {
-									continue;
-								}
-								if (!empty($interface['mtu'])) {
-									$mtu_wanted = intval($interface['mtu']) + 8;
-								}
-							}
-						}
-						// ... unless there is an MTU configured on the port in question
-						if (!empty($ppp['mtu'])) {
-							$mtus = explode(',',$ppp['mtu']);
-							if (!empty($mtus[$pid])) {
-								$mtu_wanted = intval($mtus[$pid]) + 8;
-							}
-						}
-						if ($mtu_wanted > $mtu) {
-							$mtu = $mtu_wanted;
-						}
+	if (!is_array($config['ppps']) || !is_array($config['ppps']['ppp'])) {
+		return $mtu;
+	}
+
+	foreach ($config['ppps']['ppp'] as $ppp) {
+		if ($ppp['type'] != "pppoe") {
+			continue;
+		}
+
+		$ports = explode(',', $ppp['ports']);
+		$mtu_wanted = 1500;
+		foreach ($ports as $pid => $port) {
+			if (get_real_interface($port) != $realif) {
+				continue;
+			}
+
+			if (!empty($ppp['mtu'])) {
+				$mtus = explode(',', $ppp['mtu']);
+			} else {
+				$mtus = array();
+			}
+			// there is an MTU configured on the port in question
+			if (!empty($mtus[$pid])) {
+				$mtu_wanted = intval($mtus[$pid]) + 8;
+			// or use the MTU configured on the interface ...
+			} elseif (is_array($config['interfaces'])) {
+				foreach ($config['interfaces'] as $interface) {
+					if ($interface['if'] == $ppp['if'] &&
+					    !empty($interface['mtu'])) {
+						$mtu_wanted = intval($interface['mtu']) + 8;
+						break;
 					}
 				}
+			}
+			unset($mtus);
+
+			if ($mtu_wanted > $mtu) {
+				$mtu = $mtu_wanted;
 			}
 		}
 	}

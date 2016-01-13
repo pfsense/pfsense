@@ -108,6 +108,7 @@ if ($g['disablecrashreporter'] != true) {
 
 		if ($x > 0) {
 			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+			$class = "warning";
 		}
 	}
 }
@@ -304,7 +305,7 @@ $pgtitle = array(gettext("Status"), gettext("Dashboard"));
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");

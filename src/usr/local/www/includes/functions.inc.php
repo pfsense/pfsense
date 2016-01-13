@@ -1,4 +1,4 @@
-<?
+<?php
 /*
 	functions.inc.php
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP

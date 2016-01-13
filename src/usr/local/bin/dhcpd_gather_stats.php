@@ -187,23 +187,21 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	}
 	$ifcfgip = get_interface_ip($dhcpif);
 	$ifcfgsn = get_interface_subnet($dhcpif);
-	$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-	$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
-	
-	$result['range'] = (ip2ulong($config['dhcpd'][$dhcpif]['range']['to'])) - (ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) ;
+	$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
+	$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
+
+	$result['range'] = (ip2ulong($config['dhcpd'][$dhcpif]['range']['to'])) - (ip2ulong($config['dhcpd'][$dhcpif]['range']['from']));
 	
 	foreach ($leases as $data) {
-		$lip = ip2ulong($data['ip']);
-		
 		if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
 			continue;
 		if ($data['act'] != "static") {
-			if (($lip >= ip2ulong($config['dhcpd'][$dhcpif]['range']['from'])) && ($lip <= ip2ulong($config['dhcpd'][$dhcpif]['range']['to']))) {
+			if (is_inrange_v4($data['ip'], $config['dhcpd'][$dhcpif]['range']['from'], $config['dhcpd'][$dhcpif]['range']['to'])) {
 					$result['active'] = $result['active'] + 1;
 			}
 		}
 		else {
-			if (($lip >= $subnet_start) && ($lip <= $subnet_end)) {
+			if (is_inrange_v4($data['ip'], $subnet_start, $subnet_end)) {
 				$result['static'] = $result['static'] + 1;
 			}
 		}

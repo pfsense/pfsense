@@ -174,7 +174,7 @@ if ($_POST) {
 	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $member) {
 			if (!does_interface_exist($member)) {
-				$input_errors[] = gettext("Interface supplied as member is invalid");
+				$input_errors[] = sprintf(gettext("Interface supplied as member (%s) is invalid"), $member);
 			}
 		}
 	} else if (!does_interface_exist($_POST['members'])) {
@@ -221,17 +221,16 @@ if ($_POST) {
 function build_member_list() {
 	global $pconfig, $portlist, $realifchecklist;
 
-	$memberlist = array('list' => array(),
-						'selected' => array());
+	$memberlist = array('list' => array(), 'selected' => array());
 
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (array_key_exists($ifn, $realifchecklist)) {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . '(' . $ifinfo['mac'] . ')';
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 
-		if (stristr($pconfig['members'], $ifn)) {
+		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);
 		}
 	}
@@ -254,7 +253,7 @@ $section = new Form_Section('LAGG Configuration');
 $memberslist = build_member_list();
 
 $section->addInput(new Form_Select(
-	'members[]',
+	'members',
 	'Parent Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],

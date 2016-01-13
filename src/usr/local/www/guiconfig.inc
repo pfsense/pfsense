@@ -298,7 +298,7 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning") {
+function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning",$showbtn = true) {
 	global $g;
 
 	if (strpos($class, "alert-") !== 0) {
@@ -319,7 +319,7 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 		}
 
 		$msg .= '</form>';
-	} else {
+	} else if ($showbtn) {
 		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
 	}
 
@@ -374,9 +374,8 @@ EOFnp;
 
 }
 
-function print_info_box($msg, $class="alert-warning") {
-	print_info_box_np($msg, null, null, false, $class);
-
+function print_info_box($msg, $class="alert-warning", $showbtn = true) {
+	print_info_box_np($msg, null, null, false, $class, $showbtn);
 }
 
 function get_std_save_message($ok) {

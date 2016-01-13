@@ -433,7 +433,7 @@ display_top_tabs($tab_array);
 <?php
 
 if ($dfltmsg) {
-	print_info_box($dn_default_shaper_msg);
+	print_info_box($dn_default_shaper_msg, 'info');
 } else {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {

@@ -124,8 +124,8 @@ $filesystems = get_mounted_filesystems();
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
 			<?php endif; ?>
-			<br/><br/>
 			<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
+				<br /><br />
 				<div id='updatestatus'><?php echo gettext("Obtaining update status "); ?><i class="fa fa-cog fa-spin"></i></div>
 			<?php endif; ?>
 			</td>
@@ -142,7 +142,7 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>
-			<?
+			<?php
 			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
 			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
 			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
@@ -190,7 +190,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
 			<td>
-				<ul>
+				<ul style="margin-bottom:0px">
 				<?php
 					$dns_servers = get_dns_servers();
 					foreach($dns_servers as $dns) {

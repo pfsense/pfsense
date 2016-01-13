@@ -116,7 +116,7 @@ $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_log
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 	$manage_log_active = false;
 }
 
@@ -480,7 +480,7 @@ if ($tcpcnt > 0) {
 <div class="infoblock">
 <?php
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
-					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR');
+					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR', 'info', false);
 ?>
 </div>
 <?php

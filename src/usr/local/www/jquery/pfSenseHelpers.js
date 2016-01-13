@@ -384,23 +384,35 @@ $('[id^=delete]').click(function(event) {
 		alert('You may not delete the last row!');
 });
 
-// "More information" handlers
+// "More information" handlers --------------------------------------------------------------------
 
 // If there is an infoblock, automatically add an info icon that toggles its display
-if($('.infoblock,.infoblock_open,#infoblock').length != 0) {
-	$('.infoblock,.infoblock_open,#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
 
-	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
-	$('.close :last').remove();
-}
+var sfx = 0;
 
-// Hide information on page load
-$('.infoblock,#infoblock').hide();
+$('.infoblock').each(function() {
+	// If the block has the class "blockopen" it is initially open
+	if (! $(this).hasClass("blockopen")) {
+		$(this).hide();
+	} else {
+		$(this).removeClass("blockopen");
+	}
+
+	// Add the "i" icon before the infoblock, incrementing the icon id for each block (in case there are multiple infoblocks on a page)
+	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
+	$(this).removeClass("infoblock");
+	$(this).addClass("infoblock" + sfx.toString());
+	sfx++;
+});
 
 // Show the help on clicking the info icon
-$('#showinfo').click(function() {
-	$('.infoblock,.infoblock_open,#infoblock').toggle();
+$('[id^="showinfo"]').click(function() {
+	var id = $(this).attr("id");
+
+	$('.' + "infoblock" + id.substr(8)).toggle();
+	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
+// ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
 $('tbody').each(function(){

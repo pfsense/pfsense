@@ -118,7 +118,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			<?php if (empty($ifinfo['ipaddr']) && empty($ifinfo['ipaddrv6'])): ?>
 				n/a
 			<?php else: ?>
-				<?=htmlspecialchars($ifinfo['ipaddr'])?><br />
+				<?=htmlspecialchars($ifinfo['ipaddr'])?>
+<?php
+				if (($ifinfo['ipaddr'] != "") && ($ifinfo['ipaddrv6'] != "")) {
+					print('<br />');
+				}
+?>
 				<?=htmlspecialchars($ifinfo['ipaddrv6'])?>
 			<?php endif; ?>
 		</td>

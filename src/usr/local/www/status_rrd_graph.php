@@ -613,7 +613,7 @@ if ($curcat == 'custom') {
 		$id = preg_replace('/\./', '_', $id);
 ?>
 		<div class="panel panel-default">
-			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+			<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 		</div>
 <?php
 
@@ -690,8 +690,8 @@ if ($curcat == 'custom') {
 				$start = $dates['start'];
 				$end = $dates['end'];
 ?>
-				<div class="panel panel-default" align="center">
-					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+				<div class="panel panel-default">
+					<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 				</div>
 <?php
 			}

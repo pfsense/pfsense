@@ -160,17 +160,12 @@ if ($_POST) {
 		if (!is_numericint($_POST['n_pppoe_units']) || $_POST['n_pppoe_units'] > 255) {
 			$input_errors[] = gettext("Number of PPPoE users must be between 1 and 255");
 		}
-		if (!is_numeric($_POST['pppoe_subnet']) ||
-		    $_POST['pppoe_subnet'] < 0 ||
-		    $_POST['pppoe_subnet'] > 32) {
+		if (!is_numericint($_POST['pppoe_subnet']) || $_POST['pppoe_subnet'] > 32) {
 			$input_errors[] = gettext("Subnet mask must be an interger between 0 and 32");
 		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
-		$subnet_start = ip2ulong($_POST['remoteip']);
-		$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
-		if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-		    (ip2ulong($_POST['localip']) <= $subnet_end)) {
+		if (is_inrange_v4($_POST['localip'], $_POST['remoteip'], ip_after($_POST['remoteip'], $_POST['pppoe_subnet'] - 1))) {
 			$input_errors[] = gettext("The specified server address lies in the remote subnet.");
 		}
 		if ($_POST['localip'] == get_interface_ip($_POST['interface'])) {

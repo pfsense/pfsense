@@ -459,7 +459,7 @@ foreach ($a_ca as $i => $ca):
 		<?=gettext("Add")?>
 	</a>
 </nav>
-<?
+<?php
 	include("foot.inc");
 	exit;
 }

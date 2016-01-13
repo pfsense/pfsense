@@ -516,7 +516,7 @@ function status_logs_build_if_list() {
 
 // Manage Log Section - Code
 function manage_log_code() {
-	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors;
+	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors, $savemsg;
 
 	$specific_log = basename($logfile) . '_settings';
 
@@ -649,11 +649,11 @@ function manage_log_code() {
 			write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
 			$retval = 0;
 			$retval = system_syslogd_start();
+			$savemsg = gettext("The changes have been applied successfully.");
 		} else {
 			write_config($desc = "Log Display Settings Saved (no backup, no sync): " . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+			$savemsg = '';
 		}
-
-		$savemsg = gettext("The changes have been applied successfully.");
 
 		// Specific to System General (main) Log
 		if ($logfile == 'system') {
@@ -753,7 +753,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries']]
+		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : "50"]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');

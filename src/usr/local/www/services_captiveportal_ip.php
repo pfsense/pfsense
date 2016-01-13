@@ -124,7 +124,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -194,7 +194,7 @@ endif;
 
 <div class="infoblock">
 <?=print_info_box(gettext('Adding allowed IP addresses will allow IP access to/from these addresses through the captive portal without being taken to the portal page. ' .
-					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'), 'info')?>
+					   'This can be used for a web server serving images for the portal page or a DNS server on another network, for example.'), 'info', false)?>
 </div>
 
 <?php

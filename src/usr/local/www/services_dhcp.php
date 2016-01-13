@@ -938,7 +938,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		'Failover peer IP',
 		$pconfig['failover_peerip']
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP.' .
-				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew < 20 (and the other is > 20).');
+				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
 }
 
 if (!is_numeric($pool) && !($act == "newpool")) {

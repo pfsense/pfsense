@@ -204,7 +204,7 @@ endforeach;
 <div class="infoblock">
 	<?=print_info_box(gettext('Remember to use these Gateway Groups in firewall rules in order to enable load balancing, failover, ' .
 						   'or policy-based routing.' . '<br />' .
-						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), 'info')?>
+						   'Without rules directing traffic into the Gateway Groups, they will not be used.'), 'info', false)?>
 </div>
 <?php
 include("foot.inc");

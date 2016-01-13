@@ -1177,14 +1177,14 @@ function system_generate_nginx_config($filename,
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
 			if (is_ipaddr($cpint_ip)) {
-				$cp_hostcheck .= "\t\tif (\$http_host = $cpint_ip) {\n";
+				$cp_hostcheck .= "\t\tif (\$http_host ~* $cpint_ip) {\n";
 				$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
 		if (isset($config['captiveportal'][$captive_portal]['httpsname']) &&
 		    is_domain($config['captiveportal'][$captive_portal]['httpsname'])) {
-			$cp_hostcheck .= "\t\tif (\$http_host = {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
+			$cp_hostcheck .= "\t\tif (\$http_host ~* {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
 			$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 			$cp_hostcheck .= "\t\t}\n";
 		}
@@ -1270,6 +1270,7 @@ $nginx_config .= <<<EOD
 	server {
 		listen {$nginx_port};
 		listen [::]:{$nginx_port};
+		client_max_body_size 200m;
 
 EOD;
 

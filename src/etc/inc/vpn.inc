@@ -1588,7 +1588,7 @@ function vpn_pppoe_configure(&$pppoecfg) {
 
 			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
 
-				$clientip = long2ip32(ip2long($pppoecfg['remoteip']) + $i);
+				$clientip = ip_after($pppoecfg['remoteip'], $i);
 
 				if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
 					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
@@ -1827,7 +1827,7 @@ EOD;
 
 			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
 
-				$clientip = long2ip32(ip2long($l2tpcfg['remoteip']) + $i);
+				$clientip = ip_after($l2tpcfg['remoteip'], $i);
 
 				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
 					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";

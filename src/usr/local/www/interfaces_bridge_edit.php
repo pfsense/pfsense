@@ -327,8 +327,7 @@ function build_spanport_list() {
 function build_member_list() {
 	global $pconfig, $ifacelist;
 
-	$memberlist = array('list' => array(),
-						'selected' => array());
+	$memberlist = array('list' => array(), 'selected' => array());
 
 	$members_array = explode(',', $pconfig['members']);
 	foreach ($ifacelist as $ifn => $ifinfo) {
@@ -343,14 +342,14 @@ function build_member_list() {
 }
 
 function build_port_list($selecton) {
-	global $pconfig, $ifacelist;
+	global $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		$portlist['list'][$ifn] = $ifdescr;
 
-		if (stristr($selecton, $ifn)) {
+		if (in_array($ifn, explode(',', $selecton))) {
 			array_push($portlist['selected'], $ifn);
 		}
 	}
@@ -431,7 +430,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['edge']);
 
 $section->addInput(new Form_Select(
-	'edge[]',
+	'edge',
 	'Edge Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -441,7 +440,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['autoedge']);
 
 $section->addInput(new Form_Select(
-	'autoedge[]',
+	'autoedge',
 	'Auto Edge Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -462,7 +461,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['autoptp']);
 
 $section->addInput(new Form_Select(
-	'autoptp[]',
+	'autoptp',
 	'Auto PTP Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -473,7 +472,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['static']);
 
 $section->addInput(new Form_Select(
-	'static[]',
+	'static',
 	'Sticky Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -484,7 +483,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['private']);
 
 $section->addInput(new Form_Select(
-	'private[]',
+	'private',
 	'Private Ports',
 	$edgelist['selected'],
 	$edgelist['list'],
@@ -520,7 +519,7 @@ $section->addInput(new Form_Select(
 $edgelist = build_port_list($pconfig['stp']);
 
 $section->addInput(new Form_Select(
-	'stp[]',
+	'stp',
 	'STP Interfaces',
 	$edgelist['selected'],
 	$edgelist['list'],

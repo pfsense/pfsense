@@ -550,7 +550,7 @@ endforeach;
 		" entered in %sSystem: General setup%s".
 		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-		" is checked."), '<a href="system.php">', '</a>'), 'info')?>
+		" is checked."), '<a href="system.php">', '</a>'), 'info', false)?>
 </div>
 
 <?php include("foot.inc");

@@ -483,8 +483,7 @@ $serport_count = 0;
 function build_link_list() {
 	global $pconfig, $portlist, $port_count, $serport_count;
 
-	$linklist = array('list'	 => array(),
-					  'selected' => array());
+	$linklist = array('list' => array(), 'selected' => array());
 
 	$selected_ports = array();
 

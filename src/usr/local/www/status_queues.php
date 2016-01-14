@@ -241,11 +241,9 @@ include("foot.inc");
 function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
-	$gray_value = 190 + $level * 10;
-	if ($gray_value > 250) {
-		$gray_value = 255;
-	}
-	$row_background = str_repeat(dechex($gray_value), 3);
+
+	$row_class="alert_default";
+
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {
@@ -262,7 +260,7 @@ function processQueues($altqstats, $level, $parent_name) {
 		}
 ?>
 		<tr class="<?php echo $parent_name?>">
-			<td style="background-color:#<?php echo $row_background?>;padding-left:<?php echo $level * 20?>px;">
+			<td class="<?=$row_class?>" style="padding-left:<?=$level * 20?>px;">
 				<?php
 				if (is_array($q['queue'])) {
 					echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a>";
@@ -276,17 +274,17 @@ function processQueues($altqstats, $level, $parent_name) {
 			</td>
 <?php
 		$cpuUsage = 0;
-		echo "<td style=\"background-color:#{$row_background}\" >";
-		echo "<div class=\"progress\" style=\"height: 7px;width: 170px;\">
-				<div class=\"progress-bar\" role=\"progressbar\" id=\"queue{$q['name']}{$q['interface']}width\" aria-valuenow=\"70\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: " . ($cpuUsage*100) . "%;\"></div>
-			  </div>";
-		echo "</td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}pps\" id=\"queue{$q['name']}{$q['interface']}pps\" value=\"(" . gettext("Loading") . ")\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:80px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}bps\" id=\"queue{$q['name']}{$q['interface']}bps\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}borrows\" id=\"queue{$q['name']}{$q['interface']}borrows\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}suspends\" id=\"queue{$q['name']}{$q['interface']}suspends\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}drops\" id=\"queue{$q['name']}{$q['interface']}drops\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}length\" id=\"queue{$q['name']}{$q['interface']}length\" value=\"\" /></td>";
+		print('<td class="' . $row_class . '">');
+		print('<div class="progress" style="height: 7px;width: 170px;">');
+		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;\"></div>');
+		print('	  </div>');
+		print('</td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:80px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'bps"      id="queue' . $q['name'] . $q['interface'] . 'bps"      value="" /></td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'borrows"  id="queue' . $q['name'] . $q['interface'] . 'borrows"  value="" /></td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'suspends" id="queue' . $q['name'] . $q['interface'] . 'suspends" value="" /></td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'drops"    id="queue' . $q['name'] . $q['interface'] . 'drops"    value="" /></td>');
+		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'length"   id="queue' . $q['name'] . $q['interface'] . 'length"   value="" /></td>');
 ?>
 		</tr>
 <?php

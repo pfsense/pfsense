@@ -811,11 +811,9 @@ function is_subnetoralias($subnet) {
 	}
 }
 
-/* Get number of addresses in an IPv4/IPv6 subnet.
-   optional arg $exact=true forces an error to be returned if it can't be represented exactly
-   
-   
-   
+/* Get number of addresses in an IPv4/IPv6 subnet (represented as a string)
+   optional $exact=true forces error (0) to be returned if it can't be represented exactly
+   Exact result not possible above PHP_MAX_INT which is about 2^31 addresses on x32 or 2^63 on x64
    Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
 function subnet_size($subnet, $exact=false) {
 	$parts = explode("/", $subnet);
@@ -829,11 +827,10 @@ function subnet_size($subnet, $exact=false) {
 	return 0;
 }
 
-/* Underlying function to get number of addresses in a subnet, given IP type and netmask size.
-   $exact=true forces detection of overflow, for huge subnets, and guarantees returned result is exact and an INT.
-   (Exact result not possible above PHP_MAX_INT which is about 2^31 on x32 or 2^63 on x64)
-   Hard to think where we need huge subnets in this way but detection by calling code is probably sensible to allow
-   Returns 0 for bad data or if result can't fit into INT and $exact=true is required */
+/* Get number of addresses in an IPv4/IPv6 subnet (represented numerically as IP type + bits)
+   optional $exact=true forces error (0) to be returned if it can't be represented exactly
+   Hard to think where we might need to count exactly a huge subnet but an overflow detection option is probably sensible
+   Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
 function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 	if (!is_numericint($bits)) {
 		return 0;

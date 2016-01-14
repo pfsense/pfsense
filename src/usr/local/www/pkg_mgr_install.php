@@ -600,7 +600,7 @@ function getLogsStatus() {
 				show_success();
 				repeat = false;
 				if (json.reboot_needed == "yes") {
-					$('#reboot_needed).val("yes");
+					$('#reboot_needed').val("yes");
 				}
 
 				$('form').submit();

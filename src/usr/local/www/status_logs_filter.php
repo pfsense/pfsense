@@ -183,9 +183,9 @@ if (!$rawfilter) {
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr class="text-nowrap">
-					<th><?=gettext("Act")?></th>
+					<th><?=gettext("Action")?></th>
 					<th><?=gettext("Time")?></th>
-					<th><?=gettext("IF")?></th>
+					<th><?=gettext("Interface")?></th>
 <?php
 	if ($config['syslog']['filterdescriptions'] === "1") {
 ?>
@@ -197,7 +197,7 @@ if (!$rawfilter) {
 ?>
 					<th><?=gettext("Source")?></th>
 					<th><?=gettext("Destination")?></th>
-					<th><?=gettext("Proto")?></th>
+					<th><?=gettext("Protocol")?></th>
 				</tr>
 			</thead>
 			<tbody>

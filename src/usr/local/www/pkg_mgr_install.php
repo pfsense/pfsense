@@ -247,7 +247,7 @@ if ($_POST) {
 if ($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
 	$firmwareversion = get_system_pkg_version();
-	$headline = gettext("System update") ;
+	$headline = gettext("System Update") ;
 }
 
 $tab_array = array();
@@ -310,7 +310,7 @@ if ($input_errors) {
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=$g['product_name']?> <?=gettext(" system update")?>
+				<?=$g['product_name']?> <?=gettext(" System Update")?>
 <?php
 			} else {
 ?>
@@ -347,7 +347,7 @@ if ($input_errors) {
 ?>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Confirm Upgrade")?>
+				<?=gettext("Confirm Update")?>
 			</label>
 			<div class="col-sm-10">
 				<input type="hidden" name="id" value="firmware" />

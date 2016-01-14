@@ -141,7 +141,7 @@ display_top_tabs($tab_array);
 				<thead>
 					<tr>
 					  <th><?=gettext("Interface"); ?></th>
-					  <th><?=gettext("Tag");?></td>
+					  <th><?=gettext("Tag");?></th>
 					  <th><?=gettext("QinQ members"); ?></th>
 					  <th><?=gettext("Description"); ?></th>
 					  <th></th>

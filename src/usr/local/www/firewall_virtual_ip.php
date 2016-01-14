@@ -296,7 +296,7 @@ display_top_tabs($tab_array);
 					<th><?=gettext("Interface")?></th>
 					<th><?=gettext("Type")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!--Buttons--></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>

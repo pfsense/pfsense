@@ -799,7 +799,7 @@ else:
 					<th><?=gettext("Protocol")?></th>
 					<th><?=gettext("Server")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!-- Buttons --></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 

@@ -1200,7 +1200,7 @@ else:
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!-- Buttons --></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 

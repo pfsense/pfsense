@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 	<input id="id" type="hidden" name="id" value=""/>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('VLAN interfaces')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('VLAN Interfaces')?></h2></div>
 		<div class="panel-body">
 			<div class="table-responsive">
 				<table class="table table-striped table-hover table-condensed">
@@ -141,7 +141,7 @@ display_top_tabs($tab_array);
 							<th><?=gettext('VLAN tag');?></th>
 							<th><?=gettext('Priority');?></th>
 							<th><?=gettext('Description');?></th>
-							<th></th>
+							<th><?=gettext('Actions');?></th>
 						</tr>
 					</thead>
 					<tbody>

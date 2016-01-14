@@ -261,7 +261,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Interface QinQ Edit');
+$section = new Form_Section('QinQ Configuration');
 
 $section->addInput(new Form_Select(
 	'if',

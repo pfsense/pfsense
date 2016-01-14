@@ -220,7 +220,7 @@ $tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
-$section = new Form_Section('Interface Group Edit');
+$section = new Form_Section('Interface Group Configuration');
 
 $section->addInput(new Form_Input(
 	'ifname',

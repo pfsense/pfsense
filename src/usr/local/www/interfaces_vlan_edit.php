@@ -208,7 +208,7 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Interface VLAN Edit');
+$section = new Form_Section('VLAN Configuration');
 
 $section->addInput(new Form_Select(
 	'if',

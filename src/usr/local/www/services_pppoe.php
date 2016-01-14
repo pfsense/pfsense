@@ -138,7 +138,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 				<th><?=gettext("Local IP")?></th>
 				<th><?=gettext("Number of users")?></th>
 				<th><?=gettext("Description")?></th>
-				<th><!-- Action buttons --></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 		<tbody>

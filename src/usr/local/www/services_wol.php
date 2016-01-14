@@ -200,7 +200,7 @@ print $form;
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("MAC address")?></th>
 						<th><?=gettext("Description")?></th>
-						<th></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>

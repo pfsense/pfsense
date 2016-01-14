@@ -811,15 +811,50 @@ function is_subnetoralias($subnet) {
 	}
 }
 
-function subnet_size($subnet) {
-	if (is_subnetv4($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (32 - $bits)));
-	} else if (is_subnetv6($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (128 - $bits)));
+/* Get number of addresses in an IPv4/IPv6 subnet.
+   optional arg $exact=true forces an error to be returned if it can't be represented exactly
+   
+   
+   
+   Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
+function subnet_size($subnet, $exact=false) {
+	$parts = explode("/", $subnet);
+	if (count($parts) == 2) {
+		if (is_ipaddrv4($ip)) {
+			return subnet_size_by_netmask(4, $bits, $exact);
+		} elseif (is_ipaddrv6($ip)) {
+			return subnet_size_by_netmask(6, $bits, $exact);
+		}
+	}
+	return 0;
+}
+
+/* Underlying function to get number of addresses in a subnet, given IP type and netmask size.
+   $exact=true forces detection of overflow, for huge subnets, and guarantees returned result is exact and an INT.
+   (Exact result not possible above PHP_MAX_INT which is about 2^31 on x32 or 2^63 on x64)
+   Hard to think where we need huge subnets in this way but detection by calling code is probably sensible to allow
+   Returns 0 for bad data or if result can't fit into INT and $exact=true is required */
+function subnet_size_by_netmask($iptype, $bits, $exact=false) {
+	if (!is_numericint($bits)) {
+		return 0;
+	} elseif ($iptype == 4 && $bits <= 32) {
+		$snsize = 32 - $bits;
+	} elseif ($iptype == 6 && $bits <= 128) {
+		$snsize = 128 - $bits;
 	} else {
 		return 0;
+	}
+
+	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
+	$result = 2 ** $snsize;
+	
+	if ($exact && !is_int($result)) {
+		//exact required but can't represent result exactly as an INT
+		return 0;
+	} else {
+		// result ok, will be an INT where possible (guaranteed up to 2^31 addresses on x32/x64) and a float for 'huge' subnets
+		return $result;
 	}
 }
 

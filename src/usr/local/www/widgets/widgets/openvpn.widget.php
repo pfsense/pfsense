@@ -133,7 +133,7 @@ $clients = openvpn_get_active_clients();
 					<td>
 						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style="cursor:pointer;"
 							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							title='Kill client connection from <?php echo $conn['remote_host']; ?>'>
+							title='Kill client connection from <?=$conn['remote_host'];?>'>
 						</i>
 					</td>
 				</tr>

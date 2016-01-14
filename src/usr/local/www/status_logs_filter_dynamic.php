@@ -451,7 +451,7 @@ function toggleListDescriptions() {
 								$icon_act = "fa-check text-success";
 							}
 ?>
-							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+							<i class="fa <?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>

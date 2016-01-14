@@ -152,7 +152,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("NanoBSD Boot Slice");?></th>
 			<td>
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?php echo $rw; ?>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?=$rw;?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
 				<br /><br />Next Boot:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>

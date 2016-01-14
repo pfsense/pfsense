@@ -3311,11 +3311,9 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			if ($wancfg['mtu'] > $parentmtu) {
 				log_error("There is a conflict on MTU between parent {$mtuhwif} and VLAN({$mtuif})");
 			}
-		} else {
-			$parentmtu = 0;
 		}
 
-		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $parentmtu);
+		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $wantedmtu);
 
 		if (get_interface_mtu($mtuhwif) != $parentmtu) {
 			pfSense_interface_mtu($mtuhwif, $parentmtu);

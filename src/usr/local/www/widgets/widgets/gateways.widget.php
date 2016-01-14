@@ -66,7 +66,7 @@ require_once("/usr/local/www/widgets/include/gateways.inc");
 
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
-	compose_table_body_contents();
+	print(compose_table_body_contents());
 	exit;
 }
 
@@ -94,7 +94,7 @@ if ($_POST) {
 	</thead>
 	<tbody id="gwtblbody">
 <?PHP
-	compose_table_body_contents();
+	print(compose_table_body_contents());
 ?>
 	</tbody>
 </table>
@@ -167,6 +167,8 @@ if ($_POST) {
 function compose_table_body_contents() {
 	global $config;
 
+	$rtnstr = '';
+
 	$a_gateways = return_gateways_array();
 	$gateways_status = array();
 	$gateways_status = return_gateways_status(true);
@@ -178,10 +180,10 @@ function compose_table_body_contents() {
 	}
 
 	foreach ($a_gateways as $gname => $gateway) {
-		print("<tr>\n");
-		print(	"<td>\n");
-		print(htmlspecialchars($gateway['name']) . "<br />");
-		print('<div id="gateway' . $counter . '" style="display:inline"><b>');
+		$rtnstr .= "<tr>\n";
+		$rtnstr .= 	"<td>\n";
+		$rtnstr .= htmlspecialchars($gateway['name']) . "<br />";
+		$rtnstr .= '<div id="gateway' . $counter . '" style="display:inline"><b>';
 
 		$monitor_address = "";
 		$monitor_address_disp = "";
@@ -217,15 +219,15 @@ function compose_table_body_contents() {
 			$monitor_address_disp = "";
 		}
 
-		print($if_gw . $monitor_address_disp);
+		$rtnstr .= $if_gw . $monitor_address_disp;
 		unset ($if_gw);
 		unset ($monitor_address);
 		unset ($monitor_address_disp);
 		$counter++;
 
-		print(		"</b>");
-		print(		"</div>\n");
-		print(	"</td>\n");
+		$rtnstr .= 		"</b>";
+		$rtnstr .= 		"</div>\n";
+		$rtnstr .= 	"</td>\n";
 
 		if ($gateways_status[$gname]) {
 			if (stristr($gateways_status[$gname]['status'], "force_down")) {
@@ -252,10 +254,11 @@ function compose_table_body_contents() {
 			$bgcolor = "info";  // lightblue
 		}
 
-		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n");
-		print(	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n");
-		print('<td class="bg-' . $bgcolor . '">' . $online . "</td>\n");
-		print("</tr>\n");
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n";
+		$rtnstr .= '<td class="bg-' . $bgcolor . '">' . $online . "</td>\n";
+		$rtnstr .= "</tr>\n";
 	}
+	return($rtnstr);
 }
 ?>

@@ -120,7 +120,7 @@ $tab_array[] = array(gettext("NPt"), true, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('NPt mappings')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('NPt Mappings')?></h2></div>
 	<div class="panel-body">
 		<div class="table responsive">
 			<form method="post">
@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext("External Prefix")?></th>
 						<th><?=gettext("Internal prefix")?></th>
 						<th><?=gettext("Description")?></th>
-						<th><!-- Buttons --></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody class="user-entries">
@@ -167,8 +167,8 @@ foreach ($a_npt as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
-							<a href="firewall_nat_npt_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext("Edit")?></a>
-							<a href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext("Delete")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit"); ?>" href="firewall_nat_npt_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete")?>" href="firewall_nat_npt.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php

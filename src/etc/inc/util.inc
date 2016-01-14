@@ -818,10 +818,10 @@ function is_subnetoralias($subnet) {
 function subnet_size($subnet, $exact=false) {
 	$parts = explode("/", $subnet);
 	if (count($parts) == 2) {
-		if (is_ipaddrv4($ip)) {
-			return subnet_size_by_netmask(4, $bits, $exact);
-		} elseif (is_ipaddrv6($ip)) {
-			return subnet_size_by_netmask(6, $bits, $exact);
+		if (is_ipaddrv4($parts[0])) {
+			return subnet_size_by_netmask(4, $parts[1], $exact);
+		} elseif (is_ipaddrv6($parts[0])) {
+			return subnet_size_by_netmask(6, $parts[1], $exact);
 		}
 	}
 	return 0;

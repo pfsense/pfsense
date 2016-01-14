@@ -142,7 +142,11 @@ if ($savemsg) {
 if ($diff) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?>
+		</h2>
+	</div>
 	<div class="panel-body table-responsive">
 	<!-- This table is left un-bootstrapped to maintain the original diff format output -->
 		<table style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;">

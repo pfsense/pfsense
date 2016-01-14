@@ -286,7 +286,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP response</h2></div>");
 
 		$tmpname = tempnam("/tmp", "");
 		$phpfile = fopen($tmpname, "w");

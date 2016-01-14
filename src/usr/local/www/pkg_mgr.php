@@ -169,12 +169,15 @@ $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.ph
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default" id="search-panel" style="display: none;">
-	<div class="panel-heading"><?=gettext('Search')?>
-		<span class="widget-heading-icon pull-right">
-			<a data-toggle="collapse" href="#search-panel_panel-body">
-				<i class="fa fa-plus-circle"></i>
-			</a>
-		</span>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
 	</div>
 	<div id="search-panel_panel-body" class="panel-body collapse in">
 		<div class="form-group">

@@ -487,7 +487,9 @@ function build_link_list() {
 
 	$selected_ports = array();
 
-	if ($pconfig['interfaces']) {
+	if (is_array($pconfig['interfaces'])) {
+		$selected_ports = $pconfig['interfaces'];
+	} elseif (!empty($pconfig['interfaces'])) {
 		$selected_ports = explode(',', $pconfig['interfaces']);
 	}
 

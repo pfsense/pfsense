@@ -373,7 +373,7 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if (empty($pconfig['dst'] || $pconfig['dst'] == "any")) {
+	if (empty($pconfig['dst']) || $pconfig['dst'] == "any") {
 		return('any');
 	}
 

@@ -297,7 +297,16 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext(ucfirst($curcat)." Graphs"));
+switch ($curcat) {
+	case "vpnusers":
+		$curcattext = "VPN Users";
+		break;
+	default:
+		$curcattext = ucfirst($curcat);
+		break;
+}
+
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext($curcattext . " Graphs"));
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {

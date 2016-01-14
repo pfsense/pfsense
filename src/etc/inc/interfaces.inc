@@ -737,19 +737,15 @@ function interface_lagg_configure($lagg) {
 
 	/* Check if MTU was defined for this lagg interface */
 	$lagg_mtu = interface_find_child_cfgmtu($laggif);
-	if ($lagg_mtu == 0) {
-		/* Calculate smaller mtu and enforce it */
-		$smallermtu = 0;
-		foreach ($members as $member) {
-			$mtu = get_interface_mtu($member);
-			if (empty($mtu)) {
-				continue;
-			}
-			if ($smallermtu == 0 || $mtu < $smallermtu) {
-				$smallermtu = $mtu;
+	if ($lagg_mtu == 0 &&
+	    is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $lagg['laggif'] &&
+			    !empty($tmpinterface['mtu'])) {
+				$lagg_mtu = $tmpinterface['mtu'];
+				break;
 			}
 		}
-		$lagg_mtu = $smallermtu;
 	}
 
 	/* Just in case anything is not working well */

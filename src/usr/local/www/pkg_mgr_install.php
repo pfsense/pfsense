@@ -131,9 +131,9 @@ if ($_REQUEST['ajax']) {
 				$code = str_replace("__RC=", "", $logline);
 
 				if (strpos($code, "REBOOT_AFTER") != false) {
-					$logline = gettext("Restart required") . "\n";
+					$statusarray['reboot_needed'] = "yes";
 				}
-				elseif ($code == 0) {
+				if ($code == 0) {
 					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";
@@ -399,6 +399,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="id" value="<?=htmlspecialchars($_POST['id'])?>" />
 	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
 	<input type="hidden" name="completed" value="true" />
+	<input type="hidden" name="reboot_needed" value="no" />
 
 	<div id="countdown" class="text-center"></div>
 
@@ -476,7 +477,7 @@ if ($_POST && ($_POST['completed'] != "true")) {
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
 if ($_POST && $_POST['completed'] == "true"):
-	if ($pkgid == 'firmware'):
+	if (($pkgid == 'firmware') && ($_POST['reboot_needed'] == "yes")):
 ?>
 <script>
 //<![CDATA[
@@ -598,6 +599,10 @@ function getLogsStatus() {
 			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
+				if (json.reboot_needed == "yes") {
+					$('#reboot_needed).val("yes");
+				}
+
 				$('form').submit();
 			}
 

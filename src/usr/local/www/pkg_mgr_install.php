@@ -129,10 +129,8 @@ if ($_REQUEST['ajax']) {
 			// Check for return codes and replace with suitable strings
 			if (strpos($logline, "_RC=") != false) {
 				$code = str_replace("__RC=", "", $logline);
+				$statusarray['reboot_needed'] = (strpos($code, "REBOOT_AFTER") == false) ? "no":"yes";
 
-				if (strpos($code, "REBOOT_AFTER") != false) {
-					$statusarray['reboot_needed'] = "yes";
-				}
 				if ($code == 0) {
 					$logline = gettext("Success") . "\n";
 				} else {
@@ -140,7 +138,7 @@ if ($_REQUEST['ajax']) {
 				}
 
 				$response .= $logline;
-				$statusarray = array('exitstatus' => $code);
+				$statusarray['exitstatus'] = $code;
 			} else {
 				$response .= htmlspecialchars($logline);
 			}
@@ -568,6 +566,8 @@ function getLogsStatus() {
 
 		json = jQuery.parseJSON(response);
 
+//		alert("JSON data: " + JSON.stringify(json));
+
 		if (json.log != "not ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
@@ -599,6 +599,7 @@ function getLogsStatus() {
 			if ((json.pid == "stopped") && (progress == 0) && (json.exitstatus == 0)) {
 				show_success();
 				repeat = false;
+
 				if (json.reboot_needed == "yes") {
 					$('#reboot_needed').val("yes");
 				}

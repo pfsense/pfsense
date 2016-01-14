@@ -127,12 +127,8 @@ if ($_REQUEST['ajax']) {
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if (strpos($logline, "__RC=") == 0) {
-				list($code, $reboot_after) = explode(" ", $logline);
-
-				$code = str_replace("__RC=", "", $code);
-				/* XXX: Implement a GUI timeout counter if (is_numericint($reboot_after)) */
-				$reboot_after = str_replace("__REBOOT_AFTER=", "", $reboot_after);
+			if (strpos($logline, "_RC=") != false) {
+				$code = str_replace("__RC=", "", $logline);
 
 				if ($code == 0) {
 					$logline = gettext("Success") . "\n";
@@ -655,6 +651,7 @@ events.push(function() {
 	// we only meed to re-populate the progress indicator and the status banner
 	if ("<?=$_POST['completed']?>" == "true") {
 		setProgress('progressbar', 100, false);
+		$('#progressbar').addClass("progress-bar-success");
 		show_success();
 		setTimeout(scrollToBottom, 200);
 	}

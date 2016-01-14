@@ -112,7 +112,7 @@ display_top_tabs($tab_array);
 					<?=htmlspecialchars($gateway['name']);?>
 				</td>
 				<td>
-					<?php echo lookup_gateway_ip_by_name($gname);?>
+					<?=lookup_gateway_ip_by_name($gname);?>
 				</td>
 				<td>
 <?php

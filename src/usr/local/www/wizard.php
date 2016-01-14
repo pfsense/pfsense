@@ -930,7 +930,7 @@ print($form);
 		$counter = 0;
 		foreach ($inputaliases as $alias) {
 ?>
-			$('#' + '<?php echo $alias; ?>').autocomplete({
+			$('#' + '<?=$alias;?>').autocomplete({
 				source: customarray
 			});
 <?php

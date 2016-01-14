@@ -188,7 +188,7 @@ if ($_REQUEST['updateme']) {
 		<?php if ($ntpq_counter == 0): ?>
 			<i>No active peers available</i>
 		<?php else: ?>
-			<?php echo $syncsource; ?>
+			<?=$syncsource;?>
 		<?php endif; ?>
 		</td>
 	</tr>
@@ -196,7 +196,7 @@ if ($_REQUEST['updateme']) {
 		<tr>
 			<th>Clock location</th>
 			<td>
-				<a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">
+				<a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
 				<?php
 				echo sprintf("%.5f", $gps_lat) . " " . $gps_la . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lo; ?>
 				</a>

@@ -262,8 +262,8 @@ if (ipsec_enabled()) {
 			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
 				<param name="id" value="graph" />
 				<param name="type" value="image/svg+xml" />
-				<param name="width" value="<?php echo $width; ?>" />
-				<param name="height" value="<?php echo $height; ?>" />
+				<param name="width" value="<?=$width;?>" />
+				<param name="height" value="<?=$height;?>" />
 				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 			</object>
 		</div>

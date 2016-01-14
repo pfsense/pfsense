@@ -743,18 +743,18 @@ events.push(function() {
 		$("[id^='address_subnet']").prop("disabled", disable_subnets);
 
 		// Set the help text to match the tab
-		var helparray = <?php echo json_encode($help); ?>;
+		var helparray = <?=json_encode($help);?>;
 		$('.helptext').html(helparray[tab]);
 
 		// Set the section heading by tab type
-		var sectionstr = <?php echo json_encode($section_str); ?>;
+		var sectionstr = <?=json_encode($section_str);?>;
 		$('.panel-title:last').text(sectionstr[tab]);
 
-		var buttonstr = <?php echo json_encode($btn_str); ?>;
+		var buttonstr = <?=json_encode($btn_str);?>;
 		$('.btn-success').prop('value', buttonstr[tab]);
 
 		// Set the input field label by tab
-		var labelstr = <?php echo json_encode($label_str); ?>;
+		var labelstr = <?=json_encode($label_str);?>;
 		$('.repeatable:first').find('label').text(labelstr[tab]);
 
 		// Hide and disable rows other than the first

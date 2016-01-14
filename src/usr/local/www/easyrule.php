@@ -101,7 +101,7 @@ if ($input_errors) {
 
 if ($message) { ?>
 <br />
-<?=gettext("Message"); ?>: <?php echo $message; ?>
+<?=gettext("Message"); ?>: <?=$message;?>
 <br />
 <?php } else { ?>
 <?=gettext("This is the Easy Rule status page, mainly used to display errors when adding rules. " .

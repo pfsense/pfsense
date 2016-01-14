@@ -158,7 +158,7 @@ include("head.inc"); ?>
 						<td><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
-							   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
 							<i class="fa fa-times"></i>

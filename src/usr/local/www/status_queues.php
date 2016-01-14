@@ -259,7 +259,7 @@ function processQueues($altqstats, $level, $parent_name) {
 			$prev_if = $q['interface'];
 		}
 ?>
-		<tr class="<?php echo $parent_name?>">
+		<tr class="<?=$parent_name;?>">
 			<td class="<?=$row_class?>" style="padding-left:<?=$level * 20?>px;">
 				<?php
 				if (is_array($q['queue'])) {

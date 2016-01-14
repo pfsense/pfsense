@@ -257,7 +257,7 @@ if ($_GET && $_GET['id'] == "firmware") {
 
 $tab_array = array();
 
-if ($firmwareupdate) {
+if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 	$pgtitle = array(gettext("System"), gettext("Update"), $headline);
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");

@@ -131,7 +131,13 @@ if ($_REQUEST['ajax']) {
 			if (strpos($logline, "__RC=") !== false) {
 				$code = explode(" ", $logline);
 				$rc = str_replace("__RC=", "", $code[0]);
-				$statusarray['reboot_needed'] = (strpos($code[1], "REBOOT_AFTER") === false) ? "no":"yes";
+
+				if (count($code) > 1 &&
+				    strpos($code[1], "REBOOT_AFTER") !== false) {
+					$statusarray['reboot_needed'] = "yes";
+				} else {
+					$statusarray['reboot_needed'] = "no";
+				}
 
 				if ($rc == 0) {
 					$logline = gettext("Success") . "\n";

@@ -224,7 +224,7 @@ if ($_POST) {
 		case 'reinstallall':
 			$headline = gettext("Reinstall all packages");
 		case 'reinstallpkg':
-			if ($_GET['from'] && $_GET['from']) {
+			if ($_GET['from'] && $_GET['to']) {
 				$headline = gettext("Upgrade package");
 			} else {
 				$headline = gettext("Reinstall package");
@@ -300,7 +300,7 @@ if ($input_errors) {
 ?>
 				<?=gettext("All packages will be reinstalled.");?>
 <?php
-			} else if ($_GET['from'] && $_GET['from']) {
+			} else if ($_GET['from'] && $_GET['to']) {
 ?>
 				Package: <b><?=$pkgname;?></b> will be upgraded from <b><?=$_GET['from']?></b> to <b><?=$_GET['to']?></b>.
 <?php

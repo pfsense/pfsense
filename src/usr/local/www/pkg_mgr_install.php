@@ -127,9 +127,9 @@ if ($_REQUEST['ajax']) {
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
-			if (strpos($logline, "_RC=") != false) {
+			if (strpos($logline, "_RC=") !== false) {
 				$code = str_replace("__RC=", "", $logline);
-				$statusarray['reboot_needed'] = (strpos($code, "REBOOT_AFTER") == false) ? "no":"yes";
+				$statusarray['reboot_needed'] = (strpos($code, "REBOOT_AFTER") === false) ? "no":"yes";
 
 				if ($code == 0) {
 					$logline = gettext("Success") . "\n";

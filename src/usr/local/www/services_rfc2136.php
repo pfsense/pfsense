@@ -104,18 +104,18 @@ if ($input_errors) {
 
 <form action="services_rfc2136.php" method="post" name="iform" id="iform">
 	<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('RFC2136 clients')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('RFC2136 Clients')?></h2></div>
 		<div class="panel-body">
 			<div class="table-responsive">
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
 						<tr>
-							<th><?=gettext("IF")?></th>
+							<th><?=gettext("Interface")?></th>
 							<th><?=gettext("Server")?></th>
 							<th><?=gettext("Hostname")?></th>
 							<th><?=gettext("Cached IP")?></th>
 							<th><?=gettext("Description")?></th>
-							<th></th>
+							<th><?=gettext("Actions")?></th>
 						</tr>
 					</thead>
 					<tbody>

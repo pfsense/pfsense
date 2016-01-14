@@ -133,7 +133,7 @@ $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
 $form = new Form(false);
 
-$section = new Form_Section('State filter');
+$section = new Form_Section('State filter', 'secfilter', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'filter',
@@ -162,17 +162,21 @@ if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST[
 $form->add($section);
 print $form;
 ?>
-<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
-	<thead>
-		<tr>
-			<th><?=gettext("Interface")?></th>
-			<th><?=gettext("Protocol")?></th>
-			<th><?=gettext("Source -> Router -> Destination")?></th>
-			<th><?=gettext("State")?></th>
-			<th></th> <!-- For the optional "Remove" button -->
-		</tr>
-	</thead>
-	<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("States")?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Source -> Router -> Destination")?></th>
+						<th><?=gettext("State")?></th>
+						<th></th> <!-- For the optional "Remove" button -->
+					</tr>
+				</thead>
+				<tbody>
 <?php
 	$row = 0;
 	/* get our states */
@@ -200,21 +204,24 @@ print $form;
 		$parts = explode(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 ?>
-		<tr>
-			<td><?= $iface ?></td>
-			<td><?= $proto ?></td>
-			<td><?= $info ?></td>
-			<td><?= $state ?></td>
+					<tr>
+						<td><?= $iface ?></td>
+						<td><?= $proto ?></td>
+						<td><?= $info ?></td>
+						<td><?= $state ?></td>
 
-			<td>
-				<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
-					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
-			</td>
-		</tr>
+						<td>
+							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
+								title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
+						</td>
+					</tr>
 <?php $row++; }
 ?>
-	</tbody>
-</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 <?php
 
 if ($row == 0) {

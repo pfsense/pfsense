@@ -123,22 +123,24 @@ if ($_REQUEST['ajax']) {
 	if ($logfile != FALSE) {
 		$resparray = array();
 		$statusarray = array();
+		$code = array();
 
 		// Log file is read a line at a time so that we can detect/modify certain entries
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
 			if (strpos($logline, "_RC=") !== false) {
-				$code = str_replace("__RC=", "", $logline);
-				$statusarray['reboot_needed'] = (strpos($code, "REBOOT_AFTER") === false) ? "no":"yes";
+				$code = explode(" ", $$logline);
+				$rc = str_replace("__RC=", "", $code[0]);
+				$statusarray['reboot_needed'] = (strpos($code[1], "REBOOT_AFTER") === false) ? "no":"yes";
 
-				if ($code == 0) {
+				if ($rc == 0) {
 					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";
 				}
 
 				$response .= $logline;
-				$statusarray['exitstatus'] = $code;
+				$statusarray['exitstatus'] = $rc;
 			} else {
 				$response .= htmlspecialchars($logline);
 			}

@@ -665,7 +665,7 @@ else :  // Not an 'add' or an 'edit'. Just the table of Override CSCs
 					<th><?=gettext("Disabled")?></th>
 					<th><?=gettext("Common Name")?></th>
 					<th><?=gettext("Description")?></th>
-					<th> <!-- Buttons --></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>

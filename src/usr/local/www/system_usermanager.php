@@ -496,7 +496,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 						<th><?=gettext("Full name")?></th>
 						<th><?=gettext("Disabled")?></th>
 						<th><?=gettext("Groups")?></th>
-						<th>&nbsp;</th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>

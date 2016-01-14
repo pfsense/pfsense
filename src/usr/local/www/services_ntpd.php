@@ -283,7 +283,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('NTP server configuration');
+$section = new Form_Section('NTP Server Configuration');
 
 $iflist = build_interface_list();
 

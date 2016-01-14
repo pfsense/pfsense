@@ -104,7 +104,7 @@ $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Interface groups')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Interface Groups')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">
@@ -113,7 +113,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Name');?></th>
 						<th><?=gettext('Members');?></th>
 						<th><?=gettext('Description');?></th>
-						<th></th>
+						<th><?=gettext('Actions');?></th>
 					</tr>
 				</thead>
 				<tbody>

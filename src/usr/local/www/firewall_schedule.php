@@ -126,7 +126,7 @@ if ($savemsg) {
 					<th><?=gettext("Name")?></th>
 					<th><?=gettext("Range: Date / Times / Name")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!--Buttons--></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>

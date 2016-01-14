@@ -550,7 +550,7 @@ $linkparamstr = gettext('Bandwidth is set only for MLPPP connections and when li
 
 $form = new Form();
 
-$section = new Form_Section('PPPs Configuration');
+$section = new Form_Section('PPP Configuration');
 
 $section->addInput(new Form_Select(
 	'type',

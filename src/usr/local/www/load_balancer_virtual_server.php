@@ -158,7 +158,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Pool'); ?></th>
 						<th><?=gettext('Fallback pool'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><!-- Action buttons --></th>
+						<th><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>

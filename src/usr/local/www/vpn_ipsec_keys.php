@@ -138,7 +138,7 @@ if (is_subsystem_dirty('ipsec')) {
 						<th><?=gettext("Identifier"); ?></th>
 						<th><?=gettext("Type"); ?></th>
 						<th><?=gettext("Pre-Shared Key"); ?></th>
-						<th></th>
+						<th><?=gettext("Actions"); ?></th>
 					</tr>
 				</thead>
 				<tbody>

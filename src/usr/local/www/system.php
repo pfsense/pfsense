@@ -371,7 +371,7 @@ $section->addInput(new Form_Input(
 	'local hosts not running mDNS.');
 $form->add($section);
 
-$section = new Form_Section('DNS server settings');
+$section = new Form_Section('DNS Server Settings');
 
 for ($i=1; $i<5; $i++) {
 //	if (!isset($pconfig['dns'.$i]))
@@ -424,7 +424,7 @@ for ($i=1; $i<5; $i++) {
 
 $section->addInput(new Form_Checkbox(
 	'dnsallowoverride',
-	'DNS server override',
+	'DNS Server Override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
 ))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers '.
@@ -434,7 +434,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'dnslocalhost',
-	'Disable DNS forwarder',
+	'Disable DNS Forwarder',
 	'Do not use the DNS Forwarder as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
 ))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS '.

@@ -140,7 +140,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Name')?></th>
 						<th><?=gettext('Type')?></th>
 						<th><?=gettext('Description')?></th>
-						<th><?=gettext('Action')?></th>
+						<th><?=gettext('Actions')?></th>
 					</tr>
 				</thead>
 				<tbody>

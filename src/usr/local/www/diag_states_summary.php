@@ -179,7 +179,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 						<tr>
 							<th ><?=gettext("IP");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
-							<th ><?=gettext("Proto");?></th>
+							<th ><?=gettext("Protocol");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
 							<th class="text-center"><?=gettext("Src Ports");?></th>
 							<th class="text-center"><?=gettext("Dst Ports");?></th>

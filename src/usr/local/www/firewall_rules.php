@@ -281,7 +281,7 @@ display_top_tabs($tab_array);
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
-						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
 						<th><?=gettext("Destination")?></th>

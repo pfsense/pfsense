@@ -406,12 +406,12 @@ function toggleListDescriptions() {
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr class="text-nowrap">
-						<th><?=gettext("Act")?></th>
+						<th><?=gettext("Action")?></th>
 						<th><?=gettext("Time")?></th>
-						<th><?=gettext("IF")?></th>
+						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Destination")?></th>
-						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Protocol")?></th>
 					</tr>
 				</thead>
 				<tbody id="filter-log-entries">

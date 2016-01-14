@@ -196,7 +196,7 @@ display_top_tabs($tab_array);
 						<th><!-- Checkbox --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("If")?></th>
-						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Src. addr")?></th>
 						<th><?=gettext("Src. ports")?></th>
 						<th><?=gettext("Dest. addr")?></th>

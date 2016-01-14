@@ -129,7 +129,7 @@ if ($_REQUEST['ajax']) {
 		while (($logline = fgets($logfile)) !== false) {
 			// Check for return codes and replace with suitable strings
 			if (strpos($logline, "__RC=") !== false) {
-				$code = explode(" ", $$logline);
+				$code = explode(" ", $logline);
 				$rc = str_replace("__RC=", "", $code[0]);
 				$statusarray['reboot_needed'] = (strpos($code[1], "REBOOT_AFTER") === false) ? "no":"yes";
 

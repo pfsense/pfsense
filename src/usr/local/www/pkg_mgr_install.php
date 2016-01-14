@@ -130,7 +130,10 @@ if ($_REQUEST['ajax']) {
 			if (strpos($logline, "_RC=") != false) {
 				$code = str_replace("__RC=", "", $logline);
 
-				if ($code == 0) {
+				if (strpos($code, "REBOOT_AFTER") != false) {
+					$logline = gettext("Restart required") . "\n";
+				}
+				elseif ($code == 0) {
 					$logline = gettext("Success") . "\n";
 				} else {
 					$logline = gettext("Failed") . "\n";

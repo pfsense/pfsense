@@ -165,7 +165,7 @@ print $form;
 <table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 	<thead>
 		<tr>
-			<th><?=gettext("Int")?></th>
+			<th><?=gettext("Interface")?></th>
 			<th><?=gettext("Protocol")?></th>
 			<th><?=gettext("Source -> Router -> Destination")?></th>
 			<th><?=gettext("State")?></th>

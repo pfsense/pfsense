@@ -93,7 +93,7 @@ if ($_POST) {
 		</tr>
 	</thead>
 	<tbody id="gwtblbody">
-<?PHP
+<?php
 	print(compose_table_body_contents());
 ?>
 	</tbody>

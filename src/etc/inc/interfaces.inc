@@ -3079,21 +3079,20 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 	foreach ($vlanifs as $vlan) {
 		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 		$pppoe_mtu = interface_mtu_wanted_for_pppoe($vlan['vlanif']);
-		if (!empty($assignedport)) {
-			if (!empty($config['interfaces'][$assignedport]['mtu'])) {
-				pfSense_interface_mtu($vlan['vlanif'], $config['interfaces'][$assignedport]['mtu']);
-			} else if ($pppoe_mtu != 0) {
-				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
-			} else {
-				if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
-					pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
-				}
-			}
+		$if_mtu = 0;
+		if (!empty($assignedport) &&
+		    !empty($config['interfaces'][$assignedport]['mtu'])) {
+			$if_mtu = $config['interfaces'][$assignedport]['mtu'];
 		} else {
-			if ($pppoe_mtu != 0) {
-				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
-			} else if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
-				pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
+			$if_mtu = ($pppoe_mtu != 0 ? $pppoe_mtu : $mtu);
+		}
+
+		if (get_interface_mtu($vlan['vlanif']) != $if_mtu) {
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if (substr($vlan['if'], 0, 4) == 'lagg') {
+				interface_vlan_configure($vlan);
+			} else {
+				pfSense_interface_mtu($vlan['vlanif'], $if_mtu);
 			}
 		}
 	}

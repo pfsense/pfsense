@@ -173,7 +173,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("NAT 1 to 1 mappings")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1 to 1 mappings")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>

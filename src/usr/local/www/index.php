@@ -313,12 +313,14 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 ?>
 
 <div class="panel panel-default" id="widget-available">
-	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
-		<span class="widget-heading-icon">
-			<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
-				<i class="fa fa-plus-circle"></i>
-			</a>
-		</span>
+	<div class="panel-heading">
+		<h2 class="panel-title"><?=gettext("Available Widgets"); ?>
+			<span class="widget-heading-icon">
+				<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
 	</div>
 	<div id="widget-available_panel-body" class="panel-body collapse out">
 		<div class="content">
@@ -390,19 +392,21 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 				?>
 					<div class="panel panel-default" id="widget-<?=$widgetname?>">
 					<div class="panel-heading">
-						<?=$wtitle?>
-						<span class="widget-heading-icon">
-							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
-								<i class="fa fa-wrench"></i>
-							</a>
-							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
-								<!--  actual icon is determined in css based on state of body -->
-								<i class="fa fa-plus-circle"></i>
-							</a>
-							<a data-toggle="close" href="#widget-<?=$widgetname?>">
-								<i class="fa fa-times-circle"></i>
-							</a>
-						</span>
+						<h2 class="panel-title">
+							<?=$wtitle?>
+							<span class="widget-heading-icon">
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
+									<i class="fa fa-wrench"></i>
+								</a>
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
+									<!--  actual icon is determined in css based on state of body -->
+									<i class="fa fa-plus-circle"></i>
+								</a>
+								<a data-toggle="close" href="#widget-<?=$widgetname?>">
+									<i class="fa fa-times-circle"></i>
+								</a>
+							</span>
+						</h2>
 					</div>
 					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
 						<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>

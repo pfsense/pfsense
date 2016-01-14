@@ -151,7 +151,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		}
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Unfortunately we have detected a programming bug.")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Unfortunately we have detected a programming bug.")?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<p>

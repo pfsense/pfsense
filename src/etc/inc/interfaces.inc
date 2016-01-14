@@ -3316,7 +3316,20 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $wantedmtu);
 
 		if (get_interface_mtu($mtuhwif) != $parentmtu) {
-			pfSense_interface_mtu($mtuhwif, $parentmtu);
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if (substr($mtuhwif, 0, 4) == 'lagg') {
+				if (isset($config['laggs']['lagg']) &&
+				    is_array($config['laggs']['lagg'])) {
+					foreach ($config['laggs']['lagg'] as $lagg) {
+						if ($lagg['laggif'] == $mtuhwif) {
+							interface_lagg_configure($lagg);
+							break;
+						}
+					}
+				}
+			} else {
+				pfSense_interface_mtu($mtuhwif, $parentmtu);
+			}
 		}
 
 		/* All vlans need to use the same mtu value as their parent. */

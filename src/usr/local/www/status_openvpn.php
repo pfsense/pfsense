@@ -253,10 +253,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -309,10 +309,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>

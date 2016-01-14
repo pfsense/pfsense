@@ -197,10 +197,10 @@ display_top_tabs($tab_array);
 						<th><!-- Rule type --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Protocol")?></th>
-						<th><?=gettext("Src. addr")?></th>
-						<th><?=gettext("Src. ports")?></th>
-						<th><?=gettext("Dest. addr")?></th>
-						<th><?=gettext("Dest. ports")?></th>
+						<th><?=gettext("Source Address")?></th>
+						<th><?=gettext("Source Ports")?></th>
+						<th><?=gettext("Dest. Address")?></th>
+						<th><?=gettext("Dest. Ports")?></th>
 						<th><?=gettext("NAT IP")?></th>
 						<th><?=gettext("NAT Ports")?></th>
 						<th><?=gettext("Description")?></th>

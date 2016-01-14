@@ -181,8 +181,8 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 							<th class="text-center"># <?=gettext("States");?></th>
 							<th ><?=gettext("Protocol");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
-							<th class="text-center"><?=gettext("Src Ports");?></th>
-							<th class="text-center"><?=gettext("Dst Ports");?></th>
+							<th class="text-center"><?=gettext("Source Ports");?></th>
+							<th class="text-center"><?=gettext("Dest. Ports");?></th>
 						</tr>
 					</thead>
 					<tbody>

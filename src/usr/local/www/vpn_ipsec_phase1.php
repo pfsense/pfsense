@@ -1106,6 +1106,7 @@ events.push(function() {
 });
 //]]>
 </script>
+</form>
 <?php
 
 include("foot.inc");

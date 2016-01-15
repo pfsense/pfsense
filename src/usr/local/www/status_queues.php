@@ -190,7 +190,7 @@ else: ?>
 					<tr>
 						<th><?=gettext("Queue"); ?></th>
 						<th><?=gettext("Statistics"); ?>
-							<select id="selStatistic">
+							<select id="selStatistic" class="form-control">
 								<option value="0">PPS</option>
 								<option value="1">Bandwidth</option>
 							</select>

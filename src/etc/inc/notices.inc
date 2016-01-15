@@ -297,8 +297,8 @@ function notify_via_smtp($message, $force = false) {
 		return;
 	}
 
-	/* Do NOT send the same message twice */
-	if (file_exists("/var/db/notices_lastmsg.txt")) {
+	/* Do NOT send the same message twice, except if $force is true */
+	if (!$force && file_exists("/var/db/notices_lastmsg.txt")) {
 		$lastmsg = trim(file_get_contents("/var/db/notices_lastmsg.txt"));
 		if ($lastmsg == $message) {
 			return;

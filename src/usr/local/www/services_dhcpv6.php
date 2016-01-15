@@ -949,7 +949,7 @@ events.push(function() {
 	function hideDDNS(hide) {
 		hideCheckbox('ddnsupdate', hide);
 		hideInput('ddnsdomain', hide);
-		hideInput('ddnsdomainprimary', hide);hideCheckbox
+		hideInput('ddnsdomainprimary', hide);
 		hideInput('ddnsdomainkeyname', hide);
 		hideInput('ddnsdomainkey', hide);
 	}

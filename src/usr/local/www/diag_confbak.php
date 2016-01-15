@@ -226,7 +226,7 @@ if (is_array($confvers)) {
 ?>
 
 <form action="diag_confbak.php" method="get">
-	<div class="table-resposive">
+	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 <?php
 if (is_array($confvers)):

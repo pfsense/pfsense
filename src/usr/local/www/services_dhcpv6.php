@@ -817,7 +817,10 @@ $form->add($section);
 $title = 'Show Additional BOOTP/DHCP Options';
 
 if (!$pconfig['numberoptions']) {
+	$noopts = true;
 	$pconfig['numberoptions']['item'] = array(0 => array('number' => "", 'value' => ""));
+} else {
+	$noopts = false;
 }
 
 $counter = 0;
@@ -826,6 +829,7 @@ $last = count($pconfig['numberoptions']['item']) - 1;
 foreach ($pconfig['numberoptions']['item'] as $item) {
 	$group = new Form_Group(null);
 	$group->addClass('repeatable');
+	$group->addClass('adnloptions');
 
 	$group->add(new Form_Input(
 		'number' . $counter,
@@ -858,7 +862,7 @@ $btnaddopt = new Form_Button(
 	'Add Option'
 );
 
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm')->addClass('adnloptions');
 
 $section->addInput($btnaddopt);
 
@@ -1004,7 +1008,7 @@ events.push(function() {
 
 	// Show additional  controls
 	$("#btnadnl").click(function() {
-		hideClass('adnlopt', false);
+		hideClass('adnloptions', false);
 		hideInput('btnaddopt', false);
 	});
 
@@ -1015,7 +1019,7 @@ events.push(function() {
 	hideInput('ldap', true);
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
-	hideClass('adnlopt', true);
+	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
 	hideInput('btnaddopt', true);
 });
 //]]>

@@ -139,6 +139,11 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
+$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
+display_top_tabs($tab_array);
+
 if ($diff) {
 ?>
 <div class="panel panel-default">
@@ -178,11 +183,6 @@ if ($diff) {
 </div>
 <?php
 }
-
-$tab_array = array();
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
-display_top_tabs($tab_array);
 
 $form = new Form(new Form_Button(
 	'Submit',

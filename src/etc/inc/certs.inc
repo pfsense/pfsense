@@ -692,6 +692,22 @@ function is_webgui_cert($certref) {
 	}
 }
 
+function is_package_cert($certref) {
+	$pluginparams = array();
+	$pluginparams['type'] = 'certificates';
+	$pluginparams['event'] = 'used_certificates';
+
+	$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+
+	/* Check if any package is using certificate */
+	foreach ($certificates_used_by_packages as $name => $package) {
+		if (is_array($package['certificatelist'][$certref]) &&
+		    isset($package['certificatelist'][$certref]) > 0) {
+			return true;
+		}
+	}
+}
+
 function is_captiveportal_cert($certref) {
 	global $config;
 	if (!is_array($config['captiveportal'])) {
@@ -706,12 +722,14 @@ function is_captiveportal_cert($certref) {
 }
 
 function cert_in_use($certref) {
+
 	return (is_webgui_cert($certref) ||
 		is_user_cert($certref) ||
 		is_openvpn_server_cert($certref) ||
 		is_openvpn_client_cert($certref) ||
 		is_ipsec_cert($certref) ||
-		is_captiveportal_cert($certref));
+		is_captiveportal_cert($certref) ||
+		is_package_cert($certref));
 }
 
 function crl_create(& $crl, $caref, $name, $serial = 0, $lifetime = 9999) {

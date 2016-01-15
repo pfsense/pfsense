@@ -18,12 +18,12 @@ class ntlm_sasl_client_class
 
 	Function Initialize(&$client)
 	{
-		if (!function_exists($function="mcrypt_encrypt") ||
-		    !function_exists($function="hash"))
+		if(!function_exists($function="mcrypt_encrypt")
+		|| !function_exists($function="mhash"))
 		{
 			$extensions=array(
 				"mcrypt_encrypt"=>"mcrypt",
-				"hash"=>"hash"
+				"mhash"=>"mhash"
 			);
 			$client->error="the extension ".$extensions[$function]." required by the NTLM SASL client class is not available in this PHP configuration";
 			return(0);
@@ -33,7 +33,7 @@ class ntlm_sasl_client_class
 
 	Function ASCIIToUnicode($ascii)
 	{
-		for ($unicode="",$a=0;$a<strlen($ascii);$a++)
+		for($unicode="",$a=0;$a<strlen($ascii);$a++)
 			$unicode.=substr($ascii,$a,1).chr(0);
 		return($unicode);
 	}
@@ -62,15 +62,15 @@ class ntlm_sasl_client_class
 	Function NTLMResponse($challenge,$password)
 	{
 		$unicode=$this->ASCIIToUnicode($password);
-		$md4=hash("md4", $unicode);
+		$md4=mhash(MHASH_MD4,$unicode);
 		$padded=$md4.str_repeat(chr(0),21-strlen($md4));
 		$iv_size=mcrypt_get_iv_size(MCRYPT_DES,MCRYPT_MODE_ECB);
 		$iv=mcrypt_create_iv($iv_size,MCRYPT_RAND);
-		for ($response="",$third=0;$third<21;$third+=7)
+		for($response="",$third=0;$third<21;$third+=7)
 		{
-			for ($packed="",$p=$third;$p<$third+7;$p++)
-			     $packed.=str_pad(decbin(ord(substr($padded,$p,1))),8,"0",STR_PAD_LEFT);
-			for ($key="",$p=0;$p<strlen($packed);$p+=7)
+			for($packed="",$p=$third;$p<$third+7;$p++)
+				$packed.=str_pad(decbin(ord(substr($padded,$p,1))),8,"0",STR_PAD_LEFT);
+			for($key="",$p=0;$p<strlen($packed);$p+=7)
 			{
 				$s=substr($packed,$p,7);
 				$b=$s.((substr_count($s,"1") % 2) ? "0" : "1");
@@ -134,7 +134,7 @@ class ntlm_sasl_client_class
 
 	Function Start(&$client, &$message, &$interactions)
 	{
-		if ($this->state!=SASL_NTLM_STATE_START)
+		if($this->state!=SASL_NTLM_STATE_START)
 		{
 			$client->error="NTLM authentication state is not at the start";
 			return(SASL_FAIL);
@@ -147,7 +147,7 @@ class ntlm_sasl_client_class
 		);
 		$defaults=array();
 		$status=$client->GetCredentials($this->credentials,$defaults,$interactions);
-		if ($status==SASL_CONTINUE)
+		if($status==SASL_CONTINUE)
 			$this->state=SASL_NTLM_STATE_IDENTIFY_DOMAIN;
 		Unset($message);
 		return($status);
@@ -155,7 +155,7 @@ class ntlm_sasl_client_class
 
 	Function Step(&$client, $response, &$message, &$interactions)
 	{
-		switch ($this->state)
+		switch($this->state)
 		{
 			case SASL_NTLM_STATE_IDENTIFY_DOMAIN:
 				$message=$this->TypeMsg1($this->credentials["realm"],$this->credentials["workstation"]);

@@ -360,6 +360,13 @@ function local_backed($username, $passwd) {
 		return false;
 	}
 
+	if ($user['bcrypt-hash']) {
+		if (password_verify($passwd, $user['bcrypt-hash'])) {
+			return true;
+		}
+	}
+
+	//for backwards compatibility
 	if ($user['password']) {
 		if (crypt($passwd, $user['password']) == $user['password']) {
 			return true;
@@ -450,7 +457,7 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	if (empty($user['password'])) {
+	if (empty($user['password']) && empty($user['bcrypt-hash'])) {
 		log_error("There is something wrong in your config because user {$user['name']} password is missing!");
 		return;
 	}
@@ -498,7 +505,12 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
+		if (empty($user['bcrypt-hash'])) {
+			fwrite($fd, $user['password']);
+		}
+		else {
+			fwrite($fd, $user['bcrypt-hash']);
+		}
 		pclose($fd);
 		$user_group = "wheel";
 		$user_home = "/root";
@@ -528,7 +540,12 @@ function local_user_set(& $user) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
+	if (empty($user['bcrypt-hash'])) {
+		fwrite($fd, $user['password']);
+	}
+	else {
+		fwrite($fd, $user['bcrypt-hash']);
+	}
 	pclose($fd);
 
 	/* create user directory if required */
@@ -593,8 +610,9 @@ function local_user_del($user) {
 
 function local_user_set_password(&$user, $password) {
 
-	$user['password'] = crypt($password);
-	$user['md5-hash'] = md5($password);
+	$user['password'] = "REMOVED";
+	$user['md5-hash'] = "REMOVED";
+	$user['bcrypt-hash'] = password_hash($password,PASSWORD_BCRYPT);
 
 	// Converts ascii to unicode.
 	$astr = (string) $password;

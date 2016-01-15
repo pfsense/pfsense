@@ -533,6 +533,7 @@ function show_success() {
 
 // Display a failure banner
 function show_failure() {
+	$('#final').removeClass("alert-info");
 	$('#final').addClass("alert-danger");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("<?=$pkgid?>" + " " + "<?=$modetxt?>" + " " + "<?=gettext(' failed!')?>");

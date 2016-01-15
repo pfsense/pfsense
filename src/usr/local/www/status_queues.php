@@ -242,8 +242,6 @@ function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
 
-	$row_class="alert_default";
-
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {

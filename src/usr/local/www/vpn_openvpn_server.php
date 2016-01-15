@@ -824,7 +824,7 @@ if ($act=="new" || $act=="edit"):
 		'cert_depth',
 		'Certificate Depth',
 		$pconfig['cert_depth'],
-		$openvpn_cert_depths
+		["" => "Do Not Check"] + $openvpn_cert_depths
 		))->setHelp('When a certificate-based client logs in, do not accept certificates below this depth. ' .
 					'Useful for denying certificates made with intermediate CAs generated from the same CA as the server.');
 
@@ -982,6 +982,7 @@ if ($act=="new" || $act=="edit"):
 	$form->add($section);
 
 	$section = new Form_Section('Client Settings');
+	$section->addClass('advanced');
 
 	$section->addInput(new Form_Checkbox(
 		'dynamic_ip',
@@ -1083,10 +1084,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['ntp_server2']
 	));
 
-	$form->add($section);
-
-	$section = new Form_Section('NetBIOS Options');
-
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
 		'NetBIOS enable',
@@ -1150,7 +1147,6 @@ if ($act=="new" || $act=="edit"):
 	$form->add($section);
 
 	$section = new Form_Section('Advanced Configuration');
-	$section->addClass('advanced');
 
 	$section->addInput(new Form_Textarea(
 		'custom_options',
@@ -1338,6 +1334,7 @@ events.push(function() {
 				break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
+				hideClass('advanced', false);
 				hideCheckbox('autokey_enable', true);
 			default:
 				hideInput('custom_options', false);
@@ -1439,8 +1436,8 @@ events.push(function() {
 		hideInput('netbios_scope', hide);
 		hideCheckbox('wins_server_enable', hide);
 		wins_server_change();
-		hideCheckbox('client_mgmt_port_enable', hide);
-		client_mgmt_port_change();
+//		hideCheckbox('client_mgmt_port_enable', hide);
+//		client_mgmt_port_change();
 	}
 
 	function tuntap_change() {

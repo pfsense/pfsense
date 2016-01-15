@@ -4269,4 +4269,20 @@ function upgrade_134_to_135() {
 		$config['syslog']['nolognginx'] = true;
 	}
 }
+
+function upgrade_135_to_136() {
+	global $config;
+
+	if (isset($config['l7shaper'])) {
+		file_notice("L7shaper", "Layer 7 shaping is no longer supported. Its configuration has been removed.");
+		unset($config['l7shaper']);
+		if (is_array($config['filter']['rule'])) {
+			foreach ($config['filter']['rule'] as $idx => $rule) {
+				if (isset($rule['l7container'])) {
+					unset($config['filter']['rule'][$idx]['l7container']);
+				}
+			}
+		}
+	}
+}
 ?>

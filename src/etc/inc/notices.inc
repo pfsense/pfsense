@@ -341,7 +341,7 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 
 	$smtp->direct_delivery = 0;
 	$smtp->ssl = (isset($config['notifications']['smtp']['ssl'])) ? 1 : 0;
-	$smtp->tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
+	$smtp->start_tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
 	$smtp->debug = 0;
 	$smtp->html_debug = 0;
 	$smtp->localhost = $config['system']['hostname'] . "." . $config['system']['domain'];

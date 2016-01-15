@@ -1755,26 +1755,13 @@ $group->setHelp('This field can be used to modify ("spoof") the MAC address of t
 				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank');
 $section->add($group);
 
-// If the interface is a VLAN and has a LAGG as a parent, the MTU cannot be set here.
-// We can determine that by parsing the interface name (begins with "lagg", contains "_vlan")
-if(  (strrpos($wancfg['if'], "lagg", -strlen($wancfg['if'])) !== FALSE)  && (strpos($wancfg['if'], "_vlan") !== false)) {
-	$section->addInput(new Form_Input(
-		'mtu',
-		'MTU',
-		'number',
-		$pconfig['mtu']
-	))->setHelp('<span class="text-danger">' . 'You may not set the MTU of a VLAN interface that has a LAGG parent here. ' . '<br />' . 
-				'<a href="interfaces_lagg_edit.php?id=' . $wancfg['if'][4] . '">interfaces_lagg.php</a></span>')
-	  ->setReadonly();
-} else {
-	$section->addInput(new Form_Input(
-		'mtu',
-		'MTU',
-		'number',
-		$pconfig['mtu']
-	))->setHelp('If you leave this field blank, the adapter\'s default MTU will be used. ' .
-				'This is typically 1500 bytes but can vary in some circumstances.');
-}
+$section->addInput(new Form_Input(
+	'mtu',
+	'MTU',
+	'number',
+	$pconfig['mtu']
+))->setHelp('If you leave this field blank, the adapter\'s default MTU will be used. ' .
+			'This is typically 1500 bytes but can vary in some circumstances.');
 
 $section->addInput(new Form_Input(
 	'mss',

@@ -130,6 +130,7 @@ if ($_REQUEST['ajax']) {
 			// Check for return codes and replace with suitable strings
 			if (strpos($logline, "__RC=") !== false) {
 				$code = explode(" ", $logline);
+
 				$rc = str_replace("__RC=", "", $code[0]);
 
 				if (count($code) > 1 &&
@@ -407,7 +408,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<input type="hidden" name="id" value="<?=htmlspecialchars($_POST['id'])?>" />
 	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
 	<input type="hidden" name="completed" value="true" />
-	<input type="hidden" name="reboot_needed" value="no" />
+	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />
 
 	<div id="countdown" class="text-center"></div>
 

@@ -149,7 +149,7 @@ if ($diff) {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?>
+			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
 		</h2>
 	</div>
 	<div class="panel-body table-responsive">

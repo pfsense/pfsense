@@ -4285,4 +4285,33 @@ function upgrade_135_to_136() {
 		}
 	}
 }
+
+function upgrade_136_to_137() {
+	global $config;
+
+	if (is_array($config['dhcpd'])) {
+		foreach ($config['dhcpd'] as &$dhcpd) {
+			if (!is_array($dhcpd['numberoptions']['item'])) {
+				continue;
+			}
+
+			foreach ($dhcpd['numberoptions']['item'] as &$item) {
+				$item['value'] = base64_encode($item['value']);
+			}
+		}
+	}
+
+	if (is_array($config['dhcpdv6'])) {
+		foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (!is_array($dhcpdv6['numberoptions']['item'])) {
+				continue;
+			}
+
+			foreach ($dhcpdv6['numberoptions']['item'] as &$item) {
+				$item['value'] = base64_encode($item['value']);
+			}
+		}
+	}
+}
+
 ?>

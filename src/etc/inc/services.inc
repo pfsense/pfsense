@@ -958,10 +958,11 @@ EOD;
 		$dhcpdconf .= "\n";
 		if ($dhcpifconf['numberoptions']['item']) {
 			foreach ($dhcpifconf['numberoptions']['item'] as $itemidx => $item) {
+				$item_value = base64_decode($item['value']);
 				if (empty($item['type']) || $item['type'] == "text") {
-					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item['value']}\";\n";
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} \"{$item_value}\";\n";
 				} else {
-					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item['value']};\n";
+					$dhcpdconf .= "	option custom-{$dhcpif}-{$itemidx} {$item_value};\n";
 				}
 			}
 		}
@@ -1462,7 +1463,8 @@ EOD;
 		$dhcpdv6conf .= "\n";
 		if ($dhcpv6ifconf['numberoptions']['item']) {
 			foreach ($dhcpv6ifconf['numberoptions']['item'] as $itemv6idx => $itemv6) {
-				$dhcpdv6conf .= "	option custom-{$dhcpv6if}-{$itemv6idx} \"{$itemv6['value']}\";\n";
+				$itemv6_value = base64_decode($itemv6['value']);
+				$dhcpdv6conf .= "	option custom-{$dhcpv6if}-{$itemv6idx} \"{$itemv6_value}\";\n";
 			}
 		}
 

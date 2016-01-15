@@ -180,7 +180,7 @@ if ($_POST) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
-			$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
+			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
@@ -852,7 +852,7 @@ if ($pconfig['numberoptions']) {
 			'value' . $counter,
 			null,
 			'text',
-			$item['value']
+			base64_decode($item['value'])
 		))->setHelp($counter == $last ? 'Value':null);
 
 		$btn = new Form_Button(

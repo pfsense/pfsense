@@ -212,11 +212,11 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else if (!$resolved && $type) {
-	print('<div class="alert alert-warning" role="alert">' . gettext("Host") .' "'. $host .'" '. gettext("could not be resolved") . '</div>');
+	print('<div class="alert alert-warning" role="alert">' . sprintf(gettext('Host "%s" could not be resolved'), $host) . '</div>');
 }
 
 if ($createdalias) {
-	print('<div class="alert alert-success" role="alert">'.gettext("Alias was created/updated successfully").'</div>');
+	print('<div class="alert alert-success" role="alert">' . gettext("Alias was created/updated successfully") . '</div>');
 }
 
 $form = new Form('Lookup');
@@ -244,7 +244,7 @@ if (!$input_errors && $type) {
 	if ($resolved):
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 <?php
@@ -264,13 +264,13 @@ if (!$input_errors && $type) {
 
 <!-- Second table displays the server resolution times -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Timings</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Timings')?></h2></div>
 	<div class="panel-body">
 		<table class="table">
 		<thead>
 			<tr>
-				<th>Name server</th>
-				<th>Query time</th>
+				<th><?=gettext('Name server')?></th>
+				<th><?=gettext('Query time')?></th>
 			</tr>
 		</thead>
 
@@ -287,7 +287,7 @@ if (!$input_errors && $type) {
 
 <!-- Third table displays "More information" -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">More information</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More information')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>

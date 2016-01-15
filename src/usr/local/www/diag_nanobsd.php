@@ -90,7 +90,7 @@ if ($_POST['bootslice']) {
 	   sleep(4);
 	}
 
-	$savemsg = gettext("The boot slice has been set to") . " " . nanobsd_get_active_slice();
+	$savemsg = sprintf(gettext("The boot slice has been set to %s"), nanobsd_get_active_slice());
 	$class = 'alert-success';
 	// Survey slice info
 	nanobsd_detect_slice_info();
@@ -139,7 +139,7 @@ if ($_POST['setrw']) {
 	}
 }
 
-print_info_box("The options on this page are intended for use by advanced users only.");
+print_info_box(gettext("The options on this page are intended for use by advanced users only."));
 
 if ($savemsg) {
 	print_info_box($savemsg, $class);
@@ -171,7 +171,7 @@ if (is_writable("/")) {
 	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
-		$refdisplay = " (Reference count " . $refcount . ")";
+		$refdisplay = " ". sprintf(gettext("(Reference count %s)"), $refcount);
 	}
 	$lbl = gettext("Read/Write") . $refdisplay;
 	$btnlbl = gettext("Switch to Read-Only");

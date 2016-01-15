@@ -68,13 +68,13 @@ $shortcut_section = "trafficshaper-limiters";
 if ($_REQUEST['getactivity']) {
 	$text = `/sbin/ipfw pipe show`;
 	if ($text == "") {
-		$text = "We could not find any limiters on this system.";
+		$text = gettext("We could not find any limiters on this system.");
 	}
-	echo "Limiters:\n";
+	echo gettext("Limiters:") . "\n";
 	echo $text;
 	$text = `/sbin/ipfw queue show`;
 	if ($text != "") {
-		echo "\n\nQueues:\n";
+		echo "\n\n" . gettext("Queues") . ":\n";
 		echo $text;
 	}
 	exit;
@@ -111,7 +111,7 @@ if ($input_errors) {
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Limiter Information</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Limiter Information")?></h2></div>
 	<div class="panel-body">
 		<pre id="xhrOutput"><?=gettext("Gathering Limiter information, please wait...")?></pre>
 	</div>

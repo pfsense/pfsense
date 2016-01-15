@@ -212,7 +212,7 @@ print $form;
 
 						<td>
 							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
-								title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>"></a>
+								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $dstip);?>"></a>
 						</td>
 					</tr>
 <?php $row++; }

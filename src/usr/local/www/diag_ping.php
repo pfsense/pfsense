@@ -156,7 +156,7 @@ if ($do_ping) {
 	$result = shell_exec($cmd);
 
 	if (empty($result)) {
-		$input_errors[] = "Host \"" . $host . "\" did not respond or could not be resolved.";
+		$input_errors[] = sprintf(gettext('Host "%s" did not respond or could not be resolved.'), $host);
 	}
 
 }
@@ -207,7 +207,7 @@ if ($do_ping && !empty($result) && !$input_errors) {
 ?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title">Results</h2>
+			<h2 class="panel-title"><?=gettext('Results')?></h2>
 		</div>
 
 		<div class="panel-body">

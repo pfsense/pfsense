@@ -176,7 +176,7 @@ if ($_POST) {
 
 	/* ipalias and carp should not use network or broadcast address */
 	if ($_POST['mode'] == "ipalias" || $_POST['mode'] == "carp") {
-		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32") {
+		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32" && $_POST['subnet_bits'] != "31") {
 			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
 		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128") {

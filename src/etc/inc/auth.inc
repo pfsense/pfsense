@@ -614,6 +614,15 @@ function local_user_set_password(&$user, $password) {
 	$user['md5-hash'] = "REMOVED";
 	$user['bcrypt-hash'] = password_hash($password,PASSWORD_BCRYPT);
 
+	// Maintain compatibility with FreeBSD
+	// https://reviews.freebsd.org/D2742
+	// change $2y$ prefix to $2b$
+
+	if ($user['bcrypt-hash'][2] == "y") {
+		$user['bcrypt-hash'][2] = "b";
+	}
+
+
 	// Converts ascii to unicode.
 	$astr = (string) $password;
 	$ustr = '';

@@ -330,11 +330,9 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 // Build the Available Widgets table using a sorted copy of the $widgets array
 // Can't just ksort because the "Firewall Logs" widget has a key of "logs"
 $available = $widgets;
-function widgetcompare($w1, $w2) {
-	return ($w1['name'] < $w2['name']) ? -1:1;
-}
-
-//usort($available, 'widgetcompare');
+$values = array_values($available);
+$keys = array_keys($available);
+array_multisort($values, SORT_ASC, $keys, SORT_ASC, $available);
 
 foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):

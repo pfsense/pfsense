@@ -334,7 +334,7 @@ function widgetcompare($w1, $w2) {
 	return ($w1['name'] < $w2['name']) ? -1:1;
 }
 
-usort($available, 'widgetcompare');
+//usort($available, 'widgetcompare');
 
 foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):

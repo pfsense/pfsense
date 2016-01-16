@@ -190,7 +190,7 @@ else: ?>
 					<tr>
 						<th><?=gettext("Queue"); ?></th>
 						<th><?=gettext("Statistics"); ?>
-							<select id="selStatistic">
+							<select id="selStatistic" class="form-control">
 								<option value="0">PPS</option>
 								<option value="1">Bandwidth</option>
 							</select>
@@ -242,8 +242,6 @@ function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
 
-	$row_class="alert_default";
-
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {
@@ -274,17 +272,17 @@ function processQueues($altqstats, $level, $parent_name) {
 			</td>
 <?php
 		$cpuUsage = 0;
-		print('<td class="' . $row_class . '">');
+		print('<td>');
 		print('<div class="progress" style="height: 7px;width: 170px;">');
 		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;\"></div>');
 		print('	  </div>');
 		print('</td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:80px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'bps"      id="queue' . $q['name'] . $q['interface'] . 'bps"      value="" /></td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'borrows"  id="queue' . $q['name'] . $q['interface'] . 'borrows"  value="" /></td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'suspends" id="queue' . $q['name'] . $q['interface'] . 'suspends" value="" /></td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'drops"    id="queue' . $q['name'] . $q['interface'] . 'drops"    value="" /></td>');
-		print('<td class="' . $row_class . '"><input readonly style="border:0;width:70px;text-align:right;" size="10" name="queue' . $q['name'] . $q['interface'] . 'length"   id="queue' . $q['name'] . $q['interface'] . 'length"   value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');
+		print('<td><input readonly style="border:0;width:80px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'bps"      id="queue' . $q['name'] . $q['interface'] . 'bps"      value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'borrows"  id="queue' . $q['name'] . $q['interface'] . 'borrows"  value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'suspends" id="queue' . $q['name'] . $q['interface'] . 'suspends" value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'drops"    id="queue' . $q['name'] . $q['interface'] . 'drops"    value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'length"   id="queue' . $q['name'] . $q['interface'] . 'length"   value="" /></td>');
 ?>
 		</tr>
 <?php

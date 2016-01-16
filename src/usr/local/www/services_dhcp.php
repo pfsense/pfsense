@@ -230,7 +230,7 @@ if (isset($_POST['submit'])) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
 			$numbervalue['type'] = htmlspecialchars($_POST["itemtype{$x}"]);
-			$numbervalue['value'] = str_replace('&quot;', '"', htmlspecialchars($_POST["value{$x}"]));
+			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
@@ -1200,7 +1200,7 @@ $numrows = count($pconfig['numberoptions']['item']) -1;
 foreach ($pconfig['numberoptions']['item'] as $item) {
 	$number = $item['number'];
 	$itemtype = $item['type'];
-	$value = $item['value'];
+	$value = base64_decode($item['value']);
 
 	$group = new Form_Group(($counter == 0) ? 'Option':null);
 	$group->addClass('repeatable');

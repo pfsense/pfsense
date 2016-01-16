@@ -137,7 +137,7 @@ print $form;
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Current source tracking entries</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Current source tracking entries")?></h2></div>
 	<div class="panel-body">
 		<table class="table table-striped">
 			<thead>
@@ -176,7 +176,7 @@ if (count($sources) > 0) {
 
 					<td>
 						<a class="btn btn-xs btn-danger" data-entry="<?=$srcip?>|<?=$dstip?>"
-							title="<?=sprintf(gettext('Remove all source tracking entries from %s to %s'), $srcip, $dstip);?>">Remove</a>
+							title="<?=sprintf(gettext('Remove all source tracking entries from %1$s to %2$s'), $srcip, $dstip);?>"><?=gettext("Remove")?></a>
 					</td>
 				</tr>
 <?php

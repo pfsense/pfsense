@@ -124,7 +124,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 			print_r($resp);
 			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.") . "</p>";
 		} else {
-			echo "Could not find any crash files.";
+			echo gettext("Could not find any crash files.");
 		}
 	} else if (gettext($_POST['Submit']) == "No") {
 		array_map('unlink', glob("/var/crash/*"));
@@ -147,7 +147,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 				}
 			}
 		} else {
-			echo "Could not locate any crash data.";
+			echo gettext("Could not locate any crash data.");
 		}
 ?>
 	<div class="panel panel-default">

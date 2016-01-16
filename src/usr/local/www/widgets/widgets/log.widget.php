@@ -131,11 +131,11 @@ if (isset($_POST['lastsawtime'])) {
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th><?=gettext("Action");?></th>
+			<th><?=gettext("Act");?></th>
 			<th><?=gettext("Time");?></th>
-			<th><?=gettext("Interface");?></th>
+			<th><?=gettext("If");?></th>
 			<th><?=gettext("Source");?></th>
-			<th><?=gettext("Destination");?></th>
+			<th><?=gettext("Dest");?></th>
 		</tr>
 	</thead>
 	<tbody>

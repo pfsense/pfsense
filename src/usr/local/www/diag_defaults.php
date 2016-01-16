@@ -85,12 +85,12 @@ include("head.inc");
 <?php else:?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Are you sure you want to reset the system to the factory defaults?</h2>
+		<h2 class="panel-title"><?=gettext("Are you sure you want to reset the system to the factory defaults?")?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="content">
 			<form action="diag_defaults.php" method="post">
-				<p><strong><?=gettext("If you click") . " &quot;" . gettext("Yes") . "&quot;, " . gettext("the firewall will:")?></strong></p>
+				<p><strong><?=sprintf(gettext('If you click %1$sYes%1$s the firewall will:'), "&quot;")?></strong></p>
 				<ul>
 					<li><?=gettext("Reset to factory defaults")?></li>
 					<li><?=gettext("LAN IP address will be reset to 192.168.1.1")?></li>
@@ -98,7 +98,7 @@ include("head.inc");
 					<li><?=gettext("Reboot after changes are installed")?></li>
 					<li><?=gettext("WAN interface will be set to obtain an address automatically from a DHCP server")?></li>
 					<li><?=gettext("webConfigurator admin username will be reset to 'admin'")?></li>
-					<li><?=gettext("webConfigurator admin password will be reset to")?> '<?=$g['factory_shipped_password']?>'</li>
+					<li><?=sprintf(gettext("webConfigurator admin password will be reset to '%s'"), $g['factory_shipped_password'])?></li>
 				</ul>
 				<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
 				<p>

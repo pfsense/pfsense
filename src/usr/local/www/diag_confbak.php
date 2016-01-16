@@ -139,12 +139,17 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
+$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
+display_top_tabs($tab_array);
+
 if ($diff) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?>
+			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
 		</h2>
 	</div>
 	<div class="panel-body table-responsive">
@@ -178,11 +183,6 @@ if ($diff) {
 </div>
 <?php
 }
-
-$tab_array = array();
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
-display_top_tabs($tab_array);
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -226,7 +226,7 @@ if (is_array($confvers)) {
 ?>
 
 <form action="diag_confbak.php" method="get">
-	<div class="table-resposive">
+	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 <?php
 if (is_array($confvers)):

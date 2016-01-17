@@ -129,7 +129,7 @@ if ($savemsg) {
 if ($tablename == "webConfiguratorlockout") {
 	$displayname = gettext("Web configurator lockout table");
 } else {
-	$displayname = ucfirst($tablename) . " " . gettext("table");
+	$displayname = sprintf(gettext("%s table"), ucfirst($tablename));
 }
 
 $form = new Form(false);
@@ -230,7 +230,7 @@ events.push(function() {
 						</td>
 						<td>
 							<?php if (!$bogons): ?>
-								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>">Remove</a>
+								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>"><?=gettext("Remove")?></a>
 							<?php endif ?>
 						</td>
 					</tr>

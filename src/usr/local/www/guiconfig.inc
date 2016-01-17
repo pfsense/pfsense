@@ -563,7 +563,11 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {
-		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+		if ((strpos($grepfor[0], '!') === 0)) {
+			$grepfor[0] = substr($grepfor[0], 1);
+			$invert = '-v';
+		}
+		$grepline .= " | /usr/bin/egrep $invert " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
@@ -609,7 +613,11 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$logarr = "";
 	$grepline = "  ";
 	if (is_array($grepfor)) {
-		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+		if ((strpos($grepfor[0], '!') === 0)) {
+			$grepfor[0] = substr($grepfor[0], 1);
+			$invert = '-v';
+		}
+		$grepline .= " | /usr/bin/egrep $invert " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));

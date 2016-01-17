@@ -69,9 +69,9 @@ if ($_POST['action']) {
 	switch ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
-				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
+				print('|5|' . '<div class="alert alert-danger" role="alert">' . gettext("No file name specified") . '</div>' . '|');
 			} elseif (is_dir($_POST['file'])) {
-				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
+				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") . '</div>' . '|');
 			} elseif (!is_file($_POST['file'])) {
 				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
@@ -87,7 +87,7 @@ if ($_POST['action']) {
 
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
-				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
+				print('|' . '<div class="alert alert-danger" role="alert">' . gettext("No file name specified") . '</div>' . '|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -116,7 +116,7 @@ require("head.inc");
 ?>
 <!-- file status box -->
 <div style="display:none; background:#eeeeee;" id="fileStatusBox">
-		<strong id="fileStatus"></strong>
+	<strong id="fileStatus"></strong>
 </div>
 
 <div class="panel panel-default">

@@ -90,7 +90,7 @@ if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	exit;
 } else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
+	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s'), htmlentities($_FILES['ulfile']['name']));
 	unset($_POST['txtCommand']);
 }
 
@@ -218,12 +218,12 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print('<div class="alert alert-warning" role="alert">'.gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!").'</div>');
+	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
-		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Shell Output - %s'), htmlspecialchars($_POST['txtCommand']))?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 <?php
@@ -269,7 +269,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <?php
 	if ($ulmsg) {
-		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
+		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
 	}
 ?>
 	<div class="panel panel-default">

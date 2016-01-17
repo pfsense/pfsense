@@ -132,11 +132,11 @@ EOT;
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		if (strtolower($this->_labelTarget->get_Type()) == 'hidden')
+		if (strtolower($this->_labelTarget->getType()) == 'hidden')
 			$hidden = true;
 
 		$form_controls = array('input', 'select', 'button', 'textarea', 'option', 'optgroup', 'fieldset', 'label');
-		if (in_array(strtolower($this->_labelTarget->gettagName()), $form_controls) && !$hidden)
+		if (in_array(strtolower($this->_labelTarget->getTagName()), $form_controls) && !$hidden)
 			$target = $this->_labelTarget->getId();
 
 		$inputs = implode('', $this->_inputs);

@@ -106,12 +106,12 @@ class Form_Input extends Form_Element
 		return $this->_attributes['id'];
 	}
 
-	public function get_Type()
+	public function getType()
 	{
 		return $this->_attributes['type'];
 	}
 
-	public function gettagName()
+	public function getTagName()
 	{
 		return $this->_tagName;
 	}

@@ -167,7 +167,7 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 <?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
 			<label>
 				<input type="checkbox" name="shown[<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
-				<?=$ifname?>
+				<?=$ifdescr?>
 			</label>
 <?php endforeach; ?>
 		</div>

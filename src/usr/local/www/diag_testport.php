@@ -221,9 +221,9 @@ include("head.inc");
 // Handle the display of all messages here where the user can readily see them
 if ($input_errors) {
 	print_input_errors($input_errors);
-} elseif ($do_testport)	{
+} elseif ($do_testport) {
 	// User asked for a port test
-	if ($retval == 0)	{
+	if ($retval == 0) {
 		// Good host & port
 		$alert_text = '<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful'), $host, $port);
 		if ($showtext) {

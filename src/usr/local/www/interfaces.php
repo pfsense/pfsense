@@ -540,6 +540,16 @@ if ($_POST['apply']) {
 			break;
 		}
 	}
+
+	/* Is the description already used as an alias name? */
+	if (is_array($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($alias['name'] == $_POST['descr']) {
+				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+			}
+		}
+	}
+
 	if (is_numeric($_POST['descr'])) {
 		$input_errors[] = gettext("The interface description cannot contain only numbers.");
 	}
@@ -1630,7 +1640,7 @@ foreach ($mediaopts as $mediaopt) {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
+$pgtitle = array(gettext("Interfaces"), $wancfg['descr']);
 $shortcut_section = "interfaces";
 
 $types4 = array("none" => gettext("None"), "staticv4" => gettext("Static IPv4"), "dhcp" => gettext("DHCP"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP"));

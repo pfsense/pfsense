@@ -764,12 +764,18 @@ events.push(function() {
 			var septext = $('#newsep').val();
 			$('#ruletable > tbody:last >tr:last').remove();
 			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle">' +
-	            '<td bgcolor="#cce5ff" colspan="12">' + '<font color="#002699">' + septext + '</font></td>' +
+	            '<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
+	            '<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash"></i></a></td>' + 
 	            '</tr>');
 		});
     });
 
-
+	$(function(){
+		$('table').on('click','tr a',function(e){
+			e.preventDefault();
+			$(this).parents('tr').remove();
+		});
+	});
 });
 //]]>
 </script>

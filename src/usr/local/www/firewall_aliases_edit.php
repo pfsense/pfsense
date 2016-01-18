@@ -702,7 +702,13 @@ while ($counter < count($addresses)) {
 		list($address, $address_subnet) = explode("/", $addresses[$counter]);
 	} else {
 		$address = $addresses[$counter];
-		$address_subnet = "";
+		if (isset($pconfig['updatefreq'])) {
+			// Note: There is only 1 updatefreq possible.
+			// The alias types that use updatefreq only allow a single entry.
+			$address_subnet = $pconfig['updatefreq'];
+		} else {
+			$address_subnet = "";
+		}
 	}
 
 	$group = new Form_Group($counter == 0 ? $label_str[$tab]:'');

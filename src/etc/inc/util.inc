@@ -847,36 +847,44 @@ function subnetv4_expand($subnet) {
 	return $result;
 }
 
-/* find out whether two subnets overlap */
+/* find out whether two IPv4/IPv6 CIDR subnets overlap.
+   Note: CIDR overlap implies one is identical or included so largest sn will be the same */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
-
-	if (!is_numeric($bits1)) {
-		$bits1 = 32;
-	}
-	if (!is_numeric($bits2)) {
-		$bits2 = 32;
-	}
-
-	if ($bits1 < $bits2) {
-		$relbits = $bits1;
+	if (is_ipaddrv4($subnet1)) {
+		return check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2);
 	} else {
-		$relbits = $bits2;
+		return check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2);
 	}
-
-	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
-	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
-
-	return ($sn1 == $sn2);
 }
 
-/* find out whether two IPv6 subnets overlap */
-function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$sub1_min = gen_subnetv6($subnet1, $bits1);
-	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
-	$sub2_min = gen_subnetv6($subnet2, $bits2);
-	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+/* find out whether two IPv4 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
+	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
+	
+	if($subnetv4_start1 == '' || $subnetv4_start2 == '') {
+		// One or both args is not a valid IPv4 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv4_start1 == $subnetv4_start2);
+}
 
-	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+/* find out whether two IPv6 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
+	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
+	
+	if($subnetv6_start1 == '' || $subnetv6_start2 == '') {
+		// One or both args is not a valid IPv6 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv6_start1 == $subnetv6_start2);
 }
 
 /* return true if $addr is in $subnet, false if not */

@@ -221,30 +221,29 @@ include("head.inc");
 // Handle the display of all messages here where the user can readily see them
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else {
-	// New page
-	if (empty($result) && $retval != 0 && !$showtext) {
-	    print('<div class="alert alert-warning" role="alert">This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.' .
-	          ' This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.</div>');
-	}
-
-	// Good host & port
-	if ($retval == 0 && $do_testport == 1)	{
-		if (!$showtext) {
-			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful").'</div>');
-		} else {
-			print('<div class="alert alert-success" role="alert">'.gettext("Port test to host: " . $host . " Port: " . $port . " successful") . '. Any text received from the host will be shown below the form.</div>');
-		}
-	}
-
-	// netcat exit value != 0
-	if ($retval != 0 && !empty($result)) {
+} elseif ($do_testport) {
+	// User asked for a port test
+	if ($retval == 0) {
+		// Good host & port
+		$alert_text = '<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful'), $host, $port);
 		if ($showtext) {
-			print('<div class="alert alert-danger" role="alert">'.gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.').'</div>');
+			$alert_text .= ' ' . gettext('Any text received from the host will be shown below the form.');
+		}
+	} else {
+		// netcat exit value != 0
+		$alert_text = '<div class="alert alert-danger" role="alert">';
+		if ($showtext) {
+			$alert_text .= gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.');
 		} else {
-			print('<div class="alert alert-danger" role="alert">'.gettext('Connection failed.').'</div>');
+			$alert_text .= gettext('Connection failed.');
 		}
 	}
+	print ($alert_text . '</div>');
+} else {
+	// First time, new page
+	print('<div class="alert alert-warning" role="alert">' .
+		gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.') . '</div>');
 }
 
 $form = new Form('Test');
@@ -300,15 +299,18 @@ $section->addInput(new Form_Select(
 $form->add($section);
 print $form;
 
-if ($ncoutput && !empty($result) && $showtext && $retval == 0): ?>
+// If the command succeeded, the user asked to see the output and there is output, then show it.
+if ($retval == 0 && $showtext && !empty($ncoutput)):
+?>
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h2 class="panel-title">Received Remote Text</h2>
+			<h2 class="panel-title"><?=gettext('Received Remote Text')?></h2>
 		</div>
 		<div class="panel-body">
 			<pre><?= $ncoutput ?></pre>
 		</div>
 	</div>
-<?php endif;
+<?php
+endif;
 
 include("foot.inc");

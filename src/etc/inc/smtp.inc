@@ -1265,12 +1265,14 @@ class smtp_class
 				elseif($success = ($this->PutLine('STARTTLS')
 				&& $this->VerifyResultLines('220',$responses)>0))
 				{
-					$this->OutputDebug('Starting TLS cryptograpic protocol');
+					if($this->debug)
+						$this->OutputDebug('Starting TLS cryptograpic protocol');
 					if(!($success = @stream_socket_enable_crypto($this->connection, 1, STREAM_CRYPTO_METHOD_TLS_CLIENT)))
 						$this->error = 'could not start TLS connection encryption protocol';
 					else
 					{
-						$this->OutputDebug('TLS started');
+						if($this->debug)
+							$this->OutputDebug('TLS started');
 						$success = $this->StartSMTP($localhost);
 					}
 				}

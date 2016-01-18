@@ -531,16 +531,16 @@ if ($_POST) {
 function build_srctype_list() {
 	global $pconfig, $ifdisp, $config;
 
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	$sel = is_specialnet($pconfig['src']);
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
@@ -577,14 +577,14 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
@@ -681,22 +681,22 @@ foreach ($iflist as $if => $ifdesc) {
 
 if ($config['l2tp']['mode'] == "server") {
 	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = "L2TP VPN";
+		$interfaces['l2tp'] = gettext("L2TP VPN");
 	}
 }
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = "PPPoE Server";
+	$interfaces['pppoe'] = gettext("PPPoE Server");
 }
 
 /* add ipsec interfaces */
 if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = "IPsec";
+	$interfaces["enc0"] = gettext("IPsec");
 }
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = "OpenVPN";
+	$interfaces["openvpn"] = gettext("OpenVPN");
 }
 
 $section->addInput(new Form_Select(
@@ -752,7 +752,7 @@ $group->add(new Form_IpAddress(
 
 $section->add($group);
 
-$portlist = array("" => 'Other', 'any' => 'Any');
+$portlist = array("" => gettext('Other'), 'any' => gettext('Any'));
 
 foreach ($wkports as $wkport => $wkportdesc) {
 	$portlist[$wkport] = $wkportdesc;
@@ -906,24 +906,24 @@ $section->addInput(new Form_Select(
 	'NAT reflection',
 	$pconfig['natreflection'],
 	array(
-		'default' => 'Use system default',
-		'enable'  => 'Enable (NAT + Proxy)',
-		'purenat' => 'Enable (Pure NAT)',
-		'disable' => 'Disable'
+		'default' => gettext('Use system default'),
+		'enable'  => gettext('Enable (NAT + Proxy)'),
+		'purenat' => gettext('Enable (Pure NAT)'),
+		'disable' => gettext('Disable')
 	)
 ));
 
 if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
 
 	$hlpstr = '';
-	$rulelist = array('' => 'None', 'pass' => 'Pass');
+	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
 
 	if (is_array($config['filter']['rule'])) {
 		filter_rules_sort();
 
 		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
-				$rulelist[$filter_rule['associated-rule-id']] = 'Rule ' . $filter_rule['descr'];
+				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 
 				if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
 					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
@@ -933,7 +933,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 	}
 
 	if (isset($pconfig['associated-rule-id'])) {
-		$rulelist['new'] = 'Create new associated filter rule';
+		$rulelist['new'] = gettext('Create new associated filter rule');
 	}
 
 	$section->addInput(new Form_Select(
@@ -949,9 +949,9 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 		'add-associated',
 		array(
 			'' => 'None',
-			'add-associated'  => 'Add associated filter rule',
-			'add-unassociated' => 'Add unassociated filter rule',
-			'pass' => 'Pass'
+			'add-associated'  => gettext('Add associated filter rule'),
+			'add-unassociated' => gettext('Add unassociated filter rule'),
+			'pass' => gettext('Pass')
 		)
 	))->setHelp('The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.');
 }

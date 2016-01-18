@@ -212,7 +212,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Firewall Aliases') . " " . $bctab?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Firewall Aliases %s'), $bctab)?></h2></div>
 	<div class="panel-body">
 
 <div class="table-responsive">

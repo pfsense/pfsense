@@ -608,9 +608,9 @@ function local_user_del($user) {
 
 function local_user_set_password(&$user, $password) {
 
-	$user['password'] = "REMOVED";
-	$user['md5-hash'] = "REMOVED";
-	$user['bcrypt-hash'] = password_hash($password,PASSWORD_BCRYPT);
+	unset($user['password']);
+	unset($user['md5-hash']);
+	$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
 
 	// Maintain compatibility with FreeBSD
 	// https://reviews.freebsd.org/D2742
@@ -619,7 +619,6 @@ function local_user_set_password(&$user, $password) {
 	if ($user['bcrypt-hash'][2] == "y") {
 		$user['bcrypt-hash'][2] = "b";
 	}
-
 
 	// Converts ascii to unicode.
 	$astr = (string) $password;

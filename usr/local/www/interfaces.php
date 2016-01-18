@@ -1503,7 +1503,7 @@ foreach ($mediaopts as $mediaopt){
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), $pconfig['descr']);
+$pgtitle = array(gettext("Interfaces"), $wancfg['descr']);
 $shortcut_section = "interfaces";
 
 $closehead = false;

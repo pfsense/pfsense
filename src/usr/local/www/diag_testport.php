@@ -221,30 +221,29 @@ include("head.inc");
 // Handle the display of all messages here where the user can readily see them
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else {
-	if ($do_testport)	{
-		// User asked for a port test
-		if ($retval == 0)	{
-			// Good host & port
-			if (!$showtext) {
-				print('<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful'), $host, $port) . '</div>');
-			} else {
-				print('<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful.'), $host, $port) . ' ' . gettext('Any text received from the host will be shown below the form.') . '</div>');
-			}
-		} else {
-			// netcat exit value != 0
-			if ($showtext) {
-				print('<div class="alert alert-danger" role="alert">' . gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.') . '</div>');
-			} else {
-				print('<div class="alert alert-danger" role="alert">' . gettext('Connection failed.') . '</div>');
-			}
+} elseif ($do_testport)	{
+	// User asked for a port test
+	if ($retval == 0)	{
+		// Good host & port
+		$alert_text = '<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful'), $host, $port);
+		if ($showtext) {
+			$alert_text .= ' ' . gettext('Any text received from the host will be shown below the form.');
 		}
 	} else {
-		// First time, new page
-	    print('<div class="alert alert-warning" role="alert">' .
-			gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
-			gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.') . '</div>');
+		// netcat exit value != 0
+		$alert_text = '<div class="alert alert-danger" role="alert">';
+		if ($showtext) {
+			$alert_text .= gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.');
+		} else {
+			$alert_text .= gettext('Connection failed.');
+		}
 	}
+	print ($alert_text . '</div>');
+} else {
+	// First time, new page
+	print('<div class="alert alert-warning" role="alert">' .
+		gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.') . '</div>');
 }
 
 $form = new Form('Test');

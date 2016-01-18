@@ -900,6 +900,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			eval("\$pkg_source_txt = &$source_url;");
 
 			#check if show disable option is present on xml
+			if (!is_array($pkg_source_txt)) {
+				$pkg_source_txt = array();
+			}
 			if (isset($pkga['show_disable_value'])) {
 				array_push($pkg_source_txt,
 					array(($pkga['source_name']? $pkga['source_name'] : $pkga['name'])=> $pkga['show_disable_value'], ($pkga['source_value']? $pkga['source_value'] : $pkga['value'])=> $pkga['show_disable_value']));

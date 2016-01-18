@@ -284,16 +284,16 @@ include("head.inc");
 function build_srctype_list() {
 	global $pconfig, $ifdisp;
 
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	$sel = is_specialnet($pconfig['src']);
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
@@ -326,14 +326,14 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
@@ -423,22 +423,22 @@ foreach ($iflist as $if => $ifdesc) {
 
 if ($config['l2tp']['mode'] == "server") {
 	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = "L2TP VPN";
+		$interfaces['l2tp'] = gettext("L2TP VPN");
 	}
 }
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = "PPPoE Server";
+	$interfaces['pppoe'] = gettext("PPPoE Server");
 }
 
 /* add ipsec interfaces */
 if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = "IPsec";
+	$interfaces["enc0"] = gettext("IPsec");
 }
 
 /* add openvpn/tun interfaces */
 if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = "OpenVPN";
+	$interfaces["openvpn"] = gettext("OpenVPN");
 }
 
 $section->addInput(new Form_Select(
@@ -520,9 +520,9 @@ $section->addInput(new Form_Select(
 	'NAT reflection',
 	$pconfig['natreflection'],
 	array(
-		'default' => 'Use system default',
-		'enable'  => 'Enable',
-		'disable' => 'Disable'
+		'default' => gettext('Use system default'),
+		'enable'  => gettext('Enable'),
+		'disable' => gettext('Disable')
 	)
 ));
 

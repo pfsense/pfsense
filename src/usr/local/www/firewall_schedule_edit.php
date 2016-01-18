@@ -130,7 +130,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Reserved word used for schedule name.");
 	} else {
 		if (is_validaliasname($_POST['name']) == false) {
-			$input_errors[] = gettext("The schedule name may only consist of the characters a-z, A-Z, 0-9");
+			$input_errors[] = gettext("The schedule name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters:") . ' a-z, A-Z, 0-9, _';
 		}
 	}
 
@@ -395,7 +395,7 @@ $input = new Form_Input(
 	$pconfig['name']
 );
 
-$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the alias may only consist of the characters a-z, A-Z and 0-9':
+$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the schedule may only consist of the characters "a-z, A-Z, 0-9 and _".':
 																'This schedule is in use so the name may not be modified!');
 
 if (is_schedule_inuse($pconfig['name']) == true) {

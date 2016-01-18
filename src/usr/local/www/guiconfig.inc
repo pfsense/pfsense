@@ -560,20 +560,21 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
+		$invert = '';
 		if ((strpos($grepfor[0], '!') === 0)) {
 			$grepfor[0] = substr($grepfor[0], 1);
 			$invert = '-v';
 		}
-		$grepline .= " | /usr/bin/egrep $invert " . escapeshellarg(implode("|", $grepfor));
+		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File $logfile is a directory.");
+		$logarr = array("File {$logfile} is a directory.");
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
@@ -610,20 +611,21 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
+		$invert = '';
 		if ((strpos($grepfor[0], '!') === 0)) {
 			$grepfor[0] = substr($grepfor[0], 1);
 			$invert = '-v';
 		}
-		$grepline .= " | /usr/bin/egrep $invert " . escapeshellarg(implode("|", $grepfor));
+		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File $logfile is a directory.");
+		$logarr = array("File {$logfile} is a directory.");
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
 		$logarr = array("Log file started.");
 	} else {
@@ -659,7 +661,7 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
 	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));

@@ -75,7 +75,7 @@ if (!is_array($config['nat']['onetoone'])) {
 $a_1to1 = &$config['nat']['onetoone'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if ($_POST['order-store']) {
+if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_1to1_new = array();
 
@@ -273,7 +273,7 @@ display_top_tabs($tab_array);
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save rule order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>

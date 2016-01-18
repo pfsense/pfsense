@@ -120,15 +120,15 @@ $dirhandle = opendir($directory);
 $filename = "";
 
 while (false !== ($filename = readdir($dirhandle))) {
+	if (!stristr($filename, ".inc")) {
+		continue;
+	}
 	$phpincludefiles[] = $filename;
 }
 
 ## Include each widget include file.
 ## These define vars that specify the widget title and title link.
 foreach ($phpincludefiles as $includename) {
-	if (!stristr($includename, ".inc")) {
-		continue;
-	}
 	if (file_exists($directory . $includename)) {
 		include($directory . $includename);
 	}
@@ -140,7 +140,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 	// Get the widget title that should be in a var defined in the widget's inc file.
 	$widgettitle = ${$name . '_title'};
 
-	if ((strlen($widgettitle) == 0)) {
+	if (empty(trim($widgettitle))) {
 		// Fall back to constructing a title from the file name of the widget.
 		$widgettitle = ucwords(str_replace('_', ' ', $name));
 	}
@@ -277,7 +277,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		// Get the widget title that should be in a var defined in the widget's inc file.
 		$widgettitle = ${$file . '_title'};
 
-		if ((strlen($widgettitle) == 0)) {
+		if (empty(trim($widgettitle))) {
 			// Fall back to constructing a title from the file name of the widget.
 			$widgettitle = ucwords(str_replace('_', ' ', $file));
 		}
@@ -328,12 +328,8 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <?php
 
 // Build the Available Widgets table using a sorted copy of the $widgets array
-function wgtcmp($a, $b) {
-	return(strtolower($a['name']) > strtolower($b['name']));
-}
-
 $available = $widgets;
-uasort($available, 'wgtcmp');
+uasort($available, function($a, $b){ return strcasecmp($a['name'], $b['name']); });
 
 foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):

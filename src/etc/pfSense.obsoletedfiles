@@ -445,7 +445,6 @@
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
-/usr/local/etc/lighttpd
 /usr/local/etc/pkg.conf
 /usr/local/info
 /usr/local/lib/engines
@@ -578,8 +577,6 @@
 /usr/local/sbin/ipfw_context
 /usr/local/sbin/ipfw-classifyd
 /usr/local/sbin/kbdcheck
-/usr/local/sbin/lighttpd
-/usr/local/sbin/lighttpd-angel
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd
 /usr/local/sbin/mpd
@@ -968,7 +965,5 @@
 /var/db/rrd/index.html
 /var/dhcpd/lib/libc.so.6
 /var/etc/pppoe-vpn
-/var/log/lighttpd
-/var/log/lighttpd.log
 /var/mail/_relayd
 /var/mail/unbound

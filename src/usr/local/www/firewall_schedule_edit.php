@@ -436,7 +436,7 @@ $group->add(new Form_Select(
 	'starttimemin',
 	null,
 	null,
-	array('00' => '00', '15' => '15', '30' => '30', '59' => '59')
+	array('00' => '00', '15' => '15', '30' => '30', '45' => '45', '59' => '59')
 ))->setHelp('Start Mins');
 
 $group->add(new Form_Select(
@@ -450,7 +450,7 @@ $group->add(new Form_Select(
 	'stoptimemin',
 	null,
 	'59',
-	array('00' => '00', '15' => '15', '30' => '30', '59' => '59')
+	array('00' => '00', '15' => '15', '30' => '30', '45' => '45', '59' => '59')
 ))->setHelp('Stop Mins');
 
 $group->setHelp('Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.');

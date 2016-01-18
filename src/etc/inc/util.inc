@@ -860,7 +860,7 @@ function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
 /* find out whether two IPv4 CIDR subnets overlap.
    Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
 function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$largest_sn = max($bits1, $bits2);
+	$largest_sn = min($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
 	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
 	
@@ -875,7 +875,7 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 /* find out whether two IPv6 CIDR subnets overlap.
    Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
 function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$largest_sn = max($bits1, $bits2);
+	$largest_sn = min($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
 	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
 	

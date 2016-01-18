@@ -144,7 +144,7 @@ if (isset($_POST['del_x'])) {
 		} else {
 			$a_1to1[$_GET['id']]['disabled'] = true;
 		}
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
+		if (write_config(gettext("Firewall: NAT: 1 to 1, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -269,7 +269,7 @@ display_top_tabs($tab_array);
 			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>">
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected mappings')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>

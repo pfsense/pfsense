@@ -395,7 +395,7 @@ $input = new Form_Input(
 	$pconfig['name']
 );
 
-$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the alias may only consist of the characters "a-z, A-Z, 0-9 and _".':
+$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the schedule emay only consist of the characters "a-z, A-Z, 0-9 and _".':
 																'This schedule is in use so the name may not be modified!');
 
 if (is_schedule_inuse($pconfig['name']) == true) {

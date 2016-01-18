@@ -276,7 +276,7 @@ display_top_tabs($tab_array);
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -692,6 +692,10 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
+		<button type="submit" id="addsep" name="addsep" class="btn btn-sm btn-warning" title="<?=gettext('Add separator')?>">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Separator")?>
+		</button>
 	</nav>
 </form>
 
@@ -743,6 +747,29 @@ events.push(function() {
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
 	});
+
+	// Separator bar stuff
+	$("#addsep").prop('type' ,'button');
+
+    $("#addsep").click(function() {
+        alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
+        $('#ruletable > tbody:last').append('<tr>' +
+            '<td bgcolor="#cce5ff" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
+            '<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
+            '</tr>');
+
+		$("#btnnewsep").prop('type' ,'button');
+
+		$("#btnnewsep").click(function() {
+			var septext = $('#newsep').val();
+			$('#ruletable > tbody:last >tr:last').remove();
+			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle">' +
+	            '<td bgcolor="#cce5ff" colspan="12">' + '<font color="#002699">' + septext + '</font></td>' +
+	            '</tr>');
+		});
+    });
+
+
 });
 //]]>
 </script>

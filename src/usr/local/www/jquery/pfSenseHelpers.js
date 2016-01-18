@@ -275,7 +275,7 @@ function renumber() {
 }
 
 function delete_row(rowDelBtn) {
-	var label;
+	var rowLabel;
 
 	// If we are deleting row zero, we need to save/restore the label
 	if (rowDelBtn == "deleterow0") {

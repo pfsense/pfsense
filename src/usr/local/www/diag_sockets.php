@@ -67,7 +67,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 include('head.inc');
 
 $showAll = isset($_GET['showAll']);
-$showAllText = $showAll ? "Show only listening sockets" : "Show all socket connections";
+$showAllText = $showAll ? gettext("Show only listening sockets") : gettext("Show all socket connections");
 $showAllOption = $showAll ? "" : "?showAll";
 
 ?>

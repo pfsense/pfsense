@@ -504,6 +504,16 @@ if ($_POST['apply']) {
 			break;
 		}
 	}
+
+	/* Is the description already used as an alias name? */
+	if (is_array($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($alias['name'] == $_POST['descr']) {
+				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+			}
+		}
+	}
+
 	if(is_numeric($_POST['descr'])) {
 		$input_errors[] = gettext("The interface description cannot contain only numbers.");
 	}

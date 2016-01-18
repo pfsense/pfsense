@@ -328,11 +328,12 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 <?php
 
 // Build the Available Widgets table using a sorted copy of the $widgets array
-// Can't just ksort because the "Firewall Logs" widget has a key of "logs"
+function wgtcmp($a, $b) {
+	return(strtolower($a['name']) > strtolower($b['name']));
+}
+
 $available = $widgets;
-$values = array_values($available);
-$keys = array_keys($available);
-array_multisort($values, SORT_ASC, $keys, SORT_ASC, $available);
+uasort($available, 'wgtcmp');
 
 foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):

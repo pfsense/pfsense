@@ -507,8 +507,7 @@ function local_user_set(& $user) {
 		$fd = popen($cmd, "w");
 		if (empty($user['bcrypt-hash'])) {
 			fwrite($fd, $user['password']);
-		}
-		else {
+		} else {
 			fwrite($fd, $user['bcrypt-hash']);
 		}
 		pclose($fd);
@@ -542,8 +541,7 @@ function local_user_set(& $user) {
 	$fd = popen($cmd, "w");
 	if (empty($user['bcrypt-hash'])) {
 		fwrite($fd, $user['password']);
-	}
-	else {
+	} else {
 		fwrite($fd, $user['bcrypt-hash']);
 	}
 	pclose($fd);

@@ -217,13 +217,13 @@ if ($_GET['act'] == "del") {
 			}
 
 			if ($found_carp === true && $found_other_alias === false && $found_if === false) {
-				$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description") . " {$vip['descr']}.";
+				$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by a CARP IP with the description %s."), $vip['descr']);
 			}
 		} else if ($a_vip[$_GET['id']]['mode'] == "carp") {
 			$vipiface = "{$a_vip[$_GET['id']]['interface']}_vip{$a_vip[$_GET['id']]['vhid']}";
 			foreach ($a_vip as $vip) {
 				if ($vipiface == $vip['interface'] && $vip['mode'] == "ipalias") {
-					$input_errors[] = gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description") . " {$vip['descr']}.";
+					$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by an IP alias entry with the description %s."), $vip['descr']);
 				}
 			}
 		}
@@ -262,10 +262,10 @@ if ($_GET['act'] == "del") {
 	$id = $_GET['id'];
 }
 
-$types = array('proxyarp' => 'Proxy ARP',
-			   'carp' => 'CARP',
-			   'other' => 'Other',
-			   'ipalias' => 'IP Alias'
+$types = array('proxyarp' => gettext('Proxy ARP'),
+			   'carp' => gettext('CARP'),
+			   'other' => gettext('Other'),
+			   'ipalias' => gettext('IP Alias')
 			   );
 
 $pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
@@ -276,7 +276,7 @@ if ($input_errors) {
 } else if ($savemsg) {
 	print_info_box($savemsg, 'success');
 } else if (is_subsystem_dirty('vip')) {
-	print_info_box_np(gettext("The VIP configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+	print_info_box_np(gettext("The VIP configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 /* active tabs
@@ -365,8 +365,8 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box(gettext('The virtual IP addresses defined on this page may be used in ') . '<a href="firewall_nat.php">' . gettext('NAT') . '</a>' . gettext(' mappings.') . '<br />' .
-			   gettext('You can check the status of your CARP Virtual IPs and interfaces ') . '<a href="status_carp.php">' . gettext('here') . '</a>', 'info', false)?>
+	<?=print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
+		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s'), '<a href="status_carp.php">', '</a>'), 'info', false)?>
 </div>
 
 <?php

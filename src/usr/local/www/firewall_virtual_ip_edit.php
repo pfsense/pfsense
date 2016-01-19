@@ -200,7 +200,7 @@ if ($_POST) {
 			$idtracker = 0;
 			foreach ($config['virtualip']['vip'] as $vip) {
 				if ($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker != $id) {
-					$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
+					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
 				}
 				$idtracker++;
 			}
@@ -410,8 +410,8 @@ $section->addInput(new Form_Select(
 	'Address type',
 	((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) ? 'single':'network',
 	array(
-		'single' => 'Single address',
-		'network' => 'Network'
+		'single' => gettext('Single address'),
+		'network' => gettext('Network')
 	)
 ))->addClass('typesel');
 

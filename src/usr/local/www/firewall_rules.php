@@ -745,14 +745,18 @@ events.push(function() {
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
-	   $('[id^=frc]').prop('checked', true);
+		$('[id^=frc]').prop('checked', true);
+
+		// Save the separator bar configuration
+		save_separators();
 	});
 
-	// Separator bar stuff
+	// Separator bar stuff ------------------------------------------------------------------------
 	$("#addsep").prop('type' ,'button');
 
     $("#addsep").click(function() {
         alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
+        // Inset a temporary bar in which hte user can enter some optional text
         $('#ruletable > tbody:last').append('<tr>' +
             '<td bgcolor="#cce5ff" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
             '<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
@@ -760,23 +764,31 @@ events.push(function() {
 
 		$("#btnnewsep").prop('type' ,'button');
 
+		// Remove the temporary separator bar and replace it with the final version containing the
+		// user's text and a delete icon
 		$("#btnnewsep").click(function() {
 			var septext = escapeHtml($('#newsep').val());
 			$('#ruletable > tbody:last >tr:last').remove();
 			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle">' +
 	            '<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
-	            '<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash"></i></a></td>' + 
+	            '<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash sepdel"></i></a></td>' +
 	            '</tr>');
 		});
     });
-/*
+
+	// Delete a sepaator row
 	$(function(){
-		$('table').on('click','tr a',function(e){
+		$('table').on('click','tr a .sepdel',function(e){
 			e.preventDefault();
 			$(this).parents('tr').remove();
 		});
 	});
-*/
+
+	function save_separators() {
+		return(true);
+	}
+
+	//JS equivalent to PHP htmlspecialchars()
 	function escapeHtml(text) {
 		var map = {
 			'&': '&amp;',
@@ -788,6 +800,7 @@ events.push(function() {
 
 		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 	}
+	// --------------------------------------------------------------------------------------------
 });
 //]]>
 </script>

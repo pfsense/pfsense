@@ -614,7 +614,7 @@ function local_user_set_password(&$user, $password) {
 
 	/* Maintain compatibility with FreeBSD - change $2y$ prefix to $2b$
 	 * https://reviews.freebsd.org/D2742
-	 * Can be removed as soon as r284483 is MFC'd.
+	 * XXX: Can be removed as soon as r284483 is MFC'd.
 	 */
 	if ($user['bcrypt-hash'][2] == "y") {
 		$user['bcrypt-hash'][2] = "b";

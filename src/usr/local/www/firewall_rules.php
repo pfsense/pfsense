@@ -761,7 +761,7 @@ events.push(function() {
 		$("#btnnewsep").prop('type' ,'button');
 
 		$("#btnnewsep").click(function() {
-			var septext = $('#newsep').val();
+			var septext = escapeHtml($('#newsep').val());
 			$('#ruletable > tbody:last >tr:last').remove();
 			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle">' +
 	            '<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
@@ -769,13 +769,25 @@ events.push(function() {
 	            '</tr>');
 		});
     });
-
+/*
 	$(function(){
 		$('table').on('click','tr a',function(e){
 			e.preventDefault();
 			$(this).parents('tr').remove();
 		});
 	});
+*/
+	function escapeHtml(text) {
+		var map = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#039;'
+		};
+
+		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+	}
 });
 //]]>
 </script>

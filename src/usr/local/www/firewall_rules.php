@@ -372,15 +372,12 @@ display_top_tabs($tab_array);
 $nrules = 0;
 $seps = 0;
 
-if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
-	foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
-		if ($rulesep['row']['0'] == "fr-1") {
-			print('<tr class="ui-sortable-handle separator">' .
-				'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $rulesep['text'] . '</font></td>' .
-				'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-				'</tr>' . "\n");
-		}
-	}
+// There can be a separator before any rules are listed
+if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
+	print('<tr class="ui-sortable-handle separator">' .
+		'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</font></td>' .
+		'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+		'</tr>' . "\n");
 }
 
 for ($i = 0; isset($a_filter[$i]); $i++):

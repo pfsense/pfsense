@@ -238,7 +238,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$htmltext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $htmltext);
-			$htmltext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $htmltext);
 			$htmltext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $htmltext);
 			if ($cpcfg['preauthurl']) {
 				$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $htmltext);
@@ -266,7 +265,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$errtext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $errtext);
 			$errtext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $errtext);
 			$errtext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $errtext);
-			$errtext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $errtext);
 			$errtext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $errtext);
 			if ($cpcfg['preauthurl']) {
 				$errtext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $errtext);

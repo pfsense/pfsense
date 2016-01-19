@@ -428,6 +428,7 @@ function return_gateways_status($byname = false) {
 		$status[$target]['srcip'] = $dpinger_status['srcip'];
 		$status[$target]['name'] = $gwname;
 		$status[$target]['delay'] = empty($dpinger_status['latency_avg']) ? "0ms" : $dpinger_status['latency_avg'] . "ms";
+		$status[$target]['stddev'] = empty($dpinger_status['latency_stddev']) ? "0ms" : $dpinger_status['latency_stddev'] . "ms";
 		$status[$target]['loss'] = empty($dpinger_status['loss']) ? "0.0%" : round($dpinger_status['loss'], 1) . "%";
 		$status[$target]['status'] = $dpinger_status['status'];
 	}

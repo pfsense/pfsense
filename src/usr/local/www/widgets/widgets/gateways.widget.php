@@ -88,6 +88,7 @@ if ($_POST) {
 		<tr>
 			<th><?=gettext("Name")?></th>
 			<th>RTT</th>
+			<th>RTTsd</th>
 			<th><?=gettext("Loss")?></th>
 			<th><?=gettext("Status")?></th>
 		</tr>
@@ -255,6 +256,7 @@ function compose_table_body_contents() {
 		}
 
 		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['delay']) : gettext("Pending")) . "</td>\n";
+		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['stddev']) : gettext("Pending")) . "</td>\n";
 		$rtnstr .= 	"<td>" . ($gateways_status[$gname] ? htmlspecialchars($gateways_status[$gname]['loss']) : gettext("Pending")) . "</td>\n";
 		$rtnstr .= '<td class="bg-' . $bgcolor . '">' . $online . "</td>\n";
 		$rtnstr .= "</tr>\n";

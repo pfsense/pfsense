@@ -99,6 +99,7 @@ display_top_tabs($tab_array);
 				<th><?=gettext("Gateway"); ?></th>
 				<th><?=gettext("Monitor"); ?></th>
 				<th><?=gettext("RTT"); ?></th>
+				<th><?=gettext("RTTsd"); ?></th>
 				<th><?=gettext("Loss"); ?></th>
 				<th><?=gettext("Status"); ?></th>
 				<th><?=gettext("Description"); ?></th>
@@ -127,6 +128,15 @@ display_top_tabs($tab_array);
 <?php
 					if ($gateways_status[$gname]) {
 						echo $gateways_status[$gname]['delay'];
+					} else {
+						echo gettext("Pending");
+					}
+?>
+				</td>
+				<td>
+<?php
+					if ($gateways_status[$gname]) {
+						echo $gateways_status[$gname]['stddev'];
 					} else {
 						echo gettext("Pending");
 					}

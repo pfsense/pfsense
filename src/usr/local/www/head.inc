@@ -486,6 +486,14 @@ echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
 echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 
 ?>
+	<?php if ($pagetitle === 'Status: Dashboard'): ?>
+		<li>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Show/Hide available widgets panel")?>">
+				<i class="btn-sm btn-breadcrumbbar">Widgets</i>
+			</a>
+		</li>
+	<?php endif?>
+
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>" class="help-icon">

@@ -88,6 +88,11 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
+$after = $_GET['after'];
+if (isset($_POST['after'])) {
+	$after = $_POST['after'];
+}
+
 if (isset($_GET['dup'])) {
 	$id = $_GET['dup'];
 	$after = $_GET['dup'];

@@ -970,7 +970,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
@@ -1018,7 +1018,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'MAC address control',
@@ -1027,14 +1027,14 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Input(
 	'mac_allow',
-	'Allow',
+	'MAC Allow',
 	'text',
 	$pconfig['mac_allow']
 ))->setHelp('List of partial MAC addresses to allow, comma separated, no spaces, e.g.: 00:00:00,01:E5:FF');
 
 $section->addInput(new Form_Input(
 	'mac_deny',
-	'Deny',
+	'MAC Deny',
 	'text',
 	$pconfig['mac_deny']
 ))->setHelp('List of partial MAC addresses to deny access, comma separated, no spaces, e.g.: 00:00:00,01:E5:FF');
@@ -1045,7 +1045,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
@@ -1070,7 +1070,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP server',
@@ -1079,7 +1079,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_IpAddress(
 	'tftp',
-	null,
+	'Host or IP',
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server')->setPattern('[.a-zA-Z0-9_]+');
 
@@ -1089,7 +1089,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'LDAP URI',
@@ -1103,22 +1103,18 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
 
-// Advanced NETBOOT
-$btnadv = new Form_Button(
-	'btnadvboot',
-	'Advanced'
-);
+$form->add($section);
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
-
-$section->addInput(new Form_StaticText(
-	'Network booting',
-	$btnadv
-));
+if ($pconfig['netboot']) {
+	$sectate = COLLAPSIBLE|SEC_OPEN;
+} else {
+	$sectate = COLLAPSIBLE|SEC_CLOSED;
+}
+$section = new Form_Section("Network booting", nwkbootsec, $sectate);
 
 $section->addInput(new Form_Checkbox(
 	'netboot',
-	null,
+	'Enable',
 	'Enables network booting',
 	$pconfig['netboot']
 ));
@@ -1164,7 +1160,7 @@ $btnadv = new Form_Button(
 	'Advanced'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
@@ -1391,7 +1387,6 @@ events.push(function() {
 
 		hideInput('mac_allow', !showadvmac && !hide);
 		hideInput('mac_deny', !showadvmac && !hide);
-		hideInput('btnadvmac', hide);
 
 		showadvmac = !showadvmac;
 	}
@@ -1399,7 +1394,7 @@ events.push(function() {
 	$('#btnadvmac').prop('type', 'button');
 
 	$('#btnadvmac').click(function(event) {
-		show_advmac();
+		show_advmac(true);
 	});
 
   // Show advanced NTP options ======================================================================================
@@ -1429,7 +1424,7 @@ events.push(function() {
 	});
 
    // Show advanced TFTP options ======================================================================================
-	var showadvtftp = false;
+	var showtftp = false;
 
 	function show_advtftp() {
 <?php
@@ -1441,10 +1436,9 @@ events.push(function() {
 ?>
 		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
 
-		hideInput('tftp', !showadvtftp && !hide);
-		hideInput('btnadvtftp', hide);
+		hideInput('tftp', !showtftp & !hide);
 
-		showadvtftp = !showadvtftp;
+		showtftp = !showtftp;
 	}
 
 	$('#btnadvtftp').prop('type', 'button');
@@ -1476,37 +1470,6 @@ events.push(function() {
 
 	$('#btnadvldap').click(function(event) {
 		show_advldap();
-	});
-
-   // Show advanced NETBOOT options ===================================================================================
-	var showadvboot = false;
-
-	function show_advboot() {
-<?php
-		if (!$pconfig['netboot'] && empty($pconfig['nextserver']) && empty($pconfig['filename']) && empty($pconfig['filename32']) &&
-		    empty($pconfig['filename64']) && empty($pconfig['rootpath'])) {
-			$hide = false;
-		} else {
-			$hide = true;
-		}
-?>
-		var hide = <?php if ($hide) {echo 'true';} else {echo 'false';} ?>;
-
-		hideCheckbox('netboot', !showadvboot && !hide);
-		hideInput('nextserver', !showadvboot && !hide);
-		hideInput('filename', !showadvboot && !hide);
-		hideInput('filename32', !showadvboot && !hide);
-		hideInput('filename64', !showadvboot && !hide);
-		hideInput('rootpath', !showadvboot && !hide);
-		hideInput('btnadvboot', hide);
-
-		showadvboot = !showadvboot;
-	}
-
-	$('#btnadvboot').prop('type', 'button');
-
-	$('#btnadvboot').click(function(event) {
-		show_advboot();
 	});
 
 	// Show advanced additional opts options ===========================================================================
@@ -1542,7 +1505,6 @@ events.push(function() {
 	show_advntp();
 	show_advtftp();
 	show_advldap();
-	show_advboot();
 	show_advopts();
 
 	// Suppress "Delete row" button if there are fewer than two rows

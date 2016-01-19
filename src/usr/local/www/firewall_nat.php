@@ -164,6 +164,19 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
+} else if ($_GET['act'] == "toggle") {
+	if ($a_nat[$_GET['id']]) {
+		if (isset($a_nat[$_GET['id']]['disabled'])) {
+			unset($a_nat[$_GET['id']]['disabled']);
+		} else {
+			$a_nat[$_GET['id']]['disabled'] = true;
+		}
+		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
+			mark_subsystem_dirty('natconf');
+		}
+		header("Location: firewall_nat.php");
+		exit;
+	}
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
@@ -194,6 +207,7 @@ display_top_tabs($tab_array);
 				<thead>
 					<tr>
 						<th><!-- Checkbox --></th>
+						<th><!-- Icon --></th>
 						<th><!-- Rule type --></th>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Protocol")?></th>
@@ -225,11 +239,24 @@ foreach ($a_nat as $natent):
 	if (!have_natpfruleint_access($natent['interface'])) {
 		continue;
 	}
+
+	if (isset($natent['disabled'])) {
+		$iconfn = "pass_d";
+		$trclass = 'class="disabled"';
+	} else {
+		$iconfn = "pass";
+		$trclass = '';
+	}
 ?>
 
-					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
+						</td>
+						<td>
+							<a href="?act=toggle&amp;id=<?=$i?>">
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+							</a>
 						</td>
 						<td>
 <?php

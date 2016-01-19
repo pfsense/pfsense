@@ -120,26 +120,26 @@ foreach ($ifdescs as $ifent => $ifdesc) {
 
 if ($config['l2tp']['mode'] == "server") {
 	if (have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = "L2TP VPN";
+		$iflist['l2tp'] = gettext("L2TP VPN");
 	}
 }
 
 if (is_array($config['pppoes']['pppoe'])) {
 	foreach ($config['pppoes']['pppoe'] as $pppoes) {
 		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
-			$iflist['pppoe'] = "PPPoE Server";
+			$iflist['pppoe'] = gettext("PPPoE Server");
 		}
 	}
 }
 
 /* add ipsec interfaces */
 if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$iflist["enc0"] = "IPsec";
+	$iflist["enc0"] = gettext("IPsec");
 }
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$iflist["openvpn"] = "OpenVPN";
+	$iflist["openvpn"] = gettext("OpenVPN");
 }
 
 if (!$if || !isset($iflist[$if])) {
@@ -572,7 +572,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				echo ' <span style="cursor: help;" title="ICMP type: ' .
+				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
 					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
 					'"><u>';
 				echo $filterent['icmptype'];
@@ -584,25 +584,25 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if (isset($alias['src'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_address($filterent['source']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 							<?php endif; ?>
 							<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
 						</td>

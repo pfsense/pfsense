@@ -130,7 +130,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Reserved word used for schedule name.");
 	} else {
 		if (is_validaliasname($_POST['name']) == false) {
-			$input_errors[] = gettext("The schedule name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters:") . ' a-z, A-Z, 0-9, _';
+			$input_errors[] = sprintf(gettext("The schedule name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %s"), 'a-z, A-Z, 0-9, _');
 		}
 	}
 

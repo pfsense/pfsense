@@ -155,6 +155,7 @@ if (!$if || !isset($iflist[$if])) {
 }
 
 if ($_POST) {
+
 	$pconfig = $_POST;
 
 	if ($_POST['apply']) {
@@ -233,6 +234,16 @@ if (isset($_POST['del_x'])) {
 		}
 
 		$a_filter = $a_filter_new;
+
+		$config['filter']['separator'][$if] = "";
+
+		if ($_POST['separator']) {
+			$idx = 0;
+			foreach ($_POST['separator'] as $separator) {
+				$config['filter']['separator'][$separator['if']]['sep' . $idx++] = $separator;
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
 		}
@@ -297,8 +308,8 @@ display_top_tabs($tab_array);
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 	if (!isset($config['system']['webgui']['noantilockout']) &&
-	    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
-	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
+		(((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+		 ((count($config['interfaces']) == 1) && ($if == 'wan')))):
 		$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
 					<tr id="antilockout">
@@ -359,6 +370,7 @@ display_top_tabs($tab_array);
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
+$seps = 0;
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
@@ -367,6 +379,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	} else {
 		$display = "";
 	}
+
 ?>
 					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td >
@@ -517,7 +530,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					#FIXME
 					$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
 					$schedule_span_begin = '<a href="/firewall_schedule_edit.php?id=' . $idx . '" data-toggle="popover" data-trigger="hover focus" title="' . $schedule['name'] . '" data-content="' .
-					    $sched_caption_escaped . '" data-html="true">';
+						$sched_caption_escaped . '" data-html="true">';
 					$schedule_span_end = "";
 				}
 			}
@@ -653,6 +666,17 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 					</tr>
 <?php
+		if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
+			foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
+				if ($rulesep['row']['0'] == "fr" . $nrules) {
+					print('<tr class="ui-sortable-handle separator">' .
+						'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $rulesep['text'] . '</font></td>' .
+						'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+						'</tr>' . "\n");
+				}
+			}
+		}
+
 		$nrules++;
 		endfor;
 ?>
@@ -754,13 +778,14 @@ events.push(function() {
 	// Separator bar stuff ------------------------------------------------------------------------
 	$("#addsep").prop('type' ,'button');
 
-    $("#addsep").click(function() {
-        alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
-        // Inset a temporary bar in which hte user can enter some optional text
-        $('#ruletable > tbody:last').append('<tr>' +
-            '<td bgcolor="#cce5ff" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
-            '<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
-            '</tr>');
+	$("#addsep").click(function() {
+//		alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
+
+		// Inset a temporary bar in which hte user can enter some optional text
+		$('#ruletable > tbody:last').append('<tr>' +
+			'<td bgcolor="#cce5ff" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
+			'<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
+			'</tr>');
 
 		$("#btnnewsep").prop('type' ,'button');
 
@@ -769,23 +794,52 @@ events.push(function() {
 		$("#btnnewsep").click(function() {
 			var septext = escapeHtml($('#newsep').val());
 			$('#ruletable > tbody:last >tr:last').remove();
-			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle">' +
-	            '<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
-	            '<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash sepdel"></i></a></td>' +
-	            '</tr>');
+			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
+				'<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
+				'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash sepdel"></i></a></td>' +
+				'</tr>');
+
+			$('#order-store').removeAttr('disabled');
 		});
-    });
+	});
 
 	// Delete a sepaator row
 	$(function(){
 		$('table').on('click','tr a .sepdel',function(e){
 			e.preventDefault();
 			$(this).parents('tr').remove();
+			$('#order-store').removeAttr('disabled');
 		});
 	});
 
+	// Compose an inout array containing the row # and text for each separator
 	function save_separators() {
-		return(true);
+		var seprow = 0;
+		var sepinput;
+		var sepnum = 0;
+
+		$('#ruletable > tbody > tr').each(function() {
+			if ($(this).hasClass('separator')) {
+				seprow = $(this).prev('tr').attr("id");
+				if (isNaN(seprow)) {
+					seprow = 0;
+				}
+
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + $(this).find('td').text() + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + 'blue' + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="<?=$if?>"></input>';
+				$('form').append(sepinput);
+				sepnum++;
+			}
+
+			if ($(this).parent('tbody').hasClass('user-entries')) {
+				seprow++;
+			}
+		});
 	}
 
 	//JS equivalent to PHP htmlspecialchars()

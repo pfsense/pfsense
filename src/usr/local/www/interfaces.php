@@ -283,7 +283,7 @@ $pconfig['enable'] = isset($wancfg['enable']);
 if (is_array($config['aliases']['alias'])) {
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($alias['name'] == $wancfg['descr']) {
-			$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $wancfg['descr']);
+			$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists. Interfaces cannot have the same name as an alias."), $wancfg['descr']);
 		}
 	}
 }

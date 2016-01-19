@@ -354,7 +354,7 @@ print($form);
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php

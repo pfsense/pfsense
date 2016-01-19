@@ -528,7 +528,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$image = "";
 		if (!isset($filterent['disabled'])) {
 			if ($schedstatus) {
-				if ($iconfn == "block" || $iconfn == "reject") {
+				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
 					$image = "times-circle";
 					$dispcolor = "text-danger";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
@@ -539,13 +539,13 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
-				if ($iconfn == "block" || $iconfn == "reject") {
+				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
 					$image = "times-circle";
 				} else {
-					$image = "times-circle";
+					$image = "play-circle";
 				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
-				$dispcolor = "text-danger";
+				$dispcolor = "text-warning";
 				$printicon = true;
 			}
 		}

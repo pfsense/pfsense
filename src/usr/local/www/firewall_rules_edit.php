@@ -645,22 +645,22 @@ if ($_POST) {
 
 	if ($_POST['statetype'] == "none") {
 		if (!empty($_POST['max'])) {
-			$input_errors[] = gettext("You cannot specify the maximum state entries (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum state entries (advanced option) if statetype is none.");
 		}
 		if (!empty($_POST['max-src-nodes'])) {
-			$input_errors[] = gettext("You cannot specify the maximum number of unique source hosts (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum number of unique source hosts (advanced option) if statetype is none.");
 		}
 		if (!empty($_POST['max-src-conn'])) {
-			$input_errors[] = gettext("You cannot specify the maximum number of established connections per host (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum number of established connections per host (advanced option) if statetype is none.");
 		}
 		if (!empty($_POST['max-src-states'])) {
-			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none.");
 		}
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
-			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none.");
 		}
 		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none and no L7 container is selected.");
+			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none.");
 		}
 	}
 

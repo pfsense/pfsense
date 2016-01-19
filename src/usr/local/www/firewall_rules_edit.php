@@ -429,10 +429,10 @@ if ($_POST) {
 		$reqdfields[] = "src";
 		$reqdfields[] = "dst";
 	}
-	$reqdfieldsn = explode(",", "Type,Protocol");
+	$reqdfieldsn = array(gettext("Type"), gettext("Protocol"));
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {
-		$reqdfieldsn[] = "Source";
-		$reqdfieldsn[] = "Destination";
+		$reqdfieldsn[] = gettext("Source");
+		$reqdfieldsn[] = gettext("Destination");
 	}
 
 	if ($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
@@ -447,7 +447,7 @@ if ($_POST) {
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
 	    (!(is_specialnet($_POST['srctype']) || ($_POST['srctype'] == "single")))) {
 		$reqdfields[] = "srcmask";
-		$reqdfieldsn[] = "Source bit count";
+		$reqdfieldsn[] = gettext("Source bit count");
 	}
 	if (isset($a_filter[$id]['associated-rule-id']) === false &&
 	    (!(is_specialnet($_POST['dsttype']) || ($_POST['dsttype'] == "single")))) {
@@ -939,8 +939,8 @@ function build_flag_table() {
 	$setflags = explode(",", $pconfig['tcpflags1']);
 	$outofflags = explode(",", $pconfig['tcpflags2']);
 	$header = "<td></td>";
-	$tcpflags1 = "<td>set</td>";
-	$tcpflags2 = "<td>out of</td>";
+	$tcpflags1 = "<td>" . gettext("set") . "</td>";
+	$tcpflags2 = "<td>" . gettext("out of") . "</td>";
 
 	foreach ($tcpflags as $tcpflag) {
 		$header .= "<td><strong>" . strtoupper($tcpflag) . "</strong></td>\n";
@@ -993,21 +993,21 @@ function build_if_list() {
 	}
 
 	if ($config['l2tp']['mode'] == "server" && have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = 'L2TP VPN';
+		$iflist['l2tp'] = gettext('L2TP VPN');
 	}
 
 	if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-		$iflist['pppoe'] = "PPPoE Server";
+		$iflist['pppoe'] = gettext("PPPoE Server");
 	}
 
 	// add ipsec interfaces
 	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$iflist["enc0"] = "IPsec";
+		$iflist["enc0"] = gettext("IPsec");
 	}
 
 	// add openvpn/tun interfaces
 	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$iflist["openvpn"] = "OpenVPN";
+		$iflist["openvpn"] = gettext("OpenVPN");
 	}
 
 	return($iflist);
@@ -1062,13 +1062,13 @@ $form->addGlobal(new Form_Input(
 pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/htmlphpearly");
 
 $values = array(
-	'pass' => 'Pass',
-	'block' => 'Block',
-	'reject' => 'Reject',
+	'pass' => gettext('Pass'),
+	'block' => gettext('Block'),
+	'reject' => gettext('Reject'),
 );
 
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
-	$values['match'] = 'Match';
+	$values['match'] = gettext('Match');
 }
 
 $section->addInput(new Form_Select(
@@ -1159,9 +1159,9 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'Direction',
 		$pconfig['direction'],
 		array(
-			'any' => 'any',
-			'in' => 'in',
-			'out' => 'out',
+			'any' => gettext('any'),
+			'in' => gettext('in'),
+			'out' => gettext('out'),
 		)
 	));
 
@@ -1201,7 +1201,7 @@ $section->addInput(new Form_Select(
 		'pim' => 'PIM',
 		'ospf' => 'OSPF',
 		'sctp' => 'SCTP',
-		'any' => 'any',
+		'any' => gettext('any'),
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
@@ -1252,23 +1252,23 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	}
 
 	$ruleValues = array(
-		'any' => 'any',
-		'single' => 'Single host or alias',
-		'network' => 'Network',
+		'any' => gettext('any'),
+		'single' => gettext('Single host or alias'),
+		'network' => gettext('Network'),
 	);
 
-	if($type == 'dst') {
-		$ruleValues['(self)'] = "This firewall (self)";
+	if ($type == 'dst') {
+		$ruleValues['(self)'] = gettext("This firewall (self)");
 	}
 
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
-		$ruleValues['(self)'] = 'This Firewall (self)';
+		$ruleValues['(self)'] = gettext('This Firewall (self)');
 	}
 	if (have_ruleint_access("pppoe")) {
-		$ruleValues['pppoe'] = 'PPPoE clients';
+		$ruleValues['pppoe'] = gettext('PPPoE clients');
 	}
 	if (have_ruleint_access("l2tp")) {
-		$ruleValues['l2tp'] = 'L2TP clients';
+		$ruleValues['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
@@ -1302,7 +1302,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		))->removeClass('btn-primary');
 	}
 
-	$portValues = ['' => '(other)', 'any' => 'any'];
+	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
 
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
@@ -1507,10 +1507,10 @@ $section->addInput(new Form_Select(
 	'State type',
 	(isset($pconfig['statetype'])) ? "keep state":$pconfig['statetype'],
 	array(
-		'keep state' => 'Keep',
-		'sloppy state' => 'Sloppy',
-		'synproxy state' => 'Synproxy',
-		'none' => 'None',
+		'keep state' => gettext('Keep'),
+		'sloppy state' => gettext('Sloppy'),
+		'synproxy state' => gettext('Synproxy'),
+		'none' => gettext('None'),
 	)
 ))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state' . '<br />' .
 			'<span></span>');
@@ -1549,10 +1549,10 @@ $section->addInput(new Form_Select(
 	'sched',
 	'Schedule',
 	$pconfig['sched'],
-	['' => 'none'] + array_combine($schedules, $schedules)
+	['' => gettext('none')] + array_combine($schedules, $schedules)
 ))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
 
-$gateways = array("" => 'default');
+$gateways = array("" => gettext('default'));
 foreach (return_gateways_array() as $gwname => $gw) {
 	if (($pconfig['ipprotocol'] == "inet46")) {
 		continue;
@@ -1590,14 +1590,14 @@ $group->add(new Form_Select(
 	'dnpipe',
 	'DNpipe',
 	(isset($pconfig['dnpipe'])) ? $pconfig['dnpipe']:"",
-	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
+	array('' => gettext('none')) + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $group->add(new Form_Select(
 	'pdnpipe',
 	'PDNpipe',
 	(isset($pconfig['pdnpipe'])) ? $pconfig['pdnpipe']:"",
-	array('' => 'none') + array_combine(array_keys($dnqlist), array_keys($dnqlist))
+	array('' => gettext('none')) + array_combine(array_keys($dnqlist), array_keys($dnqlist))
 ));
 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.

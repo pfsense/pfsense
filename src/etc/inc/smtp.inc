@@ -2,7 +2,7 @@
 /*
  * smtp.php
  *
- * @(#) $Header: /opt2/ena/metal/smtp/smtp.php,v 1.48 2014/11/23 22:45:30 mlemos Exp $
+ * @(#) $Header: /opt2/ena/metal/smtp/smtp.php,v 1.50 2016/01/19 00:16:06 mlemos Exp $
  *
  */
 
@@ -12,7 +12,7 @@
 
 	<package>net.manuellemos.smtp</package>
 
-	<version>@(#) $Id: smtp.php,v 1.48 2014/11/23 22:45:30 mlemos Exp $</version>
+	<version>@(#) $Id: smtp.php,v 1.50 2016/01/19 00:16:06 mlemos Exp $</version>
 	<copyright>Copyright (C) Manuel Lemos 1999-2011</copyright>
 	<title>Sending e-mail messages via SMTP protocol</title>
 	<author>Manuel Lemos</author>
@@ -261,7 +261,7 @@ class smtp_class
 	<variable>
 		<name>user_agent</name>
 		<type>STRING</type>
-		<value>SMTP Class (http://www.phpclasses.org/smtpclass $Revision: 1.48 $)</value>
+		<value>SMTP Class (http://www.phpclasses.org/smtpclass $Revision: 1.50 $)</value>
 		<documentation>
 			<purpose>Set the user agent used when connecting via an HTTP proxy.</purpose>
 			<usage>Change this value only if for some reason you want emulate a
@@ -270,7 +270,7 @@ class smtp_class
 	</variable>
 {/metadocument}
 */
-	var $user_agent='SMTP Class (http://www.phpclasses.org/smtpclass $Revision: 1.48 $)';
+	var $user_agent='SMTP Class (http://www.phpclasses.org/smtpclass $Revision: 1.50 $)';
 
 /*
 {metadocument}

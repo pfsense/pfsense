@@ -799,6 +799,8 @@ events.push(function() {
 			'<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
 			'</tr>');
 
+		$('#newsep').focus();
+
 		$("#btnnewsep").prop('type' ,'button');
 
 		// Remove the temporary separator bar and replace it with the final version containing the
@@ -815,7 +817,7 @@ events.push(function() {
 		});
 	});
 
-	// Delete a sepaator row
+	// Delete a separator row
 	$(function(){
 		$('table').on('click','tr a .sepdel',function(e){
 			e.preventDefault();

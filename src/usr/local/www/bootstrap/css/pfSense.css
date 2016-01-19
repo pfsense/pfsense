@@ -781,3 +781,23 @@ ul.tree li .over{
         max-height: none !important;
     }
 }
+/* These colors style the separator bars that may be added to firewall rules and NAT rules*/
+tr .separator-red {
+	background-color: #ff9999;
+    color: #4d0000;
+}
+
+.separator-green {
+	background-color: #79d379;
+    color: #0d260d;
+}
+
+.separator-blue {
+	background-color: #cce5ff;
+    color: #002699;
+}
+
+.separator-orange {
+	background-color: #ffcc00;
+    color: #1a1400;
+}

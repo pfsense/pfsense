@@ -678,9 +678,10 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
 			foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
 				if ($rulesep['row']['0'] == "fr" . $nrules) {
+					$cellcolor = $rulesep['color'];
 					print('<tr class="ui-sortable-handle separator">' .
-						'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $rulesep['text'] . '</font></td>' .
-						'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+						'<td class="' . $cellcolor . '" colspan="11">' . '<font class="' . $cellcolor . '">' . $rulesep['text'] . '</font></td>' .
+						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
 						'</tr>' . "\n");
 				}
 			}
@@ -790,15 +791,23 @@ events.push(function() {
 	$("#addsep").click(function() {
 //		alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
 
-		// Inset a temporary bar in which hte user can enter some optional text
-		$('#ruletable > tbody:last').append('<tr>' +
-			'<td bgcolor="#cce5ff" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
-			'<td bgcolor="#cce5ff" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button></td>' +
-			'</tr>');
+		// Inset a temporary bar in which the user can enter some optional text
+		$('#ruletable > tbody:last').append('<tr class="separator-red">' +
+			'<td class="separator-blue" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
+			'<td class="separator-blue" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
+			'<button class="btn btn-default btn-sm" id="btncncsep"><?=gettext("Cancel")?></button>' +
+			'&nbsp;&nbsp;&nbsp;&nbsp;' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrblue" value="blue"><i class="fa fa-circle text-info"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrred" value="red"><i class="fa fa-circle text-danger"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrgreen" value="green"><i class="fa fa-circle text-success"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrorange" value="orange"><i class="fa fa-circle text-warning"></i></a>' +
+			'</td></tr>');
 
 		$('#newsep').focus();
 
 		$("#btnnewsep").prop('type' ,'button');
+
+		handle_colors();
 
 		// Remove the temporary separator bar and replace it with the final version containing the
 		// user's text and a delete icon
@@ -806,8 +815,8 @@ events.push(function() {
 			var septext = escapeHtml($('#newsep').val());
 			$('#ruletable > tbody:last >tr:last').remove();
 			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
-				'<td bgcolor="#cce5ff" colspan="11">' + '<font color="#002699">' + septext + '</font></td>' +
-				'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash sepdel"></i></a></td>' +
+				'<td class="' + gColor + '" colspan="11">' + '<font class="' + gColor + '">' + septext + '</font></td>' +
+				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
 				'</tr>');
 
 			$('#order-store').removeAttr('disabled');
@@ -822,6 +831,8 @@ events.push(function() {
 			$('#order-store').removeAttr('disabled');
 		});
 	});
+
+	gColor = 'separator-blue';
 
 	// Compose an inout array containing the row # and text for each separator
 	function save_separators() {
@@ -840,7 +851,7 @@ events.push(function() {
 				$('form').append(sepinput);
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + $(this).find('td').text() + '"></input>';
 				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + 'blue' + '"></input>';
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
 				$('form').append(sepinput);
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="<?=strtolower($if)?>"></input>';
 				$('form').append(sepinput);
@@ -850,6 +861,28 @@ events.push(function() {
 			if ($(this).parent('tbody').hasClass('user-entries')) {
 				seprow++;
 			}
+		});
+	}
+
+	function handle_colors() {
+		$('[id^=sepclr]').prop("type", "button");
+
+		$('[id^=sepclr]').click(function () {
+			var color =  $(this).attr('value');
+			// Clear all the color classes
+			$(this).parent('td').removeClass('separator-red');
+			$(this).parent('td').removeClass('separator-green');
+			$(this).parent('td').removeClass('separator-blue');
+			$(this).parent('td').removeClass('separator-orange');
+			$(this).parent('td').prev('td').removeClass('separator-red');
+			$(this).parent('td').prev('td').removeClass('separator-green');
+			$(this).parent('td').prev('td').removeClass('separator-blue');
+			$(this).parent('td').prev('td').removeClass('separator-orange');
+			// Install our new color class
+			$(this).parent('td').addClass('separator-' + color);
+			$(this).parent('td').prev('td').addClass('separator-' + color);
+			// Set the global color
+			gColor = 'separator-' + color;
 		});
 	}
 

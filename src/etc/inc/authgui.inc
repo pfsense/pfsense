@@ -277,7 +277,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 							<div class="form-group">
 								<label for="usernamefld" class="col-sm-3 control-label">Username</label>
 								<div class="col-sm-9 col-md-7">
-									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="Enter your username" autocorrect="off" autocapitalize="off" spellcheck="false">
+									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="Enter your username" autocorrect="off" autocapitalize="none" spellcheck="false">
 								</div>
 							</div>
 

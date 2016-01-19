@@ -235,12 +235,12 @@ if (isset($_POST['del_x'])) {
 
 		$a_filter = $a_filter_new;
 
-		$config['filter']['separator'][$if] = "";
+		$config['filter']['separator'][strtolower($if)] = "";
 
 		if ($_POST['separator']) {
 			$idx = 0;
 			foreach ($_POST['separator'] as $separator) {
-				$config['filter']['separator'][$separator['if']]['sep' . $idx++] = $separator;
+				$config['filter']['separator'][strtolower($separator['if'])]['sep' . $idx++] = $separator;
 			}
 		}
 
@@ -371,6 +371,18 @@ display_top_tabs($tab_array);
 <?php
 $nrules = 0;
 $seps = 0;
+
+if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
+	foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
+		if ($rulesep['row']['0'] == "fr-1") {
+			print('<tr class="ui-sortable-handle separator">' .
+				'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $rulesep['text'] . '</font></td>' .
+				'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+				'</tr>' . "\n");
+		}
+	}
+}
+
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
@@ -821,8 +833,8 @@ events.push(function() {
 		$('#ruletable > tbody > tr').each(function() {
 			if ($(this).hasClass('separator')) {
 				seprow = $(this).prev('tr').attr("id");
-				if (isNaN(seprow)) {
-					seprow = 0;
+				if (seprow == undefined) {
+					seprow = "fr-1";
 				}
 
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
@@ -831,7 +843,7 @@ events.push(function() {
 				$('form').append(sepinput);
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + 'blue' + '"></input>';
 				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="<?=$if?>"></input>';
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="<?=strtolower($if)?>"></input>';
 				$('form').append(sepinput);
 				sepnum++;
 			}

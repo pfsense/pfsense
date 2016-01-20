@@ -157,6 +157,11 @@ ul.context-links li a {
     border-color: #212121;
 }
 
+.btn-breadcrumbbar {
+	color: #808080;
+    background-color: #404040;
+}
+
 .btn-default.active, .btn-default.focus, .btn-default:active, .btn-default:focus, .btn-default:hover, .open>.dropdown-toggle.btn-default {
     color: #ffffff;
     background-color: #424242;

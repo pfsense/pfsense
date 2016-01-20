@@ -885,7 +885,8 @@ events.push(function() {
 
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
 				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + $(this).find('td').text() + '"></input>';
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
+				alert(sepinput);
 				$('form').append(sepinput);
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
 				$('form').append(sepinput);

@@ -509,6 +509,11 @@ footer a {
     background-color: #1976D2;
 }
 
+.btn-breadcrumbbar {
+	color: #808080;
+    background-color: #D0D0D0;
+}
+
 .text-warning {
     color: #F57F17;
 }

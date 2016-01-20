@@ -63,6 +63,7 @@ require_once("filter_log.inc");
 // Status Logs Common - Code
 function status_logs_common_code() {
 	global $g, $config, $specific_log, $nentries, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
+	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
@@ -85,6 +86,15 @@ function status_logs_common_code() {
 
 	if (!empty($allowed_logs[$logfile]["shortcut"])) {
 		$shortcut_section = $allowed_logs[$logfile]["shortcut"];
+	}
+
+	// Get the configured options for Show/Hide Log Filter and Manage Log panels.
+	$system_logs_filter_form_hidden = isset($config['system']['webgui']['systemlogsfilterpanel']) ? false : true;
+	$system_logs_manage_log_form_hidden = isset($config['system']['webgui']['systemlogsmanagelogpanel']) ? false : true;
+
+	if ($logfile == 'filter' && $view == 'summary') {
+		$system_logs_filter_form_hidden = false;
+		$system_logs_manage_log_form_hidden = false;
 	}
 }
 
@@ -174,17 +184,26 @@ function log_filter_form_system_submit() {
 function filter_form_system() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
+	global $system_logs_filter_form_hidden;
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -236,8 +255,9 @@ function filter_form_system() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -320,6 +340,7 @@ function log_filter_form_firewall_submit() {
 function filter_form_firewall() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $interfacefilter;
+	global $system_logs_filter_form_hidden;
 
 	$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 	if ($filterfieldsarray['interface'] == "All") {
@@ -327,15 +348,23 @@ function filter_form_firewall() {
 	}
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -434,8 +463,9 @@ function filter_form_firewall() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -698,20 +728,30 @@ function manage_log_code() {
 function manage_log_section() {
 
 	global $input_errors, $allowed_logs, $logfile, $config, $pconfig;
+	global $system_logs_manage_log_form_hidden;
 
 	if ($input_errors) {
 		print_input_errors($input_errors);
 		$manage_log_active = true;
 	}
 
-	if ($manage_log_active)
-		$manage_log_state = SEC_OPEN;
-	else
-		$manage_log_state = SEC_CLOSED;
+	if ($filter_active) {
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
+	} else {
+		if ($system_logs_manage_log_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
+	}
 
 	$form = new Form(false);
+	$form->setAttribute('id', 'manage-log-form')->addClass('collapse ' . $panel_state);
 
-	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'log-manager-panel', COLLAPSIBLE|$manage_log_state);
+	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
 
 	$section->addInput(new Form_StaticText(
 		'',

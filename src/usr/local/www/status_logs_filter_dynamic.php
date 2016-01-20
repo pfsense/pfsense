@@ -125,6 +125,12 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
 // Log Filter Submit - Firewall
 filter_form_firewall();
 
@@ -489,7 +495,9 @@ if ($tcpcnt > 0) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <script type="text/javascript">

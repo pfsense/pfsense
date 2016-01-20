@@ -93,6 +93,9 @@ $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+$pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+$pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
+$pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -234,6 +237,15 @@ if ($_POST) {
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+
+		unset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
+
+		unset($config['system']['webgui']['systemlogsfilterpanel']);
+		$config['system']['webgui']['systemlogsfilterpanel'] = $_POST['systemlogsfilterpanel'] ? true : false;
+
+		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
+		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -505,6 +517,34 @@ $section->addInput(new Form_Input(
 	$pconfig['dashboardcolumns'],
 	[min => 1, max => 4]
 ))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+
+$group = new Form_Group('Special Panels Show/Hide');
+
+$group->add(new Form_Checkbox(
+	'dashboardavailablewidgetspanel',
+	null,
+	'Available Widgets',
+	$pconfig['dashboardavailablewidgetspanel']
+	))->setHelp('Show the Available Widgets panel on the Dashboard.');
+
+$group->add(new Form_Checkbox(
+	'systemlogsfilterpanel',
+	null,
+	'Log Filter',
+	$pconfig['systemlogsfilterpanel']
+))->setHelp('Show the Log Filter panel in System Logs.');
+
+$group->add(new Form_Checkbox(
+	'systemlogsmanagelogpanel',
+	null,
+	'Manage Logs',
+	$pconfig['systemlogsmanagelogpanel']
+))->setHelp('Show the Manage Log panel in System Logs.');
+
+$group->setHelp('These options set which special panels to show or hide.  When a panel is hidden a button to show/hide the panel is displayed in the title bar.
+<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'webguileftcolumnhyper',

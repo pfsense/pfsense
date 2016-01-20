@@ -486,7 +486,7 @@ echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
 echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 
 ?>
-	<?php if ($pagetitle === 'Status: Dashboard'): ?>
+	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
 			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Show/Hide available widgets panel")?>">
 				<i class="btn-sm btn-breadcrumbbar">Widgets</i>

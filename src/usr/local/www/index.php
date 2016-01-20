@@ -301,6 +301,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 }
 
 ## Set Page Title and Include Header
+$dashboard_available_widgets_hidden = true;
 $pgtitle = array(gettext("Status"), gettext("Dashboard"));
 include("head.inc");
 

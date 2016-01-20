@@ -469,6 +469,7 @@
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.so
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.a
 /usr/local/lib/ipsec/plugins/libstrongswan-smp.la
+/usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED
 /usr/local/lib/libcrypto.a
 /usr/local/lib/libcrypto.so
 /usr/local/lib/libcrypto.so.8

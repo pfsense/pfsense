@@ -541,7 +541,7 @@ $group->add(new Form_Checkbox(
 	$pconfig['systemlogsmanagelogpanel']
 ))->setHelp('Show the Manage Log panel in System Logs.');
 
-$group->setHelp('These options set which special panels to show or hide.  When a panel is hidden a button to show/hide the panel is displayed in the title bar.
+$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.
 <br /><span class="badge" title="This feature is in BETA">BETA</span>');
 
 $section->add($group);

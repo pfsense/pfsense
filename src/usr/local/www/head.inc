@@ -465,7 +465,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
 			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Show/Hide available widgets panel")?>">
-				<i class="btn-sm btn-breadcrumbbar">Widgets</i>
+				<i style="cursor:pointer"><?=gettext("Widgets");?></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -473,7 +473,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Show/Hide log filter panel")?>">
-				<i class="btn-sm btn-breadcrumbbar">Filter</i>
+				<i style="cursor:pointer"><?=gettext("Filter");?></i>
 			</a>
 		</li>
 	<?php endif ?>
@@ -481,7 +481,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	<?php if ($system_logs_manage_log_form_hidden): ?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Show/Hide manage log panel")?>">
-				<i class="btn-sm btn-breadcrumbbar">Manage Log</i>
+				<i style="cursor:pointer"><?=gettext("Manage Log");?></i>
 			</a>
 		</li>
 	<?php endif ?>

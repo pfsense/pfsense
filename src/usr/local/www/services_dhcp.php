@@ -1048,21 +1048,21 @@ $btnadv = new Form_Button(
 $btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'NTP servers',
+	'NTP',
 	$btnadv
 ));
 
 $section->addInput(new Form_IpAddress(
 	'ntp1',
-	null,
+	'NTP Server 1',
 	$pconfig['ntp1']
-))->setAttribute('placeholder', 'NTP Server 1');
+));
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
-	null,
+	'NTP Server 2',
 	$pconfig['ntp2']
-))->setAttribute('placeholder', 'NTP Server 2');
+));
 
 // Advanced TFTP
 $btnadv = new Form_Button(
@@ -1073,13 +1073,13 @@ $btnadv = new Form_Button(
 $btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'TFTP server',
+	'TFTP',
 	$btnadv
 ));
 
 $section->addInput(new Form_IpAddress(
 	'tftp',
-	'Host or IP',
+	'TFTP Server',
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server')->setPattern('[.a-zA-Z0-9_]+');
 
@@ -1092,13 +1092,13 @@ $btnadv = new Form_Button(
 $btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'LDAP URI',
+	'LDAP',
 	$btnadv
 ));
 
 $section->addInput(new Form_Input(
 	'ldap',
-	null,
+	'LDAP Server URI',
 	'text',
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');

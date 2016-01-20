@@ -786,24 +786,33 @@ events.push(function() {
 	});
 
 	// Separator bar stuff ------------------------------------------------------------------------
+
+	// Globals
+	gColor = 'bg-info';
+	newSeperator = false;
+
 	$("#addsep").prop('type' ,'button');
 
 	$("#addsep").click(function() {
-//		alert("This feature is not yet complete. (Nothing is saved)\nIncluded for review only.");
+		if (newSeperator) {
+			return(false);
+		}
 
+		gColor = 'bg-info';
 		// Inset a temporary bar in which the user can enter some optional text
-		$('#ruletable > tbody:last').append('<tr class="separator-red">' +
-			'<td class="separator-blue" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
-			'<td class="separator-blue" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
+		$('#ruletable > tbody:last').append('<tr>' +
+			'<td class="' + gColor + '" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text"></input></td>' +
+			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
 			'<button class="btn btn-default btn-sm" id="btncncsep"><?=gettext("Cancel")?></button>' +
 			'&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrblue" value="blue"><i class="fa fa-circle text-info"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrred" value="red"><i class="fa fa-circle text-danger"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrgreen" value="green"><i class="fa fa-circle text-success"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrorange" value="orange"><i class="fa fa-circle text-warning"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success"></i></a>' +
+			'&nbsp;&nbsp;<a href="#" id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning"></i></a>' +
 			'</td></tr>');
 
 		$('#newsep').focus();
+		newSeperator = true;
 
 		$("#btnnewsep").prop('type' ,'button');
 
@@ -820,6 +829,14 @@ events.push(function() {
 				'</tr>');
 
 			$('#order-store').removeAttr('disabled');
+			newSeperator = false;
+		});
+
+		// Cancel button
+		$('#btncncsep').click(function(e) {
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			newSeperator = false;
 		});
 	});
 
@@ -831,8 +848,6 @@ events.push(function() {
 			$('#order-store').removeAttr('disabled');
 		});
 	});
-
-	gColor = 'separator-blue';
 
 	// Compose an inout array containing the row # and text for each separator
 	function save_separators() {
@@ -870,19 +885,13 @@ events.push(function() {
 		$('[id^=sepclr]').click(function () {
 			var color =  $(this).attr('value');
 			// Clear all the color classes
-			$(this).parent('td').removeClass('separator-red');
-			$(this).parent('td').removeClass('separator-green');
-			$(this).parent('td').removeClass('separator-blue');
-			$(this).parent('td').removeClass('separator-orange');
-			$(this).parent('td').prev('td').removeClass('separator-red');
-			$(this).parent('td').prev('td').removeClass('separator-green');
-			$(this).parent('td').prev('td').removeClass('separator-blue');
-			$(this).parent('td').prev('td').removeClass('separator-orange');
+			$(this).parent('td').prop('class', '');
+			$(this).parent('td').prev('td').prop('class', '');
 			// Install our new color class
-			$(this).parent('td').addClass('separator-' + color);
-			$(this).parent('td').prev('td').addClass('separator-' + color);
+			$(this).parent('td').addClass(color);
+			$(this).parent('td').prev('td').addClass(color);
 			// Set the global color
-			gColor = 'separator-' + color;
+			gColor = color;
 		});
 	}
 

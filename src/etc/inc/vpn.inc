@@ -652,7 +652,7 @@ EOD;
 		}
 	}
 
-	$strongswan .= "\t}\n}\n";
+	$strongswan .= "\n\t}\n}\n";
 	@file_put_contents("{$g['varetc_path']}/ipsec/strongswan.conf", $strongswan);
 	unset($strongswan);
 

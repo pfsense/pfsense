@@ -831,7 +831,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'strictusercn',
 		'Strict User-CN Matching',
-		null,
+		'Enforce match',
 		$pconfig['strictusercn']
 	))->setHelp('When authenticating users, enforce a match between the common name of the client certificate and the username given at login.');
 

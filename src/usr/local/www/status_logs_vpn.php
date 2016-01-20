@@ -75,7 +75,7 @@ $allowed_logs = array(
 	"vpn" => array("name" => "VPN Logins",
 		    "shortcut" => "poes"),
 	"poes" => array("name" => "PPPoE Service",
-		    "shortcut" => "poes"),
+		    "shortcut" => "pppoes"),
 	"l2tps" => array("name" => "L2TP Service",
 		    "shortcut" => "l2tps"),
 );

@@ -469,7 +469,7 @@ function vpn_ipsec_configure($restart = false) {
 	$ipsecloglevels = vpn_logging_cfgtxt();
 	if (is_array($ipsecloglevels)) {
 		foreach ($ipsecloglevels as $loglevel) {
-			$strongswanlog .= "\t\t" . $loglevel . "\n";
+			$strongswanlog .= "\t\t\t" . $loglevel . "\n";
 		}
 	}
 	$strongswan = <<<EOD
@@ -482,29 +482,29 @@ starter {
 
 charon {
 # number of worker threads in charon
-threads = 16
-ikesa_table_size = 32
-ikesa_table_segments = 4
-init_limit_half_open = 1000
-install_routes = no
-{$i_dont_care_about_security_and_use_aggressive_mode_psk}
-{$accept_unencrypted}
-cisco_unity = {$unity_enabled}
-{$ifacesuse}
-{$makebeforebreak}
+	threads = 16
+	ikesa_table_size = 32
+	ikesa_table_segments = 4
+	init_limit_half_open = 1000
+	install_routes = no
+	{$i_dont_care_about_security_and_use_aggressive_mode_psk}
+	{$accept_unencrypted}
+	cisco_unity = {$unity_enabled}
+	{$ifacesuse}
+	{$makebeforebreak}
 
-syslog {
-	identifier = charon
-	# log everything under daemon since it ends up in the same place regardless with our syslog.conf
-	daemon {
-		ike_name = yes
+	syslog {
+		identifier = charon
+		# log everything under daemon since it ends up in the same place regardless with our syslog.conf
+		daemon {
+			ike_name = yes
 {$strongswanlog}
+		}
+		# disable logging under auth so logs aren't duplicated
+		auth {
+			default = -1
+		}
 	}
-	# disable logging under auth so logs aren't duplicated
-	auth {
-		default = -1
-	}
-}
 
 	plugins {
 		stroke {

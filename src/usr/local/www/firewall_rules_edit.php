@@ -966,7 +966,7 @@ function build_flag_table() {
 	$flagtable .=  "</table>";
 
 	$flagtable .= '<input type="checkbox" name="tcpflags_any" id="tcpflags_any" value="on"';
-	$flagtable .= $pconfig['tcpflags_any'] ? 'checked':'' . '/>';
+	$flagtable .= ($pconfig['tcpflags_any'] ? 'checked':'') . '/>';
 	$flagtable .= '<strong>' . gettext(" Any flags.") . '</strong>';
 
 	return($flagtable);
@@ -1505,7 +1505,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Select(
 	'statetype',
 	'State type',
-	(isset($pconfig['statetype'])) ? "keep state":$pconfig['statetype'],
+	(isset($pconfig['statetype'])) ? $pconfig['statetype'] : "keep state",
 	array(
 		'keep state' => gettext('Keep'),
 		'sloppy state' => gettext('Sloppy'),

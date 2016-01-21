@@ -125,15 +125,21 @@ $form->addGlobal(new Form_Input(
 $section = new Form_Section('pfTop Configuration');
 
 $validViews = array(
-	'default', 'label', 'long',
-	'queue', 'rules', 'size',
-	'speed', 'state', 'time',
+	'default' => gettext('default'), 
+	'label' => gettext('label'), 
+	'long' => gettext('long'),
+	'queue' => gettext('queue'), 
+	'rules' => gettext('rules'), 
+	'size' => gettext('size'),
+	'speed' => gettext('speed'), 
+	'state' => gettext('state'), 
+	'time' => gettext('time'),
 );
 $section->addInput(new Form_Select(
 	'viewtype',
 	'View',
 	$viewtype,
-	array_combine($validViews, $validViews)
+	$validViews
 ));
 
 $section->addInput(new Form_Select(
@@ -141,18 +147,18 @@ $section->addInput(new Form_Select(
 	'Sort by',
 	$sorttype,
 	array(
-		'none' => 'None',
-		'age' => 'Age',
-		'bytes' => 'Bytes',
-		'dest' => 'Destination Address',
-		'dport' => 'Destination Port',
-		'exp' => 'Expiry',
-		'peak' => 'Peak',
-		'pkt' => 'Packet',
-		'rate' => 'Rate',
-		'size' => 'Size',
-		'sport' => 'Source Port',
-		'src' => 'Source Address',
+		'none' => gettext('None'),
+		'age' => gettext('Age'),
+		'bytes' => gettext('Bytes'),
+		'dest' => gettext('Destination Address'),
+		'dport' => gettext('Destination Port'),
+		'exp' => gettext('Expiry'),
+		'peak' => gettext('Peak'),
+		'pkt' => gettext('Packet'),
+		'rate' => gettext('Rate'),
+		'size' => gettext('Size'),
+		'sport' => gettext('Source Port'),
+		'src' => gettext('Source Address'),
 	)
 ));
 

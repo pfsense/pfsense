@@ -69,9 +69,9 @@ if (isset($_POST['backupcount'])) {
 		$changedescr = $config['system']['backupcount'];
 	} else {
 		unset($config['system']['backupcount']);
-		$changedescr = "(platform default)";
+		$changedescr = gettext("(platform default)");
 	}
-	write_config("Changed backup revision count to {$changedescr}");
+	write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
 } elseif ($_GET) {
 	if (!isset($_GET['newver']) && !isset($_GET['rmver']) && !isset($_GET['getcfg']) && !isset($_GET['diff'])) {
 		header("Location: diag_confbak.php");

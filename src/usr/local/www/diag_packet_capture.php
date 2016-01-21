@@ -264,19 +264,19 @@ if ($_POST) {
 }
 
 $protocollist = array(
-	'' => 'Any',
+	'' => gettext('Any'),
 	'icmp' => 'ICMP',
-	'!icmp' => 'Exclude ICMP',
+	'!icmp' => gettext('Exclude ICMP'),
 	'icmp6' => 'ICMPv6',
-	'!icmp6' => 'Exclude ICMPv6',
+	'!icmp6' => gettext('Exclude ICMPv6'),
 	'tcp' => 'TCP',
-	'!tcp' => 'Exclude TCP',
+	'!tcp' => gettext('Exclude TCP'),
 	'udp' => 'UDP',
-	'!udp' => 'Exclude UDP',
+	'!udp' => gettext('Exclude UDP'),
 	'arp' => 'ARP',
-	'!arp' => 'Exclude ARP',
+	'!arp' => gettext('Exclude ARP'),
 	'carp' => 'CARP (VRRP)',
-	'!carp' => 'Exclude CARP (VRRP)',
+	'!carp' => gettext('Exclude CARP (VRRP)'),
 	'esp' => 'ESP'
 );
 
@@ -311,8 +311,8 @@ $section->addInput(new Form_Select(
 	'Address Family',
 	$fam,
 	array('' => 'Any',
-		  'ip' => 'IPv4 Only',
-		  'ip6' => 'IPv6 Only'
+		  'ip' => gettext('IPv4 Only'),
+		  'ip6' => gettext('IPv6 Only')
 	)
 ))->setHelp('Select the type of traffic to be captured');
 
@@ -361,10 +361,10 @@ $section->addInput(new Form_Select(
 	'detail',
 	'Level of detail',
 	$detail,
-	array('normal' => 'Normal',
-		  'medium' => 'Medium',
-		  'high' => 'High',
-		  'full' => 'Full',
+	array('normal' => gettext('Normal'),
+		  'medium' => gettext('Medium'),
+		  'high' => gettext('High'),
+		  'full' => gettext('Full'),
 	)
 ))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
 			'This option does not affect the level of detail when downloading the packet capture. ');

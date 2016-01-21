@@ -81,7 +81,7 @@ $ipproto = 'ipv4';
 $sourceip = 'any';
 
 function create_sourceaddresslist() {
-	$list = array('any' => 'Any');
+	$list = array('any' => gettext('Any'));
 
 	$sourceips = get_possible_traffic_source_addresses(true);
 

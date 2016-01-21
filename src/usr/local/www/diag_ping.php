@@ -77,7 +77,7 @@ $count = DEFAULT_COUNT;
 function create_sourceaddresslist() {
 	$sourceips = get_possible_traffic_source_addresses(true);
 
-	$list = array("" => 'Default');
+	$list = array("" => gettext('Default'));
 
 	foreach ($sourceips as $sipvalue => $sipname) {
 		$list[$sipvalue] = $sipname;

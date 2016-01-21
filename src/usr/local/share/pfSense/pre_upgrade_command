@@ -38,6 +38,9 @@ if which pbi_info >/dev/null 2>&1; then
 
 		pbi_delete ${pbi}
 	done
+
+	# Cleanup remaining symbolic links
+	find / -type l -lname '/usr/pbi/*' -delete
 fi
 
 # Hack to workaround ticket #3749

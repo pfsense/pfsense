@@ -1678,6 +1678,7 @@ events.push(function() {
 	var srcportsvisible = 0;
 
 	function ext_change() {
+
 		if (($('#srcbeginport').find(":selected").index() == 0) && portsenabled && editenabled) {
 			disableInput('srcbeginport_cust', false);
 		} else {
@@ -1937,6 +1938,15 @@ events.push(function() {
 		setHelpText(target, dispstr);
 	}
 
+	function disable_most(disable) {
+		var elementsToDisable = [
+			'interface', 'proto', 'icmptype', 'icmp6type', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
+
+		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {
+			disableInput(elementsToDisable[idx], disable);
+		}
+	}
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#statetype').on('change', function() {
@@ -1946,6 +1956,12 @@ events.push(function() {
 	// ---------- On initial page load ------------------------------------------------------------
 
 	setOptText('statetype', $('#statetype').val())
+<?php if ($edit_disabled) {
+?>
+	disable_most(true);
+<?php
+}
+?>
 
 	// ---------- Autocomplete --------------------------------------------------------------------
 

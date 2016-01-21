@@ -1122,7 +1122,7 @@ if ($pconfig['page']['errtext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
-		'?zone=' . $cpzone . '&amp;act=viewerrhtml'
+		'?zone=' . $cpzone . '&act=viewerrhtml'
 	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
 
 	$section->addInput(new Form_Button(

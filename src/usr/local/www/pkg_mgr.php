@@ -133,13 +133,13 @@ function get_pkg_table() {
 		$pkgtbl .= 		$index['desc'];
 
 		if (is_array($index['deps']) && count($index['deps'])) {
-			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<ul>\n";
+			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<br/>\n";
 
 			foreach ($index['deps'] as $pdep) {
-				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '" class="fa fa-globe"><small>&nbsp;' . basename($pdep['origin']) . '-' . $pdep['version'] . '</small></a>&emsp;' . "\n";
+				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
 			}
 
-			$pkgtbl .= '</ul>' . "\n";
+			$pkgtbl .= "\n";
 		}
 
 		$pkgtbl .= 	'</td>' . "\n";

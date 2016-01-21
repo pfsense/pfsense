@@ -223,7 +223,7 @@ $section->addInput(new Form_Select(
 	array(
 		'bss' => 'Infrastructure (BSS)',
 		'adhoc' => 'Ad-hoc (IBSS)',
-		'hostap' => gettext('Access Point)'
+		'hostap' => gettext('Access Point')
 	)
 ));
 

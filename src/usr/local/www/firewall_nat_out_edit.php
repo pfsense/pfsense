@@ -510,7 +510,7 @@ $group->add(new Form_Select(
 	'source_type',
 	null,
 	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
-	array('any' => gettext('Any'), '(self)' => gettext('This Firewall (self))', 'network' => gettext('Network'))
+	array('any' => gettext('Any'), '(self)' => gettext('This Firewall (self)'), 'network' => gettext('Network'))
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(

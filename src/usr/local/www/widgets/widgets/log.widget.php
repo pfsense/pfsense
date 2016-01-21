@@ -133,9 +133,9 @@ if (isset($_POST['lastsawtime'])) {
 		<tr>
 			<th><?=gettext("Act");?></th>
 			<th><?=gettext("Time");?></th>
-			<th><?=gettext("If");?></th>
+			<th><?=gettext("IF");?></th>
 			<th><?=gettext("Source");?></th>
-			<th><?=gettext("Dest");?></th>
+			<th><?=gettext("Destination");?></th>
 		</tr>
 	</thead>
 	<tbody>

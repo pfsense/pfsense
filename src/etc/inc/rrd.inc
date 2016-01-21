@@ -984,7 +984,7 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		continue
 	fi
 
-    t=\$(/usr/bin/nc -U \$sock)
+	t=\$(/usr/bin/nc -U \$sock)
 	if [ -z "\$t" ]; then
 		continue
 	fi

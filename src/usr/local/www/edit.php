@@ -66,18 +66,21 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
 if ($_POST['action']) {
+	$button_html = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+	$alert_danger_html = '<div class="alert alert-danger" role="alert">' . $button_html;
+	$alert_success_html = '<div class="alert alert-success" role="alert">' . $button_html;
 	switch ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
-				print('|5|' . '<div class="alert alert-danger" role="alert">' . gettext("No file name specified") . '</div>' . '|');
+				print('|5|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
 			} elseif (is_dir($_POST['file'])) {
-				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") . '</div>' . '|');
+				print('|4|' . $alert_danger_html . gettext("Loading a directory is not supported") . '</div>' . '|');
 			} elseif (!is_file($_POST['file'])) {
-				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
+				print('|3|' . $alert_danger_html . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if ($data === false) {
-					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
+					print('|1|' . $alert_danger_html . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
 					print("|0|{$_POST['file']}|{$data}|");
@@ -87,7 +90,7 @@ if ($_POST['action']) {
 
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
-				print('|' . '<div class="alert alert-danger" role="alert">' . gettext("No file name specified") . '</div>' . '|');
+				print('|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -100,11 +103,11 @@ if ($_POST['action']) {
 					disable_security_checks();
 				}
 				if ($ret === false) {
-					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to write file") . '</div>' . '|');
+					print('|' . $alert_danger_html . gettext("Failed to write file") . '</div>' . '|');
 				} elseif ($ret != strlen($_POST['data'])) {
-					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Error while writing file") . '</div>' . '|');
+					print('|' . $alert_danger_html . gettext("Error while writing file") . '</div>' . '|');
 				} else {
-					print('|' . '<div class="alert alert-success" role="alert">' . gettext("File saved successfully") . '</div>' . '|');
+					print('|' . $alert_success_html . gettext("File saved successfully") . '</div>' . '|');
 				}
 			}
 			exit;

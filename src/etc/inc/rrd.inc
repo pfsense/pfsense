@@ -984,14 +984,14 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		continue
 	fi
 
-	gw=\$(/usr/bin/nc -U \$sock | awk '{ print \$1 }')
-
-	if [ -z "\$gw" ]; then
+	t=\$(/usr/bin/nc -U \$sock)
+	if [ -z "\$t" ]; then
 		continue
 	fi
 
-	delay=\$(/usr/bin/nc -U \$sock | awk '{ print \$2 }')
-	loss=\$(/usr/bin/nc -U \$sock | awk '{ print \$4 }')
+	gw=\$(echo "\$t" | awk '{ print \$1 }')
+	delay=\$(echo "\$t" | awk '{ print \$2 }')
+	loss=\$(echo "\$t" | awk '{ print \$4 }')
 
 	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
 		loss="U"

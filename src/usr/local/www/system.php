@@ -232,7 +232,7 @@ if ($_POST) {
 
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
-			set_language($config['system']['language']);
+			set_language();
 		}
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);

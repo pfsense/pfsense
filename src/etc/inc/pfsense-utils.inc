@@ -2756,11 +2756,21 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
-function set_language($lang = 'en_US', $encoding = "UTF-8") {
-	setlocale(LC_ALL, "{$lang}.{$encoding}");
-	textdomain("pfSense");
-	bindtextdomain("pfSense", "/usr/local/share/locale");
-	bind_textdomain_codeset("pfSense", "{$lang}.{$encoding}");
+function set_language() {
+	global $config, $g;
+
+	if (!empty($config['system']['language'])) {
+		$lang = $config['system']['language'];
+	} elseif (!empty($g['language'])) {
+		$lang = $g['language'];
+	}
+	$lang .= ".UTF-8";
+
+	putenv("LANG={$lang}");
+	$r = setlocale(LC_ALL, $lang);
+	$r = textdomain("pfSense");
+	$r = bindtextdomain("pfSense", "/usr/local/share/locale");
+	$r = bind_textdomain_codeset("pfSense", $lang);
 }
 
 function get_locale_list() {

@@ -624,7 +624,7 @@ if ($pkg['savetext'] != "") {
 	$savevalue = $pkg['savetext'];
 }
 
-$savehelp = gettext("");
+$savehelp = "";
 if ($pkg['savehelp'] != "") {
 	$savehelp = $pkg['savehelp'];
 }

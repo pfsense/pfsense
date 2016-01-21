@@ -127,6 +127,12 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
 // Filter Section/Form - VPN
 filter_form_vpn();
 
@@ -272,7 +278,9 @@ if (!$rawfilter) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <?php
@@ -354,17 +362,26 @@ function filter_form_vpn() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
 	global $logfile;
+	global $system_logs_filter_form_hidden;
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		if ($logfile == "vpn") {
 			$group = new Form_Group('');
@@ -460,8 +477,9 @@ function filter_form_vpn() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 

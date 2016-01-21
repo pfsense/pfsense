@@ -137,6 +137,12 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
 // Filter Section/Form - System
 filter_form_system();
 
@@ -248,7 +254,9 @@ if (!$rawfilter) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <?php include("foot.inc"); ?>

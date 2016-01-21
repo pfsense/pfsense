@@ -461,8 +461,32 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	}
 ?>
 		<ul class="context-links">
-<?php
 
+	<?php if ($dashboard_available_widgets_hidden): ?>
+		<li>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available Widgets")?>">
+				<i style="cursor:pointer" class="fa fa-plus"></i>
+			</a>
+		</li>
+	<?php endif?>
+
+	<?php if ($system_logs_filter_form_hidden): ?>
+		<li>
+			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">
+				<i style="cursor:pointer" class="fa fa-filter"></i>
+			</a>
+		</li>
+	<?php endif ?>
+
+	<?php if ($system_logs_manage_log_form_hidden): ?>
+		<li>
+			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage Log")?>">
+				<i style="cursor:pointer" class="fa fa-wrench"></i>
+			</a>
+		</li>
+	<?php endif ?>
+
+<?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {

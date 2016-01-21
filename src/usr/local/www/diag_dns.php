@@ -111,7 +111,7 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 			$newalias['name'] = $aliasname;
 			$newalias['type'] = "network";
 			$newalias['address'] = $addresses;
-			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
+			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
 			if ($override) {
 				$a_aliases[$id] = $newalias;
 			} else {

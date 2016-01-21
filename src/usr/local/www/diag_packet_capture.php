@@ -363,10 +363,10 @@ $section->addInput(new Form_Select(
 	'detail',
 	'Level of detail',
 	$detail,
-	array('normal' => 'Normal',
-		  'medium' => 'Medium',
-		  'high' => 'High',
-		  'full' => 'Full',
+	array('normal' => gettext('Normal'),
+		  'medium' => gettext('Medium'),
+		  'high' => gettext('High'),
+		  'full' => gettext('Full'),
 	)
 ))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
 			'This option does not affect the level of detail when downloading the packet capture. ');

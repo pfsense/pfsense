@@ -111,7 +111,7 @@ $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
-	echo "Device does not exist, bailing.";
+	echo gettext("Device does not exist, bailing.");
 	return;
 }
 
@@ -126,7 +126,7 @@ switch ($action) {
 	{
 		$test = $_POST['testType'];
 		if (!in_array($test, $valid_test_types)) {
-			echo "Invalid test type, bailing.";
+			echo gettext("Invalid test type, bailing.");
 			return;
 		}
 

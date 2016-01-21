@@ -131,10 +131,10 @@ if ($_POST['setrw']) {
 			unset($config['system']['nanobsd_force_rw']);
 		}
 
-		write_config("Changed Permanent Read/Write Setting");
+		write_config(gettext("Changed Permanent Read/Write Setting"));
 		conf_mount_ro();
 	} else {
-		$savemsg = 'Saved r/w permanently';
+		$savemsg = gettext('Saved r/w permanently');
 		$class = 'alert-success';
 	}
 }

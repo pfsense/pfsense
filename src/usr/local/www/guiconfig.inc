@@ -151,8 +151,8 @@ $ldap_urltypes = array(
 	'SSL - Encrypted' => 636);
 
 $ldap_scopes = array(
-	'one' => "One Level",
-	'subtree' => "Entire Subtree");
+	'one' => gettext("One Level"),
+	'subtree' => gettext("Entire Subtree"));
 
 $ldap_protvers = array(
 	2,
@@ -179,9 +179,9 @@ $ldap_templates = array(
 		'attr_member' => "uniqueMember"));
 
 $radius_srvcs = array(
-	'both' => "Authentication and Accounting",
-	'auth' => "Authentication",
-	'acct' => "Accounting");
+	'both' => gettext("Authentication and Accounting"),
+	'auth' => gettext("Authentication"),
+	'acct' => gettext("Accounting"));
 
 $netbios_nodetypes = array(
 	'0' => "none",
@@ -240,7 +240,10 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg", "ece", "cwr");
 
-$specialnets = array("(self)" => "This Firewall", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array(
+	"(self)" => gettext("This Firewall"),
+	"pppoe" => gettext("PPPoE clients"),
+	"l2tp" => gettext("L2TP clients"));
 
 $spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -249,16 +252,16 @@ foreach ($spiflist as $ifgui => $ifdesc) {
 }
 
 $medias = array(
-	"auto" => "autoselect",
-	"100full" => "100BASE-TX full-duplex",
-	"100half" => "100BASE-TX half-duplex",
-	"10full" => "10BASE-T full-duplex",
-	"10half" => "10BASE-T half-duplex");
+	"auto" => gettext("autoselect"),
+	"100full" => gettext("100BASE-TX full-duplex"),
+	"100half" => gettext("100BASE-TX half-duplex"),
+	"10full" => gettext("10BASE-T full-duplex"),
+	"10half" => gettext("10BASE-T half-duplex"));
 
 $wlan_modes = array(
-	"bss" => "Infrastructure (BSS)",
-	"adhoc" => "Ad-hoc (IBSS)",
-	"hostap" => "Access Point");
+	"bss" => gettext("Infrastructure (BSS)"),
+	"adhoc" => gettext("Ad-hoc (IBSS)"),
+	"hostap" => gettext("Access Point"));
 
 function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
@@ -312,7 +315,7 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
 	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="'.$value.'">'.$name.'</button>';
+		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="' . $value . '">' . $name . '</button>';
 
 		if ($_POST['if']) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
@@ -320,10 +323,10 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 
 		$msg .= '</form>';
 	} else if ($showbtn) {
-		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
+		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' . $msg;
 	}
 
-	echo '<div class="alert ' . $class . ' clearfix" role="alert">'.$msg.'</div>';
+	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
 }
 
 function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes", $undo) {
@@ -574,9 +577,9 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File {$logfile} is a directory.");
+		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array("Log file started.");
+		$logarr = array(gettext("Log file started."));
 	} else {
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
@@ -625,9 +628,9 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File {$logfile} is a directory.");
+		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array("Log file started.");
+		$logarr = array(gettext("Log file started."));
 	} else {
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);

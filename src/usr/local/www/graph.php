@@ -115,7 +115,7 @@ $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 
 //Error text if we cannot fetch data : depends on which method is used
-$error_text = "Cannot get data about interface " . htmlspecialchars($ifnum);
+$error_text = sprintf(gettext("Cannot get data about interface %s"), htmlspecialchars($ifnum));
 
 $height=100;            //SVG internal height : do not modify
 $width=200;             //SVG internal width : do not modify
@@ -144,7 +144,7 @@ print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
 		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
 		<text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
 		<text id="time" x="<?=$width*0.33?>" y="11" <?=$attribs['legend']?>> </text>
-		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=gettext("Graph shows last"); ?> <?=$time_interval*$nb_plot?> <?=gettext("seconds"); ?></text>
+		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=sprintf(gettext("Graph shows last %s seconds"), $time_interval*$nb_plot)?></text>
 		<polygon id="axis_arrow_x" <?=$attribs['axis']?> points="<?=($width) . "," . ($height)?> <?=($width-2) . "," . ($height-2)?> <?=($width-2) . "," . $height?>"/>
 		<text id="error" x="<?=$width*0.5?>" y="<?=$height*0.5?>" visibility="hidden" <?=$attribs['error']?> text-anchor="middle"><?=$error_text?></text>
 		<text id="collect_initial" x="<?=$width*0.5?>" y="<?=$height*0.5?>" visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle"><?=gettext("Collecting initial data, please wait"); ?>...</text>

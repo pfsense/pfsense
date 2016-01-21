@@ -107,7 +107,7 @@ if ($g['disablecrashreporter'] != true) {
 		}
 
 		if ($x > 0) {
-			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information."), $g['product_name']);
 			$class = "warning";
 		}
 	}
@@ -357,7 +357,7 @@ foreach ($available as $widgetname => $widgetconfig):
 	<form action="/" method="post" id="widgetSequence_form" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
 
-		<button type="submit" id="btnstore" class="btn btn-primary">Store widget configuration</button>
+		<button type="submit" id="btnstore" class="btn btn-primary"><?=gettext("Store widget configuration")?></button>
 	</form>
 </div>
 

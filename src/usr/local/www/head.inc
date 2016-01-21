@@ -539,7 +539,7 @@ $pgtitle_output = true;
 if ($config['remote_managed_pages']['item']) {
 	foreach ($config['remote_managed_pages']['item'] as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
-			print_info_box_np("This page is currently being managed by a remote machine.");
+			print_info_box_np(gettext("This page is currently being managed by a remote machine."));
 			include("foot.inc");
 			exit;
 		}
@@ -558,7 +558,7 @@ if (are_notices_pending()):?>
 					<span aria-hidden="true">&times;</span>
 				</button>
 
-				<h3 class="modal-title" id="myModalLabel">Notices</h3>
+				<h3 class="modal-title" id="myModalLabel"><?=gettext("Notices")?></h3>
 			</div>
 
 			<div class="modal-body">
@@ -597,7 +597,7 @@ if (are_notices_pending()):?>
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><?=gettext("Close")?></button>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark all as read")?></button>
 			</div>
 		</div>

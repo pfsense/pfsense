@@ -263,20 +263,22 @@ if ($_POST) {
 	$do_tcpdump = false;
 }
 
+$excl = gettext("Exclude");
+
 $protocollist = array(
 	'' => 'Any',
 	'icmp' => 'ICMP',
-	'!icmp' => 'Exclude ICMP',
+	'!icmp' => $excl . ' ICMP',
 	'icmp6' => 'ICMPv6',
-	'!icmp6' => 'Exclude ICMPv6',
+	'!icmp6' => $excl . ' ICMPv6',
 	'tcp' => 'TCP',
-	'!tcp' => 'Exclude TCP',
+	'!tcp' => $excl . ' TCP',
 	'udp' => 'UDP',
-	'!udp' => 'Exclude UDP',
+	'!udp' => $excl . ' UDP',
 	'arp' => 'ARP',
-	'!arp' => 'Exclude ARP',
+	'!arp' => $excl . ' ARP',
 	'carp' => 'CARP (VRRP)',
-	'!carp' => 'Exclude CARP (VRRP)',
+	'!carp' => $excl . ' CARP (VRRP)',
 	'esp' => 'ESP'
 );
 
@@ -311,8 +313,8 @@ $section->addInput(new Form_Select(
 	'Address Family',
 	$fam,
 	array('' => 'Any',
-		  'ip' => 'IPv4 Only',
-		  'ip6' => 'IPv6 Only'
+		  'ip' => gettext('IPv4 Only'),
+		  'ip6' => gettext('IPv6 Only')
 	)
 ))->setHelp('Select the type of traffic to be captured');
 

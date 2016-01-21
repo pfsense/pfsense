@@ -2587,7 +2587,7 @@ $section->addInput(new Form_Select(
 	'pppoe-reset-type',
 	'Periodic reset',
 	$pconfig['pppoe-reset-type'],
-	['' => 'Disabled', 'custom' => 'Custom', 'preset' => 'Pre-set']
+	['' => gettext('Disabled'), 'custom' => gettext('Custom'), 'preset' => gettext('Pre-set')]
 ))->setHelp('Select a reset timing type');
 
 $group = new Form_Group('Custom reset');

@@ -315,7 +315,7 @@ if ($_POST) {
 function build_spanport_list() {
 	global $ifacelist;
 
-	$splist = array('none' => 'None');
+	$splist = array('none' => gettext('None'));
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		$splist[$ifn] = $ifdescr;

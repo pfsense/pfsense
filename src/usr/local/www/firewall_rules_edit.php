@@ -1399,7 +1399,7 @@ $section->addInput(new Form_Select(
 	'os',
 	'Source OS',
 	(empty($pconfig['os']) ? '':$pconfig['os']),
-	['' => 'Any'] + array_combine($ostypes, $ostypes)
+	['' => gettext('Any')] + array_combine($ostypes, $ostypes)
 ))->setHelp('Note: this only works for TCP rules. General OS choice matches all subtypes.');
 
 $section->addInput(new Form_Select(

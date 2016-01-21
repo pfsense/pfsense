@@ -233,7 +233,7 @@ $section->addInput(new Form_Select(
 	'action',
 	'Action',
 	strtolower($pconfig['action']),
-	array('pass' => 'Pass', 'block' => 'Block')
+	array('pass' => gettext('Pass'), 'block' => gettext('Block'))
 ))->setHelp('Choose what to do with packets coming from this MAC address.');
 
 $macaddress = new Form_Input(

@@ -129,15 +129,17 @@ if (!is_array($pconfig['subnets'])) {
 	$pconfig['subnets'] = array();
 }
 
-$advertise_modes = array("disabled" => "Disabled",
-	"router" => "Router Only",
-	"unmanaged" => "Unmanaged",
-	"managed" => "Managed",
-	"assist" => "Assisted",
-	"stateless_dhcp" => "Stateless DHCP");
-$priority_modes = array("low" => "Low",
-	"medium" => "Normal",
-	"high" => "High");
+$advertise_modes = array(
+	"disabled" => 	gettext("Disabled"),
+	"router" => 	gettext("Router Only"),
+	"unmanaged" => 	gettext("Unmanaged"),
+	"managed" => 	gettext("Managed"),
+	"assist" => 	gettext("Assisted"),
+	"stateless_dhcp" => gettext("Stateless DHCP"));
+$priority_modes = array(
+	"low" => 	gettext("Low"),
+	"medium" => gettext("Normal"),
+	"high" => 	gettext("High"));
 $carplist = get_configured_carp_interface_list();
 
 $subnets_help = '<span class="help-block">' . gettext("Subnets are specified in CIDR format.  " .

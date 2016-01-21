@@ -340,11 +340,12 @@ $section->addInput(new Form_Input(
 			'The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. ' .
 			'The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.');
 
+$mnt = gettext("minutes");
 $section->addInput(new Form_Select(
 	'infra_host_ttl',
 	'TTL for Host Cache Entries',
 	$pconfig['infra_host_ttl'],
-	array_combine(array("60", "120", "300", "600", "900"), array("1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"))
+	array_combine(array("60", "120", "300", "600", "900"), array("1 " . $mnt, "2  " . $mnt, "5  " . $mnt, "10 " . $mnt, "15 " . $mnt))
 ))->setHelp('Time to Live, in seconds, for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
 
 $section->addInput(new Form_Select(
@@ -354,21 +355,23 @@ $section->addInput(new Form_Select(
 	array_combine(array("1000", "5000", "10000", "20000", "50000"), array("1000", "5000", "10000", "20000", "50000"))
 ))->setHelp('Number of infrastructure hosts for which information is cached. The default is 10,000.');
 
+$mln = gettext("million");
 $section->addInput(new Form_Select(
 	'unwanted_reply_threshold',
 	'Unwanted Reply Threshold',
 	$pconfig['unwanted_reply_threshold'],
 	array_combine(array("disabled", "5000000", "10000000", "20000000", "40000000", "50000000"),
-				  array("Disabled", "5 million", "10 million", "20 million", "40 million", "50 million"))
+				  array("Disabled", "5 " . $mln, "10 " . $mln, "20 " . $mln, "40 " . $mln, "50 " . $mln))
 ))->setHelp('If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken ' .
 			'and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. ' .
 			'The default is disabled, but if enabled a value of 10 million is suggested.');
 
+$lvl = gettext("level");
 $section->addInput(new Form_Select(
 	'log_verbosity',
 	'Log Level',
 	$pconfig['log_verbosity'],
-	array_combine(array("0", "1", "2", "3", "4", "5"), array("Level 0", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"))
+	array_combine(array("0", "1", "2", "3", "4", "5"), array($lvl + " 0", $lvl + " 1", $lvl + " 2", $lvl + " 3", $lvl + " 4", $lvl + " 5"))
 ))->setHelp('Select the log verbosity.');
 
 $section->addInput(new Form_Checkbox(

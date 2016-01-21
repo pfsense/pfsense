@@ -672,7 +672,7 @@ $section->addInput(new Form_Select(
 	'iketype',
 	'Key Exchange version',
 	$pconfig['iketype'],
-	array("ikev1" => "V1", "ikev2" => "V2", "auto" => "Auto")
+	array("ikev1" => "V1", "ikev2" => "V2", "auto" => gettext("Auto"))
 ))->setHelp('Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2.');
 
 $section->addInput(new Form_Select(
@@ -720,7 +720,7 @@ $section->addInput(new Form_Select(
 	'mode',
 	'Negotiation mode',
 	$pconfig['mode'],
-	array("main" => "Main", "aggressive" => "Aggressive")
+	array("main" => gettext("Main"), "aggressive" => gettext("Aggressive"))
 ))->setHelp('Aggressive is more flexible, but less secure.');
 
 $group = new Form_Group('My identifier');
@@ -857,7 +857,7 @@ $section->addInput(new Form_Select(
 	'nat_traversal',
 	'NAT Traversal',
 	$pconfig['nat_traversal'],
-	array('on' => 'Auto', 'force' => 'Force')
+	array('on' => gettext('Auto'), 'force' => gettext('Force'))
 ))->setHelp('Set this option to enable the use of NAT-T (i.e. the encapsulation of ESP in UDP packets) if needed, ' .
 			'which can help with clients that are behind restrictive firewalls.');
 
@@ -865,7 +865,7 @@ $section->addInput(new Form_Select(
 	'mobike',
 	'MOBIKE',
 	$pconfig['mobike'],
-	array('on' => 'Enable', 'off' => 'Disable')
+	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
 
 $section->addInput(new Form_Checkbox(

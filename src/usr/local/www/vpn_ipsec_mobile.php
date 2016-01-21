@@ -491,8 +491,8 @@ $section->addInput(new Form_Select(
 	'Group Authentication',
 	$pconfig['group_source'],
 	array(
-		'none' => 'none',
-		'system' => 'system',
+		'none' => gettext('none'),
+		'system' => gettext('system'),
 	)
 ))->setHelp('Source');
 

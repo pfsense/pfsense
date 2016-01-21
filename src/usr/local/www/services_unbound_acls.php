@@ -259,7 +259,7 @@ if ($act == "new" || $act == "edit") {
 		'aclaction',
 		'Action',
 		strtolower($pconfig['aclaction']),
-		array('allow' => 'Allow', 'deny' => 'Deny', 'refuse' => 'Refuse', 'allow snoop' => 'Allow Snoop')
+		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'))
 	))->setHelp($actionHelp);
 
 	$section->addInput(new Form_Input(

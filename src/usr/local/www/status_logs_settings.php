@@ -320,9 +320,9 @@ $section->addInput(new Form_Select(
 	'Where to show rule descriptions',
 	!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
 	array(
-		'0' => 'Dont load descriptions',
-		'1' => 'Display as column',
-		'2' => 'Display as second row'
+		'0' => gettext('Dont load descriptions'),
+		'1' => gettext('Display as column'),
+		'2' => gettext('Display as second row')
 	)
 ))->setHelp('Show the applied rule description below or in the firewall log rows' . '<br />' .
 			'Displaying rule descriptions for all lines in the log might affect performance with large rule sets');

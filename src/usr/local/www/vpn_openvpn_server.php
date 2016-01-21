@@ -824,7 +824,7 @@ if ($act=="new" || $act=="edit"):
 		'cert_depth',
 		'Certificate Depth',
 		$pconfig['cert_depth'],
-		["" => "Do Not Check"] + $openvpn_cert_depths
+		["" => gettext("Do Not Check")] + $openvpn_cert_depths
 		))->setHelp('When a certificate-based client logs in, do not accept certificates below this depth. ' .
 					'Useful for denying certificates made with intermediate CAs generated from the same CA as the server.');
 

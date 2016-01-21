@@ -985,7 +985,7 @@ $section->addInput(new Form_Select(
 	'radiusvendor',
 	'Type',
 	$pconfig['radiusvendor'],
-	['default' => 'default', 'cisco' => 'cisco']
+	['default' => gettext('default'), 'cisco' => 'cisco']
 ))->setHelp('If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-ID will be set to the client\'s IP address and the ' .
 			'Called-Station-Id to the client\'s MAC address. Default behavior is Calling-Station-Id = client\'s MAC address and ' .
 			'Called-Station-ID = pfSense\'s WAN IP address.');
@@ -1009,7 +1009,7 @@ $section->addInput(new Form_Select(
 	'radmac_format',
 	'MAC address format',
 	$pconfig['radmac_format'],
-	['default' => 'Default', 'singledash' => 'Single dash', 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => 'Unformatted']
+	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
 ))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if you also need to change the username format for ' .
 			'RADIUS MAC authentication.' . '<br />' .
 			'Default: 00:11:22:33:44:55' . '<br />' .

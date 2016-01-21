@@ -512,7 +512,7 @@ if ($act=="new" || $act=="edit"):
 		'proxy_authtype',
 		'Proxy Auth. - Extra options',
 		$pconfig['proxy_authtype'],
-		array('none' => 'none', 'basic' => 'basic', 'ntlm' => 'ntlm')
+		array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'))
 		));
 
 	$section->addInput(new Form_Input(

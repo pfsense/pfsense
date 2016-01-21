@@ -556,7 +556,7 @@ $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	['address' => 'Address', 'network' => 'Network'] + $subnetarray
+	['address' => gettext('Address'), 'network' => gettext('Network')] + $subnetarray
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(
@@ -576,7 +576,7 @@ foreach ($subnetarray as $ifname => $ifdescr) {
 }
 
 // Tack none, address & network on the beginning
-$subnetarray = array('none' => gettext('None'), 'address' => 'Address', 'network' => 'Network') + $subnetarray;
+$subnetarray = array('none' => gettext('None'), 'address' => gettext('Address'), 'network' => gettext('Network')) + $subnetarray;
 
 $group->add(new Form_Select(
 	'natlocalid_type',
@@ -602,7 +602,7 @@ if (!isset($pconfig['mobile'])) {
 		'remoteid_type',
 		null,
 		$pconfig['remoteid_type'],
-		array('address' => 'Address', 'network' => 'Network')
+		array('address' => gettext('Address'), 'network' => gettext('Network'))
 	))->setHelp('Type');
 
 	$group->add(new Form_IpAddress(
@@ -660,7 +660,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 			'keylen_' . $algo,
 			null,
 			$pconfig["keylen_".$algo],
-			['auto' => 'Auto'] + $list
+			['auto' => gettext('Auto')] + $list
 		));
 	}
 

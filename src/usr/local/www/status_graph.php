@@ -170,8 +170,8 @@ $group->add(new Form_Select(
 	null,
 	$cursort,
 	array (
-		'in'	=> 'Bandwidth In',
-		'out'	=> 'Bandwidth Out'
+		'in'	=> gettext('Bandwidth In'),
+		'out'	=> gettext('Bandwidth Out')
 	)
 ))->setHelp('Sort by');
 
@@ -180,9 +180,9 @@ $group->add(new Form_Select(
 	null,
 	$curfilter,
 	array (
-		'local'	=> 'Local',
-		'remote'=> 'Remote',
-		'all'	=> 'All'
+		'local'	=> gettext('Local'),
+		'remote'=> gettext('Remote'),
+		'all'	=> gettext('All')
 	)
 ))->setHelp('Filter');
 
@@ -191,10 +191,10 @@ $group->add(new Form_Select(
 	null,
 	$curhostipformat,
 	array (
-		''			=> 'IP Address',
-		'hostname'	=> 'Host Name',
-		'descr'		=> 'Description',
-		'fqdn'		=> 'FQDN'
+		''			=> gettext('IP Address'),
+		'hostname'	=> gettext('Host Name'),
+		'descr'		=> gettext('Description'),
+		'fqdn'		=> gettext('FQDN')
 	)
 ))->setHelp('Display');
 

@@ -451,9 +451,9 @@ $section->addInput($input = new Form_Select(
 	$config['system']['optimization'],
 	array(
 		'normal' => 'Normal',
-		'high-latency' => 'High-latency',
-		'aggressive' => 'Aggressive',
-		'conservative' => 'Conservative',
+		'high-latency' => gettext('High-latency'),
+		'aggressive' => gettext('Aggressive'),
+		'conservative' => gettext('Conservative'),
 	)
 ))->setHelp('Select the type of state table optimization to use');
 
@@ -594,9 +594,9 @@ $section->addInput(new Form_Select(
 	'Update Frequency',
 	empty($pconfig['bogonsinterval']) ? 'monthly' : $pconfig['bogonsinterval'],
 	array(
-		'monthly' => 'Monthly',
-		'weekly' => 'Weekly',
-		'daily' => 'Daily',
+		'monthly' => gettext('Monthly'),
+		'weekly' => gettext('Weekly'),
+		'daily' => gettext('Daily'),
 	)
 ))->setHelp('The frequency of updating the lists of IP addresses that are '.
 	'reserved (but not RFC 1918) or not yet assigned by IANA.');
@@ -619,9 +619,9 @@ if (count($config['interfaces']) > 1) {
 		'NAT Reflection mode for port forwards',
 		$value,
 		array(
-			'disable' => 'disabled',
-			'proxy' => 'NAT + proxy',
-			'purenat' => 'Pure NAT',
+			'disable' => gettext('disabled'),
+			'proxy' => gettext('NAT + proxy'),
+			'purenat' => gettext('Pure NAT'),
 		)
 	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.

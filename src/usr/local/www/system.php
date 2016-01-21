@@ -507,7 +507,7 @@ $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Top Navigation',
 	$pconfig['webguifixedmenu'],
-	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
+	["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
 ))->setHelp("The fixed option is intended for large screens only.");
 
 $section->addInput(new Form_Input(

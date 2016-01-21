@@ -808,10 +808,10 @@ foreach ($pconfig['altnames']['item'] as $item) {
 		'Type',
 		$item['type'],
 		array(
-			'DNS' => 'FQDN or Hostname',
-			'IP' => 'IP address',
-			'URI' => 'URI',
-			'email' => 'email address',
+			'DNS' => gettext('FQDN or Hostname'),
+			'IP' => gettext('IP address'),
+			'URI' => gettext('URI'),
+			'email' => gettext('email address'),
 		)
 	))->setHelp(($counter == $numrows) ? 'Type':null);
 

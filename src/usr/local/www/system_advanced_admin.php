@@ -534,8 +534,8 @@ if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['pl
 		'Primary Console',
 		$pconfig['primaryconsole'],
 		array(
-			'serial' => 'Serial Console',
-			'video' => 'VGA Console',
+			'serial' => gettext('Serial Console'),
+			'video' => gettext('VGA Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
 		'The preferred console will show pfSense boot script output. All consoles '.

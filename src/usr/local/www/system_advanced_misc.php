@@ -417,10 +417,10 @@ $section->addInput(new Form_Checkbox(
 	'lower CPU load.');
 
 $modes = array(
-	'hadp' => 'Hiadaptive',
-	'adp' => 'Adaptive',
-	'min' => 'Minimum',
-	'max' => 'Maximum',
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
 );
 
 $section->addInput(new Form_Select(

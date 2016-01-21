@@ -268,17 +268,18 @@ foreach ($a_gateways as $gwname => $gateway) {
 	))->setHelp($row == $numrows ? 'Gateway':null)
 	  ->setReadonly();
 
+	$tr = gettext("Tier");
 	$group->add(new Form_Select(
 		$gwname,
 		'Tier',
 		$selected,
 		array(
 			'0' => 'Never',
-			'1' => 'Tier 1',
-			'2' => 'Tier 2',
-			'3' => 'Tier 3',
-			'4' => 'Tier 4',
-			'5' => 'Tier 5'
+			'1' => $tr . ' 1',
+			'2' => $tr . ' 2',
+			'3' => $tr . ' 3',
+			'4' => $tr . ' 4',
+			'5' => $tr . ' 5'
 		)
 	))->setHelp($row == $numrows ? 'Tier':null)->addClass('row')->addClass($gateway['ipprotocol']);
 
@@ -329,10 +330,10 @@ $section->addInput(new Form_Select(
 	'Trigger Level',
 	$pconfig['trigger'],
 	array(
-		'0' => 'Member down',
-		'1' => 'Packet Loss',
-		'2' => 'High Latency',
-		'3' => 'Packet Loss or High latency'
+		'0' => gettext('Member down'),
+		'1' => gettext('Packet Loss'),
+		'2' => gettext('High Latency'),
+		'3' => gettext('Packet Loss or High latency')
 	)
 ))->setHelp('When to trigger exclusion of a member');
 

@@ -137,7 +137,9 @@ function tab_array_logs_common() {
 					(($logfile == 'l2tps') && ($vpntype == "l2tp")),
 					"/status_logs_vpn.php?logfile=l2tps&amp;vpntype=l2tp");
 	}
-	display_top_tabs($tab_array, false, 'nav nav-tabs');
+	if ($tab_array) {
+		display_top_tabs($tab_array, false, 'tabs');
+	}
 }
 
 

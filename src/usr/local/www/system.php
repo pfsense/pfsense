@@ -537,7 +537,7 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'systemlogsmanagelogpanel',
 	null,
-	'Manage Logs',
+	'Manage Log',
 	$pconfig['systemlogsmanagelogpanel']
 ))->setHelp('Show the Manage Log panel in System Logs.');
 

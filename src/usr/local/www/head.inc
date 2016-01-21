@@ -464,24 +464,24 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
-			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Show/Hide available widgets panel")?>">
-				<i style="cursor:pointer"><?=gettext("Widgets");?></i>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available Widgets")?>">
+				<i style="cursor:pointer" class="fa fa-plus"></i>
 			</a>
 		</li>
 	<?php endif?>
 
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
-			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Show/Hide log filter panel")?>">
-				<i style="cursor:pointer"><?=gettext("Filter");?></i>
+			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">
+				<i style="cursor:pointer" class="fa fa-filter"></i>
 			</a>
 		</li>
 	<?php endif ?>
 
 	<?php if ($system_logs_manage_log_form_hidden): ?>
 		<li>
-			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Show/Hide manage log panel")?>">
-				<i style="cursor:pointer"><?=gettext("Manage Log");?></i>
+			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage Log")?>">
+				<i style="cursor:pointer" class="fa fa-wrench"></i>
 			</a>
 		</li>
 	<?php endif ?>

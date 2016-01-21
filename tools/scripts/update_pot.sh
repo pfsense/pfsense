@@ -97,6 +97,7 @@ POT=$ROOT/src/usr/local/share/locale/en/LC_MESSAGES/pfSense.pot
 		-kForm_MultiCheckboxGroup \
 		-kForm_MultiCheckbox:2 \
 		-kForm_IpAddress:2 \
+		-kForm_Select:2 \
 )
 
 ( \

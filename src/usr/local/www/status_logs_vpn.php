@@ -72,11 +72,11 @@ Build a list of allowed log files so we can reject others to prevent the page
 from acting on unauthorized files.
 */
 $allowed_logs = array(
-	"vpn" => array("name" => "VPN Logins",
+	"vpn" => array("name" => gettext("VPN Logins"),
 		    "shortcut" => "poes"),
-	"poes" => array("name" => "PPPoE Service",
+	"poes" => array("name" => gettext("PPPoE Service"),
 		    "shortcut" => "pppoes"),
-	"l2tps" => array("name" => "L2TP Service",
+	"l2tps" => array("name" => gettext("L2TP Service"),
 		    "shortcut" => "l2tps"),
 );
 
@@ -94,8 +94,8 @@ if (!$_GET['logfile']) {
 	}
 }
 
-if ($vpntype == 'poes') { $allowed_logs['vpn']['name'] = "PPPoE Logins"; }
-if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = "L2TP Logins"; }
+if ($vpntype == 'poes') { $allowed_logs['vpn']['name'] = gettext("PPPoE Logins"); }
+if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = gettext("L2TP Logins"); }
 
 
 // Log Filter Submit - VPN

@@ -71,7 +71,7 @@ $pgtitle = gettext("Status: CPU Graph");
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">CPU Load graph</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("CPU Load graph");?></h2></div>
 	<div class="panel-body text-center">
 		<embed src="graph_cpu.php" type="image/svg+xml"
 			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />

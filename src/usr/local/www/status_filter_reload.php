@@ -91,7 +91,7 @@ include("head.inc");
 
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Filter Reload</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Filter Reload");?></h2></div>
 	<div class="panel-body">
 		<form action="status_filter_reload.php" method="post" name="filter">
 			<input type="submit" class="btn btn-success" value="Reload Filter" name="reloadfilter" id="reloadfilter" />
@@ -135,16 +135,16 @@ function update_data(obj) {
 	if (result_text) {
 		jQuery('#status').html(result_text + '...');
 	} else {
-		jQuery('#status').html('Obtaining filter status...');
+		jQuery('#status').html('<?=gettext("Obtaining filter status...");?>');
 	}
 	if (result_text == "Initializing") {
-		jQuery('#status').html('Initializing...');
+		jQuery('#status').html('<?=gettext("Initializing...");?>');
 	} else if (result_text == "Done") {
 		jQuery('#status').effect('highlight');
-		jQuery('#status').html('Done.  The filter rules have been reloaded.');
+		jQuery('#status').html('<?=gettext("Done.  The filter rules have been reloaded.");?>');
 		jQuery('#reloadinfo').css("visibility", "hidden");
 		jQuery('#doneurl').css("visibility", "visible");
-		jQuery('#doneurl').html("<p><a href='status_queues.php'>Queue Status<\/a><\/p>");
+		jQuery('#doneurl').html("<p><a href='status_queues.php'><?=gettext("Queue Status");?><\/a><\/p>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }

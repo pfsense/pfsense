@@ -230,7 +230,7 @@ if (is_numeric($_GET['end'])) {
 
 /* this should never happen */
 if ($end < $start) {
-	log_error("start $start is smaller than end $end");
+	log_error(sprintf(gettext("start %d is smaller than end %d"), $start, $end));
 	$end = $now;
 }
 
@@ -299,7 +299,7 @@ $graph_length = array(
 
 switch ($curcat) {
 	case "vpnusers":
-		$curcattext = "VPN Users";
+		$curcattext = gettext("VPN Users");
 		break;
 	default:
 		$curcattext = ucfirst($curcat);
@@ -622,7 +622,7 @@ if ($curcat == 'custom') {
 		$id = preg_replace('/\./', '_', $id);
 ?>
 		<div class="panel panel-default">
-			<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+			<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> <?=gettext("Graph");?>" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 		</div>
 <?php
 

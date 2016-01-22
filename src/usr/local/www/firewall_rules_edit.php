@@ -1938,6 +1938,8 @@ events.push(function() {
 		setHelpText(target, dispstr);
 	}
 
+	// When editing "associated" rules, everything except the enable, action, address family and desscription
+	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
 			'interface', 'proto', 'icmptype', 'icmp6type', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
@@ -1947,6 +1949,7 @@ events.push(function() {
 			disableInput(elementsToDisable[idx], disable);
 		}
 	}
+
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#statetype').on('change', function() {

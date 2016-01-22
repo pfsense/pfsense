@@ -288,6 +288,14 @@ if (is_array($config['aliases']['alias'])) {
 	}
 }
 
+if (is_array($config['ifgroups']['ifgroupentry'])) {
+	foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+		if ($ifgroupentry['ifname'] == $wancfg['descr']) {
+			$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists. Interfaces cannot have the same name as an interface group."), $wancfg['descr']);
+		}
+	}
+}
+
 switch ($wancfg['ipaddr']) {
 	case "dhcp":
 		$pconfig['type'] = "dhcp";

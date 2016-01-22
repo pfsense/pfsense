@@ -90,7 +90,7 @@ if (is_numeric($_POST['filterlogentries'])) {
 		unset($config['widgets']['filterlogentriesinterfaces']);
 	}
 
-	write_config("Saved Filter Log Entries via Dashboard");
+	write_config(gettext("Saved Filter Log Entries via Dashboard"));
 	Header("Location: /");
 	exit(0);
 }
@@ -168,7 +168,7 @@ if (isset($_POST['lastsawtime'])) {
 		<tr>
 			<td><a href="#" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
 			role="button" data-toggle="popover" data-trigger="hover"
-				data-title="Rule that triggered this action"
+				data-title=<?=gettext("Rule that triggered this action")?>
 				data-content="<?=htmlspecialchars($rule)?>"> <i
 					class="fa fa-<?=$iconfn?>"></i>
 			</a></td>
@@ -226,8 +226,7 @@ events.push(function(){
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
 		<div class="form-group">
-			<label for="filterlogentries" class="col-sm-4 control-label">Number
-				of entries</label>
+			<label for="filterlogentries" class="col-sm-4 control-label"><?=gettext('Number of entries')?></label>
 			<div class="col-sm-6">
 				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$nentries?>"
 					min="1" max="20" class="form-control" />
@@ -235,34 +234,41 @@ events.push(function(){
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-4 control-label">Filter actions</label>
+			<label class="col-sm-4 control-label"><?=gettext('Filter actions')?></label>
 			<div class="col-sm-6 checkbox">
 			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
 			<label><input name="actpass" type="checkbox" value="Pass"
-					<?=(in_array('pass', $include_acts) ? 'checked':'')?> />Pass</label>
-				<label><input name="actblock" type="checkbox" value="Block"
-					<?=(in_array('block', $include_acts) ? 'checked':'')?> />Block</label>
-				<label><input name="actreject" type="checkbox" value="Reject"
-					<?=(in_array('reject', $include_acts) ? 'checked':'')?> />Reject</label>
+				<?=(in_array('pass', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Pass')?>
+			</label>
+			<label><input name="actblock" type="checkbox" value="Block"
+				<?=(in_array('block', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Block')?>
+			</label>
+			<label><input name="actreject" type="checkbox" value="Reject"
+				<?=(in_array('reject', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Reject')?>
+			</label>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label for="filterlogentriesinterfaces"
-				class="col-sm-4 control-label">Filter interface</label>
+			<label for="filterlogentriesinterfaces" class="col-sm-4 control-label">
+				<?=gettext('Filter interface')?>
+			</label>
 			<div class="col-sm-6 checkbox">
 				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>
-			</select>
+				</select>
 			</div>
 		</div>
 
 		<div class="form-group">
 			<div class="col-sm-offset-4 col-sm-6">
-				<button type="submit" class="btn btn-default">Save</button>
+				<button type="submit" class="btn btn-default"><?=gettext('Save')?></button>
 			</div>
 		</div>
 	</form>

@@ -77,7 +77,7 @@ if ($_POST) {
 	if (isset($_POST["display_type"])) {
 		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
-	write_config("Updated gateways widget settings via dashboard.");
+	write_config(gettext("Updated gateways widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
 }
@@ -130,11 +130,11 @@ if ($_POST) {
 					}
 				}
 			?>
-		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <span>Gateway IP</span>
-		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /> <span>Monitor IP</span>
-		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /> <span>Both</span>
+		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Gateway IP')?></span>
+		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Monitor IP')?></span>
+		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Both')?></span>
 		<br /><br />
-		<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="Save Settings" />
+		<input id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="formbtn" value="<?=gettext('Save Settings')?>" />
 	</form>
 </div>
 
@@ -232,22 +232,22 @@ function compose_table_body_contents() {
 
 		if ($gateways_status[$gname]) {
 			if (stristr($gateways_status[$gname]['status'], "force_down")) {
-				$online = "Offline (forced)";
+				$online = gettext("Offline (forced)");
 				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "down")) {
-				$online = "Offline";
+				$online = gettext("Offline");
 				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
-				$online = "Packetloss";
+				$online = gettext("Packetloss");
 				$bgcolor = "warning";  // khaki
 			} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
-				$online = "Latency";
+				$online = gettext("Latency");
 				$bgcolor = "warning";  // khaki
 			} elseif ($gateways_status[$gname]['status'] == "none") {
-				$online = "Online";
+				$online = gettext("Online");
 				$bgcolor = "success";  // lightgreen
 			} elseif ($gateways_status[$gname]['status'] == "") {
-				$online = "Pending";
+				$online = gettext("Pending");
 				$bgcolor = "info";  // lightgray
 			}
 		} else {

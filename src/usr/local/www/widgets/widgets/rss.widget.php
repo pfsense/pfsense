@@ -64,7 +64,7 @@ if ($_POST['rssfeed']) {
 	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
 	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
 	$config['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
-	write_config("Saved RSS Widget feed via Dashboard");
+	write_config(gettext("Saved RSS Widget feed via Dashboard"));
 	header("Location: /");
 }
 
@@ -158,28 +158,28 @@ if ($config['widgets']['rssfeed']) {
 
 <form action="/widgets/widgets/rss.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
-		<label for="rssfeed" class="col-sm-3 control-label">Feeds</label>
+		<label for="rssfeed" class="col-sm-3 control-label"><?=gettext('Feeds')?></label>
 		<div class="col-sm-6">
 			<textarea id="rssfeed" name="rssfeed" class="form-control"><?=$textarea_txt;?></textarea>
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rssmaxitems" class="col-sm-3 control-label"># Stories</label>
+		<label for="rssmaxitems" class="col-sm-3 control-label"><?=gettext('# Stories')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rssmaxitems" name="rssmaxitems" value="<?=$max_items?>" min="1" max="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rsswidgetheight" class="col-sm-3 control-label">Widget height</label>
+		<label for="rsswidgetheight" class="col-sm-3 control-label"><?=gettext('Widget height')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rsswidgetheight" name="rsswidgetheight" value="<?=$rsswidgetheight?>" min="100" max="2500" step="100" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="rsswidgettextlength" class="col-sm-3 control-label">Content limit</label>
+		<label for="rsswidgettextlength" class="col-sm-3 control-label"><?=gettext('Content limit')?></label>
 		<div class="col-sm-6">
 			<input type="number" id="rsswidgettextlength" name="rsswidgettextlength" value="<?=$rsswidgettextlength?>" min="100" max="5000" step="10" class="form-control" />
 		</div>
@@ -187,7 +187,7 @@ if ($config['widgets']['rssfeed']) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-default"><?=gettext('Save')?></button>
 		</div>
 	</div>
 </form>

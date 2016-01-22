@@ -112,8 +112,8 @@ $clients = openvpn_get_active_clients();
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th>Name/Time</th>
-					<th>Real/Virtual IP</th>
+					<th><?=gettext('Name/Time')?></th>
+					<th><?=gettext('Real/Virtual IP')?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -133,7 +133,7 @@ $clients = openvpn_get_active_clients();
 					<td>
 						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style="cursor:pointer;"
 							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							title='Kill client connection from <?=$conn['remote_host'];?>'>
+							title=<?=sprintf(gettext('Kill client connection from %s'), $conn['remote_host']);?>'>
 						</i>
 					</td>
 				</tr>
@@ -160,8 +160,8 @@ $clients = openvpn_get_active_clients();
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th>Name/Time</th>
-					<th>Remote/Virtual IP</th>
+					<th><?=gettext('Name/Time')?></th>
+					<th><?=gettext('Remote/Virtual IP')?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -210,8 +210,8 @@ $clients = openvpn_get_active_clients();
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th>Name/Time</th>
-					<th>Remote/Virtual IP</th>
+					<th><?=gettext('Name/Time')?></th>
+					<th><?=gettext('Remote/Virtual IP')?></th>
 					<th></th>
 				</tr>
 			</thead>
@@ -256,11 +256,11 @@ $clients = openvpn_get_active_clients();
 }
 
 if ($DisplayNote) {
-	echo "<br /><b>NOTE:</b> You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen";
+	echo "<br /><b>". gettext("NOTE") . ":</b> ". gettext("You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen");
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-	echo "No OpenVPN instances defined";
+	echo gettext("No OpenVPN instances defined");
 }
 ?>
 </div>

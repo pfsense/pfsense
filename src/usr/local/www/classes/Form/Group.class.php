@@ -148,7 +148,9 @@ EOT;
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
-		$title = htmlspecialchars(gettext($this->_title));
+		if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
+			$title = htmlspecialchars(gettext($this->_title));
+		}
 
 		return <<<EOT
 	{$element}

@@ -133,18 +133,18 @@ function update_data(obj) {
 	result_text = result_text.replace("\n", "");
 	result_text = result_text.replace("\r", "");
 	if (result_text) {
-		jQuery('#status').html(result_text + '...');
+		$('#status').html(result_text + '...');
 	} else {
-		jQuery('#status').html('<?=gettext("Obtaining filter status...");?>');
+		$('#status').html('<?=gettext("Obtaining filter status...");?>');
 	}
 	if (result_text == "Initializing") {
-		jQuery('#status').html('<?=gettext("Initializing...");?>');
+		$('#status').html('<?=gettext("Initializing...");?>');
 	} else if (result_text == "Done") {
-		jQuery('#status').effect('highlight');
-		jQuery('#status').html('<?=gettext("Done.  The filter rules have been reloaded.");?>');
-		jQuery('#reloadinfo').css("visibility", "hidden");
-		jQuery('#doneurl').css("visibility", "visible");
-		jQuery('#doneurl').html("<p><a href='status_queues.php'><?=gettext("Queue Status");?><\/a><\/p>");
+		$('#status').effect('highlight');
+		$('#status').html('<?=gettext("Done.  The filter rules have been reloaded.");?>');
+		$('#reloadinfo').css("visibility", "hidden");
+		$('#doneurl').css("visibility", "visible");
+		$('#doneurl').html("<p><a href='status_queues.php'><?=gettext("Queue Status");?><\/a><\/p>");
 	}
 	window.setTimeout('update_status_thread()', 2500);
 }

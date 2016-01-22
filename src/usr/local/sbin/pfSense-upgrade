@@ -662,6 +662,8 @@ do_reboot() {
 	fi
 }
 
+export LANG=C
+
 pid_file="/var/run/$(basename $0).pid"
 logfile="/cf/conf/upgrade_log.txt"
 stdout='/dev/null'

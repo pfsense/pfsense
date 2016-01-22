@@ -104,6 +104,7 @@ function pkg_env() {
 	global $config, $g;
 
 	$pkg_env_vars = array(
+		"LANG" => "C",
 		"HTTP_USER_AGENT" => $user_agent,
 		"ASSUME_ALWAYS_YES" => "true"
 	);

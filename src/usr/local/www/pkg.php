@@ -254,7 +254,7 @@ if (isset($tab_array)) {
 events.push(function() {
 
 	function setFilter(filtertext) {
-		jQuery('#pkg_filter').val(filtertext);
+		$('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
 	}
 
@@ -268,7 +268,7 @@ events.push(function() {
 			opacity: 0.8,
 			helper: function(e, ui) {
 				ui.children().each(function() {
-					jQuery(this).width(jQuery(this).width());
+					$(this).width($(this).width());
 				});
 			return ui;
 			},

@@ -1533,20 +1533,20 @@ if ($pkg['fields']['field'] != "") { ?>
 <?php
 	foreach ($pkg['fields']['field'] as $field) {
 		if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
-			echo "\tif (jQuery('input[name=\"{$field['fieldname']}\"]').prop('checked') == false) {\n";
+			echo "\tif ($('input[name=\"{$field['fieldname']}\"]').prop('checked') == false) {\n";
 
 			if (isset($field['enablefields'])) {
 				foreach (explode(',', $field['enablefields']) as $enablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$enablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$enablefield}\"]').prop('disabled',true);\n";
+					echo "\t\tif ($('input[name=\"{$enablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$enablefield}\"]').prop('disabled',true);\n";
 					echo "\t\t}\n";
 				}
 			}
 
 			if (isset($field['checkenablefields'])) {
 				foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$checkenablefield}\"]').prop('checked',true);\n";
+					echo "\t\tif ($('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$checkenablefield}\"]').prop('checked',true);\n";
 					echo "\t\t}\n";
 				}
 			}
@@ -1555,16 +1555,16 @@ if ($pkg['fields']['field'] != "") { ?>
 
 			if (isset($field['enablefields'])) {
 				foreach (explode(',', $field['enablefields']) as $enablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$enablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$enablefield}\"]').prop('disabled',false);\n";
+					echo "\t\tif ($('input[name=\"{$enablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$enablefield}\"]').prop('disabled',false);\n";
 					echo "\t\t}\n";
 				}
 			}
 
 			if (isset($field['checkenablefields'])) {
 				foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$checkenablefield}\"]').prop('checked',false);\n";
+					echo "\t\tif ($('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$checkenablefield}\"]').prop('checked',false);\n";
 					echo "\t\t}\n";
 				}
 			}

@@ -91,6 +91,11 @@ $navlevelsep = ": ";	/* navigation level separator string */
 $mandfldhtml = "";		/* display this before mandatory input fields */
 $mandfldhtmlspc = "";	/* same as above, but with spacing */
 
+if (!function_exists('set_language')) {
+	require_once("pfsense-utils.inc");
+}
+set_language();
+
 /* Some ajax scripts still need access to GUI */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {

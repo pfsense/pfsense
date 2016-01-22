@@ -398,7 +398,7 @@ function resolve_ip_callback(transport) {
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
-	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
+	$('span.RESOLVE-' + resolve_class).html(resolve_text);
 }
 
 // From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities

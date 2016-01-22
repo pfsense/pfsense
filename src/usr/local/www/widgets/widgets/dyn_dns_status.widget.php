@@ -158,7 +158,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		scroll(0,0);
 		var url = "/widgets/widgets/dyn_dns_status.widget.php";
 		var pars = 'getdyndnsstatus=yes';
-		jQuery.ajax(
+		$.ajax(
 			url,
 			{
 				type: 'get',
@@ -173,7 +173,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		var responseStrings = transport.responseText.split("|");
 		for (var count=0; count<responseStrings.length; count++) {
 			var divlabel = '#dyndnsstatus' + count;
-			jQuery(divlabel).prop('innerHTML',responseStrings[count]);
+			$(divlabel).prop('innerHTML',responseStrings[count]);
 		}
 	}
 	// Do the first status check 2 seconds after the dashboard opens

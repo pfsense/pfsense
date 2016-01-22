@@ -65,7 +65,7 @@ function showThermalSensorsData() {
 				//IE fix to disable cache when using http:// , just append timespan
 				+ new Date().getTime();
 
-		jQuery.ajax(url, {
+		$.ajax(url, {
 			type: 'get',
 			success: function(data) {
 				var thermalSensorsData = data || "";
@@ -112,9 +112,9 @@ function loadThermalSensorsContainer (thermalSensorsContent) {
 
 	if (thermalSensorsContent && thermalSensorsContent != "") {
 		//load generated graph (or raw data) into thermalSensorsContainer (thermalSensorsContainer DIV defined in "thermal_sensors.widget.php")
-		jQuery('#thermalSensorsContainer').html(thermalSensorsContent);
+		$('#thermalSensorsContainer').html(thermalSensorsContent);
 	} else {
-		jQuery('#thermalSensorsContainer').html("No Thermal Sensors data available.");
+		$('#thermalSensorsContainer').html("No Thermal Sensors data available.");
 	}
 }
 

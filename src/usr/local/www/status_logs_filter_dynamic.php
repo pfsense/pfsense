@@ -322,7 +322,7 @@ function update_table_rows(data) {
 
 	data = data.slice(startat, data.length);
 
-	var rows = jQuery('#filter-log-entries>tr');
+	var rows = $('#filter-log-entries>tr');
 
 	// Number of rows to move by
 	var move = rows.length + data.length - nentries;
@@ -333,38 +333,38 @@ function update_table_rows(data) {
 
 	if (isReverse == false) {
 		for (var i = move; i < rows.length; i++) {
-			jQuery(rows[i - move]).html(jQuery(rows[i]).html());
+			$(rows[i - move]).html($(rows[i]).html());
 		}
 
-		var tbody = jQuery('#filter-log-entries');
+		var tbody = $('#filter-log-entries');
 
 		for (var i = 0; i < data.length; i++) {
 			var rowIndex = rows.length - move + i;
 			if (rowIndex < rows.length) {
-				jQuery(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).html(data[i]);
 			} else {
-				jQuery(tbody).append('<tr>' + data[i] + '</tr>');
+				$(tbody).append('<tr>' + data[i] + '</tr>');
 			}
 		}
 	} else {
 		for (var i = rows.length - 1; i >= move; i--) {
-			jQuery(rows[i]).html(jQuery(rows[i - move]).html());
+			$(rows[i]).html($(rows[i - move]).html());
 		}
 
-		var tbody = jQuery('#filter-log-entries');
+		var tbody = $('#filter-log-entries');
 
 		for (var i = 0; i < data.length; i++) {
 			var rowIndex = move - 1 - i;
 			if (rowIndex >= 0) {
-				jQuery(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).html(data[i]);
 			} else {
-				jQuery(tbody).prepend('<tr>' + data[i] + '</tr>');
+				$(tbody).prepend('<tr>' + data[i] + '</tr>');
 			}
 		}
 	}
 
 	// Much easier to go through each of the rows once they've all be added.
-	rows = jQuery('#filter-log-entries>tr');
+	rows = $('#filter-log-entries>tr');
 	for (var i = 0; i < rows.length; i++) {
 		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
 	}

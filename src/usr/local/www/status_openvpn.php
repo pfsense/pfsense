@@ -96,14 +96,14 @@ include("head.inc"); ?>
 //<![CDATA[
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+			$(icon).bind("onclick","");
+			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
+			$(icon).css("cursor","wait");
 		}
 
-		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
+		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
-		jQuery.ajax(
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
 				"?action=kill&port=" + mport + "&remipp=" + remipp,
 			{ type: "get", complete: killComplete }
@@ -117,8 +117,8 @@ include("head.inc"); ?>
 			return;
 		}
 
-		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
 //]]>

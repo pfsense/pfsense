@@ -84,7 +84,7 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	$error = "Something wrong happened during communication with stat gathering";
+	$error = gettext("Something wrong happened during communication with stat gathering");
 } else {
 	$stats = "";
 	while (!feof($fd)) {
@@ -94,7 +94,7 @@ if (!$fd) {
 	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
 	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
 	if ($altqstats == -1) {
-		$error = "No queue statistics could be read.";
+		$error = gettext("No queue statistics could be read.");
 	}
 }
 if ($_REQUEST['getactivity']) {
@@ -191,8 +191,8 @@ else: ?>
 						<th><?=gettext("Queue"); ?></th>
 						<th><?=gettext("Statistics"); ?>
 							<select id="selStatistic" class="form-control">
-								<option value="0">PPS</option>
-								<option value="1">Bandwidth</option>
+								<option value="0"><?=gettext("PPS");?></option>
+								<option value="1"><?=gettext("Bandwidth");?></option>
 							</select>
 						</th>
 						<th><?=gettext("PPS"); ?></th>

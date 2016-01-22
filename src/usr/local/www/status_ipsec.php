@@ -124,7 +124,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">IPsec status</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPsec status");?></h2></div>
 	<div class="panel-body table responsive">
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -197,7 +197,7 @@ if (is_array($status)) {
 		$identity = "";
 		if (!empty($ikesa['remote-id'])) {
 			if ($ikesa['remote-id'] == '%any') {
-				$identity = 'Any identifier';
+				$identity = htmlspecialchars(gettext('Any identifier'));
 			} else {
 				$identity = htmlspecialchars($ikesa['remote']['identification']);
 			}
@@ -274,13 +274,13 @@ if (is_array($status)) {
 <?php
 		if ($ikesa['state'] != 'ESTABLISHED') {
 ?>
-					<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="Connect VPN" >
+					<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="<?=gettext("Connect VPN");?>" >
 							<?=gettext("Connect VPN")?>
 						</a>
 <?php
 		} else {
 ?>
-						<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="Disconnect VPN">
+						<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="<?=gettext("Disconnect VPN");?>">
 							<?=gettext("Disconnect")?>
 						</a><br />
 <?php

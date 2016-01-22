@@ -140,12 +140,12 @@ if ($_POST) {
 		}
 
 		mark_subsystem_dirty('loadbalancer');
-		write_config("Updated load balancer pools via status screen.");
+		write_config(gettext("Updated load balancer pools via status screen."));
 	}
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_info_box_np('The load balancer configuration has been changed You must apply the changes in order for them to take effect.');
+	print_info_box_np(gettext('The load balancer configuration has been changed You must apply the changes in order for them to take effect.'));
 }
 
 /* active tabs */
@@ -159,7 +159,7 @@ $rowsprinted = 0;
 
 <form action="status_lb_pool.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title">Load Balancer Pools</h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Load Balancer Pools");?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
@@ -184,13 +184,13 @@ foreach ($a_pool as $pool):
 <?php
 	switch ($pool['mode']) {
 		case "loadbalance":
-			echo "Load balancing";
+			echo gettext("Load balancing");
 			break;
 		case "failover":
-			echo "Manual failover";
+			echo gettext("Manual failover");
 			break;
 		default:
-			echo "(default)";
+			echo gettext("(default)");
 	}
 ?>
 						</td>

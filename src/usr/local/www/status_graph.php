@@ -225,8 +225,8 @@ function updateBandwidth() {
 
 						$('#top10-hosts').append('<tr>'+
 							'<td>'+ hostinfo[0] +'</td>'+
-							'<td>'+ hostinfo[1] +' Bits/sec</td>'+
-							'<td>'+ hostinfo[2] +' Bits/sec</td>'+
+							'<td>'+ hostinfo[1] +' <?=gettext("Bits/sec");?></td>'+
+							'<td>'+ hostinfo[2] +' <?=gettext("Bits/sec");?></td>'+
 						'</tr>');
 					}
 				}
@@ -255,7 +255,7 @@ if (ipsec_enabled()) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Traffic graph</h2>
+		<h2 class="panel-title"><?=gettext("Traffic graph");?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">

@@ -100,9 +100,9 @@ if (count($spd)) {
 <?php
 		foreach ($spd as $sp) {
 			if ($sp['dir'] == 'in') {
-				$dirstr = LEFTARROW . ' Inbound';
+				$dirstr = LEFTARROW . gettext(' Inbound');
 			} else {
-				$dirstr = RIGHTARROW . ' Outbound';
+				$dirstr = RIGHTARROW . gettext(' Outbound');
 			}
 ?>
 				<tr>

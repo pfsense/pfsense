@@ -81,28 +81,28 @@ if (!isset($config['ntpd']['noquery'])) {
 
 		switch (substr($line, 0, 1)) {
 			case " ":
-				$server['status'] = "Unreach/Pending";
+				$server['status'] = gettext("Unreach/Pending");
 				break;
 			case "*":
-				$server['status'] = "Active Peer";
+				$server['status'] = gettext("Active Peer");
 				break;
 			case "+":
-				$server['status'] = "Candidate";
+				$server['status'] = gettext("Candidate");
 				break;
 			case "o":
-				$server['status'] = "PPS Peer";
+				$server['status'] = gettext("PPS Peer");
 				break;
 			case "#":
-				$server['status'] = "Selected";
+				$server['status'] = gettext("Selected");
 				break;
 			case ".":
-				$server['status'] = "Excess Peer";
+				$server['status'] = gettext("Excess Peer");
 				break;
 			case "x":
-				$server['status'] = "False Ticker";
+				$server['status'] = gettext("False Ticker");
 				break;
 			case "-":
-				$server['status'] = "Outlier";
+				$server['status'] = gettext("Outlier");
 				break;
 		}
 
@@ -190,7 +190,7 @@ include("head.inc");
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Network Time Protocol Status</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Network Time Protocol Status");?></h2></div>
 	<div class="panel-body">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -212,13 +212,13 @@ include("head.inc");
 				<?php if (isset($config['ntpd']['noquery'])): ?>
 				<tr>
 					<td class="warning" colspan="11">
-						Statistics unavailable because ntpq and ntpdc queries are disabled in the <a href="services_ntpd.php">NTP service settings</a>.
+						<?=sprintf(gettext("Statistics unavailable because ntpq and ntpdc queries are disabled in the %sNTP service settings%s"), '<a href="services_ntpd.php">', '</a>');?>
 					</td>
 				</tr>
 				<?php elseif (count($ntpq_servers) == 0): ?>
 				<tr>
 					<td class="warning" colspan="11">
-						No peers found, <a href="status_services.php">is the ntp service running?</a>
+						<?=sprintf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');?>
 					</td>
 				</tr>
 				<?php else:
@@ -255,7 +255,7 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 	$gps_goo_lnk = 2; ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title">GPS information</h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS information");?></h2></div>
 		<div class="panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -300,21 +300,21 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 						if (isset($gps_sat) || isset($gps_satview)) { ?>
 							<td class="text-center"> <?php
 								if (isset($gps_satview)) {
-									print('in view ' . intval($gps_satview));
+									print(gettext('in view ') . intval($gps_satview));
 								}
 
 							if (isset($gps_sat) && isset($gps_satview)) {
 								print(', ');
 							}
 							if (isset($gps_sat)) {
-								print('in use ' . $gps_sat);
+								print(gettext('in use ') . $gps_sat);
 							} ?>
 							</td> <?php
 						}
 						?>
 					</tr>
 					<tr>
-						<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>">Google Maps Link</a></td>
+						<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>"><?=gettext("Google Maps Link");?></a></td>
 					</tr>
 				</tbody>
 			</table>

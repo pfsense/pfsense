@@ -1266,7 +1266,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
-				hideInput('strictusercn', true);
+				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
@@ -1276,7 +1276,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
-				hideInput('strictusercn', false);
+				hideCheckbox('strictusercn', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
@@ -1291,7 +1291,7 @@ events.push(function() {
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('dh_length', true);
 				hideInput('cert_depth', true);
-				hideInput('strictusercn', true);
+				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);

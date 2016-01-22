@@ -244,9 +244,9 @@ include("head.inc");
 
 function maxmss_checked(obj) {
 	if (obj.checked) {
-		jQuery('#maxmss').attr('disabled', false);
+		$('#maxmss').attr('disabled', false);
 	} else {
-		jQuery('#maxmss').attr('disabled', 'true');
+		$('#maxmss').attr('disabled', 'true');
 	}
 }
 

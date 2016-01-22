@@ -99,7 +99,7 @@ $crash_report_header .= "\nCrash report details:\n";
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 ?>
 <?php
-	if (gettext($_POST['Submit']) == gettext("Yes")) {
+	if ($_POST['Submit'] == "Yes") {
 		echo gettext("Processing...");
 		if (!is_dir("/var/crash")) {
 			mkdir("/var/crash", 0750, true);
@@ -126,7 +126,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		} else {
 			echo gettext("Could not find any crash files.");
 		}
-	} else if (gettext($_POST['Submit']) == gettext("No")) {
+	} else if ($_POST['Submit'] == "No") {
 		array_map('unlink', glob("/var/crash/*"));
 		// Erase the contents of the PHP error log
 		fclose(fopen("/tmp/PHP_errors.log", 'w'));

@@ -2767,10 +2767,10 @@ function set_language() {
 	$lang .= ".UTF-8";
 
 	putenv("LANG={$lang}");
-	$r = setlocale(LC_ALL, $lang);
-	$r = textdomain("pfSense");
-	$r = bindtextdomain("pfSense", "/usr/local/share/locale");
-	$r = bind_textdomain_codeset("pfSense", $lang);
+	setlocale(LC_ALL, $lang);
+	textdomain("pfSense");
+	bindtextdomain("pfSense", "/usr/local/share/locale");
+	bind_textdomain_codeset("pfSense", $lang);
 }
 
 function get_locale_list() {

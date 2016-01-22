@@ -127,7 +127,9 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 					if ($gateways_status[$gname]) {
-						echo $gateways_status[$gname]['delay'];
+						if (!isset($gateway['monitor_disable'])) {
+							echo $gateways_status[$gname]['delay'];
+						} 
 					} else {
 						echo gettext("Pending");
 					}
@@ -136,7 +138,9 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 					if ($gateways_status[$gname]) {
-						echo $gateways_status[$gname]['stddev'];
+						if (!isset($gateway['monitor_disable'])) {
+							echo $gateways_status[$gname]['stddev'];
+						}
 					} else {
 						echo gettext("Pending");
 					}
@@ -145,7 +149,9 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 					if ($gateways_status[$gname]) {
-						echo $gateways_status[$gname]['loss'];
+						if (!isset($gateway['monitor_disable'])) {
+							echo $gateways_status[$gname]['loss'];
+						}
 					} else {
 						echo gettext("Pending");
 					}

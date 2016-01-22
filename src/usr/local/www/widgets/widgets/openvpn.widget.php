@@ -83,7 +83,7 @@ $clients = openvpn_get_active_clients();
 //<![CDATA[
 	function killClient(mport, remipp) {
 
-		jQuery.ajax(
+		$.ajax(
 			"widgets/widgets/openvpn.widget.php" +
 				"?action=kill&port=" + mport + "&remipp=" + remipp,
 			{ type: "get", complete: killComplete }
@@ -97,8 +97,8 @@ $clients = openvpn_get_active_clients();
 			return;
 		}
 
-		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
 //]]>

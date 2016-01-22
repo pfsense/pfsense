@@ -207,19 +207,19 @@ require("head.inc");
 	});
 
 	function loadFile() {
-		jQuery("#fileStatus").html("");
-		jQuery("#fileStatusBox").show(500);
-		jQuery.ajax(
+		$("#fileStatus").html("");
+		$("#fileStatusBox").show(500);
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
-				data: "action=load&file=" + jQuery("#fbTarget").val(),
+				data: "action=load&file=" + $("#fbTarget").val(),
 				complete: loadComplete
 			}
 		);
 	}
 
 	function loadComplete(req) {
-		jQuery("#fileContent").show(1000);
+		$("#fileContent").show(1000);
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
 
@@ -227,30 +227,30 @@ require("head.inc");
 			var file = values.shift();
 			var fileContent = window.atob(values.join("|"));
 
-			jQuery("#fileContent").val(fileContent);
+			$("#fileContent").val(fileContent);
 		} else {
-			jQuery("#fileStatus").html(values[0]);
-			jQuery("#fileContent").val("");
+			$("#fileStatus").html(values[0]);
+			$("#fileContent").val("");
 		}
 
-		jQuery("#fileContent").show(1000);
+		$("#fileContent").show(1000);
 	}
 
 	function saveFile(file) {
-		jQuery("#fileStatus").html("");
-		jQuery("#fileStatusBox").show(500);
+		$("#fileStatus").html("");
+		$("#fileStatusBox").show(500);
 
-		var fileContent = Base64.encode(jQuery("#fileContent").val());
+		var fileContent = Base64.encode($("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g, "%2B");
 
-		jQuery.ajax(
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
-				data: "action=save&file=" + jQuery("#fbTarget").val() +
+				data: "action=save&file=" + $("#fbTarget").val() +
 							"&data=" + fileContent,
 				complete: function(req) {
 					var values = req.responseText.split("|");
-					jQuery("#fileStatus").html(values[1]);
+					$("#fileStatus").html(values[1]);
 				}
 			}
 		);
@@ -397,7 +397,7 @@ var Base64 = {
 
 	<?php if ($_GET['action'] == "load"): ?>
 		events.push(function() {
-			jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			$("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
 			loadFile();
 		});
 	<?php endif; ?>

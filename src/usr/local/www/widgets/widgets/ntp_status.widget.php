@@ -501,7 +501,7 @@ clockUpdate();
 		scroll(0,0);
 		var url = "/widgets/widgets/ntp_status.widget.php";
 		var pars = 'updateme=yes';
-		jQuery.ajax(
+		$.ajax(
 			url,
 			{
 				type: 'get',
@@ -515,7 +515,7 @@ clockUpdate();
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText
-		jQuery('#ntpstatus').prop('innerHTML',responseStringNtp);
+		$('#ntpstatus').prop('innerHTML',responseStringNtp);
 	}
 	// Do the first status check 1 second after the dashboard opens
 	setTimeout('ntp_getstatus()', 1000);

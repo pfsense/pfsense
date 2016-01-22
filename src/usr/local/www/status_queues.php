@@ -129,13 +129,13 @@ if ($_REQUEST['getactivity']) {
 		if ($packet_s < 0) {
 			$packet_s = 0;
 		}
-		$finscript .= "jQuery('#queue{$q->queuename}width').css('width','{$packet_s}%');";
-		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
-		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
-		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
-		$finscript .= "jQuery('#queue{$q->queuename}length').val('{$q->queuelength}');";
+		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";
+		$finscript .= "$('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
+		$finscript .= "$('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
+		$finscript .= "$('#queue{$q->queuename}borrows').val('{$q->borrows}');";
+		$finscript .= "$('#queue{$q->queuename}suspends').val('{$q->suspends}');";
+		$finscript .= "$('#queue{$q->queuename}drops').val('{$q->drops}');";
+		$finscript .= "$('#queue{$q->queuename}length').val('{$q->queuelength}');";
 	}
 	unset($statistics, $altqstats);
 	header("Content-type: text/javascript");
@@ -160,8 +160,8 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 //<![CDATA[
 	function getqueueactivity() {
 		var url = "/status_queues.php";
-		var pars = "getactivity=yes&stats=" + jQuery("#selStatistic").val();
-		jQuery.ajax(
+		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
+		$.ajax(
 			url,
 			{
 				type: 'post',
@@ -172,7 +172,7 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 	function activitycallback(transport) {
 		setTimeout('getqueueactivity()', 5100);
 	}
-	jQuery(document).ready(function() {
+	$(document).ready(function() {
 		setTimeout('getqueueactivity()', 150);
 	});
 //]]>
@@ -224,11 +224,11 @@ else: ?>
 <script type="text/javascript">
 //<![CDATA[
 	function StatsShowHide(classname) {
-		var firstrow = jQuery("." + classname).first();
+		var firstrow = $("." + classname).first();
 		if (firstrow.is(':visible')) {
-			jQuery("." + classname).hide();
+			$("." + classname).hide();
 		} else {
-			jQuery("." + classname).show();
+			$("." + classname).show();
 		}
 	}
 //]]>

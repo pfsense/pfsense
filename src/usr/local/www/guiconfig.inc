@@ -354,7 +354,7 @@ function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes",
 	$nifty_blackbox = "#000000";
 
 	if (!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
+		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"$(this).parents('table[id=redboxtable]').hide();\" /></td>";
 	}
 
 	echo <<<EOFnp

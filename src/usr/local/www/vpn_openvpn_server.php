@@ -762,7 +762,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">System &gt; Cert Manager</a>', '</span>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);

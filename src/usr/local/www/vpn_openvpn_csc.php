@@ -335,7 +335,7 @@ if ($act == "new" || $act == "edit"):
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $serversettings) {
 			if (in_array($serversettings['mode'], $openvpn_tls_server_modes)) {
-				$serveroptionlist[$serversettings['vpnid']] = "OpenVPN Server {$serversettings['vpnid']}: {$serversettings['description']}";
+				$serveroptionlist[$serversettings['vpnid']] = sprintf(gettext("OpenVPN Server %d: %s"), $serversettings['vpnid'], $serversettings['description']);
 			}
 		}
 	}

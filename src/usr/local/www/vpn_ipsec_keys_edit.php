@@ -144,7 +144,7 @@ if ($_POST) {
 			$text = gettext("Added");
 		}
 
-		write_config("{$text} IPsec Pre-Shared Keys");
+		write_config("{$text} " . gettext("IPsec Pre-Shared Keys"));
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec_keys.php");

@@ -545,7 +545,7 @@ function build_interface_list() {
 			$vipif = $group[0]['int'];
 		}
 
-		$interfaces[$name] = "GW Group {$name}";
+		$interfaces[$name] = sprintf(gettext("GW Group %s"), $name);
 	}
 
 	return($interfaces);

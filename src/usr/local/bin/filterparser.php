@@ -44,7 +44,7 @@ $lastline = "";
 while (!feof($log)) {
 	$line = fgets($log);
 	$line = rtrim($line);
-	$flent = parse_filter_line(trim($line));
+	$flent = parse_firewall_log_line(trim($line));
 	if ($flent != "") {
 		$flags = (($flent['proto'] == "TCP") && !empty($flent['tcpflags'])) ? ":" . $flent['tcpflags'] : "";
 		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']}{$flags} {$flent['src']} {$flent['dst']}\n";

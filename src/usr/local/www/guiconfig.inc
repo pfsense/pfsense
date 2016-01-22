@@ -314,7 +314,10 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
-	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
+	// The $msg string might or might not have had a known translation into the target language.
+	// So check it against the keywords "apply", "save and "create" in both the target language and English.
+	if ((stristr($msg, gettext("apply")) != false) || (stristr($msg, gettext("save")) != false) || (stristr($msg, gettext("create")) != false) || 
+	    (stristr($msg, "apply") != false) || (stristr($msg, "save") != false) || (stristr($msg, "create") != false) || $showapply) {
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="' . $value . '">' . $name . '</button>';
 
 		if ($_POST['if']) {

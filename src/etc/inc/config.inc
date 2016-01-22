@@ -229,11 +229,6 @@ if (isset($config['system']['timezone']) &&
 }
 date_default_timezone_set("$timezone");
 
-if (!function_exists('set_language')) {
-	require_once("pfsense-utils.inc");
-}
-set_language();
-
 if ($config_parsed == true) {
 	/* process packager manager custom rules */
 	if (is_dir("/usr/local/pkg/parse_config")) {

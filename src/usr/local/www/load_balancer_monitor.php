@@ -118,7 +118,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_info_box_np(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The load balancer configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 /* active tabs */

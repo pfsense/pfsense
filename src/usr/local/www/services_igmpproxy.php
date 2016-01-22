@@ -106,7 +106,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('igmpproxy')) {
-	print_info_box_np(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
 }
 ?>
 

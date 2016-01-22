@@ -89,25 +89,25 @@ if ($_POST['xml']) {
 
 if (empty($xml)) {
 	$xml = "not_defined";
-	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+	print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 	die;
 } else {
 	$wizard_xml_prefix = "{$g['www_path']}/wizards";
 	$wizard_full_path = "{$wizard_xml_prefix}/{$xml}";
 	if (substr_compare(realpath($wizard_full_path), $wizard_xml_prefix, 0, strlen($wizard_xml_prefix))) {
-		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		print_info_box(gettext("ERROR: Invalid path specified."));
 		die;
 	}
 	if (file_exists($wizard_full_path)) {
 		$pkg = parse_xml_config_pkg($wizard_full_path, "pfsensewizard");
 	} else {
-		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+		print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 		die;
 	}
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
+	print_info_box(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
 	die;
 }
 

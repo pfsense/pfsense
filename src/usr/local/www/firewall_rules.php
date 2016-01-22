@@ -277,7 +277,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('filter')) {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
+	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 display_top_tabs($tab_array);

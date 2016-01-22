@@ -131,7 +131,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('staticroutes')) {
-	print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));
+	print_apply_box(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));
 }
 
 $tab_array = array();

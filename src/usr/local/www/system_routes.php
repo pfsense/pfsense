@@ -254,7 +254,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('staticroutes')) {
-	print_info_box_np(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();

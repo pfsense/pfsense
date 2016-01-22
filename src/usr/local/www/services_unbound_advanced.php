@@ -227,11 +227,11 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-        print_info_box($savemsg, 'success');
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_info_box_np(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
+	print_apply_box(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
 }
 
 $tab_array = array();

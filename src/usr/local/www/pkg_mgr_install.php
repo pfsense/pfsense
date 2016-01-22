@@ -450,7 +450,7 @@ if ($_POST && ($_POST['completed'] != "true")) {
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
-	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$g['tmp_path']}/webgui-log.txt -p {$g['tmp_path']}/webgui-log.sock";
+	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$g['cf_conf_path']}/upgrade_log.txt -p {$g['tmp_path']}/upgrade_logwebgui-log.sock";
 
 	switch ($_POST['mode']) {
 		case 'delete':
@@ -567,7 +567,7 @@ function getLogsStatus() {
 			url: "pkg_mgr_install.php",
 			type: "post",
 			data: { ajax: "ajax",
-					logfilename: "<?=$g['tmp_path'];?>/webgui-log",
+					logfilename: "<?=$g['cf_conf_path'];?>/upgrade_log",
 					next_log_line: "0"
 				  }
 		});

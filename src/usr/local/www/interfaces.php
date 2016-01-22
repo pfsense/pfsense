@@ -280,22 +280,6 @@ $pconfig['dhcp_plus'] = isset($wancfg['dhcp_plus']);
 $pconfig['descr'] = remove_bad_chars($wancfg['descr']);
 $pconfig['enable'] = isset($wancfg['enable']);
 
-if (is_array($config['aliases']['alias'])) {
-	foreach ($config['aliases']['alias'] as $alias) {
-		if ($alias['name'] == $wancfg['descr']) {
-			$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists. Interfaces cannot have the same name as an alias."), $wancfg['descr']);
-		}
-	}
-}
-
-if (is_array($config['ifgroups']['ifgroupentry'])) {
-	foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-		if ($ifgroupentry['ifname'] == $wancfg['descr']) {
-			$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists. Interfaces cannot have the same name as an interface group."), $wancfg['descr']);
-		}
-	}
-}
-
 switch ($wancfg['ipaddr']) {
 	case "dhcp":
 		$pconfig['type'] = "dhcp";
@@ -554,6 +538,15 @@ if ($_POST['apply']) {
 		foreach ($config['aliases']['alias'] as $alias) {
 			if ($alias['name'] == $_POST['descr']) {
 				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+			}
+		}
+	}
+
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['descr']) {
+				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $wancfg['descr']);
 			}
 		}
 	}

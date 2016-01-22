@@ -1628,7 +1628,7 @@ EOD;
 			if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
 				$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
 			} else {
-				$pppoemaxlogins = 1
+				$pppoemaxlogins = 1;
 			}
 
 			$mpdconf .=<<<EOD

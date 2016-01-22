@@ -472,6 +472,163 @@ function ip_after($ip, $offset = 1) {
 	return long2ip32(ip2long($ip) + $offset);
 }
 
+/* Convert human-readable IPv4/IPv6 to lowercase 8 or 32 char hex for ease of comparison
+   Returns '' if not a valid IPv4/IPv6 address */
+function ip_to_hex($ip) {
+	$type = is_ipaddr($ip);
+	// is_ipaddr() returns 4/6 if valid IPv4/IPv6, or '' if not valid
+	if ($type == 4) {
+		$result = str_pad(strtolower(dechex(ip2long32($ip))), 8, '0', STR_PAD_LEFT);
+	} elseif ($type == 6) {
+		$result = strtolower(str_replace(Net_IPv6::uncompress($ip, true), ':', ''));
+	}
+	// probably redundant not to return already but guarantees catching any subtle issues in hex conversion
+	if (isset($result) && ctype_xdigit($result) && (strlen($result) == 8 || strlen($result == 32))) {
+		return $result;
+	} else {
+		return '';
+	}
+}
+
+/* 	High-level generic IP/subnet/range compare
+	ARGUMENTS:
+	     1) Data1: an IP/subnet/range, as a string or a structured array (array is simpler if subnet/range data is already separated out)
+	     2) Comparison operator: text string indicating condition to test, listed below
+	     3) Data2: the other data in the comparison, see Data1
+	     Optional param: 4 or 6 to stipulate IPs must be IPv4/IPv6, and to return '' (bad input) if not.
+	RETURN VALUE:
+	     true, false or '' for bad input
+	DATA1 / DATA2 EXAMPLES:
+	     IP:     AS STRING: '1.2.3.4'         AS ARRAY: array('ip', '1.2.3.4')
+	     Subnet: AS STRING: '1.2.3.4/24'      AS ARRAY: array('subnet', '1.2.3.4', 24)
+	     Range:  AS STRING: '1.2.3.4-5.6.7.8' AS ARRAY: array('range', '1.2.3.4', '5.6.7.8')
+	          and the same for IPv6
+	VALID COMPARISON TYPES (add more if useful):
+		IP to IP: 
+		     < <= = >= > !=  (not ==)
+		IP to RANGE/SUBNET: 
+		     'in' (true if IP in range/subnet) 
+		     '!in' (true if IP not in range/subnet)
+		     Only meaningful if $data1 = IP and $data2 = range/subnet
+		RANGE/SUBNET to RANGE/SUBNET: 
+		     'overlaps' (true if some or all IPs in common)
+		     'included-in' (true if 1st range/subnet completely included in, or identical to, 2nd range/subnet)
+		     '!overlaps' (true if no IPs in common, disjoint)
+		     		[Note: !included-in wouldn't be very meaningful]
+*/
+function ip_compare($data1, $comparison, $data2, $requiretype='any') {
+
+	// unpack data1/2 into d1/2, converting subnet to range, and validate data type + array sizes
+	if (is_array($data1)) {
+		//array data
+		if ($data1[0] == 'subnet'  && count($data1) == 3) {
+			$d1 = array('range', gen_subnet($data1[1], $data1[2]), gen_subnet_max($data1[1], $data1[2]));
+		} elseif (($data1[0] == 'ip' && count($data1) == 2) || ($data1[0] == 'range' && count($data1) == 3)) {
+			$d1 = $data1;
+		} else {
+			return '';
+		}
+	} elseif (is_string($data1)) {
+		// string data
+		if (count($d = explode('/', $data1)) == 2) {
+			// invalid subnet is picked up as error later
+			$d1 = array('range', gen_subnet($d[0], $d[1]), gen_subnet_max($d[0], $d[1]));
+		} elseif (count($d = explode('-', $data1)) == 2) {
+			$d1 = array('range', $d[0], $d[1]);
+		} else {
+			$d1 = array('ip', $data1);
+		}
+	} else {
+		return '';
+	}
+
+	if (is_array($data2)) {
+		//array data
+		if ($data2[0] == 'subnet'  && count($data2) == 3) {
+			$d2 = array('range', gen_subnet($data2[1], $data2[2]), gen_subnet_max($data2[1], $data2[2]));
+		} elseif (($data2[0] == 'ip' && count($data2) == 2) || ($data2[0] == 'range' && count($data2) == 3)) {
+			$d2 = $data2;
+		} else {
+			return '';
+		}
+	} elseif (is_string($data2)) {
+		// string data
+		if (count($d = explode('/', $data2)) == 2) {
+			// invalid subnet is picked up as error later
+			$d2 = array('range', gen_subnet($d[0], $d[1]), gen_subnet_max($d[0], $d[1]));
+		} elseif (count($d = explode('-', $data2)) == 2) {
+			$d2 = array('range', $d[0], $d[1]);
+		} else {
+			$d2 = array('ip', $data2);
+		}
+	} else {
+		return '';
+	}
+
+	//convert ips and range start-ends to hex, check range ordering, and collate a list of strlen() for IP type validation
+	list($d1[1], $d2[1]) = array(ip_to_hex($d1[1]), ip_to_hex($d2[1]));
+	$ip_sizes = array(strlen($d1[1]), strlen($d2[1]));
+	if ($d1[0] == 'range') {
+		$d1[2] = ip_to_hex($d1[2]);
+		$ip_sizes[] = strlen($d1[2]);
+		if ($d1[2] < $d1[1]) {
+			// check range start-end ordering: TRUE would be misordered range or some invalid IP data
+			return '';
+		}
+	}
+	if ($d2[0] == 'range') {
+		$d2[2] = ip_to_hex($d2[2]);
+		$ip_sizes[] = strlen($d2[2]);
+		if ($d2[2] < $d2[1]) {
+			// check range start-end ordering: TRUE would be misordered range or some invalid IP data
+			return '';
+		}
+	}
+
+	// validate IP type for all data (any prior function that failed and any bad IP/range/subnet will lead to bad data below)
+	$min__sizes = min($ip_sizes);
+	if (($min__sizes != 8 && $min_sizes != 32) || $min__sizes != max($ip_sizes)) {
+		// at least one IP, subnet, or range wasn't valid, or not all IPs are the same kind (4/6)
+		return '';
+	}
+
+	// check IPv4/IPv6 required, and if so, whether data complies
+	if (!(($requiretype == 4 && $min__sizes == 8) || ($requiretype == 6 && $min__sizes == 32) || $requiretype == 'any')) {
+		//required IPv4/IPv6 but IPs aren't correct number of hex chars, or invalid value of $requiretype
+		return '';
+	}
+
+	// IP data valid, now we check comparisons are meaningful and perform them
+	$c = $comparison;
+	if ($d1[0] == 'ip' && $d2[0] == 'ip' && in_array($c, array('<', '<=', '=', '>=', '>', '!='))) {
+		// IP to IP comparison
+		return (($d1[1] < $d2[1] && ($c == '<' || $c == '<=')) ||
+		   ($d1[1] == $d2[1] && ($c == '<=' || $c == '=' || $c == '>=')) ||
+		   ($d1[1] > $d2[1] && ($c == '>' || $c == '>=')));
+	} elseif ($d1[0] == 'ip' && $d2[0] == 'range' && in_array($c, array('in', '!in'))) {
+		// IP to range/subnet comparison
+		return (($d1[1] >= $d2[1] && $d1[1] <= $d2[2] && $c == 'in') ||
+		   (($d1[1] < $d2[1] || $d1[1] > $d2[2]) && $c == '!in'));
+	} elseif ($d1[0] == 'range' && $d2[0] == 'range' && in_array($c, array('overlaps', '!overlaps', 'included-in'))) {
+		// range/subnet to range/subnet comparison
+		if ($d1[2] < $d2[1] || $d1[1] > $d2[2]) {
+			// no overlap at all
+			$matchtype = 0;
+		} elseif ($d1[1] >= $d2[1] && $d1[2] <= $d2[2]) {
+			// complete inclusion (or identical)
+			$matchtype = 1;
+		} else {
+			// overlap to some degree but not inclusion
+			$matchtype = 2;
+		}
+		return (($c == '!overlaps' && $matchtype == 0) ||
+		   ($c == 'overlaps' && ($matchtype == 1 || $matchtype == 2)) ||
+		   ($c == 'included-in' && $matchtype == 2));
+	}
+	// comparison operator or comparison data types invalid
+	return '';
+}
+
 /* Return true if the first IP is 'before' the second */
 function ip_less_than($ip1, $ip2) {
 	// Compare as unsigned long because otherwise it wouldn't work when

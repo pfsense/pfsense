@@ -114,7 +114,7 @@ $carp_enabled = get_carp_status();
 		}
 	} else {
 ?>
-		<tr><td>No CARP Interfaces Defined. Click <a href="status_carp.php">here</a> to configure CARP.</td></tr>
+		<tr><td><?=gettext('No CARP Interfaces Defined.')?> <?=sprintf(gettext('Click %1$shere%2$s to configure CARP.'), '<a href="status_carp.php">', '</a>')?></td></tr>
 <?php
 	}
 ?>

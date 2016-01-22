@@ -202,9 +202,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 if (isset($config['ipsec']['phase1'])) {
 	$tab_array = array();
-	$tab_array[] = array("Overview", true, "ipsec-Overview");
-	$tab_array[] = array("Tunnels", false, "ipsec-tunnel");
-	$tab_array[] = array("Mobile", false, "ipsec-mobile");
+	$tab_array[] = array(gettext("Overview"), true, "ipsec-Overview");
+	$tab_array[] = array(gettext("Tunnels"), false, "ipsec-tunnel");
+	$tab_array[] = array(gettext("Mobile"), false, "ipsec-mobile");
 
 	display_widget_tabs($tab_array);
 }
@@ -216,9 +216,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<table class="table table-striped table-hover">
 		<thead>
 		<tr>
-			<th>Active Tunnels</th>
-			<th>Inactive Tunnels</th>
-			<th>Mobile Users</th>
+			<th><?=gettext("Active Tunnels")?></th>
+			<th><?=gettext("Inactive Tunnels")?></th>
+			<th><?=gettext("Mobile Users")?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -230,10 +230,10 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<table class="table table-striped table-hover">
 	<thead>
 	<tr>
-		<th>Source</th>
-		<th>Destination</th>
-		<th>Description</th>
-		<th>Status</th>
+		<th><?=gettext("Source")?></th>
+		<th><?=gettext("Destination")?></th>
+		<th><?=gettext("Description")?></th>
+		<th><?=gettext("Status")?></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -247,9 +247,9 @@ if (isset($config['ipsec']['phase2'])): ?>
 		<table class="table table-striped table-hover">
 		<thead>
 		<tr>
-			<th>User</th>
-			<th>IP</th>
-			<th>Status</th>
+			<th><?=gettext("User")?></th>
+			<th><?=gettext("IP")?></th>
+			<th><?=gettext("Status")?></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -260,8 +260,8 @@ if (isset($config['ipsec']['phase2'])): ?>
 	<?php endif;?>
 <?php else: ?>
 	<div>
-		<h5 style="padding-left:10px;">There are no configured IPsec Tunnels</h5>
-		<p  style="padding-left:10px;">You can configure your IPsec <a href="vpn_ipsec.php">here</a>.</p>
+		<h5 style="padding-left:10px;"><?=gettext("There are no configured IPsec Tunnels")?></h5>
+		<p  style="padding-left:10px;"><?=gettext('You can configure your IPsec <a href="vpn_ipsec.php">here</a>.')?></p>
 	</div>
 <?php endif;
 

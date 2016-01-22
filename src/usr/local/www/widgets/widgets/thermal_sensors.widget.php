@@ -89,7 +89,7 @@ if ($_POST) {
 	saveGraphDisplaySettings($config, $_POST, "thermal_sensors_widget_pulsate_critical");
 
 	//write settings to config file
-	write_config("Saved thermal_sensors_widget settings via Dashboard.");
+	write_config(gettext("Saved thermal_sensors_widget settings via Dashboard."));
 	header("Location: ../../index.php");
 }
 
@@ -185,7 +185,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 </script>
 <div style="padding: 5px">
 	<div id="thermalSensorsContainer" class="listr">
-		(Updating...)<br /><br />
+		<?=gettext('(Updating...)')?><br /><br />
 	</div>
 </div>
 </div>
@@ -196,15 +196,15 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 	<table>
 		<tr>
 			<td class="text-left" colspan="2">
-				<strong>Thresholds in &deg;C (1 to 100):</strong>
+				<strong><?=gettext('Thresholds in')?> &deg;C <?=gettext('(1 to 100):')?></strong>
 			</td>
 			<td class="text-right" colspan="1">
-				<strong>Display settings:</strong>
+				<strong><?=gettext('Display settings:')?></strong>
 			</td>
 		</tr>
 		<tr>
 			<td class="text-right">
-				Zone Warning:
+				<?=gettext('Zone Warning:')?>
 			</td>
 			<td>
 				<input type="text" maxlength="3" size="3" class="formfld unknown"
@@ -213,7 +213,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					value="<?= $thermal_sensors_widget_zoneWarningTempThreshold; ?>" />
 			</td>
 			<td class="text-right">
-				<label for="thermal_sensors_widget_show_raw_output">Show raw output (no graph): </label>
+				<label for="thermal_sensors_widget_show_raw_output"><?=gettext('Show raw output (no graph):')?> </label>
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_raw_output"
 					name="thermal_sensors_widget_show_raw_output"
@@ -222,7 +222,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-right">
-				Zone Critical:
+				<?=gettext('Zone Critical:')?>
 			</td>
 			<td>
 				<input type="text" maxlength="3" size="3" class="formfld unknown"
@@ -231,7 +231,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 					value="<?= $thermal_sensors_widget_zoneCriticalTempThreshold; ?>" />
 			</td>
 			<td class="text-right">
-				<label for="thermal_sensors_widget_show_full_sensor_name">Show full sensor name: </label>
+				<label for="thermal_sensors_widget_show_full_sensor_name"><?=gettext('Show full sensor name:')?> </label>
 				<input type="checkbox"
 					id="thermal_sensors_widget_show_full_sensor_name"
 					name="thermal_sensors_widget_show_full_sensor_name"
@@ -240,7 +240,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-right">
-				Core Warning:
+				<?=gettext('Core Warning:')?>
 			</td>
 			<td>
 				<input type="text" maxlength="3" size="3" class="formfld unknown"
@@ -254,7 +254,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-right">
-				Core Critical:
+				<?=gettext('Core Critical:')?>
 			</td>
 			<td>
 				<input type="text" maxlength="3" size="3" class="formfld unknown"
@@ -273,8 +273,8 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-left" colspan="3">
-				<span>* You can configure a proper Thermal Sensor / Module under <br />
-				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php">System &gt; Advanced &gt; Miscellaneous : Thermal Sensors section</a>.</span>
+				<span><?=gettext('* You can configure a proper Thermal Sensor / Module under')?> <br />
+				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php"><?=gettext('System')?> &gt; <?=gettext('Advanced')?> &gt; <?=gettext('Miscellaneous')?> : <?=gettext('Thermal Sensors')?> <?=gettext('section')?></a>.</span>
 			</td>
 		</tr>
 	</table>

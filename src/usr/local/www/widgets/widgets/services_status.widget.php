@@ -78,7 +78,7 @@ if ($_POST) {
 		$config['widgets']['servicestatusfilter'] = "";
 	}
 
-	write_config("Saved Service Status Filter via Dashboard");
+	write_config(gettext("Saved Service Status Filter via Dashboard"));
 	header("Location: /index.php");
 }
 
@@ -87,9 +87,9 @@ if ($_POST) {
 <thead>
 	<tr>
 		<th></th>
-		<th>Service</th>
-		<th>Description</th>
-		<th>Action</th>
+		<th><?=gettext('Service')?></th>
+		<th><?=gettext('Description')?></th>
+		<th><?=gettext('Action')?></th>
 	</tr>
 </thead>
 <tbody>
@@ -116,7 +116,7 @@ if (count($services) > 0) {
 <?php
 	}
 } else {
-	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . " . </td></tr>\n";
+	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
 }
 ?>
 </tbody>
@@ -127,7 +127,7 @@ if (count($services) > 0) {
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
-		<label for="inputPassword3" class="col-sm-3 control-label">Hidden services</label>
+		<label for="inputPassword3" class="col-sm-3 control-label"><?=gettext('Hidden services')?></label>
 		<div class="col-sm-6">
 			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php
@@ -145,8 +145,8 @@ if (count($services) > 0) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary">Save</button>
-			<button id="clearall" type="button" class="btn btn-default">Clear</button>
+			<button type="submit" class="btn btn-primary"><?=gettext('Save')?></button>
+			<button id="clearall" type="button" class="btn btn-default"><?=gettext('Clear')?></button>
 		</div>
 	</div>
 </form>

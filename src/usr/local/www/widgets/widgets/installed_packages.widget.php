@@ -74,8 +74,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 	if (empty($installed_packages)) {
 		print("<div class=\"alert alert-warning\" role=\"alert\">\n");
-		print("	<strong>No packages installed.</strong>\n");
-		print("	You can install packages <a href=\"pkg_mgr.php\" class=\"alert-link\">here</a>.\n");
+		print("	<strong>". gettext("No packages installed.") . "</strong>\n");
+		print(" " . gettext('You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.') . "\n");
 		print("</div>\n");
 		exit;
 	}
@@ -103,17 +103,17 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		if (isset($pkg['broken'])) {
 			$txtcolor = "text-danger";
 			$missing = true;
-			$status = 'Package is configured, but not installed!';
+			$status = gettext('Package is configured, but not installed!');
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare(
 			    $pkg['installed_version'], $pkg['version']);
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
-				$status = 'Newer than available ('. $pkg['version'] .')';
+				$status = sprintf(gettext('Newer than available (%s)'), $pkg['version']);
 				$statusicon = 'exclamation';
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
-				$status = 'Upgrade available to '.$pkg['version'];
+				$status = sprintf(gettext('Upgrade available to %s'), $pkg['version']);
 				$statusicon = 'plus-circle';
 				$txtcolor = "text-warning";
 				$upgradeavail = true;
@@ -121,15 +121,15 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				    '&amp;to=' . $pkg['version'];
 			} else if ($version_compare == '=') {
 				// we're running the current version
-				$status = 'ok';
+				$status = gettext('ok');
 				$statusicon = 'check';
 			} else {
-				$status = 'Error comparing version';
+				$status = gettext('Error comparing version');
 				$statusicon = 'exclamation';
 			}
 		} else {
 			// unknown available package version
-			$status = 'Unknown';
+			$status = gettext('Unknown');
 			$statusicon = 'question';
 		}
 
@@ -180,7 +180,7 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 </div>
 
 <p class="text-center">
-	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php">System -&gt; Packages</a>
+	<?=gettext("Packages may be added/managed here: ")?> <a href="pkg_mgr_installed.php"><?=gettext("System")?> -&gt; <?=gettext("Packages")?></a>
 </p>
 
 <script type="text/javascript">

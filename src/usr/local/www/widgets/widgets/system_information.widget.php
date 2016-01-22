@@ -119,7 +119,7 @@ $filesystems = get_mounted_filesystems();
 				<strong><?=$g['product_version']?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
-				built on <?php readfile("/etc/version.buildtime"); ?>
+				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
 			<?php if (!$g['hideuname']): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
@@ -154,7 +154,7 @@ $filesystems = get_mounted_filesystems();
 			<td>
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?=$rw;?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br /><br />Next Boot:<br />
+				<br /><br /><?=gettext('Next Boot')?>:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
 				<?php endif; ?>
 			</td>
@@ -168,7 +168,7 @@ $filesystems = get_mounted_filesystems();
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
-					<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?>
+					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
 				</div>
 		<?php endif; ?>
 			</td>
@@ -247,7 +247,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
-				<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
+				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -257,7 +257,7 @@ $filesystems = get_mounted_filesystems();
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter">(Updating in 10 seconds)</span>
+				<span id="cpumeter"><?=gettext('(Updating in 10 seconds)')?></span>
 			</td>
 		</tr>
 		<tr>
@@ -292,7 +292,7 @@ $filesystems = get_mounted_filesystems();
 <?php foreach ($filesystems as $fs): ?>
 					<tr>
 						<th><?=$fs['mountpoint']?></th>
-						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
+						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></td>
 						<td><?=$fs['total_size']?></td>
 						<td>
 							<span><?=$fs['percent_used']?>%</span>

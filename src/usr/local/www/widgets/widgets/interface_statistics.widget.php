@@ -70,13 +70,13 @@ require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 if ($_REQUEST && $_REQUEST['ajax']) {
 
 	$rows = array(
-		'inpkts' => 'Packets In',
-		'outpkts' => 'Packets Out',
-		'inbytes' => 'Bytes In',
-		'outbytes' => 'Bytes Out',
-		'inerrs' => 'Errors In',
-		'outerrs' => 'Errors Out',
-		'collisions' => 'Collisions',
+		'inpkts' => gettext('Packets In'),
+		'outpkts' => gettext('Packets Out'),
+		'inbytes' => gettext('Bytes In'),
+		'outbytes' => gettext('Bytes Out'),
+		'inerrs' => gettext('Errors In'),
+		'outerrs' => gettext('Errors Out'),
+		'collisions' => gettext('Collisions'),
 	);
 
 	$ifdescrs = get_configured_interface_with_descr();

@@ -71,7 +71,7 @@ require_once("pkg-utils.inc");
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
-	print_info_box_np("Please wait while packages are reinstalled in the background.");
+	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
 }

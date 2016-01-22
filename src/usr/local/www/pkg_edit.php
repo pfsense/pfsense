@@ -82,7 +82,7 @@ $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	include("head.inc");
-	print_info_box_np(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("ERROR: No valid package defined."));
 	include("foot.inc");
 	die;
 } else {

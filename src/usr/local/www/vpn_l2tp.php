@@ -211,7 +211,7 @@ if ($_POST) {
 
 		/* if ajax is calling, give them an update message */
 		if (isAjax()) {
-			print_info_box_np($savemsg, '', '', false, 'success');
+			print_info_box($savemsg, 'success');
 		}
 	}
 }

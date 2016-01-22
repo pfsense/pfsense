@@ -91,11 +91,6 @@ $navlevelsep = ": ";	/* navigation level separator string */
 $mandfldhtml = "";		/* display this before mandatory input fields */
 $mandfldhtmlspc = "";	/* same as above, but with spacing */
 
-if (!function_exists('set_language')) {
-	require_once("pfsense-utils.inc");
-}
-set_language();
-
 /* Some ajax scripts still need access to GUI */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
@@ -306,7 +301,7 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning",$showbtn = true) {
+function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning", $showclose = true) {
 	global $g;
 
 	if (strpos($class, "alert-") !== 0) {
@@ -319,10 +314,7 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
-	// The $msg string might or might not have had a known translation into the target language.
-	// So check it against the keywords "apply", "save and "create" in both the target language and English.
-	if ((stristr($msg, gettext("apply")) != false) || (stristr($msg, gettext("save")) != false) || (stristr($msg, gettext("create")) != false) || 
-	    (stristr($msg, "apply") != false) || (stristr($msg, "save") != false) || (stristr($msg, "create") != false) || $showapply) {
+	if ($showapply) {
 		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="' . $value . '">' . $name . '</button>';
 
 		if ($_POST['if']) {
@@ -330,63 +322,36 @@ function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $cl
 		}
 
 		$msg .= '</form>';
-	} else if ($showbtn) {
+	} else if ($showclose) {
 		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' . $msg;
 	}
 
 	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
 }
 
-function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes", $undo) {
-	global $g;
-
-	if (stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
-		$savebutton = "<td class=\"infoboxsave text-nowrap\">";
-		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
-		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
-		$savebutton .= "</td>";
-		if ($_POST['if']) {
-			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
-		}
+function print_info_box($msg, $class="alert-warning", $btntoshow = "close") {
+	switch ($btntoshow) {
+		case "close":
+			$showclose = true;
+			$showapply = false;
+			$name = "";
+			break;
+		case "apply":
+			$showclose = false;
+			$showapply = true;
+			$name = "apply";
+			break;
+		default:
+			$showclose = false;
+			$showapply = false;
+			$name = "";
+			break;
 	}
-
-	$nifty_redbox = "#990000";
-	$nifty_blackbox = "#000000";
-
-	if (!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
-	}
-
-	echo <<<EOFnp
-	<table class="infobox" id="redboxtable" summary="red box table">
-		<tr>
-			<td>
-				<div class="infoboxnp" id="redbox">
-					<table class="infoboxnptable2" summary="message">
-						<tr>
-							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
-							</td>
-							<td class="infoboxnptd2">
-								<b>{$msg}</b>
-							</td>
-							{$savebutton}
-							{$undobutton}
-						</tr>
-					</table>
-				</div>
-				<div>
-					<p>&nbsp;</p>
-				</div>
-			</td>
-		</tr>
-	</table>
-EOFnp;
-
+	print_info_box_np($msg, $name, null, $showapply, $class, $showclose);
 }
 
-function print_info_box($msg, $class="alert-warning", $showbtn = true) {
-	print_info_box_np($msg, null, null, false, $class, $showbtn);
+function print_apply_box($msg) {
+	print_info_box($msg, "warning", "apply");
 }
 
 function get_std_save_message($ok) {

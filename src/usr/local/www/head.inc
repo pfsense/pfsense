@@ -539,7 +539,7 @@ $pgtitle_output = true;
 if ($config['remote_managed_pages']['item']) {
 	foreach ($config['remote_managed_pages']['item'] as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
-			print_info_box_np(gettext("This page is currently being managed by a remote machine."));
+			print_info_box(gettext("This page is currently being managed by a remote machine."));
 			include("foot.inc");
 			exit;
 		}

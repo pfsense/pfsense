@@ -279,7 +279,7 @@ function print_notice_box($category = "all") {
 	if (!$notices) {
 		return;
 	}
-	print_info_box_np(print_notices($notices, $category));
+	print_info_box(print_notices($notices, $category));
 	return;
 }
 

@@ -71,21 +71,21 @@ $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
 	include("head.inc");
-	print_info_box_np(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("ERROR: No valid package defined."));
 	include("foot.inc");
 	exit;
 } else {
 	$pkg_xml_prefix = "/usr/local/pkg/";
 	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
 	if (substr_compare(realpath($pkg_full_path), $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
-		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		print_info_box(gettext("ERROR: Invalid path specified."));
 		die;
 	}
 	if (file_exists($pkg_full_path)) {
 		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	} else {
 		include("head.inc");
-		print_info_box_np(gettext("File not found ") . htmlspecialchars($xml));
+		print_info_box(gettext("File not found ") . htmlspecialchars($xml));
 		include("foot.inc");
 		exit;
 	}

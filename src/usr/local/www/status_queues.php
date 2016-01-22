@@ -214,7 +214,7 @@ else: ?>
 			<br />
 			<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info');
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info', false);
 ?>
 			</div>
 		</div>

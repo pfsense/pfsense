@@ -456,7 +456,7 @@ if ($dhcrelay_enabled) {
 }
 
 if (is_subsystem_dirty('staticmaps')) {
-	print_info_box_np(gettext('The static mapping configuration has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The static mapping configuration has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
 }
 
 /* active tabs */
@@ -883,7 +883,8 @@ print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' 
 			   gettext('will be assigned to clients by the DHCP server.') . '<br />' .
 			   gettext('The DHCP lease table can be viewed on the ') . '<a href="status_dhcpv6_leases.php">' .
 			   gettext('Status: DHCPv6 leases') . '</a>' . gettext(' page.'),
-			   'info');
+			   'info',
+			   false);
 ?>
 </div>
 <div class="panel panel-default">

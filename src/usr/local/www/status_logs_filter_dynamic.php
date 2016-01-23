@@ -137,11 +137,7 @@ filter_form_firewall();
 
 
 // Now the forms are complete we can draw the log table and its controls
-if ($filterlogentries_submit) {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-} else {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
-}
+system_log_filter();
 ?>
 
 <script type="text/javascript">
@@ -408,13 +404,7 @@ function toggleListDescriptions() {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if (($filtersubmit) || ($filterlogentries_submit)) {
-		printf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_header());
 ?>
 <?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />
 		</h2>

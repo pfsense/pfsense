@@ -149,24 +149,14 @@ filter_form_system();
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
-	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-	} else {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext);
-	}
+	system_log_filter();
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if (($filtersubmit) || ($filterlogentries_submit)) {
-		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_header());
 ?>
 		</h2>
 	</div>
@@ -219,13 +209,7 @@ if (!$rawfilter) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if (($filtersubmit) || ($filterlogentries_submit)) {
-		printf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_header());
 ?>
 		</h2>
 	</div>
@@ -245,11 +229,7 @@ if (!$rawfilter) {
 		$inverse = null;
 	}
 
-	if ($filtertext) {
-		$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
-	} else {
-		$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
-	}
+	system_log_filter();
 ?>
 			</tbody>
 		</table>

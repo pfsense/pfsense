@@ -153,6 +153,53 @@ function tab_array_logs_common() {
 }
 
 
+// Log Table header
+function system_log_table_header() {
+	global $rawfilter, $filtersubmit, $filterlogentries_submit, $filterlog, $allowed_logs, $logfile, $nentries;
+
+	$rtnstr = '';
+
+	if ($rawfilter) {
+		if ($filtersubmit) {
+			$rtnstr .= sprintf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+		} else {
+			$rtnstr .= sprintf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+		}
+	} else {
+		if ($filterlogentries_submit) {
+			$rtnstr .= sprintf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+		} else {
+			$rtnstr .= sprintf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+		}
+	}
+
+	$rtnstr .= sprintf(" (" . gettext("Maximum %d") . ")", $nentries);
+
+	return $rtnstr;
+}
+
+
+// Log Filter
+function system_log_filter() {
+	global $rawfilter, $filtertext, $filterlogentries_submit, $logfile_path, $nentries, $filterfieldsarray, $filtertext, $interfacefilter;
+	global $filterlog, $rows, $inverse;
+
+	if ($rawfilter) {
+		if ($filtertext) {
+			$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
+		} else {
+			$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
+		}
+	} else {
+		if ($filterlogentries_submit) {
+			$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
+		} else {
+			$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+		}
+	}
+}
+
+
 // Log Filter Submit - System
 function log_filter_form_system_submit() {
 

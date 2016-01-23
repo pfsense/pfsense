@@ -434,7 +434,7 @@ function vpn_ipsec_configure($restart = false) {
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	}
 
-	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'no' : 'yes';
+	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
 
 	$makebeforebreak = '';
 	if (isset($config['ipsec']['makebeforebreak'])) {

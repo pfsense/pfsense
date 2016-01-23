@@ -4314,4 +4314,16 @@ function upgrade_136_to_137() {
 	}
 }
 
+function upgrade_137_to_138() {
+	global $config;
+
+	// the presence of unityplugin tag used to disable loading of unity plugin
+	// it's now disabled by default, and config tag is to enable. Unset accordingly. 
+	if (is_array($config['ipsec'])) {
+		if (isset($config['ipsec']['unityplugin'])) {
+			unset($config['ipsec']['unityplugin']);
+		}
+	}
+}
+
 ?>

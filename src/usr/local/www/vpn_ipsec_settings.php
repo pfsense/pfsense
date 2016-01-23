@@ -359,10 +359,10 @@ $section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',
-	'Disable Cisco Extensions',
-	'Disable Unity Plugin',
+	'Enable Cisco Extensions',
+	'Enable Unity Plugin',
 	$pconfig['unityplugin']
-))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+))->setHelp('Enable Unity Plugin which provides Cisco Extension support such as Split-Include, Split-Exclude and Split-Dns.');
 
 $section->addInput(new Form_Checkbox(
 	'strictcrlpolicy',

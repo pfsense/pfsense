@@ -781,3 +781,8 @@ ul.tree li .over{
         max-height: none !important;
     }
 }
+
+/** Override text-warning with something less red. */
+.text-warning {
+	color: #ffcc00;
+}

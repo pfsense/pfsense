@@ -307,57 +307,35 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning", $showclose = true) {
-	global $g;
+function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "") {
 
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
 	}
 
-	if (empty($value)) {
-		$value = gettext("Apply changes");
-	}
-
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
-	if ($showapply) {
-		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="' . $value . '">' . $name . '</button>';
+	if ($btnname === "close") {
+		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' . $msg;
+	} else if ($btnname != "") {
+		if (empty($btntext)) {
+			$btntext = $btnname;
+		}
+
+		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $btnname . '" value="' . $btntext . '">' . $btntext . '</button>';
 
 		if ($_POST['if']) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 
 		$msg .= '</form>';
-	} else if ($showclose) {
-		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' . $msg;
 	}
 
 	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
 }
 
-function print_info_box($msg, $class="alert-warning", $btntoshow = "close") {
-	switch ($btntoshow) {
-		case "close":
-			$showclose = true;
-			$showapply = false;
-			$name = "";
-			break;
-		case "apply":
-			$showclose = false;
-			$showapply = true;
-			$name = "apply";
-			break;
-		default:
-			$showclose = false;
-			$showapply = false;
-			$name = "";
-			break;
-	}
-	print_info_box_np($msg, $name, null, $showapply, $class, $showclose);
-}
-
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply");
+	print_info_box($msg, "warning", "apply", gettext("Apply changes"));
 }
 
 function get_std_save_message($ok) {
@@ -1167,7 +1145,7 @@ function get_flash_message() {
 	@session_start();
 	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
 		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
-			print_info_box_np(implode("<br />", $flash_message), null, null, false, $class);
+			print_info_box(implode("<br />", $flash_message), $class);
 		}
 		unset($_SESSION['flash_messages']);
 	}

@@ -1,6 +1,18 @@
 @import url("/bootstrap/css/pfSense.css");
 
 /*** Experimental Changes Go Here ***/
+
+.panel-heading a:link, .panel-heading a:visited {
+    color: #404040;
+    text-decoration: underline;
+}
+
+.panel-default>.panel-heading {
+    color: #404040;
+    background-color: #cccccc;
+    letter-spacing: 1px;
+}
+
 .panel-title {
 	font-size: 16px;
 }

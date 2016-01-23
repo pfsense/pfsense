@@ -189,7 +189,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Saved Configurations');
+$section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'backupcount',

@@ -404,6 +404,7 @@ function toggleListDescriptions() {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
+	$rawfilter = true;
 	print(system_log_table_header());
 ?>
 <?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />

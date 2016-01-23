@@ -159,10 +159,10 @@ if (!$rawfilter) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-		if ((!$filtertext) && (!$filterfieldsarray)) {
-			printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-		} else {
+		if (($filtersubmit) || ($filterlogentries_submit)) {
 			printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+		} else {
+			printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 		}
 
 		printf(" (" . gettext("Maximum %d") . ")", $nentries);
@@ -260,7 +260,19 @@ if (!$rawfilter) {
 } else {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	if (($filtersubmit) || ($filterlogentries_submit)) {
+		printf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+	} else {
+		printf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+	}
+
+	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+?>
+		</h2>
+	</div>
 	<div class="panel-body">
 		<pre><?php 
 			$rows = dump_clog_no_table($logfile_path, $nentries, true, array($filtertext));
@@ -519,5 +531,13 @@ function filter_form_vpn() {
 	print $form;
 }
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
 
 <?php include("foot.inc"); ?>

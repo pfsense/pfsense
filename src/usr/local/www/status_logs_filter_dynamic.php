@@ -132,6 +132,7 @@ if ($system_logs_manage_log_form_hidden) {
 
 
 // Log Filter Submit - Firewall
+$rawfilter = false;
 filter_form_firewall();
 
 
@@ -369,6 +370,8 @@ function update_table_rows(data) {
 		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
 	}
 
+	$("#count").html(rows.length);
+
 	$('.fa').tooltip();
 }
 
@@ -404,7 +407,16 @@ function toggleListDescriptions() {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=gettext('Last ') . $nentries . gettext(' records. ') . gettext('Pause ')?><input type="checkbox" onclick="javascript:toggle_pause();" />
+<?php
+	if (($filtersubmit) || ($filterlogentries_submit)) {
+		printf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+	} else {
+		printf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+	}
+
+	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+?>
+<?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />
 		</h2>
 	</div>
 	<div class="panel-body">
@@ -506,6 +518,14 @@ events.push(function() {
 	$(document).ready(function() {
 	    $('.fa').tooltip();
 	});
+});
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=count($filterlog);?>);
 });
 //]]>
 </script>

@@ -126,7 +126,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_server[$id]);
 	write_config();
-	$savemsg = gettext("Server successfully deleted")."<br />";
+	$savemsg = gettext("Server successfully deleted");
 }
 
 if ($_GET['act'] == "new") {
@@ -603,7 +603,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box_np($savemsg, 'success');
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

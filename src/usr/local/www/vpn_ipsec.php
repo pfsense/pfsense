@@ -82,7 +82,6 @@ $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
 if ($_POST) {
-
 	if ($_POST['apply']) {
 		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
@@ -509,7 +508,7 @@ display_top_tabs($tab_array);
 <!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
 												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
 												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
-												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$i?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
+												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
 										</tr>

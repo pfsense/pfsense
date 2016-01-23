@@ -156,7 +156,7 @@ if (!$rawfilter) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	print(system_log_table_header());
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>
@@ -209,7 +209,7 @@ if (!$rawfilter) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	print(system_log_table_header());
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>

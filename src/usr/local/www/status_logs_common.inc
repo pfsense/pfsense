@@ -154,7 +154,7 @@ function tab_array_logs_common() {
 
 
 // Log Table header
-function system_log_table_header() {
+function system_log_table_panel_title() {
 	global $rawfilter, $filtersubmit, $filterlogentries_submit, $filterlog, $nentries;
 	global $allowed_logs, $logfile;
 

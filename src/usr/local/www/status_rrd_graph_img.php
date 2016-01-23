@@ -441,7 +441,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "HRULE:\"$curif-in_bits_95#{$colortraffic95[1]}:$curif-in (95%)\" ";
 	$graphcmd .= "HRULE:\"$curif-out_bits_95#{$colortraffic95[0]}:$curif-out (95%)\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t\t maximum\t	  average\t\t current\t	   period\t	  95th percentile\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t\t maximum\t    average\t\t current\t    period\t   95th percentile\\n\" ";
 	$graphcmd .= "COMMENT:\"IPv4 in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
@@ -596,7 +596,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "{$AREA}:\"tput-out_bits_pass_neg#{$colortrafficup[0]}:out-pass \" ";
 
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum		average		  current		 period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t  maximum        average       current        period\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"tput-in_bits_pass:MAX:%7.2lf %sb/s\" ";
 	$graphcmd .= "GPRINT:\"tput-in_bits_pass:AVERAGE:%7.2lf %Sb/s\" ";
@@ -695,7 +695,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "$AREA:\"$curif-out6_pps_pass_neg#{$colorpacketsup[2]}:$curif-out6-pass:STACK\" ";
 
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t  maximum\t\t average\t		current\t	 period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t  maximum         average        current         period\\n\" ";
 	$graphcmd .= "COMMENT:\"in-pass\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:MAX:%7.2lf %s pps\" ";
 	$graphcmd .= "GPRINT:\"$curif-in_pps_pass:AVERAGE:%7.2lf %S pps\" ";
@@ -762,7 +762,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE2:\"$curif-rate#{$colorwireless[1]}:$curif-rate\" ";
 	$graphcmd .= "LINE2:\"$curif-channel#{$colorwireless[2]}:$curif-channel\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t	 current\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t     current\\n\" ";
 	$graphcmd .= "COMMENT:\"SNR\t\t\" ";
 	$graphcmd .= "GPRINT:\"$curif-snr:MAX:%7.2lf dBi  \" ";
 	$graphcmd .= "GPRINT:\"$curif-snr:AVERAGE:%7.2lf dBi  \" ";
@@ -774,8 +774,8 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"$curif-rate:LAST:%7.2lf Mb\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Channel\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-channel:MAX:%7.2lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-channel:MAX:%7.2lf      \" ";
+	$graphcmd .= "GPRINT:\"$curif-channel:AVERAGE:%7.2lf      \" ";
 	$graphcmd .= "GPRINT:\"$curif-channel:LAST:%7.2lf\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
@@ -790,10 +790,10 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "DEF:\"$curif-users=$rrddbpath$curdatabase:users:AVERAGE:step=$step\" ";
 	$graphcmd .= "LINE2:\"$curif-users#{$colorvpnusers[0]}:$curif-users\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t	  maximum\t\t average\t		current\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    maximum\t\t average\t     current\\n\" ";
 	$graphcmd .= "COMMENT:\"Users Online\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-users:MAX:%7.2lf	   \" ";
-	$graphcmd .= "GPRINT:\"$curif-users:AVERAGE:%7.2lf		\" ";
+	$graphcmd .= "GPRINT:\"$curif-users:MAX:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-users:AVERAGE:%7.2lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-users:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
@@ -817,7 +817,7 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE1:\"$curif-srcip#{$colorstates[3]}:$curif-srcip\" ";
 	$graphcmd .= "LINE1:\"$curif-dstip#{$colorstates[4]}:$curif-dstip\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t	  minimum		 average		maximum		   current		   period\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t      minimum        average        maximum        current          period\\n\" ";
 	$graphcmd .= "COMMENT:\"state changes\" ";
 	$graphcmd .= "GPRINT:\"$curif-pfrate:MIN:%7.2lf %s cps\" ";
 	$graphcmd .= "GPRINT:\"$curif-pfrate:AVERAGE:%7.2lf %s cps\" ";
@@ -826,28 +826,28 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "GPRINT:\"$curif-pfrate_t:AVERAGE:%7.2lf %s chg\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"filter states\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:MIN:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:AVERAGE:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:MAX:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"$curif-pfstates:LAST:%7.2lf %s	 \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfstates:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"nat states	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-pfnat:LAST:%7.2lf %s	  \" ";
+	$graphcmd .= "COMMENT:\"nat states   \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-pfnat:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Source addr. \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-srcip:LAST:%7.2lf %s	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-srcip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Dest. addr.	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s	  \" ";
+	$graphcmd .= "COMMENT:\"Dest. addr.  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dstip:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } elseif ((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -869,36 +869,36 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "AREA:\"interrupt#{$colorprocessor[3]}:interrupt:STACK\" ";
 	$graphcmd .= "LINE2:\"processes#{$colorprocessor[4]}:processes\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t	  minimum		 average		maximum		   current\\n\" ";
-	$graphcmd .= "COMMENT:\"User util.	 \" ";
-	$graphcmd .= "GPRINT:\"user:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"user:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"user:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"user:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "COMMENT:\"\t\t     minimum        average         maximum         current\\n\" ";
+	$graphcmd .= "COMMENT:\"User util.   \" ";
+	$graphcmd .= "GPRINT:\"user:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"user:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"user:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"user:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Nice util.	 \" ";
-	$graphcmd .= "GPRINT:\"nice:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"nice:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"nice:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"nice:LAST:%7.2lf %s	  \" ";
+	$graphcmd .= "COMMENT:\"Nice util.   \" ";
+	$graphcmd .= "GPRINT:\"nice:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"nice:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"nice:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"nice:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"System util. \" ";
-	$graphcmd .= "GPRINT:\"system:MIN:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"system:AVERAGE:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"system:MAX:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"system:LAST:%7.2lf %s	\" ";
+	$graphcmd .= "GPRINT:\"system:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"system:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"system:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"system:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Interrupt	 \" ";
-	$graphcmd .= "GPRINT:\"interrupt:MIN:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"interrupt:AVERAGE:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"interrupt:MAX:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"interrupt:LAST:%7.2lf %s	   \" ";
+	$graphcmd .= "COMMENT:\"Interrupt    \" ";
+	$graphcmd .= "GPRINT:\"interrupt:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"interrupt:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"interrupt:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"interrupt:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Processes	 \" ";
-	$graphcmd .= "GPRINT:\"processes:MIN:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"processes:AVERAGE:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"processes:MAX:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"processes:LAST:%7.2lf %s	   \" ";
+	$graphcmd .= "COMMENT:\"Processes    \" ";
+	$graphcmd .= "GPRINT:\"processes:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"processes:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"processes:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"processes:LAST:%7.2lf %s    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } elseif ((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -920,36 +920,36 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE2:\"cache#{$colormemory[3]}:cache\" ";
 	$graphcmd .= "LINE2:\"wire#{$colormemory[4]}:wire\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t	  minimum		 average		maximum		   current\\n\" ";
-	$graphcmd .= "COMMENT:\"Active.		 \" ";
-	$graphcmd .= "GPRINT:\"active:MIN:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"active:AVERAGE:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"active:MAX:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"active:LAST:%7.2lf %S	\" ";
+	$graphcmd .= "COMMENT:\"\t\t      minimum        average        maximum         current\\n\" ";
+	$graphcmd .= "COMMENT:\"Active.      \" ";
+	$graphcmd .= "GPRINT:\"active:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"active:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"active:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"active:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Inactive.	 \" ";
-	$graphcmd .= "GPRINT:\"inactive:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"inactive:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"inactive:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"inactive:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "COMMENT:\"Inactive.    \" ";
+	$graphcmd .= "GPRINT:\"inactive:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"inactive:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"inactive:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"inactive:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Free.		 \" ";
-	$graphcmd .= "GPRINT:\"free:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"free:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"free:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"free:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "COMMENT:\"Free.        \" ";
+	$graphcmd .= "GPRINT:\"free:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"free:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"free:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"free:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Cached.		 \" ";
-	$graphcmd .= "GPRINT:\"cache:MIN:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:AVERAGE:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:MAX:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:LAST:%7.2lf %S	   \" ";
+	$graphcmd .= "COMMENT:\"Cached.      \" ";
+	$graphcmd .= "GPRINT:\"cache:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Wired.		 \" ";
-	$graphcmd .= "GPRINT:\"wire:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"wire:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"wire:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "COMMENT:\"Wired.       \" ";
+	$graphcmd .= "GPRINT:\"wire:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wire:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wire:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wire:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } elseif ((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -969,30 +969,30 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE2:\"total#{$colormbuf[2]}:total\" ";
 	$graphcmd .= "LINE2:\"max#{$colormbuf[3]}:max\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t	  minimum		 average		maximum		   current\\n\" ";
-	$graphcmd .= "COMMENT:\"Current.	  \" ";
-	$graphcmd .= "GPRINT:\"current:MIN:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"current:AVERAGE:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"current:MAX:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"current:LAST:%7.2lf %S	 \" ";
+	$graphcmd .= "COMMENT:\"\t\t      minimum        average         maximum        current\\n\" ";
+	$graphcmd .= "COMMENT:\"Current.     \" ";
+	$graphcmd .= "GPRINT:\"current:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"current:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Cache.		  \" ";
-	$graphcmd .= "GPRINT:\"cache:MIN:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:AVERAGE:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:MAX:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"cache:LAST:%7.2lf %S	   \" ";
+	$graphcmd .= "COMMENT:\"Cache.       \" ";
+	$graphcmd .= "GPRINT:\"cache:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cache:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Total.		  \" ";
-	$graphcmd .= "GPRINT:\"total:MIN:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"total:AVERAGE:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"total:MAX:%7.2lf %s	  \" ";
-	$graphcmd .= "GPRINT:\"total:LAST:%7.2lf %S	   \" ";
+	$graphcmd .= "COMMENT:\"Total.       \" ";
+	$graphcmd .= "GPRINT:\"total:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"total:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"Max.		  \" ";
-	$graphcmd .= "GPRINT:\"max:MIN:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"max:AVERAGE:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"max:MAX:%7.2lf %s	\" ";
-	$graphcmd .= "GPRINT:\"max:LAST:%7.2lf %S	 \" ";
+	$graphcmd .= "COMMENT:\"Max.         \" ";
+	$graphcmd .= "GPRINT:\"max:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"max:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } elseif ((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -1078,18 +1078,18 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 		\"CDEF:r1=delay,60,MIN\" \\
 		\"CDEF:r2=delay,180,MIN\" \\
 		\"CDEF:r3=delay,420,MIN\" \\
-		COMMENT:\"\t\t\t\t\tDelay\t\t\tPacket loss\\n\" \\
-		AREA:delay#$colorqualityrtt[0]:\"> 420		ms\" \\
-		GPRINT:delay:MIN:\"\t\tMin\\:  %7.2lf ms\" \\
+		COMMENT:\"\t\t\t\t\tDelay\t\t\t\tPacket loss\\n\" \\
+		AREA:delay#$colorqualityrtt[0]:\"> 420      ms\" \\
+		GPRINT:delay:MIN:\"\t\tMin\\: %7.2lf ms\" \\
 		GPRINT:loss:MIN:\"\tMin\\: %3.1lf %%\\n\" \\
-		AREA:r3#$colorqualityrtt[1]:\"180-420	 ms\" \\
-		GPRINT:delay:AVERAGE:\"\t\tAvg\\:  %7.2lf ms\" \\
+		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
+		GPRINT:delay:AVERAGE:\"\t\tAvg\\: %7.2lf ms\" \\
 		GPRINT:loss:AVERAGE:\"\tAvg\\: %3.1lf %%\\n\" \\
-		AREA:r2#$colorqualityrtt[2]:\"60-180	 ms\" \\
-		GPRINT:delay:MAX:\"\t\tMax\\:  %7.2lf ms\" \\
+		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
+		GPRINT:delay:MAX:\"\t\tMax\\: %7.2lf ms\" \\
 		GPRINT:loss:MAX:\"\tMax\\: %3.1lf %%\\n\" \\
-		AREA:r1#$colorqualityrtt[3]:\"20-60		 ms\\n\" \\
-		AREA:r0#$colorqualityrtt[4]:\"< 20		 ms\" \\
+		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
+		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\
 		GPRINT:delay:LAST:\"\t\tLast\\: %7.2lf ms\" \\
 		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
@@ -1143,10 +1143,10 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "DEF:\"$curif-rssi=$rrddbpath$curdatabase:rssi:AVERAGE:step=$step\" ";
 	$graphcmd .= "LINE2:\"$curif-rssi#{$colorwireless[0]}:$curif-rssi\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t	 current\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t   maximum\t\t average\t     current\\n\" ";
 	$graphcmd .= "COMMENT:\"RSSI\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-rssi:MAX:%7.2lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-rssi:AVERAGE:%7.2lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-rssi:MAX:%7.2lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-rssi:AVERAGE:%7.2lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-rssi:LAST:%7.2lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
@@ -1182,10 +1182,10 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "DEF:\"$curif-concurrentusers=$rrddbpath$curdatabase:concurrentusers:AVERAGE:step=$step\" ";
 	$graphcmd .= "AREA:\"$curif-concurrentusers#{$colorcaptiveportalusers[0]}:Concurrent Users\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t		maximum\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t     maximum\\n\" ";
 	$graphcmd .= "COMMENT:\"Users Online\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%8.0lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:LAST:%8.0lf     \" ";
+	$graphcmd .= "GPRINT:\"$curif-concurrentusers:AVERAGE:%8.0lf     \" ";
 	$graphcmd .= "GPRINT:\"$curif-concurrentusers:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
@@ -1206,30 +1206,30 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE2:\"cjit#{$colorntpd[2]}:cjit\" ";
 	$graphcmd .= "LINE2:\"wander#{$colorntpd[3]}:wander\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t		minimum		   average		  maximum		 current\\n\" ";
-	$graphcmd .= "COMMENT:\"Offset		   \" ";
-	$graphcmd .= "GPRINT:\"offset:MIN:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"offset:AVERAGE:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"offset:MAX:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"offset:LAST:%7.2lf %S	\" ";
+	$graphcmd .= "COMMENT:\"\t\t        minimum        average        maximum        current\\n\" ";
+	$graphcmd .= "COMMENT:\"Offset         \" ";
+	$graphcmd .= "GPRINT:\"offset:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"offset:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"System jitter  \" ";
-	$graphcmd .= "GPRINT:\"sjit:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"sjit:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"sjit:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"sjit:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "GPRINT:\"sjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"sjit:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Clock jitter   \" ";
-	$graphcmd .= "GPRINT:\"cjit:MIN:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"cjit:AVERAGE:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"cjit:MAX:%7.2lf %s	 \" ";
-	$graphcmd .= "GPRINT:\"cjit:LAST:%7.2lf %S	  \" ";
+	$graphcmd .= "GPRINT:\"cjit:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"cjit:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Clk freq wander\" ";
-	$graphcmd .= "GPRINT:\"wander:MIN:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"wander:AVERAGE:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s	   \" ";
-	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S	\" ";
+	$graphcmd .= "GPRINT:\"wander:MIN:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:AVERAGE:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:MAX:%7.2lf %s    \" ";
+	$graphcmd .= "GPRINT:\"wander:LAST:%7.2lf %S    \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 } elseif ((strstr($curdatabase, "-dhcpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
@@ -1247,20 +1247,20 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 	$graphcmd .= "LINE2:\"$curif-staticleases#{$colordhcpd[1]}:Static Leases\" ";
 	$graphcmd .= "LINE1:\"$curif-dhcprange#{$colordhcpd[2]}:DHCP Range\" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
-	$graphcmd .= "COMMENT:\"\t\t\t	  current\t\t average\t\tmaximum\\n\" ";
+	$graphcmd .= "COMMENT:\"\t\t\t    current\t\t average\t\tmaximum\\n\" ";
 	$graphcmd .= "COMMENT:\"Active Leases\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:LAST:%8.0lf    \" ";
+	$graphcmd .= "GPRINT:\"$curif-leases:AVERAGE:%8.0lf    \" ";
 	$graphcmd .= "GPRINT:\"$curif-leases:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"Static Leases\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:LAST:%8.0lf    \" ";
+	$graphcmd .= "GPRINT:\"$curif-staticleases:AVERAGE:%8.0lf    \" ";
 	$graphcmd .= "GPRINT:\"$curif-staticleases:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"DHCP Range\t\t\" ";
-	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf	  \" ";
-	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf	  \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:LAST:%8.0lf    \" ";
+	$graphcmd .= "GPRINT:\"$curif-dhcprange:AVERAGE:%8.0lf    \" ";
 	$graphcmd .= "GPRINT:\"$curif-dhcprange:MAX:%8.0lf \" ";
 	$graphcmd .= "COMMENT:\"\\n\" ";
 	$graphcmd .= "COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";

@@ -572,7 +572,7 @@ function ip_compare($data1, $comparison, $data2, $requiretype='any') {
 		$d1[2] = ip_to_hex($d1[2]);
 		$ip_sizes[] = strlen($d1[2]);
 		if ($d1[2] < $d1[1]) {
-			// check range start-end ordering: TRUE would be misordered range or some invalid IP data
+			// check range start-end ordering: TRUE would be misordered range or $d1[2] invalid
 			return '';
 		}
 	}
@@ -580,7 +580,7 @@ function ip_compare($data1, $comparison, $data2, $requiretype='any') {
 		$d2[2] = ip_to_hex($d2[2]);
 		$ip_sizes[] = strlen($d2[2]);
 		if ($d2[2] < $d2[1]) {
-			// check range start-end ordering: TRUE would be misordered range or some invalid IP data
+			// check range start-end ordering: TRUE would be misordered range or $d2[2] invalid
 			return '';
 		}
 	}

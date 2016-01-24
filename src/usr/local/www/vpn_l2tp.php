@@ -363,9 +363,12 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 print($form);
-
-print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info');
 ?>
+<div class="infoblock blockopen">
+<?php
+	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info', false);
+?>
+</div>
 
 <script type="text/javascript">
 //<![CDATA[

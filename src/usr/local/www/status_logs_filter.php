@@ -163,24 +163,14 @@ if (!$rawfilter) {
 		$interfacefilter = $iflist[$interfacefilter];
 	}
 
-	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-	} else {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
-	}
+	system_log_filter();
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if ((!$filtertext) && (!$filterfieldsarray)) {
-		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>
@@ -325,7 +315,13 @@ if (!$rawfilter) {
 } else {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	print(system_log_table_panel_title());
+?>
+		</h2>
+	</div>
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -336,11 +332,7 @@ if (!$rawfilter) {
 			</thead>
 			<tbody>
 <?php
-	if ($filtertext) {
-		$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"));
-	} else {
-		$rows = dump_clog($logfile_path, $nentries, true, array());
-	}
+	system_log_filter();
 ?>
 			</tbody>
 		</table>
@@ -445,6 +437,14 @@ if (typeof getURL == 'undefined') {
 
 events.push(function() {
     $('.fa').tooltip();
+});
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
 });
 //]]>
 </script>

@@ -132,15 +132,12 @@ if ($system_logs_manage_log_form_hidden) {
 
 
 // Log Filter Submit - Firewall
+$rawfilter = false;
 filter_form_firewall();
 
 
 // Now the forms are complete we can draw the log table and its controls
-if ($filterlogentries_submit) {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-} else {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
-}
+system_log_filter();
 ?>
 
 <script type="text/javascript">
@@ -369,6 +366,8 @@ function update_table_rows(data) {
 		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
 	}
 
+	$("#count").html(rows.length);
+
 	$('.fa').tooltip();
 }
 
@@ -404,7 +403,11 @@ function toggleListDescriptions() {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=gettext('Last ') . $nentries . gettext(' records. ') . gettext('Pause ')?><input type="checkbox" onclick="javascript:toggle_pause();" />
+<?php
+	$rawfilter = true;
+	print(system_log_table_panel_title());
+?>
+<?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />
 		</h2>
 	</div>
 	<div class="panel-body">
@@ -506,6 +509,14 @@ events.push(function() {
 	$(document).ready(function() {
 	    $('.fa').tooltip();
 	});
+});
+//]]>
+</script>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=count($filterlog);?>);
 });
 //]]>
 </script>

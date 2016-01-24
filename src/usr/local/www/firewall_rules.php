@@ -282,6 +282,24 @@ if (is_subsystem_dirty('filter')) {
 
 display_top_tabs($tab_array);
 
+$showantilockout = false;
+$showprivate = false;
+$showblockbogons = false;
+
+if (!isset($config['system']['webgui']['noantilockout']) &&
+    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+    ((count($config['interfaces']) == 1) && ($if == 'wan')))) {
+	$showantilockout = true;
+}
+
+if (isset($config['interfaces'][$if]['blockpriv'])) {
+	$showprivate = true;
+}
+
+if (isset($config['interfaces'][$if]['blockbogons'])) {
+	$showblockbogons = true;
+}
+
 ?>
 <form method="post">
 	<div class="panel panel-default">
@@ -304,13 +322,14 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
+
+<?php if ($showblockbogons || $showantilockout || $showprivate) :
+?>
 				<tbody>
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
-	if (!isset($config['system']['webgui']['noantilockout']) &&
-		(((count($config['interfaces']) > 1) && ($if == 'lan')) ||
-		 ((count($config['interfaces']) == 1) && ($if == 'wan')))):
-		$alports = implode('<br />', filter_get_antilockout_ports(true));
+		if ($showantilockout):
+			$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
 					<tr id="antilockout">
 						<td></td>
@@ -328,8 +347,8 @@ display_top_tabs($tab_array);
 							<a href="system_advanced_admin.php" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
-<?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
+<?php 	endif;?>
+<?php 	if ($showprivate): ?>
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
@@ -346,8 +365,8 @@ display_top_tabs($tab_array);
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
-<?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
+<?php 	endif;?>
+<?php 	if ($showblockbogons): ?>
 					<tr id="frrfc1918">
 					<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
@@ -364,9 +383,9 @@ display_top_tabs($tab_array);
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
+<?php 	endif;?>
 			</tbody>
-
+<?php endif;?>
 			<tbody class="user-entries">
 <?php
 $nrules = 0;

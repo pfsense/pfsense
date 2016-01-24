@@ -627,7 +627,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 									<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 								</a>
-							<?php else ?>
+							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 							<?php endif; ?>
 						</td>

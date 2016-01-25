@@ -221,8 +221,8 @@ $section->addInput(new Form_Select(
 	'Mode',
 	$pconfig['mode'],
 	array(
-		'bss' => 'Infrastructure (BSS)',
-		'adhoc' => 'Ad-hoc (IBSS)',
+		'bss' => gettext('Infrastructure (BSS)'),
+		'adhoc' => gettext('Ad-hoc (IBSS)'),
 		'hostap' => gettext('Access Point')
 	)
 ));

@@ -380,7 +380,7 @@ function fixup_string($string) {
 		}
 	}
 
-	$http_host = $_SERVER['SERVER_NAME'];
+	$http_host = $_SERVER['HTTP_HOST'];
 	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if ($title == "Reload in progress") {

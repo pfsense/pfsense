@@ -121,43 +121,43 @@ if ($_POST) {
 		$pconfig = $_POST;
 
 		if (isset($_POST['msgcachesize']) && !in_array($_POST['msgcachesize'], array('4', '10', '20', '50', '100', '250', '512'), true)) {
-			$input_errors[] = "A valid value for Message Cache Size must be specified.";
+			$input_errors[] = gettext("A valid value for Message Cache Size must be specified.");
 		}
 		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
+			$input_errors[] = gettext("A valid value must be specified for Outgoing TCP Buffers.");
 		}
 		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
+			$input_errors[] = gettext("A valid value must be specified for Incoming TCP Buffers.");
 		}
 		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
-			$input_errors[] = "A valid value must be specified for EDNS Buffer Size.";
+			$input_errors[] = gettext("A valid value must be specified for EDNS Buffer Size.");
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Queries per Thread.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Queries per Thread.");
 		}
 		if (isset($_POST['jostle_timeout']) && !in_array($_POST['jostle_timeout'], array('100', '200', '500', '1000'), true)) {
-			$input_errors[] = "A valid value must be specified for Jostle Timeout.";
+			$input_errors[] = gettext("A valid value must be specified for Jostle Timeout.");
 		}
 		if (isset($_POST['cache_max_ttl']) && (!is_numericint($_POST['cache_max_ttl']) || ($_POST['cache_max_ttl'] < 0))) {
-			$input_errors[] = "'Maximum TTL for RRsets and Messages' must be a positive integer.";
+			$input_errors[] = gettext("'Maximum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['cache_min_ttl']) && (!is_numericint($_POST['cache_min_ttl']) || ($_POST['cache_min_ttl'] < 0))) {
-			$input_errors[] = "'Minimum TTL for RRsets and Messages' must be a positive integer.";
+			$input_errors[] = gettext("'Minimum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
-			$input_errors[] = "A valid value must be specified for TTL for Host Cache Entries.";
+			$input_errors[] = gettext("A valid value must be specified for TTL for Host Cache Entries.");
 		}
 		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Hosts to Cache.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Hosts to Cache.");
 		}
 		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
-			$input_errors[] = "A valid value must be specified for Unwanted Reply Threshold.";
+			$input_errors[] = gettext("A valid value must be specified for Unwanted Reply Threshold.");
 		}
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
-			$input_errors[] = "A valid value must be specified for Log Level.";
+			$input_errors[] = gettext("A valid value must be specified for Log Level.");
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
-			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
+			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
 		}
 
 		if (!$input_errors) {
@@ -211,7 +211,7 @@ if ($_POST) {
 				unset($config['unbound']['use_caps']);
 			}
 
-			write_config("DNS Resolver configured.");
+			write_config(gettext("DNS Resolver configured."));
 
 			mark_subsystem_dirty('unbound');
 		}

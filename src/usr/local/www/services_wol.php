@@ -188,7 +188,7 @@ print $form;
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Wake on LAN devices</h2>
+		<h2 class="panel-title"><?=gettext("Wake on LAN devices");?></h2>
 	</div>
 
 	<div class="panel-body">
@@ -227,7 +227,7 @@ print $form;
 	</div>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
-			Add
+			<?=gettext("Add");?>
 		</a>
 
 		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">

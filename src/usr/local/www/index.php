@@ -356,8 +356,6 @@ foreach ($available as $widgetname => $widgetconfig):
 <div class="hidden" id="widgetSequence">
 	<form action="/" method="post" id="widgetSequence_form" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
-
-		<button type="submit" id="btnstore" class="btn btn-primary"><?=gettext("Store widget configuration")?></button>
 	</form>
 </div>
 
@@ -436,6 +434,8 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 
 <script type="text/javascript">
 //<![CDATA[
+
+dirty = false;
 function updateWidgets(newWidget) {
 	var sequence = '';
 
@@ -456,7 +456,6 @@ function updateWidgets(newWidget) {
 		}
 	}
 
-	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
@@ -467,6 +466,8 @@ events.push(function() {
 		$(el).on('click', function(e) {
 			$(el).parents('.panel').remove();
 			updateWidgets();
+			// Submit the form save/display all selected widgets
+			$('[name=widgetForm]').submit();
 		})
 	});
 
@@ -475,7 +476,7 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: updateWidgets
+		update: showSaveButton
 	});
 
 	// On clicking a widget to install . .
@@ -483,13 +484,30 @@ events.push(function() {
 		// Add the widget name to the list of displayed widgets
 		updateWidgets(this.id.replace('btnadd-', ''));
 
-		// We don't want to see the "Store" button because we are doing that automatically
-		$('#btnstore').hide();
-
 		// Submit the form save/display all selected widgets
 		$('[name=widgetForm]').submit();
 	});
 
+	function showSaveButton() {
+		$('.context-links li:last').prev('li').html('<a href="#" class=help-icon" title="Save dashboard layout" id="btnstore"><i class="fa fa-save"></i></a>');
+
+		$('#btnstore').click(function() {
+			updateWidgets();
+			dirty = false;
+			$('[name=widgetForm]').submit();
+		});
+
+		dirty = true;
+	}
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (dirty) {
+			return ("<?=gettext('You have moved one or more rules but have now yet saved')?>");
+		} else {
+			return undefined;
+		}
+	});
 });
 //]]>
 </script>

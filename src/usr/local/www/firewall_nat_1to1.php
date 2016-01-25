@@ -303,12 +303,29 @@ events.push(function() {
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			dirty = true;
 		}
 	});
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
+	});
+
+	// Globals
+	saving = false;
+	dirty = false;
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (!saving && dirty) {
+			return ("<?=gettext('You have moved one or more NAT 1:1 mappings but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
 //]]>

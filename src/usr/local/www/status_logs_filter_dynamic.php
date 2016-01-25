@@ -298,7 +298,7 @@ function in_arrayi(needle, haystack) {
 }
 
 function update_table_rows(data) {
-	if (isPaused) {
+	if ((isPaused) || (data.length < 1)) {
 		return;
 	}
 
@@ -326,6 +326,10 @@ function update_table_rows(data) {
 
 	if (move < 0) {
 		move = 0;
+	}
+
+	if (($("#count").text() == 0) && (data.length < nentries)){
+		move += rows.length;
 	}
 
 	if (isReverse == false) {
@@ -363,7 +367,7 @@ function update_table_rows(data) {
 	// Much easier to go through each of the rows once they've all be added.
 	rows = $('#filter-log-entries>tr');
 	for (var i = 0; i < rows.length; i++) {
-		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
+		rows[i].className = 'text-nowrap';
 	}
 
 	$("#count").html(rows.length);
@@ -429,7 +433,6 @@ function toggleListDescriptions() {
 				$tcpcnt = 0;
 
 				foreach ($filterlog as $filterent) {
-					$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 					$rowIndex++;
 					if ($filterent['version'] == '6') {
 						$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
@@ -476,6 +479,13 @@ function toggleListDescriptions() {
 					</tr>
 <?php
 				} // e-o-foreach()
+?>
+<?php
+	if (count($filterlog) == 0) {
+		print '<tr class="text-nowrap"><td colspan=6>';
+		print_info_box(gettext('No logs to display'));
+		print '</td></tr>';
+	}
 ?>
 				</tbody>
 			</table>

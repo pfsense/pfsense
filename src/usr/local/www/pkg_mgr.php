@@ -197,7 +197,7 @@ display_top_tabs($tab_array);
 				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
-				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search package names and descriptions.')?></span>
 			</div>
 		</div>
 	</div>

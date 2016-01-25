@@ -1193,11 +1193,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			sort($ips);
 			if (isset($pkga['showlistenall'])) {
-				array_unshift($ips, array('ip' => 'All', 'description' => 'Listen on All interfaces/ip addresses '));
+				array_unshift($ips, array('ip' => gettext('All'), 'description' => gettext('Listen on All interfaces/ip addresses ')));
 			}
 
 			if (!preg_match("/$interface_regex/", "loopback")) {
-				$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (loopback)" : "loopback");
+				$loopback_text = gettext("loopback");
+				$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (" . $loopback_text . ")" : $loopback_text);
 				array_push($ips, array('ip' => 'lo0', 'description' => $iface_description));
 			}
 

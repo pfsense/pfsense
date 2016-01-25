@@ -476,7 +476,7 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: showSaveButton
+		update: function(){dirty = true;}
 	});
 
 	// On clicking a widget to install . .
@@ -488,17 +488,18 @@ events.push(function() {
 		$('[name=widgetForm]').submit();
 	});
 
-	function showSaveButton() {
-		$('.context-links li:last').prev('li').html('<a href="#" class=help-icon" title="Save dashboard layout" id="btnstore"><i class="fa fa-save"></i></a>');
 
-		$('#btnstore').click(function() {
-			updateWidgets();
-			dirty = false;
-			$('[name=widgetForm]').submit();
-		});
+	$('.context-links li:last').prev('li').html('<a href="#" class=help-icon" title="Save dashboard layout" id="btnstore"><i class="fa fa-save"></i></a>');
 
+	$('#btnstore').click(function() {
+		updateWidgets();
+		dirty = false;
+		$('[name=widgetForm]').submit();
+	});
+
+	$('#widgetToggle').click(function() {
 		dirty = true;
-	}
+	});
 
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){

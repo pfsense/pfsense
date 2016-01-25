@@ -55,10 +55,10 @@ if($xml == "") {
 	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
 	$pkg_realpath = realpath($pkg_full_path);
 	if (empty($pkg_realpath)) {
-		$path_error = sprintf(gettext("ERROR: Package path %s not found."), $pkg_full_path);
+		$path_error = sprintf(gettext("ERROR: Package path %s not found."), htmlspecialchars($pkg_full_path));
 	} else {
 		if (substr_compare($pkg_realpath, $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
-			$path_error = sprintf(gettext("ERROR: Invalid path %s specified."), $pkg_full_path);
+			$path_error = sprintf(gettext("ERROR: Invalid path %s specified."), htmlspecialchars($pkg_full_path));
 		}
 	}
 

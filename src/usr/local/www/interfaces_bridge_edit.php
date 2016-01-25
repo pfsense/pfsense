@@ -180,7 +180,7 @@ if ($_POST) {
 	}
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if ($_POST[$ifn] <> "" && !is_numericint($_POST[$ifn])) {
-			$input_errors[] = "{$ifdescr} " . gettext("interface priority for STP needs to be an integer between 0 and 240.");
+			$input_errors[] = sprintf(gettext("%s interface priority for STP needs to be an integer between 0 and 240."), $ifdescr);
 		}
 	}
 
@@ -188,7 +188,7 @@ if ($_POST) {
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
 		if ($_POST["{$ifn}{$i}"] <> "" && !is_numeric($_POST["{$ifn}{$i}"])) {
-			$input_errors[] = "{$ifdescr} " . gettext("interface path cost for STP needs to be an integer between 1 and 200000000.");
+			$input_errors[] = sprintf(gettext("%s interface path cost for STP needs to be an integer between 1 and 200000000."), $ifdescr);
 		}
 		$i++;
 	}
@@ -216,7 +216,7 @@ if ($_POST) {
 				$a_members = explode(',', $a_bridge['members']);
 				foreach ($a_members as $a_member) {
 					if ($ifmembers === $a_member) {
-						$input_errors[] = $ifmembers . gettext(" is part of another bridge. Remove the interface from bridge members to continue.");
+						$input_errors[] = sprintf(gettext("%s is part of another bridge. Remove the interface from bridge members to continue."), $ifmembers);
 					}
 				}
 			}

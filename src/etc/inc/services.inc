@@ -817,20 +817,24 @@ EOPP;
 				}
 				$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
+			$deny_action = "deny";
+			if (isset($poolconf['nonak'])) {
+				$deny_action = "ignore";
+			}
 			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));
 			foreach ($mac_deny_list as $mac) {
 				if (empty($mac)) {
 					continue;
 				}
-				$dhcpdconf .= "		deny members of \"" . str_replace(':', '', $mac) . "\";\n";
+				$dhcpdconf .= "		$deny_action members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 
 			if ($poolconf['failover_peerip'] <> "") {
-				$dhcpdconf .= "		deny dynamic bootp clients;\n";
+				$dhcpdconf .= "		$deny_action dynamic bootp clients;\n";
 			}
 
 			if (isset($poolconf['denyunknown'])) {
-			   $dhcpdconf .= "		deny unknown-clients;\n";
+				$dhcpdconf .= "		$deny_action unknown-clients;\n";
 			}
 
 			if ($poolconf['gateway'] && $poolconf['gateway'] != "none" && ($poolconf['gateway'] != $dhcpifconf['gateway'])) {

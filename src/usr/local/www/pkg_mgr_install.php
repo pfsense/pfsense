@@ -646,7 +646,7 @@ function scrollToBottom() {
 	$('#output').scrollTop($('#output')[0].scrollHeight);
 }
 
-var timeoutmsg = '<h4>' + '<?=gettext('Rebooting')?>' + '<br />' + 'Page will automatically reload in ';
+var timeoutmsg = '<h4><?=gettext("Rebooting");?><br /><?=gettext("Page will automatically reload in ");?>';
 var time = 0;
 
 function checkonline() {
@@ -662,11 +662,11 @@ function checkonline() {
 function startCountdown() {
 	setInterval(function() {
 		if (time > 0) {
-			$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
+			$('#countdown').html(timeoutmsg + time + ' <?=gettext("seconds");?>.</h4>');
 			time--;
 		} else {
 			time = "<?=$guiretry?>";
-			timeoutmsg = '<h4>' + '<?=gettext('Not yet ready')?>' + '<br />Retrying in another ';
+			timeoutmsg = '<h4><?=gettext("Not yet ready");?><br /><?=gettext("Retrying in another ");?>';
 			checkonline();
 		}
 	}, 1000);

@@ -86,7 +86,7 @@ if (!function_exists("pfSenseHeader")) {
 			if ($_SERVER['SERVER_PORT'] == "443" && $protocol == "https") {
 				$port = "";
 			}
-			$complete_url = "{$protocol}://{$_SERVER['SERVER_NAME']}{$port}/{$text}";
+			$complete_url = "{$protocol}://{$_SERVER['HTTP_HOST']}{$port}/{$text}";
 			echo "\ndocument.location.href = '{$complete_url}';\n";
 		} else {
 			header("Location: $text");

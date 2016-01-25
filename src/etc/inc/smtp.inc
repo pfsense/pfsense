@@ -1243,7 +1243,7 @@ class smtp_class
 		if($this->debug)
 			$this->OutputDebug("Connected to SMTP server \"".$domain."\".");
 		if(!strcmp($localhost=$this->localhost,"")
-		&& !strcmp($localhost=getenv("SERVER_NAME"),"")
+		&& !strcmp($localhost=getenv("HTTP_HOST"),"")
 		&& !strcmp($localhost=getenv("HOST"),""))
 			$localhost="localhost";
 		$success=0;

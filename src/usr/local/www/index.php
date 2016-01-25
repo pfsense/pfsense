@@ -497,10 +497,6 @@ events.push(function() {
 		$('[name=widgetForm]').submit();
 	});
 
-	$('#widgetToggle').click(function() {
-		dirty = true;
-	});
-
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (dirty) {

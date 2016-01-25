@@ -77,10 +77,22 @@ if ($xml == "") {
 } else {
 	$pkg_xml_prefix = "/usr/local/pkg/";
 	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
-	if (substr_compare(realpath($pkg_full_path), $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
-		print_info_box(gettext("ERROR: Invalid path specified."));
+	$pkg_realpath = realpath($pkg_full_path);
+	if (empty($pkg_realpath)) {
+		$path_error = sprintf(gettext("ERROR: Package path %s not found."), htmlspecialchars($pkg_full_path));
+	} else {
+		if (substr_compare($pkg_realpath, $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
+			$path_error = sprintf(gettext("ERROR: Invalid path %s specified."), htmlspecialchars($pkg_full_path));
+		}
+	}
+
+	if (!empty($path_error)) {
+		include("head.inc");
+		print_info_box($path_error . "<br />" . gettext("Try reinstalling the package."));
+		include("foot.inc");
 		die;
 	}
+
 	if (file_exists($pkg_full_path)) {
 		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	} else {

@@ -1005,11 +1005,18 @@ print $form;
 					<th><?=gettext("Issuer")?></th>
 					<th><?=gettext("Distinguished Name")?></th>
 					<th><?=gettext("In Use")?></th>
+
 					<th class="col-sm-2"><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
 <?php
+
+$pluginparams = array();
+$pluginparams['type'] = 'certificates';
+$pluginparams['event'] = 'used_certificates';
+$certificates_used_by_packages = pkg_call_plugins('plugin_certificates', $pluginparams);
+$i = 0;
 foreach ($a_cert as $i => $cert):
 	$name = htmlspecialchars($cert['descr']);
 
@@ -1080,6 +1087,25 @@ foreach ($a_cert as $i => $cert):
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
 							Captive Portal
 						<?php endif?>
+<?php
+							$refid = $cert['refid'];
+							if (is_array($certificates_used_by_packages)) {
+								foreach ($certificates_used_by_packages as $name => $package) {
+									if (isset($package['certificatelist'][$refid])) {
+										$hint = "" ;
+										if (is_array($package['certificatelist'][$refid])) {
+											foreach ($package['certificatelist'][$refid] as $cert_used) {
+												$hint = $hint . $cert_used['usedby']."\n";
+											}
+										}
+										$count = count($package['certificatelist'][$refid]);
+										echo "<div title='".htmlspecialchars($hint)."'>";
+										echo htmlspecialchars($package['pkgname'])." ($count)<br />";
+										echo "</div>";
+									}
+								}
+							}
+?>
 					</td>
 					<td>
 						<?php if (!$cert['csr']): ?>
@@ -1096,7 +1122,9 @@ foreach ($a_cert as $i => $cert):
 						<?php endif?>
 					</td>
 				</tr>
-<?php endforeach; ?>
+<?php
+	$i++; 
+	endforeach; ?>
 			</tbody>
 		</table>
 		</div>

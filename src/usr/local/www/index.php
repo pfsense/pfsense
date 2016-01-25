@@ -504,7 +504,7 @@ events.push(function() {
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (dirty) {
-			return ("<?=gettext('You have moved one or more rules but have not yet saved')?>");
+			return ("<?=gettext('You have moved one or more widgets but have not yet saved')?>");
 		} else {
 			return undefined;
 		}

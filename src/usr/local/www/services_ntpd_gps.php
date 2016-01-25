@@ -83,7 +83,7 @@ function set_default_gps() {
 		$config['ntpd']['gps']['nmea'] = 0;
 	}
 
-	write_config("Setting default NTPd settings");
+	write_config(gettext("Setting default NTPd settings"));
 }
 
 if ($_POST) {
@@ -186,7 +186,7 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['initcmd']);
 	}
 
-	write_config("Updated NTP GPS Settings");
+	write_config(gettext("Updated NTP GPS Settings"));
 
 	$retval = system_ntp_configure();
 	$savemsg = get_std_save_message($retval);
@@ -202,11 +202,11 @@ function build_nmea_list() {
 
 	$nmealist = array('options' => array(), 'selected' => array());
 
-	$nmealist['options'][0] = 'All';
-	$nmealist['options'][1] = 'RMC';
-	$nmealist['options'][2] = 'GGA';
-	$nmealist['options'][4] = 'GLL';
-	$nmealist['options'][8] = 'ZDA or ZDG';
+	$nmealist['options'][0] = gettext('All');
+	$nmealist['options'][1] = gettext('RMC');
+	$nmealist['options'][2] = gettext('GGA');
+	$nmealist['options'][4] = gettext('GLL');
+	$nmealist['options'][8] = gettext('ZDA or ZDG');
 
 	if (!$pconfig['nmea']) {
 		array_push($nmealist['selected'], 0);

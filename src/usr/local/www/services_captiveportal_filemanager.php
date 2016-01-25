@@ -96,7 +96,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("File Manager"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("File Manager"));
 $shortcut_section = "captiveportal";
 
 if (!is_array($a_cp[$cpzone]['element'])) {
@@ -242,7 +242,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 ?>
 						<tr>
 							<th>
-								Total
+								<?=gettext("Total");?>
 							</th>
 							<th>
 								<?=format_bytes($total_size);?>
@@ -272,7 +272,7 @@ endif;
 // is provided so that you only see the notes if you ask for them
 ?>
 <div class="infoblock panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Notes</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Notes");?></h2></div>
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .

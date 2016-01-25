@@ -200,11 +200,10 @@ if ($_POST) {
 }
 
 $actionHelp =
-					'<span class="text-success"><strong>Deny:</strong></span> Stops queries from hosts within the netblock defined below.' . '<br />' .
-					'<span class="text-success"><strong>Refuse:</strong></span> Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.' . '<br />' .
-					'<span class="text-success"><strong>Allow:</strong></span> Allow queries from hosts within the netblock defined below.' . '<br />' .
-					'<span class="text-success"><strong>Allow Snoop:</strong></span> Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.';
-
+					sprintf(gettext('%sDeny:%s Stops queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+					sprintf(gettext('%sRefuse:%s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+					sprintf(gettext('%sAllow:%s Allow queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.'), '<span class="text-success"><strong>', '</strong></span>'); 
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 $shortcut_section = "resolver";

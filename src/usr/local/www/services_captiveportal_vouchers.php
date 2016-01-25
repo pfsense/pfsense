@@ -103,7 +103,7 @@ if (!is_array($config['voucher'])) {
 }
 
 if (empty($a_cp[$cpzone])) {
-	log_error("Submission on captiveportal page with unknown zone parameter: " . htmlspecialchars($cpzone));
+	log_error(sprintf(gettext("Submission on captiveportal page with unknown zone parameter: %s"), htmlspecialchars($cpzone)));
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
@@ -350,31 +350,31 @@ EOF;
 					XML_RPC_encode($execcmd)
 				);
 				$port = $newvoucher['vouchersyncport'];
-				log_error("voucher XMLRPC sync data {$url}:{$port}.");
+				log_error(sprintf(gettext("voucher XMLRPC sync data %s:%d"), $url, $port));
 				$msg = new XML_RPC_Message('pfsense.exec_php', $params);
 				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 				$cli->setCredentials($newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
 				$resp = $cli->send($msg, "250");
 				if (!is_object($resp)) {
-					$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+					$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d (pfsense.exec_php)."), $url, $port);
 					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
+					file_notice("CaptivePortalVoucherSync", $error, gettext("Communications error occurred"), "");
 					$input_errors[] = $error;
 				} elseif ($resp->faultCode()) {
 					$cli->setDebug(1);
 					$resp = $cli->send($msg, "250");
-					$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+					$error = sprintf(gettext("An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d - Code %d: %s"), $url, $port, $resp->faultCode(), $resp->faultString());
 					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
+					file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
 					$input_errors[] = $error;
 				} else {
-					log_error("The Captive Portal voucher database has been synchronized with {$url}:{$port} (pfsense.exec_php).");
+					log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s:%d (pfsense.exec_php)."), $url, $port));
 				}
 				if (!$input_errors) {
 					$toreturn = XML_RPC_Decode($resp->value());
 					if (!is_array($toreturn)) {
 						if ($toreturn == "Authentication failed") {
-							$input_errors[] = "Could not synchronize the voucher database: Authentication Failed.";
+							$input_errors[] = gettext("Could not synchronize the voucher database: Authentication Failed.");
 						}
 					} else {
 						// If we received back the voucher roll and other information then store it.
@@ -446,7 +446,7 @@ display_top_tabs($tab_array, true);
 // We draw a simple table first, then present the controls to work with it
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Voucher Rolls</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Voucher Rolls");?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">
@@ -674,7 +674,7 @@ events.push(function() {
 	// Set initial state
 	setShowHide($('#enable').is(":checked"));
 
-	var generateButton = $('<a class="btn btn-xs btn-default">Generate new keys</a>');
+	var generateButton = $('<a class="btn btn-xs btn-default"><?=gettetx("Generate new keys");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
 			type: 'get',

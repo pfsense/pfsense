@@ -369,7 +369,7 @@ if (isset($_POST['submit'])) {
 		}
 
 		if ($_POST['staticarp'] && $noip) {
-			$input_errors[] = "Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.";
+			$input_errors[] = gettext("Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.");
 		}
 
 		if (is_array($pconfig['numberoptions']['item'])) {
@@ -804,7 +804,7 @@ $range_to--;
 $rangestr = long2ip32($range_from) . ' - ' . long2ip32($range_to);
 
 if (is_numeric($pool) || ($act == "newpool")) {
-	$rangestr .= '<br />' . 'In-use DHCP Pool Ranges:';
+	$rangestr .= '<br />' . gettext('In-use DHCP Pool Ranges:');
 	if (is_array($config['dhcpd'][$if]['range'])) {
 		$rangestr .= '<br />' . $config['dhcpd'][$if]['range']['from'] . ' - ' . $config['dhcpd'][$if]['range']['to'];
 	}

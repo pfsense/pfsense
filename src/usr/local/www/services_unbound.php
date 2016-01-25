@@ -137,22 +137,22 @@ if ($_POST) {
 
 		if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
 			if ($pconfig['port'] == $config['dnsmasq']['port']) {
-				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
+				$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
 			}
 		}
 
 		if (empty($pconfig['active_interface'])) {
-			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
+			$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
 		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
-			$input_errors[] = "This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.";
+			$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
 		}
 
 		if (empty($pconfig['outgoing_interface'])) {
-			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
+			$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
 		}
 
 		if (empty($pconfig['system_domain_local_zone_type'])) {
-			$input_errors[] = "A System Domain Local-Zone Type must be selected.";
+			$input_errors[] = gettext("A System Domain Local-Zone Type must be selected.");
 		}
 
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
@@ -195,7 +195,7 @@ if ($_POST) {
 			$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 			$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
 
-			write_config("DNS Resolver configured.");
+			write_config(gettext("DNS Resolver configured."));
 			mark_subsystem_dirty('unbound');
 		}
 
@@ -230,7 +230,7 @@ function build_if_list($selectedifs) {
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 
-	$iflist['options']['all']	= "All";
+	$iflist['options']['all']	= gettext("All");
 	if (empty($selectedifs) || empty($selectedifs[0]) || in_array("all", $selectedifs)) {
 		array_push($iflist['selected'], "all");
 	}
@@ -465,7 +465,7 @@ foreach ($a_hosts as $hostent):
 						<?=$alias['domain']?>
 					</td>
 					<td>
-						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
+						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
 						<i class="fa fa-angle-double-right text-info"></i>

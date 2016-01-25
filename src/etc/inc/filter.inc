@@ -212,7 +212,7 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (isset($config['system']['kill_states'])) {
+	if (!isset($config['system']['gw_down_kill_states'])) {
 		return;
 	}
 

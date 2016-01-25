@@ -3330,9 +3330,8 @@ function upgrade_096_to_097() {
 }
 
 function upgrade_097_to_098() {
-	global $config, $g;
-	/* Disable kill_states by default */
-	$config['system']['kill_states'] = true;
+	// no longer used (used to set kill_states)
+	return;
 }
 
 function upgrade_098_to_099() {
@@ -4323,6 +4322,18 @@ function upgrade_137_to_138() {
 		if (isset($config['ipsec']['unityplugin'])) {
 			unset($config['ipsec']['unityplugin']);
 		}
+	}
+}
+
+function upgrade_138_to_139() {
+	global $config;
+
+	// clean up state killing on gateway failure. having kill_states set used to mean it was disabled
+	// now set gw_down_kill_states if enabled. 
+	if (!isset($config['system']['kill_states'])) {
+		$config['system']['gw_down_kill_states'] = true;
+	} else {
+		unset($config['system']['kill_states']);
 	}
 }
 

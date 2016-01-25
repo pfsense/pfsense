@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>13.8</version>
+	<version>13.9</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -49,7 +49,6 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
-		<kill_states/>
 	</system>
 	<interfaces>
 		<wan>

@@ -277,8 +277,8 @@ $protocollist = array(
 	'!udp' => $excl . ' UDP',
 	'arp' => 'ARP',
 	'!arp' => $excl . ' ARP',
-	'carp' => 'CARP (VRRP)',
-	'!carp' => $excl . ' CARP (VRRP)',
+	'carp' => 'CARP',
+	'!carp' => $excl . ' CARP',
 	'esp' => 'ESP'
 );
 
@@ -474,6 +474,11 @@ if ($do_tcpdump) :
 	<div class="panel-body">
 		<div class="form-group">
 <?php
+		if ($proto == "carp") {
+			$iscarp = "-T carp";
+		} else {
+			$iscarp = "";
+		}
 		$detail_args = "";
 		switch ($detail) {
 			case "full":
@@ -492,7 +497,7 @@ if ($do_tcpdump) :
 		}
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
-		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
+		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
 		print('</textarea>');
 
 		conf_mount_ro();

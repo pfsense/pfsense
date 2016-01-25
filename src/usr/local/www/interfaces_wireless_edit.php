@@ -210,7 +210,7 @@ $form = new Form();
 $section = new Form_Section('Wireless Interface Configuration');
 
 $section->addInput(new Form_Select(
-	'parent',
+	'if',
 	'Parent Interface',
 	$pconfig['if'],
 	build_parent_list()

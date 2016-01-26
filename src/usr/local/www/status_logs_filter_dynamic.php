@@ -165,14 +165,10 @@ system_log_filter();
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
-
-	if ($reverse) {
-		echo "var isReverse = true;\n";
-	} else {
-		echo "var isReverse = false;\n";
-	}
 ?>
 	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
+
+	var isReverse = "<?=$reverse?>";
 
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
@@ -332,6 +328,8 @@ function update_table_rows(data) {
 		move += rows.length;
 	}
 
+	var tr_classes = 'text-nowrap';
+
 	if (isReverse == false) {
 		for (var i = move; i < rows.length; i++) {
 			$(rows[i - move]).html($(rows[i]).html());
@@ -343,8 +341,9 @@ function update_table_rows(data) {
 			var rowIndex = rows.length - move + i;
 			if (rowIndex < rows.length) {
 				$(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).className = tr_classes;
 			} else {
-				$(tbody).append('<tr>' + data[i] + '</tr>');
+				$(tbody).append('<tr class="' + tr_classes + '">' + data[i] + '</tr>');
 			}
 		}
 	} else {
@@ -358,19 +357,15 @@ function update_table_rows(data) {
 			var rowIndex = move - 1 - i;
 			if (rowIndex >= 0) {
 				$(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).className = tr_classes;
 			} else {
-				$(tbody).prepend('<tr>' + data[i] + '</tr>');
+				$(tbody).prepend('<tr class="' + tr_classes + '">' + data[i] + '</tr>');
 			}
 		}
 	}
 
-	// Much easier to go through each of the rows once they've all be added.
-	rows = $('#filter-log-entries>tr');
-	for (var i = 0; i < rows.length; i++) {
-		rows[i].className = 'text-nowrap';
-	}
-
-	$("#count").html(rows.length);
+	var rowCount = $('#filter-log-entries>tr').length;
+	$("#count").html(rowCount);
 
 	$('.fa').tooltip();
 }

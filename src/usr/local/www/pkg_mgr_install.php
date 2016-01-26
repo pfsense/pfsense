@@ -501,6 +501,7 @@ if ($_POST && ($_POST['completed'] != "true")) {
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
 if ($_POST && $_POST['completed'] == "true"):
+	unlink_if_exists($logfilename . ".json");
 	if (($pkgid == 'firmware') && ($_POST['reboot_needed'] == "yes")):
 ?>
 <script>

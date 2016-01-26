@@ -94,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //<![CDATA[
 events.push(function() {
 
-	var timeoutmsg = '<h4><?=sprintf(gettext("Rebooting%sPage will automatically reload in %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>';
 	var time = 0;
 
 	function checkonline() {
@@ -110,7 +109,7 @@ events.push(function() {
 	function startCountdown() {
 		setInterval(function() {
 			if (time == "<?=$guitimeout?>") {
-				$('#countdown').html(timeoutmsg);
+				$('#countdown').html('<h4><?=sprintf(gettext("Rebooting%sPage will automatically reload in %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
 			}
 
 			if (time > 0) {

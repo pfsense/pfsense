@@ -1132,7 +1132,10 @@ function interfaces_configure() {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
-		interface_configure($if, $reload);
+		// bridge interface needs reconfigure, then re-add VIPs, to ensure find_interface_ip is correct. 
+		// redmine #3997
+		interface_reconfigure($if, $reload);
+		interfaces_vips_configure($if);
 
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";

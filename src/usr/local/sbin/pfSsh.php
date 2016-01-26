@@ -162,19 +162,28 @@ function completion($string, $index) {
 
 readline_completion_function("completion");
 
+function get_playback_files() {
+	$playback_files = array();
+	$files = scandir("/etc/phpshellsessions/");
+	foreach ($files as $file) {
+		if ($file <> "." and $file <> "..") {
+			$playback_files[] = $file;
+		}
+	}
+	return $playback_files;
+}
+
 if ($argc < 2) {
 	echo "Welcome to the {$g['product_name']} developer shell\n";
 	echo "\nType \"help\" to show common usage scenarios.\n";
 	echo "\nAvailable playback commands:\n     ";
-	$files = scandir("/etc/phpshellsessions/");
 	$tccommands[] = "playback";
-	foreach ($files as $file) {
-		if ($file <> "." and $file <> "..") {
-			echo $file . " ";
-			if (function_exists("readline_add_history")) {
-				readline_add_history("playback $file");
-				$tccommands[] = "$file";
-			}
+	$playback_files = get_playback_files();
+	foreach ($playback_files as $pbf) {
+		echo "{$pbf} ";
+		if (function_exists("readline_add_history")) {
+			readline_add_history("playback $file");
+			$tccommands[] = "$file";
 		}
 	}
 	echo "\n\n";
@@ -185,11 +194,16 @@ $playback_file_split = array();
 $playbackbuffer = "";
 
 if ($argv[1]=="playback" or $argv[1]=="run") {
-	if (!file_exists("/etc/phpshellsessions/{$argv[2]}")) {
-		echo "Could not locate playback file.";
-		exit;
+	if (empty($argv[2]) || !file_exists("/etc/phpshellsessions/" . basename($argv[2]))) {
+		echo "Error: Invalid playback file specified.\n\n";
+		echo "Valid playback files are:\n";
+		foreach (get_playback_files() as $pbf) {
+			echo "{$pbf} ";
+		}
+		echo "\n\n";
+		exit(-1);
 	}
-	playback_file($argv[2]);
+	playback_file(basename($argv[2]));
 	exit;
 }
 

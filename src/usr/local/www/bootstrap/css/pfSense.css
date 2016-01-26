@@ -786,3 +786,8 @@ ul.tree li .over{
 .text-warning {
 	color: #ffcc00;
 }
+
+/**Suppress href links when printing */
+a[href]:after {
+    content:normal
+}

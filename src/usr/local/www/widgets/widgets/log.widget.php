@@ -169,7 +169,7 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 		<tr>
 			<td><a href="#" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
 			role="button" data-toggle="popover" data-trigger="hover"
-				data-title=<?=gettext("Rule that triggered this action")?>
+				data-title="<?=gettext("Rule that triggered this action")?>"
 				data-content="<?=htmlspecialchars($rule)?>"> <i
 					class="fa fa-<?=$iconfn?>"></i>
 			</a></td>

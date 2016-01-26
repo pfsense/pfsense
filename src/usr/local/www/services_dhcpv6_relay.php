@@ -118,7 +118,7 @@ if ($_POST) {
 		if ($_POST['server']) {
 			foreach ($_POST['server'] as $checksrv => $srv) {
 				if (!is_ipaddrv6($srv[0])) {
-					$input_errors[] = gettext("A valid Destination Server IPv6 address  must be specified.");
+					$input_errors[] = gettext("A valid Destination Server IPv6 address must be specified.");
 				}
 
 

@@ -195,7 +195,7 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['prefixrange_from'] && !is_ipaddrv6($_POST['prefixrange_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+			$input_errors[] = gettext("A valid prefix range must be specified.");
 		}
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to']))) {
 			$input_errors[] = gettext("A valid prefix range must be specified.");
@@ -878,13 +878,19 @@ print($form);
 ?>
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' . gettext(' System: General setup') . '</a>' .
-			   gettext(' (or the ') . '<a href="services_dnsmasq.php"/>' . gettext('DNS forwarder') . '</a>, ' . gettext('if enabled) ') .
-			   gettext('will be assigned to clients by the DHCP server.') . '<br />' .
-			   gettext('The DHCP lease table can be viewed on the ') . '<a href="status_dhcpv6_leases.php">' .
-			   gettext('Status: DHCPv6 leases') . '</a>' . gettext(' page.'),
-			   'info',
-			   false);
+print_info_box(
+	sprintf(
+		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
+		'<a href="system.php">',
+		'<a href="services_dnsmasq.php"/>',
+		'</a>') . 
+	'<br />' .
+	sprintf(
+		gettext('The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page.'),
+		'<a href="status_dhcpv6_leases.php">',
+		'</a>'),
+	'info',
+	false);
 ?>
 </div>
 <div class="panel panel-default">

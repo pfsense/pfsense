@@ -293,7 +293,7 @@ if (isset($_POST['submit'])) {
 				}
 				if ($cpdata['timeout'] > $deftime) {
 					$input_errors[] = sprintf(gettext(
-						"The Captive Portal zone '%s' has Hard Timeout parameter set to a value bigger than Default lease time (%s)."), $cpZone, $deftime);
+						'The Captive Portal zone (%1$s) has Hard Timeout parameter set to a value bigger than Default lease time (%2$s).'), $cpZone, $deftime);
 				}
 			}
 		}
@@ -1134,8 +1134,8 @@ $section->addClass('adnlopts');
 
 $section->addInput(new Form_StaticText(
 	null,
-	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information. ' .
-	'For a list of available options please visit this ') . '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">' . gettext("URL") . '</a></div>'
+	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.') . ' ' .
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a></div>')
 ));
 
 if (!$pconfig['numberoptions']) {

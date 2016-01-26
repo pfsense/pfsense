@@ -344,17 +344,18 @@ print($form);
 ?>
 <div class="infoblock blockopen">
 <?php
-print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
-	" service (if enabled) will automatically serve the LAN IP".
-	" address as a DNS server to DHCP clients so they will use".
-	" the forwarder. The DNS forwarder will use the DNS servers".
-	" entered in %sSystem: General setup%s".
-	" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-	" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-	" is checked. If you don't use that option (or if you use".
-	" a static IP address on WAN), you must manually specify at".
-	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), 'info', false);
+print_info_box(
+	sprintf(
+		gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
+			' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.' .
+			' The DNS forwarder will use the DNS servers entered in %1$sSystem: General setup%3$s or' .
+			' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
+			' If you don\'t use that option (or if you use a static IP address on WAN),' .
+			' you must manually specify at least one DNS server on the %2$sSystem:General setup%3$s page.'),
+		'<a href="system.php">',
+		'<a href="system.php">',
+		'</a>'),
+	'info', false);
 ?>
 </div>
 
@@ -435,7 +436,7 @@ endforeach;
 
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
+print_info_box(gettext("Entries in this section override individual results from the forwarders.") . " " .
 				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info', false);
 ?>
 </div>

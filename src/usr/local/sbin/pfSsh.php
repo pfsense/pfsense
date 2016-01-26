@@ -85,8 +85,8 @@ $show_help_text = <<<EOF
 
 	Example commands:
 
-	startrecording <recordingfilename>
-	stoprecording <recordingfilename>
+	record <recordingfilename>
+	stoprecording
 	showrecordings
 
 	parse_config(true);  # reloads the \$config array
@@ -166,7 +166,7 @@ function get_playback_files() {
 	$playback_files = array();
 	$files = scandir("/etc/phpshellsessions/");
 	foreach ($files as $file) {
-		if ($file <> "." and $file <> "..") {
+		if ($file <> "." && $file <> "..") {
 			$playback_files[] = $file;
 		}
 	}
@@ -196,11 +196,7 @@ $playbackbuffer = "";
 if ($argv[1]=="playback" or $argv[1]=="run") {
 	if (empty($argv[2]) || !file_exists("/etc/phpshellsessions/" . basename($argv[2]))) {
 		echo "Error: Invalid playback file specified.\n\n";
-		echo "Valid playback files are:\n";
-		foreach (get_playback_files() as $pbf) {
-			echo "{$pbf} ";
-		}
-		echo "\n\n";
+		show_playback_files();
 		exit(-1);
 	}
 	playback_file(basename($argv[2]));
@@ -212,7 +208,6 @@ $tccommands[] = "exit";
 $tccommands[] = "quit";
 $tccommands[] = "?";
 $tccommands[] = "exec";
-$tccommands[] = "startrecording";
 $tccommands[] = "stoprecording";
 $tccommands[] = "showrecordings";
 $tccommands[] = "record";
@@ -275,18 +270,20 @@ while ($shell_active == true) {
 	if ($first_command == "record") {
 		if (!$command_split[1]) {
 			echo "usage: record playbackname\n";
+			echo "\tplaybackname will be created in /etc/phpshellsessions.\n";
 			$command = "";
 		} else {
 			/* time to record */
 			conf_mount_rw();
 			safe_mkdir("/etc/phpshellsessions");
-			$recording_fd = fopen("/etc/phpshellsessions/{$command_split[1]}","w");
+			$recording_fn = basename($command_split[1]);
+			$recording_fd = fopen("/etc/phpshellsessions/{$recording_fn}","w");
 			if (!$recording_fd) {
 				echo "Could not start recording session.\n";
 				$command = "";
 			} else {
 				$recording = true;
-				echo "Recording of {$command_split[1]} started.\n";
+				echo "Recording of {$recording_fn} started.\n";
 				$command = "";
 			}
 		}
@@ -295,13 +292,12 @@ while ($shell_active == true) {
 }
 
 function show_recordings() {
-	conf_mount_rw();
-	safe_mkdir("/etc/phpshellsessions");
-	if ($recording) {
-		conf_mount_ro();
-	}
 	echo "==> Sessions available for playback are:\n";
-	system("cd /etc/phpshellsessions && ls /etc/phpshellsessions");
+	$playback_files = get_playback_files();
+	foreach (get_playback_files() as $pbf) {
+		echo "{$pbf} ";
+	}
+	echo "\n\n";
 	echo "==> end of list.\n";
 }
 

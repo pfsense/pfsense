@@ -196,7 +196,7 @@ $playbackbuffer = "";
 if ($argv[1]=="playback" or $argv[1]=="run") {
 	if (empty($argv[2]) || !file_exists("/etc/phpshellsessions/" . basename($argv[2]))) {
 		echo "Error: Invalid playback file specified.\n\n";
-		show_playback_files();
+		get_playback_files();
 		exit(-1);
 	}
 	playback_file(basename($argv[2]));

@@ -424,21 +424,21 @@ $modes = array(
 );
 
 $section->addInput(new Form_Select(
-	'powerd_ac_mode',
+	'ac-power',
 	'AC Power',
 	$pconfig['powerd_ac_mode'],
 	$modes
 ));
 
 $section->addInput(new Form_Select(
-	'powerd_battery_mode',
+	'battery-power',
 	'Battery Power',
 	$pconfig['powerd_battery_mode'],
 	$modes
 ));
 
 $section->addInput(new Form_Select(
-	'powerd_normal_mode',
+	'unknown-power',
 	'Unknown Power',
 	$pconfig['powerd_normal_mode'],
 	$modes

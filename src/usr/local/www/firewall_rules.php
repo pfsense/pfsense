@@ -301,6 +301,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 }
 
 ?>
+
 <form method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
@@ -974,3 +975,4 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");?>
+

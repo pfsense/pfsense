@@ -76,7 +76,6 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
 include("head.inc");
 
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DEBUG) {
 	   print_info_box(gettext("Not actually rebooting (DEBUG is set true)"), 'success');
@@ -94,8 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //<![CDATA[
 events.push(function() {
 
-	var timeoutmsg = '<h4><?=gettext("Rebooting");?><br /><?=gettext("Page will automatically reload in ");?>';
-	var time = 0;
+	var time = "<?=$guitimeout?>";
+	var firstcountdown = true;
+	var timeoutmsg;
 
 	function checkonline() {
 		$.ajax({
@@ -110,17 +110,22 @@ events.push(function() {
 	function startCountdown() {
 		setInterval(function() {
 			if (time > 0) {
-				$('#countdown').html(timeoutmsg + time + ' <?=gettext("seconds");?>.</h4>');
+				if (firstcountdown) {
+					timeoutmsg = `<?=gettext('Page will automatically reload in ${time} seconds.');?>`;
+					$('#countdown').html('<h4><?=gettext("Rebooting");?><br />' + timeoutmsg + ' </h4>');
+				} else {
+					timeoutmsg = `<?=gettext('Retrying in another ${time} seconds.');?>`;
+					$('#countdown').html('<h4><?=gettext("Not yet ready");?><br />' + timeoutmsg + ' </h4>');
+				}
 				time--;
 			} else {
 				time = "<?=$guiretry?>";
-				timeoutmsg = '<h4><?=gettext("Not yet ready");?><br /><?=gettext("Retrying in another ");?>';
+				firstcountdown = false;
 				checkonline();
 			}
 		}, 1000);
 	}
 
-	time = "<?=$guitimeout?>";
 	startCountdown();
 
 });

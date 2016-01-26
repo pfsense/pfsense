@@ -614,7 +614,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      * The protocol to use in contacting the remote server
      * @var string
      */
-    var $protocol = 'http://';
+    var $protocol = 'tcp://';
 
     /**
      * The port for connecting to the remote server
@@ -650,7 +650,7 @@ class XML_RPC_Client extends XML_RPC_Base {
      * The protocol to use in contacting the proxy server, if any
      * @var string
      */
-    var $proxy_protocol = 'http://';
+    var $proxy_protocol = 'tcp://';
 
     /**
      * The port for connecting to the proxy server
@@ -739,12 +739,14 @@ class XML_RPC_Client extends XML_RPC_Base {
                 $this->port     = 443;
             } else {
                 $this->server = $match[2];
+                $this->protocol = 'tcp://';
                 if ($port) {
                     $this->port = $port;
                 }
             }
         } elseif ($match[1] == 'http://') {
             $this->server = $match[2];
+            $this->protocol = 'tcp://';
             if ($port) {
                 $this->port = $port;
             }
@@ -767,12 +769,14 @@ class XML_RPC_Client extends XML_RPC_Base {
                     $this->proxy_port     = 443;
                 } else {
                     $this->proxy = $match[2];
+                    $this->proxy_protocol = 'tcp://';
                     if ($proxy_port) {
                         $this->proxy_port = $proxy_port;
                     }
                 }
             } elseif ($match[1] == 'http://') {
                 $this->proxy = $match[2];
+                $this->proxy_protocol = 'tcp://';
                 if ($proxy_port) {
                     $this->proxy_port = $proxy_port;
                 }

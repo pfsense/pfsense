@@ -1875,6 +1875,10 @@ events.push(function() {
 		ext_change();
 	});
 
+	$('#save').on('click', function() {
+		disableInput('save');
+	});
+
 	$('#dstbeginport').on('change', function() {
 		dst_rep_change();
 		ext_change();

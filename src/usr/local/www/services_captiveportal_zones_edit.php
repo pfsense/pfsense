@@ -90,7 +90,7 @@ if ($_POST) {
 
 	foreach ($a_cp as $cpkey => $cpent) {
 		if ($cpent['zone'] == $_POST['zone']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['zone'], gettext("already exists"));
+			$input_errors[] = sprintf(gettext("Zone [%s] already exists."), $_POST['zone']);
 			break;
 		}
 	}

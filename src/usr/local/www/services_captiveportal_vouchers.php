@@ -108,7 +108,7 @@ if (empty($a_cp[$cpzone])) {
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("Vouchers"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Vouchers"));
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -258,7 +258,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Double quotes aren't allowed.");
 		}
 		if ($_POST['charset'] && (strpos($_POST['charset'], ",") > 0)) {
-			$input_errors[] = "',' " . gettext("aren't allowed.");
+			$input_errors[] = gettext("',' aren't allowed.");
 		}
 		if ($_POST['rollbits'] && (!is_numeric($_POST['rollbits']) || ($_POST['rollbits'] < 1) || ($_POST['rollbits'] > 31))) {
 			$input_errors[] = gettext("# of Bits to store Roll Id needs to be between 1..31.");
@@ -408,7 +408,7 @@ EOF;
 						if ($toreturn['voucher']['descrmsgexpired']) {
 							$newvoucher['descrmsgexpired'] = $toreturn['voucher']['descrmsgexpired'];
 						}
-						$savemsg = gettext("Voucher database has been synchronized from {$url}:{$port}");
+						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s:%2$s'), $url, $port);
 
 						$config['voucher'][$cpzone] = $newvoucher;
 						write_config();
@@ -452,9 +452,9 @@ display_top_tabs($tab_array, true);
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
-						<th><?=gettext("Roll")?> #</th>
+						<th><?=gettext("Roll #")?></th>
 						<th><?=gettext("Minutes/Ticket")?></th>
-						<th># <?=gettext("of Tickets")?></th>
+						<th><?=gettext("# of Tickets")?></th>
 						<th><?=gettext("Comment")?></th>
 						<th><?=gettext("Action")?></th>
 					</tr>

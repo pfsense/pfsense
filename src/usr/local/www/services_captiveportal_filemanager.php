@@ -132,8 +132,8 @@ if ($_POST) {
 
 		// check total file size
 		if (($total_size + $size) > $g['captiveportal_element_sizelimit']) {
-			$input_errors[] = gettext("The total size of all files uploaded may not exceed ") .
-				format_bytes($g['captiveportal_element_sizelimit']) . ".";
+			$input_errors[] = sprintf(gettext("The total size of all files uploaded may not exceed %s."),
+				format_bytes($g['captiveportal_element_sizelimit']));
 		}
 
 		if (!$input_errors) {

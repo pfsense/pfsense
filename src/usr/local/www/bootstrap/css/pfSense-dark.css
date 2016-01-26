@@ -348,3 +348,7 @@ input, select, textarea {
 ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
     color : #ffffff;
 }
+
+textarea {
+    background-color: #bfbfbf;
+}

@@ -4337,4 +4337,18 @@ function upgrade_138_to_139() {
 	}
 }
 
+function upgrade_139_to_140() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if ($vip['mode'] == "carp") {
+				if (!isset($vip['uniqid'])) {
+					$config['virtualip']['vip'][$idx]['uniqid'] = uniqid();
+				}
+			}
+		}
+	}
+}
+
 ?>

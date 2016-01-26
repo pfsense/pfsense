@@ -1502,6 +1502,10 @@ EOD;
 function vpn_ipsec_force_reload($interface = "") {
 	global $g, $config;
 
+	if (!ipsec_enabled()) {
+		return;
+	}
+
 	$ipseccfg = $config['ipsec'];
 
 	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
@@ -1518,11 +1522,9 @@ function vpn_ipsec_force_reload($interface = "") {
 		}
 	}
 
-	/* if ipsec is enabled, start up again */
-	if (isset($ipseccfg['enable'])) {
-		log_error(gettext("Forcefully reloading IPsec"));
-		vpn_ipsec_configure();
-	}
+	/* If we get this far then we need to take action. */
+	log_error(gettext("Forcefully reloading IPsec"));
+	vpn_ipsec_configure();
 }
 
 /* master setup for vpn (mpd) */

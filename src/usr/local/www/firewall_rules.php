@@ -711,7 +711,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				if ($rulesep['row']['0'] == "fr" . $nrules) {
 					$cellcolor = $rulesep['color'];
 					print('<tr class="ui-sortable-handle separator">' .
-						'<td class="' . $cellcolor . '" colspan="11">' . '<font class="' . $cellcolor . '">' . $rulesep['text'] . '</font></td>' .
+						'<td class="' . $cellcolor . '" colspan="11">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
 						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
 						'</tr>' . "\n");
 				}
@@ -874,7 +874,7 @@ events.push(function() {
 			var septext = escapeHtml($('#newsep').val());
 			$('#ruletable > tbody:last >tr:last').remove();
 			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
-				'<td class="' + gColor + '" colspan="11">' + '<font class="' + gColor + '">' + septext + '</font></td>' +
+				'<td class="' + gColor + '" colspan="11">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
 				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
 				'</td></tr>');
 

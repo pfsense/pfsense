@@ -92,8 +92,8 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses") . ".</b></p>" .
-		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown") . ".</b></p>";
+	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "</b></p>" .
+		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown.") . "</b></p>";
 }
 
 $iflist = get_configured_interface_with_descr();
@@ -142,11 +142,12 @@ $priority_modes = array(
 	"high" => 	gettext("High"));
 $carplist = get_configured_carp_interface_list();
 
-$subnets_help = '<span class="help-block">' . gettext("Subnets are specified in CIDR format.  " .
-	"Select the CIDR mask that pertains to each entry.	" .
-	"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
-	"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned." .
-	'</span>');
+$subnets_help = '<span class="help-block">' .
+	gettext("Subnets are specified in CIDR format.  " .
+		"Select the CIDR mask that pertains to each entry.	" .
+		"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
+		"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.") .
+	'</span>';
 
 if ($_POST) {
 	unset($input_errors);

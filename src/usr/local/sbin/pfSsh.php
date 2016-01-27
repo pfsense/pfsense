@@ -182,8 +182,8 @@ if ($argc < 2) {
 	foreach ($playback_files as $pbf) {
 		echo "{$pbf} ";
 		if (function_exists("readline_add_history")) {
-			readline_add_history("playback $file");
-			$tccommands[] = "$file";
+			readline_add_history("playback $pbf");
+			$tccommands[] = "$pbf";
 		}
 	}
 	echo "\n\n";

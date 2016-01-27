@@ -209,38 +209,45 @@ include("head.inc");
 				</tr>
 			</thead>
 			<tbody>
-				<?php if (isset($config['ntpd']['noquery'])): ?>
+<?php
+	if (isset($config['ntpd']['noquery'])):
+?>
 				<tr>
 					<td class="warning" colspan="11">
 						<?=sprintf(gettext("Statistics unavailable because ntpq and ntpdc queries are disabled in the %sNTP service settings%s"), '<a href="services_ntpd.php">', '</a>');?>
 					</td>
 				</tr>
-				<?php elseif (count($ntpq_servers) == 0): ?>
+<?php
+	elseif (count($ntpq_servers) == 0):
+?>
 				<tr>
 					<td class="warning" colspan="11">
 						<?=sprintf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');?>
 					</td>
 				</tr>
-				<?php else:
+<?php
+	else:
 
-					$i = 0;
-					foreach ($ntpq_servers as $server): ?>
-						<tr>
-							<td><?=$server['status']?></td>
-							<td><?=$server['server']?></td>
-							<td><?=$server['refid']?></td>
-							<td><?=$server['stratum']?></td>
-							<td><?=$server['type']?></td>
-							<td><?=$server['when']?></td>
-							<td><?=$server['poll']?></td>
-							<td><?=$server['reach']?></td>
-							<td><?=$server['delay']?></td>
-							<td><?=$server['offset']?></td>
-							<td><?=$server['jitter']?></td>
-						</tr> <?php
-					   $i++;
-				   endforeach;
-			   endif;
+		$i = 0;
+		foreach ($ntpq_servers as $server):
+?>
+				<tr>
+					<td><?=$server['status']?></td>
+					<td><?=$server['server']?></td>
+					<td><?=$server['refid']?></td>
+					<td><?=$server['stratum']?></td>
+					<td><?=$server['type']?></td>
+					<td><?=$server['when']?></td>
+					<td><?=$server['poll']?></td>
+					<td><?=$server['reach']?></td>
+					<td><?=$server['delay']?></td>
+					<td><?=$server['offset']?></td>
+					<td><?=$server['jitter']?></td>
+				</tr>
+<?php
+			$i++;
+		endforeach;
+	endif;
 ?>
 			</tbody>
 		</table>
@@ -252,13 +259,14 @@ include("head.inc");
 
 // GPS satellite information (if available)
 if (($gps_ok) && ($gps_lat) && ($gps_lon)):
-	$gps_goo_lnk = 2; ?>
+	$gps_goo_lnk = 2;
+?>
 
-	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS information");?></h2></div>
-		<div class="panel-body">
-			<table class="table table-striped table-hover table-condensed">
-				<thead>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS information");?></h2></div>
+	<div class="panel-body">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
 				<tr>
 					<th>
 						 <?=gettext("Clock Latitude"); ?>
@@ -266,62 +274,76 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 					<th>
 						<?=gettext("Clock Longitude"); ?>
 					</th>
-					<?php if (isset($gps_alt)) { ?>
-						 <th>
-							 <?=gettext("Clock Altitude")?>
-						 </th>
-						 <?php $gps_goo_lnk++;
-					 }
+<?php
+	if (isset($gps_alt)) {
+?>
+					<th>
+						<?=gettext("Clock Altitude")?>
+					</th>
+<?php
+		$gps_goo_lnk++;
+	}
 
-					 if (isset($gps_sat) || isset($gps_satview)) { ?>
-						<th>
-							<?=gettext("Satellites")?>
-						</th> <?php
-						$gps_goo_lnk++;
-					 }?>
-					</tr>
-				</thead>
+	if (isset($gps_sat) || isset($gps_satview)) {
+?>
+					<th>
+						<?=gettext("Satellites")?>
+					</th>
+<?php
+		$gps_goo_lnk++;
+	}
+?>
+				</tr>
+			</thead>
 
-				<tbody>
-					<tr>
-						<td>
-							<?=printf("%.5f", $gps_lat); ?> (<?=printf("%d", $gps_lat_deg); ?>&deg; <?=printf("%.5f", $gps_lat_min*60); ?><?=$gps_vars[4]; ?>)
-						</td>
-						<td>
-							<?=printf("%.5f", $gps_lon); ?> (<?=printf("%d", $gps_lon_deg); ?>&deg; <?=printf("%.5f", $gps_lon_min*60); ?><?=$gps_vars[6]; ?>)
-						</td>
+			<tbody>
+				<tr>
+					<td>
+						<?=printf("%.5f", $gps_lat); ?> (<?=printf("%d", $gps_lat_deg); ?>&deg; <?=printf("%.5f", $gps_lat_min*60); ?><?=$gps_vars[4]; ?>)
+					</td>
+					<td>
+						<?=printf("%.5f", $gps_lon); ?> (<?=printf("%d", $gps_lon_deg); ?>&deg; <?=printf("%.5f", $gps_lon_min*60); ?><?=$gps_vars[6]; ?>)
+					</td>
 
-						<?php if (isset($gps_alt)) { ?>
-							<td>
-								<?=$gps_alt . ' ' . $gps_alt_unit?>
-							</td>
-						<?php
-						}
+<?php
+	if (isset($gps_alt)) {
+?>
+					<td>
+						<?=$gps_alt . ' ' . $gps_alt_unit?>
+					</td>
+<?php
+	}
 
-						if (isset($gps_sat) || isset($gps_satview)) { ?>
-							<td class="text-center"> <?php
-								if (isset($gps_satview)) {
-									print(gettext('in view ') . intval($gps_satview));
-								}
+	if (isset($gps_sat) || isset($gps_satview)) {
+?>
+					<td class="text-center">
+<?php
+		if (isset($gps_satview)) {
+			print(gettext('in view ') . intval($gps_satview));
+		}
 
-							if (isset($gps_sat) && isset($gps_satview)) {
-								print(', ');
-							}
-							if (isset($gps_sat)) {
-								print(gettext('in use ') . $gps_sat);
-							} ?>
-							</td> <?php
-						}
-						?>
-					</tr>
-					<tr>
-						<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>"><?=gettext("Google Maps Link");?></a></td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		if (isset($gps_sat) && isset($gps_satview)) {
+			print(', ');
+		}
+		if (isset($gps_sat)) {
+			print(gettext('in use ') . $gps_sat);
+		}
+?>
+					</td>
+<?php
+	}
+?>
+				</tr>
+				<tr>
+					<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>"><?=gettext("Google Maps Link");?></a></td>
+				</tr>
+			</tbody>
+		</table>
 	</div>
+</div>
 
-<?php	endif;
+<?php
+endif;
 
-include("foot.inc"); ?>
+include("foot.inc");
+?>

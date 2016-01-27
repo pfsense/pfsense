@@ -76,6 +76,8 @@
 			<subnetv6>64</subnetv6>
 			<media/>
 			<mediaopt/>
+			<track6-interface>wan</track6-interface>
+			<track6-prefix-id>0</track6-prefix-id>
 		</lan>
 	</interfaces>
 	<staticroutes/>

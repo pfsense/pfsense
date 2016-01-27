@@ -77,7 +77,7 @@ include("head.inc");
 
 	<p class="text-center">
 		<strong><?=gettext("Note"); ?>:</strong>
-		<?=sprintf(gettext('If you can\'t see the graph, you may have to install the %1$sAdobe SVG viewer%2$s'), '<a href="http://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
+		<?=sprintf(gettext('If you cannot see the graph, you may have to install the %1$sAdobe SVG viewer%2$s'), '<a href="http://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
 	</p>
 </div>
 

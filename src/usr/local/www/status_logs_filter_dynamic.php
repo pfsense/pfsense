@@ -131,8 +131,11 @@ if ($system_logs_manage_log_form_hidden) {
 }
 
 
-// Log Filter Submit - Firewall
+// Force the formatted mode filter and form.  Raw mode is not applicable in the dynamic view.
 $rawfilter = false;
+
+
+// Log Filter Submit - Firewall
 filter_form_firewall();
 
 
@@ -403,7 +406,9 @@ function toggleListDescriptions() {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
+	// Force the raw mode table panel title so that JQuery can update it dynamically.
 	$rawfilter = true;
+
 	print(system_log_table_panel_title());
 ?>
 <?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />

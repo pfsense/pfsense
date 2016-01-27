@@ -63,22 +63,21 @@
 ##|*MATCH=status_graph_cpu.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Status"), gettext("CPU load"));
+$pgtitle = array(gettext("Status"), gettext("CPU Load Graph"));
 require("guiconfig.inc");
 include("head.inc");
 
-$pgtitle = gettext("Status: CPU Graph");
-
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("CPU Load graph");?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("CPU Load Graph");?></h2></div>
 	<div class="panel-body text-center">
 		<embed src="graph_cpu.php" type="image/svg+xml"
 			   width="550" height="275" pluginspage="http://www.adobe.com/svg/viewer/install/auto" />
 	</div>
 
-	<p class="text-center"><strong><?=gettext("Note"); ?>:</strong><?=gettext("if you can't see the graph, you may have to install the")?>
-		<a href="http://www.adobe.com/svg/viewer/install/" target="_blank"><?=gettext("Adobe SVG viewer"); ?></a>
+	<p class="text-center">
+		<strong><?=gettext("Note"); ?>:</strong>
+		<?=sprintf(gettext('If you cannot see the graph, you may have to install the %1$sAdobe SVG viewer%2$s'), '<a href="http://www.adobe.com/svg/viewer/install/" target="_blank">', '</a>')?>
 	</p>
 </div>
 

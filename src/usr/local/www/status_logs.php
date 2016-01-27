@@ -233,6 +233,15 @@ if (!$rawfilter) {
 ?>
 			</tbody>
 		</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -250,13 +259,5 @@ if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();
 }
 ?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$("#count").html(<?=$rows?>);
-});
-//]]>
-</script>
 
 <?php include("foot.inc"); ?>

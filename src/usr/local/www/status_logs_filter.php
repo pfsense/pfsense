@@ -336,6 +336,15 @@ if (!$rawfilter) {
 ?>
 			</tbody>
 		</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -437,14 +446,6 @@ if (typeof getURL == 'undefined') {
 
 events.push(function() {
     $('.fa').tooltip();
-});
-//]]>
-</script>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$("#count").html(<?=$rows?>);
 });
 //]]>
 </script>

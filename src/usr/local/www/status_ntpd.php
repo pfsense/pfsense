@@ -295,7 +295,8 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 							<td>
 								<?=$gps_alt . ' ' . $gps_alt_unit?>
 							</td>
-							}
+						<?php
+						}
 
 						if (isset($gps_sat) || isset($gps_satview)) { ?>
 							<td class="text-center"> <?php

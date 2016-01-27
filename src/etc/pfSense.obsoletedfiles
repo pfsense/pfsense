@@ -848,7 +848,7 @@
 /usr/local/www/services_proxyarp.php
 /usr/local/www/services_proxyarp_edit.php
 /usr/local/www/services_usermanager.php
-/usr/local/www/shortcuts/pkg_upnp.inc
+/usr/local/www/shortcuts/pkg_upnp.php
 /usr/local/www/sortable/sortable.min.js
 /usr/local/www/status_slbd_pool.php
 /usr/local/www/status_slbd_vs.php

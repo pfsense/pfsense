@@ -176,6 +176,7 @@ $offline_string = gettext("offline");
 $active_string = gettext("active");
 $expired_string = gettext("expired");
 $reserved_string = gettext("reserved");
+$dynamic_string = gettext("dynamic");
 $static_string = gettext("static");
 
 // Put everything together again
@@ -206,7 +207,7 @@ foreach ($leases_content as $lease) {
 				continue 3;
 			case "lease":
 				$leases[$l]['ip'] = $data[$f+1];
-				$leases[$l]['type'] = "dynamic";
+				$leases[$l]['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "starts":
@@ -445,7 +446,7 @@ foreach ($leases as $data):
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>
-<?php if ($data['type'] == "dynamic"): ?>
+<?php if ($data['type'] == $dynamic_string): ?>
 						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php else: ?>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
@@ -455,7 +456,7 @@ foreach ($leases as $data):
 						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <?php endif; ?>
 
-<?php if ($data['type'] == "dynamic" && $data['online'] != $online_string):?>
+<?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
 						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <?php endif; ?>
 					</td>

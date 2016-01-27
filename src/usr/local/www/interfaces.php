@@ -669,6 +669,10 @@ if ($_POST['apply']) {
 				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
 			}
 
+			if (empty($_POST['track6-interface'])) {
+				$input_errors[] = gettext("You have to select a valid interface to track.");
+			}
+
 			if ($_POST['track6-prefix-id--hex'] != "" && !is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
 				$input_errors[] = gettext("You must enter a valid hexadecimal number for the IPv6 prefix ID.");
 			} else {

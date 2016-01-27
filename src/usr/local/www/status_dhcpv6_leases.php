@@ -206,6 +206,16 @@ $i = 0;
 $l = 0;
 $p = 0;
 
+// Translate these once so we don't do it over and over in the loops below.
+$online_string = gettext("online");
+$offline_string = gettext("offline");
+$active_string = gettext("active");
+$expired_string = gettext("expired");
+$reserved_string = gettext("reserved");
+$released_string = gettext("released");
+$dynamic_string = gettext("dynamic");
+$static_string = gettext("static");
+
 // Put everything together again
 while ($i < $leases_count) {
 	$entry = array();
@@ -257,23 +267,23 @@ while ($i < $leases_count) {
 				} else {
 					$entry['duid'] = $data[$f+1];
 				}
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "iaaddr":
 				$entry['ip'] = $data[$f+1];
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				if (in_array($entry['ip'], array_keys($ndpdata))) {
-					$entry['online'] = 'online';
+					$entry['online'] = $online_string;
 				} else {
-					$entry['online'] = 'offline';
+					$entry['online'] = $offline_string;
 				}
 				$f = $f+2;
 				break;
 			case "iaprefix":
 				$is_prefix = true;
 				$entry['prefix'] = $data[$f+1];
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "starts":
@@ -303,19 +313,19 @@ while ($i < $leases_count) {
 			case "binding":
 				switch ($data[$f+2]) {
 					case "active":
-						$entry['act'] = "active";
+						$entry['act'] = $active_string;
 						break;
 					case "free":
-						$entry['act'] = "expired";
-						$entry['online'] = "offline";
+						$entry['act'] = $expired_string;
+						$entry['online'] = $offline_string;
 						break;
 					case "backup":
-						$entry['act'] = "reserved";
-						$entry['online'] = "offline";
+						$entry['act'] = $reserved_string;
+						$entry['online'] = $offline_string;
 						break;
 					case "released":
-						$entry['act'] = "released";
-						$entry['online'] = "offline";
+						$entry['act'] = $released_string;
+						$entry['online'] = $offline_string;
 				}
 				$f = $f+1;
 				break;
@@ -378,11 +388,11 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
-			$slease['act'] = "static";
+			$slease['act'] = $static_string;
 			if (in_array($slease['ip'], array_keys($ndpdata))) {
-				$slease['online'] = 'online';
+				$slease['online'] = $online_string;
 			} else {
-				$slease['online'] = 'offline';
+				$slease['online'] = $offline_string;
 			}
 
 			$leases[] = $slease;
@@ -429,7 +439,7 @@ if (count($pools) > 0) {
 }
 
 if (empty($leases)) {
-	print '<div class="alert alert-warning" role="alert">'. gettext("No leases file found. Is the DHCP server active?") .'</div>';
+	print '<div class="alert alert-warning" role="alert">' . gettext("No leases file found. Is the DHCP server active?") . '</div>';
 }
 
 ?>
@@ -455,19 +465,19 @@ if (empty($leases)) {
 		<tbody>
 <?php
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
 	}
 
-	if ($data['act'] == 'active') {
+	if ($data['act'] == $active_string) {
 		$icon = 'fa-check-circle-o';
-	} elseif ($data['act'] == 'expired') {
+	} elseif ($data['act'] == $expired_string) {
 		$icon = 'fa-ban';
 	} else {
 		$icon = 'fa-times-circle-o';
 	}
 
-	if ($data['act'] == "static") {
+	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
@@ -502,7 +512,7 @@ foreach ($leases as $data):
 					<?php endif; ?>
 				</td>
 				<td><?=htmlentities($data['hostname'])?></td>
-<?php if ($data['type'] != "static"):?>
+<?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
 <?php else: ?>
@@ -512,11 +522,11 @@ foreach ($leases as $data):
 				<td><?=$data['online']?></td>
 				<td><?=$data['act']?></td>
 				<td>
-<?php if ($data['type'] == "dynamic"): ?>
+<?php if ($data['type'] == $dynamic_string): ?>
 					<a <a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
 					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
-<?php if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
+<?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
 					<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <?php endif; ?>
 				</td>
@@ -544,19 +554,19 @@ foreach ($leases as $data):
 		<tbody>
 <?php
 foreach ($prefixes as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
 	}
 
-	if ($data['act'] == 'active') {
+	if ($data['act'] == $active_string) {
 		$icon = 'fa-check-circle-o';
-	} elseif ($data['act'] == 'expired') {
+	} elseif ($data['act'] == $expired_string) {
 		$icon = 'fa-ban';
 	} else {
 		$icon = 'fa-times-circle-o';
 	}
 
-	if ($data['act'] == "static") {
+	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
@@ -590,7 +600,7 @@ foreach ($prefixes as $data):
 				</td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
-<?php if ($data['type'] != "static"):?>
+<?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
 <?php else: ?>

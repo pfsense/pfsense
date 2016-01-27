@@ -117,8 +117,8 @@ if ($_POST['action'] != "KillRuleStates") {
 }
 
 //Get rule Hit count
-function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false) {
-	global $g,$rules_count_array;
+function get_rule_ht($tracker, $sum_ht=array(), $buit_in_rule=false) {
+	global $g, $rules_count_array;
 
 	//check if there is previous values
 	$packets = (isset($sum_ht['packets']) ? $sum_ht['packets'] : 0);
@@ -178,14 +178,14 @@ function bd_nice_number($n) {
 	if(!is_numeric($n)) return false;
 
 	// now filter it;
-	if ( $n>1000000000000 ) {
-		return round(($n/1000000000000),1).'t';
-	} else if ( $n>1000000000 ) {
-		return round(($n/1000000000),1).'g';
-	} else if ( $n>1000000 ) {
-		return round(($n/1000000),1).'m';
-	} else if( $n>1000 ) {
-		return round(($n/1000),1).'k';
+	if ( $n > 1000000000000 ) {
+		return round(($n / 1000000000000),1).'t';
+	} else if ( $n > 1000000000 ) {
+		return round(($n / 1000000000),1).'g';
+	} else if ( $n > 1000000 ) {
+		return round(($n / 1000000),1).'m';
+	} else if( $n > 1000 ) {
+		return round(($n / 1000),1).'k';
 	}
 
 	return number_format($n);

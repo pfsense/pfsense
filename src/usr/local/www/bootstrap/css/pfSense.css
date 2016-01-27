@@ -549,8 +549,9 @@ footer a {
     color: white;
     padding-right: 15px;
     padding-bottom: 17px;
-    margin-top: -0.125em
-
+    margin-top: -0.125em;
+    width: 14px;
+    height: 14px
 }
 
 /* Used when you need an icon to act as a submit button **/
@@ -789,19 +790,5 @@ ul.tree li .over{
 /**Suppress href links when printing */
 a[href]:after {
     content:normal
-}
-
-/** previously in glyphicons-halflings.css */
-[class^="icon-"],
-[class*=" icon-"] {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  margin-top: 1px;
-  *margin-right: .3em;
-  line-height: 14px;
-  vertical-align: text-top;
-  background-position: 14px 14px;
-  background-repeat: no-repeat;
 }
 

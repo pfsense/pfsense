@@ -920,21 +920,24 @@ $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
 	'No Accounting updates',
-	!$pconfig['reauthenticateacct']
+	$pconfig['reauthenticateacct'] == "",
+	""
 ))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
 	'Stop/start Accounting',
-	$pconfig['reauthenticateacct'] == 'stopstart'
+	$pconfig['reauthenticateacct'] == 'stopstart',
+	"stopstart"
 ))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
 	'Interim update',
-	$pconfig['reauthenticateacct'] == 'interimupdate'
+	$pconfig['reauthenticateacct'] == 'interimupdate',
+	"interimupdate"
 ))->displayasRadio();
 
 $section->add($group);

@@ -456,7 +456,7 @@ if ($dhcrelay_enabled) {
 }
 
 if (is_subsystem_dirty('staticmaps')) {
-	print_apply_box(gettext('The static mapping configuration has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The static mapping configuration has been changed.') . '<br />' . gettext('You must apply the changes in order for them to take effect.'));
 }
 
 /* active tabs */

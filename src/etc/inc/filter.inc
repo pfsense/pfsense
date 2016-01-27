@@ -1,12 +1,11 @@
 <?php
-/* $Id$ */
 /*
 	filter.inc
-	Copyright (C) 2004-2006 Scott Ullrich
-	Copyright (C) 2005		Bill Marquette
-	Copyright (C) 2006		Peter Allgeyer
-	Copyright (C) 2008-2010	Ermal Luçi
-	All rights reserved.
+
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2005 Bill Marquette
+	Copyright (c) 2006 Peter Allgeyer
+	Copyright (c) 2008-2016 Electric Sheep Fencing, LLC. All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -19,23 +18,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-	pfSense_BUILDER_BINARIES:	/sbin/kldload	/usr/sbin/tcpdump	/sbin/pfctl	/bin/rm
-	pfSense_BUILDER_BINARIES:	/usr/sbin/inetd
-	pfSense_MODULE:	filter
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 
@@ -194,7 +212,7 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (isset($config['system']['kill_states'])) {
+	if (!isset($config['system']['gw_down_kill_states'])) {
 		return;
 	}
 
@@ -278,8 +296,6 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	}
 	update_filter_reload_status(gettext("Generating ALTQ queues"));
 	$altq_queues = filter_generate_altq_queues();
-	update_filter_reload_status(gettext("Generating Layer7 rules"));
-	generate_layer7_files();
 	if (platform_booting() == true) {
 		echo ".";
 	}
@@ -433,40 +449,38 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	 * then output the contents of the error to the caller
 	 */
 	if ($rules_loading <> 0) {
-		$saved_line_error = $rules_error[0];
-		$line_error = explode(":", $rules_error[0]);
-		$line_number = $line_error[1];
-		$line_split = file("{$g['tmp_path']}/rules.debug");
-		if (is_array($line_split)) {
-			$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
-		}
-		unset($line_split);
+		foreach ($rules_error as $errorline) {
+			$saved_line_error = $errorline;
+			$line_error = explode(":", $errorline);
+			$line_number = $line_error[1];
+			$line_split = file("{$g['tmp_path']}/rules.debug");
+			if (is_array($line_split)) {
+				$line_error = sprintf(gettext('The line in question reads [%1$d]: %2$s'), $line_number, $line_split[$line_number-1]);
+			}
+			unset($line_split);
 
-		/* Brutal ugly hack but required -- PF is stuck, unwedge */
-		if (strstr("$rules_error[0]", "busy")) {
-			exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
-			$error_msg = gettext("PF was wedged/busy and has been reset.");
-			file_notice("pf_busy", $error_msg, "pf_busy", "");
-		} else {
-			$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
+			/* Brutal ugly hack but required -- PF is stuck, unwedge */
+			if (strstr("$rules_error[0]", "busy")) {
+				exec("/sbin/pfctl -d; /sbin/pfctl -e; /sbin/pfctl -f {$g['tmp_path']}/rules.debug");
+				$error_msg = gettext("PF was wedged/busy and has been reset.");
+				file_notice("pf_busy", $error_msg, "pf_busy", "");
+			} else {
+				$_grbg = exec("/sbin/pfctl -o basic -f {$g['tmp_path']}/rules.debug.old 2>&1");
+			}
+			if ($line_error and $line_number) {
+				file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
+				update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
+				unlock($filterlck);
+				return;
+			}
 		}
 		unset($rules_loading, $rules_error);
-
-		if ($line_error and $line_number) {
-			file_notice("filter_load", sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error), "Filter Reload", "");
-			update_filter_reload_status(sprintf(gettext('There were error(s) loading the rules: %1$s - %2$s'), $saved_line_error, $line_error));
-			unlock($filterlck);
-			return;
-		}
 	}
 
 	# If we are not using bogonsv6 then we can remove any bogonsv6 table from the running pf (if the table is not there, the kill is still fine).
 	if (!is_bogonsv6_used()) {
 		$_grbg = exec("/sbin/pfctl -t bogonsv6 -T kill 2>/dev/null");
 	}
-
-	update_filter_reload_status(gettext("Starting up layer7 daemon"));
-	layer7_start_l7daemon();
 
 	if (!platform_booting()) {
 		if (!empty($filterdns)) {
@@ -934,13 +948,13 @@ function filter_get_vpns_list() {
 	$vpns_arr = array();
 
 	/* ipsec */
-	if (isset($config['ipsec']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
-					if (!function_exists('ipsec_idinfo_to_cidr')) {
-						require_once("ipsec.inc");
-					}
 					if (!is_array($ph2ent['remoteid'])) {
 						continue;
 					}
@@ -1067,7 +1081,6 @@ function filter_generate_optcfg_array() {
 		echo "filter_generate_optcfg_array() being called $mt\n";
 	}
 
-	read_layer7_config();
 	/* if list */
 	$iflist = get_configured_interface_with_descr();
 	foreach ($iflist as $if => $ifdetail) {
@@ -1172,7 +1185,10 @@ function filter_generate_optcfg_array() {
 		}
 	}
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		$oic = array();
 		$oic['if'] = 'enc0';
 		$oic['descr'] = 'IPsec';
@@ -1329,12 +1345,12 @@ function filter_generate_reflection_nat($rule, &$route_table, $nat_ifs, $protoco
 	return $natrules;
 }
 
-function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, &$starting_localhost_port, &$reflection_txt) {
+function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $dstaddr_port, &$starting_localhost_port, &$reflection_rules) {
 	global $FilterIflist, $config;
 
 	// Initialize natrules holder string
 	$natrules = "";
-	$reflection_txt = array();
+	$reflection_rules = array();
 
 	if (!empty($rdr_ifs)) {
 		if ($config['system']['reflectiontimeout']) {
@@ -1509,17 +1525,27 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 							if ($reflect_proto == "udp") {
 								$socktype = "dgram";
 								$dash_u = "-u ";
-								$wait = "wait\t";
+								$wait = "yes";
 							} else {
 								$socktype = "stream";
 								$dash_u = "";
-								$wait = "nowait/0";
+								$wait = "no";
 							}
 							foreach ($rtarget as $targip) {
 								if (empty($targip)) {
 									continue;
 								}
-								$reflection_txt[] = "{$inetdport}\t{$socktype}\t{$reflect_proto}\t{$wait}\tnobody\t/usr/bin/nc\tnc {$dash_u}-w {$reflectiontimeout} {$targip} {$tda}\n";
+								$reflection_rule = array(
+									'port' => $inetdport,
+									'socket_type' => $socktype,
+									'protocol' => $reflect_proto,
+									'wait' => $wait,
+									'user' => 'nobody',
+									'server' => '/usr/bin/nc',
+									'server_args' => "{$dash_u}-w {$reflectiontimeout} {$targip} {$tda}"
+								);
+								$reflection_rules[] = $reflection_rule;
+								unset($reflection_rule);
 							}
 						}
 						$inetdport++;
@@ -1532,8 +1558,6 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 				break;
 			}
 		}
-
-		$reflection_txt = array_unique($reflection_txt);
 	}
 
 	return $natrules;
@@ -1787,6 +1811,26 @@ function filter_nat_rules_generate_if ($if, $src = "any", $srcport = "", $dst = 
 	return $natrule;
 }
 
+function xinetd_service_entry($entry_array) {
+	$entry = <<<EOD
+service {$entry_array['port']}-{$entry_array['protocol']}
+{
+	type = unlisted
+	bind = 127.0.0.1
+	port = {$entry_array['port']}
+	socket_type = {$entry_array['socket_type']}
+	protocol = {$entry_array['protocol']}
+	wait = {$entry_array['wait']}
+	user = {$entry_array['user']}
+	server = {$entry_array['server']}
+	server_args = {$entry_array['server_args']}
+}
+
+
+EOD;
+	return $entry;
+}
+
 function filter_nat_rules_generate() {
 	global $config, $g, $after_filter_configure_run, $FilterIflist, $GatewaysList, $aliases;
 
@@ -1842,22 +1886,27 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			/*
-			 * If reflection is enabled, turn on extra redirections
-			 * for this rule by adding other interfaces to an rdr rule.
-			 */
-			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
-			    ($rule['natreflection'] != "disable")) {
-				$nat_if_list = filter_get_reflection_interfaces($natif);
+			if (isset($rule['nobinat'])) {
+				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
 			} else {
-				$nat_if_list = array();
-			}
+				/*
+				 * If reflection is enabled, turn on extra redirections
+				 * for this rule by adding other interfaces to an rdr rule.
+				 */
+				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
+				    ($rule['natreflection'] != "disable")) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
 
-			$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
-			if (!empty($nat_if_list)) {
-				$binat_if_list = implode(" ", $nat_if_list);
-				$binat_if_list = "{ {$binat_if_list} }";
-				$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
+
+				if (!empty($nat_if_list)) {
+					$binat_if_list = implode(" ", $nat_if_list);
+					$binat_if_list = "{ {$binat_if_list} }";
+					$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				}
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
@@ -1896,12 +1945,19 @@ function filter_nat_rules_generate() {
 	}
 
 	/* ipsec nat */
-	if (is_array($config['ipsec']) && isset($config['ipsec']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
-				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid'])) {
-					if (!function_exists('ipsec_idinfo_to_cidr')) {
-						require_once("ipsec.inc");
+				if ($ph2ent['mode'] != 'transport' && !empty($ph2ent['natlocalid']) && !isset($ph2ent['disabled'])) {
+					ipsec_lookup_phase1($ph2ent, $ph1ent);
+					if (!is_array($ph1ent)) {
+						continue;
+					}
+					if (isset($ph1ent['disabled'])) {
+						continue;
 					}
 					if (!is_array($ph2ent['localid'])) {
 						$ph2ent['localid'] = array();
@@ -2069,13 +2125,21 @@ function filter_nat_rules_generate() {
 		$natrules .= "rdr on \${$FilterIflist['wan']['descr']} proto ipv6 from any to any -> {$config['diag']['ipv6nat']['ipaddr']}\n";
 	}
 
-	if (file_exists("/var/etc/inetd.conf")) {
-		@unlink("/var/etc/inetd.conf");
-	}
-	// Open inetd.conf write handle
-	$inetd_fd = fopen("/var/etc/inetd.conf", "w");
+	unlink_if_exists("{$g['varetc_path']}/xinetd.conf");
+	// Open xinetd.conf write handle
+	$xinetd_fd = fopen("{$g['varetc_path']}/xinetd.conf", "w");
+
 	/* add tftp protocol helper */
-	fwrite($inetd_fd, "tftp-proxy\tdgram\tudp\twait\t\troot\t/usr/libexec/tftp-proxy\ttftp-proxy -v\n");
+	$ftp_proxy_entry = array(
+		'port' => 6969,
+		'socket_type' => 'dgram',
+		'protocol' => 'udp',
+		'wait' => 'yes',
+		'user' => 'root',
+		'server' => '/usr/libexec/tftp-proxy',
+		'server_args' => '-v'
+	);
+	fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
 
 	if (isset($config['nat']['rule'])) {
 		/* start reflection redirects on port 19000 of localhost */
@@ -2257,8 +2321,8 @@ function filter_nat_rules_generate() {
 					if ($reflection_type == "proxy" && !isset($rule['nordr'])) {
 						$natrules .= filter_generate_reflection_proxy($rule, $nordr, $nat_if_list, $srcaddr, $dstaddr, $starting_localhost_port, $reflection_rules);
 						$nat_if_list = array($natif);
-						foreach ($reflection_rules as $txtline) {
-							fwrite($inetd_fd, $txtline);
+						foreach ($reflection_rules as $reflection_rule) {
+							fwrite($xinetd_fd, xinetd_service_entry($reflection_rule));
 						}
 					} else if ($reflection_type == "purenat" || isset($rule['nordr'])) {
 						$rdr_if_list = implode(" ", $nat_if_list);
@@ -2282,7 +2346,7 @@ function filter_nat_rules_generate() {
 			}
 		}
 	}
-	fclose($inetd_fd);		// Close file handle
+	fclose($xinetd_fd);		// Close file handle
 
 	$natrules .= discover_pkg_rules("nat");
 
@@ -2293,13 +2357,15 @@ function filter_nat_rules_generate() {
 		$natrules .= "\n# Reflection redirects and NAT for 1:1 mappings\n" . $reflection_txt;
 	}
 
-	// Check if inetd is running, if not start it.	If so, restart it gracefully.
-	$helpers = isvalidproc("inetd");
-	if (file_exists("/var/etc/inetd.conf")) {
-		if (!$helpers) {
-			mwexec("/usr/sbin/inetd -wW -R 0 -a 127.0.0.1 /var/etc/inetd.conf");
+	// Check if xinetd is running, if not start it.	If so, restart it gracefully.
+	if (file_exists("{$g['varetc_path']}/xinetd.conf")) {
+		if (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
+			sigkillbypid("{$g['varrun_path']}/xinetd.pid", "HUP");
 		} else {
-			sigkillbypid("/var/run/inetd.pid", "HUP");
+			mwexec("/usr/local/sbin/xinetd " .
+			    "-syslog daemon " .
+			    "-f {$g['varetc_path']}/xinetd.conf " .
+			    "-pidfile {$g['varrun_path']}/xinetd.pid");
 		}
 	}
 
@@ -2313,9 +2379,7 @@ function filter_generate_user_rule_arr($rule) {
 	$line = filter_generate_user_rule($rule);
 	$ret['rule'] = $line;
 	$ret['interface'] = $rule['interface'];
-	if ($rule['tracker'] != "" and $line != "") {
-		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['tracker']}") . "\"";
-	} elseif ($rule['descr'] != "" and $line != "") {
+	if ($rule['descr'] != "" and $line != "") {
 		$ret['descr'] = "label \"" . fix_rule_label("USER_RULE: {$rule['descr']}") . "\"";
 	} else {
 		$ret['descr'] = "label \"USER_RULE\"";
@@ -2560,7 +2624,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 
 function filter_generate_user_rule($rule) {
 	global $config, $g, $FilterIflist, $GatewaysList;
-	global $layer7_rules_list, $dummynet_name_list;
+	global $dummynet_name_list;
 
 	if (isset($config['system']['developerspew'])) {
 		$mt = microtime();
@@ -2670,7 +2734,7 @@ function filter_generate_user_rule($rule) {
 			$rg = get_interface_gateway($rule['interface']);
 			if (is_ipaddrv4($rg)) {
 				$aline['reply'] = "reply-to ( {$ifcfg['if']} {$rg} ) ";
-			} 
+			}
 		}
 	}
 	/* if user has selected a custom gateway, lets work with it */
@@ -2721,15 +2785,6 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	//Layer7 support
-	$l7_present = false;
-	$l7_structures = array();
-	if (isset($rule['l7container']) && $rule['l7container'] != "none") {
-		$l7_present = true;
-		$l7rule =& $layer7_rules_list[$rule['l7container']];
-		$l7_structures = $l7rule->get_unique_structures();
-		$aline['divert'] = "divert-to " . $l7rule->GetRPort() . " ";
-	}
 	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet")) {
 		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
 	}
@@ -2868,7 +2923,7 @@ function filter_generate_user_rule($rule) {
 			$rule['nopfsync'] = true;
 		}
 
-		if ($noadvoptions == false || $l7_present) {
+		if ($noadvoptions == false) {
 			if ((isset($rule['source-track']) and $rule['source-track'] <> "") or
 			    (isset($rule['max']) and $rule['max'] <> "") or
 			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
@@ -2879,8 +2934,7 @@ function filter_generate_user_rule($rule) {
 			      (isset($rule['max-src-conn-rate']) and $rule['max-src-conn-rate'] <> "") or
 			      (isset($rule['max-src-conn-rates']) and $rule['max-src-conn-rates'] <> ""))) or
 			    (isset($rule['sloppy'])) or
-			    (isset($rule['nopfsync'])) or
-			    ($l7_present)) {
+			    (isset($rule['nopfsync']))) {
 				$aline['flags'] .= "( ";
 				if (isset($rule['sloppy'])) {
 					$aline['flags'] .= "sloppy ";
@@ -2917,10 +2971,6 @@ function filter_generate_user_rule($rule) {
 				    ($rule['max-src-conn-rates'] <> "")) {
 					$aline['flags'] .= "max-src-conn-rate " . $rule['max-src-conn-rate'] . " ";
 					$aline['flags'] .= "/" . $rule['max-src-conn-rates'] . ", overload <virusprot> flush global ";
-				}
-
-				if (!empty($aline['divert'])) {
-					$aline['flags'] .= "max-packets 8 ";
 				}
 
 				$aline['flags'] .= " ) ";
@@ -2993,7 +3043,7 @@ function filter_generate_user_rule($rule) {
 	/* piece together the actual user rule */
 	$line .= $aline['type'] . $aline['direction'] . $aline['log'] . $aline['quick'] . $aline['interface'] .
 		$aline['reply'] . $aline['route'] . $aline['ipprotocol'] . $aline['prot'] . $aline['src'] . $aline['os'] . $aline['dst'] .
-		$aline['divert'] . $aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
+		$aline['icmp-type'] . $aline['icmp6-type'] . $aline['tag'] . $aline['tagged'] . $aline['dscp'] . $aline['tracker'] .
 		$aline['vlanprio'] . $aline['vlanprioset'] . $aline['allowopts'] . $aline['flags'] . $aline['queue'] . $aline['dnpipe'] . $aline['schedlabel'];
 
 	unset($aline);
@@ -3335,6 +3385,19 @@ EOD;
 					}
 
 				}
+				/* allow access to DHCP relay on interfaces */
+				if (isset($config['dhcrelay']['enable'])) {
+					$dhcifaces = explode(",", $dhcrelaycfg['interface']);
+					foreach ($dhcifaces as $dhcrelayif) {
+						if ($dhcrelayif == $on) {
+							$ipfrules .= <<<EOD
+# allow access to DHCP relay on {$oc['descr']}
+pass in {$log['pass']} quick on \${$oc['descr']} proto udp from any port = 68 to 255.255.255.255 port = 67 tracker {$increment_tracker($tracker)} label "allow access to DHCP relay"
+
+EOD;
+						}
+					}
+				}
 				break;
 		}
 
@@ -3462,7 +3525,10 @@ EOD;
 	$saved_tracker += 300;
 	$tracker = $saved_tracker;
 	/* add ipsec interfaces */
-	if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		$ipfrules .= "pass out {$log['pass']} on \$IPsec all tracker {$increment_tracker($tracker)} tracker {$increment_tracker($tracker)} keep state label \"IPsec internal host to host\"\n";
 	}
 
@@ -3521,6 +3587,11 @@ EOD;
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			if (isset ($rule['disabled'])) {
+				continue;
+			}
+
+			// Webgui separator bar. Not a real rule
+			if (isset($rule['separator'])) {
 				continue;
 			}
 
@@ -3950,8 +4021,10 @@ function filter_generate_ipsec_rules($log = array()) {
 	$increment_tracker = 'filter_rule_tracker';
 
 	$ipfrules = "\n# VPN Rules\n";
-	if ((isset($config['ipsec']['enable'])) &&
-	    (is_array($config['ipsec']['phase1']))) {
+	if (!function_exists('ipsec_enabled')) {
+		require_once("ipsec.inc");
+	}
+	if (ipsec_enabled()) {
 		/* step through all phase1 entries */
 		foreach ($config['ipsec']['phase1'] as $ph1ent) {
 			$tracker += 10;
@@ -3961,9 +4034,6 @@ function filter_generate_ipsec_rules($log = array()) {
 			}
 			/* determine local and remote peer addresses */
 			if (!isset($ph1ent['mobile'])) {
-				if (!function_exists('ipsec_get_phase1_dst')) {
-					require_once("ipsec.inc");
-				}
 				$rgip = ipsec_get_phase1_dst($ph1ent);
 				if (!$rgip) {
 					$ipfrules .= "# ERROR! Unable to determine remote IPsec peer address for {$ph1ent['remote-gateway']}\n";
@@ -4001,6 +4071,14 @@ function filter_generate_ipsec_rules($log = array()) {
 
 			if (strpos($ph1ent['interface'], "_vip")) {
 				$parentinterface = get_configured_carp_interface_list($ph1ent['interface'], '', 'iface');
+			} else if (is_ipaddr($ph1ent['interface'])) {
+				if (is_array($config['virtualip']['vip'])) {
+					foreach ($config['virtualip']['vip'] as $vip) {
+						if ($ph1ent['interface'] == $vip['subnet']) {
+							$parentinterface = $vip['interface'];
+						}
+					}
+				}
 			} else {
 				$parentinterface = $ph1ent['interface'];
 			}
@@ -4041,30 +4119,30 @@ function filter_generate_ipsec_rules($log = array()) {
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
 			$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
+pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if ($ph1ent['nat_traversal'] != "off") {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from any to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to any port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
+pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 			}
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto esp from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
+pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if ($prot_used_ah) {
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto ah from any to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
-pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to any tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
+pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
+pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;
 			}

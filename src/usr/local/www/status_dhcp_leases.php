@@ -170,6 +170,15 @@ $i = 0;
 $l = 0;
 $p = 0;
 
+// Translate these once so we don't do it over and over in the loops below.
+$online_string = gettext("online");
+$offline_string = gettext("offline");
+$active_string = gettext("active");
+$expired_string = gettext("expired");
+$reserved_string = gettext("reserved");
+$dynamic_string = gettext("dynamic");
+$static_string = gettext("static");
+
 // Put everything together again
 foreach ($leases_content as $lease) {
 	/* split the line by space */
@@ -198,7 +207,7 @@ foreach ($leases_content as $lease) {
 				continue 3;
 			case "lease":
 				$leases[$l]['ip'] = $data[$f+1];
-				$leases[$l]['type'] = "dynamic";
+				$leases[$l]['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "starts":
@@ -233,15 +242,15 @@ foreach ($leases_content as $lease) {
 			case "binding":
 				switch ($data[$f+2]) {
 					case "active":
-						$leases[$l]['act'] = "active";
+						$leases[$l]['act'] = $active_string;
 						break;
 					case "free":
-						$leases[$l]['act'] = "expired";
-						$leases[$l]['online'] = "offline";
+						$leases[$l]['act'] = $expired_string;
+						$leases[$l]['online'] = $offline_string;
 						break;
 					case "backup":
-						$leases[$l]['act'] = "reserved";
-						$leases[$l]['online'] = "offline";
+						$leases[$l]['act'] = $reserved_string;
+						$leases[$l]['online'] = $offline_string;
 						break;
 				}
 				$f = $f+1;
@@ -258,9 +267,9 @@ foreach ($leases_content as $lease) {
 				$leases[$l]['mac'] = $data[$f+2];
 				/* check if it's online and the lease is active */
 				if (in_array($leases[$l]['ip'], $arpdata_ip)) {
-					$leases[$l]['online'] = 'online';
+					$leases[$l]['online'] = $online_string;
 				} else {
-					$leases[$l]['online'] = 'offline';
+					$leases[$l]['online'] = $offline_string;
 				}
 				$f = $f+2;
 				break;
@@ -306,15 +315,15 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
 			$slease = array();
 			$slease['ip'] = $static['ipaddr'];
-			$slease['type'] = "static";
+			$slease['type'] = $static_string;
 			$slease['mac'] = $static['mac'];
 			$slease['if'] = $ifname;
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
 			$slease['descr'] = htmlentities($static['descr']);
-			$slease['act'] = "static";
-			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
+			$slease['act'] = $static_string;
+			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
 			$slease['staticmap_array_index'] = $staticmap_array_index;
 			$leases[] = $slease;
 			$staticmap_array_index++;
@@ -383,19 +392,19 @@ $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 $iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
 
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1) {
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
 	}
 
-	if ($data['act'] == 'active') {
+	if ($data['act'] == $active_string) {
 		$icon = 'fa-check-circle-o';
-	} elseif ($data['act'] == 'expired') {
+	} elseif ($data['act'] == $expired_string) {
 		$icon = 'fa-ban';
 	} else {
 		$icon = 'fa-times-circle-o';
 	}
 
-	if ($data['act'] != "static") {
+	if ($data['act'] != $static_string) {
 		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if (!is_array($dhcpifconf['range'])) {
@@ -428,7 +437,7 @@ foreach ($leases as $data):
 						<?php endif; ?>
 					</td>
 					<td><?=htmlentities($data['hostname'])?></td>
-<?php if ($data['type'] != "static"):?>
+<?php if ($data['type'] != $static_string):?>
 					<td><?=adjust_gmt($data['start'])?></td>
 					<td><?=adjust_gmt($data['end'])?></td>
 <?php else: ?>
@@ -437,17 +446,17 @@ foreach ($leases as $data):
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>
-<?php if ($data['type'] == "dynamic"): ?>
+<?php if ($data['type'] == $dynamic_string): ?>
 						<a class="fa fa-plus-square-o"	title="<?=gettext("Add static mapping")?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php else: ?>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <?php endif; ?>
 						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
-<?php if ($data['online'] != "online"):?>
+<?php if ($data['online'] != $online_string):?>
 						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <?php endif; ?>
 
-<?php if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
+<?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
 						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <?php endif; ?>
 					</td>

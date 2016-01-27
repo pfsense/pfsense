@@ -484,6 +484,15 @@ function toggleListDescriptions() {
 ?>
 				</tbody>
 			</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=count($filterlog);?>);
+});
+//]]>
+</script>
+
 		</div>
 	</div>
 </div>
@@ -514,14 +523,6 @@ events.push(function() {
 	$(document).ready(function() {
 	    $('.fa').tooltip();
 	});
-});
-//]]>
-</script>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$("#count").html(<?=count($filterlog);?>);
 });
 //]]>
 </script>

@@ -261,6 +261,15 @@ if (!$rawfilter) {
 		<pre><?php 
 			$rows = dump_clog_no_table($logfile_path, $nentries, true, array($filtertext));
 		?></pre>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -515,13 +524,5 @@ function filter_form_vpn() {
 	print $form;
 }
 ?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	$("#count").html(<?=$rows?>);
-});
-//]]>
-</script>
 
 <?php include("foot.inc"); ?>

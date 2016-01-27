@@ -72,9 +72,9 @@ require_once("shaper.inc");
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
-foreach (pfSense_get_pf_rules() as $line){
-	foreach ($line as $key=>$value){
-		switch ($key){
+foreach (pfSense_get_pf_rules() as $line) {
+	foreach ($line as $key=>$value) {
+		switch ($key) {
 			case 'bytes':
 			case 'states':
 			case 'packets':
@@ -95,7 +95,8 @@ foreach (pfSense_get_pf_rules() as $line){
 	}
 }
 
-if ($_POST['action'] != "KillRuleStates") {?>
+if ($_POST['action'] != "KillRuleStates") {
+	?>
 	<div id="RuleStates" class="modal fade" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -112,9 +113,11 @@ if ($_POST['action'] != "KillRuleStates") {?>
 			</div>
 		</div>
 	</div>
+	<?php
+}
 
 //Get rule Hit count
-function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false){
+function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false) {
 	global $g,$rules_count_array;
 
 	//check if there is previous values
@@ -122,13 +125,13 @@ function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false){
 	$states = (isset($sum_ht['bytes']) ? $sum_ht['bytes'] : 0);
 	$rules_title = (isset($sum_ht['title']) ? $sum_ht['title'] : "");
 	$rules_id = array();
-	if (preg_match("/\s+/",$tracker)){
+	if (preg_match("/\s+/",$tracker)) {
 		$rules_title .= "$tracker\n";
 	}
-	if ($buit_in_rule == true){
+	if ($buit_in_rule == true) {
 		//get tracker based on builtin description rule
-		foreach ($rules_count_array as $rule_tracker => $rule_info){
-			if ($rule_info['label']==$tracker){
+		foreach ($rules_count_array as $rule_tracker => $rule_info) {
+			if ($rule_info['label']==$tracker) {
 				$tracker = $rule_tracker;
 				break;
 			}
@@ -139,7 +142,7 @@ function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false){
 		$packets += $rules_count_array[$tracker]['packets'];
 		$states += $rules_count_array[$tracker]['states'];
 		foreach ($rules_count_array[$tracker] as $rck => $rcv) {
-			switch($rck){
+			switch($rck) {
 				case "label":
 					$label = $rcv;
 					break;
@@ -152,7 +155,7 @@ function get_rule_ht($tracker,$sum_ht=array(),$buit_in_rule=false){
 		}
 	}
 	$hitcount = bd_nice_number($packets)."/".bd_nice_number($states);
-	if ($states > 0){
+	if ($states > 0) {
 		//NEED HELP HERE fixing width for states popup
 		$html  = "<a href=\"#\" onmouseover=\"showState('{$ruleid}','{$hitcount}','{$label}');\" data-toggle=\"modal\" data-target=\"#RuleStates\" role=\"button\" aria-expanded=\"false\">";
 		$html .= "<span onmouseover=\"showState('{$ruleid}','{$hitcount}','{$label}');\">{$hitcount}</span></a>";
@@ -323,11 +326,11 @@ if ($_POST) {
 		$resp .= "<tbody>";
 		$state_count = 0;
 		$remove_ids = "";
-		if (isset($_POST['hitcount'])){
+		if (isset($_POST['hitcount'])) {
 			$hitcount=html_entity_decode($_POST['hitcount']);
 		}
 
-		if (isset($_POST['ruleid'])){
+		if (isset($_POST['ruleid'])) {
 			$ruleid=html_entity_decode($_POST['ruleid']);
 			$cnt_pfctls=array();
 			exec("/sbin/pfctl -vvss | /usr/bin/grep -EB2 -A1 \"rule ({$ruleid})\"",$cnt_pfctls);
@@ -335,7 +338,7 @@ if ($_POST) {
 			echo gettext("invalid input");
 		}
 
-		if (isset($_POST['title'])){
+		if (isset($_POST['title'])) {
 			$hittitle=html_entity_decode($_POST['title']);
 		}
 

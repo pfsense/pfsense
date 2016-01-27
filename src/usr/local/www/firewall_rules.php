@@ -171,7 +171,7 @@ function get_rule_ht($tracker, $sum_ht=array(), $buit_in_rule=false) {
 }
 
 function bd_nice_number ($a) {
-	$unim = array("B","K","M","G","T","P");
+	$unim = array("","K","M","G","T","P");
 	$c = 0;
 	while ($a>=1024) {
 		$c++;
@@ -283,7 +283,7 @@ if ($_POST) {
 			$cnt_pfctlk=array();
 			$rule_ids=explode("|",$rulelabel);
 			foreach ($rule_ids as $rule_id) {
-				$cnt_pfctlk[]= $rule_id;
+				$cnt_pfctlk[]="Rule ID: {$rule_id}";
 				exec("/sbin/pfctl -k id -k " . escapeshellarg($rule_id) ." 2>&1",$cnt_pfctlk);
 			}
 		} else {
@@ -292,7 +292,11 @@ if ($_POST) {
 
 		if (!empty($cnt_pfctlk)) {
 			foreach ($cnt_pfctlk as $line) {
-				print "$line\n";
+				if (preg_match("/Rule ID/",$line)) {
+					print "$line ";
+				}else{
+					print "$line\n";
+				}
 			}
 		}
 		return;

@@ -125,6 +125,14 @@ if (($pagename == "pkg.php") || ($pagename == "pkg_edit.php") || ($pagename == "
 			$pagename = $xmlfile[1];
 		}
 	}
+} else if ($pagename == "status_logs.php") {
+	$param_split = explode('&', $uri_split[2]);
+	foreach ($param_split as $param) {
+		if (substr($param, 0, 8) == "logfile=") {
+			$logtype = explode('=', $param);
+			$pagename .= '-' . $logtype[1];
+		}
+	}
 }
 
 // Build the full help URL.

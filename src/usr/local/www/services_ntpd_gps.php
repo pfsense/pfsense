@@ -138,8 +138,8 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['prefer']);
 	}
 
-	if (!empty($_POST['gpsselect'])) {
-		$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
+	if (!empty($_POST['gpsnoselect'])) {
+		$config['ntpd']['gps']['noselect'] = $_POST['gpsnoselect'];
 	} elseif (isset($config['ntpd']['gps']['noselect'])) {
 		unset($config['ntpd']['gps']['noselect']);
 	}
@@ -321,7 +321,7 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'gpsselect',
+	'gpsnoselect',
 	null,
 	'Do not use this clock, display for reference only (default: unchecked).',
 	$pconfig['noselect']
@@ -530,14 +530,14 @@ events.push(function() {
 
 	set_gps_default('<?=$pconfig['type']?>');
 
-	//	Checkboxes gpsprefer and gpsselect are mutually exclusive
+	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive
 	$('#gpsprefer').click(function() {
 		if ($(this).is(':checked')) {
-			$('#gpsselect').prop('checked', false);
+			$('#gpsnoselect').prop('checked', false);
 		}
 	});
 
-	$('#gpsselect').click(function() {
+	$('#gpsnoselect').click(function() {
 		if ($(this).is(':checked')) {
 			$('#gpsprefer').prop('checked', false);
 		}

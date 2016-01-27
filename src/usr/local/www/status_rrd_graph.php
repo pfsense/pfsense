@@ -572,7 +572,7 @@ $group->add(new Form_Select(
 ))->setHelp('Period');
 
 if ($curcat == 'custom') {
-	$group->setHelp('Any changes to these option may not take affect until the next auto-refresh.');
+	$group->setHelp('Any changes to these options may not take affect until the next auto-refresh.');
 }
 
 $section->add($group);
@@ -607,7 +607,7 @@ if ($curcat == 'custom') {
 	))->setHelp('End');
 
 	if ($curcat != 'custom') {
-		$group->setHelp('Any changes to these option may not take affect until the next auto-refresh');
+		$group->setHelp('Any changes to these options may not take affect until the next auto-refresh');
 	}
 
 	$section->add($group);

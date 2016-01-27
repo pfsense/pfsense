@@ -167,10 +167,10 @@ display_top_tabs($tab_array);
 						$online = gettext("Offline");
 						$bgcolor = LIGHTCORAL;
 					} elseif (stristr($status['status'], "loss")) {
-						$online = gettext("Warning, Packetloss").': '.$status['loss'];
+						$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
 						$bgcolor = KHAKI;
 					} elseif (stristr($status['status'], "delay")) {
-						$online = gettext("Warning, Latency").': '.$status['delay'];
+						$online = gettext("Warning, Latency") . ': ' . $status['delay'];
 						$bgcolor = KHAKI;
 					} elseif ($status['status'] == "none") {
 						$online = gettext("Online");
@@ -194,7 +194,7 @@ display_top_tabs($tab_array);
 				<td bgcolor="<?=$bgcolor?>">
 					<strong><?=$online?></strong> <?php
 					if (!empty($lastchange)) { ?>
-						<br /><i>Last checked <?=$lastchange?></i>
+						<br /><i><?=gettext("Last checked")?> <?=$lastchange?></i>
 <?php				} ?>
 				</td>
 

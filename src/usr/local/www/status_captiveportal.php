@@ -259,7 +259,7 @@ else:
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
 	<div class="panel-body"><br />
 <?php
-	print_info_box(gettext("No captive portal zones have been configured. You may add new zones here: ") . '<a href="services_captiveportal_zones.php">' . gettext('Services->Captive portal') . '</a>');
+	print_info_box(sprintf(gettext('No captive portal zones have been configured. You may add new zones here: %1$sServices->Captive portal%2$s'), '<a href="services_captiveportal_zones.php">', '</a>'));
 ?>
 	</div>
 </div>

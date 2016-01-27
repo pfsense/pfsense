@@ -175,7 +175,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {
-	print_apply_box(gettext("The firewall tunables have changed. You must apply the configuration for them to take affect."));
+	print_apply_box(gettext("The firewall tunables have changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();

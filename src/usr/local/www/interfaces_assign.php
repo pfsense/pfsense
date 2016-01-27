@@ -502,7 +502,7 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 
 if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
-	print_apply_box(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 	echo "<br /></p>\n";
 } elseif ($savemsg) {
 	print_info_box($savemsg, $class);

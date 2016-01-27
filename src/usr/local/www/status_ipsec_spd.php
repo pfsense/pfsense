@@ -133,6 +133,17 @@ if (count($spd)) {
 	print_info_box(gettext('No IPsec security policies configured.'));
 }
 
-print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
-
+if (ipsec_enabled()) {
+?>
+<div class="infoblock">
+<?php
+} else {
+?>
+<div class="infoblock blockopen">
+<?php
+}
+print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+?>
+</div>
+<?php
 include("foot.inc");

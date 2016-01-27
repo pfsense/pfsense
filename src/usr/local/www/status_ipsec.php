@@ -519,5 +519,17 @@ function show_childsa(id, buttonid) {
 
 <?php
 unset($status);
-print_info_box(gettext("You can configure IPsec ") . '<a href="vpn_ipsec.php">Here</a>');
+if (ipsec_enabled()) {
+?>
+<div class="infoblock">
+<?php
+} else {
+?>
+<div class="infoblock blockopen">
+<?php
+}
+print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+?>
+</div>
+<?php
 include("foot.inc"); ?>

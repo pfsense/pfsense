@@ -84,14 +84,14 @@ if ($_POST['height']) {
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
-	$ifdescrs['enc0'] = "IPsec";
+	$ifdescrs['enc0'] = gettext("IPsec");
 }
 
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " " . $mode . ": ".htmlspecialchars($setting['description']);
 			}
 		}
 	}
@@ -249,7 +249,7 @@ events.push(function() {
 
 /* link the ipsec interface magically */
 if (ipsec_enabled()) {
-	$ifdescrs['enc0'] = "IPsec";
+	$ifdescrs['enc0'] = gettext("IPsec");
 }
 
 ?>

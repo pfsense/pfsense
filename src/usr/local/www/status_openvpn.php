@@ -160,7 +160,7 @@ include("head.inc"); ?>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
+							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
 							<i class="fa fa-times"></i>
 							</a>
 						</td>

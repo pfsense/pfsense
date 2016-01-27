@@ -173,7 +173,7 @@ if ($diff) {
 		}
 ?>
 			<tr>
-				<td valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
 	}

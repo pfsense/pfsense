@@ -83,10 +83,10 @@ if ($_GET['wakeall'] != "") {
 		$bcip = gen_subnet_max($ipaddr, get_interface_subnet($if));
 		/* Execute wol command and check return code. */
 		if (!mwexec("/usr/local/bin/wol -i {$bcip} {$mac}")) {
-			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s)%3$s'), $mac, $description, ".<br />");
+			$savemsg .= sprintf(gettext('Sent magic packet to %1$s (%2$s).'), $mac, $description) . "<br />";
 			$class = 'success';
 		} else {
-			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully%5$s'), '<a href="/status_logs.php">', '</a>', $description, $mac, ".<br />");
+			$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s (%4$s) did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $description, $mac) . "<br />";
 			$class = 'warning';
 		}
 	}
@@ -127,7 +127,7 @@ if ($_POST || $_GET['mac']) {
 				$savemsg .= sprintf(gettext("Sent magic packet to %s."), $mac);
 				$class = 'success';
 			} else {
-				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully%4$s'), '<a href="/status_logs.php">', '</a>', $mac, ".<br />");
+				$savemsg .= sprintf(gettext('Please check the %1$ssystem log%2$s, the wol command for %3$s did not complete successfully.'), '<a href="/status_logs.php">', '</a>', $mac) . "<br />";
 				$class = 'warning';
 			}
 		}
@@ -148,9 +148,9 @@ include("head.inc");
 ?>
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext('This service can be used to wake up (power on) computers by sending special') . ' "' . gettext('Magic Packets') . '"<br />' .
+print_info_box(gettext('This service can be used to wake up (power on) computers by sending special "Magic Packets".') . '<br />' .
 			   gettext('The NIC in the computer that is to be woken up must support Wake on LAN and must be properly configured (WOL cable, BIOS settings).'),
-			   'info');
+			   'info', false);
 
 ?>
 </div>

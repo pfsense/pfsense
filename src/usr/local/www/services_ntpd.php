@@ -75,7 +75,7 @@ if (empty($config['ntpd']['interface'])) {
 	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
-		write_config("Upgraded settings from openttpd");
+		write_config(gettext("Upgraded settings from openttpd"));
 	} else {
 		$pconfig['interface'] = array();
 	}

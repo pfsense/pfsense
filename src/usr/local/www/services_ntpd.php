@@ -374,7 +374,7 @@ $section->addInput(new Form_Checkbox(
 	'Log system messages (default: disabled).',
 	$pconfig['logsys']
 ))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="diag_logs_ntpd.php">' . 'Status > System Logs > NTP' . '</a>');
+			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>');
 
 // Statistics logging section
 $btnadvstats = new Form_Button(

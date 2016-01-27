@@ -1,38 +1,61 @@
 <?php
 /*
 	status_wireless.php
-	Copyright (C) 2004 Scott Ullrich
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: interfaces
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-wirelessstatus
-##|*NAME=Status: Wireless page
+##|*NAME=Status: Wireless
 ##|*DESCR=Allow access to the 'Status: Wireless' page.
 ##|*MATCH=status_wireless.php*
 ##|-PRIV
@@ -46,13 +69,13 @@ include("head.inc");
 
 $if = $_POST['if'];
 
-if($_GET['if'] != "")
+if ($_GET['if'] != "") {
 	$if = $_GET['if'];
+}
 
 $ciflist = get_configured_interface_with_descr();
 if (empty($if)) {
-	/* Find the first interface
-	   that is wireless */
+	/* Find the first interface that is wireless */
 	foreach ($ciflist as $interface => $ifdescr) {
 		if (is_interface_wireless(get_real_interface($interface))) {
 			$if = $interface;
@@ -63,11 +86,12 @@ if (empty($if)) {
 
 $tab_array = array();
 
-foreach($ciflist as $interface => $ifdescr) {
+foreach ($ciflist as $interface => $ifdescr) {
 	if (is_interface_wireless(get_real_interface($interface))) {
 		$enabled = false;
-		if($if == $interface)
+		if ($if == $interface) {
 			$enabled = true;
+		}
 
 		$tab_array[] = array(gettext("Status") . " ({$ifdescr})", $enabled, "status_wireless.php?if={$interface}");
 	}
@@ -75,13 +99,14 @@ foreach($ciflist as $interface => $ifdescr) {
 
 $rwlif = get_real_interface($if);
 
-if($_POST['rescanwifi'] != "") {
+if ($_POST['rescanwifi'] != "") {
 	mwexec_bg("/sbin/ifconfig {$rwlif} scan 2>&1");
 	$savemsg = gettext("Rescan has been initiated in the background. Refresh this page in 10 seconds to see the results.");
 }
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 display_top_tabs($tab_array);
 ?>
@@ -90,7 +115,7 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Nearby access points or ad-hoc peers")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th>SSID</th>
@@ -159,19 +184,19 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Associated or ad-hoc peers")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
-						<th>ADDR</font></th>
-						<th>AID</font></th>
-						<th>CHAN</font></th>
-						<th>RATE</font></th>
-						<th>RSSI</font></th>
-						<th>IDLE</font></th>
-						<th>TXSEQ</font></th>
-						<th>RXSEQ</font></th>
-						<th>CAPS</font></th>
-						<th>ERP</font></th>
+						<th>ADDR</th>
+						<th>AID</th>
+						<th>CHAN</th>
+						<th>RATE</th>
+						<th>RSSI</th>
+						<th>IDLE</th>
+						<th>TXSEQ</th>
+						<th>RXSEQ</th>
+						<th>CAPS</th>
+						<th>ERP</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -183,13 +208,13 @@ display_top_tabs($tab_array);
 
 	$counter=0;
 
-	foreach($states as $state) {
+	foreach ($states as $state) {
 		$split = preg_split("/[ ]+/i", $state);
 ?>
 					<tr>
 <?php
 		/* Split the rest by using spaces for this line using the 2nd part */
-		for($idx=0; $idx<10; $idx++) {
+		for ($idx=0; $idx<10; $idx++) {
 ?>
 						<td>
 							<?=$split[$idx]?>
@@ -210,14 +235,19 @@ display_top_tabs($tab_array);
 
 <form action="status_wireless.php" method="post">
 	<nav class="action-buttons">
-		<input type="hidden" name="if" id="if" value="<?=htmlspecialchars($if)?>">
-		<input type="submit" class="btn btn-success" name="rescanwifi" id="rescanwifi" value="Rescan">
+		<input type="hidden" name="if" id="if" value="<?=htmlspecialchars($if)?>" />
+		<button type="submit" class="btn btn-success" name="rescanwifi" id="rescanwifi" value="Rescan">
+			<i class="fa fa-undo icon-embed-btn"></i>
+			<?=gettext("Rescan")?>
+		</button>
 	</nav>
 </form>
-
+<div class="infoblock">
 <?php
 print_info_box('<b>Flags:</b> A = authorized, E = Extended Rate (802.11g), P = Power saving mode<br />' .
 			   '<b>Capabilities:</b> E = ESS (infrastructure mode), I = IBSS (ad-hoc mode), P = privacy (WEP/TKIP/AES), ' .
-			   'S = Short preamble, s = Short slot time');
-
+			   'S = Short preamble, s = Short slot time', 'info');
+?>
+</div>
+<?php
 include("foot.inc");

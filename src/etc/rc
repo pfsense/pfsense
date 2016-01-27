@@ -25,9 +25,13 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
 # Setup dumpdev/ddb/savecore"
 echo "Configuring crash dumps..."
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/etc/rc.dumpon
 fi
 
@@ -41,7 +45,7 @@ if [ -e /root/force_fsck ]; then
 	/sbin/fsck -y -F -t ufs
 fi
 
-if [ ! "${PLATFORM}" = "cdrom" ]; then
+if [ "${PLATFORM}" != "cdrom" ]; then
 	/sbin/fsck -p -F
 	FSCK_ACTION_NEEDED=0
 	case $? in
@@ -91,9 +95,35 @@ if [ ! "${PLATFORM}" = "cdrom" ]; then
 		fi
 	fi
 
-	USE_MFS_TMPVAR=`/usr/bin/grep -c use_mfs_tmpvar /cf/conf/config.xml`
-	if [ "${PLATFORM}" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
+	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+	unset MOVE_PKG_DATA
+	if [ "$PLATFORM" = "${product}" ]; then
+		# If use MFS var is disabled, move files back to place
+		if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
+			MOVE_PKG_DATA=1
+			rm -rf /var/db/pkg 2>/dev/null
+			rm -rf /var/cache/pkg 2>/dev/null
+			mv /root/var/db/pkg /var/db
+			mv /root/var/cache/pkg /var/cache
+		# If use MFS var is enabled, move files to a safe place
+		elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
+			MOVE_PKG_DATA=1
+			/bin/mkdir -p /root/var/db /root/var/cache
+			mv /var/db/pkg /root/var/db
+			mv /var/cache/pkg /root/var/cache
+		fi
+	elif [ "${PLATFORM}" = "nanobsd" ]; then
+		MOVE_PKG_DATA=1
+	fi
+
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
 		/etc/rc.embedded
+	fi
+
+	if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
+		/bin/mkdir -p /var/db /var/cache
+		ln -sf ../../root/var/db/pkg /var/db/pkg
+		ln -sf ../../root/var/cache/pkg /var/cache/pkg
 	fi
 fi
 
@@ -106,7 +136,7 @@ if [ "${PLATFORM}" = "nanobsd" ]; then
 	if [ $? -eq 0 ]; then
 		/sbin/kldunload zfs
 	fi
-elif [ "$PLATFORM" = "pfSense" ]; then
+elif [ "$PLATFORM" = "${product}" ]; then
 	# Handle ZFS read-only case
 	/sbin/kldstat -qm zfs
 	if [ $? -eq 0 ]; then
@@ -136,15 +166,16 @@ if [ "$CDDEVICE" != "" ]; then
 	cdcontrol -f /dev/"$CDDEVICE" eject
 fi
 
-product=`/usr/bin/grep product_name /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
-hideplatform=`/usr/bin/grep hideplatform /etc/inc/globals.inc | /usr/bin/wc -l`
-varrunpath=`/usr/bin/grep varrun_path /etc/inc/globals.inc | /usr/bin/cut -d'"' -f4`
+# Use php -n here because we are not ready to load extensions yet
+varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
 
-if [ "$PLATFORM" = "pfSense" ] && [ ${USE_MFS_TMPVAR} -eq 0 ]; then
+if [ "$PLATFORM" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
-if [ "$hideplatform" -gt "0" ]; then
+# Use php -n here because we are not ready to load extensions yet
+hideplatform=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var hideplatform)
+if [ "$hideplatform" = "true" ]; then
 	platformbanner="" # hide the platform
 else
 	platformbanner=" on the '${PLATFORM}' platform"
@@ -154,28 +185,15 @@ echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version} ${platformbanner} ..."
+echo "Welcome to ${product} ${version}${platformbanner}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null
 
-if [ "$PLATFORM" = "cdrom" ] ; then
-	# do nothing for cdrom platform
-elif [ "$PLATFORM" = "nanobsd" ] || [ ${USE_MFS_TMPVAR} -gt 0 ]; then
-	# Ensure that old-style PKG packages can be persistent across reboots
-	/bin/mkdir -p /root/var/db/pkg
-	/bin/rm -rf /var/db/pkg
-	/bin/ln -s /root/var/db/pkg/ /var/db/pkg
-else
+if [ "$PLATFORM" = "${product}" ]; then
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
-
-	if [ -d /root/var/db/pkg ]; then
-		# User must have just disabled RAM disks, move these back into place.
-		/bin/mkdir -p /var/db/pkg
-		/bin/mv /root/var/db/pkg /var/db/pkg
-	fi
 fi
 
 if [ "$PLATFORM" = "cdrom" ] ; then
@@ -199,12 +217,28 @@ fi
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
 /bin/rm -rf $varrunpath/*
-if [ "$PLATFORM" != "pfSense" ]; then
+if [ "$PLATFORM" != "${product}" ]; then
 	/bin/rm /var/log/* 2>/dev/null
 fi
 
 # Cleanup configuration files from previous instance
 /bin/rm -rf /var/etc/*
+
+# Workaround for ipsec symlinks, otherwise it's going to break
+# strongswan pkg upgrade
+
+if [ -L /usr/local/etc/ipsec.d ]; then
+	rm -f /usr/local/etc/ipsec.d
+fi
+if [ -L /usr/local/etc/ipsec.conf ]; then
+	rm -f /usr/local/etc/ipsec.conf
+fi
+if [ -L /usr/local/etc/strongswan.d ]; then
+	rm -f /usr/local/etc/strongswan.d
+fi
+if [ -L /usr/local/etc/strongswan.conf ]; then
+	rm -f /usr/local/etc/strongswan.conf
+fi
 
 echo -n "Creating symlinks..."
 # Repair symlinks if they are broken
@@ -273,31 +307,23 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 /bin/rm -f /var/etc/nameserver*
 
 echo -n "."
-DISABLESYSLOGCLOG=`/usr/bin/grep -c disablesyslogclog /cf/conf/config.xml`
-ENABLEFIFOLOG=`/usr/bin/grep -c usefifolog /cf/conf/config.xml`
-LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless lighttpd ntpd gateways resolver routing"
+DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
+LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
 
-DEFAULT_LOG_FILE_SIZE=`/usr/local/bin/xmllint --xpath 'string(//pfsense/syslog/logfilesize)' /conf/config.xml`
-if [ ! ${DEFAULT_LOG_FILE_SIZE} ]; then
-	DEFAULT_LOG_FILE_SIZE=511488
-fi
+DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
+DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}
 
 for logfile in $LOG_FILES; do
-	if [ "$DISABLESYSLOGCLOG" -gt "0" ]; then
+	if [ "$DISABLESYSLOGCLOG" = "true" ]; then
 		/usr/bin/touch /var/log/$logfile.log
 	else
 		if [ ! -f /var/log/$logfile.log ]; then
-			if [ "$ENABLEFIFOLOG" -gt "0" ]; then
-				# generate fifolog files
-				/usr/sbin/fifolog_create -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
-			else
-				/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
-			fi
+			/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
 		fi
 	fi
 done
 
-# change permissions on newly created fifolog files.
+# change permissions on newly created log files.
 /bin/chmod 0600 /var/log/*.log
 
 echo -n "."
@@ -332,16 +358,13 @@ echo "done."
 # Recreate capabilities DB
 /usr/bin/cap_mkdb /etc/login.conf
 
-# Finish update
-if [ -f /cf/conf/upgrade_in_progress ]; then
-	echo "Running second stage of upgrade process..."
-	/usr/local/sbin/pfsense-upgrade.sh -y
-fi
+# Second upgrade stage
+/usr/local/sbin/${product}-upgrade -y -b 2
 
 # Run the php.ini setup file and populate
-# /usr/local/etc/php.ini and /usr/local/lib/php.ini
+# /usr/local/etc/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt
-/usr/local/sbin/php-fpm -c /usr/local/lib/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
 
 # Launch external configuration loader for supported platforms
 if [ "$PLATFORM" = "nanobsd" ]; then
@@ -349,7 +372,7 @@ if [ "$PLATFORM" = "nanobsd" ]; then
 fi
 
 # Launch external configuration loader for supported platforms
-if [ "$PLATFORM" = "pfSense" ]; then
+if [ "$PLATFORM" = "${product}" ]; then
 	/usr/local/sbin/fcgicli -f /etc/ecl.php
 fi
 
@@ -365,7 +388,6 @@ export fcgipath=/var/run/php-fpm.socket
 # let the PHP-based configuration subsystem set up the system now
 echo -n "Launching the init system..."
 /bin/rm -f /cf/conf/backup/backup.cache
-/bin/rm -f /root/lighttpd*
 /usr/bin/touch $varrunpath/booting
 
 if [ "${PLATFORM}" = "nanobsd" ]; then
@@ -411,6 +433,8 @@ if [ "${GMIRROR_STATUS}" != "" ]; then
 	# Setup monitoring/notifications
 	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
 fi
+
+/usr/local/sbin/${product}-upgrade -y -b 3
 
 # Log product version to syslog
 BUILDTIME=`cat /etc/version.buildtime`

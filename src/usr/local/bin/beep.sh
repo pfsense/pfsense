@@ -1,8 +1,8 @@
 #!/bin/sh
 
 
-BEEP=`/usr/bin/grep -c disablebeep /conf/config.xml`
-if [ $BEEP -gt 0 ]; then
+BEEP=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablebeep)
+if [ "$BEEP" = "true" ]; then
 	exit;
 fi
 

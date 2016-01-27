@@ -1,39 +1,62 @@
 <?php
 /*
 	services_captiveportal_vouchers_edit.php
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2007 Marcel Wiget <mwiget@mac.com>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE:	captiveportal
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2007 Marcel Wiget <mwiget@mac.com>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-voucher-edit
-##|*NAME=Services: Captive portal Voucher Rolls page
+##|*NAME=Services: Captive portal Voucher Rolls
 ##|*DESCR=Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
@@ -45,7 +68,7 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), gettext("Edit Voucher Rolls"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit Voucher Rolls"));
 $shortcut_section = "captiveportal-vouchers";
 
 $cpzone = $_GET['zone'];
@@ -104,6 +127,9 @@ if ($_POST) {
 
 	// Look for duplicate roll #
 	foreach ($a_roll as $re) {
+		if (isset($id) && $a_roll[$id] && $a_roll[$id] === $re) {
+			continue;
+		}
 		if ($re['number'] == $_POST['number']) {
 			$input_errors[] = sprintf(gettext("Roll number %s already exists."), $_POST['number']);
 			break;
@@ -139,11 +165,11 @@ if ($_POST) {
 		if ($_POST['count'] != $rollent['count']) {
 			$rollent['count'] = $_POST['count'];
 			$len = ($rollent['count']>>3) + 1;	 // count / 8 +1
-			$rollent['used'] = base64_encode(str_repeat("\000",$len)); // 4 bitmask
+			$rollent['used'] = base64_encode(str_repeat("\000", $len)); // 4 bitmask
 			$rollent['active'] = array();
 			voucher_write_used_db($rollent['number'], $rollent['used']);
 			voucher_write_active_db($rollent['number'], array());	// create empty DB
-			voucher_log(LOG_INFO,sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
+			voucher_log(LOG_INFO, sprintf(gettext('All %1$s vouchers from Roll %2$s marked unused'), $rollent['count'], $rollent['number']));
 		} else {
 			// existing roll has been modified but without changing the count
 			// read active and used DB from ramdisk and store it in XML config
@@ -151,7 +177,7 @@ if ($_POST) {
 			$activent = array();
 			$db = array();
 			$active_vouchers = voucher_read_active_db($rollent['number'], $rollent['minutes']);
-			foreach($active_vouchers as $voucher => $line) {
+			foreach ($active_vouchers as $voucher => $line) {
 				list($timestamp, $minutes) = explode(",", $line);
 				$activent['voucher'] = $voucher;
 				$activent['timestamp'] = $timestamp;
@@ -163,10 +189,11 @@ if ($_POST) {
 
 		unlock($voucherlck);
 
-		if (isset($id) && $a_roll[$id])
+		if (isset($id) && $a_roll[$id]) {
 			$a_roll[$id] = $rollent;
-		else
+		} else {
 			$a_roll[] = $rollent;
+		}
 
 		write_config();
 
@@ -177,13 +204,13 @@ if ($_POST) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form();
 

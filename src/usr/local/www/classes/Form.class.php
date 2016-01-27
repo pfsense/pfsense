@@ -27,11 +27,6 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-require_once('classes/Form/Element.class.php');
-require_once('classes/Form/Input.class.php');
-foreach (glob('classes/Form/*.class.php') as $file)
-	require_once($file);
-
 class Form extends Form_Element
 {
 	const LABEL_WIDTH = 2;
@@ -40,8 +35,6 @@ class Form extends Form_Element
 	protected $_attributes = array(
 		'class' => array('form-horizontal' => true),
 		'method' => 'post',
-		// Empty is interpreted by all browsers to submit to the current URI
-		'action' => '',
 	);
 	protected $_sections = array();
 	protected $_global = array();
@@ -59,6 +52,9 @@ class Form extends Form_Element
 
 		if (false !== $submit)
 			$this->addGlobal($submit);
+
+		if (!isset($this->_attributes['action']))
+			$this->_attributes['action'] = $_SERVER['REQUEST_URI'];
 	}
 
 	public function add(Form_Section $section)

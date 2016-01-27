@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_notifications.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -54,13 +52,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-notifications
-##|*NAME=System: Advanced: Notifications page
+##|*NAME=System: Advanced: Notifications
 ##|*DESCR=Allow access to the 'System: Advanced: Notifications' page.
 ##|*MATCH=system_advanced_notifications.php*
 ##|-PRIV
@@ -131,7 +126,14 @@ if ($_POST) {
 
 		// Growl
 		$config['notifications']['growl']['ipaddress'] = $_POST['ipaddress'];
-		$config['notifications']['growl']['password'] = $_POST['password'];
+		if ($_POST['password'] != DMYPWD) {
+			if ($_POST['password'] == $_POST['password_confirm']) {
+				$config['notifications']['growl']['password'] = $_POST['password'];
+			} else {
+				$input_errors[] = gettext("Growl passwords must match");
+			}
+		}
+
 		$config['notifications']['growl']['name'] = $_POST['name'];
 		$config['notifications']['growl']['notification_name'] = $_POST['notification_name'];
 
@@ -158,7 +160,15 @@ if ($_POST) {
 
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
-		$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+
+		if ($_POST['smtppassword'] != DMYPWD) {
+			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
+				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
+			} else {
+				$input_errors[] = gettext("SMTP passwords must match");
+			}
+		}
+
 		$config['notifications']['smtp']['authentication_mechanism'] = $_POST['smtpauthmech'];
 		$config['notifications']['smtp']['fromaddress'] = $_POST['smtpfromaddress'];
 
@@ -175,24 +185,26 @@ if ($_POST) {
 			unset($config['system']['disablebeep']);
 		}
 
-		write_config();
-		
-		pfSenseHeader("system_advanced_notifications.php");
-		return;
+		if (!$input_errors) {
+			write_config();
+
+			pfSenseHeader("system_advanced_notifications.php");
+			return;
+		}
 
 	}
 
 	if (isset($_POST['test-growl'])) {
 		// Send test message via growl
 		if ($config['notifications']['growl']['ipaddress'] &&
-			$config['notifications']['growl']['password'] = $_POST['password']) {
+		    $config['notifications']['growl']['password'] = $_POST['password']) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
 		}
 	}
 
-	if (isset($_POST['test-smtp'])) {	
+	if (isset($_POST['test-smtp'])) {
 		// Send test message via smtp
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
@@ -201,14 +213,16 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Notifications"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Notifications"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -218,8 +232,6 @@ $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php"
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
 $tab_array[] = array(gettext("Notifications"), true, "system_advanced_notifications.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form;
 
@@ -258,7 +270,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('This is the IP address that you would like to send growl '.
 	'notifications to.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'password',
 	'Password',
 	'text',
@@ -342,12 +354,19 @@ $section->addInput(new Form_Input(
 	['autocomplete' => 'off']
 ))->setHelp('Enter the e-mail address username for SMTP authentication.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'smtppassword',
 	'Notification E-Mail auth password',
 	'password',
 	$pconfig['smtppassword']
-))->setHelp('Enter the e-mail address password for SMTP authentication.');
+))->setHelp('Enter the e-mail account password for SMTP authentication.');
+
+$section->addInput(new Form_Select(
+	'smtpauthmech',
+	'Notification E-Mail auth mechanism',
+	$pconfig['smtpauthmech'],
+	$smtp_authentication_mechanisms
+))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN. ');
 
 $section->addInput(new Form_Input(
 	'test-smtp',
@@ -355,7 +374,7 @@ $section->addInput(new Form_Input(
 	'submit',
 	'Test SMTP settings'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
+	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 
 $form->add($section);
 

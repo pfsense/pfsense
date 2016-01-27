@@ -1,46 +1,65 @@
 <?php
-/* $Id$ */
 /*
 	status_dhcpv6_leases.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2011 Seth Mos
-	Copyright (C) 2004-2009 Scott Ullrich
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/bin/cat	/usr/sbin/ndp	/usr/bin/wc	/usr/bin/grep
-	pfSense_MODULE:	dhcpserver
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2011 Seth Mos
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-dhcpv6leases
-##|*NAME=Status: DHCPv6 leases page
+##|*NAME=Status: DHCPv6 leases
 ##|*DESCR=Allow access to the 'Status: DHCPv6 leases' page.
 ##|*MATCH=status_dhcpv6_leases.php*
 ##|-PRIV
@@ -100,11 +119,11 @@ function leasecmp($a, $b) {
 function adjust_gmt($dt) {
 	global $config;
 
-	$dhcpv6leaseinlocaltime == "no";
+	$dhcpv6leaseinlocaltime = "no";
 	if (is_array($config['dhcpdv6'])) {
 		$dhcpdv6 = $config['dhcpdv6'];
-		foreach ($dhcpdv6 as $dhcpv6leaseinlocaltime) {
-			$dhcpv6leaseinlocaltime = $dhcpv6leaseinlocaltime['dhcpv6leaseinlocaltime'];
+		foreach ($dhcpdv6 as $dhcpdv6params) {
+			$dhcpv6leaseinlocaltime = $dhcpdv6params['dhcpv6leaseinlocaltime'];
 			if ($dhcpv6leaseinlocaltime == "yes") {
 				break;
 			}
@@ -187,6 +206,16 @@ $i = 0;
 $l = 0;
 $p = 0;
 
+// Translate these once so we don't do it over and over in the loops below.
+$online_string = gettext("online");
+$offline_string = gettext("offline");
+$active_string = gettext("active");
+$expired_string = gettext("expired");
+$reserved_string = gettext("reserved");
+$released_string = gettext("released");
+$dynamic_string = gettext("dynamic");
+$static_string = gettext("static");
+
 // Put everything together again
 while ($i < $leases_count) {
 	$entry = array();
@@ -238,23 +267,23 @@ while ($i < $leases_count) {
 				} else {
 					$entry['duid'] = $data[$f+1];
 				}
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "iaaddr":
 				$entry['ip'] = $data[$f+1];
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				if (in_array($entry['ip'], array_keys($ndpdata))) {
-					$entry['online'] = 'online';
+					$entry['online'] = $online_string;
 				} else {
-					$entry['online'] = 'offline';
+					$entry['online'] = $offline_string;
 				}
 				$f = $f+2;
 				break;
 			case "iaprefix":
 				$is_prefix = true;
 				$entry['prefix'] = $data[$f+1];
-				$entry['type'] = "dynamic";
+				$entry['type'] = $dynamic_string;
 				$f = $f+2;
 				break;
 			case "starts":
@@ -284,19 +313,19 @@ while ($i < $leases_count) {
 			case "binding":
 				switch ($data[$f+2]) {
 					case "active":
-						$entry['act'] = "active";
+						$entry['act'] = $active_string;
 						break;
 					case "free":
-						$entry['act'] = "expired";
-						$entry['online'] = "offline";
+						$entry['act'] = $expired_string;
+						$entry['online'] = $offline_string;
 						break;
 					case "backup":
-						$entry['act'] = "reserved";
-						$entry['online'] = "offline";
+						$entry['act'] = $reserved_string;
+						$entry['online'] = $offline_string;
 						break;
 					case "released":
-						$entry['act'] = "released";
-						$entry['online'] = "offline";
+						$entry['act'] = $released_string;
+						$entry['online'] = $offline_string;
 				}
 				$f = $f+1;
 				break;
@@ -308,11 +337,11 @@ while ($i < $leases_count) {
 				$f = $f+2;
 				break;
 			case "client-hostname":
-				if($data[$f+1] != "") {
-					$entry['hostname'] = preg_replace('/"/','',$data[$f+1]);
+				if ($data[$f+1] != "") {
+					$entry['hostname'] = preg_replace('/"/', '', $data[$f+1]);
 				} else {
 					$hostname = gethostbyaddr($entry['ip']);
-					if($hostname != "") {
+					if ($hostname != "") {
 						$entry['hostname'] = $hostname;
 					}
 				}
@@ -359,11 +388,11 @@ foreach ($config['interfaces'] as $ifname => $ifarr) {
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
-			$slease['act'] = "static";
+			$slease['act'] = $static_string;
 			if (in_array($slease['ip'], array_keys($ndpdata))) {
-				$slease['online'] = 'online';
+				$slease['online'] = $online_string;
 			} else {
-				$slease['online'] = 'offline';
+				$slease['online'] = $offline_string;
 			}
 
 			$leases[] = $slease;
@@ -381,7 +410,7 @@ if (count($pools) > 0) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>
 	<div class="panel-body">
-		<table class="table">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("Failover Group")?></a></th>
@@ -392,7 +421,7 @@ if (count($pools) > 0) {
 			</tr>
 		</thead>
 		<tbody>
-<? foreach ($pools as $data):?>
+<?php foreach ($pools as $data):?>
 			<tr>
 				<td><?=$data['name']?></td>
 				<td><?=$data['mystate']?></td>
@@ -400,7 +429,7 @@ if (count($pools) > 0) {
 				<td><?=$data['peerstate']?></td>
 				<td><?=adjust_gmt($data['peerdate'])?></td>
 			</tr>
-<? endforeach?>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>
@@ -409,14 +438,15 @@ if (count($pools) > 0) {
 /* only print pool status when we have one */
 }
 
-if (empty($leases))
-	print '<div class="alert alert-warning" role="alert">'. gettext("No leases file found. Is the DHCP server active?") .'</div>';
+if (empty($leases)) {
+	print '<div class="alert alert-warning" role="alert">' . gettext("No leases file found. Is the DHCP server active?") . '</div>';
+}
 
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
 	<div class="panel-body">
-		<table class="table">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><!-- icon --></th>
@@ -429,24 +459,27 @@ if (empty($leases))
 				<th><?=gettext("End")?></th>
 				<th><?=gettext("Online")?></th>
 				<th><?=gettext("Lease Type")?></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 		<tbody>
 <?php
 foreach ($leases as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
-		$icon = 'icon-ok-circle';
-	elseif ($data['act'] == 'expired')
-		$icon = 'icon-ban-circle';
-	else
-		$icon = 'icon-remove-circle';
+	if ($data['act'] == $active_string) {
+		$icon = 'fa-check-circle-o';
+	} elseif ($data['act'] == $expired_string) {
+		$icon = 'fa-ban';
+	} else {
+		$icon = 'fa-times-circle-o';
+	}
 
-	if ($data['act'] == "static") {
+	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-			if(is_array($dhcpifconf['staticmap'])) {
+			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddr']) {
 						$data['if'] = $dhcpif;
@@ -455,8 +488,9 @@ foreach ($leases as $data):
 				}
 			}
 			/* exit as soon as we have an interface */
-			if ($data['if'] != "")
+			if ($data['if'] != "") {
 				break;
+			}
 		}
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
@@ -466,45 +500,37 @@ foreach ($leases as $data):
 	$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 ?>
 			<tr>
-				<td><i class="icon <?=$icon?>"></i></td>
+				<td><i class="fa <?=$icon?>"></i></td>
 				<td><?=$data['ip']?></td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
 				<td>
 					<?=$mac?>
 
-					<? if(isset($mac_man[$mac_hi])):?>
+					<?php if (isset($mac_man[$mac_hi])):?>
 						(<?=$mac_man[$mac_hi]?>)
-					<?endif?>
+					<?php endif; ?>
 				</td>
 				<td><?=htmlentities($data['hostname'])?></td>
-<? if ($data['type'] != "static"):?>
+<?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
-<? else: ?>
+<?php else: ?>
 				<td>n/a</td>
 				<td>n/a</td>
-<? endif; ?>
+<?php endif; ?>
 				<td><?=$data['online']?></td>
 				<td><?=$data['act']?></td>
 				<td>
-<? if ($data['type'] == "dynamic"): ?>
-					<a class="btn btn-xs btn-primary" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>">
-						<?=gettext("add static mapping")?>
-					</a>
-<? endif; ?>
-
-					<a class="btn btn-xs btn-success" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>">
-						add WOL mapping
-					</a>
-
-<? if ($data['type'] == "dynamic" && $data['online'] != "online"):?>
-					<a class="btn btn-xs btn-danger" href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>">
-						delete lease
-					</a>
-<? endif?>
+<?php if ($data['type'] == $dynamic_string): ?>
+					<a <a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+<?php endif; ?>
+					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+<?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>
+					<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
+<?php endif; ?>
 				</td>
-<? endforeach; ?>
+<?php endforeach; ?>
 			</tr>
 		</tbody>
 		</table>
@@ -514,7 +540,7 @@ foreach ($leases as $data):
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
 	<div class="panel-body">
-		<table class="table">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("IPv6 Prefix")?></th>
@@ -528,19 +554,21 @@ foreach ($leases as $data):
 		<tbody>
 <?php
 foreach ($prefixes as $data):
-	if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)
+	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
+	}
 
-	if ($data['act'] == 'active')
-		$icon = 'icon-ok-circle';
-	elseif ($data['act'] == 'expired')
-		$icon = 'icon-ban-circle';
-	else
-		$icon = 'icon-remove-circle';
+	if ($data['act'] == $active_string) {
+		$icon = 'fa-check-circle-o';
+	} elseif ($data['act'] == $expired_string) {
+		$icon = 'fa-ban';
+	} else {
+		$icon = 'fa-times-circle-o';
+	}
 
-	if ($data['act'] == "static") {
+	if ($data['act'] == $static_string) {
 		foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-			if(is_array($dhcpifconf['staticmap'])) {
+			if (is_array($dhcpifconf['staticmap'])) {
 				foreach ($dhcpifconf['staticmap'] as $staticent) {
 					if ($data['ip'] == $staticent['ipaddr']) {
 						$data['if'] = $dhcpif;
@@ -549,8 +577,9 @@ foreach ($prefixes as $data):
 				}
 			}
 			/* exit as soon as we have an interface */
-			if ($data['if'] != "")
+			if ($data['if'] != "") {
 				break;
+			}
 		}
 	} else {
 		$data['if'] = convert_real_interface_to_friendly_interface_name(guess_interface_from_ip($data['ip']));
@@ -561,25 +590,25 @@ foreach ($prefixes as $data):
 	}
 ?>
 			<tr>
-				<td><i class="icon <?=$icon?>"></i></td>
+				<td><i class="fa <?=$icon?>"></i></td>
 				<td>
 					<?=$data['prefix']?>
-<? if ($mappings[$data['iaid'] . $data['duid']]): ?>
+<?php if ($mappings[$data['iaid'] . $data['duid']]): ?>
 					<br />
 					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
-<? endif; ?>
+<?php endif; ?>
 				</td>
 				<td><?=$data['iaid']?></td>
 				<td><?=$data['duid']?></td>
-<? if ($data['type'] != "static"):?>
+<?php if ($data['type'] != $static_string):?>
 				<td><?=adjust_gmt($data['start'])?></td>
 				<td><?=adjust_gmt($data['end'])?></td>
-<? else: ?>
+<?php else: ?>
 				<td>n/a</td>
 				<td>n/a</td>
-<? endif; ?>
+<?php endif; ?>
 				<td><?=$data['act']?></td>
-<? endforeach; ?>
+<?php endforeach; ?>
 			</tr>
 		</tbody>
 		</table>

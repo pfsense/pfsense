@@ -1,14 +1,12 @@
 <?php
-/****h* pfSense/service-utils
-	NAME
-		service-utils.inc - Service facility
-	DESCRIPTION
-		This file contains various functions used by the pfSense service facility.
-	HISTORY
-	$Id$
+/*
+	service-utils.inc
 
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2005-2006 Colin Smith (ethethlay@gmail.com)
+	Copyright (c) 2005-2016 Electric Sheep Fencing, LLC.
 	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -16,26 +14,44 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	RISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
- */
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/pgrep /bin/sh /usr/bin/killall
-	pfSense_MODULE:	utils
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+
 require_once("globals.inc");
 require_once("captiveportal.inc");
 require_once("openvpn.inc");
@@ -138,6 +154,8 @@ function stop_service($name) {
 				}
 				if (!empty($service['stopcmd'])) {
 					eval($service['stopcmd']);
+				} elseif (!empty($service['executable'])) {
+					mwexec("/usr/bin/killall " . escapeshellarg($service['executable']));
 				}
 
 				break;
@@ -153,7 +171,9 @@ function restart_service($name) {
 		return;
 	}
 
-	stop_service($name);
+	if (is_service_running($name)) {
+		stop_service($name);
+	}
 	start_service($name);
 
 	if (is_array($config['installedpackages']) && is_array($config['installedpackages']['service'])) {
@@ -318,7 +338,7 @@ function get_services() {
 	$gateways_arr = return_gateways_array();
 	if (is_array($gateways_arr)) {
 		$pconfig = array();
-		$pconfig['name'] = "apinger";
+		$pconfig['name'] = "dpinger";
 		$pconfig['description'] = gettext("Gateway Monitoring Daemon");
 		$services[] = $pconfig;
 	}
@@ -344,7 +364,7 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
-	if (isset($config['ipsec']['enable'])) {
+	if (ipsec_enabled()) {
 		$pconfig = array();
 		$pconfig['name'] = "ipsec";
 		$pconfig['description'] = gettext("IPsec VPN");
@@ -439,9 +459,9 @@ function get_service_status($service) {
 			$running = is_pid_running("{$g['varrun_path']}/openvpn_{$service['mode']}{$service['vpnid']}.pid");
 			break;
 		case "captiveportal":
-			$running = is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal.pid");
+			$running = is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal.pid");
 			if (isset($config['captiveportal'][$service['zone']]['httpslogin'])) {
-				$running = $running && is_pid_running("{$g['varrun_path']}/lighty-{$service['zone']}-CaptivePortal-SSL.pid");
+				$running = $running && is_pid_running("{$g['varrun_path']}/nginx-{$service['zone']}-CaptivePortal-SSL.pid");
 			}
 			break;
 		case "vhosts-http":
@@ -465,7 +485,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-play" : "icon icon-large icon-play";
+		$output .= ($smallicon) ? "fa fa-play" : "fa fa-lg fa-play";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -474,7 +494,7 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 		$service_enabled = is_service_enabled($service['name']);
 		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
 		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "icon icon-remove" : "icon icon-large icon-remove";
+		$output .= ($smallicon) ? "fa fa-times" : "fa fa-lg fa-times";
 		$output .= "\" ></i></a>";
 		if ($withtext) {
 			$output .= "&nbsp;" . $statustext;
@@ -483,7 +503,9 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	return $output;
 }
 
-function get_service_control_links($service, $addname = false) {
+
+// This version proved GET formatted links
+function get_service_control_GET_links($service, $addname = false) {
 	global $g;
 	$output = "";
 	$stitle = ($addname) ? $service['name'] . " " : "";
@@ -502,33 +524,87 @@ function get_service_control_links($service, $addname = false) {
 	if (get_service_status($service)) {
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=restartservice&amp;service={$service['name']}'>";
+				$output .= "<a href=\"status_services.php?mode=restartservice&amp;service={$service['name']}\">";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Restart %sService"), $stitle) . "' border='0' src='/themes/".$g['theme']."/images/icons/icon_service_restart.gif' alt='restart' /></a>\n";
+		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
 		switch ($service['name']) {
 			case "openvpn":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;vpnmode={$service['mode']}&amp;id={$service['vpnid']}\">";
 				break;
 			case "captiveportal":
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}&amp;zone={$service['zone']}\">";
 				break;
 			default:
-				$output .= "<a href='status_services.php?mode=stopservice&amp;service={$service['name']}'>";
+				$output .= "<a href=\"status_services.php?mode=stopservice&amp;service={$service['name']}\">";
 		}
-		$output .= "<img style=\"vertical-align:middle\" title='" . sprintf(gettext("Stop %sService"), $stitle) . "' border='0' src='/themes/" . $g['theme'] . "/images/icons/icon_service_stop.gif' alt='stop' />";
-		$output .= "</a>";
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
 	} else {
 		$service_enabled = is_service_enabled($service['name']);
 
 		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
 			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
-			$output .= '<i class="icon icon-play-circle"></i></a> ';
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
+		}
+	}
+
+	return $output;
+}
+
+function get_service_control_links($service, $addname = false) {
+	global $g;
+	$output = "";
+	$stitle = ($addname) ? $service['name'] . " " : "";
+
+	switch ($service['name']) {
+		case "openvpn":
+			$link = '<a title="%s" href="#" id="openvpn-%s-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+		break;
+		case "captiveportal":
+			$link = '<a title="%s" href="#" id="captiveportal-%s-' . $service['zone'] . '">';
+		break;
+		default:
+			$link = '<a title="%s" href="#" id="%s-' . $service['name'] . '">';
+	}
+
+	if (get_service_status($service)) {
+		switch ($service['name']) {
+			case "openvpn":
+				$output .= '<a href="#" id="openvpn-restartservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+				break;
+			case "captiveportal":
+				$output .= '<a href="#" id="captiveportal-restartservice-' . $service['zone'] . '">';
+				break;
+			default:
+				$output .= '<a href="#" id="restartservice-' . $service['name'] . '" >';
+		}
+
+		$output .= "<i class=\"fa fa-repeat\" title=\"" . sprintf(gettext("Restart %sService"), $stitle) . "\"></i></a>\n";
+
+		switch ($service['name']) {
+			case "openvpn":
+				$output .= '<a href="#" id="openvpn-stopservice-' . $service['mode'] . '-' . $service['vpnid'] . '" >';
+				break;
+			case "captiveportal":
+				$output .= '<a href="#" id="captiveportal-stopservice-' . $service['zone'] . '">';
+				break;
+			default:
+				$output .= '<a href="#" id="stopservice-' . $service['name'] . '">';
+		}
+
+		$output .= "<i class=\"fa fa-stop-circle-o\" title=\"" . sprintf(gettext("Stop %sService"), $stitle) . "\"></i></a>";
+
+	} else {
+		$service_enabled = is_service_enabled($service['name']);
+
+		if ($service['name'] == 'openvpn' || $service['name'] == 'captiveportal' || $service_enabled) {
+			$output .= sprintf($link, sprintf(gettext("Start %sService"), $stitle), 'startservice');
+			$output .= '<i class="fa fa-play-circle"></i></a> ';
 		}
 	}
 
@@ -549,7 +625,7 @@ function service_control_start($name, $extras) {
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':
@@ -609,8 +685,8 @@ function service_control_stop($name, $extras) {
 			break;
 		case 'captiveportal':
 			$zone = htmlspecialchars($extras['zone']);
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
 			break;
 		case 'ntpd':
 			killbyname("ntpd");
@@ -618,8 +694,8 @@ function service_control_stop($name, $extras) {
 		case 'openntpd':
 			killbyname("openntpd");
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
+			stop_dpinger();
 			break;
 		case 'bsnmpd':
 			killbypid("{$g['varrun_path']}/snmpd.pid");
@@ -680,16 +756,15 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'captiveportal':
 			$zone = htmlspecialchars($extras['zone']);
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal.pid");
-			killbypid("{$g['varrun_path']}/lighty-{$zone}-CaptivePortal-SSL.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal.pid");
+			killbypid("{$g['varrun_path']}/nginx-{$zone}-CaptivePortal-SSL.pid");
 			captiveportal_init_webgui_zonename($zone);
 			break;
 		case 'ntpd':
 		case 'openntpd':
 			system_ntp_configure();
 			break;
-		case 'apinger':
-			killbypid("{$g['varrun_path']}/apinger.pid");
+		case 'dpinger':
 			setup_gateways_monitor();
 			break;
 		case 'bsnmpd':

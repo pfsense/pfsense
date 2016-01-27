@@ -1,8 +1,6 @@
 #!/usr/local/bin/php-cgi -f
 <?php
 /*
-	$Id$
-
 	rc.banner
 	part of pfSense
 	Copyright (C) 2005 Scott Ullrich and Colin Smith
@@ -85,6 +83,9 @@
 				break;
 			case "track6":
 				$class6 = "/t6";
+				break;
+			default:
+				$class6 = "";
 				break;
 		}
 		$ipaddr = get_interface_ip($ifname);

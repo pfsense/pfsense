@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_1to1.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1
-##|*NAME=Firewall: NAT: 1:1 page
+##|*NAME=Firewall: NAT: 1:1
 ##|*DESCR=Allow access to the 'Firewall: NAT: 1:1' page.
 ##|*MATCH=firewall_nat_1to1.php*
 ##|-PRIV
@@ -78,18 +75,20 @@ if (!is_array($config['nat']['onetoone'])) {
 $a_1to1 = &$config['nat']['onetoone'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if($_POST['order-store']) {
+if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_1to1_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_1to1_new[] = $a_1to1[$id];
+		}
 
 		$a_1to1 = $a_1to1_new;
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('natconf');
+		}
 
 		header("Location: firewall_nat_1to1.php");
 		exit;
@@ -145,7 +144,7 @@ if (isset($_POST['del_x'])) {
 		} else {
 			$a_1to1[$_GET['id']]['disabled'] = true;
 		}
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
+		if (write_config(gettext("Firewall: NAT: 1 to 1, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -156,12 +155,14 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
-	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
-					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+if (is_subsystem_dirty('natconf')) {
+	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
+					gettext('You must apply the changes in order for them to take effect.'));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), false, "firewall_nat.php");
@@ -172,7 +173,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("NAT 1 to 1 mappings")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1 to 1 mappings")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -207,7 +208,10 @@ display_top_tabs($tab_array);
 
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="<?= ($iconfn == "pass") ? "icon-ok":"icon-remove"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+<?php 				if (isset($natent['nobinat'])) { ?>
+								&nbsp;<i class="fa fa-hand-paper-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+<?php 				} ?>
 							</a>
 						</td>
 						<td>
@@ -245,9 +249,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="btn btn-xs btn-info"		  title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1.php?id=<?=$i?>"><?=gettext("Edit")?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 
 					</tr>
@@ -261,63 +265,69 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>"><?=gettext('Add new mapping')?></a>
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>"	 />
-		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="store changes" disabled="disabled" />
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<a href="firewall_nat_1to1_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected mappings')?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save mapping order')?>">
+			<i class="fa fa-save icon-embed-btn"></i>
+			<?=gettext("Save")?>
+		</button>
 	</nav>
 </form>
 
-<div>
-<?php
-
-print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
+<div class="infoblock">
+<?=print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
 			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
-					   'using the WAN IP address will no longer function.'));
-?>
+					   'using the WAN IP address will no longer function.'), 'info', false)?>
+
 </div>
 
-<script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
-	// Make rules draggable/sortable
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			dirty = true;
 		}
 	});
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
+	});
+
+	// Globals
+	saving = false;
+	dirty = false;
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (!saving && dirty) {
+			return ("<?=gettext('You have moved one or more NAT 1:1 mappings but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
+//]]>
 </script>
 <?php include("foot.inc"); ?>

@@ -1,67 +1,64 @@
 <?php
-/* $Id$ */
 /*
 	index.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004-2012 Scott Ullrich
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution. 
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
  *
- *  3. All advertising materials mentioning features or use of this software 
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
  *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
  *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
  *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
  *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
  *
- *  ====================================================================
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE:	interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-login/logout
-##|*NAME=System: Login / Logout page / Dashboard
+##|*NAME=System: Login / Logout / Dashboard
 ##|*DESCR=Allow access to the 'System: Login / Logout' page and Dashboard.
 ##|*MATCH=index.php*
 ##|-PRIV
@@ -78,10 +75,15 @@ require_once('functions.inc');
 require_once('notices.inc');
 require_once("pkg-utils.inc");
 
+if (isset($_POST['closenotice'])) {
+	close_notice($_POST['closenotice']);
+	sleep(1);
+	exit;
+}
+
 if (isset($_GET['closenotice'])) {
 	close_notice($_GET['closenotice']);
-	echo get_menu_messages();
-	exit;
+	sleep(1);
 }
 
 if ($g['disablecrashreporter'] != true) {
@@ -93,30 +95,58 @@ if ($g['disablecrashreporter'] != true) {
 			$x++;
 		}
 	}
+
 	$crash = glob("/var/crash/*");
 	$skip_files = array(".", "..", "minfree", "");
+
 	if (is_array($crash)) {
 		foreach ($crash as $c) {
 			if (!in_array(basename($c), $skip_files)) {
 				$x++;
 			}
 		}
+
 		if ($x > 0) {
-			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information."), $g['product_name']);
+			$class = "warning";
 		}
 	}
 }
 
-##build list of widgets
-foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file)
-{
-	$name = basename($file, '.widget.php');
-	$widgets[ $name ] = array('name' => ucwords(str_replace('_', ' ', $name)), 'display' => 'none');
+##build list of php include files
+$phpincludefiles = array();
+$directory = "/usr/local/www/widgets/include/";
+$dirhandle = opendir($directory);
+$filename = "";
+
+while (false !== ($filename = readdir($dirhandle))) {
+	if (!stristr($filename, ".inc")) {
+		continue;
+	}
+	$phpincludefiles[] = $filename;
 }
 
-##insert the system information widget as first, so as to be displayed first
-unset($widgets['system_information']);
-$widgets = array_merge(array('system_information' => array('name' => 'System Information')), $widgets);
+## Include each widget include file.
+## These define vars that specify the widget title and title link.
+foreach ($phpincludefiles as $includename) {
+	if (file_exists($directory . $includename)) {
+		include($directory . $includename);
+	}
+}
+
+##build list of widgets
+foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
+	$name = basename($file, '.widget.php');
+	// Get the widget title that should be in a var defined in the widget's inc file.
+	$widgettitle = ${$name . '_title'};
+
+	if (empty(trim($widgettitle))) {
+		// Fall back to constructing a title from the file name of the widget.
+		$widgettitle = ucwords(str_replace('_', ' ', $name));
+	}
+
+	$widgets[ $name ] = array('name' => $widgettitle, 'display' => 'none');
+}
 
 ##if no config entry found, initialize config entry
 if (!is_array($config['widgets'])) {
@@ -124,11 +154,12 @@ if (!is_array($config['widgets'])) {
 }
 
 if ($_POST && $_POST['sequence']) {
+
 	$config['widgets']['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$config['widgets'][$widgetname . '-config'] = $_POST[$name . '-config'];
+			$config['widgets'][$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
@@ -151,7 +182,7 @@ if (file_exists("/usr/sbin/swapinfo")) {
 ## If packages are installed lets resync
 if (file_exists('/conf/needs_package_sync')) {
 	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		if ($g['platform'] == "pfSense" || $g['platform'] == "nanobsd") {
+		if ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd") {
 			## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
 			## the package reinstall page. That is about to be done by the boot script anyway.
 			## The code in head.inc will put up a notice to the user.
@@ -175,17 +206,19 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <html lang="en">
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
-	<title>{$g['product_name']}.localdomain - {$g['product_name']} first time setup</title>
+	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
 	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 </head>
 <body id="loading-wizard" class="no-menu">
 	<div id="jumbotron">
 		<div class="container">
 			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
-				<p><?=sprintf(gettext("Welcome to %s!\n"), $g['product_name'])?></p>
+				<font color="white">
+				<p><h3><?=sprintf(gettext("Welcome to %s!\n"), $g['product_name'])?></h3></p>
 				<p><?=gettext("One moment while we start the initial setup wizard.")?></p>
 				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
 				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
+				</font>
 			</div>
 		</div>
 	</div>
@@ -206,13 +239,15 @@ if ($fd) {
 			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
 			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
 			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
-			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^aesni.: (.*?),/", $dmesgl, $matches)) {
+			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}
 	}
 	fclose($fd);
+	if (!isset($hwcrypto) && get_single_sysctl("dev.aesni.0.%desc")) {
+		$hwcrypto = get_single_sysctl("dev.aesni.0.%desc");
+	}
 }
 
 ##build widget saved list information
@@ -220,17 +255,35 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	$pconfig['sequence'] = $config['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
-	foreach (explode(',', $pconfig['sequence']) as $line)
-	{
+	foreach (explode(',', $pconfig['sequence']) as $line) {
 		list($file, $col, $display) = explode(':', $line);
 
 		// be backwards compatible
+		// If the display column information is missing, we will assign a temporary
+		// column here. Next time the user saves the dashboard it will fix itself
+		if ($col == "") {
+			if ($file == "system_information") {
+				$col = "col1";
+			} else {
+				$col = "col2";
+			}
+		}
+
 		$offset = strpos($file, '-container');
-		if (false !== $offset)
+		if (false !== $offset) {
 			$file = substr($file, 0, $offset);
+		}
+
+		// Get the widget title that should be in a var defined in the widget's inc file.
+		$widgettitle = ${$file . '_title'};
+
+		if (empty(trim($widgettitle))) {
+			// Fall back to constructing a title from the file name of the widget.
+			$widgettitle = ucwords(str_replace('_', ' ', $file));
+		}
 
 		$widgetsfromconfig[ $file ] = array(
-			'name' => ucwords(str_replace('_', ' ', $file)),
+			'name' => $widgettitle,
 			'col' => $col,
 			'display' => $display,
 		);
@@ -241,200 +294,224 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 
 	##find custom configurations of a particular widget and load its info to $pconfig
 	foreach ($widgets as $widgetname => $widgetconfig) {
-		if ($config['widgets'][$name . '-config']) {
-			$pconfig[$name . '-config'] = $config['widgets'][$name . '-config'];
+		if ($config['widgets'][$widgetname . '-config']) {
+			$pconfig[$widgetname . '-config'] = $config['widgets'][$widgetname . '-config'];
 		}
 	}
 }
 
-##build list of php include files
-$phpincludefiles = array();
-$directory = "/usr/local/www/widgets/include/";
-$dirhandle = opendir($directory);
-$filename = "";
-while (false !== ($filename = readdir($dirhandle))) {
-	$phpincludefiles[] = $filename;
-}
-foreach ($phpincludefiles as $includename) {
-	if (!stristr($includename, ".inc")) {
-		continue;
-	}
-	if (file_exists($directory . $includename)) {
-		include($directory . $includename);
-	}
+## Get the configured options for Show/Hide available widgets panel.
+$dashboard_available_widgets_hidden = isset($config['system']['webgui']['dashboardavailablewidgetspanel']) ? false : true;
+
+if ($dashboard_available_widgets_hidden) {
+	$panel_state = 'out';
+	$panel_body_state = 'in';
+} else {
+	$panel_state = 'in';
+	$panel_body_state = 'out';
 }
 
 ## Set Page Title and Include Header
-$pgtitle = array(gettext("Status: Dashboard"));
+$pgtitle = array(gettext("Status"), gettext("Dashboard"));
 include("head.inc");
 
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers()) {
-	print_info_box(package_server_mismatch_message());
-}
-
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 ?>
 
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Available Widgets"); ?></h2></div>
-	<div class="panel-body">
-<?php foreach ($widgets as $widgetname => $widgetconfig): ?>
-	<?php if ($widgetconfig['display'] == 'none'): ?>
-		<div class="col-sm-3"><a href="#"><i class="icon icon-plus"></i> <?=$widgetconfig['name']?></a></div>
+<div class="panel panel-default collapse <?=$panel_state?>" id="widget-available">
+	<div class="panel-heading">
+		<h2 class="panel-title"><?=gettext("Available Widgets"); ?>
+			<span class="widget-heading-icon">
+				<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
+	</div>
+	<div id="widget-available_panel-body" class="panel-body collapse <?=$panel_body_state?>">
+		<div class="content">
+			<div class="row">
+<?php
+
+// Build the Available Widgets table using a sorted copy of the $widgets array
+$available = $widgets;
+uasort($available, function($a, $b){ return strcasecmp($a['name'], $b['name']); });
+
+foreach ($available as $widgetname => $widgetconfig):
+	if ($widgetconfig['display'] == 'none'):
+?>
+		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
 	<?php endif; ?>
 <?php endforeach; ?>
-	</div>
-</div>
-
-<div class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title"><?=gettext("Welcome to the Dashboard page"); ?>!</h4>
-			</div>
-			<div class="modal-body">
-				<p>
-					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-					<?=gettext("To get started click the");?> FIXME <?=gettext("icon to add widgets.");?><br />
-					<br />
-					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
-				</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
 
 <div class="hidden" id="widgetSequence">
-	<form action="/" method="post" id="widgetSequence">
+	<form action="/" method="post" id="widgetSequence_form" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
-
-		<button type="submit" class="btn btn-primary">Store widget configuration</button>
 	</form>
 </div>
 
 <?php
 $widgetColumns = array();
-foreach ($widgets as $widgetname => $widgetconfig)
-{
-	if ($widgetconfig['display'] == 'none')
+foreach ($widgets as $widgetname => $widgetconfig) {
+	if ($widgetconfig['display'] == 'none') {
 		continue;
+	}
 
 	if (!file_exists('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php')) {
 		continue;
 	}
 
-	if (!isset($widgetColumns[ $widgetconfig['col'] ]))
+	if (!isset($widgetColumns[ $widgetconfig['col'] ])) {
 		$widgetColumns[ $widgetconfig['col'] ] = array();
+	}
 
 	$widgetColumns[ $widgetconfig['col'] ][ $widgetname ] = $widgetconfig;
 }
 ?>
 
 <div class="row">
-<?php foreach ($widgetColumns as $column => $columnWidgets):?>
-	<div class="col-md-6" id="widgets-<?=$column?>">
-<?php foreach ($columnWidgets as $widgetname => $widgetconfig):?>
-		<div class="panel panel-default" id="widget-<?=$widgetname?>">
-			<div class="panel-heading">
-				<?=$widgetconfig['name']?>
-				<span class="icons">
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-footer" class="config hidden">
-						<i class="icon icon-wrench"></i>
-					</a>
-					<a data-toggle="collapse" href="#widget-<?=$widgetname?> .panel-body">
-						<!--  actual icon is determined in css based on state of body -->
-						<i class="icon icon-plus-sign"></i>
-					</a>
-					<a data-toggle="close" href="#widget-<?=$widgetname?>">
-						<i class="icon icon-remove-sign"></i>
-					</a>
-				</span>
-			</div>
-			<div class="panel-body collapse<?=($widgetconfig['display']=='close' ? '' : ' in')?>">
-				<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
-			</div>
-		</div>
-<?php endforeach; ?>
-	</div>
-<?php endforeach; ?>
+<?php
+	$columnWidth = 12 / $numColumns;
+
+	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
+		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
+
+		//if col$currentColumnNumber exists
+		if (isset($widgetColumns['col'.$currentColumnNumber])) {
+			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
+
+			foreach ($columnWidgets as $widgetname => $widgetconfig) {
+				// Compose the widget title and include the title link if available
+				$widgetlink = ${$widgetname . '_title_link'};
+
+				if ((strlen($widgetlink) > 0)) {
+					$wtitle = '<a href="' . $widgetlink . '"> ' . $widgetconfig['name'] . '</a>';
+				} else {
+					$wtitle = $widgetconfig['name'];
+				}
+				?>
+					<div class="panel panel-default" id="widget-<?=$widgetname?>">
+					<div class="panel-heading">
+						<h2 class="panel-title">
+							<?=$wtitle?>
+							<span class="widget-heading-icon">
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
+									<i class="fa fa-wrench"></i>
+								</a>
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
+									<!--  actual icon is determined in css based on state of body -->
+									<i class="fa fa-plus-circle"></i>
+								</a>
+								<a data-toggle="close" href="#widget-<?=$widgetname?>">
+									<i class="fa fa-times-circle"></i>
+								</a>
+							</span>
+						</h2>
+					</div>
+					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
+						<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
+					</div>
+				</div>
+				<?php
+			}
+		} else {
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
+		}
+		echo "</div>";
+	}
+?>
+
 </div>
 
-<script>
-function updateWidgets()
-{
+<script type="text/javascript">
+//<![CDATA[
+
+dirty = false;
+function updateWidgets(newWidget) {
 	var sequence = '';
 
-	$('.container .col-md-6').each(function(idx, col){
-		$('.panel', col).each(function(idx, widget){
+	$('.container .col-md-<?=$columnWidth?>').each(function(idx, col) {
+		$('.panel', col).each(function(idx, widget) {
 			var isOpen = $('.panel-body', widget).hasClass('in');
 
-			sequence += widget.id.split('-')[1] +':'+ col.id.split('-')[1] +':'+ (isOpen ? 'open' : 'close') +',';
+			sequence += widget.id.split('-')[1] + ':' + col.id.split('-')[1] + ':' + (isOpen ? 'open' : 'close') + ',';
 		});
 	});
 
-	$('#widgetSequence').removeClass('hidden');
-	$('input[name=sequence]', $('#widgetSequence')).val(sequence);
+	if (typeof newWidget !== 'undefined') {
+		// The system_information widget is always added to column one. Others go in column two
+		if (newWidget == "system_information") {
+			sequence += newWidget + ':' + 'col1:open';
+		} else {
+		sequence += newWidget + ':' + 'col2:open';
+		}
+	}
+
+	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
 events.push(function() {
-	// Hide configuration button for panels without configuration
-	$('.container .panel-heading a.config').each(function (idx, el){
-		var config = $(el).parents('.panel').children('.panel-footer');
-		if (config.length == 1)
-			$(el).removeClass('hidden');
-	});
-
-	// Initial state & toggle icons of collapsed panel
-	$('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el){
-		var body = $(el).parents('.panel').children('.panel-body'), isOpen = body.hasClass('in');
-		$(el).toggleClass('icon-plus-sign', !isOpen);
-		$(el).toggleClass('icon-minus-sign', isOpen);
-
-		body.on('shown.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', true);
-			$(el).toggleClass('icon-plus-sign', false);
-
-			updateWidgets();
-		});
-
-		body.on('hidden.bs.collapse', function(){
-			$(el).toggleClass('icon-minus-sign', false);
-			$(el).toggleClass('icon-plus-sign', true);
-
-			updateWidgets();
-		});
-	});
 
 	// Make panels destroyable
-	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el){
-		$(el).on('click', function(e){
+	$('.container .panel-heading a[data-toggle="close"]').each(function (idx, el) {
+		$(el).on('click', function(e) {
 			$(el).parents('.panel').remove();
 			updateWidgets();
+			// Submit the form save/display all selected widgets
+			$('[name=widgetForm]').submit();
 		})
 	});
 
 	// Make panels sortable
-	$('.container .col-md-6').sortable({
+	$('.container .col-md-<?=$columnWidth?>').sortable({
 		handle: '.panel-heading',
 		cursor: 'grabbing',
-		connectWith: '.container .col-md-6',
-		update: updateWidgets
+		connectWith: '.container .col-md-<?=$columnWidth?>',
+		update: function(){dirty = true;}
+	});
+
+	// On clicking a widget to install . .
+	$('[id^=btnadd-]').click(function(event) {
+		// Add the widget name to the list of displayed widgets
+		updateWidgets(this.id.replace('btnadd-', ''));
+
+		// Submit the form save/display all selected widgets
+		$('[name=widgetForm]').submit();
+	});
+
+
+	$('.context-links li:last').prev('li').html('<a href="#" class=help-icon" title="<?=gettext("Save dashboard layout")?>" id="btnstore"><i class="fa fa-save"></i></a>');
+
+	$('#btnstore').click(function() {
+		updateWidgets();
+		dirty = false;
+		$('[name=widgetForm]').submit();
+	});
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (dirty) {
+			return ("<?=gettext('You have moved one or more widgets but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
+//]]>
 </script>
 <?php
 //build list of javascript include files
-foreach (glob('widgets/javascript/*.js') as $file)
+foreach (glob('widgets/javascript/*.js') as $file) {
 	echo '<script src="'.$file.'"></script>';
+}
 
 include("foot.inc");

@@ -1,41 +1,65 @@
 <?php
-/* $Id$ */
 /*
 	services_dnsmasq.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: dnsforwarder
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsforwarder
-##|*NAME=Services: DNS Forwarder page
+##|*NAME=Services: DNS Forwarder
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder' page.
 ##|*MATCH=services_dnsmasq.php*
 ##|-PRIV
@@ -75,55 +99,7 @@ $a_hosts = &$config['dnsmasq']['hosts'];
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
 
 if ($_POST) {
-	$pconfig = $_POST;
-	unset($input_errors);
-
-	$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
-	$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
-	$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
-	$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
-	$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
-	$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
-	$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
-	$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
-	$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
-
-	if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
-		if ($_POST['port'] == $config['unbound']['port']) {
-			$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
-		}
-	}
-
-	if ($_POST['port']) {
-		if (is_port($_POST['port'])) {
-			$config['dnsmasq']['port'] = $_POST['port'];
-		} else {
-			$input_errors[] = gettext("You must specify a valid port number");
-		}
-	} else if (isset($config['dnsmasq']['port'])) {
-		unset($config['dnsmasq']['port']);
-	}
-
-	if (is_array($_POST['interface'])) {
-		$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
-	} elseif (isset($config['dnsmasq']['interface'])) {
-		unset($config['dnsmasq']['interface']);
-	}
-
-	if ($config['dnsmasq']['custom_options']) {
-		$args = '';
-		foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
-			$args .= escapeshellarg("--{$c}") . " ";
-		}
-		exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
-		if ($rc != 0) {
-			$input_errors[] = gettext("Invalid custom options");
-		}
-	}
-
-	if (!$input_errors) {
-		write_config();
-
+	if ($_POST['apply']) {
 		$retval = 0;
 		$retval = services_dnsmasq_configure();
 		$savemsg = get_std_save_message($retval);
@@ -138,6 +114,57 @@ if ($_POST) {
 		if ($retval == 0) {
 			clear_subsystem_dirty('hosts');
 		}
+	} else {
+		$pconfig = $_POST;
+		unset($input_errors);
+
+		$config['dnsmasq']['enable'] = ($_POST['enable']) ? true : false;
+		$config['dnsmasq']['regdhcp'] = ($_POST['regdhcp']) ? true : false;
+		$config['dnsmasq']['regdhcpstatic'] = ($_POST['regdhcpstatic']) ? true : false;
+		$config['dnsmasq']['dhcpfirst'] = ($_POST['dhcpfirst']) ? true : false;
+		$config['dnsmasq']['strict_order'] = ($_POST['strict_order']) ? true : false;
+		$config['dnsmasq']['domain_needed'] = ($_POST['domain_needed']) ? true : false;
+		$config['dnsmasq']['no_private_reverse'] = ($_POST['no_private_reverse']) ? true : false;
+		$config['dnsmasq']['custom_options'] = str_replace("\r\n", "\n", $_POST['custom_options']);
+		$config['dnsmasq']['strictbind'] = ($_POST['strictbind']) ? true : false;
+
+		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
+			if ($_POST['port'] == $config['unbound']['port']) {
+				$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
+			}
+		}
+
+		if ($_POST['port']) {
+			if (is_port($_POST['port'])) {
+				$config['dnsmasq']['port'] = $_POST['port'];
+			} else {
+				$input_errors[] = gettext("You must specify a valid port number");
+			}
+		} else if (isset($config['dnsmasq']['port'])) {
+			unset($config['dnsmasq']['port']);
+		}
+
+		if (is_array($_POST['interface'])) {
+			$config['dnsmasq']['interface'] = implode(",", $_POST['interface']);
+		} elseif (isset($config['dnsmasq']['interface'])) {
+			unset($config['dnsmasq']['interface']);
+		}
+
+		if ($config['dnsmasq']['custom_options']) {
+			$args = '';
+			foreach (preg_split('/\s+/', $config['dnsmasq']['custom_options']) as $c) {
+				$args .= escapeshellarg("--{$c}") . " ";
+			}
+			exec("/usr/local/sbin/dnsmasq --test $args", $output, $rc);
+			if ($rc != 0) {
+				$input_errors[] = gettext("Invalid custom options");
+			}
+		}
+
+		if (!$input_errors) {
+			write_config();
+			mark_subsystem_dirty('hosts');
+		}
 	}
 }
 
@@ -150,8 +177,7 @@ if ($_GET['act'] == "del") {
 			header("Location: services_dnsmasq.php");
 			exit;
 		}
-	}
-	elseif ($_GET['type'] == 'doverride') {
+	} elseif ($_GET['type'] == 'doverride') {
 		if ($a_domainOverrides[$_GET['id']]) {
 			unset($a_domainOverrides[$_GET['id']]);
 			write_config();
@@ -163,18 +189,22 @@ if ($_GET['act'] == "del") {
 }
 
 function build_if_list() {
+	global $pconfig;
+
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 
 	$iflist['options'][""]	= "All";
-	if (empty($pconfig['interface']) || empty($pconfig['interface'][0]))
+	if (empty($pconfig['interface']) || empty($pconfig['interface'][0])) {
 		array_push($iflist['selected'], "");
+	}
 
 	foreach ($interface_addresses as $laddr => $ldescr) {
 		$iflist['options'][$laddr] = htmlspecialchars($ldescr);
 
-		if ($pconfig['interface'] && in_array($laddr, $pconfig['interface']))
+		if ($pconfig['interface'] && in_array($laddr, $pconfig['interface'])) {
 			array_push($iflist['selected'], $laddr);
+		}
 	}
 
 	unset($interface_addresses);
@@ -182,21 +212,21 @@ function build_if_list() {
 	return($iflist);
 }
 
-$closehead = false;
-$pgtitle = array(gettext("Services"), gettext("DNS forwarder"));
+$pgtitle = array(gettext("Services"), gettext("DNS Forwarder"));
 $shortcut_section = "forwarder";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('hosts'))
-	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
-
-require_once('classes/Form.class.php');
+if (is_subsystem_dirty('hosts')) {
+	print_apply_box(gettext("The DNS forwarder configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $form = new Form();
 
@@ -302,7 +332,7 @@ $section->addInput(new Form_Checkbox(
 					'rather than binding to all interfaces and discarding queries to other addresses.' . '<br /><br />' .
 					'This option does NOT work with IPv6. If set, dnsmasq will not bind to IPv6 addresses.');
 
-$section->addInput(new Form_TextArea(
+$section->addInput(new Form_Textarea(
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
@@ -311,24 +341,28 @@ $section->addInput(new Form_TextArea(
 
 $form->add($section);
 print($form);
-
-print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
-	" service (if enabled) will automatically serve the LAN IP".
-	" address as a DNS server to DHCP clients so they will use".
-	" the forwarder. The DNS forwarder will use the DNS servers".
-	" entered in %sSystem: General setup%s".
-	" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-	" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-	" is checked. If you don't use that option (or if you use".
-	" a static IP address on WAN), you must manually specify at".
-	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'));
 ?>
+<div class="infoblock blockopen">
+<?php
+print_info_box(
+	sprintf(
+		gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
+			' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.' .
+			' The DNS forwarder will use the DNS servers entered in %1$sSystem: General setup%3$s or' .
+			' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
+			' If you don\'t use that option (or if you use a static IP address on WAN),' .
+			' you must manually specify at least one DNS server on the %2$sSystem:General setup%3$s page.'),
+		'<a href="system.php">',
+		'<a href="system.php">',
+		'</a>'),
+	'info', false);
+?>
+</div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Host Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
@@ -344,10 +378,10 @@ foreach ($a_hosts as $i => $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($hostent['host'])?>
+						<?=$hostent['host']?>
 					</td>
 					<td>
-						<?=strtolower($hostent['domain'])?>
+						<?=$hostent['domain']?>
 					</td>
 					<td>
 						<?=$hostent['ip']?>
@@ -356,8 +390,8 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 
@@ -367,19 +401,20 @@ foreach ($a_hosts as $i => $hostent):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($alias['host'])?>
+						<?=$alias['host']?>
 					</td>
 					<td>
-						<?=strtolower($alias['domain'])?>
+						<?=$alias['domain']?>
 					</td>
 					<td>
-						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
+						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
+						<i class="fa fa-angle-double-right text-info"></i>
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -393,18 +428,23 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_dnsmasq_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
+<div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				gettext("Use these for changing DNS results or for adding custom DNS records."));
+print_info_box(gettext("Entries in this section override individual results from the forwarders.") . " " .
+				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info', false);
 ?>
+</div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2><?=gettext("Domain Overrides")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>
@@ -420,7 +460,7 @@ foreach ($a_domainOverrides as $i => $doment):
 ?>
 				<tr>
 					<td>
-						<?=strtolower($doment['domain'])?>
+						<?=$doment['domain']?>
 					</td>
 					<td>
 						<?=$doment['ip']?>
@@ -429,8 +469,8 @@ foreach ($a_domainOverrides as $i => $doment):
 						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
-						<a href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>" class="btn btn-xs btn-info"><?=gettext('Edit')?></a>
-						<a href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>" class="btn btn-xs btn-danger"><?=gettext('Delete')?></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -442,11 +482,17 @@ endforeach;
 </div>
 
 <nav class="action-buttons">
-	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success"><?=gettext('Add')?></a>
+	<a href="services_dnsmasq_domainoverride_edit.php" class="btn btn-sm btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext('Add')?>
+	</a>
 </nav>
 
+<div class="infoblock blockopen">
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."));
-
+						" authoritative DNS server to be queried for that domain."), 'info', false);
+?>
+</div>
+<?php
 include("foot.inc");

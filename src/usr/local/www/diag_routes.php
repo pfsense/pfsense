@@ -1,15 +1,13 @@
 <?php
-
-/* $Id$ */
 /*
 	diag_routes.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2006 Fernando Lamos
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +53,9 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/netstat
-	pfSense_MODULE:	routing
-*/
 ##|+PRIV
 ##|*IDENT=page-diagnostics-routingtables
-##|*NAME=Diagnostics: Routing tables page
+##|*NAME=Diagnostics: Routing tables
 ##|*DESCR=Allow access to the 'Diagnostics: Routing tables' page.
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
@@ -105,8 +99,6 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
-require_once('classes/Form.class.php');
-
 $form = new Form('Update');
 $form->addGlobal(new Form_Input(
 	'isAjax',
@@ -114,7 +106,7 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	1
 ));
-$section = new Form_Section('Traceroute');
+$section = new Form_Section('Routing Table Display Options');
 
 $section->addInput(new Form_Checkbox(
 	'resolve',
@@ -142,7 +134,8 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print $form;
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 function update_routes(section) {
 	$.ajax(
 		'/diag_routes.php',
@@ -163,27 +156,37 @@ function update_routes_callback(html) {
 	var thead = '<tr>';
 
 	for (var i = 0; i < responseTextArr.length; i++) {
-		if (responseTextArr[i] == "")
+
+		if (responseTextArr[i] == "") {
 			continue;
-		var tmp = '<tr>';
+		}
+
+		if (i == 0) {
+			var tmp = '';
+		} else {
+			var tmp = '<tr>';
+		}
+
 		var j = 0;
 		var entry = responseTextArr[i].split(" ");
 		for (var k = 0; k < entry.length; k++) {
-			if (entry[k] == "")
+			if (entry[k] == "") {
 				continue;
-			if (i == 0)
+			}
+			if (i == 0) {
 				tmp += '<th>' + entry[k] + '<\/th>';
-			else
+			} else {
 				tmp += '<td>' + entry[k] + '<\/td>';
+			}
 			j++;
 		}
 
-		tmp += '<td><\/td>';
-
-		if (i == 0)
+		if (i == 0) {
 			thead += tmp;
-		else
+		} else {
+			tmp += '<td><\/td>'
 			tbody += tmp;
+		}
 	}
 
 	$('#' + section + ' > thead').html(thead);
@@ -195,24 +198,27 @@ function update_all_routes() {
 	update_routes("IPv6");
 }
 
-events.push(function(){
+events.push(function() {
 	setInterval('update_all_routes()', 5000);
 	update_all_routes();
 
-	$(document.forms[0]).on('submit', function(e){
+	$(document.forms[0]).on('submit', function(e) {
 		update_all_routes();
 
 		e.preventDefault();
 	});
 });
+//]]>
 </script>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">IPv4 Routes</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPv4 Routes")?></h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv4">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv4">
 		<thead>
-			<!-- filled by xhr -->
+			<tr>
+				<th><!-- filled by xhr --></th>
+			</tr>
 		</thead>
 		<tbody>
 			<tr>
@@ -224,11 +230,13 @@ events.push(function(){
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">IPv6 Routes</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPv6 Routes")?></h2></div>
 	<div class="panel panel-body">
-		<table class="table table-striped table-compact" id="IPv6">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" id="IPv6">
 		<thead>
-			<!-- filled by xhr -->
+			<tr>
+				<th><!-- filled by xhr --></th>
+			</tr>
 		</thead>
 		<tbody>
 			<tr>

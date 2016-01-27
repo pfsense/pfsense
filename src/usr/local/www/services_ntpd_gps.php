@@ -1,42 +1,63 @@
 <?php
-/* $Id$ */
 /*
 	services_ntpd_gps.php
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2013	Dagorlad
-	Copyright (C) 2012	Jim Pingle
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: ntpd_gps
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2013 Dagorlad
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd-gps
-##|*NAME=Services: NTP Serial GPS page
-##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page..
+##|*NAME=Services: NTP Serial GPS
+##|*DESCR=Allow access to the 'Services: NTP Serial GPS' page.
 ##|*MATCH=services_ntpd_gps.php*
 ##|-PRIV
 
@@ -62,7 +83,7 @@ function set_default_gps() {
 		$config['ntpd']['gps']['nmea'] = 0;
 	}
 
-	write_config("Setting default NTPd settings");
+	write_config(gettext("Setting default NTPd settings"));
 }
 
 if ($_POST) {
@@ -117,8 +138,8 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['prefer']);
 	}
 
-	if (!empty($_POST['gpsselect'])) {
-		$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
+	if (!empty($_POST['gpsnoselect'])) {
+		$config['ntpd']['gps']['noselect'] = $_POST['gpsnoselect'];
 	} elseif (isset($config['ntpd']['gps']['noselect'])) {
 		unset($config['ntpd']['gps']['noselect']);
 	}
@@ -165,7 +186,7 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['initcmd']);
 	}
 
-	write_config("Updated NTP GPS Settings");
+	write_config(gettext("Updated NTP GPS Settings"));
 
 	$retval = system_ntp_configure();
 	$savemsg = get_std_save_message($retval);
@@ -181,26 +202,27 @@ function build_nmea_list() {
 
 	$nmealist = array('options' => array(), 'selected' => array());
 
-	$nmealist['options'][0] = 'All';
-	$nmealist['options'][1] = 'RMC';
-	$nmealist['options'][2] = 'GGA';
-	$nmealist['options'][4] = 'GLL';
-	$nmealist['options'][8] = 'ZDA or ZDG';
+	$nmealist['options'][0] = gettext('All');
+	$nmealist['options'][1] = gettext('RMC');
+	$nmealist['options'][2] = gettext('GGA');
+	$nmealist['options'][4] = gettext('GLL');
+	$nmealist['options'][8] = gettext('ZDA or ZDG');
 
-	if(!$pconfig['nmea'])
+	if (!$pconfig['nmea']) {
 		array_push($nmealist['selected'], 0);
+	}
 
-	foreach($nmealist['options'] as $val => $opt) {
-		if($pconfig['nmea'] & $val)
+	foreach ($nmealist['options'] as $val => $opt) {
+		if ($pconfig['nmea'] & $val) {
 		  array_push($nmealist['selected'], $val);
+		}
 	}
 
 	return($nmealist);
 }
 
-$closehead = false;
 $pconfig = &$config['ntpd']['gps'];
-$pgtitle = array(gettext("Services"), gettext("NTP GPS"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -209,8 +231,6 @@ $tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form;
 
@@ -225,40 +245,40 @@ $section->addInput(new Form_StaticText(
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
 
-$gpstypes = array('Custom', 'Default', 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
+$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
 $section->addInput(new Form_Select(
 	'gpstype',
-	'GPS',
+	'GPS Type',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
-))->setHelp('This option allows you to select a predefined configuration.' .
+))->setHelp('This option allows you to select a predefined configuration. ' .
 			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if your GPS is not listed.' . '<br /><br />' .
-			'The perdefined configurations assume your GPS has already been set to NMEA mode.');
+			'The predefined configurations assume your GPS has already been set to NMEA mode.');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
 if (!empty($serialports)) {
 	$splist = array();
-	
-	foreach ($serialports as $port) { 
-		$shortport = substr($port,5);
+
+	foreach ($serialports as $port) {
+		$shortport = substr($port, 5);
 		$splist[$shortport] = $shortport;
 	}
-	
+
 	$section->addInput(new Form_Select(
 		'gpsport',
-		'Serial port',
+		'Serial Port',
 		$pconfig['port'],
-			$splist
+		$splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
-	
+
 	$section->addInput(new Form_Select(
 		'gpsspeed',
 		null,
 		$pconfig['speed'],
 		[0 => '4800', 15 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
-	
+
 	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
 				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');
 }
@@ -274,14 +294,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'gpsfudge1',
-	'Fudge time 1',
+	'Fudge Time 1',
 	'text',
 	$pconfig['fudge1']
 ))->setHelp('Fudge time 1 is used to specify the GPS PPS signal offset (default: 0.0).');
 
 $section->addInput(new Form_Input(
 	'gpsfudge2',
-	'Fudge time 2',
+	'Fudge Time 2',
 	'text',
 	$pconfig['fudge2']
 ))->setHelp('Fudge time 2 is used to specify the GPS time offset (default: 0.0).');
@@ -296,49 +316,49 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
 	'Flags',
-	'NTP should prefer this clock (default: enabled).',
+	'Prefer this clock (default: checked).',
 	!$pconfig['prefer']
 ));
 
 $section->addInput(new Form_Checkbox(
-	'gpsselect',
+	'gpsnoselect',
 	null,
-	'NTP should not use this clock, it will be displayed for reference only(default: disabled).',
+	'Do not use this clock, display for reference only (default: unchecked).',
 	$pconfig['noselect']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag1',
 	null,
-	'Enable PPS signal processing (default: enabled).',
+	'Enable PPS signal processing (default: checked).',
 	$pconfig['flag1']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag2',
 	null,
-	'Enable falling edge PPS signal processing (default: rising edge).',
+	'Enable falling edge PPS signal processing (default: unchecked, rising edge).',
 	$pconfig['flag2']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag3',
 	null,
-	'Enable kernel PPS clock discipline (default: enabled).',
+	'Enable kernel PPS clock discipline (default: checked).',
 	$pconfig['flag3']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpsflag4',
 	null,
-	'Obscure location in timestamp (default: unobscured).',
+	'Obscure location in timestamp (default: unchecked, unobscured).',
 	$pconfig['flag4']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'gpssubsec',
 	null,
-	'Log the sub-second fraction of the received time stamp (default: Not logged).',
+	'Log the sub-second fraction of the received time stamp (default: unchecked, not logged).',
 	$pconfig['subsec']
 ))->setHelp('Enabling this will rapidly fill the log, but is useful for tuning Fudge time 2.');
 
@@ -360,7 +380,7 @@ $btnadvgps->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'GPS Initialization',
-	$btnadvgps . '&nbsp' . 'Show GPS Initialization commands'
+	$btnadvgps . '&nbsp;' . 'Show GPS Initialization commands'
 ));
 
 $section->addInput(new Form_Textarea(
@@ -403,15 +423,15 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	function NMEAChecksum(cmd) {
 		// Compute the checksum by XORing all the character values in the string.
 		var checksum = 0;
 
-		for(var i = 0; i < cmd.length; i++) {
+		for (var i = 0; i < cmd.length; i++) {
 			checksum = checksum ^ cmd.charCodeAt(i);
 		}
 		// Convert it to hexadecimal (base-16, upper case, most significant byte first).
@@ -424,22 +444,6 @@ events.push(function(){
 		return(hexsum);
 	}
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
 		$('#gpsspeed').val(0);
@@ -450,12 +454,12 @@ events.push(function(){
 			case "Default":
 				$('#gpsfudge1').val("0.155");
 				$('#gpsfudge2').val("");
-				$('#gpsinitcmd').val("JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ0K");
+				$('#gpsinitcmd').val(atob("JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ0K"));
 				break;
 
 			case "Garmin":
 				$('#gpsfudge2').val("0.600");
-				$('#gpsinitcmd').val("JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==");
+				$('#gpsinitcmd').val(atob("JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg=="));
 				break;
 
 			case "Generic":
@@ -465,24 +469,24 @@ events.push(function(){
 
 			case "MediaTek":
 				$('#gpsfudge2').val("0.400");
-				$('#gpsinitcmd').val("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDAsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyOA0KJFBNVEszMDEsMioyRQ0KJFBNVEszMjAsMCoyRg0KJFBNVEszMzAsMCoyRQ0KJFBNVEszODYsMCoyMw0KJFBNVEszOTcsMCoyMw0KJFBNVEsyNTEsNDgwMCoxNA0K");
+				$('#gpsinitcmd').val(atob("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDAsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyOA0KJFBNVEszMDEsMioyRQ0KJFBNVEszMjAsMCoyRg0KJFBNVEszMzAsMCoyRQ0KJFBNVEszODYsMCoyMw0KJFBNVEszOTcsMCoyMw0KJFBNVEsyNTEsNDgwMCoxNA0K"));
 				break;
 
 			case "SiRF":
 				$('#gpsfudge2').val("0.704"); //valid for 4800, 0.688 @ 9600, 0.640 @ USB
-				$('#gpsinitcmd').val("JFBTUkYxMDMsMDAsMDAsMDEsMDEqMjUNCiRQU1JGMTAzLDAxLDAwLDAxLDAxKjI0DQokUFNSRjEwMywwMiwwMCwwMCwwMSoyNA0KJFBTUkYxMDMsMDMsMDAsMDAsMDEqMjQNCiRQU1JGMTAzLDA0LDAwLDAxLDAxKjI0DQokUFNSRjEwMywwNSwwMCwwMCwwMSoyNA0KJFBTUkYxMDAsMSw0ODAwLDgsMSwwKjBFDQo=");
+				$('#gpsinitcmd').val(atob("JFBTUkYxMDMsMDAsMDAsMDEsMDEqMjUNCiRQU1JGMTAzLDAxLDAwLDAxLDAxKjI0DQokUFNSRjEwMywwMiwwMCwwMCwwMSoyNA0KJFBTUkYxMDMsMDMsMDAsMDAsMDEqMjQNCiRQU1JGMTAzLDA0LDAwLDAxLDAxKjI0DQokUFNSRjEwMywwNSwwMCwwMCwwMSoyNA0KJFBTUkYxMDAsMSw0ODAwLDgsMSwwKjBFDQo="));
 				break;
 
 			case "U-Blox":
 				$('#gpsfudge2').val("0.400");
-				$('#gpsinitcmd').val("JFBVQlgsNDAsR0dBLDEsMSwxLDEsMCwwKjVBDQokUFVCWCw0MCxHTEwsMSwxLDEsMSwwLDAqNUMNCiRQVUJYLDQwLEdTQSwwLDAsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR1NWLDAsMCwwLDAsMCwwKjU5DQokUFVCWCw0MCxSTUMsMSwxLDEsMSwwLDAqNDcNCiRQVUJYLDQwLFZURywwLDAsMCwwLDAsMCo1RQ0KJFBVQlgsNDAsR1JTLDAsMCwwLDAsMCwwKjVEDQokUFVCWCw0MCxHU1QsMCwwLDAsMCwwLDAqNUINCiRQVUJYLDQwLFpEQSwxLDEsMSwxLDAsMCo0NA0KJFBVQlgsNDAsR0JTLDAsMCwwLDAsMCwwKjREDQokUFVCWCw0MCxEVE0sMCwwLDAsMCwwLDAqNDYNCiRQVUJYLDQwLEdQUSwwLDAsMCwwLDAsMCo1RA0KJFBVQlgsNDAsVFhULDAsMCwwLDAsMCwwKjQzDQokUFVCWCw0MCxUSFMsMCwwLDAsMCwwLDAqNTQNCiRQVUJYLDQxLDEsMDAwNywwMDAzLDQ4MDAsMCoxMw0K");
+				$('#gpsinitcmd').val(atob("JFBVQlgsNDAsR0dBLDEsMSwxLDEsMCwwKjVBDQokUFVCWCw0MCxHTEwsMSwxLDEsMSwwLDAqNUMNCiRQVUJYLDQwLEdTQSwwLDAsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR1NWLDAsMCwwLDAsMCwwKjU5DQokUFVCWCw0MCxSTUMsMSwxLDEsMSwwLDAqNDcNCiRQVUJYLDQwLFZURywwLDAsMCwwLDAsMCo1RQ0KJFBVQlgsNDAsR1JTLDAsMCwwLDAsMCwwKjVEDQokUFVCWCw0MCxHU1QsMCwwLDAsMCwwLDAqNUINCiRQVUJYLDQwLFpEQSwxLDEsMSwxLDAsMCo0NA0KJFBVQlgsNDAsR0JTLDAsMCwwLDAsMCwwKjREDQokUFVCWCw0MCxEVE0sMCwwLDAsMCwwLDAqNDYNCiRQVUJYLDQwLEdQUSwwLDAsMCwwLDAsMCo1RA0KJFBVQlgsNDAsVFhULDAsMCwwLDAsMCwwKjQzDQokUFVCWCw0MCxUSFMsMCwwLDAsMCwwLDAqNTQNCiRQVUJYLDQxLDEsMDAwNywwMDAzLDQ4MDAsMCoxMw0K"));
 				break;
 
 			case "SureGPS":
 				$('#gpsnmea').val(1);
 				$('#gpsspeed').val(16);
 				$('#gpsfudge2').val("0.407");
-				$('#gpsinitcmd').val("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==");
+				$('#gpsinitcmd').val(atob("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg=="));
 				break;
 			default:
 				return;
@@ -526,14 +530,14 @@ events.push(function(){
 
 	set_gps_default('<?=$pconfig['type']?>');
 
-	//	Checkboxes gpsprefer and gpsselect are mutually exclusive
+	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive
 	$('#gpsprefer').click(function() {
 		if ($(this).is(':checked')) {
-			$('#gpsselect').prop('checked', false);
+			$('#gpsnoselect').prop('checked', false);
 		}
 	});
 
-	$('#gpsselect').click(function() {
+	$('#gpsnoselect').click(function() {
 		if ($(this).is(':checked')) {
 			$('#gpsprefer').prop('checked', false);
 		}

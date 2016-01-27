@@ -1,43 +1,65 @@
 <?php
-/* $Id$ */
 /*
 	status_ntpd.php
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2013 Dagorlad
-	Copyright (C) 2012 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/ntpd	/usr/local/sbin/ntpq
-	pfSense_MODULE: ntpd
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2013 Dagorlad
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-ntp
-##|*NAME=Status: NTP page
+##|*NAME=Status: NTP
 ##|*DESCR=Allow access to the 'Status: NTP' page.
 ##|*MATCH=status_ntpd.php*
 ##|-PRIV
@@ -59,28 +81,28 @@ if (!isset($config['ntpd']['noquery'])) {
 
 		switch (substr($line, 0, 1)) {
 			case " ":
-				$server['status'] = "Unreach/Pending";
+				$server['status'] = gettext("Unreach/Pending");
 				break;
 			case "*":
-				$server['status'] = "Active Peer";
+				$server['status'] = gettext("Active Peer");
 				break;
 			case "+":
-				$server['status'] = "Candidate";
+				$server['status'] = gettext("Candidate");
 				break;
 			case "o":
-				$server['status'] = "PPS Peer";
+				$server['status'] = gettext("PPS Peer");
 				break;
 			case "#":
-				$server['status'] = "Selected";
+				$server['status'] = gettext("Selected");
 				break;
 			case ".":
-				$server['status'] = "Excess Peer";
+				$server['status'] = gettext("Excess Peer");
 				break;
 			case "x":
-				$server['status'] = "False Ticker";
+				$server['status'] = gettext("False Ticker");
 				break;
 			case "-":
-				$server['status'] = "Outlier";
+				$server['status'] = gettext("Outlier");
 				break;
 		}
 
@@ -168,9 +190,9 @@ include("head.inc");
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Network Time Protocol Status</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Network Time Protocol Status");?></h2></div>
 	<div class="panel-body">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Status"); ?></th>
@@ -190,13 +212,13 @@ include("head.inc");
 				<?php if (isset($config['ntpd']['noquery'])): ?>
 				<tr>
 					<td class="warning" colspan="11">
-						Statistics unavailable because ntpq and ntpdc queries are disabled in the <a href="services_ntpd.php">NTP service settings</a>.
+						<?=sprintf(gettext("Statistics unavailable because ntpq and ntpdc queries are disabled in the %sNTP service settings%s"), '<a href="services_ntpd.php">', '</a>');?>
 					</td>
 				</tr>
 				<?php elseif (count($ntpq_servers) == 0): ?>
 				<tr>
 					<td class="warning" colspan="11">
-						No peers found, <a href="status_services.php">is the ntp service running?</a>
+						<?=sprintf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');?>
 					</td>
 				</tr>
 				<?php else:
@@ -233,7 +255,7 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 	$gps_goo_lnk = 2; ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title">GPS information</h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS information");?></h2></div>
 		<div class="panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -276,23 +298,23 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 							}
 
 						if (isset($gps_sat) || isset($gps_satview)) { ?>
-							<td align="center"> <?php
+							<td class="text-center"> <?php
 								if (isset($gps_satview)) {
-									print('in view ' . intval($gps_satview));
+									print(gettext('in view ') . intval($gps_satview));
 								}
 
 							if (isset($gps_sat) && isset($gps_satview)) {
 								print(', ');
 							}
 							if (isset($gps_sat)) {
-								print('in use ' . $gps_sat);
+								print(gettext('in use ') . $gps_sat);
 							} ?>
 							</td> <?php
 						}
 						?>
 					</tr>
 					<tr>
-						<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>">Google Maps Link</a></td>
+						<td colspan="<?=$gps_goo_lnk; ?>"><a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat; ?>,<?=$gps_lon; ?>"><?=gettext("Google Maps Link");?></a></td>
 					</tr>
 				</tbody>
 			</table>

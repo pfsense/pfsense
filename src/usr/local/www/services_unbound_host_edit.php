@@ -1,43 +1,66 @@
 <?php
-/* $Id$ */
 /*
 	services_unbound_host_edit.php
-	part of the pfSense project (https://www.pfsense.org)
-	Copyright (C) 2014 Warren Baker (warren@decoy.co.za)
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Copyright (C) 2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: dnsresolver
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2014 Warren Baker (warren@decoy.co.za)
+ *	Copyright (c)  2003-2004 Bob Zoller <bob@kludgebox.com> and Manuel Kasper <mk@neon1.net>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-dnsresolver-edithost
-##|*NAME=Services: DNS Resolver: Edit host page
+##|*NAME=Services: DNS Resolver: Edit host
 ##|*DESCR=Allow access to the 'Services: DNS Resolver: Edit host' page.
 ##|*MATCH=services_unbound_host_edit.php*
 ##|-PRIV
@@ -80,7 +103,6 @@ if (isset($id) && $a_hosts[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -110,43 +132,45 @@ if ($_POST) {
 
 	/* collect aliases */
 	$aliases = array();
-	foreach ($_POST as $key => $value) {
-		$entry = '';
-		if (!substr_compare('aliashost', $key, 0, 9)) {
-			$entry = substr($key, 9);
-			$field = 'host';
-		} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
-			$entry = substr($key, 11);
-			$field = 'domain';
-		} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
-			$entry = substr($key, 16);
-			$field = 'description';
-		}
-		if (ctype_digit($entry)) {
-			$aliases[$entry][$field] = $value;
-		}
-	}
-
-	$pconfig['aliases']['item'] = $aliases;
-
-	/* validate aliases */
-	foreach ($aliases as $idx => $alias) {
-		$aliasreqdfields = array('aliasdomain' . $idx);
-		$aliasreqdfieldsn = array(gettext("Alias Domain"));
-
-		do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
-
-		if ($alias['host']) {
-			if (!is_hostname($alias['host'])) {
-				$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
-			} else {
-				if (!is_unqualified_hostname($alias['host'])) {
-					$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
-				}
+	if (!empty($_POST['aliashost0'])) {
+		foreach ($_POST as $key => $value) {
+			$entry = '';
+			if (!substr_compare('aliashost', $key, 0, 9)) {
+				$entry = substr($key, 9);
+				$field = 'host';
+			} elseif (!substr_compare('aliasdomain', $key, 0, 11)) {
+				$entry = substr($key, 11);
+				$field = 'domain';
+			} elseif (!substr_compare('aliasdescription', $key, 0, 16)) {
+				$entry = substr($key, 16);
+				$field = 'description';
+			}
+			if (ctype_digit($entry)) {
+				$aliases[$entry][$field] = $value;
 			}
 		}
-		if (($alias['domain'] && !is_domain($alias['domain']))) {
-			$input_errors[] = gettext("A valid domain must be specified in alias list.");
+
+		$pconfig['aliases']['item'] = $aliases;
+
+		/* validate aliases */
+		foreach ($aliases as $idx => $alias) {
+			$aliasreqdfields = array('aliasdomain' . $idx);
+			$aliasreqdfieldsn = array(gettext("Alias Domain"));
+
+			do_input_validation($_POST, $aliasreqdfields, $aliasreqdfieldsn, $input_errors);
+
+			if ($alias['host']) {
+				if (!is_hostname($alias['host'])) {
+					$input_errors[] = gettext("Hostnames in an alias list can only contain the characters A-Z, 0-9 and '-'. They may not start or end with '-'.");
+				} else {
+					if (!is_unqualified_hostname($alias['host'])) {
+						$input_errors[] = gettext("A valid alias hostname is specified, but the domain name part should be omitted");
+					}
+				}
+			}
+			if (($alias['domain'] && !is_domain($alias['domain']))) {
+				$input_errors[] = gettext("A valid domain must be specified in alias list.");
+			}
 		}
 	}
 
@@ -189,31 +213,34 @@ if ($_POST) {
 }
 
 // Delete a row in the options table
-if($_GET['act'] == "delopt") {
+if ($_GET['act'] == "delopt") {
 	$idx = $_GET['id'];
 
-	if($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
+	if ($pconfig['aliases'] && is_array($pconfig['aliases']['item'][$idx])) {
 	   unset($pconfig['aliases']['item'][$idx]);
 	}
 }
 
 // Add an option row
-if($_GET['act'] == "addopt") {
-	if(!is_array($pconfig['aliases']['item']))
+if ($_GET['act'] == "addopt") {
+	if (!is_array($pconfig['aliases']['item'])) {
 		$pconfig['aliases']['item'] = array();
+	}
 
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
-$pgtitle = array(gettext("Services"),gettext("DNS Resolver"),gettext("Edit host"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Host Override"));
 $shortcut_section = "resolver";
 include("head.inc");
 
-require_once('classes/Form.class.php');
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $form = new Form();
 
-$section = new Form_Section('Edit DNS Rersolver Entry');
+$section = new Form_Section('Host override options');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -258,12 +285,17 @@ $form->add($section);
 
 $section = new Form_Section('Additional names for this host');
 
-if( $pconfig['aliases']['item']) {
+if (!$pconfig['aliases']['item']) {
+	$pconfig['aliases']['item'] = array('host' => "");
+}
+
+if ($pconfig['aliases']['item']) {
 	$counter = 0;
 	$last = count($pconfig['aliases']['item']) - 1;
 
-	foreach($pconfig['aliases']['item'] as $item) {
+	foreach ($pconfig['aliases']['item'] as $item) {
 		$group = new Form_Group(null);
+		$group->addClass('repeatable');
 
 		$group->add(new Form_Input(
 			'aliashost' . $counter,
@@ -277,7 +309,7 @@ if( $pconfig['aliases']['item']) {
 			null,
 			'text',
 			$item['domain']
-		))->setHelp($counter == $last ? 'Value':null);
+		))->setHelp($counter == $last ? 'Domain':null);
 
 		$group->add(new Form_Input(
 			'aliasdescription' . $counter,
@@ -286,28 +318,22 @@ if( $pconfig['aliases']['item']) {
 			$item['description']
 		))->setHelp($counter == $last ? 'Description':null);
 
-		$btn = new Form_Button(
-			'btn' . $counter,
-			'Delete',
-			'services_unbound_host_edit.php?act=delopt' . '&id=' . $counter
-		);
+		$group->add(new Form_Button(
+			'deleterow' . $counter,
+			'Delete'
+		))->removeClass('btn-primary')->addClass('btn-warning');
 
-		$btn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
-		$group->add($btn);
 		$section->add($group);
 		$counter++;
 	}
 }
 
-$btnaddopt = new Form_Button(
-	'btnaddopt',
-	'Add Option',
-	'services_unbound_host_edit.php?act=addopt'
-);
-
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
-
-$section->addInput($btnaddopt);
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add host name',
+	null,
+	'fa-plus'
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 print($form);

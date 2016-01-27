@@ -1,13 +1,16 @@
 <?php
-/* $Id$ */
 /*
 	exec.php
 */
 /* ====================================================================
- *	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved
  *	Created by technologEase (http://www.technologEase.com)
  *	(modified for m0n0wall by Manuel Kasper <mk@neon1.net>)\
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -39,7 +42,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -56,13 +59,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: shell
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-command
-##|*NAME=Diagnostics: Command page
+##|*NAME=Diagnostics: Command
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
 ##|*MATCH=exec.php*
 ##|-PRIV
@@ -71,7 +71,7 @@ $allowautocomplete = true;
 
 require("guiconfig.inc");
 
-if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
+if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
 	$fd = fopen($_POST['dlPath'], "rb");
 	header("Content-Type: application/octet-stream");
@@ -88,9 +88,9 @@ if (($_POST['submit'] == "Download") && file_exists($_POST['dlPath'])) {
 
 	fpassthru($fd);
 	exit;
-} else if (($_POST['submit'] == "Upload") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+} else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
+	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s'), htmlentities($_FILES['ulfile']['name']));
 	unset($_POST['txtCommand']);
 }
 
@@ -122,11 +122,11 @@ $ScriptName = $REQUEST['SCRIPT_NAME'];
 $arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$closehead = false;
 $pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
 include("head.inc");
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	// Create recall buffer array (of encoded strings).
 <?php
 
@@ -217,81 +217,117 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 </script>
 <?php
 
-if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg))
-	print('<div class="alert alert-warning" role="alert">'.gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!").'</div>');
+if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
+	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
+}
 
 if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
-		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Shell Output - %s'), htmlspecialchars($_POST['txtCommand']))?></h2></div>
 		<div class="panel-body">
-			<pre>
+			<div class="content">
 <?php
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
 	$output = array();
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
-	foreach($output as $line)
-		print(htmlspecialchars($line) . "\r\n");
-?></pre>
 
+	$output = implode("\n", $output);
+	print("<pre>" . htmlspecialchars($output) . "</pre>");
+?>
+			</div>
 		</div>
 	</div>
-<? endif ?>
+<?php endif; ?>
 
 <form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
 		<div class="panel-body">
-			<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
-			<br /><br />
-			<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
-			<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
-			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute"); ?>" />
-			<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
-			<input type="button"  class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+			<div class="content">
+				<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
+				<br /><br />
+				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
+				<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
+				<button type="submit" class="btn btn-default btn-sm" value="EXEC"><?=gettext("Execute"); ?></button>
+				<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
+				<input type="button" class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+			</div>
 		</div>
 	</div>
 
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
 		<div class="panel-body">
-			<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
-			<br /><br />
-			<input name="submit" type="submit"	class="btn btn-default btn-sm" id="download" value="<?=gettext("Download"); ?>" />
+			<div class="content">
+				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
+				<br /><br />
+				<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
+			</div>
 		</div>
 	</div>
 
 <?php
-	if ($ulmsg)
-		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
+	if ($ulmsg) {
+		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
+	}
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload a file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
 		<div class="panel-body">
-			<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
-			<br />
-			<input name="submit" type="submit" class="btn btn-default btn-sm pull-left" id="upload" value="<?=gettext("Upload"); ?>" />
-
+			<div class="content">
+				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
+				<br />
+				<button name="submit" type="submit" class="btn btn-default btn-sm" id="upload" value="UPLOAD"><?=gettext("Upload")?></button>
+			</div>
 		</div>
 	</div>
 <?php
+	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
+	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
-		puts("<pre>");
-		require_once("config.inc");
-		require_once("functions.inc");
-		echo eval($_POST['txtPHPCommand']);
-		puts("&nbsp;</pre>");
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP response</h2></div>");
+
+		$tmpname = tempnam("/tmp", "");
+		$phpfile = fopen($tmpname, "w");
+		fwrite($phpfile, "<?php\n");
+		fwrite($phpfile, "require_once(\"/etc/inc/config.inc\");\n");
+		fwrite($phpfile, "require_once(\"/etc/inc/functions.inc\");\n\n");
+		fwrite($phpfile, $_POST['txtPHPCommand'] . "\n");
+		fwrite($phpfile, "?>\n");
+		fclose($phpfile);
+
+		$output = array();
+		exec("/usr/local/bin/php " . $tmpname, $output);
+
+		unlink($tmpname);
+
+		$output = implode("\n", $output);
+		print("<pre>" . htmlspecialchars($output) . "</pre>");
+
+//		echo eval($_POST['txtPHPCommand']);
 		puts("</div>");
+?>
+<script type="text/javascript">
+//<![CDATA[
+	events.push(function() {
+		// Scroll to the bottom of the page to more easily see the results of a PHP exec command
+		$("html, body").animate({ scrollTop: $(document).height() }, 1000);
+	});
+//]]>
+</script>
+<?php
 }
 ?>
 	<div class="panel panel-default responsive">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute PHP Commands')?></h2></div>
 		<div class="panel-body">
-			<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
-			<br />
-			<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
-			<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
+			<div class="content">
+				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
+				<br />
+				<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
+				<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
+			</div>
 		</div>
 	</div>
 </form>
@@ -299,5 +335,6 @@ if (!isBlank($_POST['txtCommand'])):?>
 <?php
 include("foot.inc");
 
-if($_POST)
+if ($_POST) {
 	conf_mount_ro();
+}

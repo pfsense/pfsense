@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_misc.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,13 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-misc
-##|*NAME=System: Advanced: Miscellaneous page
+##|*NAME=System: Advanced: Miscellaneous
 ##|*DESCR=Allow access to the 'System: Advanced: Miscellaneous' page.
 ##|*MATCH=system_advanced_misc.php*
 ##|-PRIV
@@ -85,14 +83,12 @@ $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
-$pconfig['kill_states'] = isset($config['system']['kill_states']);
+$pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
-$pconfig['apinger_debug'] = isset($config['system']['apinger_debug']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
 $pconfig['use_mfs_var_size'] = $config['system']['use_mfs_var_size'];
-$pconfig['pkg_nochecksig'] = isset($config['system']['pkg_nochecksig']);
-$pconfig['host_uuid'] = !isset($config['system']['host_uuid']);
+$pconfig['do_not_send_host_uuid'] = isset($config['system']['do_not_send_host_uuid']);
 
 $pconfig['powerd_ac_mode'] = "hadp";
 if (!empty($config['system']['powerd_ac_mode'])) {
@@ -153,6 +149,10 @@ if ($_POST) {
 		$input_errors[] = gettext("The proxy username contains invalid characters.");
 	}
 
+	if($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+		$input_errors[] = gettext("Proxy password and confirmation must match.");
+	}
+
 	if (!$input_errors) {
 
 		if ($_POST['harddiskstandby'] <> "") {
@@ -181,7 +181,9 @@ if ($_POST) {
 		}
 
 		if ($_POST['proxypass'] <> "") {
-			$config['system']['proxypass'] = $_POST['proxypass'];
+			if ($_POST['proxypass'] != DMYPWD) {
+				$config['system']['proxypass'] = $_POST['proxypass'];
+			}
 		} else {
 			unset($config['system']['proxypass']);
 		}
@@ -215,10 +217,10 @@ if ($_POST) {
 			unset($config['system']['pkg_nochecksig']);
 		}
 
-		if ($_POST['host_uuid'] == "yes") {
-			unset($config['system']['host_uuid']);
+		if ($_POST['do_not_send_host_uuid'] == "yes") {
+			$config['system']['do_not_send_host_uuid'] = true;
 		} else {
-			$config['system']['host_uuid'] = true;
+			unset($config['system']['do_not_send_host_uuid']);
 		}
 
 		if ($_POST['powerd_enable'] == "yes") {
@@ -227,9 +229,9 @@ if ($_POST) {
 			unset($config['system']['powerd_enable']);
 		}
 
-		$config['system']['powerd_ac_mode'] = $_POST['ac-power'];
-		$config['system']['powerd_battery_mode'] = $_POST['battery-power'];
-		$config['system']['powerd_normal_mode'] = $_POST['unknown-power'];
+		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
+		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
+		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
 
 		if ($_POST['crypto_hardware']) {
 			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
@@ -249,10 +251,10 @@ if ($_POST) {
 			unset($config['system']['schedule_states']);
 		}
 
-		if ($_POST['kill_states'] == "yes") {
-			$config['system']['kill_states'] = true;
+		if ($_POST['gw_down_kill_states'] == "yes") {
+			$config['system']['gw_down_kill_states'] = true;
 		} else {
-			unset($config['system']['kill_states']);
+			unset($config['system']['gw_down_kill_states']);
 		}
 
 		if ($_POST['skip_rules_gw_down'] == "yes") {
@@ -261,27 +263,14 @@ if ($_POST) {
 			unset($config['system']['skip_rules_gw_down']);
 		}
 
-		$need_apinger_restart = false;
-		if ($_POST['apinger_debug'] == "yes") {
-			if (!isset($config['system']['apinger_debug'])) {
-				$need_apinger_restart = true;
-			}
-			$config['system']['apinger_debug'] = true;
-		} else {
-			if (isset($config['system']['apinger_debug'])) {
-				$need_apinger_restart = true;
-			}
-			unset($config['system']['apinger_debug']);
-		}
-
 		if ($_POST['use_mfs_tmpvar'] == "yes") {
 			$config['system']['use_mfs_tmpvar'] = true;
 		} else {
 			unset($config['system']['use_mfs_tmpvar']);
 		}
 
-		$config['system']['use_mfs_tmp_size'] = $_POST['-tmp-ram-disk-size'];
-		$config['system']['use_mfs_var_size'] = $_POST['-var-ram-disk-size'];
+		$config['system']['use_mfs_tmp_size'] = $_POST['use_mfs_tmp_size'];
+		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
 
 		if (isset($_POST['rrdbackup'])) {
 			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
@@ -309,19 +298,19 @@ if ($_POST) {
 		if ($need_relayd_restart) {
 			relayd_configure();
 		}
-		if ($need_apinger_restart) {
-			setup_gateways_monitor();
-		}
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Miscellaneous"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
-	print_info_box($savemsg);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -332,9 +321,6 @@ $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 display_top_tabs($tab_array);
 
-?><div id="container"><?php
-
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Proxy support');
 
@@ -361,7 +347,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Username for authentication to proxy server. Optional, '.
 	'leave blank to not use authentication.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'proxypass',
 	'Proxy Password',
 	'password',
@@ -431,10 +417,10 @@ $section->addInput(new Form_Checkbox(
 	'lower CPU load.');
 
 $modes = array(
-	'hadp' => 'Hiadaptive',
-	'adp' => 'Adaptive',
-	'min' => 'Minimum',
-	'max' => 'Maximum',
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
 );
 
 $section->addInput(new Form_Select(
@@ -505,12 +491,12 @@ $form->add($section);
 $section = new Form_Section('Gateway Monitoring');
 
 $section->addInput(new Form_Checkbox(
-	'kill_states',
+	'gw_down_kill_states',
 	'State Killing on Gateway Failure',
 	'Flush all states when a gateway goes down',
-	$pconfig['kill_states']
+	$pconfig['gw_down_kill_states']
 ))->setHelp('The monitoring process will flush all states when a gateway goes down '.
-	'if this box is not checked. Check this box to disable this behavior.');
+	'if this box is checked.');
 
 $section->addInput(new Form_Checkbox(
 	'skip_rules_gw_down',
@@ -521,14 +507,6 @@ $section->addInput(new Form_Checkbox(
 	'down, the rule is created omitting the gateway. This option overrides that '.
 	'behavior by omitting the entire rule instead.');
 
-$section->addInput(new Form_Checkbox(
-	'apinger_debug',
-	'Gateway monitoring logging',
-	'Enable debug logging',
-	$pconfig['apinger_debug']
-))->setHelp('Enable this setting to log debug information from the gateway '.
-	'monitoring process to the system logs.');
-
 $form->add($section);
 $section = new Form_Section('RAM Disk Settings (Reboot to Apply Changes)');
 
@@ -536,7 +514,7 @@ $section->addInput(new Form_Checkbox(
 	'use_mfs_tmpvar',
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
-	($pconfig['use_mfs_tmpvar'] || $g['platform'] != "pfSense")
+	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
 ))->setHelp('Set this if you wish to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
 	'cause the data in /tmp and /var to be lost at reboot, including log data. RRD '.
@@ -581,17 +559,35 @@ $section->addInput(new Form_Input(
 	'frequent the backup, the more writes will happen to your media.');
 
 $form->add($section);
-$section = new Form_Section('Package settings');
+
+if ($g['platform'] == "pfSense") {
+	$section = new Form_Section('Hardware settings');
+
+	$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
+	$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
+
+	$section->addInput(new Form_Select(
+		'harddiskstandby',
+		'Hard disk standby time',
+		$pconfig['harddiskstandby'],
+		['' => gettext("Always on")] + array_combine($opts, $vals)
+	))->setHelp("Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access." . "<br />" .
+				"<strong> Do not set this for CF cards.</strong>");
+
+	$form->add($section);
+}
+
+$section = new Form_Section('Installation Feedback');
 
 $section->addInput(new Form_Checkbox(
-	'pkg_nochecksig',
-	'Package signature',
-	'Disable check package signature',
-	$pconfig['pkg_nochecksig']
-))->setHelp('Enable this option to allow pfSense to install any package without '.
-	'checking its signature.');
+	'do_not_send_host_uuid',
+	'Host UUID',
+	'Do NOT send HOST UUID with user agent',
+	$pconfig['do_not_send_host_uuid']
+))->setHelp('Enable this option to not send HOST UUID to pfSense as part of User-Agent header.');
 
 $form->add($section);
+
 print $form;
 
 include("foot.inc");

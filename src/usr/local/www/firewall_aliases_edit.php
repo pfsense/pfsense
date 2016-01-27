@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_aliases_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c)  2009 Ermal Luçi
- *	Copyright (c)  2010 Jim Pingle
- *	originally part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -40,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -57,14 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm /bin/mkdir	/usr/bin/fetch
-	pfSense_MODULE: aliases
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-edit
-##|*NAME=Firewall: Alias: Edit page
+##|*NAME=Firewall: Alias: Edit
 ##|*DESCR=Allow access to the 'Firewall: Alias: Edit' page.
 ##|*MATCH=firewall_aliases_edit.php*
 ##|-PRIV
@@ -112,13 +106,23 @@ if ($debug) {
 	unlink_if_exists("{$g['tmp_path']}/alias_rename_log.txt");
 }
 
+$singular_types = array(
+	'host'	=> gettext("host"),
+	'network' => gettext("network"),
+	'port' => gettext("port"),
+	'url' => gettext("URL (IP)"),
+	'url_ports' => gettext("URL (Port)"),
+	'urltable' => gettext("URL Table (IP)"),
+	'urltable_ports' => gettext("URL Table (Port)"),
+);
+
 function alias_same_type($name, $type) {
 	global $config;
 
 	foreach ($config['aliases']['alias'] as $alias) {
 		if ($name == $alias['name']) {
 			if (in_array($type, array("host", "network")) &&
-				in_array($alias['type'], array("host", "network"))) {
+			    in_array($alias['type'], array("host", "network"))) {
 				return true;
 			}
 
@@ -178,23 +182,21 @@ if ($_POST) {
 		$input_errors[] = gettext("Reserved word used for alias name.");
 	} else {
 		if (is_validaliasname($_POST['name']) == false) {
-			$input_errors[] = gettext("The alias name must be less than 32 characters long, may not consist of only numbers, and may only contain the following characters") . " a-z, A-Z, 0-9, _.";
+			$input_errors[] = sprintf(gettext("The alias name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %s"), 'a-z, A-Z, 0-9, _');
 		}
 	}
 	/* check for name conflicts */
-	if (empty($a_aliases[$id])) {
-		foreach ($a_aliases as $alias) {
-			if ($alias['name'] == $_POST['name']) {
-				$input_errors[] = gettext("An alias with this name already exists.");
-				break;
-			}
+	foreach ($a_aliases as $key => $alias) {
+		if (($alias['name'] == $_POST['name']) && (empty($a_aliases[$id]) || ($key != $id))) {
+			$input_errors[] = gettext("An alias with this name already exists.");
+			break;
 		}
 	}
 
 	/* Check for reserved keyword names */
 	foreach ($reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
-			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
 
@@ -430,24 +432,24 @@ if ($_POST) {
 				if (!alias_same_type($input_address, $_POST['type'])) {
 					// But alias type network can include alias type urltable. Feature#1603.
 					if (!($_POST['type'] == 'network' &&
-						preg_match("/urltable/i", alias_get_type($input_address)))) {
+					    preg_match("/urltable/i", alias_get_type($input_address)))) {
 						$wrongaliases .= " " . $input_address;
 					}
 				}
 			} else if ($_POST['type'] == "port") {
 				if (!is_port($input_address) && !is_portrange($input_address)) {
-					$input_errors[] = $input_address . " " . gettext("is not a valid port or alias.");
+					$input_errors[] = sprintf(gettext("%s is not a valid port or alias."), $input_address);
 				}
 			} else if ($_POST['type'] == "host" || $_POST['type'] == "network") {
 				if (is_subnet($input_address) ||
-					(!is_ipaddr($input_address) && !is_hostname($input_address))) {
-					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $_POST['type']);
+				    (!is_ipaddr($input_address) && !is_hostname($input_address))) {
+					$input_errors[] = sprintf(gettext('%1$s is not a valid %2$s address, FQDN or alias.'), $input_address, $singular_types[$_POST['type']]);
 				}
 			}
 			$tmpaddress = $input_address;
 			if ($_POST['type'] != "host" && is_ipaddr($input_address) && $input_address_subnet[$idx] <> "") {
 				if (!is_subnet($input_address . "/" . $input_address_subnet[$idx])) {
-					$input_errors[] = sprintf(gettext('%s/%s is not a valid subnet.'), $input_address, $input_address_subnet[$idx]);
+					$input_errors[] = sprintf(gettext('%1$s/%2$s is not a valid subnet.'), $input_address, $input_address_subnet[$idx]);
 				} else {
 					$tmpaddress .= "/" . $input_address_subnet[$idx];
 				}
@@ -565,7 +567,17 @@ $section_str = array(
 	'url_ports' => gettext("URL (Ports)"),
 	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)")
-	);
+);
+
+$btn_str = array(
+	'network' => gettext("Add Network"),
+	'host'	=> gettext("Add Host"),
+	'port' => gettext("Add Port"),
+	'url' => gettext("Add URL"),
+	'url_ports' => gettext("Add URL"),
+	'urltable' => gettext("Add URL Table"),
+	'urltable_ports' => gettext("Add URL Table")
+);
 
 $label_str = array(
 	'network' => gettext("Network or FQDN"),
@@ -573,53 +585,62 @@ $label_str = array(
 	'port' => gettext("Port"),
 	'url' => gettext("URL (IPs)"),
 	'url_ports' => gettext("URL (Ports)"),
-	'urltable' => gettext("URL (IPs)"),
+	'urltable' => gettext("URL Table (IPs)"),
 	'urltable_ports' => gettext("URL Table (Ports)")
-	);
+);
+
+$special_cidr_usage_text = gettext("The value after the \"/\" is the update frequency in days.");
 
 $help = array(
-	'network' => "Networks are specified in CIDR format.  Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range.",
-	'host' => "Enter as many hosts as you would like.  Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used. You may also enter an IP range such as 192.168.1.1-192.168.1.10 or a small subnet such as 192.168.1.16/28 and a list of individual IP addresses will be generated.",
-	'port' => "Enter as many ports as you wish.	 Port ranges can be expressed by separating with a colon.",
-	'url' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000).",
-	'url_ports' => "Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000).",
-	'urltable' => "Enter a single URL containing a large number of IPs and/or Subnets. After saving we will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers." . "<br /><b>The value after the \"/\" is the " .
-				  "update frequency in days.</b>",
-	'urltable_ports' => "Enter a single URL containing a list of Port numbers and/or Port ranges. After saving we will download the URL." . "<br /><b>The value after the \"/\" is the " .
-						 "update frequency in days.</b>"
+	'network' => gettext("Networks are specified in CIDR format. Select the CIDR mask that pertains to each entry. /32 specifies a single IPv4 host, /128 specifies a single IPv6 host, /24 specifies 255.255.255.0, /64 specifies a normal IPv6 network, etc. Hostnames (FQDNs) may also be specified, using a /32 mask for IPv4 or /128 for IPv6. You may also enter an IP range such as 192.168.1.1-192.168.1.254 and a list of CIDR networks will be derived to fill the range."),
+	'host' => gettext("Enter as many hosts as you would like. Hosts must be specified by their IP address or fully qualified domain name (FQDN). FQDN hostnames are periodically re-resolved and updated. If multiple IPs are returned by a DNS query, all are used. You may also enter an IP range such as 192.168.1.1-192.168.1.10 or a small subnet such as 192.168.1.16/28 and a list of individual IP addresses will be generated."),
+	'port' => gettext("Enter as many ports as you wish. Port ranges can be expressed by separating with a colon."),
+	'url' => gettext("Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of IP addresses (less than 3000)."),
+	'url_ports' => gettext("Enter as many URLs as you wish. After saving we will download the URL and import the items into the alias. Use only with small sets of Ports (less than 3000)."),
+	'urltable' => gettext("Enter a single URL containing a large number of IPs and/or Subnets. After saving we will download the URL and create a table file containing these addresses. This will work with large numbers of addresses (30,000+) or small numbers.") .
+		"<br /><b>" . $special_cidr_usage_text . "</b>",
+	'urltable_ports' => gettext("Enter a single URL containing a list of Port numbers and/or Port ranges. After saving we will download the URL.") .
+		"<br /><b>" . $special_cidr_usage_text . "</b>",
+);
+
+// Tab type specific patterns.
+// Intentionally loose (valid character check only, no pattern recognition).
+// Can be tightend up with pattern recognition as desired for each tab type.
+$pattern_str = array(
+	'network'			=> '[a-zA-Z0-9_:.-]+',	// Alias Name, Host Name, IP Address, FQDN, Network or IP Address Range
+	'host'				=> '[a-zA-Z0-9_:.-]+',	// Alias Name, Host Name, IP Address, FQDN
+	'port'				=> '[a-zA-Z0-9_:]+',	// Alias Name, Port Number, or Port Number Range
+	'url'				=> '.*',				// Alias Name or URL
+	'url_ports'			=> '.*',				// Alias Name or URL
+	'urltable'			=> '.*',				// Alias Name or URL
+	'urltable_ports'	=> '.*'					// Alias Name or URL
 );
 
 $types = array(
-	'host' => 'Host(s)',
-	'network' => 'Network(s)',
-	'port' => 'Port(s)',
-	'url' => 'URL (IPs)',
-	'url_ports' => 'URL (Ports)',
-	'urltable' => 'URL Table (IPs)',
-	'urltable_ports' => 'URL Table (Ports)',
+	'host'	=> gettext("Host(s)"),
+	'network' => gettext("Network(s)"),
+	'port' => gettext("Port(s)"),
+	'url' => gettext("URL (IPs)"),
+	'url_ports' => gettext("URL (Ports)"),
+	'urltable' => gettext("URL Table (IPs)"),
+	'urltable_ports' => gettext("URL Table (Ports)"),
 );
 
 if (empty($tab)) {
-	if (preg_match("/url/i", $pconfig['type']))
+	if (preg_match("/url/i", $pconfig['type'])) {
 		$tab = 'url';
-	else if ($pconfig['type'] == 'host')
+	} else if ($pconfig['type'] == 'host') {
 		$tab = 'ip';
-	else
+	} else {
 		$tab = $pconfig['type'];
+	}
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-require('classes/Form.class.php');
 $form = new Form;
-
-$form->addGlobal(new Form_Input(
-	'tab',
-	null,
-	'hidden',
-	$tab
-));
 
 $form->addGlobal(new Form_Input(
 	'tab',
@@ -635,8 +656,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['name']
 ));
 
-if (isset($id) && $a_aliases[$id])
-{
+if (isset($id) && $a_aliases[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,
@@ -694,7 +714,13 @@ while ($counter < count($addresses)) {
 		list($address, $address_subnet) = explode("/", $addresses[$counter]);
 	} else {
 		$address = $addresses[$counter];
-		$address_subnet = "";
+		if (isset($pconfig['updatefreq'])) {
+			// Note: There is only 1 updatefreq possible.
+			// The alias types that use updatefreq only allow a single entry.
+			$address_subnet = $pconfig['updatefreq'];
+		} else {
+			$address_subnet = "";
+		}
 	}
 
 	$group = new Form_Group($counter == 0 ? $label_str[$tab]:'');
@@ -702,16 +728,16 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		null,
+		'Address',
 		$address
-	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern('[0-9, a-z, A-Z and .');
+	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 
 	$group->add(new Form_Input(
 		'detail' . $counter,
-		null,
+		'Description',
 		'text',
 		$details[$counter]
-	))->setHelp('Description')->setWidth(4);
+	))->setWidth(4);
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
@@ -722,219 +748,112 @@ while ($counter < count($addresses)) {
 	$counter++;
 }
 
-$section->addInput(new Form_Button(
+$form->addGlobal(new Form_Button(
 	'addrow',
-	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+	$btn_str[$tab]
+))->removeClass('btn-primary')->addClass('btn-success addbtn');
 
 $form->add($section);
 
 print $form;
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
 
-	function setMasks() {
-		// Find all ipaddress masks and make dynamic based on address family of input
-		$('span.pfIpMask + select').each(function (idx, select){
-			var input = $(select).prevAll('input[type=text]');
+events.push(function() {
 
-			input.on('change', function(e){
-				var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
-				if (!isV6)
-					max = 32;
+	var disable_subnets;
 
-				if (input.val() == "")
-					return;
+	function typechange() {
+		var tab = $('#type').find('option:selected').val();
 
-				while (select.options.length > max)
-					select.remove(0);
+		disable_subnets = (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports');
 
-				if (select.options.length < max)
-				{
-					for (var i=select.options.length; i<=max; i++)
-						select.options.add(new Option(i, i), 0);
-				}
-			});
+		$("[id^='address_subnet']").prop("disabled", disable_subnets);
 
-			// Fire immediately
-			input.change();
-		});
+		// Set the help text to match the tab
+		var helparray = <?=json_encode($help);?>;
+		$('.helptext').html(helparray[tab]);
+
+		// Set the section heading by tab type
+		var sectionstr = <?=json_encode($section_str);?>;
+		$('.panel-title:last').text(sectionstr[tab]);
+
+		var buttonstr = <?=json_encode($btn_str);?>;
+		$('.btn-success').prop('value', buttonstr[tab]);
+
+		// Set the input field label by tab
+		var labelstr = <?=json_encode($label_str);?>;
+		$('.repeatable:first').find('label').text(labelstr[tab]);
+
+		// Set the input field pattern by tab type
+		var patternstr = <?=json_encode($pattern_str);?>;
+		for (i = 0; i < <?=$counter;?>; i++) {
+			$('#address' + i).prop('pattern', patternstr[tab]);
+		}
+
+		// Hide and disable rows other than the first
+		hideRowsAfter(1, (tab == 'urltable') || (tab == 'urltable_ports'));
+
+		// The add button and delete buttons must not show on URL Table IP or URL table ports
+		if ((tab == 'urltable') || (tab == 'urltable_ports')) {
+			hideClass('addbtn', true);
+			$('[id^=deleterow]').hide();
+		} else {
+			hideClass('addbtn', false);
+			$('[id^=deleterow]').show();
+		}
 	}
 
-	// Complicated function to move all help text associated with this input id to the same id
-	// on the row above. That way if you delete the last row, you don't lose the help
-	function moveHelpText(id) {
-		$('#' + id).parent('div').parent('div').find('input').each(function() {	 // For each <span></span>
-			var fromId = this.id;
-			var toId = decrStringInt(fromId);
-			var helpSpan;
-
-			if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
-
-				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
-				if($(helpSpan).hasClass('help-block')) {
-					if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group'))
-						$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
-					else
-						$('#' + decrStringInt(fromId)).after(helpSpan);
-				}
-			}
-		});
-	}
-
-	// Increment the number at the end of the string
-	function bumpStringInt( str )	{
-	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
-
-	  if( data )
-		newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
-
-	  return newStr || str;
-	}
-
-	// Decrement the number at the end of the string
-	function decrStringInt( str )	{
-	  var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
-
-	  if( data )
-		newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
-
-	  return newStr || str;
-	}
-
-	// Called after a delete so that there are no gaps in the numbering. Most of the time the config system doesn't care about
-	// gaps, but I do :)
-	function renumber() {
+	// Hide and disable all rows >= that specified
+	function hideRowsAfter(row, hide) {
 		var idx = 0;
 
-		$('.repeatable').each(function() {
-
-			$(this).find('input').each(function() {
-				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
-				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
-			});
-
-			$(this).find('select').each(function() {
-				$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
-				$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
-			});
-
-			$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
+		$('.repeatable').each(function(el) {
+			if (idx >= row) {
+				hideRow(idx, hide);
+			}
 
 			idx++;
 		});
 	}
 
-	function delete_row(row) {
-		$('#' + row).parent('div').parent('div').remove();
-		renumber();
+	function hideRow(row, hide) {
+		if (hide) {
+			$('#deleterow' + row).parent('div').parent().addClass('hidden');
+		} else {
+			$('#deleterow' + row).parent('div').parent().removeClass('hidden');
+		}
+
+		// We need to disable the elements so they are not submitted in the POST
+		$('#address' + row).prop("disabled", hide);
+		$('#address_subnet' + row).prop("disabled", hide || disable_subnets);
+		$('#detail' + row).prop("disabled", hide);
+		$('#deleterow' + row).prop("disabled", hide);
 	}
-
-	function add_row() {
-		// Find the lst repeatable group
-		var lastRepeatableGroup = $('.repeatable:last');
-
-		// Clone it
-		var newGroup = lastRepeatableGroup.clone(true);
-
-		// Increment the suffix number for each input elemnt in the new group
-		$(newGroup).find('input').each(function() {
-			$(this).prop("id", bumpStringInt(this.id));
-			$(this).prop("name", bumpStringInt(this.name));
-			if(!$(this).is('[id^=delete]'))
-				$(this).val('');
-		});
-
-		// Do the same for selectors
-		$(newGroup).find('select').each(function() {
-			$(this).prop("id", bumpStringInt(this.id));
-			$(this).prop("name", bumpStringInt(this.name));
-			// If this selector lists mask bits, we need it to be reset to all 128 options
-			// and no items selected, so that automatic v4/v6 selection still works
-			if($(this).is('[id^=address_subnet]')) {
-				$(this).empty();
-				for(idx=128; idx>0; idx--) {
-					$(this).append($('<option>', {
-						value: idx,
-						text: idx
-					}));
-				}
-			}
-		});
-
-		// And for "for" tags
-		$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
-		$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
-
-		// Insert the updated/cloned row
-		$(lastRepeatableGroup).after(newGroup);
-
-		// Delete any help text from the group we have cloned
-		$(lastRepeatableGroup).find('.help-block').each(function() {
-			$(this).remove();
-		});
-
-		setMasks();
-
-		$('[id^=address]').autocomplete({
-			source: addressarray
-		});
-	}
-
-	function typechange() {
-		var tab = $('#type').find('option:selected').val();
-		$("[id^='address_subnet']").prop("disabled", (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports'));
-
-		// Set the help text to match the tab
-		var helparray = <?php echo json_encode($help); ?>;
-		$('.helptext').html(helparray[tab]);
-
-		// Set the section heading by tab type
-		var sectionstr = <?php echo json_encode($section_str); ?>;
-		$('.panel-title:last').text(sectionstr[tab]);
-
-		// Set the input field label by tab
-		var labelstr = <?php echo json_encode($label_str); ?>;
-		$('.repeatable:first').find('label').text(labelstr[tab]);
-	}
-
-	// These are action buttons, not submit buttons
-	$('[id^=addrow]').prop('type','button');
-	$('[id^=delete]').prop('type','button');
 
 	// On load . .
 	typechange();
 
-	// Autocomplete
-	var addressarray = <?= json_encode(array_exclude($pconfig['name'], get_alias_list($pconfig['type']))) ?>;
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 
-	$('[id^=address]').autocomplete({
-		source: addressarray
+	// Autocomplete
+	$('[id^=address]').each(function() {
+		if (this.id.substring(0, 8) != "address_") {
+			$(this).autocomplete({
+				source: addressarray
+			});
+		}
 	});
 
 	// on click . .
-	$('[id^=addrow]').click(function() {
-		add_row();
-	});
-
-	$('[id^=delete]').click(function(event) {
-		if($('.repeatable').length > 1) {
-			moveHelpText(event.target.id);
-			delete_row(event.target.id);
-		}
-		else
-			alert('<?php echo gettext("You may not delete the last one!")?>');
-	});
-
 	$('#type').on('change', function() {
 		typechange();
 	});
 
-	// Disable address_subnet if type == 'host'
-	$("[id^='address_subnet']").prop("disabled", ($('#type').val() == 'host'));
 });
 //]]>
 </script>

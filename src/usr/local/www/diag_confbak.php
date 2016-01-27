@@ -1,41 +1,62 @@
 <?php
-/* $Id$ */
 /*
 	diag_confbak.php
-	Copyright (C) 2005 Colin Smith
-	Copyright (C) 2010 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-
-/*
-	pfSense_MODULE:	config
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2005 Colin Smith
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-configurationhistory
-##|*NAME=Diagnostics: Configuration History page
+##|*NAME=Diagnostics: Configuration History
 ##|*DESCR=Allow access to the 'Diagnostics: Configuration History' page.
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
@@ -48,9 +69,9 @@ if (isset($_POST['backupcount'])) {
 		$changedescr = $config['system']['backupcount'];
 	} else {
 		unset($config['system']['backupcount']);
-		$changedescr = "(platform default)";
+		$changedescr = gettext("(platform default)");
 	}
-	write_config("Changed backup revision count to {$changedescr}");
+	write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
 } elseif ($_GET) {
 	if (!isset($_GET['newver']) && !isset($_GET['rmver']) && !isset($_GET['getcfg']) && !isset($_GET['diff'])) {
 		header("Location: diag_confbak.php");
@@ -59,7 +80,7 @@ if (isset($_POST['backupcount'])) {
 
 	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
-	
+
 	if ($_GET['newver'] != "") {
 		if (config_restore($g['conf_path'] . '/backup/config-' . $_GET['newver'] . '.xml') == 0) {
 			$savemsg = sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['newver']), htmlspecialchars($confvers[$_GET['newver']]['description']));
@@ -75,6 +96,7 @@ if (isset($_POST['backupcount'])) {
 }
 
 if ($_GET['getcfg'] != "") {
+	$_GET['getcfg'] = basename($_GET['getcfg']);
 	$file = $g['conf_path'] . '/backup/config-' . $_GET['getcfg'] . '.xml';
 
 	$exp_name = urlencode("config-{$config['system']['hostname']}.{$config['system']['domain']}-{$_GET['getcfg']}.xml");
@@ -117,10 +139,19 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
+$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
+display_top_tabs($tab_array);
+
 if ($diff) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
+		</h2>
+	</div>
 	<div class="panel-body table-responsive">
 	<!-- This table is left un-bootstrapped to maintain the original diff format output -->
 		<table style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;">
@@ -144,28 +175,21 @@ if ($diff) {
 			<tr>
 				<td valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
-<?php 
+<?php
 	}
 ?>
 		</table>
 	</div>
 </div>
-<?php 
+<?php
 }
-
-$tab_array = array();
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
-display_top_tabs($tab_array);
-
-require('classes/Form.class.php');
 
 $form = new Form(new Form_Button(
 	'Submit',
 	gettext("Save")
 ));
 
-$section = new Form_Section('Saved Configurations');
+$section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'backupcount',
@@ -186,16 +210,25 @@ $form->add($section);
 print($form);
 
 if (is_array($confvers)) {
-	print_info_box(gettext('To view the differences between an older configuration and a newer configuration, ' .
-						   'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
-						   'then press the "Diff" button.'));
-}						   
-?>					
-					
+?>
+<div>
+	<div class="infoblock blockopen">
+		<?=print_info_box(
+			gettext(
+				'To view the differences between an older configuration and a newer configuration, ' .
+				'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
+				'then press the "Diff" button.'),
+			'info', false)?>
+	</div>
+</div>
+<?php
+}
+?>
+
 <form action="diag_confbak.php" method="get">
-	<div class="table-resposive">
+	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
-<?php 
+<?php
 if (is_array($confvers)):
 ?>
 			<thead>
@@ -224,7 +257,7 @@ if (is_array($confvers)):
 					<td><?=gettext("Current configuration")?></td>
 				</tr>
 <?php
-	// And now for hte table of prior backups
+	// And now for the table of prior backups
 	$c = 0;
 	foreach ($confvers as $version):
 		if ($version['time'] != 0) {
@@ -242,9 +275,9 @@ if (is_array($confvers)):
 		if ($c < (count($confvers) - 1)) {
 ?>
 								<input type="radio" name="newtime" value="<?=$version['time']?>" />
-<?php 
+<?php
 		}
-		$c++; 
+		$c++;
 ?>
 					</td>
 					<td><?= $date ?></td>
@@ -252,26 +285,19 @@ if (is_array($confvers)):
 					<td><?= format_bytes($version['filesize']) ?></td>
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
-						<a href="diag_confbak.php?newver=<?=$version['time']?>" class="btn btn-xs btn-success" 
-							onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')">
-							<?=gettext("Revert")?>
-						</a>
-						<a href="diag_confbak.php?rmver=<?=$version['time']?>" class="btn btn-xs btn-danger">
-							<?=gettext("Delete")?>
-						</a>
-						<a href="diag_confbak.php?getcfg=<?=$version['time']?>" class="btn btn-xs btn-default">
-							<?=gettext("Download")?>
-						</a>
+						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')"></a>
+						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
+						<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="diag_confbak.php?rmver=<?=$version['time']?>"></a>
 					</td>
 				</tr>
-<?php 
+<?php
 	endforeach;
 ?>
 				<tr>
 					<td colspan="2"><input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" /></td>
 					<td colspan="5"></td>
 				</tr>
-<?php 
+<?php
 else:
 	print_info_box(gettext("No backups found."), 'danger');
 endif;

@@ -47,8 +47,6 @@ function restart_packages() {
 	global $oldip, $curwanip, $g;
 
 	/* restart packages */
-	system_ntp_configure(false);
-	mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
 	log_error("{$g['product_name']} package system has detected an IP change or dynamic WAN reconnection - $oldip ->  $curwanip - Restarting packages.");
 	send_event("service reload packages");
 }
@@ -152,7 +150,13 @@ if (!empty($grouptmp)) {
 unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp)) {
-	interface_bridge_add_member($bridgetmp, $interface_real);
+	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+		foreach ($config['bridges']['bridged'] as $bridge) {
+			if ($bridge['bridgeif'] == $bridgetmp) {
+				interface_bridge_configure($bridge);
+			}
+		}
+	}
 }
 
 // Do not process while booting
@@ -218,8 +222,8 @@ if (!is_ipaddr($oldip) || $curwanip != $oldip || !is_ipaddrv4($config['interface
 	/*
 	 * Some services (e.g. dyndns, see ticket #4066) depend on
 	 * filter_configure() to be called before, otherwise pass out
-	 * route-to rules have the old ip set in 'from' and connection
-	 * do not go through correct link
+	 * route-to rules have the old ip set in 'from' and connections
+	 * do not go through the correct link
 	 */
 	filter_configure_sync();
 

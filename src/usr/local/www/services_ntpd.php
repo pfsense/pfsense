@@ -1,36 +1,58 @@
 <?php
 /*
 	services_ntpd.php
-
-	Copyright (C) 2013	Dagorlad
-	Copyright (C) 2012	Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: ntpd
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2013 Dagorlad
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd
@@ -50,21 +72,16 @@ if (!is_array($config['ntpd'])) {
 
 if (empty($config['ntpd']['interface'])) {
 	if (is_array($config['installedpackages']['openntpd']) && is_array($config['installedpackages']['openntpd']['config']) &&
-		is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
+	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
-		write_config("Upgraded settings from openttpd");
+		write_config(gettext("Upgraded settings from openttpd"));
 	} else {
 		$pconfig['interface'] = array();
 	}
 } else {
 	$pconfig['interface'] = explode(",", $config['ntpd']['interface']);
 }
-
-if($_GET['addrow'])
-	$maxrows = $_GET['addrow'] + 1;
-else
-	$maxrows = 3;
 
 if ($_POST) {
 	unset($input_errors);
@@ -87,7 +104,7 @@ if ($_POST) {
 		unset($config['ntpd']['noselect']);
 		$timeservers = '';
 
-		for ($i = 0; $i < 10; $i++) {
+		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
 			$tserver = trim($_POST["server{$i}"]);
 			if (!empty($tserver)) {
 				$timeservers .= "{$tserver} ";
@@ -214,45 +231,49 @@ function build_interface_list() {
 	$interfaces = get_configured_interface_with_descr();
 	$carplist = get_configured_carp_interface_list();
 
-	foreach ($carplist as $cif => $carpip)
+	foreach ($carplist as $cif => $carpip) {
 		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) .")";
+	}
 
 	$aliaslist = get_configured_ip_aliases_list();
 
-	foreach ($aliaslist as $aliasip => $aliasif)
+	foreach ($aliaslist as $aliasip => $aliasif) {
 		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	}
 
 	$size = (count($interfaces) < 10) ? count($interfaces) : 10;
 
 	foreach ($interfaces as $iface => $ifacename) {
-		if (!is_ipaddr(get_interface_ip($iface)) && !is_ipaddr($iface))
+		if (!is_ipaddr(get_interface_ip($iface)) && !is_ipaddr($iface)) {
 			continue;
+		}
 
-		$iflist['options']['$iface'] = $ifacename;
+		$iflist['options'][$iface] = $ifacename;
 
-		if (in_array($iface, $pconfig['interface']))
-			array_push($iflist['slected'], $iface);
-
+		if (in_array($iface, $pconfig['interface'])) {
+			array_push($iflist['selected'], $iface);
+		}
 	}
 
 	return($iflist);
 }
 
-$closehead = false;
 $pconfig = &$config['ntpd'];
 if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = array();
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-$pgtitle = array(gettext("Services"), gettext("NTP"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
 $shortcut_section = "ntp";
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
+}
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("NTP"), true, "services_ntpd.php");
@@ -260,11 +281,9 @@ $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form;
 
-$section = new Form_Section('NTP server configuration');
+$section = new Form_Section('NTP Server Configuration');
 
 $iflist = build_interface_list();
 
@@ -278,52 +297,46 @@ $section->addInput(new Form_Select(
 			'Selecting no interfaces will listen on all interfaces with a wildcard.' . '<br />' .
 			'Selecting all interfaces will explicitly listen on only the interfaces/IPs specified.');
 
-// NUMTIMESERVERS time servers are always available, but we only display a smaller number of these ($maxrows)
-// Clicking the 'Add Row' button increments $maxrows so you can see more of time servers
-$timeservers = explode( ' ', $config['system']['timeservers']);
-for ($i = $j = 0; $i < NUMTIMESERVERS; $i++){
-
-	if($i >= $maxrows)
-		continue;
-
-	$group = new Form_Group($i == 0 ? 'Time servers':'');
+$timeservers = explode(' ', $config['system']['timeservers']);
+$maxrows = max(count($timeservers), 1);
+for ($counter=0; $counter < $maxrows; $counter++) {
+	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
+	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
-		'server' . $i,
+		'server' . $counter,
 		null,
 		'text',
-		$timeservers[$i]
-	 ));
+		$timeservers[$counter],
+		['placeholder' => 'Hostname']
+	 ))->setWidth(3);
 
 	 $group->add(new Form_Checkbox(
-		'servprefer' . $i,
+		'servprefer' . $counter,
 		null,
-		'Prefer',
-		isset($config['ntpd']['prefer']) && isset($timeservers[$i]) && substr_count($config['ntpd']['prefer'], $timeservers[$i])
-	 ));
+		null,
+		isset($config['ntpd']['prefer']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['prefer'], $timeservers[$counter])
+	 ))->sethelp('Prefer');
 
 	 $group->add(new Form_Checkbox(
-		'servselect' . $i,
+		'servselect' . $counter,
 		null,
-		'NoSelect',
-		isset($config['ntpd']['noselect']) && isset($timeservers[$i]) && substr_count($config['ntpd']['noselect'], $timeservers[$i])
-	 ));
+		null,
+		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
+	 ))->sethelp('No Select');
+
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	))->removeClass('btn-primary')->addClass('btn-warning');
 
 	 $section->add($group);
 }
 
-// Show the 'Add Rows' button only if we are currently displaying less than the maximum
-// number of configured servers
-if($maxrows < NUMTIMESERVERS) {
-	$btnaddrow = new Form_Button(
-		'btnaddrow',
-		'Add Server',
-		'services_ntpd.php?addrow=' . $maxrows
-		);
-
-	$btnaddrow->removeClass('btn-primary')->addClass('btn-success btn-sm');
-} else
-	$btnaddrow = false;
+$section->addInput(new Form_Button(
+	'addrow',
+	'Add'
+))->removeClass('btn-primary')->addClass('btn-success');
 
 $section->addInput(new Form_StaticText(
 	null,
@@ -334,7 +347,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Input(
 	'ntporphan',
-	'Orphan mode',
+	'Orphan Mode',
 	'text',
 	$pconfig['ntporphan']
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
@@ -350,18 +363,18 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'logpeer',
-	'Syslog logging',
-	'Enable logging of peer messages (default: disabled).',
+	'Logging',
+	'Log peer messages (default: disabled).',
 	$pconfig['logpeer']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'logsys',
 	null,
-	'Enable logging of system messages (default: disabled).',
+	'Log system messages (default: disabled).',
 	$pconfig['logsys']
 ))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="diag_logs_ntpd.php">' . 'Status > System Logs > NTP' . '</a>');
+			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>');
 
 // Statistics logging section
 $btnadvstats = new Form_Button(
@@ -372,28 +385,28 @@ $btnadvstats = new Form_Button(
 $btnadvstats->removeClass('btn-primary')->addClass('btn-default btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Statistics logging',
+	'Statistics Logging',
 	$btnadvstats
-))->setHelp('Warning: These options will create persistant daily log files in /var/log/ntp.');
+))->setHelp('Warning: These options will create persistent daily log files in /var/log/ntp.');
 
 $section->addInput(new Form_Checkbox(
 	'clockstats',
 	null,
-	'Enable logging of reference clock statistics (default: disabled).',
+	'Log reference clock statistics (default: disabled).',
 	$pconfig['clockstats']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'loopstats',
 	null,
-	'Enable logging of clock discipline statistics (default: disabled).',
+	'Log clock discipline statistics (default: disabled).',
 	$pconfig['loopstats']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'peerstats',
 	null,
-	'Enable logging of NTP peer statistics (default: disabled).',
+	'Log NTP peer statistics (default: disabled).',
 	$pconfig['peerstats']
 ));
 
@@ -413,43 +426,43 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Checkbox(
 	'kod',
 	null,
-	'Enable Kiss-o\'-death packets (default: enabled).',
-	$pconfig['kod']
+	'Enable Kiss-o\'-death packets (default: checked).',
+	!$pconfig['kod']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'nomodify',
 	null,
-	'Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: enabled).',
-	$pconfig['nomodify']
+	'Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: checked).',
+	!$pconfig['nomodify']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'noquery',
 	null,
-	'Disable ntpq and ntpdc queries (default: disabled).',
+	'Disable ntpq and ntpdc queries (default: unchecked).',
 	$pconfig['noquery']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'noserve',
 	null,
-	'Disable all except ntpq and ntpdc queries (default: disabled).',
+	'Disable all except ntpq and ntpdc queries (default: unchecked).',
 	$pconfig['noserve']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'nopeer',
 	null,
-	'Deny packets that attempt a peer association (default: enabled).',
-	$pconfig['nopeer']
+	'Deny packets that attempt a peer association (default: checked).',
+	!$pconfig['nopeer']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'notrap',
 	null,
-	'Deny mode 6 control message trap service (default: enabled).',
-	$pconfig['notrap']
+	'Deny mode 6 control message trap service (default: checked).',
+	!$pconfig['notrap']
 ))->addClass('advrestrictions');
 
 // Leap seconds section
@@ -483,25 +496,16 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+	// If this variable is declared, any help text will not be deleted when rows are added
+	// IOW the help text will appear on every row
+	retainhelp = true;
+</script>
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
 
 	// Make the ‘clear’ button a plain button, not a submit button
 	$('#btnadvstats').prop('type','button');
@@ -518,6 +522,7 @@ events.push(function(){
 
 	// On click, show the controls in the restrictions section
 	$("#btnadvrestr").click(function() {
+		hideCheckbox('kod', false);
 		hideCheckbox('nomodify', false);
 		hideCheckbox('noquery', false);
 		hideCheckbox('noserve', false);
@@ -546,6 +551,9 @@ events.push(function(){
 	hideCheckbox('notrap', true);
 	hideInput('leaptext', true);
 	hideInput('leapfile', true);
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
 });
 //]]>
 </script>

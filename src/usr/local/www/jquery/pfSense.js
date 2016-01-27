@@ -80,7 +80,7 @@ $(function() {
 			var group = $(this).parents('div.form-group');
 
 			var clone = group.clone(true);
-			clone.find('*').removeAttr('value');			
+			clone.find('*').removeAttr('value');
 			clone.appendTo(group.parent());
 		});
 
@@ -93,10 +93,10 @@ $(function() {
 		});
 	})();
 
-	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPvd addresses
+	// Automatically change IpAddress mask selectors to 128/32 options for IPv6/IPv4 addresses
 	$('span.pfIpMask + select').each(function (idx, select){
 		var input = $(select).prevAll('input[type=text]');
-			
+
 		input.on('change', function(e){
 			var isV6 = (input.val().indexOf(':') != -1), min = 0, max = 128;
 			if (!isV6)
@@ -105,10 +105,10 @@ $(function() {
 			if (input.val() == "")
 				return;
 
-			// Eat all of the options with a value greater than max. We don't want them to be available 
+			// Eat all of the options with a value greater than max. We don't want them to be available
 			while (select.options[0].value > max)
 				select.remove(0);
-			
+
 			if (select.options.length < max) {
 				for (var i=select.options.length; i<=max; i++)
 					select.options.add(new Option(i, i), 0);
@@ -118,44 +118,48 @@ $(function() {
 		// Fire immediately
 		input.change();
 	});
-	
-	// Add confirm to all btn-danger buttons
+
+	// Add confirm to all btn-danger buttons and fa-trash icons
 	// Use element title in the confirmation message, or if not available
 	// the element value
-	$('.btn-danger').on('click', function(e){
-		var msg = $.trim(this.textContent);
-		
-		if(!msg)
-			var msg = $.trim(this.value);
-			
-		var q = 'Are you sure you wish to '+ msg +'?';
+	$('.btn-danger, .fa-trash').on('click', function(e){
+		if(!($(this).hasClass('no-confirm'))) {
+			var msg = $.trim(this.textContent);
 
-		if ($(this).attr('title') != undefined)
-			q = $(this).attr('title')+'?';
+			if(!msg)
+				var msg = $.trim(this.value).toLowerCase();
 
-		if (!confirm(q))
-			e.preventDefault();
-	});
+			var q = 'Are you sure you wish to '+ msg +'?';
 
-	// Add toggle-all when there are multiple checkboxes and none of them are radio buttons
-	$('.control-label + .checkbox.multi').each(function() {
-		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
-		
-		if(($(this).html().indexOf("type=\"radio\"") == -1)) {
-			a.on('click', function() {
-				var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
-					all = wrap.find('input[type=checkbox]'),
-					checked = wrap.find('input[type=checkbox]:checked');
-	
-				all.prop('checked', (all.length != checked.length));
-			});
-	
-			a.appendTo($(this));
+			if ($(this).attr('title') != undefined)
+				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
+
+			if (!confirm(q))
+				e.preventDefault();
 		}
 	});
 
+	// Add toggle-all when there are multiple checkboxes
+	$('.control-label + .checkbox.multi').each(function() {
+		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
+
+		a.on('click', function() {
+			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),
+				all = wrap.find('input[type=checkbox]'),
+				checked = wrap.find('input[type=checkbox]:checked');
+
+			all.prop('checked', (all.length != checked.length));
+		});
+
+		a.appendTo($(this));
+	});
+
+	// The need to NOT hide the advanced options if the elements therein are not set to the system
+	// default values makes it better to handle advanced option hiding in each PHP file so this is being
+	// disabled for now by changing the class name it acts on to "auto-advanced"
+
 	// Hide advanced inputs by default
-	if ($('.advanced').length > 0)
+	if ($('.auto-advanced').length > 0)
 	{
 		var advButt = $('<a id="toggle-advanced" class="btn btn-default">toggle advanced options</a>');
 		advButt.on('click', function() {
@@ -164,7 +168,7 @@ $(function() {
 
 		advButt.insertAfter($('#save'));
 
-		$('.advanced').parents('.form-group').collapse({toggle: true});
+		$('.auto-advanced').parents('.form-group').collapse({toggle: true});
 	}
 
 	// Enable popovers globally
@@ -174,6 +178,7 @@ $(function() {
 	$('input[type=checkbox][data-toggle="collapse"]:not(:checked)').each(function() {
 		$( $(this).data('target') ).addClass('collapse');
 	});
+
 	$('input[type=checkbox][data-toggle="disable"]:not(:checked)').each(function() {
 		$( $(this).data('target') ).prop('disabled', true);
 	});

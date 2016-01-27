@@ -3,12 +3,14 @@
 	diag_traceroute.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2005 Paul Taylor (paultaylor@winndixie.com) and Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +18,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +39,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +57,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/traceroute
-	pfSense_MODULE: routing
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-traceroute
-##|*NAME=Diagnostics: Traceroute page
+##|*NAME=Diagnostics: Traceroute
 ##|*DESCR=Allow access to the 'Diagnostics: Traceroute' page.
 ##|*MATCH=diag_traceroute.php*
 ##|-PRIV
@@ -76,24 +73,27 @@ include("head.inc");
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
-$pconfig['ttl'] = DEFAULT_TTL;
-$pconfig['ipproto'] = 'IPv4';
-$pconfig['sourceip'] = 'Any';
+// Set defaults in case they are not supplied.
+$do_traceroute = false;
+$host = '';
+$ttl = DEFAULT_TTL;
+$ipproto = 'ipv4';
+$sourceip = 'any';
 
 function create_sourceaddresslist() {
-	$list = array('any' => 'Any');
+	$list = array('any' => gettext('Any'));
 
 	$sourceips = get_possible_traffic_source_addresses(true);
 
-	foreach ($sourceips as $sipvalue => $sipname)
-		$list[$sipname[value]] = $sipname[name];
+	foreach ($sourceips as $sipvalue => $sipname) {
+		$list[$sipvalue] = $sipname;
+	}
 
 	return($list);
 }
 
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
-	unset($do_traceroute);
 
 	/* input validation */
 	$reqdfields = explode(" ", "host ttl");
@@ -112,30 +112,48 @@ if ($_POST || $_REQUEST['host']) {
 		$input_errors[] = gettext("When using IPv6, the target host must be an IPv6 address or hostname.");
 	}
 
-	if (!$input_errors)
-		$host = $_REQUEST['host'];
-
 	$sourceip = $_REQUEST['sourceip'];
-	$do_traceroute = true;
 	$ttl = $_REQUEST['ttl'];
 	$resolve = $_REQUEST['resolve'];
 	$useicmp = $_REQUEST['useicmp'];
+
+	if ($_POST && !$input_errors) {
+		$do_traceroute = true;
+	}
 
 } else {
 	$resolve = false;
 	$useicmp = false;
 }
 
-if (!isset($do_traceroute)) {
-	$do_traceroute = false;
-	$host = '';
-	$ttl = DEFAULT_TTL;
+if ($input_errors) {
+	print_input_errors($input_errors);
 }
 
-if ($input_errors)
-	print_input_errors($input_errors);
+/* Do the traceroute and show any error */
+if ($do_traceroute) {
+	$useicmpparam = isset($useicmp) ? "-I" : "";
+	$n = isset($resolve) ? "" : "-n";
 
-require_once('classes/Form.class.php');
+	$command = "/usr/sbin/traceroute";
+	if ($ipproto == "ipv6") {
+		$command .= "6";
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
+	} else {
+		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
+	}
+
+	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
+		$srcip = "-s " . escapeshellarg($ifaddr);
+	}
+
+	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmpparam} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+	$result = shell_exec($cmd);
+
+	if (!$result) {
+		print_info_box(sprintf(gettext('Error: %s could not be traced/resolved'), $host));
+	}
+}
 
 $form = new Form('Traceroute');
 
@@ -152,14 +170,14 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Select(
 	'ipproto',
 	'IP Protocol',
-	$pconfig['protocol'],
+	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp('Select the protocol to use');
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
-	$pconfig['source'],
+	$sourceip,
 	create_sourceaddresslist()
 ))->setHelp('Select source address for the trace');
 
@@ -188,33 +206,13 @@ $form->add($section);
 print $form;
 
 /* Show the traceroute results */
-if (!$input_errors && $do_traceroute) {
-
-	$useicmp = isset($_REQUEST['useicmp']) ? "-I" : "";
-	$n = isset($resolve) ? "" : "-n";
-
-	$command = "/usr/sbin/traceroute";
-	if ($ipproto == "ipv6") {
-		$command .= "6";
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
-	} else {
-		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);
-	}
-
-	if ($ifaddr && (is_ipaddr($host) || is_hostname($host))) {
-		$srcip = "-s " . escapeshellarg($ifaddr);
-	}
-
-	$cmd = "{$command} {$n} {$srcip} -w 2 {$useicmp} -m " . escapeshellarg($ttl) . " " . escapeshellarg($host);
+if ($do_traceroute && $result) {
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 		<div class="panel-body">
 <?php
-		if ($result = shell_exec($cmd))
-			print(nl2br($result));
-		else
-			print('Error: ' . $host . ' ' . gettext("could not be traced/resolved"));
+	print('<pre>' . $result . '</pre>');
 ?>
 		</div>
 	</div>

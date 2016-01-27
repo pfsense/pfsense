@@ -1,14 +1,11 @@
 <?php
-/****h* pfSense/pfsense-utils
-	NAME
-		pfsense-utils.inc - Utilities specific to pfSense
-	DESCRIPTION
-		This include contains various pfSense specific functions.
-	HISTORY
-		$Id$
+/*
+	pfsense-utils.inc
 
-	Copyright (C) 2004-2007 Scott Ullrich (sullrich@gmail.com)
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
 	All rights reserved.
+
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
@@ -16,26 +13,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig	/sbin/pfctl	/usr/local/bin/php-cgi /usr/bin/netstat
-	pfSense_BUILDER_BINARIES:	/bin/df	/usr/bin/grep	/usr/bin/awk	/bin/rm	/usr/sbin/pwd_mkdb	/usr/bin/host
-	pfSense_BUILDER_BINARIES:	/sbin/kldload
-	pfSense_MODULE:	utils
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /****f* pfsense-utils/have_natpfruleint_access
@@ -405,21 +418,35 @@ function convert_ip_to_network_format($ip, $subnet) {
  * get_carp_interface_status($carpinterface): returns the status of a carp ip
  */
 function get_carp_interface_status($carpinterface) {
+	global $config;
 
-	$interface = get_real_interface($interface);
-	$carp_query = '';
-	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep -v grep | /usr/bin/grep carp: | /usr/bin/head -n 1", $carp_query);
-	foreach ($carp_query as $int) {
-		if (stripos($int, "MASTER")) {
-			return "MASTER";
+	foreach ($config['virtualip']['vip'] as $carp) {
+		if ($carp['mode'] != "carp") {
+			continue;
 		}
-		if (stripos($int, "BACKUP")) {
-			return "BACKUP";
+		$carpif = "_vip{$carp['uniqid']}";
+		if ($carpinterface !== $carpif) {
+			continue;
 		}
-		if (stripos($int, "INIT")) {
-			return "INIT";
+
+		$interface = get_real_interface($carp['interface']);
+		$vhid = $carp['vhid'];
+		$carp_query = '';
+		$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+		foreach ($carp_query as $int) {
+			if (stripos($int, "MASTER")) {
+				return "MASTER";
+			}
+			if (stripos($int, "BACKUP")) {
+				return "BACKUP";
+			}
+			if (stripos($int, "INIT")) {
+				return "INIT";
+			}
 		}
+		break;
 	}
+
 	return;
 }
 
@@ -618,50 +645,6 @@ function merge_config_section($section_name, $new_contents) {
 }
 
 /*
- * http_post($server, $port, $url, $vars): does an http post to a web server
- *                                         posting the vars array.
- * written by nf@bigpond.net.au
- */
-function http_post($server, $port, $url, $vars) {
-	$user_agent = "Mozilla/4.0 (compatible; MSIE 5.5; Windows 98)";
-	$urlencoded = "";
-	while (list($key, $value) = each($vars)) {
-		$urlencoded .= urlencode($key) . "=" . urlencode($value) . "&";
-	}
-	$urlencoded = substr($urlencoded, 0, -1);
-	$content_length = strlen($urlencoded);
-	$headers = "POST $url HTTP/1.1
-Accept: */*
-Accept-Language: en-au
-Content-Type: application/x-www-form-urlencoded
-User-Agent: $user_agent
-Host: $server
-Connection: Keep-Alive
-Cache-Control: no-cache
-Content-Length: $content_length
-
-";
-
-	$errno = "";
-	$errstr = "";
-	$fp = fsockopen($server, $port, $errno, $errstr);
-	if (!$fp) {
-		return false;
-	}
-
-	fputs($fp, $headers);
-	fputs($fp, $urlencoded);
-
-	$ret = "";
-	while (!feof($fp)) {
-		$ret .= fgets($fp, 1024);
-	}
-	fclose($fp);
-
-	return $ret;
-}
-
-/*
  *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
  */
 if (!function_exists('php_check_syntax')) {
@@ -737,103 +720,6 @@ function rmdir_recursive($path, $follow_links=false) {
 		}
 	}
 	return;
-}
-
-/*
- * call_pfsense_method(): Call a method exposed by the pfsense.org XMLRPC server.
- */
-function call_pfsense_method($method, $params, $timeout = 0) {
-	global $g, $config;
-
-	$xmlrpc_base_url = get_active_xml_rpc_base_url();
-	$xmlrpc_path = $g['xmlrpcpath'];
-
-	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
-	$ip = gethostbyname($xmlrpcfqdn);
-	if ($ip == $xmlrpcfqdn) {
-		return false;
-	}
-
-	$msg = new XML_RPC_Message($method, array(XML_RPC_Encode($params)));
-	$port = 0;
-	$proxyurl = "";
-	$proxyport = 0;
-	$proxyuser = "";
-	$proxypass = "";
-	if (!empty($config['system']['proxyurl'])) {
-		$proxyurl = $config['system']['proxyurl'];
-	}
-	if (!empty($config['system']['proxyport']) && is_numeric($config['system']['proxyport'])) {
-		$proxyport = $config['system']['proxyport'];
-	}
-	if (!empty($config['system']['proxyuser'])) {
-		$proxyuser = $config['system']['proxyuser'];
-	}
-	if (!empty($config['system']['proxypass'])) {
-		$proxypass = $config['system']['proxypass'];
-	}
-	$cli = new XML_RPC_Client($xmlrpc_path, $xmlrpc_base_url, $port, $proxyurl, $proxyport, $proxyuser, $proxypass);
-	// If the ALT PKG Repo has a username/password set, use it.
-	if ($config['system']['altpkgrepo']['username'] &&
-	    $config['system']['altpkgrepo']['password']) {
-		$username = $config['system']['altpkgrepo']['username'];
-		$password = $config['system']['altpkgrepo']['password'];
-		$cli->setCredentials($username, $password);
-	}
-	$resp = $cli->send($msg, $timeout);
-	if (!is_object($resp)) {
-		log_error(sprintf(gettext("XMLRPC communication error: %s"), $cli->errstr));
-		return false;
-	} elseif ($resp->faultCode()) {
-		log_error(sprintf(gettext('XMLRPC request failed with error %1$s: %2$s'), $resp->faultCode(), $resp->faultString()));
-		return false;
-	} else {
-		return XML_RPC_Decode($resp->value());
-	}
-}
-
-/*
- * check_firmware_version(): Check whether the current firmware installed is the most recently released.
- */
-function check_firmware_version($tocheck = "all", $return_php = true) {
-	global $g, $config;
-
-	$xmlrpc_base_url = get_active_xml_rpc_base_url();
-	$xmlrpcfqdn = preg_replace("(https?://)", "", $xmlrpc_base_url);
-	$ip = gethostbyname($xmlrpcfqdn);
-	if ($ip == $xmlrpcfqdn) {
-		return false;
-	}
-	$version = php_uname('r');
-	$version = explode('-', $version);
-	$rawparams = array("firmware" => array("version" => $g['product_version']),
-		"kernel"   => array("version" => $version[0]),
-		"base"     => array("version" => $version[0]),
-		"platform" => trim(file_get_contents('/etc/platform')),
-		"config_version" => $config['version']
-		);
-	unset($version);
-
-	if ($tocheck == "all") {
-		$params = $rawparams;
-	} else {
-		foreach ($tocheck as $check) {
-			$params['check'] = $rawparams['check'];
-			$params['platform'] = $rawparams['platform'];
-		}
-	}
-	if ($config['system']['firmware']['branch']) {
-		$params['branch'] = $config['system']['firmware']['branch'];
-	}
-
-	/* XXX: What is this method? */
-	if (!($versions = call_pfsense_method('pfsense.get_firmware_version', $params))) {
-		return false;
-	} else {
-		$versions["current"] = $params;
-	}
-
-	return $versions;
 }
 
 /*
@@ -1122,7 +1008,7 @@ function is_serial_enabled() {
 
 	if (!isset($g['enableserial_force']) &&
 	    !isset($config['system']['enableserial']) &&
-	    ($g['platform'] == "pfSense" || $g['platform'] == "cdrom")) {
+	    ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 		return false;
 	}
 
@@ -1436,7 +1322,7 @@ function get_interface_info($ifdescr) {
 			}
 
 			$usbmodemoutput = array();
-			exec("usbconfig", $usbmodemoutput);
+			exec("/usr/sbin/usbconfig", $usbmodemoutput);
 			$mondev = "{$g['tmp_path']}/3gstats.{$ifdescr}";
 			if (file_exists($mondev)) {
 				$cellstats = file($mondev);
@@ -1588,7 +1474,7 @@ function add_hostname_to_watch($hostname) {
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
+		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if ($rethost == 0) {
 			foreach ($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1646,7 +1532,7 @@ function pfsense_default_tables_size() {
 
 function pfsense_default_table_entries_size() {
 	$current = `pfctl -sm | grep table-entries | awk '{print $4};'`;
-	return $current;
+	return (trim($current));
 }
 
 /* Compare the current hostname DNS to the DNS cache we made
@@ -1665,7 +1551,7 @@ function compare_hostname_to_dnscache($hostname) {
 	if ((is_fqdn($hostname)) && (!is_ipaddr($hostname))) {
 		$domrecords = array();
 		$domips = array();
-		exec("host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
+		exec("/usr/bin/host -t A " . escapeshellarg($hostname), $domrecords, $rethost);
 		if ($rethost == 0) {
 			foreach ($domrecords as $domr) {
 				$doml = explode(" ", $domr);
@@ -1776,7 +1662,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 	curl_setopt($ch, CURLOPT_HEADER, false);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-	if (!isset($config['system']['host_uuid'])) {
+	if (!isset($config['system']['do_not_send_host_uuid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
@@ -1822,7 +1708,7 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 	curl_setopt($ch, CURLOPT_NOPROGRESS, '1');
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-	if (!isset($config['system']['host_uuid'])) {
+	if (!isset($config['system']['do_not_send_host_uuid'])) {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version'] . ' : ' . get_single_sysctl('kern.hostuuid'));
 	} else {
 		curl_setopt($ch, CURLOPT_USERAGENT, $g['product_name'] . '/' . $g['product_version']);
@@ -1920,9 +1806,11 @@ function update_output_window($text) {
 	$log = preg_replace("/\n/", "\\n", $text);
 	if ($pkg_interface != "console") {
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 	document.getElementById("output").textContent="<?=htmlspecialchars($log)?>";
 	document.getElementById("output").scrollTop = document.getElementById("output").scrollHeight;
+//]]>
 </script>
 <?php
 	}
@@ -1935,10 +1823,9 @@ function update_output_window($text) {
  */
 function update_status($status) {
 	global $pkg_interface;
+
 	if ($pkg_interface == "console") {
-		echo "\r{$status}";
-	} else {
-		echo '<script>document.getElementById("status").innerText="'. htmlspecialchars($status).'";</script>';
+		print ("{$status}");
 	}
 
 	/* ensure that contents are written out */
@@ -1954,7 +1841,11 @@ function update_progress_bar($percent, $first_time) {
 		$percent = 1;
 	}
 	if ($pkg_interface <> "console") {
-		echo '<script>document.getElementById("progressbar").style.width="'. $percent.'%";</script>';
+		echo '<script type="text/javascript">';
+		echo "\n//<![CDATA[\n";
+		echo 'document.getElementById("progressbar").style.width="'. $percent.'%"';
+		echo "\n//]]>\n";
+		echo '</script>';
 	} else {
 		if (!($first_time)) {
 			echo "\x08\x08\x08\x08\x08";
@@ -2372,7 +2263,7 @@ function nanobsd_switch_boot_slice() {
 	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
 	conf_mount_rw();
 	set_single_sysctl("kern.geom.debugflags", "16");
-	exec("gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
+	exec("/sbin/gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
 	// We can't update these if they are mounted now.
 	if ($BOOTFLASH != $slice) {
@@ -2424,7 +2315,7 @@ EOF;
 			$status = false;
 		}
 	} else {
-		$status = exec("sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
+		$status = exec("/usr/bin/sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
 	}
 	exec("/sbin/umount {$tmppath}");
 	rmdir($tmppath);
@@ -2820,7 +2711,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	$interface_list_vips = get_configured_vips_list(true);
 	foreach ($interface_list_vips as $id => $vip) {
 		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && substr($ignore_vip_if, 5) == $vip['uniqdid']) {
+		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && $ignore_vip_if === $vip['if']) {
 			continue;
 		}
 		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {
@@ -2865,12 +2756,21 @@ function pfSense_handle_custom_code($src_dir) {
 	}
 }
 
-function set_language($lang = 'en_US', $encoding = "UTF-8") {
-	putenv("LANG={$lang}.{$encoding}");
-	setlocale(LC_ALL, "{$lang}.{$encoding}");
+function set_language() {
+	global $config, $g;
+
+	if (!empty($config['system']['language'])) {
+		$lang = $config['system']['language'];
+	} elseif (!empty($g['language'])) {
+		$lang = $g['language'];
+	}
+	$lang .= ".UTF-8";
+
+	putenv("LANG={$lang}");
+	setlocale(LC_ALL, $lang);
 	textdomain("pfSense");
 	bindtextdomain("pfSense", "/usr/local/share/locale");
-	bind_textdomain_codeset("pfSense", "{$lang}.{$encoding}");
+	bind_textdomain_codeset("pfSense", $lang);
 }
 
 function get_locale_list() {
@@ -2882,66 +2782,6 @@ function get_locale_list() {
 	asort($locales);
 	return $locales;
 }
-
-function system_get_language_code() {
-	global $config, $g_languages;
-
-	// a language code, as per [RFC3066]
-	$language = $config['system']['language'];
-	//$code = $g_languages[$language]['code'];
-	$code = str_replace("_", "-", $language);
-
-	if (empty($code)) {
-		$code = "en-US"; // Set default code.
-	}
-
-	return $code;
-}
-
-function system_get_language_codeset() {
-	global $config, $g_languages;
-
-	$language = $config['system']['language'];
-	$codeset = $g_languages[$language]['codeset'];
-
-	if (empty($codeset)) {
-		$codeset = "UTF-8"; // Set default codeset.
-	}
-
-	return $codeset;
-}
-
-/* Available languages/locales */
-$g_languages = array (
-	"sq"    => array("codeset" => "UTF-8", "desc" => gettext("Albanian")),
-	"bg"    => array("codeset" => "UTF-8", "desc" => gettext("Bulgarian")),
-	"zh_CN" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Simplified)")),
-	"zh_TW" => array("codeset" => "UTF-8", "desc" => gettext("Chinese (Traditional)")),
-	"nl"    => array("codeset" => "UTF-8", "desc" => gettext("Dutch")),
-	"da"    => array("codeset" => "UTF-8", "desc" => gettext("Danish")),
-	"en_US" => array("codeset" => "UTF-8", "desc" => gettext("English")),
-	"fi"    => array("codeset" => "UTF-8", "desc" => gettext("Finnish")),
-	"fr"    => array("codeset" => "UTF-8", "desc" => gettext("French")),
-	"de"    => array("codeset" => "UTF-8", "desc" => gettext("German")),
-	"el"    => array("codeset" => "UTF-8", "desc" => gettext("Greek")),
-	"hu"    => array("codeset" => "UTF-8", "desc" => gettext("Hungarian")),
-	"it"    => array("codeset" => "UTF-8", "desc" => gettext("Italian")),
-	"ja"    => array("codeset" => "UTF-8", "desc" => gettext("Japanese")),
-	"ko"    => array("codeset" => "UTF-8", "desc" => gettext("Korean")),
-	"lv"    => array("codeset" => "UTF-8", "desc" => gettext("Latvian")),
-	"nb"    => array("codeset" => "UTF-8", "desc" => gettext("Norwegian (Bokmal)")),
-	"pl"    => array("codeset" => "UTF-8", "desc" => gettext("Polish")),
-	"pt_BR" => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Brazil)")),
-	"pt"    => array("codeset" => "UTF-8", "desc" => gettext("Portuguese (Portugal)")),
-	"ro"    => array("codeset" => "UTF-8", "desc" => gettext("Romanian")),
-	"ru"    => array("codeset" => "UTF-8", "desc" => gettext("Russian")),
-	"sl"    => array("codeset" => "UTF-8", "desc" => gettext("Slovenian")),
-	"tr"    => array("codeset" => "UTF-8", "desc" => gettext("Turkish")),
-	"es"    => array("codeset" => "UTF-8", "desc" => gettext("Spanish")),
-	"sv"    => array("codeset" => "UTF-8", "desc" => gettext("Swedish")),
-	"sk"    => array("codeset" => "UTF-8", "desc" => gettext("Slovak")),
-	"cs"    => array("codeset" => "UTF-8", "desc" => gettext("Czech"))
-);
 
 function return_hex_ipv4($ipv4) {
 	if (!is_ipaddrv4($ipv4)) {
@@ -3133,7 +2973,7 @@ function get_pppoes_child_interfaces($ifpattern) {
 		return;
 	}
 
-	exec("ifconfig", $out, $ret);
+	exec("/sbin/ifconfig", $out, $ret);
 	foreach ($out as $line) {
 		if (preg_match("/^({$ifpattern}[0-9]+):/i", $line, $match)) {
 			$if_arr[] = $match[1];
@@ -3181,17 +3021,6 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 		}
 	}
 	return $results;
-}
-
-/* Function to find and return the active XML RPC base URL to avoid code duplication */
-function get_active_xml_rpc_base_url() {
-	global $config, $g;
-	/* If the user has activated the option to enable an alternate xmlrpcbaseurl, and it's not empty, then use it */
-	if (isset($config['system']['altpkgrepo']['enable']) && !empty($config['system']['altpkgrepo']['xmlrpcbaseurl'])) {
-		return $config['system']['altpkgrepo']['xmlrpcbaseurl'];
-	} else {
-		return $g['xmlrpcbaseurl'];
-	}
 }
 
 ?>

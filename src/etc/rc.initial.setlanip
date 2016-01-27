@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
 	rc.initial.setlanip
 	part of m0n0wall (http://m0n0.ch/wall)

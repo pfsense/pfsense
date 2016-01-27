@@ -1,11 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	diag_backup.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -37,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +56,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/shutdown
-	pfSense_MODULE: backup
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup/restore
-##|*NAME=Diagnostics: Backup/restore page
+##|*NAME=Diagnostics: Backup/restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
@@ -73,7 +69,6 @@ ini_set('max_input_time', '0');
 
 /* omit no-cache headers because it confuses IE with file downloads */
 $omit_nocacheheaders = true;
-$nocsrf = true;
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
@@ -113,7 +108,7 @@ function restore_rrddata() {
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
 			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
-				log_error("Cannot write $xml_file");
+				log_error(sprintf(gettext("Cannot write %s"), $xml_file));
 				continue;
 			}
 			$output = array();
@@ -128,7 +123,7 @@ function restore_rrddata() {
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$rrd_fd = fopen($rrd_file, "w");
 			if (!$rrd_fd) {
-				log_error("Cannot write $rrd_file");
+				log_error(sprintf(gettext("Cannot write %s"), $rrd_file));
 				continue;
 			}
 			$data = base64_decode($rrd['data']);
@@ -137,18 +132,18 @@ function restore_rrddata() {
 			if ($dcomp) {
 				/* If the decompression worked, write the decompressed data */
 				if (fwrite($rrd_fd, $dcomp) === false) {
-					log_error("fwrite $rrd_file failed");
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
 					continue;
 				}
 			} else {
 				/* If the decompression failed, it wasn't compressed, so write raw data */
 				if (fwrite($rrd_fd, $data) === false) {
-					log_error("fwrite $rrd_file failed");
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
 					continue;
 				}
 			}
 			if (fclose($rrd_fd) === false) {
-				log_error("fclose $rrd_file failed");
+				log_error(sprintf(gettext("fclose %s failed"), $rrd_file));
 				continue;
 			}
 		}
@@ -178,8 +173,6 @@ function add_base_packages_menu_items() {
 						$modified_config = true;
 					}
 				}
-				$static_output .= "done.\n";
-				update_output_window($static_output);
 			}
 		}
 	}
@@ -232,11 +225,8 @@ if ($_POST) {
 	if ($mode) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
-				if (!$_POST['encrypt_password'] || !$_POST['encrypt_passconf']) {
+				if (!$_POST['encrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
-				}
-				if ($_POST['encrypt_password'] != $_POST['encrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -310,11 +300,8 @@ if ($_POST) {
 
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
-				if (!$_POST['decrypt_password'] || !$_POST['decrypt_passconf']) {
+				if (!$_POST['decrypt_password']) {
 					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
-				}
-				if ($_POST['decrypt_password'] != $_POST['decrypt_passconf']) {
-					$input_errors[] = gettext("The supplied 'Password' and 'Confirm' field values must match.");
 				}
 			}
 
@@ -373,7 +360,7 @@ if ($_POST) {
 								/* this will be picked up by /index.php */
 								conf_mount_rw();
 								mark_subsystem_dirty("restore");
-								touch("/conf/needs_package_sync");
+								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
 								if (file_exists("{$g['tmp_path']}/config.cache")) {
 									unlink("{$g['tmp_path']}/config.cache");
@@ -383,7 +370,7 @@ if ($_POST) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole")) {
 										$config['system']['enableserial'] = true;
-										write_config("Restore serial console enabling in configuration.");
+										write_config(gettext("Restore serial console enabling in configuration."));
 									}
 									unset($loaderconf);
 								}
@@ -606,19 +593,21 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 if (is_subsystem_dirty('restore')):
 ?>
 	<br/>
-	<form action="reboot.php" method="post">
+	<form action="diag_reboot.php" method="post">
 		<input name="Submit" type="hidden" value="Yes" />
 		<?=print_info_box(gettext("The firewall configuration has been changed.") . "<br />" . gettext("The firewall is now rebooting."))?>
 		<br />
@@ -631,9 +620,8 @@ $tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
 $tab_array[] = array(gettext("Backup/Restore"), true, "diag_backup.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
+$form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('Backup configuration');
 
@@ -663,23 +651,14 @@ $section->addInput(new Form_Checkbox(
 	'Encryption',
 	'Encrypt this configuration file.',
 	false
-))->toggles('.toggle-passwords');;
+));
 
 $section->addInput(new Form_Input(
 	'encrypt_password',
-	null,
+	'Password',
 	'password',
-	null,
-	['placeholder' => 'Password']
-))->addClass('toggle-passwords');
-
-$section->addInput(new Form_Input(
-	'encrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
-))->addClass('toggle-passwords');
+	null
+));
 
 $group = new Form_Group('');
 $group->add(new Form_Button(
@@ -694,7 +673,7 @@ $section = new Form_Section('Restore backup');
 
 $section->addInput(new Form_StaticText(
 	null,
-	gettext("Open a ") . $g['[product_name'] . gettext(" configuration XML file and click the button below to restore the configuration.")
+	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), $g['product_name'])
 ));
 
 $section->addInput(new Form_Select(
@@ -712,33 +691,25 @@ $section->addInput(new Form_Input(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'encrypt',
+	'decrypt',
 	'Encryption',
-	'Encrypt this configuration file.',
+	'Configuration file is encrypted.',
 	false
-))->toggles('.toggle-dpasswords');;
+));
 
 $section->addInput(new Form_Input(
 	'decrypt_password',
-	null,
+	'Password',
 	'password',
 	null,
 	['placeholder' => 'Password']
-))->addClass('toggle-dpasswords');
-
-$section->addInput(new Form_Input(
-	'decrypt_passconf',
-	null,
-	'password',
-	null,
-	['placeholder' => 'Confirm password']
-))->addClass('toggle-dpasswords');
+));
 
 $group = new Form_Group('');
 $group->add(new Form_Button(
 	'Submit',
-	'Restore configuration'
-))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger');
+	'Restore Configuration'
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore');
 
 $section->add($group);
 
@@ -751,8 +722,8 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 		$group = new Form_Group('');
 		$group->add(new Form_Button(
 			'Submit',
-			'Reinstall packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-warning');
+			'Reinstall Packages'
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success');
 
 		$section->add($group);
 	}
@@ -771,7 +742,54 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 }
 
 print($form);
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
 
+	// ------- Show/hide sections based on checkbox settings --------------------------------------
+
+	function hideSections(hide) {
+		hidePasswords();
+	}
+
+	function hidePasswords() {
+
+		encryptHide = !($('input[name="encrypt"]').is(':checked'));
+		decryptHide = !($('input[name="decrypt"]').is(':checked'));
+
+		hideInput('encrypt_password', encryptHide);
+		hideInput('encrypt_password_confirm', encryptHide);
+		hideInput('decrypt_password', decryptHide);
+		hideInput('decrypt_password_confirm', decryptHide);
+	}
+
+	// ---------- Click handlers ------------------------------------------------------------------
+
+	$('input[name="encrypt"]').on('change', function() {
+		hidePasswords();
+	});
+
+	$('input[name="decrypt"]').on('change', function() {
+		hidePasswords();
+	});
+
+	$('#conffile').change(function () {
+		if (document.getElementById("conffile").value) {
+			$('.restore').prop('disabled', false);
+		} else {
+			$('.restore').prop('disabled', true);
+		}
+    });
+	// ---------- On initial page load ------------------------------------------------------------
+
+	hideSections();
+	$('.restore').prop('disabled', true);
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");
 
 if (is_subsystem_dirty('restore')) {

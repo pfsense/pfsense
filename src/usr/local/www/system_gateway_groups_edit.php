@@ -1,41 +1,62 @@
 <?php
-/* $Id$ */
 /*
 	system_gateway_groups_edit.php
-	part of pfSense (https://www.pfsense.org)
-
-	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: routing
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-gateways-editgatewaygroups
-##|*NAME=System: Gateways: Edit Gateway Groups page
+##|*NAME=System: Gateways: Edit Gateway Groups
 ##|*DESCR=Allow access to the 'System: Gateways: Edit Gateway Groups' page.
 ##|*MATCH=system_gateway_groups_edit.php*
 ##|-PRIV
@@ -44,8 +65,9 @@ require("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-if (!is_array($config['gateways']['gateway_group']))
+if (!is_array($config['gateways']['gateway_group'])) {
 	$config['gateways']['gateway_group'] = array();
+}
 
 $a_gateway_groups = &$config['gateways']['gateway_group'];
 $a_gateways = return_gateways_array();
@@ -155,7 +177,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Gateways"), gettext("Edit gateway group"));
+$pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"), gettext("Edit"));
 $shortcut_section = "gateway-groups";
 
 function build_gateway_protocol_map (&$a_gateways) {
@@ -163,7 +185,7 @@ function build_gateway_protocol_map (&$a_gateways) {
 	foreach ($a_gateways as $gwname => $gateway) {
 		$result[$gwname] = $gateway['ipprotocol'];
 	}
-	
+
 	return $result;
 }
 
@@ -172,11 +194,13 @@ function build_carp_list() {
 
 	$list = array('address' => gettext('Interface Address'));
 
-	foreach($carplist as $vip => $address) {
-		if(($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address)))
+	foreach ($carplist as $vip => $address) {
+		if (($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address))) {
 			continue;
-		if(($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address)))
+		}
+		if (($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address))) {
 			continue;
+		}
 
 		$list[$vip] = "$vip - $address";
 	}
@@ -191,46 +215,45 @@ $gateway_array	= array_keys($a_gateways);
 $protocol_array	  = array_values($gateway_protocol);
 $protocol_array	  = array_values(array_unique($gateway_protocol));
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form();
 
 $section = new Form_Section('Edit gateway group entry');
 
 $section->addInput(new Form_Input(
-	'nentries',
+	'name',
 	'Group Name',
-	'text'
+	'text',
+	$pconfig['name']
 ));
 
 
 $carplist = get_configured_carp_interface_list($interface);
-$row == 0;
+$row = 0;
 $numrows = count($a_gateways) - 1;
 
-foreach($a_gateways as $gwname => $gateway) {
-	if(!empty($pconfig['item'])) {
+foreach ($a_gateways as $gwname => $gateway) {
+	if (!empty($pconfig['item'])) {
 		$af = explode("|", $pconfig['item'][0]);
 		$family = $a_gateways[$af[0]]['ipprotocol'];
-		if($gateway['ipprotocol'] != $family) {
+		if ($gateway['ipprotocol'] != $family) {
 			$rows++;
 			continue;
 		}
 	}
 
 	$interface = $gateway['friendlyiface'];
-	$selected = array();
 
-	foreach((array)$pconfig['item'] as $item) {
+	foreach ((array)$pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
-		if($itemsplit[0] == $gwname) {
-			$selected[$itemsplit[1]] = "selected=\"selected\"";
+		if ($itemsplit[0] == $gwname) {
+			$selected = $itemsplit[1];
 			break;
 		} else {
-			$selected[0] = "selected=\"selected\"";
+			$selected = '0';
 		}
 	}
 
@@ -242,21 +265,33 @@ foreach($a_gateways as $gwname => $gateway) {
 		'Group Name',
 		'text',
 		$gateway['name']
-	))->setHelp($row == $numrows ? 'Gateway':null);
+	))->setHelp($row == $numrows ? 'Gateway':null)
+	  ->setReadonly();
 
+	$tr = gettext("Tier");
 	$group->add(new Form_Select(
 		$gwname,
 		'Tier',
-		isset($pconfig['filterdescriptions']) ? $pconfig['filterdescriptions']:'0',
+		$selected,
 		array(
 			'0' => 'Never',
-			'1' => 'Tier 1',
-			'2' => 'Tier 2',
-			'3' => 'Tier 3',
-			'4' => 'Tier 4',
-			'5' => 'Tier 5'
+			'1' => $tr . ' 1',
+			'2' => $tr . ' 2',
+			'3' => $tr . ' 3',
+			'4' => $tr . ' 4',
+			'5' => $tr . ' 5'
 		)
 	))->setHelp($row == $numrows ? 'Tier':null)->addClass('row')->addClass($gateway['ipprotocol']);
+
+	foreach ((array)$pconfig['item'] as $item) {
+		$itemsplit = explode("|", $item);
+		if ($itemsplit[0] == $gwname) {
+			$selected = $itemsplit[2];
+			break;
+		} else {
+			$selected = "0";
+		}
+	}
 
 	$group->add(new Form_Select(
 		$gwname . '_vip',
@@ -266,16 +301,17 @@ foreach($a_gateways as $gwname => $gateway) {
 	))->setHelp($row == $numrows ? 'Virtual IP':null);
 
 	$group->add(new Form_Input(
-		'nentries',
+		'description',
 		'Group Name',
 		'text',
 		$gateway['descr']
-	))->setWidth(3)->setHelp($row == $numrows ? 'Description':null);
+	))->setWidth(3)->setHelp($row == $numrows ? 'Description':null)
+	  ->setReadonly();
 
 	$section->add($group);
 
 	$row++;
-} // e-o-forwach
+} // e-o-foreach
 
 $section->addInput(new Form_StaticText(
 	'Link Priority',
@@ -294,10 +330,10 @@ $section->addInput(new Form_Select(
 	'Trigger Level',
 	$pconfig['trigger'],
 	array(
-		'0' => 'Member down',
-		'1' => 'Packet Loss',
-		'2' => 'High Latency',
-		'3' => 'Packet Loss or High latency'
+		'0' => gettext('Member down'),
+		'1' => gettext('Packet Loss'),
+		'2' => gettext('High Latency'),
+		'3' => gettext('Packet Loss or High latency')
 	)
 ))->setHelp('When to trigger exclusion of a member');
 
@@ -324,28 +360,29 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	// Hides all elements of the specified class. This will usually be a section or group
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide) {
 			$('.' + s_class).hide();
-		else
+		} else {
 			$('.' + s_class).show();
+		}
 	}
 
 	// On changing a Tier selector on any row, find which protocol it uses (class)
 	// and disable the opposite
 	$('.row').on('change', function() {
 		// If user selects 'Never', unhide all rows
-		if($(this).find(":selected").index() == 0) {
+		if ($(this).find(":selected").index() == 0) {
 			hideClass('inet', false);
 			hideClass('inet6', false);
-		}
-		else { // Otherwise hide the rows that are ont of 'this' protocol
-			if($(this).hasClass('inet6'))
+		} else { // Otherwise hide the rows that are not of 'this' protocol
+			if ($(this).hasClass('inet6')) {
 				hideClass('inet', true);
-			else
+			} else {
 				hideClass('inet6', true);
+			}
 		}
 	});
 });

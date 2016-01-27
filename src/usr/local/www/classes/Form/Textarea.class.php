@@ -32,7 +32,7 @@ class Form_Textarea extends Form_Input
 	protected $_value;
 	protected $_attributes = array(
 		'rows' => 5,
-		'class' => array('form-control' => true),
+		'class' => array('form-control' => true)
 	);
 
 	public function __construct($name, $title, $value)
@@ -40,6 +40,20 @@ class Form_Textarea extends Form_Input
 		parent::__construct($name, $title, null);
 
 		$this->_value = $value;
+	}
+
+	public function setRows($size)
+	{
+		$this->_attributes['rows'] = $size;
+
+		return $this;
+	}
+
+	public function setNoWrap()
+	{
+		$this->_attributes['style'] = 'white-space: pre;';
+
+		return $this;
 	}
 
 	protected function _getInput()

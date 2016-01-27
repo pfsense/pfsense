@@ -1,44 +1,64 @@
 <?php
-/* $Id$ */
 /*
 	status_graph.php
-	Part of pfSense
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2004 Scott Ullrich
-	All rights reserved.
-
-	Originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE:	routing
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficgraph
-##|*NAME=Status: Traffic Graph page
+##|*NAME=Status: Traffic Graph
 ##|*DESCR=Allow access to the 'Status: Traffic Graph' page.
 ##|*MATCH=status_graph.php*
 ##|*MATCH=bandwidth_by_ip.php*
@@ -47,6 +67,7 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("ipsec.inc");
 
 if ($_POST['width']) {
 	$width = $_POST['width'];
@@ -62,9 +83,10 @@ if ($_POST['height']) {
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
+
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
@@ -125,11 +147,9 @@ function iflist() {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Status"),gettext("Traffic Graph"));
+$pgtitle = array(gettext("Status"), gettext("Traffic Graph"));
 
 include("head.inc");
-
-require_once('classes/Form.class.php');
 
 $form = new Form(false);
 $form->addClass('auto-submit');
@@ -150,8 +170,8 @@ $group->add(new Form_Select(
 	null,
 	$cursort,
 	array (
-		'in'	=> 'Bandwidth In',
-		'out'	=> 'Bandwidth Out'
+		'in'	=> gettext('Bandwidth In'),
+		'out'	=> gettext('Bandwidth Out')
 	)
 ))->setHelp('Sort by');
 
@@ -160,9 +180,9 @@ $group->add(new Form_Select(
 	null,
 	$curfilter,
 	array (
-		'local'	=> 'Local',
-		'remote'=> 'Remote',
-		'all'	=> 'All'
+		'local'	=> gettext('Local'),
+		'remote'=> gettext('Remote'),
+		'all'	=> gettext('All')
 	)
 ))->setHelp('Filter');
 
@@ -171,9 +191,10 @@ $group->add(new Form_Select(
 	null,
 	$curhostipformat,
 	array (
-		''			=> 'IP Address',
-		'hostname'	=> 'Host Name',
-		'fqdn'		=> 'FQDN'
+		''			=> gettext('IP Address'),
+		'hostname'	=> gettext('Host Name'),
+		'descr'		=> gettext('Description'),
+		'fqdn'		=> gettext('FQDN')
 	)
 ))->setHelp('Display');
 
@@ -183,9 +204,10 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+<script type="text/javascript">
+//<![CDATA[
 
-function updateBandwidth(){
+function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',
 		{
@@ -197,14 +219,14 @@ function updateBandwidth(){
 				$('#top10-hosts').empty();
 
 				//parse top ten bandwidth abuser hosts
-				for (var y=0; y<10; y++){
+				for (var y=0; y<10; y++) {
 					if ((y < hosts_split.length) && (hosts_split[y] != "") && (hosts_split[y] != "no info")) {
 						hostinfo = hosts_split[y].split(";");
 
 						$('#top10-hosts').append('<tr>'+
 							'<td>'+ hostinfo[0] +'</td>'+
-							'<td>'+ hostinfo[1] +' Bits/sec</td>'+
-							'<td>'+ hostinfo[2] +' Bits/sec</td>'+
+							'<td>'+ hostinfo[1] +' <?=gettext("Bits/sec");?></td>'+
+							'<td>'+ hostinfo[2] +' <?=gettext("Bits/sec");?></td>'+
 						'</tr>');
 					}
 				}
@@ -212,35 +234,36 @@ function updateBandwidth(){
 	});
 }
 
-events.push(function(){
-	$('form.auto-submit').on('change', function(){
+events.push(function() {
+	$('form.auto-submit').on('change', function() {
 		$(this).submit();
 	});
 
-	setInterval('updateBandwidth()', 1000);
+	setInterval('updateBandwidth()', 3000);
 
 	updateBandwidth();
 });
+//]]>
 </script>
 <?php
 
 /* link the ipsec interface magically */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable'])) {
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
 
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Traffic graph</h2>
+		<h2 class="panel-title"><?=gettext("Traffic graph");?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">
 			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
 				<param name="id" value="graph" />
 				<param name="type" value="image/svg+xml" />
-				<param name="width" value="<? echo $width; ?>" />
-				<param name="height" value="<? echo $height; ?>" />
+				<param name="width" value="<?=$width;?>" />
+				<param name="height" value="<?=$height;?>" />
 				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 			</object>
 		</div>
@@ -248,7 +271,7 @@ if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enabl
 			<table class="table table-striped table-condensed">
 				<thead>
 					<tr>
-						<th><?=(($curhostipformat=="") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
+						<th><?=(($curhostipformat == "") ? gettext("Host IP") : gettext("Host Name or IP")); ?></th>
 						<th><?=gettext("Bandwidth In"); ?></th>
 						<th><?=gettext("Bandwidth Out"); ?></th>
 					</tr>

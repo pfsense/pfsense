@@ -1,5 +1,8 @@
 <?php
 /*
+	openvpn_wizard.inc
+*/
+/*
 	Copyright (C) 2010 Ermal Luçi
 	All rights reserved.
 
@@ -23,8 +26,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-
-	pfSense_MODULE: openvpn
 */
 require_once("openvpn.inc");
 
@@ -207,7 +208,7 @@ function step7_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new Certificate Authority.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
@@ -240,7 +241,7 @@ function step8_submitphpaction() {
 		unset($config['ovpnserver']['step9']['uselist']);
 		$stepid++;
 	} else {
-		$config['ovpnserver']['step6']['uselist'] = "on";
+		$config['ovpnserver']['step9']['uselist'] = "on";
 		$_POST['uselist'] = "on";
 	}
 }
@@ -298,7 +299,7 @@ function step9_submitphpaction() {
 			$certnames[] = $cert['descr'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];
-		}	
+		}
 	}
 
 	if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
@@ -310,13 +311,13 @@ function step9_submitphpaction() {
 	    empty($_POST['organization']) || empty($_POST['email'])) {
 		$stepid--;
 		$savemsg = "Please enter all information for the new certificate.";
-	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) || 
+	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
 		$input_errors[] = "Please do not use special characters in Certificate field names.";
 	} elseif (in_array($_POST['descr'], $certnames) || in_array($_POST['descr'], $certcns)) {
 		$stepid--;
-		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";	
+		$savemsg = "Please enter a different name for the Certificate. A Certificate with that name/common name already exists.";
 	} elseif (strlen($_POST['country']) != 2) {
 		$stepid--;
 		$savemsg = "Please enter only a two-letter ISO country code";
@@ -583,6 +584,7 @@ function step12_submitphpaction() {
 	}
 	$server['dh_length'] = $pconfig['step10']['dhkey'];
 	$server['tunnel_network'] = $pconfig['step10']['tunnelnet'];
+	$server['topology'] = $pconfig['step10']['topology'];
 	if (isset($pconfig['step10']['rdrgw']))
 		$server['gwredir'] = $pconfig['step10']['rdrgw'];
 	if (isset($pconfig['step10']['localnet']))

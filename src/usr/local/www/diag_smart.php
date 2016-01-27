@@ -3,12 +3,11 @@
 	diag_smart.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2010 - Jim Pingle
- *	Copyright (c) 2006, Eric Friesen
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2006 Eric Friesen
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -55,6 +54,13 @@
  *
  */
 
+##|+PRIV
+##|*IDENT=page-diagnostics-smart
+##|*NAME=Diagnostics: S.M.A.R.T. Monitor Tools
+##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.
+##|*MATCH=diag_smart.php*
+##|-PRIV
+
 require("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
@@ -66,19 +72,17 @@ $valid_test_types = array("offline", "short", "long", "conveyance");
 $valid_info_types = array("i", "H", "c", "A", "a");
 $valid_log_types = array("error", "selftest");
 
-$closehead = false;
 include("head.inc");
 
 // Highlights the words "PASSED", "FAILED", and "WARNING".
-function add_colors($string)
-{
+function add_colors($string) {
 	// To add words keep arrays matched by numbers
 	$patterns[0] = '/PASSED/';
 	$patterns[1] = '/FAILED/';
 	$patterns[2] = '/Warning/';
-	$replacements[0] = '<b><font color="#00ff00">' . gettext("PASSED") .  '</font></b>';
-	$replacements[1] = '<b><font color="#ff0000">' . gettext("FAILED") .  '</font></b>';
-	$replacements[2] = '<font color="#ff0000">'	   . gettext("Warning") . '</font>';
+	$replacements[0] = '<span class="text-success">' . gettext("PASSED") . '</span>';
+	$replacements[1] = '<span class="text-alert">' . gettext("FAILED") . '</span>';
+	$replacements[2] = '<span class="text-warning">' . gettext("Warning") . '</span>';
 	ksort($patterns);
 	ksort($replacements);
 	return preg_replace($patterns, $replacements, $string);
@@ -107,11 +111,9 @@ $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
-	echo "Device does not exist, bailing.";
+	echo gettext("Device does not exist, bailing.");
 	return;
 }
-
-require_once('classes/Form.class.php');
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
@@ -124,7 +126,7 @@ switch ($action) {
 	{
 		$test = $_POST['testType'];
 		if (!in_array($test, $valid_test_types)) {
-			echo "Invalid test type, bailing.";
+			echo gettext("Invalid test type, bailing.");
 			return;
 		}
 
@@ -226,9 +228,7 @@ switch ($action) {
 			smartmonctl("stop");
 			smartmonctl("start");
 			$style = 'warning';
-		}
-		else if (isset($_POST['save']))
-		{
+		} else if (isset($_POST['save'])) {
 			$config['system']['smartmonemail'] = $_POST['smartmonemail'];
 			write_config();
 
@@ -238,8 +238,7 @@ switch ($action) {
 			if (stristr($retval, "error") != true) {
 				$savemsg = get_std_save_message($retval);
 				$style = 'success';
-				}
-			else {
+			} else {
 				$savemsg = $retval;
 				$style='danger';
 			}
@@ -254,8 +253,9 @@ switch ($action) {
 		}
 
 	// Was the config changed? if so, print the message
-	if ($savemsg)
+	if ($savemsg) {
 		print_info_box($savemsg, $style);
+	}
 
 	// Get users email from the xml file
 	$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
@@ -287,13 +287,15 @@ switch ($action) {
 
 	// Default page, prints the forms to view info, test, etc...
 	default: {
-// Information	
+// Information
 		$devs = get_smart_drive_list();
 
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview = new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('Information');
 
@@ -355,14 +357,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
 // Tests
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btntest = new Form_Button(
 			'submit',
 			'Test'
-		));
+		);
 
 		$section = new Form_Section('Perform self-tests');
 
@@ -417,14 +426,21 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btntest
+		));
+
 		$form->add($section);
 		print($form);
 
 // Logs
-		$form = new Form(new Form_Button(
+		$form = new Form(false);
+
+		$btnview =  new Form_Button(
 			'submit',
 			'View'
-		));
+		);
 
 		$section = new Form_Section('View logs');
 
@@ -462,6 +478,11 @@ switch ($action) {
 			array_combine($devs, $devs)
 		));
 
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnview
+		));
+
 		$form->add($section);
 		print($form);
 
@@ -473,7 +494,7 @@ switch ($action) {
 
 		$btnabort->removeClass('btn-primary')->addClass('btn-danger');
 
-		$form = new Form($btnabort);
+		$form = new Form(false);
 
 		$section = new Form_Section('Abort');
 
@@ -489,6 +510,11 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
+		));
+
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnabort
 		));
 
 		$form->add($section);

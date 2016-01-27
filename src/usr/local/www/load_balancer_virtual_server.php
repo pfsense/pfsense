@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	load_balancer_virtual_server.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2005-2008 Bill Marquette <bill.marquette@gmail.com>
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -55,13 +53,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: routing
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-loadbalancer-virtualservers
-##|*NAME=Services: Load Balancer: Virtual Servers page
+##|*NAME=Services: Load Balancer: Virtual Servers
 ##|*DESCR=Allow access to the 'Services: Load Balancer: Virtual Servers' page.
 ##|*MATCH=load_balancer_virtual_server.php*
 ##|-PRIV
@@ -128,14 +123,17 @@ $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
-	print_info_box($savemsg);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('loadbalancer'))
-	print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+if (is_subsystem_dirty('loadbalancer')) {
+	print_apply_box(gettext("The virtual server configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 /* active tabs */
 $tab_array = array();
@@ -148,7 +146,7 @@ display_top_tabs($tab_array);
 
 <form action="load_balancer_virtual_server.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual ervers')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Virtual Servers')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
@@ -160,14 +158,14 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Pool'); ?></th>
 						<th><?=gettext('Fallback pool'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><!-- Action buttons --></th>
+						<th><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 <?php
-if(!empty($a_vs)) {
+if (!empty($a_vs)) {
 	$i = 0;
-	foreach($a_vs as $a_v) {
+	foreach ($a_vs as $a_v) {
 ?>
 					<tr>
 						<td><?=htmlspecialchars($a_v['name'])?></td>
@@ -178,9 +176,9 @@ if(!empty($a_vs)) {
 						<td><?=$a_v['sitedown']?></td>
 						<td><?=htmlspecialchars($a_v['descr'])?></td>
 						<td>
-							<a type="button" class="btn btn-info btn-xs" href="load_balancer_virtual_server_edit.php?id=<?=$i?>"><?=gettext('Edit')?></a>
-							<a type="button" class="btn btn-warning btn-xs" href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"><?=gettext('Copy')?></a>
-							<a type="button" class="btn btn-danger btn-xs" href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"><?=gettext('Del')?></a>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit virtual server')?>"	href="load_balancer_virtual_server_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy virtual server')?>"	href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php
@@ -198,12 +196,14 @@ if(!empty($a_vs)) {
 			</table>
 		</div>
 	</div>
-
-	<nav class="action-buttons">
-		<a href="load_balancer_virtual_server_edit.php" class="btn btn-success"><?=gettext("Add")?></a>
-	</nav>
-
 </form>
+
+<nav class="action-buttons">
+	<a href="load_balancer_virtual_server_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 
 <?php
 

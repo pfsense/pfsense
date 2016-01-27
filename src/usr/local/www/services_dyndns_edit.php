@@ -1,41 +1,61 @@
 <?php
-/* $Id$ */
 /*
 	services_dyndns_edit.php
-
-	Copyright (C) 2008 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE: dyndns
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-dynamicdnsclient
-##|*NAME=Services: Dynamic DNS client page
+##|*NAME=Services: Dynamic DNS client
 ##|*DESCR=Allow access to the 'Services: Dynamic DNS client' page.
 ##|*MATCH=services_dyndns_edit.php*
 ##|-PRIV
@@ -116,6 +136,10 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
+	}
+
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
@@ -143,14 +167,18 @@ if ($_POST) {
 		$dyndns = array();
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
-		$dyndns['password'] = $_POST['passwordfld'];
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$dyndns['password'] = $_POST['passwordfld'];
+		} else {
+			$dyndns['password'] = $a_dyndns[$id]['password'];;
+		}
 		$dyndns['host'] = $_POST['host'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
 		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
 		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
-		/* In this place enable means disabled */
+		// In this place enable means disabled
 		if ($_POST['enable']) {
 			unset($dyndns['enable']);
 		} else {
@@ -197,8 +225,9 @@ function build_type_list() {
 	$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
 	$typelist = array();
 
-	for ($j = 0; $j < count($vals); $j++)
+	for ($j = 0; $j < count($vals); $j++) {
 		$typelist[$vals[$j]] = htmlspecialchars($types[$j]);
+	}
 
 	return($typelist);
 }
@@ -208,31 +237,33 @@ function build_if_list() {
 
 	$iflist = get_configured_interface_with_descr();
 
-	foreach ($iflist as $if => $ifdesc)
+	foreach ($iflist as $if => $ifdesc) {
 		$list[$if] = $ifdesc;
+	}
 
 	unset($iflist);
 
 	$grouplist = return_gateway_groups_array();
 
-	foreach ($grouplist as $name => $group)
+	foreach ($grouplist as $name => $group) {
 		$list[$name] = 'GW Group ' . $name;
+	}
 
 	unset($grouplist);
 
 	return($list);
 }
 
-$pgtitle = array(gettext("Services"),gettext("Dynamic DNS client"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Client"), gettext("Edit"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form;
 
@@ -266,7 +297,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'requestif',
 	'Interface to send update from',
-	$pconfig['request'],
+	$pconfig['requestif'],
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 
@@ -326,11 +357,11 @@ $section->addInput(new Form_Input(
 			'GleSYS: Enter your API user.' . '<br />' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.');
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
-	$pconfig['passwordfld']
+	$pconfig['password']
 ))->setHelp('FreeDNS (freedns.afraid.org): Enter your "Authentication Token" provided by FreeDNS.' . '<br />' .
 			'Route 53: Enter your Secret Access Key.' . '<br />' .
 			'GleSYS: Enter your API key.' . '<br />' .
@@ -368,10 +399,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('Choose TTL for your dns record.');
 
 $section->addInput(new Form_Input(
-	'description',
+	'descr',
 	'Description',
 	'text',
-	$pconfig['description']
+	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 if (isset($id) && $a_dyndns[$id]) {
@@ -381,6 +412,11 @@ if (isset($id) && $a_dyndns[$id]) {
 		'hidden',
 		$id
 	));
+
+	$form->addGlobal(new Form_Button(
+		'force',
+		'Save & Force Update'
+	))->removeClass('btn-primary')->addClass('btn-info');
 }
 
 $form->add($section);
@@ -390,29 +426,12 @@ print($form);
 // Certain input elements are hidden/shown based on the service type in the following script
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	var visible = false;
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
+events.push(function() {
 
 	function setVisible(service) {
-		switch(service) {
+		switch (service) {
 			case "custom" :
 			case "custom-v6" :
 				hideInput('resultmatch', false);
@@ -457,10 +476,11 @@ events.push(function(){
 
 	// When the 'Service type" selector is changed, we show/hide certain elements
 	$('#type').on('change', function() {
-		setVisible( this.value );
+		setVisible(this.value);
 	});
 
-	// On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	setVisible($('#type').val());
 
 });

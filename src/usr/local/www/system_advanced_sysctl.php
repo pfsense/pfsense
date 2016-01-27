@@ -1,12 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_sysctl.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -55,13 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: system
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-sysctl
-##|*NAME=System: Advanced: Tunables page
+##|*NAME=System: Advanced: Tunables
 ##|*DESCR=Allow access to the 'System: Advanced: Tunables' page.
 ##|*MATCH=system_advanced_sysctl.php*
 ##|-PRIV
@@ -95,12 +93,14 @@ if ($act == "edit") {
 		$pconfig['tunable'] = $a_tunable[$id]['tunable'];
 		$pconfig['value'] = $a_tunable[$id]['value'];
 		$pconfig['descr'] = $a_tunable[$id]['descr'];
+
 	} else if (isset($tunables[$id])) {
 		$pconfig['tunable'] = $tunables[$id]['tunable'];
 		$pconfig['value'] = $tunables[$id]['value'];
 		$pconfig['descr'] = $tunables[$id]['descr'];
 	}
 }
+
 if ($act == "del") {
 	if ($a_tunable[$id]) {
 		/* if this is an AJAX caller then handle via JSON */
@@ -108,6 +108,7 @@ if ($act == "del") {
 			input_errors2Ajax($input_errors);
 			exit;
 		}
+
 		if (!$input_errors) {
 			unset($a_tunable[$id]);
 			write_config();
@@ -139,34 +140,43 @@ if ($_POST) {
 
 		$tunableent = array();
 
-		$tunableent['tunable'] = $_POST['tunable'];
-		$tunableent['value'] = $_POST['value'];
-		$tunableent['descr'] = $_POST['descr'];
-
-		if (isset($id) && isset($a_tunable[$id])) {
-			$a_tunable[$id] = $tunableent;
+		if (!$_POST['tunable'] || !isset($_POST['value'])) {
+			$input_errors[] = gettext("Both a name and a value must be specified.");
+		} else if (!ctype_alnum($_POST['value'])) {
+			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
 		} else {
-			$a_tunable[] = $tunableent;
-		}
+			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
+			$tunableent['value'] = htmlspecialchars($_POST['value']);
+			$tunableent['descr'] = strip_tags($_POST['descr']);
 
-		mark_subsystem_dirty('sysctl');
-		write_config();
-		pfSenseHeader("system_advanced_sysctl.php");
-		exit;
+			if (isset($id) && isset($a_tunable[$id])) {
+				$a_tunable[$id] = $tunableent;
+			} else {
+				$a_tunable[] = $tunableent;
+			}
+
+			mark_subsystem_dirty('sysctl');
+			write_config();
+			pfSenseHeader("system_advanced_sysctl.php");
+			exit;
+		}
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: System Tunables"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-	
-if ($savemsg)
-	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('sysctl') && ($act != "edit" ))
-	print_info_box_np(gettext("The firewall tunables have changed. You must apply the configuration for them to take affect."));
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
+
+if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {
+	print_apply_box(gettext("The firewall tunables have changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
@@ -177,7 +187,7 @@ $tab_array[] = array(gettext("System Tunables"), true, "system_advanced_sysctl.p
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
 display_top_tabs($tab_array);
 
-if ($act != "edit" ): ?>
+if ($act != "edit"): ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title"><?=gettext('System Tunables'); ?></h2>
@@ -194,20 +204,26 @@ if ($act != "edit" ): ?>
 						<th><a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit"><?=gettext('New'); ?></a></th>
 					</tr>
 				</thead>
-				<?php foreach ($tunables as $i => $tunable):
-					if (!isset($tunable['modified']))
-						$i = $tunable['tunable']; ?>
+				<?php
+					foreach ($tunables as $i => $tunable):
+						if (!isset($tunable['modified'])) {
+							$i = $tunable['tunable'];
+						}
+				?>
 				<tr>
 					<td><?=$tunable['tunable']; ?></td>
 					<td><?=$tunable['descr']; ?></td>
 					<td><?=$tunable['value']; ?>
-					<?php if($tunable['value'] == "default")
-						echo "(" . get_default_sysctl_value($tunable['tunable']) . ")"; ?>
+					<?php
+						if ($tunable['value'] == "default") {
+							echo "(" . get_default_sysctl_value($tunable['tunable']) . ")";
+						}
+					?>
 					</td>
 					<td>
-					<a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"><?=gettext('Edit'); ?></a>
+					<a class="fa fa-pencil" title="<?=gettext("Edit tunable"); ?>" href="system_advanced_sysctl.php?act=edit&amp;id=<?=$i;?>"></a>
 						<?php if (isset($tunable['modified'])): ?>
-						<a class="btn btn-xs btn-danger" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"><?=gettext('Delete/Reset'); ?></a>
+						<a class="fa fa-trash" title="<?=gettext("Delete/Reset tunable")?>" href="system_advanced_sysctl.php?act=del&amp;id=<?=$i;?>"></a>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -221,7 +237,6 @@ if ($act != "edit" ): ?>
 </div>
 
 <?php else:
-	require_once('classes/Form.class.php');
 	$form = new Form;
 	$section = new Form_Section('Edit Tunable');
 
@@ -233,17 +248,17 @@ if ($act != "edit" ): ?>
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
-		'descr',
-		'Description',
-		'text',
-		$pconfig['descr']
-	))->setWidth(4);
-
-	$section->addInput(new Form_Input(
 		'value',
 		'Value',
 		'text',
 		$pconfig['value']
+	))->setWidth(4);
+
+	$section->addInput(new Form_Input(
+		'descr',
+		'Description',
+		'text',
+		$pconfig['descr']
 	))->setWidth(4);
 
 	if (isset($id) && $a_tunable[$id]) {
@@ -261,4 +276,4 @@ if ($act != "edit" ): ?>
 
 endif;
 
-include("fend.inc");
+include("foot.inc");

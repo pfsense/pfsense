@@ -66,6 +66,7 @@ usage() {
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
 	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
+	echo "		--poudriere-snapshots - Update poudriere packages and send them to PKG_RSYNC_HOSTNAME"
 	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
 	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
@@ -87,6 +88,7 @@ unset pfPORTTOBUILD
 unset IMAGETYPE
 unset DO_NOT_UPLOAD
 unset SNAPSHOTS
+unset POUDRIERE_SNAPSHOTS
 unset ARCH_LIST
 BUILDACTION="images"
 
@@ -136,6 +138,9 @@ while test "$1" != ""; do
 		--snapshots)
 			export SNAPSHOTS=1
 			IMAGETYPE="all"
+			;;
+		--poudriere-snapshots)
+			export POUDRIERE_SNAPSHOTS=1
 			;;
 		--build-kernel)
 			BUILDACTION="buildkernel"
@@ -223,7 +228,9 @@ fi
 
 # Update snapshot status and exit
 if [ "${BUILDACTION}" = "snapshot_status_message" ]; then
-	export SNAPSHOTS=1
+	if [ -z "${POUDRIERE_SNAPSHOTS}" ]; then
+		export SNAPSHOTS=1
+	fi
 	snapshots_update_status "${snapshot_status_message}"
 	exit 0
 fi
@@ -274,6 +281,10 @@ case $BUILDACTION in
 		poudriere_update_ports
 	;;
 	update_pkg_repo)
+		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then
+			echo "ERROR: rsync is not installed, aborting..."
+			exit 1
+		fi
 		poudriere_bulk
 	;;
 	*)
@@ -306,6 +317,11 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 			exit 1
 		fi
 	done
+
+	if [ ! -f /usr/local/bin/rsync ]; then
+		echo "ERROR: rsync is not installed, aborting..."
+		exit 1
+	fi
 fi
 
 if [ $# -gt 1 ]; then
@@ -380,18 +396,22 @@ fi
 
 export DEFAULT_KERNEL=${DEFAULT_KERNEL_ISO:-"${PRODUCT_NAME}"}
 
+# XXX: Figure out why wait is failing and proper fix
+# Global variable to keep track of process running in bg
+export _bg_pids=""
+
 for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	# Clean up items that should be cleaned each run
 	staginareas_clean_each_run
 
 	if [ "${_IMGTOBUILD}" = "iso" ]; then
-		(create_iso_image)
+		create_iso_image
 	elif [ "${_IMGTOBUILD}" = "memstick" ]; then
-		(create_memstick_image)
+		create_memstick_image
 	elif [ "${_IMGTOBUILD}" = "memstickserial" ]; then
-		(create_memstick_serial_image)
+		create_memstick_serial_image
 	elif [ "${_IMGTOBUILD}" = "memstickadi" ]; then
-		(create_memstick_adi_image)
+		create_memstick_adi_image
 	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
 		create_Full_update_tarball
 	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
@@ -406,19 +426,36 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 	elif [ "${_IMGTOBUILD}" = "ova" ]; then
 		install_pkg_install_ports ${PRODUCT_NAME}-vmware
-		(create_ova_image)
+		create_ova_image
 		install_pkg_install_ports
 	fi
 done
 
 core_pkg_create_repo
 
-if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_update_status ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
-else
-	echo ">>> NOTE: waiting for jobs: $(jobs -l) to finish..."
+if [ -n "${_bg_pids}" ]; then
+	if [ -n "${SNAPSHOTS}" ]; then
+		snapshots_update_status ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	else
+		echo ">>> NOTE: waiting for jobs: ${_bg_pids} to finish..."
+	fi
+	wait
+
+	# XXX: For some reason wait is failing, workaround it tracking all PIDs
+	while [ -n "${_bg_pids}" ]; do
+		_tmp_pids="${_bg_pids}"
+		unset _bg_pids
+		for p in ${_tmp_pids}; do
+			[ -z "${p}" ] \
+				&& continue
+
+			kill -0 ${p} >/dev/null 2>&1 \
+				&& _bg_pids="${_bg_pids}${_bg_pids:+ }${p}"
+		done
+		[ -n "${_bg_pids}" ] \
+			&& sleep 1
+	done
 fi
-wait
 
 if [ -n "${SNAPSHOTS}" ]; then
 	snapshots_copy_to_staging_iso_updates

@@ -76,7 +76,7 @@ if (isset($_GET['interface'])) {
 }
 
 if ((is_array($config['openvpn']['openvpn-server']) && count($config['openvpn']['openvpn-server'])) ||
-	(is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {
+    (is_array($config['openvpn']['openvpn-client']) && count($config['openvpn']['openvpn-client']))) {
 	if (empty($argument) || $argument == "all") {
 		$argument = "all";
 		$log_text = "all";

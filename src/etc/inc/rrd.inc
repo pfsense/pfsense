@@ -1,8 +1,10 @@
 <?php
-/* $Id$ */
 /*
 	rrd.inc
+
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
+	Copyright (c) 2010-2016 Electric Sheep Fencing, LLC.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -12,25 +14,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-  */
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm	/usr/bin/nice	/usr/local/bin/rrdtool	/bin/cd
-	pfSense_MODULE:	rrd
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* include all configuration functions */
@@ -50,12 +69,12 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 function restore_rrd() {
 	global $g, $config;
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
 	$rrdrestore = "";
 	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != "pfSense")) {
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && (isset($config['system']['use_mfs_tmpvar']) || $g['platform'] != $g['product_name'])) {
 		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
 			@unlink($xml_file);
 		}
@@ -87,7 +106,7 @@ function restore_rrd() {
 		unset($rrdrestore);
 		@unlink("{$g['tmp_path']}/rrd_restore");
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == "pfSense") && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
 		}
 		return true;
@@ -211,7 +230,7 @@ function enable_rrd_graphing() {
 		echo gettext("Generating RRD graphs...");
 	}
 
-	$rrddbpath = "/var/db/rrd/";
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
 	$rrdgraphpath = "/usr/local/www/rrd";
 
 	$traffic = "-traffic.rrd";
@@ -229,6 +248,7 @@ function enable_rrd_graphing() {
 	$captiveportalconcurrent = "-concurrent.rrd";
 	$captiveportalloggedin = "-loggedin.rrd";
 	$ntpd = "ntpd.rrd";
+	$dhcpd = "-dhcpd.rrd";
 
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	$netstat = "/usr/bin/netstat";
@@ -241,6 +261,7 @@ function enable_rrd_graphing() {
 	$spamd_gather = "/usr/local/bin/spamd_gather_stats.php";
 	$ifconfig = "/sbin/ifconfig";
 	$captiveportal_gather = "/usr/local/bin/captiveportal_gather_stats.php";
+	$dhcpd_gather = "/usr/local/bin/dhcpd_gather_stats.php";
 	$ntpq = "/usr/local/sbin/ntpq";
 
 	$rrdtrafficinterval = 60;
@@ -258,6 +279,7 @@ function enable_rrd_graphing() {
 	$rrdvpninterval = 60;
 	$rrdcaptiveportalinterval = 60;
 	$rrdntpdinterval = 60;
+	$rrddhcpdinterval = 60;
 
 	$trafficvalid = $rrdtrafficinterval * 2;
 	$wirelessvalid = $rrdwirelessinterval * 2;
@@ -274,6 +296,7 @@ function enable_rrd_graphing() {
 	$vpnvalid = $rrdvpninterval * 2;
 	$captiveportalvalid = $rrdcaptiveportalinterval * 2;
 	$ntpdvalid = $rrdntpdinterval * 2;
+	$dhcpdvalid = $rrddhcpdinterval * 2;
 
 	/* Assume 2*10GigE for now */
 	$downstream = 2500000000;
@@ -319,11 +342,11 @@ function enable_rrd_graphing() {
 		}
 
 		if (platform_booting()) {
-			if (!is_dir("{$g['vardb_path']}/rrd")) {
-				mkdir("{$g['vardb_path']}/rrd", 0775);
+			if (!is_dir($rrddbpath)) {
+				mkdir($rrddbpath, 0775);
 			}
 
-			@chown("{$g['vardb_path']}/rrd", "nobody");
+			@chown($rrddbpath, "nobody");
 		}
 
 		/* process all real and pseudo interfaces */
@@ -912,6 +935,92 @@ function enable_rrd_graphing() {
 		}
 		/* End NTP statistics */
 
+		/* Start dhcpd statistics */
+		if (is_array($config['dhcpd'])) {
+			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
+				if (isset($config['dhcpd'][$dhcpif]['statsgraph'])) {
+					if (!file_exists("$rrddbpath$dhcpif$dhcpd")) {
+						$rrdcreate = "$rrdtool create $rrddbpath$dhcpif$dhcpd --step $rrddhcpdinterval ";
+						$rrdcreate .= "DS:leases:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "DS:staticleases:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "DS:dhcprange:GAUGE:$dhcpdvalid:0:100000 ";
+						$rrdcreate .= "RRA:MIN:0.5:1:1200 ";
+						$rrdcreate .= "RRA:MIN:0.5:5:720 ";
+						$rrdcreate .= "RRA:MIN:0.5:60:1860 ";
+						$rrdcreate .= "RRA:MIN:0.5:1440:2284 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
+						$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
+						$rrdcreate .= "RRA:MAX:0.5:1:1200 ";
+						$rrdcreate .= "RRA:MAX:0.5:5:720 ";
+						$rrdcreate .= "RRA:MAX:0.5:60:1860 ";
+						$rrdcreate .= "RRA:MAX:0.5:1440:2284 ";
+						create_new_rrd($rrdcreate);
+						unset($rrdcreate);
+					}
+
+					/* enter UNKNOWN values in the RRD so it knows we rebooted. */
+					if (platform_booting()) {
+						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
+					}
+
+					$rrdupdatesh .= "\n";
+					$rrdupdatesh .= "# polling leases for dhcp \n";
+					$rrdupdatesh .= "DHCP=`${php} -q ${dhcpd_gather} '${dhcpif}'`\n";
+					$rrdupdatesh .= "$rrdtool update $rrddbpath$dhcpif$dhcpd \${DHCP}\n";
+
+				}
+			}
+		}
+		/* END dhcpd statistics */
+
+		/* Start gateway quality */
+		$rrdupdatesh .= <<<EOD
+
+# Gateway quality graphs
+for sock in {$g['varrun_path']}/dpinger_*.sock; do
+	if [ ! -S "\$sock" ]; then
+		continue
+	fi
+
+	t=\$(/usr/bin/nc -U \$sock)
+	if [ -z "\$t" ]; then
+		continue
+	fi
+
+	gw=\$(echo "\$t" | awk '{ print \$1 }')
+	delay=\$(echo "\$t" | awk '{ print \$2 }')
+	loss=\$(echo "\$t" | awk '{ print \$4 }')
+
+	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
+		loss="U"
+	fi
+	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
+		delay="U"
+	else
+		# Convert delay to millisecond
+		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
+	fi
+
+	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
+		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
+		DS:loss:GAUGE:120:0:100 \\
+		DS:delay:GAUGE:120:0:100000 \\
+		RRA:AVERAGE:0.5:1:1200 \\
+		RRA:AVERAGE:0.5:5:720 \\
+		RRA:AVERAGE:0.5:60:1860 \\
+		RRA:AVERAGE:0.5:1440:2284
+
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:U:U
+	fi
+
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:\$loss:\$delay
+done
+
+EOD;
+		/* End gateway quality */
+
 		$rrdupdatesh .= "sleep 60\n";
 		$rrdupdatesh .= "done\n";
 		log_error(gettext("Creating rrd update script"));
@@ -943,41 +1052,6 @@ function enable_rrd_graphing() {
 		echo gettext("done.") . "\n";
 	}
 
-}
-
-# Create gateway quality RRD with settings suitable for pfSense graph set.
-function create_gateway_quality_rrd($rrd_file) {
-	global $g;
-
-	$rrdinterval = 60;
-	$valid = $rrdinterval * 2;
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	/* GATEWAY QUALITY, set up the rrd file */
-	if (!file_exists("$rrd_file")) {
-		$rrdcreate = "$rrdtool create $rrd_file --step $rrdinterval ";
-		$rrdcreate .= "DS:loss:GAUGE:$valid:0:100 ";
-		$rrdcreate .= "DS:delay:GAUGE:$valid:0:100000 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1:1200 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:5:720 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:60:1860 ";
-		$rrdcreate .= "RRA:AVERAGE:0.5:1440:2284 ";
-
-		create_new_rrd($rrdcreate);
-		unset($rrdcreate);
-	}
-
-	/* enter UNKNOWN values in the RRD so it knows we rebooted. */
-	if (platform_booting()) {
-		if (!is_dir("{$g['vardb_path']}/rrd")) {
-			mkdir("{$g['vardb_path']}/rrd", 0775);
-		}
-
-		@chown("{$g['vardb_path']}/rrd", "nobody");
-
-		mwexec("$rrdtool update $rrd_file N:U:U");
-	}
-	unset($rrdtool, $rrdinterval, $valid, $rrd_file);
 }
 
 function kill_traffic_collector() {

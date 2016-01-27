@@ -3,13 +3,14 @@
 	diag_ndp.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *	Copyright (C) 2004-2010 Scott Ullrich <sullrich@gmail.com>
- *	Copyright (C) 2011 Seth Mos <seth.mos@dds.nl>
- *	Part of the pfSense project (https://www.pfsense.org)
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c) 2011 Seth Mos <seth.mos@dds.nl>
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +18,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +39,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -56,14 +57,9 @@
  *
  */
 
-/*
-	pfSense_BUILDER_BINARIES:	/bin/cat		/usr/sbin/arp
-	pfSense_MODULE: arp
-*/
-
 ##|+PRIV
 ##|*IDENT=page-diagnostics-ndptable
-##|*NAME=Diagnostics: NDP Table page
+##|*NAME=Diagnostics: NDP Table
 ##|*DESCR=Allow access to the 'Diagnostics: NDP Table' page.
 ##|*MATCH=diag_ndp.php*
 ##|-PRIV
@@ -133,9 +129,13 @@ $pgtitle = array(gettext("Diagnostics"), gettext("NDP Table"));
 include("head.inc");
 ?>
 
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('NDP Table')?></h2></div>
+	<div class="panel-body">
+
 <div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
+	<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
+		<thead>
 			<tr>
 				<th><?= gettext("IPv6 address"); ?></th>
 				<th><?= gettext("MAC address"); ?></th>
@@ -154,9 +154,9 @@ include("head.inc");
 						?>
 						<?=$mac?>
 
-						<? if (isset($mac_man[$mac_hi])):?>
+						<?php if (isset($mac_man[$mac_hi])):?>
 							(<?=$mac_man[$mac_hi]?>)
-						<?endif?>
+						<?php endif; ?>
 
 					</td>
 					<td>
@@ -164,16 +164,20 @@ include("head.inc");
 					</td>
 					<td>
 						<?php
-						if (isset($hwif[$entry['interface']]))
+						if (isset($hwif[$entry['interface']])) {
 							echo $hwif[$entry['interface']];
-						else
+						} else {
 							echo $entry['interface'];
+						}
 						?>
 					</td>
 				</tr>
 			<?php endforeach; ?>
 	</tbody>
 	</table>
+</div>
+
+	</div>
 </div>
 
 <?php include("foot.inc");

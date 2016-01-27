@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
 	captiveportal_gather_stats.php
 	Copyright (C) 2011 Warren Baker

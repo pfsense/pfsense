@@ -1,42 +1,65 @@
 <?php
 /*
 	interfaces_assign.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	Written by Jim McBeath based on existing m0n0wall files
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/bin/rm
-	pfSense_MODULE:	interfaces
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Written by Jim McBeath based on existing m0n0wall files
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
-##|*NAME=Interfaces: Assign network ports page
+##|*NAME=Interfaces: Assign network ports
 ##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
@@ -196,11 +219,15 @@ $ovpn_descrs = array();
 if (is_array($config['openvpn'])) {
 	if (is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as $s) {
+			$portname = "ovpns{$s['vpnid']}";
+			$portlist[$portname] = $s;
 			$ovpn_descrs[$s['vpnid']] = $s['description'];
 		}
 	}
 	if (is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $c) {
+			$portname = "ovpnc{$c['vpnid']}";
+			$portlist[$portname] = $c;
 			$ovpn_descrs[$c['vpnid']] = $c['description'];
 		}
 	}
@@ -247,6 +274,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 		write_config();
 
 		$savemsg = gettext("Interface has been added.");
+		$class = "success";
 	}
 
 } else if (isset($_POST['apply'])) {
@@ -257,12 +285,13 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 		write_config();
 
 		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
+			$class = "success";
 		} else {
 			$savemsg = $retval;
+			$class = "danger";
 		}
 	}
 
@@ -307,7 +336,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 				$members = explode(",", strtoupper($bridge['members']));
 				foreach ($members as $member) {
 					if ($member == $ifnames[0]) {
-						$input_errors[] = sprintf(gettext("You cannot set port %s to interface %s because this interface is a member of %s."), $portname, $member, $portname);
+						$input_errors[] = sprintf(gettext('You cannot set port %1$s to interface %2$s because this interface is a member of %3$s.'), $portname, $member, $portname);
 						break;
 					}
 				}
@@ -318,7 +347,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (does_interface_exist($vlan['if']) == false) {
-				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['tag']} cannot be created please fix the issue before continuing.";
+				$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
 			}
 		}
 	}
@@ -379,8 +408,9 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	}
 } else {
 	unset($delbtn);
-	if (!empty($_POST['del']))
+	if (!empty($_POST['del'])) {
 		$delbtn = key($_POST['del']);
+	}
 
 	if (isset($delbtn)) {
 		$id = $delbtn;
@@ -433,6 +463,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 			link_interface_to_vlans($realid, "update");
 
 			$savemsg = gettext("Interface has been deleted.");
+			$class = "success";
 		}
 	}
 }
@@ -458,38 +489,42 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
 		if ($rebootingnow) {
 			$savemsg = gettext("The system is now rebooting.  Please wait.");
+			$class = "success";
 		} else {
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+			$class = "warning";
 		}
 	} else {
 		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
+		$class = "warning";
 	}
 }
 
 if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
-	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 	echo "<br /></p>\n";
 } elseif ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
-$tab_array[1] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
-$tab_array[2] = array(gettext("Wireless"), false, "interfaces_wireless.php");
-$tab_array[3] = array(gettext("VLANs"), false, "interfaces_vlan.php");
-$tab_array[4] = array(gettext("QinQs"), false, "interfaces_qinq.php");
-$tab_array[5] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[7] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[8] = array(gettext("GIF"), false, "interfaces_gif.php");
-$tab_array[9] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[10] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
+$tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
+$tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
+$tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
+$tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
+$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
+$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <form action="interfaces_assign.php" method="post">
@@ -499,22 +534,24 @@ display_top_tabs($tab_array);
 		<tr>
 			<th><?=gettext("Interface")?></th>
 			<th><?=gettext("Network port")?></th>
+			<th>&nbsp;</th>
 		</tr>
 	</thead>
 	<tbody>
 <?php
 	foreach ($config['interfaces'] as $ifname => $iface):
-		if ($iface['descr'])
+		if ($iface['descr']) {
 			$ifdescr = $iface['descr'];
-		else
+		} else {
 			$ifdescr = strtoupper($ifname);
+		}
 ?>
 		<tr>
 			<td><a href="/interfaces.php?if=<?=$ifname?>"><?=$ifdescr?></a></td>
 			<td>
 				<select name="<?=$ifname?>" id="<?=$ifname?>" class="form-control">
 <?php foreach ($portlist as $portname => $portinfo):?>
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
 						<?=interface_assign_description($portinfo, $portname)?>
 					</option>
 <?php endforeach;?>
@@ -522,7 +559,10 @@ display_top_tabs($tab_array);
 			</td>
 			<td>
 <?php if ($ifname != 'wan'):?>
-				<input type="submit" name="del[<?=$ifname?>]" class="btn btn-danger" value="<?=gettext("delete interface")?>"/>
+				<button type="submit" name="del[<?=$ifname?>]" class="btn btn-danger btn-sm" title="<?=gettext("Delete interface")?>">
+					<i class="fa fa-trash icon-embed-btn"></i>
+					<?=gettext("Delete")?>
+				</button>
 <?php endif;?>
 			</td>
 		</tr>
@@ -536,14 +576,17 @@ display_top_tabs($tab_array);
 			<td>
 				<select name="if_add" id="if_add" class="form-control">
 <?php foreach ($unused_portlist as $portname => $portinfo):?>
-					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected="selected"': ''?>>
+					<option value="<?=$portname?>" <?=($portname == $iface['if']) ? ' selected': ''?>>
 						<?=interface_assign_description($portinfo, $portname)?>
 					</option>
 <?php endforeach;?>
 				</select>
 			</td>
 			<td>
-				<input type="submit" name="add" title="<?=gettext("add selected interface")?>" value="add interface" class="btn btn-success" />
+				<button type="submit" name="add" title="<?=gettext("Add selected interface")?>" value="add interface" class="btn btn-success btn-sm" >
+					<i class="fa fa-plus icon-embed-btn"></i>
+					<?=gettext("Add")?>
+				</button>
 			</td>
 		</tr>
 <?php endif;?>
@@ -551,9 +594,9 @@ display_top_tabs($tab_array);
 	</table>
 	</div>
 
-	<input name="Submit" type="submit" class="btn btn-default" value="<?=gettext("Save")?>" /><br /><br />
+	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><?=gettext('Save')?></button>
 </form>
-
+<br />
 <p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
 
 <?php include("foot.inc")?>

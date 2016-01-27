@@ -25,7 +25,7 @@
 	3. All advertising materials mentioning features or use of this software
 	   must display the following acknowledgment:
 	   "This product includes software developed by the pfSense Project
-	   for use in the pfSenseÂ® software distribution. (http://www.pfsense.org/).
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
 	4. The names "pfSense" and "pfSense Project" must not be used to
 	   endorse or promote products derived from this software without
@@ -4000,7 +4000,7 @@ function filter_process_carp_rules($log) {
 	/* return if there are no carp configured items */
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
 		$lines .= "block in {$log['block']} quick proto carp from (self) to any tracker {$increment_tracker($tracker)}\n";
-		$lines .= "pass {$log['pass']} quick proto carp tracker {$increment_tracker($tracker)}\n";
+		$lines .= "pass {$log['pass']} quick proto carp tracker {$increment_tracker($tracker)} no state\n";
 	}
 	return $lines;
 }
@@ -4118,30 +4118,39 @@ function filter_generate_ipsec_rules($log = array()) {
 
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
+			// don't add "pass out" rules where $rgip is any as it will over-match and often break VPN clients behind the system in multi-WAN scenarios. redmine #5819
+			if ($rgip != " any ") {
+				$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"\n";
+			}
 			$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if ($ph1ent['nat_traversal'] != "off") {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 			}
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if ($prot_used_ah) {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;

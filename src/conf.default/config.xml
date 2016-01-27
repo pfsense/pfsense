@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>12.2</version>
+	<version>14.0</version>
 	<lastchange/>
-	<theme>pfsense_ng</theme>
 	<system>
 		<optimization>normal</optimization>
 		<hostname>pfSense</hostname>
@@ -35,8 +34,6 @@
 		</user>
 		<nextuid>2000</nextuid>
 		<nextgid>2000</nextgid>
-		<timezone>Etc/UTC</timezone>
-		<time-update-interval>300</time-update-interval>
 		<timeservers>0.pfsense.pool.ntp.org</timeservers>
 		<webgui>
 			<protocol>https</protocol>
@@ -52,7 +49,6 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
-		<kill_states/>
 	</system>
 	<interfaces>
 		<wan>
@@ -254,7 +250,7 @@
 		</monitor_type>
 	</load_balancer>
 	<widgets>
-		<sequence>system_information-container:col1:show,captive_portal_status-container:col1:close,carp_status-container:col1:close,cpu_graphs-container:col1:close,gateways-container:col1:close,gmirror_status-container:col1:close,installed_packages-container:col1:close,interface_statistics-container:col1:close,interfaces-container:col2:show,ipsec-container:col2:close,load_balancer_status-container:col2:close,log-container:col2:close,picture-container:col2:close,rss-container:col2:close,services_status-container:col2:close,traffic_graphs-container:col2:close</sequence>
+		<sequence>system_information:col1:show,interfaces:col2:show</sequence>
 	</widgets>
 	<openvpn/>
 	<dnshaper/>

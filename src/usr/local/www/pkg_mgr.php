@@ -1,11 +1,9 @@
 <?php
-/* $Id$ */
 /*
 	pkg_mgr.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
  *	Copyright (c)  2013 Marcello Coutinho
  *
  *	Redistribution and use in source and binary forms, with or without modification,
@@ -55,14 +53,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: pkgs
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-packagemanager
-##|*NAME=System: Package Manager page
+##|*NAME=System: Package Manager
 ##|*DESCR=Allow access to the 'System: Package Manager' page.
 ##|*MATCH=pkg_mgr.php*
 ##|-PRIV
@@ -73,181 +67,246 @@ require_once("globals.inc");
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-$timezone = $config['system']['timezone'];
-if (!$timezone)
-	$timezone = "Etc/UTC";
-
-date_default_timezone_set($timezone);
-
-/* if upgrade in progress, alert user */
-if(is_subsystem_dirty('packagelock')) {
-	$pgtitle = array(gettext("System"),gettext("Package Manager"));
+// if upgrade in progress, alert user
+if (is_subsystem_dirty('packagelock')) {
+	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
-	print_info_box_np("Please wait while packages are reinstalled in the background.");
+	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
 }
 
-//get_pkg_info only if cache file has more then $g[min_pkg_cache_file_time] seconds
-$pkg_cache_file_time=($g['min_pkg_cache_file_time'] ? $g['min_pkg_cache_file_time'] : 120);
-
-$xmlrpc_base_url = get_active_xml_rpc_base_url();
-if (!file_exists("{$g['tmp_path']}/pkg_info.cache") || (time() - filemtime("{$g['tmp_path']}/pkg_info.cache")) > $pkg_cache_file_time) {
-	$pkg_info = get_pkg_info('all', array("noembedded", "name", "category", "website", "version", "status", "descr", "maintainer", "required_version", "maximum_version", "pkginfolink", "config_file"));
-	//create cache file after get_pkg_info
-	if($pkg_info) {
-		$fout = fopen("{$g['tmp_path']}/pkg_info.cache", "w");
-		fwrite($fout, serialize($pkg_info));
-		fclose($fout);
-		//$pkg_sizes = get_pkg_sizes();
-	} else {
-		$using_cache = true;
-		if(file_exists("{$g['tmp_path']}/pkg_info.cache")) {
-			$savemsg = sprintf(gettext("Unable to retrieve package info from %s. Cached data will be used."), $xmlrpc_base_url);
-			$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
-		} else {
-			$savemsg = sprintf(gettext('Unable to communicate with %1$s. Please verify DNS and interface configuration, and that %2$s has functional Internet connectivity.'), $xmlrpc_base_url, $g['product_name']);
-		}
-	}
-} else {
-	$pkg_info = unserialize(@file_get_contents("{$g['tmp_path']}/pkg_info.cache"));
+// We are being called only to get the pacakge data, not to display anything
+if (($_REQUEST) && ($_REQUEST['ajax'])) {
+	print(get_pkg_table());
+	exit;
 }
 
-if (! empty($_GET))
-	if (isset($_GET['ver']))
-		$requested_version = htmlspecialchars($_GET['ver']);
+// THe content for the table of packages is created here and fetched by Ajax. This allows us to draw the page and dispay
+// any required messages while the table it being downloaded/populated. On very small/slow systems, that can take a while
+function get_pkg_table() {
 
-$pgtitle = array(gettext("System"),gettext("Package Manager"));
+	$pkg_info = get_pkg_info();
+
+	if (!$pkg_info) {
+		print("error");
+		exit;
+	}
+
+	$pkgtbl = 	'<table id="pkgtable" class="table table-striped table-hover">' . "\n";
+	$pkgtbl .= 		'<thead>' . "\n";
+	$pkgtbl .= 			'<tr>' . "\n";
+	$pkgtbl .= 				'<th>' . gettext("Name") . "</th>\n";
+	$pkgtbl .= 				'<th>' . gettext("Version") . "</th>\n";
+	$pkgtbl .= 				'<th>' . gettext("Description") . "</th>\n";
+	$pkgtbl .= 				'<th></th>' . "\n";
+	$pkgtbl .= 			'</tr>' . "\n";
+	$pkgtbl .= 		'</thead>' . "\n";
+	$pkgtbl .= 		'<tbody>' . "\n";
+
+	foreach ($pkg_info as $index) {
+		if (isset($index['installed'])) {
+			continue;
+		}
+
+		$pkgtbl .= 	'<tr>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+
+		if ($index['www']) {
+			$pkgtbl .= 	'<a title="' . gettext("Visit official website") . '" target="_blank" href="' . htmlspecialchars($index['www']) . '">' . "\n";
+		}
+
+		$pkgtbl .= htmlspecialchars($index['shortname']);
+		$pkgtbl .= 		'</a>' . "\n";
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+
+		if (!$g['disablepackagehistory']) {
+			$pkgtbl .= '<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($index['changeloglink']) . '">' . "\n";
+			$pkgtbl .= htmlspecialchars($index['version']) . '</a>' . "\n";
+		} else {
+			$pkgtbl .= htmlspecialchars($index['version']);
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+		$pkgtbl .= 		$index['desc'];
+
+		if (is_array($index['deps']) && count($index['deps'])) {
+			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<br/>\n";
+
+			foreach ($index['deps'] as $pdep) {
+				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
+			}
+
+			$pkgtbl .= "\n";
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= '<td>' . "\n";
+		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">install</a>' . "\n";
+
+		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
+			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'</tr>' . "\n";
+	}
+
+	$pkgtbl .= 	'</tbody>' . "\n";
+	$pkgtbl .= '</table>' . "\n";
+
+	return ($pkgtbl);
+}
+
+$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Available Packages"));
 include("head.inc");
 
-/* Print package server mismatch warning. See https://redmine.pfsense.org/issues/484 */
-if (!verify_all_package_servers())
-	print_info_box(package_server_mismatch_message());
-
-/* Print package server SSL warning. See https://redmine.pfsense.org/issues/484 */
-if (check_package_server_ssl() === false)
-	print_info_box(package_server_ssl_failure_message());
-
-if ($savemsg)
-	print_info_box($savemsg);
-
-$version = rtrim(file_get_contents("/etc/version"));
-
 $tab_array = array();
-$tab_array[] = array(gettext("Available Packages"), $requested_version <> "" ? false : true, "pkg_mgr.php");
+$tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
-
-$version = rtrim(file_get_contents("/etc/version"));
-if($pkg_info) {
-	$pkg_keys = array_keys($pkg_info);
-	natcasesort($pkg_keys);
-
-	//Check categories
-	$categories=array();
-	if(is_array($pkg_keys)) {
-		foreach($pkg_keys as $key) {
-				$categories[$pkg_info[$key]['category']]++;
-			}
-		}
-	ksort($categories);
-	$cm_count=0;
-	$tab_array = array();
-	$visible_categories=array();
-	$categories_min_count=($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
-	$categories_max_display=($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
-
-	/* check selected category or define default category to show */
-	if (isset($_REQUEST['category']))
-		$menu_category = $_REQUEST['category'];
-	else if (isset($g['pkg_default_category']))
-		$menu_category = $g['pkg_default_category'];
-	else
-		$menu_category = "All";
-
-	$menu_category = (isset($_REQUEST['category']) ? $_REQUEST['category'] : "All");
-	$show_category = ($menu_category == "Other" || $menu_category == "All");
-
-	$tab_array[] = array(gettext("All"), $menu_category=="All" ? true : false, "pkg_mgr.php?category=All");
-	foreach ($categories as $category => $c_count) {
-		if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
-			$tab_array[] = array(gettext($category) , $menu_category==$category ? true : false, "pkg_mgr.php?category={$category}");
-			$visible_categories[]=$category;
-			$cm_count++;
-		}
-	}
-	$tab_array[] = array(gettext("Other Categories"), $menu_category=="Other" ? true : false, "pkg_mgr.php?category=Other");
-	if (count($categories) > 1)
-		display_top_tabs($tab_array);
-}
-
-if(!$pkg_info || !is_array($pkg_keys)):?>
-	<div class="alert alert-warning">
-		<?=gettext("There are currently no packages available for installation.")?>
-	</div>
-<?php else: ?>
-	<div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
-	<tr>
-		<th><?=gettext("Name")?></th>
-<?php if (!$g['disablepackagehistory']):?>
-		<th><?=gettext("Version")?></th>
-<?php endif;?>
-
-		<th><?=gettext("Description")?></th>
-	</tr>
-	</thead>
-	<tbody>
-<?php
-	foreach($pkg_keys as $key):
-		$index = &$pkg_info[$key];
-
-		if(get_pkg_id($index['name']) >= 0 )
-			continue;
-		continue;
-
-		/* get history/changelog git dir */
-		$commit_dir=explode("/",$index['config_file']);
-		$changeloglink = "https://github.com/pfsense/pfsense-packages/commits/master/config/";
-		if ($commit_dir[(count($commit_dir)-2)] == "config")
-			$changeloglink .= $commit_dir[(count($commit_dir)-1)];
-		else
-			$changeloglink .= $commit_dir[(count($commit_dir)-2)];
-
-		if ($menu_category != "All" && $index['category'] != $menu_category && !($menu_category == "Other" && !in_array($index['category'], $visible_categories)))
-			continue;
 ?>
-		<tr>
-			<td>
-<?php if ($index['www']):?>
-				<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
-<?php endif; ?>
-					<?=htmlspecialchars($index['name'])?>
+<div class="panel panel-default" id="search-panel" style="display: none;">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
 				</a>
-			</td>
-
-<?php if (!$g['disablepackagehistory']):?>
-			<td>
-				<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($changeloglink)?>">
-					<?=htmlspecialchars($index['version'])?>
-				</a>
-			</td>
-<?php endif;?>
-			<td>
-				<?=$index['desc']?>
-			</td>
-			<td>
-				<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success">install</a>
-<?php if(!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['website']):?>
-				<a target="_blank" title="<?=gettext("View more inforation")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default">info</a>
-<?php endif;?>
-			</td>
-		</tr>
-<?php
-	endforeach;
-endif;?>
-	</tbody>
-	</table>
+			</span>
+		</h2>
 	</div>
-<?php include("foot.inc")?>
+	<div id="search-panel_panel-body" class="panel-body collapse in">
+		<div class="form-group">
+			<label class="col-sm-2 control-label">
+				<?=gettext("Search term")?>
+			</label>
+			<div class="col-sm-5"><input class="form-control" name="searchstr" id="searchstr" type="text"/></div>
+			<div class="col-sm-2">
+				<select id="where" class="form-control">
+					<option value="0"><?=gettext("Name")?></option>
+					<option value="1"><?=gettext("Description")?></option>
+					<option value="2" selected><?=gettext("Both")?></option>
+				</select>
+			</div>
+			<div class="col-sm-3">
+				<a id="btnsearch" title="<?=gettext("Search")?>" class="btn btn-primary btn-sm"><?=gettext("Search")?></a>
+				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
+			</div>
+			<div class="col-sm-10 col-sm-offset-2">
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search package names and descriptions.')?></span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
+	<div id="pkgtbl" class="panel-body table-responsive">
+		<div id="waitmsg">
+			<?=print_info_box(gettext("Please wait while the list of packages is retrieved and formatted") . '&nbsp;<i class="fa fa-cog fa-spin"></i>')?>
+		</div>
+
+		<div id="errmsg" style="display: none;">
+			<?=print_info_box("<ul><li>" . gettext("Error: Unable to retrieve package information.") . "</li></ul>", 'danger')?>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+//<![CDATA[
+
+events.push(function() {
+
+	// Initial state & toggle icons of collapsed panel
+	$('.panel-heading a[data-toggle="collapse"]').each(function (idx, el) {
+		var body = $(el).parents('.panel').children('.panel-body')
+		var isOpen = body.hasClass('in');
+
+		$(el).children('i').toggleClass('fa-plus-circle', !isOpen);
+		$(el).children('i').toggleClass('fa-minus-circle', isOpen);
+
+		body.on('shown.bs.collapse', function() {
+			$(el).children('i').toggleClass('fa-minus-circle', true);
+			$(el).children('i').toggleClass('fa-plus-circle', false);
+		});
+	});
+
+	// Make these controls plain buttons
+	$("#btnsearch").prop('type', 'button');
+	$("#btnclear").prop('type', 'button');
+
+	// Search for a term in the package name and/or description
+	$("#btnsearch").click(function() {
+		var searchstr = $('#searchstr').val().toLowerCase();
+		var table = $("table tbody");
+		var where = $('#where').val();
+
+		table.find('tr').each(function (i) {
+			var $tds = $(this).find('td'),
+				shortname = $tds.eq(0).text().trim().toLowerCase(),
+				descr = $tds.eq(2).text().trim().toLowerCase();
+
+			regexp = new RegExp(searchstr);
+			if (searchstr.length > 0) {
+				if (!(regexp.test(shortname) && (where != 1)) && !(regexp.test(descr) && (where != 0))) {
+					$(this).hide();
+				} else {
+					$(this).show();
+				}
+			} else {
+				$(this).show();	// A blank search string shows all
+			}
+		});
+	});
+
+	// Clear the search term and unhide all rows (that were hidden during a previous search)
+	$("#btnclear").click(function() {
+		var table = $("table tbody");
+
+		$('#searchstr').val("");
+
+		table.find('tr').each(function (i) {
+			$(this).show();
+		});
+	});
+
+	// Hitting the enter key will do the same as clicking the search button
+	$("#searchstr").on("keyup", function (event) {
+	    if (event.keyCode == 13) {
+	        $("#btnsearch").get(0).click();
+	    }
+	});
+
+	// Retrieve the table formatted pacakge information and display it in the "Packages" panel
+	// (Or display an appropriate error message)
+	var ajaxRequest;
+
+	$.ajax({
+		url: "/pkg_mgr.php",
+		type: "post",
+		data: { ajax: "ajax"},
+		success: function(data) {
+			if (data == "error") {
+				$('#waitmsg').hide();
+				$('#errmsg').show();
+			} else {
+				$('#pkgtbl').html(data);
+				$('#search-panel').show();
+			}
+		},
+		error: function() {
+			$('#waitmsg').hide();
+			$('#errmsg').show();
+		}
+	});
+
+});
+//]]>
+</script>
+
+<?php include("foot.inc");
+?>

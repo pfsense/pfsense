@@ -249,6 +249,7 @@ if ($_POST) {
 									"<a href='status_filter_reload.php'>", "</a>");
 	}
 
+<<<<<<< HEAD
 	/* handle AJAX operations */
 	if ($_POST['action'] == "KillRuleStates") {
 		if (isset($_POST['label'])) {
@@ -334,6 +335,8 @@ if ($_POST) {
 	}
 }
 
+=======
+>>>>>>> upstream/master
 if ($_GET['act'] == "del") {
 	if ($a_filter[$_GET['id']]) {
 		if (!empty($a_filter[$_GET['id']]['associated-rule-id'])) {
@@ -536,7 +539,10 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
+<<<<<<< HEAD
 						<th><?=gettext("Hits");?></th>
+=======
+>>>>>>> upstream/master
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
@@ -557,12 +563,18 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 		if ($showantilockout):
 			$alports = implode('<br />', filter_get_antilockout_ports(true));
+<<<<<<< HEAD
 			$rule_hit_count=get_rule_ht("anti-lockout rule",array(),true);
+=======
+>>>>>>> upstream/master
 ?>
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
+<<<<<<< HEAD
 						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title']; ?>"><?=$rule_hit_count['html']; ?></td>
+=======
+>>>>>>> upstream/master
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -577,6 +589,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 						</td>
 					</tr>
 <?php 	endif;?>
+<<<<<<< HEAD
 <?php 	if ($showprivate):
 			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 192.168/16",array(),true);
 			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 127/8",$rule_hit_count,true);
@@ -587,6 +600,12 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'];?>"><?=$rule_hit_count['html']; ?></td>
+=======
+<?php 	if ($showprivate): ?>
+					<tr id="frrfc1918">
+						<td></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+>>>>>>> upstream/master
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -601,6 +620,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 						</td>
 					</tr>
 <?php 	endif;?>
+<<<<<<< HEAD
 <?php 	if ($showblockbogons):
 			$rule_hit_count=get_rule_ht("block bogon IPv4 networks from ".strtoupper($if),array(),true);
 			$rule_hit_count=get_rule_ht("block bogon IPv6 networks from ".strtoupper($if),$rule_hit_count,true);
@@ -609,6 +629,12 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'] ?>"><?=$rule_hit_count['html']; ?></td>
+=======
+<?php 	if ($showblockbogons): ?>
+					<tr id="frrfc1918">
+					<td></td>
+						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+>>>>>>> upstream/master
 						<td>*</td>
 						<td><?=gettext("Reserved/not assigned by IANA");?></td>
 						<td>*</td>
@@ -1130,6 +1156,7 @@ events.push(function() {
 			$(this).parents('tr').remove();
 			newSeperator = false;
 		});
+<<<<<<< HEAD
 	});
 
 	// Delete a separator row
@@ -1142,6 +1169,20 @@ events.push(function() {
 		});
 	});
 
+=======
+	});
+
+	// Delete a separator row
+	$(function(){
+		$('table').on('click','tr a .sepdel',function(e){
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			$('#order-store').removeAttr('disabled');
+			dirty = true;
+		});
+	});
+
+>>>>>>> upstream/master
 	// Compose an inout array containing the row #, color and text for each separator
 	function save_separators() {
 		var seprow = 0;
@@ -1215,3 +1256,4 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");?>
+

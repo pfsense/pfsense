@@ -224,6 +224,9 @@
 					$config_text .= "system_uptime=yes\n";
 				}
 
+				/* set secure_mode */
+				$config_text .= "secure_mode=yes\n";
+
 				/* set webgui url */
 				if (!empty($config['system']['webgui']['protocol'])) {
 					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
@@ -241,9 +244,11 @@
 				$config_text .= "model_number=" . $g['product_version'] . "\n";
 
 				/* upnp access restrictions */
-				foreach ($upnp_config['row'] as $row) {
-					if ($row['permuser']) {
-						$config_text .= "{$row["permuser"]}\n";
+				if (is_array($upnp_config['row'])) {
+					foreach ($upnp_config['row'] as $row) {
+						if ($row['permuser']) {
+							$config_text .= "{$row["permuser"]}\n";
+						}
 					}
 				}
 

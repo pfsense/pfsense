@@ -1,6 +1,5 @@
 <?php
 /*
-	$Id$
 	part of m0n0wall (http://m0n0.ch/wall)
 
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
@@ -28,9 +27,6 @@
 	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 	POSSIBILITY OF SUCH DAMAGE.
-*/
-/*
-	pfSense_MODULE:	captiveportal
 */
 
 require_once("auth.inc");
@@ -156,7 +152,9 @@ setTimeout('window.close();',5000) ;
 </html>
 
 EOD;
-	captiveportal_disconnect_client($_POST['logout_id']);
+
+	$safe_logout_id = SQLite3::escapeString($_POST['logout_id']);
+	captiveportal_disconnect_client($safe_logout_id);
 
 } else if ($macfilter && $clientmac && captiveportal_blocked_mac($clientmac)) {
 	captiveportal_logportalauth($clientmac, $clientmac, $clientip, "Blocked MAC address");

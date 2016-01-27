@@ -1,41 +1,61 @@
 <?php
-/* $Id$ */
 /*
 	system_advanced_admin.php
-	part of pfSense
-	Copyright (C) 2005-2010 Scott Ullrich
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: system
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-admin
@@ -126,23 +146,34 @@ if ($_POST) {
 		if (update_if_changed("webgui protocol", $config['system']['webgui']['protocol'], $_POST['webguiproto'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui port", $config['system']['webgui']['port'], $_POST['webguiport'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui certificate", $config['system']['webgui']['ssl-certref'], $_POST['ssl-certref'])) {
 			$restart_webgui = true;
 		}
+
 		if (update_if_changed("webgui max processes", $config['system']['webgui']['max_procs'], $_POST['max_procs'])) {
 			$restart_webgui = true;
 		}
 
+		// Restart the webgui only if this actually changed
 		if ($_POST['webgui-redirect'] == "yes") {
+			if ($config['system']['webgui']['disablehttpredirect'] != true) {
+				$restart_webgui = true;
+			}
+
 			$config['system']['webgui']['disablehttpredirect'] = true;
-			$restart_webgui = true;
 		} else {
+			if ($config['system']['webgui']['disablehttpredirect'] == true) {
+				$restart_webgui = true;
+			}
+
 			unset($config['system']['webgui']['disablehttpredirect']);
-			$restart_webgui = true;
 		}
+
 		if ($_POST['webgui-login-messages'] == "yes") {
 			$config['system']['webgui']['quietlogin'] = true;
 		} else {
@@ -231,8 +262,8 @@ if ($_POST) {
 		}
 
 		if (($sshd_enabled != $config['system']['enablesshd']) ||
-			($sshd_keyonly != $config['system']['sshdkeyonly']) ||
-			($sshd_port != $config['system']['ssh']['port'])) {
+		    ($sshd_keyonly != $config['system']['sshdkeyonly']) ||
+		    ($sshd_port != $config['system']['ssh']['port'])) {
 			$restart_sshd = true;
 		}
 
@@ -282,14 +313,16 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced: Admin Access"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Admin Access"));
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), true, "system_advanced_admin.php");
@@ -302,7 +335,6 @@ display_top_tabs($tab_array);
 
 ?><div id="container"><?php
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('WebConfigurator');
 $group = new Form_Group('Protocol');
@@ -311,7 +343,7 @@ $group->add(new Form_Checkbox(
 	'webguiproto',
 	'Protocol',
 	'HTTP',
-	($pconfig['webguiproto']=='http'),
+	($pconfig['webguiproto'] == 'http'),
 	'http'
 ))->displayAsRadio();
 
@@ -319,7 +351,7 @@ $group->add(new Form_Checkbox(
 	'webguiproto',
 	'Protocol',
 	'HTTPS',
-	($pconfig['webguiproto']=='https'),
+	($pconfig['webguiproto'] == 'https'),
 	'https'
 ))->displayAsRadio();
 
@@ -330,8 +362,9 @@ $group->setHelp($certs_available ? '':'No Certificates have been defined. You mu
 $section->add($group);
 
 $values = array();
-foreach($a_cert as $cert)
+foreach ($a_cert as $cert) {
 	$values[ $cert['refid'] ] = $cert['descr'];
+}
 
 $section->addInput($input = new Form_Select(
 	'ssl-certref',
@@ -360,7 +393,7 @@ $section->addInput(new Form_Input(
 	'users/browsers to access the GUI concurrently.');
 
 $section->addInput(new Form_Checkbox(
-	'disablehttpredirect',
+	'webgui-redirect',
 	'WebGUI redirect',
 	'Disable webConfigurator redirect rule',
 	$pconfig['disablehttpredirect']
@@ -380,17 +413,18 @@ $section->addInput(new Form_Checkbox(
 	'this option).');
 
 $section->addInput(new Form_Checkbox(
-	'quietlogin',
+	'webgui-login-messages',
 	'WebGUI login messages',
 	'Disable logging of webConfigurator successful logins',
 	$pconfig['quietlogin']
 ))->setHelp('When this is checked, successful logins to the webConfigurator will '.
 	'not be logged.');
 
-if ($config['interfaces']['lan'])
+if ($config['interfaces']['lan']) {
 	$lockout_interface = "LAN";
-else
+} else {
 	$lockout_interface = "WAN";
+}
 
 $section->addInput(new Form_Checkbox(
 	'noantilockout',
@@ -411,7 +445,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable DNS Rebinding Checks',
 	$pconfig['nodnsrebindcheck']
 ))->setHelp('When this is unchecked, your system is protected against <a '.
-	'href=\"http://en.wikipedia.org/wiki/DNS_rebinding\">DNS Rebinding attacks</a>. '.
+	'href="http://en.wikipedia.org/wiki/DNS_rebinding">DNS Rebinding attacks</a>. '.
 	'This blocks private IP responses from your configured DNS servers. Check this '.
 	'box to disable this protection if it interferes with webConfigurator access or '.
 	'name resolution in your environment.');
@@ -474,11 +508,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 
-if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] == "cdrom"))
-{
-	$form->add($section);
-	$section = new Form_Section('Serial Communications');
+$form->add($section);
+$section = new Form_Section('Serial Communications');
 
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
@@ -486,23 +519,25 @@ if (!$g['enableserial_force'] && ($g['platform'] == "pfSense" || $g['platform'] 
 		isset($pconfig['enableserial'])
 	))->setHelp('Note:	This will redirect the console output and messages to '.
 		'the serial port. You can still access the console menu from the internal video '.
-		'card/keyboard. A<b>null modem</b>serial cable or adapter is required to use the '.
+		'card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the '.
 		'serial console.');
+}
 
-	$section->addInput(new Form_Select(
-		'serialspeed',
-		'Serial Speed',
-		$pconfig['serialspeed'],
-		array(115200, 57600, 38400, 19200, 14400, 9600)
-	))->setHelp('Allows selection of different speeds for the serial console port.');
+$section->addInput(new Form_Select(
+	'serialspeed',
+	'Serial Speed',
+	$pconfig['serialspeed'],
+	array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
+))->setHelp('Allows selection of different speeds for the serial console port.');
 
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 	$section->addInput(new Form_Select(
 		'primaryconsole',
 		'Primary Console',
 		$pconfig['primaryconsole'],
 		array(
-			'serial' => 'Serial Console',
-			'video' => 'VGA Console',
+			'serial' => gettext('Serial Console'),
+			'video' => gettext('VGA Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
 		'The preferred console will show pfSense boot script output. All consoles '.
@@ -523,24 +558,19 @@ $form->add($section);
 print $form;
 
 ?>
-<script>
+</div>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
+	// ---------- On initial page load ------------------------------------------------------------
 
-	// On page load . .
-	hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+	hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 
-	// On click . .
-	 $('[id=webguiproto]').click(function () {
-		hideInput('ssl-certificate', $('input[name=webguiproto]:checked').val() == 'http');
+	// ---------- Click checkbox handlers ---------------------------------------------------------
+
+	 $('[name=webguiproto]').click(function () {
+		hideInput('ssl-certref', $('input[name=webguiproto]:checked').val() == 'http');
 	});
 });
 //]]>
@@ -549,11 +579,11 @@ events.push(function(){
 <?php
 include("foot.inc");
 
-if ($restart_webgui)
+if ($restart_webgui) {
 	echo "<meta http-equiv=\"refresh\" content=\"20;url={$url}\" />";
+}
 
-if ($restart_sshd)
-{
+if ($restart_sshd) {
 	killbyname("sshd");
 	log_error(gettext("secure shell configuration has changed. Stopping sshd."));
 
@@ -563,10 +593,10 @@ if ($restart_sshd)
 	}
 }
 
-if ($restart_webgui)
-{
+if ($restart_webgui) {
 	ob_flush();
 	flush();
 	log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 	send_event("service restart webgui");
 }
+?>

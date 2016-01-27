@@ -46,9 +46,7 @@
 	$sshConfigDir = "/etc/ssh";
 
 	$keys = array(
-		array('type' => 'rsa1',    'suffix' => ''),
 		array('type' => 'rsa',     'suffix' => 'rsa_'),
-		array('type' => 'dsa',     'suffix' => 'dsa_'),
 		array('type' => 'ecdsa',   'suffix' => 'ecdsa_'),
 		array('type' => 'ed25519', 'suffix' => 'ed25519_')
 	);
@@ -163,7 +161,7 @@
 	$generate_keys = array();
 	foreach ($keys as $key) {
 		if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
-			!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
+		    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
 			$generate_keys[] = $key;
 		}
 	}

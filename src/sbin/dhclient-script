@@ -18,11 +18,7 @@
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 #
 
-NETSTAT=/usr/bin/netstat
-GREP=/usr/bin/grep
-AWK=/usr/bin/awk
 HOSTNAME=/bin/hostname
-GREP=/usr/bin/grep
 ROUTE=/sbin/route
 SED=/usr/bin/sed
 ARP=/usr/sbin/arp
@@ -114,7 +110,7 @@ add_new_address() {
 	$LOGGER "New Routers ($interface): $new_routers"
 
 
-	# This is necessary otherwise apinger will try to ping all 1s address
+	# This is necessary otherwise dpinger will try to ping all 1s address
 	if [ -n "$new_routers" ] && [ "$new_routers" != "255.255.255.255" ]; then
 		echo $new_routers > /tmp/${interface}_router
 	fi
@@ -268,12 +264,12 @@ add_new_resolv_conf() {
 	fi
 	if [ -n "$new_domain_name_servers" ]; then
 		/bin/rm -f /var/etc/nameserver_$interface
-		ALLOWOVERRIDE=`/usr/bin/grep dnsallowoverride /conf/config.xml | /usr/bin/wc -l`
+		ALLOWOVERRIDE=$(/usr/local/sbin/read_xml_tag.sh boolean system/dnsallowoverride)
 		for nameserver in $new_domain_name_servers; do
 			# Add a route to the nameserver out the correct interface
 			# so that mulitple wans work correctly with multiple dns
 			# also backup the nameserver for later route removal
-			if [ $ALLOWOVERRIDE -gt 0 ]; then
+			if [ "$ALLOWOVERRIDE" = "true" ]; then
 				echo $nameserver >>/var/etc/nameserver_$interface
 				$ROUTE add $nameserver -iface $interface
 			fi
@@ -304,13 +300,6 @@ if [ -f /etc/dhclient-enter-hooks ]; then
 		exit $exit_status
 	fi
 fi
-
-#if [ -x $ROUTE ]; then
-#	if_defaultroute=`$ROUTE -n get -inet default | $GREP interface | $AWK '{print $2}'`
-#else
-#	$LOGGER "if_defaultroute"
-#	if_defaultroute="x"
-#fi
 
 $LOGGER $reason
 case $reason in

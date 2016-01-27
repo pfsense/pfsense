@@ -1,40 +1,64 @@
 <?php
 /*
 	services_captiveportal.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: captiveportal
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal
-##|*NAME=Services: Captive portal page
+##|*NAME=Services: Captive portal
 ##|*DESCR=Allow access to the 'Services: Captive portal' page.
 ##|*MATCH=services_captiveportal.php*
 ##|-PRIV
@@ -69,7 +93,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive portal"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Configuration"));
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
@@ -274,16 +298,16 @@ if ($_POST) {
 				}
 
 				if ($_POST['timeout'] > $deftime) {
-					$input_errors[] = gettext("Hard timeout must be less or equal Default lease time set on DHCP Server");
+					$input_errors[] = gettext("Hard timeout must be less than or equal to the Default lease time set on DHCP Server");
 				}
 			}
 		}
 	}
-	
+
 	if ($_POST['idletimeout'] && (!is_numeric($_POST['idletimeout']) || ($_POST['idletimeout'] < 1))) {
 		$input_errors[] = gettext("The idle timeout must be at least 1 minute.");
 	}
-	
+
 	if ($_POST['freelogins_count'] && (!is_numeric($_POST['freelogins_count']))) {
 		$input_errors[] = gettext("The pass-through credit count must be a number or left blank.");
 	} else if ($_POST['freelogins_count'] && is_numeric($_POST['freelogins_count']) && ($_POST['freelogins_count'] >= 1)) {
@@ -291,47 +315,47 @@ if ($_POST) {
 			$input_errors[] = gettext("The waiting period to restore pass-through credits must be above 0 hours.");
 		}
 	}
-	
+
 	if (($_POST['radiusip'] && !is_ipaddr($_POST['radiusip']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip']);
 	}
-	
+
 	if (($_POST['radiusip2'] && !is_ipaddr($_POST['radiusip2']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip2']);
 	}
-	
+
 	if (($_POST['radiusip3'] && !is_ipaddr($_POST['radiusip3']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip3']);
 	}
-	
+
 	if (($_POST['radiusip4'] && !is_ipaddr($_POST['radiusip4']))) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
-	
+
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
-	
+
 	if (($_POST['radiusport2'] && !is_port($_POST['radiusport2']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport2']);
 	}
-	
+
 	if (($_POST['radiusport3'] && !is_port($_POST['radiusport3']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport3']);
 	}
-	
+
 	if (($_POST['radiusport4'] && !is_port($_POST['radiusport4']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
-	
+
 	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
 	}
-	
+
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
 		$input_errors[] = gettext("The maximum number of concurrent connections per client IP address may not be larger than the global maximum.");
 	}
-	
+
 	if (trim($_POST['radiusnasid']) !== "" && !preg_match("/^[\x21-\x7e]{3,253}$/i", trim($_POST['radiusnasid']))) {
 		$input_errors[] = gettext("The NAS-Identifier must be 3-253 characters long and should only contain ASCII characters.");
 	}
@@ -502,8 +526,9 @@ function build_radiusnas_list() {
 					$snip = long2ip32($start+$i);
 					$list[$snip] = $sn['descr'] . ' - ' . $snip;
 				}
-			} else
+			} else {
 				$list[$sn['subnet']] = $sn['descr'] . ' - ' . $sn['subnet'];
+			}
 		}
 	}
 
@@ -515,33 +540,34 @@ function build_cert_list() {
 
 	$list = array();
 
-	foreach($a_cert as $cert)
+	foreach ($a_cert as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
+	}
 
 	return($list);
 }
 
-$closehead = false;
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
-$tab_array[] = array(gettext("Captive portal(s)"), true, "services_captiveportal.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Configuration"), true, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Allowed IP addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
 $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_filemanager.php?zone={$cpzone}");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
+$form->setMultipartEncoding();
 
 $section = new Form_Section('Captive Portal Configuration');
 
@@ -567,7 +593,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maxprocperip'],
 	['min' => '0', 'max' => '100']
 ))->setHelp('Limits the number of concurrent connections to the captive portal HTTP(S) server. This does not set how many users can be logged in ' .
-			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.'); 
+			'to the captive portal, but rather how many connections a single IP can establish to the portal web server.');
 
 $section->addInput(new Form_Input(
 	'idletimeout',
@@ -681,7 +707,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'bwdefaultup',
-	'Default download (Kbit/s)',
+	'Default upload (Kbit/s)',
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
@@ -705,10 +731,10 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'auth_method',
 	null,
-	'Local/Vouchers',
+	'Local User Manager / Vouchers',
 	$pconfig['auth_method'] == 'local',
 	'local'
-))->displayasRadio()->setHelp('<a href="system_usermanager.php">User Manager</a>');
+))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'auth_method',
@@ -728,6 +754,7 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $group = new Form_Group('RADIUS protocol');
+$group->addClass("radiusproto");
 
 $group->add(new Form_Checkbox(
 	'radius_protocol',
@@ -758,7 +785,7 @@ $group->add(new Form_Checkbox(
 	null,
 	'MSCHAPv2',
 	$pconfig['radius_protocol'] == 'MSCHAPv2',
-	'SCHAPv2'
+	'MSCHAPv2'
 ))->displayasRadio();
 
 $section->add($group);
@@ -805,14 +832,14 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['radiusport2']
-))->setHelp('Leave blank for default (1812)');
+))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey3',
+	'radiuskey2',
 	null,
 	'text',
-	$pconfig['radiuskey3']
-))->setHelp('Leave blank to not use a RADIUS shared secret (not recommended)');
+	$pconfig['radiuskey2']
+))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
 
@@ -824,23 +851,23 @@ $section->addClass('Secondary');
 $group = new Form_Group('Primary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip4',
+	'radiusip3',
 	null,
-	$pconfig['radiusip4']
+	$pconfig['radiusip3']
 ));
 
 $group->add(new Form_Input(
-	'radiusport4',
+	'radiusport3',
 	null,
 	'number',
-	$pconfig['radiusport4']
+	$pconfig['radiusport3']
 ));
 
 $group->add(new Form_Input(
-	'radiuskey4',
+	'radiuskey3',
 	null,
 	'text',
-	$pconfig['radiuskey4']
+	$pconfig['radiuskey3']
 ));
 
 $section->add($group);
@@ -848,24 +875,24 @@ $section->add($group);
 $group = new Form_Group('Secondary RADIUS server');
 
 $group->add(new Form_IpAddress(
-	'radiusip',
+	'radiusip4',
 	null,
-	$pconfig['radiusip']
+	$pconfig['radiusip4']
 ))->setHelp('IP address of the RADIUS server to authenticate against.');
 
 $group->add(new Form_Input(
-	'radiusport',
+	'radiusport4',
 	null,
 	'number',
-	$pconfig['radiusport']
-))->setHelp('Leave blank for default (1812)');
+	$pconfig['radiusport4']
+))->setHelp('RADIUS port. Leave blank for default (1812)');
 
 $group->add(new Form_Input(
-	'radiuskey',
+	'radiuskey4',
 	null,
 	'text',
-	$pconfig['radiuskey']
-))->setHelp('Leave blank to not use a RADIUS shared secret (not recommended)');
+	$pconfig['radiuskey4']
+))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
 
 $section->add($group);
 $form->add($section);
@@ -899,7 +926,7 @@ $group->add(new Form_Checkbox(
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'Stop/stop Accounting',
+	'Stop/start Accounting',
 	$pconfig['reauthenticateacct'] == 'stopstart'
 ))->displayasRadio();
 
@@ -958,7 +985,7 @@ $section->addInput(new Form_Select(
 	'radiusvendor',
 	'Type',
 	$pconfig['radiusvendor'],
-	['default' => 'default', 'cisco' => 'cisco']
+	['default' => gettext('default'), 'cisco' => 'cisco']
 ))->setHelp('If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-ID will be set to the client\'s IP address and the ' .
 			'Called-Station-Id to the client\'s MAC address. Default behavior is Calling-Station-Id = client\'s MAC address and ' .
 			'Called-Station-ID = pfSense\'s WAN IP address.');
@@ -982,7 +1009,7 @@ $section->addInput(new Form_Select(
 	'radmac_format',
 	'MAC address format',
 	$pconfig['radmac_format'],
-	['default' => 'Default', 'singledash' => 'Single dash', 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => 'Unformatted']
+	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
 ))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if you also need to change the username format for ' .
 			'RADIUS MAC authentication.' . '<br />' .
 			'Default: 00:11:22:33:44:55' . '<br />' .
@@ -1015,7 +1042,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'SSL Certigicate',
+	'SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert Manager</a>');
@@ -1052,24 +1079,34 @@ $section->addInput(new Form_Input(
 			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />
 			 &lt;/form&gt;')->addClass('btn btn-info btn-sm');
 
+list($host) = explode(":", $_SERVER['HTTP_HOST']);
+$zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
+if ($pconfig['httpslogin_enable']) {
+	$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 8001);
+	$href = "https://{$host}:{$port}/?zone={$cpzone}";
+} else {
+	$port = $pconfig['listenporthttp'] ? $pconfig['listenporthttp'] : ($zoneid + 8000);
+	$href = "http://{$host}:{$port}/?zone={$cpzone}";
+}
+
 if ($pconfig['page']['htmltext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
 		$href
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
+	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=gethtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=gethtmlhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Restore default portal page',
-		'?zone=' . $cpzone . '&amp;act=delhtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'?zone=' . $cpzone . '&act=delhtmlhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 
 $section->addInput(new Form_Input(
@@ -1085,20 +1122,20 @@ if ($pconfig['page']['errtext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
-		'?zone=' . $cpzone . '&amp;act=viewerrhtml'
+		'?zone=' . $cpzone . '&act=viewerrhtml'
 	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=geterrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=geterrhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
-		'?zone=' . $cpzone . '&amp;act=delerrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'Restore default error page',
+		'?zone=' . $cpzone . '&act=delerrhtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 
 $section->addInput(new Form_Input(
@@ -1112,20 +1149,20 @@ if ($pconfig['page']['logouttext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
-		'?zone=' . $cpzone . '&amp;act=viewlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
+		'?zone=' . $cpzone . '&act=viewlogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
 		'Download current page',
-		'?zone=' . $cpzone . '&amp;act=getlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs');
+		'?zone=' . $cpzone . '&act=getlogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$section->addInput(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
-		'?zone=' . $cpzone . '&amp;act=dellogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs');
+		'Restore default logout page',
+		'?zone=' . $cpzone . '&act=dellogouthtml'
+	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
 }
 $section->addInput(new Form_Input(
 	'zone',
@@ -1145,45 +1182,7 @@ print_info_box(gettext('Warning:' . '<br />' . 'Don\'t forget to enable the DHCP
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	//---------- "Standard" show/hide functions ---------------------------------------------------
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	// Hides all elements of the specified class belonging to a multiselect.
-	function hideMultiClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).parent().parent().hide();
-		else
-			$('.' + s_class).parent().parent().show();
-	}
-
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
+events.push(function() {
 
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
 	function hideSections(hide) {
@@ -1204,6 +1203,8 @@ events.push(function(){
 		hideClass('Radius', hide);
 
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
+		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
+		hideClass("radiusproto", !($('input[name="auth_method"]:checked').val() == 'radius'));
 	}
 
 	function hideHTTPS() {
@@ -1248,7 +1249,7 @@ events.push(function(){
 		hideHTTPS(!this.checked);
 	});
 
-	// ---------- On itial page load --------------------------------------------------------------
+	// ---------- On initial page load ------------------------------------------------------------
 	hideSections(!$('#enable').prop('checked'));
 	disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 });

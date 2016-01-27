@@ -4,9 +4,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: schedules
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-schedules-edit
-##|*NAME=Firewall: Schedules: Edit page
+##|*NAME=Firewall: Schedules: Edit
 ##|*DESCR=Allow access to the 'Firewall: Schedules: Edit' page.
 ##|*MATCH=firewall_schedule_edit.php*
 ##|-PRIV
@@ -73,8 +70,9 @@ function schedulecmp($a, $b) {
 function schedule_sort() {
 	global $g, $config;
 
-	if (!is_array($config['schedules']['schedule']))
+	if (!is_array($config['schedules']['schedule'])) {
 		return;
+	}
 
 	usort($config['schedules']['schedule'], "schedulecmp");
 }
@@ -91,16 +89,19 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firew
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-if (!is_array($config['schedules']['schedule']))
+if (!is_array($config['schedules']['schedule'])) {
 	$config['schedules']['schedule'] = array();
+}
 
 $a_schedules = &$config['schedules']['schedule'];
 
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
+}
 
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_schedules[$id]) {
 	$pconfig['name'] = $a_schedules[$id]['name'];
@@ -112,27 +113,32 @@ if (isset($id) && $a_schedules[$id]) {
 
 if ($_POST) {
 
-	if (strtolower($_POST['name']) == "lan")
+	if (strtolower($_POST['name']) == "lan") {
 		$input_errors[] = gettext("Schedule may not be named LAN.");
+	}
 
-	if (strtolower($_POST['name']) == "wan")
+	if (strtolower($_POST['name']) == "wan") {
 		$input_errors[] = gettext("Schedule may not be named WAN.");
+	}
 
-	if (strtolower($_POST['name']) == "")
+	if (strtolower($_POST['name']) == "") {
 		$input_errors[] = gettext("Schedule name cannot be blank.");
+	}
 
 	$x = is_validaliasname($_POST['name']);
 	if (!isset($x)) {
 		$input_errors[] = gettext("Reserved word used for schedule name.");
 	} else {
-		if (is_validaliasname($_POST['name']) == false)
-			$input_errors[] = gettext("The schedule name may only consist of the characters a-z, A-Z, 0-9");
+		if (is_validaliasname($_POST['name']) == false) {
+			$input_errors[] = sprintf(gettext("The schedule name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %s"), 'a-z, A-Z, 0-9, _');
+		}
 	}
 
 	/* check for name conflicts */
 	foreach ($a_schedules as $schedule) {
-		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule))
+		if (isset($id) && ($a_schedules[$id]) && ($a_schedules[$id] === $schedule)) {
 			continue;
+		}
 
 		if ($schedule['name'] == $_POST['name']) {
 			$input_errors[] = gettext("A Schedule with this name already exists.");
@@ -169,21 +175,16 @@ if ($_POST) {
 			$timedescrstr = htmlentities($_POST['timedescr' . $x], ENT_QUOTES, 'UTF-8');
 			$dashpos = strpos($timestr, '-');
 
-			if ($dashpos === false)
-			{
+			if ($dashpos === false) {
 				$timeparts['position'] = $timestr;
-			}
-			else
-			{
+			} else {
 				$tempindarray = array();
 				$monthstr = "";
 				$daystr = "";
 				$tempindarray = explode(",", $timestr);
-				foreach ($tempindarray as $currentselection)
-				{
+				foreach ($tempindarray as $currentselection) {
 					if ($currentselection) {
-						if ($firstprint)
-						{
+						if ($firstprint) {
 							$monthstr .= ",";
 							$daystr .= ",";
 						}
@@ -206,39 +207,41 @@ if ($_POST) {
 		}
 	}
 
-	if (!$timerangeFound)
+	if (!$timerangeFound) {
 		$input_errors[] = gettext("The schedule must have at least one time range configured.");
+	}
 
 	if (!$input_errors) {
 
-		if (!empty($pconfig['schedlabel']))
+		if (!empty($pconfig['schedlabel'])) {
 			$schedule['schedlabel'] = $pconfig['schedlabel'];
-		else
+		} else {
 			$schedule['schedlabel'] = uniqid();
+		}
 
 		if (isset($id) && $a_schedules[$id]) {
 			$a_schedules[$id] = $schedule;
-		}
-		else {
+		} else {
 			$a_schedules[] = $schedule;
 		}
 
 		schedule_sort();
 
-		if (write_config())
+		if (write_config()) {
 			filter_configure();
+		}
 
 		header("Location: firewall_schedule.php");
 		exit;
 
 	}
 	//we received input errors, copy data to prevent retype
-	else
-	{
-		if (!$_POST['schedule0'])
+	else {
+		if (!$_POST['schedule0']) {
 			$getSchedule = false;
-		else
+		} else {
 			$getSchedule = true;
+		}
 
 		$pconfig['name'] = $schedule['name'];
 		$pconfig['descr'] = $schedule['descr'];
@@ -260,8 +263,9 @@ function build_date_table() {
 	for ($k = 0; $k < 12; $k++) {
 		$firstdayofmonth = date("w", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter)));
 
-		if ($firstdayofmonth == 0)
+		if ($firstdayofmonth == 0) {
 			$firstdayofmonth = 7;
+		}
 
 		$daycounter = 1;
 		//number of day in month
@@ -273,16 +277,17 @@ function build_date_table() {
 		$mostr = '<div id="' . date("F_y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) ;
 		$mostr .= '" style="position:relative; display:';
 
-		if ($firstmonth)
+		if ($firstmonth) {
 			$mostr .= "block";
-		else
+		} else {
 			$mostr .= "none";
+		}
 
 		$mostr .= '" class="col-md-6">';
 
 		$mostr .=
-			'<table class="table table-condensed" border="1" cellspacing="1" cellpadding="1" id="calTable' . $monthcounter . $yearcounter . '" >
-				<thead><tr class="info"><td colspan="7" align="center" ><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
+			'<table class="table table-condensed table-bordered" id="calTable' . $monthcounter . $yearcounter . '" >
+				<thead><tr class="info"><td colspan="7" class="text-center"><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
 				</tr>
 				<tr>
 					<th class="text-center" style="cursor: pointer;" onclick="daytoggle(\'w1p1\');">' . gettext("Mon") . '</th>
@@ -301,8 +306,7 @@ function build_date_table() {
 				while ($daycounter<=$numberofdays) {
 					$weekcounter =	date("W", mktime(0, 0, 0, date($monthcounter), date($daycounter), date($yearcounter)));
 					$weekcounter = ltrim($weekcounter, "0");
-					if ($positioncounter == 1)
-					{
+					if ($positioncounter == 1) {
 						$mostr .= "<tr>";
 					}
 
@@ -313,22 +317,25 @@ function build_date_table() {
 						$daycounter++;
 						$firstdayprinted = TRUE;
 						$mostr .= "</td>";
-					}
-					elseif ($firstdayprinted == TRUE && $daycounter <= $numberofdays) {
+					} elseif ($firstdayprinted == TRUE && $daycounter <= $numberofdays) {
 						$mostr .= '<td class="text-center" style="cursor: pointer;" id="w' . $weekcounter . 'p' . $positioncounter . '" onclick="daytoggle(\'w' . $weekcounter . 'p' . $positioncounter . '-m' . $monthcounter . 'd' . $daycounter . '\');">' . $daycounter . "\r\n";
 						$daycounter++;
 						$mostr .= "</td>";
-					}
-					else
-					{
+					} else {
 						$mostr .= '<td class="text-center"></td>';
 					}
 
-					if ($positioncounter == 7 || $daycounter > $numberofdays) {
+					if ($daycounter > $numberofdays) {
+						while ($positioncounter < 7) {
+							$mostr .= '<td class="text-center"></td>';
+							$positioncounter++;
+						}
+					}
+
+					if ($positioncounter == 7) {
 						$positioncounter = 1;
 						$mostr .= "</tr>";
-					}
-					else {
+					} else {
 						$positioncounter++;
 					}
 
@@ -338,13 +345,10 @@ function build_date_table() {
 			$mostr .= gettext('Click individual date to select that date only. Click the appropriate weekday Header to select all occurrences of that weekday. ');
 			$mostr .= '</div>';
 
-		if ($monthcounter == 12)
-		{
+		if ($monthcounter == 12) {
 			$monthcounter = 1;
 			$yearcounter++;
-		}
-		else
-		{
+		} else {
 			$monthcounter++;
 		}
 
@@ -368,9 +372,7 @@ function build_month_list() {
 		if ($monthcounter == 12) {
 			$monthcounter = 1;
 			$yearcounter++;
-		}
-		else
-		{
+		} else {
 			$monthcounter++;
 		}
 	}
@@ -378,10 +380,9 @@ function build_month_list() {
 	return($list);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form();
 
@@ -394,11 +395,12 @@ $input = new Form_Input(
 	$pconfig['name']
 );
 
-$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the alias may only consist of the characters a-z, A-Z and 0-9':
+$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the schedule may only consist of the characters "a-z, A-Z, 0-9 and _".':
 																'This schedule is in use so the name may not be modified!');
 
-if (is_schedule_inuse($pconfig['name']) == true)
+if (is_schedule_inuse($pconfig['name']) == true) {
 	$input->setReadonly();
+}
 
 $section->addInput($input);
 
@@ -434,7 +436,7 @@ $group->add(new Form_Select(
 	'starttimemin',
 	null,
 	null,
-	array('00' => '00', '15' => '15', '30' => '30', '59' => '59')
+	array('00' => '00', '15' => '15', '30' => '30', '45' => '45', '59' => '59')
 ))->setHelp('Start Mins');
 
 $group->add(new Form_Select(
@@ -448,7 +450,7 @@ $group->add(new Form_Select(
 	'stoptimemin',
 	null,
 	'59',
-	array('00' => '00', '15' => '15', '30' => '30', '59' => '59')
+	array('00' => '00', '15' => '15', '30' => '30', '45' => '45', '59' => '59')
 ))->setHelp('Stop Mins');
 
 $group->setHelp('Select the time range for the day(s) selected on the Month(s) above. A full day is 0:00-23:59.');
@@ -531,16 +533,14 @@ if ($getSchedule) {
 					$weeknumber = date("W", mktime(0, 0, 0, date($month), date($day), date("Y")));
 					$weeknumber = ltrim($weeknumber, "0");
 
-					if ($firstPrint)
-					{
+					if ($firstPrint) {
 						$tempID .= ",";
 					}
 
 					$tempID .= "w" . $weeknumber . "p" . $daypos . "-m" .  $month . "d" . $day;
 					$firstPrint = true;
 
-					if (!$firstDayFound)
-					{
+					if (!$firstDayFound) {
 						$firstDay = $day;
 						$firstmonth = $month;
 						$firstDayFound = true;
@@ -550,15 +550,17 @@ if ($getSchedule) {
 					$nextDay = $tempdayarray[$arraycounter+1];
 					$currentDay++;
 					if (($currentDay != $nextDay) || ($tempmontharray[$arraycounter] != $tempmontharray[$arraycounter+1])) {
-						if ($firstprint2)
+						if ($firstprint2) {
 							$tempFriendlyTime .= ", ";
+						}
 
 						$currentDay--;
 
-						if ($currentDay != $firstDay)
+						if ($currentDay != $firstDay) {
 							$tempFriendlyTime .= $monthArray[$firstmonth-1] . " " . $firstDay . " - " . $currentDay ;
-						else
+						} else {
 							$tempFriendlyTime .=  $monthArray[$month-1] . " " . $day;
+						}
 
 						$firstDayFound = false;
 						$firstprint2 = true;
@@ -566,9 +568,7 @@ if ($getSchedule) {
 					$arraycounter++;
 				}
 
-			}
-			else
-			{
+			} else {
 				$dayFriendly = $timerange['position'];
 				$tempID = $dayFriendly;
 			}
@@ -588,8 +588,7 @@ if ($getSchedule) {
 			if (!$timerange['month']) {
 				foreach ($tempFriendlyDayArray as $day) {
 					if ($day != "") {
-						if (!$firstDayFound)
-						{
+						if (!$firstDayFound) {
 							$firstDay = $tempFriendlyDayArray[$i];
 							$firstDayFound = true;
 						}
@@ -600,15 +599,17 @@ if ($getSchedule) {
 						$currentDay++;
 
 						if ($currentDay != $nextDay) {
-							if ($firstprint)
+							if ($firstprint) {
 								$tempFriendlyTime .= ", ";
+							}
 
 							$currentDay--;
 
-							if ($currentDay != $firstDay)
+							if ($currentDay != $firstDay) {
 								$tempFriendlyTime .= $dayArray[$firstDay-1] . " - " . $dayArray[$currentDay-1];
-							else
+							} else {
 								$tempFriendlyTime .= $dayArray[$firstDay-1];
+							}
 
 							$firstDayFound = false;
 							$firstprint = true;
@@ -681,7 +682,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	//Update the calendar when a new month is selected
 	$('#monthsel').on('change', function() {
@@ -707,7 +708,7 @@ events.push(function(){
 	$('[id^=Delete]').prop('type', 'button');
 
 	$('[id^=Delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 });
 //]]>
@@ -723,8 +724,9 @@ var schCounter = 0;
 function rgb2hex(rgb) {
 	var parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
 
-	if (parts == null)
+	if (parts == null) {
 		return;
+	}
 
 	function hex(x) {
 		return ("0" + parseInt(x).toString(16)).slice(-2);
@@ -733,7 +735,7 @@ function rgb2hex(rgb) {
 	return ("#" + hex(parts[1]) + hex(parts[2]) + hex(parts[3])).toUpperCase();
 }
 
-function repeatExistingDays(){
+function repeatExistingDays() {
 	var tempstr, tempstrdaypos, week, daypos, dayposdone = "";
 
 	var dayarray = daysSelected.split(",");
@@ -751,17 +753,18 @@ function repeatExistingDays(){
 		tempstr = 'w' + week + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1") {
-			if (rgb2hex(daycell.style.backgroundColor) == "#F08080")  // lightcoral
+			if (rgb2hex(daycell.style.backgroundColor) == "#F08080") {  // lightcoral
 				daytogglerepeating(week,daypos,true);
-			else
+			} else {
 				daytogglerepeating(week,daypos,false);
+			}
 
 			dayposdone += daypos + ",";
 		}
 	}
 }
 
-function daytogglerepeating(week,daypos,bExists){
+function daytogglerepeating(week, daypos, bExists) {
 	var tempstr, daycell, dayoriginal = "";
 
 	for (j=1; j<=53; j++) {
@@ -775,9 +778,7 @@ function daytogglerepeating(week,daypos,bExists){
 		if (daycell != null) {
 			if (bExists) {
 				daycell.style.backgroundColor = "#FFFFFF";	// white
-			}
-			else
-			{
+			} else {
 				daycell.style.backgroundColor = "#F08080";	// lightcoral
 			}
 
@@ -805,9 +806,7 @@ function daytoggle(id) {
 		idmod = id;
 		runrepeat = true;
 		var daypos = id.substr(tempstrdaypos+1);
-	}
-	else
-	{
+	} else {
 		idmod = id.substring(0, iddashpos);
 		var daypos = id.substring(tempstrdaypos+1, iddashpos);
 	}
@@ -822,28 +821,19 @@ function daytoggle(id) {
 				daycell.style.backgroundColor = "#FFFFFF";	// white
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
-			}
-			else if (rgb2hex(daycell.style.backgroundColor) == "#F08080")  // lightcoral
-			{
+			} else if (rgb2hex(daycell.style.backgroundColor) == "#F08080") { // lightcoral
 				daytogglerepeating(week,daypos,true);
-			}
-			else //color is white cell
-			{
-				if (!runrepeat)
-				{
+			} else { //color is white cell
+				if (!runrepeat) {
 					daycell.style.backgroundColor = "#FF0000";	// red
-				}
-				else
-				{
+				} else {
 					daycell.style.backgroundColor = "#F08080";	// lightcoral
 					daytogglerepeating(week,daypos,false);
 				}
 				daysSelected += id + ",";
 			}
 			bFoundValid = true;
-		}
-		else
-		{
+		} else {
 			//we found an invalid cell when column was clicked, move up to the next week
 			week++;
 			tempstr = "w" + week + "p" + daypos;
@@ -860,21 +850,19 @@ function update_month() {
 		option = document.forms[0].monthsel.options[i].text;
 		document.popupMonthLayer = eval('document.getElementById (option)');
 
-		if (selected == option)
+		if (selected == option) {
 			document.popupMonthLayer.style.display="block";
-		else
+		} else {
 			document.popupMonthLayer.style.display="none";
+		}
 	}
 }
 
 function checkForRanges() {
-	if (daysSelected != "")
-	{
+	if (daysSelected != "") {
 		alert("You have not saved the specified time range. Please click 'Add Time' button to save the time range.");
 		return false;
-	}
-	else
-	{
+	} else {
 		return true;
 	}
 }
@@ -890,14 +878,11 @@ function processEntries() {
 	stoptimemin = parseInt(document.getElementById("stoptimemin").value);
 
 	//do time checks
-	if (starttimehour > stoptimehour)
-	{
+	if (starttimehour > stoptimehour) {
 		errors = "Error: Start Hour cannot be greater than Stop Hour.";
 		passedValidiation = false;
 
-	}
-	else if (starttimehour == stoptimehour)
-	{
+	} else if (starttimehour == stoptimehour) {
 		if (starttimemin > stoptimemin) {
 			errors = "Error: Start Minute cannot be greater than Stop Minute.";
 			passedValidiation = false;
@@ -906,10 +891,10 @@ function processEntries() {
 
 	if (passedValidiation) {
 		addTimeRange();
-	}
-	else {
-		if (errors != "")
+	} else {
+		if (errors != "") {
 			alert(errors);
+		}
 	}
 }
 
@@ -933,8 +918,7 @@ function addTimeRange() {
 
 	for (u = 0; u < 99; u++) {
 		findCurrentCounter = document.getElementById("schedule" + u);
-		if (!findCurrentCounter)
-		{
+		if (!findCurrentCounter) {
 			schCounter = u;
 			break;
 		}
@@ -943,18 +927,15 @@ function addTimeRange() {
 	if (daysSelected != "") {
 		//get days selected
 
-		for (i = 0; i < tempdayarray.length; i++)
-		{
+		for (i = 0; i < tempdayarray.length; i++) {
 			tempstr = tempdayarray[i];
-			if (tempstr != "")
-			{
+			if (tempstr != "") {
 				tempstrdaypos = tempstr.search("p");
 				week = tempstr.substring(1, tempstrdaypos);
 				week = parseInt(week);
 				dashpos = tempstr.search("-");
 
-				if (dashpos != "-1")
-				{
+				if (dashpos != "-1") {
 					var nonrepeatingfound = true;
 					daypos = tempstr.substring(tempstrdaypos+1, dashpos);
 					daypos = parseInt(daypos);
@@ -967,9 +948,7 @@ function addTimeRange() {
 					monthstr += month + ",";
 					daystr += day + ",";
 					nrtempID += tempstr + ",";
-				}
-				else
-				{
+				} else {
 					var repeatingfound = true;
 					daypos = tempstr.substr(tempstrdaypos+1);
 					daypos = parseInt(daypos);
@@ -990,8 +969,7 @@ function addTimeRange() {
 		for (k = 0; k < tempFriendlyMonthArray.length; k++) {
 			tempstr = tempFriendlyMonthArray[k];
 			if (tempstr != "") {
-				if (!firstDayFound)
-				{
+				if (!firstDayFound) {
 					firstDay = tempFriendlyDayArray[k];
 					firstDay = parseInt(firstDay);
 					firstMonth = tempFriendlyMonthArray[k];
@@ -1008,15 +986,17 @@ function addTimeRange() {
 
 				currentDay++;
 				if ((currentDay != nextDay) || (tempFriendlyMonthArray[k] != tempFriendlyMonthArray[k+1])) {
-					if (firstprint)
+					if (firstprint) {
 						nrtempFriendlyTime += ", ";
+					}
 
 					currentDay--;
 
-					if (currentDay != firstDay)
+					if (currentDay != firstDay) {
 						nrtempFriendlyTime += month_array[firstMonth-1] + " " + firstDay + "-" + currentDay;
-					else
+					} else {
 						nrtempFriendlyTime += month_array[firstMonth-1] + " " + currentDay;
+					}
 
 					firstDayFound = false;
 					firstprint = true;
@@ -1035,8 +1015,7 @@ function addTimeRange() {
 		for (k = 0; k < tempFriendlyDayArray.length; k++) {
 			tempstr = tempFriendlyDayArray[k];
 			if (tempstr != "") {
-				if (!firstDayFound)
-				{
+				if (!firstDayFound) {
 					firstDay = tempFriendlyDayArray[k];
 					firstDay = parseInt(firstDay);
 					firstDayFound = true;
@@ -1050,15 +1029,17 @@ function addTimeRange() {
 				currentDay++;
 
 				if (currentDay != nextDay) {
-					if (firstprint)
+					if (firstprint) {
 						rtempFriendlyTime += ", ";
+					}
 
 					currentDay--;
 
-					if (currentDay != firstDay)
+					if (currentDay != firstDay) {
 						rtempFriendlyTime += day_array[firstDay-1] + " - " + day_array[currentDay-1];
-					else
+					} else {
 						rtempFriendlyTime += day_array[firstDay-1];
+					}
 
 					firstDayFound = false;
 					firstprint = true;
@@ -1074,15 +1055,14 @@ function addTimeRange() {
 
 		//clear tempID
 		rtempID = "";
-		for (t = 0; t < tempsortArray.length; t++)
-		{
+		for (t = 0; t < tempsortArray.length; t++) {
 			if (tempsortArray[t] != "") {
 				if (!isFirstdone) {
 					rtempID += tempsortArray[t];
 					isFirstdone = true;
-				}
-				else
+				} else {
 					rtempID += "," + tempsortArray[t];
+				}
 			}
 		}
 
@@ -1118,9 +1098,7 @@ function addTimeRange() {
 			insertElements(rtempFriendlyTime, starttimehour, starttimemin, stoptimehour, stoptimemin, tempdescr, rtempTime, rtempID);
 		}
 
-	}
-	else
-	{
+	} else {
 		//no days were selected, alert user
 		alert ("You must select at least 1 day before adding time");
 	}
@@ -1131,8 +1109,7 @@ function clearCalendar() {
 	//clear days selected
 	daysSelected = "";
 	//loop through all 52 weeks
-	for (j = 1; j <= 53; j++)
-	{
+	for (j = 1; j <= 53; j++) {
 		//loop through all 7 days
 		for (k = 1; k < 8; k++) {
 			tempstr = 'w' + j + 'p' + k;
@@ -1166,7 +1143,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 		rows_displayed = counter;
 	}
 
-	// Template for the schedule deifinition. '@' will be replaced with the row number using .replace()
+	// Template for the schedule definition. '@' will be replaced with the row number using .replace()
 	rowhtml =
 	'<div class="form-group schedulegrp' + counter + '">' +
 		'<label for="tempFriendlyTime" class="col-sm-2 control-label"></label>' +
@@ -1200,7 +1177,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	$(rowhtml.replace(/@/g, counter)).insertBefore(node);
 
 	$('[id^=delete]').click(function(event) {
-		delete_row(event.target.id.slice(6));
+		fse_delete_row(event.target.id.slice(6));
 	});
 
 	counter++;
@@ -1214,7 +1191,7 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 }
 
 // If only everything were this simple
-function delete_row(row) {
+function fse_delete_row(row) {
 	$('.schedulegrp' + row).remove();
 }
 //]]>

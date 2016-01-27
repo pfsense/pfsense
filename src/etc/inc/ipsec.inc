@@ -1,12 +1,11 @@
 <?php
 /*
 	ipsec.inc
-	Copyright (C) 2007 Scott Ullrich
-	Copyright (C) 2008 Shrew Soft Inc
-	All rights reserved.
 
-	Parts of this code was originally based on vpn_ipsec_sad.php
-	Copyright (C) 2003-2004 Manuel Kasper
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2007-2016 Electric Sheep Fencing, LLC.
+	Copyright (C) 2008 Shrew Soft Inc.
+	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
@@ -15,23 +14,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-	pfSense_BUILDER_BINARIES:	/sbin/setkey	/sbin/route
-	pfSense_MODULE:	ipsec
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* IPsec defines */
@@ -41,6 +59,36 @@ $ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE
 	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
 	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
 	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSwan Lib");
+
+global $ipsec_log_sevs;
+$ipsec_log_sevs = array(
+	'-1' => 'Silent',
+	'0' => 'Audit',
+	'1' => 'Control',
+	'2' => 'Diag',
+	'3' => 'Raw',
+	'4' => 'Highest'
+);
+
+global $ipsec_log_cats;
+$ipsec_log_cats = array(
+	"dmn" => "Daemon",
+	"mgr" => "SA Manager",
+	"ike" => "IKE SA",
+	"chd" => "IKE Child SA",
+	"job" => "Job Processing",
+	"cfg" => "Configuration backend",
+	"knl" => "Kernel Interface",
+	"net" => "Networking",
+	"asn" => "ASN encoding",
+	"enc" => "Message encoding",
+	"imc" => "Integrity checker",
+	"imv" => "Integrity Verifier",
+	"pts" => "Platform Trust Service",
+	"tls" => "TLS handler",
+	"esp" => "IPsec traffic",
+	"lib" => "StrongSwan Lib"
+);
 
 global $my_identifier_list;
 $my_identifier_list = array(
@@ -70,13 +118,9 @@ $ipsec_idhandling = array(
 global $p1_ealgos;
 $p1_ealgos = array(
 	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
-	'aes128gcm' => array('name' => 'AES128-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'aes192gcm' => array('name' => 'AES192-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
-	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'),
-	'des' => array('name' => 'DES'));
+	'cast128' => array('name' => 'CAST128'));
 
 global $p2_ealgos;
 $p2_ealgos = array(
@@ -86,8 +130,7 @@ $p2_ealgos = array(
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'),
-	'des' => array('name' => 'DES'));
+	'cast128' => array('name' => 'CAST128'));
 
 global $p1_halgos;
 $p1_halgos = array(
@@ -176,6 +219,29 @@ $p2_pfskeygroups = array(
 	29 => '29 (brainpool ecp384)',
 	30 => '30 (brainpool ecp512)'
 );
+
+function ipsec_enabled() {
+	global $config;
+
+	if (!isset($config['ipsec']) || !is_array($config['ipsec'])) {
+		return false;
+	}
+
+	/* Check if we have at least one phase 1 entry. */
+	if (!isset($config['ipsec']['phase1']) ||
+	    !is_array($config['ipsec']['phase1']) ||
+	    empty($config['ipsec']['phase1'])) {
+		return false;
+	}
+	/* Check if at least one phase 1 entry is enabled. */
+	foreach ($config['ipsec']['phase1'] as $phase1) {
+		if (!isset($phase1['disabled'])) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 /*
  * ikeid management functions
@@ -426,51 +492,16 @@ function ipsec_phase2_status(&$ipsec_status, &$phase2) {
 	return false;
 }
 
-function ipsec_smp_dump_status() {
-	global $config, $g, $custom_listtags;
+/*
+ * Wrapper to call pfSense_ipsec_list_sa() when IPsec is enabled
+ */
+function ipsec_list_sa() {
 
-        if (isset($config['ipsec']['enable'])) {
-            if (!file_exists("{$g['varrun_path']}/charon.xml")) {
-                log_error("IPsec daemon not running or has a problem!");
-                return;
-            }
-        } else {
-            return;
-        }
-
-	$fd = @fsockopen("unix://{$g['varrun_path']}/charon.xml");
-	if (!$fd) {
-		log_error("Could not read status from IPsec");
-		return;
-	}
-	$query = '<?xml version="1.0"?><message xmlns="http://www.strongswan.org/smp/1.0" type="request" id="1">';
-	$query .= '<query><ikesalist/></query></message>';
-
-	@fwrite($fd, $query);
-	$response = "";
-	while (!strstr($sread, "</message>")) {
-		$sread = fgets($fd);
-		if ($sread === false) {
-			break;
-		}
-		$response .= $sread;
-	}
-	fclose($fd);
-
-	if ($sread === false) {
-		log_error("Error during reading of status from IPsec");
-		return;
+	if (ipsec_enabled()) {
+		return pfSense_ipsec_list_sa();
 	}
 
-	@file_put_contents("{$g['tmp_path']}/smp_status.xml", $response);
-	unset($response, $sread);
-
-	$custom_listtags = array('ikesa', 'childsa', 'network', 'auth');
-	$response = parse_xml_config("{$g['tmp_path']}/smp_status.xml", "message");
-	@unlink("{$g['tmp_path']}/smp_status.xml");
-	unset($custom_listtags);
-
-	return $response;
+	return array();
 }
 
 /*
@@ -584,24 +615,52 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g, $custom_listtags;
+	global $g;
 
-	$_gb = exec("/usr/local/sbin/ipsec stroke leases > {$g['tmp_path']}/strongswan_leases.xml");
+	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
-	if (!file_exists("{$g['tmp_path']}/strongswan_leases.xml")) {
+	if ($rc != 0) {
 		log_error(gettext("Unable to find IPsec daemon leases file. Could not display mobile user stats!"));
 		return array();
 	}
 
-	/* This is needed for fixing #4130 */
-	if (filesize("{$g['tmp_path']}/strongswan_leases.xml") < 200) {
-		return array();
+	$response = array();
+	$id = -1;
+
+	/* Leases in pool '10.7.200.0/24', usage: 1/254, 1 online */
+	$lease_regex='/^Leases *in *pool *\'(?P<name>.+)\', *usage: *(?P<usage>\d+)\/(?P<size>\d+), *(?P<online>\d+) *online/';
+	/* 10.7.200.1   online   'jimp' */
+	$pool_regex='/\s*(?P<host>[\d\.]+)\s+(?P<status>online|offline)\s+\'(?P<id>.*)\'/';
+	/* no matching leases found */
+	$nopool_regex='/no *matching *leases *found/';
+
+	$lease=false;
+	foreach ($output as $line) {
+		if (preg_match($lease_regex, $line, $matches)) {
+			$id++;
+			$response['pool'][$id] = array(
+			    'name'   => $matches['name'],
+			    'usage'  => $matches['usage'],
+			    'size'   => $matches['size'],
+			    'online' => $matches['online'],
+			);
+			$lease=true;
+		} else if ($lease) {
+			if (preg_match($nopool_regex, $line)) {
+				$response['pool'][$id]['lease'][] = array();
+				$lease=false;
+			} else if (preg_match($pool_regex, $line, $matches)) {
+				$response['pool'][$id]['lease'][] = array(
+				    'host'   => $matches['host'],
+				    'status' => $matches['status'],
+				    'id'     => $matches['id']
+				);
+			}
+		}
 	}
 
-	$custom_listtags = array('lease', 'pool');
-	$response = parse_xml_config("{$g['tmp_path']}/strongswan_leases.xml", "leases");
-	@unlink("{$g['tmp_path']}/strongswan_leases.xml");
-	unset($custom_listtags, $_gb);
+	unset($_gb, $lease, $output, $rc, $id, $lease_regex, $pool_regex,
+	    $nopool_regex);
 
 	return $response;
 }

@@ -4,8 +4,9 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
-	Copyright (c)  2003-2005 Manuel Kasper <mk@neon1.net>
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -57,7 +58,7 @@
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec
-##|*NAME=VPN: IPsec page
+##|*NAME=VPN: IPsec
 ##|*DESCR=Allow access to the 'VPN: IPsec' page.
 ##|*MATCH=vpn_ipsec.php*
 ##|-PRIV
@@ -80,11 +81,8 @@ if (!is_array($config['ipsec']['phase2'])) {
 $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
-$pconfig['enable'] = isset($config['ipsec']['enable']);
-
 if ($_POST) {
 	if ($_POST['apply']) {
-		$retval = 0;
 		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
 		filter_configure();
@@ -94,14 +92,6 @@ if ($_POST) {
 				clear_subsystem_dirty('ipsec');
 			}
 		}
-	} else if ($_POST['submit'] == 'Save') {
-		$pconfig = $_POST;
-
-		$config['ipsec']['enable'] = $_POST['enable'] ? true : false;
-
-		write_config();
-
-		$retval = vpn_ipsec_configure();
 	} else if (isset($_POST['del'])) {
 		/* delete selected p1 entries */
 		if (is_array($_POST['p1entry']) && count($_POST['p1entry'])) {
@@ -259,53 +249,48 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
 
 $tab_array = array();
 $tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
 $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 ?>
-
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
 
 <?php
 	if ($savemsg) {
 		print_info_box($savemsg, 'success');
 	}
 
-	if ($pconfig['enable'] && is_subsystem_dirty('ipsec')) {
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	if (is_subsystem_dirty('ipsec')) {
+		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 	}
 ?>
 
-<form method="post">
-	<input name="enable" type="checkbox" id="enable" value="yes" <?php if ($pconfig['enable']) echo "checked=\"checked\"";?> />&nbsp;&nbsp;<?=gettext("Enable IPsec")?><br /><br />
-	<input name="submit" type="submit" class="btn btn-sm btn-primary" value="<?=gettext("Save"); ?>" /><br /><br />
-
+<form name="mainform" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPSec tunnels')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPsec tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
 					<tr>
 						<th>&nbsp;</th>
 						<th>&nbsp;</th>
-						<th><?=gettext("IKE"); ?></th>
-						<th><?=gettext("Remote Gateway"); ?></th>
-						<th><?=gettext("Mode"); ?></th>
-						<th><?=gettext("P1 Protocol"); ?></th>
-						<th><?=gettext("P1 Transforms"); ?></th>
-						<th><?=gettext("P1 Description"); ?></th>
-						<th></th>
+						<th><?=gettext("IKE")?></th>
+						<th><?=gettext("Remote Gateway")?></th>
+						<th><?=gettext("Mode")?></th>
+						<th><?=gettext("P1 Protocol")?></th>
+						<th><?=gettext("P1 Transforms")?></th>
+						<th><?=gettext("P1 Description")?></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="p1-entries">
 <?php $i = 0; foreach ($a_phase1 as $ph1ent): ?>
 <?php
 	$iconfn = "pass";
@@ -316,69 +301,77 @@ display_top_tabs($tab_array);
 		$iconfn .= "_d";
 	}
 ?>
-					<tr id="fr<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
+					<tr id="fr<?=$i?>" onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="p1entry[]" value="<?=$i?>" onclick="fr_bgcolor('<?=$i?>')" />
+							<input type="checkbox" id="frc<?=$i?>" onclick="fr_toggle(<?=$i?>)" name="p1entry[]" value="<?=$i?>"  />
+							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
 						</td>
 						<td>
 							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled' ? 'enable' : 'disable') ?></button>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td id="frd<?=$i?>">
 <?php
-			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 				echo "V1";
-			else
+			} else {
 				echo "V2";
+			}
 ?>
 						</td>
-						<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						<td>
 <?php
 			if ($ph1ent['interface']) {
 				$iflabels = get_configured_interface_with_descr();
 
 				$carplist = get_configured_carp_interface_list();
-				foreach ($carplist as $cif => $carpip)
+				foreach ($carplist as $cif => $carpip) {
 					$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
+				}
 
 				$aliaslist = get_configured_ip_aliases_list();
-				foreach ($aliaslist as $aliasip => $aliasif)
+				foreach ($aliaslist as $aliasip => $aliasif) {
 					$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+				}
 
 				$grouplist = return_gateway_groups_array();
 				foreach ($grouplist as $name => $group) {
-					if($group[0]['vip'] != "")
+					if ($group[0]['vip'] != "") {
 						$vipif = $group[0]['vip'];
-					else
+					} else {
 						$vipif = $group[0]['int'];
+					}
 					$iflabels[$name] = "GW Group {$name}";
 				}
 				$if = htmlspecialchars($iflabels[$ph1ent['interface']]);
-			}
-			else
+			} else {
 				$if = "WAN";
+			}
 
-			if (!isset($ph1ent['mobile']))
+			if (!isset($ph1ent['mobile'])) {
 				echo $if."<br />".$ph1ent['remote-gateway'];
-			else
+			} else {
 				echo $if."<br /><strong>" . gettext("Mobile Client") . "</strong>";
+			}
 ?>
-				</td>
-				<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+						</td>
+						<td id="frd<?=$i?>">
 					<?=$spans?>
 					<?php
-					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1")
+					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 						echo "{$ph1ent['mode']}";
+					}
 					?>
 					<?=$spane?>
 				</td>
-				<td onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>">
+				<td id="frd<?=$i?>">
 					<?=$p1_ealgos[$ph1ent['encryption-algorithm']['name']]['name']?>
 <?php
 			if ($ph1ent['encryption-algorithm']['keylen']) {
-				if ($ph1ent['encryption-algorithm']['keylen']=="auto")
+				if ($ph1ent['encryption-algorithm']['keylen'] == "auto") {
 					echo " (" . gettext("auto") . ")";
-				else
+				} else {
 					echo " ({$ph1ent['encryption-algorithm']['keylen']} " . gettext("bits") . ")";
+				}
 			}
 ?>
 						</td>
@@ -388,60 +381,65 @@ display_top_tabs($tab_array);
 						<td>
 							<?=htmlspecialchars($ph1ent['descr'])?>
 						</td>
-						<td>
-					<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
-					<button class="btn btn-xs btn-default" type="submit" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("move selected entries before this")?></button>
-							<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("edit phase1 entry"); ?>">edit</a>
-							<button class="btn btn-xs btn-danger" type="submit" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('delete phase1 entry'); ?>">delete</button>
-		<?php if (!isset($ph1ent['mobile'])): ?>
-					<a class="btn btn-xs btn-success" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("copy phase1 entry"); ?>">copy</a>
-		<?php endif; ?>
+						<td style="cursor: pointer;">
+<!--							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a> -->
+							<button style="display: none;" class="btn btn-default btn-xs" type="submit" id="move_<?=$i?>" name="move_<?=$i?>" value="move_<?=$i?>"><?=gettext("Move checked entries to here")?></button>
+							<a class="fa fa-pencil" href="vpn_ipsec_phase1.php?p1index=<?=$i?>" title="<?=gettext("Edit phase1 entry"); ?>"></a>
+<?php if (!isset($ph1ent['mobile'])): ?>
+							<a class="fa fa-clone" href="vpn_ipsec_phase1.php?dup=<?=$i?>" title="<?=gettext("Copy phase1 entry"); ?>"></a>
+<?php endif; ?>
+							<a	class="fa fa-trash no-confirm" id="Xdel_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>"></a>
+							<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="del_<?=$i?>" name="del_<?=$i?>" value="del_<?=$i?>" title="<?=gettext('Delete phase1 entry'); ?>">delete</button>
+
 						</td>
 					</tr>
 					<tr class="<?= $entryStatus ?>">
 						<td colspan="2"></td>
 						<td colspan="7" class="contains-table">
 <?php
-			if (isset($_POST["tdph2-{$i}-visible"]))
+			if (isset($_POST["tdph2-{$i}-visible"])) {
 				$tdph2_visible = htmlspecialchars($_POST["tdph2-{$i}-visible"]);
-			else
+			} else {
 				$tdph2_visible = 0;
+			}
 ?>
-					<input type="hidden" name="tdph2-<?=$i?>-visible" id="tdph2-<?=$i?>-visible" value="<?=$tdph2_visible?>" />
-					<div id="shph2but-<?=$i?>" <?=($tdph2_visible == '1' ? 'style="display:none"' : '')?>>
+							<input type="hidden" name="tdph2-<?=$i?>-visible" id="tdph2-<?=$i?>-visible" value="<?=$tdph2_visible?>" />
+							<div id="shph2but-<?=$i?>" <?=($tdph2_visible == '1' ? 'style="display:none"' : '')?>>
 <?php
 				$phase2count=0;
 
 				foreach ($a_phase2 as $ph2ent) {
-					if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+					if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 						continue;
+					}
 					$phase2count++;
 				}
 				$fr_prefix = "frp2{$i}";
 				$fr_header = $fr_prefix . "header";
 ?>
-						<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
-					</div>
-					<div id="tdph2-<?=$i?>" <?=($tdph2_visible != '1' ? 'style="display:none"' : '')?>>
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th>&nbsp;</th>
-									<th>&nbsp;</th>
-									<th><?=gettext("Mode"); ?></th>
-									<th><?=gettext("Local Subnet"); ?></th>
-									<th><?=gettext("Remote Subnet"); ?></th>
-									<th><?=gettext("P2 Protocol"); ?></th>
-									<th><?=gettext("P2 Transforms"); ?></th>
-									<th><?=gettext("P2 Auth Methods"); ?></th>
-									<th>&nbsp;</th>
-								</tr>
-							</thead>
-							<tbody>
+								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
+							</div>
+							<div id="tdph2-<?=$i?>" <?=($tdph2_visible != '1' ? 'style="display:none"' : '')?>>
+								<table class="table table-striped table-hover">
+									<thead>
+										<tr>
+											<th>&nbsp;</th>
+											<th>&nbsp;</th>
+											<th><?=gettext("Mode"); ?></th>
+											<th><?=gettext("Local Subnet"); ?></th>
+											<th><?=gettext("Remote Subnet"); ?></th>
+											<th><?=gettext("P2 Protocol"); ?></th>
+											<th><?=gettext("P2 Transforms"); ?></th>
+											<th><?=gettext("P2 Auth Methods"); ?></th>
+											<th><?=gettext("P2 actions")?></th>
+										</tr>
+									</thead>
+									<tbody class="p2-entries">
 <?php $j = 0; foreach ($a_phase2 as $ph2index => $ph2ent): ?>
 <?php
-						if ($ph2ent['ikeid'] != $ph1ent['ikeid'])
+						if ($ph2ent['ikeid'] != $ph1ent['ikeid']) {
 							continue;
+						}
 
 						$fr_c = $fr_prefix . "c" . $j;
 						$fr_d = $fr_prefix . "d" . $j;
@@ -449,97 +447,81 @@ display_top_tabs($tab_array);
 						$iconfn = "pass";
 						$entryStatus = (isset($ph2ent['disabled']) || isset($ph1ent['disabled']) ? 'disabled' : 'enabled');
 
-						if ($entryStatus == 'disabled')
+						if ($entryStatus == 'disabled') {
 							$iconfn .= "_d";
-
+						}
 ?>
-								<tr id="<?=$fr_prefix . $j?>" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>'" class="<?= $entryStatus ?>">
-									<td>
-										<input type="checkbox" id="<?=$fr_c?>" name="p2entry[]" value="<?=$ph2index?>" onclick="fr_bgcolor('<?=$j?>', '<?=$fr_prefix?>')" />
-									</td>
-									<td>
-										<button value="togglep2_<?=$ph2index?>" name="togglep2_<?=$ph2index?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled'? 'enable' : 'disable') ?></button>
-									</td>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-										<?=$ph2ent['mode']?>
-									</td>
-<?php if(($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-										<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
-									</td>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-										<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
-									</td>
-<?php else: ?>
-									<td colspan="2"></td>
+										<tr id="<?=$fr_prefix . $j?>" ondblclick="document.location='vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>'" class="<?= $entryStatus ?>">
+											<td>
+												<input type="checkbox" id="<?=$fr_c?>" name="p2entry[]" value="<?=$ph2index?>" onclick="fr_bgcolor('<?=$j?>', '<?=$fr_prefix?>')" />
+												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button>
+											</td>
+											<td>
+												<button value="togglep2_<?=$ph2index?>" name="togglep2_<?=$ph2index?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled'? 'enable' : 'disable') ?></button>
+											</td>
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+												<?=$ph2ent['mode']?>
+											</td>
+<?php if (($ph2ent['mode'] == "tunnel") or ($ph2ent['mode'] == "tunnel6")): ?>
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+												<?=ipsec_idinfo_to_text($ph2ent['localid']); ?>
+											</td>
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+												<?=ipsec_idinfo_to_text($ph2ent['remoteid']); ?>
+											</td>
+		<?php else: ?>
+											<td colspan="2"></td>
 <?php endif; ?>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
-										<?=$p2_protos[$ph2ent['protocol']]; ?>
-									</td>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+												<?=$p2_protos[$ph2ent['protocol']]; ?>
+											</td>
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 <?php
 								foreach ($ph2ent['encryption-algorithm-option'] as $k => $ph2ea) {
-									if ($k)
+									if ($k) {
 										echo ", ";
+									}
 									echo $p2_ealgos[$ph2ea['name']]['name'];
 									if ($ph2ea['keylen']) {
-										if ($ph2ea['keylen']=="auto")
+										if ($ph2ea['keylen'] == "auto") {
 											echo " (" . gettext("auto") . ")";
-										else
+										} else {
 											echo " ({$ph2ea['keylen']} " . gettext("bits") . ")";
+										}
 									}
 								}
 ?>
-									</td>
-									<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
+											</td>
+											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 <?php
 								if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
 									foreach ($ph2ent['hash-algorithm-option'] as $k => $ph2ha) {
-										if ($k)
+										if ($k) {
 											echo ", ";
+										}
 										echo $p2_halgos[$ph2ha];
 									}
 								}
 ?>
-									</td>
-									<td>
-										<?php // TODO: add mouseover behaviour which indicates insert position when moving ?>
-										<button class="btn btn-xs btn-default" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>"><?=gettext("move selected entries before this")?></button>
-										<a class="btn btn-xs btn-primary" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("edit phase2 entry"); ?>">edit</a>
-										<button class="btn btn-xs btn-danger" type="submit" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
-										<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("add a new Phase 2 based on this one"); ?>">copy</a>
-									</td>
-								</tr>
-<?php $j++; endforeach; ?>
-								<tr>
-									<td colspan="8"></td>
-									<td>
-<?php
-							if ($j == 0):
-?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_left_d.gif" width="17" height="17" title="<?=gettext("move selected phase2 entries to end")?>" border="0" alt="move" />
-<?php
-							else:
-?>
-										<input onmouseover="fr_insline(<?=$j?>, true, '<?=$fr_prefix?>')" onmouseout="fr_insline(<?=$j?>, false, '<?=$fr_prefix?>')" name="movep2_<?=$j?>" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_left.gif" style="width:17;height:17;border:0" title="<?=gettext("move selected phase2 entries to end")?>" />
-<?php
-							endif;
-?>
-										<a href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
-											<img src="./themes/<?= $g['theme']; ?>/images/icons/icon_plus.gif" title="<?=gettext("add phase2 entry"); ?>" alt="add" />
-										</a>
-<?php
-							if ($j == 0):
-?>
-										<img src="/themes/<?= $g['theme']; ?>/images/icons/icon_x_d.gif" width="17" height="17" title="<?=gettext("delete selected phase2 entries")?>" border="0" alt="delete" />
-<?php
-							else:
-?>
-										<input name="delp2" type="image" src="/themes/<?= $g['theme']; ?>/images/icons/icon_x.gif" style="width:17;height:17" title="<?=gettext("delete selected phase2 entries")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase2 entries?")?>')" />
-<?php
-							endif;
-?>
 											</td>
+											<td style="cursor: pointer;">
+<!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
+												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
+												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
+												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
+												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
+											</td>
+										</tr>
+<?php $j++; endforeach; ?>
+										<tr>
+											<td></td>
+											<td>
+												<a class="btn btn-xs btn-success" href="vpn_ipsec_phase2.php?ikeid=<?=$ph1ent['ikeid']?><?php if (isset($ph1ent['mobile'])) echo "&amp;mobile=true"?>">
+													<i class="fa fa-plus icon-embed-btn"></i>
+													<?=gettext("Add P2")?>
+												</a>
+											</td>
+											<td colspan="7"></td>
 										</tr>
 									</tbody>
 								</table>
@@ -550,30 +532,39 @@ display_top_tabs($tab_array);
 					$i++;
 				endforeach;	 // $a_phase1 as $ph1ent
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
-</div>
 
-<nav class="action-buttons">
-<?php if ($i !== 0): ?>
+	<nav class="action-buttons">
+<?php
+/*
+	if ($i !== 0): ?>
 	<input type="submit" name="move_<?=$i?>" class="btn btn-default" value="<?=gettext("move selected phase1 entries to end")?>" />
-<?php endif; ?>
-	<a href="vpn_ipsec_phase1.php" class="btn btn-success"><?=gettext("add new phase1")?></a>
+<?php endif;
+*/
+?>
+		<a href="vpn_ipsec_phase1.php" class="btn btn-success btn-sm">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Add P1")?>
+		</a>
 <?php if ($i !== 0): ?>
-	<input type="submit" name="del" class="btn btn-danger" value="<?=gettext("delete selected phase1 entries")?>" onclick="return confirm('<?=gettext("Do you really want to delete the selected phase1 entries?")?>')" />
+		<button type="submit" name="del" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected P1s")?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete P1s")?>
+		</button>
 <?php endif; ?>
-</nav>
+	</nav>
 </form>
 
-<div class="alert alert-info">
-	<strong><?=gettext("Note:")?></strong><br />
-	<?=gettext("You can check your IPsec status at"); ?> <a href="diag_ipsec.php"><?=gettext("Status:IPsec"); ?></a>.<br />
-	<?=gettext("IPsec Debug Mode can be enabled at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.<br />
-	<?=gettext("IPsec can be set to prefer older SAs at"); ?> <a href="vpn_ipsec_settings.php"><?=gettext("VPN:IPsec:Advanced Settings"); ?></a>.
+<div class="infoblock">
+	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
+	gettext("You can check your IPsec status at ") . '<a href="status_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
+	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
+	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info', false)?>
 </div>
 
-<?php include("foot.inc"); ?>
 <script type="text/javascript">
 //<![CDATA[
 function show_phase2(id, buttonid) {
@@ -582,5 +573,26 @@ function show_phase2(id, buttonid) {
 	var visible = id + '-visible';
 	document.getElementById(visible).value = "1";
 }
+
+events.push(function() {
+	$('[id^=Xmove_]').click(function (event) {
+		$('#' + event.target.id.slice(1)).click();
+	});
+
+	$('[id^=Xdel_]').click(function (event) {
+		if (confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
+			$('#' + event.target.id.slice(1)).click();
+		}
+	});
+
+	$('[id^=Xdelp2_]').click(function (event) {
+		if (confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
+			$('#' + event.target.id.slice(1)).click();
+		}
+	});
+});
 //]]>
 </script>
+
+<?php
+include("foot.inc");

@@ -3,12 +3,15 @@
 	graph.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2004-2006 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
  *							 and Jonathan Watt <jwatt@jwatt.org>
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +19,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -54,13 +57,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	graph
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-interfacetraffic
-##|*NAME=Diagnostics: Interface Traffic page
+##|*NAME=Diagnostics: Interface Traffic
 ##|*DESCR=Allow access to the 'Diagnostics: Interface Traffic' page.
 ##|*MATCH=graph.php*
 ##|-PRIV
@@ -115,18 +115,12 @@ $attribs['error']='fill="blue" font-family="Arial" font-size="4"';
 $attribs['collect_initial']='fill="gray" font-family="Tahoma, Verdana, Arial, Helvetica, sans-serif" font-size="4"';
 
 //Error text if we cannot fetch data : depends on which method is used
-$error_text = "Cannot get data about interface " . htmlspecialchars($ifnum);
+$error_text = sprintf(gettext("Cannot get data about interface %s"), htmlspecialchars($ifnum));
 
 $height=100;            //SVG internal height : do not modify
 $width=200;             //SVG internal width : do not modify
 
 $fetch_link = "ifstats.php?if=" . htmlspecialchars($ifnum);
-
-/* check for custom theme colors */
-if (file_exists("/usr/local/www/themes/{$g['theme']}/graph.php")) {
-	$themetxt = file_get_contents("/usr/local/www/themes/{$g['theme']}/graph.php");
-	eval($themetxt);
-}
 
 /********* Graph DATA **************/
 print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
@@ -150,7 +144,7 @@ print('<?xml version="1.0" encoding="UTF-8"?>' . "\n");?>
 		<text id="switch_scale" x="<?=$width*0.55?>" y="11" <?=$attribs['switch_scale']?>><?=gettext("AutoScale"); ?> (<?=$scale_type?>)</text>
 		<text id="date" x="<?=$width*0.33?>" y="5" <?=$attribs['legend']?>> </text>
 		<text id="time" x="<?=$width*0.33?>" y="11" <?=$attribs['legend']?>> </text>
-		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=gettext("Graph shows last"); ?> <?=$time_interval*$nb_plot?> <?=gettext("seconds"); ?></text>
+		<text id="graphlast" x="<?=$width*0.55?>" y="17" <?=$attribs['legend']?>><?=sprintf(gettext("Graph shows last %s seconds"), $time_interval*$nb_plot)?></text>
 		<polygon id="axis_arrow_x" <?=$attribs['axis']?> points="<?=($width) . "," . ($height)?> <?=($width-2) . "," . ($height-2)?> <?=($width-2) . "," . $height?>"/>
 		<text id="error" x="<?=$width*0.5?>" y="<?=$height*0.5?>" visibility="hidden" <?=$attribs['error']?> text-anchor="middle"><?=$error_text?></text>
 		<text id="collect_initial" x="<?=$width*0.5?>" y="<?=$height*0.5?>" visibility="hidden" <?=$attribs['collect_initial']?> text-anchor="middle"><?=gettext("Collecting initial data, please wait"); ?>...</text>

@@ -1,167 +1,211 @@
 <?php
 /*
 	gwlb.inc
+
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2008 Bill Marquette, Seth Mos
-	Copyright (C) 2010 Ermal Luçi
-	All rights reserved.
+	Copyright (c) 2008-2016 Electric Sheep Fencing, LLC. All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
 	modification, are permitted provided that the following conditions are met:
 
 	1. Redistributions of source code must retain the above copyright notice,
-	this list of conditions and the following disclaimer.
+	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	notice, this list of conditions and the following disclaimer in the
-	documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-	pfSense_BUILDER_BINARIES:	/sbin/route	/usr/local/sbin/apinger
-	pfSense_MODULE:	routing
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 require_once("config.inc");
 require_once("rrd.inc");
 
-/* Returns an array of default values used for apinger.conf */
-function return_apinger_defaults() {
+/* Returns an array of default values used for dpinger */
+function return_dpinger_defaults() {
 	return array(
 		"latencylow" => "200",
 		"latencyhigh" => "500",
 		"losslow" => "10",
 		"losshigh" => "20",
-		"interval" => "1",
-		"down" => "10",
-		"avg_delay_samples" => "10",
-		"avg_loss_samples" => "50",
-		"avg_loss_delay_samples" => "20");
+		"interval" => "250",
+		"loss_interval" => "1250",
+		"time_period" => "30000",
+		"alert_interval" => "1000");
+}
+
+function running_dpinger_processes() {
+	global $g;
+
+	$pidfiles = glob("{$g['varrun_path']}/dpinger_*.pid");
+
+	$result = array();
+	if ($pidfiles === FALSE) {
+		return $result;
+	}
+
+	foreach ($pidfiles as $pidfile) {
+		if (preg_match('/^dpinger_(.+)_([^_]+)_([^_]+)\.pid$/',
+		    basename($pidfile), $matches)) {
+			$socket_file = preg_replace('/\.pid$/', '.sock',
+			    $pidfile);
+			$result[$matches[1]] = array(
+			    'srcip'    => $matches[2],
+			    'targetip' => $matches[3],
+			    'pidfile'  => $pidfile,
+			    'socket'   => $socket_file
+			);
+			unset($gwinfo);
+		}
+	}
+
+	return $result;
 }
 
 /*
- * Creates monitoring configuration file and
- * adds appropriate static routes.
+ * Stop one or more dpinger process
+ * default parameter $gwname is '*' that will kill all running sessions
+ * If a gateway name is passed, only this one will be killed
+ */
+function stop_dpinger($gwname = '') {
+	global $g;
+
+	$running_processes = running_dpinger_processes();
+
+	foreach ($running_processes as $running_gwname => $process) {
+		if ($gwname != '' && $running_gwname != $gwname) {
+			continue;
+		}
+
+		if (isvalidpid($process['pidfile'])) {
+			killbypid($process['pidfile']);
+		} else {
+			@unlink($process['pidfile']);
+		}
+	}
+}
+
+function start_dpinger($gateway) {
+	global $g;
+
+	if (!isset($gateway['gwifip'])) {
+		return;
+	}
+
+	$dpinger_defaults = return_dpinger_defaults();
+
+	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
+	    "{$gateway['gwifip']}_{$gateway['monitor']}.pid";
+	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
+	    "{$gateway['gwifip']}_{$gateway['monitor']}.sock";
+	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm";
+
+	$params  = "-S ";			/* Log warnings via syslog */
+	$params .= "-r 0 ";			/* Disable unused reporting thread */
+	$params .= "-i {$gateway['name']} ";	/* Identifier */
+	$params .= "-B {$gateway['gwifip']} ";	/* Bind src address */
+	$params .= "-p {$pidfile} ";		/* PID filename */
+	$params .= "-u {$socket} ";		/* Status Socket */
+	$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+
+	$params .= "-s " .
+	    (isset($gateway['interval']) && is_numeric($gateway['interval'])
+	    ? $gateway['interval']
+	    : $dpinger_defaults['interval']
+	    ) . " ";
+
+	$params .= "-l " .
+	    (isset($gateway['loss_interval']) && is_numeric($gateway['loss_interval'])
+	    ?  $gateway['loss_interval']
+	    : $dpinger_defaults['loss_interval']
+	    ) . " ";
+
+	$params .= "-t " .
+	    (isset($gateway['time_period']) && is_numeric($gateway['time_period'])
+	    ?  $gateway['time_period']
+	    : $dpinger_defaults['time_period']
+	    ) . " ";
+
+	$params .= "-A " .
+	    (isset($gateway['alert_interval']) && is_numeric($gateway['alert_interval'])
+	    ?  $gateway['alert_interval']
+	    : $dpinger_defaults['alert_interval']
+	    ) . " ";
+
+	$params .= "-D " .
+	    (isset($gateway['latencyhigh']) && is_numeric($gateway['latencyhigh'])
+	    ?  $gateway['latencyhigh']
+	    : $dpinger_defaults['latencyhigh']
+	    ) . " ";
+
+	$params .= "-L " .
+	    (isset($gateway['losshigh']) && is_numeric($gateway['losshigh'])
+	    ?  $gateway['losshigh']
+	    : $dpinger_defaults['losshigh']
+	    ) . " ";
+
+	/* Make sure we don't end up with 2 process for the same GW */
+	stop_dpinger($gateway['name']);
+
+	/* Redirect stdout to /dev/null to avoid exec() to wait for dpinger */
+	return mwexec("/usr/local/bin/dpinger {$params} {$gateway['monitor']} >/dev/null");
+}
+
+/*
+ * Starts dpinger processes and adds appropriate static routes for monitor IPs
  */
 function setup_gateways_monitor() {
 	global $config, $g;
 
 	$gateways_arr = return_gateways_array();
 	if (!is_array($gateways_arr)) {
-		log_error("No gateways to monitor. Apinger will not be run.");
-		killbypid("{$g['varrun_path']}/apinger.pid");
-		@unlink("{$g['varrun_path']}/apinger.status");
+		log_error("No gateways to monitor. dpinger will not run.");
+		stop_dpinger();
 		return;
 	}
 
-	$apinger_debug = "";
-	if (isset($config['system']['apinger_debug'])) {
-		$apinger_debug = "debug on";
-	}
-
-	$apinger_default = return_apinger_defaults();
-	$apingerconfig = <<<EOD
-
-# pfSense apinger configuration file. Automatically Generated!
-
-{$apinger_debug}
-
-## User and group the pinger should run as
-user "root"
-group "wheel"
-
-## Mailer to use (default: "/usr/lib/sendmail -t")
-#mailer "/var/qmail/bin/qmail-inject"
-
-## Location of the pid-file (default: "/var/run/apinger.pid")
-pid_file "{$g['varrun_path']}/apinger.pid"
-
-## Format of timestamp (%s macro) (default: "%b %d %H:%M:%S")
-#timestamp_format "%Y%m%d%H%M%S"
-
-status {
-	## File where the status information should be written to
-	file "{$g['varrun_path']}/apinger.status"
-	## Interval between file updates
-	## when 0 or not set, file is written only when SIGUSR1 is received
-	interval 5s
-}
-
-########################################
-# RRDTool status gathering configuration
-# Interval between RRD updates
-rrd interval 60s;
-
-## These parameters can be overridden in a specific alarm configuration
-alarm default {
-	command on "/usr/local/sbin/pfSctl -c 'service reload dyndns %T' -c 'service reload ipsecdns' -c 'service reload openvpn %T' -c 'filter reload' "
-	command off "/usr/local/sbin/pfSctl -c 'service reload dyndns %T' -c 'service reload ipsecdns' -c 'service reload openvpn %T' -c 'filter reload' "
-	combine 10s
-}
-
-## "Down" alarm definition.
-## This alarm will be fired when target doesn't respond for 30 seconds.
-alarm down "down" {
-	time {$apinger_default['down']}s
-}
-
-## "Delay" alarm definition.
-## This alarm will be fired when responses are delayed more than 200ms
-## it will be canceled, when the delay drops below 100ms
-alarm delay "delay" {
-	delay_low {$apinger_default['latencylow']}ms
-	delay_high {$apinger_default['latencyhigh']}ms
-}
-
-## "Loss" alarm definition.
-## This alarm will be fired when packet loss goes over 20%
-## it will be canceled, when the loss drops below 10%
-alarm loss "loss" {
-	percent_low {$apinger_default['losslow']}
-	percent_high {$apinger_default['losshigh']}
-}
-
-target default {
-	## How often the probe should be sent
-	interval {$apinger_default['interval']}s
-
-	## How many replies should be used to compute average delay
-	## for controlling "delay" alarms
-	avg_delay_samples {$apinger_default['avg_delay_samples']}
-
-	## How many probes should be used to compute average loss
-	avg_loss_samples {$apinger_default['avg_loss_samples']}
-
-	## The delay (in samples) after which loss is computed
-	## without this delays larger than interval would be treated as loss
-	avg_loss_delay_samples {$apinger_default['avg_loss_delay_samples']}
-
-	## Names of the alarms that may be generated for the target
-	alarms "down","delay","loss"
-
-	## Location of the RRD
-	#rrd file "{$g['vardb_path']}/rrd/apinger-%t.rrd"
-}
-
-EOD;
-
 	$monitor_ips = array();
-	foreach ($gateways_arr as $name => $gateway) {
+	foreach ($gateways_arr as $gwname => $gateway) {
 		/* Do not monitor if such was requested */
 		if (isset($gateway['monitor_disable'])) {
 			continue;
 		}
 		if (empty($gateway['monitor']) || !is_ipaddr($gateway['monitor'])) {
 			if (is_ipaddr($gateway['gateway'])) {
-				$gateway['monitor'] = $gateway['gateway'];
+				$gateways_arr[$gwname]['monitor'] = $gateway['gateway'];
 			} else { /* No chance to get an ip to monitor skip target. */
 				continue;
 			}
@@ -172,9 +216,9 @@ EOD;
 			continue;
 		}
 
-		/* Interface ip is needed since apinger will bind a socket to it.
+		/* Interface ip is needed since dpinger will bind a socket to it.
 		 * However the config GUI should already have checked this and when
-		 * PPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
+		 * PPPoE is used the IP address is set to "dynamic". So using is_ipaddrv4
 		 * or is_ipaddrv6 to identify packet type would be wrong, especially as
 		 * further checks (that can cope with the "dynamic" case) are present inside
 		 * the if block. So using $gateway['ipprotocol'] is the better option.
@@ -208,31 +252,23 @@ EOD;
 				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
 			}
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
-			if ($gateway['monitor'] == $gateway['gateway']) {
-				/* link locals really need a different src ip */
-				if (is_linklocal($gateway['gateway'])) {
-					if (!strpos($gateway['gateway'], '%')) {
-						$gateway['gateway'] .= '%' . $gateway['interface'];
-					}
-					$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
-				} else {
-					$gwifip = find_interface_ipv6($gateway['interface'], true);
-				}
-			} else {
-				/* 'monitor' has been set, so makes sure it has precedence over
-				 * 'gateway' in defining the source IP. Otherwise if 'gateway'
-				 * is a local link and 'monitor' is global routable then the
-				 * ICMP6 response would not find its way back home...
-				 */
-				$gwifip = find_interface_ipv6($gateway['interface'], true);
+			if (is_linklocal($gateway['gateway']) &&
+			    get_ll_scope($gateway['gateway']) == '') {
+				$gateways_arr[$gwname]['gateway'] .= '%' . $gateway['interface'];
 			}
 
-			/* Make sure srcip and target have scope defined when they are ll */
-			if (is_linklocal($gwifip) && !strpos($gwifip, '%')) {
-				$gwifip .= '%' . $gateway['interface'];
-			}
-			if (is_linklocal($gateway['monitor']) && !strpos($gateway['monitor'], '%')) {
-				$gateway['monitor'] .= "%{$gateway['interface']}";
+			if (is_linklocal($gateway['monitor'])) {
+				if (get_ll_scope($gateway['monitor']) == '') {
+					$gateways_arr[$gwname]['monitor'] .= '%' . $gateway['interface'];
+				}
+
+				$gwifip = find_interface_ipv6_ll($gateway['interface'], true);
+
+				if (get_ll_scope($gwifip) == '') {
+					$gwifip .= '%' . $gateway['interface'];
+				}
+			} else {
+				$gwifip = find_interface_ipv6($gateway['interface'], true);
 			}
 
 			if (!is_ipaddrv6($gwifip)) {
@@ -262,176 +298,139 @@ EOD;
 		}
 
 		$monitor_ips[] = $gateway['monitor'];
-		$apingercfg = "target \"{$gateway['monitor']}\" {\n";
-		$apingercfg .= "	description \"{$name}\"\n";
-		$apingercfg .= "	srcip \"{$gwifip}\"\n";
-
-		## How often the probe should be sent
-		if (!empty($gateway['interval']) && is_numeric($gateway['interval'])) {
-			$interval = intval($gateway['interval']);	# Restrict to Integer
-			if ($interval < 1) {
-				$interval = 1;	# Minimum
-			}
-			if ($interval != $apinger_default['interval']) {	# If not default value
-				$apingercfg .= "	interval " . $interval . "s\n";
-			}
-		}
-
-		## How many replies should be used to compute average delay
-		## for controlling "delay" alarms
-		if (!empty($gateway['avg_delay_samples']) && is_numeric($gateway['avg_delay_samples'])) {
-			$avg_delay_samples = intval($gateway['avg_delay_samples']);	# Restrict to Integer
-			if ($avg_delay_samples < 1) {
-				$avg_delay_samples = 1;	# Minimum
-			}
-			if ($avg_delay_samples != $apinger_default['avg_delay_samples']) {	# If not default value
-				$apingercfg .= "	avg_delay_samples " . $avg_delay_samples . "\n";
-			}
-		}
-
-		## How many probes should be used to compute average loss
-		if (!empty($gateway['avg_loss_samples']) && is_numeric($gateway['avg_loss_samples'])) {
-			$avg_loss_samples = intval($gateway['avg_loss_samples']);	# Restrict to Integer
-			if ($avg_loss_samples < 1) {
-				$avg_loss_samples = 1;	# Minimum
-			}
-			if ($avg_loss_samples != $apinger_default['avg_loss_samples']) { # If not default value
-				$apingercfg .= "	avg_loss_samples " . $avg_loss_samples . "\n";
-			}
-		}
-
-		## The delay (in samples) after which loss is computed
-		## without this delays larger than interval would be treated as loss
-		if (!empty($gateway['avg_loss_delay_samples']) && is_numeric($gateway['avg_loss_delay_samples'])) {
-			$avg_loss_delay_samples = intval($gateway['avg_loss_delay_samples']);	# Restrict to Integer
-			if ($avg_loss_delay_samples < 1) {
-				$avg_loss_delay_samples = 1;	# Minimum
-			}
-			if ($avg_loss_delay_samples != $apinger_default['avg_loss_delay_samples']) { # If not default value
-				$apingercfg .= "	avg_loss_delay_samples " . $avg_loss_delay_samples . "\n";
-			}
-		}
-
-		$alarms = "";
-		$alarmscfg = "";
-		$override = false;
-		if (!empty($gateway['losslow'])) {
-			$alarmscfg .= "alarm loss \"{$name}loss\" {\n";
-			$alarmscfg .= "\tpercent_low {$gateway['losslow']}\n";
-			$alarmscfg .= "\tpercent_high {$gateway['losshigh']}\n";
-			$alarmscfg .= "}\n";
-			$alarms .= "\"{$name}loss\"";
-			$override = true;
-		} else {
-			if ($override == true) {
-				$alarms .= ",";
-			}
-			$alarms .= "\"loss\"";
-			$override = true;
-		}
-		if (!empty($gateway['latencylow'])) {
-			$alarmscfg .= "alarm delay \"{$name}delay\" {\n";
-			$alarmscfg .= "\tdelay_low {$gateway['latencylow']}ms\n";
-			$alarmscfg .= "\tdelay_high {$gateway['latencyhigh']}ms\n";
-			$alarmscfg .= "}\n";
-			if ($override == true) {
-				$alarms .= ",";
-			}
-			$alarms .= "\"{$name}delay\"";
-			$override = true;
-		} else {
-			if ($override == true) {
-				$alarms .= ",";
-			}
-			$alarms .= "\"delay\"";
-			$override = true;
-		}
-		if (!empty($gateway['down'])) {
-			$alarmscfg .= "alarm down \"{$name}down\" {\n";
-			$alarmscfg .= "\ttime {$gateway['down']}s\n";
-			$alarmscfg .= "}\n";
-			if ($override == true) {
-				$alarms .= ",";
-			}
-			$alarms .= "\"{$name}down\"";
-			$override = true;
-		} else {
-			if ($override == true) {
-				$alarms .= ",";
-			}
-			$alarms .= "\"down\"";
-			$override = true;
-		}
-		if ($override == true) {
-			$apingercfg .= "\talarms override {$alarms};\n";
-		}
-
-		if (isset($gateway['force_down'])) {
-			$apingercfg .= "\tforce_down on\n";
-		}
-
-		$apingercfg .= "	rrd file \"{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd\"\n";
-		$apingercfg .= "}\n";
-		$apingercfg .= "\n";
-
-		$apingerconfig .= $alarmscfg;
-		$apingerconfig .= $apingercfg;
-
-		# Create gateway quality RRD with settings more suitable for pfSense graph set,
-		# since apinger uses default step (300; 5 minutes) and other settings that don't
-		# match the pfSense gateway quality graph set.
-		create_gateway_quality_rrd("{$g['vardb_path']}/rrd/{$gateway['name']}-quality.rrd");
-	}
-	@file_put_contents("{$g['varetc_path']}/apinger.conf", $apingerconfig);
-	unset($apingerconfig);
-
-	/* Restart apinger process */
-	if (isvalidpid("{$g['varrun_path']}/apinger.pid")) {
-		sigkillbypid("{$g['varrun_path']}/apinger.pid", "HUP");
-	} else {
-		/* start a new apinger process */
-		@unlink("{$g['varrun_path']}/apinger.status");
-		sleep(1);
-		mwexec_bg("/usr/local/sbin/apinger -c {$g['varetc_path']}/apinger.conf");
-		sleep(1);
-		sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
+		$gateways_arr[$gwname]['enable_dpinger'] = true;
+		$gateways_arr[$gwname]['gwifip'] = $gwifip;
 	}
 
-	return 0;
+	stop_dpinger();
+
+	/* Start new processes */
+	foreach ($gateways_arr as $gateway) {
+		if (!isset($gateway['enable_dpinger'])) {
+			continue;
+		}
+
+		if (start_dpinger($gateway) != 0) {
+			log_error("Error starting gateway monitor for " .
+			    $gateway['name']);
+		}
+	}
+
+	return;
 }
 
-/* return the status of the apinger targets as a array */
+function get_dpinger_status($gwname) {
+	global $g;
+
+	$running_processes = running_dpinger_processes();
+
+	if (!isset($running_processes[$gwname])) {
+		log_error("dpinger: No dpinger session running for gateway {$gwname}");
+		return false;
+	}
+
+	$proc = $running_processes[$gwname];
+	unset($running_processes);
+
+	if (!file_exists($proc['socket'])) {
+		log_error("dpinger: status socket {$proc['socket']} not found");
+		return false;
+	}
+
+	$fp = stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
+	if (!$fp) {
+		log_error("dpinger: cannot connect to status socket {$proc['socket']} - $errstr ($errno)");
+		return false;
+	}
+
+	$status = '';
+	while (!feof($fp)) {
+		$status .= fgets($fp, 1024);
+	}
+	fclose($fp);
+
+	$r = array();
+	list(
+	    $r['gwname'],
+	    $r['latency_avg'],
+	    $r['latency_stddev'],
+	    $r['loss']
+	) = explode(' ', preg_replace('/\n/', '', $status));
+
+	$r['srcip'] = $proc['srcip'];
+	$r['targetip'] = $proc['targetip'];
+
+	$gateways_arr = return_gateways_array();
+	unset($gw);
+	if (isset($gateways_arr[$gwname])) {
+		$gw = $gateways_arr[$gwname];
+	}
+
+	$r['latency_avg'] = round($r['latency_avg']/1000, 3);
+	$r['latency_stddev'] = round($r['latency_stddev']/1000, 3);
+
+	$r['status'] = "none";
+	if (isset($gw) && isset($gw['force_down'])) {
+		$r['status'] = "force_down";
+	} else if (isset($gw)) {
+		$settings = return_dpinger_defaults();
+
+		$keys = array(
+		    'latencylow',
+		    'latencyhigh',
+		    'losslow',
+		    'losshigh'
+		);
+
+		/* Replace default values by user-defined */
+		foreach ($keys as $key) {
+			if (isset($gw[$key]) && is_numeric($gw[$key])) {
+				$settings[$key] = $gw[$key];
+			}
+		}
+
+		if ($r['latency_avg'] > $settings['latencyhigh'] ||
+		    $r['loss'] > $settings['losshigh']) {
+			$r['status'] = "down";
+		} else if ($r['latency_avg'] > $settings['latencylow']) {
+			$r['status'] = "delay";
+		} else if ($r['loss'] > $settings['losslow']) {
+			$r['status'] = "loss";
+		}
+	}
+
+	return $r;
+}
+
+/* return the status of the dpinger targets as an array */
 function return_gateways_status($byname = false) {
 	global $config, $g;
 
-	$apingerstatus = array();
-	/* Always get the latest status from apinger */
-	if (file_exists("{$g['varrun_path']}/apinger.pid")) {
-		sigkillbypid("{$g['varrun_path']}/apinger.pid", "USR1");
-	}
-	if (file_exists("{$g['varrun_path']}/apinger.status")) {
-		$apingerstatus = file("{$g['varrun_path']}/apinger.status");
-	} else {
-		$apingerstatus = array();
-	}
-
+	$dpinger_gws = running_dpinger_processes();
 	$status = array();
-	foreach ($apingerstatus as $line) {
-		$info = explode("|", $line);
+
+	$gateways_arr = return_gateways_array();
+
+	foreach ($dpinger_gws as $gwname => $gwdata) {
+		$dpinger_status = get_dpinger_status($gwname);
+		if ($dpinger_status === false) {
+			continue;
+		}
+
 		if ($byname == false) {
-			$target = $info[0];
+			$target = $dpinger_status['targetip'];
 		} else {
-			$target = $info[2];
+			$target = $gwname;
 		}
 
 		$status[$target] = array();
-		$status[$target]['monitorip'] = $info[0];
-		$status[$target]['srcip'] = $info[1];
-		$status[$target]['name'] = $info[2];
-		$status[$target]['lastcheck'] = $info[5] ? date('r', $info[5]) : date('r');
-		$status[$target]['delay'] = empty($info[6]) ? "0ms" : round($info[6], 1) ."ms" ;
-		$status[$target]['loss'] = empty($info[7]) ? "0.0%" : round($info[7], 1) . "%";
-		$status[$target]['status'] = trim($info[8]);
+		$status[$target]['monitorip'] = $dpinger_status['targetip'];
+		$status[$target]['srcip'] = $dpinger_status['srcip'];
+		$status[$target]['name'] = $gwname;
+		$status[$target]['delay'] = empty($dpinger_status['latency_avg']) ? "0ms" : $dpinger_status['latency_avg'] . "ms";
+		$status[$target]['stddev'] = empty($dpinger_status['latency_stddev']) ? "0ms" : $dpinger_status['latency_stddev'] . "ms";
+		$status[$target]['loss'] = empty($dpinger_status['loss']) ? "0.0%" : round($dpinger_status['loss'], 1) . "%";
+		$status[$target]['status'] = $dpinger_status['status'];
 	}
 
 	/* tack on any gateways that have monitoring disabled
@@ -441,7 +440,7 @@ function return_gateways_status($byname = false) {
 		if (!isset($gwitem['monitor_disable'])) {
 			continue;
 		}
-		if (!is_ipaddr($gwitem['monitorip'])) {
+		if (!is_ipaddr($gwitem['monitor'])) {
 			$realif = $gwitem['interface'];
 			$tgtip = get_interface_gateway($realif);
 			if (!is_ipaddr($tgtip)) {
@@ -449,7 +448,7 @@ function return_gateways_status($byname = false) {
 			}
 			$srcip = find_interface_ip($realif);
 		} else {
-			$tgtip = $gwitem['monitorip'];
+			$tgtip = $gwitem['monitor'];
 			$srcip = find_interface_ip($realif);
 		}
 		if ($byname == true) {
@@ -462,7 +461,6 @@ function return_gateways_status($byname = false) {
 		if ($target == "none") {
 			$target = $gwitem['name'];
 			$status[$target]['name'] = $gwitem['name'];
-			$status[$target]['lastcheck'] = date('r');
 			$status[$target]['delay'] = "0.0ms";
 			$status[$target]['loss'] = "100.0%";
 			$status[$target]['status'] = "down";
@@ -470,7 +468,6 @@ function return_gateways_status($byname = false) {
 			$status[$target]['monitorip'] = $tgtip;
 			$status[$target]['srcip'] = $srcip;
 			$status[$target]['name'] = $gwitem['name'];
-			$status[$target]['lastcheck'] = date('r');
 			$status[$target]['delay'] = "0.0ms";
 			$status[$target]['loss'] = "0.0%";
 			$status[$target]['status'] = "none";

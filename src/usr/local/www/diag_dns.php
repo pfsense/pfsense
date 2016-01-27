@@ -2,12 +2,11 @@
 /*
 	diag_dns.php
 */
-	/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2009 Jim Pingle (jpingle@gmail.com)
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -53,9 +52,13 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: dns
-*/
+
+##|+PRIV
+##|*IDENT=page-diagnostics-dns
+##|*NAME=Diagnostics: DNS Lookup
+##|*DESCR=Allow access to the 'Diagnostics: DNS Lookup' page.
+##|*MATCH=diag_dns.php*
+##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require("guiconfig.inc");
@@ -93,8 +96,9 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 		$isfirst = true;
 		foreach ($resolved as $re) {
 			if ($re != "") {
-				if (!$isfirst)
+				if (!$isfirst) {
 					$addresses .= " ";
+				}
 				$addresses .= rtrim($re) . "/32";
 				$isfirst = false;
 			}
@@ -107,7 +111,7 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 			$newalias['name'] = $aliasname;
 			$newalias['type'] = "network";
 			$newalias['address'] = $addresses;
-			$newalias['descr'] = "Created from Diagnostics-> DNS Lookup";
+			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
 			if ($override) {
 				$a_aliases[$id] = $newalias;
 			} else {
@@ -205,15 +209,15 @@ function display_host_results ($address, $hostname, $dns_speeds) {
 include("head.inc");
 
 /* Display any error messages resulting from user input */
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-else if (!$resolved && $type)
-	print('<div class="alert alert-warning" role="alert">' . gettext("Host") .' "'. $host .'" '. gettext("could not be resolved") . '</div>');
+} else if (!$resolved && $type) {
+	print('<div class="alert alert-warning" role="alert">' . sprintf(gettext('Host "%s" could not be resolved'), $host) . '</div>');
+}
 
-if ($createdalias)
-	print('<div class="alert alert-success" role="alert">'.gettext("Alias was created/updated successfully").'</div>');
-
-require_once('classes/Form.class.php');
+if ($createdalias) {
+	print('<div class="alert alert-success" role="alert">' . gettext("Alias was created/updated successfully") . '</div>');
+}
 
 $form = new Form('Lookup');
 $section = new Form_Section('DNS Lookup');
@@ -240,14 +244,14 @@ if (!$input_errors && $type) {
 	if ($resolved):
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Results</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
-<?
+<?php
 		foreach ((array)$resolved as $hostitem) {
 ?>
 			<li class="list-group-item"><?=$hostitem?></li>
-<?
+<?php
 			if ($hostitem != "") {
 				$found++;
 			}
@@ -256,26 +260,26 @@ if (!$input_errors && $type) {
 		</ul>
 	</div>
 </div>
-<? endif?>
+<?php endif; ?>
 
 <!-- Second table displays the server resolution times -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Timings</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Timings')?></h2></div>
 	<div class="panel-body">
 		<table class="table">
 		<thead>
 			<tr>
-				<th>Name server</th>
-				<th>Query time</th>
+				<th><?=gettext('Name server')?></th>
+				<th><?=gettext('Query time')?></th>
 			</tr>
 		</thead>
 
 		<tbody>
-<? foreach ((array)$dns_speeds as $qt):?>
+<?php foreach ((array)$dns_speeds as $qt):?>
 		<tr>
 			<td><?=$qt['dns_server']?></td><td><?=$qt['query_time']?></td>
 		</tr>
-<? endforeach?>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>
@@ -283,16 +287,16 @@ if (!$input_errors && $type) {
 
 <!-- Third table displays "More information" -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">More information</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More information')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
-			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;interface=wan&amp;count=3"><?=gettext("Ping")?></a></li>
+			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>
 			<li class="list-group-item"><a href="/diag_traceroute.php?host=<?=htmlspecialchars($host)?>&amp;ttl=18"><?=gettext("Traceroute")?></a></li>
 		</ul>
-		<p><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></p>
+		<h5><?=gettext("NOTE: The following links are to external services, so their reliability cannot be guaranteed.");?></h5>
 		<ul class="list-group">
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
-			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?php echo $ipaddr; ?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
+			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/whois.ch?ip=<?=$ipaddr;?>"><?=gettext("IP WHOIS @ DNS Stuff");?></a></li>
+			<li class="list-group-item"><a target="_blank" href="http://private.dnsstuff.com/tools/ipall.ch?ip=<?=$ipaddr;?>"><?=gettext("IP Info @ DNS Stuff");?></a></li>
 		</ul>
 	</div>
 </div>

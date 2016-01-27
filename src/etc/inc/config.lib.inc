@@ -1,17 +1,11 @@
 <?php
-/****h* pfSense/config
- * NAME
- *   config.lib.inc - Functions to manipulate config.xml
- * DESCRIPTION
- *   This include contains various config.xml specific functions.
- * HISTORY
- * $Id$
- ******
-
+/*
 	config.lib.inc
+
 	Ported from config.inc by Erik Kristensen
-	Copyright (C) 2004-2010 Scott Ullrich
-	All rights reserved.
+
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -24,23 +18,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt
-	pfSense_MODULE:	config
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /****f* config/encrypted_configxml
@@ -250,7 +263,7 @@ function parse_config_bootup() {
 			if (strstr($g['platform'], "cdrom")) {
 				/* try copying the default config. to the floppy */
 				echo gettext("Resetting factory defaults...") . "\n";
-				reset_factory_defaults(true);
+				reset_factory_defaults(true, false);
 				if (!file_exists("{$g['conf_path']}/config.xml")) {
 					echo gettext("No XML configuration file found - using factory defaults.\n" .
 								 "Make sure that the configuration floppy disk with the conf/config.xml\n" .
@@ -326,7 +339,7 @@ function conf_mount_rw() {
 	global $g, $config;
 
 	/* do not mount on cdrom platform */
-	if ($g['platform'] == "cdrom" or $g['platform'] == "pfSense") {
+	if ($g['platform'] == "cdrom" or $g['platform'] == $g['product_name']) {
 		return;
 	}
 
@@ -342,7 +355,7 @@ function conf_mount_rw() {
 		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
 	}
 
-	/*    if the platform is soekris or wrap or pfSense, lets mount the
+	/*    if the platform is soekris or wrap or $product, lets mount the
 	 *    compact flash cards root.
 	*/
 	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
@@ -367,7 +380,7 @@ function conf_mount_ro() {
 	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
 	$platform = trim(file_get_contents("/etc/platform"));
 	/* do not umount on cdrom or pfSense platforms */
-	if ($platform == "cdrom" or $platform == "pfSense") {
+	if ($platform == "cdrom" or $platform == $g['product_name']) {
 		return;
 	}
 
@@ -515,7 +528,7 @@ function safe_write_file($file, $content, $force_binary) {
  *   null
  ******/
 /* save the system configuration */
-function write_config($desc="Unknown", $backup = true) {
+function write_config($desc="Unknown", $backup = true, $write_config_only = false) {
 	global $config, $g;
 
 	if (!empty($_SERVER['REMOTE_ADDR'])) {
@@ -580,6 +593,12 @@ function write_config($desc="Unknown", $backup = true) {
 
 	unlock($lockkey);
 
+	if ($write_config_only) {
+		/* tell kernel to sync fs data */
+		conf_mount_ro();
+		return $config;
+	}
+
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
 
 	/* tell kernel to sync fs data */
@@ -602,7 +621,7 @@ function write_config($desc="Unknown", $backup = true) {
  * RESULT
  *   integer	- indicates completion
  ******/
-function reset_factory_defaults($lock = false) {
+function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
 	conf_mount_rw();
@@ -616,7 +635,7 @@ function reset_factory_defaults($lock = false) {
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
-		if (($filename != ".") && ($filename != "..")) {
+		if (($filename != ".") && ($filename != "..") && (!is_dir($g['conf_path'] . "/" . $filename))) {
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}
@@ -629,7 +648,12 @@ function reset_factory_defaults($lock = false) {
 	disable_security_checks();
 
 	/* call the wizard */
-	touch("/conf/trigger_initial_wizard");
+	if ($reboot_required) {
+		// If we need a reboot first then touch a different trigger file.
+		touch("/conf/trigger_initial_wizard_after_reboot");
+	} else {
+		touch("/conf/trigger_initial_wizard");
+	}
 	if (!$lock) {
 		unlock($lockkey);
 	}

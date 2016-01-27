@@ -1,38 +1,57 @@
 <?php
-/* $Id$ */
 /*
 	filter_log.inc
-	part of pfSesne by Scott Ullrich
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2009 Jim Pingle <myfirstname>@<mylastname>.org
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/sbin/fifolog_reader	/usr/bin/tail	/usr/local/sbin/clog
-	pfSense_MODULE: filter
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 require 'config.inc';
 
@@ -42,7 +61,7 @@ $buffer_rules_normal = array();
 
 /* format filter logs */
 function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $filterinterface = null) {
-	global $config, $g;
+	global $config, $g, $pattern;
 
 	/* Make sure this is a number before using it in a system call */
 	if (!(is_numeric($tail))) {
@@ -56,11 +75,85 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
 	$logarr = "";
 
-	if (isset($config['system']['usefifolog'])) {
-		exec("/usr/sbin/fifolog_reader " . escapeshellarg($logfile) . " | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
-	} else {
-		exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | grep -v \"CLOG\" | grep -v \"\033\" | /usr/bin/grep 'filterlog:' | /usr/bin/tail -r -n {$tail}", $logarr);
+	     if ($logfile == "{$g['varlog_path']}/system.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/gateways.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/routing.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/resolver.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/wireless.log")	{ $logfile_type = "system"; }
+
+	else if ($logfile == "{$g['varlog_path']}/filter.log")		{ $logfile_type = "firewall"; }
+	else if ($logfile == "{$g['varlog_path']}/dhcpd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/portalauth.log")	{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ipsec.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ppp.log")			{ $logfile_type = "system"; }
+
+	else if ($logfile == "{$g['varlog_path']}/vpn.log")			{ $logfile_type = "vpn_login"; }
+	else if ($logfile == "{$g['varlog_path']}/poes.log")		{ $logfile_type = "vpn_service"; }
+	else if ($logfile == "{$g['varlog_path']}/l2tps.log")		{ $logfile_type = "vpn_service"; }
+
+	else if ($logfile == "{$g['varlog_path']}/relayd.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/openvpn.log")		{ $logfile_type = "system"; }
+	else if ($logfile == "{$g['varlog_path']}/ntpd.log")		{ $logfile_type = "system"; }
+
+	else 														{ $logfile_type = "unknown"; }
+
+
+# Common Regular Expression Patterns
+	$month_pattern = "[a-zA-Z]{3}";
+	$day_pattern = "[0-9]{1,2}";
+	$time_pattern = "[0-9]{2}:[0-9]{2}:[0-9]{2}";
+
+	$date_pattern = "\(" . $month_pattern . "\ +" . $day_pattern . "\ +" . $time_pattern . "\)";
+
+	$host_pattern = "\(.*?\)";
+#	$host_pattern = "\([a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9]\)";
+
+	$process_pattern = "\(.*?\)\(?::\ +\)?";
+	$pid_pattern = "\(?:\\\[\([0-9:]*\)\\\]\)?:?";
+	$process_pid_pattern = $process_pattern . $pid_pattern;
+
+	$log_message_pattern = "\(.*\)";
+
+
+	# Construct RegEx for specific log file type.
+	     if ($logfile_type == 'firewall')	{
+		$pattern = "filterlog:";
 	}
+	else if ($logfile_type == 'system')		{
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
+	}
+
+	else if ($logfile_type == 'vpn_login')	{
+		$action_pattern = "\(.*?\)";
+		$type_pattern = "\(.*?\)";
+		$ip_address_pattern = "\(.*?\)";
+		$user_pattern = "\(.*?\)";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
+	}
+	else if ($logfile_type == 'vpn_service')	{
+		$type_pattern = "\(.*?\):";
+		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
+		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $type_pattern . "\ +" . $pid_pattern . "\ *" . $log_message_pattern . "$";
+	}
+	else if ($logfile_type == 'unknown')	{
+		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
+	}
+	else									{
+		$pattern = "^\(.*\)$";
+	}
+
+
+	# Get a bunch of log entries.
+	exec("/usr/local/sbin/clog " . escapeshellarg($logfile) . " | /usr/bin/grep -v \"CLOG\" | /usr/bin/grep -v \"\033\" | /usr/bin/grep -E $pattern | /usr/bin/tail -r -n {$tail}", $logarr);
+
+
+	# Remove escapes and fix up the pattern for preg_match.
+	$pattern = '/' . $pattern . '/';
+	$pattern = str_replace('\(', '(', $pattern);
+	$pattern = str_replace('\)', ')', $pattern);
+	$pattern = str_replace('\[', '[', $pattern);
+	$pattern = str_replace('\]', ']', $pattern);
+
 
 	$filterlog = array();
 	$counter = 0;
@@ -71,7 +164,13 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 			break;
 		}
 
-		$flent = parse_filter_line($logent);
+		     if ($logfile_type == 'firewall')		{ $flent = parse_firewall_log_line($logent); }
+		else if ($logfile_type == 'system')			{ $flent = parse_system_log_line($logent); }
+		else if ($logfile_type == 'vpn_login')		{ $flent = parse_vpn_login_log_line($logent); }
+		else if ($logfile_type == 'vpn_service')	{ $flent = parse_vpn_service_log_line($logent); }
+		else if ($logfile_type == 'unknown')		{ $flent = parse_unknown_log_line($logent); }
+		else 										{ $flent = array(); }
+
 		if (!$filterinterface || ($filterinterface == $flent['interface'])) {
 			if ((($flent != "") && (!is_array($filtertext)) && (match_filter_line($flent, $filtertext))) ||
 			    (($flent != "") && (is_array($filtertext)) && (match_filter_field($flent, $filtertext)))) {
@@ -81,7 +180,13 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		}
 	}
 	/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
-	return isset($config['syslog']['reverse']) ? $filterlog : array_reverse($filterlog);
+	# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+	$reverse = isset($config['syslog']['reverse']);
+	$specific_log = basename($logfile, '.log') . '_settings';
+	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+	return ($reverse) ? $filterlog : array_reverse($filterlog);
 }
 
 function escape_filter_regex($filtertext) {
@@ -136,7 +241,97 @@ function in_arrayi($needle, $haystack) {
 	return in_array(strtolower($needle), array_map('strtolower', $haystack));
 }
 
-function parse_filter_line($line) {
+function parse_vpn_login_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['action'], $flent['type'], $flent['ip_address'], $flent['user']) = $log_split;
+
+	/* If there is time, action, user, and IP address fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
+}
+
+function parse_vpn_service_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split))
+		return "";
+
+	list($all, $flent['time'], $flent['host'], $flent['type'], $flent['pid'], $flent['message']) = $log_split;
+
+	/* If there is time, type, and message fields, then the line should be usable/good */
+	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
+		return $flent;
+	} else {
+		if($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
+}
+
+function parse_unknown_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split)) {
+		return "";
+	}
+
+	list($all, $flent['time'], $flent['message']) = $log_split;
+
+	/* If there is time, and message, fields, then the line should be usable/good */
+	if (!((trim($flent['time']) == "") && (trim($flent['message']) == ""))) {
+		return $flent;
+	} else {
+		if ($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
+}
+
+function parse_system_log_line($line) {
+	global $config, $g, $pattern;
+
+	$flent = array();
+	$log_split = "";
+
+	if (!preg_match($pattern, $line, $log_split)) {
+		return "";
+	}
+
+	list($all, $flent['time'], $flent['host'], $flent['process'], $flent['pid'], $flent['message']) = $log_split;
+
+	/* If there is time, process, and message, fields, then the line should be usable/good */
+	if (!((trim($flent['time']) == "") && (trim($flent['process']) == "") && (trim($flent['message']) == ""))) {
+		return $flent;
+	} else {
+		if ($g['debug']) {
+			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+		}
+		return "";
+	}
+}
+
+function parse_firewall_log_line($line) {
 	global $config, $g;
 
 	$flent = array();
@@ -271,7 +466,7 @@ function parse_filter_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $errline));
+			log_error(sprintf(gettext("There was a error parsing rule: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}
@@ -312,11 +507,7 @@ function find_rule_by_number($rulenum, $trackernum, $type="block") {
 	if ($type == "rdr") {
 		$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/egrep " . escapeshellarg("^@{$rulenum}"), $buffer);
 	} else {
-		if (file_exists("{$g['tmp_path']}/rules.debug")) {
-			$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
-		} else {
-			$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
-		}
+		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep " . escapeshellarg($lookup_pattern), $buffer);
 	}
 	if (is_array($buffer)) {
 		return $buffer[0];
@@ -333,7 +524,7 @@ function buffer_rules_load() {
 	$buffer_rules_rdr = array();
 	$buffer_rules_normal = array();
 
-	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | grep '^@'", $buffer);
+	$_gb = exec("/sbin/pfctl -vvPsn -a \"miniupnpd\" | /usr/bin/grep '^@'", $buffer);
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
 			list($key, $value) = explode (" ", $line, 2);
@@ -341,11 +532,7 @@ function buffer_rules_load() {
 		}
 	}
 	unset($buffer, $_gb);
-	if (file_exists("{$g['tmp_path']}/rules.debug")) {
-		$_gb = exec("/sbin/pfctl -vvPnf {$g['tmp_path']}/rules.debug 2>/dev/null | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]' | /usr/bin/egrep -v '^@[0-9]+\([0-9]+\)[[:space:]](nat|rdr|binat|no|scrub)'", $buffer);
-	} else {
-		$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
-	}
+	$_gb = exec("/sbin/pfctl -vvPsr | /usr/bin/egrep '^@[0-9]+\([0-9]+\)[[:space:]].*[[:space:]]log[[:space:]]'", $buffer);
 
 	if (is_array($buffer)) {
 		foreach ($buffer as $line) {
@@ -386,7 +573,7 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 	} else {
 		$ruleString = $buffer_rules_normal[$lookup_key];
 		list(,$rulename,) = explode("\"", $ruleString);
-		$rulename = str_replace("USER_RULE: ", '<img src="/themes/' . $g['theme'] . '/images/icons/icon_frmfld_user.png" width="11" height="12" title="USER_RULE" alt="USER_RULE"/> ', $rulename);
+		$rulename = str_replace("USER_RULE: ", '<i class="fa fa-user"></i> ', $rulename);
 	}
 	return "{$rulename} ({$lookup_key})";
 }
@@ -394,42 +581,62 @@ function find_rule_by_number_buffer($rulenum, $trackernum, $type) {
 function find_action_image($action) {
 	global $g;
 	if ((strstr(strtolower($action), "p")) || (strtolower($action) == "rdr")) {
-		return "/themes/{$g['theme']}/images/icons/icon_pass.gif";
+		return "fa-check-circle-o";
 	} else if (strstr(strtolower($action), "r")) {
-		return "/themes/{$g['theme']}/images/icons/icon_reject.gif";
+		return "fa-times-circle-o";
 	} else {
-		return "/themes/{$g['theme']}/images/icons/icon_block.gif";
+		return "fa-ban";
 	}
 }
 
 /* AJAX specific handlers */
-function handle_ajax($nentries, $tail = 50) {
+function handle_ajax() {
 	global $config;
-	if ($_GET['lastsawtime'] or $_POST['lastsawtime']) {
-		global $filter_logfile,$filterent;
-		if ($_GET['lastsawtime']) {
-			$lastsawtime = $_GET['lastsawtime'];
+	if (($_GET['lastsawtime'] or $_POST['lastsawtime']) and ($_GET['logfile'] or $_POST['logfile'])) {
+
+		$lastsawtime = getGETPOSTsettingvalue('lastsawtime', null);
+		$logfile = getGETPOSTsettingvalue('logfile', null);
+		$nentries = getGETPOSTsettingvalue('nentries', null);
+		$type = getGETPOSTsettingvalue('type', null);
+		$filter = getGETPOSTsettingvalue('filter', null);
+		$interfacefilter = getGETPOSTsettingvalue('interfacefilter', null);
+
+		if (!empty(trim($filter)) || is_numeric($filter)) {
+			$filter = json_decode($filter, true);	# Filter Fields Array or Filter Text
 		}
-		if ($_POST['lastsawtime']) {
-			$lastsawtime = $_POST['lastsawtime'];
-		}
+
 		/* compare lastsawrule's time stamp to filter logs.
 		 * afterwards return the newer records so that client
 		 * can update AJAX interface screen.
 		 */
 		$new_rules = "";
-		$filterlog = conv_log_filter($filter_logfile, $nentries, $tail);
+
+		$filterlog = conv_log_filter($logfile, $nentries, $nentries + 100, $filter, $interfacefilter);
+
 		/* We need this to always be in forward order for the AJAX update to work properly */
-		$filterlog = isset($config['syslog']['reverse']) ? array_reverse($filterlog) : $filterlog;
+		/* Since the lines are in reverse order, flip them around if needed based on the user's preference */
+		# First get the "General Logging Options" (global) chronological order setting.  Then apply specific log override if set.
+		$reverse = isset($config['syslog']['reverse']);
+		$specific_log = basename($logfile, '.log') . '_settings';
+		if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
+		if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
+
+		$filterlog = ($reverse) ? array_reverse($filterlog) : $filterlog;
+
 		foreach ($filterlog as $log_row) {
 			$row_time = strtotime($log_row['time']);
-			$img = "<img border='0' src='" . find_action_image($log_row['act']) . "' alt={$log_row['act']} title={$log_row['act']} />";
 			if ($row_time > $lastsawtime) {
 				if ($log_row['proto'] == "TCP") {
 					$log_row['proto'] .= ":{$log_row['tcpflags']}";
 				}
 
-				$btn = "<a href=\"#\" class=\"btn btn-danger btn-xs\" onClick=\"javascript:getURL('diag_logs_filter.php?getrulenum={$log_row['rulenum']},{$log_row['rulenum']}', outputrule);\">" . gettext("Block") . " </a>";
+				if ($log_row['act'] == "block") {
+					$icon_act = "fa-times text-danger";
+				} else {
+					$icon_act = "fa-check text-success";
+				}
+
+				$btn = '<i class="fa ' . $icon_act . ' icon-pointer" title="' . $log_row['act'] . '/' . $log_row['tracker'] . '" onclick="javascript:getURL(\'status_logs_filter.php?getrulenum=' . $log_row['rulenum'] . ',' . $log_row['tracker'] . ',' . $log_row['act'] . '\', outputrule);"></i>';
 				$new_rules .= "{$btn}||{$log_row['time']}||{$log_row['interface']}||{$log_row['srcip']}||{$log_row['srcport']}||{$log_row['dstip']}||{$log_row['dstport']}||{$log_row['proto']}||{$log_row['version']}||" . time() . "||\n";
 			}
 		}

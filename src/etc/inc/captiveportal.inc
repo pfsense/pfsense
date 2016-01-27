@@ -1,9 +1,9 @@
 <?php
 /*
 	captiveportal.inc
+
 	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -16,30 +16,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-	This version of captiveportal.inc has been modified by Rob Parker
-	<rob.parker@keycom.co.uk> to include changes for per-user bandwidth management
-	via returned RADIUS attributes. This page has been modified to delete any
-	added rules which may have been created by other per-user code (index.php, etc).
-	These changes are (c) 2004 Keycom PLC.
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
-	pfSense_BUILDER_BINARIES:	/sbin/ipfw	/sbin/route
-	pfSense_BUILDER_BINARIES:	/usr/local/sbin/lighttpd	/usr/local/bin/minicron /sbin/pfctl
-	pfSense_BUILDER_BINARIES:	/bin/hostname	/bin/cp
-	pfSense_MODULE: captiveportal
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* include all configuration functions */
@@ -226,7 +238,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$htmltext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $htmltext);
-			$htmltext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $htmltext);
 			$htmltext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $htmltext);
 			if ($cpcfg['preauthurl']) {
 				$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $htmltext);
@@ -254,7 +265,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$errtext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $errtext);
 			$errtext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $errtext);
 			$errtext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $errtext);
-			$errtext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $errtext);
 			$errtext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $errtext);
 			if ($cpcfg['preauthurl']) {
 				$errtext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $errtext);
@@ -315,9 +325,9 @@ EOD;
 		/* write elements */
 		captiveportal_write_elements();
 
-		/* kill any running mini_httpd */
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		/* kill any running CP nginx instances */
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 
 		/* start up the webserving daemon */
 		captiveportal_init_webgui_zone($cpcfg);
@@ -342,8 +352,8 @@ EOD;
 		}
 
 	} else {
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal.pid");
-		killbypid("{$g['varrun_path']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal.pid");
+		killbypid("{$g['varrun_path']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
 		killbypid("{$g['varrun_path']}/cp_prunedb_{$cpzone}.pid");
 		@unlink("{$g['varetc_path']}/captiveportal_{$cpzone}.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
@@ -422,35 +432,35 @@ function captiveportal_init_webgui_zone($cpcfg) {
 		$key = base64_decode($cert['prv']);
 		$ca = ca_chain($cert);
 
-		/* generate lighttpd configuration */
+		/* generate nginx configuration */
 		if (!empty($cpcfg['listenporthttps'])) {
 			$listenporthttps = $cpcfg['listenporthttps'];
 		} else {
 			$listenporthttps = 8001 + $cpcfg['zoneid'];
 		}
-		system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf",
-			$crt, $key, $ca, "lighty-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
+		system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf",
+			$crt, $key, $ca, "nginx-{$cpzone}-CaptivePortal-SSL.pid", $listenporthttps, "/usr/local/captiveportal",
 			"cert-{$cpzone}-portal.pem", "ca-{$cpzone}-portal.pem", $cpzone);
 	}
 
-	/* generate lighttpd configuration */
+	/* generate nginx configuration */
 	if (!empty($cpcfg['listenporthttp'])) {
 		$listenporthttp = $cpcfg['listenporthttp'];
 	} else {
 		$listenporthttp = 8000 + $cpcfg['zoneid'];
 	}
-	system_generate_lighty_config("{$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf",
-		"", "", "", "lighty-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
+	system_generate_nginx_config("{$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf",
+		"", "", "", "nginx-{$cpzone}-CaptivePortal.pid", $listenporthttp, "/usr/local/captiveportal",
 		"", "", $cpzone);
 
-	@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal.pid");
-	/* attempt to start lighttpd */
-	$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal.conf");
+	@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal.pid");
+	/* attempt to start nginx */
+	$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal.conf");
 
 	/* fire up https instance */
 	if (isset($cpcfg['httpslogin'])) {
-		@unlink("{$g['varrun']}/lighty-{$cpzone}-CaptivePortal-SSL.pid");
-		$res = mwexec("/usr/local/sbin/lighttpd -f {$g['varetc_path']}/lighty-{$cpzone}-CaptivePortal-SSL.conf");
+		@unlink("{$g['varrun']}/nginx-{$cpzone}-CaptivePortal-SSL.pid");
+		$res = mwexec("/usr/local/sbin/nginx -c {$g['varetc_path']}/nginx-{$cpzone}-CaptivePortal-SSL.conf");
 	}
 }
 
@@ -500,12 +510,11 @@ function captiveportal_init_rules($reinit = false) {
 			$cpipm = get_interface_ip($cpifgrp);
 			if (is_ipaddr($cpipm)) {
 				$cpips[] = $cpipm;
-				if (!is_array($config['virtualip']) || !is_array($config['virtualip']['vip'])) {
-					continue;
-				}
-				foreach ($config['virtualip']['vip'] as $vip) {
-					if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
-						$cpips[] = $vip['subnet'];
+				if (is_array($config['virtualip']['vip'])) {
+					foreach ($config['virtualip']['vip'] as $vip) {
+						if (($vip['interface'] == $cpifgrp) && (($vip['mode'] == "carp") || ($vip['mode'] == "ipalias"))) {
+							$cpips[] = $vip['subnet'];
+						}
 					}
 				}
 			}
@@ -546,19 +555,14 @@ EOD;
 	$rulenum++;
 	$cprules .= "add {$rulenum} pass ip from table(100) to any out\n";
 	$rulenum++;
-	$ips = "";
 	foreach ($cpips as $cpip) {
 		$cprules .= "table 100 add {$cpip}\n";
 	}
-	$cprules .= "table 100 add 255.255.255.255\n";
-	$cprules .= "add {$rulenum} pass ip from any to {$ips} in\n";
+	$cprules .= "add {$rulenum} pass ip from any to 255.255.255.255 in\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} pass ip from {$ips} to any out\n";
+	$cprules .= "add {$rulenum} pass ip from 255.255.255.255 to any out\n";
 	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from {$ips} to any out icmptype 0\n";
-	$rulenum++;
-	$cprules .= "add {$rulenum} pass icmp from any to {$ips} in icmptype 8 \n";
-	$rulenum++;
+
 	/* Allowed ips */
 	$cprules .= "add {$rulenum} pipe tablearg ip from table(3) to any in\n";
 	$rulenum++;
@@ -670,8 +674,8 @@ function captiveportal_prune_old() {
 	 * If something is missed next run will catch it!
 	 */
 	$pruning_time = time();
-	$stop_time = $pruning_time;
 	foreach ($cpdb as $cpentry) {
+		$stop_time = $pruning_time;
 
 		$timedout = false;
 		$term_cause = 1;
@@ -937,6 +941,7 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutReason = "LOGOUT") {
 	global $g, $config;
 
+	$sessionid = SQLite3::escapeString($sessionid);
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* read database */
@@ -1402,7 +1407,7 @@ function radius($username, $password, $clientip, $clientmac, $type, $radiusctx =
 }
 
 function captiveportal_opendb() {
-	global $g, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
 	$createquery = "CREATE TABLE IF NOT EXISTS captiveportal (" .
@@ -1416,11 +1421,13 @@ function captiveportal_opendb() {
 
 	try {
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 	} catch (Exception $e) {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Trying again.");
 		unlink_if_exists($db_path);
 		try {
 			$DB = new SQLite3($db_path);
+			$DB->busyTimeout(60000);
 		} catch (Exception $e) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1431,6 +1438,7 @@ function captiveportal_opendb() {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if (!$DB) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1445,8 +1453,22 @@ function captiveportal_opendb() {
 		unset($DB);
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if ($DB->exec($createquery)) {
 			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
+			if (!is_numericint($cpzoneid)) {
+				if (is_array($config['captiveportal'])) {
+					foreach ($config['captiveportal'] as $cpkey => $cp) {
+						if ($cpzone == $cp['zone']) {
+							$cpzoneid = $cp['zoneid'];
+						}
+					}
+				}
+			}
+			if (is_numericint($cpzoneid)) {
+				mwexec("/sbin/ipfw -x $cpzoneid table all flush");
+				captiveportal_syslog("Flushed tables for {$cpzone} after database reset.");
+			}
 		} else {
 			captiveportal_syslog("Still unable to create tables for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and try again.");
 		}
@@ -1528,7 +1550,11 @@ function captiveportal_write_elements() {
 	if (is_array($cpcfg['element'])) {
 		conf_mount_rw();
 		foreach ($cpcfg['element'] as $data) {
-			if (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
+			/* Do not attempt to decode or write out empty files. */
+			if (empty($data['content']) || empty(base64_decode($data['content']))) {
+				unlink_if_exists("{$g['captiveportal_element_path']}/{$data['name']}");
+				touch("{$g['captiveportal_element_path']}/{$data['name']}");
+			} elseif (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
 				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
@@ -1978,6 +2004,8 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	if ($attributes['voucher']) {
 		$remaining_time = $attributes['session_timeout'];
+	// Set RADIUS-Attribute to Voucher to prevent ReAuth-Reqeuest for Vouchers Bug: #2155
+		$radiusctx="voucher";
 	}
 
 	$writecfg = false;

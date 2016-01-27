@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -q
 <?php
-/* $Id$ */
 /*
 	filterparser.php
 	part of pfSesne by Scott Ullrich
@@ -36,9 +35,6 @@
 	clog /var/log/filter.log | tail -50 | /usr/local/www/filterparser.php
 	clog -f /var/log/filter.log | /usr/local/www/filterparser.php
 */
-/*
-	pfSense_MODULE:	logs
-*/
 
 include_once("functions.inc");
 include_once("filter_log.inc");
@@ -48,7 +44,7 @@ $lastline = "";
 while (!feof($log)) {
 	$line = fgets($log);
 	$line = rtrim($line);
-	$flent = parse_filter_line(trim($line));
+	$flent = parse_firewall_log_line(trim($line));
 	if ($flent != "") {
 		$flags = (($flent['proto'] == "TCP") && !empty($flent['tcpflags'])) ? ":" . $flent['tcpflags'] : "";
 		echo "{$flent['time']} {$flent['act']} {$flent['realint']} {$flent['proto']}{$flags} {$flent['src']} {$flent['dst']}\n";

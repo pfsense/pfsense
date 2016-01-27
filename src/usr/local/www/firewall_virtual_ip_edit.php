@@ -1,14 +1,13 @@
 <?php
-/* $Id$ */
 /*
-
 	firewall_virtual_ip_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
  *	Copyright (c)  2005 Bill Marquette <bill.marquette@gmail.com>
- *	Originally part of pfSense (https://www.pfsense.org)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -57,14 +56,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/ifconfig
-	pfSense_MODULE: interfaces
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-virtualipaddress-edit
-##|*NAME=Firewall: Virtual IP Address: Edit page
+##|*NAME=Firewall: Virtual IP Address: Edit
 ##|*DESCR=Allow access to the 'Firewall: Virtual IP Address: Edit' page.
 ##|*MATCH=firewall_virtual_ip_edit.php*
 ##|-PRIV
@@ -117,7 +112,7 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['descr'] = $a_vip[$id]['descr'];
 	$pconfig['type'] = $a_vip[$id]['type'];
 	$pconfig['interface'] = $a_vip[$id]['interface'];
-	$pconfig['uniqid'] = $a_vip[$id]['interface'];
+	$pconfig['uniqid'] = $a_vip[$id]['uniqid'];
 } else {
 	$lastvhid = find_last_used_vhid();
 	$lastvhid++;
@@ -146,20 +141,20 @@ if ($_POST) {
 			if (isset($id) && isset($a_vip[$id])) {
 				$ignore_if = $a_vip[$id]['interface'];
 				$ignore_mode = $a_vip[$id]['mode'];
-				if (isset($a_vip[$id]['vhid'])) {
-					$ignore_vhid = $a_vip[$id]['vhid'];
+				if (isset($a_vip[$id]['uniqid'])) {
+					$ignore_uniqid = $a_vip[$id]['uniqid'];
 				}
 			} else {
 				$ignore_if = $_POST['interface'];
 				$ignore_mode = $_POST['mode'];
 			}
 
-			if (!isset($ignore_vhid)) {
-				$ignore_vhid = $_POST['vhid'];
+			if (!isset($ignore_uniqid)) {
+				$ignore_uniqid = $_POST['uniqid'];
 			}
 
 			if ($ignore_mode == 'carp') {
-				$ignore_if .= "_vip{$ignore_vhid}";
+				$ignore_if = "_vip{$ignore_uniqid}";
 			} else {
 				$ignore_if .= "_virtualip{$id}";
 			}
@@ -181,7 +176,7 @@ if ($_POST) {
 
 	/* ipalias and carp should not use network or broadcast address */
 	if ($_POST['mode'] == "ipalias" || $_POST['mode'] == "carp") {
-		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32") {
+		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32" && $_POST['subnet_bits'] != "31") {
 			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
 		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128") {
@@ -203,19 +198,26 @@ if ($_POST) {
 		case 'carp':
 			/* verify against reusage of vhids */
 			$idtracker = 0;
-			foreach($config['virtualip']['vip'] as $vip) {
-				if($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker != $id)
-					$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."),$_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
+			foreach ($config['virtualip']['vip'] as $vip) {
+				if ($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker != $id) {
+					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
+				}
 				$idtracker++;
 			}
 
-			if (empty($_POST['password']))
+			if (empty($_POST['password'])) {
 				$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
+			}
 
-			if ($_POST['interface'] == 'lo0')
+			if ($_POST['password'] != $_POST['password_confirm']) {
+				$input_errors[] = gettext("Password and confirm password must match");
+			}
+
+			if ($_POST['interface'] == 'lo0') {
 				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			else if (strpos($_POST['interface'], '_vip'))
+			} else if (strpos($_POST['interface'], '_vip')) {
 				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+			}
 
 			break;
 		case 'ipalias':
@@ -231,9 +233,9 @@ if ($_POST) {
 				}
 
 				if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") &&
-					!ip_in_interface_alias_subnet(link_carp_interface_to_parent($_POST['interface']), $_POST['subnet'])) {
+				    !ip_in_interface_alias_subnet(link_carp_interface_to_parent($_POST['interface']), $_POST['subnet'])) {
 					$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-					$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."),$cannot_find);
+					$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."), $cannot_find);
 				}
 
 				unset($parent_ip, $parent_sn, $subnet);
@@ -241,10 +243,11 @@ if ($_POST) {
 
 			break;
 		default:
-			if ($_POST['interface'] == 'lo0')
+			if ($_POST['interface'] == 'lo0') {
 				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			else if (strpos($_POST['interface'], '_vip'))
+			} else if (strpos($_POST['interface'], '_vip')) {
 				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
+			}
 
 			break;
 	}
@@ -272,7 +275,12 @@ if ($_POST) {
 			$vipent['uniqid'] = $_POST['uniqid'];
 			$vipent['advskew'] = $_POST['advskew'];
 			$vipent['advbase'] = $_POST['advbase'];
-			$vipent['password'] = $_POST['password'];
+
+			if ($_POST['password'] != DMYPWD) {
+				$vipent['password'] = $_POST['password'];
+			} else {
+				$vipent['password'] = $a_vip[$id]['password'];
+			}
 		}
 
 		/* Common fields */
@@ -328,7 +336,7 @@ if ($_POST) {
 $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not specify a CIDR range.');
 $proxyarphelp = gettext('Enter a CIDR block of proxy ARP addresses.');
 
-$pgtitle = array(gettext("Firewall"),gettext("Virtual IP Address"),gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Address"), gettext("Edit"));
 include("head.inc");
 
 function build_if_list() {
@@ -337,18 +345,18 @@ function build_if_list() {
 	$interfaces = get_configured_interface_with_descr(false, true);
 	$carplist = get_configured_carp_interface_list();
 
-	foreach ($carplist as $cif => $carpip)
+	foreach ($carplist as $cif => $carpip) {
 		$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+	}
 
 	$interfaces['lo0'] = 'Localhost';
 
 	return($interfaces);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require('classes/Form.class.php');
+}
 
 $form = new Form();
 
@@ -402,8 +410,8 @@ $section->addInput(new Form_Select(
 	'Address type',
 	((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) ? 'single':'network',
 	array(
-		'single' => 'Single address',
-		'network' => 'Network'
+		'single' => gettext('Single address'),
+		'network' => gettext('Network')
 	)
 ))->addClass('typesel');
 
@@ -420,7 +428,7 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['noexpand'])
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'password',
 	'Virtual IP Password',
 	'password',
@@ -479,21 +487,24 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print($form);
-
-print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
-			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'));
 ?>
 
-<script>
+<div class="infoblock">
+	<?=print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
+			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), 'info', false)?>
+</div>
+
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 	function hideCheckbox(id, hide) {
-		if(hide)
+		if (hide) {
 			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
+		} else {
 			$('#' + id).parent().parent().parent('div').removeClass('hidden');
+		}
 	}
 
 	// Disables the specified input element
@@ -511,34 +522,35 @@ events.push(function(){
 		disableInput('subnet_bits', true);
 		disableInput('type', true);
 		disableInput('password', true);
+		disableInput('password_confirm', true);
 		hideCheckbox('noexpand', true);
 
-		if(mode == 'ipalias') {
+		if (mode == 'ipalias') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			$('#type').val('single');
 			disableInput('subnet_bits', false);
 
-		}
-		else if(mode == 'carp') {
+		} else if (mode == 'carp') {
 			$('#address_note').html("<?=$ipaliashelp?>");
 			disableInput('vhid', false);
 			disableInput('advbase', false);
 			disableInput('advskew', false);
 			disableInput('password', false);
+			disableInput('password_confirm', false);
 			disableInput('subnet_bits', false);
 			$('#type').val('single');
-		}
-		else if(mode == 'proxyarp') {
+		} else if (mode == 'proxyarp') {
 			$('#address_note').html("<?=$proxyarphelp?>");
 			disableInput('type', false);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
-		}
-		else {
+		} else {
 			$('#address_note').html('');
 			disableInput('type', false);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
 		}
 	}
+
+	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	// When radio buttons are clicked . .
 	$('input:radio[name=mode]').click(function() {
@@ -551,7 +563,8 @@ events.push(function(){
 		hideCheckbox('noexpand', (this.value == 'single'));
 	});
 
-	// On initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	check_mode();
 });
 //]]>

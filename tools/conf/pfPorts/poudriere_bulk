@@ -1,3 +1,8 @@
+databases/php56-mysql
+databases/php56-mysqli
+databases/php56-pdo_mysql
+databases/rrdtool
+databases/pecl-rrd
 benchmarks/iperf
 benchmarks/iperf3
 security/%%PRODUCT_NAME%%

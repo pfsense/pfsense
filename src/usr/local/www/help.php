@@ -1,13 +1,12 @@
 <?php
-/* 
+/*
 	Redirector for Contextual Help System
- */
+*/
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  c) 2009 Jim Pingle <jimp@pfsense.org>
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -53,7 +52,7 @@
  *  ====================================================================
  *
  */
- 
+
 require_once("guiconfig.inc");
 
 /* Define hash of jumpto url maps */
@@ -80,7 +79,7 @@ $helppages = array(
 	'interfaces_vlan_edit.php' => 'https://doc.pfsense.org/index.php/VLAN_Trunking',
 	'diag_routes.php' => 'https://doc.pfsense.org/index.php/Viewing_Routes',
 	'diag_packet_capture.php' => 'https://doc.pfsense.org/index.php/Sniffers,_Packet_Capture',
-	'diag_system_pftop.php' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage#pftop',
+	'diag_pftop.php' => 'https://doc.pfsense.org/index.php/How_can_I_monitor_bandwidth_usage#pftop',
 	'status_rrd_graph.php' => 'https://doc.pfsense.org/index.php/RRD_Graphs',
 	'status_rrd_graph_img.php' => 'https://doc.pfsense.org/index.php/RRD_Graphs',
 	'status_rrd_graph_settings.php' => 'https://doc.pfsense.org/index.php/RRD_Graphs',
@@ -91,7 +90,6 @@ $helppages = array(
 	'diag_confbak.php' => 'https://doc.pfsense.org/index.php/Configuration_History',
 	'diag_defaults.php' => 'https://doc.pfsense.org/index.php/Factory_Defaults',
 	'firewall_shaper.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
-	'firewall_shaper_layer7.php' => 'https://doc.pfsense.org/index.php/Layer_7',
 	'firewall_shaper_queues.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
 	'firewall_shaper_vinterface.php' => 'https://doc.pfsense.org/index.php/Limiters',
 	'firewall_shaper_wizards.php' => 'https://doc.pfsense.org/index.php/Traffic_Shaping_Guide',
@@ -100,23 +98,26 @@ $helppages = array(
 	'diag_dns.php' => 'https://doc.pfsense.org/index.php/DNS_Lookup',
 	'diag_dump_states.php' => 'https://doc.pfsense.org/index.php/Show_States',
 	'diag_resetstate.php' => 'https://doc.pfsense.org/index.php/Reset_States',
-	'diag_logs.php' => 'https://doc.pfsense.org/index.php/System_Logs',
-	'diag_logs_auth.php' => 'https://doc.pfsense.org/index.php/Captive_Portal_Authentication_Logs',
-	'diag_logs_dhcp.php' => 'https://doc.pfsense.org/index.php/DHCP_Logs',
-	'diag_logs_filter.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
-	'diag_logs_filter_dynamic.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
-	'diag_logs_filter_summary.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
-	'diag_logs_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Logs',
-	'diag_logs_ppp.php' => 'https://doc.pfsense.org/index.php/PPP_Logs',
-	'diag_logs_relayd.php' => 'https://doc.pfsense.org/index.php/Load_Balancer_Logs',
-	'diag_logs_settings.php' => 'https://doc.pfsense.org/index.php/Log_Settings',
-	'diag_logs_vpn.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Logs',
-	'diag_logs_ipsec.php' => 'https://doc.pfsense.org/index.php/IPsec_Logs',
-	'diag_logs_openvpn.php' => 'https://doc.pfsense.org/index.php/OpenVPN_Logs',
+	'status_logs.php' => 'https://doc.pfsense.org/index.php/System_Logs',
+	'status_logs.php-dhcpd' => 'https://doc.pfsense.org/index.php/DHCP_Logs',
+	'status_logs.php-gateways' => 'https://doc.pfsense.org/index.php/Gateway_Logs',
+	'status_logs.php-ipsec' => 'https://doc.pfsense.org/index.php/IPsec_Logs',
+	'status_logs.php-ntpd' => 'https://doc.pfsense.org/index.php/NTP_Logs',
+	'status_logs.php-openvpn' => 'https://doc.pfsense.org/index.php/OpenVPN_Logs',
+	'status_logs.php-portalauth' => 'https://doc.pfsense.org/index.php/Captive_Portal_Authentication_Logs',
+	'status_logs.php-ppp' => 'https://doc.pfsense.org/index.php/PPP_Logs',
+	'status_logs.php-relayd' => 'https://doc.pfsense.org/index.php/Load_Balancer_Logs',
+	'status_logs.php-resolver' => 'https://doc.pfsense.org/index.php/Resolver_Logs',
+	'status_logs.php-routing' => 'https://doc.pfsense.org/index.php/Routing_Logs',
+	'status_logs.php-wireless' => 'https://doc.pfsense.org/index.php/Wireless_Logs',
+	'status_logs_filter.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
+	'status_logs_filter_dynamic.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
+	'status_logs_filter_summary.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
+	'status_logs_settings.php' => 'https://doc.pfsense.org/index.php/Log_Settings',
+	'status_logs_vpn.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Logs',
 	'diag_nanobsd.php' => 'https://doc.pfsense.org/index.php/NanoBSD_Diagnostics',
-	'diag_patterns.php' => 'https://doc.pfsense.org/index.php/Layer7_Pattern_Diagnostics',
 	'diag_ping.php' => 'https://doc.pfsense.org/index.php/Ping_Host',
-	'diag_pkglogs.php' => 'https://doc.pfsense.org/index.php/Package_Logs',
+	'status_pkglogs.php' => 'https://doc.pfsense.org/index.php/Package_Logs',
 	'diag_tables.php' => 'https://doc.pfsense.org/index.php/Tables',
 	'diag_system_activity.php' => 'https://doc.pfsense.org/index.php/System_Activity',
 	'diag_traceroute.php' => 'https://doc.pfsense.org/index.php/Traceroute',
@@ -125,8 +126,8 @@ $helppages = array(
 	'exec.php' => 'https://doc.pfsense.org/index.php/Execute_Command',
 	'firewall_nat_1to1.php' => 'https://doc.pfsense.org/index.php/1:1_NAT',
 	'firewall_nat_1to1_edit.php' => 'https://doc.pfsense.org/index.php/1:1_NAT',
-	'halt.php' => 'https://doc.pfsense.org/index.php/Halt_System',
-	'reboot.php' => 'https://doc.pfsense.org/index.php/Reboot_System',
+	'diag_halt.php' => 'https://doc.pfsense.org/index.php/Halt_System',
+	'diag_reboot.php' => 'https://doc.pfsense.org/index.php/Reboot_System',
 	'status_filter_reload.php' => 'https://doc.pfsense.org/index.php/Filter_Reload_Status',
 	'status_gateway_groups.php' => 'https://doc.pfsense.org/index.php/Gateway_Status',
 	'status_gateways.php' => 'https://doc.pfsense.org/index.php/Gateway_Status',
@@ -138,7 +139,6 @@ $helppages = array(
 	'pkg_mgr.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_install.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
 	'pkg_mgr_installed.php' => 'https://doc.pfsense.org/index.php/Package_Manager',
-	'pkg_mgr_settings.php' => 'https://doc.pfsense.org/index.php/Package_Manager_Settings',
 	'interfaces.php' => 'https://doc.pfsense.org/index.php/Interface_Settings',
 	'interfaces_assign.php' => 'https://doc.pfsense.org/index.php/Assign_Interfaces',
 	'interfaces_bridge.php' => 'https://doc.pfsense.org/index.php/Interface_Bridges',
@@ -177,10 +177,7 @@ $helppages = array(
 	'system_advanced_network.php' => 'https://doc.pfsense.org/index.php/Advanced_Setup#Firewall.2FNAT',
 	'system_advanced_notifications.php' => 'https://doc.pfsense.org/index.php/Advanced_Setup#Notifications',
 	'system_advanced_sysctl.php' => 'https://doc.pfsense.org/index.php/Advanced_Setup#System_Tunables',
-	'system_firmware.php' => 'https://doc.pfsense.org/index.php/Firmware_Updates',
-	'system_firmware_auto.php' => 'https://doc.pfsense.org/index.php/Firmware_Updates',
-	'system_firmware_check.php' => 'https://doc.pfsense.org/index.php/Firmware_Updates',
-	'system_firmware_settings.php' => 'https://doc.pfsense.org/index.php/Firmware_Updates',
+	'system_update_settings.php' => 'https://doc.pfsense.org/index.php/Firmware_Updates',
 	'system_gateway_groups.php' => 'https://doc.pfsense.org/index.php/Gateway_Settings',
 	'system_gateway_groups_edit.php' => 'https://doc.pfsense.org/index.php/Gateway_Settings',
 	'system_gateways.php' => 'https://doc.pfsense.org/index.php/Gateway_Settings',
@@ -201,17 +198,17 @@ $helppages = array(
 	'vpn_l2tp.php' => 'https://doc.pfsense.org/index.php/L2TP_VPN_Settings',
 	'vpn_l2tp_users.php' => 'https://doc.pfsense.org/index.php/L2TP_VPN_Settings',
 	'vpn_l2tp_users_edit.php' => 'https://doc.pfsense.org/index.php/L2TP_VPN_Settings',
-	'vpn_pppoe.php' => 'https://doc.pfsense.org/index.php/PPPoE_Server_Settings',
-	'vpn_pppoe_edit.php' => 'https://doc.pfsense.org/index.php/PPPoE_Server_Settings',
+	'services_pppoe.php' => 'https://doc.pfsense.org/index.php/PPPoE_Server_Settings',
+	'services_pppoe_edit.php' => 'https://doc.pfsense.org/index.php/PPPoE_Server_Settings',
 	'vpn_pptp.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Settings',
 	'vpn_pptp_users.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Settings',
 	'vpn_pptp_users_edit.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Settings',
-	'diag_ipsec.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
-	'diag_ipsec_sad.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
-	'diag_ipsec_spd.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
+	'status_ipsec.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
+	'status_ipsec_sad.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
+	'status_ipsec_spd.php' => 'https://doc.pfsense.org/index.php/IPsec_Status',
 	'vpn_ipsec.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_mobile.php' => 'https://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
-	'diag_ipsec_leases.php' => 'https://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
+	'status_ipsec_leases.php' => 'https://doc.pfsense.org/index.php/IPsec_Mobile_Clients',
 	'vpn_ipsec_phase1.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_phase2.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
 	'vpn_ipsec_keys.php' => 'https://doc.pfsense.org/index.php/IPsec_Tunnels',
@@ -247,10 +244,6 @@ $helppages = array(
 	'system_crlmanager.php' => 'https://doc.pfsense.org/index.php/Certificate_Management',
 	'crash_reporter.php' => 'https://doc.pfsense.org/index.php/Unexpected_Reboot_Troubleshooting',
 	'diag_dump_states_sources.php' => 'https://doc.pfsense.org/index.php/Show_Source_Tracking',
-	'diag_logs_gateways.php' => 'https://doc.pfsense.org/index.php/Gateway_Logs',
-	'diag_logs_resolver.php' => 'https://doc.pfsense.org/index.php/Resolver_Logs',
-	'diag_logs_routing.php' => 'https://doc.pfsense.org/index.php/Routing_Logs',
-	'diag_logs_wireless.php' => 'https://doc.pfsense.org/index.php/Wireless_Logs',
 	'diag_ndp.php' => 'https://doc.pfsense.org/index.php/NDP_Table',
 	'diag_sockets.php' => 'https://doc.pfsense.org/index.php/Diag_Sockets',
 	'diag_testport.php' => 'https://doc.pfsense.org/index.php/Test_Port',
@@ -263,7 +256,6 @@ $helppages = array(
 	'status_ntpd.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'services_ntpd_gps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
 	'services_ntpd_pps.php' => 'https://doc.pfsense.org/index.php/NTP_Server',
-	'system_firmware_restorefullbackup.php' => 'https://doc.pfsense.org/index.php/Full_Backup',
 	'load_balancer_monitor.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_monitor_edit.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing',
 	'load_balancer_pool.php' => 'https://doc.pfsense.org/index.php/Inbound_Load_Balancing#Set_up_Load_Balancing_Pool',
@@ -278,7 +270,7 @@ $helppages = array(
 	'services_dhcpv6.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_dhcpv6_edit.php' => 'https://doc.pfsense.org/index.php/DHCPv6_Server',
 	'services_router_advertisements.php' => 'https://doc.pfsense.org/index.php/Router_Advertisements',
-	'carp_status.php' => 'https://doc.pfsense.org/index.php/CARP_Status',
+	'status_carp.php' => 'https://doc.pfsense.org/index.php/CARP_Status',
 	'system_hasync.php' => 'https://doc.pfsense.org/index.php/High_Availability',
 	'services_unbound.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
 	'services_unbound_advanced.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver#Advanced_Settings_Tab',
@@ -287,7 +279,7 @@ $helppages = array(
 	'services_unbound_host_edit.php' => 'https://doc.pfsense.org/index.php/Unbound_DNS_Resolver',
 	'diag_gmirror.php' => 'https://doc.pfsense.org/index.php/Create_a_Software_RAID1_%28gmirror%29',
 
-	/* From here down are packages. Not checking these as strictly, 
+	/* From here down are packages. Not checking these as strictly,
 	any information is better than nothing. */
 	'olsrd.xml' => 'https://doc.pfsense.org/index.php/OLSR_Daemon',
 	'routed.xml' => 'https://doc.pfsense.org/index.php/Routing_Information_Protocol_(RIP)', # RIP

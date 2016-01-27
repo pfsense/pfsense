@@ -3,12 +3,11 @@
 	services_dhcp_relay.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  22003-2004 Justin Ellison <justin@techadvise.com>
- *  Copyright (c)  22010 	Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2003-2004 Justin Ellison <justin@techadvise.com>
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -54,20 +53,16 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	dhcprelay
-*/
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcprelay
-##|*NAME=Services: DHCP Relay page
+##|*NAME=Services: DHCP Relay
 ##|*DESCR=Allow access to the 'Services: DHCP Relay' page.
 ##|*MATCH=services_dhcp_relay.php*
 ##|-PRIV
 
 require("guiconfig.inc");
-require_once('classes/Form.class.php');
-
+require_once("filter.inc");
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
 
 if (empty($config['dhcrelay']['interface'])) {
@@ -105,8 +100,9 @@ if (is_array($config['dhcpd'])) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
-	
+
 	$pconfig = $_POST;
 
 	/* input validation */
@@ -117,16 +113,18 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		$svrlist = '';
-		
+
 		if ($_POST['server']) {
-			foreach($_POST['server'] as $checksrv => $srv) {
-				if (!is_ipaddr($srv[0]))
+			foreach ($_POST['server'] as $checksrv => $srv) {
+				if (!is_ipaddr($srv[0])) {
 					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
-					
-				if(!empty($srv[0])) { // Filter out any empties
-					if(!empty($svrlist))
+				}
+
+				if (!empty($srv[0])) { // Filter out any empties
+					if (!empty($svrlist)) {
 						$svrlist .= ',';
-											
+					}
+
 					$svrlist .= $srv[0];
 				}
 			}
@@ -135,38 +133,41 @@ if ($_POST) {
 
 	// Now $svrlist is a comma separated list of servers ready to save to the config system
 	$pconfig['server'] = $svrlist;
-	
+
 	if (!$input_errors) {
 		$config['dhcrelay']['enable'] = $_POST['enable'] ? true : false;
 		$config['dhcrelay']['interface'] = implode(",", $_POST['interface']);
 		$config['dhcrelay']['agentoption'] = $_POST['agentoption'] ? true : false;
-		$config['dhcrelay']['server'] = $pconfig['server'];
+		$config['dhcrelay']['server'] = $svrlist;
 
 		write_config();
 
 		$retval = 0;
 		$retval = services_dhcrelay_configure();
 		$savemsg = get_std_save_message($retval);
-
+		filter_configure();
 	}
 }
 
-$closehead = false;
+$pconfig['server'] = $config['dhcrelay']['server'];
+
 $pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
 include("head.inc");
 
 if ($dhcpd_enabled) {
-	echo '<div class="alert alert-danger">DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.</div>';
+	echo '<div class="alert alert-danger">' . gettext("DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.") . '</div>';
 	include("foot.inc");
 	exit;
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $form = new Form;
 
@@ -191,7 +192,6 @@ $section->addInput(new Form_Checkbox(
 	'agentoption',
 	'',
 	'Append circuit ID and agent ID to requests',
-	'yes',
 	$pconfig['agentoption']
 ))->setHelp(
 	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
@@ -199,25 +199,24 @@ $section->addInput(new Form_Checkbox(
 );
 
 //Small function to prevent duplicate code
-function createDestinationServerInputGroup($value = null)
-{
+function createDestinationServerInputGroup($value = null) {
 	$group = new Form_Group('Destination server');
 
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
 		$value
-	))->setWidth(4)->setHelp(
-		'This is the IP address of the server to which DHCP requests are relayed.'
-	)->setIsRepeated();
-	
+	))->setWidth(4)
+	  ->setHelp('This is the IP address of the server to which DHCP requests are relayed.')
+	  ->setIsRepeated();
+
 	$group->enableDuplication(null, true); // Buttons are in-line with the input
 	return $group;
 }
 
-if (!isset($pconfig['server']) || count($pconfig['server']) < 1)
+if (!isset($pconfig['server'])) {
 	$section->add(createDestinationServerInputGroup());
-else {
+} else {
 	foreach (explode(',', $pconfig['server']) as $server) {
 			$section->add(createDestinationServerInputGroup($server));
 	}

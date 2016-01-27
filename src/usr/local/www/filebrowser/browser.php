@@ -3,7 +3,6 @@
 require_once("guiconfig.inc");
 
 /*
-	pfSense_MODULE:	shell
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 
 */
@@ -46,16 +45,16 @@ if (is_file($path)) {
 ?>
 <table width="100%">
 	<tr>
-		<td class="fbHome" width="25px" align="left">
-			<img onClick="jQuery('#fbTarget').val('<?=$realDir?>'); fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
+		<td class="fbHome text-left" width="25px">
+			<img onClick="$('#fbTarget').val('<?=$realDir?>'); fbBrowse('/');" src="/filebrowser/images/icon_home.gif" alt="Home" title="Home" />
 		</td>
 		<td><b><?=$path;?></b></td>
-		<td class="fbClose" align="right">
-			<img onClick="jQuery('#fbBrowser').fadeOut();" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
+		<td class="fbClose text-right">
+			<img onClick="$('#fbBrowser').fadeOut();" border="0" src="/filebrowser/images/icon_cancel.gif" alt="Close" title="Close" />
 		</td>
 	</tr>
 	<tr>
-		<td id="fbCurrentDir" colspan="3" class="vexpl" align="left">
+		<td id="fbCurrentDir" colspan="3" class="vexpl text-left">
 <?php
 
 // ----- read contents -----
@@ -82,8 +81,8 @@ foreach ($dirs as $dir):
 ?>
 	<tr>
 		<td></td>
-		<td class="fbDir vexpl" id="<?=$realDir;?>" align="left">
-			<div onClick="jQuery('#fbTarget').val('<?=$realDir?>'); fbBrowse('<?=$realDir?>');">
+		<td class="fbDir vexpl text-left" id="<?=$realDir;?>">
+			<div onClick="$('#fbTarget').val('<?=$realDir?>'); fbBrowse('<?=$realDir?>');">
 				<img src="/filebrowser/images/folder_generic.gif" />
 				&nbsp;<?=$dir;?>
 			</div>
@@ -148,14 +147,14 @@ foreach ($files as $file):
 ?>
 	<tr>
 		<td></td>
-		<td class="fbFile vexpl" id="<?=$fqpn;?>" align="left">
+		<td class="fbFile vexpl text-left" id="<?=$fqpn;?>">
 			<?php $filename = str_replace("//","/", "{$path}/{$file}"); ?>
-			<div onClick="jQuery('#fbTarget').val('<?=$filename?>'); loadFile(); jQuery('#fbBrowser').fadeOut();">
+			<div onClick="$('#fbTarget').val('<?=$filename?>'); loadFile(); $('#fbBrowser').fadeOut();">
 				<img src="/filebrowser/images/file_<?=$type;?>.gif" alt="" title="">
 				&nbsp;<?=$file;?>
 			</div>
 		</td>
-		<td align="right" class="vexpl">
+		<td class="vexpl text-right">
 			<?=$size;?>
 		</td>
 	</tr>

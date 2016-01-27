@@ -1,56 +1,73 @@
 <?php
 /*
-	$Id: system_groupmanager.php
-	part of m0n0wall (http://m0n0.ch/wall)
-	part of pfSense
-
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Copyright (C) 2008 Shrew Soft Inc.
-	All rights reserved.
-
-	Copyright (C) 2005 Paul Taylor <paultaylor@winn-dixie.com>.
-	All rights reserved.
-
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	system_groupmanager.php
 */
-/*
-	pfSense_MODULE: auth
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ *	Copyright (c)  2008 Shrew Soft Inc
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager
-##|*NAME=System: Group manager page
+##|*NAME=System: Group manager
 ##|*DESCR=Allow access to the 'System: Group manager' page.
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("Group manager"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
@@ -226,7 +243,9 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
 		$privhtml .=		'</tr>';
+
 	}
 
 	$privhtml .=		'</tbody>';
@@ -242,10 +261,12 @@ function build_priv_table() {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-if ($savemsg)
-	print_info_box($savemsg);
+}
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -254,60 +275,67 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($_GET['act'] == "new" || $_GET['act'] == "edit"))
-{
+if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 ?>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover">
-			<thead>
-				<tr>
-					<th><?=gettext("Group name")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><?=gettext("Member Count")?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Group name")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Member Count")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
-	foreach($a_group as $i => $group):
-		if ($group["name"] == "all")
+	foreach ($a_group as $i => $group):
+		if ($group["name"] == "all") {
 			$groupcount = count($config['system']['user']);
-		else
+		} else {
 			$groupcount = count($group['member']);
+		}
 ?>
-				<tr>
-					<td>
-						<?=htmlspecialchars($group['name'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($group['description'])?>
-					</td>
-					<td>
-						<?=$groupcount?>
-					</td>
-					<td>
-						<a href="?act=edit&amp;groupid=<?=$i?>" class="btn btn-xs btn-primary">edit</a>
-						<?php if($group['scope'] != "system"): ?>
-							<a href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>" class="btn btn-xs btn-danger">delete</a>
-						<?php endif;?>
-					</td>
-				</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars($group['name'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($group['description'])?>
+						</td>
+						<td>
+							<?=$groupcount?>
+						</td>
+						<td>
+							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
+							<?php if ($group['scope'] != "system"): ?>
+								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
+							<?php endif;?>
+						</td>
+					</tr>
 <?php
 	endforeach;
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
+</div>
 
-	<nav class="action-buttons">
-		<a href="?act=new" class="btn btn-success">add new</a>
-	</nav>
+<nav class="action-buttons">
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 	include('foot.inc');
 	exit;
 }
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $form->setAction('system_groupmanager.php?act=edit');
 $form->addGlobal(new Form_Input(
@@ -335,8 +363,7 @@ if (isset($id) && $a_group[$id]){
 
 $section = new Form_Section('Group properties');
 
-if ($_GET['act'] != "new")
-{
+if ($_GET['act'] != "new") {
 	$section->addInput(new Form_StaticText(
 		'Defined by',
 		strtoupper($pconfig['gtype'])
@@ -350,8 +377,9 @@ $section->addInput($input = new Form_Input(
 	$pconfig['name']
 ));
 
-if ($pconfig['gtype'] == "system")
+if ($pconfig['gtype'] == "system") {
 	$input->setReadonly();
+}
 
 $section->addInput(new Form_Input(
 	'description',
@@ -361,8 +389,8 @@ $section->addInput(new Form_Input(
 ))->setHelp('Group description, for your own information only');
 
 $form->add($section);
-if ($pconfig['gid'] != 1998) // all users group
-{
+if ($pconfig['gid'] != 1998) { // all users group
+
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
@@ -372,10 +400,11 @@ if ($pconfig['gid'] != 1998) // all users group
 	$usersGroups = array();
 
 	foreach ($config['system']['user'] as $user) {
-		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members']))
+		if (is_array($pconfig['members']) && in_array($user['uid'], $pconfig['members'])) {
 			$usersGroups[ $user['uid'] ] = $user['name'];	// Add it to the user's list
-		else
+		} else {
 			$systemGroups[ $user['uid'] ] = $user['name']; // Add it to the 'not a member of' list
+		}
 	}
 
 	$group->add(new Form_Select(
@@ -413,8 +442,7 @@ if ($pconfig['gid'] != 1998) // all users group
 
 }
 
-if ($_GET['act'] != "new")
-{
+if ($_GET['act'] != "new") {
 	$section = new Form_Section('Assigned Privileges');
 
 	$section->addInput(new Form_StaticText(
@@ -428,9 +456,9 @@ if ($_GET['act'] != "new")
 
 print $form;
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Select every option in the specified multiselect
 	function AllServers(id, selectAll) {
@@ -444,9 +472,9 @@ events.push(function(){
 		var len = From.length;
 		var option, value;
 
-		if(len > 1) {
-			for(i=0; i<len; i++) {
-				if(From.eq(i).is(':selected')) {
+		if (len > 1) {
+			for (i=0; i<len; i++) {
+				if (From.eq(i).is(':selected')) {
 					option = From.eq(i).val();
 					value = From.eq(i).text();
 					To.append(new Option(value, option));
@@ -471,7 +499,7 @@ events.push(function(){
 	});
 
 	// On submit mark all the user's groups as "selected"
-	$('form').submit(function(){
+	$('form').submit(function() {
 		AllServers($('[name="members[]"] option'), true);
 	});
 });

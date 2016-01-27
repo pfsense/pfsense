@@ -1,38 +1,65 @@
 <?php
 /*
 	vpn_ipsec_phase2.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2005 Manuel Kasper <mk@neon1.net>.
-	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2008 Shrew Soft Inc
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-editphase2
-##|*NAME=VPN: IPsec: Edit Phase 2 page
+##|*NAME=VPN: IPsec: Edit Phase 2
 ##|*DESCR=Allow access to the 'VPN: IPsec: Edit Phase 2' page.
 ##|*MATCH=vpn_ipsec_phase2.php*
 ##|-PRIV
@@ -233,13 +260,15 @@ if ($_POST) {
 				$localid_data = ipsec_idinfo_to_cidr($name['localid'], false, $name['mode']);
 				$entered = array();
 				$entered['type'] = $pconfig['localid_type'];
-				
-				if (isset($pconfig['localid_address'])) 
-				    $entered['address'] = $pconfig['localid_address'];
-				    
-				if (isset($pconfig['localid_netbits'])) 
-				    $entered['netbits'] = $pconfig['localid_netbits'];
-				    
+
+				if (isset($pconfig['localid_address'])) {
+					$entered['address'] = $pconfig['localid_address'];
+				}
+
+				if (isset($pconfig['localid_netbits'])) {
+					$entered['netbits'] = $pconfig['localid_netbits'];
+				}
+
 				$entered_localid_data = ipsec_idinfo_to_cidr($entered, false, $pconfig['mode']);
 				if ($localid_data == $entered_localid_data) {
 					/* adding new p2 entry */
@@ -409,9 +438,11 @@ if ($_POST) {
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 2"), gettext("Mobile Client"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 2"));
+	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Edit Phase 2"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 2"));
+	$editing_mobile = false;
 }
 $shortcut_section = "ipsec";
 
@@ -437,7 +468,7 @@ function pconfig_to_ealgos(& $pconfig) {
 	return $ealgos;
 }
 
-function ealgos_to_pconfig(& $ealgos,& $pconfig) {
+function ealgos_to_pconfig(& $ealgos, & $pconfig) {
 
 	$pconfig['ealgos'] = array();
 	foreach ($ealgos as $algo_data) {
@@ -450,7 +481,7 @@ function ealgos_to_pconfig(& $ealgos,& $pconfig) {
 	return $ealgos;
 }
 
-function pconfig_to_idinfo($prefix,& $pconfig) {
+function pconfig_to_idinfo($prefix, & $pconfig) {
 
 	$type = $pconfig[$prefix."id_type"];
 	$address = $pconfig[$prefix."id_address"];
@@ -466,7 +497,7 @@ function pconfig_to_idinfo($prefix,& $pconfig) {
 	}
 }
 
-function idinfo_to_pconfig($prefix,& $idinfo,& $pconfig) {
+function idinfo_to_pconfig($prefix, & $idinfo, & $pconfig) {
 
 	switch ($idinfo['type']) {
 		case "address":
@@ -484,17 +515,16 @@ function idinfo_to_pconfig($prefix,& $idinfo,& $pconfig) {
 	}
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[0] = array(gettext("Tunnels"), !$editing_mobile, "vpn_ipsec.php");
+$tab_array[1] = array(gettext("Mobile Clients"), $editing_mobile, "vpn_ipsec_mobile.php");
 $tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 $form = new Form();
 
@@ -518,14 +548,15 @@ $group = new Form_Group('Local Network');
 $group->addClass('opt_localid');
 
 $subnetarray = get_configured_interface_with_descr();
-foreach($subnetarray as $ifname => $ifdescr)
+foreach ($subnetarray as $ifname => $ifdescr) {
 	$subnetarray[$ifname] = $ifdescr . ' subnet';
+}
 
 $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	array_merge(array('address' => 'Address', 'network' => 'Network'), $subnetarray)
+	['address' => gettext('Address'), 'network' => gettext('Network')] + $subnetarray
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(
@@ -540,11 +571,12 @@ $group = new Form_Group('NAT/BINAT translation');
 $group->addClass('opt_natid');
 
 $subnetarray = get_configured_interface_with_descr();
-foreach($subnetarray as $ifname => $ifdescr)
+foreach ($subnetarray as $ifname => $ifdescr) {
 	$subnetarray[$ifname] = $ifdescr . ' subnet';
+}
 
 // Tack none, address & network on the beginning
-$subnetarray = array('none' => gettext('None'), 'address' => 'Address', 'network' => 'Network') + $subnetarray;
+$subnetarray = array('none' => gettext('None'), 'address' => gettext('Address'), 'network' => gettext('Network')) + $subnetarray;
 
 $group->add(new Form_Select(
 	'natlocalid_type',
@@ -556,29 +588,31 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'natlocalid_address',
 	null,
-	$pconfig['localid_address']
+	$pconfig['natlocalid_address']
 ))->setHelp('Address')->addMask(natlocalid_netbits, $pconfig['natlocalid_netbits'], 128, 0);
 
 $group->setHelp('If NAT/BINAT is required on this network specify the address to be translated');
 $section->add($group);
 
-$group = new Form_Group('Remote Network');
-$group->addClass('opt_remoteid');
+if (!isset($pconfig['mobile'])) {
+	$group = new Form_Group('Remote Network');
+	$group->addClass('opt_remoteid');
 
-$group->add(new Form_Select(
-	'remoteid_type',
-	null,
-	$pconfig['remoteid_type'],
-	array('address' => 'Address', 'network' => 'Network')
-))->setHelp('Type');
+	$group->add(new Form_Select(
+		'remoteid_type',
+		null,
+		$pconfig['remoteid_type'],
+		array('address' => gettext('Address'), 'network' => gettext('Network'))
+	))->setHelp('Type');
 
-$group->add(new Form_IpAddress(
-	'remoteid_address',
-	null,
-	$pconfig['remoteid_address']
-))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits'], 128, 0);
+	$group->add(new Form_IpAddress(
+		'remoteid_address',
+		null,
+		$pconfig['remoteid_address']
+	))->setHelp('Address')->addMask(remoteid_netbits, $pconfig['remoteid_netbits'], 128, 0);
 
-$section->add($group);
+	$section->add($group);
+}
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -609,13 +643,11 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		'ealgos[]',
 		null,
 		$algodata['name'],
-		(is_array($pconfig['ealgos']) && in_array($algo,$pconfig['ealgos'])),
+		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
 	))->addClass('multi');
 
-
-
-	if(is_array($algodata['keysel'])) {
+	if (is_array($algodata['keysel'])) {
 		$list = array();
 		$key_hi = $algodata['keysel']['hi'];
 		$key_lo = $algodata['keysel']['lo'];
@@ -627,14 +659,15 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$group->add(new Form_Select(
 			'keylen_' . $algo,
 			null,
-			$keylen == $pconfig["keylen_".$algo],
-			array_merge(array('auto' => 'Auto'), $list)
+			$pconfig["keylen_".$algo],
+			['auto' => gettext('Auto')] + $list
 		));
 	}
 
 
-	if($i == $rows)
+	if ($i == $rows) {
 		$group->setHelp('Use 3DES for best compatibility or if you have a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
+	}
 
 	$i++;
 	$section->add($group);
@@ -647,7 +680,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		'halgos[]',
 		null,
 		$algoname,
-		(in_array($algo, $pconfig['halgos'])),
+		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
 	))->addClass('multi');
 }
@@ -659,7 +692,7 @@ $sm = (!isset($pconfig['mobile']) || !isset($a_client['pfs_group']));
 $section->addInput(new Form_Select(
 	'pfsgroup',
 	'PFS key group',
-	$pconfig['psgroup'],
+	$pconfig['pfsgroup'],
 	$sm ? $p2_pfskeygroups:array()
 ))->setHelp($sm ? '':'Set globally in mobile client options');
 
@@ -721,9 +754,9 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
-    // ---------- On changing "Mode" ----------------------------------------------------------------------------------
+	// ---------- On changing "Mode" ----------------------------------------------------------------------------------
 	function change_mode() {
 
 		value = $('#mode').val();
@@ -745,15 +778,14 @@ events.push(function(){
 		}
 	}
 
-    // ---------- On changing "NAT/BINAT" -----------------------------------------------------------------------------
+	// ---------- On changing "NAT/BINAT" -----------------------------------------------------------------------------
 	function typesel_change_natlocal(bits) {
 		var value = $('#mode').val();
 
 		if (typeof(bits) === "undefined") {
 			if (value === "tunnel") {
 				bits = 24;
-			}
-			else if (value === "tunnel6") {
+			} else if (value === "tunnel6") {
 				bits = 64;
 			}
 		}
@@ -772,11 +804,11 @@ events.push(function(){
 				break;
 			case 1: /* network */
 				disableInput('natlocalid_address', false);
-				
+
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(bits);
 				}
-				
+
 				disableInput('natlocalid_netbits', false);
 				break;
 			case 3: /* none */
@@ -786,25 +818,24 @@ events.push(function(){
 			default:
 				$('#natlocalid_address').val("");
 				disableInput('natlocalid_address', true);
-				
+
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(0);
 				}
-				
+
 				disableInput('natlocalid_netbits', true);
 				break;
 		}
 	}
 
-    // ---------- On changing "Local Network" -------------------------------------------------------------------------
+	// ---------- On changing "Local Network" -------------------------------------------------------------------------
 	function typesel_change_local(bits) {
 		var value = $('#mode').val();
 
 		if (typeof(bits) === "undefined") {
 			if (value === "tunnel") {
 				bits = 24;
-			}
-			else if (value === "tunnel6") {
+			} else if (value === "tunnel6") {
 				bits = 64;
 			}
 		}
@@ -823,11 +854,11 @@ events.push(function(){
 				break;
 			case 1: /* network */
 				disableInput('localid_address', false);
-				
+
 				if (address_is_blank) {
 					$('#localid_netbits').val(bits);
 				}
-				
+
 				disableInput('localid_netbits', false);
 				break;
 			case 3: /* none */
@@ -837,11 +868,11 @@ events.push(function(){
 			default:
 				$('#localid_address').val("");
 				disableInput('localid_address', true);
-				
+
 				if (address_is_blank) {
 					$('#localid_netbits').val(0);
 				}
-				
+
 				disableInput('localid_netbits', true);
 				break;
 		}
@@ -849,7 +880,7 @@ events.push(function(){
 
 <?php
 
-    // ---------- On changing "Remote Network" ------------------------------------------------------------------------
+	// ---------- On changing "Remote Network" ------------------------------------------------------------------------
 	if (!isset($pconfig['mobile'])): ?>
 
 		function typesel_change_remote(bits) {
@@ -859,8 +890,7 @@ events.push(function(){
 			if (typeof(bits) === "undefined") {
 				if (value === "tunnel") {
 					bits = 24;
-				}
-				else if (value === "tunnel6") {
+				} else if (value === "tunnel6") {
 					bits = 64;
 				}
 			}
@@ -879,11 +909,11 @@ events.push(function(){
 					break;
 				case 1: /* network */
 					disableInput('remoteid_address', false);
-					
+
 					if (address_is_blank) {
 						$('#remoteid_netbits').val(bits);
 					}
-					
+
 					disableInput('remoteid_netbits', false);
 					break;
 				case 3: /* none */
@@ -893,11 +923,11 @@ events.push(function(){
 				default:
 					$('#remoteid_address').val("");
 					disableInput('remoteid_address', true);
-					
+
 					if (address_is_blank) {
 						$('#remoteid_netbits').val(0);
 					}
-					
+
 					disableInput('remoteid_netbits', true);
 					break;
 			}
@@ -909,49 +939,7 @@ events.push(function(){
 			hideClass('encalg', ($('#proto').val() != 'esp'));
 	}
 
-	// ---------- Library of show/hide functions ----------------------------------------------------------------------
-
-	// Hides the <div> in which the specified input element lives so that the input,
-	// its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified group input element lives so that the input,
-	// its label and help text are hidden
-	function hideGroupInput(id, hide) {
-		if(hide)
-			$('#' + id).parent('div').addClass('hidden');
-		else
-			$('#' + id).parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox,
-	// its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------
+	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Protocol
 	$('#proto').click(function () {
@@ -978,7 +966,10 @@ events.push(function(){
 		change_mode();
 	});
 
-    // ---------- Iniatial page load ----------------------------------------------------------------------------------    
+	// ---------- On initial page load ------------------------------------------------------------
+	hideInput('ikeid', true);
+	hideInput('uniqid', true);
+
 	change_mode();
 	change_protocol();
 	typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);

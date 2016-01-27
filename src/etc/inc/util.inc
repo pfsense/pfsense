@@ -1,40 +1,60 @@
 <?php
 /*
 	util.inc
-	part of the pfSense project (https://www.pfsense.org)
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-
-/*
-	pfSense_BUILDER_BINARIES:	/bin/ps	/bin/kill	/usr/bin/killall	/sbin/ifconfig	/usr/bin/netstat
-	pfSense_BUILDER_BINARIES:	/usr/bin/awk	/sbin/dmesg		/sbin/ping /usr/local/sbin/gzsig	/usr/sbin/arp
-	pfSense_BUILDER_BINARIES:	/sbin/conscontrol	/sbin/devd	/bin/ps
-	pfSense_MODULE:	utils
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 /* kill a process by pid file */
 function killbypid($pidfile) {
@@ -372,7 +392,7 @@ function gen_subnetv4_max($ipaddr, $bits) {
 		if ($bits == 32) {
 			return $ipaddr;
 		}
-		return long2ip32(ip2long($ipaddr) | ~gen_subnet_mask_long($bits));
+		return long2ip32(ip2long($ipaddr) | (~gen_subnet_mask_long($bits) & 0xFFFFFFFF));
 	}
 	return "";
 }
@@ -401,17 +421,20 @@ function gen_subnet_mask($bits) {
 	return long2ip(gen_subnet_mask_long($bits));
 }
 
-/* Convert long int to IP address, truncating to 32-bits. */
+/* Convert long int to IPv4 address
+   Returns '' if not valid IPv4 (including if any bits >32 are non-zero) */
 function long2ip32($ip) {
 	return long2ip($ip & 0xFFFFFFFF);
 }
 
-/* Convert IP address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms. */
+/* Convert IPv4 address to long int, truncated to 32-bits to avoid sign extension on 64-bit platforms.
+   Returns '' if not valid IPv4. */
 function ip2long32($ip) {
 	return (ip2long($ip) & 0xFFFFFFFF);
 }
 
-/* Convert IP address to unsigned long int. */
+/* Convert IPv4 address to unsigned long int.
+   Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
 	return sprintf("%u", ip2long32($ip));
 }
@@ -502,73 +525,127 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 	return $rangeaddresses;
 }
 
-/* Convert a range of IPv4 addresses to an array of subnets which can contain the range. */
-/* Note: IPv6 ranges are not yet supported here. */
-function ip_range_to_subnet_array($startip, $endip) {
-	if (!is_ipaddrv4($startip) || !is_ipaddrv4($endip)) {
+/* 	Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
+	Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
+
+	Documented on pfsense dev list 19-20 May 2013. Summary:
+
+	The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
+	These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
+
+	As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
+	to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
+
+	(a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
+	represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
+	low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
+	adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
+	Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
+	low bits can now be ignored.
+
+	(b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
+	*always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
+	_always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
+	in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
+	We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
+	range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
+*/
+
+function ip_range_to_subnet_array($ip1, $ip2) {
+
+	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2)) {
+		$proto = 'ipv4';  // for clarity
+		$bits = 32;
+		$ip1bin = decbin(ip2long32($ip1));
+		$ip2bin = decbin(ip2long32($ip2));
+	} elseif (is_ipaddrv6($ip1) && is_ipaddrv6($ip2)) {
+		$proto = 'ipv6';
+		$bits = 128;
+		$ip1bin = Net_IPv6::_ip2Bin($ip1);
+		$ip2bin = Net_IPv6::_ip2Bin($ip2);
+	} else {
 		return array();
 	}
 
-	if (ip_greater_than($startip, $endip)) {
-		// Swap start and end so we can process sensibly.
-		$temp = $startip;
-		$startip = $endip;
-		$endip = $temp;
+	// it's *crucial* that binary strings are guaranteed the expected length;  do this for certainty even though for IPv6 it's redundant
+	$ip1bin = str_pad($ip1bin, $bits, '0', STR_PAD_LEFT);
+	$ip2bin = str_pad($ip2bin, $bits, '0', STR_PAD_LEFT);
+
+	if ($ip1bin == $ip2bin) {
+		return array($ip1 . '/' . $bits); // exit if ip1=ip2 (trivial case)
 	}
 
-	// Container for subnets within this range.
+	if ($ip1bin > $ip2bin) {
+		list ($ip1bin, $ip2bin) = array($ip2bin, $ip1bin);  // swap if needed (ensures ip1 < ip2)
+	}
+
 	$rangesubnets = array();
+	$netsize = 0;
 
-	// Figure out what the smallest subnet is that holds the number of IPs in the given range.
-	$cidr = find_smallest_cidr_v4(ip_range_size_v4($startip, $endip));
+	do {
+		// at loop start, $ip1 is guaranteed strictly less than $ip2 (important for edge case trapping and preventing accidental binary wrapround)
+		// which means the assignments $ip1 += 1 and $ip2 -= 1 will always be "binary-wrapround-safe"
 
-	// Loop here to reduce subnet size and retest as needed. We need to make sure
-	//   that the target subnet is wholly contained between $startip and $endip.
-	for ($cidr; $cidr <= 32; $cidr++) {
-		// Find the network and broadcast addresses for the subnet being tested.
-		$targetsub_min = gen_subnet($startip, $cidr);
-		$targetsub_max = gen_subnet_max($startip, $cidr);
+		// step #1 if start ip (as shifted) ends in any '1's, then it must have a single cidr to itself (any cidr would include the '0' below it)
 
-		// Check best case where the range is exactly one subnet.
-		if (($targetsub_min == $startip) && ($targetsub_max == $endip)) {
-			// Hooray, the range is exactly this subnet!
-			return array("{$startip}/{$cidr}");
+		if (substr($ip1bin, -1, 1) == '1') {
+			// the start ip must be in a separate one-IP cidr range
+			$new_subnet_ip = substr($ip1bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			$n = strrpos($ip1bin, '0');  //can't be all 1's
+			$ip1bin = ($n == 0 ? '' : substr($ip1bin, 0, $n)) . '1' . str_repeat('0', $bits - $n - 1);  // BINARY VERSION OF $ip1 += 1
 		}
 
-		// These remaining scenarios will find a subnet that uses the largest
-		//  chunk possible of the range being tested, and leave the rest to be
-		//  tested recursively after the loop.
+		// step #2, if end ip (as shifted) ends in any zeros then that must have a cidr to itself (as cidr cant span the 1->0 gap)
 
-		// Check if the subnet begins with $startip and ends before $endip
-		if (($targetsub_min == $startip) && ip_less_than($targetsub_max, $endip)) {
-			break;
+		if (substr($ip2bin, -1, 1) == '0') {
+			// the end ip must be in a separate one-IP cidr range
+			$new_subnet_ip = substr($ip2bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			$n = strrpos($ip2bin, '1');  //can't be all 0's
+			$ip2bin = ($n == 0 ? '' : substr($ip2bin, 0, $n)) . '0' . str_repeat('1', $bits - $n - 1);  // BINARY VERSION OF $ip2 -= 1
+			// already checked for the edge case where end = start+1 and start ends in 0x1, above, so it's safe
 		}
 
-		// Check if the subnet ends at $endip and starts after $startip
-		if (ip_greater_than($targetsub_min, $startip) && ($targetsub_max == $endip)) {
-			break;
+		// this is the only edge case arising from increment/decrement.
+		// it happens if the range at start of loop is exactly 2 adjacent ips, that spanned the 1->0 gap. (we will have enumerated both by now)
+
+		if ($ip2bin < $ip1bin) {
+			continue;
 		}
 
-		// Check if the subnet is between $startip and $endip
-		if (ip_greater_than($targetsub_min, $startip) && ip_less_than($targetsub_max, $endip)) {
-			break;
+		// step #3 the start and end ip MUST now end in '0's and '1's respectively
+		// so we have a non-trivial range AND the last N bits are no longer important for CIDR purposes.
+
+		$shift = $bits - max(strrpos($ip1bin, '0'), strrpos($ip2bin, '1'));  // num of low bits which are '0' in ip1 and '1' in ip2
+		$ip1bin = str_repeat('0', $shift) . substr($ip1bin, 0, $bits - $shift);
+		$ip2bin = str_repeat('0', $shift) . substr($ip2bin, 0, $bits - $shift);
+		$netsize += $shift;
+		if ($ip1bin == $ip2bin) {
+			// we're done.
+			$new_subnet_ip = substr($ip1bin, $netsize, $bits - $netsize) . str_repeat('0', $netsize);
+			$rangesubnets[$new_subnet_ip] = $bits - $netsize;
+			continue;
+		}
+
+		// at this point there's still a remaining range, and either startip ends with '1', or endip ends with '0'. So repeat cycle.
+	} while ($ip1bin < $ip2bin);
+
+	// subnets are ordered by bit size. Re sort by IP ("naturally") and convert back to IPv4/IPv6
+
+	ksort($rangesubnets, SORT_STRING);
+	$out = array();
+
+	foreach ($rangesubnets as $ip => $netmask) {
+		if ($proto == 'ipv4') {
+			$i = str_split($ip, 8);
+			$out[] = implode('.', array(bindec($i[0]), bindec($i[1]), bindec($i[2]), bindec($i[3]))) . '/' . $netmask;
+		} else {
+			$out[] = Net_IPv6::compress(Net_IPv6::_bin2Ip($ip)) . '/' . $netmask;
 		}
 	}
 
-	// Some logic that will recursively search from $startip to the first IP before the start of the subnet we just found.
-	// NOTE: This may never be hit, the way the above algo turned out, but is left for completeness.
-	if ($startip != $targetsub_min) {
-		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array($startip, ip_before($targetsub_min)));
-	}
-
-	// Add in the subnet we found before, to preserve ordering
-	$rangesubnets[] = "{$targetsub_min}/{$cidr}";
-
-	// And some more logic that will search after the subnet we found to fill in to the end of the range.
-	if ($endip != $targetsub_max) {
-		$rangesubnets = array_merge($rangesubnets, ip_range_to_subnet_array(ip_after($targetsub_max), $endip));
-	}
-	return $rangesubnets;
+	return $out;
 }
 
 /* returns true if $range is a valid pair of IPv4 or IPv6 addresses separated by a "-"
@@ -738,12 +815,10 @@ function subnet_size($subnet) {
 	if (is_subnetv4($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (32 - $bits)));
-	}
-	else if (is_subnetv6($subnet)) {
+	} else if (is_subnetv6($subnet)) {
 		list ($ip, $bits) = explode("/", $subnet);
 		return round(exp(log(2) * (128 - $bits)));
-	}
-	else {
+	} else {
 		return 0;
 	}
 }
@@ -772,36 +847,44 @@ function subnetv4_expand($subnet) {
 	return $result;
 }
 
-/* find out whether two subnets overlap */
+/* find out whether two IPv4/IPv6 CIDR subnets overlap.
+   Note: CIDR overlap implies one is identical or included so largest sn will be the same */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
-
-	if (!is_numeric($bits1)) {
-		$bits1 = 32;
-	}
-	if (!is_numeric($bits2)) {
-		$bits2 = 32;
-	}
-
-	if ($bits1 < $bits2) {
-		$relbits = $bits1;
+	if (is_ipaddrv4($subnet1)) {
+		return check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2);
 	} else {
-		$relbits = $bits2;
+		return check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2);
 	}
-
-	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
-	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
-
-	return ($sn1 == $sn2);
 }
 
-/* find out whether two IPv6 subnets overlap */
-function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$sub1_min = gen_subnetv6($subnet1, $bits1);
-	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
-	$sub2_min = gen_subnetv6($subnet2, $bits2);
-	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+/* find out whether two IPv4 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
+	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
+	
+	if($subnetv4_start1 == '' || $subnetv4_start2 == '') {
+		// One or both args is not a valid IPv4 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv4_start1 == $subnetv4_start2);
+}
 
-	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+/* find out whether two IPv6 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
+	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
+	
+	if($subnetv6_start1 == '' || $subnetv6_start2 == '') {
+		// One or both args is not a valid IPv6 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv6_start1 == $subnetv6_start2);
 }
 
 /* return true if $addr is in $subnet, false if not */
@@ -830,12 +913,12 @@ function is_unqualified_hostname($hostname) {
 }
 
 /* returns true if $hostname is a valid hostname, with or without being a fully-qualified domain name. */
-function is_hostname($hostname) {
+function is_hostname($hostname, $allow_wildcard=false) {
 	if (!is_string($hostname)) {
 		return false;
 	}
 
-	if (is_domain($hostname)) {
+	if (is_domain($hostname, $allow_wildcard)) {
 		if ((substr_count($hostname, ".") == 1) && ($hostname[strlen($hostname)-1] == ".")) {
 			/* Only a single dot at the end like "test." - hosts cannot be directly in the root domain. */
 			return false;
@@ -848,12 +931,17 @@ function is_hostname($hostname) {
 }
 
 /* returns true if $domain is a valid domain name */
-function is_domain($domain) {
+function is_domain($domain, $allow_wildcard=false) {
 	if (!is_string($domain)) {
 		return false;
 	}
+	if ($allow_wildcard) {
+		$domain_regex = '/^(?:(?:[a-z_0-9\*]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i';
+	} else {
+		$domain_regex = '/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i';
+	}
 
-	if (preg_match('/^(?:(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9])\.)*(?:[a-z_0-9]|[a-z_0-9][a-z_0-9\-]*[a-z_0-9\.])$/i', $domain)) {
+	if (preg_match($domain_regex, $domain)) {
 		return true;
 	} else {
 		return false;
@@ -1010,51 +1098,57 @@ function get_configured_carp_interface_list($carpinterface = '', $family = 'inet
 
 	$iflist = array();
 
-	if (is_array($config['virtualip']['vip'])) {
-		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip) {
-			switch ($vip['mode']) {
-				case "carp":
-					if (!empty($carpinterface)) {
-						if ($carpinterface == "_vip{$vip['uniqid']}") {
-							switch ($what) {
-								case 'subnet':
-									if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-										return $vip['subnet_bits'];
-									} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-										return $vip['subnet_bits'];
-									}
-									break;
-								case 'iface':
-									if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-										return $vip['interface'];
-									} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-										return $vip['interface'];
-									}
-									break;
-								case 'vip':
-									if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-										return $vip;
-									} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-										return $vip;
-									}
-									break;
-								case 'ip':
-								default:
-									if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-										return $vip['subnet'];
-									} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-										return $vip['subnet'];
-									}
-									break;
-							}
-						}
-					} else {
-						$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
-					}
-					break;
-			}
+	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
+		return $iflist;
+	}
+
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] != "carp") {
+			continue;
 		}
+
+		if (empty($carpinterface)) {
+			$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
+			continue;
+		}
+
+		if ($carpinterface != "_vip{$vip['uniqid']}") {
+			continue;
+		}
+
+		switch ($what) {
+			case 'subnet':
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
+					return $vip['subnet_bits'];
+				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
+					return $vip['subnet_bits'];
+				}
+				break;
+			case 'iface':
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
+					return $vip['interface'];
+				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
+					return $vip['interface'];
+				}
+				break;
+			case 'vip':
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
+					return $vip;
+				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
+					return $vip;
+				}
+				break;
+			case 'ip':
+			default:
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
+					return $vip['subnet'];
+				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
+					return $vip['subnet'];
+				}
+				break;
+		}
+		break;
 	}
 
 	return $iflist;
@@ -1092,7 +1186,7 @@ function get_configured_vips_list() {
 		$viparr = &$config['virtualip']['vip'];
 		foreach ($viparr as $vip) {
 			if ($vip['mode'] == "carp") {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "{$vip['interface']}_vip{$vip['vhid']}");
+				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "_vip{$vip['uniqid']}");
 			} else {
 				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
 			}
@@ -1420,67 +1514,54 @@ function exec_command($command) {
 	return(implode("\n", $output));
 }
 
-/* wrapper for exec() */
-function mwexec($command, $mute = false, $clearsigmask = false) {
+/* wrapper for exec()
+   Executes in background or foreground.
+   For background execution, returns PID of background process to allow calling code control */
+function mwexec($command, $nologentry = false, $clearsigmask = false, $background = false) {
 	global $g;
+	$retval = 0;
 
 	if ($g['debug']) {
 		if (!$_SERVER['REMOTE_ADDR']) {
-			echo "mwexec(): $command\n";
+			echo "mwexec(): $command" . ($background ? " [BG]":"") . "\n";
 		}
 	}
-	$oarr = array();
-	$retval = 0;
-
 	if ($clearsigmask) {
 		$oldset = array();
 		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
 	}
-	$garbage = exec("$command 2>&1", $oarr, $retval);
+
+	if ($background) {
+		// start background process and return PID
+		$retval = exec("/usr/bin/nohup $command > /dev/null 2>&1 & echo $!");
+	} else {
+		// run in foreground, and (optionally) log if nonzero return
+		$outputarray = array();
+		exec("$command 2>&1", $outputarray, $retval);
+		if (($retval <> 0) && (!$nologentry || isset($config['system']['developerspew']))) {
+			log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, implode(" ", $outputarray)));
+		}
+	}
+
 	if ($clearsigmask) {
 		pcntl_sigprocmask(SIG_SETMASK, $oldset);
 	}
 
-	if (isset($config['system']['developerspew'])) {
-		$mute = false;
-	}
-	if (($retval <> 0) && ($mute === false)) {
-		$output = implode(" ", $oarr);
-		log_error(sprintf(gettext("The command '%1\$s' returned exit code '%2\$d', the output was '%3\$s' "), $command, $retval, $output));
-		unset($output);
-	}
-	unset($oarr);
 	return $retval;
 }
 
 /* wrapper for exec() in background */
 function mwexec_bg($command, $clearsigmask = false) {
-	global $g;
-
-	if ($g['debug']) {
-		if (!$_SERVER['REMOTE_ADDR']) {
-			echo "mwexec(): $command\n";
-		}
-	}
-
-	if ($clearsigmask) {
-		$oldset = array();
-		pcntl_sigprocmask(SIG_SETMASK, array(), $oldset);
-	}
-	$_gb = exec("/usr/bin/nohup $command > /dev/null 2>&1 &");
-	if ($clearsigmask) {
-		pcntl_sigprocmask(SIG_SETMASK, $oldset);
-	}
-	unset($_gb);
+	return mwexec($command, false, $clearsigmask, true);
 }
 
-/* unlink a file, if it exists */
+/* unlink a file, or pattern-match of a file, if it exists
+   if the file/path contains glob() compatible wildcards, all matching files will be unlinked
+   if no matches, no error occurs */
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
-	if (is_array($to_do)) {
-		foreach ($to_do as $filename) {
-			@unlink($filename);
-		}
+	if (is_array($to_do) && count($to_do) > 0) {
+		@array_map("unlink", $to_do);
 	} else {
 		@unlink($fn);
 	}
@@ -1556,17 +1637,6 @@ function alias_expand_urltable($name) {
 		}
 	}
 	return null;
-}
-
-/* verify (and remove) the digital signature on a file - returns 0 if OK */
-function verify_digital_signature($fname) {
-	global $g;
-
-	if (!file_exists("/usr/local/sbin/gzsig")) {
-		return 4;
-	}
-
-	return mwexec("/usr/local/sbin/gzsig verify {$g['etc_path']}/pubkey.pem < " . escapeshellarg($fname));
 }
 
 /* obtain MAC address given an IP address by looking at the ARP table */
@@ -2191,32 +2261,6 @@ function array_exclude($needle, $haystack) {
 	return $result;
 }
 
-function get_current_theme() {
-	global $config, $g;
-	/*
-	 *   if user has selected a custom template, use it.
-	 *   otherwise default to pfsense template
-	 */
-	if (($g["disablethemeselection"] === true) && !empty($g["default_theme"]) && (is_dir($g["www_path"].'/themes/'.$g["default_theme"]))) {
-		$theme = $g["default_theme"];
-	} elseif ($config['theme'] <> "" && (is_dir($g["www_path"].'/themes/'.$config['theme']))) {
-		$theme = $config['theme'];
-	} else {
-		$theme = "pfsense";
-	}
-	/*
-	 *  If this device is an apple ipod/iphone
-	 *  switch the theme to one that works with it.
-	 */
-	$lowres_ua = array("iPhone", "iPod", "iPad", "Android", "BlackBerry", "Opera Mini", "Opera Mobi", "PlayBook", "IEMobile");
-	foreach ($lowres_ua as $useragent) {
-		if (strstr($_SERVER['HTTP_USER_AGENT'], $useragent)) {
-			$theme = (empty($g['theme_lowres']) && (is_dir($g["www_path"].'/themes/'.$g['theme_lowres']))) ? "pfsense" : $g['theme_lowres'];
-		}
-	}
-	return $theme;
-}
-
 /* Define what is preferred, IPv4 or IPv6 */
 function prefer_ipv4_or_ipv6() {
 	global $config;
@@ -2238,7 +2282,12 @@ function post_redirect($page, $params) {
 	foreach ($params as $key => $value) {
 		print "<input type=\"hidden\" name=\"{$key}\" value=\"{$value}\" />\n";
 	}
-	print "</form><script type=\"text/javascript\">document.formredir.submit();</script>\n";
+	print "</form>\n";
+	print "<script type=\"text/javascript\">\n";
+	print "//<![CDATA[\n";
+	print "document.formredir.submit();\n";
+	print "//]]>\n";
+	print "</script>\n";
 	print "</body></html>\n";
 }
 

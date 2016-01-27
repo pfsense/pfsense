@@ -1,15 +1,12 @@
 <?php
-/* $Id$ */
-/* NEW
+/*
 	firewall_shaper_queues.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2004, 2005 Scott Ullrich
- *  Copyright (c)  2008 Ermal Luçi
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +52,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/usr/bin/killall
-	pfSense_MODULE: shaper
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-queues
-##|*NAME=Firewall: Traffic Shaper: Queues page
+##|*NAME=Firewall: Traffic Shaper: Queues
 ##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Queues' page.
 ##|*MATCH=firewall_shaper_queues.php*
 ##|-PRIV
@@ -132,12 +125,12 @@ if ($_GET) {
 			 */
 			foreach ($altq_list_queues as $altq) {
 				$qtmp =& $altq->find_queue("", $qname);
-				
+
 				if ($qtmp) {
 					$copycfg = array();
 					$qtmp->copy_queue($interface, $copycfg);
 					$aq =& $altq_list_queues[$interface];
-					
+
 					if ($qname == $qtmp->GetInterface()) {
 						$config['shaper']['queue'][] = $copycfg;
 					} else if ($aq) {
@@ -163,8 +156,9 @@ if ($_GET) {
 						$config['shaper']['queue'][] = $newroot;
 					}
 
-					if (write_config())
+					if (write_config()) {
 						mark_subsystem_dirty('shaper');
+					}
 
 					break;
 					}
@@ -180,17 +174,19 @@ if ($_GET) {
 				if ($altq) {
 					$qtmp =& $altq->find_queue("", $qname);
 
-					if ($qtmp)
+					if ($qtmp) {
 						$output .= $qtmp->build_shortform();
-					else
+					} else {
 						$output .= build_iface_without_this_queue($if, $qname);
-
+					}
 				} else {
-					if (!is_altq_capable($ifdesc['if']))
+					if (!is_altq_capable($ifdesc['if'])) {
 						continue;
+					}
 
-					if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan")
+					if (!isset($ifdesc['enable']) && $if != "lan" && $if != "wan") {
 						continue;
+					}
 
 					$output .= build_iface_without_this_queue($if, $qname);
 				}
@@ -208,8 +204,10 @@ if ($_POST['apply']) {
 	$savemsg = get_std_save_message($retval);
 	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
+		$class = 'alert-success';
 	} else {
 		$savemsg = $retval;
+		$class = 'alert-danger';
 	}
 
 	/* reset rrd queues */
@@ -220,31 +218,31 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = gettext("Firewall: Shaper: By Queues View");
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
-$closehead = false;
 
 include("head.inc");
 ?>
 
-<link rel="stylesheet" type="text/css" media="all" href="./tree/tree.css" />
 <script type="text/javascript" src="./tree/tree.js"></script>
 
 <?php
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
-	print_info_box($savemsg);
+if ($savemsg) {
+	print_info_box($savemsg, $class);
+}
 
-if (is_subsystem_dirty('shaper'))
-	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+if (is_subsystem_dirty('shaper')) {
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), true, "firewall_shaper_queues.php");
 $tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
-$tab_array[] = array(gettext("Layer7"), false, "firewall_shaper_layer7.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
@@ -252,7 +250,7 @@ display_top_tabs($tab_array);
 
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 	<div class="panel panel-default">
-		<div class="panel-heading" align="center"><h2 class="panel-title"><?=$qname?></h2></div>
+		<div class="panel-heading text-center"><h2 class="panel-title"><?=$qname?></h2></div>
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="col-sm-2 ">
@@ -267,5 +265,5 @@ display_top_tabs($tab_array);
 </form>
 
 <?php
-
 include("foot.inc");
+?>

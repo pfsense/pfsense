@@ -3,13 +3,11 @@
 	diag_tables.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2010 Jim Pingle
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *	Portions borrowed from diag_dump_states.php
- *	Copyright (c) 2010 Scott Ullrich
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -17,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -38,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,14 +53,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-tables
-##|*NAME=Diagnostics: PF Table IP addresses
+##|*NAME=Diagnostics: pf Table IP addresses
 ##|*DESCR=Allow access to the 'Diagnostics: Tables' page.
 ##|*MATCH=diag_tables.php*
 ##|-PRIV
@@ -88,7 +82,7 @@ if ($_REQUEST['delete']) {
 	exit;
 }
 
-if ($_POST['deleteall']) {
+if ($_POST['clearall']) {
 	exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T show", $entries);
 	if (is_array($entries)) {
 		foreach ($entries as $entryA) {
@@ -96,6 +90,7 @@ if ($_POST['deleteall']) {
 			exec("/sbin/pfctl -t " . escapeshellarg($tablename) . " -T delete " . escapeshellarg($entry), $delete);
 		}
 	}
+	unset($entries);
 }
 
 if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
@@ -107,15 +102,18 @@ if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
 		$loading = true;
 		while ($loading == true) {
 			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-			if ($isrunning == "")
+			if ($isrunning == "") {
 				$loading = false;
+			}
 			$maxtimetowait++;
-			if ($maxtimetowait > 89)
+			if ($maxtimetowait > 89) {
 				$loading = false;
+			}
 			sleep(1);
 		}
-		if ($maxtimetowait < 90)
+		if ($maxtimetowait < 90) {
 			$savemsg = gettext("The bogons database has been updated.");
+		}
 	}
 }
 
@@ -124,28 +122,68 @@ exec("/sbin/pfctl -sT", $tables);
 
 include("head.inc");
 
-if ($savemsg)
-	print_info_box($savemsg);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
 
-require_once('classes/Form.class.php');
-$form = new Form('Show');
+if ($tablename == "webConfiguratorlockout") {
+	$displayname = gettext("Web configurator lockout table");
+} else {
+	$displayname = sprintf(gettext("%s table"), ucfirst($tablename));
+}
+
+$form = new Form(false);
 
 $section = new Form_Section('Table to display');
+$group = new Form_Group("Table");
 
-$section->addInput(new Form_Select(
+$group->add(new Form_Select(
 	'type',
-	'Table',
+	null,
 	$tablename,
 	array_combine($tables, $tables)
 ));
 
+if ($bogons || !empty($entries)) {
+	if ($bogons) {
+		$group->add(new Form_Button(
+			'Download',
+			'Update'
+		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+	} elseif (!empty($entries)) {
+		$group->add(new Form_Button(
+			'clearall',
+			'Clear Table'
+		))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+	}
+}
+
+$section->add($group);
 $form->add($section);
 print $form;
+
+if ($bogons || !empty($entries)) {
+?>
+<div>
+	<div class="infoblock blockopen">
+<?php
+	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
+	if ($last_updated != "") {
+		print_info_box(gettext("Table last updated on ") . $last_updated, 'info', false);
+	} else {
+		print_info_box(gettext("Date of last update of table is unknown"), 'info', false);
+	}
+?>
+	</div>
+</div>
+<?php
+}
 ?>
 
-<script>
-events.push(function(){
-	$('a[data-entry]').on('click', function(){
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 
 		$.ajax(
@@ -156,72 +194,57 @@ events.push(function(){
 					type: '<?=htmlspecialchars($tablename)?>',
 					delete: $(this).data('entry')
 				},
-				success: function(){
+				success: function() {
 					el.parents('tr').remove();
 				},
 		});
 	});
+
+	// Auto-submit the form on table selector change
+	$('#type').on('change', function() {
+        $('form').submit();
+    });
 });
+//]]>
 </script>
 
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext("IP Address")?></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=$displayname?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("IP Address")?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 		foreach ($entries as $entry):
 			$entry = trim($entry);
 ?>
-			<tr>
-				<td>
-					<?=$entry?>
-				</td>
-				<td>
-					<?php if (!$bogons): ?>
-						<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>">Remove</a>
-					<?php endif ?>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=$entry?>
+						</td>
+						<td>
+							<?php if (!$bogons): ?>
+								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>"><?=gettext("Remove")?></a>
+							<?php endif ?>
+						</td>
+					</tr>
 <?php endforeach ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
+
 <?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert">No entries exist in this table</div>
+	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
 <?php endif ?>
 
 <?php
-
-if ($bogons || !empty($entries)) {
-	$form = new Form;
-
-	$section = new Form_Section('Table Data');
-
-	if ($bogons) {
-		$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
-
-		$section->addInput(new Form_StaticText(
-			'Last update',
-			$last_updated
-		));
-
-		$section->addInput(new Form_Button(
-			'Download',
-			'Download'
-		))->setHelp('Download the latest bogon data')->addClass('btn-warning');
-	} elseif (!empty($entries)) {
-		$section->addInput(new Form_Button(
-			'deleteall',
-			'Clear Table'
-		))->setHelp('Clear all of the entries in this table')->addClass('btn-danger');
-	}
-
-	$form->add($section);
-	print $form;
-}
 
 include("foot.inc");

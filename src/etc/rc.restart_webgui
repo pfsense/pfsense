@@ -10,11 +10,11 @@ require_once("rrd.inc");
 
 echo "Restarting webConfigurator...";
 
-sigkillbyname("lighttpd", "KILL");
+/* Stop all running nginx processes */
+$pidfiles = glob("{$g['varrun_path']}/nginx*.pid");
 
-while (is_process_running("lighttpd")) {
-	echo '.';
-	sleep(1);
+foreach ($pidfiles as $pidfile) {
+	killbypid($pidfile);
 }
 
 system_webgui_start();

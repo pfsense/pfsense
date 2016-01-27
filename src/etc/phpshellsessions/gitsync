@@ -48,7 +48,7 @@ while (!empty($temp_args)) {
 		switch ($arg) {
 			case "--help":
 				echo "Usage: playback gitsync [options] [[repository] <branch>]\nOptions:\n";
-				foreach($valid_args as $arg_name => $arg_desc) {
+				foreach ($valid_args as $arg_name => $arg_desc) {
 					echo $arg_name . "\n" . $arg_desc;
 				}
 				exit;
@@ -218,7 +218,7 @@ if (!$args[0] && !$upgrading) {
 	} while (!empty($merge_repo));
 }
 
-if ($branch == "RESTORE" && $g['platform'] == "pfSense") {
+if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
 	if (!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
 		conf_mount_ro();
@@ -305,33 +305,28 @@ if (isset($args["--minimal"])) {
 // Save new commit ID for later minimal file copies
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
 
-exec("mkdir -p /tmp/lighttpd/cache/compress/");
-
-// Nuke CVS and pfSense tarballs
-exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name CVS -exec rm -rf {} \; 2>/dev/null");
-exec("cd ${CODIR}/pfSenseGITREPO/pfSenseGITREPO && find . -name pfSense.tgz -exec rm {} \; 2>/dev/null");
-
 // Remove files that we do not want to overwrite the system with
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/crontab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/master.passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/passwd 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/ttys 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/group 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/fstab 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/platform 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/device.hints 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.conf 2>/dev/null");
-exec("rm ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/boot/loader.rc 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/conf*");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/cf 2>/dev/null");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.shrc");
-exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.tcshrc");
-exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/master.passwd");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/passwd");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/ttys");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/group");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/fstab");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/platform");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/device.hints");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.conf");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/boot/loader.rc");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/syslog.conf");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.shrc");
+@unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/root/.tcshrc");
+exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
+exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
+@chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 01777);
 
 echo "===> Installing new files...\n";
 
-if ($g['platform'] == "pfSense") {
+if ($g['platform'] == $g['product_name']) {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
 } else {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
@@ -362,7 +357,7 @@ if (!$upgrading) {
 echo "===> Checkout complete.\n";
 echo "\n";
 if (!$upgrading) {
-	echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
+	echo "Your system is now sync'd and PHP and nginx will be restarted in 5 seconds.\n\n";
 } else {
 	echo "Your system is now sync'd.\n\n";
 }
@@ -384,7 +379,7 @@ function post_cvssync_commands() {
 
 	if (file_exists("/etc/rc.php_ini_setup")) {
 		echo "===> Running /etc/rc.php_ini_setup...";
-		exec("/etc/rc.php_ini_setup");
+		exec("/etc/rc.php_ini_setup >/dev/null 2>&1");
 		echo "\n";
 	}
 
@@ -392,16 +387,13 @@ function post_cvssync_commands() {
 	echo "===> Locking down the console if needed...\n";
 	reload_ttys();
 
-	echo "===> Signaling PHP and Lighty restart...";
-	$fd = fopen("/tmp/restart_lighty", "w");
+	echo "===> Signaling PHP and nginx restart...";
+	$fd = fopen("/tmp/restart_nginx", "w");
 	fwrite($fd, "#!/bin/sh\n");
 	fwrite($fd, "sleep 5\n");
 	fwrite($fd, "/usr/local/sbin/pfSctl -c 'service restart webgui'\n");
-	if (file_exists("/var/etc/lighty-CaptivePortal.conf")) {
-		fwrite($fd, "/usr/local/sbin/lighttpd -f /var/etc/lighty-CaptivePortal.conf\n");
-	}
 	fclose($fd);
-	mwexec_bg("sh /tmp/restart_lighty");
+	mwexec_bg("sh /tmp/restart_nginx");
 	echo "\n";
 
 }

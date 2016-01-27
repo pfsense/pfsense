@@ -26,7 +26,7 @@ class plain_sasl_client_class
 
 	Function Start(&$client, &$message, &$interactions)
 	{
-		if ($this->state!=SASL_PLAIN_STATE_START)
+		if($this->state!=SASL_PLAIN_STATE_START)
 		{
 			$client->error="PLAIN authentication state is not at the start";
 			return(SASL_FAIL);
@@ -42,9 +42,9 @@ class plain_sasl_client_class
 			"mode"=>""
 		);
 		$status=$client->GetCredentials($this->credentials,$defaults,$interactions);
-		if ($status==SASL_CONTINUE)
+		if($status==SASL_CONTINUE)
 		{
-			switch ($this->credentials["mode"])
+			switch($this->credentials["mode"])
 			{
 				case SASL_PLAIN_EXIM_MODE:
 					$message=$this->credentials["user"]."\0".$this->credentials["password"]."\0";
@@ -65,11 +65,11 @@ class plain_sasl_client_class
 
 	Function Step(&$client, $response, &$message, &$interactions)
 	{
-		switch ($this->state)
+		switch($this->state)
 		{
 /*
 			case SASL_PLAIN_STATE_IDENTIFY:
-				switch ($this->credentials["mode"])
+				switch($this->credentials["mode"])
 				{
 					case SASL_PLAIN_EXIM_MODE:
 						$message=$this->credentials["user"]."\0".$this->credentials["password"]."\0";

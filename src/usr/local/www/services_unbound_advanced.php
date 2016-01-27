@@ -1,14 +1,13 @@
 <?php
-/* $Id$ */
 /*
 	services_unbound_advanced.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  22015	Warren Baker (warren@percol8.co.za)
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *  Copyright (c)  2015  Warren Baker (warren@percol8.co.za)
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -54,15 +53,12 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE: dnsresolver
-*/
 
 ##|+PRIV
-##|*IDENT=page-services-unbound
-##|*NAME=Services: DNS Resolver Advanced page
-##|*DESCR=Allow access to the 'Services: DNS Resolver Advanced' page.
-##|*MATCH=services_unbound.php*
+##|*IDENT=page-services-dnsresolver-advanced
+##|*NAME=Services: DNS Resolver: Advanced
+##|*DESCR=Allow access to the 'Services: DNS Resolver: Advanced' page.
+##|*MATCH=services_unbound_advanced.php*
 ##|-PRIV
 
 require_once("guiconfig.inc");
@@ -114,9 +110,6 @@ if (isset($config['unbound']['use_caps'])) {
 }
 
 if ($_POST) {
-	unset($input_errors);
-	$pconfig = $_POST;
-
 	if ($_POST['apply']) {
 		$retval = services_unbound_configure();
 		$savemsg = get_std_save_message($retval);
@@ -124,44 +117,47 @@ if ($_POST) {
 			clear_subsystem_dirty('unbound');
 		}
 	} else {
+		unset($input_errors);
+		$pconfig = $_POST;
+
 		if (isset($_POST['msgcachesize']) && !in_array($_POST['msgcachesize'], array('4', '10', '20', '50', '100', '250', '512'), true)) {
-			$input_errors[] = "A valid value for Message Cache Size must be specified.";
+			$input_errors[] = gettext("A valid value for Message Cache Size must be specified.");
 		}
 		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
+			$input_errors[] = gettext("A valid value must be specified for Outgoing TCP Buffers.");
 		}
-		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
+		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
+			$input_errors[] = gettext("A valid value must be specified for Incoming TCP Buffers.");
 		}
 		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
-			$input_errors[] = "A valid value must be specified for EDNS Buffer Size.";
+			$input_errors[] = gettext("A valid value must be specified for EDNS Buffer Size.");
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of queries per thread.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Queries per Thread.");
 		}
 		if (isset($_POST['jostle_timeout']) && !in_array($_POST['jostle_timeout'], array('100', '200', '500', '1000'), true)) {
-			$input_errors[] = "A valid value must be specified for Jostle Timeout.";
+			$input_errors[] = gettext("A valid value must be specified for Jostle Timeout.");
 		}
 		if (isset($_POST['cache_max_ttl']) && (!is_numericint($_POST['cache_max_ttl']) || ($_POST['cache_max_ttl'] < 0))) {
-			$input_errors[] = "'Maximum TTL for RRsets and messages' must be a positive integer.";
+			$input_errors[] = gettext("'Maximum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['cache_min_ttl']) && (!is_numericint($_POST['cache_min_ttl']) || ($_POST['cache_min_ttl'] < 0))) {
-			$input_errors[] = "'Minimum TTL for RRsets and messages' must be a positive integer.";
+			$input_errors[] = gettext("'Minimum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
-			$input_errors[] = "A valid value must be specified for TTL for Host cache entries.";
+			$input_errors[] = gettext("A valid value must be specified for TTL for Host Cache Entries.");
 		}
 		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Hosts to cache.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Hosts to Cache.");
 		}
 		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
-			$input_errors[] = "A valid value must be specified for Unwanted Reply Threshold.";
+			$input_errors[] = gettext("A valid value must be specified for Unwanted Reply Threshold.");
 		}
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
-			$input_errors[] = "A valid value must be specified for Log level verbosity.";
+			$input_errors[] = gettext("A valid value must be specified for Log Level.");
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
-			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
+			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
 		}
 
 		if (!$input_errors) {
@@ -215,17 +211,28 @@ if ($_POST) {
 				unset($config['unbound']['use_caps']);
 			}
 
-			write_config("DNS Resolver configured.");
+			write_config(gettext("DNS Resolver configured."));
 
 			mark_subsystem_dirty('unbound');
 		}
 	}
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced"));
 $shortcut_section = "resolver";
 include_once("head.inc");
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
+
+if (is_subsystem_dirty('unbound')) {
+	print_apply_box(gettext("The DNS Resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("General settings"), false, "services_unbound.php");
@@ -233,29 +240,27 @@ $tab_array[] = array(gettext("Advanced settings"), true, "services_unbound_advan
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
-require_once('classes/Form.class.php');
-
 $form = new Form();
 
 $section = new Form_Section('Advanced Resolver Options');
 
 $section->addInput(new Form_Checkbox(
 	'hideidentity',
-	'Hide identity',
+	'Hide Identity',
 	'id.server and hostname.bind queries are refused',
 	$pconfig['hideidentity']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'hideversion',
-	'Hide version',
+	'Hide Version',
 	'version.server and version.bind queries are refused',
 	$pconfig['hideversion']
 ));
 
 $section->addInput(new Form_Checkbox(
 	'prefetch',
-	'Prefetch support',
+	'Prefetch Support',
 	'Message cache elements are prefetched before they expire to help keep the cache up to date',
 	$pconfig['prefetch']
 ))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache');
@@ -263,41 +268,41 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'prefetchkey',
 	'Prefetch DNS Key Support',
-	'DNSKEYs are fetched earlier in the validation process when a  Delegation signer is encountered',
+	'DNSKEYs are fetched earlier in the validation process when a Delegation signer is encountered',
 	$pconfig['prefetchkey']
 ))->setHelp('This helps lower the latency of requests but does utilize a little more CPU. See: <a href="http://en.wikipedia.org/wiki/List_of_DNS_record_types">Wikipedia</a>');
 
 $section->addInput(new Form_Checkbox(
 	'dnssecstripped',
-	'Harden DNSSEC data',
+	'Harden DNSSEC Data',
 	'DNSSEC data is required for trust-anchored zones.',
 	$pconfig['dnssecstripped']
 ))->setHelp('If such data is absent, the zone becomes bogus. If Disabled and no DNSSEC data is received, then the zone is made insecure. ');
 
 $section->addInput(new Form_Select(
 	'msgcachesize',
-	'Message Cache size',
+	'Message Cache Size',
 	$pconfig['msgcachesize'],
 	array_combine(array("4", "10", "20", "50", "100", "250", "512"), array("4 MB", "10 MB", "20 MB", "50 MB", "100 MB", "250 MB", "512 MB"))
-))->setHelp('Size of the message cache. The message cache stores DNS rcodes and validation statuses. The RRSet cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.');
+))->setHelp('Size of the message cache. The message cache stores DNS response codes and validation statuses. The Resource Record Set (RRSet) cache will automatically be set to twice this amount. The RRSet cache contains the actual RR data. The default is 4 megabytes.');
 
 $section->addInput(new Form_Select(
 	'outgoing_num_tcp',
 	'Outgoing TCP Buffers',
 	$pconfig['outgoing_num_tcp'],
 	array_combine(array("0", "10", "20", "30", "50", "50"), array("0", "10", "20", "30", "50", "50"))
-))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
+))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then TCP queries are not sent to authoritative servers.');
 
 $section->addInput(new Form_Select(
 	'incoming_num_tcp',
 	'Incoming TCP Buffers',
 	$pconfig['incoming_num_tcp'],
 	array_combine(array("0", "10", "20", "30", "50", "50"), array("0", "10", "20", "30", "50", "50"))
-))->setHelp('The number of outgoing TCP buffers to allocate per thread. The default value is 10. If 0 is selected then no TCP queries, to authoritative servers, are done.');
+))->setHelp('The number of incoming TCP buffers to allocate per thread. The default value is 10. If 0 is selected then TCP queries are not accepted from clients.');
 
 $section->addInput(new Form_Select(
 	'edns_buffer_size',
-	'EDNS Buffer size',
+	'EDNS Buffer Size',
 	$pconfig['edns_buffer_size'],
 	array_combine(array("512", "1480", "4096"), array("512", "1480", "4096"))
 ))->setHelp('Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. ' .
@@ -306,7 +311,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'num_queries_per_thread',
-	'Number of queries per thread',
+	'Number of Queries per Thread',
 	$pconfig['num_queries_per_thread'],
 	array_combine(array("512", "1024", "2048"), array("512", "1024", "2048"))
 ))->setHelp('The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped');
@@ -320,57 +325,60 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'cache_max_ttl',
-	'Maximum TTL for RRsets and messages',
+	'Maximum TTL for RRsets and Messages',
 	'text',
 	$pconfig['cache_max_ttl']
-))->setHelp('Configure a maximum Time to live for RRsets and messages in the cache. The default is 86400 seconds (1 day). ' .
+))->setHelp('The Maximum Time to Live for RRsets and messages in the cache. The default is 86400 seconds (1 day). ' .
 			'When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values');
 
 $section->addInput(new Form_Input(
 	'cache_min_ttl',
-	'Minimum TTL for RRsets and messages',
+	'Minimum TTL for RRsets and Messages',
 	'text',
 	$pconfig['cache_min_ttl']
-))->setHelp('Configure a minimum Time to live for RRsets and messages in the cache. ' .
+))->setHelp('The Minimum Time to Live for RRsets and messages in the cache. ' .
 			'The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. ' .
 			'The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.');
 
+$mnt = gettext("minutes");
 $section->addInput(new Form_Select(
 	'infra_host_ttl',
-	'TTL for Host Cache entries',
+	'TTL for Host Cache Entries',
 	$pconfig['infra_host_ttl'],
-	array_combine(array("60", "120", "300", "600", "900"), array("1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"))
-))->setHelp('This timeout is used for when the server is very busy. This protects against denial of service by slow queries or high query rates. The default value is 200 milliseconds. ');
+	array_combine(array("60", "120", "300", "600", "900"), array("1 " . $mnt, "2  " . $mnt, "5  " . $mnt, "10 " . $mnt, "15 " . $mnt))
+))->setHelp('Time to Live, in seconds, for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
 
 $section->addInput(new Form_Select(
 	'infra_cache_numhosts',
 	'Number of Hosts to Cache',
 	$pconfig['infra_cache_numhosts'],
 	array_combine(array("1000", "5000", "10000", "20000", "50000"), array("1000", "5000", "10000", "20000", "50000"))
-))->setHelp('Number of hosts for which information is cached. The default is 10,000.');
+))->setHelp('Number of infrastructure hosts for which information is cached. The default is 10,000.');
 
+$mln = gettext("million");
 $section->addInput(new Form_Select(
 	'unwanted_reply_threshold',
 	'Unwanted Reply Threshold',
 	$pconfig['unwanted_reply_threshold'],
 	array_combine(array("disabled", "5000000", "10000000", "20000000", "40000000", "50000000"),
-				  array("Disabled", "5 million", "10 million", "20 million", "40 million", "50 million"))
+				  array("Disabled", "5 " . $mln, "10 " . $mln, "20 " . $mln, "40 " . $mln, "50 " . $mln))
 ))->setHelp('If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken ' .
 			'and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. ' .
 			'The default is disabled, but if enabled a value of 10 million is suggested.');
 
+$lvl = gettext("level");
 $section->addInput(new Form_Select(
 	'log_verbosity',
-	'Log level',
+	'Log Level',
 	$pconfig['log_verbosity'],
-	array_combine(array("0", "1", "2", "3", "4", "5"), array("Level 0", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"))
+	array_combine(array("0", "1", "2", "3", "4", "5"), array($lvl + " 0", $lvl + " 1", $lvl + " 2", $lvl + " 3", $lvl + " 4", $lvl + " 5"))
 ))->setHelp('Select the log verbosity.');
 
 $section->addInput(new Form_Checkbox(
 	'disable_auto_added_access_control',
-	'Disable auto-added access control',
+	'Disable Auto-added Access Control',
 	'disable the automatically-added access control entries',
-	$pconfig['hdisable_auto_added_access_control']
+	$pconfig['disable_auto_added_access_control']
 ))->setHelp('By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. ' .
 			'Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.');
 

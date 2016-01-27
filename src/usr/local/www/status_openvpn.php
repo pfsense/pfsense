@@ -1,44 +1,62 @@
 <?php
 /*
 	status_openvpn.php
-
-	Copyright (C) 2005 Scott Ullrich, Colin Smith
-	Copyright (C) 2008 Shrew Soft Inc.
-	Copyright (C) 2010 Jim Pingle
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	AJAX bits borrowed from diag_dump_states.php
-
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE:	openvpn
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2008 Shrew Soft Inc.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-openvpn
-##|*NAME=Status: OpenVPN page
+##|*NAME=Status: OpenVPN
 ##|*DESCR=Allow access to the 'Status: OpenVPN' page.
 ##|*MATCH=status_openvpn.php*
 ##|-PRIV
@@ -52,55 +70,18 @@ require_once("shortcuts.inc");
 require_once("service-utils.inc");
 
 /* Handle AJAX */
-if($_GET['action']) {
-	if($_GET['action'] == "kill") {
+if ($_GET['action']) {
+	if ($_GET['action'] == "kill") {
 		$port  = $_GET['port'];
 		$remipp  = $_GET['remipp'];
 		if (!empty($port) and !empty($remipp)) {
-			$retval = kill_client($port, $remipp);
+			$retval = openvpn_kill_client($port, $remipp);
 			echo htmlentities("|{$port}|{$remipp}|{$retval}|");
 		} else {
 			echo gettext("invalid input");
 		}
 		exit;
 	}
-}
-
-
-function kill_client($port, $remipp) {
-	global $g;
-
-	//$tcpsrv = "tcp://127.0.0.1:{$port}";
-	$tcpsrv = "unix://{$g['varetc_path']}/openvpn/{$port}.sock";
-	$errval = null;
-	$errstr = null;
-
-	/* open a tcp connection to the management port of each server */
-	$fp = @stream_socket_client($tcpsrv, $errval, $errstr, 1);
-	$killed = -1;
-	if ($fp) {
-		stream_set_timeout($fp, 1);
-		fputs($fp, "kill {$remipp}\n");
-		while (!feof($fp)) {
-			$line = fgets($fp, 1024);
-
-			$info = stream_get_meta_data($fp);
-			if ($info['timed_out']) {
-				break;
-			}
-
-			/* parse header list line */
-			if (strpos($line, "INFO:") !== false) {
-				continue;
-			}
-			if (strpos($line, "SUCCESS") !== false) {
-				$killed = 0;
-			}
-			break;
-		}
-		fclose($fp);
-	}
-	return $killed;
 }
 
 $servers = openvpn_get_active_servers();
@@ -115,14 +96,14 @@ include("head.inc"); ?>
 //<![CDATA[
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+			$(icon).bind("onclick","");
+			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
+			$(icon).css("cursor","wait");
 		}
 
-		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
+		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
-		jQuery.ajax(
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
 				"?action=kill&port=" + mport + "&remipp=" + remipp,
 			{ type: "get", complete: killComplete }
@@ -131,13 +112,13 @@ include("head.inc"); ?>
 
 	function killComplete(req) {
 		var values = req.responseText.split("|");
-		if(values[3] != "0") {
+		if (values[3] != "0") {
 			alert('<?=gettext("An error occurred.");?>' + ' (' + values[3] + ')');
 			return;
 		}
 
-		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -151,7 +132,7 @@ include("head.inc"); ?>
 <div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client connections')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Common Name")?></th>
@@ -160,10 +141,11 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
+						<th><!-- Icons --></th>
 					</tr>
 				</thead>
 				<tbody>
-					
+
 					<?php
 							foreach ($server['conns'] as $conn):
 					?>
@@ -176,10 +158,10 @@ include("head.inc"); ?>
 						<td><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
-							   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
 							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
-							<i class="icon icon-remove"></i>
+							<i class="fa fa-times"></i>
 							</a>
 						</td>
 					</tr>
@@ -189,16 +171,18 @@ include("head.inc"); ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td>
+						<td colspan="2">
 							<table>
 								<tr>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, true, true); ?>
-										<?= get_service_control_links($ssvc, true); ?>
+										<?= get_service_control_GET_links($ssvc, true); ?>
 									</td>
 								</tr>
 							</table>
+						</td>
+						<td colspan="5">
 						</td>
 					</tr>
 				</tfoot>
@@ -212,10 +196,10 @@ include("head.inc"); ?>
 	<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
 		<br /><br />
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default" id="tabroute-<?=$i?>" style="display: none;">
 		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext("Routing Table"); ?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Common Name"); ?></th>
@@ -223,7 +207,7 @@ include("head.inc"); ?>
 						<th><?=gettext("Target Network"); ?></th>
 						<th><?=gettext("Last Used"); ?></th>
 					</tr>
-				</thead>	
+				</thead>
 				<tbody>
 
 <?php
@@ -241,7 +225,7 @@ include("head.inc"); ?>
 				</tbody>
 				<tfoot>
 					<tr>
-						<td><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
+						<td colspan="4"><?= gettext("An IP address followed by C indicates a host currently connected through the VPN.") ?></td>
 					</tr>
 				</tfoot>
 			</table>
@@ -263,15 +247,16 @@ include("head.inc"); ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics"); ?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
-					<tr>  
+					<tr>
 						<th><?=gettext("Name"); ?></th>
+						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -294,7 +279,7 @@ include("head.inc"); ?>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_links($ssvc, true); ?>
+										<?= get_service_control_GET_links($ssvc, true); ?>
 									</td>
 								</tr>
 							</table>
@@ -318,16 +303,16 @@ include("head.inc"); ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics"); ?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
-					<tr>  
+					<tr>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -350,7 +335,7 @@ include("head.inc"); ?>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_links($ssvc, true); ?>
+										<?= get_service_control_GET_links($ssvc, true); ?>
 									</td>
 								</tr>
 							</table>
@@ -362,9 +347,9 @@ include("head.inc"); ?>
 				</tbody>
 			</table>
 		</div>
-</div>
+	</div>
 
-<?php 
+<?php
 }
 
 if ($DisplayNote) {
@@ -376,15 +361,17 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 }
 ?>
 </form>
-<?php include("fend.inc"); ?>
+
+<?php include("foot.inc"); ?>
+
 <script type="text/javascript">
 //<![CDATA[
+
 function show_routes(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
 	aodiv.style.display = "block";
 }
+
 //]]>
 </script>
-</body>
-</html>

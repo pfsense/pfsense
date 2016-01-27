@@ -178,7 +178,7 @@ class sasl_client_class
 			<purpose>Retrieve the values of one or more credentials to be used by
 				the authentication mechanism classes.</purpose>
 			<usage>This is meant to be used by authentication mechanism driver
-				classes to retrieve the credentials that may be needed.</usage>
+				classes to retrieve the credentials that may be neede.</usage>
 			<returnvalue>The function may return <tt>SASL_CONTINUE</tt> if it
 				succeeded, or <tt>SASL_NOMECH</tt> if it was not possible to
 				retrieve one of the requested credentials.</returnvalue>
@@ -359,7 +359,7 @@ class sasl_client_class
 		<type>INTEGER</type>
 		<documentation>
 			<purpose>Process the authentication steps after the initial step,
-				until the authentication iteration dialog is complete.</purpose>
+				until the authetication iteration dialog is complete.</purpose>
 			<usage>Call this function iteratively after a successful initial
 				step calling the <functionlink>Start</functionlink> function.</usage>
 			<returnvalue>The function returns <tt>SASL_CONTINUE</tt> if step was

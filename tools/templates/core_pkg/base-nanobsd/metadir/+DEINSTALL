@@ -1,0 +1,21 @@
+#!/bin/sh
+
+if [ "${2}" != "DEINSTALL" ]; then
+	exit 0
+fi
+
+echo "===> Keeping a copy of current version mtree"
+
+# Check if there is a current mtree to be saved
+if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree ]; then
+	echo "===> Current mtree file not found"
+	exit 1
+fi
+
+[ -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous ] \
+	&& rm -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
+
+cp -f /usr/local/share/%%PRODUCT_NAME%%/base.mtree \
+	/usr/local/share/%%PRODUCT_NAME%%/base.mtree.previous
+
+exit $?

@@ -1,35 +1,61 @@
 <?php
 /*
 	vpn_ipsec_settings.php
-
-	Copyright (C) 2015 Electric Sheep Fencing, LLC
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-vpn-ipsec-settings
-##|*NAME=VPN: IPsec: Settings page
+##|*NAME=VPN: IPsec: Settings
 ##|*DESCR=Allow access to the 'VPN: IPsec: Settings' page.
 ##|*MATCH=vpn_ipsec_settings.php*
 ##|-PRIV
@@ -41,11 +67,16 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-foreach ($ipsec_loglevels as $lkey => $ldescr) {
-	if (!empty($config['ipsec']["ipsec_{$lkey}"])) {
-		$pconfig["ipsec_{$lkey}"] = $config['ipsec']["ipsec_{$lkey}"];
+$def_loglevel = '1';
+
+foreach (array_keys($ipsec_log_cats) as $cat) {
+	if (isset($config['ipsec']['logging'][$cat])) {
+		$pconfig[$cat] = $config['ipsec']['logging'][$cat];
+	} else {
+		$pconfig[$cat] = $def_loglevel;
 	}
 }
+
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
@@ -58,76 +89,36 @@ $pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!in_array($pconfig['ipsec_dmn'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Daemon debug.";
+	foreach ($ipsec_log_cats as $cat => $desc) {
+		if (!in_array(intval($pconfig[$cat]), array_keys($ipsec_log_sevs), true)) {
+			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
+		}
 	}
-	if (!in_array($pconfig['ipsec_mgr'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for SA Manager debug.";
-	}
-	if (!in_array($pconfig['ipsec_ike'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IKE SA debug.";
-	}
-	if (!in_array($pconfig['ipsec_chd'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IKE Child SA debug.";
-	}
-	if (!in_array($pconfig['ipsec_job'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Job Processing debug.";
-	}
-	if (!in_array($pconfig['ipsec_cfg'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Configuration backend debug.";
-	}
-	if (!in_array($pconfig['ipsec_knl'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Kernel Interface debug.";
-	}
-	if (!in_array($pconfig['ipsec_net'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Networking debug.";
-	}
-	if (!in_array($pconfig['ipsec_asn'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for ASN Encoding debug.";
-	}
-	if (!in_array($pconfig['ipsec_enc'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Message encoding debug.";
-	}
-	if (!in_array($pconfig['ipsec_imc'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Integrity checker debug.";
-	}
-	if (!in_array($pconfig['ipsec_imv'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Integrity Verifier debug.";
-	}
-	if (!in_array($pconfig['ipsec_pts'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for Platform Trust Service debug.";
-	}
-	if (!in_array($pconfig['ipsec_tls'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for TLS Handler debug.";
-	}
-	if (!in_array($pconfig['ipsec_esp'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for IPsec Traffic debug.";
-	}
-	if (!in_array($pconfig['ipsec_lib'], array('0', '1', '2', '3', '4', '5'), true)) {
-		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
-	}
+
 	if (isset($pconfig['maxmss'])) {
 		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
-			$input_errors[] = "An integer must be specified for Maximum MSS.";
+			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
 		}
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
+			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
 	}
 
 	if (!$input_errors) {
 
-		foreach ($ipsec_loglevels as $lkey => $ldescr) {
-			if (empty($_POST["ipsec_{$lkey}"])) {
-				if (isset($config['ipsec']["ipsec_{$lkey}"])) {
-					unset($config['ipsec']["ipsec_{$lkey}"]);
-				}
-			} else {
-				$config['ipsec']["ipsec_{$lkey}"] = $_POST["ipsec_{$lkey}"];
+		/* log levels aren't set initially and use default. They all
+		 * get set when we save, even if it's to the default level.
+		 */
+		foreach (array_keys($ipsec_log_cats) as $cat) {
+			if (!isset($pconfig[$cat])) {
+				continue;
+			}
+			if ($pconfig[$cat] != $config['ipsec']['logging'][$cat]) {
+				$config['ipsec']['logging'][$cat] = $pconfig[$cat];
+				vpn_update_daemon_loglevel($cat, $pconfig[$cat]);
 			}
 		}
 
@@ -162,7 +153,7 @@ if ($_POST) {
 			$needsrestart = true;
 			unset($config['ipsec']['unityplugin']);
 		}
-		
+
 		if ($_POST['strictcrlpolicy'] == "yes") {
 			$config['ipsec']['strictcrlpolicy'] = true;
 		} elseif (isset($config['ipsec']['strictcrlpolicy'])) {
@@ -175,7 +166,9 @@ if ($_POST) {
 			unset($config['ipsec']['makebeforebreak']);
 		}
 
-		if ($_POST['noshuntlaninterfaces'] == "yes") {
+		// The UI deals with "Auto-exclude LAN address" but in the back-end we work with
+		// noshuntlaninterfaces which is the reverse true/false logic setting - #4655
+		if ($_POST['autoexcludelanaddress'] == "yes") {
 			if (isset($config['ipsec']['noshuntlaninterfaces'])) {
 				unset($config['ipsec']['noshuntlaninterfaces']);
 			}
@@ -217,27 +210,30 @@ if ($_POST) {
 		$retval = filter_configure();
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
+			$class = 'success';
 		} else {
 			$savemsg = gettext($retval);
+			$class = 'warning';
 		}
 
 		vpn_ipsec_configure($needsrestart);
-		vpn_ipsec_configure_loglevels();
 
 		header("Location: vpn_ipsec_settings.php");
 		return;
 	}
 
-	// The logic value sent by $POST is opposite to the way it is stored in the config.
+	// The logic value sent by $POST for autoexcludelanaddress is opposite to
+	// the way it is stored in the config as noshuntlaninterfaces.
 	// Reset the $pconfig value so it reflects the opposite of what was $POSTed.
-	if ($_POST['noshuntlaninterfaces'] == "yes") {
+	// This helps a redrawn UI page after Save to correctly display the most recently entered setting.
+	if ($_POST['autoexcludelanaddress'] == "yes") {
 		$pconfig['noshuntlaninterfaces'] = false;
 	} else {
 		$pconfig['noshuntlaninterfaces'] = true;
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Settings"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Advanced Settings"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -248,9 +244,9 @@ include("head.inc");
 
 function maxmss_checked(obj) {
 	if (obj.checked) {
-		jQuery('#maxmss').attr('disabled', false);
+		$('#maxmss').attr('disabled', false);
 	} else {
-		jQuery('#maxmss').attr('disabled', 'true');
+		$('#maxmss').attr('disabled', 'true');
 	}
 }
 
@@ -258,35 +254,31 @@ function maxmss_checked(obj) {
 </script>
 
 <?php
-	if ($savemsg) {
-		print_info_box($savemsg);
-	}
-	if ($input_errors) {
-		print_input_errors($input_errors);
-	}
-?>
+if ($savemsg) {
+	print_info_box($savemsg, $class);
+}
 
-<?php
+if ($input_errors) {
+	print_input_errors($input_errors);
+}
 
 $tab_array = array();
 $tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
-$tab_array[1] = array(gettext("Mobile clients"), false, "vpn_ipsec_mobile.php");
-$tab_array[2] = array(gettext("Pre-Shared Key"), false, "vpn_ipsec_keys.php");
+$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
+$tab_array[2] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[3] = array(gettext("Advanced Settings"), true, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
-require_once('classes/Form.class.php');
 $form = new Form;
 
 $section = new Form_Section('Start IPsec in debug mode based on sections selected');
 
-foreach ($ipsec_loglevels as $lkey => $ldescr)
-{
+foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
-		'ipsec_' . $lkey,
-		$ldescr,
-		$pconfig['ipsec_' . $lkey],
-		array('Silent', 'Audit', 'Control', 'Diag', 'Raw', 'Highest')
+		$cat,
+		$desc,
+		$pconfig[$cat],
+		$ipsec_log_sevs
 	))->setWidth(2);
 }
 
@@ -349,8 +341,9 @@ $section->addInput(new Form_Checkbox(
 $group = new Form_Group('Maximum MSS');
 $group->addClass('toggle-maxmss collapse');
 
-if (!empty($pconfig['maxmss_enable']))
+if (!empty($pconfig['maxmss_enable'])) {
 	$group->addClass('in');
+}
 
 $group->add(new Form_Input(
 	'maxmss',
@@ -366,17 +359,33 @@ $section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',
-	'Disable Cisco Extensions',
-	'Disable Unity Plugin',
+	'Enable Cisco Extensions',
+	'Enable Unity Plugin',
 	$pconfig['unityplugin']
-))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+))->setHelp('Enable Unity Plugin which provides Cisco Extension support such as Split-Include, Split-Exclude and Split-Dns.');
 
 $section->addInput(new Form_Checkbox(
-	'shuntlaninterfaces',
-	'Bypass LAN address',
-	'Enable bypass for LAN interface ip',
-	$pconfig['shuntlaninterfaces']
-))->setHelp('Prevent LAN ip address to be processed for IPsec traffic.');
+	'strictcrlpolicy',
+	'Strict CRL Checking',
+	'Enable strict Certificate Revocation List checking',
+	$pconfig['strictcrlpolicy']
+))->setHelp('Check this to require availability of a fresh CRL for peer authentication based on RSA signatures to succeed.');
+
+$section->addInput(new Form_Checkbox(
+	'makebeforebreak',
+	'Make before Break',
+	'Initiate IKEv2 reauthentication with a make-before-break',
+	$pconfig['makebeforebreak']
+))->setHelp('instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication ' .
+			'by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps ' .
+			'during reauthentication, but requires support for overlapping SAs by the peer');
+
+$section->addInput(new Form_Checkbox(
+	'autoexcludelanaddress',
+	'Auto-exclude LAN address',
+	'Enable bypass for LAN interface IP',
+	!$pconfig['noshuntlaninterfaces']
+))->setHelp('Exclude traffic from LAN subnet to LAN IP address from IPsec.');
 
 $form->add($section);
 

@@ -1,42 +1,69 @@
 <?php
 /*
 	traffic_graphs.widget.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-
-	Copyright 2007 Scott Dale
-	Part of pfSense widgets (https://www.pfsense.org)
-	originally based on m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
-	and Jonathan Watt <jwatt@jwatt.org>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2007 Scott Dale
+ *	Copyright (c)  2004-2005 T. Lechat <dev@lechat.org>, Manuel Kasper <mk@neon1.net>
+ *	and Jonathan Watt <jwatt@jwatt.org>.
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 $nocsrf = true;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
+require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;
@@ -54,25 +81,28 @@ if (!is_array($a_config["shown"]["item"])) {
 }
 
 $ifdescrs = get_configured_interface_with_descr();
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
 
 if ($_POST) {
-	if (isset($_POST["refreshinterval"])) {
+	if (isset($_POST["refreshinterval"]) && is_numericint($_POST["refreshinterval"])) {
 		$a_config["refreshinterval"] = $_POST["refreshinterval"];
 	}
+
 	if (isset($_POST["scale_type"])) {
 		$a_config["scale_type"] = $_POST["scale_type"];
 	}
+
 	$a_config["shown"]["item"] = array();
+
 	foreach ($ifdescrs as $ifname => $ifdescr) {
-		$state = $_POST["shown"][$ifname];
-		if ($state === "show") {
+		if (in_array($ifname, $_POST["shown"])) {
 			$a_config["shown"]["item"][] = $ifname;
 		}
 	}
-	write_config("Updated traffic graph settings via dashboard.");
+
+	write_config(gettext("Updated traffic graph settings via dashboard."));
 	header("Location: /");
 	exit(0);
 }
@@ -81,12 +111,13 @@ $shown = array();
 foreach ($a_config["shown"]["item"] as $if) {
 	$shown[$if] = true;
 }
+
 if ($first_time) {
 	$keys = array_keys($ifdescrs);
 	$shown[$keys[0]] = true;
 }
 
-if (isset($a_config["refreshinterval"])) {
+if (isset($a_config["refreshinterval"]) && is_numericint($a_config["refreshinterval"])) {
 	$refreshinterval = $a_config["refreshinterval"];
 } else {
 	$refreshinterval = 10;
@@ -99,6 +130,7 @@ if (isset($a_config["scale_type"])) {
 }
 
 $graphcounter = 0;
+
 foreach ($ifdescrs as $ifname => $ifdescr):
 	$ifinfo = get_interface_info($ifname);
 	if ($shown[$ifname]) {
@@ -113,49 +145,57 @@ foreach ($ifdescrs as $ifname => $ifdescr):
 		$graphdisplay = "none";
 		$interfacevalue = "hide";
 	}
+
 	if ($ifinfo['status'] != "down"):
 ?>
 	<div style="display:<?=$graphdisplay?>">
 		<object data="graph.php?ifnum=<?=$ifname?>&amp;ifname=<?=rawurlencode($ifdescr)?>&amp;timeint=<?=$refreshinterval?>&amp;initdelay=<?=$graphcounter * 2?>">
 			<param name="id" value="graph" />
 			<param name="type" value="image/svg+xml" />
-			<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 		</object>
 	</div>
 <?php endif; ?>
 <?php endforeach; ?>
 
 <!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div class="panel-footer collapse">
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/traffic_graphs.widget.php" method="post" class="form-horizontal">
-	<?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
-		<input type="hidden" name="shown[<?= $ifname?>]" value="<?= $shown[$ifname] ? "show" : "hide"?>" />
-	<?php endforeach; ?>
 	<div class="form-group">
-		<label for="scale_type_up" class="col-sm-3 control-label">Default Autoscale</label>
+		<label for="scale_type_up" class="col-sm-3 control-label"><?=gettext('Show graphs')?></label>
+		<div class="col-sm-6 checkbox">
+<?php foreach ($ifdescrs as $ifname => $ifdescr): ?>
+			<label>
+				<input type="checkbox" name="shown[<?= $ifname?>]" value="<?=$ifname?>" <?= ($shown[$ifname]) ? "checked":""?> />
+				<?=$ifdescr?>
+			</label>
+<?php endforeach; ?>
+		</div>
+	</div>
+	<div class="form-group">
+		<label for="scale_type_up" class="col-sm-3 control-label"><?=gettext('Default Autoscale')?></label>
 		<div class="col-sm-6 checkbox">
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? '' : 'checked="checked"')?> />
-				up
+				<input name="scale_type" type="radio" id="scale_type_up" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="up" ? '' : 'checked')?> />
+				<?=gettext('Up')?>
 			</label>
 			<label>
-				<input name="scale_type" type="radio" id="scale_type_follow" value="up" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked="checked"' : '')?> />
-				follow
+				<input name="scale_type" type="radio" id="scale_type_follow" value="follow" <?=($config["widgets"]["trafficgraphs"]["scale_type"]=="follow" ? 'checked' : '')?> />
+				<?=gettext('Follow')?>
 			</label>
 		</div>
 	</div>
 
 	<div class="form-group">
-		<label for="refreshinterval" class="col-sm-3 control-label">Refresh Interval</label>
+		<label for="refreshinterval" class="col-sm-3 control-label"><?=gettext('Refresh Interval')?></label>
 		<div class="col-sm-6">
-			<input type="number" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
+			<input type="number" id="refreshinterval" name="refreshinterval" value="<?=$refreshinterval?>" min="1" max="30" class="form-control" />
 		</div>
 	</div>
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-default">Save</button>
+			<button type="submit" class="btn btn-default"><?=gettext('Save')?></button>
 		</div>
 	</div>
 </form>

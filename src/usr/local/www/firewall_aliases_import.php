@@ -1,14 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_aliases_import.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
- *  Copyright (c)  2005 Scott Ullrich
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -16,12 +14,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -37,7 +35,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -54,13 +52,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_MODULE:	filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-alias-import
-##|*NAME=Firewall: Alias: Import page
+##|*NAME=Firewall: Alias: Import
 ##|*DESCR=Allow access to the 'Firewall: Alias: Import' page.
 ##|*MATCH=firewall_aliases_import.php*
 ##|-PRIV
@@ -100,7 +95,7 @@ if ($_POST['aliasimport'] != "") {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (is_validaliasname($_POST['name']) == false) {
-		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
+		$input_errors[] = sprintf(gettext("The alias name may only consist of the characters %s"), "a-z, A-Z, 0-9, _.");
 	}
 
 	/* check for name duplicates */
@@ -112,7 +107,7 @@ if ($_POST['aliasimport'] != "") {
 	/* Check for reserved keyword names */
 	foreach ($reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
-			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
 
@@ -193,10 +188,10 @@ if ($_POST['aliasimport'] != "") {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-require_once('classes/Form.class.php');
 $form = new Form;
 $section = new Form_Section('Alias details');
 

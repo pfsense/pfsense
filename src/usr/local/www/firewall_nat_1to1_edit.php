@@ -1,12 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat_1to1_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
- *	part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -38,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -55,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-1-1-edit
-##|*NAME=Firewall: NAT: 1:1: Edit page
+##|*NAME=Firewall: NAT: 1:1: Edit
 ##|*DESCR=Allow access to the 'Firewall: NAT: 1:1: Edit' page.
 ##|*MATCH=firewall_nat_1to1_edit.php*
 ##|-PRIV
@@ -69,6 +66,7 @@
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
+require_once("ipsec.inc");
 require("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
@@ -105,6 +103,7 @@ if (isset($_GET['dup'])) {
 }
 
 if (isset($id) && $a_1to1[$id]) {
+	$pconfig['nobinat'] = isset($a_1to1[$id]['nobinat']);
 	$pconfig['disabled'] = isset($a_1to1[$id]['disabled']);
 
 	address_to_pconfig($a_1to1[$id]['source'], $pconfig['src'],
@@ -142,13 +141,19 @@ if ($_POST) {
 		$temp = str_replace(">", "", $value);
 		$newpost = htmlentities($temp);
 
-		if ($newpost != $temp)
+		if ($newpost != $temp) {
 			$input_errors[] = sprintf(gettext("Invalid characters detected (%s).  Please remove invalid characters and save again."), $temp);
+		}
 	}
 
 	/* input validation */
-	$reqdfields = explode(" ", "interface external");
-	$reqdfieldsn = array(gettext("Interface"), gettext("External subnet"));
+	if (isset($_POST['nobinat'])) {
+		$reqdfields = explode(" ", "interface");
+		$reqdfieldsn = array(gettext("Interface"));
+	} else {
+		$reqdfields = explode(" ", "interface external");
+		$reqdfieldsn = array(gettext("Interface"), gettext("External subnet"));
+	}
 
 	if ($_POST['srctype'] == "single" || $_POST['srctype'] == "network") {
 		$reqdfields[] = "src";
@@ -237,6 +242,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$natent = array();
 
+		$natent['nobinat'] = isset($_POST['nobinat']) ? true:false;
 		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
 		$natent['external'] = $_POST['external'];
 		$natent['descr'] = $_POST['descr'];
@@ -278,15 +284,17 @@ include("head.inc");
 function build_srctype_list() {
 	global $pconfig, $ifdisp;
 
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	$sel = is_specialnet($pconfig['src']);
 
-	if (have_ruleint_access("pppoe"))
-		$list['pppoe'] = 'PPPoE clients';
+	if (have_ruleint_access("pppoe")) {
+		$list['pppoe'] = gettext('PPPoE clients');
+	}
 
-	if (have_ruleint_access("l2tp"))
-		$list['l2tp'] = 'L2TP clients';
+	if (have_ruleint_access("l2tp")) {
+		$list['l2tp'] = gettext('L2TP clients');
+	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
 		if (have_ruleint_access($ifent)) {
@@ -304,8 +312,9 @@ function srctype_selected() {
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
-		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask'])))
+		if (($pconfig['srcmask'] == 32) || (!isset($pconfig['srcmask']))) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -317,13 +326,15 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
-	if (have_ruleint_access("pppoe"))
-		$list['pppoe'] = 'PPPoE clients';
+	if (have_ruleint_access("pppoe")) {
+		$list['pppoe'] = gettext('PPPoE clients');
+	}
 
-	if (have_ruleint_access("l2tp"))
-		$list['l2tp'] = 'L2TP clients';
+	if (have_ruleint_access("l2tp")) {
+		$list['l2tp'] = gettext('L2TP clients');
+	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
 		if (have_ruleint_access($if)) {
@@ -334,8 +345,9 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand']))
+			if (isset($sn['noexpand'])) {
 				continue;
+			}
 
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
@@ -361,12 +373,14 @@ function dsttype_selected() {
 
 	$sel = is_specialnet($pconfig['dst']);
 
-	if (empty($pconfig['dst'] || $pconfig['dst'] == "any"))
+	if (empty($pconfig['dst']) || $pconfig['dst'] == "any") {
 		return('any');
+	}
 
 	if (!$sel) {
-		if ($pconfig['dstmask'] == 32)
+		if ($pconfig['dstmask'] == 32) {
 			return('single');
+		}
 
 		return('network');
 	}
@@ -374,10 +388,9 @@ function dsttype_selected() {
 	return($pconfig['dst']);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
-
-require_once('classes/Form.class.php');
+}
 
 $form = new Form(new Form_Button(
 	'Submit',
@@ -387,33 +400,46 @@ $form = new Form(new Form_Button(
 $section = new Form_Section('Edit NAT 1 to 1 entry');
 
 $section->addInput(new Form_Checkbox(
-	'nordr',
-	'No RDR (NOT)',
+	'nobinat',
+	'Negate',
+	'This rule will be excluded from the NAT',
+	$pconfig['nobinat']
+))->setHelp('Use this to exclude addresses from a rule that follows this one');
+
+$section->addInput(new Form_Checkbox(
+	'disabled',
+	'No BINAT (NOT)',
 	'Disable redirection for traffic matching this rule',
-	$pconfig['nordr']
+	$pconfig['disabled']
 ))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 
-foreach ($iflist as $if => $ifdesc)
-	if (have_ruleint_access($if))
+foreach ($iflist as $if => $ifdesc) {
+	if (have_ruleint_access($if)) {
 		$interfaces[$if] = $ifdesc;
+	}
+}
 
-if ($config['l2tp']['mode'] == "server")
-	if (have_ruleint_access("l2tp"))
-		$interfaces['l2tp'] = "L2TP VPN";
+if ($config['l2tp']['mode'] == "server") {
+	if (have_ruleint_access("l2tp")) {
+		$interfaces['l2tp'] = gettext("L2TP VPN");
+	}
+}
 
-if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-	$interfaces['pppoe'] = "PPPoE Server";
+if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
+	$interfaces['pppoe'] = gettext("PPPoE Server");
+}
 
 /* add ipsec interfaces */
-if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-	if (have_ruleint_access("enc0"))
-		$interfaces["enc0"] = "IPsec";
+if (ipsec_enabled() && have_ruleint_access("enc0")) {
+	$interfaces["enc0"] = gettext("IPsec");
+}
 
 /* add openvpn/tun interfaces */
-if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-	$interfaces["openvpn"] = "OpenVPN";
+if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
+	$interfaces["openvpn"] = gettext("OpenVPN");
+}
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -449,7 +475,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[0-9, a-z, A-Z and .');
+))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 				'The subnet size specified for the internal subnet will be applied to the external subnet.');
@@ -462,7 +488,7 @@ $group->add(new Form_Checkbox(
 	'dstnot',
 	null,
 	'Not',
-	$pconfig['srcnot']
+	$pconfig['dstnot']
 ))->setHelp('Invert the sense of the match.');
 
 $group->add(new Form_Select(
@@ -476,7 +502,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[0-9, a-z, A-Z and .');
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
 
 $group->setHelp('The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".');
 
@@ -494,9 +520,9 @@ $section->addInput(new Form_Select(
 	'NAT reflection',
 	$pconfig['natreflection'],
 	array(
-		'default' => 'Use system default',
-		'enable'  => 'Enable',
-		'disable' => 'Disable'
+		'default' => gettext('Use system default'),
+		'enable'  => gettext('Enable'),
+		'disable' => gettext('Disable')
 	)
 ));
 
@@ -507,7 +533,7 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Disables the specified input element
 	function disableInput(id, disable) {
@@ -552,7 +578,7 @@ events.push(function(){
 		}
 	}
 
-	// On-click . .
+	// ---------- Click checkbox handlers ---------------------------------------------------------
 
 	$('#srctype').click(function () {
 		typesel_change();
@@ -562,10 +588,12 @@ events.push(function(){
 		typesel_change();
 	});
 
-	// Initial page load
+	// ---------- On initial page load ------------------------------------------------------------
+
 	typesel_change();
 
-	// --------- Autocomplete -----------------------------------------------------------------------------------------
+	// ---------- Autocomplete --------------------------------------------------------------------
+
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;
 
 	$('#dst').autocomplete({

@@ -1,51 +1,70 @@
-#!/usr/local/bin/php
 <?php
-/* $Id$ */
 /*
 	status_queues.php
-	Part of the pfSense project
-	Copyright (C) 2004, 2005 Scott Ullrich
-	Copyright (C) 2009 Ermal Luçi
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE:	shaper
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficshaper-queues
-##|*NAME=Status: Traffic shaper: Queues page
+##|*NAME=Status: Traffic shaper: Queues
 ##|*DESCR=Allow access to the 'Status: Traffic shaper: Queues' page.
 ##|*MATCH=status_queues.php*
 ##|-PRIV
-
+/*
 header("Last-Modified: " . gmdate("D, j M Y H:i:s") . " GMT");
 header("Expires: " . gmdate("D, j M Y H:i:s", time()) . " GMT");
 header("Cache-Control: no-cache, no-store, must-revalidate"); // HTTP/1.1
 header("Pragma: no-cache"); // HTTP/1.0
+*/
 
 require("guiconfig.inc");
 class QueueStats {
@@ -65,7 +84,7 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	$error = "Something wrong happened during communication with stat gathering";
+	$error = gettext("Something wrong happened during communication with stat gathering");
 } else {
 	$stats = "";
 	while (!feof($fd)) {
@@ -75,7 +94,7 @@ if (!$fd) {
 	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
 	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
 	if ($altqstats == -1) {
-		$error = "No queue statistics could be read.";
+		$error = gettext("No queue statistics could be read.");
 	}
 }
 if ($_REQUEST['getactivity']) {
@@ -110,13 +129,13 @@ if ($_REQUEST['getactivity']) {
 		if ($packet_s < 0) {
 			$packet_s = 0;
 		}
-		$finscript .= "jQuery('#queue{$q->queuename}width').css('width','{$packet_s}%');";
-		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
-		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
-		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
-		$finscript .= "jQuery('#queue{$q->queuename}length').val('{$q->queuelength}');";
+		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";
+		$finscript .= "$('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
+		$finscript .= "$('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
+		$finscript .= "$('#queue{$q->queuename}borrows').val('{$q->borrows}');";
+		$finscript .= "$('#queue{$q->queuename}suspends').val('{$q->suspends}');";
+		$finscript .= "$('#queue{$q->queuename}drops').val('{$q->drops}');";
+		$finscript .= "$('#queue{$q->queuename}length').val('{$q->queuelength}');";
 	}
 	unset($statistics, $altqstats);
 	header("Content-type: text/javascript");
@@ -127,13 +146,11 @@ $pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues")
 $shortcut_section = "trafficshaper";
 include("head.inc");
 ?>
-<body>
 <script src="/jquery/jquery-1.11.2.min.js"></script>
 <?php
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
-	include("fend.inc");
-	echo "</body></html>";
+	include("foot.inc");
 	exit;
 }
 ?>
@@ -143,8 +160,8 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 //<![CDATA[
 	function getqueueactivity() {
 		var url = "/status_queues.php";
-		var pars = "getactivity=yes&stats=" + jQuery("#selStatistic").val();
-		jQuery.ajax(
+		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
+		$.ajax(
 			url,
 			{
 				type: 'post',
@@ -155,14 +172,14 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 	function activitycallback(transport) {
 		setTimeout('getqueueactivity()', 5100);
 	}
-	jQuery(document).ready(function() {
+	$(document).ready(function() {
 		setTimeout('getqueueactivity()', 150);
 	});
 //]]>
 </script>
-<?php endif; 
+<?php endif;
 
-if ($error): 
+if ($error):
 	print_info_box($error);
 else: ?>
 	<div class="panel panel-default">
@@ -170,12 +187,12 @@ else: ?>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
-					<tr>  
+					<tr>
 						<th><?=gettext("Queue"); ?></th>
 						<th><?=gettext("Statistics"); ?>
-							<select id="selStatistic">
-								<option value="0">PPS</option>
-								<option value="1">Bandwidth</option>
+							<select id="selStatistic" class="form-control">
+								<option value="0"><?=gettext("PPS");?></option>
+								<option value="1"><?=gettext("Bandwidth");?></option>
 							</select>
 						</th>
 						<th><?=gettext("PPS"); ?></th>
@@ -185,46 +202,46 @@ else: ?>
 						<th><?=gettext("Drops"); ?></th>
 						<th><?=gettext("Length"); ?></th>
 					</tr>
-				</thead>	
+				</thead>
+				<tbody>
 <?php
 	$if_queue_list = get_configured_interface_list_by_realif(false, true);
 	processQueues($altqstats, 0, "");
 ?>
 <?php endif; ?>
+				</tbody>
 			</table>
-</br>
-
-<?php 
-
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data"));
-
+			<br />
+			<div class="infoblock blockopen">
+<?php
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info', false);
 ?>
+			</div>
+		</div>
+	</div>
+<br/>
 
 <script type="text/javascript">
 //<![CDATA[
 	function StatsShowHide(classname) {
-		var firstrow = jQuery("." + classname).first();
+		var firstrow = $("." + classname).first();
 		if (firstrow.is(':visible')) {
-			jQuery("." + classname).hide();
+			$("." + classname).hide();
 		} else {
-			jQuery("." + classname).show();
+			$("." + classname).show();
 		}
 	}
 //]]>
 </script>
 </form>
-<?php include("fend.inc"); ?>
-</body>
-</html>
 <?php
+
+include("foot.inc");
+
 function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
-	$gray_value = 190 + $level * 10;
-	if ($gray_value > 250) {
-		$gray_value = 255;
-	}
-	$row_background = str_repeat(dechex($gray_value), 3);
+
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {
@@ -236,38 +253,36 @@ function processQueues($altqstats, $level, $parent_name) {
 			}
 		}
 		if ($prev_if != $q['interface']) {
-			echo "<tr><td><b>Interface ". htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>";
+			echo "<tr><td colspan=\"8\"><b>Interface " . htmlspecialchars(convert_real_interface_to_friendly_descr($q['interface'])) . "</b></td></tr>\n";
 			$prev_if = $q['interface'];
 		}
 ?>
-		<tr class="<?php echo $parent_name?>">
-			<td bgcolor="#<?php echo $row_background?>" style="padding-left: <?php echo $level * 20?>px;">
-				<font color="#000000">
-					<?
-					if (is_array($q['queue'])) {
-						echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a> ";
-					}
-					if (strstr($q['name'], "root_")) {
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
-					} else {
-						echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
-					}
-					?>
-				</font>
+		<tr class="<?=$parent_name;?>">
+			<td class="<?=$row_class?>" style="padding-left:<?=$level * 20?>px;">
+				<?php
+				if (is_array($q['queue'])) {
+					echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a>";
+				}
+				if (strstr($q['name'], "root_")) {
+					echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$if_name}&amp;action=show\">Root queue</a>";
+				} else {
+					echo "<a href=\"firewall_shaper.php?interface={$if_name}&amp;queue={$q['name']}&amp;action=show\">" . htmlspecialchars($q['name']) . "</a>";
+				}
+				?>
 			</td>
 <?php
 		$cpuUsage = 0;
-		echo "<td bgcolor=\"#{$row_background}\">";
-		echo "<div class='progress' style='height: 7px;width: 170px;'>
-				<div class='progress-bar' role='progressbar' name='queue{$q['name']}{$q['interface']}width' id='queue{$q['name']}{$q['interface']}width' aria-valuenow='70' aria-valuemin='0' aria-valuemax='100' style='width: ".  ($cpuUsage*100) ."%;'></div>
-			  </div>";
-		echo " </td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}pps' id='queue{$q['name']}{$q['interface']}pps' value='(" . gettext("Loading") . ")' align='left' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:80px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}bps' id='queue{$q['name']}{$q['interface']}bps' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}borrows' id='queue{$q['name']}{$q['interface']}borrows' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}suspends' id='queue{$q['name']}{$q['interface']}suspends' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}drops' id='queue{$q['name']}{$q['interface']}drops' value='' align='right' /></td>";
-		echo "<td bgcolor=\"#{$row_background}\"><input style='border: 0px solid white; background-color:#{$row_background}; color:#000000;width:70px;text-align:right;' size='10' name='queue{$q['name']}{$q['interface']}length' id='queue{$q['name']}{$q['interface']}length' value='' align='right' /></td>";
+		print('<td>');
+		print('<div class="progress" style="height: 7px;width: 170px;">');
+		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;\"></div>');
+		print('	  </div>');
+		print('</td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');
+		print('<td><input readonly style="border:0;width:80px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'bps"      id="queue' . $q['name'] . $q['interface'] . 'bps"      value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'borrows"  id="queue' . $q['name'] . $q['interface'] . 'borrows"  value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'suspends" id="queue' . $q['name'] . $q['interface'] . 'suspends" value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'drops"    id="queue' . $q['name'] . $q['interface'] . 'drops"    value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'length"   id="queue' . $q['name'] . $q['interface'] . 'length"   value="" /></td>');
 ?>
 		</tr>
 <?php
@@ -276,6 +291,7 @@ function processQueues($altqstats, $level, $parent_name) {
 		}
 	};
 }
+
 function statsQueues($xml) {
 	global $statistics;
 

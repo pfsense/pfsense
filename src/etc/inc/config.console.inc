@@ -1,16 +1,9 @@
 <?php
-/****h* pfSense/config
- * NAME
- *   config.inc - Functions to manipulate config.xml
- * DESCRIPTION
- *   This include contains various config.xml specific functions.
- * HISTORY
- * $Id$
- ******
-
+/*
 	config.console.inc
-	Copyright (C) 2004-2010 Scott Ullrich
-	All rights reserved.
+
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -23,23 +16,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
 
-	pfSense_BUILDER_BINARIES:	/sbin/mount	/sbin/umount	/sbin/halt	/sbin/fsck
-	pfSense_MODULE:	config
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 function set_networking_interfaces_ports() {
@@ -86,8 +98,9 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
+			$ifsmallist = trim($ifsmallist . " " . $iface);
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "  (up)" : "(down)", $ifa['dmesg']);
+				$ifa['up'] ? "  (up)" : "(down)", substr($ifa['dmesg'], 0, 48));
 		}
 	}
 
@@ -100,15 +113,13 @@ BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
 EOD;
 	}
 
-	echo <<<EOD
-
-Do you want to set up VLANs first? 
-
-If you are not going to use VLANs, or only for optional interfaces, you should
-say no here and use the webConfigurator to configure VLANs later, if required.
-
-Do you want to set up VLANs now [y|n]? 
-EOD;
+	echo "\n" . gettext("Do you want to set up VLANs first?");
+	echo "\n" .
+		gettext(
+			"If you are not going to use VLANs, or only for optional interfaces, you should\n" .
+			"say no here and use the webConfigurator to configure VLANs later, if required.") .
+		"\n";
+	echo "\n" . gettext("Do you want to set up VLANs now [y|n]?") . " ";
 
 	if ($auto_assign) {
 		$key = timeout();
@@ -190,6 +201,7 @@ EOD;
 					"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
 				$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
+				$ifsmallist = trim($ifsmallist . " " . $vlan['if'] . '_vlan' . $vlan['tag']);
 			}
 		}
 
@@ -202,7 +214,8 @@ hitting 'a' to initiate auto detection.
 EOD;
 
 		do {
-			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection:") . " ";
+			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
+			printf(gettext("%s(%s or a): "), "\n", $ifsmallist);
 			$wanif = chop(fgets($fp));
 			if ($wanif === "") {
 				return;
@@ -214,12 +227,13 @@ EOD;
 				unset($wanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($wanif, "", $ifsmallist)));
 		} while (!$wanif);
 
 		do {
 			printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
 				"NOTE: this enables full Firewalling/NAT mode.%s" .
-				"(or nothing if finished):%s"), "\n", "\n", "\n", " ");
+				"(%s a or nothing if finished):%s"), "\n", "\n", "\n", $ifsmallist, " ");
 
 			$lanif = chop(fgets($fp));
 
@@ -239,6 +253,7 @@ EOD;
 				unset($lanif);
 				continue;
 			}
+			$ifsmallist = trim(str_replace("  ", " ", str_replace($lanif, "", $ifsmallist)));
 		} while (!$lanif);
 
 		/* optional interfaces */
@@ -257,7 +272,7 @@ EOD;
 				}
 
 				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-					"(or nothing if finished):%s"), "\n", $io, "\n", " ");
+					"(%s a or nothing if finished):%s"), "\n", $io, "\n", $ifsmallist, " ");
 
 				$optif[$i] = chop(fgets($fp));
 
@@ -274,6 +289,7 @@ EOD;
 						unset($optif[$i]);
 						continue;
 					}
+					$ifsmallist = trim(str_replace("  ", " ", str_replace($optif[$i], "", $ifsmallist)));
 				} else {
 					unset($optif[$i]);
 					break;
@@ -308,10 +324,7 @@ EOD;
 			echo "OPT" . ($i+1) . " -> " . $optif[$i] . "\n";
 		}
 
-		echo <<<EOD
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 		$key = chop(fgets($fp));
 	}
 
@@ -324,13 +337,8 @@ EOD;
 			$config['interfaces']['lan']['enable'] = true;
 		} elseif (!platform_booting() && !$auto_assign) {
 
-echo <<<EODD
-
-You have chosen to remove the LAN interface.
-
-Would you like to remove the LAN IP address and
-unload the interface now? [y|n]? 
-EODD;
+			echo "\n" . gettext("You have chosen to remove the LAN interface.") . "\n";
+			echo "\n" . gettext("Would you like to remove the LAN IP address and \nunload the interface now [y|n]?") . " ";
 
 			if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 				if (isset($config['interfaces']['lan']) && $config['interfaces']['lan']['if']) {
@@ -491,13 +499,8 @@ function vlan_setup() {
 	$iflist = get_interface_list();
 
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-
-		echo <<<EOD
-
-WARNING: all existing VLANs will be cleared if you proceed!
-
-Do you want to proceed [y|n]?
-EOD;
+		echo "\n" . gettext("WARNING: all existing VLANs will be cleared if you proceed!") . "\n";
+		echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 		if (strcasecmp(chop(fgets($fp)), "y") != 0) {
 			return;
@@ -554,6 +557,65 @@ EOD;
 
 		$config['vlans']['vlan'][] = $vlan;
 		$vlanif++;
+	}
+}
+
+function check_for_alternate_interfaces() {
+	global $config;
+
+	// If the WAN and/or LAN devices in the factory default config do not exist,
+	// then look for alternate devices.
+	// This lets many systems boot a factory default config without being
+	// forced to do interface assignment on the console.
+
+	$specplatform = system_identify_specific_platform();
+	$default_device = array();
+
+	// If we recognise the platform, then specify the devices directly.
+	switch ($specplatform['name']) {
+		case 'alix':
+			$default_device['wan'] = "vr1";
+			$default_device['lan'] = "vr0";
+			break;
+		case 'APU':
+			$default_device['wan'] = "re1";
+			$default_device['lan'] = "re2";
+			break;
+		case 'RCC-VE':
+			$default_device['wan'] = "igb0";
+			$default_device['lan'] = "igb1";
+			break;
+		default:
+			$default_device['wan'] = "";
+			$default_device['lan'] = "";
+			break;
+	}
+
+	// Other common device names can be put here and will be looked for
+	// if the system was not one of the known platforms.
+	$other_devices_arr['wan'] = array("vr1", "re1", "igb0", "em0");
+	$other_devices_arr['lan'] = array("vr0", "re2", "igb1", "em1");
+	$interface_assignment_changed = false;
+
+	foreach ($other_devices_arr as $ifname => $other_devices) {
+		if (!does_interface_exist($config['interfaces'][$ifname]['if'])) {
+			if (does_interface_exist($default_device[$ifname])) {
+				$config['interfaces'][$ifname]['if'] = $default_device[$ifname];
+				$interface_assignment_changed = true;
+			} else {
+				foreach ($other_devices as $other_device) {
+					if (does_interface_exist($other_device)) {
+						$config['interfaces'][$ifname]['if'] = $other_device;
+						$interface_assignment_changed = true;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	if ($interface_assignment_changed) {
+		write_config("Factory default boot detected WAN " . $config['interfaces']['wan']['if'] . " and LAN " . $config['interfaces']['lan']['if']);
 	}
 }
 

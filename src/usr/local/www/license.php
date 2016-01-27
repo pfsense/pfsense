@@ -1,38 +1,61 @@
 <?php
-/* $Id$ */
 /*
 	license.php
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: routing
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-system-license
-##|*NAME=System: License page
+##|*NAME=System: License
 ##|*DESCR=Allow access to the 'System: License' page.
 ##|*MATCH=license.php*
 ##|-PRIV
@@ -41,7 +64,7 @@ require("guiconfig.inc");
 include("head.inc");
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h4><?=gettext("License")?></h4></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("License")?></h2></div>
 	<div class="panel-body">
 		<p>
 			<strong><?=$g['product_name']?><?=gettext(" is Copyright")?> &copy; <?=$g['product_copyright_years']?><?=gettext(" by ")?><?=$g['product_copyright']?><br />
@@ -89,17 +112,17 @@ include("head.inc");
 			<?= "{$g['product_name']} " . gettext("is based upon/includes various free software packages, ".
 			"listed below.")?><br />
 			<?php printf(gettext("The authors of %s would like to thank the authors of these " .
-			"software packages for their efforts"),$g['product_name'])?>.
+			"software packages for their efforts"), $g['product_name'])?>.
 		</p>
 		<p>
 			FreeBSD (<a href="http://www.freebsd.org" target="_blank">http://www.freebsd.org</a>)<br />
 			<?=gettext("Copyright")?> &copy;<?=gettext("1992-2015 The FreeBSD Project. All rights reserved")?>.<br />
 			<br />
-			<?=gettext("This product includes PHP, freely available from")?><a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br />
-			<?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2015 The PHP Group. All rights reserved.")?>.<br />
+			<?=gettext("This product includes PHP, freely available from")?> <a href="http://www.php.net/" target="_blank">http://www.php.net</a>.<br />
+			<?=gettext("Copyright"); ?> &copy; <?=gettext("1999-2015 The PHP Group. All rights reserved.")?><br />
 			<br />
-			<?=gettext("LightTPD"); ?> (<a href="http://www.lighttpd.net" target="_blank">http://www.lighttpd.net)</a><br />
-			<?=gettext("Copyright"); ?> &copy;<?=gettext("2004, Jan Knescke, incremental")?><jan@kneschke.de>
+			<?=gettext("nginx"); ?> (<a href="http://www.nginx.org" target="_blank">http://www.nginx.org)</a><br />
+			<?=gettext("Copyright"); ?> &copy;<?=gettext("2011-2015 Nginx, Inc.")?>
 			<?=gettext("All rights reserved.")?><br />
 			<br />
 			<?=gettext("ISC DHCP server ")?>(<a href="http://www.isc.org/products/DHCP/" target="_blank">http://www.isc.org/products/DHCP</a>)<br />

@@ -1,44 +1,66 @@
 <?php
-/* $Id$ */
 /*
 	interfaces_ppps_edit.php
-	part of m0n0wall (http://m0n0.ch/wall)
-
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-	Copyright (C) 2010 Gabriel B. <gnoahb@gmail.com>.
-	All rights reserved.
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
 */
-/*
-	pfSense_MODULE: interfaces
-*/
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2003-2004 Manuel Kasper <mk@neon1.net>
+ *	Copyright (c)  2010 Gabriel B. <gnoahb@gmail.com>
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-ppps-edit
-##|*NAME=Interfaces: PPPs: Edit page
+##|*NAME=Interfaces: PPPs: Edit
 ##|*DESCR=Allow access to the 'Interfaces: PPPs: Edit' page.
 ##|*MATCH=interfaces_ppps_edit.php*
 ##|-PRIV
@@ -67,20 +89,17 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	}
 }
 
-if($_GET && $_GET['type'])
+if ($_GET && $_GET['type']) {
 	$pconfig['type'] = $_GET['type'];
+}
 
-if($_GET && $_GET['country'])
-	$pconfig['country'] = $_GET['country'];
-
-if($_GET && $_GET['provider'])
-	$pconfig['provider'] = $_GET['provider'];
-
-if (is_numericint($_GET['id']))
+if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
+}
 
-if (isset($_POST['id']) && is_numericint($_POST['id']))
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
+}
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
@@ -95,13 +114,14 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
-	$pconfig['bandwidth'] = explode(",",$a_ppps[$id]['bandwidth']);
-	$pconfig['mtu'] = explode(",",$a_ppps[$id]['mtu']);
-	$pconfig['mru'] = explode(",",$a_ppps[$id]['mru']);
-	$pconfig['mrru'] = explode(",",$a_ppps[$id]['mrru']);
+	$pconfig['bandwidth'] = explode(",", $a_ppps[$id]['bandwidth']);
+	$pconfig['mtu'] = explode(",", $a_ppps[$id]['mtu']);
+	$pconfig['mru'] = explode(",", $a_ppps[$id]['mru']);
+	$pconfig['mrru'] = explode(",", $a_ppps[$id]['mrru']);
 
-	if (isset($a_ppps[$id]['shortseq']))
+	if (isset($a_ppps[$id]['shortseq'])) {
 		$pconfig['shortseq'] = true;
+	}
 
 	if (isset($a_ppps[$id]['acfcomp'])) {
 		$pconfig['acfcomp'] = true;
@@ -189,7 +209,6 @@ if (isset($id) && $a_ppps[$id]) {
 }
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -237,6 +256,9 @@ if ($_POST) {
 		default:
 			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
+	}
+	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
 		$input_errors[] = gettext("Multilink connections (MLPPP) using the PPP link type is not currently supported. Please select only one Link Interface.");
@@ -294,19 +316,6 @@ if ($_POST) {
 		}
 	}
 
-/*
-	foreach ($a_ppps as $ppp) {
-		if (isset($id) && ($a_ppps[$id]) && ($a_ppps[$id] === $ppp)) {
-			continue;
-		}
-
-		if ($ppp['serialport'] == $_POST['serialport']) {
-			$input_errors[] = "Serial port is in use";
-			break;
-		}
-	}
-*/
-
 	if (!$input_errors) {
 		$ppp = array();
 		$ppp['ptpid'] = $_POST['ptpid'];
@@ -314,7 +323,11 @@ if ($_POST) {
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
-		$ppp['password'] = base64_encode($_POST['passwordfld']);
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$ppp['password'] = base64_encode($_POST['passwordfld']);
+		} else {
+			$ppp['password'] = $a_ppps[$id]['password'];
+		}
 		$ppp['ondemand'] = $_POST['ondemand'] ? true : false;
 		if (!empty($_POST['idletimeout'])) {
 			$ppp['idletimeout'] = $_POST['idletimeout'];
@@ -435,18 +448,19 @@ if ($_POST) {
 	}
 } // end if ($_POST)
 
-$closehead = false;
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
-$types = array("select" => gettext("Select"), "ppp" => "PPP", "pppoe" => "PPPoE", "pptp" => "PPTP", "l2tp" => "L2TP"/*, "tcp" => "TCP", "udp" => "UDP"*/);
+$types = array("select" => gettext("Select"), "ppp" => gettext("PPP"), "pppoe" => gettext("PPPoE"), "pptp" => gettext("PPTP"), "l2tp" => gettext("L2TP")/*, "tcp" => "TCP", "udp" => "UDP"*/);
 
 $serviceproviders_xml = "/usr/local/share/mobile-broadband-provider-info/serviceproviders.xml";
 $serviceproviders_contents = file_get_contents($serviceproviders_xml);
-$serviceproviders_attr = xml2array($serviceproviders_contents,1,"attr");
+$serviceproviders_attr = xml2array($serviceproviders_contents, 1, "attr");
 
 $serviceproviders = &$serviceproviders_attr['serviceproviders']['country'];
+
+//print_r($serviceproviders);
 
 function build_country_list() {
 	global $serviceproviders;
@@ -456,63 +470,8 @@ function build_country_list() {
 	// get_country_name is in pfSense-utils.inc
 	$country_list = get_country_name("ALL");
 
-	foreach($country_list as $country) {
+	foreach ($country_list as $country) {
 		$list[$country['code']] = $country['name'];
-	}
-
-	return($list);
-}
-
-function build_provider_list($country) {
-	global $serviceproviders;
-
-	$list = array();
-
-	foreach($serviceproviders as $sp) {
-		if($sp['attr']['code'] == strtolower($country)) {
-			if(is_array($sp['provider'][0])) {
-				foreach($sp['provider'] as $provider) {
-					array_push($list, $provider['name']['value']);
-				 }
-			}
-		}
-	}
-
-	return array_combine($list, $list);
-}
-
-function build_plans_list($country, $provider) {
-	global $serviceproviders;
-
-	$list = array();
-
-	foreach($serviceproviders as $sprecord) {
-		if($sprecord['attr']['code'] == strtolower($country)) {
-			foreach($sprecord['provider'] as $sp) {
-				if(strtolower($sp['name']['value']) == strtolower($provider)) {
-					if(array_key_exists('gsm', $sp)) {
-
-						if(array_key_exists('attr',$sp['gsm']['apn'])) {
-							$name = ($sp['gsm']['apn']['name'] ? $sp['gsm']['apn']['name'] : $sp['name']['value']);
-							echo $name . ":" . $sp['gsm']['apn']['attr']['value'];
-						} else {
-							foreach($sp['gsm']['apn'] as $apn_info) {
-								$name = ($apn_info['name']['value'] ? $apn_info['name']['value'] : $apn_info['gsm']['apn']['name']);
-
-								$key = $apn_info['attr']['value'];
-								$list[$key] = $name . ($key ? ' ':'') . '- ' . $key;
-							}
-						}
-					}
-
-					if(array_key_exists('cdma',$sp)) {
-						$name = $sp['cdma']['name']['value'] ? $sp['cdma']['name']['value']:$sp['name']['value'];
-						$key = 'CDMA';
-						$list[$key] = $name . ' - ' . $key;
-					}
-				}
-			}
-		}
 	}
 
 	return($list);
@@ -524,19 +483,22 @@ $serport_count = 0;
 function build_link_list() {
 	global $pconfig, $portlist, $port_count, $serport_count;
 
-	$linklist = array('list'	 => array(),
-					  'selected' => array());
+	$linklist = array('list' => array(), 'selected' => array());
 
-	$selected_ports = explode(',',$pconfig['interfaces']);
+	$selected_ports = array();
 
-	if (!is_dir("/var/spool/lock"))
+	if (is_array($pconfig['interfaces'])) {
+		$selected_ports = $pconfig['interfaces'];
+	} elseif (!empty($pconfig['interfaces'])) {
+		$selected_ports = explode(',', $pconfig['interfaces']);
+	}
+
+	if (!is_dir("/var/spool/lock")) {
 		mwexec("/bin/mkdir -p /var/spool/lock");
+	}
 
-	if($pconfig['type'] == 'ppp') {
-		$serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
-		//DEBUG
-		$serialports = glob("/dev/tty?[0-9]{,.[0-9]}", GLOB_BRACE);
-
+	if ($pconfig['type'] == 'ppp') {
+		$serialports = glob("/dev/cua[a-zA-Z][0-9]{,.[0-9],.[0-9][0-9],[0-9],[0-9].[0-9],[0-9].[0-9][0-9]}", GLOB_BRACE);
 		$serport_count = 0;
 
 		foreach ($serialports as $port) {
@@ -544,49 +506,52 @@ function build_link_list() {
 
 			$linklist['list'][$port] = trim($port);
 
-			if (in_array($port, $selected_ports))
+			if (in_array($port, $selected_ports)) {
 				array_push($linklist['selected'], $port);
+			}
 		}
-	}
-	else {
+	} else {
 		$port_count = 0;
-		foreach ($portlist as $ifn => $ifinfo){
+		foreach ($portlist as $ifn => $ifinfo) {
 			$port_count++;
 			$string = "";
 
 			if (is_array($ifinfo)) {
 				$string .= $ifn;
-				if ($ifinfo['mac'])
-				$string .= " ({$ifinfo['mac']})";
-			} else
+				if ($ifinfo['mac']) {
+					$string .= " ({$ifinfo['mac']})";
+				}
+			} else {
 				$string .= $ifinfo;
+			}
 
 			$linklist['list'][$ifn] = $string;
 
-			if (in_array($ifn, $selected_ports))
+			if (in_array($ifn, $selected_ports)) {
 				array_push($linklist['selected'], $ifn);
+			}
 		}
 
-		if($serport_count > $port_count)
-			$port_count=$serport_count;
+		if ($serport_count > $port_count) {
+			$port_count = $serport_count;
+		}
 	}
 
 	return($linklist);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-$linkparamstr = gettext('Bandwidth is set only for MLLP conncetions and when links have diferent bandwidths' . '<br />' .
+$linkparamstr = gettext('Bandwidth is set only for MLPPP connections and when links have different bandwidths' . '<br />' .
 						'MTU defaults to 1492' . '<br />' .
 						'MRU will be auto-negotiated by default' . '<br />' .
-						'Set only for MLLP conncetions. MRRU will be auto-negotiated by default.');
-
-require_once('classes/Form.class.php');
+						'Set only for MLPPP connections. MRRU will be auto-negotiated by default.');
 
 $form = new Form();
 
-$section = new Form_Section('PPPs Configuration');
+$section = new Form_Section('PPP Configuration');
 
 $section->addInput(new Form_Select(
 	'type',
@@ -623,14 +588,14 @@ $section->addInput(new Form_Select(
 	'provider',
 	'Provider',
 	$pconfig['provider'],
-	build_provider_list($pconfig['country'])
+	[]
 ));
 
 $section->addInput(new Form_Select(
 	'providerplan',
 	'Plan',
 	$pconfig['providerplan'],
-	build_plans_list($pconfig['country'], $pconfig['provider'])
+	[]
 ))->setHelp('Select to fill in data for your service provider.');
 
 $section->addInput(new Form_Input(
@@ -640,17 +605,17 @@ $section->addInput(new Form_Input(
 	$pconfig['username']
 ));
 
-$section->addInput(new Form_Input(
+$section->addPassword(new Form_Input(
 	'passwordfld',
 	'Password',
 	'password',
-	$pconfig['passwordfld']
+	$pconfig['password']
 ));
 
-// These elements arehidden by default, and un-hidden in Javascript
-if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
+// These elements are hidden by default, and un-hidden in Javascript
+if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	$j = 0;
-	foreach($linklist['list'] as $ifnm =>$nm) {
+	foreach ($linklist['list'] as $ifnm => $nm) {
 
 		$group = new Form_Group('IP/Gateway (' . $ifnm . ')');
 
@@ -663,7 +628,7 @@ if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 		$group->add(new Form_Input(
 			'gateway' . $j,
 			null,
-			'password',
+			'text',
 			$pconfig['gateway'][$j]
 		))->setHelp('IP or Hostname');
 
@@ -674,7 +639,7 @@ if($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 	}
 }
 
-if($pconfig['type'] == 'ppp') {
+if ($pconfig['type'] == 'ppp') {
 	$section->addInput(new Form_Input(
 		'phone',
 		'Phone number',
@@ -730,7 +695,7 @@ $section->addInput(new Form_Checkbox(
 	'uptime',
 	'Uptime logging',
 	'Enable persistent logging of connection uptime. ',
-	$pconfig['uptime']
+	isset($pconfig['uptime'])
 ))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %sStatus->Interfaces%s page.', '<a href="status_interfaces.php">', '</a>'));
 
 $group = new Form_Group('Service name');
@@ -760,13 +725,13 @@ $section->addInput(new Form_Select(
 	'Periodic Reset',
 	$pconfig['pppoe-reset-type'],
 	array(
-		'' => 'Disabled',
-		'custom' => 'Custom',
-		'preset' => 'Pre-set'
+		'' => gettext('Disabled'),
+		'custom' => gettext('Custom'),
+		'preset' => gettext('Pre-set')
 	)
 ))->addClass('pppoe')->setHelp('Select a reset timing type');
 
-$group = new Form_Group('Rest Date/Time');
+$group = new Form_Group('Reset Date/Time');
 $group->addClass('pppoe-reset-date');
 
 $group->add(new Form_Input(
@@ -795,7 +760,7 @@ $group->setHelp('Leaving the date field empty will cause the reset to be execute
 
 $section->add($group);
 
-$group = new Form_Group('Rest frequency');
+$group = new Form_Group('Reset frequency');
 $group->addClass('pppoe-reset-cron');
 
 $group->add(new Form_Checkbox(
@@ -912,7 +877,7 @@ $section->addInput(new Form_Checkbox(
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
 
-foreach($linklist['list'] as $ifnm =>$nm) {
+foreach ($linklist['list'] as $ifnm =>$nm) {
 
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
 
@@ -926,21 +891,21 @@ foreach($linklist['list'] as $ifnm =>$nm) {
 	$group->add(new Form_Input(
 		'mtu' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mtu'][$j]
 	))->setHelp('MTU');
 
 	$group->add(new Form_Input(
 		'mru' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mru'][$j]
 	))->setHelp('MRU');
 
 	$group->add(new Form_Input(
 		'mrru' . $j,
 		null,
-		'password',
+		'text',
 		$pconfig['mrru'][$j]
 	))->setHelp('MRRU');
 
@@ -980,48 +945,17 @@ print($form);
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 	var showadvanced = false;
 
-	// Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
-	function hideInput(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent('div').removeClass('hidden');
-	}
-
-	// Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
-	function hideCheckbox(id, hide) {
-		if(hide)
-			$('#' + id).parent().parent().parent('div').addClass('hidden');
-		else
-			$('#' + id).parent().parent().parent('div').removeClass('hidden');
-	}
-
-	// Disables the specified input element
-	function disableInput(id, disable) {
-		$('#' + id).prop("disabled", disable);
-	}
-
-	// Hides all elements of the specified class. This will usually be a section or group
-	function hideClass(s_class, hide) {
-		if(hide)
-			$('.' + s_class).hide();
-		else
-			$('.' + s_class).show();
-	}
-
-	// Simple test in which clicking the ‘clear’ button toggles certain display elements
 	function setAdvVisible() {
 		// Update the button text and toggle showadvanced
-		if(showadvanced) {
+		if (showadvanced) {
 			$("#btnadvanced").prop('value', 'Hide');
 			showadvanced = false;
-		}
-		else {
+		} else {
 			$("#btnadvanced").prop('value', 'Show');
 			showadvanced = true;
 		}
@@ -1031,18 +965,19 @@ events.push(function(){
 		// The options that follow are only shown if type == 'ppp'
 		var ppptype = ($('#type').val() == 'ppp');
 
-		hideInput('apnum', showadvanced && ppptype);
-		hideInput('simpin', showadvanced && ppptype);
-		hideInput('pin-wait', showadvanced && ppptype);
-		hideInput('initstr', showadvanced && ppptype);
-		hideInput('connect-timeout', showadvanced && ppptype);
-		hideCheckbox('uptime', showadvanced && ppptype);
+		hideInput('apn', showadvanced || !ppptype);
+		hideInput('apnum', showadvanced || !ppptype);
+		hideInput('simpin', showadvanced || !ppptype);
+		hideInput('pin-wait', showadvanced || !ppptype);
+		hideInput('initstr', showadvanced || !ppptype);
+		hideInput('connect-timeout', showadvanced || !ppptype);
+		hideCheckbox('uptime', showadvanced || !ppptype);
 
 		// The options that follow are only shown if type == 'pppoe'
 		var pppoetype = ($('#type').val() != 'pppoe');
 
-		hideClass('pppoe', showadvanced || pppoetype);
-		hideInput('pppoe-reset-type', showadvanced || pppoetype);
+		hideClass('pppoe', pppoetype);
+		hideInput('pppoe-reset-type', pppoetype || showadvanced);
 
 		hideResetDisplay(true);
 
@@ -1054,8 +989,8 @@ events.push(function(){
 		hideClass('pppoe-reset-date', true);
 		hideClass('pppoe-reset-cron', true);
 
-		if(!hide) {
-			switch($('#pppoe-reset-type').val()) {
+		if (!hide) {
+			switch ($('#pppoe-reset-type').val()) {
 				case 'custom' :
 					hideClass('pppoe-reset-date', false);
 					break;
@@ -1071,17 +1006,88 @@ events.push(function(){
 		hideClass('linkparam', true);
 		hideInput('linkparamhelp', true);
 
-		var selected = $('.interfaces').val();
-		var length = selected.length;
+		var selected = $('#interfaces').val();
+		var length = $("#interfaces :selected").length;
 
-		for(var i=0; i<length; i++) {
+		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
-			if(!showadvanced) {
+			if (!showadvanced) {
 				hideClass('linkparam' + selected[i], false);
 				hideInput('linkparamhelp', false);
-			   }
+			}
 		}
+	}
+
+	function hideProviders(hide) {
+		hideInput('country', hide);
+		hideInput('provider', hide);
+		hideInput('providerplan', hide);
+	}
+
+	function providers_list() {
+		$('#provider option').remove();
+		$('#providerplan option').remove();
+		$('#provider').append(new Option('', ''));
+		$.ajax("getserviceproviders.php",{
+			type: 'POST',
+			data: {country : $('#country').val()},
+			success: function(responseText) {
+				var responseTextArr = responseText.split("\n");
+				var value, i;
+				responseTextArr.sort();
+				for (i = 0; i < responseTextArr.length; i += 1) {
+					value = responseTextArr[i];
+					if (/\S/.test(value)) {
+						$('#provider').append(new Option(value, value));
+					}
+				}
+			}
+		});
+	}
+
+	function providerplan_list() {
+		$('#providerplan option').remove();
+		$('#providerplan').append( new Option('','') );
+		$.ajax("getserviceproviders.php",{
+			type: 'POST',
+			data: {country : $('#country').val(), provider : $('#provider').val()},
+			success: function(responseText) {
+				var responseTextArr = responseText.split("\n");
+				var value, providerplan, i;
+				responseTextArr.sort();
+				for (i = 0; i < responseTextArr.length; i += 1) {
+					value = responseTextArr[i];
+					if (/\S/.test(value)) {
+						providerplan = value.split(":");
+						$('#providerplan').append(new Option(providerplan[0] + " - " + providerplan[1],
+											  providerplan[1]));
+					}
+				}
+			}
+		});
+	}
+
+	function prefill_provider() {
+		$.ajax("getserviceproviders.php",{
+			type: "POST",
+			data: {country : $('#country').val(), provider : $('#provider').val(), plan : $('#providerplan').val()},
+			success: function(responseXML) {
+				var xmldoc = responseXML;
+				var provider = xmldoc.getElementsByTagName('connection')[0];
+				$('#username').val('');
+				$('#password').val('');
+				if (provider.getElementsByTagName('apn')[0].firstChild.data == "CDMA") {
+					$('#phone').val('#777');
+					$('#apn').val('');
+				} else {
+					$('#phone').val('*99#');
+					$('#apn').val(provider.getElementsByTagName('apn')[0].firstChild.data);
+				}
+				$('#username').val(provider.getElementsByTagName('username')[0].firstChild.data);
+				$('#password').val(provider.getElementsByTagName('password')[0].firstChild.data);
+			}
+		});
 	}
 
 	// Make the ‘btnadvanced’ button a plain button, not a submit button
@@ -1099,25 +1105,40 @@ events.push(function(){
 	// Multiselect boxes must be handled by class
 	$('.interfaces').on('change', function() {
 		hideInterfaces();
-	 });
+	});
 
-	// When type, country or provider are changed, reload the page and build the new selector arrays
+	// When type, country, provider or plan are changed, reload the page and build the new selector arrays
 	$('#type').on('change', function() {
 		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&type=' + this.value;
 	});
 
 	$('#country').on('change', function() {
-		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&country=' + this.value + '&type=' + $('#type').val();
+		providers_list();
+		hideInput('provider', false);
 	});
 
 	$('#provider').on('change', function() {
-		window.location = 'interfaces_ppps_edit.php?id=' + $('#id').val() + '&provider=' + this.value + '&type=' + $('#type').val() + '&country=' + $('#country').val();
+		providerplan_list();
+		hideInput('providerplan', false);
+	});
+
+	$('#providerplan').on('change', function() {
+		prefill_provider();
 	});
 
 	// Set element visibility on initial page load
 	setAdvVisible();
 
 	hideClass('linkparam', true);
+
+	hideProviders($('#type').val() != "ppp");
+	if ($('provider').size() == 0) {
+		hideInput('provider', true);
+	}
+
+	if ($('providerplan').size() == 0) {
+		hideInput('providerplan', true);
+	}
 });
 //]]>
 
@@ -1125,3 +1146,4 @@ events.push(function(){
 <?php
 
 include("foot.inc");
+

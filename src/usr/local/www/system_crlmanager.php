@@ -4,8 +4,6 @@
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004, 2005 Scott Ullrich
- *	Copyright (c)  2010 Jim Pingle
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -54,9 +52,6 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: certificate_manager
-*/
 
 ##|+PRIV
 ##|*IDENT=page-system-crlmanager
@@ -72,7 +67,7 @@ require_once("vpn.inc");
 
 global $openssl_crl_status;
 
-$pgtitle = array(gettext("System"), gettext("Certificate Revocation List Manager"));
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation Lists"));
 
 $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
@@ -329,9 +324,10 @@ function build_method_list() {
 
 	$list = array();
 
-	foreach($crl_methods as $method => $desc) {
-		if (($_GET['importonly'] == "yes") && ($method != "existing"))
+	foreach ($crl_methods as $method => $desc) {
+		if (($_GET['importonly'] == "yes") && ($method != "existing")) {
 			continue;
+		}
 
 		$list[$method] = $desc;
 	}
@@ -344,8 +340,9 @@ function build_ca_list() {
 
 	$list = array();
 
-	foreach($a_ca as $ca)
+	foreach ($a_ca as $ca) {
 		$list[$ca['refid']] = $ca['descr'];
+	}
 
 	return($list);
 }
@@ -355,25 +352,26 @@ function build_cacert_list() {
 
 	$list = array();
 
-	foreach($ca_certs as $cert)
+	foreach($ca_certs as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
+	}
 
 	return($list);
 }
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
-	print_info_box($savemsg, 'sucess');
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("CAs"), false, "system_camanager.php");
 $tab_array[] = array(gettext("Certificates"), false, "system_certmanager.php");
 $tab_array[] = array(gettext("Certificate Revocation"), true, "system_crlmanager.php");
 display_top_tabs($tab_array);
-
-require_once('classes/Form.class.php');
 
 if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (!isset($id)) {
@@ -496,9 +494,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Currently Revoked Certificates for CRL") . ': ' . $crl['descr']?></h2></div>
 		<div class="panel-body table-responsive">
 <?php
-	if (!is_array($crl['cert']) || (count($crl['cert']) == 0))
+	if (!is_array($crl['cert']) || (count($crl['cert']) == 0)) {
 		print_info_box(gettext("No Certificates Found for this CRL."), 'danger');
-	else {
+	} else {
 ?>
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -511,7 +509,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
-		foreach($crl['cert'] as $i => $cert):
+		foreach ($crl['cert'] as $i => $cert):
 			$name = htmlspecialchars($cert['descr']);
 ?>
 					<tr>
@@ -526,7 +524,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						</td>
 						<td class="list">
 							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?")?>')">
-								<i class="icon-large icon-remove-sign" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>"></i>
+								<i class="fa fa-times-circle" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>"></i>
 							</a>
 						</td>
 					</tr>
@@ -535,66 +533,71 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 ?>
 				</tbody>
 			</table>
-<?php } ?>
+<?php
+	}
+?>
 		</div>
 	</div>
 <?php
 
 	$ca_certs = array();
-	foreach($a_cert as $cert)
-		if ($cert['caref'] == $crl['caref'])
+	foreach ($a_cert as $cert) {
+		if ($cert['caref'] == $crl['caref']) {
 			$ca_certs[] = $cert;
+		}
+	}
 
-	if (count($ca_certs) == 0)
+	if (count($ca_certs) == 0) {
 		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
-	else
+	} else {
+		$section = new Form_Section('Choose a certificate to revoke');
+		$group = new Form_Group(null);
 
-	$section = new Form_Section('Choose a certificate to revoke');
-	$group = new Form_Group(null);
+		$group->add(new Form_Select(
+			'certref',
+			null,
+			$pconfig['certref'],
+			build_cacert_list()
+			))->setWidth(4)->setHelp('Certificate');
 
-	$group->add(new Form_Select(
-		'certref',
-		null,
-		$pconfig['certref'],
-		build_cacert_list()
-		))->setWidth(4)->setHelp('Certificate');
+		$group->add(new Form_Select(
+			'crlreason',
+			null,
+			-1,
+			$openssl_crl_status
+			))->setHelp('Reason');
 
-	$group->add(new Form_Select(
-		'crlreason',
-		null,
-		-1,
-		$openssl_crl_status
-		))->setHelp('Reason');
+		$group->add(new Form_Button(
+			'submit',
+			'Add'
+			))->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-	$group->add(new Form_Button(
-		'submit',
-		'Add'
-		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+		$section->add($group);
 
-	$section->add($group);
+		$section->addInput(new Form_Input(
+			'id',
+			null,
+			'hidden',
+			$crl['refid']
+		));
 
-	$section->addInput(new Form_Input(
-		'id',
-		null,
-		'hidden',
-		$crl['refid']
-	));
+		$section->addInput(new Form_Input(
+			'act',
+			null,
+			'hidden',
+			'addcert'
+		));
 
-	$section->addInput(new Form_Input(
-		'act',
-		null,
-		'hidden',
-		'addcert'
-	));
+		$section->addInput(new Form_Input(
+			'crlref',
+			null,
+			'hidden',
+			$crl['refid']
+		));
 
-	$section->addInput(new Form_Input(
-		'crlref',
-		null,
-		'hidden',
-		$crl['refid']
-	));
+		$form->add($section);
+	}
 
-	$form->add($section);
 	print($form);
 } else {
 ?>
@@ -614,20 +617,21 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 				</thead>
 				<tbody>
 <?php
-	$caimg = "/themes/{$g['theme']}/images/icons/icon_frmfld_cert.png";
 	// Map CRLs to CAs in one pass
 	$ca_crl_map = array();
-	foreach($a_crl as $crl)
+	foreach ($a_crl as $crl) {
 		$ca_crl_map[$crl['caref']][] = $crl['refid'];
+	}
 
 	$i = 0;
-	foreach($a_ca as $ca):
+	foreach ($a_ca as $ca):
 		$name = htmlspecialchars($ca['descr']);
 
-		if($ca['prv']) {
+		if ($ca['prv']) {
 			$cainternal = "YES";
-		} else
+		} else {
 			$cainternal = "NO";
+		}
 ?>
 					<tr>
 						<td colspan="4">
@@ -635,22 +639,25 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						</td>
 						<td>
 <?php
-		if ($cainternal == "YES"): ?>
+		if ($cainternal == "YES"):
+?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
-		else: ?>
+		else:
+?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
-		endif; ?>
+		endif;
+?>
 						</td>
 					</tr>
 <?php
 		if (is_array($ca_crl_map[$ca['refid']])):
-			foreach($ca_crl_map[$ca['refid']] as $crl):
+			foreach ($ca_crl_map[$ca['refid']] as $crl):
 				$tmpcrl = lookup_crl($crl);
 				$internal = is_crl_internal($tmpcrl);
 				$inuse = crl_in_use($tmpcrl['refid']);
@@ -670,17 +677,20 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 								<?=gettext("Edit CRL")?>
 							</a>
 <?php
-				else: ?>
+				else:
+?>
 							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
 								<?=gettext("Edit CRL")?>
 							</a>
 <?php			endif;
-				if (!$inuse): ?>
+				if (!$inuse):
+?>
 							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-danger">
 								<?=gettext("Delete CRL")?>
 							</a>
 <?php
-				endif; ?>
+				endif;
+?>
 						</td>
 					</tr>
 <?php
@@ -702,14 +712,15 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 <script>
 //<![CDATA[
-events.push(function(){
+events.push(function() {
 
 	// Hides all elements of the specified class. This will usually be a section or group
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide) {
 			$('.' + s_class).hide();
-		else
+		} else {
 			$('.' + s_class).show();
+		}
 	}
 
 	// When the 'method" selector is changed, we show/hide certain sections

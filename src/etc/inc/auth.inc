@@ -1,46 +1,60 @@
 <?php
-/* $Id$ */
 /*
-	Copyright (C) 2010 Ermal Luçi
-	All rights reserved.
-
-	Copyright (C) 2007, 2008 Scott Ullrich <sullrich@gmail.com>
-	All rights reserved.
-
-	Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
-	All rights reserved.
-
-	Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
-	All rights reserved.
-
-	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-
-	pfSense_BUILDER_BINARIES:	/usr/sbin/pw	/bin/cp
-	pfSense_MODULE:	auth
+	auth.inc
 */
-
+/* ====================================================================
+ *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *	Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ *	Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>
+ *	Copyright (c)  2003-2006 Manuel Kasper <mk@neon1.net>
+ *
+ *	Redistribution and use in source and binary forms, with or without modification,
+ *	are permitted provided that the following conditions are met:
+ *
+ *	1. Redistributions of source code must retain the above copyright notice,
+ *		this list of conditions and the following disclaimer.
+ *
+ *	2. Redistributions in binary form must reproduce the above copyright
+ *		notice, this list of conditions and the following disclaimer in
+ *		the documentation and/or other materials provided with the
+ *		distribution.
+ *
+ *	3. All advertising materials mentioning features or use of this software
+ *		must display the following acknowledgment:
+ *		"This product includes software developed by the pfSense Project
+ *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *	4. The names "pfSense" and "pfSense Project" must not be used to
+ *		 endorse or promote products derived from this software without
+ *		 prior written permission. For written permission, please contact
+ *		 coreteam@pfsense.org.
+ *
+ *	5. Products derived from this software may not be called "pfSense"
+ *		nor may "pfSense" appear in their names without prior written
+ *		permission of the Electric Sheep Fencing, LLC.
+ *
+ *	6. Redistributions of any form whatsoever must retain the following
+ *		acknowledgment:
+ *
+ *	"This product includes software developed by the pfSense Project
+ *	for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *	OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *	====================================================================
+ *
+ */
 /*
  * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
  * file courtesy of Michael Retterklieber.
@@ -151,7 +165,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		$referrer_host = str_replace(array("[", "]"), "", $referrer_host);
 		if ($referrer_host) {
 			if (strcasecmp($referrer_host, $config['system']['hostname'] . "." . $config['system']['domain']) == 0 ||
-				strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
+			    strcasecmp($referrer_host, $config['system']['hostname']) == 0) {
 				$found_host = true;
 			}
 
@@ -346,6 +360,13 @@ function local_backed($username, $passwd) {
 		return false;
 	}
 
+	if ($user['bcrypt-hash']) {
+		if (password_verify($passwd, $user['bcrypt-hash'])) {
+			return true;
+		}
+	}
+
+	//for backwards compatibility
 	if ($user['password']) {
 		if (crypt($passwd, $user['password']) == $user['password']) {
 			return true;
@@ -436,7 +457,7 @@ function local_sync_accounts() {
 function local_user_set(& $user) {
 	global $g, $debug;
 
-	if (empty($user['password'])) {
+	if (empty($user['password']) && empty($user['bcrypt-hash'])) {
 		log_error("There is something wrong in your config because user {$user['name']} password is missing!");
 		return;
 	}
@@ -484,7 +505,11 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		fwrite($fd, $user['password']);
+		if (empty($user['bcrypt-hash'])) {
+			fwrite($fd, $user['password']);
+		} else {
+			fwrite($fd, $user['bcrypt-hash']);
+		}
 		pclose($fd);
 		$user_group = "wheel";
 		$user_home = "/root";
@@ -514,7 +539,11 @@ function local_user_set(& $user) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
 	}
 	$fd = popen($cmd, "w");
-	fwrite($fd, $user['password']);
+	if (empty($user['bcrypt-hash'])) {
+		fwrite($fd, $user['password']);
+	} else {
+		fwrite($fd, $user['bcrypt-hash']);
+	}
 	pclose($fd);
 
 	/* create user directory if required */
@@ -579,8 +608,17 @@ function local_user_del($user) {
 
 function local_user_set_password(&$user, $password) {
 
-	$user['password'] = crypt($password);
-	$user['md5-hash'] = md5($password);
+	unset($user['password']);
+	unset($user['md5-hash']);
+	$user['bcrypt-hash'] = password_hash($password, PASSWORD_BCRYPT);
+
+	/* Maintain compatibility with FreeBSD - change $2y$ prefix to $2b$
+	 * https://reviews.freebsd.org/D2742
+	 * XXX: Can be removed as soon as r284483 is MFC'd.
+	 */
+	if ($user['bcrypt-hash'][2] == "y") {
+		$user['bcrypt-hash'][2] = "b";
+	}
 
 	// Converts ascii to unicode.
 	$astr = (string) $password;
@@ -1112,11 +1150,11 @@ function ldap_get_groups($username, $authcfg) {
 
 	$gresults = isset($authcfg['ldap_rfc2307']) ? $info : $info[0][$ldapgroupattribute];
 
-	if(is_array($gresults)) {
+	if (is_array($gresults)) {
 		/* Iterate through the groups and throw them into an array */
 		foreach ($gresults as $grp) {
-			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false))
-				|| ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
+			if (((isset($authcfg['ldap_rfc2307'])) && (stristr($grp["dn"], "CN=") !== false)) ||
+			    ((!isset($authcfg['ldap_rfc2307'])) && (stristr($grp, "CN=") !== false))) {
 				$grpsplit = isset($authcfg['ldap_rfc2307']) ? explode(",", $grp["dn"]) : explode(",", $grp);
 				$memberof[] = preg_replace("/CN=/i", "", $grpsplit[0]);
 			}

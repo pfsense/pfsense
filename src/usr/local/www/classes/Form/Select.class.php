@@ -54,12 +54,26 @@ class Form_Select extends Form_Input
 		$options = '';
 		foreach ($this->_values as $value => $name)
 		{
-			if (isset($this->_attributes['multiple']))
-				$selected = in_array($value, (array)$this->_value);
-			else
-				$selected = ($this->_value == $value);
+			// Things can get wierd if we have mixed types
+			$sval = $this->_value;
 
-			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. htmlspecialchars(gettext($name)) .'</option>';
+			if( (gettype($value) == "integer") && (gettype($sval) == "string") )
+				$value = strval($value);
+
+			if (isset($this->_attributes['multiple']))
+				$selected = in_array($value, (array)$sval);
+			else {
+				$selected = ($sval == $value);
+			}
+
+			if (!empty(trim($name)) || is_numeric($name)) {
+				$name_str = htmlspecialchars(gettext($name));
+			} else {
+				// Fixes HTML5 validation: Element option without attribute label must not be empty
+				$name_str = "&nbsp;";
+			}
+
+			$options .= '<option value="'. htmlspecialchars($value) .'"'.($selected ? ' selected' : '').'>'. $name_str .'</option>';
 		}
 
 		return <<<EOT

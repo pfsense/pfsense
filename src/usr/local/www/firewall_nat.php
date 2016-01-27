@@ -1,13 +1,12 @@
 <?php
-/* $Id$ */
 /*
 	firewall_nat.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2004 Scott Ullrich
- *	Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>
- *	originally part of m0n0wall (http://m0n0.ch/wall)
+ *
+ *	Some or all of this file is based on the m0n0wall project which is
+ *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
  *
  *	Redistribution and use in source and binary forms, with or without modification,
  *	are permitted provided that the following conditions are met:
@@ -39,7 +38,7 @@
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -56,13 +55,10 @@
  *	====================================================================
  *
  */
-/*
-	pfSense_MODULE: nat
-*/
 
 ##|+PRIV
 ##|*IDENT=page-firewall-nat-portforward
-##|*NAME=Firewall: NAT: Port Forward page
+##|*NAME=Firewall: NAT: Port Forward
 ##|*DESCR=Allow access to the 'Firewall: NAT: Port Forward' page.
 ##|*MATCH=firewall_nat.php*
 ##|-PRIV
@@ -80,18 +76,20 @@ if (!is_array($config['nat']['rule'])) {
 $a_nat = &$config['nat']['rule'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if($_POST['order-store']) {
+if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_nat_new = array();
 
 		// if a rule is not in POST[rule], it has been deleted by the user
-		foreach ($_POST['rule'] as $id)
+		foreach ($_POST['rule'] as $id) {
 			$a_nat_new[] = $a_nat[$id];
+		}
 
 		$a_nat = $a_nat_new;
 
-		if (write_config())
+		if (write_config()) {
 			mark_subsystem_dirty('filter');
+		}
 
 		header("Location: firewall_nat.php");
 		exit;
@@ -166,18 +164,32 @@ if (isset($_POST['del_x'])) {
 		header("Location: firewall_nat.php");
 		exit;
 	}
+} else if ($_GET['act'] == "toggle") {
+	if ($a_nat[$_GET['id']]) {
+		if (isset($a_nat[$_GET['id']]['disabled'])) {
+			unset($a_nat[$_GET['id']]['disabled']);
+		} else {
+			$a_nat[$_GET['id']]['disabled'] = true;
+		}
+		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
+			mark_subsystem_dirty('natconf');
+		}
+		header("Location: firewall_nat.php");
+		exit;
+	}
 }
 
-$closehead = false;
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
 include("head.inc");
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
-if (is_subsystem_dirty('natconf'))
-	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
-					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+if (is_subsystem_dirty('natconf')) {
+	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
+					gettext('You must apply the changes in order for them to take effect.'));
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Port Forward"), true, "firewall_nat.php");
@@ -189,19 +201,20 @@ display_top_tabs($tab_array);
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Rules')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Rules')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><!-- Checkbox --></th>
+						<th><!-- Icon --></th>
 						<th><!-- Rule type --></th>
-						<th><?=gettext("If")?></th>
-						<th><?=gettext("Proto")?></th>
-						<th><?=gettext("Src. addr")?></th>
-						<th><?=gettext("Src. ports")?></th>
-						<th><?=gettext("Dest. addr")?></th>
-						<th><?=gettext("Dest. ports")?></th>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Source Address")?></th>
+						<th><?=gettext("Source Ports")?></th>
+						<th><?=gettext("Dest. Address")?></th>
+						<th><?=gettext("Dest. Ports")?></th>
 						<th><?=gettext("NAT IP")?></th>
 						<th><?=gettext("NAT Ports")?></th>
 						<th><?=gettext("Description")?></th>
@@ -223,23 +236,37 @@ foreach ($a_nat as $natent):
 	);
 
 	/* if user does not have access to edit an interface skip on to the next record */
-	if (!have_natpfruleint_access($natent['interface']))
+	if (!have_natpfruleint_access($natent['interface'])) {
 		continue;
+	}
+
+	if (isset($natent['disabled'])) {
+		$iconfn = "pass_d";
+		$trclass = 'class="disabled"';
+	} else {
+		$iconfn = "pass";
+		$trclass = '';
+	}
 ?>
 
-					<tr id="fr<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$nnats;?>" <?=$trclass?> onClick="fr_toggle(<?=$nnats;?>)" ondblclick="document.location='firewall_nat_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$nnats;?>" onClick="fr_toggle(<?=$nnats;?>)" name="rule[]" value="<?=$i;?>"/>
+						</td>
+						<td>
+							<a href="?act=toggle&amp;id=<?=$i?>">
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+							</a>
 						</td>
 						<td>
 <?php
 	if ($natent['associated-rule-id'] == "pass"):
 ?>
-							<i class="icon-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
+							<i class="fa fa-play" title="<?=gettext("All traffic matching this NAT entry is passed")?>"></i>
 <?php
 	elseif (!empty($natent['associated-rule-id'])):
 ?>
-							<i class="icon-random" title="<?=gettext("Firewall rule ID ")?><?=htmlspecialchars($nnatid)?> . <?=gettext('is managed by this rule')?>"></i>
+							<i class="fa fa-random" title="<?=sprintf(gettext("Firewall rule ID %s is managed by this rule"), htmlspecialchars($natent['associated-rule-id']))?>"></i>
 <?php
 	endif;
 ?>
@@ -247,10 +274,11 @@ foreach ($a_nat as $natent):
 						<td>
 							<?=$textss?>
 <?php
-	if (!$natent['interface'])
+	if (!$natent['interface']) {
 		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr("wan"));
-	else
+	} else {
 		echo htmlspecialchars(convert_friendly_interface_to_friendly_descr($natent['interface']));
+	}
 ?>
 							<?=$textse?>
 						</td>
@@ -265,7 +293,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['src'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
 <?php
 	endif;
 ?>
@@ -273,7 +301,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['src'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -282,7 +310,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
 <?php
 	endif;
 ?>
@@ -290,7 +318,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -300,7 +328,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 <?php
 	endif;
 ?>
@@ -308,7 +336,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -317,7 +345,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
 <?php
 	endif;
 ?>
@@ -325,7 +353,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<i class='icon icon-pencil'></i></a>
+							<i class='fa fa-pencil'></i></a>
 <?php
 	endif;
 ?>
@@ -352,9 +380,9 @@ foreach ($a_nat as $natent):
 							<?=htmlspecialchars($natent['descr'])?>
 						</td>
 						<td>
-							<a class="btn btn-xs btn-info"	title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"><?=gettext("Edit"); ?></a>
-							<a class="btn btn-xs btn-danger"  title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"><?=gettext("Del")?></a>
-							<a class="btn btn-xs btn-success"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"><?=gettext("Clone")?></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit rule"); ?>" href="firewall_nat_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone"	  title="<?=gettext("Add a new NAT based on this one")?>" href="firewall_nat_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext("Delete rule")?>" href="firewall_nat.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php
@@ -367,53 +395,61 @@ endforeach;
 		</div>
 	</div>
 
-	<div class="pull-right">
-		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new rule')?>"><?=gettext('Add new rule')?></a>
-		<input name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rules"); ?>"	 />
-		<input type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="<?=gettext("Save changes")?>" disabled="disabled" />
-	</div>
+	<nav class="action-buttons">
+		<a href="firewall_nat_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<a href="firewall_nat_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected rules')?>">
+			<i class="fa fa-trash icon-embed-btn"></i>
+			<?=gettext("Delete"); ?>
+		</button>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save rule order')?>">
+			<i class="fa fa-save icon-embed-btn"></i>
+			<?=gettext("Save")?>
+		</button>
+	</nav>
 </form>
 
-<script>
-function fr_toggle(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	checkbox.checked = !checkbox.checked;
-	fr_bgcolor(id, prefix);
-}
-
-function fr_bgcolor(id, prefix) {
-	if (!prefix)
-		prefix = 'fr';
-
-	var row = document.getElementById(prefix + id);
-	var checkbox = document.getElementById(prefix + 'c' + id);
-	var cells = row.getElementsByTagName('td');
-	var cellcnt = cells.length;
-
-	for (i = 0; i < cellcnt-1; i++) {
-		cells[i].style.backgroundColor = checkbox.checked ? "#DDF4FF" : "#FFFFFF";
-	}
-}
-</script>
-
-<script>
+<script type="text/javascript">
+//<![CDATA[
 events.push(function() {
-	// Make rules draggable/sortable
+
+	// Make rules sortable
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			dirty = true;
 		}
 	});
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
+	});
+
+	// Globals
+	saving = false;
+	dirty = false;
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (!saving && dirty) {
+			return ("<?=gettext('You have moved one or more Port Forward rules but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
+//]]>
 </script>
 <?php
 
@@ -423,8 +459,8 @@ if (count($a_nat) > 0) {
 <div>
 	<dl class="dl-horizontal responsive">
 		<dt><?=gettext('Legend')?></dt>					<dd></dd>
-		<dt><i class="icon icon-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
-		<dt><i class="icon icon-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
+		<dt><i class="fa fa-play"></i></dt>			<dd><?=gettext('Pass')?></dd>
+		<dt><i class="fa fa-random"></i></dt>		<dd><?=gettext('Linked rule')?></dd>
 	</dl>
 </div>
 

@@ -4,4 +4,4 @@ if [ "${2}" != "POST-INSTALL" ]; then
 	exit 0
 fi
 
-/usr/local/sbin/fcgicli -f /etc/rc.packages -d "pkg=%%PORTNAME%%&when=${2}"
+/usr/local/bin/php -f /etc/rc.packages %%PORTNAME%% ${2}

@@ -3,11 +3,11 @@
 	diag_dump_states.php
 */
 /* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved. 
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
  *  Copyright (c)  2005 Colin Smith
  *
- *  Redistribution and use in source and binary forms, with or without modification, 
- *  are permitted provided that the following conditions are met: 
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
  *
  *  1. Redistributions of source code must retain the above copyright notice,
  *      this list of conditions and the following disclaimer.
@@ -15,12 +15,12 @@
  *  2. Redistributions in binary form must reproduce the above copyright
  *      notice, this list of conditions and the following disclaimer in
  *      the documentation and/or other materials provided with the
- *      distribution. 
+ *      distribution.
  *
- *  3. All advertising materials mentioning features or use of this software 
+ *  3. All advertising materials mentioning features or use of this software
  *      must display the following acknowledgment:
  *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/). 
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *  4. The names "pfSense" and "pfSense Project" must not be used to
  *       endorse or promote products derived from this software without
@@ -36,7 +36,7 @@
  *
  *  "This product includes software developed by the pfSense Project
  *  for use in the pfSense software distribution (http://www.pfsense.org/).
-  *
+ *
  *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
  *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
@@ -53,14 +53,10 @@
  *  ====================================================================
  *
  */
-/*
-	pfSense_BUILDER_BINARIES:	/sbin/pfctl
-	pfSense_MODULE: filter
-*/
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-showstates
-##|*NAME=Diagnostics: Show States page
+##|*NAME=Diagnostics: Show States
 ##|*DESCR=Allow access to the 'Diagnostics: Show States' page.
 ##|*MATCH=diag_dump_states.php*
 ##|-PRIV
@@ -98,9 +94,10 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
 include("head.inc");
 ?>
 
-<script>
-events.push(function(){
-	$('a[data-entry]').on('click', function(){
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 		var data = $(this).data('entry').split('|');
 
@@ -113,30 +110,30 @@ events.push(function(){
 					srcip: data[0],
 					dstip: data[1]
 				},
-				success: function(){
+				success: function() {
 					el.parents('tr').remove();
 				},
 		});
 	});
 });
+//]]>
 </script>
 
 <?php
 $tab_array = array();
 $tab_array[] = array(gettext("States"), true, "diag_dump_states.php");
-if (isset($config['system']['lb_use_sticky']))
+if (isset($config['system']['lb_use_sticky'])) {
 	$tab_array[] = array(gettext("Source Tracking"), false, "diag_dump_states_sources.php");
+}
 $tab_array[] = array(gettext("Reset States"), false, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
 // Start of tab content
 $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
-require_once('classes/Form.class.php');
-
 $form = new Form(false);
 
-$section = new Form_Section('State filter');
+$section = new Form_Section('State filter', 'secfilter', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'filter',
@@ -165,25 +162,30 @@ if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST[
 $form->add($section);
 print $form;
 ?>
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th><?=gettext("Int")?></th>
-			<th><?=gettext("Proto")?></th>
-			<th><?=gettext("Source -> Router -> Destination")?></th>
-			<th><?=gettext("State")?></th>
-			<th></th> <!-- For the optional "Remove" button -->
-		</tr>
-	</thead>
-	<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("States")?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Source -> Router -> Destination")?></th>
+						<th><?=gettext("State")?></th>
+						<th></th> <!-- For the optional "Remove" button -->
+					</tr>
+				</thead>
+				<tbody>
 <?php
 	$row = 0;
 	/* get our states */
 	$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
 	$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
 	while ($line = chop(fgets($fd))) {
-		if ($row >= 10000)
+		if ($row >= 10000) {
 			break;
+		}
 
 		$line_split = preg_split("/\s+/", $line);
 
@@ -202,27 +204,32 @@ print $form;
 		$parts = explode(":", $ends[count($ends) - 1]);
 		$dstip = trim($parts[0]);
 ?>
-		<tr>
-			<td><?= $iface ?></td>
-			<td><?= $proto ?></td>
-			<td><?= $info ?></td>
-			<td><?= $state ?></td>
+					<tr>
+						<td><?= $iface ?></td>
+						<td><?= $proto ?></td>
+						<td><?= $info ?></td>
+						<td><?= $state ?></td>
 
-			<td>
-				<a class="btn btn-xs btn-danger" data-entry="<?=$srcip?>|<?=$dstip?>"
-					title="<?=sprintf(gettext('Remove all state entries from %s to %s'), $srcip, $dstip);?>">Remove</a>
-			</td>
-		</tr>
-<?php $row++; } ?>
-	</tbody>
-</table>
+						<td>
+							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
+								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $dstip);?>"></a>
+						</td>
+					</tr>
+<?php $row++; }
+?>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 <?php
 
 if ($row == 0) {
-	if (isset($_POST['filter']) && !empty($_POST['filter']))
+	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter');
-	else
+	} else {
 		$errmsg = gettext('No states were found');
+	}
 
 	print('<p class="alert alert-warning">' . $errmsg . '</p>');
 }

@@ -1,6 +1,5 @@
 #!/usr/local/bin/php-cgi -f
 <?php
-/* $Id$ */
 /*
 	rc.carpmaster
 	part of pfSense (https://www.pfsense.org)

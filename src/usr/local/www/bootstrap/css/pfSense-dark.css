@@ -352,3 +352,9 @@ ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
 textarea {
     background-color: #bfbfbf;
 }
+
+/** Styling for jQuery autocomplete widget */
+.ui-autocomplete {
+    color: #212121;
+    background-color: #e0e0e0;
+}

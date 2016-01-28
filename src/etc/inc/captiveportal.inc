@@ -742,19 +742,32 @@ function captiveportal_prune_old() {
 		/* do periodic RADIUS reauthentication? */
 		if (!$timedout && !empty($radiusservers)) {
 			if (isset($cpcfg['radacct_enable'])) {
-				if ($cpcfg['reauthenticateacct'] == "stopstart") {
+				if (substr($cpcfg['reauthenticateacct'], 0, 9) == "stopstart") {
 					/* stop and restart accounting */
+					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
+						$rastart_time = 0;
+						$rastop_time = 60;
+					} else {
+						$rastart_time = $cpentry[0];
+						$rastop_time = null;
+					}
 					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
-						$cpentry[0], // start time
+						$rastart_time, // start time
 						$radiusservers,
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
-						10); // NAS Request
+						10, // NAS Request
+						false, // Not an interim request
+						$rastop_time); // Stop Time
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
 					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 1, $cpentry[2], $clientsn, $cpentry[3]);
 					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 2, $cpentry[2], $clientsn, $cpentry[3]);
+					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
+						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
+						sleep(1);
+					}
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid

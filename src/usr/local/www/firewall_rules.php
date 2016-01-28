@@ -348,7 +348,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 /* Load the counter data of each pf rule. */
 $rulescnt = pfSense_get_pf_rules();
 
-// Update this is you add or remove columns!
+// Update this if you add or remove columns!
 $columns_in_table = 13;
 
 ?>

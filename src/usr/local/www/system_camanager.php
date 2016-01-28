@@ -443,12 +443,12 @@ foreach ($a_ca as $i => $ca):
 						</small>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext("Edit")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-sign-in"	title="<?=gettext("Export")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
+						<a class="fa fa-sign-in"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php endforeach; ?>

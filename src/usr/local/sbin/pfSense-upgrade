@@ -510,6 +510,7 @@ setup_nanobsd_env() {
 	_exec "tunefs -L ${_update_partition##*/} ${_update_slice}" "Restoring slice label" mute
 	sysctl kern.geom.debugflags=0 >/dev/null 2>&1
 
+	_exec "/sbin/fsck -y -t ufs /dev/${_update_partition}" "Testing duplicated partition integrity" mute
 	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
 
 	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \

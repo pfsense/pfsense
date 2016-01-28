@@ -207,11 +207,11 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 
-		if(is_numericint($dhcpv6ifconf['ravalidlifetime'])) {
+		if (is_numericint($dhcpv6ifconf['ravalidlifetime'])) {
 		  $radvdconf .= "\t\tAdvValidLifetime {$dhcpv6ifconf['ravalidlifetime']};\n";
 		}
 
-		if(is_numericint($dhcpv6ifconf['rapreferredlifetime'])) {
+		if (is_numericint($dhcpv6ifconf['rapreferredlifetime'])) {
 		  $radvdconf .= "\t\tAdvPreferredLifetime {$dhcpv6ifconf['rapreferredlifetime']};\n";
 		}
 

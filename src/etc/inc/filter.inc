@@ -139,8 +139,8 @@ $icmp6types = array(
 /*
  * Fixed tracker values (used to group and track usage in GUI):
  *
- * bogons rules:	10000
- * anti-lockout rules:	11000
+ * anti-lockout rules:	10000
+ * bogons rules:	11000
  * RFC1918 rules:	12000
  *
  */

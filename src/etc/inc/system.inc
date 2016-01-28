@@ -238,26 +238,21 @@ function system_resolvconf_generate($dynupdate = false) {
 		/* setup static routes for dns servers */
 		$dnsgw = "dns{$dnscounter}gw";
 		if (isset($config['system'][$dnsgw])) {
+			if (empty($config['system'][$dnsgw]) ||
+			    $config['system'][$dnsgw] == "none") {
+				continue;
+			}
 			$gwname = $config['system'][$dnsgw];
-			if (($gwname <> "") && ($gwname <> "none")) {
-				$gatewayip = lookup_gateway_ip_by_name($gwname);
-				if (is_ipaddrv4($gatewayip)) {
-					/* dns server array starts at 0 */
-					$dnscountermo = $dnscounter - 1;
-					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
-					if (isset($config['system']['route-debug'])) {
-						$mt = microtime();
-						log_error("ROUTING debug: $mt - route change -host {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
-					}
-				}
-				if (is_ipaddrv6($gatewayip)) {
-					/* dns server array starts at 0 */
-					$dnscountermo = $dnscounter - 1;
-					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
-					if (isset($config['system']['route-debug'])) {
-						$mt = microtime();
-						log_error("ROUTING debug: $mt - route change -host -inet6 {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
-					}
+			$gatewayip = lookup_gateway_ip_by_name($gwname);
+			$inet = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
+
+			if (is_ipaddr($gatewayip)) {
+				/* dns server array starts at 0 */
+				$dnscountermo = $dnscounter - 1;
+				mwexec("/sbin/route change -host " . $inet . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - route change -host {$inet} {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
 				}
 			}
 		}

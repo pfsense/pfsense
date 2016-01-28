@@ -88,6 +88,7 @@ if ($_POST) {
 		$retval = 0;
 
 		$retval = system_routing_configure();
+		$retval |= system_resolvconf_generate();
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
 		setup_gateways_monitor();

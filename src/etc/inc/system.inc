@@ -244,16 +244,22 @@ function system_resolvconf_generate($dynupdate = false) {
 			}
 			$gwname = $config['system'][$dnsgw];
 			$gatewayip = lookup_gateway_ip_by_name($gwname);
-			$inet = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
+			$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
+			/* dns server array starts at 0 */
+			$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
 
 			if (is_ipaddr($gatewayip)) {
-				/* dns server array starts at 0 */
-				$dnscountermo = $dnscounter - 1;
-				mwexec("/sbin/route change -host " . $inet . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
-				if (isset($config['system']['route-debug'])) {
-					$mt = microtime();
-					log_error("ROUTING debug: $mt - route change -host {$inet} {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
-				}
+				$cmd = 'change';
+			} else {
+				/* Remove old route when disable gw */
+				$cmd = 'delete';
+				$gatewayip = '';
+			}
+
+			mwexec("/sbin/route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
+			if (isset($config['system']['route-debug'])) {
+				$mt = microtime();
+				log_error("ROUTING debug: $mt - route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
 			}
 		}
 	}

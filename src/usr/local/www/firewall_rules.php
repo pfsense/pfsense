@@ -900,10 +900,10 @@ events.push(function() {
 			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
 			'<button class="btn btn-default btn-sm" id="btncncsep"><?=gettext("Cancel")?></button>' +
 			'&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success"></i></a>' +
-			'&nbsp;&nbsp;<a href="#" id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
 			'</td></tr>');
 
 		$('#newsep').focus();

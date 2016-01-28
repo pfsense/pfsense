@@ -882,7 +882,7 @@ events.push(function() {
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
-			reindex_rules(ui.item.parent('tbody'), ui.item.index);
+			reindex_rules(ui.item.parent('tbody'));
 			dirty = true;
 		}
 	});
@@ -1013,12 +1013,11 @@ events.push(function() {
 		});
 	}
 
-	function reindex_rules(section, startingat) {
+	function reindex_rules(section) {
 		var row = 0;
 
 		section.find('tr').each(function() {
 			if(this.id) {
-//				$(this).attr("id", bumpStringInt($(this).attr("id")));
 				$(this).attr("id", "fr" + row);
 				row++;
 			}

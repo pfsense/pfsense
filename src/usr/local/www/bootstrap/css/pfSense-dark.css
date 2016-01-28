@@ -353,6 +353,8 @@ textarea {
     background-color: #bfbfbf;
 }
 
+/** Styling for jQuery autocomplete widget */
 .ui-autocomplete {
-    background-color: #606060;
+    color: #212121;
+    background-color: #e0e0e0;
 }

@@ -72,6 +72,114 @@ require_once("shaper.inc");
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
+foreach (pfSense_get_pf_rules() as $line) {
+	foreach ($line as $key=>$value) {
+		switch ($key) {
+			case 'bytes':
+			case 'states':
+			case 'packets':
+			case 'evaluations':
+				$rules_count_array[$line['tracker']][$key] += $value;
+				break;
+			case 'id':
+				if (isset($rules_count_array[$line['tracker']]['RuleId'])) {
+					$rules_count_array[$line['tracker']]['RuleId'] .= "|{$value}";
+				} else {
+					$rules_count_array[$line['tracker']]['RuleId'] = $value;
+				}
+				break;
+			case 'label':
+				$rules_count_array[$line['tracker']][$key] = $value;
+				break;
+		}
+	}
+}
+
+if ($_POST['action'] != "KillRuleStates") {
+	?>
+	<div id="RuleStates" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+
+					<h3 class="modal-title" id="myModalLabel"><?=gettext("Rule States")?></h3>
+				</div>
+
+				<div class="modal-body" id="RuleStates-modal-body">
+				</div>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+
+//Get rule Hit count
+function get_rule_ht($tracker, $sum_ht=array(), $buit_in_rule=false) {
+	global $g, $rules_count_array;
+
+	//check if there is previous values
+	$packets = (isset($sum_ht['packets']) ? $sum_ht['packets'] : 0);
+	$states = (isset($sum_ht['bytes']) ? $sum_ht['bytes'] : 0);
+	$rules_title = (isset($sum_ht['title']) ? $sum_ht['title'] : "");
+	$rules_id = array();
+	if (preg_match("/\s+/",$tracker)) {
+		$rules_title .= "$tracker\n";
+	}
+	if ($buit_in_rule == true) {
+		//get tracker based on builtin description rule
+		foreach ($rules_count_array as $rule_tracker => $rule_info) {
+			if ($rule_info['label']==$tracker) {
+				$tracker = $rule_tracker;
+				break;
+			}
+		}
+	}
+	$tracker = (int) $tracker;
+	if (is_array($rules_count_array) && array_key_exists($tracker,$rules_count_array)) {
+		$packets += $rules_count_array[$tracker]['packets'];
+		$states += $rules_count_array[$tracker]['states'];
+		foreach ($rules_count_array[$tracker] as $rck => $rcv) {
+			switch($rck) {
+				case "label":
+					$label = $rcv;
+					break;
+				case "RuleId":
+					$ruleid = $rcv;
+					break;
+				default:
+					$rules_title .= "$rck: ".bd_nice_number($rcv)."\n";
+			}
+		}
+	}
+	$hitcount = bd_nice_number($packets)."/".bd_nice_number($states);
+	if ($states > 0) {
+		//NEED HELP HERE fixing width for states popup
+		$html  = "<a href=\"#\" onmouseover=\"showState('{$ruleid}','{$hitcount}','{$label}');\" data-toggle=\"modal\" data-target=\"#RuleStates\" role=\"button\" aria-expanded=\"false\">";
+		$html .= "<span onmouseover=\"showState('{$ruleid}','{$hitcount}','{$label}');\">{$hitcount}</span></a>";
+	} else {
+		$html="<span id=\"{$label}\" class=\"{$label}\">{$hitcount}</span>";
+	}
+	return (array(	'title'=> $rules_title,
+					'packets' =>$packets,
+					'states' =>$states,
+					'html' =>$html,
+					'id' => $label
+	));
+}
+
+function bd_nice_number ($a) {
+	$unim = array("","K","M","G","T","P");
+	$c = 0;
+	while ($a>=1024) {
+		$c++;
+		$a = $a/1024;
+	}
+	return number_format($a,($c ? 2 : 0),",",".").$unim[$c];
+}
+
 function delete_nat_association($id) {
 	global $config;
 
@@ -166,6 +274,91 @@ if ($_POST) {
 
 		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
 									"<a href='status_filter_reload.php'>", "</a>");
+	}
+
+	/* handle AJAX operations */
+	if ($_POST['action'] == "KillRuleStates") {
+		if (isset($_POST['label'])) {
+			$rulelabel=html_entity_decode($_POST['label']);
+			$cnt_pfctlk=array();
+			$rule_ids=explode("|",$rulelabel);
+			foreach ($rule_ids as $rule_id) {
+				$cnt_pfctlk[]="Rule ID: {$rule_id}";
+				exec("/sbin/pfctl -k id -k " . escapeshellarg($rule_id) ." 2>&1",$cnt_pfctlk);
+			}
+		} else {
+			echo gettext("invalid input");
+		}
+
+		if (!empty($cnt_pfctlk)) {
+			foreach ($cnt_pfctlk as $line) {
+				if (preg_match("/Rule ID/",$line)) {
+					print "$line ";
+				}else{
+					print "$line\n";
+				}
+			}
+		}
+		return;
+	}
+
+	if($_POST['action'] == "ShowRuleStates") {
+		$th1="<th>";
+		$th2="<th>";
+		//$td2="<td class=\'vncell\' style=\'background: #FFFFFF;color: #000000;\'>";
+		$resp  = "<table class='table table-striped table-hover table-condensed'>";
+		$resp .= "<thead>";
+		$resp .= "<tr>";
+		$resp .= $th1 . gettext("Proto") . "</th>";
+		$resp .= $th1 . gettext("Source -> Router -> Destination") . "</th>";
+		$resp .= $th1 . gettext("State") . "</th>";
+		$resp .= $th1 . gettext("Packets") . "</th>";
+		$resp .= $th1 . gettext("bytes") . "</th>";
+		$resp .= "</tr>";
+		$resp .= "</thead>";
+		$resp .= "<tbody>";
+		$state_count = 0;
+		$remove_ids = "";
+		if (isset($_POST['hitcount'])) {
+			$hitcount=html_entity_decode($_POST['hitcount']);
+		}
+
+		if (isset($_POST['ruleid'])) {
+			$ruleid=html_entity_decode($_POST['ruleid']);
+			$cnt_pfctls=array();
+			exec("/sbin/pfctl -vvss | /usr/bin/grep -EB2 -A1 \"rule ({$ruleid})\"",$cnt_pfctls);
+		} else {
+			echo gettext("invalid input");
+		}
+
+		if (isset($_POST['title'])) {
+			$hittitle=html_entity_decode($_POST['title']);
+		}
+
+		if (!empty($cnt_pfctls)) {
+			foreach($cnt_pfctls as $line) {
+				if (preg_match("/^\w+\s+(\w+)\s+(.*)(.-.)(.*)\s+(\w+:\w+)/",$line,$mcon)) {
+					$state_count++;
+					$resp .= "<tr>{$th2}{$mcon[1]}</th>{$th2}{$mcon[2]}{$mcon[3]}{$mcon[4]}</th>{$th2}{$mcon[5]}</th>";
+				} else if (preg_match("/age.*, (\S+) pkts, (\S+) bytes, rule (\d+)/",$line,$mrule)) {
+					list($pkt1,$pkt2)=split(":",$mrule[1],2);
+					list($bt1,$bt2)=split(":",$mrule[2],2);
+					$resp .= "{$th2}".bd_nice_number($pkt1)." / ".bd_nice_number($pkt2)."</th>{$th2}".bd_nice_number($bt1)." / ".bd_nice_number($bt2)."</th></tr>";
+				} else if (preg_match("/id:\s+(\w+)\s+creatorid:\s+(\w+)/",$line,$mid)) {
+					$remove_ids .= ($remove_ids == "" ? $mid[1] : "|{$mid[1]}");
+				}
+
+			}
+		}
+		$resp .= "</tbody>";
+		$resp .= "</table>";
+		//
+		$resp .= '<div class="modal-footer">';
+		$resp .= '<button type="button" class="btn btn-default" data-dismiss="modal">' . gettext("Close") . '</button>';
+		$resp .= '<button type="button" id="clearstates" class="btn btn-primary" onclick="removeState(' . "'{$remove_ids}')\">" . gettext("Kill Rule States") . "</button>";
+		$resp .= '</div>';
+		print($resp);
+		return;
 	}
 }
 
@@ -303,6 +496,66 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 ?>
 
 <form method="post">
+<script type="text/javascript">
+//<![CDATA[
+	function removeState(label,rtp) {
+		myrtp = rtp;
+		mylabel = label;
+		var busy = function(index,icon) {
+			jQuery(icon).bind("onclick","");
+			jQuery(icon).css("cursor","wait");
+		}
+
+		jQuery.ajax(
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action: "KillRuleStates",
+					label: label
+				},
+				complete: RemoveComplete
+			}
+		);
+	}
+	function showState(ruleid,hitcount,label) {
+		myruleid = ruleid;
+		mylabel = label;
+		myhitcount = hitcount;
+		var busy = function(index,icon) {
+			jQuery(icon).bind("onclick","");
+			jQuery(icon).css("cursor","wait");
+		}
+
+		jQuery.ajax(
+			"<?=$_SERVER['SCRIPT_NAME'];?>",
+			{
+				type: "post",
+				data: {
+					action: "ShowRuleStates",
+					ruleid: myruleid,
+					hitcount: myhitcount,
+					label: label
+				},
+				complete: ShowComplete
+			}
+		);
+	}
+	function RemoveComplete(req) {
+		alert(req.responseText);
+		jQuery('span[id="'+ mylabel + '"]').each(
+			function(index,row) { jQuery(row).html(myrtp + "/0"); }
+			);
+		return;
+	}
+	function ShowComplete(req) {
+			jQuery('div[id="RuleStates-modal-body"]').each(
+					function(index,row) { jQuery(row).html(req.responseText); }
+					);
+	return;
+	}
+//]]>
+</script>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
@@ -311,6 +564,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
+						<th><?=gettext("Hits");?></th>
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
@@ -331,10 +585,12 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 		if ($showantilockout):
 			$alports = implode('<br />', filter_get_antilockout_ports(true));
+			$rule_hit_count=get_rule_ht("anti-lockout rule",array(),true);
 ?>
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
+						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title']; ?>"><?=$rule_hit_count['html']; ?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -349,10 +605,16 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 						</td>
 					</tr>
 <?php 	endif;?>
-<?php 	if ($showprivate): ?>
+<?php 	if ($showprivate):
+			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 192.168/16",array(),true);
+			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 127/8",$rule_hit_count,true);
+			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 172.16/12",$rule_hit_count,true);
+			$rule_hit_count=get_rule_ht("Block private networks from " . strtoupper($if) . " block 10/8",$rule_hit_count,true);
+?>
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'];?>"><?=$rule_hit_count['html']; ?></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -367,10 +629,14 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 						</td>
 					</tr>
 <?php 	endif;?>
-<?php 	if ($showblockbogons): ?>
+<?php 	if ($showblockbogons):
+			$rule_hit_count=get_rule_ht("block bogon IPv4 networks from ".strtoupper($if),array(),true);
+			$rule_hit_count=get_rule_ht("block bogon IPv6 networks from ".strtoupper($if),$rule_hit_count,true);
+?>
 					<tr id="frrfc1918">
 					<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'] ?>"><?=$rule_hit_count['html']; ?></td>
 						<td>*</td>
 						<td><?=gettext("Reserved/not assigned by IANA");?></td>
 						<td>*</td>
@@ -591,7 +857,9 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				$printicon = true;
 			}
 		}
+		$rule_hit_count=get_rule_ht($filterent['tracker']);
 	?>
+				<td id="<?=$rule_hit_count['id']; ?>" title="<?=$rule_hit_count['title'] ?>"><?=$rule_hit_count['html']; ?></td>
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {
@@ -975,4 +1243,3 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");?>
-

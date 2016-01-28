@@ -1118,7 +1118,7 @@ foreach ($a_cert as $i => $cert):
 							<a href="system_certmanager.php?act=key&amp;id=<?=$i?>" class="fa fa-key" title="<?=gettext("Export Key")?>"></a>
 						<?php endif?>
 						<?php if (!cert_in_use($cert['refid'])): ?>
-							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete")?>"></a>
+							<a href="system_certmanager.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext("Delete Certificate")?>"></a>
 						<?php endif?>
 					</td>
 				</tr>

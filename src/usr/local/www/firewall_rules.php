@@ -758,7 +758,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 <?php }
 ?>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>"></a>
 						</td>
 					</tr>
 <?php

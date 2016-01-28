@@ -220,6 +220,17 @@ if ($_GET['act'] == "del") {
 			delete_nat_association($a_filter[$_GET['id']]['associated-rule-id']);
 		}
 		unset($a_filter[$_GET['id']]);
+
+		// Update the separators
+		$a_separators = &$config['filter']['separator'][$if];
+
+		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+			if ($seprow >= $_GET['id']) {
+				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
 		}
@@ -239,10 +250,20 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		$a_separators = &$config['filter']['separator'][$if];
+
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 			$deleted = true;
+
+			// Update the separators
+			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+				if ($seprow >= $rulei) {
+					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+				}
+			}
 		}
 
 		if ($deleted) {
@@ -861,6 +882,7 @@ events.push(function() {
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			reindex_rules(ui.item.parent('tbody'), ui.item.index);
 			dirty = true;
 		}
 	});
@@ -989,6 +1011,18 @@ events.push(function() {
 				seprow++;
 			}
 		});
+	}
+
+	function reindex_rules(section, startingat) {
+		var row = 0;
+
+		section.find('tr').each(function() {
+			if(this.id) {
+//				$(this).attr("id", bumpStringInt($(this).attr("id")));
+				$(this).attr("id", "fr" + row);
+				row++;
+			}
+		})
 	}
 
 	function handle_colors() {

@@ -660,7 +660,7 @@ function build_pooltable() {
 	$pooltbl .=					'<th>' . gettext("Pool Start") . '</th>';
 	$pooltbl .=					'<th>' . gettext("Pool End") . '</th>';
 	$pooltbl .=					'<th>' . gettext("Description") . '</th>';
-	$pooltbl .=					'<th></th>';
+	$pooltbl .=					'<th>' . gettext("Actions") . '</th>';
 	$pooltbl .=				'</tr>';
 	$pooltbl .=			'</thead>';
 	$pooltbl .=			'<tbody>';
@@ -679,9 +679,9 @@ function build_pooltable() {
 				$pooltbl .= '<td ondblclick="document.location=\'services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '\';">' .
 							htmlspecialchars($poolent['descr']) . '</td>';
 
-				$pooltbl .= '<td><a class="btn btn-xs btn-info" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '" />' . gettext('Edit') . '</a>';
+				$pooltbl .= '<td><a class="fa fa-pencil" title="'. gettext("Edit pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&pool=' . $i . '"></a>';
 
-				$pooltbl .= '<a class="btn btn-xs btn-danger" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '" />' . gettext('Delete') . '</a></td>';
+				$pooltbl .= ' <a class="fa fa-trash" title="'. gettext("Delete pool") . '" href="services_dhcp.php?if=' . htmlspecialchars($if) . '&act=delpool&id=' . $i . '"></a></td>';
 				$pooltbl .= '</tr>';
 			}
 		$i++;

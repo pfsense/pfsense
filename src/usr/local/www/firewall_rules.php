@@ -419,11 +419,11 @@ $rulescnt = pfSense_get_pf_rules();
 <?php 	endif;?>
 <?php 	if ($showblockbogons): ?>
 					<tr id="frrfc1918">
-					<td></td>
+						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td><? print_states(intval(BOGONS_TRACKER)); ?></td>
 						<td>*</td>
-						<td><?=gettext("Reserved/not assigned by IANA");?></td>
+						<td><?=sprintf(gettext("Reserved%sNot assigned by IANA"), "<br />");?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -446,7 +446,7 @@ $seps = 0;
 // There can be a separator before any rules are listed
 if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
 	print('<tr class="ui-sortable-handle separator">' .
-		'<td bgcolor="#cce5ff" colspan="11">' . '<font color="#002699">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</font></td>' .
+		'<td bgcolor="#cce5ff" colspan="12">' . '<font color="#002699">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</font></td>' .
 		'<td  bgcolor="#cce5ff"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
 		'</tr>' . "\n");
 }
@@ -890,9 +890,11 @@ events.push(function() {
 
 		gColor = 'bg-info';
 		// Inset a temporary bar in which the user can enter some optional text
+		sepcols = $( "#ruletable tr td" ).length - 1;
+
 		$('#ruletable > tbody:last').append('<tr>' +
-			'<td class="' + gColor + '" colspan="10"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text" /></td>' +
-			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
+			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="<?=gettext("Enter a description, Save, then drag to final location.")?>" class="col-md-12" type="text" /></td>' +
+			'<td class="' + gColor + '"><button class="btn btn-default btn-sm" id="btnnewsep"><?=gettext("Save")?></button>' +
 			'<button class="btn btn-default btn-sm" id="btncncsep"><?=gettext("Cancel")?></button>' +
 			'&nbsp;&nbsp;&nbsp;&nbsp;' +
 			'&nbsp;&nbsp;<a href="#" id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info"></i></a>' +

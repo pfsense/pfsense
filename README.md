@@ -13,13 +13,16 @@ Read more at [https://pfsense.org/](https://pfsense.org/ "The pfSense homepage")
 
 ## Contribute
 
-Contact [coreteam@pfsense.org](mailto:coreteam@pfsense.org "Mail to coreteam@pfsense.org") to get involved.
+The pfSense project welcomes contributions, big or small. Members of the pfSense community frequently contribute bug fixes, enhancements, and documentation changes to improve the functionality and usability of the software.
 
-* Review our Developer Style Guide: https://doc.pfsense.org/index.php/Developer_Style_Guide
-* Familiarize yourself with our git repositories (and github in general): https://github.com/pfsense
-* Review the list of open bug reports and other issues: https://redmine.pfsense.org/projects/pfsense/issues
-* Review and Sign the license agreement (LA) and either the Individual or Corporate CLA: https://doc.pfsense.org/index.php/Contributor_License_Agreement_for_Developers
+All of the pfSense project source code is on Github. We recommend potential contributors familiarize themselves with [the pfSense project git repositories](https://github.com/pfsense) and Github in general
 
-Once you have the LA and CLA complete, you can submit changes as pull requests on github: https://help.github.com/articles/using-pull-requests/
+For legal reasons, we require those seeking to contribute source code changes to [review and sign the license agreement (LA) and either the Individual or Corporate CLA](https://doc.pfsense.org/index.php/Contributor_License_Agreement_for_Developers).
 
-Our developers will review the submissions, offer feedback, and merge the changes if they are acceptable.
+If you want to contribute but do not have a specific topic in mind, review the [list of open bug reports and other issues that are in need of attention](https://redmine.pfsense.org/projects/pfsense/issues).
+
+Before making source code changes, be sure to review our [Developer Style Guide](https://doc.pfsense.org/index.php/Developer_Style_Guide) so that the submitted code matches our preferred coding style.
+
+Changes may be submitted as [pull requests on github](https://help.github.com/articles/using-pull-requests/) once the LA and CLA signing process has been completed. After being submitted, our developers will review the requests, offer feedback, and merge the changes if they are acceptable.
+
+Contact [coreteam@pfsense.org](mailto:coreteam@pfsense.org "Mail to coreteam@pfsense.org") with any additional questions or concerns.

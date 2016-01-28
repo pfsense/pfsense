@@ -1720,7 +1720,7 @@ function format_bytes($bytes) {
 	} else if ($bytes >= 1024) {
 		return sprintf("%.0f KB", $bytes/1024);
 	} else {
-		return sprintf("%d bytes", $bytes);
+		return sprintf("%d B", $bytes);
 	}
 }
 

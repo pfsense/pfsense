@@ -87,6 +87,16 @@ if (array_key_exists('order-store', $_POST)) {
 
 		$a_nat = $a_nat_new;
 
+
+		$config['nat']['separator'] = "";
+
+		if ($_POST['separator']) {
+			$idx = 0;
+			foreach ($_POST['separator'] as $separator) {
+				$config['nat']['separator']['sep' . $idx++] = $separator;
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
 		}
@@ -130,6 +140,16 @@ if ($_GET['act'] == "del") {
 		}
 		unset($a_nat[$_GET['id']]);
 
+		// Update the separators
+		$a_separators = &$config['nat']['separator'];
+
+		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+			if ($seprow >= $_GET['id']) {
+				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
 			if ($want_dirty_filter) {
@@ -145,8 +165,11 @@ if ($_GET['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		$a_separators = &$config['nat']['separator'];
+
 		foreach ($_POST['rule'] as $rulei) {
-		$target = $rule['target'];
+			$target = $rule['target'];
+
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
@@ -155,6 +178,14 @@ if (isset($_POST['del_x'])) {
 			}
 
 			unset($a_nat[$rulei]);
+
+			// Update the separators
+			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+				if ($seprow >= $rulei) {
+					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+				}
+			}
 		}
 
 		if (write_config()) {
@@ -197,13 +228,15 @@ $tab_array[] = array(gettext("1:1"), false, "firewall_nat_1to1.php");
 $tab_array[] = array(gettext("Outbound"), false, "firewall_nat_out.php");
 $tab_array[] = array(gettext("NPt"), false, "firewall_nat_npt.php");
 display_top_tabs($tab_array);
+
+$columns_in_table = 13;
 ?>
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Rules')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table id="ruletable" class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr>
 						<th><!-- Checkbox --></th>
@@ -225,6 +258,15 @@ display_top_tabs($tab_array);
 <?php
 
 $nnats = $i = 0;
+
+// There can be a separator before any rules are listed
+if ($config['nat']['separator']['sep0']['row'][0] == "fr-1") {
+	$cellcolor = $config['nat']['separator']['sep0']['color'];
+	print('<tr class="ui-sortable-handle separator">' .
+		'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $config['nat']['separator']['sep0']['text'] . '</span></td>' .
+		'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+		'</tr>' . "\n");
+}
 
 foreach ($a_nat as $natent):
 
@@ -386,6 +428,18 @@ foreach ($a_nat as $natent):
 						</td>
 					</tr>
 <?php
+
+		if (isset($config['nat']['separator']['sep0'])) {
+			foreach ($config['nat']['separator'] as $rulesep) {
+				if ($rulesep['row']['0'] == "fr" . $nnats) {
+					$cellcolor = $rulesep['color'];
+					print('<tr class="ui-sortable-handle separator">' .
+						'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
+						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+						'</tr>' . "\n");
+				}
+			}
+		}
 	$i++;
 	$nnats++;
 endforeach;
@@ -412,11 +466,23 @@ endforeach;
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
+		<button type="submit" id="addsep" name="addsep" class="btn btn-sm btn-warning" title="<?=gettext('Add separator')?>">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Separator")?>
+		</button>
 	</nav>
 </form>
 
 <script type="text/javascript">
 //<![CDATA[
+//Need to create some variables here so that jquert/pfSenseHelpers.php can read them
+iface = "<?=strtolower($if)?>";
+cncltxt = '<?=gettext("Cancel")?>';
+svtxt = '<?=gettext("Save")?>';
+svbtnplaceholder = '<?=gettext("Enter a description, Save, then drag to final location.")?>';
+configsection = "nat";
+dirty = false;
+
 events.push(function() {
 
 	// Make rules sortable
@@ -425,6 +491,8 @@ events.push(function() {
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			dirty = true;
+			reindex_rules(ui.item.parent('tbody'));
+			dirty = true;
 		}
 	});
 
@@ -432,8 +500,12 @@ events.push(function() {
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
 
+		// Save the separator bar configuration
+		save_separators();
+
 		// Suppress the "Do you really want to leave the page" message
 		saving = true;
+
 	});
 
 	// Globals

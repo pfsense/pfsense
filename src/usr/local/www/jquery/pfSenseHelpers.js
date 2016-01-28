@@ -465,3 +465,159 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 		}
 	});
 });
+
+	// Separator bar stuff ------------------------------------------------------------------------
+
+	// Globals
+	gColor = 'bg-info';
+	newSeperator = false;
+	saving = false;
+	dirty = false;
+
+	$("#addsep").prop('type' ,'button');
+
+	$("#addsep").click(function() {
+		if (newSeperator) {
+			return(false);
+		}
+
+		gColor = 'bg-info';
+		// Inset a temporary bar in which the user can enter some optional text
+		sepcols = $( "#ruletable tr th" ).length - 2;
+
+		$('#ruletable > tbody:last').append('<tr>' +
+			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
+			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep">' + svtxt + '</button>' +
+			'<button class="btn btn-default btn-sm" id="btncncsep">' + cncltxt + '</button>' +
+			'&nbsp;&nbsp;&nbsp;&nbsp;' +
+			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+			'</td></tr>');
+
+		$('#newsep').focus();
+		newSeperator = true;
+
+		$("#btnnewsep").prop('type' ,'button');
+
+		// Watch escape and enter keys
+		$('#newsep').keyup(function(e) {
+			if(e.which == 27) {
+				$('#btncncsep').trigger('click');
+			}
+		});
+
+		$('#newsep').keypress(function(e) {
+			if(e.which == 13) {
+				$('#btnnewsep').trigger('click');
+			}
+		});
+
+		handle_colors();
+
+		// Remove the temporary separator bar and replace it with the final version containing the
+		// user's text and a delete icon
+		$("#btnnewsep").click(function() {
+			var septext = escapeHtml($('#newsep').val());
+			sepcols = $( "#ruletable tr th" ).length - 1;
+
+			$('#ruletable > tbody:last >tr:last').remove();
+			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
+				'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
+				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
+				'</td></tr>');
+
+			$('#order-store').removeAttr('disabled');
+			newSeperator = false;
+			dirty = true;
+		});
+
+		// Cancel button
+		$('#btncncsep').click(function(e) {
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			newSeperator = false;
+		});
+	});
+
+	// Delete a separator row
+	$(function(){
+		$('table').on('click','tr a .sepdel',function(e){
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			$('#order-store').removeAttr('disabled');
+			dirty = true;
+		});
+	});
+
+	// Compose an inout array containing the row #, color and text for each separator
+	function save_separators() {
+		var seprow = 0;
+		var sepinput;
+		var sepnum = 0;
+
+		$('#ruletable > tbody > tr').each(function() {
+			if ($(this).hasClass('separator')) {
+				seprow = $(this).prev('tr').attr("id");
+				if (seprow == undefined) {
+					seprow = "fr-1";
+				}
+
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
+				$('form').append(sepinput);
+				sepnum++;
+			}
+
+			if ($(this).parent('tbody').hasClass('user-entries')) {
+				seprow++;
+			}
+		});
+	}
+
+	function reindex_rules(section) {
+		var row = 0;
+
+		section.find('tr').each(function() {
+			if(this.id) {
+				$(this).attr("id", "fr" + row);
+				row++;
+			}
+		})
+	}
+
+	function handle_colors() {
+		$('[id^=sepclr]').prop("type", "button");
+
+		$('[id^=sepclr]').click(function () {
+			var color =	 $(this).attr('value');
+			// Clear all the color classes
+			$(this).parent('td').prop('class', '');
+			$(this).parent('td').prev('td').prop('class', '');
+			// Install our new color class
+			$(this).parent('td').addClass(color);
+			$(this).parent('td').prev('td').addClass(color);
+			// Set the global color
+			gColor = color;
+		});
+	}
+
+	//JS equivalent to PHP htmlspecialchars()
+	function escapeHtml(text) {
+		var map = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#039;'
+		};
+
+		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+	}
+	// --------------------------------------------------------------------------------------------

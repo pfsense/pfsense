@@ -514,6 +514,14 @@ if ($_POST) {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
 				array_splice($a_nat, $after+1, 0, array($natent));
+
+				// Update the separators
+				$a_separators = &$config['nat']['separator'];
+
+				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
+				}
 			} else {
 				$a_nat[] = $natent;
 			}

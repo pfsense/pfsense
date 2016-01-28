@@ -118,6 +118,10 @@ if (is_array($config['dhcpdv6'][$if])) {
 	if ($pconfig['rapriority'] == "") {
 		$pconfig['rapriority'] = "medium";
 	}
+
+	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
+	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
+
 	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
@@ -191,6 +195,10 @@ if ($_POST) {
 		}
 	}
 
+	if ($_POST['ravalidlifetime'] && (!is_numeric($_POST['ravalidlifetime']) || ($_POST['ravalidlifetime'] < 7200))) {
+		$input_errors[] = gettext("A valid lifetime below 2 hrs will be ignored by clients (RFC 4862 Section 5.5.3 point e)");
+	}
+
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'][$if])) {
 			$config['dhcpdv6'][$if] = array();
@@ -199,6 +207,9 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
 		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
 		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
+
+		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
+		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		unset($config['dhcpdv6'][$if]['radnsserver']);
@@ -297,6 +308,22 @@ $section->addInput(new Form_Select(
 	$pconfig['rapriority'],
 	$priority_modes
 ))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');
+
+$section->addInput(new Form_Input(
+	'ravalidlifetime',
+	'Default valid lifetime',
+	'text',
+	$pconfig['ravalidlifetime']
+))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
+'The default is 86400 seconds.');
+
+$section->addInput(new Form_Input(
+	'rapreferredlifetime',
+	'Default preferred lifetime',
+	'text',
+	$pconfig['rapreferredlifetime']
+))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
+			'The default is 14400 seconds.');
 
 $carplistif = array();
 if (count($carplist) > 0) {

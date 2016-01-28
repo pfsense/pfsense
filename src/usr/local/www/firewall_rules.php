@@ -72,6 +72,51 @@ require_once("shaper.inc");
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
+function get_pf_rules($rules, $tracker) {
+
+	if ($rules == NULL || !is_array($rules))
+		return (NULL);
+
+	$arr = array();
+	for ($i = 0; $i < count($rules); $i++) {
+		if ($rules[$i]['tracker'] === $tracker)
+			$arr[] = $rules[$i];
+	}
+
+	if (count($arr) == 0)
+		return (NULL);
+
+	return ($arr);
+}
+
+function print_states($tracker) {
+	global $rulescnt;
+
+	$rulesid = "";
+	$bytes = 0;
+	$states = 0;
+	$packets = 0;
+	$evaluations = 0;
+	$stcreations = 0;
+	$rules = get_pf_rules($rulescnt, $tracker);
+	for ($j = 0; is_array($rules) && $j < count($rules); $j++) {
+		$bytes += $rules[$j]['bytes'];
+		$states += $rules[$j]['states'];
+		$packets += $rules[$j]['packets'];
+		$evaluations += $rules[$j]['evaluations'];
+		$stcreations += $rules[$j]['state creations'];
+		if (strlen($rulesid) > 0)
+			$rulesid .= ",";
+		$rulesid .= "{$rules[$j]['id']}";
+	}
+	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
+	    $rulesid, gettext("States details"));
+	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
+	    format_number($evaluations), format_number($packets), format_bytes($bytes),
+	    format_number($states), format_number($stcreations));
+	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+}
+
 function delete_nat_association($id) {
 	global $config;
 
@@ -300,8 +345,10 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 	$showblockbogons = true;
 }
 
-?>
+/* Load the counter data of each pf rule. */
+$rulescnt = pfSense_get_pf_rules();
 
+?>
 <form method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
@@ -311,6 +358,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
+						<th><?=gettext("States")?></th>
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
@@ -335,6 +383,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
+						<td><? print_states(intval(ANTILOCKOUT_TRACKER)); ?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -353,6 +402,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td><? print_states(intval(RFC1918_TRACKER)); ?></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -371,6 +421,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 					<tr id="frrfc1918">
 					<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td><? print_states(intval(BOGONS_TRACKER)); ?></td>
 						<td>*</td>
 						<td><?=gettext("Reserved/not assigned by IANA");?></td>
 						<td>*</td>
@@ -592,6 +643,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			}
 		}
 	?>
+				<td><? print_states(intval($filterent['tracker'])); ?></td>
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {
@@ -975,4 +1027,3 @@ events.push(function() {
 </script>
 
 <?php include("foot.inc");?>
-

@@ -2792,14 +2792,10 @@ function filter_generate_user_rule($rule) {
 		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
 	}
 	if (!empty($rule['tag'])) {
-		if (ctype_digit($rule['tag'])) {
-			$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
-		} else {
-			$aline['tag'] = " tag " .$rule['tag']. " ";
-		}
+		$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
 	}
 	if (!empty($rule['tagged'])) {
-		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
+		$aline['tagged'] = " tagged \"" .$rule['tagged']. "\" ";
 	}
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {

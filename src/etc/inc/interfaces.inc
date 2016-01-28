@@ -2016,6 +2016,26 @@ EOD;
 		}
 	}
 
+	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
+	/* random IPv6 interface identifier during boot. More details at */
+	/* https://forum.pfsense.org/index.php?topic=101967.msg570519#msg570519 */
+	if (platform_booting() && is_array($config['interfaces'])) {
+		$count = 0;
+		foreach ($config['interfaces'] as $tempifacename => $tempiface) {
+			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
+				$tempaddr[$count]['if'] = $tempiface['if'];
+				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempaddr[$count]['if']) . ' inet ' . escapeshellarg($tempaddr[$count]['ipaddr']) . ' alias', true);
+				$count++;
+			}
+			// Maximum /31 is is x.y.z.254/31
+			if ($count > 122) {
+				break;
+			}
+		}
+		unset($count);
+	}
+
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/" .
 		escapeshellarg($ppp['type']) . "_{$interface}.pid -s ppp " . escapeshellarg($ppp['type']) . "client");
@@ -2036,6 +2056,16 @@ EOD;
 			break;
 		}
 		$i++;
+	}
+
+	/* Remove all temporary bogon IPv4 addresses */
+	if (is_array($tempaddr)) {
+		foreach ($tempaddr as $tempiface) {
+			if (isset($tempiface['if']) && isset($tempiface['ipaddr'])) {
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempiface['if']) . ' inet ' . escapeshellarg($tempiface['ipaddr']) . ' -alias', true);
+			}
+		}
+		unset ($tempaddr);
 	}
 
 	/* we only support the 3gstats.php for huawei modems for now. Will add more later. */
@@ -3385,7 +3415,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	switch ($wancfg['ipaddrv6']) {
 		case 'slaac':
 		case 'dhcp6':
-			interface_dhcpv6_configure($interface, $wancfg);
+			// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
+			// calls interface_dhcpv6_configure() for these connections after IPv6CP is up, whilst rc.newwanip
+			// handles all non-PPP connections with 'dhcp6usev4iface' set
+			if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
+				interface_dhcpv6_configure($interface, $wancfg);
+			}
 			break;
 		case '6rd':
 			interface_6rd_configure($interface, $wancfg);
@@ -3994,7 +4029,6 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	@chmod("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", 0755);
 
 	/* accept router advertisements for this interface */
-	set_single_sysctl("net.inet6.ip6.accept_rtadv", "1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 

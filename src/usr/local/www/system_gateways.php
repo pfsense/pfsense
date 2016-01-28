@@ -321,19 +321,19 @@ foreach ($a_gateways as $i => $gateway):
 							<?=htmlspecialchars($gateway['descr'])?>
 						</td>
 						<td>
-							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
-							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>"></a>
 	<?php } else {
 	?>
-							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>"></a>
 	<?php }
 	?>
-							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>"></a>
 
 <?php endif; ?>
 						</td>

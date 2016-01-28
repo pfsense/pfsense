@@ -151,10 +151,6 @@ if ($_POST) {
 			$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
 		}
 
-		if (empty($pconfig['system_domain_local_zone_type'])) {
-			$input_errors[] = gettext("A System Domain Local-Zone Type must be selected.");
-		}
-
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
 			$input_errors[] = gettext("You must specify a valid port number.");
 		}
@@ -170,11 +166,6 @@ if ($_POST) {
 		if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
 			$display_outgoing_interface = $pconfig['outgoing_interface'];
 			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
-		}
-
-		if (isset($pconfig['system_domain_local_zone_type']) && !empty($pconfig['system_domain_local_zone_type'])) {
-			$display_system_domain_local_zone_type = $pconfig['system_domain_local_zone_type'];
-			$pconfig['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 		}
 
 		$test_output = array();
@@ -201,7 +192,6 @@ if ($_POST) {
 
 		$pconfig['active_interface'] = $display_active_interface;
 		$pconfig['outgoing_interface'] = $display_outgoing_interface;
-		$pconfig['system_domain_local_zone_type'] = $display_system_domain_local_zone_type;
 		$pconfig['custom_options'] = $display_custom_options;
 	}
 }
@@ -311,13 +301,11 @@ $section->addInput(new Form_Select(
 	true
 ))->addClass('general')->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
 
-$unbound_local_zone_types = array("deny" => gettext("Deny"), "refuse" => gettext("Refuse"), "static" => gettext("Static"), "transparent" => gettext("Transparent"), "typetransparent" => gettext("Type Transparent"), "redirect" => gettext("Redirect"), "inform" => gettext("Inform"), "inform_deny" => gettext("Inform Deny"), "nodefault" => gettext("No Default"));
-
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
 	'System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
-	$unbound_local_zone_types
+	unbound_local_zone_types()
 ))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
 
 $section->addInput(new Form_Checkbox(

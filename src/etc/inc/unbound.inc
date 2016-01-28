@@ -599,13 +599,14 @@ function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 function unbound_add_host_entries($cfgsubdir = "") {
 	global $config, $g;
 
-	if (empty($config['unbound']['system_domain_local_zone_type'])) {
-		$system_domain_local_zone_type = "transparent";
-	} else {
+	// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
+	if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
 		$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+	} else {
+		$system_domain_local_zone_type = "transparent";
 	}
 
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" $system_domain_local_zone_type\n";
+	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
 
 	$hosts = read_hosts();
 	$added_ptr = array();
@@ -791,6 +792,21 @@ function unbound_hosts_generate() {
 
 	// Reload our service to read the updates
 	unbound_control("reload");
+}
+
+// Array of valid unbound local zone types
+function unbound_local_zone_types() {
+	return array(
+		"deny" => gettext("Deny"),
+		"refuse" => gettext("Refuse"),
+		"static" => gettext("Static"),
+		"transparent" => gettext("Transparent"),
+		"typetransparent" => gettext("Type Transparent"),
+		"redirect" => gettext("Redirect"),
+		"inform" => gettext("Inform"),
+		"inform_deny" => gettext("Inform Deny"),
+		"nodefault" => gettext("No Default")
+	);
 }
 
 ?>

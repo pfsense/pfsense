@@ -886,7 +886,10 @@ configsection = "filter";
 
 events.push(function() {
 
-	// Make rules sortable
+	// Make rules sortable. Hiding the table before applying sortable, then showing it again is 
+	// a work-around for very slow sorting on FireFox
+	$('table tbody.user-entries').hide();
+
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
@@ -895,6 +898,8 @@ events.push(function() {
 			dirty = true;
 		}
 	});
+
+	$('table tbody.user-entries').show();
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {

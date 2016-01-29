@@ -142,7 +142,8 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	$filterent['source']['address'] = $blockaliasname . strtoupper($int);
 	$filterent['destination']['any'] = '';
 	$filterent['descr'] = gettext("Easy Rule: Blocked from Firewall Log View");
-	$filterent['created'] = make_config_revision_entry(null, gettext("Easy Rule"));
+	/* Do not translate this, it's considered a username which cannot contain international characters */
+	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
 
 	array_splice($a_filter, 0, 0, array($filterent));
 

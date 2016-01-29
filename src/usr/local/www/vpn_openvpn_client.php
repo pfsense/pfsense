@@ -65,6 +65,8 @@ require("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
+global $openvpn_topologies;
+
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client"));
 $shortcut_section = "openvpn";
 
@@ -188,6 +190,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['use_shaper'] = $a_client[$id]['use_shaper'];
 		$pconfig['compression'] = $a_client[$id]['compression'];
 		$pconfig['passtos'] = $a_client[$id]['passtos'];
+		$pconfig['topology'] = $a_client[$id]['topology'];
 
 		// just in case the modes switch
 		$pconfig['autokey_enable'] = "yes";
@@ -251,6 +254,10 @@ if ($_POST) {
 
 	if ($result = openvpn_validate_port($pconfig['server_port'], 'Server port')) {
 		$input_errors[] = $result;
+	}
+
+	if (!array_key_exists($pconfig['topology'], $openvpn_topologies)) {
+		$input_errors[] = gettext("The field 'Topology' contains an invalid selection");
 	}
 
 	if ($pconfig['proxy_addr']) {
@@ -373,6 +380,7 @@ if ($_POST) {
 		}
 		$client['description'] = $pconfig['description'];
 		$client['mode'] = $pconfig['mode'];
+		$client['topology'] = $pconfig['topology'];
 		$client['custom_options'] = str_replace("\r\n", "\n", $pconfig['custom_options']);
 
 		if ($tls_mode) {
@@ -719,6 +727,13 @@ $section->addInput(new Form_Input(
 		$openvpn_compression_modes
 		))->setHelp('Compress tunnel packets using the LZO algorithm. Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the packets is not being compressed efficiently.');
 
+	$section->addInput(new Form_Select(
+		'topology',
+		'Topology',
+		$pconfig['topology'],
+		$openvpn_topologies
+	))->setHelp('Specifies the method used to configure a virtual adapter IP address.');
+
 	$section->addInput(new Form_Checkbox(
 		'passtos',
 		'Type-of-Service',
@@ -880,6 +895,7 @@ events.push(function() {
 
 	function dev_mode_change() {
 		hideCheckbox('no_tun_ipv6', ($('#dev_mode').val() == 'tap'));
+		hideInput('topology',  ($('#dev_mode').val() == 'tap'));
 	}
 
 	// Process "Automatically generate a shared key" checkbox

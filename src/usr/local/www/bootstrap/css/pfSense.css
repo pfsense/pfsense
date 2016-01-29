@@ -796,3 +796,14 @@ a[href]:after {
 .diff-text {
     color: #000000;
 }
+
+/** Eliminate overflow in available widgets, log filter, and manage log panels. (cause of scroll bar) */
+#widget-available_panel-body>.content>.row,
+#filter-panel_panel-body>.form-group,
+#manage-log-panel_panel-body>.form-group,
+/** optionally prevent more globally by using the class hierarchy */
+.panel-body.collapse.in>.content>.row,
+.panel-body.collapse.in>.form-group
+{
+	margin-right:0px;
+}

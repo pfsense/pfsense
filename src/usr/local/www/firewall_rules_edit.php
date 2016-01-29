@@ -917,7 +917,11 @@ if ($_POST) {
 
 				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
+
+					// If the separator is located after the place where the new rule is to go, increment the separator row
+					if ($seprow > $after) {
+						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
+					}
 				}
 			} else {
 				$a_filter[] = $filterent;

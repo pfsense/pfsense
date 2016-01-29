@@ -886,7 +886,7 @@ configsection = "filter";
 
 events.push(function() {
 
-	// Make rules sortable. Hiding the table before applying sortable, then showing it again is 
+	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
 

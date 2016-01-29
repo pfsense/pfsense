@@ -1054,7 +1054,7 @@ function openvpn_reconfigure($mode, $settings) {
 
 	if ($settings['resolve_retry']) {
 		$conf .= "resolv-retry infinite\n";
-	} else if ($mode == 'clie} nt') {
+	} else if ($mode == 'client') {
 		$conf .= "resolv-retry infinite\n";
 	}
 

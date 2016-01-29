@@ -793,8 +793,8 @@ events.push(function() {
 		var address_is_blank = !/\S/.test($('#natlocalid_address').val());
 
 		switch ($("#natlocalid_type option:selected").index()) {
-			case 0: /* single */
-				disableInput('natlocalid_address', false);
+			case 0: /* none */
+				disableInput('natlocalid_address', true);
 
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(0);
@@ -802,18 +802,18 @@ events.push(function() {
 
 				disableInput('natlocalid_netbits', true);
 				break;
-			case 1: /* network */
+			case 1: /* address */
 				disableInput('natlocalid_address', false);
 
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(bits);
 				}
 
-				disableInput('natlocalid_netbits', false);
-				break;
-			case 3: /* none */
-				disableInput('natlocalid_address', true);
 				disableInput('natlocalid_netbits', true);
+				break;
+			case 2: /* network */
+				disableInput('natlocalid_address', false);
+				disableInput('natlocalid_netbits', false);
 				break;
 			default:
 				$('#natlocalid_address').val("");

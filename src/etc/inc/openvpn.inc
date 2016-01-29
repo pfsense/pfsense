@@ -1064,7 +1064,7 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	// If the server is not a TLS server or it has a tunnel network CIDR less than a /30, skip this.
-	if (in_array($settings['mode'], $openvpn_tls_server_modes) && (!empty($ip) && !empty($mask) && ($cidr < 30))) {
+	if (in_array($settings['mode'], $openvpn_tls_server_modes) && (!empty($ip) && !empty($mask) && ($cidr < 30)) && $settings['dev_mode'] != "tap") {
 		if (empty($settings['topology'])) {
 			$settings['topology'] = "subnet";
 		}

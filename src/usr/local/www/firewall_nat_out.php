@@ -327,8 +327,12 @@ print($form);
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
+				$trclass = '';
+
 				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
 					$iconfn .= "_d";
+					$trclass = 'class="disabled"';
+
 				}
 
 
@@ -340,7 +344,7 @@ print($form);
 				);
 ?>
 
-					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$i;?>" <?=$trclass?> onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>

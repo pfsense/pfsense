@@ -4351,4 +4351,25 @@ function upgrade_139_to_140() {
 	}
 }
 
+function upgrade_140_to_141() {
+	global $config; 
+
+	// retain OpenVPN's net30 default topology for upgraded configs so they still work
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $idx => $ovpnserver) {
+			if (!isset($ovpnserver['topology'])) {
+				$config['openvpn']['openvpn-server'][$idx]['topology'] = "net30";
+			}
+		}
+	}
+
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpnclient) {
+			if (!isset($ovpnclient['topology'])) {
+				$config['openvpn']['openvpn-client'][$idx]['topology'] = "net30";
+			}
+		}
+	}
+}
+
 ?>

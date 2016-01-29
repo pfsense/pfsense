@@ -407,7 +407,7 @@ $columns_in_table = 13;
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
-						<td><? print_states(intval(ANTILOCKOUT_TRACKER)); ?></td>
+						<td><?php print_states(intval(ANTILOCKOUT_TRACKER)); ?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -426,7 +426,7 @@ $columns_in_table = 13;
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
-						<td><? print_states(intval(RFC1918_TRACKER)); ?></td>
+						<td><?php print_states(intval(RFC1918_TRACKER)); ?></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -445,7 +445,7 @@ $columns_in_table = 13;
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
-						<td><? print_states(intval(BOGONS_TRACKER)); ?></td>
+						<td><?php print_states(intval(BOGONS_TRACKER)); ?></td>
 						<td>*</td>
 						<td><?=sprintf(gettext("Reserved%sNot assigned by IANA"), "<br />");?></td>
 						<td>*</td>
@@ -668,7 +668,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			}
 		}
 	?>
-				<td><? print_states(intval($filterent['tracker'])); ?></td>
+				<td><?php print_states(intval($filterent['tracker'])); ?></td>
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {
@@ -724,7 +724,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
 									<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 								</a>
-							<?php else :?>
+							<?php else: ?>
 								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 							<?php endif; ?>
 						</td>
@@ -877,7 +877,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <script type="text/javascript">
 //<![CDATA[
 
-//Need to create some variables here so that jquer/pfSenseHelpers.php can read them
+//Need to create some variables here so that jquery/pfSenseHelpers.js can read them
 iface = "<?=strtolower($if)?>";
 cncltxt = '<?=gettext("Cancel")?>';
 svtxt = '<?=gettext("Save")?>';

@@ -462,7 +462,7 @@ switch ($action) {
 		))->displayAsRadio();
 
 		$group->add(new Form_Checkbox(
-			'test',
+			'type',
 			null,
 			'Self-test',
 			false,

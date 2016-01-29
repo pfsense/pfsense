@@ -409,7 +409,7 @@ if ($_POST) {
 		}
 	}
 
-	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients'])) {
+	if ($pconfig['maxclients'] && !is_numericint($pconfig['maxclients'])) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 

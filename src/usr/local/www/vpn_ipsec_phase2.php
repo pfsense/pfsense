@@ -645,7 +645,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$algodata['name'],
 		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
-	))->addClass('multi');
+	))->addClass('multi')->setAttribute('id', 'ealgos[]' . '_' . $algodata['name']);
 
 	if (is_array($algodata['keysel'])) {
 		$list = array();
@@ -682,7 +682,7 @@ foreach ($p2_halgos as $algo => $algoname) {
 		$algoname,
 		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
-	))->addClass('multi');
+	))->addClass('multi')->setAttribute('id', 'halgos[]' . '_' . $algoname);
 }
 
 $section->add($group);

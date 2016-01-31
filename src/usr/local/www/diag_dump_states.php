@@ -64,6 +64,21 @@
 require_once("guiconfig.inc");
 require_once("interfaces.inc");
 
+function get_ip($addr) {
+
+	$parts = explode(":", $addr);
+	if (count($parts) == 2)
+		return (trim($parts[0]));
+	else {
+		/* IPv6 */
+		$parts = explode("[", $addr);
+		if (count($parts) == 2)
+			return (trim($parts[0]));
+	}
+
+	return ("");
+}
+
 /* handle AJAX operations */
 if (isset($_POST['action']) && $_POST['action'] == "remove") {
 	if (isset($_POST['srcip']) && isset($_POST['dstip']) && is_ipaddr($_POST['srcip']) && is_ipaddr($_POST['dstip'])) {
@@ -173,49 +188,74 @@ print $form;
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source -> Router -> Destination")?></th>
 						<th><?=gettext("State")?></th>
+						<th><?=gettext("Packets")?></th>
+						<th><?=gettext("Bytes")?></th>
 						<th></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
 				<tbody>
 <?php
-	$row = 0;
-	/* get our states */
-	$grepline = (isset($_POST['filter'])) ? "| /usr/bin/egrep " . escapeshellarg(htmlspecialchars($_POST['filter'])) : "";
-	$fd = popen("/sbin/pfctl -s state {$grepline}", "r");
-	while ($line = chop(fgets($fd))) {
-		if ($row >= 10000) {
-			break;
+	if (isset($_REQUEST['ruleid'])) {
+		$ids = explode(",", $_REQUEST['ruleid']);
+		$arr = array();
+		for ($i = 0; $i < count($ids); $i++)
+			$arr[] = array("ruleid" => intval($ids[$i]));
+	}
+
+	if (isset($arr) && is_array($arr) && count($arr) > 0)
+		$res = pfSense_get_pf_states($arr);
+	else
+		$res = pfSense_get_pf_states();
+
+	$states = 0;
+	if ($res != NULL && is_array($res))
+		$states = count($res);
+
+	/* XXX - limit to 10.000 states. */
+	if ($states > 10000)
+		$states = 10000;
+
+	for ($i = 0; $i < $states; $i++) {
+		if ($res[$i]['direction'] === "out") {
+			$info = $res[$i]['src'];
+			if ($res[$i]['src-orig'])
+				$info .= " (" . $res[$i]['src-orig'] . ")";
+			$info .= " -> ";
+			$info .= $res[$i]['dst'];
+			if ($res[$i]['dst-orig'])
+				$info .= " (" . $res[$i]['dst-orig'] . ")";
+			$srcip = get_ip($res[$i]['src']);
+			$dstip = get_ip($res[$i]['dst']);
+		} else {
+			$info = $res[$i]['dst'];
+			if ($res[$i]['dst-orig'])
+				$info .= " (" . $res[$i]['dst-orig'] . ")";
+			$info .= " -> ";
+			$info .= $res[$i]['src'];
+			if ($res[$i]['src-orig'])
+				$info .= " (" . $res[$i]['src-orig'] . ")";
+			$srcip = get_ip($res[$i]['dst']);
+			$dstip = get_ip($res[$i]['src']);
 		}
 
-		$line_split = preg_split("/\s+/", $line);
-
-		$iface	= array_shift($line_split);
-		$proto = array_shift($line_split);
-		$state = array_pop($line_split);
-		$info  = implode(" ", $line_split);
-
-		// We may want to make this optional, with a large state table, this could get to be expensive.
-		$iface = convert_real_interface_to_friendly_descr($iface);
-
-		/* break up info and extract $srcip and $dstip */
-		$ends = preg_split("/\<?-\>?/", $info);
-		$parts = explode(":", $ends[0]);
-		$srcip = trim($parts[0]);
-		$parts = explode(":", $ends[count($ends) - 1]);
-		$dstip = trim($parts[0]);
 ?>
 					<tr>
-						<td><?= $iface ?></td>
-						<td><?= $proto ?></td>
+						<td><?= convert_real_interface_to_friendly_descr($res[$i]['if']) ?></td>
+						<td><?= $res[$i]['proto'] ?></td>
 						<td><?= $info ?></td>
-						<td><?= $state ?></td>
+						<td><?= $res[$i]['state'] ?></td>
+						<td><?= format_number($res[$i]['packets in']) ?> /
+						    <?= format_number($res[$i]['packets out']) ?></td>
+						<td><?= format_bytes($res[$i]['bytes in']) ?> /
+						    <?= format_bytes($res[$i]['bytes out']) ?></td>
 
 						<td>
 							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
 								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $dstip);?>"></a>
 						</td>
 					</tr>
-<?php $row++; }
+<?
+	}
 ?>
 				</tbody>
 			</table>
@@ -224,7 +264,7 @@ print $form;
 </div>
 <?php
 
-if ($row == 0) {
+if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter');
 	} else {

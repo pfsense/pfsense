@@ -639,6 +639,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	$group = new Form_Group($i == 0 ? 'Encryption Algorithms':'');
 	$group->addClass('encalg');
 
+	// Note: ID attribute of each element created is to be unique.
 	$group->add(new Form_Checkbox(
 		'ealgos[]',
 		null,
@@ -676,6 +677,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 $group = new Form_Group('Hash Algorithms');
 
 foreach ($p2_halgos as $algo => $algoname) {
+	// Note: ID attribute of each element created is to be unique.
 	$group->add(new Form_Checkbox(
 		'halgos[]',
 		null,

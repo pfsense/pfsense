@@ -2090,6 +2090,7 @@ function system_check_reset_button() {
 
 ***********************************************************************
 * Reset button pressed - resetting configuration to factory defaults. *
+* All additional packages installed will be removed                   *
 * The system will reboot after this completes.                        *
 ***********************************************************************
 

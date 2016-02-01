@@ -54,7 +54,7 @@ usage() {
 	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all ]"
 	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi fullupdate"
 	echo "	[ options ]: "
-	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '512m 1g'. Default: 512m"
+	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
 	echo "		--no-cleanobjdir|--no-cleanrepos|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"

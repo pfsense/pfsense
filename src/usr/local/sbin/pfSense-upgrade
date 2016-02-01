@@ -176,8 +176,9 @@ pkg_with_pb() {
 	fi
 
 	pkg ${_event_pipe} $@
+	local _pkg_result=$?
 	nc_pid=""
-	return $?
+	return ${_pkg_result}
 }
 
 fetch_upgrade_packages() {

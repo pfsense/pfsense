@@ -618,7 +618,7 @@ pkg_install() {
 		local _msg="Installing"
 	fi
 
-	_exec "pkg_with_pb ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg_with_pb ${_cmd}${dry_run:+ }${dry_run} ${_pkg_name}" "${_msg} ${_pkg_name}"
 	_exec "pkg clean" "Cleaning up cache" mute ignore_result
 }
 
@@ -646,7 +646,7 @@ pkg_delete() {
 		_exit 1
 	fi
 
-	_exec "pkg_with_pb delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg_with_pb delete${dry_run:+ }${dry_run} ${_pkg_name}" "Removing ${_pkg_name}"
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
@@ -773,7 +773,7 @@ while getopts 46b:cdfi:hp:l:nr:Ruy opt; do
 			fi
 			;;
 		n)
-			dry_run=1
+			dry_run="-n"
 			;;
 		p)
 			progress_socket="${OPTARG}"

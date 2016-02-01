@@ -639,6 +639,17 @@ pkg_delete() {
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
+# Delete every pfSense-pkg-* package
+pkg_delete_all() {
+	for _pkg in $(pkg query -e '%a == 0' %n); do
+		case ${_pkg} in "${pkg_prefix}"* )
+			_echo "Removing ${_pkg}"
+			pkg_delete ${_pkg}
+			;;
+		esac
+	done
+}
+
 # Reinstall every pfSense-pkg-* package
 pkg_reinstall_all() {
 	for _pkg in $(pkg query -e '%a == 0' %n); do
@@ -849,7 +860,11 @@ case "${action}" in
 		fi
 		;;
 	delete)
-		pkg_delete ${action_pkg}
+		if [ ${action_pkg} == "ALL_PACKAGES" ] && [ -n ${force} ]; then
+			pkg_delete_all
+		else
+			pkg_delete ${action_pkg}
+		fi
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

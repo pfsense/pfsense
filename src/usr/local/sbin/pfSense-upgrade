@@ -381,9 +381,9 @@ pkg_upgrade() {
 			fi
 		fi
 
-		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
+		if [ $(pkg ${pkg_chroot} upgrade -Unq | wc -l) -gt 1 ]; then
 			_echo "Upgrading necessary packages..."
-			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
+			if ! pkg ${pkg_chroot} upgrade -U 2>&1 | tee -a ${logfile}; then
 				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
 				pkg_unlock "${pkg_prefix}*"
 				_echo "ERROR: An error occurred when upgrade was running..."
@@ -412,9 +412,9 @@ pkg_upgrade() {
 	fi
 
 	if [ "${next_stage}" = "3" ]; then
-		if [ $(pkg upgrade -nq | wc -l) -gt 1 ]; then
+		if [ $(pkg upgrade -Unq | wc -l) -gt 1 ]; then
 			_echo "Upgrading necessary packages..."
-			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
+			if ! pkg ${pkg_chroot} upgrade -U 2>&1 | tee -a ${logfile}; then
 				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
 				_echo "ERROR: An error occurred when upgrade was running..."
 				_exit 1

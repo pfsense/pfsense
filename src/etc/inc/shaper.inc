@@ -3141,7 +3141,7 @@ class fairq_queue extends priq_queue {
 			$this->GetBuckets()
 		))->setHelp('Number of buckets available');
 
-		$section->addINput(new Form_Input(
+		$section->addInput(new Form_Input(
 			'hogs',
 			'',
 			'text',

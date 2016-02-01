@@ -3134,22 +3134,21 @@ class fairq_queue extends priq_queue {
 
 		$section->add($group);
 
+		$section->addInput(new Form_Input(
+			'buckets',
+			'Scheduler specific options',
+			'text',
+			$this->GetBuckets()
+		))->setHelp('Number of buckets available');
 
-		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
-		$form .= "<td class=\"vtable\"><table><tr><td>";
-		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
-		$tmpvalue = trim($this->GetBuckets());
-		if (!empty($tmpvalue)) {
-			$form .= $this->GetBuckets();
-		}
-		$form .= "\" /> " . gettext("Number of buckets available.") . "<br /></td></tr>";
-		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
-		$tmpvalue = trim($this->GetHogs());
-		if (!empty($tmpvalue)) {
-			$form .= $this->GetHogs();
-		}
-		$form .= "\" /> " . gettext("Bandwidth limit for hosts to not saturate link.") . "<br /></td></tr>";
-		$form .= "</table></td></tr>";
+		$section->addINput(new Form_Input(
+			'hogs',
+			'',
+			'text',
+			$this->GetHogs()
+			))->setHelp('Bandwidth limit for hosts to not saturate link');
+
+		$form->add($section);
 		return $form;
 	}
 

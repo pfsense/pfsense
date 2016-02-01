@@ -70,7 +70,12 @@ $a_dyndns = &$config['dyndnses']['dyndns'];
 
 if ($_GET['act'] == "del") {
 	$conf = $a_dyndns[$_GET['id']];
-	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($conf['host']) . "{$conf['id']}.cache");
+	if ($conf['type'] == "namecheap") {
+		$hostname = $conf['host'] . "." . $conf['domainname'];
+	} else {
+		$hostname = $conf['host'];
+	}
+	@unlink("{$g['conf_path']}/dyndns_{$conf['interface']}{$conf['type']}" . escapeshellarg($hostname) . "{$conf['id']}.cache");
 	unset($a_dyndns[$_GET['id']]);
 
 	write_config();
@@ -124,6 +129,11 @@ display_top_tabs($tab_array);
 <?php
 $i = 0;
 foreach ($a_dyndns as $dyndns):
+	if ($dyndns['type'] == "namecheap") {
+		$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
+	} else {
+		$hostname = $dyndns['host'];
+	}
 ?>
 						<tr<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 							<td>
@@ -162,13 +172,13 @@ foreach ($a_dyndns as $dyndns):
 							</td>
 							<td>
 <?php
-	print(htmlspecialchars($dyndns['host']));
+	print(htmlspecialchars($hostname));
 ?>
 							</td>
 							<td>
 <?php
-	$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
-	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}_v6.cache";
+	$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
+	$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 	if (file_exists($filename)) {
 		$ipaddr = dyndnsCheckIP($dyndns['interface']);
 		$cached_ip_s = explode(":", file_get_contents($filename));

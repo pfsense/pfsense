@@ -1920,6 +1920,7 @@ function services_dyndns_configure_client($conf) {
 
 	$dns = new updatedns($dnsService = $conf['type'],
 		$dnsHost = $conf['host'],
+		$dnsDomain = $conf['domainname'],
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWildcard = $conf['wildcard'],

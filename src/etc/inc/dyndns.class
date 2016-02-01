@@ -105,6 +105,8 @@
 		var $_dnsUser;
 		var $_dnsPass;
 		var $_dnsHost;
+		var $_dnsDomain;
+		var $_FQDN;
 		var $_dnsIP;
 		var $_dnsWildcard;
 		var $_dnsMX;
@@ -137,7 +139,7 @@
 		 *   - $dnsUser, and $dnsPass indicate HTTP Auth for custom DNS, if they are needed in the URL (GET Variables), include them in $dnsUpdateURL.
 		 *   - $For custom requests, $dnsUpdateURL is parsed for '%IP%', which is replaced with the new IP.
 		 */
-		function updatedns ($dnsService = '', $dnsHost = '', $dnsUser = '', $dnsPass = '',
+		function updatedns ($dnsService = '', $dnsHost = '', $dnsDomain = '', $dnsUser = '', $dnsPass = '',
 					$dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
@@ -145,9 +147,15 @@
 
 			global $config, $g;
 
-			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.cache";
-			$this->_cacheFile_v6 = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}_v6.cache";
-			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($dnsHost) . "{$dnsID}.debug";
+			if ($dnsService == "namecheap") {
+				$this->_FQDN = $dnsHost . "." . $dnsDomain;
+			} else {
+				$this->_FQDN = $dnsHost;
+			}
+
+			$this->_cacheFile = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}.cache";
+			$this->_cacheFile_v6 = "{$g['conf_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}_v6.cache";
+			$this->_debugFile = "{$g['varetc_path']}/dyndns_{$dnsIf}{$dnsService}" . escapeshellarg($this->_FQDN) . "{$dnsID}.debug";
 
 			$this->_curlIpresolveV4 = $curlIpresolveV4;
 			$this->_curlSslVerifypeer = $curlSslVerifypeer;
@@ -166,6 +174,7 @@
 			case 'namecheap':
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
 				break;
 			case 'route53':
 				if (!$dnsZoneID) $this->_error(8);
@@ -193,6 +202,7 @@
 			$this->_dnsUser = $dnsUser;
 			$this->_dnsPass = $dnsPass;
 			$this->_dnsHost = $dnsHost;
+			$this->_dnsDomain = $dnsDomain;
 			$this->_dnsServer = $dnsServer;
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
@@ -205,7 +215,7 @@
 			$this->_dnsResultMatch = $dnsResultMatch;
 			$this->_dnsRequestIf = get_failover_interface($dnsRequestIf);
 			if ($this->_dnsVerboseLog) {
-				log_error("DynDNS ({$this->_dnsHost}): running get_failover_interface for {$dnsRequestIf}. found {$this->_dnsRequestIf}");
+				log_error("DynDNS ({$this->_FQDN}): running get_failover_interface for {$dnsRequestIf}. found {$this->_dnsRequestIf}");
 			}
 			$this->_dnsRequestIfIP = get_interface_ip($dnsRequestIf);
 			$this->_dnsMaxCacheAgeDays = 25;
@@ -214,7 +224,7 @@
 
 			// Ensure that we were able to lookup the IP
 			if (!is_ipaddr($this->_dnsIP)) {
-				log_error("DynDNS ({$this->_dnsHost}) There was an error trying to determine the public IP for interface - {$dnsIf}({$this->_if}). Probably interface is not a WAN interface.");
+				log_error("DynDNS ({$this->_FQDN}) There was an error trying to determine the public IP for interface - {$dnsIf}({$this->_if}). Probably interface is not a WAN interface.");
 				unlock($dyndnslck);
 				return;
 			}
@@ -287,7 +297,7 @@
 		function _update() {
 
 			if ($this->_dnsVerboseLog) {
-				log_error("DynDNS ({$this->_dnsHost}): DynDns _update() starting.");
+				log_error("DynDNS ({$this->_FQDN}): DynDns _update() starting.");
 			}
 
 			if (strstr($this->_dnsRequestIf, "_vip")) {
@@ -315,11 +325,11 @@
 				case 'glesys':
 					$needsIP = TRUE;
 					if ($this->_dnsVerboseLog) {
-						log_error("DynDNS: ({$this->_dnsHost}) DNS update() starting.");
+						log_error("DynDNS: ({$this->_FQDN}) DNS update() starting.");
 					}
 					$server = 'https://api.glesys.com/domain/updaterecord/format/json';
 					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
-					$post_data['recordid'] = $this->_dnsHost;
+					$post_data['recordid'] = $this->_FQDN;
 					$post_data['data'] = $this->_dnsIP;
 					curl_setopt($ch, CURLOPT_URL, $server);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
@@ -329,7 +339,7 @@
 				case 'dyndns-custom':
 					$needsIP = FALSE;
 					if ($this->_dnsVerboseLog) {
-						log_error("DynDNS: ({$this->_dnsHost}) DNS update() starting.");
+						log_error("DynDNS: ({$this->_FQDN}) DNS update() starting.");
 					}
 					if (isset($this->_dnsWildcard) && $this->_dnsWildcard != "OFF") {
 						$this->_dnsWildcard = "ON";
@@ -556,15 +566,10 @@
 					*/
 					$needsIP = FALSE;
 					if ($this->_dnsVerboseLog) {
-						log_error("Namecheap ({$this->_dnsHost}): DNS update() starting.");
+						log_error("Namecheap ({$this->_FQDN}): DNS update() starting.");
 					}
-					$dparts = explode(".", trim($this->_dnsHost));
-					$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
-					$domain_offset = count($dparts) - $domain_part_count;
-					$hostname = implode(".", array_slice($dparts, 0, $domain_offset));
-					$domain = implode(".", array_slice($dparts, $domain_offset));
 					$dnspass = trim($this->_dnsPass);
-					$server = "https://dynamicdns.park-your-domain.com/update?host={$hostname}&domain={$domain}&password={$dnspass}&ip={$this->_dnsIP}";
+					$server = "https://dynamicdns.park-your-domain.com/update?host={$this->_dnsHost}&domain={$this->_dnsDomain}&password={$dnspass}&ip={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
 				case 'he-net':
@@ -859,8 +864,8 @@
 		 */
 		function _checkStatus($ch, $data) {
 			if ($this->_dnsVerboseLog) {
-				log_error("DynDNS ({$this->_dnsHost}): DynDns _checkStatus() starting.");
-				log_error("DynDNS ({$this->_dnsHost}): Current Service: {$this->_dnsService}");
+				log_error("DynDNS ({$this->_FQDN}): DynDns _checkStatus() starting.");
+				log_error("DynDNS ({$this->_FQDN}): Current Service: {$this->_dnsService}");
 			}
 			$successful_update = false;
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53' && @curl_error($ch)) {
@@ -1517,7 +1522,7 @@
 					$status = "Route 53: (Error) Invalid TTL";
 					break;
 				case 10:
-					$error = "phpDynDNS ({$this->_dnsHost}): No change in my IP address and/or " . $this->_dnsMaxCacheAgeDays . " days has not passed. Not updating dynamic DNS entry.";
+					$error = "phpDynDNS ({$this->_FQDN}): No change in my IP address and/or " . $this->_dnsMaxCacheAgeDays . " days has not passed. Not updating dynamic DNS entry.";
 					break;
 				default:
 					$error = "phpDynDNS: (ERROR!) Unknown Response.";
@@ -1539,17 +1544,17 @@
 			global $debug;
 
 			if ($debug) {
-				log_error("DynDns ({$this->_dnsHost}): _detectChange() starting.");
+				log_error("DynDns ({$this->_FQDN}): _detectChange() starting.");
 			}
 
 			$currentTime = time();
 
 			$wan_ip = $this->_checkIP();
 			if ($wan_ip == 0) {
-				log_error("DynDns ({$this->_dnsHost}): Current WAN IP could not be determined, skipping update process.");
+				log_error("DynDns ({$this->_FQDN}): Current WAN IP could not be determined, skipping update process.");
 				return false;
 			}
-			$log_error = "DynDns ({$this->_dnsHost}): Current WAN IP: {$wan_ip} ";
+			$log_error = "DynDns ({$this->_FQDN}): Current WAN IP: {$wan_ip} ";
 
 			if ($this->_useIPv6 == true) {
 				if (file_exists($this->_cacheFile_v6)) {
@@ -1614,7 +1619,7 @@
 			 */
 			if ($needs_updating == true) {
 				if ($this->_dnsVerboseLog) {
-					log_error("DynDns ({$this->_dnsHost}): {$update_reason}");
+					log_error("DynDns ({$this->_FQDN}): {$update_reason}");
 				}
 				return true;
 			}
@@ -1645,7 +1650,7 @@
 			global $debug;
 
 			if ($debug) {
-				log_error("DynDns ({$this->_dnsHost}): _checkIP() starting.");
+				log_error("DynDns ({$this->_FQDN}): _checkIP() starting.");
 			}
 
 			if ($this->_useIPv6 == true) {
@@ -1670,7 +1675,7 @@
 					$try++;
 				}
 				if ($try >= 3) {
-					log_error("Dyndns debug information ({$this->_dnsHost}): Could not resolve {$hosttocheck} to IP using interface IP {$ip_address}.");
+					log_error("Dyndns debug information ({$this->_FQDN}): Could not resolve {$hosttocheck} to IP using interface IP {$ip_address}.");
 					return 0;
 				}
 				$ip_ch = curl_init("http://{$checkip}");
@@ -1689,15 +1694,15 @@
 				$ip_address = trim($matches[1]);
 				if (is_ipaddr($ip_address)) {
 					if ($this->_dnsVerboseLog) {
-						log_error("DynDns ({$this->_dnsHost}): {$ip_address} extracted from {$hosttocheck}");
+						log_error("DynDns ({$this->_FQDN}): {$ip_address} extracted from {$hosttocheck}");
 					}
 				} else {
-					log_error("DynDns ({$this->_dnsHost}): IP address could not be extracted from {$hosttocheck}");
+					log_error("DynDns ({$this->_FQDN}): IP address could not be extracted from {$hosttocheck}");
 					return 0;
 				}
 			} else {
 				if ($this->_dnsVerboseLog) {
-					log_error("DynDns ({$this->_dnsHost}): {$ip_address} extracted from local system.");
+					log_error("DynDns ({$this->_FQDN}): {$ip_address} extracted from local system.");
 				}
 			}
 			$this->_dnsIP = $ip_address;

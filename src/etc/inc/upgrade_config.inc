@@ -4377,4 +4377,27 @@ function upgrade_140_to_141() {
 
 }
 
+function upgrade_141_to_142() {
+	global $config;
+	/* Convert Namecheap type DynDNS entries to the new split hostname and domain format */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		if ($dyndns['type'] == "namecheap") {
+			/* Use the old style logic to split the host and domain one last time. */
+			$dparts = explode(".", trim($dyndns['host']));
+			$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
+			$domain_offset = count($dparts) - $domain_part_count;
+			$dyndns['host'] = implode(".", array_slice($dparts, 0, $domain_offset));
+			$dyndns['domainname'] = implode(".", array_slice($dparts, $domain_offset));
+		}
+	}
+}
 ?>

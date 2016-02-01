@@ -92,6 +92,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['username'] = $a_dyndns[$id]['username'];
 	$pconfig['password'] = $a_dyndns[$id]['password'];
 	$pconfig['host'] = $a_dyndns[$id]['host'];
+	$pconfig['domainname'] = $a_dyndns[$id]['domainname'];
 	$pconfig['mx'] = $a_dyndns[$id]['mx'];
 	$pconfig['type'] = $a_dyndns[$id]['type'];
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
@@ -129,6 +130,10 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Password");
 		$reqdfields[] = "username";
 		$reqdfieldsn[] = gettext("Username");
+		if ($pconfig['type'] == "namecheap") {
+			$reqdfields[] = "domainname";
+			$reqdfieldsn[] = gettext("Domain Name");
+		}
 	} else {
 		$reqdfields[] = "updateurl";
 		$reqdfieldsn[] = gettext("Update URL");
@@ -173,6 +178,7 @@ if ($_POST) {
 			$dyndns['password'] = $a_dyndns[$id]['password'];;
 		}
 		$dyndns['host'] = $_POST['host'];
+		$dyndns['domainname'] = $_POST['domainname'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
@@ -301,15 +307,28 @@ $section->addInput(new Form_Select(
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 
-$section->addInput(new Form_Input(
+$group = new Form_Group('Hostname');
+
+$group->add(new Form_Input(
 	'host',
 	'Hostname',
 	'text',
 	$pconfig['host']
-))->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
+));
+$group->add(new Form_Input(
+	'domainname',
+	'Domain Name',
+	'text',
+	$pconfig['domainname']
+));
+
+$group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
 			'he.net tunnelbroker: Enter your tunnel ID' . '<br />' .
 			'GleSYS: Enter your record ID' . '<br />' .
-			'DNSimple: Enter only the domain name.');
+			'DNSimple: Enter only the domain name.' . '<br />' .
+			'Namecheap: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by Namecheap.');
+
+$section->add($group);
 
 $section->addInput(new Form_Input(
 	'mx',
@@ -434,6 +453,7 @@ events.push(function() {
 		switch (service) {
 			case "custom" :
 			case "custom-v6" :
+				hideGroupInput('domainname', true);
 				hideInput('resultmatch', false);
 				hideInput('updateurl', false);
 				hideInput('requestif', false);
@@ -448,6 +468,7 @@ events.push(function() {
 
 			case "dnsimple":
 			case "route53":
+				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
 				hideInput('requestif', true);
@@ -459,8 +480,21 @@ events.push(function() {
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
-
+			case "namecheap":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', false);
+				hideCheckbox('wildcard', false);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
+				break;
 			default:
+				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);
 				hideInput('requestif', true);

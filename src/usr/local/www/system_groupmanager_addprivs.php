@@ -209,6 +209,34 @@ $section->addInput(new Form_Select(
 	true
 ))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.')->setAttribute('style', 'height:400px;');
 
+$section->addInput(new Form_Input(
+	'filtertxt',
+	'Filter',
+	'text',
+	null
+))->setHelp('Show only the choices containing this term');
+
+$btnfilter = new Form_Button(
+	'btnfilter',
+	'Filter',
+	null,
+	'fa-filter'
+);
+
+$btnfilter->addClass('btn btn-info');
+
+$form->addGlobal($btnfilter);
+
+$btnclear = new Form_Button(
+	'btnclear',
+	'Clear',
+	null,
+	'fa-times'
+);
+
+$btnclear->addClass('btn btn-warning');
+
+$form->addGlobal($btnclear);
 $form->add($section);
 
 print $form;
@@ -245,7 +273,43 @@ events.push(function() {
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html('<span style="color: green;">' + descs[$(this).children('option:selected').index()] + '</span>');
+		$('#pdesc').html('<span class="text-info">' + descs[$(this).children('option:selected').index()] + '</span>');
+	});
+
+	$('#btnfilter').prop('type', 'button');
+
+	$('#btnfilter').click(function() {
+		searchterm = $('#filtertxt').val().toLowerCase();
+
+		$(".multiselect > option").each(function() {
+			if (this.text.toLowerCase().indexOf(searchterm) > -1 ) {
+				$(this).show();
+			} else {
+				$(this).hide();
+			}
+		});
+	});
+
+	$('#btnclear').prop('type', 'button');
+
+	$('#btnclear').click(function() {
+		$(".multiselect > option").each(function() {
+			$(this).show();
+		});
+	});
+
+	$('#filtertxt').keypress(function(e) {
+		if(e.which == 13) {
+			e.preventDefault();
+			$('#btnfilter').trigger('click');
+		}
+	});
+
+	// On submit unhide all options (or else they will not submit)
+	$('form').submit(function() {
+		$(".multiselect > option").each(function() {
+			$(this).show();
+		});
 	});
 });
 //]]>

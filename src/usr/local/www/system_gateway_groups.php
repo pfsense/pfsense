@@ -106,7 +106,7 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= gettext("removed gateway group") . " {$_GET['id']}";
+		$changedesc .= sprintf(gettext("removed gateway group %s"), $_GET['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);

@@ -146,7 +146,7 @@ if ($_POST) {
 		}
 		/* check for overlaps */
 		if ($_POST['name'] == $gwname) {
-			$input_errors[] = sprintf(gettext('A gateway group cannot have the same name with a gateway "%s" please choose another name.'), $_POST['name']);
+			$input_errors[] = sprintf(gettext('A gateway group cannot have the same name as a gateway "%s" please choose another name.'), $_POST['name']);
 		}
 
 	}

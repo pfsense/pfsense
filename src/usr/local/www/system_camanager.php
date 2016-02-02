@@ -128,7 +128,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name)) . "<br />";
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name));
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -246,20 +246,20 @@ if ($_POST) {
 	if ($pconfig['method'] != "existing") {
 		/* Make sure we do not have invalid characters in the fields for the certificate */
 		if (preg_match("/[\?\>\<\&\/\\\"\']/", $_POST['descr'])) {
-			array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
+			array_push($input_errors, gettext("The field 'Descriptive Name' contains invalid characters."));
 		}
 
 		for ($i = 0; $i < count($reqdfields); $i++) {
 			if ($reqdfields[$i] == 'dn_email') {
 				if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_email"])) {
-					array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
+					array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
 				}
 			} else if ($reqdfields[$i] == 'dn_commonname') {
 				if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST["dn_commonname"])) {
-					array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
+					array_push($input_errors, gettext("The field 'Distinguished name Common Name' contains invalid characters."));
 				}
 			} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST["$reqdfields[$i]"])) {
-				array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+				array_push($input_errors, sprintf(gettext("The field '%s' contains invalid characters."), $reqdfieldsn[$i]));
 			}
 		}
 		if (!in_array($_POST["keylen"], $ca_keylens)) {

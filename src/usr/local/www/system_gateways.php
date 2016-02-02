@@ -115,9 +115,9 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 				$items = explode("|", $item);
 				if ($items[0] == $a_gateways[$id]['name']) {
 					if (!$disable) {
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Gateway Group "%2$s"'), $a_gateways[$id]['name'], $group['name']);
 					} else {
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $a_gateways[$id]['name'], $group['name']);
 					}
 				}
 			}
@@ -129,11 +129,11 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 			if ($route['gateway'] == $a_gateways[$id]['name']) {
 				if (!$disable) {
 					// The user wants to delete this gateway, but there is a static route (enabled or disabled) that refers to the gateway.
-					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
 				} else if (!isset($route['disabled'])) {
 					// The user wants to disable this gateway.
 					// But there is a static route that uses this gateway and is enabled (not disabled).
-					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
 				}
 			}
 		}
@@ -208,7 +208,7 @@ if (isset($_POST['del_x'])) {
 				$items_deleted .= "{$rulei} ";
 			}
 			if (!empty($items_deleted)) {
-				write_config("Gateways: removed gateways {$items_deleted}");
+				write_config(sprintf(gettext("Gateways: removed gateways %s", $items_deleted)));
 				mark_subsystem_dirty('staticroutes');
 			}
 			header("Location: system_gateways.php");

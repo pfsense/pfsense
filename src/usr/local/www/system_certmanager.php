@@ -137,7 +137,7 @@ if ($act == "del") {
 
 	unset($a_cert[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), htmlspecialchars($a_cert[$id]['descr'])) . "<br />";
+	$savemsg = sprintf(gettext("Certificate %s successfully deleted"), htmlspecialchars($a_cert[$id]['descr']));
 	pfSenseHeader("system_certmanager.php");
 	exit;
 }
@@ -247,7 +247,7 @@ if ($act == "csr") {
 }
 
 if ($_POST) {
-	// This is just the blank altername name that is added for display purposes. We don't want to validate/save it
+	// This is just the blank alternate name that is added for display purposes. We don't want to validate/save it
 	if ($_POST['altname_value0'] == "") {
 		unset($_POST['altname_type0']);
 		unset($_POST['altname_value0']);
@@ -371,14 +371,14 @@ if ($_POST) {
 			for ($i = 0; $i < count($reqdfields); $i++) {
 				if (preg_match('/email/', $reqdfields[$i])) { /* dn_email or csr_dn_name */
 					if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
-						array_push($input_errors, "The field 'Distinguished name Email Address' contains invalid characters.");
+						array_push($input_errors, gettext("The field 'Distinguished name Email Address' contains invalid characters."));
 					}
 				} else if (preg_match('/commonname/', $reqdfields[$i])) { /* dn_commonname or csr_dn_commonname */
 					if (preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $_POST[$reqdfields[$i]])) {
-						array_push($input_errors, "The field 'Distinguished name Common Name' contains invalid characters.");
+						array_push($input_errors, gettext("The field 'Distinguished name Common Name' contains invalid characters."));
 					}
 				} else if (($reqdfields[$i] != "descr") && preg_match("/[\!\@\#\$\%\^\(\)\~\?\>\<\&\/\\\,\.\"\']/", $_POST[$reqdfields[$i]])) {
-					array_push($input_errors, "The field '" . $reqdfieldsn[$i] . "' contains invalid characters.");
+					array_push($input_errors, sprintf(gettext("The field '%s' contains invalid characters."), $reqdfieldsn[$i]));
 				}
 			}
 
@@ -1052,7 +1052,7 @@ foreach ($a_cert as $i => $cert):
 							<i><?=$cert_types[$cert['type']]?></i><br />
 						<?php endif?>
 						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b>, Server: <b><?=$purpose['server']?></b>
+							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>
@@ -1067,25 +1067,25 @@ foreach ($a_cert as $i => $cert):
 					</td>
 					<td>
 						<?php if (is_cert_revoked($cert)): ?>
-							<i>Revoked </i>
+							<i><?=gettext("Revoked")?></i>
 						<?php endif?>
 						<?php if (is_webgui_cert($cert['refid'])): ?>
-							webConfigurator
+							<?=gettext("webConfigurator")?>
 						<?php endif?>
 						<?php if (is_user_cert($cert['refid'])): ?>
-							User Cert
+							<?=gettext("User Cert")?>
 						<?php endif?>
 						<?php if (is_openvpn_server_cert($cert['refid'])): ?>
-							OpenVPN Server
+							<?=gettext("OpenVPN Server")?>
 						<?php endif?>
 						<?php if (is_openvpn_client_cert($cert['refid'])): ?>
-							OpenVPN Client
+							<?=gettext("OpenVPN Client")?>
 						<?php endif?>
 						<?php if (is_ipsec_cert($cert['refid'])): ?>
-							IPsec Tunnel
+							<?=gettext("IPsec Tunnel")?>
 						<?php endif?>
 						<?php if (is_captiveportal_cert($cert['refid'])): ?>
-							Captive Portal
+							<?=gettext("Captive Portal")?>
 						<?php endif?>
 <?php
 							$refid = $cert['refid'];

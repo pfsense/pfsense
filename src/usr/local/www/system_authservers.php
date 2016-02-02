@@ -111,7 +111,7 @@ if ($act == "del") {
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
 
-	$savemsg = gettext("Authentication Server") . " " . htmlspecialchars($serverdeleted) . " " . gettext("deleted") . "<br />";
+	$savemsg = sprintf(gettext("Authentication Server %s deleted"), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
 }
 
@@ -379,11 +379,13 @@ if($_POST && $input_errors) {
 
 include("head.inc");
 
-if ($input_errors)
+if ($input_errors) {
 	print_input_errors($input_errors);
+}
 
-if ($savemsg)
+if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
@@ -392,8 +394,7 @@ $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.ph
 $tab_array[] = array(gettext("Servers"), true, "system_authservers.php");
 display_top_tabs($tab_array);
 
-if (!($act == "new" || $act == "edit" || $input_errors))
-{
+if (!($act == "new" || $act == "edit" || $input_errors)) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Authentication Servers')?></h2></div>

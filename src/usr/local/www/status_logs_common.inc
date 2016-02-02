@@ -334,7 +334,7 @@ function filter_form_system() {
 		);
 	}
 
-	$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+	$btnsubmit->removeClass('btn-primary')->addClass('btn-sm btn-success');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -553,7 +553,7 @@ function filter_form_firewall() {
 		);
 	}
 
-	$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+	$btnsubmit->removeClass('btn-primary')->addClass('btn-sm btn-success');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -958,11 +958,12 @@ function manage_log_section() {
 
 	$btnsavesettings = new Form_Button(
 		'save_settings',
-		gettext('Save'),
-		null
+		' ' . gettext('Save'),
+		null,
+		'fa-save'
 	);
 
-	$btnsavesettings->addClass('btn-sm');
+	$btnsavesettings->addClass('btn-sm btn-primary');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -977,7 +978,7 @@ function manage_log_section() {
 		'fa-trash'
 	);
 
-	$btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+	$btnclear->removeClass('btn-primary')->addClass('btn-sm btn-danger');
 
 	$group->add(new Form_StaticText(
 		'',

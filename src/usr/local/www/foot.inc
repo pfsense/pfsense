@@ -24,7 +24,6 @@
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
 	<script src="/sortable/sortable.js"></script>
-
 	<script type="text/javascript">
 	//<![CDATA[
 		// Un-hide the "Top of page" icons if the page is larger than the window

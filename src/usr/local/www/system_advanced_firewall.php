@@ -743,13 +743,13 @@ events.push(function() {
 		var htext = '<span class="text-success">';
 
 		if (val == 'normal') {
-			htext += 'The default optimization algorithm';
+			htext += '<?=gettext("The default optimization algorithm");?>';
 		} else if (val == 'high-latency') {
-			htext += 'Used for eg. satellite links. Expires idle connections later than default';
+			htext += '<?=gettext("Used for eg. satellite links. Expires idle connections later than default");?>';
 		} else if (val == 'aggressive') {
-			htext += 'Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections';
+			htext += '<?=gettext("Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections");?>';
 		} else if (val == 'conservative') {
-			htext += 'Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization';
+			htext += '<?=gettext("Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization");?>';
 		}
 
 		htext += '</span>';

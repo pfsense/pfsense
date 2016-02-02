@@ -126,7 +126,7 @@ $section->addInput(new Form_Select(
 	fwbranch,
 	'Branch',
 	(is_pkg_installed($g['product_name'] . "-repo")) ? "stable":"development",
-	["stable" => "Stable", "development" => "Development"]
+	["stable" => gettext("Stable"), "development" => gettext("Development")]
 ))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
 			'Use of the development version is at your own risk!');
 

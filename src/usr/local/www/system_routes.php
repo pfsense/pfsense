@@ -140,7 +140,7 @@ function delete_static_route($id) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc = $changedesc_prefix . gettext("removed route to") . " " . $a_routes[$_GET['id']]['network'];
+		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_GET['id']]['network']);
 		delete_static_route($_GET['id']);
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
@@ -152,12 +152,13 @@ if ($_GET['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected routes */
 	if (is_array($_POST['route']) && count($_POST['route'])) {
-		$changedesc = $changedesc_prefix . gettext("removed route to");
+		$deleted_routes = "";
 		foreach ($_POST['route'] as $routei) {
-			$changedesc .= " " . $a_routes[$routei]['network'];
+			$deleted_routes .= " " . $a_routes[$routei]['network'];
 			delete_static_route($routei);
 			unset($a_routes[$routei]);
 		}
+		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to%s"), $deleted_routes);
 		write_config($changedesc);
 		header("Location: system_routes.php");
 		exit;
@@ -170,15 +171,15 @@ if (isset($_POST['del_x'])) {
 			// Do not enable a route whose gateway is disabled
 			if (isset($a_gateways[$a_routes[$_GET['id']]['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . gettext("gateway is disabled, cannot enable route to") . " " . $a_routes[$_GET['id']]['network'];
+				$input_errors[] = $changedesc_prefix . sprintf(gettext("gateway is disabled, cannot enable route to %s"), $a_routes[$_GET['id']]['network']);
 			} else {
 				unset($a_routes[$_GET['id']]['disabled']);
-				$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
+				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_GET['id']]['network']);
 			}
 		} else {
 			delete_static_route($_GET['id']);
 			$a_routes[$_GET['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$_GET['id']]['network'];
+			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_GET['id']]['network']);
 		}
 
 		if ($do_update_config) {

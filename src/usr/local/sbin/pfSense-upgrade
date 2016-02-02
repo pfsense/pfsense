@@ -829,6 +829,10 @@ if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
 	/etc/rc.conf_mount_rw
 fi
 
+if [ -n "${booting}" ]; then
+	export REPO_AUTOUPDATE=false
+fi
+
 echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT

@@ -4399,5 +4399,15 @@ function upgrade_141_to_142() {
 			$dyndns['domainname'] = implode(".", array_slice($dparts, $domain_offset));
 		}
 	}
+
+	/* unset old pppoerestart cron job if it exists. redmine 1905 */
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $idx => $cronitem) {
+			if ($cronitem['command'] == "/etc/pppoerestart") {
+				unset($config['cron']['item'][$idx]);
+			}
+		}
+	}
 }
+
 ?>

@@ -77,7 +77,13 @@ if ($_REQUEST['getdyndnsstatus']) {
 			echo "|";
 		}
 
-		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+		if ($dyndns['type'] == "namecheap") {
+			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
+		} else {
+			$hostname = $dyndns['host'];
+		}
+
+		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
 		if (file_exists($filename)) {
 			$ipaddr = dyndnsCheckIP($dyndns['interface']);
 			$cached_ip_s = explode(':', file_get_contents($filename));
@@ -108,7 +114,12 @@ if ($_REQUEST['getdyndnsstatus']) {
 	</tr>
 	</thead>
 	<tbody>
-	<?php $dyndnsid = 0; foreach ($a_dyndns as $dyndns): ?>
+	<?php $dyndnsid = 0; foreach ($a_dyndns as $dyndns):
+		if ($dyndns['type'] == "namecheap") {
+			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
+		} else {
+			$hostname = $dyndns['host'];
+		} ?>
 	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 		<td>
 		<?php $iflist = get_configured_interface_with_descr();
@@ -141,7 +152,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		</td>
 		<td>
 		<?php
-		print(htmlspecialchars($dyndns['host']));
+		print(htmlspecialchars($hostname));
 		?>
 		</td>
 		<td>

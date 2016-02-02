@@ -1708,6 +1708,9 @@ EOD;
 
 EOD;
 				}
+				if (isset($pppoecfg['radius']['nasip'])) {
+					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
+				}
 			}
 
 			fwrite($fd, $mpdconf);

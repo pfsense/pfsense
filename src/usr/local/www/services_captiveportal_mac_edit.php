@@ -251,11 +251,18 @@ $btnmymac = new Form_Button(
 
 $btnmymac->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC controls');
+$group = new Form_Group('MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
-$group->setHelp('MAC address (6 hex octets separated by colons)');
+$group->setHelp('6 hex octets separated by colons');
 $section->add($group);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp('You may enter a description here for your reference (not parsed)');
 
 $section->addInput(new Form_Input(
 	'bw_up',

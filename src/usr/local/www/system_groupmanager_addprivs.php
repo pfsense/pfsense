@@ -278,7 +278,7 @@ events.push(function() {
 		echo $jdescs;
 	}
 ?>
-	$('.shadowselect').hide();
+	$('.shadowselect').parent().parent('div').addClass('hidden');
 
 	// Set the number of options to display
 	$('.multiselect').attr("size","20");

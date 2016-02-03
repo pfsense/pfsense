@@ -381,9 +381,9 @@ if (count($pools) > 0) {
 					<th><?=gettext("Hostname")?></th>
 					<th><?=gettext("Start")?></th>
 					<th><?=gettext("End")?></th>
-					<th><?=gettext("Online")?></th>
-					<th><?=gettext("Lease Type")?></th>
-					<th><?=gettext("Actions")?></th>
+					<th data-sortable="false"><?=gettext("Online")?></th>
+					<th data-sortable="false"><?=gettext("Lease Type")?></th>
+					<th data-sortable="false"><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>

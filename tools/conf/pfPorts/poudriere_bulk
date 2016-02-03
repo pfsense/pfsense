@@ -1,6 +1,3 @@
-net/isc-dhcp43-client
-net/isc-dhcp43-server
-net/isc-dhcp43-relay
 sysutils/flashrom
 databases/php56-mysql
 databases/php56-mysqli

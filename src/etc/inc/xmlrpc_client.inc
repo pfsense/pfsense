@@ -932,7 +932,7 @@ class XML_RPC_Client extends XML_RPC_Base {
 
         $ctx = stream_context_create($ctx_options);
 
-        $fp = stream_socket_client("{$this->protocol}{$server}:{$port}",
+        $fp = @stream_socket_client("{$this->protocol}{$server}:{$port}",
             $this->errno, $this->errstr,
             ($timeout > 0 ? $timeout : ini_get("default_socket_timeout")),
             STREAM_CLIENT_CONNECT, $ctx);

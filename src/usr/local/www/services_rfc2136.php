@@ -123,6 +123,7 @@ if ($input_errors) {
 
 
 $iflist = get_configured_interface_with_descr();
+$groupslist = return_gateway_groups_array();
 
 $i = 0;
 foreach ($a_rfc2136 as $rfc2136):
@@ -133,6 +134,12 @@ foreach ($a_rfc2136 as $rfc2136):
 	foreach ($iflist as $if => $ifdesc) {
 		if ($rfc2136['interface'] == $if) {
 			print($ifdesc);
+			break;
+		}
+	}
+	foreach ($groupslist as $if => $group) {
+		if ($rfc2136['interface'] == $if) {
+			print($if);
 			break;
 		}
 	}
@@ -147,13 +154,14 @@ foreach ($a_rfc2136 as $rfc2136):
 							<td>
 <?php
 	$filename = "{$g['conf_path']}/dyndns_{$rfc2136['interface']}_rfc2136_" . escapeshellarg($rfc2136['host']) . "_{$rfc2136['server']}.cache";
+	$if = get_failover_interface($rfc2136['interface']);
 
 	if (file_exists($filename)) {
 		print('IPv4: ');
 		if (isset($rfc2136['usepublicip'])) {
-			$ipaddr = dyndnsCheckIP($rfc2136['interface']);
+			$ipaddr = dyndnsCheckIP($if);
 		} else {
-			$ipaddr = get_interface_ip($rfc2136['interface']);
+			$ipaddr = get_interface_ip($if);
 		}
 
 		$cached_ip_s = explode("|", file_get_contents($filename));
@@ -175,7 +183,7 @@ foreach ($a_rfc2136 as $rfc2136):
 
 	if (file_exists("{$filename}.ipv6")) {
 		print('IPv6: ');
-		$ipaddr = get_interface_ipv6($rfc2136['interface']);
+		$ipaddr = get_interface_ipv6($if);
 		$cached_ip_s = explode("|", file_get_contents("{$filename}.ipv6"));
 		$cached_ip = $cached_ip_s[0];
 

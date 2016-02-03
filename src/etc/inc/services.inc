@@ -2450,11 +2450,12 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 	/* Dynamic DNS updating active? */
 	if (is_array($config['dnsupdates']['dnsupdate'])) {
 		$notify_text = "";
+		$gwgroups = return_gateway_groups_array();
 		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
 			if (!isset($dnsupdate['enable'])) {
 				continue;
 			}
-			if (!empty($int) && $int != $dnsupdate['interface']) {
+			if (!empty($int) && ($int != $dnsupdate['interface']) && (!is_array($gwgroups[$dnsupdate['interface']]))) {
 				continue;
 			}
 			if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {
@@ -2462,15 +2463,15 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			}
 
 			/* determine interface name */
-			$if = get_real_interface($dnsupdate['interface']);
+			$if = get_failover_interface($dnsupdate['interface']);
 
 			if (isset($dnsupdate['usepublicip'])) {
-				$wanip = dyndnsCheckIP($dnsupdate['interface']);
+				$wanip = dyndnsCheckIP($if);
 			} else {
-				$wanip = get_interface_ip($dnsupdate['interface']);
+				$wanip = get_interface_ip($if);
 			}
 
-			$wanipv6 = get_interface_ipv6($dnsupdate['interface']);
+			$wanipv6 = get_interface_ipv6($if);
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
 			$currentTime = time();
 

@@ -157,6 +157,28 @@ if ($_POST) {
 	}
 }
 
+function build_if_list() {
+	$list = array();
+
+	$iflist = get_configured_interface_with_descr();
+
+	foreach ($iflist as $if => $ifdesc) {
+		$list[$if] = $ifdesc;
+	}
+
+	unset($iflist);
+
+	$grouplist = return_gateway_groups_array();
+
+	foreach ($grouplist as $name => $group) {
+		$list[$name] = 'GW Group ' . $name;
+	}
+
+	unset($grouplist);
+
+	return($list);
+}
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
 include("head.inc");
 
@@ -180,17 +202,14 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $optionlist = array();
-$iflist = get_configured_interface_with_descr();
 
-foreach ($iflist as $ifnam => $ifdescr) {
-	$optionlist[$ifnam] = $ifdescr;
-}
+$iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
 	'Interface',
 	$pconfig['interface'],
-	$optionlist
+	$iflist
 ));
 
 $section->addInput(new Form_Input(

@@ -3819,7 +3819,7 @@ EOD;
 				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"form-control\">";
 
-				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
+				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
 					$form .= "<option value=\"{$bwsidx}\"";
 
 					if ($bw['bwscale'] == $bwsidx) {

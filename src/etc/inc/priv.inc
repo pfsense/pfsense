@@ -338,7 +338,7 @@ function getAllowedPages($username, &$attributes = array()) {
 
 function sort_user_privs($privs) {
 	// Privileges to place first, to redirect properly.
-	$priority_privs = array("page-dashboard-all", "page-system-login/logout");
+	$priority_privs = array("page-dashboard-all", "page-system-login-logout");
 
 	$fprivs = array_intersect($privs, $priority_privs);
 	$sprivs = array_diff($privs, $priority_privs);

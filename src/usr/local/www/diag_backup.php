@@ -57,7 +57,7 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-backup/restore
+##|*IDENT=page-diagnostics-backup-restore
 ##|*NAME=Diagnostics: Backup/restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*

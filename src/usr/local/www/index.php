@@ -57,7 +57,7 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-system-login/logout
+##|*IDENT=page-system-login-logout
 ##|*NAME=System: Login / Logout / Dashboard
 ##|*DESCR=Allow access to the 'System: Login / Logout' page and Dashboard.
 ##|*MATCH=index.php*

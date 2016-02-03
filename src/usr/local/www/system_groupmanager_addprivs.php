@@ -207,7 +207,17 @@ $section->addInput(new Form_Select(
 	$a_group['priv'],
 	build_priv_list(),
 	true
-))->addClass('multiselect')->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.')->setAttribute('style', 'height:400px;');
+))->addClass('multiselect')
+  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
+
+$section->addInput(new Form_Select(
+	'shadow',
+	'Shadow',
+	null,
+	build_priv_list(),
+	true
+))->addClass('shadowselect')
+  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
 
 $section->addInput(new Form_Input(
 	'filtertxt',
@@ -268,24 +278,38 @@ events.push(function() {
 		echo $jdescs;
 	}
 ?>
+	$('.shadowselect').hide();
+
 	// Set the number of options to display
 	$('.multiselect').attr("size","20");
+	$('.shadowselect').attr("size","20");
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
 		$('#pdesc').html('<span class="text-info">' + descs[$(this).children('option:selected').index()] + '</span>');
+
+		// and update the shadow list from the real list
+		$(".multiselect option").each(function() {
+			shadowoption = $('.shadowselect option').filter('[value=' + $(this).val() + ']');
+
+			if ($(this).is(':selected')) {
+				shadowoption.prop("selected", true);
+			} else {
+				shadowoption.prop("selected", false);
+			}
+		});
 	});
 
 	$('#btnfilter').prop('type', 'button');
 
 	$('#btnfilter').click(function() {
 		searchterm = $('#filtertxt').val().toLowerCase();
+		copyselect(true);
 
+		// Then filter
 		$(".multiselect > option").each(function() {
-			if (this.text.toLowerCase().indexOf(searchterm) > -1 ) {
-				$(this).show();
-			} else {
-				$(this).hide();
+			if (this.text.toLowerCase().indexOf(searchterm) == -1 ) {
+				$(this).remove();
 			}
 		});
 	});
@@ -293,9 +317,10 @@ events.push(function() {
 	$('#btnclear').prop('type', 'button');
 
 	$('#btnclear').click(function() {
-		$(".multiselect > option").each(function() {
-			$(this).show();
-		});
+		// Copy all options from shadow to sysprivs
+		copyselect(true)
+
+		$('#filtertxt').val('');
 	});
 
 	$('#filtertxt').keypress(function(e) {
@@ -307,9 +332,33 @@ events.push(function() {
 
 	// On submit unhide all options (or else they will not submit)
 	$('form').submit(function() {
+
 		$(".multiselect > option").each(function() {
 			$(this).show();
 		});
+
+		$('.shadowselect').remove();
+	});
+
+	function copyselect(selected) {
+		// Copy all optionsfrom shadow to sysprivs
+		$('.multiselect').html($('.shadowselect').html());
+
+		if (selected) {
+			// Update the shadow list from the real list
+			$(".shadowselect option").each(function() {
+				multioption = $('.multiselect option').filter('[value=' + $(this).val() + ']');
+				if ($(this).is(':selected')) {
+					multioption.prop("selected", true);
+				} else {
+					multioption.prop("selected", false);
+				}
+			});
+		}
+	}
+
+	$('.multiselect').mouseup(function () {
+		$('.multiselect').trigger('click');
 	});
 });
 //]]>

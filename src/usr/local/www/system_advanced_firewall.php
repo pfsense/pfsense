@@ -470,7 +470,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
 	'Disable Firewall Scrub',
-	'Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.',
+	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
 	isset($config['system']['disablescrub'])
 ));
 
@@ -545,8 +545,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable Auto-added VPN rules',
 	'Disable all auto-added VPN rules.',
 	isset($config['system']['disablevpnrules'])
-))->setHelp('<span>Note: This disables automatically added rules for IPsec, '.
-	'PPTP.</span>');
+))->setHelp('Note: This disables automatically added rules for IPsec.');
 
 $section->addInput(new Form_Checkbox(
 	'disablereplyto',

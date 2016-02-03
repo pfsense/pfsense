@@ -325,12 +325,17 @@ $section->addInput(new Form_Input(
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 if (isset($id) && $a_rfc2136[$id]) {
-    	$section->addInput(new Form_Input(
-    	'id',
-    	null,
-    	'hidden',
-    	$id
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
 	));
+
+	$form->addGlobal(new Form_Button(
+		'force',
+		'Save & Force Update'
+	))->removeClass('btn-primary')->addClass('btn-info');
 }
 
 $form->add($section);

@@ -644,5 +644,3 @@ function handle_ajax() {
 		exit;
 	}
 }
-
-?>

@@ -212,5 +212,3 @@ if (file_exists("{$g['cf_conf_path']}/enableserial_force")) {
 }
 
 $config_parsed = false;
-
-?>

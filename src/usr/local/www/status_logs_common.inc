@@ -990,4 +990,3 @@ function manage_log_section() {
 	$form->add($section);
 	print $form;
 }
-?>

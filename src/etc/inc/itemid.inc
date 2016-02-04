@@ -126,5 +126,3 @@ function get_unique_id() {
 
 	return uniqid("nat_", true);
 }
-
-?>

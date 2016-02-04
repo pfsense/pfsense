@@ -1059,5 +1059,3 @@ function kill_traffic_collector() {
 
 	killbypid("{$g['varrun_path']}/updaterrd.sh.pid");
 }
-
-?>

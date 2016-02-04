@@ -832,5 +832,3 @@ function ipsec_new_reqid() {
 
 	return $keyid;
 }
-
-?>

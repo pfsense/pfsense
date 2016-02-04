@@ -108,5 +108,3 @@ if ($config_parsed == true) {
 		run_plugins("/usr/local/pkg/parse_config/");
 	}
 }
-
-?>

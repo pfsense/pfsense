@@ -2357,5 +2357,3 @@ function get_smart_drive_list() {
 	sort($disk_list);
 	return $disk_list;
 }
-
-?>

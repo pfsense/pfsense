@@ -5986,5 +5986,3 @@ function get_failover_interface($interface, $family = "all") {
 function remove_ifindex($ifname) {
 	return preg_replace("/[0-9]+$/", "", $ifname);
 }
-
-?>

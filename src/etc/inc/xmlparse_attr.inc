@@ -258,5 +258,3 @@ function parse_xml_config_raw_attr($cffile, $rootobj, &$parsed_attributes, $isst
 
 	return $parsedcfg[$rootobj];
 }
-
-?>

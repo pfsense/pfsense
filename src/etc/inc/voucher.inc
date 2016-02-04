@@ -808,5 +808,3 @@ function voucher_save_db_to_config_zone() {
 	write_config("Syncing vouchers");
 	return;
 }
-
-?>

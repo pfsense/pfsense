@@ -65,5 +65,3 @@ class login_sasl_client_class
 		return(SASL_CONTINUE);
 	}
 };
-
-?>

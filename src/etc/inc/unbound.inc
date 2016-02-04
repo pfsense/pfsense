@@ -808,5 +808,3 @@ function unbound_local_zone_types() {
 		"nodefault" => gettext("No Default")
 	);
 }
-
-?>

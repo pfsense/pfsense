@@ -1680,5 +1680,3 @@ function wizard_get_bandwidthtype_scale($type = "b") {
 	}
 	return intval($factor);
 }
-
-?>

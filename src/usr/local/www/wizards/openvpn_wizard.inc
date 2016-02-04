@@ -674,5 +674,3 @@ function step12_submitphpaction() {
 	header("Location: vpn_openvpn_server.php");
 	exit;
 }
-
-?>

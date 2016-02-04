@@ -816,5 +816,3 @@ function service_control_restart($name, $extras) {
 	}
 	return sprintf(gettext("%s has been restarted."), htmlspecialchars($name));
 }
-
-?>

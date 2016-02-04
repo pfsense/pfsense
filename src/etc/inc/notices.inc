@@ -467,5 +467,3 @@ function notify_all_remote($msg) {
 	notify_via_smtp($msg);
 	notify_via_growl($msg);
 }
-
-?>

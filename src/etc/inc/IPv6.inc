@@ -1102,5 +1102,3 @@ class Net_IPv6
  * c-hanging-comment-ender-p: nil
  * End:
  */
-
-?>

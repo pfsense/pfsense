@@ -4702,5 +4702,3 @@ $default_shaper_msg .= gettext("The tree on the left helps you navigate through 
 	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 
 $dn_default_shaper_msg = $default_shaper_msg;
-
-?>

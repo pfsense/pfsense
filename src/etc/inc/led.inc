@@ -393,5 +393,3 @@ function char_to_morse($char) {
 			break;
 	}
 }
-
-?>

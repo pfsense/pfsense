@@ -4409,5 +4409,3 @@ function upgrade_141_to_142() {
 		}
 	}
 }
-
-?>

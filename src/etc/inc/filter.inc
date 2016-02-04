@@ -907,6 +907,7 @@ function filter_generate_gateways() {
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";
+				$routetomembers = 0;
 				foreach ($members as $idx => $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
@@ -914,10 +915,17 @@ function filter_generate_gateways() {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}
+						if ($routetomembers + $member['weight'] > 384) {
+							// would create invalid ruleset, bail
+							log_error(sprintf(gettext("Too many members in group %s, gateway group truncated in ruleset."), $member['name']));
+							continue;
+						}
 						if ($member['weight'] > 1) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
+							$routetomembers += $member['weight'];
 						} else {
 							$routeto .= "( {$int} {$gatewayip} ) ";
+							$routetomembers++;
 						}
 						$foundlb++;
 					} else {

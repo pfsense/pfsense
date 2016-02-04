@@ -405,7 +405,7 @@
 					} else {
 						$iptoset = $this->_dnsIP;
 					}
-					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&hostname=' . $this->_dnsHost.'&ip=' . $iptoset);
+					curl_setopt($ch, CURLOPT_URL, $server . $port . '?username=' . urlencode($this->_dnsUser) . '&pass=' . urlencode($this->_dnsPass) . '&h[]=' . $this->_dnsHost.'&ip=' . $iptoset);
 					break;
 				case 'easydns':
 					$needsIP = TRUE;

@@ -1044,5 +1044,3 @@ function pfSense_clear_globals() {
 }
 
 register_shutdown_function('pfSense_clear_globals');
-
-?>

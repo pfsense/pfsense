@@ -152,12 +152,15 @@ if ($_POST) {
 		} else {
 			$host_to_check = $_POST['host'];
 
-			/* No-ip (and maybe others) can have a @ in hostname */
-			$last_to_check = strrpos($host_to_check, '@');
-			if ($last_to_check !== false) {
-				$host_to_check = substr_replace($host_to_check, '.', $last_to_check, 1);
+			/* No-ip can have a @ in hostname */
+			if (substr($pconfig['type'], 0, 4) == "noip") {
+				$last_to_check = strrpos($host_to_check, '@');
+				if ($last_to_check !== false) {
+					$host_to_check = substr_replace(
+					    $host_to_check, '.', $last_to_check, 1);
+				}
+				unset($last_to_check);
 			}
-			unset($last_to_check);
 		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6") {

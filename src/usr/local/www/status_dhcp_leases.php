@@ -384,7 +384,7 @@ if (count($pools) > 0) {
 					<th><?=gettext("End")?></th>
 					<th><?=gettext("Online")?></th>
 					<th><?=gettext("Lease Type")?></th>
-					<th><?=gettext("Actions")?></th>
+					<th data-sortable="false"><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>

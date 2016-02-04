@@ -905,10 +905,17 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 
 	/* this client needs to be deleted - remove ipfw rules */
 	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers)) {
+		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstartfreeradius") {
+			/* Interim updates are on so the session time must be reported as the elapsed time since the previous interim update. */
+			$session_time = ($stop_time - $dbent[0]) % 60;
+			$start_time = $stop_time - $session_time;
+		} else {
+			$start_time = $dbent[0];
+		}
 		RADIUS_ACCOUNTING_STOP($dbent[1], // ruleno
 			$dbent[4], // username
 			$dbent[5], // sessionid
-			$dbent[0], // start time
+			$start_time, // start time
 			$radiusservers,
 			$dbent[2], // clientip
 			$dbent[3], // clientmac

@@ -479,24 +479,6 @@ if ($_POST['apply']) {
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
 	header("Location: interfaces.php?if={$if}");
 	exit;
-} else if ($_POST && $_POST['enable'] != "yes") {
-	unset($wancfg['enable']);
-	if (isset($wancfg['wireless'])) {
-		interface_sync_wireless_clones($wancfg, false);
-	}
-	write_config(sprintf(gettext('Interface %1$s (%2$s) is now disabled.'), $_POST['descr'], $if));
-	mark_subsystem_dirty('interfaces');
-	if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {
-		$toapplylist = unserialize(file_get_contents("{$g['tmp_path']}/.interfaces.apply"));
-	} else {
-		$toapplylist = array();
-	}
-	$toapplylist[$if]['ifcfg'] = $wancfg;
-	$toapplylist[$if]['ppps'] = $a_ppps;
-	/* we need to be able remove IP aliases for IPv6 */
-	file_put_contents("{$g['tmp_path']}/.interfaces.apply", serialize($toapplylist));
-	header("Location: interfaces.php?if={$if}");
-	exit;
 } else if ($_POST) {
 
 	unset($input_errors);

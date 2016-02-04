@@ -698,9 +698,31 @@ function is_ipaddrv4($ipaddr) {
 	return true;
 }
 
-/* returns true if $ipaddr is a valid IPv6 linklocal address */
+/* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
+   returns '' if not a valid linklocal address
+   TODO: does not attempt to validate any IPv6 %scope (if present) other than to check [0-9a-z_] and non-pathological max length 64 */
 function is_linklocal($ipaddr) {
-	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
+	if (is_string($ipaddr)) {
+		// distinguish possible IPv4 and IPv6 using a 'cheap' test first
+		if (strpos($ipaddr, ":") === false) {
+			// input is IPv4 or bad data
+			// test if it's 169.254.1.0 - 169.254.254.255 per rfc3927 2.1
+			// following is probably 'cheaper' than using preg_match
+			$ip4 = explode(".", $ipaddr);
+			if (count($ip4) == 4 && $ip4[0] == '169' && $ip4[1] == '254' && ctype_digit($ip[2]) && 
+				$ip4[2] >= 1 && $ip4[2] <= 254 && ctype_digit($ip4[3]) && $ip4[3] <= 255) {
+					return 4;
+			}
+		} elseif (preg_match('/^([0-9a-f:]{2,39})(%([0-9a-z_]{1,64}))?$/i', $ipaddr, $ip6)) {
+			// IPv6: test whether valid IPv6 and first 64 bits are '1111111010' + 54 zero bits (fe80::) per rfc4291 2.5.6
+			// we don't attempt any validation on scope data captured in $ip6[3] (if any) so long as plausible
+			// Net_IPv6::_Ip2Bin() can return a shorter binary string for non-IPv6/bad data so also test we got 128 bits returned
+			$ipbin = Net_IPv6::_Ip2Bin($ip6[1]);
+			if (strlen($ipbin) == 128 && substr($ipbin,0,64) == '1111111010' . str_repeat('0',54))
+				return 6;
+		}
+	}
+	return '';
 }
 
 /* returns scope of a linklocal address */
@@ -714,16 +736,14 @@ function get_ll_scope($addr) {
 
 /* returns true if $ipaddr is a valid literal IPv6 address */
 function is_literalipaddrv6($ipaddr) {
-	if (preg_match("/\[([0-9a-f:]+)\]/i", $ipaddr, $match)) {
-		$ipaddr = $match[1];
-	} else {
-		return false;
+	if (substr($ipaddr,0,1) == '[' && substr($ipaddr,-1,1) == ']') {
+		// if it's data wrapped in "[ ... ]" then test if middle part is valid IPv6
+		return is_ipaddrv6(substr($ipaddr,1,-1));
 	}
-
-	return is_ipaddrv6($ipaddr);
+	return false;
 }
 
-/* returns true if $iport is a valid IPv4/IPv6 address + port
+/* returns true if $iport is a valid IPv4:port or [Literal IPv6]:port
 	false - not valid
 	true (numeric 4 or 6) - if valid, gives type of address */
 function is_ipaddrwithport($ipport) {
@@ -748,12 +768,11 @@ function is_ipaddrwithport($ipport) {
 
 function is_hostnamewithport($hostport) {
 	$parts = explode(":", $hostport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_hostname($parts[0]) && is_port($port);
-	} else {
-		return false;
+	// no need to validate with is_string(); if it's not a string then explode won't return 2 parts anyway
+	if (count($parts) == 2) {
+		return is_hostname($parts[0]) && is_port($parts[1]);
 	}
+	return false;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */

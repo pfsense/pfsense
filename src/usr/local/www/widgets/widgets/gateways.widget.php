@@ -244,7 +244,11 @@ function compose_table_body_contents() {
 				$online = gettext("Latency");
 				$bgcolor = "warning";  // khaki
 			} elseif ($gateways_status[$gname]['status'] == "none") {
-				$online = gettext("Online");
+				if ($gateways_status[$gname]['monitorip'] == "none") {
+					$online = gettext("Online <br/>(unmonitored)");
+				} else {
+					$online = gettext("Online");
+				}
 				$bgcolor = "success";  // lightgreen
 			} elseif ($gateways_status[$gname]['status'] == "") {
 				$online = gettext("Pending");

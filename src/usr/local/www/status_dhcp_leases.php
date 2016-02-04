@@ -379,11 +379,12 @@ if (count($pools) > 0) {
 					<th><?=gettext("IP address")?></th>
 					<th><?=gettext("MAC address")?></th>
 					<th><?=gettext("Hostname")?></th>
+					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Start")?></th>
 					<th><?=gettext("End")?></th>
-					<th data-sortable="false"><?=gettext("Online")?></th>
-					<th data-sortable="false"><?=gettext("Lease Type")?></th>
-					<th data-sortable="false"><?=gettext("Actions")?></th>
+					<th><?=gettext("Online")?></th>
+					<th><?=gettext("Lease Type")?></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -437,12 +438,9 @@ foreach ($leases as $data):
 						<?php endif; ?>
 					</td>
 					<td><?=htmlentities($data['hostname'])?></td>
-<?php if ($data['type'] != $static_string):?>
+					<td><?=htmlentities($data['descr'])?></td>
 					<td><?=adjust_gmt($data['start'])?></td>
 					<td><?=adjust_gmt($data['end'])?></td>
-<?php else: ?>
-					<td colspan="2"><?=htmlentities($data['descr'])?></td>
-<?php endif; ?>
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>

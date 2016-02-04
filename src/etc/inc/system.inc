@@ -1300,6 +1300,9 @@ $nginx_config .= <<<EOD
 		listen [::]:{$nginx_port};
 		client_max_body_size 200m;
 
+		gzip on;
+		gzip_types text/html text/plain text/css text/javascript;
+
 EOD;
 
 	if ($cert <> "" and $key <> "") {

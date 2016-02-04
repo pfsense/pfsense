@@ -699,28 +699,17 @@ function is_ipaddrv4($ipaddr) {
 }
 
 /* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
-   returns '' if not a valid linklocal address
-   TODO: does not attempt to validate any IPv6 %scope (if present) other than to check [0-9a-z_] and non-pathological max length 64 */
+   returns '' if not a valid linklocal address */
 function is_linklocal($ipaddr) {
-	if (is_string($ipaddr)) {
-		// distinguish possible IPv4 and IPv6 using a 'cheap' test first
-		if (strpos($ipaddr, ":") === false) {
-			// input is IPv4 or bad data
-			// test if it's 169.254.1.0 - 169.254.254.255 per rfc3927 2.1
-			// following is probably 'cheaper' than using preg_match
-			$ip4 = explode(".", $ipaddr);
-			if (count($ip4) == 4 && $ip4[0] == '169' && $ip4[1] == '254' && ctype_digit($ip[2]) && 
-				$ip4[2] >= 1 && $ip4[2] <= 254 && ctype_digit($ip4[3]) && $ip4[3] <= 255) {
-					return 4;
-			}
-		} elseif (preg_match('/^([0-9a-f:]{2,39})(%([0-9a-z_]{1,64}))?$/i', $ipaddr, $ip6)) {
-			// IPv6: test whether valid IPv6 and first 64 bits are '1111111010' + 54 zero bits (fe80::) per rfc4291 2.5.6
-			// we don't attempt any validation on scope data captured in $ip6[3] (if any) so long as plausible
-			// Net_IPv6::_Ip2Bin() can return a shorter binary string for non-IPv6/bad data so also test we got 128 bits returned
-			$ipbin = Net_IPv6::_Ip2Bin($ip6[1]);
-			if (strlen($ipbin) == 128 && substr($ipbin,0,64) == '1111111010' . str_repeat('0',54))
-				return 6;
+	if (is_ipaddrv4($ipaddr)) {
+		// input is IPv4
+		// test if it's 169.254.x.x per rfc3927 2.1
+		$ip4 = explode(".", $ipaddr);
+		if ($ip4[0] == '169' && $ip4[1] == '254') {
+			return 4;
 		}
+	} elseif (Net_IPv6::getAddressType($ipaddr) == NET_IPV6_LOCAL_LINK) {
+		return 6;
 	}
 	return '';
 }

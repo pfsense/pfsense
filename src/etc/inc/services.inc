@@ -209,10 +209,14 @@ function services_radvd_configure($blacklist = array()) {
 
 		if (is_numericint($dhcpv6ifconf['ravalidlifetime'])) {
 		  $radvdconf .= "\t\tAdvValidLifetime {$dhcpv6ifconf['ravalidlifetime']};\n";
+		} else {
+		  $radvdconf .= "\t\tAdvValidLifetime 86400;\n";
 		}
 
 		if (is_numericint($dhcpv6ifconf['rapreferredlifetime'])) {
 		  $radvdconf .= "\t\tAdvPreferredLifetime {$dhcpv6ifconf['rapreferredlifetime']};\n";
+		} else {
+		  $radvdconf .= "\t\tAdvPreferredLifetime 14400;\n";
 		}
 
 		$radvdconf .= "\t};\n";

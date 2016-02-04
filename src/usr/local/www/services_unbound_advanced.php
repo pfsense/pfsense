@@ -121,43 +121,43 @@ if ($_POST) {
 		$pconfig = $_POST;
 
 		if (isset($_POST['msgcachesize']) && !in_array($_POST['msgcachesize'], array('4', '10', '20', '50', '100', '250', '512'), true)) {
-			$input_errors[] = "A valid value for Message Cache Size must be specified.";
+			$input_errors[] = gettext("A valid value for Message Cache Size must be specified.");
 		}
 		if (isset($_POST['outgoing_num_tcp']) && !in_array($_POST['outgoing_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Outgoing TCP Buffers.";
+			$input_errors[] = gettext("A valid value must be specified for Outgoing TCP Buffers.");
 		}
 		if (isset($_POST['incoming_num_tcp']) && !in_array($_POST['incoming_num_tcp'], array('0', '10', '20', '30', '40', '50'), true)) {
-			$input_errors[] = "A valid value must be specified for Incoming TCP Buffers.";
+			$input_errors[] = gettext("A valid value must be specified for Incoming TCP Buffers.");
 		}
 		if (isset($_POST['edns_buffer_size']) && !in_array($_POST['edns_buffer_size'], array('512', '1480', '4096'), true)) {
-			$input_errors[] = "A valid value must be specified for EDNS Buffer Size.";
+			$input_errors[] = gettext("A valid value must be specified for EDNS Buffer Size.");
 		}
 		if (isset($_POST['num_queries_per_thread']) && !in_array($_POST['num_queries_per_thread'], array('512', '1024', '2048'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Queries per Thread.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Queries per Thread.");
 		}
 		if (isset($_POST['jostle_timeout']) && !in_array($_POST['jostle_timeout'], array('100', '200', '500', '1000'), true)) {
-			$input_errors[] = "A valid value must be specified for Jostle Timeout.";
+			$input_errors[] = gettext("A valid value must be specified for Jostle Timeout.");
 		}
 		if (isset($_POST['cache_max_ttl']) && (!is_numericint($_POST['cache_max_ttl']) || ($_POST['cache_max_ttl'] < 0))) {
-			$input_errors[] = "'Maximum TTL for RRsets and Messages' must be a positive integer.";
+			$input_errors[] = gettext("'Maximum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['cache_min_ttl']) && (!is_numericint($_POST['cache_min_ttl']) || ($_POST['cache_min_ttl'] < 0))) {
-			$input_errors[] = "'Minimum TTL for RRsets and Messages' must be a positive integer.";
+			$input_errors[] = gettext("'Minimum TTL for RRsets and Messages' must be a positive integer.");
 		}
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
-			$input_errors[] = "A valid value must be specified for TTL for Host Cache Entries.";
+			$input_errors[] = gettext("A valid value must be specified for TTL for Host Cache Entries.");
 		}
 		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000'), true)) {
-			$input_errors[] = "A valid value must be specified for Number of Hosts to Cache.";
+			$input_errors[] = gettext("A valid value must be specified for Number of Hosts to Cache.");
 		}
 		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
-			$input_errors[] = "A valid value must be specified for Unwanted Reply Threshold.";
+			$input_errors[] = gettext("A valid value must be specified for Unwanted Reply Threshold.");
 		}
 		if (isset($_POST['log_verbosity']) && !in_array($_POST['log_verbosity'], array('0', '1', '2', '3', '4', '5'), true)) {
-			$input_errors[] = "A valid value must be specified for Log Level.";
+			$input_errors[] = gettext("A valid value must be specified for Log Level.");
 		}
 		if (isset($_POST['dnssecstripped']) && !isset($config['unbound']['dnssec'])) {
-			$input_errors[] = "Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.";
+			$input_errors[] = gettext("Harden DNSSEC Data option can only be enabled if DNSSEC support is enabled.");
 		}
 
 		if (!$input_errors) {
@@ -211,7 +211,7 @@ if ($_POST) {
 				unset($config['unbound']['use_caps']);
 			}
 
-			write_config("DNS Resolver configured.");
+			write_config(gettext("DNS Resolver configured."));
 
 			mark_subsystem_dirty('unbound');
 		}
@@ -227,11 +227,11 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-        print_info_box($savemsg, 'success');
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_info_box_np(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
+	print_apply_box(gettext("The DNS Resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -340,11 +340,12 @@ $section->addInput(new Form_Input(
 			'The default is 0 seconds. If the minimum value kicks in, the data is cached for longer than the domain owner intended, and thus less queries are made to look up the data. ' .
 			'The 0 value ensures the data in the cache is as the domain owner intended. High values can lead to trouble as the data in the cache might not match up with the actual data anymore.');
 
+$mnt = gettext("minutes");
 $section->addInput(new Form_Select(
 	'infra_host_ttl',
 	'TTL for Host Cache Entries',
 	$pconfig['infra_host_ttl'],
-	array_combine(array("60", "120", "300", "600", "900"), array("1 minute", "2 minutes", "5 minutes", "10 minutes", "15 minutes"))
+	array_combine(array("60", "120", "300", "600", "900"), array("1 " . $mnt, "2  " . $mnt, "5  " . $mnt, "10 " . $mnt, "15 " . $mnt))
 ))->setHelp('Time to Live, in seconds, for entries in the infrastructure host cache. The infrastructure host cache contains round trip timing, lameness, and EDNS support information for DNS servers. The default value is 15 minutes.');
 
 $section->addInput(new Form_Select(
@@ -354,21 +355,23 @@ $section->addInput(new Form_Select(
 	array_combine(array("1000", "5000", "10000", "20000", "50000"), array("1000", "5000", "10000", "20000", "50000"))
 ))->setHelp('Number of infrastructure hosts for which information is cached. The default is 10,000.');
 
+$mln = gettext("million");
 $section->addInput(new Form_Select(
 	'unwanted_reply_threshold',
 	'Unwanted Reply Threshold',
 	$pconfig['unwanted_reply_threshold'],
 	array_combine(array("disabled", "5000000", "10000000", "20000000", "40000000", "50000000"),
-				  array("Disabled", "5 million", "10 million", "20 million", "40 million", "50 million"))
+				  array("Disabled", "5 " . $mln, "10 " . $mln, "20 " . $mln, "40 " . $mln, "50 " . $mln))
 ))->setHelp('If enabled, a total number of unwanted replies is kept track of in every thread. When it reaches the threshold, a defensive action is taken ' .
 			'and a warning is printed to the log file. This defensive action is to clear the RRSet and message caches, hopefully flushing away any poison. ' .
 			'The default is disabled, but if enabled a value of 10 million is suggested.');
 
+$lvl = gettext("level");
 $section->addInput(new Form_Select(
 	'log_verbosity',
 	'Log Level',
 	$pconfig['log_verbosity'],
-	array_combine(array("0", "1", "2", "3", "4", "5"), array("Level 0", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5"))
+	array_combine(array("0", "1", "2", "3", "4", "5"), array($lvl + " 0", $lvl + " 1", $lvl + " 2", $lvl + " 3", $lvl + " 4", $lvl + " 5"))
 ))->setHelp('Select the log verbosity.');
 
 $section->addInput(new Form_Checkbox(

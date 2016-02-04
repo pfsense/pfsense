@@ -91,7 +91,7 @@ $tab_array[] = array(gettext("Virtual Servers"), true, "status_lb_vs.php");
 display_top_tabs($tab_array);
 
 if (empty($a_vs)) {
-	print('<div class="alert alert-danger">No load balancers have been configured!</div>');
+	print('<div class="alert alert-danger">' . gettext("No load balancers have been configured!") . '</div>');
 } else {
 ?>
 <div class="table-responsive"></div>
@@ -133,15 +133,15 @@ if (empty($a_vs)) {
 				switch (trim($rdr_a[$vsent['name']]['status'])) {
 					case 'active':
 					  $bgcolor = LIGHTGREEN;
-					  $rdr_a[$vsent['name']]['status'] = "Active";
+					  $rdr_a[$vsent['name']]['status'] = gettext("Active");
 					  break;
 					case 'down':
 					  $bgcolor = LIGHTCORAL;
-					  $rdr_a[$vsent['name']]['status'] = "Down";
+					  $rdr_a[$vsent['name']]['status'] = gettext("Down");
 					  break;
 					default:
 					  $bgcolor = LIGHTGRAY;
-					  $rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+					  $rdr_a[$vsent['name']]['status'] = gettext('Unknown - relayd not running?');
 				  }
 
 				if (!COLOR) {
@@ -153,19 +153,13 @@ if (empty($a_vs)) {
 
 <?php
 					if (!empty($rdr_a[$vsent['name']]['total'])) {
-?>
-						Total Sessions: <?=$rdr_a[$vsent['name']]['total']?><br>/>
-<?php
+						echo sprintf(gettext("Total Sessions: %s"), $rdr_a[$vsent['name']]['total'] . "<br />");
 					}
 					if (!empty($rdr_a[$vsent['name']]['last'])) {
-?>
-						Last: <?=$rdr_a[$vsent['name']]['last']?><br>/>
-<?php
+						echo sprintf(gettext("Last: %s"), $rdr_a[$vsent['name']]['last'] . "<br />");
 					}
 					if (!empty($rdr_a[$vsent['name']]['average'])) {
-?>
-						Average: <?=$rdr_a[$vsent['name']]['average']?>
-<?php
+						echo sprintf(gettext("Average: %s"), $rdr_a[$vsent['name']]['average']);
 					}
 ?>
 				</td>

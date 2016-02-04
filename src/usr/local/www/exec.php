@@ -90,7 +90,7 @@ if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	exit;
 } else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = "Uploaded file to /tmp/" . htmlentities($_FILES['ulfile']['name']);
+	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s'), htmlentities($_FILES['ulfile']['name']));
 	unset($_POST['txtCommand']);
 }
 
@@ -218,25 +218,23 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print('<div class="alert alert-warning" role="alert">'.gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!").'</div>');
+	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
-		<div class="panel-heading"><h2 class="panel-title">Shell Output - <?=htmlspecialchars($_POST['txtCommand'])?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Shell Output - %s'), htmlspecialchars($_POST['txtCommand']))?></h2></div>
 		<div class="panel-body">
 			<div class="content">
-				<pre>
 <?php
 	putenv("PATH=/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin");
 	putenv("SCRIPT_FILENAME=" . strtok($_POST['txtCommand'], " "));
 	$output = array();
 	exec($_POST['txtCommand'] . ' 2>&1', $output);
-	foreach ($output as $line) {
-		print(htmlspecialchars($line) . "\r\n");
-	}
+
+	$output = implode("\n", $output);
+	print("<pre>" . htmlspecialchars($output) . "</pre>");
 ?>
-				</pre>
 			</div>
 		</div>
 	</div>
@@ -262,7 +260,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
-				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?php echo htmlspecialchars($_GET['dlPath']) ?>"/>
+				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
 				<br /><br />
 				<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
 			</div>
@@ -271,7 +269,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <?php
 	if ($ulmsg) {
-		print('<div class="alert alert-success" role="alert">' . $ulmsg .'</div>');
+		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
 	}
 ?>
 	<div class="panel panel-default">
@@ -288,8 +286,8 @@ if (!isBlank($_POST['txtCommand'])):?>
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\">PHP response</div>");
-		puts("<pre>");
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP response</h2></div>");
+
 		$tmpname = tempnam("/tmp", "");
 		$phpfile = fopen($tmpname, "w");
 		fwrite($phpfile, "<?php\n");
@@ -299,16 +297,15 @@ if (!isBlank($_POST['txtCommand'])):?>
 		fwrite($phpfile, "?>\n");
 		fclose($phpfile);
 
+		$output = array();
 		exec("/usr/local/bin/php " . $tmpname, $output);
-
-		for ($i=0; $i < count($output); $i++) {
-			print($output[$i] . "\n");
-		}
 
 		unlink($tmpname);
 
+		$output = implode("\n", $output);
+		print("<pre>" . htmlspecialchars($output) . "</pre>");
+
 //		echo eval($_POST['txtPHPCommand']);
-		puts("&nbsp;</pre>");
 		puts("</div>");
 ?>
 <script type="text/javascript">

@@ -83,7 +83,7 @@ $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
-$pconfig['kill_states'] = isset($config['system']['kill_states']);
+$pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
 $pconfig['use_mfs_tmp_size'] = $config['system']['use_mfs_tmp_size'];
@@ -229,9 +229,9 @@ if ($_POST) {
 			unset($config['system']['powerd_enable']);
 		}
 
-		$config['system']['powerd_ac_mode'] = $_POST['ac-power'];
-		$config['system']['powerd_battery_mode'] = $_POST['battery-power'];
-		$config['system']['powerd_normal_mode'] = $_POST['unknown-power'];
+		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
+		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
+		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
 
 		if ($_POST['crypto_hardware']) {
 			$config['system']['crypto_hardware'] = $_POST['crypto_hardware'];
@@ -251,10 +251,10 @@ if ($_POST) {
 			unset($config['system']['schedule_states']);
 		}
 
-		if ($_POST['kill_states'] == "yes") {
-			$config['system']['kill_states'] = true;
+		if ($_POST['gw_down_kill_states'] == "yes") {
+			$config['system']['gw_down_kill_states'] = true;
 		} else {
-			unset($config['system']['kill_states']);
+			unset($config['system']['gw_down_kill_states']);
 		}
 
 		if ($_POST['skip_rules_gw_down'] == "yes") {
@@ -417,10 +417,10 @@ $section->addInput(new Form_Checkbox(
 	'lower CPU load.');
 
 $modes = array(
-	'hadp' => 'Hiadaptive',
-	'adp' => 'Adaptive',
-	'min' => 'Minimum',
-	'max' => 'Maximum',
+	'hadp' => gettext('Hiadaptive'),
+	'adp' => gettext('Adaptive'),
+	'min' => gettext('Minimum'),
+	'max' => gettext('Maximum'),
 );
 
 $section->addInput(new Form_Select(
@@ -491,12 +491,12 @@ $form->add($section);
 $section = new Form_Section('Gateway Monitoring');
 
 $section->addInput(new Form_Checkbox(
-	'kill_states',
+	'gw_down_kill_states',
 	'State Killing on Gateway Failure',
 	'Flush all states when a gateway goes down',
-	$pconfig['kill_states']
+	$pconfig['gw_down_kill_states']
 ))->setHelp('The monitoring process will flush all states when a gateway goes down '.
-	'if this box is not checked. Check this box to disable this behavior.');
+	'if this box is checked.');
 
 $section->addInput(new Form_Checkbox(
 	'skip_rules_gw_down',

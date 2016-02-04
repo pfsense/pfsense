@@ -236,7 +236,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -250,7 +250,7 @@ display_top_tabs($tab_array);
 
 <form action="firewall_shaper_queues.php" method="post" name="iform" id="iform">
 	<div class="panel panel-default">
-		<div class="panel-heading" align="center"><h2 class="panel-title"><?=$qname?></h2></div>
+		<div class="panel-heading text-center"><h2 class="panel-title"><?=$qname?></h2></div>
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="col-sm-2 ">
@@ -265,5 +265,5 @@ display_top_tabs($tab_array);
 </form>
 
 <?php
-
 include("foot.inc");
+?>

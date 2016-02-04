@@ -490,9 +490,6 @@ nanobsd_set_flash_details () {
 	# NB: notice math error in SDCFJ-4096-388 line.
 	#
 	case "${a1}" in
-		1024|1024m|1024mb|1g)
-			NANO_MEDIASIZE=$((997129216/512))
-			;;
 		2048|2048m|2048mb|2g)
 			NANO_MEDIASIZE=$((1989999616/512))
 			;;

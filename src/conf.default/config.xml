@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>13.4</version>
+	<version>14.2</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -28,7 +28,7 @@
 			<descr><![CDATA[System Administrator]]></descr>
 			<scope>system</scope>
 			<groupname>admins</groupname>
-			<password>$1$dSJImFph$GvZ7.1UbuWu.Yb8etC0re.</password>
+			<bcrypt-hash>$2b$10$13u6qwCOwODv34GyCMgdWub6oQF3RX0rG7c3d3X4JvzuEmAXLYDd2</bcrypt-hash>
 			<uid>0</uid>
 			<priv>user-shell-access</priv>
 		</user>
@@ -49,7 +49,6 @@
 		<bogons>
 			<interval>monthly</interval>
 		</bogons>
-		<kill_states/>
 	</system>
 	<interfaces>
 		<wan>
@@ -77,6 +76,8 @@
 			<subnetv6>64</subnetv6>
 			<media/>
 			<mediaopt/>
+			<track6-interface>wan</track6-interface>
+			<track6-prefix-id>0</track6-prefix-id>
 		</lan>
 	</interfaces>
 	<staticroutes/>

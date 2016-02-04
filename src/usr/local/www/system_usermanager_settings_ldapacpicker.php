@@ -108,7 +108,7 @@ if ($_GET) {
 //<![CDATA[
 function post_choices() {
 
-	var ous = <?php echo count($ous); ?>;
+	var ous = <?=count($ous);?>;
 	var i;
 		opener.document.forms[0].ldapauthcontainers.value="";
 	for (i = 0; i < ous; i++) {

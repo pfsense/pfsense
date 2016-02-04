@@ -130,7 +130,7 @@ if ($_POST) {
 
 		if (isset($_POST['enable']) && isset($config['unbound']['enable'])) {
 			if ($_POST['port'] == $config['unbound']['port']) {
-				$input_errors[] = "The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.";
+				$input_errors[] = gettext("The DNS Resolver is enabled using this port. Choose a non-conflicting port, or disable DNS Resolver.");
 			}
 		}
 
@@ -225,7 +225,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('hosts')) {
-	print_info_box_np(gettext("The DNS forwarder configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS forwarder configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $form = new Form();
@@ -341,19 +341,23 @@ $section->addInput(new Form_Textarea(
 
 $form->add($section);
 print($form);
-
-print_info_box(sprintf("If the DNS forwarder is enabled, the DHCP".
-	" service (if enabled) will automatically serve the LAN IP".
-	" address as a DNS server to DHCP clients so they will use".
-	" the forwarder. The DNS forwarder will use the DNS servers".
-	" entered in %sSystem: General setup%s".
-	" or those obtained via DHCP or PPP on WAN if the &quot;Allow".
-	" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-	" is checked. If you don't use that option (or if you use".
-	" a static IP address on WAN), you must manually specify at".
-	" least one DNS server on the %sSystem:".
-	"General setup%s page.",'<a href="system.php">','</a>','<a href="system.php">','</a>'), 'info');
 ?>
+<div class="infoblock blockopen">
+<?php
+print_info_box(
+	sprintf(
+		gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
+			' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.' .
+			' The DNS forwarder will use the DNS servers entered in %1$sSystem: General setup%3$s or' .
+			' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
+			' If you don\'t use that option (or if you use a static IP address on WAN),' .
+			' you must manually specify at least one DNS server on the %2$sSystem:General setup%3$s page.'),
+		'<a href="system.php">',
+		'<a href="system.php">',
+		'</a>'),
+	'info', false);
+?>
+</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
@@ -403,7 +407,7 @@ foreach ($a_hosts as $i => $hostent):
 						<?=$alias['domain']?>
 					</td>
 					<td>
-						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
+						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
 						<i class="fa fa-angle-double-right text-info"></i>
@@ -430,10 +434,12 @@ endforeach;
 	</a>
 </nav>
 
+<div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Entries in this section override individual results from the forwarders.") .
-				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info');
+print_info_box(gettext("Entries in this section override individual results from the forwarders.") . " " .
+				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info', false);
 ?>
+</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
@@ -482,20 +488,11 @@ endforeach;
 	</a>
 </nav>
 
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	// On clicking the "Apply" button, submit the main form, not the little form the button lives in
-//	$('[name=apply]').prop('type', 'button');
-
-//    $('[name=apply]').click(function() {
-//        $('form:last').submit();
-//    });
-// });
-//]]>
-</script>
+<div class="infoblock blockopen">
 <?php
 print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."), 'info');
-
+						" authoritative DNS server to be queried for that domain."), 'info', false);
+?>
+</div>
+<?php
 include("foot.inc");

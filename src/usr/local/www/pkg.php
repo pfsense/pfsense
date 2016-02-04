@@ -71,21 +71,31 @@ $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
 	include("head.inc");
-	print_info_box_np(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("ERROR: No valid package defined."));
 	include("foot.inc");
 	exit;
 } else {
 	$pkg_xml_prefix = "/usr/local/pkg/";
 	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
-	if (substr_compare(realpath($pkg_full_path), $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
-		print_info_box_np(gettext("ERROR: Invalid path specified."));
+	$pkg_realpath = realpath($pkg_full_path);
+	if (empty($pkg_realpath)) {
+		$path_error = sprintf(gettext("ERROR: Package path %s not found."), htmlspecialchars($pkg_full_path));
+	} else if (substr_compare($pkg_realpath, $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
+		$path_error = sprintf(gettext("ERROR: Invalid path %s specified."), htmlspecialchars($pkg_full_path));
+	}
+
+	if (!empty($path_error)) {
+		include("head.inc");
+		print_info_box($path_error . "<br />" . gettext("Try reinstalling the package."));
+		include("foot.inc");
 		die;
 	}
+
 	if (file_exists($pkg_full_path)) {
 		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	} else {
 		include("head.inc");
-		print_info_box_np(gettext("File not found ") . htmlspecialchars($xml));
+		print_info_box(sprintf(gettext("File not found %s"), htmlspecialchars($xml)));
 		include("foot.inc");
 		exit;
 	}
@@ -254,7 +264,7 @@ if (isset($tab_array)) {
 events.push(function() {
 
 	function setFilter(filtertext) {
-		jQuery('#pkg_filter').val(filtertext);
+		$('#pkg_filter').val(filtertext);
 		document.pkgform.submit();
 	}
 
@@ -268,7 +278,7 @@ events.push(function() {
 			opacity: 0.8,
 			helper: function(e, ui) {
 				ui.children().each(function() {
-					jQuery(this).width(jQuery(this).width());
+					$(this).width($(this).width());
 				});
 			return ui;
 			},
@@ -339,8 +349,8 @@ if ($savemsg) {
 						$display_maximum_rows = $field['display_maximum_rows'];
 					}
 				}
-				echo "<tr><td colspan='$colspan' align='center'>";
-				echo "Filter by: ";
+				echo "<tr><td colspan='$colspan' class='text-center'>";
+				echo gettext("Filter by: ");
 				$isfirst = true;
 				for ($char = 65; $char < 91; $char++) {
 					if (!$isfirst) {
@@ -350,9 +360,9 @@ if ($savemsg) {
 					$isfirst = false;
 				}
 				echo "</td></tr>";
-				echo "<tr><td colspan='$colspan' align='center'>";
+				echo "<tr><td colspan='$colspan' class='text-center'>";
 				if ($field['sortablefields']) {
-					echo "Filter field: <select name='pkg_filter_type'>";
+					echo gettext("Filter field: ") . "<select name='pkg_filter_type'>";
 					foreach ($field['sortablefields']['item'] as $si) {
 						if ($si['name'] == $_REQUEST['pkg_filter_type']) {
 							$SELECTED = "selected";
@@ -364,7 +374,7 @@ if ($savemsg) {
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo "&nbsp;&nbsp;Filter text: <input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /><input type='submit' value='Filter' />";
+					echo "&nbsp;&nbsp;" . gettext("Filter text: ") . "<input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /><input type='submit' value='Filter' />";
 				}
 				echo "</td></tr><tr><td><font size='-3'>&nbsp;</font></td></tr>";
 			}
@@ -395,8 +405,8 @@ if ($savemsg) {
 		echo "<tr><th colspan='" . count($pkg['adddeleteeditpagefields']['columnitem']) . "'>";
 		echo "<table width='100%' summary=''>";
 		echo "<tr>";
-		echo "<td align='left'>Displaying page $page of $totalpages</b></td>";
-		echo "<td align='right'>Rows per page: <select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
+		echo "<td class='text-left'>" . sprintf(gettext('Displaying page %1$s of %2$s'), $page, $totalpages) . "</b></td>";
+		echo "<td class='text-right'>" . gettext("Rows per page: ") . "<select onchange='document.pkgform.submit();' name='display_maximum_rows'>";
 		for ($x = 0; $x < 250; $x++) {
 			if ($x == $display_maximum_rows) {
 				$SELECTED = "selected";
@@ -524,14 +534,14 @@ if ($savemsg) {
 							<tr>
 <?php
 			#Show custom description to edit button if defined
-			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:"Edit this item");
+			$edit_msg=($pkg['adddeleteeditpagefields']['edittext']?$pkg['adddeleteeditpagefields']['edittext']:gettext("Edit this item"));
 ?>
 								<td><a class="fa fa-pencil" href="pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i?>" title="<?=$edit_msg?>"></a></td>
 <?php
 			#Show custom description to delete button if defined
-			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:"Delete this item");
+			$delete_msg=($pkg['adddeleteeditpagefields']['deletetext']?$pkg['adddeleteeditpagefields']['deletetext']:gettext("Delete this item"));
 ?>
-								<td>&nbsp;<a class="fa fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=gettext("Delete")?>"></a></td>
+								<td>&nbsp;<a class="fa fa-trash" href="pkg.php?xml=<?=$xml?>&amp;act=del&amp;id=<?=$i?>" title="<?=$delete_msg?>"></a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -546,27 +556,27 @@ if ($savemsg) {
 					$final_footer = "";
 					$final_footer .= "<tr><td colspan='$colcount'>";
 					$final_footer .= "<table width='100%' summary=''><tr>";
-					$final_footer .= "<td align='left'>";
+					$final_footer .= "<td class='text-left'>";
 					$startingat = $startdisplayingat - $display_maximum_rows;
 					if ($startingat > -1) {
 						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat={$startingat}&amp;display_maximum_rows={$display_maximum_rows}'>";
 					} else if ($startdisplayingat > 1) {
 						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=0&amp;display_maximum_rows={$display_maximum_rows}'>";
 					}
-					$final_footer .= "<font size='2'><< Previous page</font></a>";
+					$final_footer .= "<font size='2'><< " . gettext("Previous page") . "</font></a>";
 					if ($tmppp + $display_maximum_rows > count($evaledvar)) {
 						$endingrecord = count($evaledvar);
 					} else {
 						$endingrecord = $tmppp + $display_maximum_rows;
 					}
-					$final_footer .= "</td><td align='center'>";
+					$final_footer .= "</td><td class='text-center'>";
 					$tmppp++;
 					$final_footer .= "<font size='2'>Displaying {$tmppp} - {$endingrecord} / " . count($evaledvar) . " records";
-					$final_footer .= "</font></td><td align='right'>&nbsp;";
+					$final_footer .= "</font></td><td class='text-right'>&nbsp;";
 					if (($i+1) < count($evaledvar)) {
 						$final_footer .= "<a href='pkg.php?xml=" . $_REQUEST['xml'] . "&amp;startdisplayingat=" . ($startdisplayingat + $display_maximum_rows) . "&amp;display_maximum_rows={$display_maximum_rows}'>";
 					}
-					$final_footer .= "<font size='2'>Next page >></font></a>";
+					$final_footer .= "<font size='2'>" . gettext("Next page") . " >></font></a>";
 					$final_footer .= "</td></tr></table></td></tr>";
 					$i = count($evaledvar);
 					break;
@@ -584,7 +594,7 @@ if ($savemsg) {
 							<tr>
 <?php
 	#Show custom description to add button if defined
-	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:"Add a new item");
+	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:gettext("Add a new item"));
 ?>
 								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><?=gettext('Add')?></a></td>
 <?php

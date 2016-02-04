@@ -654,7 +654,7 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'][2]['descr'] = gettext("Indicates whether this user is able to login for example via SSH.");
 		$config['system']['user'][0]['priv'][3]['id'] = "copyfiles";
 		$config['system']['user'][0]['priv'][3]['name'] = "Is allowed to copy files";
-		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP. If you are going to use this privilege, you must install scponly on the appliance (Hint: pkg_add -r scponly)."), $g['product_name']);
+		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), $g['product_name']);
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
 		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (you should associate this privilege only with one single user).");
@@ -3330,9 +3330,8 @@ function upgrade_096_to_097() {
 }
 
 function upgrade_097_to_098() {
-	global $config, $g;
-	/* Disable kill_states by default */
-	$config['system']['kill_states'] = true;
+	// no longer used (used to set kill_states)
+	return;
 }
 
 function upgrade_098_to_099() {
@@ -3818,9 +3817,9 @@ function upgrade_117_to_118() {
 function upgrade_118_to_119() {
 	global $config;
 
-        if (!isset($config['ipsec']['phase1'])) {
-                return;
-        }
+	if (!isset($config['ipsec']['phase1'])) {
+		return;
+	}
 
 	// change peerid_type to 'any' for EAP types to retain previous behavior of omitting rightid
 	$a_phase1 =& $config['ipsec']['phase1'];
@@ -4269,3 +4268,146 @@ function upgrade_134_to_135() {
 		$config['syslog']['nolognginx'] = true;
 	}
 }
+
+function upgrade_135_to_136() {
+	global $config;
+
+	if (isset($config['l7shaper'])) {
+		file_notice("L7shaper", "Layer 7 shaping is no longer supported. Its configuration has been removed.");
+		unset($config['l7shaper']);
+		if (is_array($config['filter']['rule'])) {
+			foreach ($config['filter']['rule'] as $idx => $rule) {
+				if (isset($rule['l7container'])) {
+					unset($config['filter']['rule'][$idx]['l7container']);
+				}
+			}
+		}
+	}
+}
+
+function upgrade_136_to_137() {
+	global $config;
+
+	if (is_array($config['dhcpd'])) {
+		foreach ($config['dhcpd'] as &$dhcpd) {
+			if (!is_array($dhcpd['numberoptions']['item'])) {
+				continue;
+			}
+
+			foreach ($dhcpd['numberoptions']['item'] as &$item) {
+				$item['value'] = base64_encode($item['value']);
+			}
+		}
+	}
+
+	if (is_array($config['dhcpdv6'])) {
+		foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (!is_array($dhcpdv6['numberoptions']['item'])) {
+				continue;
+			}
+
+			foreach ($dhcpdv6['numberoptions']['item'] as &$item) {
+				$item['value'] = base64_encode($item['value']);
+			}
+		}
+	}
+}
+
+function upgrade_137_to_138() {
+	global $config;
+
+	// the presence of unityplugin tag used to disable loading of unity plugin
+	// it's now disabled by default, and config tag is to enable. Unset accordingly. 
+	if (is_array($config['ipsec'])) {
+		if (isset($config['ipsec']['unityplugin'])) {
+			unset($config['ipsec']['unityplugin']);
+		}
+	}
+}
+
+function upgrade_138_to_139() {
+	global $config;
+
+	// clean up state killing on gateway failure. having kill_states set used to mean it was disabled
+	// now set gw_down_kill_states if enabled. 
+	if (!isset($config['system']['kill_states'])) {
+		$config['system']['gw_down_kill_states'] = true;
+	} else {
+		unset($config['system']['kill_states']);
+	}
+}
+
+function upgrade_139_to_140() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if ($vip['mode'] == "carp") {
+				if (!isset($vip['uniqid'])) {
+					$config['virtualip']['vip'][$idx]['uniqid'] = uniqid();
+				}
+			}
+		}
+	}
+}
+
+function upgrade_140_to_141() {
+	global $config; 
+
+	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
+	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpnclient) {
+			if (!isset($ovpnclient['topology'])) {
+				$config['openvpn']['openvpn-client'][$idx]['topology'] = "net30";
+			}
+		}
+	}
+
+	// repeat addition of filter tracker IDs from 106_to_107 where missing since associated filter rules were missing them
+	if (is_array($config['filter']) && is_array($config['filter']['rule'])) {
+		$tracker = (int)microtime(true);
+		foreach ($config['filter']['rule'] as $ridx => $rule) {
+			if (empty($rule['tracker'])) {
+				$config['filter']['rule'][$ridx]['tracker'] = $tracker;
+				$tracker++;
+			}
+		}
+		unset($tracker, $ridx);
+	}
+
+}
+
+function upgrade_141_to_142() {
+	global $config;
+	/* Convert Namecheap type DynDNS entries to the new split hostname and domain format */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		if ($dyndns['type'] == "namecheap") {
+			/* Use the old style logic to split the host and domain one last time. */
+			$dparts = explode(".", trim($dyndns['host']));
+			$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
+			$domain_offset = count($dparts) - $domain_part_count;
+			$dyndns['host'] = implode(".", array_slice($dparts, 0, $domain_offset));
+			$dyndns['domainname'] = implode(".", array_slice($dparts, $domain_offset));
+		}
+	}
+
+	/* unset old pppoerestart cron job if it exists. redmine 1905 */
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $idx => $cronitem) {
+			if ($cronitem['command'] == "/etc/pppoerestart") {
+				unset($config['cron']['item'][$idx]);
+			}
+		}
+	}
+}
+
+?>

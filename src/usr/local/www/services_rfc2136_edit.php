@@ -157,6 +157,28 @@ if ($_POST) {
 	}
 }
 
+function build_if_list() {
+	$list = array();
+
+	$iflist = get_configured_interface_with_descr();
+
+	foreach ($iflist as $if => $ifdesc) {
+		$list[$if] = $ifdesc;
+	}
+
+	unset($iflist);
+
+	$grouplist = return_gateway_groups_array();
+
+	foreach ($grouplist as $name => $group) {
+		$list[$name] = 'GW Group ' . $name;
+	}
+
+	unset($grouplist);
+
+	return($list);
+}
+
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
 include("head.inc");
 
@@ -165,7 +187,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $form = new Form;
@@ -180,17 +202,14 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $optionlist = array();
-$iflist = get_configured_interface_with_descr();
 
-foreach ($iflist as $ifnam => $ifdescr) {
-	$optionlist[$ifnam] = $ifdescr;
-}
+$iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
 	'Interface',
 	$pconfig['interface'],
-	$optionlist
+	$iflist
 ));
 
 $section->addInput(new Form_Input(
@@ -306,19 +325,24 @@ $section->addInput(new Form_Input(
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 if (isset($id) && $a_rfc2136[$id]) {
-    	$section->addInput(new Form_Input(
-    	'id',
-    	null,
-    	'hidden',
-    	$id
+	$section->addInput(new Form_Input(
+		'id',
+		null,
+		'hidden',
+		$id
 	));
+
+	$form->addGlobal(new Form_Button(
+		'force',
+		'Save & Force Update'
+	))->removeClass('btn-primary')->addClass('btn-info');
 }
 
 $form->add($section);
 print($form);
 
-print_info_box(sprintf('You must configure a DNS server in %sSystem: ' .
-					'General setup %sor allow the DNS server list to be overridden ' .
-					'by DHCP/PPP on WAN for dynamic DNS updates to work.','<a href="system.php">', '</a>'));
+print_info_box(sprintf(gettext('You must configure a DNS server in %1$sSystem: ' .
+					'General setup %2$sor allow the DNS server list to be overridden ' .
+					'by DHCP/PPP on WAN for dynamic DNS updates to work.'), '<a href="system.php">', '</a>'));
 
 include("foot.inc");

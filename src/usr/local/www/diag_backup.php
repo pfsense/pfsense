@@ -57,7 +57,7 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-diagnostics-backup/restore
+##|*IDENT=page-diagnostics-backup-restore
 ##|*NAME=Diagnostics: Backup/restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
 ##|*MATCH=diag_backup.php*
@@ -108,7 +108,7 @@ function restore_rrddata() {
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$xml_file = preg_replace('/\.rrd$/', ".xml", $rrd_file);
 			if (file_put_contents($xml_file, gzinflate(base64_decode($rrd['xmldata']))) === false) {
-				log_error("Cannot write $xml_file");
+				log_error(sprintf(gettext("Cannot write %s"), $xml_file));
 				continue;
 			}
 			$output = array();
@@ -123,7 +123,7 @@ function restore_rrddata() {
 			$rrd_file = "{$g['vardb_path']}/rrd/{$rrd['filename']}";
 			$rrd_fd = fopen($rrd_file, "w");
 			if (!$rrd_fd) {
-				log_error("Cannot write $rrd_file");
+				log_error(sprintf(gettext("Cannot write %s"), $rrd_file));
 				continue;
 			}
 			$data = base64_decode($rrd['data']);
@@ -132,18 +132,18 @@ function restore_rrddata() {
 			if ($dcomp) {
 				/* If the decompression worked, write the decompressed data */
 				if (fwrite($rrd_fd, $dcomp) === false) {
-					log_error("fwrite $rrd_file failed");
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
 					continue;
 				}
 			} else {
 				/* If the decompression failed, it wasn't compressed, so write raw data */
 				if (fwrite($rrd_fd, $data) === false) {
-					log_error("fwrite $rrd_file failed");
+					log_error(sprintf(gettext("fwrite %s failed"), $rrd_file));
 					continue;
 				}
 			}
 			if (fclose($rrd_fd) === false) {
-				log_error("fclose $rrd_file failed");
+				log_error(sprintf(gettext("fclose %s failed"), $rrd_file));
 				continue;
 			}
 		}
@@ -370,7 +370,7 @@ if ($_POST) {
 									$loaderconf = file_get_contents("/boot/loader.conf");
 									if (strpos($loaderconf, "console=\"comconsole")) {
 										$config['system']['enableserial'] = true;
-										write_config("Restore serial console enabling in configuration.");
+										write_config(gettext("Restore serial console enabling in configuration."));
 									}
 									unset($loaderconf);
 								}
@@ -673,7 +673,7 @@ $section = new Form_Section('Restore backup');
 
 $section->addInput(new Form_StaticText(
 	null,
-	gettext("Open a ") . $g['[product_name'] . gettext(" configuration XML file and click the button below to restore the configuration.")
+	sprintf(gettext("Open a %s configuration XML file and click the button below to restore the configuration."), $g['product_name'])
 ));
 
 $section->addInput(new Form_Select(

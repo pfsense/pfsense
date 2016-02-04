@@ -135,7 +135,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a class="btn btn-xs btn-danger" href="status_ipsec_sad.php?act=del&amp;<?=$args?>">Delete</a>
+					<a class="btn btn-xs btn-danger" href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><?=gettext('Delete')?></a>
 				</td>
 			</tr>
 
@@ -149,6 +149,17 @@ if (count($sad)) {
 	print_info_box(gettext('No IPsec security associations.'));
 }
 
-print_info_box(gettext('You can configure your IPsec subsystem by clicking ') . '<a href="vpn_ipsec.php">' . gettext("here.") . '</a>');
-
+if (ipsec_enabled()) {
+?>
+<div class="infoblock">
+<?php
+} else {
+?>
+<div class="infoblock blockopen">
+<?php
+}
+print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+?>
+</div>
+<?php
 include("foot.inc");

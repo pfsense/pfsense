@@ -117,6 +117,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
@@ -155,7 +156,7 @@ if ($_POST) {
 				foreach ($group['item'] as $item) {
 					$items = explode("|", $item);
 					if ($items[0] == $_POST['name']) {
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $_POST['name'], $group['name']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $_POST['name'], $group['name']);
 					}
 				}
 			}
@@ -167,7 +168,7 @@ if ($_POST) {
 				if ($route['gateway'] == $_POST['name']) {
 					if (!isset($route['disabled'])) {
 						// There is a static route that uses this gateway and is enabled (not disabled).
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $_POST['name'], $route['network']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $_POST['name'], $route['network']);
 					}
 				}
 			}
@@ -256,22 +257,25 @@ if ($_POST) {
 	if (($_POST['monitor'] != "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
 	}
+	if (isset($_POST['data_payload']) && is_numeric($_POST['data_payload']) && $_POST['data_payload'] < 0) {
+		$input_errors[] = gettext("A valid data payload must be specified.");
+	}
 	/* only allow correct IPv4 and IPv6 gateway addresses */
 	if (($_POST['gateway'] <> "") && is_ipaddr($_POST['gateway']) && $_POST['gateway'] != "dynamic") {
 		if (is_ipaddrv6($_POST['gateway']) && ($_POST['ipprotocol'] == "inet")) {
-			$input_errors[] = gettext("The IPv6 gateway address '{$_POST['gateway']}' can not be used as a IPv4 gateway'.");
+			$input_errors[] = sprintf(gettext("The IPv6 gateway address '%s' can not be used as a IPv4 gateway."), $_POST['gateway']);
 		}
 		if (is_ipaddrv4($_POST['gateway']) && ($_POST['ipprotocol'] == "inet6")) {
-			$input_errors[] = gettext("The IPv4 gateway address '{$_POST['gateway']}' can not be used as a IPv6 gateway'.");
+			$input_errors[] = sprintf(gettext("The IPv4 gateway address '%s' can not be used as a IPv6 gateway."), $_POST['gateway']);
 		}
 	}
 	/* only allow correct IPv4 and IPv6 monitor addresses */
 	if (($_POST['monitor'] <> "") && is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		if (is_ipaddrv6($_POST['monitor']) && ($_POST['ipprotocol'] == "inet")) {
-			$input_errors[] = gettext("The IPv6 monitor address '{$_POST['monitor']}' can not be used on a IPv4 gateway'.");
+			$input_errors[] = sprintf(gettext("The IPv6 monitor address '%s' can not be used on a IPv4 gateway."), $_POST['monitor']);
 		}
 		if (is_ipaddrv4($_POST['monitor']) && ($_POST['ipprotocol'] == "inet6")) {
-			$input_errors[] = gettext("The IPv4 monitor address '{$_POST['monitor']}' can not be used on a IPv6 gateway'.");
+			$input_errors[] = sprintf(gettext("The IPv4 monitor address '%s' can not be used on a IPv6 gateway."), $_POST['monitor']);
 		}
 	}
 
@@ -415,16 +419,16 @@ if ($_POST) {
 	} else if ($_POST['latencyhigh']) {
 		if (is_numeric($_POST['latencyhigh']) &&
 		    ($_POST['latencyhigh'] > $dpinger_default['loss_interval'])) {
-			$input_errors[] = gettext(sprintf(
-			    "The high latency threshold needs to be less than or equal to the default loss interval (%d)",
-			    $dpinger_default['loss_interval']));
+			$input_errors[] = sprintf(
+				gettext("The high latency threshold needs to be less than or equal to the default loss interval (%d)"),
+				$dpinger_default['loss_interval']);
 		}
 	} else if ($_POST['loss_interval']) {
 		if (is_numeric($_POST['loss_interval']) &&
 		    ($_POST['loss_interval'] < $dpinger_default['latencyhigh'])) {
-			$input_errors[] = gettext(sprintf(
-			    "The loss interval needs to be greater than or equal to the default high latency threshold (%d)",
-			    $dpinger_default['latencyhigh']));
+			$input_errors[] = sprintf(
+				gettext("The loss interval needs to be greater than or equal to the default high latency threshold (%d)"),
+				$dpinger_default['latencyhigh']);
 		}
 	}
 
@@ -447,16 +451,16 @@ if ($_POST) {
 	} else if ($_POST['interval']) {
 		if (is_numeric($_POST['interval']) &&
 		    (($_POST['interval'] * 2) > $dpinger_default['time_period'])) {
-			$input_errors[] = gettext(sprintf(
-			    "The probe interval needs to be half or less than the default time period over which results are averaged (%d)",
-			    $dpinger_default['time_period']));
+			$input_errors[] = sprintf(
+				gettext("The probe interval needs to be half or less than the default time period over which results are averaged (%d)"),
+				$dpinger_default['time_period']);
 		}
 	} else if ($_POST['time_period']) {
 		if (is_numeric($_POST['time_period']) &&
 		    ($_POST['time_period'] < ($dpinger_default['interval'] * 2))) {
-			$input_errors[] = gettext(sprintf(
-			    "The time period over which results are averaged needs to be at least twice the default probe interval (%d)",
-			    $dpinger_default['interval']));
+			$input_errors[] = sprintf(
+				gettext("The time period over which results are averaged needs to be at least twice the default probe interval (%d)"),
+				$dpinger_default['interval']);
 		}
 	}
 
@@ -479,16 +483,16 @@ if ($_POST) {
 	} else if ($_POST['interval']) {
 		if (is_numeric($_POST['interval']) &&
 		    ($_POST['interval'] > $dpinger_default['alert_interval'])) {
-			$input_errors[] = gettext(sprintf(
-			    "The probe interval needs to be less than or equal to the default alert interval (%d)",
-			    $dpinger_default['alert_interval']));
+			$input_errors[] = sprintf(
+				gettext("The probe interval needs to be less than or equal to the default alert interval (%d)"),
+				$dpinger_default['alert_interval']);
 		}
 	} else if ($_POST['alert_interval']) {
 		if (is_numeric($_POST['alert_interval']) &&
 		    ($_POST['alert_interval'] < $dpinger_default['interval'])) {
-			$input_errors[] = gettext(sprintf(
-			    "The alert interval needs to be greater than or equal to the default probe interval (%d)",
-			    $dpinger_default['interval']));
+			$input_errors[] = sprintf(
+				gettext("The alert interval needs to be greater than or equal to the default probe interval (%d)"),
+				$dpinger_default['interval']);
 		}
 	}
 
@@ -532,6 +536,9 @@ if ($_POST) {
 		}
 		if (is_ipaddr($_POST['monitor'])) {
 			$gateway['monitor'] = $_POST['monitor'];
+		}
+		if (isset($_POST['data_payload']) && $_POST['data_payload'] > 0) {
+			$gateway['data_payload'] = $_POST['data_payload'];
 		}
 
 		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
@@ -762,7 +769,7 @@ $section->addInput(new Form_Input(
 // If any of the advanced options are non-default, we will not show the "Advanced" button
 // and will display the advanced section
 if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
-    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) ||
+    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
     (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
     (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
     (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
@@ -801,6 +808,14 @@ $section->addInput(new Form_Select(
 	$pconfig['weight'],
 	array_combine(range(1, 5), range(1, 5))
 ))->setHelp('Weight for this gateway when used in a Gateway Group.');
+
+$section->addInput(new Form_Input(
+	'data_payload',
+	'Data Payload',
+	'number',
+	$pconfig['data_payload'],
+	['placeholder' => $dpinger_default['data_payload']]
+))->setHelp('Define data payload to send on ICMP packets to gateway monitor IP.');
 
 $group = new Form_Group('Latency thresholds');
 $group->add(new Form_Input(
@@ -893,7 +908,7 @@ $group->setHelp('Time interval in milliseconds between checking for an alert con
 $section->add($group);
 
 $section->addInput(new Form_StaticText(
-	'Additional information',
+	gettext('Additional information'),
 	'<span class="help-block">'.
 	gettext('The time period over which results are averaged must be at least twice ' .
 		'the probe interval, otherwise the averaging would only "average" over a single probe.') .

@@ -128,51 +128,57 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), true, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-			  <th><?=gettext("Interface"); ?></th>
-			  <th><?=gettext("Members"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('LAGG Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Members"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 
 $i = 0;
 
 foreach ($a_laggs as $lagg) {
 ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars(strtoupper($lagg['laggif']))?>
-				</td>
-				<td>
-					<?=htmlspecialchars($lagg['members'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($lagg['descr'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars(strtoupper($lagg['laggif']))?>
+						</td>
+						<td>
+							<?=htmlspecialchars($lagg['members'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($lagg['descr'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit LAGG interface')?>"	href="interfaces_lagg_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete LAGG interface')?>"	href="interfaces_lagg.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php
 	$i++;
 }
 ?>
-		</tbody>
-	</table>
-
-	 <nav class="action-buttons">
-		<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm">
-			<i class="fa fa-plus icon-embed-btn"></i>
-			<?=gettext("Add")?>
-		</a>
-	</nav>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
+
+ <nav class="action-buttons">
+	<a href="interfaces_lagg_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
+
 <?php
 include("foot.inc");

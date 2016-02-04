@@ -393,7 +393,7 @@ $section->addInput(new Form_Input(
 	'users/browsers to access the GUI concurrently.');
 
 $section->addInput(new Form_Checkbox(
-	'disablehttpredirect',
+	'webgui-redirect',
 	'WebGUI redirect',
 	'Disable webConfigurator redirect rule',
 	$pconfig['disablehttpredirect']
@@ -508,10 +508,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('Note: Leave this blank for the default of 22.');
 
 
-if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
-	$form->add($section);
-	$section = new Form_Section('Serial Communications');
+$form->add($section);
+$section = new Form_Section('Serial Communications');
 
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
@@ -521,21 +521,23 @@ if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['pl
 		'the serial port. You can still access the console menu from the internal video '.
 		'card/keyboard. A <b>null modem</b> serial cable or adapter is required to use the '.
 		'serial console.');
+}
 
-	$section->addInput(new Form_Select(
-		'serialspeed',
-		'Serial Speed',
-		$pconfig['serialspeed'],
-		array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
-	))->setHelp('Allows selection of different speeds for the serial console port.');
+$section->addInput(new Form_Select(
+	'serialspeed',
+	'Serial Speed',
+	$pconfig['serialspeed'],
+	array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
+))->setHelp('Allows selection of different speeds for the serial console port.');
 
+if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
 	$section->addInput(new Form_Select(
 		'primaryconsole',
 		'Primary Console',
 		$pconfig['primaryconsole'],
 		array(
-			'serial' => 'Serial Console',
-			'video' => 'VGA Console',
+			'serial' => gettext('Serial Console'),
+			'video' => gettext('VGA Console'),
 		)
 	))->setHelp('Select the preferred console if multiple consoles are present. '.
 		'The preferred console will show pfSense boot script output. All consoles '.

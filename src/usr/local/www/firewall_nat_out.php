@@ -244,7 +244,8 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('natconf')) {
-	print_info_box_np(gettext("The NAT configuration has been changed.")."<br />".gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
+					gettext('You must apply the changes in order for them to take effect.'));
 }
 
 $tab_array = array();
@@ -300,7 +301,7 @@ print($form);
 
 <form action="firewall_nat_out.php" method="post" name="iform">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext('Mappings')?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Mappings')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-hover table-striped table-condensed">
 				<thead>
@@ -326,8 +327,12 @@ print($form);
 			foreach ($a_out as $natent):
 				$iconfn = "pass";
 				$textss = $textse = "";
+				$trclass = '';
+
 				if ($mode == "disabled" || $mode == "automatic" || isset($natent['disabled'])) {
 					$iconfn .= "_d";
+					$trclass = 'class="disabled"';
+
 				}
 
 
@@ -339,7 +344,7 @@ print($form);
 				);
 ?>
 
-					<tr id="fr<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
+					<tr id="fr<?=$i;?>" <?=$trclass?> onClick="fr_toggle(<?=$i;?>)" ondblclick="document.location='firewall_nat_out_edit.php?id=<?=$i;?>';">
 						<td >
 							<input type="checkbox" id="frc<?=$i;?>" onClick="fr_toggle(<?=$i;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -353,7 +358,7 @@ print($form);
 				else:
 ?>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-hidden"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("Click to toggle enabled/disabled status")?>"></i>
 							</a>
 
 <?php
@@ -529,7 +534,7 @@ print($form);
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save map order')?>">
+		<button type="submit" id="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled name="order-store" title="<?=gettext('Save mapping order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
@@ -549,7 +554,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	unset($FilterIflist, $GatewaysList);
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Automatic rules:")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic rules:")?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-hover table-striped table-condensed">
 				<thead>
@@ -670,7 +675,7 @@ endif;
 							'If disable outbound NAT is selected, no rules will be used.' . '<br />' .
 							'If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a ') .
 							'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a>' . gettext(" may also be required."),
-				   info);
+				   'info', false);
 ?>
 </div>
 
@@ -683,12 +688,29 @@ events.push(function() {
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			dirty = true;
 		}
 	});
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
+	});
+
+	// Globals
+	saving = false;
+	dirty = false;
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (!saving && dirty) {
+			return ("<?=gettext('You have moved one or more NAT outbound mappings but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
 //]]>

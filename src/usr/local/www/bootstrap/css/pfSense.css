@@ -1,5 +1,4 @@
 @import url("/bootstrap/css/bootstrap.min.css");
-@import url("/bootstrap/glyphicons/glyphicons-halflings.css");
 @import url("/bootstrap/fonts/roboto.css");
 
 html {
@@ -97,10 +96,6 @@ tr.disabled th {
     margin-bottom: 10px;
 }
 
-ul.context-links li a {
-
-}
-
 /* navigation */
 .navbar {
     margin-bottom: 10px;
@@ -194,7 +189,7 @@ ul.context-links li a {
 }
 
 .panel-title {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .panel-body {
@@ -550,8 +545,9 @@ footer a {
     color: white;
     padding-right: 15px;
     padding-bottom: 17px;
-    margin-top: -0.125em
-
+    margin-top: -0.125em;
+    width: 14px;
+    height: 14px
 }
 
 /* Used when you need an icon to act as a submit button **/
@@ -780,4 +776,30 @@ ul.tree li .over{
     .navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
         max-height: none !important;
     }
+}
+
+/** Override text-warning with something less red. */
+.text-warning {
+	color: #ffcc00;
+}
+
+/**Suppress href links when printing */
+a[href]:after {
+    content:normal
+}
+
+/** Text color for diff display when comapring configs */
+.diff-text {
+    color: #000000;
+}
+
+/** Eliminate overflow in available widgets, log filter, and manage log panels. (cause of scroll bar) */
+#widget-available_panel-body>.content>.row,
+#filter-panel_panel-body>.form-group,
+#manage-log-panel_panel-body>.form-group,
+/** optionally prevent more globally by using the class hierarchy */
+.panel-body.collapse.in>.content>.row,
+.panel-body.collapse.in>.form-group
+{
+	margin-right:0px;
 }

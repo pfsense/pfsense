@@ -90,7 +90,7 @@ if (count($devs) > 0)  {
 				$icon = "fa-check";
 				break;
 			case "":
-				$dev_state = "Unknown";
+				$dev_state = gettext("Unknown");
 				$color = "text-info";
 				$icon = "fa-times-circle";
 				break;

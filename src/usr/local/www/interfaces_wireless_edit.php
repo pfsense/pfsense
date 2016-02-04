@@ -207,10 +207,10 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Wireless Interface');
+$section = new Form_Section('Wireless Interface Configuration');
 
 $section->addInput(new Form_Select(
-	'parent',
+	'if',
 	'Parent Interface',
 	$pconfig['if'],
 	build_parent_list()
@@ -221,9 +221,9 @@ $section->addInput(new Form_Select(
 	'Mode',
 	$pconfig['mode'],
 	array(
-		'bss' => 'Infrastructure (BSS)',
-		'adhoc' => 'Ad-hoc (IBSS)',
-		'hostap' => 'Access Point'
+		'bss' => gettext('Infrastructure (BSS)'),
+		'adhoc' => gettext('Ad-hoc (IBSS)'),
+		'hostap' => gettext('Access Point')
 	)
 ));
 

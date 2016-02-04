@@ -67,7 +67,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 include('head.inc');
 
 $showAll = isset($_GET['showAll']);
-$showAllText = $showAll ? "Show only listening sockets" : "Show all socket connections";
+$showAllText = $showAll ? gettext("Show only listening sockets") : gettext("Show all socket connections");
 $showAllOption = $showAll ? "" : "?showAll";
 
 ?>
@@ -148,7 +148,7 @@ gettext('This page shows the output for the commands: "sockstat -4lL" and "socks
 				'<dt>ADDRESS</dt>		<dd>(UNIX sockets only) For bound sockets, this is the file-name of the socket. For other sockets, it is the name, PID and file descriptor number of the peer, or "(none)" if the socket is neither bound nor connected.</dd>' .
 				'<dt>LOCAL ADDRESS</dt> <dd>(Internet sockets only) The address the local end of the socket is bound to (see getsockname(2)).</dd>' .
 				'<dt>FOREIGN ADDRESS</dt><dd>(Internet sockets only) The address the foreign end of the socket is bound to (see getpeername(2)).</dd>' .
-			'</dl>'), 'info');
+			'</dl>'), 'info', false);
 ?>
 </div>
 </div>

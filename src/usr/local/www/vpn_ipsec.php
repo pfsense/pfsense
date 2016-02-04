@@ -82,7 +82,6 @@ $a_phase1 = &$config['ipsec']['phase1'];
 $a_phase2 = &$config['ipsec']['phase2'];
 
 if ($_POST) {
-
 	if ($_POST['apply']) {
 		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
@@ -263,15 +262,13 @@ $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.ph
 display_top_tabs($tab_array);
 ?>
 
-<script type="text/javascript" src="/javascript/row_toggle.js"></script>
-
 <?php
 	if ($savemsg) {
 		print_info_box($savemsg, 'success');
 	}
 
 	if (is_subsystem_dirty('ipsec')) {
-		print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 	}
 ?>
 
@@ -511,7 +508,7 @@ display_top_tabs($tab_array);
 <!--												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button> -->
 												<a class="fa fa-pencil" href="vpn_ipsec_phase2.php?p2index=<?=$ph2ent['uniqid']?>" title="<?=gettext("Edit phase2 entry"); ?>"></a>
 												<a class="fa fa-clone" href="vpn_ipsec_phase2.php?dup=<?=$ph2ent['uniqid']?>" title="<?=gettext("Add a new Phase 2 based on this one"); ?>"></a>
-												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$i?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
+												<a	class="fa fa-trash no-confirm" id="Xdelp2_<?=$ph2index?>" title="<?=gettext('Delete phase2 entry'); ?>"></a>
 												<button style="display: none;" class="btn btn-xs btn-warning" type="submit" id="delp2_<?=$ph2index?>" name="delp2_<?=$ph2index?>" value="delp2_<?=$ph2index?>" title="<?=gettext('delete phase2 entry'); ?>">delete</button>
 											</td>
 										</tr>
@@ -565,7 +562,7 @@ display_top_tabs($tab_array);
 	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
 	gettext("You can check your IPsec status at ") . '<a href="status_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
 	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
-	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info')?>
+	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info', false)?>
 </div>
 
 <script type="text/javascript">

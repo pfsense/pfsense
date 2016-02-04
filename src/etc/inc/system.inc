@@ -1,8 +1,12 @@
 <?php
 /*
 	system.inc
-	part of m0n0wall (http://m0n0.ch/wall)
 
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
+	All rights reserved.
+
+	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
@@ -13,19 +17,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
+
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 function activate_powerd() {
@@ -132,11 +159,11 @@ function system_resolvconf_generate($dynupdate = false) {
 	$syscfg = $config['system'];
 
 	if ((((isset($config['dnsmasq']['enable'])) &&
-	      (!isset($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
+	      (empty($config['dnsmasq']['port']) || $config['dnsmasq']['port'] == "53") &&
 	      (empty($config['dnsmasq']['interface']) ||
 	       in_array("lo0", explode(",", $config['dnsmasq']['interface'])))) ||
 	     ((isset($config['unbound']['enable'])) &&
-	      (!isset($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
+	      (empty($config['unbound']['port']) || $config['unbound']['port'] == "53") &&
 	      (empty($config['unbound']['active_interface']) ||
 	       in_array("lo0", explode(",", $config['unbound']['active_interface'])) ||
 	       in_array("all", explode(",", $config['unbound']['active_interface']), true)))) &&
@@ -211,27 +238,28 @@ function system_resolvconf_generate($dynupdate = false) {
 		/* setup static routes for dns servers */
 		$dnsgw = "dns{$dnscounter}gw";
 		if (isset($config['system'][$dnsgw])) {
+			if (empty($config['system'][$dnsgw]) ||
+			    $config['system'][$dnsgw] == "none") {
+				continue;
+			}
 			$gwname = $config['system'][$dnsgw];
-			if (($gwname <> "") && ($gwname <> "none")) {
-				$gatewayip = lookup_gateway_ip_by_name($gwname);
-				if (is_ipaddrv4($gatewayip)) {
-					/* dns server array starts at 0 */
-					$dnscountermo = $dnscounter - 1;
-					mwexec("/sbin/route change -host " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
-					if (isset($config['system']['route-debug'])) {
-						$mt = microtime();
-						log_error("ROUTING debug: $mt - route change -host {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
-					}
-				}
-				if (is_ipaddrv6($gatewayip)) {
-					/* dns server array starts at 0 */
-					$dnscountermo = $dnscounter - 1;
-					mwexec("/sbin/route change -host -inet6 " . $syscfg['dnsserver'][$dnscountermo] . " {$gatewayip}");
-					if (isset($config['system']['route-debug'])) {
-						$mt = microtime();
-						log_error("ROUTING debug: $mt - route change -host -inet6 {$syscfg['dnsserver'][$dnscountermo]} $gatewayip ");
-					}
-				}
+			$gatewayip = lookup_gateway_ip_by_name($gwname);
+			$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
+			/* dns server array starts at 0 */
+			$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
+
+			if (is_ipaddr($gatewayip)) {
+				$cmd = 'change';
+			} else {
+				/* Remove old route when disable gw */
+				$cmd = 'delete';
+				$gatewayip = '';
+			}
+
+			mwexec("/sbin/route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
+			if (isset($config['system']['route-debug'])) {
+				$mt = microtime();
+				log_error("ROUTING debug: $mt - route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
 			}
 		}
 	}
@@ -1177,14 +1205,14 @@ function system_generate_nginx_config($filename,
 		foreach ($cp_interfaces as $cpint) {
 			$cpint_ip = get_interface_ip($cpint);
 			if (is_ipaddr($cpint_ip)) {
-				$cp_hostcheck .= "\t\tif (\$http_host = $cpint_ip) {\n";
+				$cp_hostcheck .= "\t\tif (\$http_host ~* $cpint_ip) {\n";
 				$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 				$cp_hostcheck .= "\t\t}\n";
 			}
 		}
 		if (isset($config['captiveportal'][$captive_portal]['httpsname']) &&
 		    is_domain($config['captiveportal'][$captive_portal]['httpsname'])) {
-			$cp_hostcheck .= "\t\tif (\$http_host = {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
+			$cp_hostcheck .= "\t\tif (\$http_host ~* {$config['captiveportal'][$captive_portal]['httpsname']}) {\n";
 			$cp_hostcheck .= "\t\t\tset \$cp_redirect no;\n";
 			$cp_hostcheck .= "\t\t}\n";
 		}
@@ -1270,6 +1298,7 @@ $nginx_config .= <<<EOD
 	server {
 		listen {$nginx_port};
 		listen [::]:{$nginx_port};
+		client_max_body_size 200m;
 
 EOD;
 
@@ -1315,6 +1344,7 @@ EOD;
 			fastcgi_pass   unix:{$g['varrun_path']}/php-fpm.socket;
 			fastcgi_index  index.php;
 			fastcgi_param  SCRIPT_FILENAME  \$document_root\$fastcgi_script_name;
+			fastcgi_read_timeout 180;
 			include        /usr/local/etc/nginx/fastcgi_params;
 		}
 	}
@@ -2061,6 +2091,7 @@ function system_check_reset_button() {
 
 ***********************************************************************
 * Reset button pressed - resetting configuration to factory defaults. *
+* All additional packages installed will be removed                   *
 * The system will reboot after this completes.                        *
 ***********************************************************************
 

@@ -92,7 +92,7 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Allowed Hostnames"));
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
@@ -131,7 +131,7 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -197,7 +197,7 @@ endif;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box($notestr)?>
+	<?=print_info_box($notestr, 'info', false)?>
 </div>
 
 <?php

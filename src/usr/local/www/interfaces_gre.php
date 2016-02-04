@@ -121,36 +121,41 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext("Interface"); ?></th>
-				<th><?=gettext("Tunnel to &hellip;"); ?></th>
-				<th><?=gettext("Description"); ?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('GRE Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Tunnel to &hellip;"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php foreach ($a_gres as $i => $gre): ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']))?>
-				</td>
-				<td>
-					<?=htmlspecialchars($gre['remote-addr'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($gre['descr'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']))?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gre['remote-addr'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gre['descr'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit GRE interface')?>"	href="interfaces_gre_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete GRE interface')?>"	href="interfaces_gre.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php endforeach; ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

@@ -97,20 +97,17 @@ if ($savemsg) {
 	print_info_box($savemsg, 'alert-success');
 }
 
-$statetablehelp =	'Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
+$statetablehelp = sprintf(gettext('Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
-					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.' .
-					'<br /><br />' .
-					'The firewall will normally leave the state tables intact when changing rules.' .
-					'<br /><br />' .
-					'<strong>NOTE:</strong> If you reset the firewall state table, the browser session may appear to be hung after clicking &quot;Reset&quot;. ' .
-					'Simply refresh the page to continue.';
+					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.%s' .
+					'The firewall will normally leave the state tables intact when changing rules.%s' .
+					'%sNOTE:%s If you reset the firewall state table, the browser session may appear to be hung after clicking &quot;Reset&quot;. ' .
+					'Simply refresh the page to continue.'), "<br /><br />", "<br /><br />", "<strong>", "</strong>");
 
-$sourcetablehelp =	'Resetting the source tracking table will remove all source/destination associations. ' .
+$sourcetablehelp = sprintf(gettext('Resetting the source tracking table will remove all source/destination associations. ' .
 					'This means that the \"sticky\" source/destination association ' .
-					'will be cleared for all clients.' .
-					' <br /><br />' .
-					'This does not clear active connection states, only source tracking.';
+					'will be cleared for all clients.%s' .
+					'This does not clear active connection states, only source tracking.'), "<br /><br />");
 
 $tab_array = array();
 $tab_array[] = array(gettext("States"), false, "diag_dump_states.php");

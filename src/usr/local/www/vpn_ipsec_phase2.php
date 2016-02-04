@@ -556,7 +556,7 @@ $group->add(new Form_Select(
 	'localid_type',
 	null,
 	$pconfig['localid_type'],
-	['address' => 'Address', 'network' => 'Network'] + $subnetarray
+	['address' => gettext('Address'), 'network' => gettext('Network')] + $subnetarray
 ))->setHelp('Type');
 
 $group->add(new Form_IpAddress(
@@ -576,7 +576,7 @@ foreach ($subnetarray as $ifname => $ifdescr) {
 }
 
 // Tack none, address & network on the beginning
-$subnetarray = array('none' => gettext('None'), 'address' => 'Address', 'network' => 'Network') + $subnetarray;
+$subnetarray = array('none' => gettext('None'), 'address' => gettext('Address'), 'network' => gettext('Network')) + $subnetarray;
 
 $group->add(new Form_Select(
 	'natlocalid_type',
@@ -602,7 +602,7 @@ if (!isset($pconfig['mobile'])) {
 		'remoteid_type',
 		null,
 		$pconfig['remoteid_type'],
-		array('address' => 'Address', 'network' => 'Network')
+		array('address' => gettext('Address'), 'network' => gettext('Network'))
 	))->setHelp('Type');
 
 	$group->add(new Form_IpAddress(
@@ -659,8 +659,8 @@ foreach ($p2_ealgos as $algo => $algodata) {
 		$group->add(new Form_Select(
 			'keylen_' . $algo,
 			null,
-			$keylen == $pconfig["keylen_".$algo],
-			['auto' => 'Auto'] + $list
+			$pconfig["keylen_".$algo],
+			['auto' => gettext('Auto')] + $list
 		));
 	}
 
@@ -793,8 +793,8 @@ events.push(function() {
 		var address_is_blank = !/\S/.test($('#natlocalid_address').val());
 
 		switch ($("#natlocalid_type option:selected").index()) {
-			case 0: /* single */
-				disableInput('natlocalid_address', false);
+			case 0: /* none */
+				disableInput('natlocalid_address', true);
 
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(0);
@@ -802,18 +802,18 @@ events.push(function() {
 
 				disableInput('natlocalid_netbits', true);
 				break;
-			case 1: /* network */
+			case 1: /* address */
 				disableInput('natlocalid_address', false);
 
 				if (address_is_blank) {
 					$('#natlocalid_netbits').val(bits);
 				}
 
-				disableInput('natlocalid_netbits', false);
-				break;
-			case 3: /* none */
-				disableInput('natlocalid_address', true);
 				disableInput('natlocalid_netbits', true);
+				break;
+			case 2: /* network */
+				disableInput('natlocalid_address', false);
+				disableInput('natlocalid_netbits', false);
 				break;
 			default:
 				$('#natlocalid_address').val("");

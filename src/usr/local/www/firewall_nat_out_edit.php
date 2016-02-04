@@ -397,7 +397,7 @@ function build_target_list() {
 	global $config, $sn, $a_aliases;
 	$list = array();
 
-	$list[""] = 'Interface Address';
+	$list[""] = gettext('Interface Address');
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
@@ -427,10 +427,10 @@ function build_target_list() {
 			continue;
 		}
 
-		$list[$alias['name']] = 'Host Alias: ' . $alias['name'] . ' (' . $alias['descr'] . ')';
+		$list[$alias['name']] = gettext('Host Alias: ') . $alias['name'] . ' (' . $alias['descr'] . ')';
 	}
 
-	$list['other-subnet'] = 'Other Subnet (Enter Below)';
+	$list['other-subnet'] = gettext('Other Subnet (Enter Below)');
 
 	return($list);
 }
@@ -510,7 +510,7 @@ $group->add(new Form_Select(
 	'source_type',
 	null,
 	(($pconfig['source'] == "any") || ($pconfig['source'] == "(self)")) ? $pconfig['source'] : "network",
-	array('any' => 'Any', '(self)' => 'This Firewall (self)', 'network' => 'Network')
+	array('any' => gettext('Any'), '(self)' => gettext('This Firewall (self)'), 'network' => gettext('Network'))
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(
@@ -534,7 +534,7 @@ $group->add(new Form_Select(
 	'destination_type',
 	null,
 	$pconfig['destination'] == "any" ? "any":"network",
-	array('any' => 'Any', 'network' => 'Network')
+	array('any' => gettext('Any'), 'network' => gettext('Network'))
 ))->setHelp('Type')->setWidth('3');
 
 $group->add(new Form_IpAddress(
@@ -587,13 +587,13 @@ $section->addInput(new Form_Select(
 	'Pool options',
 	$pconfig['poolopts'],
 	array(
-		'' => 'Default',
-		'round-robin' => 'Round Robin',
-		'round-robin sticky-address' => 'Round Robin with Sticky Address',
-		'random' => 'Random',
-		'random sticky-address' => 'Random with Sticky Address',
-		'source-hash' => 'Source hash',
-		'bitmask' => 'Bit mask'
+		'' => gettext('Default'),
+		'round-robin' => gettext('Round Robin'),
+		'round-robin sticky-address' => gettext('Round Robin with Sticky Address'),
+		'random' => gettext('Random'),
+		'random sticky-address' => gettext('Random with Sticky Address'),
+		'source-hash' => gettext('Source hash'),
+		'bitmask' => gettext('Bit mask')
 	)
 ))->setHelp('Only Round Robin types work with Host Aliases. Any type can be used with a Subnet.' . '<br />' .
 			'</span><ul class="help-block">' .

@@ -63,6 +63,7 @@ require_once("filter_log.inc");
 // Status Logs Common - Code
 function status_logs_common_code() {
 	global $g, $config, $specific_log, $nentries, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
+	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
 
@@ -86,20 +87,33 @@ function status_logs_common_code() {
 	if (!empty($allowed_logs[$logfile]["shortcut"])) {
 		$shortcut_section = $allowed_logs[$logfile]["shortcut"];
 	}
+
+	// Get the configured options for Show/Hide Log Filter and Manage Log panels.
+	$system_logs_filter_form_hidden = isset($config['system']['webgui']['systemlogsfilterpanel']) ? false : true;
+	$system_logs_manage_log_form_hidden = isset($config['system']['webgui']['systemlogsmanagelogpanel']) ? false : true;
+
+	if ($logfile == 'filter' && $view == 'summary') {
+		$system_logs_filter_form_hidden = false;
+		$system_logs_manage_log_form_hidden = false;
+	}
 }
 
 // Tab Array
 function tab_array_logs_common() {
 	global $tab_array, $logfile, $vpntype, $view;
 
+	$is_system_log = in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'));
+	$is_filter_log = in_array($logfile, array('filter'));
+	$is_pppoe_l2tp_vpn_log = in_array($logfile, array('poes', 'l2tps', 'vpn'));
+
 	$tab_array = array();
-	$tab_array[] = array(gettext("System"), ($logfile == 'system'), "status_logs.php");
-	$tab_array[] = array(gettext("Firewall"), ($logfile == 'filter'), "status_logs_filter.php");
+	$tab_array[] = array(gettext("System"), $is_system_log, "status_logs.php");
+	$tab_array[] = array(gettext("Firewall"), $is_filter_log, "status_logs_filter.php");
 	$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "status_logs.php?logfile=dhcpd");
 	$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
 	$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
 	$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
-	$tab_array[] = array(gettext("VPN"), ($logfile == 'vpn'), "status_logs_vpn.php");
+	$tab_array[] = array(gettext("VPN"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
 	$tab_array[] = array(gettext("Load Balancer"), ($logfile == 'relayd'), "status_logs.php?logfile=relayd");
 	$tab_array[] = array(gettext("OpenVPN"), ($logfile == 'openvpn'), "status_logs.php?logfile=openvpn");
 	$tab_array[] = array(gettext("NTP"), ($logfile == 'ntpd'), "status_logs.php?logfile=ntpd");
@@ -107,19 +121,19 @@ function tab_array_logs_common() {
 	display_top_tabs($tab_array);
 
 	$tab_array = array();
-	if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless')))	 {
+	if ($is_system_log) {
 		$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/status_logs.php");
 		$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/status_logs.php?logfile=gateways");
 		$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/status_logs.php?logfile=routing");
 		$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
 		$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/status_logs.php?logfile=wireless");
 	}
-	else if (in_array($logfile, array('filter')))	 {
+	else if ($is_filter_log) {
 		$tab_array[] = array(gettext("Normal View"), ($view == 'normal'), "/status_logs_filter.php");
 		$tab_array[] = array(gettext("Dynamic View"), ($view == 'dynamic'), "/status_logs_filter_dynamic.php?logfile=filter&amp;view=dynamic");
 		$tab_array[] = array(gettext("Summary View"), ($view == 'summary'), "/status_logs_filter_summary.php?logfile=filter&amp;view=summary");
 	}
-	else if (in_array($logfile, array('poes', 'l2tps', 'vpn')))	 {
+	else if ($is_pppoe_l2tp_vpn_log) {
 		$tab_array[] = array(gettext("PPPoE Logins"),
 					(($logfile == 'vpn') && ($vpntype == "poes")),
 					"/status_logs_vpn.php?logfile=vpn&amp;vpntype=poes");
@@ -133,7 +147,57 @@ function tab_array_logs_common() {
 					(($logfile == 'l2tps') && ($vpntype == "l2tp")),
 					"/status_logs_vpn.php?logfile=l2tps&amp;vpntype=l2tp");
 	}
-	display_top_tabs($tab_array, false, 'nav nav-tabs');
+	if ($tab_array) {
+		display_top_tabs($tab_array, false, 'tabs');
+	}
+}
+
+
+// Log Table header
+function system_log_table_panel_title() {
+	global $rawfilter, $filtersubmit, $filterlogentries_submit, $filterlog, $nentries;
+	global $allowed_logs, $logfile;
+
+	$rtnstr = '';
+
+	if ($rawfilter) {
+		if (($filtersubmit) || ($filterlogentries_submit)) {
+			$rtnstr .= sprintf(gettext("%s matched %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+		} else {
+			$rtnstr .= sprintf(gettext("Last %s %s log entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+		}
+	} else {
+		if (($filtersubmit) || ($filterlogentries_submit)) {
+			$rtnstr .= sprintf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+		} else {
+			$rtnstr .= sprintf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+		}
+	}
+
+	$rtnstr .= sprintf(" (" . gettext("Maximum %d") . ")", $nentries);
+
+	return $rtnstr;
+}
+
+
+// Log Filter
+function system_log_filter() {
+	global $rawfilter, $filtersubmit, $filterlogentries_submit, $filterlog, $nentries;
+	global $logfile_path, $filtertext, $filterfieldsarray, $interfacefilter, $inverse, $rows;
+
+	if ($rawfilter) {
+		if (($filtersubmit) || ($filterlogentries_submit)) {
+			$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
+		} else {
+			$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
+		}
+	} else {
+		if (($filtersubmit) || ($filterlogentries_submit)) {
+			$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
+		} else {
+			$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
+		}
+	}
 }
 
 
@@ -170,17 +234,26 @@ function log_filter_form_system_submit() {
 function filter_form_system() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
+	global $system_logs_filter_form_hidden;
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -232,8 +305,9 @@ function filter_form_system() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -260,7 +334,7 @@ function filter_form_system() {
 		);
 	}
 
-	$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+	$btnsubmit->removeClass('btn-primary')->addClass('btn-sm btn-success');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -316,6 +390,7 @@ function log_filter_form_firewall_submit() {
 function filter_form_firewall() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $interfacefilter;
+	global $system_logs_filter_form_hidden;
 
 	$Include_Act = explode(",", str_replace(" ", ",", $filterfieldsarray['act']));
 	if ($filterfieldsarray['interface'] == "All") {
@@ -323,15 +398,23 @@ function filter_form_firewall() {
 	}
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -430,8 +513,9 @@ function filter_form_firewall() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 
@@ -469,7 +553,7 @@ function filter_form_firewall() {
 		);
 	}
 
-	$btnsubmit->removeClass('btn-primary')->addClass('btn-success')->addClass('btn-sm');
+	$btnsubmit->removeClass('btn-primary')->addClass('btn-sm btn-success');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -516,7 +600,7 @@ function status_logs_build_if_list() {
 
 // Manage Log Section - Code
 function manage_log_code() {
-	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors;
+	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors, $savemsg;
 
 	$specific_log = basename($logfile) . '_settings';
 
@@ -646,14 +730,14 @@ function manage_log_code() {
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
 		if ($logging_changed) {
-			write_config($desc = "Log Display Settings Saved: " . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+			write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
 			$retval = 0;
 			$retval = system_syslogd_start();
+			$savemsg = gettext("The changes have been applied successfully.");
 		} else {
-			write_config($desc = "Log Display Settings Saved (no backup, no sync): " . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+			write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+			$savemsg = '';
 		}
-
-		$savemsg = gettext("The changes have been applied successfully.");
 
 		// Specific to System General (main) Log
 		if ($logfile == 'system') {
@@ -694,20 +778,30 @@ function manage_log_code() {
 function manage_log_section() {
 
 	global $input_errors, $allowed_logs, $logfile, $config, $pconfig;
+	global $system_logs_manage_log_form_hidden;
 
 	if ($input_errors) {
 		print_input_errors($input_errors);
 		$manage_log_active = true;
 	}
 
-	if ($manage_log_active)
-		$manage_log_state = SEC_OPEN;
-	else
-		$manage_log_state = SEC_CLOSED;
+	if ($filter_active) {
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
+	} else {
+		if ($system_logs_manage_log_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
+	}
 
 	$form = new Form(false);
+	$form->setAttribute('id', 'manage-log-form')->addClass('collapse ' . $panel_state);
 
-	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'log-manager-panel', COLLAPSIBLE|$manage_log_state);
+	$section = new Form_Section(gettext('Manage') . ' ' . gettext($allowed_logs[$logfile]["name"]) . ' ' . gettext('Log'), 'manage-log-panel', COLLAPSIBLE|$panel_body_state);
 
 	$section->addInput(new Form_StaticText(
 		'',
@@ -753,7 +847,7 @@ function manage_log_section() {
 		'GUI Log Entries',
 		'number',
 		$pconfig['nentries'],
-		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries']]
+		['min' => 5, 'max' => 2000, 'placeholder' => $config['syslog']['nentries'] ? $config['syslog']['nentries'] : "50"]
 	))->setWidth(2);
 
 	$group->setHelp('This is the number of log entries displayed in the GUI. It does not affect how many entries are contained in the log.');
@@ -850,9 +944,9 @@ function manage_log_section() {
 			'Where to show rule descriptions',
 			!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
 			array(
-				'0' => 'Dont load descriptions',
-				'1' => 'Display as column',
-				'2' => 'Display as second row'
+				'0' => gettext('Dont load descriptions'),
+				'1' => gettext('Display as column'),
+				'2' => gettext('Display as second row')
 			)
 		))->setHelp('Show the applied rule description below or in the firewall log rows' . '<br />' .
 					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets');
@@ -864,11 +958,12 @@ function manage_log_section() {
 
 	$btnsavesettings = new Form_Button(
 		'save_settings',
-		gettext('Save'),
-		null
+		' ' . gettext('Save'),
+		null,
+		'fa-save'
 	);
 
-	$btnsavesettings->addClass('btn-sm');
+	$btnsavesettings->addClass('btn-sm btn-primary');
 
 	$group->add(new Form_StaticText(
 		'',
@@ -883,7 +978,7 @@ function manage_log_section() {
 		'fa-trash'
 	);
 
-	$btnclear->removeClass('btn-primary')->addClass('btn-danger')->addClass('btn-sm');
+	$btnclear->removeClass('btn-primary')->addClass('btn-sm btn-danger');
 
 	$group->add(new Form_StaticText(
 		'',

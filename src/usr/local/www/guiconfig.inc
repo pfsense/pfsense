@@ -91,6 +91,12 @@ $navlevelsep = ": ";	/* navigation level separator string */
 $mandfldhtml = "";		/* display this before mandatory input fields */
 $mandfldhtmlspc = "";	/* same as above, but with spacing */
 
+if (!function_exists('set_language')) {
+	require_once("pfsense-utils.inc");
+}
+
+set_language();
+
 /* Some ajax scripts still need access to GUI */
 if (!$ignorefirmwarelock) {
 	if (is_subsystem_dirty('firmwarelock')) {
@@ -151,8 +157,8 @@ $ldap_urltypes = array(
 	'SSL - Encrypted' => 636);
 
 $ldap_scopes = array(
-	'one' => "One Level",
-	'subtree' => "Entire Subtree");
+	'one' => gettext("One Level"),
+	'subtree' => gettext("Entire Subtree"));
 
 $ldap_protvers = array(
 	2,
@@ -179,9 +185,9 @@ $ldap_templates = array(
 		'attr_member' => "uniqueMember"));
 
 $radius_srvcs = array(
-	'both' => "Authentication and Accounting",
-	'auth' => "Authentication",
-	'acct' => "Accounting");
+	'both' => gettext("Authentication and Accounting"),
+	'auth' => gettext("Authentication"),
+	'acct' => gettext("Accounting"));
 
 $netbios_nodetypes = array(
 	'0' => "none",
@@ -240,7 +246,10 @@ $wkports = array(
 /* TCP flags */
 $tcpflags = array("fin", "syn", "rst", "psh", "ack", "urg", "ece", "cwr");
 
-$specialnets = array("(self)" => "This Firewall", "pppoe" => "PPPoE clients", "l2tp" => "L2TP clients");
+$specialnets = array(
+	"(self)" => gettext("This Firewall"),
+	"pppoe" => gettext("PPPoE clients"),
+	"l2tp" => gettext("L2TP clients"));
 
 $spiflist = get_configured_interface_with_descr(false, true);
 foreach ($spiflist as $ifgui => $ifdesc) {
@@ -249,16 +258,16 @@ foreach ($spiflist as $ifgui => $ifdesc) {
 }
 
 $medias = array(
-	"auto" => "autoselect",
-	"100full" => "100BASE-TX full-duplex",
-	"100half" => "100BASE-TX half-duplex",
-	"10full" => "10BASE-T full-duplex",
-	"10half" => "10BASE-T half-duplex");
+	"auto" => gettext("autoselect"),
+	"100full" => gettext("100BASE-TX full-duplex"),
+	"100half" => gettext("100BASE-TX half-duplex"),
+	"10full" => gettext("10BASE-T full-duplex"),
+	"10half" => gettext("10BASE-T half-duplex"));
 
 $wlan_modes = array(
-	"bss" => "Infrastructure (BSS)",
-	"adhoc" => "Ad-hoc (IBSS)",
-	"hostap" => "Access Point");
+	"bss" => gettext("Infrastructure (BSS)"),
+	"adhoc" => gettext("Ad-hoc (IBSS)"),
+	"hostap" => gettext("Access Point"));
 
 function do_input_validation($postdata, $reqdfields, $reqdfieldsn, &$input_errors) {
 
@@ -298,85 +307,41 @@ function verify_gzip_file($fname) {
 	}
 }
 
-function print_info_box_np($msg, $name="apply", $value="", $showapply=false, $class="alert-warning") {
-	global $g;
+// print_info_box() has been updated so that any required button is explicitly created, rather than relying on the detection of certain
+// strings in the message (such as "apply"). print_info_box_np() has been exterminated.
+// $class = the bootstrap style class (default, info, warning, success, danger)
+// $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button. 
+// Note that there is also a shortcut function print_apply_box here that creates a standard "apply" box for you.
+// In many cases just substitute that for print_info_box_np() to easily get a warning style "Apply changes" box.
+function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "") {
 
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
 	}
 
-	if (empty($value)) {
-		$value = gettext("Apply changes");
-	}
-
 	$msg = '<div class="pull-left">' . $msg . '</div>';
 
-	if (stristr($msg, gettext("apply")) != false || stristr($msg, gettext("save")) != false || stristr($msg, gettext("create")) != false || $showapply) {
-		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $name .'" value="'.$value.'">'.$name.'</button>';
+	if ($btnname === "close") {
+		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' . $msg;
+	} else if ($btnname != "") {
+		if (empty($btntext)) {
+			$btntext = $btnname;
+		}
+
+		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $btnname . '" value="' . $btntext . '">' . $btntext . '</button>';
 
 		if ($_POST['if']) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
 		}
 
 		$msg .= '</form>';
-	} else {
-		$msg = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'. $msg;
 	}
 
-	echo '<div class="alert ' . $class . ' clearfix" role="alert">'.$msg.'</div>';
+	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
 }
 
-function print_info_box_np_undo($msg, $name = "apply", $value = "Apply changes", $undo) {
-	global $g;
-
-	if (stristr($msg, "apply") != false || stristr($msg, "save") != false || stristr($msg, "create") != false) {
-		$savebutton = "<td class=\"infoboxsave text-nowrap\">";
-		$savebutton .= "<input type=\"button\" value=\"". gettext("Undo") . "\" onclick=\"document.location='{$undo}'\" />";
-		$savebutton .= "<input name=\"{$name}\" type=\"submit\" class=\"formbtn\" id=\"${name}\" value=\"{$value}\" />";
-		$savebutton .= "</td>";
-		if ($_POST['if']) {
-			$savebutton .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
-		}
-	}
-
-	$nifty_redbox = "#990000";
-	$nifty_blackbox = "#000000";
-
-	if (!$savebutton) {
-		$savebutton = "<td class=\"infoboxsave\"><input value=\"" . gettext("Close") . "\" type=\"button\" onclick=\"jQuery(this).parents('table[id=redboxtable]').hide();\" /></td>";
-	}
-
-	echo <<<EOFnp
-	<table class="infobox" id="redboxtable" summary="red box table">
-		<tr>
-			<td>
-				<div class="infoboxnp" id="redbox">
-					<table class="infoboxnptable2" summary="message">
-						<tr>
-							<td class="infoboxnptd">
-								&nbsp;&nbsp;&nbsp;<i class="fa fa-exclamation-circle"></i>
-							</td>
-							<td class="infoboxnptd2">
-								<b>{$msg}</b>
-							</td>
-							{$savebutton}
-							{$undobutton}
-						</tr>
-					</table>
-				</div>
-				<div>
-					<p>&nbsp;</p>
-				</div>
-			</td>
-		</tr>
-	</table>
-EOFnp;
-
-}
-
-function print_info_box($msg, $class="alert-warning") {
-	print_info_box_np($msg, null, null, false, $class);
-
+function print_apply_box($msg) {
+	print_info_box($msg, "warning", "apply", gettext("Apply changes"));
 }
 
 function get_std_save_message($ok) {
@@ -561,18 +526,23 @@ function dump_clog_no_table($logfile, $tail, $withorig = true, $grepfor = "", $g
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
-		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+		$invert = '';
+		if ((strpos($grepfor[0], '!') === 0)) {
+			$grepfor[0] = substr($grepfor[0], 1);
+			$invert = '-v';
+		}
+		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File $logfile is a directory.");
+		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array("Log file started.");
+		$logarr = array(gettext("Log file started."));
 	} else {
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
@@ -607,18 +577,23 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $sor = "";
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
-		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
+		$invert = '';
+		if ((strpos($grepfor[0], '!') === 0)) {
+			$grepfor[0] = substr($grepfor[0], 1);
+			$invert = '-v';
+		}
+		$grepline .= " | /usr/bin/egrep {$invert} " . escapeshellarg(implode("|", $grepfor));
 	}
 	if (is_array($grepinvert)) {
 		$grepline .= " | /usr/bin/egrep -v " . escapeshellarg(implode("|", $grepinvert));
 	}
 	if (is_dir($logfile)) {
-		$logarr = array("File $logfile is a directory.");
+		$logarr = array(sprintf(gettext("File %s is a directory."), $logfile));
 	} elseif (file_exists($logfile) && filesize($logfile) == 0) {
-		$logarr = array("Log file started.");
+		$logarr = array(gettext("Log file started."));
 	} else {
 		if ($config['system']['disablesyslogclog']) {
 			exec("cat " . escapeshellarg($logfile) . "{$grepline} | /usr/bin/tail {$sor} -n " . escapeshellarg($tail), $logarr);
@@ -652,7 +627,7 @@ function return_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinve
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if (($config['syslog'][$specific_log]['cronorder'] == 'forward') && !$grepreverse) $sor = "";
 	if (($config['syslog'][$specific_log]['cronorder'] == 'reverse') ||  $grepreverse) $sor = "-r";
-	$logarr = "";
+	$logarr = array();
 	$grepline = "  ";
 	if (is_array($grepfor)) {
 		$grepline .= " | /usr/bin/egrep " . escapeshellarg(implode("|", $grepfor));
@@ -1176,7 +1151,7 @@ function get_flash_message() {
 	@session_start();
 	if (isset($_SESSION['flash_messages']) && !empty($_SESSION['flash_messages'])) {
 		foreach ($_SESSION['flash_messages'] as $class => $flash_message) {
-			print_info_box_np(implode("<br />", $flash_message), null, null, false, $class);
+			print_info_box(implode("<br />", $flash_message), $class);
 		}
 		unset($_SESSION['flash_messages']);
 	}

@@ -71,29 +71,29 @@ Build a list of allowed log files so we can reject others to prevent the page
 from acting on unauthorized files.
 */
 $allowed_logs = array(
-	"system" => array("name" => "General",
+	"system" => array("name" => gettext("General"),
 		    "shortcut" => ""),
-	"dhcpd" => array("name" => "DHCP",
+	"dhcpd" => array("name" => gettext("DHCP"),
 		    "shortcut" => "dhcp"),
-	"portalauth" => array("name" => "Captive Portal Authentication",
+	"portalauth" => array("name" => gettext("Captive Portal Authentication"),
 		    "shortcut" => "captiveportal"),
-	"ipsec" => array("name" => "IPsec",
+	"ipsec" => array("name" => gettext("IPsec"),
 		    "shortcut" => "ipsec"),
-	"ppp" => array("name" => "PPP",
+	"ppp" => array("name" => gettext("PPP"),
 		    "shortcut" => ""),
-	"relayd" => array("name" => "Load Balancer",
+	"relayd" => array("name" => gettext("Load Balancer"),
 		    "shortcut" => "relayd"),
-	"openvpn" => array("name" => "OpenVPN",
+	"openvpn" => array("name" => gettext("OpenVPN"),
 		    "shortcut" => "openvpn"),
-	"ntpd" => array("name" => "NTPd",
+	"ntpd" => array("name" => gettext("NTPd"),
 		    "shortcut" => "ntp"),
-	"gateways" => array("name" => "Gateways",
+	"gateways" => array("name" => gettext("Gateways"),
 		    "shortcut" => "gateways"),
-	"routing" => array("name" => "Routing",
+	"routing" => array("name" => gettext("Routing"),
 		    "shortcut" => "routing"),
-	"resolver" => array("name" => "DNS Resolver",
+	"resolver" => array("name" => gettext("DNS Resolver"),
 		    "shortcut" => "resolver"),
-	"wireless" => array("name" => "Wireless",
+	"wireless" => array("name" => gettext("Wireless"),
 		    "shortcut" => "wireless"),
 );
 
@@ -129,12 +129,18 @@ $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_log
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 	$manage_log_active = false;
 }
 
 // Tab Array
 tab_array_logs_common();
+
+
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 
 
 // Filter Section/Form - System
@@ -143,24 +149,14 @@ filter_form_system();
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
-	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-	} else {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext);
-	}
+	system_log_filter();
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if ((!$filtertext) && (!$filterfieldsarray)) {
-		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>
@@ -210,7 +206,13 @@ if (!$rawfilter) {
 } else {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	print(system_log_table_panel_title());
+?>
+		</h2>
+	</div>
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -227,14 +229,19 @@ if (!$rawfilter) {
 		$inverse = null;
 	}
 
-	if ($filtertext) {
-		$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"), $inverse);
-	} else {
-		$rows = dump_clog($logfile_path, $nentries, true, array(), $inverse);
-	}
+	system_log_filter();
 ?>
 			</tbody>
 		</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -248,7 +255,9 @@ if (!$rawfilter) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <?php include("foot.inc"); ?>

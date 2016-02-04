@@ -133,46 +133,51 @@ $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-			  <th><?=gettext("Interface"); ?></th>
-			  <th><?=gettext("Tag");?></td>
-			  <th><?=gettext("QinQ members"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('QinQ Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Tag");?></th>
+						<th><?=gettext("QinQ members"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php foreach ($a_qinqs as $i => $qinq):?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($qinq['if'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($qinq['tag'])?>
-				</td>
-				<td>
+					<tr>
+						<td>
+							<?=htmlspecialchars($qinq['if'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($qinq['tag'])?>
+						</td>
+						<td>
 <?php if (strlen($qinq['members']) > 20):?>
-					<?=substr(htmlspecialchars($qinq['members']), 0, 20)?>&hellip;
+							<?=substr(htmlspecialchars($qinq['members']), 0, 20)?>&hellip;
 <?php else:?>
-					<?=htmlspecialchars($qinq['members'])?>
+							<?=htmlspecialchars($qinq['members'])?>
 <?php endif; ?>
-				</td>
-				<td>
-					<?=htmlspecialchars($qinq['descr'])?>&nbsp;
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+						</td>
+						<td>
+							<?=htmlspecialchars($qinq['descr'])?>&nbsp;
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit Q-in-Q interface')?>"	href="interfaces_qinq_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete Q-in-Q interface')?>"	href="interfaces_qinq.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php
 endforeach;
 ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">
@@ -185,7 +190,7 @@ endforeach;
 <div class="infoblock">
 	<?=print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
 		'QinQ tagging will still work, but the reduced MTU may cause problems.<br />' .
-		'See the %s handbook for information on supported cards.'), $g['product_name']), 'info')?>
+		'See the %s handbook for information on supported cards.'), $g['product_name']), 'info', false)?>
 </div>
 
 <?php

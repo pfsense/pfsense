@@ -101,6 +101,7 @@ if (isset($id) && $a_pppoes[$id]) {
 	$pconfig['mode'] = $pppoecfg['mode'];
 	$pconfig['interface'] = $pppoecfg['interface'];
 	$pconfig['n_pppoe_units'] = $pppoecfg['n_pppoe_units'];
+	$pconfig['n_pppoe_maxlogin'] = $pppoecfg['n_pppoe_maxlogin'];
 	$pconfig['pppoe_subnet'] = $pppoecfg['pppoe_subnet'];
 	$pconfig['pppoe_dns1'] = $pppoecfg['dns1'];
 	$pconfig['pppoe_dns2'] = $pppoecfg['dns2'];
@@ -160,17 +161,15 @@ if ($_POST) {
 		if (!is_numericint($_POST['n_pppoe_units']) || $_POST['n_pppoe_units'] > 255) {
 			$input_errors[] = gettext("Number of PPPoE users must be between 1 and 255");
 		}
-		if (!is_numeric($_POST['pppoe_subnet']) ||
-		    $_POST['pppoe_subnet'] < 0 ||
-		    $_POST['pppoe_subnet'] > 32) {
+		if (!is_numericint($_POST['n_pppoe_maxlogin']) || $_POST['n_pppoe_maxlogin'] > 255) {
+			$input_errors[] = gettext("User Max Logins must be between 1 and 255");
+		}
+		if (!is_numericint($_POST['pppoe_subnet']) || $_POST['pppoe_subnet'] > 32) {
 			$input_errors[] = gettext("Subnet mask must be an interger between 0 and 32");
 		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);
-		$subnet_start = ip2ulong($_POST['remoteip']);
-		$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['pppoe_subnet'] - 1;
-		if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-		    (ip2ulong($_POST['localip']) <= $subnet_end)) {
+		if (is_inrange_v4($_POST['localip'], $_POST['remoteip'], ip_after($_POST['remoteip'], $_POST['pppoe_subnet'] - 1))) {
 			$input_errors[] = gettext("The specified server address lies in the remote subnet.");
 		}
 		if ($_POST['localip'] == get_interface_ip($_POST['interface'])) {
@@ -201,6 +200,7 @@ if ($_POST) {
 		$pppoecfg['mode'] = $_POST['mode'];
 		$pppoecfg['interface'] = $_POST['interface'];
 		$pppoecfg['n_pppoe_units'] = $_POST['n_pppoe_units'];
+		$pppoecfg['n_pppoe_maxlogin'] = $_POST['n_pppoe_maxlogin'];
 		$pppoecfg['pppoe_subnet'] = $_POST['pppoe_subnet'];
 		$pppoecfg['descr'] = $_POST['descr'];
 		if ($_POST['radiusserver'] || $_POST['radiusserver2']) {
@@ -344,18 +344,18 @@ $section->addInput(new Form_Select(
 ));
 
 $section->addInput(new Form_Select(
-	'pppoe_subnet',
-	'Subnet mask',
-	$pconfig['pppoe_subnet'],
-	array_combine(range(0, 32, 1), range(0, 32, 1))
-))->setHelp('Hint: 24 is 255.255.255.0');
-
-$section->addInput(new Form_Select(
 	'n_pppoe_units',
-	'PPPoE User Count',
+	'Total User Count',
 	$pconfig['n_pppoe_units'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ))->setHelp('The number of PPPoE users allowed to connect to this server simultaneously.');
+
+$section->addInput(new Form_Select(
+	'n_pppoe_maxlogin',
+	'User Max Logins',
+	$pconfig['n_pppoe_maxlogin'],
+	array_combine(range(1, 255, 1), range(1, 255, 1))
+))->setHelp('The number of times a single user may be logged in at the same time.');
 
 $section->addInput(new Form_IpAddress(
 	'localip',
@@ -370,6 +370,13 @@ $section->addInput(new Form_IpAddress(
 	'Remote Address Range',
 	$pconfig['remoteip']
 ))->setHelp('Specify the starting address for the client IP address subnet');
+
+$section->addInput(new Form_Select(
+	'pppoe_subnet',
+	'Subnet mask',
+	$pconfig['pppoe_subnet'],
+	array_combine(range(0, 32, 1), range(0, 32, 1))
+))->setHelp('Hint: 24 is 255.255.255.0');
 
 $section->addInput(new Form_Input(
 	'descr',

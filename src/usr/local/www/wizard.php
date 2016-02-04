@@ -89,25 +89,25 @@ if ($_POST['xml']) {
 
 if (empty($xml)) {
 	$xml = "not_defined";
-	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+	print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 	die;
 } else {
 	$wizard_xml_prefix = "{$g['www_path']}/wizards";
 	$wizard_full_path = "{$wizard_xml_prefix}/{$xml}";
 	if (substr_compare(realpath($wizard_full_path), $wizard_xml_prefix, 0, strlen($wizard_xml_prefix))) {
-		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		print_info_box(gettext("ERROR: Invalid path specified."));
 		die;
 	}
 	if (file_exists($wizard_full_path)) {
 		$pkg = parse_xml_config_pkg($wizard_full_path, "pfsensewizard");
 	} else {
-		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+		print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 		die;
 	}
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
+	print_info_box(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
 	die;
 }
 
@@ -215,7 +215,8 @@ do {
 } while ($oldstepid != $stepid);
 
 $pgtitle = array(gettext("Wizard"), gettext($pkg['step'][0]['title']));	//First step is main title of the wizard in the breadcrumb
-$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'');		//Following steps are sub-level breadcrumbs.
+$pgtitle[] = ($stepid > 0 ? gettext($pkg['step'][$stepid]['title']):'&nbsp;');		//Following steps are sub-level breadcrumbs.
+$shortcut_section = "Wizard";
 include("head.inc");
 
 if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
@@ -331,7 +332,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 					foreach ($showfields as $showfield) {
 						$showfield = strtolower($showfield);
 						//print "\t\t" . 'document.iform.' . $showfield . ".display =\"none\";\n";
-						print "\t\t jQuery('#". $showfield . "').hide();";
+						print "\t\t $('#". $showfield . "').hide();";
 					}
 				}
 				print "\t" . '} else {' . "\n";
@@ -340,7 +341,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 					foreach ($showfields as $showfield) {
 						$showfield = strtolower($showfield);
 						#print "\t\t" . 'document.iform.' . $showfield . ".display =\"\";\n";
-						print "\t\t jQuery('#". $showfield . "').show();";
+						print "\t\t $('#". $showfield . "').show();";
 					}
 				}
 				print "\t" . '}' . "\n";
@@ -379,7 +380,7 @@ function fixup_string($string) {
 		}
 	}
 
-	$http_host = $_SERVER['SERVER_NAME'];
+	$http_host = $_SERVER['HTTP_HOST'];
 	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if ($title == "Reload in progress") {
@@ -448,7 +449,7 @@ $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
 
 <!-- Present the pfSense logo -->
-<div class="text-center"><p><a href="<?=$ip?>"><img border="0" src="logo-black.png" alt="logo-black" align="middle" height="45" width="180" /></a></p></div><br /><br/>
+<div class="text-center"><p><a href="<?=$ip?>"><img src="logo-black.png" alt="logo-black" style="border:0px; vertical-align:middle" height="45" width="180" /></a></p></div><br /><br/>
 
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">
@@ -536,7 +537,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'text',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
 			case "text":
@@ -557,7 +558,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 				$onchange = "";
 
 				if ($field['validate']) {
-					$onchange="FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")";
+					$onchange="FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")";
 				}
 
 				$section->addInput(new Form_Input(
@@ -647,7 +648,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					'password',
 					$value
 				))->setHelp($field['description'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] .")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] ."\")":"");
 
 				break;
 			case "certca_selection":
@@ -804,7 +805,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 					$value
 				))->setHelp($field['description'])
 				  ->setAttribute('rows', $field['rows'])
-				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, " . $field['validate'] . ", " . $field['message'] . ")":"");
+				  ->setOnchange(($field['validate']) ? "FieldValidate(this.value, \"" . $field['validate'] . "\", \"" . $field['message'] . "\")":"");
 
 				break;
 			case "submit":
@@ -929,7 +930,7 @@ print($form);
 		$counter = 0;
 		foreach ($inputaliases as $alias) {
 ?>
-			$('#' + '<?php echo $alias; ?>').autocomplete({
+			$('#' + '<?=$alias;?>').autocomplete({
 				source: customarray
 			});
 <?php

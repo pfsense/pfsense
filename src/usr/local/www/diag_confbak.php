@@ -69,9 +69,9 @@ if (isset($_POST['backupcount'])) {
 		$changedescr = $config['system']['backupcount'];
 	} else {
 		unset($config['system']['backupcount']);
-		$changedescr = "(platform default)";
+		$changedescr = gettext("(platform default)");
 	}
-	write_config("Changed backup revision count to {$changedescr}");
+	write_config(sprintf(gettext("Changed backup revision count to %s"), $changedescr));
 } elseif ($_GET) {
 	if (!isset($_GET['newver']) && !isset($_GET['rmver']) && !isset($_GET['getcfg']) && !isset($_GET['diff'])) {
 		header("Location: diag_confbak.php");
@@ -139,10 +139,19 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+$tab_array = array();
+$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
+$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
+display_top_tabs($tab_array);
+
 if ($diff) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><?=gettext("Configuration diff from ")?><?=date(gettext("n/j/y H:i:s"), $oldtime); ?><?=gettext(" to ")?><?=date(gettext("n/j/y H:i:s"), $newtime); ?></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
+		</h2>
+	</div>
 	<div class="panel-body table-responsive">
 	<!-- This table is left un-bootstrapped to maintain the original diff format output -->
 		<table style="padding-top: 4px; padding-bottom: 4px; vertical-align:middle;">
@@ -164,7 +173,7 @@ if ($diff) {
 		}
 ?>
 			<tr>
-				<td valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
 	}
@@ -175,17 +184,12 @@ if ($diff) {
 <?php
 }
 
-$tab_array = array();
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
-display_top_tabs($tab_array);
-
 $form = new Form(new Form_Button(
 	'Submit',
 	gettext("Save")
 ));
 
-$section = new Form_Section('Saved Configurations');
+$section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'backupcount',
@@ -208,13 +212,13 @@ print($form);
 if (is_array($confvers)) {
 ?>
 <div>
-	<div class="infoblock_open">
+	<div class="infoblock blockopen">
 		<?=print_info_box(
 			gettext(
 				'To view the differences between an older configuration and a newer configuration, ' .
 				'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
 				'then press the "Diff" button.'),
-			'info')?>
+			'info', false)?>
 	</div>
 </div>
 <?php
@@ -222,7 +226,7 @@ if (is_array($confvers)) {
 ?>
 
 <form action="diag_confbak.php" method="get">
-	<div class="table-resposive">
+	<div class="table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 <?php
 if (is_array($confvers)):

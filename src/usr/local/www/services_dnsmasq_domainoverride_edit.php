@@ -198,7 +198,7 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		null,
 		'hidden',
 		$pconfig['id']
-	))->setHelp('You may enter a description here for your reference (not parsed).');
+	));
 }
 
 $form->add($section);

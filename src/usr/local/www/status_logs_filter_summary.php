@@ -102,7 +102,7 @@ $pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_log
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 	$manage_log_active = false;
 }
 
@@ -157,8 +157,8 @@ print("<br />");
 $infomsg = sprintf(gettext('This is a summary of the last %1$s lines of the firewall log (Max %2$s).'), $gotlines, $lines);
 ?>
 <div>
-	<div class="infoblock_open">
-		<?=print_info_box($infomsg, 'info');?>
+	<div class="infoblock blockopen">
+		<?=print_info_box($infomsg, 'info', false);?>
 	</div>
 </div>
 
@@ -209,7 +209,7 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-success" title="' . gettext("Reverse Resolve with DNS") . '">Lookup</a></td></tr>');
+				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-success" title="' . gettext("Reverse Resolve with DNS") . '">' . gettext("Lookup") . '</a></td></tr>');
 
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);

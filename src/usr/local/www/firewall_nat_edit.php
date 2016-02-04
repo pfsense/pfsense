@@ -491,6 +491,7 @@ if ($_POST) {
 			// If this is a new rule, create an ID and add the rule
 			if ($_POST['filter-rule-association'] == 'add-associated') {
 				$filterent['associated-rule-id'] = $natent['associated-rule-id'] = get_unique_id();
+				$filterent['tracker'] = (int)microtime(true);
 				$filterent['created'] = make_config_revision_entry(null, gettext("NAT Port Forward"));
 				$config['filter']['rule'][] = $filterent;
 			}
@@ -514,6 +515,18 @@ if ($_POST) {
 			$natent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
 				array_splice($a_nat, $after+1, 0, array($natent));
+
+				// Update the separators
+				$a_separators = &$config['nat']['separator'];
+
+				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+
+					// If the separator is located after the place where the new rule is to go, increment the separator row
+					if ($seprow > $after) {
+						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
+					}
+				}
 			} else {
 				$a_nat[] = $natent;
 			}
@@ -531,16 +544,16 @@ if ($_POST) {
 function build_srctype_list() {
 	global $pconfig, $ifdisp, $config;
 
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	$sel = is_specialnet($pconfig['src']);
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $ifent => $ifdesc) {
@@ -577,14 +590,14 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => 'Any', 'single' => 'Single host or alias', 'network' => 'Network', '(self)' => 'This Firewall (self)');
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
 	if (have_ruleint_access("pppoe")) {
-		$list['pppoe'] = 'PPPoE clients';
+		$list['pppoe'] = gettext('PPPoE clients');
 	}
 
 	if (have_ruleint_access("l2tp")) {
-		$list['l2tp'] = 'L2TP clients';
+		$list['l2tp'] = gettext('L2TP clients');
 	}
 
 	foreach ($ifdisp as $if => $ifdesc) {
@@ -681,22 +694,22 @@ foreach ($iflist as $if => $ifdesc) {
 
 if ($config['l2tp']['mode'] == "server") {
 	if (have_ruleint_access("l2tp")) {
-		$interfaces['l2tp'] = "L2TP VPN";
+		$interfaces['l2tp'] = gettext("L2TP VPN");
 	}
 }
 
 if (is_pppoe_server_enabled() && have_ruleint_access("pppoe")) {
-	$interfaces['pppoe'] = "PPPoE Server";
+	$interfaces['pppoe'] = gettext("PPPoE Server");
 }
 
 /* add ipsec interfaces */
 if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$interfaces["enc0"] = "IPsec";
+	$interfaces["enc0"] = gettext("IPsec");
 }
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$interfaces["openvpn"] = "OpenVPN";
+	$interfaces["openvpn"] = gettext("OpenVPN");
 }
 
 $section->addInput(new Form_Select(
@@ -752,7 +765,7 @@ $group->add(new Form_IpAddress(
 
 $section->add($group);
 
-$portlist = array("" => 'Other', 'any' => 'Any');
+$portlist = array("" => gettext('Other'), 'any' => gettext('Any'));
 
 foreach ($wkports as $wkport => $wkportdesc) {
 	$portlist[$wkport] = $wkportdesc;
@@ -771,10 +784,9 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'srcbeginport_cust',
 	null,
-	'number',
-	is_numeric($pconfig['srcbeginport']) ? $pconfig['srcbeginport'] : null,
-	['min' => '1', 'max' => '65536']
-))->setHelp('Custom');
+	'text',
+	$pconfig['srcbeginport']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->add(new Form_Select(
 	'srcendport',
@@ -786,10 +798,9 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'srcendport_cust',
 	null,
-	'number',
-	is_numeric($pconfig['srcendport']) ? $pconfig['srcendport'] : null,
-	['min' => '1', 'max' => '65536']
-))->setHelp('Custom');
+	'text',
+	$pconfig['srcendport']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the source port or port range for this rule. This is usually random and almost never ' .
 				'equal to the destination port range (and should usually be \'any\'). You can leave the \'to\' field ' .
@@ -834,10 +845,9 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstbeginport_cust',
 	null,
-	'number',
-	is_numeric($pconfig['dstbeginport']) ? $pconfig['dstbeginport'] : null,
-	['min' => '1', 'max' => '65536']
-))->setHelp('Custom');
+	'text',
+	$pconfig['dstbeginport']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->add(new Form_Select(
 	'dstendport',
@@ -849,10 +859,9 @@ $group->add(new Form_Select(
 $group->add(new Form_Input(
 	'dstendport_cust',
 	null,
-	'number',
-	is_numeric($pconfig['dstendport']) ? $pconfig['dstendport'] : null,
-	['min' => '1', 'max' => '65536']
-))->setHelp('Custom');
+	'text',
+	$pconfig['dstendport']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the port or port range for the destination of the packet for this mapping. ' .
 				'You can leave the \'to\' field empty if you only want to map a single port ');
@@ -883,10 +892,9 @@ $group->setHelp('Specify the port on the machine with the IP address entered abo
 $group->add(new Form_Input(
 	'localbeginport_cust',
 	null,
-	'number',
-	is_numeric($pconfig['localbeginport']) ? $pconfig['localbeginport'] : null,
-	['min' => '1', 'max' => '65536']
-))->setHelp('Custom');
+	'text',
+	$pconfig['localbeginport']
+))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $section->add($group);
 
@@ -911,24 +919,24 @@ $section->addInput(new Form_Select(
 	'NAT reflection',
 	$pconfig['natreflection'],
 	array(
-		'default' => 'Use system default',
-		'enable'  => 'Enable (NAT + Proxy)',
-		'purenat' => 'Enable (Pure NAT)',
-		'disable' => 'Disable'
+		'default' => gettext('Use system default'),
+		'enable'  => gettext('Enable (NAT + Proxy)'),
+		'purenat' => gettext('Enable (Pure NAT)'),
+		'disable' => gettext('Disable')
 	)
 ));
 
 if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['dup']))) {
 
 	$hlpstr = '';
-	$rulelist = array('' => 'None', 'pass' => 'Pass');
+	$rulelist = array('' => gettext('None'), 'pass' => gettext('Pass'));
 
 	if (is_array($config['filter']['rule'])) {
 		filter_rules_sort();
 
 		foreach ($config['filter']['rule'] as $filter_id => $filter_rule) {
 			if (isset($filter_rule['associated-rule-id'])) {
-				$rulelist[$filter_rule['associated-rule-id']] = 'Rule ' . $filter_rule['descr'];
+				$rulelist[$filter_rule['associated-rule-id']] = sprintf(gettext('Rule %s'), $filter_rule['descr']);
 
 				if ($filter_rule['associated-rule-id'] == $pconfig['associated-rule-id']) {
 					$hlpstr = '<a href="firewall_rules_edit.php?id=' . $filter_id . '">' . gettext("View the filter rule") . '</a><br />';
@@ -938,7 +946,7 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 	}
 
 	if (isset($pconfig['associated-rule-id'])) {
-		$rulelist['new'] = 'Create new associated filter rule';
+		$rulelist['new'] = gettext('Create new associated filter rule');
 	}
 
 	$section->addInput(new Form_Select(
@@ -954,9 +962,9 @@ if (isset($id) && $a_nat[$id] && (!isset($_GET['dup']) || !is_numericint($_GET['
 		'add-associated',
 		array(
 			'' => 'None',
-			'add-associated'  => 'Add associated filter rule',
-			'add-unassociated' => 'Add unassociated filter rule',
-			'pass' => 'Pass'
+			'add-associated'  => gettext('Add associated filter rule'),
+			'add-unassociated' => gettext('Add unassociated filter rule'),
+			'pass' => gettext('Pass')
 		)
 	))->setHelp('The "pass" selection does not work properly with Multi-WAN. It will only work on an interface containing the default gateway.');
 }
@@ -1284,9 +1292,10 @@ events.push(function() {
 		source: addressarray
 	});
 
-	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, localbeginport_cust').autocomplete({
+	$('#dstbeginport_cust, #dstendport_cust, #srcbeginport_cust, #srcendport_cust, #localbeginport_cust').autocomplete({
 		source: customarray
 	});
+
 });
 //]]>
 </script>

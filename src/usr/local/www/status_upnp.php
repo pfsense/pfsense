@@ -93,19 +93,21 @@ if (!$config['installedpackages'] ||
 
 ?>
 
-<div class="panel-body panel-default">
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext("Port")?></th>
-					<th><?=gettext("Protocol")?></th>
-					<th><?=gettext("Internal IP")?></th>
-					<th><?=gettext("Int. Port")?></th>
-					<th><?=gettext("Description")?></th>
-				</tr>
-			</thead>
-			<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext(gettext("UPnP &amp; NAT-PMP Rules"))?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Port")?></th>
+						<th><?=gettext("Protocol")?></th>
+						<th><?=gettext("Internal IP")?></th>
+						<th><?=gettext("Int. Port")?></th>
+						<th><?=gettext("Description")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 $i = 0;
 
@@ -118,31 +120,35 @@ foreach ($rdr_entries as $rdr_entry) {
 	$rdr_iport = $matches[6];
 
 ?>
-				<tr>
-					<td>
-						<?=$rdr_port?>
-					</td>
-					<td>
-						<?=$rdr_proto?>
-					</td>
-					<td>
-						<?=$rdr_ip?>
-					</td>
-					<td>
-						<?=$rdr_iport?>
-					</td>
-					<td>
-						<?=$rdr_label?>
-					</td>
-				</tr>
+					<tr>
+						<td>
+							<?=$rdr_port?>
+						</td>
+						<td>
+							<?=$rdr_proto?>
+						</td>
+						<td>
+							<?=$rdr_ip?>
+						</td>
+						<td>
+							<?=$rdr_iport?>
+						</td>
+						<td>
+							<?=$rdr_label?>
+						</td>
+					</tr>
 <?php
 	}
 	$i++;
 }
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
+</div>
+
+<div>
 	<form action="status_upnp.php" method="post">
 		<nav class="action-buttons">
 			<button class="btn btn-danger btn-sm" type="submit" name="clear" id="clear" value="<?=gettext("Clear all sessions")?>">

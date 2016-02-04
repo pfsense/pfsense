@@ -1,8 +1,14 @@
 <?php
 /*
 	unbound.inc
-	part of the pfSense project (https://www.pfsense.org)
+
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2015 Warren Baker <warren@percol8.co.za>
+	Copyright (c) 2015-2016 Electric Sheep Fencing, LLC.
+	All rights reserved.
+
+	originally part of m0n0wall (http://m0n0.ch/wall)
+	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
 	All rights reserved.
 
 	Redistribution and use in source and binary forms, with or without
@@ -12,19 +18,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
+
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* include all configuration functions */
@@ -33,7 +62,7 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
-function create_unbound_chroot_path() {
+function create_unbound_chroot_path($cfgsubdir = "") {
 	global $config, $g;
 
 	// Configure chroot
@@ -43,6 +72,14 @@ function create_unbound_chroot_path() {
 		chgrp($g['unbound_chroot_path'], "unbound");
 	}
 
+	if ($cfgsubdir != "") {
+		$cfgdir = $g['unbound_chroot_path'] . $cfgsubdir;
+		if (!is_dir($cfgdir)) {
+			mkdir($cfgdir);
+			chown($cfgdir, "unbound");
+			chgrp($cfgdir, "unbound");
+		}
+	}
 }
 
 /* Optimize Unbound for environment */
@@ -102,38 +139,41 @@ function unbound_optimization() {
 function test_unbound_config($unboundcfg, &$output) {
 	global $g;
 
-	$cfgfile = "{$g['unbound_chroot_path']}/unbound.test.conf";
-	$unboundcfgtxt = unbound_generate_config_text($unboundcfg);
-	file_put_contents($cfgfile, $unboundcfgtxt);
+	$cfgsubdir = "/test";
+	unbound_generate_config($unboundcfg, $cfgsubdir);
+	unbound_remote_control_setup($cfgsubdir);
+	do_as_unbound_user("unbound-anchor", $cfgsubdir);
+
+	$cfgdir = "{$g['unbound_chroot_path']}{$cfgsubdir}";
 
 	$rv = 0;
-	exec("/usr/local/sbin/unbound-checkconf {$cfgfile} 2>&1", $output, $rv);
-	unlink_if_exists($cfgfile);
+	exec("/usr/local/sbin/unbound-checkconf {$cfgdir}/unbound.conf 2>&1", $output, $rv);
+	rmdir_recursive($cfgdir);
 
 	return $rv;
 }
 
 
-function unbound_generate_config() {
+function unbound_generate_config($unboundcfg = NULL, $cfgsubdir = "") {
 	global $g;
 
-	$unboundcfgtxt = unbound_generate_config_text();
+	$unboundcfgtxt = unbound_generate_config_text($unboundcfg, $cfgsubdir);
 
 	// Configure static Host entries
-	unbound_add_host_entries();
+	unbound_add_host_entries($cfgsubdir);
 
 	// Configure Domain Overrides
-	unbound_add_domain_overrides();
+	unbound_add_domain_overrides("", $cfgsubdir);
 
 	// Configure Unbound access-lists
-	unbound_acls_config();
+	unbound_acls_config($cfgsubdir);
 
-	create_unbound_chroot_path();
-	file_put_contents("{$g['unbound_chroot_path']}/unbound.conf", $unboundcfgtxt);
+	create_unbound_chroot_path($cfgsubdir);
+	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound.conf", $unboundcfgtxt);
 }
 
 
-function unbound_generate_config_text($unboundcfg=NULL) {
+function unbound_generate_config_text($unboundcfg = NULL, $cfgsubdir = "") {
 
 	global $config, $g;
 	if (is_null($unboundcfg)) {
@@ -146,7 +186,7 @@ function unbound_generate_config_text($unboundcfg=NULL) {
 	// Setup DNSSEC support
 	if (isset($unboundcfg['dnssec'])) {
 		$module_config = "validator iterator";
-		$anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}/root.key";
+		$anchor_file = "auto-trust-anchor-file: {$g['unbound_chroot_path']}{$cfgsubdir}/root.key";
 	} else {
 		$module_config = "iterator";
 	}
@@ -358,16 +398,16 @@ use-caps-for-id: {$use_caps}
 {$private_domains}
 
 # Access lists
-include: {$g['unbound_chroot_path']}/access_lists.conf
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/access_lists.conf
 
 # Static host entries
-include: {$g['unbound_chroot_path']}/host_entries.conf
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 
 # dhcp lease entries
-include: {$g['unbound_chroot_path']}/dhcpleases_entries.conf
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
 
 # Domain overrides
-include: {$g['unbound_chroot_path']}/domainoverrides.conf
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
 {$forward_conf}
 
 {$custom_options}
@@ -375,34 +415,34 @@ include: {$g['unbound_chroot_path']}/domainoverrides.conf
 ###
 # Remote Control Config
 ###
-include: {$g['unbound_chroot_path']}/remotecontrol.conf
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf
 
 EOD;
 
 	return $unboundconf;
 }
 
-function unbound_remote_control_setup() {
+function unbound_remote_control_setup($cfgsubdir = "") {
 	global $g;
 
-	if (!file_exists("{$g['unbound_chroot_path']}/remotecontrol.conf") || !file_exists("{$g['unbound_chroot_path']}/unbound_control.key")) {
+	if (!file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf") || !file_exists("{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key")) {
 		$remotcfg = <<<EOF
 remote-control:
 	control-enable: yes
 	control-interface: 127.0.0.1
 	control-port: 953
-	server-key-file: "{$g['unbound_chroot_path']}/unbound_server.key"
-	server-cert-file: "{$g['unbound_chroot_path']}/unbound_server.pem"
-	control-key-file: "{$g['unbound_chroot_path']}/unbound_control.key"
-	control-cert-file: "{$g['unbound_chroot_path']}/unbound_control.pem"
+	server-key-file: "{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_server.key"
+	server-cert-file: "{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_server.pem"
+	control-key-file: "{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.key"
+	control-cert-file: "{$g['unbound_chroot_path']}{$cfgsubdir}/unbound_control.pem"
 
 EOF;
 
-		create_unbound_chroot_path();
-		file_put_contents("{$g['unbound_chroot_path']}/remotecontrol.conf", $remotcfg);
+		create_unbound_chroot_path($cfgsubdir);
+		file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/remotecontrol.conf", $remotcfg);
 
 		// Generate our keys
-		do_as_unbound_user("unbound-control-setup");
+		do_as_unbound_user("unbound-control-setup", $cfgsubdir);
 
 	}
 }
@@ -476,7 +516,7 @@ function unbound_get_next_id() {
 }
 
 // Execute commands as the user unbound
-function do_as_unbound_user($cmd) {
+function do_as_unbound_user($cmd, $param1 = "") {
 	global $g;
 
 	switch ($cmd) {
@@ -490,26 +530,30 @@ function do_as_unbound_user($cmd) {
 			mwexec("echo '/usr/local/sbin/unbound-control reload' | /usr/bin/su -m unbound", true);
 			break;
 		case "unbound-anchor":
+			$root_key_file = "{$g['unbound_chroot_path']}{$param1}/root.key";
 			// sanity check root.key because unbound-anchor will fail without manual removal otherwise. redmine #5334
-			if (file_exists("{$g['unbound_chroot_path']}/root.key")) {
-				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$g['unbound_chroot_path']}/root.key", true);
+			if (file_exists($root_key_file)) {
+				$rootkeycheck = mwexec("/usr/bin/grep 'autotrust trust anchor file' {$root_key_file}", true);
 				if ($rootkeycheck != "0") {
-					log_error("Unbound root.key file is corrupt, removing and recreating.");
-					unlink_if_exists("{$g['unbound_chroot_path']}/root.key");
+					log_error("Unbound {$root_key_file} file is corrupt, removing and recreating.");
+					unlink_if_exists($root_key_file);
 				}
 			}
-			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$g['unbound_chroot_path']}/root.key' | /usr/bin/su -m unbound", true);
-			pfSense_fsync("{$g['unbound_chroot_path']}/root.key");
+			mwexec("echo '/usr/local/sbin/unbound-anchor -a {$root_key_file}' | /usr/bin/su -m unbound", true);
+			// Only sync the file if this is the real (default) one, not a test one.
+			if ($param1 == "") {
+				pfSense_fsync($root_key_file);
+			}
 			break;
 		case "unbound-control-setup":
-			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}' | /usr/bin/su -m unbound", true);
+			mwexec("echo '/usr/local/sbin/unbound-control-setup -d {$g['unbound_chroot_path']}{$param1}' | /usr/bin/su -m unbound", true);
 			break;
 		default:
 			break;
 	}
 }
 
-function unbound_add_domain_overrides($pvt_rev="") {
+function unbound_add_domain_overrides($pvt_rev="", $cfgsubdir = "") {
 	global $config, $g;
 
 	$domains = $config['unbound']['domainoverrides'];
@@ -547,21 +591,22 @@ function unbound_add_domain_overrides($pvt_rev="") {
 	if ($pvt_rev != "") {
 		return $domain_entries;
 	} else {
-		create_unbound_chroot_path();
-		file_put_contents("{$g['unbound_chroot_path']}/domainoverrides.conf", $domain_entries);
+		create_unbound_chroot_path($cfgsubdir);
+		file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf", $domain_entries);
 	}
 }
 
-function unbound_add_host_entries() {
+function unbound_add_host_entries($cfgsubdir = "") {
 	global $config, $g;
 
-	if (empty($config['unbound']['system_domain_local_zone_type'])) {
-		$system_domain_local_zone_type = "transparent";
-	} else {
+	// Make sure the config setting is a valid unbound local zone type.  If not use "transparent".
+	if (array_key_exists($config['unbound']['system_domain_local_zone_type'], unbound_local_zone_types())) {
 		$system_domain_local_zone_type = $config['unbound']['system_domain_local_zone_type'];
+	} else {
+		$system_domain_local_zone_type = "transparent";
 	}
 
-	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" $system_domain_local_zone_type\n";
+	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
 
 	$hosts = read_hosts();
 	$added_ptr = array();
@@ -585,11 +630,11 @@ function unbound_add_host_entries() {
 	}
 
 	// Write out entries
-	create_unbound_chroot_path();
-	file_put_contents("{$g['unbound_chroot_path']}/host_entries.conf", $unbound_entries);
+	create_unbound_chroot_path($cfgsubdir);
+	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf", $unbound_entries);
 
 	/* dhcpleases will write to this config file, make sure it exists */
-	@touch("{$g['unbound_chroot_path']}/dhcpleases_entries.conf");
+	@touch("{$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf");
 }
 
 function unbound_control($action) {
@@ -666,7 +711,7 @@ EOF;
 }
 
 // Unbound Access lists
-function unbound_acls_config() {
+function unbound_acls_config($cfgsubdir = "") {
 	global $g, $config;
 
 	if (!isset($config['unbound']['disable_auto_added_access_control'])) {
@@ -735,8 +780,8 @@ function unbound_acls_config() {
 		}
 	}
 	// Write out Access list
-	create_unbound_chroot_path();
-	file_put_contents("{$g['unbound_chroot_path']}/access_lists.conf", $aclcfg);
+	create_unbound_chroot_path($cfgsubdir);
+	file_put_contents("{$g['unbound_chroot_path']}{$cfgsubdir}/access_lists.conf", $aclcfg);
 
 }
 
@@ -748,3 +793,20 @@ function unbound_hosts_generate() {
 	// Reload our service to read the updates
 	unbound_control("reload");
 }
+
+// Array of valid unbound local zone types
+function unbound_local_zone_types() {
+	return array(
+		"deny" => gettext("Deny"),
+		"refuse" => gettext("Refuse"),
+		"static" => gettext("Static"),
+		"transparent" => gettext("Transparent"),
+		"typetransparent" => gettext("Type Transparent"),
+		"redirect" => gettext("Redirect"),
+		"inform" => gettext("Inform"),
+		"inform_deny" => gettext("Inform Deny"),
+		"nodefault" => gettext("No Default")
+	);
+}
+
+?>

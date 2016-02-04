@@ -106,12 +106,12 @@ class Form_Input extends Form_Element
 		return $this->_attributes['id'];
 	}
 
-	public function get_Type()
+	public function getType()
 	{
 		return $this->_attributes['type'];
 	}
 
-	public function gettagName()
+	public function getTagName()
 	{
 		return $this->_tagName;
 	}
@@ -245,7 +245,12 @@ class Form_Input extends Form_Element
 
 		if (isset($this->_help))
 		{
-			$help = gettext($this->_help);
+			/* Strings longer than this will break gettext. */
+			if (strlen($this->_help) < 7620) {
+				$help = gettext($this->_help);
+			} else {
+				$help = $this->_help;
+			}
 
 			if (!empty($this->_helpParams))
 				$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));

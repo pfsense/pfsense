@@ -63,20 +63,6 @@
 
 require_once("ipsec.inc");
 
-function natnptcmp($a, $b) {
-	return ipcmp($a['external'], $b['external']);
-}
-
-function nat_npt_rules_sort() {
-	global $g, $config;
-
-	if (!is_array($config['nat']['npt'])) {
-			return;
-	}
-
-	usort($config['nat']['npt'], "natnptcmp");
-}
-
 require("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
@@ -102,6 +88,16 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
 
+$after = $_GET['after'];
+if (isset($_POST['after'])) {
+	$after = $_POST['after'];
+}
+
+if (isset($_GET['dup'])) {
+	$id = $_GET['dup'];
+	$after = $_GET['dup'];
+}
+
 if (isset($id) && $a_npt[$id]) {
 	$pconfig['disabled'] = isset($a_npt[$id]['disabled']);
 
@@ -118,12 +114,14 @@ if (isset($id) && $a_npt[$id]) {
 		$pconfig['interface'] = "wan";
 	}
 
-	$pconfig['external'] = $a_npt[$id]['external'];
 	$pconfig['descr'] = $a_npt[$id]['descr'];
 } else {
 	$pconfig['interface'] = "wan";
 }
 
+if (isset($_GET['dup'])) {
+	unset($id);
+}
 
 if ($_POST) {
 
@@ -161,9 +159,12 @@ if ($_POST) {
 		if (isset($id) && $a_npt[$id]) {
 			$a_npt[$id] = $natent;
 		} else {
-			$a_npt[] = $natent;
+			if (is_numeric($after)) {
+				array_splice($a_npt, $after+1, 0, array($natent));
+			} else {
+				$a_npt[] = $natent;
+			}
 		}
-		nat_npt_rules_sort();
 
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
@@ -185,24 +186,24 @@ function build_if_list() {
 
 	if ($config['l2tp']['mode'] == "server") {
 		if (have_ruleint_access("l2tp")) {
-			$interfaces['l2tp'] = "L2TP VPN";
+			$interfaces['l2tp'] = gettext("L2TP VPN");
 		}
 	}
 
 	if ($config['pppoe']['mode'] == "server") {
 		if (have_ruleint_access("pppoe")) {
-			$interfaces['pppoe'] = "PPPoE Server";
+			$interfaces['pppoe'] = gettext("PPPoE Server");
 		}
 	}
 
 	/* add ipsec interfaces */
 	if (ipsec_enabled() && have_ruleint_access("enc0")) {
-		$interfaces["enc0"] = "IPsec";
+		$interfaces["enc0"] = gettext("IPsec");
 	}
 
 	/* add openvpn/tun interfaces */
 	if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-		$interfaces["openvpn"] = "OpenVPN";
+		$interfaces["openvpn"] = gettext("OpenVPN");
 	}
 
 	return($interfaces);

@@ -89,6 +89,10 @@ if (isset($id) && $a_monitor[$id]) {
 	$pconfig['options']['code'] = 200;
 }
 
+if ($_GET['act'] = "dup") {
+	unset($id);
+}
+
 $changedesc = gettext("Load Balancer: Monitor:") . " ";
 $changecount = 0;
 

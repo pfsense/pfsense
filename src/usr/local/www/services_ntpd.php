@@ -75,7 +75,7 @@ if (empty($config['ntpd']['interface'])) {
 	    is_array($config['installedpackages']['openntpd']['config'][0]) && !empty($config['installedpackages']['openntpd']['config'][0]['interface'])) {
 		$pconfig['interface'] = explode(",", $config['installedpackages']['openntpd']['config'][0]['interface']);
 		unset($config['installedpackages']['openntpd']);
-		write_config("Upgraded settings from openttpd");
+		write_config(gettext("Upgraded settings from openttpd"));
 	} else {
 		$pconfig['interface'] = array();
 	}
@@ -283,7 +283,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('NTP server configuration');
+$section = new Form_Section('NTP Server Configuration');
 
 $iflist = build_interface_list();
 
@@ -374,7 +374,7 @@ $section->addInput(new Form_Checkbox(
 	'Log system messages (default: disabled).',
 	$pconfig['logsys']
 ))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="diag_logs_ntpd.php">' . 'Status > System Logs > NTP' . '</a>');
+			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>');
 
 // Statistics logging section
 $btnadvstats = new Form_Button(

@@ -21,7 +21,7 @@ class basic_sasl_client_class
 
 	Function Start(&$client, &$message, &$interactions)
 	{
-		if ($this->state!=SASL_BASIC_STATE_START)
+		if($this->state!=SASL_BASIC_STATE_START)
 		{
 			$client->error="Basic authentication state is not at the start";
 			return(SASL_FAIL);
@@ -33,21 +33,19 @@ class basic_sasl_client_class
 		$defaults=array(
 		);
 		$status=$client->GetCredentials($this->credentials,$defaults,$interactions);
-		if ($status==SASL_CONTINUE)
+		if($status==SASL_CONTINUE)
 		{
 			$message=$this->credentials["user"].":".$this->credentials["password"];
 			$this->state=SASL_BASIC_STATE_DONE;
 		}
 		else
-		{
 			Unset($message);
-		}
 		return($status);
 	}
 
 	Function Step(&$client, $response, &$message, &$interactions)
 	{
-		switch ($this->state)
+		switch($this->state)
 		{
 			case SASL_BASIC_STATE_DONE:
 				$client->error="Basic authentication was finished without success";

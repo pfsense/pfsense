@@ -64,7 +64,7 @@ require("guiconfig.inc");
 include("head.inc");
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h4><?=gettext("License")?></h4></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("License")?></h2></div>
 	<div class="panel-body">
 		<p>
 			<strong><?=$g['product_name']?><?=gettext(" is Copyright")?> &copy; <?=$g['product_copyright_years']?><?=gettext(" by ")?><?=$g['product_copyright']?><br />

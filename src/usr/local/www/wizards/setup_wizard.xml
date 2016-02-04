@@ -621,7 +621,7 @@
 	<stepsubmitphpaction>
 		<![CDATA[
 		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
-			print_info_box_np("Invalid LAN IP Address. Please press back in your browser window and correct.");
+			print_info_box("Invalid LAN IP Address. Please press back in your browser window and correct.");
 			die;
 		}
 
@@ -709,7 +709,7 @@
 			local_user_set($admin_user);
 			write_config();
 		} else {
-			print_info_box_np("Passwords do not match!  Please press back in your browser window and correct.");
+			print_info_box("Passwords do not match!  Please press back in your browser window and correct.");
 			die;
 		}
 	}

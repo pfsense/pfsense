@@ -265,7 +265,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -277,17 +277,20 @@ display_top_tabs($tab_array);
 
 if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 ?>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext("Group name")?></th>
-					<th><?=gettext("Description")?></th>
-					<th><?=gettext("Member Count")?></th>
-					<th><?=gettext("Actions")?></th>
-				</tr>
-			</thead>
-			<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+				<thead>
+					<tr>
+						<th><?=gettext("Group name")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Member Count")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 	foreach ($a_group as $i => $group):
 		if ($group["name"] == "all") {
@@ -296,36 +299,38 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 			$groupcount = count($group['member']);
 		}
 ?>
-				<tr>
-					<td>
-						<?=htmlspecialchars($group['name'])?>
-					</td>
-					<td>
-						<?=htmlspecialchars($group['description'])?>
-					</td>
-					<td>
-						<?=$groupcount?>
-					</td>
-					<td>
-						<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
-						<?php if ($group['scope'] != "system"): ?>
-							<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
-						<?php endif;?>
-					</td>
-				</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars($group['name'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($group['description'])?>
+						</td>
+						<td>
+							<?=$groupcount?>
+						</td>
+						<td>
+							<a class="fa fa-pencil" title="<?=gettext("Edit group"); ?>" href="?act=edit&amp;groupid=<?=$i?>"></a>
+							<?php if ($group['scope'] != "system"): ?>
+								<a class="fa fa-trash"	title="<?=gettext("Delete group")?>" href="?act=delgroup&amp;groupid=<?=$i?>&amp;groupname=<?=$group['name']?>"></a>
+							<?php endif;?>
+						</td>
+					</tr>
 <?php
 	endforeach;
 ?>
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 	</div>
+</div>
 
-	<nav class="action-buttons">
-		<a href="?act=new" class="btn btn-success btn-sm">
-			<i class="fa fa-plus icon-embed-btn"></i>
-			<?=gettext("Add")?>
-		</a>
-	</nav>
+<nav class="action-buttons">
+	<a href="?act=new" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
 <?php
 	include('foot.inc');
 	exit;

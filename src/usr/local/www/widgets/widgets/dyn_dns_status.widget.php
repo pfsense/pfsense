@@ -65,24 +65,48 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
 }
 
-$a_dyndns = &$config['dyndnses']['dyndns'];
+$a_dyndns = $config['dyndnses']['dyndns'];
+
+if (!is_array($config['dnsupdates']['dnsupdate'])) {
+	$config['dnsupdates']['dnsupdate'] = array();
+}
+
+$a_rfc2136 = $config['dnsupdates']['dnsupdate'];
+
+$all_dyndns = array_merge($a_dyndns, $a_rfc2136);
 
 if ($_REQUEST['getdyndnsstatus']) {
 	$first_entry = true;
-	foreach ($a_dyndns as $dyndns) {
+	foreach ($all_dyndns as $dyndns) {
 		if ($first_entry) {
 			$first_entry = false;
 		} else {
 			// Put a vertical bar delimiter between the echoed HTML for each entry processed.
 			echo "|";
 		}
+		$cache_sep = ":";
+		if ($dyndns['type'] == "namecheap") {
+			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
+		} elseif (empty($dyndns['type'])) {
+			/* RFC2136, add some dummy values */
+			$dyndns['type'] = '_rfc2136_';
+			$dyndns['id'] = '_' . $dyndns['server'];
+			$hostname = $dyndns['host'];
+			$cache_sep = "|";
+		} else {
+			$hostname = $dyndns['host'];
+		}
 
-		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($dyndns['host']) . "{$dyndns['id']}.cache";
+		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
 		if (file_exists($filename)) {
-			$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			$cached_ip_s = explode(':', file_get_contents($filename));
+			if (($dyndns['type'] == '_rfc2136_') && (!isset($dyndns['usepublicip']))) {
+				$ipaddr = get_interface_ip(get_failover_interface($dyndns['interface']));
+			} else {
+				$ipaddr = dyndnsCheckIP($dyndns['interface']);
+			}
+			$cached_ip_s = explode($cache_sep, file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
-			if ($ipaddr <> $cached_ip) {
+			if (trim($ipaddr) != trim($cached_ip)) {
 				print('<span class="text-danger">');
 			} else {
 				print('<span class="text-success">');
@@ -108,7 +132,18 @@ if ($_REQUEST['getdyndnsstatus']) {
 	</tr>
 	</thead>
 	<tbody>
-	<?php $dyndnsid = 0; foreach ($a_dyndns as $dyndns): ?>
+	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
+
+		if ($dyndns['type'] == "namecheap") {
+			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
+		} elseif (empty($dyndns['type'])) {
+			/* RFC2136, add some dummy values */
+			$dyndns['type'] = '_rfc2136_';
+			$dyndns['id'] = '_' . $dyndns['server'];
+			$hostname = $dyndns['host'];
+		} else {
+			$hostname = $dyndns['host'];
+		} ?>
 	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 		<td>
 		<?php $iflist = get_configured_interface_with_descr();
@@ -137,11 +172,14 @@ if ($_REQUEST['getdyndnsstatus']) {
 				break;
 			}
 		}
+		if ($dyndns['type'] == '_rfc2136_') : ?>
+			RFC 2136
+		<? endif;
 		?>
 		</td>
 		<td>
 		<?php
-		print(htmlspecialchars($dyndns['host']));
+		print(htmlspecialchars($hostname));
 		?>
 		</td>
 		<td>
@@ -158,7 +196,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		scroll(0,0);
 		var url = "/widgets/widgets/dyn_dns_status.widget.php";
 		var pars = 'getdyndnsstatus=yes';
-		jQuery.ajax(
+		$.ajax(
 			url,
 			{
 				type: 'get',
@@ -173,7 +211,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		var responseStrings = transport.responseText.split("|");
 		for (var count=0; count<responseStrings.length; count++) {
 			var divlabel = '#dyndnsstatus' + count;
-			jQuery(divlabel).prop('innerHTML',responseStrings[count]);
+			$(divlabel).prop('innerHTML',responseStrings[count]);
 		}
 	}
 	// Do the first status check 2 seconds after the dashboard opens

@@ -71,9 +71,93 @@ require_once("pkg-utils.inc");
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
-	print_info_box_np("Please wait while packages are reinstalled in the background.");
+	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
+}
+
+// We are being called only to get the pacakge data, not to display anything
+if (($_REQUEST) && ($_REQUEST['ajax'])) {
+	print(get_pkg_table());
+	exit;
+}
+
+// THe content for the table of packages is created here and fetched by Ajax. This allows us to draw the page and dispay
+// any required messages while the table it being downloaded/populated. On very small/slow systems, that can take a while
+function get_pkg_table() {
+
+	$pkg_info = get_pkg_info();
+
+	if (!$pkg_info) {
+		print("error");
+		exit;
+	}
+
+	$pkgtbl = 	'<table id="pkgtable" class="table table-striped table-hover">' . "\n";
+	$pkgtbl .= 		'<thead>' . "\n";
+	$pkgtbl .= 			'<tr>' . "\n";
+	$pkgtbl .= 				'<th>' . gettext("Name") . "</th>\n";
+	$pkgtbl .= 				'<th>' . gettext("Version") . "</th>\n";
+	$pkgtbl .= 				'<th>' . gettext("Description") . "</th>\n";
+	$pkgtbl .= 				'<th></th>' . "\n";
+	$pkgtbl .= 			'</tr>' . "\n";
+	$pkgtbl .= 		'</thead>' . "\n";
+	$pkgtbl .= 		'<tbody>' . "\n";
+
+	foreach ($pkg_info as $index) {
+		if (isset($index['installed'])) {
+			continue;
+		}
+
+		$pkgtbl .= 	'<tr>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+
+		if ($index['www']) {
+			$pkgtbl .= 	'<a title="' . gettext("Visit official website") . '" target="_blank" href="' . htmlspecialchars($index['www']) . '">' . "\n";
+		}
+
+		$pkgtbl .= htmlspecialchars($index['shortname']);
+		$pkgtbl .= 		'</a>' . "\n";
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+
+		if (!$g['disablepackagehistory']) {
+			$pkgtbl .= '<a target="_blank" title="' . gettext("View changelog") . '" href="' . htmlspecialchars($index['changeloglink']) . '">' . "\n";
+			$pkgtbl .= htmlspecialchars($index['version']) . '</a>' . "\n";
+		} else {
+			$pkgtbl .= htmlspecialchars($index['version']);
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'<td>' . "\n";
+		$pkgtbl .= 		$index['desc'];
+
+		if (is_array($index['deps']) && count($index['deps'])) {
+			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<br/>\n";
+
+			foreach ($index['deps'] as $pdep) {
+				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
+			}
+
+			$pkgtbl .= "\n";
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= '<td>' . "\n";
+		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">install</a>' . "\n";
+
+		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
+			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
+		}
+
+		$pkgtbl .= 	'</td>' . "\n";
+		$pkgtbl .= 	'</tr>' . "\n";
+	}
+
+	$pkgtbl .= 	'</tbody>' . "\n";
+	$pkgtbl .= '</table>' . "\n";
+
+	return ($pkgtbl);
 }
 
 $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Available Packages"));
@@ -83,72 +167,17 @@ $tab_array = array();
 $tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 display_top_tabs($tab_array);
-
-// A crude way to display a "Please wait" message while hte page is loading
-ob_implicit_flush(true);
-print('<div class="temp">');
-print_info_box(gettext("Please wait while the package data is being retrieved.") . '&nbsp<i class="fa fa-cog fa-spin"></i>');
-echo str_repeat("<!--           -->", 1000);
-print('</div>');
-ob_end_flush();
-//flush();
-
-$pkg_info = get_pkg_info();
-
-if ($pkg_info) {
-	// Check categories
-	$categories = array();
-	foreach ($pkg_info as $pkg_data) {
-		if (isset($pkg_data['categories'][0])) {
-			$categories[$pkg_data['categories'][0]]++;
-		}
-	}
-
-	ksort($categories, SORT_STRING|SORT_FLAG_CASE);
-	$cm_count = 0;
-	$tab_array = array();
-	$visible_categories = array();
-	$categories_min_count = ($g['pkg_categories_min_count'] ? $g['pkg_categories_min_count'] : 3);
-	$categories_max_display = ($g['pkg_categories_max_display'] ? $g['pkg_categories_max_display'] : 6);
-
-	// check selected category or define default category to show
-	if (isset($_REQUEST['category'])) {
-		$menu_category = $_REQUEST['category'];
-	} elseif (isset($g['pkg_default_category'])) {
-		$menu_category = $g['pkg_default_category'];
-	} else {
-		$menu_category = "All";
-	}
-
-	$menu_category = (isset($_REQUEST['category']) ? $_REQUEST['category'] : "All");
-	$show_category = ($menu_category == "Other" || $menu_category == "All");
-
-	$tab_array[] = array(gettext("All"), $menu_category == "All" ? true : false, "pkg_mgr.php?category=All");
-	foreach ($categories as $category => $c_count) {
-		if ($c_count >= $categories_min_count && $cm_count <= $categories_max_display) {
-			$tab_array[] = array(gettext($category) , $menu_category == $category ? true : false, "pkg_mgr.php?category={$category}");
-			$visible_categories[] = $category;
-			$cm_count++;
-		}
-	}
-
-	$tab_array[] = array(gettext("Other Categories"), $menu_category == "Other" ? true : false, "pkg_mgr.php?category=Other");
-}
-
-if (!$pkg_info || !is_array($pkg_info)):?>
-
-<div class="alert alert-warning">
-	<?=gettext("There are currently no packages available for installation.")?>
-</div>
-<?php else:?>
-
-<div class="panel panel-default" id="search-panel">
-	<div class="panel-heading"><?=gettext('Search')?>
-		<span class="widget-heading-icon pull-right">
-			<a data-toggle="collapse" href="#search-panel_panel-body">
-				<i class="fa fa-plus-circle"></i>
-			</a>
-		</span>
+?>
+<div class="panel panel-default" id="search-panel" style="display: none;">
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
 	</div>
 	<div id="search-panel_panel-body" class="panel-body collapse in">
 		<div class="form-group">
@@ -168,7 +197,7 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
-				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search package names and descriptions.')?></span>
 			</div>
 		</div>
 	</div>
@@ -176,69 +205,20 @@ if (!$pkg_info || !is_array($pkg_info)):?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
-	<div class="panel-body table-responsive">
-		<table id="pkgtable" class="table table-striped table-hover">
-			<thead>
-				<tr>
-					<th><?=gettext("Name")?></th>
-					<th><?=gettext("Version")?></th>
-					<th><?=gettext("Description")?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
+	<div id="pkgtbl" class="panel-body table-responsive">
+		<div id="waitmsg">
+			<?=print_info_box(gettext("Please wait while the list of packages is retrieved and formatted") . '&nbsp;<i class="fa fa-cog fa-spin"></i>')?>
+		</div>
 
-<?php foreach ($pkg_info as $index):
-	if (isset($index['installed'])) {
-		continue;
-	}
-
-	if ($menu_category != "All" && $index['categories'][0] != $menu_category &&
-	    !($menu_category == "Other" && !in_array($index['categories'][0], $visible_categories))) {
-		continue;
-	}
-?>
-				<tr>
-					<td>
-<?php if ($index['www']):?>
-						<a title="<?=gettext("Visit official website")?>" target="_blank" href="<?=htmlspecialchars($index['www'])?>">
-<?php endif;?>
-							<?=htmlspecialchars($index['shortname'])?>
-						</a>
-					</td>
-					<td>
-<?php if (!$g['disablepackagehistory']):?>
-						<a target="_blank" title="<?=gettext("View changelog")?>" href="<?=htmlspecialchars($index['changeloglink'])?>">
-							<?=htmlspecialchars($index['version'])?></a>
-<?php else:?>
-						<?=htmlspecialchars($index['version'])?>
-<?php endif;?>
-					</td>
-					<td>
-						<?=$index['desc']?>
-<?php if (is_array($index['deps']) && count($index['deps'])):?>
-						<br /><br /><?= gettext("Package Dependencies")?>:<ul>
-	<?php foreach ($index['deps'] as $pdep):?>
-						<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>" class="fa fa-globe"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
-	<?php endforeach;?></ul>
-<?php endif;?>
-					</td>
-					<td>
-						<a title="<?=gettext("Click to install")?>" href="pkg_mgr_install.php?id=<?=$index['name']?>" class="btn btn-success btn-sm">install</a>
-<?php if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']):?>
-						<a target="_blank" title="<?=gettext("View more information")?>" href="<?=htmlspecialchars($index['pkginfolink'])?>" class="btn btn-default btn-sm">info</a>
-<?php endif;?>
-					</td>
-				</tr>
-<?php endforeach;?>
-			</tbody>
-		</table>
+		<div id="errmsg" style="display: none;">
+			<?=print_info_box("<ul><li>" . gettext("Error: Unable to retrieve package information.") . "</li></ul>", 'danger')?>
+		</div>
 	</div>
 </div>
-<?php endif;?>
 
 <script type="text/javascript">
 //<![CDATA[
+
 events.push(function() {
 
 	// Initial state & toggle icons of collapsed panel
@@ -301,7 +281,29 @@ events.push(function() {
 	    }
 	});
 
-	$('.temp').hide();
+	// Retrieve the table formatted pacakge information and display it in the "Packages" panel
+	// (Or display an appropriate error message)
+	var ajaxRequest;
+
+	$.ajax({
+		url: "/pkg_mgr.php",
+		type: "post",
+		data: { ajax: "ajax"},
+		success: function(data) {
+			if (data == "error") {
+				$('#waitmsg').hide();
+				$('#errmsg').show();
+			} else {
+				$('#pkgtbl').html(data);
+				$('#search-panel').show();
+			}
+		},
+		error: function() {
+			$('#waitmsg').hide();
+			$('#errmsg').show();
+		}
+	});
+
 });
 //]]>
 </script>

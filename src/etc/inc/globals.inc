@@ -99,7 +99,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "13.5",
+	"latest_config" => "14.2",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -111,7 +111,8 @@ $g = array(
 	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
-	"default_timezone" => "Etc/UTC"
+	"default_timezone" => "Etc/UTC",
+	"language" => "en_US"
 );
 
 /* IP TOS flags */

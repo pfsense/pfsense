@@ -179,10 +179,10 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 						<tr>
 							<th ><?=gettext("IP");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
-							<th ><?=gettext("Proto");?></th>
+							<th ><?=gettext("Protocol");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
-							<th class="text-center"><?=gettext("Src Ports");?></th>
-							<th class="text-center"><?=gettext("Dst Ports");?></th>
+							<th class="text-center"><?=gettext("Source Ports");?></th>
+							<th class="text-center"><?=gettext("Dest. Ports");?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -196,17 +196,17 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 	}
 ?>
 						<tr>
-							<td<?= $rowSpan ?>><?php echo $ip; ?></td>
-							<td<?= $rowSpan ?> class="text-center"><?php echo $ipinfo['seen']; ?></td>
+							<td<?= $rowSpan ?>><?=$ip;?></td>
+							<td<?= $rowSpan ?> class="text-center"><?=$ipinfo['seen'];?></td>
 
 <?php foreach ($ipinfo['protos'] as $proto => $protoinfo): ?>
 <?php if ($protocolCount > 1 && $i > 0): ?>
 							</tr><tr>
 <?php endif; ?>
-							<td><?php echo $proto; ?></td>
-							<td class="text-center" ><?php echo $protoinfo['seen']; ?></td>
-							<td class="text-center" ><span title="<?php echo build_port_info($protoinfo['srcports'], $proto); ?>"><?php echo count($protoinfo['srcports']); ?></span></td>
-							<td class="text-center" ><span title="<?php echo build_port_info($protoinfo['dstports'], $proto); ?>"><?php echo count($protoinfo['dstports']); ?></span></td>
+							<td><?=$proto;?></td>
+							<td class="text-center" ><?=$protoinfo['seen'];?></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['srcports'], $proto);?>"><?=count($protoinfo['srcports']);?></span></td>
+							<td class="text-center" ><span title="<?=build_port_info($protoinfo['dstports'], $proto);?>"><?=count($protoinfo['dstports']);?></span></td>
 <?php $i++; endforeach; ?>
 						</tr>
 <?php endforeach; ?>

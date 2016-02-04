@@ -135,11 +135,7 @@ if ($_POST) {
 
 		if (!$input_errors) {
 			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['l2tp_subnet']);
-			$subnet_start = ip2ulong($_POST['remoteip']);
-			$subnet_end = ip2ulong($_POST['remoteip']) + $_POST['n_l2tp_units'] - 1;
-
-			if ((ip2ulong($_POST['localip']) >= $subnet_start) &&
-			    (ip2ulong($_POST['localip']) <= $subnet_end)) {
+			if (is_inrange_v4($_POST['localip'], $_POST['remoteip'], ip_after($_POST['remoteip'], $_POST['n_l2tp_units'] - 1))) {
 				$input_errors[] = gettext("The specified server address lies in the remote subnet.");
 			}
 			if ($_POST['localip'] == get_interface_ip("lan")) {
@@ -215,7 +211,7 @@ if ($_POST) {
 
 		/* if ajax is calling, give them an update message */
 		if (isAjax()) {
-			print_info_box_np($savemsg);
+			print_info_box($savemsg, 'success');
 		}
 	}
 }
@@ -229,7 +225,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -367,9 +363,12 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 print($form);
-
-print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info');
 ?>
+<div class="infoblock blockopen">
+<?php
+	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info', false);
+?>
+</div>
 
 <script type="text/javascript">
 //<![CDATA[

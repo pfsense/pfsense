@@ -57,7 +57,7 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-system-login/logout
+##|*IDENT=page-system-login-logout
 ##|*NAME=System: Login / Logout / Dashboard
 ##|*DESCR=Allow access to the 'System: Login / Logout' page and Dashboard.
 ##|*MATCH=index.php*
@@ -107,7 +107,8 @@ if ($g['disablecrashreporter'] != true) {
 		}
 
 		if ($x > 0) {
-			$savemsg = "{$g['product_name']} has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information.";
+			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug.  Click <a href='crash_reporter.php'>here</a> for more information."), $g['product_name']);
+			$class = "warning";
 		}
 	}
 }
@@ -119,15 +120,15 @@ $dirhandle = opendir($directory);
 $filename = "";
 
 while (false !== ($filename = readdir($dirhandle))) {
+	if (!stristr($filename, ".inc")) {
+		continue;
+	}
 	$phpincludefiles[] = $filename;
 }
 
 ## Include each widget include file.
 ## These define vars that specify the widget title and title link.
 foreach ($phpincludefiles as $includename) {
-	if (!stristr($includename, ".inc")) {
-		continue;
-	}
 	if (file_exists($directory . $includename)) {
 		include($directory . $includename);
 	}
@@ -139,7 +140,7 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 	// Get the widget title that should be in a var defined in the widget's inc file.
 	$widgettitle = ${$name . '_title'};
 
-	if ((strlen($widgettitle) == 0)) {
+	if (empty(trim($widgettitle))) {
 		// Fall back to constructing a title from the file name of the widget.
 		$widgettitle = ucwords(str_replace('_', ' ', $name));
 	}
@@ -276,7 +277,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 		// Get the widget title that should be in a var defined in the widget's inc file.
 		$widgettitle = ${$file . '_title'};
 
-		if ((strlen($widgettitle) == 0)) {
+		if (empty(trim($widgettitle))) {
 			// Fall back to constructing a title from the file name of the widget.
 			$widgettitle = ucwords(str_replace('_', ' ', $file));
 		}
@@ -299,31 +300,49 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 	}
 }
 
+## Get the configured options for Show/Hide available widgets panel.
+$dashboard_available_widgets_hidden = isset($config['system']['webgui']['dashboardavailablewidgetspanel']) ? false : true;
+
+if ($dashboard_available_widgets_hidden) {
+	$panel_state = 'out';
+	$panel_body_state = 'in';
+} else {
+	$panel_state = 'in';
+	$panel_body_state = 'out';
+}
+
 ## Set Page Title and Include Header
 $pgtitle = array(gettext("Status"), gettext("Dashboard"));
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 
 ?>
 
-<div class="panel panel-default" id="widget-available">
-	<div class="panel-heading"><?=gettext("Available Widgets"); ?>
-		<span class="widget-heading-icon">
-			<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
-				<i class="fa fa-plus-circle"></i>
-			</a>
-		</span>
+<div class="panel panel-default collapse <?=$panel_state?>" id="widget-available">
+	<div class="panel-heading">
+		<h2 class="panel-title"><?=gettext("Available Widgets"); ?>
+			<span class="widget-heading-icon">
+				<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
 	</div>
-	<div id="widget-available_panel-body" class="panel-body collapse out">
+	<div id="widget-available_panel-body" class="panel-body collapse <?=$panel_body_state?>">
 		<div class="content">
 			<div class="row">
 <?php
-foreach ($widgets as $widgetname => $widgetconfig):
+
+// Build the Available Widgets table using a sorted copy of the $widgets array
+$available = $widgets;
+uasort($available, function($a, $b){ return strcasecmp($a['name'], $b['name']); });
+
+foreach ($available as $widgetname => $widgetconfig):
 	if ($widgetconfig['display'] == 'none'):
 ?>
 		<div class="col-sm-3"><a href="#" id="btnadd-<?=$widgetname?>"><i class="fa fa-plus"></i> <?=$widgetconfig['name']?></a></div>
@@ -334,33 +353,9 @@ foreach ($widgets as $widgetname => $widgetconfig):
 	</div>
 </div>
 
-<div class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title"><?=gettext("Welcome to the Dashboard page"); ?>!</h4>
-			</div>
-			<div class="modal-body">
-				<p>
-					<?=gettext("This page allows you to customize the information you want to be displayed!");?>
-					<?=gettext("To get started click the ");?> FIXME <?=gettext(" icon to add widgets.");?><br />
-					<br />
-					<?=gettext("You can move any widget around by clicking and dragging the title.");?>
-				</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default btn-primary" data-dismiss="modal">Close</button>
-			</div>
-		</div>
-	</div>
-</div>
-
 <div class="hidden" id="widgetSequence">
 	<form action="/" method="post" id="widgetSequence_form" name="widgetForm">
 		<input type="hidden" name="sequence" value="" />
-
-		<button type="submit" id="btnstore" class="btn btn-primary">Store widget configuration</button>
 	</form>
 </div>
 
@@ -406,19 +401,21 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 				?>
 					<div class="panel panel-default" id="widget-<?=$widgetname?>">
 					<div class="panel-heading">
-						<?=$wtitle?>
-						<span class="widget-heading-icon">
-							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
-								<i class="fa fa-wrench"></i>
-							</a>
-							<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
-								<!--  actual icon is determined in css based on state of body -->
-								<i class="fa fa-plus-circle"></i>
-							</a>
-							<a data-toggle="close" href="#widget-<?=$widgetname?>">
-								<i class="fa fa-times-circle"></i>
-							</a>
-						</span>
+						<h2 class="panel-title">
+							<?=$wtitle?>
+							<span class="widget-heading-icon">
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-footer" class="config hidden">
+									<i class="fa fa-wrench"></i>
+								</a>
+								<a data-toggle="collapse" href="#widget-<?=$widgetname?>_panel-body">
+									<!--  actual icon is determined in css based on state of body -->
+									<i class="fa fa-plus-circle"></i>
+								</a>
+								<a data-toggle="close" href="#widget-<?=$widgetname?>">
+									<i class="fa fa-times-circle"></i>
+								</a>
+							</span>
+						</h2>
 					</div>
 					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
 						<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
@@ -437,6 +434,8 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 
 <script type="text/javascript">
 //<![CDATA[
+
+dirty = false;
 function updateWidgets(newWidget) {
 	var sequence = '';
 
@@ -457,7 +456,6 @@ function updateWidgets(newWidget) {
 		}
 	}
 
-	$('#widgetSequence').removeClass('hidden');
 	$('input[name=sequence]', $('#widgetSequence_form')).val(sequence);
 }
 
@@ -468,6 +466,8 @@ events.push(function() {
 		$(el).on('click', function(e) {
 			$(el).parents('.panel').remove();
 			updateWidgets();
+			// Submit the form save/display all selected widgets
+			$('[name=widgetForm]').submit();
 		})
 	});
 
@@ -476,7 +476,7 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: updateWidgets
+		update: function(){dirty = true;}
 	});
 
 	// On clicking a widget to install . .
@@ -484,13 +484,27 @@ events.push(function() {
 		// Add the widget name to the list of displayed widgets
 		updateWidgets(this.id.replace('btnadd-', ''));
 
-		// We don't want to see the "Store" button because we are doing that automatically
-		$('#btnstore').hide();
-
 		// Submit the form save/display all selected widgets
 		$('[name=widgetForm]').submit();
 	});
 
+
+	$('.context-links li:last').prev('li').html('<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore"><i class="fa fa-save"></i></a>');
+
+	$('#btnstore').click(function() {
+		updateWidgets();
+		dirty = false;
+		$('[name=widgetForm]').submit();
+	});
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (dirty) {
+			return ("<?=gettext('You have moved one or more widgets but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
+	});
 });
 //]]>
 </script>

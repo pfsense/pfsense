@@ -204,7 +204,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('aliases')) {
-	print_info_box_np(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 display_top_tabs($tab_array);
@@ -212,11 +212,11 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Firewall Aliases') . " " . $bctab?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Firewall Aliases %s'), $bctab)?></h2></div>
 	<div class="panel-body">
 
 <div class="table-responsive">
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 	<thead>
 		<tr>
 			<th><?=gettext("Name")?></th>
@@ -315,7 +315,7 @@ display_top_tabs($tab_array);
 		<?=print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .
 			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info')?>
+			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false)?>
 	</div>
 </div>
 

@@ -70,56 +70,56 @@ $a_laggs = &$config['laggs']['lagg'];
 
 $portlist = get_interface_list();
 $laggprotos	  = array("none", "lacp", "failover", "fec", "loadbalance", "roundrobin");
-$laggprotosuc = array("NONE", "LACP", "FAILOVER", "FEC", "LOADBALANCE", "ROUNDROBIN");
+$laggprotosuc = array(gettext("NONE"), gettext("LACP"), gettext("FAILOVER"), gettext("FEC"), gettext("LOADBALANCE"), gettext("ROUNDROBIN"));
 
 $protohelp =
 '<ul>' .
 	'<li>' .
-		 '<strong>' . gettext($laggprotos[0]) . '</strong><br />' .
-		 gettext('This protocol is intended to do nothing: it disables any ' .
-				 'traffic without disabling the lagg interface itself') .
+		'<strong>' . $laggprotosuc[0] . '</strong><br />' .
+		gettext('This protocol is intended to do nothing: it disables any ' .
+				'traffic without disabling the lagg interface itself') .
 	'</li>' .
 	'<li>' .
-		 '<strong>' . gettext($laggprotos[1]) . '</strong><br />' .
-		 gettext('Supports the IEEE 802.3ad Link Aggregation Control Protocol ' .
-				  '(LACP) and the Marker Protocol.	LACP will negotiate a set ' .
-				  'of aggregable links with the peer in to one or more Link ' .
-				  'Aggregated Groups.  Each LAG is composed of ports of the ' .
-				  'same speed, set to full-duplex operation.  The traffic will ' .
-				  'be balanced across the ports in the LAG with the greatest ' .
-				  'total speed, in most cases there will only be one LAG which ' .
-				  'contains all ports.	In the event of changes in physical ' .
-				  'connectivity, Link Aggregation will quickly converge to a ' .
-				  'new configuration.') .
+		'<strong>' . $laggprotosuc[1] . '</strong><br />' .
+		gettext('Supports the IEEE 802.3ad Link Aggregation Control Protocol ' .
+				'(LACP) and the Marker Protocol.	LACP will negotiate a set ' .
+				'of aggregable links with the peer in to one or more Link ' .
+				'Aggregated Groups.  Each LAG is composed of ports of the ' .
+				'same speed, set to full-duplex operation.  The traffic will ' .
+				'be balanced across the ports in the LAG with the greatest ' .
+				'total speed, in most cases there will only be one LAG which ' .
+				'contains all ports.	In the event of changes in physical ' .
+				'connectivity, Link Aggregation will quickly converge to a ' .
+				'new configuration.') .
 	'</li>' .
 	'<li>' .
-		'<strong>' . gettext($laggprotos[2]) . '</strong><br />' .
+		'<strong>' . $laggprotosuc[2] . '</strong><br />' .
 		gettext('Sends and receives traffic only through the master port.  If ' .
 				'the master port becomes unavailable, the next active port is ' .
 				'used.	The first interface added is the master port; any ' .
 				'interfaces added after that are used as failover devices.') .
 	'</li>' .
 	'<li>' .
-		'<strong>' . gettext($laggprotos[3]) . '</strong><br />' .
+		'<strong>' . $laggprotosuc[3] . '</strong><br />' .
 		gettext('Supports Cisco EtherChannel.  This is a static setup and ' .
-				 'does not negotiate aggregation with the peer or exchange ' .
-				 'frames to monitor the link.') .
+				'does not negotiate aggregation with the peer or exchange ' .
+				'frames to monitor the link.') .
 	'</li>' .
 	'<li>' .
-		 '<strong>' . gettext($laggprotos[4]) . '</strong><br />' .
-		 gettext('Balances outgoing traffic across the active ports based on ' .
-				 'hashed protocol header information and accepts incoming ' .
-				 'traffic from any active port.	 This is a static setup and ' .
-				 'does not negotiate aggregation with the peer or exchange ' .
-				 'frames to monitor the link.  The hash includes the Ethernet ' .
-				 'source and destination address, and, if available, the VLAN ' .
-				 'tag, and the IP source and destination address') .
+		'<strong>' . $laggprotosuc[4] . '</strong><br />' .
+		gettext('Balances outgoing traffic across the active ports based on ' .
+				'hashed protocol header information and accepts incoming ' .
+				'traffic from any active port.	 This is a static setup and ' .
+				'does not negotiate aggregation with the peer or exchange ' .
+				'frames to monitor the link.  The hash includes the Ethernet ' .
+				'source and destination address, and, if available, the VLAN ' .
+				'tag, and the IP source and destination address') .
 	'</li>' .
 	'<li>' .
-		 '<strong>' . gettext($laggprotos[5]) . '</strong><br />' .
-		 gettext('Distributes outgoing traffic using a round-robin scheduler ' .
-				 'through all active ports and accepts incoming traffic from ' .
-				 'any active port') .
+		'<strong>' . $laggprotosuc[5] . '</strong><br />' .
+		gettext('Distributes outgoing traffic using a round-robin scheduler ' .
+				'through all active ports and accepts incoming traffic from ' .
+				'any active port') .
 	'</li>' .
 '</ul>';
 
@@ -174,7 +174,7 @@ if ($_POST) {
 	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $member) {
 			if (!does_interface_exist($member)) {
-				$input_errors[] = gettext("Interface supplied as member is invalid");
+				$input_errors[] = sprintf(gettext("Interface supplied as member (%s) is invalid"), $member);
 			}
 		}
 	} else if (!does_interface_exist($_POST['members'])) {
@@ -221,17 +221,16 @@ if ($_POST) {
 function build_member_list() {
 	global $pconfig, $portlist, $realifchecklist;
 
-	$memberlist = array('list' => array(),
-						'selected' => array());
+	$memberlist = array('list' => array(), 'selected' => array());
 
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (array_key_exists($ifn, $realifchecklist)) {
 			continue;
 		}
 
-		$memberlist['list'][$ifn] = $ifn . '(' . $ifinfo['mac'] . ')';
+		$memberlist['list'][$ifn] = $ifn . ' (' . $ifinfo['mac'] . ')';
 
-		if (stristr($pconfig['members'], $ifn)) {
+		if (in_array($ifn, explode(",", $pconfig['members']))) {
 			array_push($memberlist['selected'], $ifn);
 		}
 	}
@@ -254,7 +253,7 @@ $section = new Form_Section('LAGG Configuration');
 $memberslist = build_member_list();
 
 $section->addInput(new Form_Select(
-	'members[]',
+	'members',
 	'Parent Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],

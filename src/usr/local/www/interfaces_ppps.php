@@ -120,28 +120,31 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-			  <th><?=gettext("Interface"); ?></th>
-			  <th><?=gettext("Interface(s)/Port(s)"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('PPP Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Interface(s)/Port(s)"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 
 $i = 0;
 
 foreach ($a_ppps as $id => $ppp) {
 ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($ppp['if'])?>
-				</td>
-				<td>
+					<tr>
+						<td>
+							<?=htmlspecialchars($ppp['if'])?>
+						</td>
+						<td>
 <?php
 	$portlist = explode(",", $ppp['ports']);
 	foreach ($portlist as $portid => $port) {
@@ -149,31 +152,34 @@ foreach ($a_ppps as $id => $ppp) {
 			$portlist[$portid] = convert_friendly_interface_to_friendly_descr($port);
 		}
 	}
-					echo htmlspecialchars(implode(",", $portlist));
+							echo htmlspecialchars(implode(",", $portlist));
 ?>
-				</td>
-				<td>
-					<?=htmlspecialchars($ppp['descr'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit PPP interface')?>"	href="interfaces_ppps_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete PPP interface')?>"	href="interfaces_ppps.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+						</td>
+						<td>
+							<?=htmlspecialchars($ppp['descr'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit PPP interface')?>"	href="interfaces_ppps_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete PPP interface')?>"	href="interfaces_ppps.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php
 	$i++;
 }
 ?>
-		</tbody>
-	</table>
-
-	<nav class="action-buttons">
-		<a href="interfaces_ppps_edit.php" class="btn btn-success btn-sm">
-	   		<i class="fa fa-plus icon-embed-btn"></i>
-	   		<?=gettext("Add")?>
-	   	</a>
-	</nav>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
+
+<nav class="action-buttons">
+	<a href="interfaces_ppps_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?>
+	</a>
+</nav>
+
 <?php
 include("foot.inc");
 

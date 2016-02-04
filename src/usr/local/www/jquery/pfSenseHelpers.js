@@ -274,10 +274,21 @@ function renumber() {
 	});
 }
 
-function delete_row(row) {
-	$('#' + row).parent('div').parent('div').remove();
+function delete_row(rowDelBtn) {
+	var rowLabel;
+
+	// If we are deleting row zero, we need to save/restore the label
+	if (rowDelBtn == "deleterow0") {
+		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label').text();
+	}
+
+	$('#' + rowDelBtn).parent('div').parent('div').remove();
 	renumber();
 	checkLastRow();
+
+	if (rowDelBtn == "deleterow0") {
+		$('#' + rowDelBtn).parent('div').parent('div').find('label').text(rowLabel);
+	}
 }
 
 function checkLastRow() {
@@ -384,23 +395,35 @@ $('[id^=delete]').click(function(event) {
 		alert('You may not delete the last row!');
 });
 
-// "More information" handlers
+// "More information" handlers --------------------------------------------------------------------
 
 // If there is an infoblock, automatically add an info icon that toggles its display
-if($('.infoblock,.infoblock_open,#infoblock').length != 0) {
-	$('.infoblock,.infoblock_open,#infoblock').before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7;; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo" title="More information"></i>');
 
-	// and remove the 'X' button from the last text box (Which we assume to be the infoblock)
-	$('.close :last').remove();
-}
+var sfx = 0;
 
-// Hide information on page load
-$('.infoblock,#infoblock').hide();
+$('.infoblock').each(function() {
+	// If the block has the class "blockopen" it is initially open
+	if (! $(this).hasClass("blockopen")) {
+		$(this).hide();
+	} else {
+		$(this).removeClass("blockopen");
+	}
+
+	// Add the "i" icon before the infoblock, incrementing the icon id for each block (in case there are multiple infoblocks on a page)
+	$(this).before('<i class="fa fa-info-circle icon-pointer" style="color: #337AB7; font-size:20px; margin-left: 10px; margin-bottom: 10px;" id="showinfo' + sfx.toString() + '" title="More information"></i>');
+	$(this).removeClass("infoblock");
+	$(this).addClass("infoblock" + sfx.toString());
+	sfx++;
+});
 
 // Show the help on clicking the info icon
-$('#showinfo').click(function() {
-	$('.infoblock,.infoblock_open,#infoblock').toggle();
+$('[id^="showinfo"]').click(function() {
+	var id = $(this).attr("id");
+
+	$('.' + "infoblock" + id.substr(8)).toggle();
+	document.getSelection().removeAllRanges();		// Ensure the text is un-selected (Chrome browser quirk)
 });
+// ------------------------------------------------------------------------------------------------
 
 // Put a dummy row into any empty table to keep IE happy
 $('tbody').each(function(){
@@ -442,3 +465,159 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 		}
 	});
 });
+
+	// Separator bar stuff ------------------------------------------------------------------------
+
+	// Globals
+	gColor = 'bg-info';
+	newSeperator = false;
+	saving = false;
+	dirty = false;
+
+	$("#addsep").prop('type' ,'button');
+
+	$("#addsep").click(function() {
+		if (newSeperator) {
+			return(false);
+		}
+
+		gColor = 'bg-info';
+		// Inset a temporary bar in which the user can enter some optional text
+		sepcols = $( "#ruletable tr th" ).length - 2;
+
+		$('#ruletable > tbody:last').append('<tr>' +
+			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
+			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep">' + svtxt + '</button>' +
+			'<button class="btn btn-default btn-sm" id="btncncsep">' + cncltxt + '</button>' +
+			'&nbsp;&nbsp;&nbsp;&nbsp;' +
+			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
+			'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+			'</td></tr>');
+
+		$('#newsep').focus();
+		newSeperator = true;
+
+		$("#btnnewsep").prop('type' ,'button');
+
+		// Watch escape and enter keys
+		$('#newsep').keyup(function(e) {
+			if(e.which == 27) {
+				$('#btncncsep').trigger('click');
+			}
+		});
+
+		$('#newsep').keypress(function(e) {
+			if(e.which == 13) {
+				$('#btnnewsep').trigger('click');
+			}
+		});
+
+		handle_colors();
+
+		// Remove the temporary separator bar and replace it with the final version containing the
+		// user's text and a delete icon
+		$("#btnnewsep").click(function() {
+			var septext = escapeHtml($('#newsep').val());
+			sepcols = $( "#ruletable tr th" ).length - 1;
+
+			$('#ruletable > tbody:last >tr:last').remove();
+			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
+				'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
+				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
+				'</td></tr>');
+
+			$('#order-store').removeAttr('disabled');
+			newSeperator = false;
+			dirty = true;
+		});
+
+		// Cancel button
+		$('#btncncsep').click(function(e) {
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			newSeperator = false;
+		});
+	});
+
+	// Delete a separator row
+	$(function(){
+		$('table').on('click','tr a .sepdel',function(e){
+			e.preventDefault();
+			$(this).parents('tr').remove();
+			$('#order-store').removeAttr('disabled');
+			dirty = true;
+		});
+	});
+
+	// Compose an inout array containing the row #, color and text for each separator
+	function save_separators() {
+		var seprow = 0;
+		var sepinput;
+		var sepnum = 0;
+
+		$('#ruletable > tbody > tr').each(function() {
+			if ($(this).hasClass('separator')) {
+				seprow = $(this).prev('tr').attr("id");
+				if (seprow == undefined) {
+					seprow = "fr-1";
+				}
+
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
+				$('form').append(sepinput);
+				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
+				$('form').append(sepinput);
+				sepnum++;
+			}
+
+			if ($(this).parent('tbody').hasClass('user-entries')) {
+				seprow++;
+			}
+		});
+	}
+
+	function reindex_rules(section) {
+		var row = 0;
+
+		section.find('tr').each(function() {
+			if(this.id) {
+				$(this).attr("id", "fr" + row);
+				row++;
+			}
+		})
+	}
+
+	function handle_colors() {
+		$('[id^=sepclr]').prop("type", "button");
+
+		$('[id^=sepclr]').click(function () {
+			var color =	 $(this).attr('value');
+			// Clear all the color classes
+			$(this).parent('td').prop('class', '');
+			$(this).parent('td').prev('td').prop('class', '');
+			// Install our new color class
+			$(this).parent('td').addClass(color);
+			$(this).parent('td').prev('td').addClass(color);
+			// Set the global color
+			gColor = color;
+		});
+	}
+
+	//JS equivalent to PHP htmlspecialchars()
+	function escapeHtml(text) {
+		var map = {
+			'&': '&amp;',
+			'<': '&lt;',
+			'>': '&gt;',
+			'"': '&quot;',
+			"'": '&#039;'
+		};
+
+		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+	}
+	// --------------------------------------------------------------------------------------------

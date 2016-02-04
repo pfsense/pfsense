@@ -230,7 +230,7 @@ if (is_numeric($_GET['end'])) {
 
 /* this should never happen */
 if ($end < $start) {
-	log_error("start $start is smaller than end $end");
+	log_error(sprintf(gettext("start %d is smaller than end %d"), $start, $end));
 	$end = $now;
 }
 
@@ -297,7 +297,16 @@ $graph_length = array(
 	"year" => 31622400,
 	"fouryear" => 126230400);
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext(ucfirst($curcat)." Graphs"));
+switch ($curcat) {
+	case "vpnusers":
+		$curcattext = gettext("VPN Users");
+		break;
+	default:
+		$curcattext = ucfirst($curcat);
+		break;
+}
+
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext($curcattext . " Graphs"));
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
@@ -563,7 +572,7 @@ $group->add(new Form_Select(
 ))->setHelp('Period');
 
 if ($curcat == 'custom') {
-	$group->setHelp('Any changes to these option may not take affect until the next auto-refresh.');
+	$group->setHelp('Any changes to these options may not take affect until the next auto-refresh.');
 }
 
 $section->add($group);
@@ -598,7 +607,7 @@ if ($curcat == 'custom') {
 	))->setHelp('End');
 
 	if ($curcat != 'custom') {
-		$group->setHelp('Any changes to these option may not take affect until the next auto-refresh');
+		$group->setHelp('Any changes to these options may not take affect until the next auto-refresh');
 	}
 
 	$section->add($group);
@@ -613,7 +622,7 @@ if ($curcat == 'custom') {
 		$id = preg_replace('/\./', '_', $id);
 ?>
 		<div class="panel panel-default">
-			<img align="center" name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+			<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> <?=gettext("Graph");?>" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 		</div>
 <?php
 
@@ -690,8 +699,8 @@ if ($curcat == 'custom') {
 				$start = $dates['start'];
 				$end = $dates['end'];
 ?>
-				<div class="panel panel-default" align="center">
-					<img name="<?=$id?>" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
+				<div class="panel panel-default">
+					<img class="img-responsive center-block" id="<?=$id?>" alt="<?=$prettydb?> Graph" src="status_rrd_graph_img.php?start=<?=$start?>&amp;end=<?=$end?>&amp;database=<?=$curdatabase?>&amp;style=<?=$curstyle?>&amp;graph=<?=$graph?>" />
 				</div>
 <?php
 			}

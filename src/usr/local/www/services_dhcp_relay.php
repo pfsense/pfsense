@@ -156,7 +156,7 @@ $shortcut_section = "dhcp";
 include("head.inc");
 
 if ($dhcpd_enabled) {
-	echo '<div class="alert alert-danger">DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.</div>';
+	echo '<div class="alert alert-danger">' . gettext("DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.") . '</div>';
 	include("foot.inc");
 	exit;
 }

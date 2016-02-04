@@ -94,16 +94,16 @@ if ($_POST) {
 
 	foreach ($ipsec_log_cats as $cat => $desc) {
 		if (!in_array(intval($pconfig[$cat]), array_keys($ipsec_log_sevs), true)) {
-			$input_errors[] = "A valid value must be specified for {$desc} debug.";
+			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
 		}
 	}
 
 	if (isset($pconfig['maxmss'])) {
 		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] != '') {
-			$input_errors[] = "An integer must be specified for Maximum MSS.";
+			$input_errors[] = gettext("An integer must be specified for Maximum MSS.");
 		}
 		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535) {
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";
+			$input_errors[] = gettext("An integer between 576 and 65535 must be specified for Maximum MSS");
 		}
 	}
 
@@ -210,8 +210,10 @@ if ($_POST) {
 		$retval = filter_configure();
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message(gettext($retval));
+			$class = 'success';
 		} else {
 			$savemsg = gettext($retval);
+			$class = 'warning';
 		}
 
 		vpn_ipsec_configure($needsrestart);
@@ -242,9 +244,9 @@ include("head.inc");
 
 function maxmss_checked(obj) {
 	if (obj.checked) {
-		jQuery('#maxmss').attr('disabled', false);
+		$('#maxmss').attr('disabled', false);
 	} else {
-		jQuery('#maxmss').attr('disabled', 'true');
+		$('#maxmss').attr('disabled', 'true');
 	}
 }
 
@@ -253,7 +255,7 @@ function maxmss_checked(obj) {
 
 <?php
 if ($savemsg) {
-	print_info_box($savemsg);
+	print_info_box($savemsg, $class);
 }
 
 if ($input_errors) {
@@ -357,10 +359,10 @@ $section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'unityplugin',
-	'Disable Cisco Extensions',
-	'Disable Unity Plugin',
+	'Enable Cisco Extensions',
+	'Enable Unity Plugin',
 	$pconfig['unityplugin']
-))->setHelp('Disable Unity Plugin which provides Cisco Extension support as Split-Include, Split-Exclude, Split-Dns, ...');
+))->setHelp('Enable Unity Plugin which provides Cisco Extension support such as Split-Include, Split-Exclude and Split-Dns.');
 
 $section->addInput(new Form_Checkbox(
 	'strictcrlpolicy',

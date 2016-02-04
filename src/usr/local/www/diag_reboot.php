@@ -79,7 +79,7 @@ include("head.inc");
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DEBUG) {
-	   print_info_box("Not actually rebooting (DEBUG is set true)", 'success');
+	   print_info_box(gettext("Not actually rebooting (DEBUG is set true)"), 'success');
 	} else {
 		print('<div><pre>');
 		system_reboot();
@@ -94,7 +94,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 //<![CDATA[
 events.push(function() {
 
-	var timeoutmsg = '<h4>Rebooting<br />Page will automatically reload in ';
 	var time = 0;
 
 	function checkonline() {
@@ -109,12 +108,17 @@ events.push(function() {
 
 	function startCountdown() {
 		setInterval(function() {
+			if (time == "<?=$guitimeout?>") {
+				$('#countdown').html('<h4><?=sprintf(gettext("Rebooting%sPage will automatically reload in %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+			}
+
 			if (time > 0) {
-				$('#countdown').html(timeoutmsg + time + ' seconds.</h4>');
+				$('#secs').html(time);
 				time--;
 			} else {
 				time = "<?=$guiretry?>";
-				timeoutmsg = '<h4>Not yet ready<br />Retrying in another ';
+				$('#countdown').html('<h4><?=sprintf(gettext("Not yet ready%s Retrying in another %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+				$('#secs').html(time);
 				checkonline();
 			}
 		}, 1000);
@@ -132,13 +136,15 @@ events.push(function() {
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">Are you sure you want to reboot the system?</h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title"><?=gettext('Are you sure you want to reboot the system?')?></h2>
+	</div>
 	<div class="panel-body">
 		<div class="content">
-			<p>Click "Reboot" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)</p>
+			<p><?=gettext('Click "Reboot" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)')?></p>
 			<form action="diag_reboot.php" method="post">
-				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="Reboot">
-				<a href="/" class="btn btn-default">No</a>
+				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>">
+				<a href="/" class="btn btn-default"><?=gettext("No")?></a>
 			</form>
 		</div>
 	</div>
@@ -149,5 +155,3 @@ events.push(function() {
 }
 
 include("foot.inc");
-
-

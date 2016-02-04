@@ -263,20 +263,22 @@ if ($_POST) {
 	$do_tcpdump = false;
 }
 
+$excl = gettext("Exclude");
+
 $protocollist = array(
 	'' => 'Any',
 	'icmp' => 'ICMP',
-	'!icmp' => 'Exclude ICMP',
+	'!icmp' => $excl . ' ICMP',
 	'icmp6' => 'ICMPv6',
-	'!icmp6' => 'Exclude ICMPv6',
+	'!icmp6' => $excl . ' ICMPv6',
 	'tcp' => 'TCP',
-	'!tcp' => 'Exclude TCP',
+	'!tcp' => $excl . ' TCP',
 	'udp' => 'UDP',
-	'!udp' => 'Exclude UDP',
+	'!udp' => $excl . ' UDP',
 	'arp' => 'ARP',
-	'!arp' => 'Exclude ARP',
-	'carp' => 'CARP (VRRP)',
-	'!carp' => 'Exclude CARP (VRRP)',
+	'!arp' => $excl . ' ARP',
+	'carp' => 'CARP',
+	'!carp' => $excl . ' CARP',
 	'esp' => 'ESP'
 );
 
@@ -311,8 +313,8 @@ $section->addInput(new Form_Select(
 	'Address Family',
 	$fam,
 	array('' => 'Any',
-		  'ip' => 'IPv4 Only',
-		  'ip6' => 'IPv6 Only'
+		  'ip' => gettext('IPv4 Only'),
+		  'ip6' => gettext('IPv6 Only')
 	)
 ))->setHelp('Select the type of traffic to be captured');
 
@@ -361,10 +363,10 @@ $section->addInput(new Form_Select(
 	'detail',
 	'Level of detail',
 	$detail,
-	array('normal' => 'Normal',
-		  'medium' => 'Medium',
-		  'high' => 'High',
-		  'full' => 'Full',
+	array('normal' => gettext('Normal'),
+		  'medium' => gettext('Medium'),
+		  'high' => gettext('High'),
+		  'full' => gettext('Full'),
 	)
 ))->setHelp('This is the level of detail that will be displayed after hitting "Stop" when the packets have been captured.' . '<br />' .
 			'This option does not affect the level of detail when downloading the packet capture. ');
@@ -472,6 +474,11 @@ if ($do_tcpdump) :
 	<div class="panel-body">
 		<div class="form-group">
 <?php
+		if ($proto == "carp") {
+			$iscarp = "-T carp";
+		} else {
+			$iscarp = "";
+		}
 		$detail_args = "";
 		switch ($detail) {
 			case "full":
@@ -490,7 +497,7 @@ if ($do_tcpdump) :
 		}
 
 		print('<textarea class="form-control" rows="20" style="font-size: 13px; font-family: consolas,monaco,roboto mono,liberation mono,courier;">');
-		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} -r {$fp}{$fn}");
+		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
 		print('</textarea>');
 
 		conf_mount_ro();

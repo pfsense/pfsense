@@ -123,7 +123,7 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 if ($act == "del") {
 	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
-		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name) . "<br />";
+		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted"), $name);
 	} else {
 		foreach ($a_crl as $cid => $acrl) {
 			if ($acrl['refid'] == $thiscrl['refid']) {
@@ -131,7 +131,7 @@ if ($act == "del") {
 			}
 		}
 		write_config("Deleted CRL {$name}.");
-		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name) . "<br />";
+		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted"), $name);
 	}
 }
 
@@ -212,13 +212,13 @@ if ($act == "delcert") {
 	$certname = htmlspecialchars($thiscert['descr']);
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
+		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname);
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
-		write_config(sprintf(gettext("Deleted Certificate %s from CRL %s"), $certname, $crlname));
+		write_config($savemsg);
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $certname, $crlname) . "<br />";
+		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s"), $certname, $crlname);
 	}
 	$act="edit";
 }

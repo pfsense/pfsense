@@ -90,9 +90,9 @@ if (!$nentries) {
 <table class="table">
 <thead>
 	<tr>
-		<th>Server</th>
-		<th>Pool</th>
-		<th>Description</th>
+		<th><?=gettext('Server')?></th>
+		<th><?=gettext('Pool')?></th>
+		<th><?=gettext('Description')?></th>
 	</tr>
 </thead>
 <tbody>
@@ -102,15 +102,15 @@ if (!$nentries) {
 		switch (trim($rdr_a[$vsent['name']]['status'])) {
 			case 'active':
 				$bgcolor = "success";
-				$rdr_a[$vsent['name']]['status'] = "Active";
+				$rdr_a[$vsent['name']]['status'] = gettext("Active");
 				break;
 			case 'down':
 				$bgcolor = "danger";
-				$rdr_a[$vsent['name']]['status'] = "Down";
+				$rdr_a[$vsent['name']]['status'] = gettext("Down");
 				break;
 			default:
 				$bgcolor = "info";
-				$rdr_a[$vsent['name']]['status'] = 'Unknown - relayd not running?';
+				$rdr_a[$vsent['name']]['status'] = gettext('Unknown - relayd not running?');
 		}
 		?>
 		<td>

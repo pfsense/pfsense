@@ -92,7 +92,7 @@ $periods = array("absolute" => gettext("Absolute Timespans"),
 if ($_POST['ResetRRD']) {
 	mwexec('/bin/rm /var/db/rrd/*');
 	enable_rrd_graphing();
-	$savemsg = "RRD data has been cleared. New RRD files have been generated.";
+	$savemsg = gettext("RRD data has been cleared. New RRD files have been generated.");
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;

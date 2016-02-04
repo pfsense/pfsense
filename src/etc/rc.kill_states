@@ -85,7 +85,7 @@ if (!empty($local_ip)) {
 	}
 }
 
-if (!isset($config['system']['kill_states'])) {
+if (isset($config['system']['gw_down_kill_states'])) {
 	if (!empty($local_ip)) {
 		log_error("rc.kill_states: Removing states for IP {$local_ip}/{$subnet_bits}");
 		$nat_states = exec_command("/sbin/pfctl -i {$interface} -ss | " .

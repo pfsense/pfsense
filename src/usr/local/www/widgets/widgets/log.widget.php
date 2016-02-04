@@ -63,8 +63,12 @@ require_once("functions.inc");
 /* In an effort to reduce duplicate code, many shared functions have been moved here. */
 require_once("filter_log.inc");
 
-if (is_numeric($_POST['filterlogentries'])) {
-	$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+if ($_POST) {
+	if (is_numeric($_POST['filterlogentries'])) {
+		$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+	} else {
+		unset($config['widgets']['filterlogentries']);
+	}
 
 	$acts = array();
 	if ($_POST['actpass']) {
@@ -90,7 +94,13 @@ if (is_numeric($_POST['filterlogentries'])) {
 		unset($config['widgets']['filterlogentriesinterfaces']);
 	}
 
-	write_config("Saved Filter Log Entries via Dashboard");
+	if (is_numeric($_POST['filterlogentriesinterval'])) {
+		$config['widgets']['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
+	} else {
+		unset($config['widgets']['filterlogentriesinterval']);
+	}
+
+	write_config(gettext("Saved Filter Log Entries via Dashboard"));
 	Header("Location: /");
 	exit(0);
 }
@@ -106,20 +116,11 @@ $filterfieldsarray = array(
 	"interface" => $nentriesinterfaces
 );
 
+$nentriesinterval = isset($config['widgets']['filterlogentriesinterval']) ? $config['widgets']['filterlogentriesinterval'] : 60;
+
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
-/* AJAX related routines */
-if (isset($_POST['lastsawtime'])) {
-	$filterlog = conv_log_filter($filter_logfile, $nentries, $nentries + 20);
-
-	foreach ($filterlog as $idx => $row) {
-		if (strtotime($log_row['time']) <= $_POST['lastsawtime']) {
-			unset($filterlog[$idx]);
-		}
-	}
-} else {
-	$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
-}
+$filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray);
 ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -168,7 +169,7 @@ if (isset($_POST['lastsawtime'])) {
 		<tr>
 			<td><a href="#" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?php echo "{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"
 			role="button" data-toggle="popover" data-trigger="hover"
-				data-title="Rule that triggered this action"
+				data-title="<?=gettext("Rule that triggered this action")?>"
 				data-content="<?=htmlspecialchars($rule)?>"> <i
 					class="fa fa-<?=$iconfn?>"></i>
 			</a></td>
@@ -178,12 +179,24 @@ if (isset($_POST['lastsawtime'])) {
 				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$srcIP?></a>
 			</td>
 			<td><a href="diag_dns.php?host=<?=$filterent['dstip']?>"
-				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a>:<?=htmlspecialchars($filterent['dstport'])?>
+				title="<?=gettext("Reverse Resolve with DNS");?>"><?=$dstIP?></a><?php
+				if ($filterent['dstport']) {
+					print ':' . htmlspecialchars($filterent['dstport']);
+				}
+				?>
 			</td>
 		</tr>
 	<?php
 	endforeach;
 	?>
+<?php
+	if (count($filterlog) == 0) {
+		print '<tr class="text-nowrap"><td colspan=5 class="text-center">';
+		print gettext('No logs to display');
+		print '</td></tr>';
+	}
+?>
+
 	</tbody>
 </table>
 
@@ -214,7 +227,7 @@ function logWidgetUpdateFromServer(){
 }
 
 events.push(function(){
-	setInterval('logWidgetUpdateFromServer()', 60*1000);
+	setInterval('logWidgetUpdateFromServer()', <?=$nentriesinterval?>*1000);
 });
 //]]>
 </script>
@@ -223,46 +236,65 @@ events.push(function(){
 </div>
 <div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
+<?php
+$pconfig['nentries'] = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : '';
+$pconfig['nentriesinterval'] = isset($config['widgets']['filterlogentriesinterval']) ? $config['widgets']['filterlogentriesinterval'] : '';
+?>
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">
 		<div class="form-group">
-			<label for="filterlogentries" class="col-sm-4 control-label">Number
-				of entries</label>
+			<label for="filterlogentries" class="col-sm-4 control-label"><?=gettext('Number of entries')?></label>
 			<div class="col-sm-6">
-				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$nentries?>"
+				<input type="number" name="filterlogentries" id="filterlogentries" value="<?=$pconfig['nentries']?>" placeholder="5"
 					min="1" max="20" class="form-control" />
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-4 control-label">Filter actions</label>
+			<label class="col-sm-4 control-label"><?=gettext('Filter actions')?></label>
 			<div class="col-sm-6 checkbox">
 			<?php $include_acts = explode(" ", strtolower($nentriesacts)); ?>
 			<label><input name="actpass" type="checkbox" value="Pass"
-					<?=(in_array('pass', $include_acts) ? 'checked':'')?> />Pass</label>
-				<label><input name="actblock" type="checkbox" value="Block"
-					<?=(in_array('block', $include_acts) ? 'checked':'')?> />Block</label>
-				<label><input name="actreject" type="checkbox" value="Reject"
-					<?=(in_array('reject', $include_acts) ? 'checked':'')?> />Reject</label>
+				<?=(in_array('pass', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Pass')?>
+			</label>
+			<label><input name="actblock" type="checkbox" value="Block"
+				<?=(in_array('block', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Block')?>
+			</label>
+			<label><input name="actreject" type="checkbox" value="Reject"
+				<?=(in_array('reject', $include_acts) ? 'checked':'')?> />
+				<?=gettext('Reject')?>
+			</label>
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label for="filterlogentriesinterfaces"
-				class="col-sm-4 control-label">Filter interface</label>
+			<label for="filterlogentriesinterfaces" class="col-sm-4 control-label">
+				<?=gettext('Filter interface')?>
+			</label>
 			<div class="col-sm-6 checkbox">
 				<select name="filterlogentriesinterfaces" id="filterlogentriesinterfaces" class="form-control">
 			<?php foreach (array("All" => "ALL") + get_configured_interface_with_descr() as $iface => $ifacename):?>
 				<option value="<?=$iface?>"
 						<?=($nentriesinterfaces==$iface?'selected':'')?>><?=htmlspecialchars($ifacename)?></option>
 			<?php endforeach;?>
-			</select>
+				</select>
 			</div>
 		</div>
 
 		<div class="form-group">
+			<label for="filterlogentriesinterval" class="col-sm-4 control-label"><?=gettext('Update interval')?></label>
+			<div class="col-sm-4">
+				<input type="number" name="filterlogentriesinterval" id="filterlogentriesinterval" value="<?=$pconfig['nentriesinterval']?>" placeholder="60"
+					min="1" class="form-control" />
+			</div>
+			<?=gettext('Seconds');?>
+		</div>
+
+		<div class="form-group">
 			<div class="col-sm-offset-4 col-sm-6">
-				<button type="submit" class="btn btn-default">Save</button>
+				<button type="submit" class="btn btn-default"><?=gettext('Save')?></button>
 			</div>
 		</div>
 	</form>

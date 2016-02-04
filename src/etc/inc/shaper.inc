@@ -3134,22 +3134,21 @@ class fairq_queue extends priq_queue {
 
 		$section->add($group);
 
+		$section->addInput(new Form_Input(
+			'buckets',
+			'Scheduler specific options',
+			'text',
+			$this->GetBuckets()
+		))->setHelp('Number of buckets available');
 
-		$form .= "<tr><td class=\"vncellreq\">" . gettext("Scheduler specific options") . "</td>";
-		$form .= "<td class=\"vtable\"><table><tr><td>";
-		$form .= "<input id=\"buckets\" name=\"buckets\" value=\"";
-		$tmpvalue = trim($this->GetBuckets());
-		if (!empty($tmpvalue)) {
-			$form .= $this->GetBuckets();
-		}
-		$form .= "\" /> " . gettext("Number of buckets available.") . "<br /></td></tr>";
-		$form .= "<tr><td class=\"vtable\"><input id=\"hogs\" name=\"hogs\" value=\"";
-		$tmpvalue = trim($this->GetHogs());
-		if (!empty($tmpvalue)) {
-			$form .= $this->GetHogs();
-		}
-		$form .= "\" /> " . gettext("Bandwidth limit for hosts to not saturate link.") . "<br /></td></tr>";
-		$form .= "</table></td></tr>";
+		$section->addInput(new Form_Input(
+			'hogs',
+			'',
+			'text',
+			$this->GetHogs()
+			))->setHelp('Bandwidth limit for hosts to not saturate link');
+
+		$form->add($section);
 		return $form;
 	}
 
@@ -3820,7 +3819,7 @@ EOD;
 				$form .= '<td class="col-xs-4">';
 				$form .= "<select id=\"bwtype{$bwidx}\" name=\"bwtype{$bwidx}\" class=\"form-control\">";
 
-				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "Gb" => "Gbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
+				foreach (array("Kb" => "Kbit/s", "Mb" => "Mbit/s", "b" => "Bit/s") as $bwsidx => $bwscale) {
 					$form .= "<option value=\"{$bwsidx}\"";
 
 					if ($bw['bwscale'] == $bwsidx) {
@@ -3847,13 +3846,13 @@ EOD;
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td>';
-				$form .= '<a type="button" class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
+				$form .= '<a class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
 				$form .= "</td></tr>";
 			}
 		}
 		$form .= "</tbody></table></div><br />";
 
-		$form .= '<a type="button" class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
+		$form .= '<a class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
 		$form .= gettext("Add another schedule") . "</a>";
 
 		return($form);
@@ -3934,7 +3933,7 @@ EOD;
 			'mask',
 			'Mask',
 			$mask['type'],
-			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')
+			array('none' => gettext('None'), 'srcaddress' => gettext('Source addresses'), 'dstaddress' => gettext('Destination addresses'))
 		))->setHelp('If "source" or "destination" slots is chosen a dynamic pipe with the bandwidth, delay, packet loss ' .
 					'and queue size given above will be created for each source/destination IP address encountered, respectively. ' .
 					'This makes it possible to easily specify bandwidth limits per host.');
@@ -3953,7 +3952,7 @@ EOD;
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<font face="consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</font>');
+		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4238,7 +4237,7 @@ class dnqueue_class extends dummynet_class {
 			'mask',
 			'Mask',
 			$mask['type'],
-			array('none' => 'None', 'srcaddress' => 'Source addresses', 'dstaddress' => 'Destination addresses')
+			array('none' => gettext('None'), 'srcaddress' => gettext('Source addresses'), 'dstaddress' => gettext('Destination addresses'))
 		))->setHelp('If "source" or "destination" slots is chosen a dynamic pipe with the bandwidth, delay, packet loss ' .
 					'and queue size given above will be created for each source/destination IP address encountered, respectively. ' .
 					'This makes it possible to easily specify bandwidth limits per host.');
@@ -4257,7 +4256,7 @@ class dnqueue_class extends dummynet_class {
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<font face="consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</font>');
+		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 

@@ -115,7 +115,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('ipsec')) {
-	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 ?>
 
@@ -131,75 +131,72 @@ if (is_subsystem_dirty('ipsec')) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pre-Shared Keys')?></h2></div>
 	<div class="panel-body">
-
-<div class="table-responsive">
-	<table class="table table-striped table-hover">
-		<thead>
-			<tr>
-				<th><?=gettext("Identifier"); ?></th>
-				<th><?=gettext("Type"); ?></th>
-				<th><?=gettext("Pre-Shared Key"); ?></th>
-				<th></th>
-			</tr>
-		</thead>
-
-		<tbody>
+		<div class="table-responsive">
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th><?=gettext("Identifier"); ?></th>
+						<th><?=gettext("Type"); ?></th>
+						<th><?=gettext("Pre-Shared Key"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php $i = 0; foreach ($userkeys as $secretent): ?>
-			<tr>
-				<td>
-					<?php
-					if ($secretent['ident'] == 'allusers') {
-						echo gettext("ANY USER");
-					} else {
-						echo htmlspecialchars($secretent['ident']);
-					}
-					?>
-				</td>
-				<td>
-					<?php
-					if (empty($secretent['type'])) {
-						echo 'PSK';
-					} else {
-						echo htmlspecialchars($secretent['type']);
-					}
-					?>
-				</td>
-				<td>
-					<?=htmlspecialchars($secretent['pre-shared-key'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?php
+							if ($secretent['ident'] == 'allusers') {
+								echo gettext("ANY USER");
+							} else {
+								echo htmlspecialchars($secretent['ident']);
+							}
+							?>
+						</td>
+						<td>
+							<?php
+							if (empty($secretent['type'])) {
+								echo 'PSK';
+							} else {
+								echo htmlspecialchars($secretent['type']);
+							}
+							?>
+						</td>
+						<td>
+							<?=htmlspecialchars($secretent['pre-shared-key'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit user')?>"	href="system_usermanager.php?act=edit&amp;userid=<?=$secretent['id']?>"></a>
+						</td>
+					</tr>
 <?php $i++; endforeach; ?>
 
 <?php $i = 0; foreach ($a_secret as $secretent): ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($secretent['ident'])?>
-				</td>
-				<td>
-					<?php
-					if (empty($secretent['type'])) {
-						echo 'PSK';
-					} else {
-						echo htmlspecialchars($secretent['type']);
-					}
-					?>
-				</td>
-				<td>
-					<?=htmlspecialchars($secretent['pre-shared-key'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit key')?>" href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars($secretent['ident'])?>
+						</td>
+						<td>
+							<?php
+							if (empty($secretent['type'])) {
+								echo 'PSK';
+							} else {
+								echo htmlspecialchars($secretent['type']);
+							}
+							?>
+						</td>
+						<td>
+							<?=htmlspecialchars($secretent['pre-shared-key'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit key')?>" href="vpn_ipsec_keys_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete key')?>" href="vpn_ipsec_keys.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php $i++; endforeach; ?>
-		</tbody>
-	</table>
-</div>
-
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 

@@ -117,6 +117,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
 	$pconfig['attribute'] = $a_gateways[$id]['attribute'];
@@ -255,6 +256,9 @@ if ($_POST) {
 	}
 	if (($_POST['monitor'] != "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
 		$input_errors[] = gettext("A valid monitor IP address must be specified.");
+	}
+	if (isset($_POST['data_payload']) && is_numeric($_POST['data_payload']) && $_POST['data_payload'] < 0) {
+		$input_errors[] = gettext("A valid data payload must be specified.");
 	}
 	/* only allow correct IPv4 and IPv6 gateway addresses */
 	if (($_POST['gateway'] <> "") && is_ipaddr($_POST['gateway']) && $_POST['gateway'] != "dynamic") {
@@ -533,6 +537,9 @@ if ($_POST) {
 		if (is_ipaddr($_POST['monitor'])) {
 			$gateway['monitor'] = $_POST['monitor'];
 		}
+		if (isset($_POST['data_payload']) && $_POST['data_payload'] > 0) {
+			$gateway['data_payload'] = $_POST['data_payload'];
+		}
 
 		/* NOTE: If gateway ip is changed need to cleanup the old static interface route */
 		if ($_POST['monitor'] != "dynamic" && !empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
@@ -762,7 +769,7 @@ $section->addInput(new Form_Input(
 // If any of the advanced options are non-default, we will not show the "Advanced" button
 // and will display the advanced section
 if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
-    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) ||
+    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
     (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
     (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
     (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
@@ -801,6 +808,14 @@ $section->addInput(new Form_Select(
 	$pconfig['weight'],
 	array_combine(range(1, 5), range(1, 5))
 ))->setHelp('Weight for this gateway when used in a Gateway Group.');
+
+$section->addInput(new Form_Input(
+	'data_payload',
+	'Data Payload',
+	'number',
+	$pconfig['data_payload'],
+	['placeholder' => $dpinger_default['data_payload']]
+))->setHelp('Define data payload to send on ICMP packets to gateway monitor IP.');
 
 $group = new Form_Group('Latency thresholds');
 $group->add(new Form_Input(

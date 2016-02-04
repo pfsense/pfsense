@@ -64,7 +64,8 @@ function return_dpinger_defaults() {
 		"interval" => "250",
 		"loss_interval" => "1250",
 		"time_period" => "30000",
-		"alert_interval" => "1000");
+		"alert_interval" => "1000",
+		"data_payload" => "0");
 }
 
 function running_dpinger_processes() {
@@ -140,6 +141,12 @@ function start_dpinger($gateway) {
 	$params .= "-p {$pidfile} ";		/* PID filename */
 	$params .= "-u {$socket} ";		/* Status Socket */
 	$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+
+	$params .= "-d " .
+	    (isset($gateway['data_payload']) && is_numeric($gateway['data_payload'])
+	    ? $gateway['data_payload']
+	    : $dpinger_defaults['data_payload']
+	    ) . " ";
 
 	$params .= "-s " .
 	    (isset($gateway['interval']) && is_numeric($gateway['interval'])

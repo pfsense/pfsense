@@ -242,7 +242,7 @@ if (!empty($cpzone)): ?>
 	   endif;
 ?>
 				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>" class="btn btn-xs brn-danger"><?=gettext("Disconnect")?></a>
+					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>" class="btn btn-xs btn-danger"><?=gettext("Disconnect")?></a>
 				</td>
 			</tr>
 <?php

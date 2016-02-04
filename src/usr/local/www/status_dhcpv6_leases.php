@@ -530,8 +530,8 @@ foreach ($leases as $data):
 					<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcpv6_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <?php endif; ?>
 				</td>
-<?php endforeach; ?>
 			</tr>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>
@@ -608,8 +608,8 @@ foreach ($prefixes as $data):
 				<td>n/a</td>
 <?php endif; ?>
 				<td><?=$data['act']?></td>
-<?php endforeach; ?>
 			</tr>
+<?php endforeach; ?>
 		</tbody>
 		</table>
 	</div>

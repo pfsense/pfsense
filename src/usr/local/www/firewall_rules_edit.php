@@ -309,6 +309,7 @@ $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
+
 	unset($input_errors);
 
 	if (isset($a_filter[$id]['associated-rule-id'])) {
@@ -913,7 +914,7 @@ if ($_POST) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
 				// Update the separators
-				$a_separators = &$config['filter']['separator'][$if];
+				$a_separators = &$config['filter']['separator'][strtolower($if)];
 
 				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);

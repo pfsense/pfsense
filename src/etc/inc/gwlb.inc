@@ -475,8 +475,8 @@ function return_gateways_status($byname = false) {
 			$status[$target]['monitorip'] = $tgtip;
 			$status[$target]['srcip'] = $srcip;
 			$status[$target]['name'] = $gwitem['name'];
-			$status[$target]['delay'] = "0.0ms";
-			$status[$target]['loss'] = "0.0%";
+			$status[$target]['delay'] = "";
+			$status[$target]['loss'] = "";
 			$status[$target]['status'] = "none";
 		}
 	}

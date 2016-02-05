@@ -806,7 +806,7 @@ $section->addInput(new Form_Select(
 	'weight',
 	'Weight',
 	$pconfig['weight'],
-	array_combine(range(1, 5), range(1, 5))
+	array_combine(range(1, 30), range(1, 30))
 ))->setHelp('Weight for this gateway when used in a Gateway Group.');
 
 $section->addInput(new Form_Input(

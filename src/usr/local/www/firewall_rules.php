@@ -221,7 +221,7 @@ if ($_GET['act'] == "del") {
 		unset($a_filter[$_GET['id']]);
 
 		// Update the separators
-		$a_separators = &$config['filter']['separator'][$if];
+		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
 		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
@@ -249,7 +249,7 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['filter']['separator'][$if];
+		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);

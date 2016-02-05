@@ -971,6 +971,20 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	}
 	if ($gifif) {
 		interfaces_bring_up($gifif);
+		$gifmtu = "";
+		$currentgifmtu = get_interface_mtu($gifif);
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $gifif) {
+				if (isset($tmpinterface['mtu']) && is_numericint($tmpinterface['mtu'])) {
+					$gifmtu = $tmpinterface['mtu'];
+				}
+			}
+		}
+		if (is_numericint($gifmtu)) {
+			if ($gifmtu != $currentgifmtu) {
+				mwexec("/sbin/ifconfig {$gifif} mtu {$gifmtu}");
+			}
+		}
 	} else {
 		log_error(gettext("could not bring gifif up -- variable not defined"));
 	}

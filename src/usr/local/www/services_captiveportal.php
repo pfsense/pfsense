@@ -93,7 +93,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("Configuration"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Configuration"));
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
@@ -919,22 +919,33 @@ $group = new Form_Group('Accounting updates');
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'No Accounting updates',
-	!$pconfig['reauthenticateacct']
+	'No updates',
+	$pconfig['reauthenticateacct'] == "",
+	""
 ))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'Stop/start Accounting',
-	$pconfig['reauthenticateacct'] == 'stopstart'
+	'Stop/Start',
+	$pconfig['reauthenticateacct'] == 'stopstart',
+	"stopstart"
 ))->displayasRadio();
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
 	null,
-	'Interim update',
-	$pconfig['reauthenticateacct'] == 'interimupdate'
+	'Stop/Start (FreeRADIUS)',
+	$pconfig['reauthenticateacct'] == 'stopstartfreeradius',
+	"stopstartfreeradius"
+))->displayasRadio();
+
+$group->add(new Form_Checkbox(
+	'reauthenticateacct',
+	null,
+	'Interim',
+	$pconfig['reauthenticateacct'] == 'interimupdate',
+	"interimupdate"
 ))->displayasRadio();
 
 $section->add($group);
@@ -985,7 +996,7 @@ $section->addInput(new Form_Select(
 	'radiusvendor',
 	'Type',
 	$pconfig['radiusvendor'],
-	['default' => 'default', 'cisco' => 'cisco']
+	['default' => gettext('default'), 'cisco' => 'cisco']
 ))->setHelp('If RADIUS type is set to Cisco, in Access-Requests the value of Calling-Station-ID will be set to the client\'s IP address and the ' .
 			'Called-Station-Id to the client\'s MAC address. Default behavior is Calling-Station-Id = client\'s MAC address and ' .
 			'Called-Station-ID = pfSense\'s WAN IP address.');
@@ -1009,7 +1020,7 @@ $section->addInput(new Form_Select(
 	'radmac_format',
 	'MAC address format',
 	$pconfig['radmac_format'],
-	['default' => 'Default', 'singledash' => 'Single dash', 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => 'Unformatted']
+	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
 ))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if you also need to change the username format for ' .
 			'RADIUS MAC authentication.' . '<br />' .
 			'Default: 00:11:22:33:44:55' . '<br />' .
@@ -1083,10 +1094,10 @@ list($host) = explode(":", $_SERVER['HTTP_HOST']);
 $zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;
 if ($pconfig['httpslogin_enable']) {
 	$port = $pconfig['listenporthttps'] ? $pconfig['listenporthttps'] : ($zoneid + 8001);
-	$href = "https://{$host}:{$port}";
+	$href = "https://{$host}:{$port}/?zone={$cpzone}";
 } else {
 	$port = $pconfig['listenporthttp'] ? $pconfig['listenporthttp'] : ($zoneid + 8000);
-	$href = "http://{$host}:{$port}";
+	$href = "http://{$host}:{$port}/?zone={$cpzone}";
 }
 
 if ($pconfig['page']['htmltext']) {
@@ -1122,7 +1133,7 @@ if ($pconfig['page']['errtext']) {
 	$section->addInput(new Form_Button(
 		'btnview',
 		'View current page',
-		'?zone=' . $cpzone . '&amp;act=viewerrhtml'
+		'?zone=' . $cpzone . '&act=viewerrhtml'
 	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
 
 	$section->addInput(new Form_Button(

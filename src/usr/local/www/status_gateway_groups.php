@@ -95,24 +95,23 @@ display_top_tabs($tab_array);
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateway Groups')?></h2></div>
 	<div class="panel-body">
-
-<div class="table-responsive">
-	<table class="table table-hover table-condensed table-striped">
-		<thead>
-			<tr>
-				<th><?=gettext("Group Name"); ?></th>
-				<th><?=gettext("Gateways"); ?></th>
-				<th><?=gettext("Description"); ?></th>
-			</tr>
-		</thead>
-		<tbody>
-			<?php foreach ($a_gateway_groups as $gateway_group): ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($gateway_group['name'])?>
-				</td>
-				<td>
-					<table class="table table-bordered table-condensed">
+		<div class="table-responsive">
+			<table class="table table-hover table-condensed table-striped">
+				<thead>
+					<tr>
+						<th><?=gettext("Group Name"); ?></th>
+						<th><?=gettext("Gateways"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php foreach ($a_gateway_groups as $gateway_group): ?>
+					<tr>
+						<td>
+							<?=htmlspecialchars($gateway_group['name'])?>
+						</td>
+						<td>
+							<table class="table table-bordered table-condensed">
 <?php
 						/* process which priorities we have */
 						$priorities = array();
@@ -123,17 +122,17 @@ display_top_tabs($tab_array);
 						$priority_count = count($priorities);
 						ksort($priorities);
 ?>
-						<thead>
-							<tr>
+								<thead>
+									<tr>
 <?php
 							// Make a column for each tier
 							foreach ($priorities as $number => $tier) {
 								echo "<th>" . sprintf(gettext("Tier %s"), $number) . "</th>";
 							}
 ?>
-							</tr>
-						</thead>
-						<tbody>
+									</tr>
+								</thead>
+								<tbody>
 <?php
 							/* inverse gateway group to gateway priority */
 							$priority_arr = array();
@@ -148,7 +147,7 @@ display_top_tabs($tab_array);
 								foreach ($tier as $member) {
 									/* we always have $priority_count fields */
 ?>
-							<tr>
+									<tr>
 <?php
 									$c = 1;
 									while ($c <= $priority_count) {
@@ -176,37 +175,36 @@ display_top_tabs($tab_array);
 												$bgcolor = WHITE;
 											}
 ?>
-								<td bgcolor="<?=$bgcolor?>">
-									<?=htmlspecialchars($member);?>,<br/><?=$online?>
-								</td>
+										<td bgcolor="<?=$bgcolor?>">
+											<?=htmlspecialchars($member);?>,<br/><?=$online?>
+										</td>
 
 <?php
 										} else {
 ?>
-								<td>
-								</td>
+										<td>
+										</td>
 <?php							}
 										$c++;
 									}
 ?>
-							</tr>
+									</tr>
 <?php
 								}
 								$p++;
 							}
 ?>
-						</tbody>
-					</table>
-				</td>
-				<td>
-					<?=htmlspecialchars($gateway_group['descr'])?>
-				</td>
-			</tr>
+								</tbody>
+							</table>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway_group['descr'])?>
+						</td>
+					</tr>
 			<?php endforeach; ?>
-		</tbody>
-	</table>
-</div>
-
+				</tbody>
+			</table>
+		</div>
 	</div>
 </div>
 

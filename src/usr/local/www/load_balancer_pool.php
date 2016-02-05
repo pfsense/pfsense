@@ -132,7 +132,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_info_box_np(sprintf(gettext("The load balancer configuration has been changed%sYou must apply the changes in order for them to take effect."), "<br />"));
+	print_apply_box(gettext("The load balancer configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 /* active tabs */
@@ -157,7 +157,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Port')?></th>
 						<th><?=gettext('Monitor')?></th>
 						<th><?=gettext('Description')?></th>
-						<th></th>
+						<th><?=gettext('Actions')?></th>
 					</tr>
 				</thead>
 				<tbody>

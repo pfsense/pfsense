@@ -17,9 +17,6 @@ if which pbi_info >/dev/null 2>&1; then
 	for pbi in $(pbi_info); do
 		echo ">>> Removing PBI ${pbi} and all symlinks"
 		pbi_prefix=$(pbi_info ${pbi} | awk '$1 == "Prefix:" { print $2  }')
-		if [ ! -d "${pbi_prefix}" ]; then
-			continue
-		fi
 
 		for subdir in bin sbin; do
 			if [ ! -d "${pbi_prefix}/${subdir}" ]; then
@@ -41,6 +38,9 @@ if which pbi_info >/dev/null 2>&1; then
 
 		pbi_delete ${pbi}
 	done
+
+	# Cleanup remaining symbolic links
+	find / -type l -lname '/usr/pbi/*' -delete
 fi
 
 # Hack to workaround ticket #3749

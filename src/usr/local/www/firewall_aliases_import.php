@@ -95,7 +95,7 @@ if ($_POST['aliasimport'] != "") {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (is_validaliasname($_POST['name']) == false) {
-		$input_errors[] = gettext("The alias name may only consist of the characters") . " a-z, A-Z, 0-9, _.";
+		$input_errors[] = sprintf(gettext("The alias name may only consist of the characters %s"), "a-z, A-Z, 0-9, _.");
 	}
 
 	/* check for name duplicates */
@@ -107,7 +107,7 @@ if ($_POST['aliasimport'] != "") {
 	/* Check for reserved keyword names */
 	foreach ($reserved_keywords as $rk) {
 		if ($rk == $_POST['name']) {
-			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as alias name %s"), $rk);
+			$input_errors[] = sprintf(gettext("Cannot use a reserved keyword as an alias name: %s"), $rk);
 		}
 	}
 

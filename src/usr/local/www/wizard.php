@@ -89,25 +89,25 @@ if ($_POST['xml']) {
 
 if (empty($xml)) {
 	$xml = "not_defined";
-	print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+	print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 	die;
 } else {
 	$wizard_xml_prefix = "{$g['www_path']}/wizards";
 	$wizard_full_path = "{$wizard_xml_prefix}/{$xml}";
 	if (substr_compare(realpath($wizard_full_path), $wizard_xml_prefix, 0, strlen($wizard_xml_prefix))) {
-		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		print_info_box(gettext("ERROR: Invalid path specified."));
 		die;
 	}
 	if (file_exists($wizard_full_path)) {
 		$pkg = parse_xml_config_pkg($wizard_full_path, "pfsensewizard");
 	} else {
-		print_info_box_np(sprintf(gettext("ERROR:  Could not open %s."), $xml));
+		print_info_box(sprintf(gettext("ERROR:  Could not open %s."), $xml));
 		die;
 	}
 }
 
 if (!is_array($pkg)) {
-	print_info_box_np(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
+	print_info_box(sprintf(gettext("ERROR: Could not parse %s/wizards/%s file."), $g['www_path'], $xml));
 	die;
 }
 
@@ -332,7 +332,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 					foreach ($showfields as $showfield) {
 						$showfield = strtolower($showfield);
 						//print "\t\t" . 'document.iform.' . $showfield . ".display =\"none\";\n";
-						print "\t\t jQuery('#". $showfield . "').hide();";
+						print "\t\t $('#". $showfield . "').hide();";
 					}
 				}
 				print "\t" . '} else {' . "\n";
@@ -341,7 +341,7 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") { ?>
 					foreach ($showfields as $showfield) {
 						$showfield = strtolower($showfield);
 						#print "\t\t" . 'document.iform.' . $showfield . ".display =\"\";\n";
-						print "\t\t jQuery('#". $showfield . "').show();";
+						print "\t\t $('#". $showfield . "').show();";
 					}
 				}
 				print "\t" . '}' . "\n";
@@ -380,7 +380,7 @@ function fixup_string($string) {
 		}
 	}
 
-	$http_host = $_SERVER['SERVER_NAME'];
+	$http_host = $_SERVER['HTTP_HOST'];
 	$urlhost = $http_host;
 	// If finishing the setup wizard, check if accessing on a LAN or WAN address that changed
 	if ($title == "Reload in progress") {
@@ -930,7 +930,7 @@ print($form);
 		$counter = 0;
 		foreach ($inputaliases as $alias) {
 ?>
-			$('#' + '<?php echo $alias; ?>').autocomplete({
+			$('#' + '<?=$alias;?>').autocomplete({
 				source: customarray
 			});
 <?php

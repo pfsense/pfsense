@@ -1,39 +1,57 @@
 <?php
-/*
-	interfaces.inc
-	Copyright (C) 2004-2008 Scott Ullrich
-	Copyright (C) 2008-2009 Ermal Luçi
-	All rights reserved.
-
-	function interfaces_wireless_configure is
-	Copyright (C) 2005 Espen Johansen
-	All rights reserved.
-
-	originally part of m0n0wall (http://m0n0.ch/wall)
-	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notices,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notices, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+/* ====================================================================
+ *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ *
+ *  Some or all of this file is based on the m0n0wall project which is
+ *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ *
+ *  Redistribution and use in source and binary forms, with or without modification,
+ *  are permitted provided that the following conditions are met:
+ *
+ *  1. Redistributions of source code must retain the above copyright notice,
+ *      this list of conditions and the following disclaimer.
+ *
+ *  2. Redistributions in binary form must reproduce the above copyright
+ *      notice, this list of conditions and the following disclaimer in
+ *      the documentation and/or other materials provided with the
+ *      distribution.
+ *
+ *  3. All advertising materials mentioning features or use of this software
+ *      must display the following acknowledgment:
+ *      "This product includes software developed by the pfSense Project
+ *       for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *
+ *  4. The names "pfSense" and "pfSense Project" must not be used to
+ *       endorse or promote products derived from this software without
+ *       prior written permission. For written permission, please contact
+ *       coreteam@pfsense.org.
+ *
+ *  5. Products derived from this software may not be called "pfSense"
+ *      nor may "pfSense" appear in their names without prior written
+ *      permission of the Electric Sheep Fencing, LLC.
+ *
+ *  6. Redistributions of any form whatsoever must retain the following
+ *      acknowledgment:
+ *
+ *  "This product includes software developed by the pfSense Project
+ *  for use in the pfSense software distribution (http://www.pfsense.org/).
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+ *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+ *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ *  OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *  ====================================================================
+ *
+ */
 
 /* include all configuration functions */
 require_once("globals.inc");
@@ -719,18 +737,15 @@ function interface_lagg_configure($lagg) {
 
 	/* Check if MTU was defined for this lagg interface */
 	$lagg_mtu = interface_find_child_cfgmtu($laggif);
-	if ($lagg_mtu == 0) {
-		/* Calculate smaller mtu and enforce it */
-		$smallermtu = 0;
-		foreach ($members as $member) {
-			$mtu = get_interface_mtu($member);
-			if ($smallermtu == 0 && !empty($mtu)) {
-				$smallermtu = $mtu;
-			} else if (!empty($mtu) && $mtu < $smallermtu) {
-				$smallermtu = $mtu;
+	if ($lagg_mtu == 0 &&
+	    is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $tmpinterface) {
+			if ($tmpinterface['if'] == $lagg['laggif'] &&
+			    !empty($tmpinterface['mtu'])) {
+				$lagg_mtu = $tmpinterface['mtu'];
+				break;
 			}
 		}
-		$lagg_mtu = $smallermtu;
 	}
 
 	/* Just in case anything is not working well */
@@ -1117,7 +1132,10 @@ function interfaces_configure() {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
-		interface_configure($if, $reload);
+		// bridge interface needs reconfigure, then re-add VIPs, to ensure find_interface_ip is correct. 
+		// redmine #3997
+		interface_reconfigure($if, $reload);
+		interfaces_vips_configure($if);
 
 		if (platform_booting()) {
 			echo gettext("done.") . "\n";
@@ -1998,6 +2016,26 @@ EOD;
 		}
 	}
 
+	/* Set temporary bogon (RFC 5737) IPv4 addresses to work round mpd5 IPv6CP issue causing */
+	/* random IPv6 interface identifier during boot. More details at */
+	/* https://forum.pfsense.org/index.php?topic=101967.msg570519#msg570519 */
+	if (platform_booting() && is_array($config['interfaces'])) {
+		$count = 0;
+		foreach ($config['interfaces'] as $tempifacename => $tempiface) {
+			if ((isset($tempiface['if'])) && (isset($tempiface['ipaddr']) || isset($tempiface['ipaddrv6'])) && !interface_isppp_type($tempifacename)) {
+				$tempaddr[$count]['if'] = $tempiface['if'];
+				$tempaddr[$count]['ipaddr'] = '192.0.2.' . strval (10 + ($count * 2)) . '/31';
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempaddr[$count]['if']) . ' inet ' . escapeshellarg($tempaddr[$count]['ipaddr']) . ' alias', true);
+				$count++;
+			}
+			// Maximum /31 is is x.y.z.254/31
+			if ($count > 122) {
+				break;
+			}
+		}
+		unset($count);
+	}
+
 	/* fire up mpd */
 	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/" .
 		escapeshellarg($ppp['type']) . "_{$interface}.pid -s ppp " . escapeshellarg($ppp['type']) . "client");
@@ -2018,6 +2056,16 @@ EOD;
 			break;
 		}
 		$i++;
+	}
+
+	/* Remove all temporary bogon IPv4 addresses */
+	if (is_array($tempaddr)) {
+		foreach ($tempaddr as $tempiface) {
+			if (isset($tempiface['if']) && isset($tempiface['ipaddr'])) {
+				mwexec('/sbin/ifconfig ' . escapeshellarg($tempiface['if']) . ' inet ' . escapeshellarg($tempiface['ipaddr']) . ' -alias', true);
+			}
+		}
+		unset ($tempaddr);
 	}
 
 	/* we only support the 3gstats.php for huawei modems for now. Will add more later. */
@@ -3064,21 +3112,20 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 	foreach ($vlanifs as $vlan) {
 		$assignedport = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
 		$pppoe_mtu = interface_mtu_wanted_for_pppoe($vlan['vlanif']);
-		if (!empty($assignedport)) {
-			if (!empty($config['interfaces'][$assignedport]['mtu'])) {
-				pfSense_interface_mtu($vlan['vlanif'], $config['interfaces'][$assignedport]['mtu']);
-			} else if ($pppoe_mtu != 0) {
-				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
-			} else {
-				if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
-					pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
-				}
-			}
+		$if_mtu = 0;
+		if (!empty($assignedport) &&
+		    !empty($config['interfaces'][$assignedport]['mtu'])) {
+			$if_mtu = $config['interfaces'][$assignedport]['mtu'];
 		} else {
-			if ($pppoe_mtu != 0) {
-				pfSense_interface_mtu($vlan['vlanif'], $pppoe_mtu);
-			} else if (get_interface_mtu($vlan['vlanif']) != (($mtu > 1500) ? 1500 : $mtu)) {
-				pfSense_interface_mtu($vlan['vlanif'], (($mtu > 1500) ? 1500 : $mtu));
+			$if_mtu = ($pppoe_mtu != 0 ? $pppoe_mtu : $mtu);
+		}
+
+		if (get_interface_mtu($vlan['vlanif']) != $if_mtu) {
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if (substr($vlan['if'], 0, 4) == 'lagg') {
+				interface_vlan_configure($vlan);
+			} else {
+				pfSense_interface_mtu($vlan['vlanif'], $if_mtu);
 			}
 		}
 	}
@@ -3296,14 +3343,25 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			if ($wancfg['mtu'] > $parentmtu) {
 				log_error("There is a conflict on MTU between parent {$mtuhwif} and VLAN({$mtuif})");
 			}
-		} else {
-			$parentmtu = 0;
 		}
 
-		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $parentmtu);
+		$parentmtu = interface_vlan_mtu_configured($mtuhwif, $wantedmtu);
 
 		if (get_interface_mtu($mtuhwif) != $parentmtu) {
-			pfSense_interface_mtu($mtuhwif, $parentmtu);
+			/* LAGG interface must be destroyed and re-created to change MTU */
+			if (substr($mtuhwif, 0, 4) == 'lagg') {
+				if (isset($config['laggs']['lagg']) &&
+				    is_array($config['laggs']['lagg'])) {
+					foreach ($config['laggs']['lagg'] as $lagg) {
+						if ($lagg['laggif'] == $mtuhwif) {
+							interface_lagg_configure($lagg);
+							break;
+						}
+					}
+				}
+			} else {
+				pfSense_interface_mtu($mtuhwif, $parentmtu);
+			}
 		}
 
 		/* All vlans need to use the same mtu value as their parent. */
@@ -3357,7 +3415,12 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 	switch ($wancfg['ipaddrv6']) {
 		case 'slaac':
 		case 'dhcp6':
-			interface_dhcpv6_configure($interface, $wancfg);
+			// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script
+			// calls interface_dhcpv6_configure() for these connections after IPv6CP is up, whilst rc.newwanip
+			// handles all non-PPP connections with 'dhcp6usev4iface' set
+			if (!(isset($wancfg['dhcp6usev4iface']) || $wancfg['ipaddr']==='ppp')) {
+				interface_dhcpv6_configure($interface, $wancfg);
+			}
 			break;
 		case '6rd':
 			interface_6rd_configure($interface, $wancfg);
@@ -3966,7 +4029,6 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	@chmod("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", 0755);
 
 	/* accept router advertisements for this interface */
-	set_single_sysctl("net.inet6.ip6.accept_rtadv", "1");
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
 
@@ -5055,8 +5117,8 @@ function interface_find_child_cfgmtu($realiface) {
 		}
 	}
 	if (is_array($gifs)) {
-		foreach ($gifs as $vlan) {
-			$ifass = convert_real_interface_to_friendly_interface_name($vlan['gifif']);
+		foreach ($gifs as $gif) {
+			$ifass = convert_real_interface_to_friendly_interface_name($gif['gifif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5068,8 +5130,8 @@ function interface_find_child_cfgmtu($realiface) {
 		}
 	}
 	if (is_array($gres)) {
-		foreach ($gres as $vlan) {
-			$ifass = convert_real_interface_to_friendly_interface_name($vlan['greif']);
+		foreach ($gres as $gre) {
+			$ifass = convert_real_interface_to_friendly_interface_name($gre['greif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5571,7 +5633,9 @@ function interface_has_gateway($friendly) {
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
 				if ($tunnelif == "gif" || $tunnelif == "gre") {
-					return true;
+					if (find_interface_ip($ifname['if'])) {
+						return true;
+					}
 				}
 				if (!empty($ifname['gateway'])) {
 					return true;
@@ -5602,7 +5666,9 @@ function interface_has_gatewayv6($friendly) {
 				}
 				$tunnelif = substr($ifname['if'], 0, 3);
 				if ($tunnelif == "gif" || $tunnelif == "gre") {
-					return true;
+					if (find_interface_ipv6($ifname['if'])) {
+						return true;
+					}
 				}
 				if (!empty($ifname['gatewayv6'])) {
 					return true;

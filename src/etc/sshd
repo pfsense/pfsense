@@ -46,9 +46,7 @@
 	$sshConfigDir = "/etc/ssh";
 
 	$keys = array(
-		array('type' => 'rsa1',    'suffix' => ''),
 		array('type' => 'rsa',     'suffix' => 'rsa_'),
-		array('type' => 'dsa',     'suffix' => 'dsa_'),
 		array('type' => 'ecdsa',   'suffix' => 'ecdsa_'),
 		array('type' => 'ed25519', 'suffix' => 'ed25519_')
 	);

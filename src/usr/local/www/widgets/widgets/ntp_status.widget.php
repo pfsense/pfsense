@@ -83,22 +83,23 @@ if ($_REQUEST['updateme']) {
 
 	exec("/usr/local/sbin/ntpq -pn $inet_version | /usr/bin/tail +3", $ntpq_output);
 	$ntpq_counter = 0;
+	$stratum_text = gettext("stratum");
 	foreach ($ntpq_output as $line) {
 		if (substr($line, 0, 1) == "*") {
 			//Active NTP Peer
 			$line = substr($line, 1);
 			$peerinfo = preg_split("/[\s\t]+/", $line);
 			if ($peerinfo[2] == "1") {
-				$syncsource = $peerinfo[0] . " (stratum " . $peerinfo[2] . ", " . $peerinfo[1] . ")";
+				$syncsource = $peerinfo[0] . " (" . $stratum_text . " " . $peerinfo[2] . ", " . $peerinfo[1] . ")";
 			} else {
-				$syncsource = $peerinfo[0] . " (stratum " . $peerinfo[2] . ")";
+				$syncsource = $peerinfo[0] . " (" . $stratum_text . " " . $peerinfo[2] . ")";
 			}
 			$ntpq_counter++;
 		} elseif (substr($line, 0, 1) == "o") {
 			//Local PPS Peer
 			$line = substr($line, 1);
 			$peerinfo = preg_split("/[\s\t]+/", $line);
-			$syncsource = $peerinfo[1] . " (stratum " . $peerinfo[2] . ", PPS)";
+			$syncsource = $peerinfo[1] . " (" . $stratum_text . " " . $peerinfo[2] . ", PPS)";
 			$ntpq_counter++;
 		}
 	}
@@ -171,7 +172,7 @@ if ($_REQUEST['updateme']) {
 
 <table id="ntp_status_widget" class="table table-striped table-hover">
 	<tr>
-		<th>Server Time</th>
+		<th><?=gettext('Server Time')?></th>
 		<td id="ClockTime"> <!-- ntpStatusClock -->
 			<script type="text/javascript">
 			//<![CDATA[
@@ -183,20 +184,20 @@ if ($_REQUEST['updateme']) {
 		</td>
 	</tr>
 	<tr>
-		<th>Sync Source</th>
+		<th><?=gettext('Sync Source')?></th>
 		<td>
 		<?php if ($ntpq_counter == 0): ?>
-			<i>No active peers available</i>
+			<i><?=gettext('No active peers available')?></i>
 		<?php else: ?>
-			<?php echo $syncsource; ?>
+			<?=$syncsource;?>
 		<?php endif; ?>
 		</td>
 	</tr>
 	<?php if (($gps_ok) && ($gps_lat) && ($gps_lon)): ?>
 		<tr>
-			<th>Clock location</th>
+			<th><?=gettext('Clock location')?></th>
 			<td>
-				<a target="_gmaps" href="http://maps.google.com/?q=<?php echo $gps_lat; ?>,<?php echo $gps_lon; ?>">
+				<a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
 				<?php
 				echo sprintf("%.5f", $gps_lat) . " " . $gps_la . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lo; ?>
 				</a>
@@ -205,12 +206,12 @@ if ($_REQUEST['updateme']) {
 		</tr>
 		<?php if (isset($gps_sat) || isset($gps_satview)): ?>
 			<tr>
-				<th>Satellites</th>
+				<th><?=gettext('Satellites')?></th>
 				<td>
 				<?php
-				if (isset($gps_satview)) {echo 'in view ' . intval($gps_satview);}
+				if (isset($gps_satview)) {echo gettext('in view') . ' ' . intval($gps_satview);}
 				if (isset($gps_sat) && isset($gps_satview)) {echo ', ';}
-				if (isset($gps_sat)) {echo 'in use ' . $gps_sat;}
+				if (isset($gps_sat)) {echo gettext('in use') . ' ' . $gps_sat;}
 				?>
 				</td>
 			</tr>
@@ -488,7 +489,7 @@ clockUpdate();
 	<tbody>
 		<tr>
 			<td>
-				Updating...
+				<?=gettext('Updating...')?>
 			</td>
 		</tr>
 	</tbody>
@@ -500,7 +501,7 @@ clockUpdate();
 		scroll(0,0);
 		var url = "/widgets/widgets/ntp_status.widget.php";
 		var pars = 'updateme=yes';
-		jQuery.ajax(
+		$.ajax(
 			url,
 			{
 				type: 'get',
@@ -514,7 +515,7 @@ clockUpdate();
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText
-		jQuery('#ntpstatus').prop('innerHTML',responseStringNtp);
+		$('#ntpstatus').prop('innerHTML',responseStringNtp);
 	}
 	// Do the first status check 1 second after the dashboard opens
 	setTimeout('ntp_getstatus()', 1000);

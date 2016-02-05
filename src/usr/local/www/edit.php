@@ -66,18 +66,21 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
 require("guiconfig.inc");
 
 if ($_POST['action']) {
+	$button_html = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
+	$alert_danger_html = '<div class="alert alert-danger" role="alert">' . $button_html;
+	$alert_success_html = '<div class="alert alert-success" role="alert">' . $button_html;
 	switch ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
-				print('|5|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
+				print('|5|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
 			} elseif (is_dir($_POST['file'])) {
-				print('|4|' . '<div class="alert alert-danger" role="alert">' . gettext("Loading a directory is not supported") .'</div>' . '|');
+				print('|4|' . $alert_danger_html . gettext("Loading a directory is not supported") . '</div>' . '|');
 			} elseif (!is_file($_POST['file'])) {
-				print('|3|' . '<div class="alert alert-danger" role="alert">' . gettext("File does not exist or is not a regular file") . '</div>' . '|');
+				print('|3|' . $alert_danger_html . gettext("File does not exist or is not a regular file") . '</div>' . '|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if ($data === false) {
-					print('|1|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to read file") . '</div>' . '|');
+					print('|1|' . $alert_danger_html . gettext("Failed to read file") . '</div>' . '|');
 				} else {
 					$data = base64_encode($data);
 					print("|0|{$_POST['file']}|{$data}|");
@@ -87,7 +90,7 @@ if ($_POST['action']) {
 
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
-				print('|' . '<div class="alert alert-danger" role="alert">'.gettext("No file name specified").'</div>' . '|');
+				print('|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -100,11 +103,11 @@ if ($_POST['action']) {
 					disable_security_checks();
 				}
 				if ($ret === false) {
-					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Failed to write file") . '</div>' . '|');
+					print('|' . $alert_danger_html . gettext("Failed to write file") . '</div>' . '|');
 				} elseif ($ret != strlen($_POST['data'])) {
-					print('|' . '<div class="alert alert-danger" role="alert">' . gettext("Error while writing file") . '</div>' . '|');
+					print('|' . $alert_danger_html . gettext("Error while writing file") . '</div>' . '|');
 				} else {
-					print('|' . '<div class="alert alert-success" role="alert">' . gettext("File saved successfully") . '</div>' . '|');
+					print('|' . $alert_success_html . gettext("File saved successfully") . '</div>' . '|');
 				}
 			}
 			exit;
@@ -116,7 +119,7 @@ require("head.inc");
 ?>
 <!-- file status box -->
 <div style="display:none; background:#eeeeee;" id="fileStatusBox">
-		<strong id="fileStatus"></strong>
+	<strong id="fileStatus"></strong>
 </div>
 
 <div class="panel panel-default">
@@ -128,6 +131,9 @@ require("head.inc");
 				<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
 				<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
 				<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+				<span class="pull-right">
+					<button id="btngoto" class="btn btn-default btn-sm"><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" width="6"></input>
+				</span>
 			</form>
 
 			<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
@@ -148,20 +154,72 @@ require("head.inc");
 
 <script type="text/javascript">
 //<![CDATA[
+	events.push(function(){
+
+		function showLine(tarea, lineNum) {
+
+			lineNum--; // array starts at 0
+			var lines = tarea.value.split("\n");
+
+			// calculate start/end
+			var startPos = 0, endPos = tarea.value.length;
+			for(var x = 0; x < lines.length; x++) {
+				if(x == lineNum) {
+					break;
+				}
+				startPos += (lines[x].length+1);
+
+			}
+
+			var endPos = lines[lineNum].length+startPos;
+
+			// do selection
+			// Chrome / Firefox
+
+			if(typeof(tarea.selectionStart) != "undefined") {
+				tarea.focus();
+				tarea.selectionStart = startPos;
+				tarea.selectionEnd = endPos;
+				return true;
+			}
+
+			// IE
+			if (document.selection && document.selection.createRange) {
+				tarea.focus();
+				tarea.select();
+				var range = document.selection.createRange();
+				range.collapse(true);
+				range.moveEnd("character", endPos);
+				range.moveStart("character", startPos);
+				range.select();
+				return true;
+			}
+
+			return false;
+		}
+
+		$("#btngoto").prop('type','button');
+
+		$('#btngoto').click(function() {
+			var tarea = document.getElementById("fileContent");
+			showLine(tarea, $('#gotoline').val());
+		});
+	});
+
 	function loadFile() {
-		jQuery("#fileStatus").html("");
-		jQuery("#fileStatusBox").show(500);
-		jQuery.ajax(
+		$("#fileStatus").html("");
+		$("#fileStatusBox").show(500);
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
-				data: "action=load&file=" + jQuery("#fbTarget").val(),
+				data: "action=load&file=" + $("#fbTarget").val(),
 				complete: loadComplete
 			}
 		);
 	}
 
 	function loadComplete(req) {
-		jQuery("#fileContent").show(1000);
+		$("#fileContent").show(1000);
 		var values = req.responseText.split("|");
 		values.shift(); values.pop();
 
@@ -169,30 +227,30 @@ require("head.inc");
 			var file = values.shift();
 			var fileContent = window.atob(values.join("|"));
 
-			jQuery("#fileContent").val(fileContent);
+			$("#fileContent").val(fileContent);
 		} else {
-			jQuery("#fileStatus").html(values[0]);
-			jQuery("#fileContent").val("");
+			$("#fileStatus").html(values[0]);
+			$("#fileContent").val("");
 		}
 
-		jQuery("#fileContent").show(1000);
+		$("#fileContent").show(1000);
 	}
 
 	function saveFile(file) {
-		jQuery("#fileStatus").html("");
-		jQuery("#fileStatusBox").show(500);
+		$("#fileStatus").html("");
+		$("#fileStatusBox").show(500);
 
-		var fileContent = Base64.encode(jQuery("#fileContent").val());
+		var fileContent = Base64.encode($("#fileContent").val());
 		fileContent = fileContent.replace(/\+/g, "%2B");
 
-		jQuery.ajax(
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME']?>", {
 				type: "post",
-				data: "action=save&file=" + jQuery("#fbTarget").val() +
+				data: "action=save&file=" + $("#fbTarget").val() +
 							"&data=" + fileContent,
 				complete: function(req) {
 					var values = req.responseText.split("|");
-					jQuery("#fileStatus").html(values[1]);
+					$("#fileStatus").html(values[1]);
 				}
 			}
 		);
@@ -339,7 +397,7 @@ var Base64 = {
 
 	<?php if ($_GET['action'] == "load"): ?>
 		events.push(function() {
-			jQuery("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
+			$("#fbTarget").val("<?=htmlspecialchars($_GET['path'])?>");
 			loadFile();
 		});
 	<?php endif; ?>

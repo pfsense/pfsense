@@ -119,7 +119,7 @@ $filesystems = get_mounted_filesystems();
 				<strong><?=$g['product_version']?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
-				built on <?php readfile("/etc/version.buildtime"); ?>
+				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>
 			<?php if (!$g['hideuname']): ?>
 				<br />
 				<span title="<?php echo php_uname("a"); ?>"><?php echo php_uname("s") . " " . php_uname("r"); ?></span>
@@ -152,9 +152,9 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("NanoBSD Boot Slice");?></th>
 			<td>
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?php echo $rw; ?>
+				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?=$rw;?>
 				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br /><br />Next Boot:<br />
+				<br /><br /><?=gettext('Next Boot')?>:<br />
 				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
 				<?php endif; ?>
 			</td>
@@ -168,7 +168,7 @@ $filesystems = get_mounted_filesystems();
 			$cpucount = get_cpu_count();
 			if ($cpucount > 1): ?>
 				<div id="cpucount">
-					<?= htmlspecialchars($cpucount) ?> CPUs: <?= htmlspecialchars(get_cpu_count(true)); ?>
+					<?= htmlspecialchars($cpucount) ?> <?=gettext('CPUs')?>: <?= htmlspecialchars(get_cpu_count(true)); ?>
 				</div>
 		<?php endif; ?>
 			</td>
@@ -247,7 +247,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
-				<div id="load_average" title="Last 1, 5 and 15 minutes"><?= get_load_average(); ?></div>
+				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
 		<tr>
@@ -257,7 +257,7 @@ $filesystems = get_mounted_filesystems();
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter">(Updating in 10 seconds)</span>
+				<span id="cpumeter"><?=gettext('(Updating in 10 seconds)')?></span>
 			</td>
 		</tr>
 		<tr>
@@ -292,7 +292,7 @@ $filesystems = get_mounted_filesystems();
 <?php foreach ($filesystems as $fs): ?>
 					<tr>
 						<th><?=$fs['mountpoint']?></th>
-						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " in RAM" : "")?></td>
+						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></td>
 						<td><?=$fs['total_size']?></td>
 						<td>
 							<span><?=$fs['percent_used']?>%</span>
@@ -326,7 +326,7 @@ function systemStatusGetUpdateStatus() {
 function updateMeters() {
 	url = '/getstats.php';
 
-	jQuery.ajax(url, {
+	$.ajax(url, {
 		type: 'get',
 		success: function(data) {
 			response = data || "";
@@ -352,7 +352,7 @@ var Seconds = 11;
 var update_interval = (Math.abs(Math.ceil(Seconds))-1)*1000 + 990;
 
 function setProgress(barName, percent) {
-	jQuery('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
+	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
 }
 
 function setTimer() {
@@ -361,7 +361,7 @@ function setTimer() {
 
 function stats(x) {
 	var values = x.split("|");
-	if (jQuery.each(values,function(key,value){
+	if ($.each(values,function(key,value){
 		if (value == 'undefined' || value == null)
 			return true;
 		else
@@ -385,35 +385,35 @@ function stats(x) {
 }
 
 function updateMemory(x) {
-	if (jQuery('#memusagemeter')) {
-		jQuery("#memusagemeter").html(x);
+	if ($('#memusagemeter')) {
+		$("#memusagemeter").html(x);
 	}
-	if (jQuery('#memUsagePB')) {
+	if ($('#memUsagePB')) {
 		setProgress('memUsagePB', parseInt(x));
 	}
 }
 
 function updateMbuf(x) {
-	if (jQuery('#mbuf')) {
-		jQuery("#mbuf").html(x);
+	if ($('#mbuf')) {
+		$("#mbuf").html(x);
 	}
 }
 
 function updateMbufMeter(x) {
-	if (jQuery('#mbufusagemeter')) {
-		jQuery("#mbufusagemeter").html(x + '%');
+	if ($('#mbufusagemeter')) {
+		$("#mbufusagemeter").html(x + '%');
 	}
-	if (jQuery('#mbufPB')) {
+	if ($('#mbufPB')) {
 		setProgress('mbufPB', parseInt(x));
 	}
 }
 
 function updateCPU(x) {
 
-	if (jQuery('#cpumeter')) {
-		jQuery("#cpumeter").html(x + '%');
+	if ($('#cpumeter')) {
+		$("#cpumeter").html(x + '%');
 	}
-	if (jQuery('#cpuPB')) {
+	if ($('#cpuPB')) {
 		setProgress('cpuPB', parseInt(x));
 	}
 
@@ -424,37 +424,37 @@ function updateCPU(x) {
 }
 
 function updateTemp(x) {
-	if (jQuery("#tempmeter")) {
-		jQuery("#tempmeter").html(x + '\u00B0' + 'C');
+	if ($("#tempmeter")) {
+		$("#tempmeter").html(x + '\u00B0' + 'C');
 	}
-	if (jQuery('#tempPB')) {
-		jQuery("#tempPB").progressbar( { value: parseInt(x) } );
+	if ($('#tempPB')) {
+		$("#tempPB").progressbar( { value: parseInt(x) } );
 	}
 }
 
 function updateDateTime(x) {
-	if (jQuery('#datetime')) {
-		jQuery("#datetime").html(x);
+	if ($('#datetime')) {
+		$("#datetime").html(x);
 	}
 }
 
 function updateUptime(x) {
-	if (jQuery('#uptime')) {
-		jQuery("#uptime").html(x);
+	if ($('#uptime')) {
+		$("#uptime").html(x);
 	}
 }
 
 function updateState(x) {
-	if (jQuery('#pfstate')) {
-		jQuery("#pfstate").html('(' + x + ')');
+	if ($('#pfstate')) {
+		$("#pfstate").html('(' + x + ')');
 	}
 }
 
 function updateStateMeter(x) {
-	if (jQuery('#pfstateusagemeter')) {
-		jQuery("#pfstateusagemeter").html(x + '%');
+	if ($('#pfstateusagemeter')) {
+		$("#pfstateusagemeter").html(x + '%');
 	}
-	if (jQuery('#statePB')) {
+	if ($('#statePB')) {
 		setProgress('statePB', parseInt(x));
 	}
 }
@@ -464,10 +464,10 @@ function updateGatewayStats(x) {
 		gateways_split = x.split(",");
 		for (var y=0; y<gateways_split.length; y++) {
 			gateways_field_split = gateways_split[y].split("^");
-			if (jQuery('#gateway' + (y + 1))) {
-				jQuery('#gateway' + (y + 1)).html(gateways_field_split[0]);
+			if ($('#gateway' + (y + 1))) {
+				$('#gateway' + (y + 1)).html(gateways_field_split[0]);
 				if (gateways_field_split[1]) {
-					jQuery('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
+					$('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
 				}
 			}
 		}
@@ -475,14 +475,14 @@ function updateGatewayStats(x) {
 }
 
 function updateCpuFreq(x) {
-	if (jQuery('#cpufreq')) {
-		jQuery("#cpufreq").html(x);
+	if ($('#cpufreq')) {
+		$("#cpufreq").html(x);
 	}
 }
 
 function updateLoadAverage(x) {
-	if (jQuery('#load_average')) {
-		jQuery("#load_average").html(x);
+	if ($('#load_average')) {
+		$("#load_average").html(x);
 	}
 }
 
@@ -491,8 +491,8 @@ function updateInterfaceStats(x) {
 		statistics_split = x.split(",");
 		var counter = 1;
 		for (var y=0; y<statistics_split.length-1; y++) {
-			if (jQuery('#stat' + counter)) {
-				jQuery('#stat' + counter).html(statistics_split[y]);
+			if ($('#stat' + counter)) {
+				$('#stat' + counter).html(statistics_split[y]);
 				counter++;
 			}
 		}
@@ -511,25 +511,25 @@ function updateInterfaces(x) {
 			}
 			switch(details[1]) {
 				case "up":
-					jQuery('#' + details[0] + '-up').css("display","inline");
-					jQuery('#' + details[0] + '-down').css("display","none");
-					jQuery('#' + details[0] + '-block').css("display","none");
-					jQuery('#' + details[0] + '-ip').html(ipv4_details);
-					jQuery('#' + details[0] + '-ipv6').html(details[3]);
-					jQuery('#' + details[0] + '-media').html(details[4]);
+					$('#' + details[0] + '-up').css("display","inline");
+					$('#' + details[0] + '-down').css("display","none");
+					$('#' + details[0] + '-block').css("display","none");
+					$('#' + details[0] + '-ip').html(ipv4_details);
+					$('#' + details[0] + '-ipv6').html(details[3]);
+					$('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "down":
-					jQuery('#' + details[0] + '-down').css("display","inline");
-					jQuery('#' + details[0] + '-up').css("display","none");
-					jQuery('#' + details[0] + '-block').css("display","none");
-					jQuery('#' + details[0] + '-ip').html(ipv4_details);
-					jQuery('#' + details[0] + '-ipv6').html(details[3]);
-					jQuery('#' + details[0] + '-media').html(details[4]);
+					$('#' + details[0] + '-down').css("display","inline");
+					$('#' + details[0] + '-up').css("display","none");
+					$('#' + details[0] + '-block').css("display","none");
+					$('#' + details[0] + '-ip').html(ipv4_details);
+					$('#' + details[0] + '-ipv6').html(details[3]);
+					$('#' + details[0] + '-media').html(details[4]);
 					break;
 				case "block":
-					jQuery('#' + details[0] + '-block').css("display","inline");
-					jQuery('#' + details[0] + '-down').css("display","none");
-					jQuery('#' + details[0] + '-up').css("display","none");
+					$('#' + details[0] + '-block').css("display","inline");
+					$('#' + details[0] + '-down').css("display","none");
+					$('#' + details[0] + '-up').css("display","none");
 					break;
 			}
 		});
@@ -537,7 +537,7 @@ function updateInterfaces(x) {
 }
 
 function widgetActive(x) {
-	var widget = jQuery('#' + x + '-container');
+	var widget = $('#' + x + '-container');
 	if ((widget != null) && (widget.css('display') != null) && (widget.css('display') != "none")) {
 		return true;
 	} else {

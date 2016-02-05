@@ -157,15 +157,17 @@ if ($_GET) {
 			if (write_config()) {
 				$retval = 0;
 				$retval |= filter_configure();
-				$savemsg = get_std_save_message($retval);
 
 				if (stristr($retval, "error") <> true) {
 					$savemsg = get_std_save_message($retval);
+					$class = 'success';
 				} else {
 					$savemsg = $retval;
+					$class = 'warning';
 				}
 			} else {
 				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+				$class = 'warning';
 			}
 
 			$dfltmsg = true;
@@ -336,12 +338,13 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
+			$class = 'success';
 		} else {
 			$savemsg = $retval;
+			$class = 'warning';
 		}
 
 		/* reset rrd queues */
@@ -423,11 +426,11 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_info_box_np(gettext("The traffic shaper configuration has been changed. You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();

@@ -130,44 +130,53 @@ display_top_tabs($tab_array);
 	<input id="act" type="hidden" name="act" value="" />
 	<input id="id" type="hidden" name="id" value=""/>
 
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
-			<thead>
-				<tr>
-					<th><?=gettext('Interface');?></th>
-					<th><?=gettext('VLAN tag');?></th>
-					<th><?=gettext('Priority');?></th>
-					<th><?=gettext('Description');?></th>
-					<th></th>
-				</tr>
-			</thead>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('VLAN Interfaces')?></h2></div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext('Interface');?></th>
+							<th><?=gettext('VLAN tag');?></th>
+							<th><?=gettext('Priority');?></th>
+							<th><?=gettext('Description');?></th>
+							<th><?=gettext('Actions');?></th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
 ?>
-				<tr>
-					<td><?=htmlspecialchars($vlan['if']);?></td>
-					<td><?=htmlspecialchars($vlan['tag']);?></td>
-					<td><?=htmlspecialchars($vlan['pcp']);?></td>
-					<td><?=htmlspecialchars($vlan['descr']);?></td>
-					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
+						<tr>
+							<td><?=htmlspecialchars($vlan['if']);?></td>
+							<td><?=htmlspecialchars($vlan['tag']);?></td>
+							<td><?=htmlspecialchars($vlan['pcp']);?></td>
+							<td><?=htmlspecialchars($vlan['descr']);?></td>
+							<td>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
 <!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-						<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
-					</td>
-				</tr>
+								<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+							</td>
+						</tr>
 <?php
 			$i++;
 	}
 ?>
-		</table>
-		<nav class="action-buttons">
-			<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
-				<i class="fa fa-plus icon-embed-btn"></i>
-				<?=gettext('Add'); ?>
-			</a>
-		</nav>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
+
+	<nav class="action-buttons">
+		<a class="btn btn-success btn-sm" role="button" href="interfaces_vlan_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext('Add'); ?>
+		</a>
+	</nav>
+
 </form>
 
 <div class="infoblock">

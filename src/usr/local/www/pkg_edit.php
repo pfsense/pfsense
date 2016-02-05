@@ -82,7 +82,7 @@ $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	include("head.inc");
-	print_info_box_np(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("ERROR: No valid package defined."));
 	include("foot.inc");
 	die;
 } else {
@@ -624,7 +624,7 @@ if ($pkg['savetext'] != "") {
 	$savevalue = $pkg['savetext'];
 }
 
-$savehelp = gettext("");
+$savehelp = "";
 if ($pkg['savehelp'] != "") {
 	$savehelp = $pkg['savehelp'];
 }
@@ -900,6 +900,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			eval("\$pkg_source_txt = &$source_url;");
 
 			#check if show disable option is present on xml
+			if (!is_array($pkg_source_txt)) {
+				$pkg_source_txt = array();
+			}
 			if (isset($pkga['show_disable_value'])) {
 				array_push($pkg_source_txt,
 					array(($pkga['source_name']? $pkga['source_name'] : $pkga['name'])=> $pkga['show_disable_value'], ($pkga['source_value']? $pkga['source_value'] : $pkga['value'])=> $pkga['show_disable_value']));
@@ -1190,11 +1193,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 			sort($ips);
 			if (isset($pkga['showlistenall'])) {
-				array_unshift($ips, array('ip' => 'All', 'description' => 'Listen on All interfaces/ip addresses '));
+				array_unshift($ips, array('ip' => gettext('All'), 'description' => gettext('Listen on All interfaces/ip addresses ')));
 			}
 
 			if (!preg_match("/$interface_regex/", "loopback")) {
-				$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (loopback)" : "loopback");
+				$loopback_text = gettext("loopback");
+				$iface_description=(isset($pkga['showips']) ? "127.0.0.1 (" . $loopback_text . ")" : $loopback_text);
 				array_push($ips, array('ip' => 'lo0', 'description' => $iface_description));
 			}
 
@@ -1530,20 +1534,20 @@ if ($pkg['fields']['field'] != "") { ?>
 <?php
 	foreach ($pkg['fields']['field'] as $field) {
 		if (isset($field['enablefields']) or isset($field['checkenablefields'])) {
-			echo "\tif (jQuery('input[name=\"{$field['fieldname']}\"]').prop('checked') == false) {\n";
+			echo "\tif ($('input[name=\"{$field['fieldname']}\"]').prop('checked') == false) {\n";
 
 			if (isset($field['enablefields'])) {
 				foreach (explode(',', $field['enablefields']) as $enablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$enablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$enablefield}\"]').prop('disabled',true);\n";
+					echo "\t\tif ($('input[name=\"{$enablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$enablefield}\"]').prop('disabled',true);\n";
 					echo "\t\t}\n";
 				}
 			}
 
 			if (isset($field['checkenablefields'])) {
 				foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$checkenablefield}\"]').prop('checked',true);\n";
+					echo "\t\tif ($('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$checkenablefield}\"]').prop('checked',true);\n";
 					echo "\t\t}\n";
 				}
 			}
@@ -1552,16 +1556,16 @@ if ($pkg['fields']['field'] != "") { ?>
 
 			if (isset($field['enablefields'])) {
 				foreach (explode(',', $field['enablefields']) as $enablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$enablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$enablefield}\"]').prop('disabled',false);\n";
+					echo "\t\tif ($('input[name=\"{$enablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$enablefield}\"]').prop('disabled',false);\n";
 					echo "\t\t}\n";
 				}
 			}
 
 			if (isset($field['checkenablefields'])) {
 				foreach (explode(',', $field['checkenablefields']) as $checkenablefield) {
-					echo "\t\tif (jQuery('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
-					echo "\t\t\tjQuery('input[name=\"{$checkenablefield}\"]').prop('checked',false);\n";
+					echo "\t\tif ($('input[name=\"{$checkenablefield}\"]').length > 0) {\n";
+					echo "\t\t\t$('input[name=\"{$checkenablefield}\"]').prop('checked',false);\n";
 					echo "\t\t}\n";
 				}
 			}

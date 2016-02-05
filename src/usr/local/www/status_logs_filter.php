@@ -145,6 +145,12 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
 // Filter Section/Form - Firewall
 filter_form_firewall();
 
@@ -157,24 +163,14 @@ if (!$rawfilter) {
 		$interfacefilter = $iflist[$interfacefilter];
 	}
 
-	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-	} else {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
-	}
+	system_log_filter();
 ?>
 
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-	if ((!$filtertext) && (!$filterfieldsarray)) {
-		printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	} else {
-		printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-	}
-
-	printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>
@@ -183,9 +179,9 @@ if (!$rawfilter) {
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr class="text-nowrap">
-					<th><?=gettext("Act")?></th>
+					<th><?=gettext("Action")?></th>
 					<th><?=gettext("Time")?></th>
-					<th><?=gettext("IF")?></th>
+					<th><?=gettext("Interface")?></th>
 <?php
 	if ($config['syslog']['filterdescriptions'] === "1") {
 ?>
@@ -197,7 +193,7 @@ if (!$rawfilter) {
 ?>
 					<th><?=gettext("Source")?></th>
 					<th><?=gettext("Destination")?></th>
-					<th><?=gettext("Proto")?></th>
+					<th><?=gettext("Protocol")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -223,7 +219,7 @@ if (!$rawfilter) {
 			$margin_left = '0.4em';
 		}
 ?>
-						<i style="margin-left:<?php echo $margin_left;?>" class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+						<i style="margin-left:<?=$margin_left;?>" class="fa <?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 <?php
 		if ($filterent['count']) {
 			echo $filterent['count'];
@@ -319,7 +315,13 @@ if (!$rawfilter) {
 } else {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	print(system_log_table_panel_title());
+?>
+		</h2>
+	</div>
 	<div class="table table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -330,14 +332,19 @@ if (!$rawfilter) {
 			</thead>
 			<tbody>
 <?php
-	if ($filtertext) {
-		$rows = dump_clog($logfile_path, $nentries, true, array("$filtertext"));
-	} else {
-		$rows = dump_clog($logfile_path, $nentries, true, array());
-	}
+	system_log_filter();
 ?>
 			</tbody>
 		</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -359,7 +366,9 @@ print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <!-- AJAXY STUFF -->
@@ -390,7 +399,7 @@ function resolve_ip_callback(transport) {
 	var resolve_class = htmlspecialchars(response.resolve_ip.replace(/[.:]/g, '-'));
 	var resolve_text = '<small><br />' + htmlspecialchars(response.resolve_text) + '<\/small>';
 
-	jQuery('span.RESOLVE-' + resolve_class).html(resolve_text);
+	$('span.RESOLVE-' + resolve_class).html(resolve_text);
 }
 
 // From http://stackoverflow.com/questions/5499078/fastest-method-to-escape-html-tags-as-html-entities

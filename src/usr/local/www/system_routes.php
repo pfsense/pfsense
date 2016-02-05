@@ -140,7 +140,7 @@ function delete_static_route($id) {
 
 if ($_GET['act'] == "del") {
 	if ($a_routes[$_GET['id']]) {
-		$changedesc = $changedesc_prefix . gettext("removed route to") . " " . $a_routes[$_GET['id']]['network'];
+		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to %s"), $a_routes[$_GET['id']]['network']);
 		delete_static_route($_GET['id']);
 		unset($a_routes[$_GET['id']]);
 		write_config($changedesc);
@@ -152,12 +152,13 @@ if ($_GET['act'] == "del") {
 if (isset($_POST['del_x'])) {
 	/* delete selected routes */
 	if (is_array($_POST['route']) && count($_POST['route'])) {
-		$changedesc = $changedesc_prefix . gettext("removed route to");
+		$deleted_routes = "";
 		foreach ($_POST['route'] as $routei) {
-			$changedesc .= " " . $a_routes[$routei]['network'];
+			$deleted_routes .= " " . $a_routes[$routei]['network'];
 			delete_static_route($routei);
 			unset($a_routes[$routei]);
 		}
+		$changedesc = $changedesc_prefix . sprintf(gettext("removed route to%s"), $deleted_routes);
 		write_config($changedesc);
 		header("Location: system_routes.php");
 		exit;
@@ -170,15 +171,15 @@ if (isset($_POST['del_x'])) {
 			// Do not enable a route whose gateway is disabled
 			if (isset($a_gateways[$a_routes[$_GET['id']]['gateway']]['disabled'])) {
 				$do_update_config = false;
-				$input_errors[] = $changedesc_prefix . gettext("gateway is disabled, cannot enable route to") . " " . $a_routes[$_GET['id']]['network'];
+				$input_errors[] = $changedesc_prefix . sprintf(gettext("gateway is disabled, cannot enable route to %s"), $a_routes[$_GET['id']]['network']);
 			} else {
 				unset($a_routes[$_GET['id']]['disabled']);
-				$changedesc = $changedesc_prefix . gettext("enabled route to") . " " . $a_routes[$_GET['id']]['network'];
+				$changedesc = $changedesc_prefix . sprintf(gettext("enabled route to %s"), $a_routes[$_GET['id']]['network']);
 			}
 		} else {
 			delete_static_route($_GET['id']);
 			$a_routes[$_GET['id']]['disabled'] = true;
-			$changedesc = $changedesc_prefix . gettext("disabled route to") . " " . $a_routes[$_GET['id']]['network'];
+			$changedesc = $changedesc_prefix . sprintf(gettext("disabled route to %s"), $a_routes[$_GET['id']]['network']);
 		}
 
 		if ($do_update_config) {
@@ -254,7 +255,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('staticroutes')) {
-	print_info_box_np(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The static route configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -264,18 +265,22 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
-<table class="table">
-<thead>
-	<tr>
-		<th></th>
-		<th><?=gettext("Network")?></th>
-		<th><?=gettext("Gateway")?></th>
-		<th><?=gettext("Interface")?></th>
-		<th><?=gettext("Description")?></th>
-		<th><?=gettext("Actions")?></th>
-	</tr>
-</thead>
-<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Static Routes')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th><?=gettext("Network")?></th>
+						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 foreach ($a_routes as $i => $route):
 	if (isset($route['disabled'])) {
@@ -284,39 +289,42 @@ foreach ($a_routes as $i => $route):
 		$icon = 'fa-check-circle-o';
 	}
 ?>
-	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-		<td><i class="fa <?=$icon?>"></i></td>
-		<td>
-			<?=strtolower($route['network'])?>
-		</td>
-		<td>
-			<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
-		</td>
-		<td>
-			<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($route['descr'])?>
-		</td>
-		<td>
-			<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+					<td><i class="fa <?=$icon?>"></i></td>
+					<td>
+						<?=strtolower($route['network'])?>
+					</td>
+					<td>
+						<?=htmlentities($a_gateways[$route['gateway']]['name']) . " - " . htmlentities($a_gateways[$route['gateway']]['gateway'])?>
+					</td>
+					<td>
+						<?=convert_friendly_interface_to_friendly_descr($a_gateways[$route['gateway']]['friendlyiface'])?>
+					</td>
+					<td>
+						<?=htmlspecialchars($route['descr'])?>
+					</td>
+					<td>
+						<a href="system_routes_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit route')?>"></a>
 
-			<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+						<a href="system_routes_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy route')?>"></a>
 
-	<?php if (isset($route['disabled'])) {
-	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
-	<?php } else {
-	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
-	<?php }
-	?>
-			<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+				<?php if (isset($route['disabled'])) {
+				?>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable route')?>"></a>
+				<?php } else {
+				?>
+						<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable route')?>"></a>
+				<?php }
+				?>
+						<a href="system_routes.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete route')?>"></a>
 
-		</td>
-	</tr>
+					</td>
+				</tr>
 <?php endforeach; ?>
-</table>
+			</table>
+		</div>
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="system_routes_edit.php" role="button" class="btn btn-success btn-sm">

@@ -126,7 +126,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_server[$id]);
 	write_config();
-	$savemsg = gettext("Server successfully deleted")."<br />";
+	$savemsg = gettext("Server successfully deleted");
 }
 
 if ($_GET['act'] == "new") {
@@ -409,7 +409,7 @@ if ($_POST) {
 		}
 	}
 
-	if ($pconfig['maxclients'] && !is_numeric($pconfig['maxclients'])) {
+	if ($pconfig['maxclients'] && !is_numericint($pconfig['maxclients'])) {
 		$input_errors[] = gettext("The field 'Concurrent connections' must be numeric.");
 	}
 
@@ -603,7 +603,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box_np($savemsg, 'success');
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -762,7 +762,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">System &gt; Cert Manager</a>', '</span>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);
@@ -824,14 +824,14 @@ if ($act=="new" || $act=="edit"):
 		'cert_depth',
 		'Certificate Depth',
 		$pconfig['cert_depth'],
-		$openvpn_cert_depths
+		["" => gettext("Do Not Check")] + $openvpn_cert_depths
 		))->setHelp('When a certificate-based client logs in, do not accept certificates below this depth. ' .
 					'Useful for denying certificates made with intermediate CAs generated from the same CA as the server.');
 
 	$section->addInput(new Form_Checkbox(
 		'strictusercn',
 		'Strict User-CN Matching',
-		null,
+		'Enforce match',
 		$pconfig['strictusercn']
 	))->setHelp('When authenticating users, enforce a match between the common name of the client certificate and the username given at login.');
 
@@ -982,6 +982,7 @@ if ($act=="new" || $act=="edit"):
 	$form->add($section);
 
 	$section = new Form_Section('Client Settings');
+	$section->addClass('advanced');
 
 	$section->addInput(new Form_Checkbox(
 		'dynamic_ip',
@@ -1083,10 +1084,6 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['ntp_server2']
 	));
 
-	$form->add($section);
-
-	$section = new Form_Section('NetBIOS Options');
-
 	$section->addInput(new Form_Checkbox(
 		'netbios_enable',
 		'NetBIOS enable',
@@ -1150,7 +1147,6 @@ if ($act=="new" || $act=="edit"):
 	$form->add($section);
 
 	$section = new Form_Section('Advanced Configuration');
-	$section->addClass('advanced');
 
 	$section->addInput(new Form_Textarea(
 		'custom_options',
@@ -1200,7 +1196,7 @@ else:
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
 					<th><?=gettext("Description")?></th>
-					<th><!-- Buttons --></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 
@@ -1270,7 +1266,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
-				hideInput('strictusercn', true);
+				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
@@ -1280,7 +1276,7 @@ events.push(function() {
 				hideInput('certref', false);
 				hideInput('dh_length', false);
 				hideInput('cert_depth', false);
-				hideInput('strictusercn', false);
+				hideCheckbox('strictusercn', false);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
@@ -1295,7 +1291,7 @@ events.push(function() {
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('dh_length', true);
 				hideInput('cert_depth', true);
-				hideInput('strictusercn', true);
+				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);
@@ -1338,6 +1334,7 @@ events.push(function() {
 				break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
+				hideClass('advanced', false);
 				hideCheckbox('autokey_enable', true);
 			default:
 				hideInput('custom_options', false);
@@ -1439,8 +1436,8 @@ events.push(function() {
 		hideInput('netbios_scope', hide);
 		hideCheckbox('wins_server_enable', hide);
 		wins_server_change();
-		hideCheckbox('client_mgmt_port_enable', hide);
-		client_mgmt_port_change();
+//		hideCheckbox('client_mgmt_port_enable', hide);
+//		client_mgmt_port_change();
 	}
 
 	function tuntap_change() {

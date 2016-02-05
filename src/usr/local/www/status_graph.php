@@ -84,14 +84,14 @@ if ($_POST['height']) {
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
 if (ipsec_enabled()) {
-	$ifdescrs['enc0'] = "IPsec";
+	$ifdescrs['enc0'] = gettext("IPsec");
 }
 
 foreach (array('server', 'client') as $mode) {
 	if (is_array($config['openvpn']["openvpn-{$mode}"])) {
 		foreach ($config['openvpn']["openvpn-{$mode}"] as $id => $setting) {
 			if (!isset($setting['disable'])) {
-				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+				$ifdescrs['ovpn' . substr($mode, 0, 1) . $setting['vpnid']] = gettext("OpenVPN") . " " . $mode . ": ".htmlspecialchars($setting['description']);
 			}
 		}
 	}
@@ -170,8 +170,8 @@ $group->add(new Form_Select(
 	null,
 	$cursort,
 	array (
-		'in'	=> 'Bandwidth In',
-		'out'	=> 'Bandwidth Out'
+		'in'	=> gettext('Bandwidth In'),
+		'out'	=> gettext('Bandwidth Out')
 	)
 ))->setHelp('Sort by');
 
@@ -180,9 +180,9 @@ $group->add(new Form_Select(
 	null,
 	$curfilter,
 	array (
-		'local'	=> 'Local',
-		'remote'=> 'Remote',
-		'all'	=> 'All'
+		'local'	=> gettext('Local'),
+		'remote'=> gettext('Remote'),
+		'all'	=> gettext('All')
 	)
 ))->setHelp('Filter');
 
@@ -191,10 +191,10 @@ $group->add(new Form_Select(
 	null,
 	$curhostipformat,
 	array (
-		''			=> 'IP Address',
-		'hostname'	=> 'Host Name',
-		'descr'		=> 'Description',
-		'fqdn'		=> 'FQDN'
+		''			=> gettext('IP Address'),
+		'hostname'	=> gettext('Host Name'),
+		'descr'		=> gettext('Description'),
+		'fqdn'		=> gettext('FQDN')
 	)
 ))->setHelp('Display');
 
@@ -225,8 +225,8 @@ function updateBandwidth() {
 
 						$('#top10-hosts').append('<tr>'+
 							'<td>'+ hostinfo[0] +'</td>'+
-							'<td>'+ hostinfo[1] +' Bits/sec</td>'+
-							'<td>'+ hostinfo[2] +' Bits/sec</td>'+
+							'<td>'+ hostinfo[1] +' <?=gettext("Bits/sec");?></td>'+
+							'<td>'+ hostinfo[2] +' <?=gettext("Bits/sec");?></td>'+
 						'</tr>');
 					}
 				}
@@ -249,21 +249,21 @@ events.push(function() {
 
 /* link the ipsec interface magically */
 if (ipsec_enabled()) {
-	$ifdescrs['enc0'] = "IPsec";
+	$ifdescrs['enc0'] = gettext("IPsec");
 }
 
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title">Traffic graph</h2>
+		<h2 class="panel-title"><?=gettext("Traffic graph");?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">
 			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
 				<param name="id" value="graph" />
 				<param name="type" value="image/svg+xml" />
-				<param name="width" value="<?php echo $width; ?>" />
-				<param name="height" value="<?php echo $height; ?>" />
+				<param name="width" value="<?=$width;?>" />
+				<param name="height" value="<?=$height;?>" />
 				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
 			</object>
 		</div>

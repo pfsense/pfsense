@@ -43,11 +43,11 @@ $priv_list['page-diagnostics-authentication']['descr'] = gettext("Allow access t
 $priv_list['page-diagnostics-authentication']['match'] = array();
 $priv_list['page-diagnostics-authentication']['match'][] = "diag_authentication.php*";
 
-$priv_list['page-diagnostics-backup/restore'] = array();
-$priv_list['page-diagnostics-backup/restore']['name'] = gettext("WebCfg - Diagnostics: Backup/restore");
-$priv_list['page-diagnostics-backup/restore']['descr'] = gettext("Allow access to the 'Diagnostics: Backup/restore' page.");
-$priv_list['page-diagnostics-backup/restore']['match'] = array();
-$priv_list['page-diagnostics-backup/restore']['match'][] = "diag_backup.php*";
+$priv_list['page-diagnostics-backup-restore'] = array();
+$priv_list['page-diagnostics-backup-restore']['name'] = gettext("WebCfg - Diagnostics: Backup/restore");
+$priv_list['page-diagnostics-backup-restore']['descr'] = gettext("Allow access to the 'Diagnostics: Backup/restore' page.");
+$priv_list['page-diagnostics-backup-restore']['match'] = array();
+$priv_list['page-diagnostics-backup-restore']['match'][] = "diag_backup.php*";
 
 $priv_list['page-diagnostics-configurationhistory'] = array();
 $priv_list['page-diagnostics-configurationhistory']['name'] = gettext("WebCfg - Diagnostics: Configuration History");
@@ -430,11 +430,11 @@ $priv_list['page-xmlrpcinterfacestats']['descr'] = gettext("Allow access to the 
 $priv_list['page-xmlrpcinterfacestats']['match'] = array();
 $priv_list['page-xmlrpcinterfacestats']['match'][] = "ifstats.php*";
 
-$priv_list['page-system-login/logout'] = array();
-$priv_list['page-system-login/logout']['name'] = gettext("WebCfg - System: Login / Logout / Dashboard");
-$priv_list['page-system-login/logout']['descr'] = gettext("Allow access to the 'System: Login / Logout' page and Dashboard.");
-$priv_list['page-system-login/logout']['match'] = array();
-$priv_list['page-system-login/logout']['match'][] = "index.php*";
+$priv_list['page-system-login-logout'] = array();
+$priv_list['page-system-login-logout']['name'] = gettext("WebCfg - System: Login / Logout / Dashboard");
+$priv_list['page-system-login-logout']['descr'] = gettext("Allow access to the 'System: Login / Logout' page and Dashboard.");
+$priv_list['page-system-login-logout']['match'] = array();
+$priv_list['page-system-login-logout']['match'][] = "index.php*";
 
 $priv_list['page-interfaces'] = array();
 $priv_list['page-interfaces']['name'] = gettext("WebCfg - Interfaces: WAN");

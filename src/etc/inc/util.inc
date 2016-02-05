@@ -698,9 +698,20 @@ function is_ipaddrv4($ipaddr) {
 	return true;
 }
 
-/* returns true if $ipaddr is a valid IPv6 linklocal address */
+/* returns 4 or 6 respectively (== TRUE) if $ipaddr is a valid IPv4 or IPv6 linklocal address
+   returns '' if not a valid linklocal address */
 function is_linklocal($ipaddr) {
-	return (strtolower(substr($ipaddr, 0, 5)) == "fe80:");
+	if (is_ipaddrv4($ipaddr)) {
+		// input is IPv4
+		// test if it's 169.254.x.x per rfc3927 2.1
+		$ip4 = explode(".", $ipaddr);
+		if ($ip4[0] == '169' && $ip4[1] == '254') {
+			return 4;
+		}
+	} elseif (Net_IPv6::getAddressType($ipaddr) == NET_IPV6_LOCAL_LINK) {
+		return 6;
+	}
+	return '';
 }
 
 /* returns scope of a linklocal address */
@@ -714,16 +725,14 @@ function get_ll_scope($addr) {
 
 /* returns true if $ipaddr is a valid literal IPv6 address */
 function is_literalipaddrv6($ipaddr) {
-	if (preg_match("/\[([0-9a-f:]+)\]/i", $ipaddr, $match)) {
-		$ipaddr = $match[1];
-	} else {
-		return false;
+	if (substr($ipaddr,0,1) == '[' && substr($ipaddr,-1,1) == ']') {
+		// if it's data wrapped in "[ ... ]" then test if middle part is valid IPv6
+		return is_ipaddrv6(substr($ipaddr,1,-1));
 	}
-
-	return is_ipaddrv6($ipaddr);
+	return false;
 }
 
-/* returns true if $iport is a valid IPv4/IPv6 address + port
+/* returns true if $iport is a valid IPv4:port or [Literal IPv6]:port
 	false - not valid
 	true (numeric 4 or 6) - if valid, gives type of address */
 function is_ipaddrwithport($ipport) {
@@ -748,12 +757,11 @@ function is_ipaddrwithport($ipport) {
 
 function is_hostnamewithport($hostport) {
 	$parts = explode(":", $hostport);
-	$port = array_pop($parts);
-	if (count($parts) == 1) {
-		return is_hostname($parts[0]) && is_port($port);
-	} else {
-		return false;
+	// no need to validate with is_string(); if it's not a string then explode won't return 2 parts anyway
+	if (count($parts) == 2) {
+		return is_hostname($parts[0]) && is_port($parts[1]);
 	}
+	return false;
 }
 
 /* returns true if $ipaddr is a valid dotted IPv4 address or an alias thereof */
@@ -811,15 +819,47 @@ function is_subnetoralias($subnet) {
 	}
 }
 
-function subnet_size($subnet) {
-	if (is_subnetv4($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (32 - $bits)));
-	} else if (is_subnetv6($subnet)) {
-		list ($ip, $bits) = explode("/", $subnet);
-		return round(exp(log(2) * (128 - $bits)));
+/* Get number of addresses in an IPv4/IPv6 subnet (represented as a string)
+   optional $exact=true forces error (0) to be returned if it can't be represented exactly
+   Exact result not possible above PHP_MAX_INT which is about 2^31 addresses on x32 or 2^63 on x64
+   Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
+function subnet_size($subnet, $exact=false) {
+	$parts = explode("/", $subnet);
+	if (count($parts) == 2) {
+		if (is_ipaddrv4($parts[0])) {
+			return subnet_size_by_netmask(4, $parts[1], $exact);
+		} elseif (is_ipaddrv6($parts[0])) {
+			return subnet_size_by_netmask(6, $parts[1], $exact);
+		}
+	}
+	return 0;
+}
+
+/* Get number of addresses in an IPv4/IPv6 subnet (represented numerically as IP type + bits)
+   optional $exact=true forces error (0) to be returned if it can't be represented exactly
+   Hard to think where we might need to count exactly a huge subnet but an overflow detection option is probably sensible
+   Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
+function subnet_size_by_netmask($iptype, $bits, $exact=false) {
+	if (!is_numericint($bits)) {
+		return 0;
+	} elseif ($iptype == 4 && $bits <= 32) {
+		$snsize = 32 - $bits;
+	} elseif ($iptype == 6 && $bits <= 128) {
+		$snsize = 128 - $bits;
 	} else {
 		return 0;
+	}
+
+	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
+	$result = 2 ** $snsize;
+	
+	if ($exact && !is_int($result)) {
+		//exact required but can't represent result exactly as an INT
+		return 0;
+	} else {
+		// result ok, will be an INT where possible (guaranteed up to 2^31 addresses on x32/x64) and a float for 'huge' subnets
+		return $result;
 	}
 }
 
@@ -847,36 +887,44 @@ function subnetv4_expand($subnet) {
 	return $result;
 }
 
-/* find out whether two subnets overlap */
+/* find out whether two IPv4/IPv6 CIDR subnets overlap.
+   Note: CIDR overlap implies one is identical or included so largest sn will be the same */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {
-
-	if (!is_numeric($bits1)) {
-		$bits1 = 32;
-	}
-	if (!is_numeric($bits2)) {
-		$bits2 = 32;
-	}
-
-	if ($bits1 < $bits2) {
-		$relbits = $bits1;
+	if (is_ipaddrv4($subnet1)) {
+		return check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2);
 	} else {
-		$relbits = $bits2;
+		return check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2);
 	}
-
-	$sn1 = gen_subnet_mask_long($relbits) & ip2long($subnet1);
-	$sn2 = gen_subnet_mask_long($relbits) & ip2long($subnet2);
-
-	return ($sn1 == $sn2);
 }
 
-/* find out whether two IPv6 subnets overlap */
-function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
-	$sub1_min = gen_subnetv6($subnet1, $bits1);
-	$sub1_max = gen_subnetv6_max($subnet1, $bits1);
-	$sub2_min = gen_subnetv6($subnet2, $bits2);
-	$sub2_max = gen_subnetv6_max($subnet2, $bits2);
+/* find out whether two IPv4 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
+	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
+	
+	if($subnetv4_start1 == '' || $subnetv4_start2 == '') {
+		// One or both args is not a valid IPv4 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv4_start1 == $subnetv4_start2);
+}
 
-	return (is_inrange_v6($sub1_min, $sub2_min, $sub2_max) || is_inrange_v6($sub1_max, $sub2_min, $sub2_max) || is_inrange_v6($sub2_min, $sub1_min, $sub1_max));
+/* find out whether two IPv6 CIDR subnets overlap.
+   Note: CIDR overlap means sn1/sn2 are identical or one is included in other. So sn using largest $bits will be the same  */
+function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
+	$largest_sn = min($bits1, $bits2);
+	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
+	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
+	
+	if($subnetv6_start1 == '' || $subnetv6_start2 == '') {
+		// One or both args is not a valid IPv6 subnet
+		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
+		return false;
+	}
+	return ($subnetv6_start1 == $subnetv6_start2);
 }
 
 /* return true if $addr is in $subnet, false if not */
@@ -1712,8 +1760,21 @@ function format_bytes($bytes) {
 	} else if ($bytes >= 1024) {
 		return sprintf("%.0f KB", $bytes/1024);
 	} else {
-		return sprintf("%d bytes", $bytes);
+		return sprintf("%d B", $bytes);
 	}
+}
+
+function format_number($num, $precision = 3) {
+	$units = array('', 'K', 'M', 'G', 'T');
+
+	$i = 0;
+	while ($num > 1000 && $i < count($units)) {
+		$num /= 1000;
+		$i++;
+	}
+	round($num, $precision);
+
+	return ("$num {$units[$i]}");
 }
 
 function update_filter_reload_status($text) {

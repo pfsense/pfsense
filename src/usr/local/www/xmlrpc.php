@@ -344,8 +344,8 @@ function restore_config_section_xmlrpc($raw_params) {
 }
 
 /*****************************/
-$merge_config_section_doc = gettext("XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
-$merge_config_section_sig = array(
+$merge_installedpackages_section_doc = gettext("XMLRPC wrapper for merging package sections. This method must be called with two parameters: a string containing the local system\'s password and an array to merge into the system\'s config. This function returns true upon completion.");
+$merge_installedpackages_section_sig = array(
 	array(
 		$XML_RPC_Boolean,
 		$XML_RPC_String,
@@ -552,7 +552,8 @@ $server = new XML_RPC_Server(
 			'signature' => $filter_configure_sig,
 			'docstring' => $filter_configure_doc),
 		'pfsense.interfaces_carp_configure' => array('function' => 'interfaces_carp_configure_xmlrpc',
-			'docstring' => $carp_configure_sig),
+			'signature' => $carp_configure_sig,
+			'docstring' => $carp_configure_doc),
 		'pfsense.backup_config_section' => array('function' => 'backup_config_section_xmlrpc',
 			'signature' => $backup_config_section_sig,
 			'docstring' => $backup_config_section_doc),
@@ -563,11 +564,11 @@ $server = new XML_RPC_Server(
 			'signature' => $merge_config_section_sig,
 			'docstring' => $merge_config_section_doc),
 		'pfsense.merge_installedpackages_section_xmlrpc' => array('function' => 'merge_installedpackages_section_xmlrpc',
-			'signature' => $merge_config_section_sig,
-			'docstring' => $merge_config_section_doc),
+			'signature' => $merge_installedpackages_section_sig,
+			'docstring' => $merge_installedpackages_section_doc),
 		'pfsense.host_firmware_version' => array('function' => 'pfsense_firmware_version_xmlrpc',
 			'signature' => $pfsense_firmware_version_sig,
-			'docstring' => $host_firmware_version_doc),
+			'docstring' => $pfsense_firmware_version_doc),
 		'pfsense.reboot' => array('function' => 'reboot_xmlrpc',
 			'signature' => $reboot_sig,
 			'docstring' => $reboot_doc),

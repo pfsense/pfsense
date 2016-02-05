@@ -354,8 +354,8 @@ $section->addInput(new Form_Select(
 	'Mode',
 	$pconfig['mode'],
 	array(
-		'loadbalance' => 'Load Balance',
-		'failover' => 'Manual Failover'
+		'loadbalance' => gettext('Load Balance'),
+		'failover' => gettext('Manual Failover')
 	)
 ));
 

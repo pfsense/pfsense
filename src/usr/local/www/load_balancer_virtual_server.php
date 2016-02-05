@@ -132,7 +132,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_info_box_np(gettext("The virtual server configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The virtual server configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 /* active tabs */
@@ -158,7 +158,7 @@ display_top_tabs($tab_array);
 						<th><?=gettext('Pool'); ?></th>
 						<th><?=gettext('Fallback pool'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><!-- Action buttons --></th>
+						<th><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>

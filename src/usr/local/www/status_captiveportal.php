@@ -242,7 +242,7 @@ if (!empty($cpzone)): ?>
 	   endif;
 ?>
 				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>" class="btn btn-xs brn-danger"><?=gettext("Disconnect")?></a>
+					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>" class="btn btn-xs btn-danger"><?=gettext("Disconnect")?></a>
 				</td>
 			</tr>
 <?php
@@ -259,7 +259,7 @@ else:
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
 	<div class="panel-body"><br />
 <?php
-	print_info_box(gettext("No captive portal zones have been configured. You may add new zones here: ") . '<a href="services_captiveportal_zones.php">' . 'Services->Captive portal' . '</a>');
+	print_info_box(sprintf(gettext('No captive portal zones have been configured. You may add new zones here: %1$sServices->Captive portal%2$s'), '<a href="services_captiveportal_zones.php">', '</a>'));
 ?>
 	</div>
 </div>

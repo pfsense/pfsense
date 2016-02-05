@@ -71,7 +71,7 @@ require_once("pkg-utils.inc");
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
-	print_info_box_np("Please wait while packages are reinstalled in the background.");
+	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
 }
@@ -133,13 +133,13 @@ function get_pkg_table() {
 		$pkgtbl .= 		$index['desc'];
 
 		if (is_array($index['deps']) && count($index['deps'])) {
-			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<ul>\n";
+			$pkgtbl .= 	'<br /><br />' . gettext("Package Dependencies") . ":<br/>\n";
 
 			foreach ($index['deps'] as $pdep) {
-				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '" class="fa fa-globe"><small>&nbsp;' . basename($pdep['origin']) . '-' . $pdep['version'] . '</small></a>&emsp;' . "\n";
+				$pkgtbl .= '<a target="_blank" href="https://freshports.org/' . $pdep['origin'] . '">&nbsp;<i class="fa fa-paperclip"></i> ' . basename($pdep['origin']) . '-' . $pdep['version'] . '</a>&emsp;' . "\n";
 			}
 
-			$pkgtbl .= '</ul>' . "\n";
+			$pkgtbl .= "\n";
 		}
 
 		$pkgtbl .= 	'</td>' . "\n";
@@ -169,12 +169,15 @@ $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.ph
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default" id="search-panel" style="display: none;">
-	<div class="panel-heading"><?=gettext('Search')?>
-		<span class="widget-heading-icon pull-right">
-			<a data-toggle="collapse" href="#search-panel_panel-body">
-				<i class="fa fa-plus-circle"></i>
-			</a>
-		</span>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+			<?=gettext('Search')?>
+			<span class="widget-heading-icon pull-right">
+				<a data-toggle="collapse" href="#search-panel_panel-body">
+					<i class="fa fa-plus-circle"></i>
+				</a>
+			</span>
+		</h2>
 	</div>
 	<div id="search-panel_panel-body" class="panel-body collapse in">
 		<div class="form-group">
@@ -194,7 +197,7 @@ display_top_tabs($tab_array);
 				<a id="btnclear" title="<?=gettext("Clear")?>" class="btn btn-default btn-sm"><?=gettext("Clear")?></a>
 			</div>
 			<div class="col-sm-10 col-sm-offset-2">
-				<span class="help-block">Enter a search string or *nix regular expression to search package names and descriptions.</span>
+				<span class="help-block"><?=gettext('Enter a search string or *nix regular expression to search package names and descriptions.')?></span>
 			</div>
 		</div>
 	</div>

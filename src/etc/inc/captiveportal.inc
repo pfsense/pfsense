@@ -1,9 +1,9 @@
 <?php
 /*
 	captiveportal.inc
+
 	part of pfSense (https://www.pfsense.org)
-	Copyright (C) 2004-2011 Scott Ullrich <sullrich@gmail.com>
-	Copyright (C) 2009-2012 Ermal Luçi <eri@pfsense.org>
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC. All rights reserved.
 	Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -16,25 +16,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
 
-	This version of captiveportal.inc has been modified by Rob Parker
-	<rob.parker@keycom.co.uk> to include changes for per-user bandwidth management
-	via returned RADIUS attributes. This page has been modified to delete any
-	added rules which may have been created by other per-user code (index.php, etc).
-	These changes are (c) 2004 Keycom PLC.
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 /* include all configuration functions */
@@ -221,7 +238,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$htmltext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $htmltext);
 			$htmltext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $htmltext);
-			$htmltext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $htmltext);
 			$htmltext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $htmltext);
 			if ($cpcfg['preauthurl']) {
 				$htmltext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $htmltext);
@@ -249,7 +265,6 @@ function captiveportal_configure_zone($cpcfg) {
 			$errtext = str_replace("\$PORTAL_MESSAGE\$", "#PORTAL_MESSAGE#", $errtext);
 			$errtext = str_replace("\$CLIENT_MAC\$", "#CLIENT_MAC#", $errtext);
 			$errtext = str_replace("\$CLIENT_IP\$", "#CLIENT_IP#", $errtext);
-			$errtext = str_replace("\$ORIGINAL_PORTAL_IP\$", "#ORIGINAL_PORTAL_IP#", $errtext);
 			$errtext = str_replace("\$PORTAL_ACTION\$", "#PORTAL_ACTION#", $errtext);
 			if ($cpcfg['preauthurl']) {
 				$errtext = str_replace("\$PORTAL_REDIRURL\$", "{$cpcfg['preauthurl']}", $errtext);
@@ -659,8 +674,8 @@ function captiveportal_prune_old() {
 	 * If something is missed next run will catch it!
 	 */
 	$pruning_time = time();
-	$stop_time = $pruning_time;
 	foreach ($cpdb as $cpentry) {
+		$stop_time = $pruning_time;
 
 		$timedout = false;
 		$term_cause = 1;
@@ -727,19 +742,32 @@ function captiveportal_prune_old() {
 		/* do periodic RADIUS reauthentication? */
 		if (!$timedout && !empty($radiusservers)) {
 			if (isset($cpcfg['radacct_enable'])) {
-				if ($cpcfg['reauthenticateacct'] == "stopstart") {
+				if (substr($cpcfg['reauthenticateacct'], 0, 9) == "stopstart") {
 					/* stop and restart accounting */
+					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
+						$rastart_time = 0;
+						$rastop_time = 60;
+					} else {
+						$rastart_time = $cpentry[0];
+						$rastop_time = null;
+					}
 					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
-						$cpentry[0], // start time
+						$rastart_time, // start time
 						$radiusservers,
 						$cpentry[2], // clientip
 						$cpentry[3], // clientmac
-						10); // NAS Request
+						10, // NAS Request
+						false, // Not an interim request
+						$rastop_time); // Stop Time
 					$clientsn = (is_ipaddrv6($cpentry[2])) ? 128 : 32;
 					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 1, $cpentry[2], $clientsn, $cpentry[3]);
 					$_gb = @pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XZEROENTRY, 2, $cpentry[2], $clientsn, $cpentry[3]);
+					if ($cpcfg['reauthenticateacct'] == "stopstartfreeradius") {
+						/* Need to pause here or the FreeRADIUS server gets confused about packet ordering. */
+						sleep(1);
+					}
 					RADIUS_ACCOUNTING_START($cpentry[1], // ruleno
 						$cpentry[4], // username
 						$cpentry[5], // sessionid
@@ -877,10 +905,17 @@ function captiveportal_disconnect($dbent, $radiusservers, $term_cause = 1, $stop
 
 	/* this client needs to be deleted - remove ipfw rules */
 	if (isset($config['captiveportal'][$cpzone]['radacct_enable']) && !empty($radiusservers)) {
+		if ($config['captiveportal'][$cpzone]['reauthenticateacct'] == "stopstartfreeradius") {
+			/* Interim updates are on so the session time must be reported as the elapsed time since the previous interim update. */
+			$session_time = ($stop_time - $dbent[0]) % 60;
+			$start_time = $stop_time - $session_time;
+		} else {
+			$start_time = $dbent[0];
+		}
 		RADIUS_ACCOUNTING_STOP($dbent[1], // ruleno
 			$dbent[4], // username
 			$dbent[5], // sessionid
-			$dbent[0], // start time
+			$start_time, // start time
 			$radiusservers,
 			$dbent[2], // clientip
 			$dbent[3], // clientmac

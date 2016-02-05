@@ -137,22 +137,18 @@ if ($_POST) {
 
 		if (isset($pconfig['enable']) && isset($config['dnsmasq']['enable'])) {
 			if ($pconfig['port'] == $config['dnsmasq']['port']) {
-				$input_errors[] = "The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.";
+				$input_errors[] = gettext("The DNS Forwarder is enabled using this port. Choose a non-conflicting port, or disable the DNS Forwarder.");
 			}
 		}
 
 		if (empty($pconfig['active_interface'])) {
-			$input_errors[] = "One or more Network Interfaces must be selected for binding.";
+			$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
 		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
-			$input_errors[] = "This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.";
+			$input_errors[] = gettext("This system is configured to use the DNS Resolver as its DNS server, so Localhost or All must be selected in Network Interfaces.");
 		}
 
 		if (empty($pconfig['outgoing_interface'])) {
-			$input_errors[] = "One or more Outgoing Network Interfaces must be selected.";
-		}
-
-		if (empty($pconfig['system_domain_local_zone_type'])) {
-			$input_errors[] = "A System Domain Local-Zone Type must be selected.";
+			$input_errors[] = gettext("One or more Outgoing Network Interfaces must be selected.");
 		}
 
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
@@ -170,11 +166,6 @@ if ($_POST) {
 		if (is_array($pconfig['outgoing_interface']) && !empty($pconfig['outgoing_interface'])) {
 			$display_outgoing_interface = $pconfig['outgoing_interface'];
 			$pconfig['outgoing_interface'] = implode(",", $pconfig['outgoing_interface']);
-		}
-
-		if (isset($pconfig['system_domain_local_zone_type']) && !empty($pconfig['system_domain_local_zone_type'])) {
-			$display_system_domain_local_zone_type = $pconfig['system_domain_local_zone_type'];
-			$pconfig['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 		}
 
 		$test_output = array();
@@ -195,13 +186,12 @@ if ($_POST) {
 			$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
 			$a_unboundcfg['custom_options'] = $pconfig['custom_options'];
 
-			write_config("DNS Resolver configured.");
+			write_config(gettext("DNS Resolver configured."));
 			mark_subsystem_dirty('unbound');
 		}
 
 		$pconfig['active_interface'] = $display_active_interface;
 		$pconfig['outgoing_interface'] = $display_outgoing_interface;
-		$pconfig['system_domain_local_zone_type'] = $display_system_domain_local_zone_type;
 		$pconfig['custom_options'] = $display_custom_options;
 	}
 }
@@ -230,7 +220,7 @@ function build_if_list($selectedifs) {
 	$interface_addresses = get_possible_listen_ips(true);
 	$iflist = array('options' => array(), 'selected' => array());
 
-	$iflist['options']['all']	= "All";
+	$iflist['options']['all']	= gettext("All");
 	if (empty($selectedifs) || empty($selectedifs[0]) || in_array("all", $selectedifs)) {
 		array_push($iflist['selected'], "all");
 	}
@@ -262,7 +252,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_info_box_np(gettext("The configuration of the DNS Resolver has been changed. You must apply changes for them to take effect."));
+	print_apply_box(gettext("The DNS Resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -311,13 +301,11 @@ $section->addInput(new Form_Select(
 	true
 ))->addClass('general')->setHelp('Utilize different network interface(s) that the DNS Resolver will use to send queries to authoritative servers and receive their replies. By default all interfaces are used.');
 
-$unbound_local_zone_types = array("deny" => gettext("Deny"), "refuse" => gettext("Refuse"), "static" => gettext("Static"), "transparent" => gettext("Transparent"), "typetransparent" => gettext("Type Transparent"), "redirect" => gettext("Redirect"), "inform" => gettext("Inform"), "inform_deny" => gettext("Inform Deny"), "nodefault" => gettext("No Default"));
-
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
 	'System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
-	$unbound_local_zone_types
+	unbound_local_zone_types()
 ))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
 
 $section->addInput(new Form_Checkbox(
@@ -465,7 +453,7 @@ foreach ($a_hosts as $hostent):
 						<?=$alias['domain']?>
 					</td>
 					<td>
-						Alias for <?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
+						<?=gettext("Alias for ");?><?=$hostent['host'] ? $hostent['host'] . '.' . $hostent['domain'] : $hostent['domain']?>
 					</td>
 					<td>
 						<i class="fa fa-angle-double-right text-info"></i>

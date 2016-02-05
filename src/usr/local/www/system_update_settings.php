@@ -65,39 +65,32 @@ require("guiconfig.inc");
 require("pkg-utils.inc");
 
 if ($_POST) {
-	unset($input_errors);
-
-	/* input validation */
-	if (($_POST['alturlenable'] == "yes") && (empty($_POST['firmwareurl']))) {
-		$input_errors[] = gettext("A Firmware Auto Update Base URL must be specified when \"Use an unofficial server for firmware upgrades\" is enabled.");
+	// Set the firmware branch, but only if we are not using it already
+	if ($_POST['fwbranch']) {
+		if (($_POST['fwbranch'] == "development") && !is_pkg_installed($g['product_name'] . "-repo-devel")) {
+			pkg_switch_repo(true);
+			pkg_update(true);
+		} else if (($_POST['fwbranch'] == "stable") && !is_pkg_installed($g['product_name'] . "-repo")) {
+			pkg_switch_repo(false);
+			pkg_update(true);
+		}
 	}
 
-	if (!$input_errors) {
-		// Set the firmware branch, but only if we are not using it already
-		if ($_POST['fwbranch']) {
-			if (($_POST['fwbranch'] == "development") && is_pkg_installed($g['product_name'] . "-repo")) {
-				pkg_switch_repo(true);
-			} else if (($_POST['fwbranch'] == "stable") && is_pkg_installed($g['product_name'] . "-repo-devel")) {
-				pkg_switch_repo(false);
-			}
-		}
-
-		if ($_POST['disablecheck'] == "yes") {
-			$config['system']['firmware']['disablecheck'] = true;
-		} else {
-			unset($config['system']['firmware']['disablecheck']);
-		}
-
-		if ($_POST['synconupgrade'] == "yes") {
-			$config['system']['gitsync']['synconupgrade'] = true;
-		} else {
-			unset($config['system']['gitsync']['synconupgrade']);
-		}
-		$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
-		$config['system']['gitsync']['branch'] = $_POST['branch'];
-
-		write_config();
+	if ($_POST['disablecheck'] == "yes") {
+		$config['system']['firmware']['disablecheck'] = true;
+	} else {
+		unset($config['system']['firmware']['disablecheck']);
 	}
+
+	if ($_POST['synconupgrade'] == "yes") {
+		$config['system']['gitsync']['synconupgrade'] = true;
+	} else {
+		unset($config['system']['gitsync']['synconupgrade']);
+	}
+	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
+	$config['system']['gitsync']['branch'] = $_POST['branch'];
+
+	write_config();
 }
 
 $curcfg = $config['system']['firmware'];
@@ -133,7 +126,7 @@ $section->addInput(new Form_Select(
 	fwbranch,
 	'Branch',
 	(is_pkg_installed($g['product_name'] . "-repo")) ? "stable":"development",
-	["stable" => "Stable", "development" => "Development"]
+	["stable" => gettext("Stable"), "development" => gettext("Development")]
 ))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
 			'Use of the development version is at your own risk!');
 
@@ -208,34 +201,5 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 } // e-o-if(file_exista()
 
 print($form);
-?>
-
-<script type="text/javascript">
-//<![CDATA[
-events.push(function() {
-	// Update firmwareurl from preseturls or from the saved alternate if "Unofficial" is checked
-	function update_firmwareurl() {
-		if (!$('#alturlenable').prop('checked')) {
-			$('#firmwareurl').prop('readonly', true)
-			$('#firmwareurl').val($('#preseturls').val());
-		} else {
-			$('#firmwareurl').prop('readonly', false)
-			$('#firmwareurl').val("<?=$config['system']['firmware']['alturl']['firmwareurl']?>");
-		}
-	}
-
-	// Call it when preseturls changes
-
-	$('#preseturls, #alturlenable').on('change', function() {
-	update_firmwareurl();
-	})
-
-	// And call it on page load
-	update_firmwareurl();
-});
-
-//]]>
-</script>
-<?php
 
 include("foot.inc");

@@ -336,7 +336,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 				$members = explode(",", strtoupper($bridge['members']));
 				foreach ($members as $member) {
 					if ($member == $ifnames[0]) {
-						$input_errors[] = sprintf(gettext("You cannot set port %s to interface %s because this interface is a member of %s."), $portname, $member, $portname);
+						$input_errors[] = sprintf(gettext('You cannot set port %1$s to interface %2$s because this interface is a member of %3$s.'), $portname, $member, $portname);
 						break;
 					}
 				}
@@ -347,7 +347,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (does_interface_exist($vlan['if']) == false) {
-				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['tag']} cannot be created please fix the issue before continuing.";
+				$input_errors[] = sprintf(gettext('Vlan parent interface %1$s does not exist anymore so vlan id %2$s cannot be created please fix the issue before continuing.'), $vlan['if'], $vlan['tag']);
 			}
 		}
 	}
@@ -502,7 +502,7 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 
 if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
-	print_info_box_np(gettext("The interface configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 	echo "<br /></p>\n";
 } elseif ($savemsg) {
 	print_info_box($savemsg, $class);

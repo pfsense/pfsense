@@ -180,7 +180,7 @@ if ($_POST) {
 		if (isset($_POST["number{$x}"]) && ctype_digit($_POST["number{$x}"])) {
 			$numbervalue = array();
 			$numbervalue['number'] = htmlspecialchars($_POST["number{$x}"]);
-			$numbervalue['value'] = htmlspecialchars($_POST["value{$x}"]);
+			$numbervalue['value'] = base64_encode($_POST["value{$x}"]);
 			$numberoptions['item'][] = $numbervalue;
 		}
 	}
@@ -195,7 +195,7 @@ if ($_POST) {
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if (($_POST['prefixrange_from'] && !is_ipaddrv6($_POST['prefixrange_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+			$input_errors[] = gettext("A valid prefix range must be specified.");
 		}
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to']))) {
 			$input_errors[] = gettext("A valid prefix range must be specified.");
@@ -436,24 +436,6 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-// Delete a row in the options table
-if ($_GET['act'] == "delopt") {
-	$idx = $_GET['id'];
-
-	if ($pconfig['numberoptions'] && is_array($pconfig['numberoptions']['item'][$idx])) {
-	   unset($pconfig['numberoptions']['item'][$idx]);
-	}
-}
-
-// Add an option row
-if ($_GET['act'] == "addopt") {
-	if (!is_array($pconfig['numberoptions']['item'])) {
-		$pconfig['numberoptions']['item'] = array();
-	}
-
-	array_push($pconfig['numberoptions']['item'], array('number' => null, 'value' => null));
-}
-
 $pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
 $shortcut_section = "dhcp6";
 
@@ -474,7 +456,7 @@ if ($dhcrelay_enabled) {
 }
 
 if (is_subsystem_dirty('staticmaps')) {
-	print_info_box_np(gettext('The static mapping configuration has been changed') . '.<br />' . gettext('You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The static mapping configuration has been changed.') . '<br />' . gettext('You must apply the changes in order for them to take effect.'));
 }
 
 /* active tabs */
@@ -834,48 +816,53 @@ $form->add($section);
 
 $title = 'Show Additional BOOTP/DHCP Options';
 
-if ($pconfig['numberoptions']) {
-	$counter = 0;
-	$last = count($pconfig['numberoptions']['item']) - 1;
-
-	foreach ($pconfig['numberoptions']['item'] as $item) {
-		$group = new Form_Group(null);
-
-		$group->add(new Form_Input(
-			'number' . $counter,
-			null,
-			'text',
-			$item['number']
-		))->setHelp($counter == $last ? 'Number':null);
-
-		$group->add(new Form_Input(
-			'value' . $counter,
-			null,
-			'text',
-			$item['value']
-		))->setHelp($counter == $last ? 'Value':null);
-
-		$btn = new Form_Button(
-			'btn' . $counter,
-			'Delete',
-			'services_dhcpv6.php?if=' . $if . '&act=delopt' . '&id=' . $counter
-		);
-
-		$btn->removeClass('btn-primary')->addClass('btn-danger btn-xs adnlopt');
-		$group->addClass('adnlopt');
-		$group->add($btn);
-		$section->add($group);
-		$counter++;
-	}
+if (!$pconfig['numberoptions']) {
+	$noopts = true;
+	$pconfig['numberoptions']['item'] = array(0 => array('number' => "", 'value' => ""));
+} else {
+	$noopts = false;
 }
 
+$counter = 0;
+$last = count($pconfig['numberoptions']['item']) - 1;
+
+foreach ($pconfig['numberoptions']['item'] as $item) {
+	$group = new Form_Group(null);
+	$group->addClass('repeatable');
+	$group->addClass('adnloptions');
+
+	$group->add(new Form_Input(
+		'number' . $counter,
+		null,
+		'text',
+		$item['number']
+	))->setHelp($counter == $last ? 'Number':null);
+
+	$group->add(new Form_Input(
+		'value' . $counter,
+		null,
+		'text',
+		base64_decode($item['value'])
+	))->setHelp($counter == $last ? 'Value':null);
+
+	$btn = new Form_Button(
+		'deleterow' . $counter,
+		'Delete'
+	);
+
+	$btn->removeClass('btn-primary')->addClass('btn-warning');
+	$group->add($btn);
+	$section->add($group);
+	$counter++;
+}
+
+
 $btnaddopt = new Form_Button(
-	'btnaddopt',
-	'Add Option',
-	'services_dhcpv6.php?if=' . $if . '&act=addopt'
+	'addrowt',
+	'Add Option'
 );
 
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm')->addClass('adnloptions');
 
 $section->addInput($btnaddopt);
 
@@ -887,19 +874,27 @@ $section->addInput(new Form_Input(
 ));
 
 print($form);
+
 ?>
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext('The DNS servers entered in ') . '<a href="system.php">' . gettext(' System: General setup') . '</a>' .
-			   gettext(' (or the ') . '<a href="services_dnsmasq.php"/>' . gettext('DNS forwarder') . '</a>, ' . gettext('if enabled) ') .
-			   gettext('will be assigned to clients by the DHCP server.') . '<br />' .
-			   gettext('The DHCP lease table can be viewed on the ') . '<a href="status_dhcpv6_leases.php">' .
-			   gettext('Status: DHCPv6 leases') . '</a>' . gettext(' page.'),
-			   'info');
+print_info_box(
+	sprintf(
+		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
+		'<a href="system.php">',
+		'<a href="services_dnsmasq.php"/>',
+		'</a>') . 
+	'<br />' .
+	sprintf(
+		gettext('The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page.'),
+		'<a href="status_dhcpv6_leases.php">',
+		'</a>'),
+	'info',
+	false);
 ?>
 </div>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title">DHCPv6 Static Mappings for this interface.</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCPv6 Static Mappings for this interface.");?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -959,7 +954,7 @@ endif;
 events.push(function() {
 
 	function hideDDNS(hide) {
-		hideCheckBox('ddnsupdate', hide);
+		hideCheckbox('ddnsupdate', hide);
 		hideInput('ddnsdomain', hide);
 		hideInput('ddnsdomainprimary', hide);
 		hideInput('ddnsdomainkeyname', hide);
@@ -1012,7 +1007,7 @@ events.push(function() {
 	// Show netboot controls
 	$("#btnnetboot").click(function() {
 		hideInput('bootfile_url', false);
-		hideCheckBox('shownetboot', false);
+		hideCheckbox('shownetboot', false);
 	});
 
 	// Make the 'additional options' button a plain button, not a submit button
@@ -1020,7 +1015,7 @@ events.push(function() {
 
 	// Show additional  controls
 	$("#btnadnl").click(function() {
-		hideClass('adnlopt', false);
+		hideClass('adnloptions', false);
 		hideInput('btnaddopt', false);
 	});
 
@@ -1030,8 +1025,8 @@ events.push(function() {
 	hideInput('tftp', true);
 	hideInput('ldap', true);
 	hideInput('bootfile_url', true);
-	hideCheckBox('shownetboot', true);
-	hideClass('adnlopt', true);
+	hideCheckbox('shownetboot', true);
+	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
 	hideInput('btnaddopt', true);
 });
 //]]>

@@ -106,40 +106,38 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('igmpproxy')) {
-	print_info_box_np(gettext('The IGMP entry list has been changed.' . '<br />' . 'You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The IGMP entry list has been changed.') . '<br />' . gettext('You must apply the changes in order for them to take effect.'));
 }
 ?>
 
 <form action="services_igmpproxy.php" method="post">
-
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>
-	<div class="panel-body">
-
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed">
-			<thead>
-				<tr>
-					<th><?=gettext("Name")?></th>
-					<th><?=gettext("Type")?></th>
-					<th><?=gettext("Values")?></th>
-					<th><?=gettext("Description")?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
+	<div class="panel panel-default">
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IGMP Proxy')?></h2></div>
+		<div class="panel-body">
+			<div class="table-responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Name")?></th>
+							<th><?=gettext("Type")?></th>
+							<th><?=gettext("Values")?></th>
+							<th><?=gettext("Description")?></th>
+							<th><?=gettext("Actions")?></th>
+						</tr>
+					</thead>
+					<tbody>
 <?php
 $i = 0;
 foreach ($a_igmpproxy as $igmpentry):
 ?>
-				<tr>
-					<td>
-						<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']))?>
-					</td>
-					<td>
-						<?=htmlspecialchars($igmpentry['type'])?>
-					</td>
-					<td>
+						<tr>
+							<td>
+								<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($igmpentry['ifname']))?>
+							</td>
+							<td>
+								<?=htmlspecialchars($igmpentry['type'])?>
+							</td>
+							<td>
 <?php
 	$addresses = implode(", ", array_slice(explode(" ", $igmpentry['address']), 0, 10));
 	print($addresses);
@@ -150,26 +148,24 @@ foreach ($a_igmpproxy as $igmpentry):
 		print('...');
 	}
 ?>
-					</td>
-					<td>
-						<?=htmlspecialchars($igmpentry['descr'])?>&nbsp;
-					</td>
-					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>"></a>
-					</td>
-				</tr>
+							</td>
+							<td>
+								<?=htmlspecialchars($igmpentry['descr'])?>&nbsp;
+							</td>
+							<td>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit IGMP entry')?>" href="services_igmpproxy_edit.php?id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete IGMP entry')?>" href="services_igmpproxy.php?act=del&amp;id=<?=$i?>"></a>
+							</td>
+						</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-			</tbody>
-		</table>
+					</tbody>
+				</table>
+			</div>
+		</div>
 	</div>
-
-	</div>
-</div>
-	
 </form>
 
 <nav class="action-buttons">

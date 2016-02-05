@@ -106,7 +106,7 @@ if ($_POST) {
 
 if ($_GET['act'] == "del") {
 	if ($a_gateway_groups[$_GET['id']]) {
-		$changedesc .= gettext("removed gateway group") . " {$_GET['id']}";
+		$changedesc .= sprintf(gettext("removed gateway group %s"), $_GET['id']);
 		foreach ($config['filter']['rule'] as $idx => $rule) {
 			if ($rule['gateway'] == $a_gateway_groups[$_GET['id']]['name']) {
 				unset($config['filter']['rule'][$idx]['gateway']);
@@ -131,7 +131,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('staticroutes')) {
-	print_info_box_np(sprintf(gettext("The gateway configuration has been changed.%sYou must apply the changes in order for them to take effect."), "<br />"));
+	print_apply_box(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -140,58 +140,62 @@ $tab_array[] = array(gettext("Static Routes"), false, "system_routes.php");
 $tab_array[] = array(gettext("Gateway Groups"), true, "system_gateway_groups.php");
 display_top_tabs($tab_array);
 ?>
-
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext("Group Name")?></th>
-				<th><?=gettext("Gateways")?></th>
-				<th><?=gettext("Priority")?></th>
-				<th><?=gettext("Description")?></th>
-				<th><?=gettext("Actions")?></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateway Groups')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Group Name")?></th>
+						<th><?=gettext("Gateways")?></th>
+						<th><?=gettext("Priority")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 $i = 0;
 foreach ($a_gateway_groups as $gateway_group):
 ?>
-			<tr>
-				<td>
-				   <?=$gateway_group['name']?>
-				</td>
-				<td>
+					<tr>
+						<td>
+						   <?=$gateway_group['name']?>
+						</td>
+						<td>
 <?php
 	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
 	}
 ?>
-				</td>
-				<td>
+						</td>
+						<td>
 <?php
 	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
 	}
 ?>
-				</td>
-				<td>
-					<?=htmlspecialchars($gateway_group['descr'])?>
-				</td>
-				<td>
-					<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
-					<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
-					<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
-				</td>
-			</tr>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway_group['descr'])?>
+						</td>
+						<td>
+							<a href="system_gateway_groups_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway group')?>"></a>
+							<a href="system_gateway_groups_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway group')?>"></a>
+							<a href="system_gateway_groups.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway group')?>"></a>
+						</td>
+					</tr>
 <?php
 	$i++;
 endforeach;
 ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

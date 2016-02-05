@@ -125,51 +125,55 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-			  <th><?=gettext("Interface"); ?></th>
-			  <th><?=gettext("Mode"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Wireless Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Mode"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 
 $i = 0;
 
 foreach ($a_clones as $clone) {
 ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars($clone['cloneif'])?>
-				</td>
-				<td>
-					<?= $wlan_modes[$clone['mode']]; ?>
-				</td>
-				<td>
-					<?=htmlspecialchars($clone['descr'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars($clone['cloneif'])?>
+						</td>
+						<td>
+							<?= $wlan_modes[$clone['mode']]; ?>
+						</td>
+						<td>
+							<?=htmlspecialchars($clone['descr'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit WiFi interface')?>"	href="interfaces_wireless_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete WiFi interface')?>"	href="interfaces_wireless.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php
 	$i++;
 }
 ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
 
-	<nav class="action-buttons">
-		<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
-			<i class="fa fa-plus icon-embed-btn"></i>
-			<?=gettext("Add")?></a>
-	</nav>
+			<nav class="action-buttons">
+				<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
+					<i class="fa fa-plus icon-embed-btn"></i>
+					<?=gettext("Add")?></a>
+			</nav>
+		</div>
+	</div>
 </div>
 <?php
 include("foot.inc");

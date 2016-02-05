@@ -147,8 +147,12 @@ _exit() {
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
-	[ -n "${progress_socket}" ] \
-		&& _echo "__RC=${_rc}"
+	if [ -n "${progress_socket}" ]; then
+		local _need_reboot_str=""
+		[ -n "${need_reboot}" ] \
+			&& _need_reboot_str=" __REBOOT_AFTER=${reboot_after}"
+		_echo "__RC=${_rc}${_need_reboot_str}"
+	fi
 
 	exit ${_rc}
 }
@@ -172,8 +176,9 @@ pkg_with_pb() {
 	fi
 
 	pkg ${_event_pipe} $@
+	local _pkg_result=$?
 	nc_pid=""
-	return $?
+	return ${_pkg_result}
 }
 
 fetch_upgrade_packages() {
@@ -506,6 +511,7 @@ setup_nanobsd_env() {
 	_exec "tunefs -L ${_update_partition##*/} ${_update_slice}" "Restoring slice label" mute
 	sysctl kern.geom.debugflags=0 >/dev/null 2>&1
 
+	_exec "/sbin/fsck -y -t ufs /dev/${_update_partition}" "Testing duplicated partition integrity" mute
 	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
 
 	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \
@@ -613,8 +619,19 @@ pkg_install() {
 		local _msg="Installing"
 	fi
 
-	_exec "pkg_with_pb ${_cmd} ${_pkg_name}" "${_msg} ${_pkg_name}"
+	_exec "pkg_with_pb ${_cmd}${dry_run:+ }${dry_run} ${_pkg_name}" "${_msg} ${_pkg_name}"
 	_exec "pkg clean" "Cleaning up cache" mute ignore_result
+}
+
+# Reinstall every pfSense-pkg-* package
+pkg_reinstall_all() {
+	for _pkg in $(pkg query -e '%a == 0' %n); do
+		case ${_pkg} in "${pkg_prefix}"* )
+			_echo "Reinstalling ${_pkg}"
+			pkg_install ${_pkg} 1
+			;;
+		esac
+	done
 }
 
 pkg_delete() {
@@ -630,29 +647,35 @@ pkg_delete() {
 		_exit 1
 	fi
 
-	_exec "pkg_with_pb delete ${_pkg_name}" "Removing ${_pkg_name}"
+	_exec "pkg_with_pb delete${dry_run:+ }${dry_run} ${_pkg_name}" "Removing ${_pkg_name}"
 	_exec "pkg autoremove" "Removing stale packages" mute ignore_result
 }
 
-# Reinstall every pfSense-pkg-* package
-pkg_reinstall_all() {
+# Delete every pfSense-pkg-* package
+pkg_delete_all() {
 	for _pkg in $(pkg query -e '%a == 0' %n); do
 		case ${_pkg} in "${pkg_prefix}"* )
-			_echo "Reinstalling ${_pkg}"
-			pkg_install ${_pkg} 1
+			_echo "Removing ${_pkg}"
+			pkg_delete ${_pkg}
 			;;
 		esac
 	done
 }
 
 do_reboot() {
-	_echo "Upgrade is complete.  Rebooting in 10 seconds."
-	echo "Upgrade is complete.  Rebooting in 10 seconds." | wall
-	/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in 10 seconds."
 	if [ -z "${dont_reboot}" ]; then
-		(sleep 10 && /etc/rc.reboot) &
+		_echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
+		echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds." | wall
+		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
+		(sleep ${reboot_after} && /etc/rc.reboot) &
+	else
+		_echo "Upgrade is complete."
+		echo "Upgrade is complete." | wall
+		/etc/rc.notify_message -e -g -m "Upgrade is complete."
 	fi
 }
+
+export LANG=C
 
 pid_file="/var/run/$(basename $0).pid"
 logfile="/cf/conf/upgrade_log.txt"
@@ -686,6 +709,9 @@ export chroot_dir=""
 
 # Save nc_pid to be able to kill it
 export nc_pid=""
+
+# Reboot after 10 seconds
+export reboot_after=10
 
 unset dry_run
 unset dont_reboot
@@ -748,7 +774,7 @@ while getopts 46b:cdfi:hp:l:nr:Ruy opt; do
 			fi
 			;;
 		n)
-			dry_run=1
+			dry_run="-n"
 			;;
 		p)
 			progress_socket="${OPTARG}"
@@ -803,6 +829,10 @@ if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
 	/etc/rc.conf_mount_rw
 fi
 
+if [ -n "${booting}" ]; then
+	export REPO_AUTOUPDATE=false
+fi
+
 echo $$ > ${pid_file}
 
 trap _exit 1 2 15 EXIT
@@ -835,7 +865,11 @@ case "${action}" in
 		fi
 		;;
 	delete)
-		pkg_delete ${action_pkg}
+		if [ ${action_pkg} == "ALL_PACKAGES" ] && [ -n ${force} ]; then
+			pkg_delete_all
+		else
+			pkg_delete ${action_pkg}
+		fi
 		;;
 	*)
 		_echo "ERROR: Invalid action!"

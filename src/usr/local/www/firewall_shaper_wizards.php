@@ -77,11 +77,12 @@ if ($_POST['apply']) {
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */
 	$retval = filter_configure();
-	$savemsg = get_std_save_message($retval);
 	if (stristr($retval, "error") <> true) {
 		$savemsg = get_std_save_message($retval);
+		$class = 'success';
 	} else {
 		$savemsg = $retval;
+		$class = 'warning';
 	}
 
 	/* reset rrd queues */
@@ -114,11 +115,11 @@ $tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_info_box_np(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 ?>

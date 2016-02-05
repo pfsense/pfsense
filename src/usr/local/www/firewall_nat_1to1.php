@@ -75,7 +75,7 @@ if (!is_array($config['nat']['onetoone'])) {
 $a_1to1 = &$config['nat']['onetoone'];
 
 /* update rule order, POST[rule] is an array of ordered IDs */
-if ($_POST['order-store']) {
+if (array_key_exists('order-store', $_POST)) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_1to1_new = array();
 
@@ -144,7 +144,7 @@ if (isset($_POST['del_x'])) {
 		} else {
 			$a_1to1[$_GET['id']]['disabled'] = true;
 		}
-		if (write_config("Firewall: NAT: Outbound, enable/disable NAT rule")) {
+		if (write_config(gettext("Firewall: NAT: 1 to 1, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -160,8 +160,8 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('natconf')) {
-	print_info_box_np(gettext('The NAT configuration has been changed.') . '<br />' .
-					  gettext('You must apply the changes in order for them to take effect.') . '<br />');
+	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
+					gettext('You must apply the changes in order for them to take effect.'));
 }
 
 $tab_array = array();
@@ -173,7 +173,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("NAT 1 to 1 mappings")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1 to 1 mappings")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
@@ -208,7 +208,10 @@ display_top_tabs($tab_array);
 
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="<?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+<?php 				if (isset($natent['nobinat'])) { ?>
+								&nbsp;<i class="fa fa-hand-paper-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+<?php 				} ?>
 							</a>
 						</td>
 						<td>
@@ -246,9 +249,9 @@ display_top_tabs($tab_array);
 						</td>
 
 						<td>
-							<a class="fa fa-pencil" title="<?=gettext("Edit rule")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone" title="<?=gettext("Add a new rule based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
-							<a class="fa fa-trash" title="<?=gettext("Delete rule")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>" onclick="return confirm('<?=gettext("Are you sure you want to delete this rule?")?>')"></a>
+							<a class="fa fa-pencil" title="<?=gettext("Edit mapping")?>" href="firewall_nat_1to1_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-clone" title="<?=gettext("Add a new mapping based on this one")?>" href="firewall_nat_1to1_edit.php?dup=<?=$i?>"></a>
+							<a class="fa fa-trash" title="<?=gettext("Delete mapping")?>" href="firewall_nat_1to1.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 
 					</tr>
@@ -262,15 +265,19 @@ display_top_tabs($tab_array);
 	</div>
 
 	<nav class="action-buttons">
-		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add new mapping')?>">
-			<i class="fa fa-plus icon-embed-btn"></i>
+		<a href="firewall_nat_1to1_edit.php?after=-1" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the top of the list')?>">
+			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext('Add')?>
 		</a>
-		<button name="del_x" type="submit" class="btn btn-danger btn-sm" value="<?=gettext("Delete selected rule"); ?>">
+		<a href="firewall_nat_1to1_edit.php" class="btn btn-sm btn-success" title="<?=gettext('Add mapping to the end of the list')?>">
+			<i class="fa fa-level-down icon-embed-btn"></i>
+			<?=gettext('Add')?>
+		</a>
+		<button name="del_x" type="submit" class="btn btn-danger btn-sm" title="<?=gettext('Delete selected mappings')?>">
 			<i class="fa fa-trash icon-embed-btn"></i>
 			<?=gettext("Delete"); ?>
 		</button>
-		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" value="Save changes" disabled>
+		<button type="submit" id="order-store" name="order-store" class="btn btn-primary btn-sm" disabled title="<?=gettext('Save mapping order')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
@@ -296,12 +303,29 @@ events.push(function() {
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			dirty = true;
 		}
 	});
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
 	   $('[id^=frc]').prop('checked', true);
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
+	});
+
+	// Globals
+	saving = false;
+	dirty = false;
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if (!saving && dirty) {
+			return ("<?=gettext('You have moved one or more NAT 1:1 mappings but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
 	});
 });
 //]]>

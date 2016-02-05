@@ -150,7 +150,13 @@ if (!empty($grouptmp)) {
 unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp)) {
-	interface_bridge_add_member($bridgetmp, $interface_real);
+	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+		foreach ($config['bridges']['bridged'] as $bridge) {
+			if ($bridge['bridgeif'] == $bridgetmp) {
+				interface_bridge_configure($bridge);
+			}
+		}
+	}
 }
 
 // Do not process while booting
@@ -170,7 +176,9 @@ switch ($config['interfaces'][$interface]['ipaddrv6']) {
 		interface_6rd_configure($interface, $config['interfaces'][$interface]);
 		break;
 	case "dhcp6":
-		if (isset($config['interfaces'][$interface]['dhcp6usev4iface'])) {
+		// N.B. PPP connections using PPP as the IPv6 parent interface are excluded because the ppp-ipv6 script calls
+		// interface_dhcpv6_configure() for these connections after IPv6CP is up
+		if (isset($config['interfaces'][$interface]['dhcp6usev4iface']) && !interface_isppp_type($interface)) {
 			interface_dhcpv6_configure($interface, $config['interfaces'][$interface]);
 		}
 		break;

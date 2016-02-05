@@ -1,9 +1,10 @@
 <?php
 /*
 	vpn.inc
-	Copyright (C) 2004 Scott Ullrich
+
+	part of pfSense (https://www.pfsense.org)
 	Copyright (C) 2008 Shrew Soft Inc
-	Copyright (C) 2008 Ermal Luçi
+	Copyright (c) 2004-2016 Electric Sheep Fencing, LLC.
 	All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
@@ -17,19 +18,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
+
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 require_once("ipsec.inc");
@@ -410,19 +434,7 @@ function vpn_ipsec_configure($restart = false) {
 		$i_dont_care_about_security_and_use_aggressive_mode_psk = "i_dont_care_about_security_and_use_aggressive_mode_psk=yes";
 	}
 
-	$unity_enabled = 'yes';
-	if (isset($config['ipsec']['unityplugin'])) {
-		$unity_enabled = 'no';
-		if (file_exists("/usr/local/lib/ipsec/plugins/libstrongswan-unity.so")) {
-			conf_mount_rw();
-			mwexec("mv /usr/local/lib/ipsec/plugins/libstrongswan-unity.so /usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED");
-			conf_mount_ro();
-		}
-	} else if (file_exists("/usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED")) {
-		conf_mount_rw();
-		mwexec("mv /usr/local/lib/ipsec/plugins/libstrongswan-unity.MOVED /usr/local/lib/ipsec/plugins/libstrongswan-unity.so");
-		conf_mount_ro();
-	}
+	$unity_enabled = isset($config['ipsec']['unityplugin']) ? 'yes' : 'no';
 
 	$makebeforebreak = '';
 	if (isset($config['ipsec']['makebeforebreak'])) {
@@ -445,7 +457,7 @@ function vpn_ipsec_configure($restart = false) {
 	$ipsecloglevels = vpn_logging_cfgtxt();
 	if (is_array($ipsecloglevels)) {
 		foreach ($ipsecloglevels as $loglevel) {
-			$strongswanlog .= "\t\t" . $loglevel . "\n";
+			$strongswanlog .= "\t\t\t" . $loglevel . "\n";
 		}
 	}
 	$strongswan = <<<EOD
@@ -458,33 +470,41 @@ starter {
 
 charon {
 # number of worker threads in charon
-threads = 16
-ikesa_table_size = 32
-ikesa_table_segments = 4
-init_limit_half_open = 1000
-install_routes = no
-{$i_dont_care_about_security_and_use_aggressive_mode_psk}
-{$accept_unencrypted}
-cisco_unity = {$unity_enabled}
-{$ifacesuse}
-{$makebeforebreak}
+	threads = 16
+	ikesa_table_size = 32
+	ikesa_table_segments = 4
+	init_limit_half_open = 1000
+	install_routes = no
+	load_modular = yes
+	{$i_dont_care_about_security_and_use_aggressive_mode_psk}
+	{$accept_unencrypted}
+	cisco_unity = {$unity_enabled}
+	{$ifacesuse}
+	{$makebeforebreak}
 
-syslog {
-	identifier = charon
-	# log everything under daemon since it ends up in the same place regardless with our syslog.conf
-	daemon {
-		ike_name = yes
+	syslog {
+		identifier = charon
+		# log everything under daemon since it ends up in the same place regardless with our syslog.conf
+		daemon {
+			ike_name = yes
 {$strongswanlog}
+		}
+		# disable logging under auth so logs aren't duplicated
+		auth {
+			default = -1
+		}
 	}
-	# disable logging under auth so logs aren't duplicated
-	auth {
-		default = -1
-	}
-}
 
 	plugins {
+		# Load defaults
+		include {$g['varetc_path']}/ipsec/strongswan.d/charon/*.conf
+
 		stroke {
 			secrets_file = {$g['varetc_path']}/ipsec/ipsec.secrets
+		}
+
+		unity {
+			load = {$unity_enabled}
 		}
 
 EOD;
@@ -628,7 +648,7 @@ EOD;
 		}
 	}
 
-	$strongswan .= "\t}\n}\n";
+	$strongswan .= "\n\t}\n}\n";
 	@file_put_contents("{$g['varetc_path']}/ipsec/strongswan.conf", $strongswan);
 	unset($strongswan);
 
@@ -1482,6 +1502,10 @@ EOD;
 function vpn_ipsec_force_reload($interface = "") {
 	global $g, $config;
 
+	if (!ipsec_enabled()) {
+		return;
+	}
+
 	$ipseccfg = $config['ipsec'];
 
 	if (!empty($interface) && is_array($ipseccfg['phase1'])) {
@@ -1498,11 +1522,9 @@ function vpn_ipsec_force_reload($interface = "") {
 		}
 	}
 
-	/* if ipsec is enabled, start up again */
-	if (isset($ipseccfg['enable'])) {
-		log_error(gettext("Forcefully reloading IPsec"));
-		vpn_ipsec_configure();
-	}
+	/* If we get this far then we need to take action. */
+	log_error(gettext("Forcefully reloading IPsec"));
+	vpn_ipsec_configure();
 }
 
 /* master setup for vpn (mpd) */
@@ -1605,13 +1627,18 @@ poes{$pppoecfg['pppoeid']}{$i}:
 
 EOD;
 			}
+			if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
+				$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
+			} else {
+				$pppoemaxlogins = 1;
+			}
 
 			$mpdconf .=<<<EOD
 
 pppoe_standard:
 	set bundle no multilink
 	set bundle enable compression
-	set auth max-logins 1
+	set auth max-logins {$pppoemaxlogins}
 	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set iface idle 0
@@ -1680,6 +1707,9 @@ EOD;
 	set auth enable radius-acct
 
 EOD;
+				}
+				if (isset($pppoecfg['radius']['nasip'])) {
+					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
 				}
 			}
 

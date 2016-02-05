@@ -224,7 +224,7 @@ export NANO_IMAGES=2
 # 1 -> Initialize second image with a copy of the first
 export NANO_INIT_IMG2=1
 export NANO_NEWFS="-b 4096 -f 512 -i 8192 -O1"
-export FLASH_SIZE=${FLASH_SIZE:-"1g"}
+export FLASH_SIZE=${FLASH_SIZE:-"2g"}
 # Size of code file system in 512 bytes sectors
 # If zero, size will be as large as possible.
 export NANO_CODESIZE=0

@@ -132,11 +132,11 @@ EOT;
 		foreach ($missingWidth as $input)
 			$input->setWidth($spaceLeft / count($missingWidth));
 
-		if (strtolower($this->_labelTarget->get_Type()) == 'hidden')
+		if (strtolower($this->_labelTarget->getType()) == 'hidden')
 			$hidden = true;
 
 		$form_controls = array('input', 'select', 'button', 'textarea', 'option', 'optgroup', 'fieldset', 'label');
-		if (in_array(strtolower($this->_labelTarget->gettagName()), $form_controls) && !$hidden)
+		if (in_array(strtolower($this->_labelTarget->getTagName()), $form_controls) && !$hidden)
 			$target = $this->_labelTarget->getId();
 
 		$inputs = implode('', $this->_inputs);
@@ -148,7 +148,9 @@ EOT;
 		$label = new Form_Element('label', false, ['for' => $target]);
 		$label->addClass('col-sm-'.Form::LABEL_WIDTH, 'control-label');
 
-		$title = htmlspecialchars(gettext($this->_title));
+		if (!empty(trim($this->_title)) || is_numeric($this->_title)) {
+			$title = htmlspecialchars(gettext($this->_title));
+		}
 
 		return <<<EOT
 	{$element}

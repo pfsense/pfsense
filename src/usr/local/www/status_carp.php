@@ -182,16 +182,16 @@ if ($carpcount == 0) {
 	// Sadly this needs to be here so that it is inside the form
 	if ($carp_detected_problems > 0) {
 		print_info_box(
-			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") . "<br/>" .
-			gettext("Check the link status on all interfaces with configured CARP VIPs.") . "<br/>" .
-			gettext("Search the") .
-			" <a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">" .
-			gettext("system log") .
-			"</a> " .
-			gettext("for CARP demotion-related events.") . "<br/><br/>" .
+			gettext("CARP has detected a problem and this unit has been demoted to BACKUP status.") .
+			"<br/>" .
+			gettext("Check the link status on all interfaces with configured CARP VIPs.") .
+			"<br/>" .
+			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
+			"<br/><br/>" .
 			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 			gettext("Reset CARP Demotion Status") .
-			'" />', 'danger'
+			'" />',
+			'danger'
 		);
 	}
 

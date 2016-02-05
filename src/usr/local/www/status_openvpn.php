@@ -96,14 +96,14 @@ include("head.inc"); ?>
 //<![CDATA[
 	function killClient(mport, remipp) {
 		var busy = function(index,icon) {
-			jQuery(icon).bind("onclick","");
-			jQuery(icon).attr('src',jQuery(icon).attr('src').replace("\.gif", "_d.gif"));
-			jQuery(icon).css("cursor","wait");
+			$(icon).bind("onclick","");
+			$(icon).attr('src',$(icon).attr('src').replace("\.gif", "_d.gif"));
+			$(icon).css("cursor","wait");
 		}
 
-		jQuery('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
+		$('img[name="i:' + mport + ":" + remipp + '"]').each(busy);
 
-		jQuery.ajax(
+		$.ajax(
 			"<?=$_SERVER['SCRIPT_NAME'];?>" +
 				"?action=kill&port=" + mport + "&remipp=" + remipp,
 			{ type: "get", complete: killComplete }
@@ -117,8 +117,8 @@ include("head.inc"); ?>
 			return;
 		}
 
-		jQuery('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
-			function(index,row) { jQuery(row).fadeOut(1000); }
+		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
 //]]>
@@ -158,9 +158,9 @@ include("head.inc"); ?>
 						<td><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
-							   onclick="killClient('<?php echo $server['mgmt']; ?>', '<?php echo $conn['remote_host']; ?>');" style="cursor:pointer;"
+							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
 							   id="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							   title="<?php echo gettext("Kill client connection from") . " " . $conn['remote_host']; ?>">
+							   title="<?php echo sprintf(gettext("Kill client connection from %s"), $conn['remote_host']); ?>">
 							<i class="fa fa-times"></i>
 							</a>
 						</td>
@@ -253,10 +253,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -309,10 +309,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Virtual Addr"); ?></th>
+						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
 						<th><?=gettext("Bytes Sent"); ?></th>
-						<th><?=gettext("Bytes Rcvd"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>

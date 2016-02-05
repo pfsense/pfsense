@@ -72,6 +72,51 @@ require_once("shaper.inc");
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
+function get_pf_rules($rules, $tracker) {
+
+	if ($rules == NULL || !is_array($rules))
+		return (NULL);
+
+	$arr = array();
+	for ($i = 0; $i < count($rules); $i++) {
+		if ($rules[$i]['tracker'] === $tracker)
+			$arr[] = $rules[$i];
+	}
+
+	if (count($arr) == 0)
+		return (NULL);
+
+	return ($arr);
+}
+
+function print_states($tracker) {
+	global $rulescnt;
+
+	$rulesid = "";
+	$bytes = 0;
+	$states = 0;
+	$packets = 0;
+	$evaluations = 0;
+	$stcreations = 0;
+	$rules = get_pf_rules($rulescnt, $tracker);
+	for ($j = 0; is_array($rules) && $j < count($rules); $j++) {
+		$bytes += $rules[$j]['bytes'];
+		$states += $rules[$j]['states'];
+		$packets += $rules[$j]['packets'];
+		$evaluations += $rules[$j]['evaluations'];
+		$stcreations += $rules[$j]['state creations'];
+		if (strlen($rulesid) > 0)
+			$rulesid .= ",";
+		$rulesid .= "{$rules[$j]['id']}";
+	}
+	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
+	    $rulesid, gettext("States details"));
+	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
+	    format_number($evaluations), format_number($packets), format_bytes($bytes),
+	    format_number($states), format_number($stcreations));
+	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+}
+
 function delete_nat_association($id) {
 	global $config;
 
@@ -120,26 +165,26 @@ foreach ($ifdescs as $ifent => $ifdesc) {
 
 if ($config['l2tp']['mode'] == "server") {
 	if (have_ruleint_access("l2tp")) {
-		$iflist['l2tp'] = "L2TP VPN";
+		$iflist['l2tp'] = gettext("L2TP VPN");
 	}
 }
 
 if (is_array($config['pppoes']['pppoe'])) {
 	foreach ($config['pppoes']['pppoe'] as $pppoes) {
 		if (($pppoes['mode'] == 'server') && have_ruleint_access("pppoe")) {
-			$iflist['pppoe'] = "PPPoE Server";
+			$iflist['pppoe'] = gettext("PPPoE Server");
 		}
 	}
 }
 
 /* add ipsec interfaces */
 if (ipsec_enabled() && have_ruleint_access("enc0")) {
-	$iflist["enc0"] = "IPsec";
+	$iflist["enc0"] = gettext("IPsec");
 }
 
 /* add openvpn/tun interfaces */
 if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]) {
-	$iflist["openvpn"] = "OpenVPN";
+	$iflist["openvpn"] = gettext("OpenVPN");
 }
 
 if (!$if || !isset($iflist[$if])) {
@@ -174,6 +219,17 @@ if ($_GET['act'] == "del") {
 			delete_nat_association($a_filter[$_GET['id']]['associated-rule-id']);
 		}
 		unset($a_filter[$_GET['id']]);
+
+		// Update the separators
+		$a_separators = &$config['filter']['separator'][$if];
+
+		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+			if ($seprow >= $_GET['id']) {
+				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
 		}
@@ -193,10 +249,20 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
+		$a_separators = &$config['filter']['separator'][$if];
+
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
 			unset($a_filter[$rulei]);
 			$deleted = true;
+
+			// Update the separators
+			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
+				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
+				if ($seprow >= $rulei) {
+					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
+				}
+			}
 		}
 
 		if ($deleted) {
@@ -223,6 +289,7 @@ if (isset($_POST['del_x'])) {
 		exit;
 	}
 } else if ($_POST['order-store']) {
+
 	/* update rule order, POST[rule] is an array of ordered IDs */
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
@@ -233,6 +300,16 @@ if (isset($_POST['del_x'])) {
 		}
 
 		$a_filter = $a_filter_new;
+
+		$config['filter']['separator'][strtolower($if)] = "";
+
+		if ($_POST['separator']) {
+			$idx = 0;
+			foreach ($_POST['separator'] as $separator) {
+				$config['filter']['separator'][strtolower($separator['if'])]['sep' . $idx++] = $separator;
+			}
+		}
+
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
 		}
@@ -266,22 +343,47 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('filter')) {
-	print_info_box_np(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."), "apply", "", true);
+	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 display_top_tabs($tab_array);
 
+$showantilockout = false;
+$showprivate = false;
+$showblockbogons = false;
+
+if (!isset($config['system']['webgui']['noantilockout']) &&
+    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
+    ((count($config['interfaces']) == 1) && ($if == 'wan')))) {
+	$showantilockout = true;
+}
+
+if (isset($config['interfaces'][$if]['blockpriv'])) {
+	$showprivate = true;
+}
+
+if (isset($config['interfaces'][$if]['blockbogons'])) {
+	$showblockbogons = true;
+}
+
+/* Load the counter data of each pf rule. */
+$rulescnt = pfSense_get_pf_rules();
+
+// Update this if you add or remove columns!
+$columns_in_table = 13;
+
 ?>
 <form method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><?=gettext("Rules (Drag to change order)")?></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
-						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("States")?></th>
+						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
 						<th><?=gettext("Destination")?></th>
@@ -293,17 +395,19 @@ display_top_tabs($tab_array);
 						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
+
+<?php if ($showblockbogons || $showantilockout || $showprivate) :
+?>
 				<tbody>
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
-	if (!isset($config['system']['webgui']['noantilockout']) &&
-	    (((count($config['interfaces']) > 1) && ($if == 'lan')) ||
-	     ((count($config['interfaces']) == 1) && ($if == 'wan')))):
-		$alports = implode('<br />', filter_get_antilockout_ports(true));
+		if ($showantilockout):
+			$alports = implode('<br />', filter_get_antilockout_ports(true));
 ?>
 					<tr id="antilockout">
 						<td></td>
 						<td title="<?=gettext("traffic is passed")?>"><i class="fa fa-check text-success"></i></td>
+						<td><?php print_states(intval(ANTILOCKOUT_TRACKER)); ?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -317,11 +421,12 @@ display_top_tabs($tab_array);
 							<a href="system_advanced_admin.php" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
-<?php if (isset($config['interfaces'][$if]['blockpriv'])): ?>
+<?php 	endif;?>
+<?php 	if ($showprivate): ?>
 					<tr id="frrfc1918">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td><?php print_states(intval(RFC1918_TRACKER)); ?></td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -335,13 +440,14 @@ display_top_tabs($tab_array);
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
-<?php if (isset($config['interfaces'][$if]['blockbogons'])): ?>
+<?php 	endif;?>
+<?php 	if ($showblockbogons): ?>
 					<tr id="frrfc1918">
-					<td></td>
+						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
+						<td><?php print_states(intval(BOGONS_TRACKER)); ?></td>
 						<td>*</td>
-						<td><?=gettext("Reserved/not assigned by IANA");?></td>
+						<td><?=sprintf(gettext("Reserved%sNot assigned by IANA"), "<br />");?></td>
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
@@ -353,12 +459,23 @@ display_top_tabs($tab_array);
 							<a href="interfaces.php?if=<?=htmlspecialchars($if)?>" title="<?=gettext("Settings");?>"><i class="fa fa-cog"></i></a>
 						</td>
 					</tr>
-<?php endif;?>
+<?php 	endif;?>
 			</tbody>
-
+<?php endif;?>
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
+$seps = 0;
+
+// There can be a separator before any rules are listed
+if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
+	$cellcolor = $config['filter']['separator'][strtolower($if)]['sep0']['color'];
+	print('<tr class="ui-sortable-handle separator">' .
+		'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</span></td>' .
+		'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+		'</tr>' . "\n");
+}
+
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
@@ -367,9 +484,10 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	} else {
 		$display = "";
 	}
+
 ?>
 					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
-						<td >
+						<td>
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
 
@@ -517,8 +635,8 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					#FIXME
 					$sched_caption_escaped = str_replace("'", "\'", $schedule['descr']);
 					$schedule_span_begin = '<a href="/firewall_schedule_edit.php?id=' . $idx . '" data-toggle="popover" data-trigger="hover focus" title="' . $schedule['name'] . '" data-content="' .
-					    $sched_caption_escaped . '" data-html="true">';
-					$schedule_span_end = "";
+						$sched_caption_escaped . '" data-html="true">';
+					$schedule_span_end = "</a>";
 				}
 			}
 			$idx++;
@@ -528,7 +646,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$image = "";
 		if (!isset($filterent['disabled'])) {
 			if ($schedstatus) {
-				if ($iconfn == "block" || $iconfn == "reject") {
+				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
 					$image = "times-circle";
 					$dispcolor = "text-danger";
 					$alttext = gettext("Traffic matching this rule is currently being denied");
@@ -539,17 +657,18 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 				}
 				$printicon = true;
 			} else if ($filterent['sched']) {
-				if ($iconfn == "block" || $iconfn == "reject") {
+				if ($filterent['type'] == "block" || $filterent['type'] == "reject") {
 					$image = "times-circle";
 				} else {
-					$image = "times-circle";
+					$image = "play-circle";
 				}
 				$alttext = gettext("This rule is not currently active because its period has expired");
-				$dispcolor = "text-danger";
+				$dispcolor = "text-warning";
 				$printicon = true;
 			}
 		}
 	?>
+				<td><?php print_states(intval($filterent['tracker'])); ?></td>
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {
@@ -572,7 +691,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				echo ' <span style="cursor: help;" title="ICMP type: ' .
+				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
 					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
 					'"><u>';
 				echo $filterent['icmptype'];
@@ -584,27 +703,39 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if (isset($alias['src'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">
+									<?=htmlspecialchars(pprint_address($filterent['source']))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($filterent['source']))?>
 							<?php endif; ?>
-							<?=htmlspecialchars(pprint_address($filterent['source']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['srcport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['srcport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['srcport'])?>" data-html="true">
+									<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
 							<?php endif; ?>
-							<?=htmlspecialchars(pprint_port($filterent['source']['port']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['dst'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dst']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dst'])?>" data-html="true">
+									<?=htmlspecialchars(pprint_address($filterent['destination']))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 							<?php endif; ?>
-							<?=htmlspecialchars(pprint_address($filterent['destination']))?>
 						</td>
 						<td>
 							<?php if (isset($alias['dstport'])): ?>
-								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+								<a href="/firewall_aliases_edit.php?id=<?=$alias['dstport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['dstport'])?>" data-html="true">
+									<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
+								</a>
+							<?php else: ?>
+								<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
 							<?php endif; ?>
-							<?=htmlspecialchars(pprint_port($filterent['destination']['port']))?>
 						</td>
 						<td>
 							<?php if (isset($config['interfaces'][$filterent['gateway']]['descr'])):?>
@@ -630,7 +761,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 						<td>
 							<?php if ($printicon) { ?>
-								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>" alt="icon"></i>
+								<i class="fa fa-<?=$image?> <?=$dispcolor?>" title="<?=$alttext;?>"></i>
 							<?php } ?>
 							<?=$schedule_span_begin;?><?=htmlspecialchars($filterent['sched']);?>&nbsp;<?=$schedule_span_end;?>
 						</td>
@@ -649,10 +780,22 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 <?php }
 ?>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>"></a>
 						</td>
 					</tr>
 <?php
+		if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
+			foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
+				if ($rulesep['row']['0'] == "fr" . $nrules) {
+					$cellcolor = $rulesep['color'];
+					print('<tr class="ui-sortable-handle separator">' .
+						'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
+						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+						'</tr>' . "\n");
+				}
+			}
+		}
+
 		$nrules++;
 		endfor;
 ?>
@@ -692,11 +835,15 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext("Save")?>
 		</button>
+		<button type="submit" id="addsep" name="addsep" class="btn btn-sm btn-warning" title="<?=gettext('Add separator')?>">
+			<i class="fa fa-plus icon-embed-btn"></i>
+			<?=gettext("Separator")?>
+		</button>
 	</nav>
 </form>
 
 <div class="infoblock">
-	<div class="alert alert-info clearfix" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><div class="pull-left">
+	<div class="alert alert-info clearfix" role="alert"><div class="pull-left">
 		<dl class="dl-horizontal responsive">
 		<!-- Legend -->
 			<dt><?=gettext('Legend')?></dt>				<dd></dd>
@@ -729,20 +876,51 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 
 <script type="text/javascript">
 //<![CDATA[
+
+//Need to create some variables here so that jquery/pfSenseHelpers.js can read them
+iface = "<?=strtolower($if)?>";
+cncltxt = '<?=gettext("Cancel")?>';
+svtxt = '<?=gettext("Save")?>';
+svbtnplaceholder = '<?=gettext("Enter a description, Save, then drag to final location.")?>';
+configsection = "filter";
+
 events.push(function() {
 
-	// Make rules sortable
+	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
+	// a work-around for very slow sorting on FireFox
+	$('table tbody.user-entries').hide();
+
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
+			reindex_rules(ui.item.parent('tbody'));
+			dirty = true;
 		}
 	});
 
+	$('table tbody.user-entries').show();
+
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {
-	   $('[id^=frc]').prop('checked', true);
+		$('[id^=frc]').prop('checked', true);
+
+		// Save the separator bar configuration
+		save_separators();
+
+		// Suppress the "Do you really want to leave the page" message
+		saving = true;
 	});
+
+	// provide a warning message if the user tries to change page before saving
+	$(window).bind('beforeunload', function(){
+		if ((!saving && dirty) || newSeperator) {
+			return ("<?=gettext('You have moved one or more rules but have not yet saved')?>");
+		} else {
+			return undefined;
+		}
+	});
+
 });
 //]]>
 </script>

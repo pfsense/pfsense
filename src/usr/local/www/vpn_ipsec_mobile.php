@@ -437,7 +437,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('ipsec')) {
-	print_info_box_np(gettext("The IPsec tunnel configuration has been changed") . ".<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 foreach ($a_phase1 as $ph1ent) {
 	if (isset($ph1ent['mobile'])) {
@@ -445,8 +445,9 @@ foreach ($a_phase1 as $ph1ent) {
 	}
 }
 if ($pconfig['enable'] && !$ph1found) {
-	print_info_box_np(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), gettext("create"), gettext("Create Phase1"));
+	print_info_box(gettext("Support for IPsec Mobile clients is enabled but a Phase1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), "warning", "create", gettext("Create Phase1"));
 }
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -491,8 +492,8 @@ $section->addInput(new Form_Select(
 	'Group Authentication',
 	$pconfig['group_source'],
 	array(
-		'none' => 'none',
-		'system' => 'system',
+		'none' => gettext('none'),
+		'system' => gettext('system'),
 	)
 ))->setHelp('Source');
 

@@ -23,6 +23,10 @@ function interface_ipv6_lower($interface_real) {
                 switch ($ifcfg['ipaddrv6']) {
                     case 'slaac':
                     case 'dhcp6':
+                        // Take no action if dhcp6 is active on the parent interface, not the PPP interface
+                        if ($ifcfg['ipaddrv6']==='dhcp6' && !(isset($ifcfg['dhcp6usev4iface']) || $ifcfg['ipaddr']==='ppp')) {
+                            break;
+                        }
                         // bring down dhcp6c if it is running
                         $pidv6 = find_dhcp6c_process($interface_real);
                         if ($pidv6) {
@@ -63,6 +67,10 @@ function interface_ipv6_raise($interface_real) {
                 switch ($ifcfg['ipaddrv6']) {
                     case 'slaac':
                     case 'dhcp6':
+                        // Take no action if dhcp6 is active on the parent interface, not the PPP interface
+                        if ($ifcfg['ipaddrv6']==='dhcp6' && !(isset($ifcfg['dhcp6usev4iface']) || $ifcfg['ipaddr']==='ppp')) {
+                            break;
+                        }
                         $pidv6 = find_dhcp6c_process($interface_real);
                         if (empty($pidv6)) {
                             // only fire if router advertisements off

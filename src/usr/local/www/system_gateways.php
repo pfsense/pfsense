@@ -88,6 +88,7 @@ if ($_POST) {
 		$retval = 0;
 
 		$retval = system_routing_configure();
+		$retval |= system_resolvconf_generate();
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
 		setup_gateways_monitor();
@@ -114,9 +115,9 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 				$items = explode("|", $item);
 				if ($items[0] == $a_gateways[$id]['name']) {
 					if (!$disable) {
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Gateway Group "%2$s"'), $a_gateways[$id]['name'], $group['name']);
 					} else {
-						$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Gateway Group '%s'"), $a_gateways[$id]['name'], $group['name']);
+						$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Gateway Group "%2$s"'), $a_gateways[$id]['name'], $group['name']);
 					}
 				}
 			}
@@ -128,11 +129,11 @@ function can_delete_disable_gateway_item($id, $disable = false) {
 			if ($route['gateway'] == $a_gateways[$id]['name']) {
 				if (!$disable) {
 					// The user wants to delete this gateway, but there is a static route (enabled or disabled) that refers to the gateway.
-					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be deleted because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be deleted because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
 				} else if (!isset($route['disabled'])) {
 					// The user wants to disable this gateway.
 					// But there is a static route that uses this gateway and is enabled (not disabled).
-					$input_errors[] = sprintf(gettext("Gateway '%s' cannot be disabled because it is in use on Static Route '%s'"), $a_gateways[$id]['name'], $route['network']);
+					$input_errors[] = sprintf(gettext('Gateway "%1$s" cannot be disabled because it is in use on Static Route "%2$s"'), $a_gateways[$id]['name'], $route['network']);
 				}
 			}
 		}
@@ -207,7 +208,7 @@ if (isset($_POST['del_x'])) {
 				$items_deleted .= "{$rulei} ";
 			}
 			if (!empty($items_deleted)) {
-				write_config("Gateways: removed gateways {$items_deleted}");
+				write_config(sprintf(gettext("Gateways: removed gateways %s", $items_deleted)));
 				mark_subsystem_dirty('staticroutes');
 			}
 			header("Location: system_gateways.php");
@@ -254,7 +255,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('staticroutes')) {
-	print_info_box_np(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The gateway configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
@@ -264,19 +265,23 @@ $tab_array[2] = array(gettext("Gateway Groups"), false, "system_gateway_groups.p
 display_top_tabs($tab_array);
 
 ?>
-<table class="table">
-<thead>
-	<tr>
-		<th></th>
-		<th><?=gettext("Name")?></th>
-		<th><?=gettext("Interface")?></th>
-		<th><?=gettext("Gateway")?></th>
-		<th><?=gettext("Monitor IP")?></th>
-		<th><?=gettext("Description")?></th>
-		<th><?=gettext("Actions")?></th>
-	</tr>
-</thead>
-<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped tabel-hover table-condensed">
+				<thead>
+					<tr>
+						<th></th>
+						<th><?=gettext("Name")?></th>
+						<th><?=gettext("Interface")?></th>
+						<th><?=gettext("Gateway")?></th>
+						<th><?=gettext("Monitor IP")?></th>
+						<th><?=gettext("Description")?></th>
+						<th><?=gettext("Actions")?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 foreach ($a_gateways as $i => $gateway):
 	if (isset($gateway['inactive'])) {
@@ -293,49 +298,52 @@ foreach ($a_gateways as $i => $gateway):
 		$title = '';
 	}
 ?>
-	<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
-		<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
-		<td>
-			<?=htmlspecialchars($gateway['name'])?>
+				<tr<?=($icon != 'fa-check-circle-o')? ' class="disabled"' : ''?>>
+					<td title="<?=$title?>"><i class="fa <?=$icon?>"></i></td>
+					<td>
+						<?=htmlspecialchars($gateway['name'])?>
 <?php
 			if (isset($gateway['defaultgw'])) {
 				echo " <strong>(default)</strong>";
 			}
 ?>
-		</td>
-		<td>
-			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['gateway'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['monitor'])?>
-		</td>
-		<td>
-			<?=htmlspecialchars($gateway['descr'])?>
-		</td>
-		<td>
-			<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit');?>"></a>
-			<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+						</td>
+						<td>
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gateway['friendlyiface']))?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['gateway'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['monitor'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gateway['descr'])?>
+						</td>
+						<td>
+							<a href="system_gateways_edit.php?id=<?=$i?>" class="fa fa-pencil" title="<?=gettext('Edit gateway');?>"></a>
+							<a href="system_gateways_edit.php?dup=<?=$i?>" class="fa fa-clone" title="<?=gettext('Copy gateway')?>"></a>
 
 <?php if (is_numeric($gateway['attribute'])): ?>
 	<?php if (isset($gateway['disabled'])) {
 	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-check-square-o" title="<?=gettext('Enable gateway')?>"></a>
 	<?php } else {
 	?>
-			<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+							<a href="?act=toggle&amp;id=<?=$i?>" class="fa fa-ban" title="<?=gettext('Disable gateway')?>"></a>
 	<?php }
 	?>
-			<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete')?>"></a>
+							<a href="system_gateways.php?act=del&amp;id=<?=$i?>" class="fa fa-trash" title="<?=gettext('Delete gateway')?>"></a>
 
 <?php endif; ?>
-		</td>
-	</tr>
+						</td>
+					</tr>
 <?php endforeach; ?>
-</tbody>
-</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
 
 <nav class="action-buttons">
 	<a href="system_gateways_edit.php" role="button" class="btn btn-success">

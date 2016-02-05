@@ -93,6 +93,9 @@ $pconfig['webguicss'] = $config['system']['webgui']['webguicss'];
 $pconfig['webguifixedmenu'] = $config['system']['webgui']['webguifixedmenu'];
 $pconfig['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+$pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+$pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
+$pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -178,16 +181,16 @@ if ($_POST) {
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
-			$input_errors[] = gettext("A valid IP address must be specified for DNS server $dnscounter.");
+			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter);
 		} else {
 			if (($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
 					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = gettext("You can not specify IPv6 gateway '{$_POST[$dnsgwname]}' for IPv4 DNS server '{$_POST[$dnsname]}'");
+						$input_errors[] = sprintf(gettext('You can not specify IPv6 gateway "%1$s" for IPv4 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = gettext("You can not specify IPv4 gateway '{$_POST[$dnsgwname]}' for IPv6 DNS server '{$_POST[$dnsname]}'");
+						$input_errors[] = sprintf(gettext('You can not specify IPv4 gateway "%1$s" for IPv6 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 				} else {
 					// The user selected a gateway but did not provide a DNS address. Be nice and set the gateway back to "none".
@@ -229,11 +232,20 @@ if ($_POST) {
 
 		if ($_POST['language'] && $_POST['language'] != $config['system']['language']) {
 			$config['system']['language'] = $_POST['language'];
-			set_language($config['system']['language']);
+			set_language();
 		}
 
 		unset($config['system']['webgui']['webguileftcolumnhyper']);
 		$config['system']['webgui']['webguileftcolumnhyper'] = $_POST['webguileftcolumnhyper'] ? true : false;
+
+		unset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+		$config['system']['webgui']['dashboardavailablewidgetspanel'] = $_POST['dashboardavailablewidgetspanel'] ? true : false;
+
+		unset($config['system']['webgui']['systemlogsfilterpanel']);
+		$config['system']['webgui']['systemlogsfilterpanel'] = $_POST['systemlogsfilterpanel'] ? true : false;
+
+		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
+		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -371,7 +383,7 @@ $section->addInput(new Form_Input(
 	'local hosts not running mDNS.');
 $form->add($section);
 
-$section = new Form_Section('DNS server settings');
+$section = new Form_Section('DNS Server Settings');
 
 for ($i=1; $i<5; $i++) {
 //	if (!isset($pconfig['dns'.$i]))
@@ -424,7 +436,7 @@ for ($i=1; $i<5; $i++) {
 
 $section->addInput(new Form_Checkbox(
 	'dnsallowoverride',
-	'DNS server override',
+	'DNS Server Override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
 ))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers '.
@@ -434,7 +446,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Checkbox(
 	'dnslocalhost',
-	'Disable DNS forwarder',
+	'Disable DNS Forwarder',
 	'Do not use the DNS Forwarder as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
 ))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS '.
@@ -495,7 +507,7 @@ $section->addInput(new Form_Select(
 	'webguifixedmenu',
 	'Top Navigation',
 	$pconfig['webguifixedmenu'],
-	["" => "Scrolls with page", "fixed" => "Fixed (Remains visible at top of page)"]
+	["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
 ))->setHelp("The fixed option is intended for large screens only.");
 
 $section->addInput(new Form_Input(
@@ -505,6 +517,34 @@ $section->addInput(new Form_Input(
 	$pconfig['dashboardcolumns'],
 	[min => 1, max => 4]
 ))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+
+$group = new Form_Group('Associated Panels Show/Hide');
+
+$group->add(new Form_Checkbox(
+	'dashboardavailablewidgetspanel',
+	null,
+	'Available Widgets',
+	$pconfig['dashboardavailablewidgetspanel']
+	))->setHelp('Show the Available Widgets panel on the Dashboard.');
+
+$group->add(new Form_Checkbox(
+	'systemlogsfilterpanel',
+	null,
+	'Log Filter',
+	$pconfig['systemlogsfilterpanel']
+))->setHelp('Show the Log Filter panel in System Logs.');
+
+$group->add(new Form_Checkbox(
+	'systemlogsmanagelogpanel',
+	null,
+	'Manage Log',
+	$pconfig['systemlogsmanagelogpanel']
+))->setHelp('Show the Manage Log panel in System Logs.');
+
+$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.
+<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+
+$section->add($group);
 
 $section->addInput(new Form_Checkbox(
 	'webguileftcolumnhyper',

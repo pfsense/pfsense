@@ -1,11 +1,11 @@
 <?php
 /*
 	filter.inc
-	Copyright (C) 2004-2006 Scott Ullrich
-	Copyright (C) 2005		Bill Marquette
-	Copyright (C) 2006		Peter Allgeyer
-	Copyright (C) 2008-2010	Ermal Luçi
-	All rights reserved.
+
+	part of pfSense (https://www.pfsense.org)
+	Copyright (c) 2005 Bill Marquette
+	Copyright (c) 2006 Peter Allgeyer
+	Copyright (c) 2008-2016 Electric Sheep Fencing, LLC. All rights reserved.
 
 	originally part of m0n0wall (http://m0n0.ch/wall)
 	Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
@@ -18,19 +18,42 @@
 	   this list of conditions and the following disclaimer.
 
 	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+	   notice, this list of conditions and the following disclaimer in
+	   the documentation and/or other materials provided with the
+	   distribution.
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
+	3. All advertising materials mentioning features or use of this software
+	   must display the following acknowledgment:
+	   "This product includes software developed by the pfSense Project
+	   for use in the pfSense® software distribution. (http://www.pfsense.org/).
+
+	4. The names "pfSense" and "pfSense Project" must not be used to
+	   endorse or promote products derived from this software without
+	   prior written permission. For written permission, please contact
+	   coreteam@pfsense.org.
+
+	5. Products derived from this software may not be called "pfSense"
+	   nor may "pfSense" appear in their names without prior written
+	   permission of the Electric Sheep Fencing, LLC.
+
+	6. Redistributions of any form whatsoever must retain the following
+	   acknowledgment:
+
+	"This product includes software developed by the pfSense Project
+	for use in the pfSense software distribution (http://www.pfsense.org/).
+
+	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
+	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
+	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 
@@ -113,8 +136,19 @@ $icmp6types = array(
 	"mtrace"	=> gettext("mtrace messages")
 );
 
-global $tracker;
-global $negate_tracker;
+/*
+ * Fixed tracker values (used to group and track usage in GUI):
+ *
+ * anti-lockout rules:	10000
+ * bogons rules:	11000
+ * RFC1918 rules:	12000
+ *
+ */
+
+define("ANTILOCKOUT_TRACKER", 10000);
+define("BOGONS_TRACKER", 11000);
+define("RFC1918_TRACKER", 12000);
+
 $tracker = 1000000000;
 $negate_tracker = 10000000;
 
@@ -189,7 +223,7 @@ function filter_configure() {
 function filter_delete_states_for_down_gateways() {
 	global $config, $GatewaysList;
 
-	if (isset($config['system']['kill_states'])) {
+	if (!isset($config['system']['gw_down_kill_states'])) {
 		return;
 	}
 
@@ -873,6 +907,7 @@ function filter_generate_gateways() {
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";
+				$routetomembers = 0;
 				foreach ($members as $idx => $member) {
 					$int = $member['int'];
 					$gatewayip = $member['gwip'];
@@ -880,10 +915,17 @@ function filter_generate_gateways() {
 						if ($g['debug']) {
 							log_error(sprintf(gettext('Setting up route with %1$s on %2$s'), $gatewayip, $int));
 						}
+						if ($routetomembers + $member['weight'] > 384) {
+							// would create invalid ruleset, bail
+							log_error(sprintf(gettext("Too many members in group %s, gateway group truncated in ruleset."), $member['name']));
+							continue;
+						}
 						if ($member['weight'] > 1) {
 							$routeto .= str_repeat("( {$int} {$gatewayip} ) ", $member['weight']);
+							$routetomembers += $member['weight'];
 						} else {
 							$routeto .= "( {$int} {$gatewayip} ) ";
+							$routetomembers++;
 						}
 						$foundlb++;
 					} else {
@@ -1863,22 +1905,27 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['if'];
 
-			/*
-			 * If reflection is enabled, turn on extra redirections
-			 * for this rule by adding other interfaces to an rdr rule.
-			 */
-			if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
-			    ($rule['natreflection'] != "disable")) {
-				$nat_if_list = filter_get_reflection_interfaces($natif);
+			if (isset($rule['nobinat'])) {
+				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
 			} else {
-				$nat_if_list = array();
-			}
+				/*
+				 * If reflection is enabled, turn on extra redirections
+				 * for this rule by adding other interfaces to an rdr rule.
+				 */
+				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
+				    ($rule['natreflection'] != "disable")) {
+					$nat_if_list = filter_get_reflection_interfaces($natif);
+				} else {
+					$nat_if_list = array();
+				}
 
-			$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
-			if (!empty($nat_if_list)) {
-				$binat_if_list = implode(" ", $nat_if_list);
-				$binat_if_list = "{ {$binat_if_list} }";
-				$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";
+
+				if (!empty($nat_if_list)) {
+					$binat_if_list = implode(" ", $nat_if_list);
+					$binat_if_list = "{ {$binat_if_list} }";
+					$reflection_txt .= "rdr on {$binat_if_list} from {$dstaddr} to {$target}{$sn1} -> {$srcaddr} bitmask\n";
+				}
 			}
 
 			$nat_if_list = array_merge(array($natif), $nat_if_list);
@@ -2764,14 +2811,10 @@ function filter_generate_user_rule($rule) {
 		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
 	}
 	if (!empty($rule['tag'])) {
-		if (ctype_digit($rule['tag'])) {
-			$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
-		} else {
-			$aline['tag'] = " tag " .$rule['tag']. " ";
-		}
+		$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
 	}
 	if (!empty($rule['tagged'])) {
-		$aline['tagged'] = " tagged " .$rule['tagged'] . " ";
+		$aline['tagged'] = " tagged \"" .$rule['tagged']. "\" ";
 	}
 	if (!empty($rule['dscp'])) {
 		switch (strtolower($rule['dscp'])) {
@@ -3247,10 +3290,11 @@ EOD;
 		}
 
 		if (isset($config['interfaces'][$on]['blockbogons'])) {
+			$bogons_tracker = BOGONS_TRACKER;
 			$ipfrules .= <<<EOD
 # block bogon networks (IPv4)
 # http://www.cymru.com/Documents/bogon-bn-nonagg.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogons> to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
+block in $bogonlog quick on \${$oc['descr']} from <bogons> to any tracker $bogons_tracker label "{$fix_rule_label("block bogon IPv4 networks from {$oc['descr']}")}"
 
 EOD;
 
@@ -3258,7 +3302,7 @@ EOD;
 				$ipfrules .= <<<EOD
 # block bogon networks (IPv6)
 # http://www.team-cymru.org/Services/Bogons/fullbogons-ipv6.txt
-block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
+block in $bogonlog quick on \${$oc['descr']} from <bogonsv6> to any tracker $bogons_tracker label "{$fix_rule_label("block bogon IPv6 networks from {$oc['descr']}")}"
 
 EOD;
 			}
@@ -3293,13 +3337,14 @@ EOD;
 
 		if (isset($config['interfaces'][$on]['blockpriv'])) {
 			if ($isbridged == false) {
+				$rfc1918_tracker = RFC1918_TRACKER;
 				$ipfrules .= <<<EOD
 # block anything from private networks on interfaces with the option set
-block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
-block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
-block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
-block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
-block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker {$increment_tracker($tracker)} label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
+block in $privnetlog quick on \${$oc['descr']} from 10.0.0.0/8 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 10/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 127/8")}"
+block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
+block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
+block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
 
 EOD;
 			}
@@ -3509,6 +3554,7 @@ EOD;
 	if (is_array($config['system']['webgui']) && !isset($config['system']['webgui']['noantilockout'])) {
 		$alports = filter_get_antilockout_ports();
 
+		$lockout_tracker = ANTILOCKOUT_TRACKER;
 		if (count($config['interfaces']) > 1 && !empty($FilterIflist['lan']['if'])) {
 			/* if antilockout is enabled, LAN exists and has
 			 * an IP and subnet mask assigned
@@ -3516,7 +3562,7 @@ EOD;
 			$lanif = $FilterIflist['lan']['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in {$log['pass']} quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
+pass in {$log['pass']} quick on {$lanif} proto tcp from any to ({$lanif}) port { {$alports} } tracker $lockout_tracker keep state label "anti-lockout rule"
 
 EOD;
 		} else if (count($config['interfaces']) == 1) {
@@ -3524,7 +3570,7 @@ EOD;
 			$wanif = $FilterIflist["wan"]['if'];
 			$ipfrules .= <<<EOD
 # make sure the user cannot lock himself out of the webConfigurator or SSH
-pass in {$log['pass']} quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker {$increment_tracker($tracker)} keep state label "anti-lockout rule"
+pass in {$log['pass']} quick on {$wanif} proto tcp from any to ({$wanif}) port { {$alports} } tracker $lockout_tracker keep state label "anti-lockout rule"
 
 EOD;
 		}
@@ -3559,6 +3605,11 @@ EOD;
 		foreach ($config['filter']['rule'] as $rule) {
 			update_filter_reload_status("Pre-caching {$rule['descr']}...");
 			if (isset ($rule['disabled'])) {
+				continue;
+			}
+
+			// Webgui separator bar. Not a real rule
+			if (isset($rule['separator'])) {
 				continue;
 			}
 
@@ -3967,7 +4018,7 @@ function filter_process_carp_rules($log) {
 	/* return if there are no carp configured items */
 	if (!empty($config['hasync']) or !empty($config['virtualip']['vip'])) {
 		$lines .= "block in {$log['block']} quick proto carp from (self) to any tracker {$increment_tracker($tracker)}\n";
-		$lines .= "pass {$log['pass']} quick proto carp tracker {$increment_tracker($tracker)}\n";
+		$lines .= "pass {$log['pass']} quick proto carp tracker {$increment_tracker($tracker)} no state\n";
 	}
 	return $lines;
 }
@@ -4085,30 +4136,39 @@ function filter_generate_ipsec_rules($log = array()) {
 
 			/* Add rules to allow IKE to pass */
 			$shorttunneldescr = substr($descr, 0, 35);
+			// don't add "pass out" rules where $rgip is any as it will over-match and often break VPN clients behind the system in multi-WAN scenarios. redmine #5819
+			if ($rgip != " any ") {
+				$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound isakmp\"\n";
+			}
 			$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound isakmp"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound isakmp"
 
 EOD;
 			/* If NAT-T is enabled, add additional rules */
 			if ($ph1ent['nat_traversal'] != "off") {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound nat-t\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto udp from (self) to {$rgip} port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound nat-t"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto udp from {$rgip} to (self) port = 4500 tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound nat-t"
 
 EOD;
 			}
 			/* Add rules to allow the protocols in use */
 			if ($prot_used_esp) {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound esp proto\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto esp from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound esp proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto esp from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound esp proto"
 
 EOD;
 			}
 			if ($prot_used_ah) {
+				if ($rgip != " any ") {
+					$ipfrules .= "pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label \"IPsec: {$shorttunneldescr} - outbound ah proto\"\n";
+				}
 				$ipfrules .= <<<EOD
-pass out {$log['pass']} $route_to proto ah from (self) to {$rgip} tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - outbound ah proto"
 pass in {$log['pass']} on \${$FilterIflist[$parentinterface]['descr']} $reply_to proto ah from {$rgip} to (self) tracker {$increment_tracker($tracker)} keep state label "IPsec: {$shorttunneldescr} - inbound ah proto"
 
 EOD;

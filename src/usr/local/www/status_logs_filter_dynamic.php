@@ -125,16 +125,22 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
+// Force the formatted mode filter and form.  Raw mode is not applicable in the dynamic view.
+$rawfilter = false;
+
+
 // Log Filter Submit - Firewall
 filter_form_firewall();
 
 
 // Now the forms are complete we can draw the log table and its controls
-if ($filterlogentries_submit) {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-} else {
-	$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext, $interfacefilter);
-}
+system_log_filter();
 ?>
 
 <script type="text/javascript">
@@ -162,14 +168,10 @@ if ($filterlogentries_submit) {
 	$specific_log = basename($logfile, '.log') . '_settings';
 	if ($config['syslog'][$specific_log]['cronorder'] == 'forward') $reverse = false;
 	if ($config['syslog'][$specific_log]['cronorder'] == 'reverse') $reverse = true;
-
-	if ($reverse) {
-		echo "var isReverse = true;\n";
-	} else {
-		echo "var isReverse = false;\n";
-	}
 ?>
 	var filter_query_string = "<?=$filter_query_string . '&logfile=' . $logfile_path . '&nentries=' . $nentries?>";
+
+	var isReverse = "<?=$reverse?>";
 
 	/* Called by the AJAX updater */
 	function format_log_line(row) {
@@ -295,7 +297,7 @@ function in_arrayi(needle, haystack) {
 }
 
 function update_table_rows(data) {
-	if (isPaused) {
+	if ((isPaused) || (data.length < 1)) {
 		return;
 	}
 
@@ -316,7 +318,7 @@ function update_table_rows(data) {
 
 	data = data.slice(startat, data.length);
 
-	var rows = jQuery('#filter-log-entries>tr');
+	var rows = $('#filter-log-entries>tr');
 
 	// Number of rows to move by
 	var move = rows.length + data.length - nentries;
@@ -325,43 +327,48 @@ function update_table_rows(data) {
 		move = 0;
 	}
 
+	if (($("#count").text() == 0) && (data.length < nentries)){
+		move += rows.length;
+	}
+
+	var tr_classes = 'text-nowrap';
+
 	if (isReverse == false) {
 		for (var i = move; i < rows.length; i++) {
-			jQuery(rows[i - move]).html(jQuery(rows[i]).html());
+			$(rows[i - move]).html($(rows[i]).html());
 		}
 
-		var tbody = jQuery('#filter-log-entries');
+		var tbody = $('#filter-log-entries');
 
 		for (var i = 0; i < data.length; i++) {
 			var rowIndex = rows.length - move + i;
 			if (rowIndex < rows.length) {
-				jQuery(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).className = tr_classes;
 			} else {
-				jQuery(tbody).append('<tr>' + data[i] + '</tr>');
+				$(tbody).append('<tr class="' + tr_classes + '">' + data[i] + '</tr>');
 			}
 		}
 	} else {
 		for (var i = rows.length - 1; i >= move; i--) {
-			jQuery(rows[i]).html(jQuery(rows[i - move]).html());
+			$(rows[i]).html($(rows[i - move]).html());
 		}
 
-		var tbody = jQuery('#filter-log-entries');
+		var tbody = $('#filter-log-entries');
 
 		for (var i = 0; i < data.length; i++) {
 			var rowIndex = move - 1 - i;
 			if (rowIndex >= 0) {
-				jQuery(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).html(data[i]);
+				$(rows[rowIndex]).className = tr_classes;
 			} else {
-				jQuery(tbody).prepend('<tr>' + data[i] + '</tr>');
+				$(tbody).prepend('<tr class="' + tr_classes + '">' + data[i] + '</tr>');
 			}
 		}
 	}
 
-	// Much easier to go through each of the rows once they've all be added.
-	rows = jQuery('#filter-log-entries>tr');
-	for (var i = 0; i < rows.length; i++) {
-		rows[i].className = i % 2 == 0 ? 'listMRodd' : 'listMReven';
-	}
+	var rowCount = $('#filter-log-entries>tr').length;
+	$("#count").html(rowCount);
 
 	$('.fa').tooltip();
 }
@@ -398,7 +405,13 @@ function toggleListDescriptions() {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=gettext('Last ') . $nentries . gettext(' records. ') . gettext('Pause ')?><input type="checkbox" onclick="javascript:toggle_pause();" />
+<?php
+	// Force the raw mode table panel title so that JQuery can update it dynamically.
+	$rawfilter = true;
+
+	print(system_log_table_panel_title());
+?>
+<?=" " . gettext('Pause') . " "?><input type="checkbox" onclick="javascript:toggle_pause();" />
 		</h2>
 	</div>
 	<div class="panel-body">
@@ -406,12 +419,12 @@ function toggleListDescriptions() {
 			<table class="table table-striped table-hover table-condensed">
 				<thead>
 					<tr class="text-nowrap">
-						<th><?=gettext("Act")?></th>
+						<th><?=gettext("Action")?></th>
 						<th><?=gettext("Time")?></th>
-						<th><?=gettext("IF")?></th>
+						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Destination")?></th>
-						<th><?=gettext("Proto")?></th>
+						<th><?=gettext("Protocol")?></th>
 					</tr>
 				</thead>
 				<tbody id="filter-log-entries">
@@ -420,7 +433,6 @@ function toggleListDescriptions() {
 				$tcpcnt = 0;
 
 				foreach ($filterlog as $filterent) {
-					$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
 					$rowIndex++;
 					if ($filterent['version'] == '6') {
 						$srcIP = "[" . htmlspecialchars($filterent['srcip']) . "]";
@@ -451,7 +463,7 @@ function toggleListDescriptions() {
 								$icon_act = "fa-check text-success";
 							}
 ?>
-							<i class="fa <?php echo $icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
+							<i class="fa <?=$icon_act;?> icon-pointer" title="<?php echo $filterent['act'] .'/'. $filterent['tracker'];?>" onclick="javascript:getURL('status_logs_filter.php?getrulenum=<?="{$filterent['rulenum']},{$filterent['tracker']},{$filterent['act']}"; ?>', outputrule);"></i>
 						</td>
 						<td><?=htmlspecialchars($filterent['time'])?></td>
 						<td><?=htmlspecialchars($filterent['interface'])?></td>
@@ -468,8 +480,24 @@ function toggleListDescriptions() {
 <?php
 				} // e-o-foreach()
 ?>
+<?php
+	if (count($filterlog) == 0) {
+		print '<tr class="text-nowrap"><td colspan=6>';
+		print_info_box(gettext('No logs to display'));
+		print '</td></tr>';
+	}
+?>
 				</tbody>
 			</table>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=count($filterlog);?>);
+});
+//]]>
+</script>
+
 		</div>
 	</div>
 </div>
@@ -489,7 +517,9 @@ if ($tcpcnt > 0) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <script type="text/javascript">

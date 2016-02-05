@@ -176,7 +176,7 @@ if ($_POST) {
 
 	/* ipalias and carp should not use network or broadcast address */
 	if ($_POST['mode'] == "ipalias" || $_POST['mode'] == "carp") {
-		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32") {
+		if (is_ipaddrv4($_POST['subnet']) && $_POST['subnet_bits'] != "32" && $_POST['subnet_bits'] != "31") {
 			$network_addr = gen_subnet($_POST['subnet'], $_POST['subnet_bits']);
 			$broadcast_addr = gen_subnet_max($_POST['subnet'], $_POST['subnet_bits']);
 		} else if (is_ipaddrv6($_POST['subnet']) && $_POST['subnet_bits'] != "128") {
@@ -200,7 +200,7 @@ if ($_POST) {
 			$idtracker = 0;
 			foreach ($config['virtualip']['vip'] as $vip) {
 				if ($vip['vhid'] == $_POST['vhid'] && $vip['interface'] == $_POST['interface'] && $idtracker != $id) {
-					$input_errors[] = sprintf(gettext("VHID %s is already in use on interface %s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
+					$input_errors[] = sprintf(gettext("VHID %1$s is already in use on interface %2$s. Pick a unique number on this interface."), $_POST['vhid'], convert_friendly_interface_to_friendly_descr($_POST['interface']));
 				}
 				$idtracker++;
 			}
@@ -410,8 +410,8 @@ $section->addInput(new Form_Select(
 	'Address type',
 	((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) ? 'single':'network',
 	array(
-		'single' => 'Single address',
-		'network' => 'Network'
+		'single' => gettext('Single address'),
+		'network' => gettext('Network')
 	)
 ))->addClass('typesel');
 

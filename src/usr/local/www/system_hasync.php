@@ -108,6 +108,12 @@ if ($_POST) {
 		$input_errors[] = gettext("Password and confirmation must match.");
 	}
 
+	if ($pconfig['pfsyncpeerip'] != "") {
+		if (!is_ipaddrv4($pconfig['pfsyncpeerip'])) {
+			$input_errors[] = gettext("pfsync Synchronize Peer IP must be an IPv4 IP.");
+		}
+	}
+
 	if (!$input_errors) {
 		write_config("Updated High Availability Sync configuration");
 		interfaces_sync_setup();

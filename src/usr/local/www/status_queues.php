@@ -84,7 +84,7 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	$error = "Something wrong happened during communication with stat gathering";
+	$error = gettext("Something wrong happened during communication with stat gathering");
 } else {
 	$stats = "";
 	while (!feof($fd)) {
@@ -94,7 +94,7 @@ if (!$fd) {
 	@file_put_contents("{$g['tmp_path']}/qstats", $stats);
 	$altqstats = @parse_xml_config("{$g['tmp_path']}/qstats", array("altqstats"));
 	if ($altqstats == -1) {
-		$error = "No queue statistics could be read.";
+		$error = gettext("No queue statistics could be read.");
 	}
 }
 if ($_REQUEST['getactivity']) {
@@ -129,13 +129,13 @@ if ($_REQUEST['getactivity']) {
 		if ($packet_s < 0) {
 			$packet_s = 0;
 		}
-		$finscript .= "jQuery('#queue{$q->queuename}width').css('width','{$packet_s}%');";
-		$finscript .= "jQuery('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
-		$finscript .= "jQuery('#queue{$q->queuename}borrows').val('{$q->borrows}');";
-		$finscript .= "jQuery('#queue{$q->queuename}suspends').val('{$q->suspends}');";
-		$finscript .= "jQuery('#queue{$q->queuename}drops').val('{$q->drops}');";
-		$finscript .= "jQuery('#queue{$q->queuename}length').val('{$q->queuelength}');";
+		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";
+		$finscript .= "$('#queue{$q->queuename}pps').val('" . number_format($q->pps, 1) . "');";
+		$finscript .= "$('#queue{$q->queuename}bps').val('" . format_bits($q->bandwidth) . "');";
+		$finscript .= "$('#queue{$q->queuename}borrows').val('{$q->borrows}');";
+		$finscript .= "$('#queue{$q->queuename}suspends').val('{$q->suspends}');";
+		$finscript .= "$('#queue{$q->queuename}drops').val('{$q->drops}');";
+		$finscript .= "$('#queue{$q->queuename}length').val('{$q->queuelength}');";
 	}
 	unset($statistics, $altqstats);
 	header("Content-type: text/javascript");
@@ -160,8 +160,8 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 //<![CDATA[
 	function getqueueactivity() {
 		var url = "/status_queues.php";
-		var pars = "getactivity=yes&stats=" + jQuery("#selStatistic").val();
-		jQuery.ajax(
+		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
+		$.ajax(
 			url,
 			{
 				type: 'post',
@@ -172,7 +172,7 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 	function activitycallback(transport) {
 		setTimeout('getqueueactivity()', 5100);
 	}
-	jQuery(document).ready(function() {
+	$(document).ready(function() {
 		setTimeout('getqueueactivity()', 150);
 	});
 //]]>
@@ -190,9 +190,9 @@ else: ?>
 					<tr>
 						<th><?=gettext("Queue"); ?></th>
 						<th><?=gettext("Statistics"); ?>
-							<select id="selStatistic">
-								<option value="0">PPS</option>
-								<option value="1">Bandwidth</option>
+							<select id="selStatistic" class="form-control">
+								<option value="0"><?=gettext("PPS");?></option>
+								<option value="1"><?=gettext("Bandwidth");?></option>
 							</select>
 						</th>
 						<th><?=gettext("PPS"); ?></th>
@@ -214,7 +214,7 @@ else: ?>
 			<br />
 			<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info');
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info', false);
 ?>
 			</div>
 		</div>
@@ -224,11 +224,11 @@ else: ?>
 <script type="text/javascript">
 //<![CDATA[
 	function StatsShowHide(classname) {
-		var firstrow = jQuery("." + classname).first();
+		var firstrow = $("." + classname).first();
 		if (firstrow.is(':visible')) {
-			jQuery("." + classname).hide();
+			$("." + classname).hide();
 		} else {
-			jQuery("." + classname).show();
+			$("." + classname).show();
 		}
 	}
 //]]>
@@ -241,11 +241,7 @@ include("foot.inc");
 function processQueues($altqstats, $level, $parent_name) {
 	global $g;
 	global $if_queue_list;
-	$gray_value = 190 + $level * 10;
-	if ($gray_value > 250) {
-		$gray_value = 255;
-	}
-	$row_background = str_repeat(dechex($gray_value), 3);
+
 	$parent_name = $parent_name . " queuerow" . $altqstats['name'] . $altqstats['interface'];
 	$prev_if = $altqstats['interface'];
 	foreach ($altqstats['queue'] as $q) {
@@ -261,8 +257,8 @@ function processQueues($altqstats, $level, $parent_name) {
 			$prev_if = $q['interface'];
 		}
 ?>
-		<tr class="<?php echo $parent_name?>">
-			<td style="background-color:#<?php echo $row_background?>;padding-left:<?php echo $level * 20?>px;">
+		<tr class="<?=$parent_name;?>">
+			<td class="<?=$row_class?>" style="padding-left:<?=$level * 20?>px;">
 				<?php
 				if (is_array($q['queue'])) {
 					echo "<a href=\"#\" onclick=\"StatsShowHide('queuerow{$q['name']}{$q['interface']}');return false\">+/-</a>";
@@ -276,17 +272,17 @@ function processQueues($altqstats, $level, $parent_name) {
 			</td>
 <?php
 		$cpuUsage = 0;
-		echo "<td style=\"background-color:#{$row_background}\" >";
-		echo "<div class=\"progress\" style=\"height: 7px;width: 170px;\">
-				<div class=\"progress-bar\" role=\"progressbar\" id=\"queue{$q['name']}{$q['interface']}width\" aria-valuenow=\"70\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: " . ($cpuUsage*100) . "%;\"></div>
-			  </div>";
-		echo "</td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}pps\" id=\"queue{$q['name']}{$q['interface']}pps\" value=\"(" . gettext("Loading") . ")\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:80px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}bps\" id=\"queue{$q['name']}{$q['interface']}bps\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}borrows\" id=\"queue{$q['name']}{$q['interface']}borrows\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}suspends\" id=\"queue{$q['name']}{$q['interface']}suspends\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}drops\" id=\"queue{$q['name']}{$q['interface']}drops\" value=\"\" /></td>";
-		echo "<td style=\"background-color:#{$row_background}\"><input style=\"border:0;width:70px;text-align:right;\" size=\"10\" name=\"queue{$q['name']}{$q['interface']}length\" id=\"queue{$q['name']}{$q['interface']}length\" value=\"\" /></td>";
+		print('<td>');
+		print('<div class="progress" style="height: 7px;width: 170px;">');
+		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;\"></div>');
+		print('	  </div>');
+		print('</td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');
+		print('<td><input readonly style="border:0;width:80px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'bps"      id="queue' . $q['name'] . $q['interface'] . 'bps"      value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'borrows"  id="queue' . $q['name'] . $q['interface'] . 'borrows"  value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'suspends" id="queue' . $q['name'] . $q['interface'] . 'suspends" value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'drops"    id="queue' . $q['name'] . $q['interface'] . 'drops"    value="" /></td>');
+		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'length"   id="queue' . $q['name'] . $q['interface'] . 'length"   value="" /></td>');
 ?>
 		</tr>
 <?php

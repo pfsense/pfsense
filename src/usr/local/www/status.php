@@ -95,7 +95,7 @@ function doCmdT($title, $command) {
 	echo "\n<a name=\"" . str_replace($rubbish, '', $title) . "\" id=\"" . str_replace($rubbish, '', $title) . "\"></a>\n";
 
 	print('<div class="panel panel-default">');
-	print('<div class="panel-heading">' . $title . '</div>');
+	print('<div class="panel-heading"><h2 class="panel-title">' . $title . '</h2></div>');
 	print('<div class="panel-body">');
 	print('<pre>');
 
@@ -163,7 +163,7 @@ function listCmds() {
 	$rubbish = array('|', '-', '/', '.', ' ');	/* fixes the <a> tag to be W3C compliant */
 
 	print('<div class="panel panel-default">');
-	print('<div class="panel-heading">' . gettext("System status on ") . $currentDate . '</div>');
+	print('<div class="panel-heading"><h2 class="panel-title">' . gettext("System Status on ") . $currentDate . '</h2></div>');
 	print('<div class="panel-body">');
 	print('    <div class="content">');
 	print("\n<p>" . gettext("This status page includes the following information") . ":\n");
@@ -191,7 +191,7 @@ global $g, $config;
 /* Set up all of the commands we want to execute. */
 
 /* System stats/info */
-defCmdT("System uptime", "/usr/bin/uptime");
+defCmdT("System Uptime", "/usr/bin/uptime");
 defCmdT("Interfaces", "/sbin/ifconfig -a");
 defCmdT("Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
@@ -215,7 +215,7 @@ defCmdT("pf Info", "/sbin/pfctl -si");
 defCmdT("pf Show All", "/sbin/pfctl -sa");
 defCmdT("pf Queues", "/sbin/pfctl -s queue -v");
 defCmdT("pf OSFP", "/sbin/pfctl -s osfp");
-defCmdT("pfsync stats", "/usr/bin/netstat -s -ppfsync");
+defCmdT("pfsync Stats", "/usr/bin/netstat -s -ppfsync");
 defCmdT("pftop Default", "/usr/local/sbin/pftop -a -b");
 defCmdT("pftop Long", "/usr/local/sbin/pftop -w 150 -a -b -v long");
 defCmdT("pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");
@@ -225,7 +225,7 @@ defCmdT("pftop Speed", "/usr/local/sbin/pftop -w 150 -a -b -v speed");
 if (isset($config['captiveportal']) && is_array($config['captiveportal'])) {
 	foreach ($config['captiveportal'] as $cpZone => $cpdata) {
 		if (isset($cpdata['enable'])) {
-			defCmdT("IPFW rules for {$cpdata['zone']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
+			defCmdT("IPFW Rules for {$cpdata['zone']}", "/sbin/ipfw -x " . escapeshellarg($cpdata['zoneid']) . " show");
 		}
 	}
 }
@@ -237,8 +237,8 @@ defCmdT("config.xml", "dumpconfigxml");
 defCmdT("resolv.conf", "/bin/cat /etc/resolv.conf");
 defCmdT("DHCP Configuration", "/bin/cat /var/dhcpd/etc/dhcpd.conf");
 defCmdT("DHCPv6 Configuration", "/bin/cat /var/dhcpd/etc/dhcpdv6.conf");
-defCmdT("strongSwan config", "/bin/cat /var/etc/ipsec/strongswan.conf");
-defCmdT("IPsec config", "/bin/cat /var/etc/ipsec/ipsec.conf");
+defCmdT("strongSwan Configuration", "/bin/cat /var/etc/ipsec/strongswan.conf");
+defCmdT("IPsec Configuration", "/bin/cat /var/etc/ipsec/ipsec.conf");
 defCmdT("IPsec Status", "/usr/local/sbin/ipsec statusall");
 defCmdT("SPD", "/sbin/setkey -DP");
 defCmdT("SAD", "/sbin/setkey -D");
@@ -252,7 +252,7 @@ if (file_exists("/boot/loader.conf.local")) {
 	defCmdT("Loader Configuration (Local)", "/bin/cat /boot/loader.conf.local");
 }
 if (file_exists("/var/etc/filterdns.conf")) {
-	defCmdT("Filter DNS Daemon Config", "/bin/cat /var/etc/filterdns.conf");
+	defCmdT("Filter DNS Daemon Configuration", "/bin/cat /var/etc/filterdns.conf");
 }
 defCmdT("last 1000 system log entries", "/usr/local/sbin/clog /var/log/system.log 2>&1 | tail -n 1000");
 defCmdT("last 1000 DHCP log entries", "/usr/local/sbin/clog /var/log/dhcpd.log 2>&1 | tail -n 1000");
@@ -280,7 +280,7 @@ defCmdT("Installed OS Packages", "/usr/sbin/pkg info");
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 
-$pgtitle = array("{$g['product_name']}", "status");
+$pgtitle = array("{$g['product_name']}", "Status");
 include("head.inc");
 
 print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting " .

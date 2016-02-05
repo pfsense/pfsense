@@ -72,11 +72,11 @@ Build a list of allowed log files so we can reject others to prevent the page
 from acting on unauthorized files.
 */
 $allowed_logs = array(
-	"vpn" => array("name" => "VPN Logins",
+	"vpn" => array("name" => gettext("VPN Logins"),
 		    "shortcut" => "poes"),
-	"poes" => array("name" => "PPPoE Service",
-		    "shortcut" => "poes"),
-	"l2tps" => array("name" => "L2TP Service",
+	"poes" => array("name" => gettext("PPPoE Service"),
+		    "shortcut" => "pppoes"),
+	"l2tps" => array("name" => gettext("L2TP Service"),
 		    "shortcut" => "l2tps"),
 );
 
@@ -94,8 +94,8 @@ if (!$_GET['logfile']) {
 	}
 }
 
-if ($vpntype == 'poes') { $allowed_logs['vpn']['name'] = "PPPoE Logins"; }
-if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = "L2TP Logins"; }
+if ($vpntype == 'poes') { $allowed_logs['vpn']['name'] = gettext("PPPoE Logins"); }
+if ($vpntype == 'l2tp') { $allowed_logs['vpn']['name'] = gettext("L2TP Logins"); }
 
 
 // Log Filter Submit - VPN
@@ -114,7 +114,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]));
+$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -127,17 +127,19 @@ if (!$input_errors && $savemsg) {
 tab_array_logs_common();
 
 
+// Manage Log - Section/Form
+if ($system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
+
+
 // Filter Section/Form - VPN
 filter_form_vpn();
 
 
 // Now the forms are complete we can draw the log table and its controls
 if (!$rawfilter) {
-	if ($filterlogentries_submit) {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filterfieldsarray);
-	} else {
-		$filterlog = conv_log_filter($logfile_path, $nentries, $nentries + 100, $filtertext);
-	}
+	system_log_filter();
 
 	// Remove those not of the selected vpn type (poes / l2tp).
 	if ($logfile == "vpn") {
@@ -153,13 +155,7 @@ if (!$rawfilter) {
 	<div class="panel-heading">
 		<h2 class="panel-title">
 <?php
-		if ((!$filtertext) && (!$filterfieldsarray)) {
-			printf(gettext("Last %d %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-		} else {
-			printf(gettext("%d matched %s log entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
-		}
-
-		printf(" (" . gettext("Maximum %d") . ")", $nentries);
+	print(system_log_table_panel_title());
 ?>
 		</h2>
 	</div>
@@ -254,11 +250,26 @@ if (!$rawfilter) {
 } else {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Last ")?><?=$nentries?> <?=gettext($allowed_logs[$logfile]["name"])?><?=gettext(" log entries")?></h2></div>
+	<div class="panel-heading">
+		<h2 class="panel-title">
+<?php
+	print(system_log_table_panel_title());
+?>
+		</h2>
+	</div>
 	<div class="panel-body">
 		<pre><?php 
 			$rows = dump_clog_no_table($logfile_path, $nentries, true, array($filtertext));
 		?></pre>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	$("#count").html(<?=$rows?>);
+});
+//]]>
+</script>
+
 <?php
 	if ($rows == 0) {
 		print_info_box(gettext('No logs to display'));
@@ -272,7 +283,9 @@ if (!$rawfilter) {
 
 <?php
 # Manage Log - Section/Form
-manage_log_section();
+if (!$system_logs_manage_log_form_hidden) {
+	manage_log_section();
+}
 ?>
 
 <?php
@@ -354,17 +367,26 @@ function filter_form_vpn() {
 
 	global $filter_active, $rawfilter, $filterfieldsarray, $filtertext, $filterlogentries_qty, $nentries, $Include_Act, $interfacefilter;
 	global $logfile;
+	global $system_logs_filter_form_hidden;
 
 	if ($filter_active) {
-		$filter_state = SEC_OPEN;
+		$panel_state = 'in';
+		$panel_body_state = SEC_OPEN;
 	} else {
-		$filter_state = SEC_CLOSED;
+		if ($system_logs_filter_form_hidden) {
+			$panel_state = 'out';
+			$panel_body_state = SEC_OPEN;
+		} else {
+			$panel_state = 'in';
+			$panel_body_state = SEC_CLOSED;
+		}
 	}
 
 	if (!$rawfilter) { // Advanced log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Advanced Log Filter', 'adv-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Advanced Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		if ($logfile == "vpn") {
 			$group = new Form_Group('');
@@ -460,8 +482,9 @@ function filter_form_vpn() {
 		);
 	} else { // Simple log filter form
 		$form = new Form(false);
+		$form->setAttribute('id', 'filter-form')->addClass('collapse ' . $panel_state);
 
-		$section = new Form_Section('Log Filter', 'basic-filter-panel', COLLAPSIBLE|$filter_state);
+		$section = new Form_Section('Log Filter', 'filter-panel', COLLAPSIBLE|$panel_body_state);
 
 		$group = new Form_Group('');
 

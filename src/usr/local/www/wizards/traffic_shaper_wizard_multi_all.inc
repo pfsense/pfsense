@@ -109,6 +109,7 @@ function step2_stepbeforeformdisplay() {
 	global $config, $pkg;
 	global $stepid, $savemsg;
 
+	$list_all_ifs = false;
 	$wans = 0;
 	$lans = 0;
 	$iflist = array();
@@ -121,6 +122,10 @@ function step2_stepbeforeformdisplay() {
 		else
 			$lans++;
 		$iflist[$if] = $ifdesc;
+	}
+	if ($wans == 0) {
+		$list_all_ifs = true;
+		$wans = $lans;
 	}
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 	if ($numberofconnections > $wans) {
@@ -160,8 +165,10 @@ function step2_stepbeforeformdisplay() {
 		$field['options']['option'] = array();
 		foreach ($iflist as $ifname => $ifdescr) {
 			// Skip wan interfaces here
-			if (interface_has_gateway($ifname) || interface_has_gatewayv6($ifname))
+			if (interface_has_gateway($ifname) ||
+			    interface_has_gatewayv6($ifname)) {
 				continue;
+			}
 			$opts = array();
 			$opts['displayname'] = $ifdescr;
 			$opts['name'] = $ifname;
@@ -211,8 +218,11 @@ function step2_stepbeforeformdisplay() {
 		$field['options']['option'] = array();
 		foreach ($iflist as $ifname => $ifdescr) {
 			// Skip lan interfaces here
-			if (!interface_has_gateway($ifname) && !interface_has_gatewayv6($ifname))
+			if (!$list_all_ifs &&
+			    !interface_has_gateway($ifname) &&
+			    !interface_has_gatewayv6($ifname)) {
 				continue;
+			}
 			$opts = array();
 			$opts['displayname'] = $ifdescr;
 			$opts['name'] = $ifname;

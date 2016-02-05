@@ -88,11 +88,11 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), "Zone " . $a_cp[$cpzone]['zone'], gettext("MAC"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("MAC"));
 $shortcut_section = "captiveportal";
 
-$actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;Pass',
-				 'block' => '<font color="red" size="4">&#x2718;</font>&nbsp;Block');
+$actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;' . gettext("Pass"),
+				 'block' => '<font color="red" size="4">&#x2718;</font>&nbsp;' . gettext("Block"));
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -189,7 +189,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('passthrumac')) {
-	print_info_box_np(gettext("The captive portal MAC address configuration has been changed.<br />You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The captive portal MAC address configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();

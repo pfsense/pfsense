@@ -451,9 +451,9 @@ $section->addInput($input = new Form_Select(
 	$config['system']['optimization'],
 	array(
 		'normal' => 'Normal',
-		'high-latency' => 'High-latency',
-		'aggressive' => 'Aggressive',
-		'conservative' => 'Conservative',
+		'high-latency' => gettext('High-latency'),
+		'aggressive' => gettext('Aggressive'),
+		'conservative' => gettext('Conservative'),
 	)
 ))->setHelp('Select the type of state table optimization to use');
 
@@ -470,7 +470,7 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_Checkbox(
 	'disablescrub',
 	'Disable Firewall Scrub',
-	'Disables the PF scrubbing option which can sometimes interfere with NFS and PPTP traffic.',
+	'Disables the PF scrubbing option which can sometimes interfere with NFS traffic.',
 	isset($config['system']['disablescrub'])
 ));
 
@@ -545,8 +545,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable Auto-added VPN rules',
 	'Disable all auto-added VPN rules.',
 	isset($config['system']['disablevpnrules'])
-))->setHelp('<span>Note: This disables automatically added rules for IPsec, '.
-	'PPTP.</span>');
+))->setHelp('Note: This disables automatically added rules for IPsec.');
 
 $section->addInput(new Form_Checkbox(
 	'disablereplyto',
@@ -594,9 +593,9 @@ $section->addInput(new Form_Select(
 	'Update Frequency',
 	empty($pconfig['bogonsinterval']) ? 'monthly' : $pconfig['bogonsinterval'],
 	array(
-		'monthly' => 'Monthly',
-		'weekly' => 'Weekly',
-		'daily' => 'Daily',
+		'monthly' => gettext('Monthly'),
+		'weekly' => gettext('Weekly'),
+		'daily' => gettext('Daily'),
 	)
 ))->setHelp('The frequency of updating the lists of IP addresses that are '.
 	'reserved (but not RFC 1918) or not yet assigned by IANA.');
@@ -619,9 +618,9 @@ if (count($config['interfaces']) > 1) {
 		'NAT Reflection mode for port forwards',
 		$value,
 		array(
-			'disable' => 'disabled',
-			'proxy' => 'NAT + proxy',
-			'purenat' => 'Pure NAT',
+			'disable' => gettext('disabled'),
+			'proxy' => gettext('NAT + proxy'),
+			'purenat' => gettext('Pure NAT'),
 		)
 	))->setHelp('</span><ul class="help-block"><li>The pure NAT mode uses a set of NAT rules to direct '.
 		'packets to the target of the port forward. It has better scalability, '.
@@ -743,13 +742,13 @@ events.push(function() {
 		var htext = '<span class="text-success">';
 
 		if (val == 'normal') {
-			htext += 'The default optimization algorithm';
+			htext += '<?=gettext("The default optimization algorithm");?>';
 		} else if (val == 'high-latency') {
-			htext += 'Used for eg. satellite links. Expires idle connections later than default';
+			htext += '<?=gettext("Used for eg. satellite links. Expires idle connections later than default");?>';
 		} else if (val == 'aggressive') {
-			htext += 'Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections';
+			htext += '<?=gettext("Expires idle connections quicker. More efficient use of CPU and memory but can drop legitimate idle connections");?>';
 		} else if (val == 'conservative') {
-			htext += 'Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization';
+			htext += '<?=gettext("Tries to avoid dropping any legitimate idle connections at the expense of increased memory usage and CPU utilization");?>';
 		}
 
 		htext += '</span>';

@@ -67,7 +67,7 @@ require_once("pkg-utils.inc");
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
 	include("head.inc");
-	print_info_box_np("Please wait while packages are reinstalled in the background.");
+	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
 	exit;
 }
@@ -125,28 +125,28 @@ if (empty($installed_packages)):?>
 			// package is configured, but does not exist in the system
 			$txtcolor = "text-danger";
 			$missing = true;
-			$status = 'Package is configured, but not installed!';
+			$status = gettext('Package is configured, but not installed!');
 		} else if (isset($pkg['installed_version']) && isset($pkg['version'])) {
 			$version_compare = pkg_version_compare($pkg['installed_version'], $pkg['version']);
 
 			if ($version_compare == '>') {
 				// we're running a newer version of the package
-				$status = 'Newer than available ('. $pkg['version'] .')';
+				$status = sprintf(gettext('Newer than available (%s)'), $pkg['version']);
 			} else if ($version_compare == '<') {
 				// we're running an older version of the package
-				$status = 'Upgrade available to '.$pkg['version'];
+				$status = sprintf(gettext('Upgrade available to %s'), $pkg['version']);
 				$txtcolor = "text-warning";
 				$upgradeavail = true;
 				$vergetstr = '&amp;from=' . $pkg['installed_version'] . '&amp;to=' . $pkg['version'];
 			} else if ($version_compare == '=') {
 				// we're running the current version
-				$status = 'Up-to-date';
+				$status = gettext('Up-to-date');
 			} else {
-				$status = 'Error comparing version';
+				$status = gettext('Error comparing version');
 			}
 		} else {
 			// unknown available package version
-			$status = 'Unknown';
+			$status = gettext('Unknown');
 			$statusicon = 'question';
 		}
 ?>
@@ -177,19 +177,19 @@ if (empty($installed_packages)):?>
 		<td>
 			<?=$pkg['desc']?>
 <?php if (is_array($pkg['deps']) && count($pkg['deps'])):?>
-			<br /><br /><?= gettext("Package Dependencies")?>:<ul>
+			<br /><br /><?= gettext("Package Dependencies")?>:<br/>
 	<?php foreach ($pkg['deps'] as $pdep):?>
-			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>" class="fa fa-globe"><small>&nbsp;<?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
-	<?php endforeach;?></ul>
+			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>">&nbsp;<i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
+	<?php endforeach;?>
 <?php endif;?>
 		</td>
 		<td>
 			<div class="row">
-				<a title="<?=gettext("Remove")?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
+				<a title="<?=sprintf(gettext("Remove package %s"), $pkg['name'])?>" href="pkg_mgr_install.php?mode=delete&amp;pkg=<?=$pkg['name']?>" class="fa fa-trash"></a>
 <?php if ($upgradeavail):?>
-				<a title="<?=gettext("Update")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
+				<a title="<?=sprintf(gettext("Update package %s"), $pkg['name'])?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?><?=$vergetstr?>" class="fa fa-refresh"></a>
 <?php else:?>
-				<a title="<?=gettext("Reinstall")?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
+				<a title="<?=sprintf(gettext("Reinstall package %s"), $pkg['name'])?>" href="pkg_mgr_install.php?mode=reinstallpkg&amp;pkg=<?=$pkg['name']?>" class="fa fa-retweet"></a>
 <?php endif;?>
 
 <?php if (!isset($g['disablepackageinfo']) && $pkg['www'] != 'UNKNOWN'):?>
@@ -206,13 +206,13 @@ if (empty($installed_packages)):?>
 <br />
 <div class="text-center">
 	<p>
-		<i class="fa fa-refresh"></i> = Update &nbsp;
-		<i class="fa fa-check"></i> = Current &nbsp;
+		<i class="fa fa-refresh"></i> = <?=gettext('Update')?> &nbsp;
+		<i class="fa fa-check"></i> = <?=gettext('Current')?> &nbsp;
 	</p>
 	<p>
-		<i class="fa fa-trash"></i> = Remove &nbsp;
-		<i class="fa fa-info"></i> = Information &nbsp;
-		<i class="fa fa-retweet"></i> = Reinstall
+		<i class="fa fa-trash"></i> = <?=gettext('Remove')?> &nbsp;
+		<i class="fa fa-info"></i> = <?=gettext('Information')?> &nbsp;
+		<i class="fa fa-retweet"></i> = <?=gettext('Reinstall')?>
 	</p>
 	<p><span class="text-warning"><?=gettext("Newer version available")?></span></p>
 	<p><span class="text-danger"><?=gettext("Package is configured but not (fully) installed")?></span></p>

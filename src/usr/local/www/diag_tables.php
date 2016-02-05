@@ -126,6 +126,12 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+if ($tablename == "webConfiguratorlockout") {
+	$displayname = gettext("Web configurator lockout table");
+} else {
+	$displayname = sprintf(gettext("%s table"), ucfirst($tablename));
+}
+
 $form = new Form(false);
 
 $section = new Form_Section('Table to display');
@@ -202,35 +208,41 @@ events.push(function() {
 //]]>
 </script>
 
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext("IP Address")?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=$displayname?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("IP Address")?></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php
 		foreach ($entries as $entry):
 			$entry = trim($entry);
 ?>
-			<tr>
-				<td>
-					<?=$entry?>
-				</td>
-				<td>
-					<?php if (!$bogons): ?>
-						<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>">Remove</a>
-					<?php endif ?>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=$entry?>
+						</td>
+						<td>
+							<?php if (!$bogons): ?>
+								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>"><?=gettext("Remove")?></a>
+							<?php endif ?>
+						</td>
+					</tr>
 <?php endforeach ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
+
 <?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert">No entries exist in this table</div>
+	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
 <?php endif ?>
 
 <?php

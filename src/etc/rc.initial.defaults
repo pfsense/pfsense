@@ -38,6 +38,7 @@
 
 	echo "\n" . gettext("You are about to reset the firewall to factory defaults.");
 	echo "\n" . gettext("The firewall will reboot after resetting the configuration.");
+	echo "\n" . gettext("All additional packages installed will be removed.");
 	echo "\n" . gettext("Do you want to proceed [y|n]?") . " ";
 
 	if (strcasecmp(chop(fgets($fp)), "y") == 0) {

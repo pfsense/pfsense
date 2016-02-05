@@ -83,7 +83,7 @@ function set_default_gps() {
 		$config['ntpd']['gps']['nmea'] = 0;
 	}
 
-	write_config("Setting default NTPd settings");
+	write_config(gettext("Setting default NTPd settings"));
 }
 
 if ($_POST) {
@@ -138,8 +138,8 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['prefer']);
 	}
 
-	if (!empty($_POST['gpsselect'])) {
-		$config['ntpd']['gps']['noselect'] = $_POST['gpsselect'];
+	if (!empty($_POST['gpsnoselect'])) {
+		$config['ntpd']['gps']['noselect'] = $_POST['gpsnoselect'];
 	} elseif (isset($config['ntpd']['gps']['noselect'])) {
 		unset($config['ntpd']['gps']['noselect']);
 	}
@@ -186,7 +186,7 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['initcmd']);
 	}
 
-	write_config("Updated NTP GPS Settings");
+	write_config(gettext("Updated NTP GPS Settings"));
 
 	$retval = system_ntp_configure();
 	$savemsg = get_std_save_message($retval);
@@ -202,11 +202,11 @@ function build_nmea_list() {
 
 	$nmealist = array('options' => array(), 'selected' => array());
 
-	$nmealist['options'][0] = 'All';
-	$nmealist['options'][1] = 'RMC';
-	$nmealist['options'][2] = 'GGA';
-	$nmealist['options'][4] = 'GLL';
-	$nmealist['options'][8] = 'ZDA or ZDG';
+	$nmealist['options'][0] = gettext('All');
+	$nmealist['options'][1] = gettext('RMC');
+	$nmealist['options'][2] = gettext('GGA');
+	$nmealist['options'][4] = gettext('GLL');
+	$nmealist['options'][8] = gettext('ZDA or ZDG');
 
 	if (!$pconfig['nmea']) {
 		array_push($nmealist['selected'], 0);
@@ -245,7 +245,7 @@ $section->addInput(new Form_StaticText(
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
 
-$gpstypes = array('Custom', 'Default', 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
+$gpstypes = array(gettext('Custom'), gettext('Default'), 'Generic', 'Garmin', 'MediaTek', 'SiRF', 'U-Blox', 'SureGPS');
 
 $section->addInput(new Form_Select(
 	'gpstype',
@@ -321,7 +321,7 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
-	'gpsselect',
+	'gpsnoselect',
 	null,
 	'Do not use this clock, display for reference only (default: unchecked).',
 	$pconfig['noselect']
@@ -530,14 +530,14 @@ events.push(function() {
 
 	set_gps_default('<?=$pconfig['type']?>');
 
-	//	Checkboxes gpsprefer and gpsselect are mutually exclusive
+	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive
 	$('#gpsprefer').click(function() {
 		if ($(this).is(':checked')) {
-			$('#gpsselect').prop('checked', false);
+			$('#gpsnoselect').prop('checked', false);
 		}
 	});
 
-	$('#gpsselect').click(function() {
+	$('#gpsnoselect').click(function() {
 		if ($(this).is(':checked')) {
 			$('#gpsprefer').prop('checked', false);
 		}

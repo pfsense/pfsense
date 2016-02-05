@@ -125,6 +125,14 @@ if (($pagename == "pkg.php") || ($pagename == "pkg_edit.php") || ($pagename == "
 			$pagename = $xmlfile[1];
 		}
 	}
+} else if ($pagename == "status_logs.php") {
+	$param_split = explode('&', $uri_split[2]);
+	foreach ($param_split as $param) {
+		if (substr($param, 0, 8) == "logfile=") {
+			$logtype = explode('=', $param);
+			$pagename .= '-' . $logtype[1];
+		}
+	}
 }
 
 // Build the full help URL.
@@ -461,8 +469,32 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	}
 ?>
 		<ul class="context-links">
-<?php
 
+	<?php if ($dashboard_available_widgets_hidden): ?>
+		<li>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available Widgets")?>">
+				<i style="cursor:pointer" class="fa fa-plus"></i>
+			</a>
+		</li>
+	<?php endif?>
+
+	<?php if ($system_logs_filter_form_hidden): ?>
+		<li>
+			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">
+				<i style="cursor:pointer" class="fa fa-filter"></i>
+			</a>
+		</li>
+	<?php endif ?>
+
+	<?php if ($system_logs_manage_log_form_hidden): ?>
+		<li>
+			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage Log")?>">
+				<i style="cursor:pointer" class="fa fa-wrench"></i>
+			</a>
+		</li>
+	<?php endif ?>
+
+<?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	$ssvc = array();
 	switch ($shortcut_section) {
@@ -488,7 +520,7 @@ echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
 ?>
 	<?php if (!$g['disablehelpicon']): ?>
 		<li>
-			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>" class="help-icon">
+			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>
 			</a>
 		</li>
@@ -515,7 +547,7 @@ $pgtitle_output = true;
 if ($config['remote_managed_pages']['item']) {
 	foreach ($config['remote_managed_pages']['item'] as $rmp) {
 		if ($rmp == $_SERVER['SCRIPT_NAME']) {
-			print_info_box_np("This page is currently being managed by a remote machine.");
+			print_info_box(gettext("This page is currently being managed by a remote machine."));
 			include("foot.inc");
 			exit;
 		}
@@ -534,7 +566,7 @@ if (are_notices_pending()):?>
 					<span aria-hidden="true">&times;</span>
 				</button>
 
-				<h3 class="modal-title" id="myModalLabel">Notices</h3>
+				<h3 class="modal-title" id="myModalLabel"><?=gettext("Notices")?></h3>
 			</div>
 
 			<div class="modal-body">
@@ -573,7 +605,7 @@ if (are_notices_pending()):?>
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal"><?=gettext("Close")?></button>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark all as read")?></button>
 			</div>
 		</div>

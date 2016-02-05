@@ -130,7 +130,7 @@ if ($_POST) {
 		} else {
 			// Note that the 3rd parameter "disabled" must be passed as explicitly true or false.
 			if (!validate_address_family($_POST['network'], $_POST['gateway'], $_POST['disabled'] ? true : false)) {
-				$input_errors[] = gettext("The gateway '{$a_gateways[$_POST['gateway']]['gateway']}' is a different Address Family than network '{$_POST['network']}'.");
+				$input_errors[] = sprintf(gettext('The gateway "%1$s" is a different Address Family than network "%2$s".'), $a_gateways[$_POST['gateway']]['gateway'], $_POST['network']);
 			}
 		}
 	}

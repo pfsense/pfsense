@@ -121,37 +121,41 @@ $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
 $tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
-
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><?=gettext("Interface"); ?></th>
-				<th><?=gettext("Tunnel to &hellip;"); ?></th>
-				<th><?=gettext("Description"); ?></th>
-				<th></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('GIF Interfaces')?></h2></div>
+	<div class="panel-body">
+		<div class="table-responsive">
+			<table class="table table-striped table-hover table-condensed">
+				<thead>
+					<tr>
+						<th><?=gettext("Interface"); ?></th>
+						<th><?=gettext("Tunnel to &hellip;"); ?></th>
+						<th><?=gettext("Description"); ?></th>
+						<th><?=gettext("Actions"); ?></th>
+					</tr>
+				</thead>
+				<tbody>
 <?php foreach ($a_gifs as $i => $gif): ?>
-			<tr>
-				<td>
-					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']))?>
-				</td>
-				<td>
-					<?=htmlspecialchars($gif['remote-addr'])?>
-				</td>
-				<td>
-					<?=htmlspecialchars($gif['descr'])?>
-				</td>
-				<td>
-					<a class="fa fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
-					<a class="fa fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>"></a>
-				</td>
-			</tr>
+					<tr>
+						<td>
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gif['if']))?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gif['remote-addr'])?>
+						</td>
+						<td>
+							<?=htmlspecialchars($gif['descr'])?>
+						</td>
+						<td>
+							<a class="fa fa-pencil"	title="<?=gettext('Edit GIF interface')?>"	href="interfaces_gif_edit.php?id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete GIF interface')?>"	href="interfaces_gif.php?act=del&amp;id=<?=$i?>"></a>
+						</td>
+					</tr>
 <?php endforeach; ?>
-		</tbody>
-	</table>
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>
 
 <nav class="action-buttons">

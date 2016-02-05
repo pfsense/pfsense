@@ -145,7 +145,7 @@ if ($_POST) {
 		}
 
 		if ($ipent['hostname'] == $_POST['hostname']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['hostname'], gettext("already allowed")) ;
+			$input_errors[] = sprintf(gettext("Hostname [%s] already allowed."), $_POST['hostname']) ;
 			break ;
 		}
 	}

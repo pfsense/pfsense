@@ -90,7 +90,6 @@ $clients = openvpn_get_active_clients();
 
 include("head.inc"); ?>
 
-<body>
 <form action="status_openvpn.php" method="get" name="iform">
 <script type="text/javascript">
 //<![CDATA[
@@ -362,8 +361,6 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 ?>
 </form>
 
-<?php include("foot.inc"); ?>
-
 <script type="text/javascript">
 //<![CDATA[
 
@@ -375,3 +372,5 @@ function show_routes(id, buttonid) {
 
 //]]>
 </script>
+
+<?php include("foot.inc"); ?>

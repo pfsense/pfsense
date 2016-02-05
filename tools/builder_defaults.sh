@@ -137,7 +137,7 @@ fi
 GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e 's,/[^/]*$,,')
 
 # This is used for using svn for retrieving src
-export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
+export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}

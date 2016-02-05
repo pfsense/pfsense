@@ -126,8 +126,8 @@ $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
-		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync');
 
 $input_errors = array();
 
@@ -279,7 +279,10 @@ $protocollist = array(
 	'!arp' => $excl . ' ARP',
 	'carp' => 'CARP',
 	'!carp' => $excl . ' CARP',
+	'pfsync' => 'pfsync',
+	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP'
+	'!esp' => $excl . 'ESP'
 );
 
 include("head.inc");

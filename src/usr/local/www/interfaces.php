@@ -316,6 +316,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "dhcp6";
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
+		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -996,6 +997,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
 		unset($wancfg['dhcp6usev4iface']);
+		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['prefix-6rd']);
@@ -1240,6 +1242,9 @@ if ($_POST['apply']) {
 				}
 				if ($_POST['dhcp6usev4iface'] == "yes") {
 					$wancfg['dhcp6usev4iface'] = true;
+				}
+				if ($_POST['dhcp6debug'] == "yes") {
+					$wancfg['dhcp6debug'] = true;
 				}
 
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
@@ -2119,6 +2124,13 @@ $section->addInput(new Form_Checkbox(
 	'Send IPv6 prefix hint',
 	'Send an IPv6 prefix hint to indicate the desired prefix size for delegation',
 	$pconfig['dhcp6-ia-pd-send-hint']
+));
+
+$section->addInput(new Form_Checkbox(
+	'dhcp6debug',
+	'Debug',
+	'Start DHCP6 client in debug mode',
+	$pconfig['dhcp6debug']
 ));
 
 $section->addInput(new Form_Input(

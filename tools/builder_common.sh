@@ -2007,6 +2007,13 @@ CHECK_CHANGED_OPTIONS=yes
 CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
+EOF
+
+	# Create specific items conf
+	[ ! -d /usr/local/etc/poudriere.d ] \
+		&& mkdir -p /usr/local/etc/poudriere.d
+
+	cat <<EOF >/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-poudriere.conf
 GIT_URL="${POUDRIERE_PORTS_GIT_URL}"
 EOF
 

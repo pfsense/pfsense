@@ -398,7 +398,7 @@ $columns_in_table = 13;
 
 <?php if ($showblockbogons || $showantilockout || $showprivate) :
 ?>
-				<tbody>
+				<tbody style="display: none;">
 <?php
 		// Show the anti-lockout rule if it's enabled, and we are on LAN with an if count > 1, or WAN with an if count of 1.
 		if ($showantilockout):
@@ -462,10 +462,10 @@ $columns_in_table = 13;
 <?php 	endif;?>
 			</tbody>
 <?php endif;?>
-			<tbody class="user-entries">
+			<tbody class="user-entries" style="display: none;">
 <?php
 $nrules = 0;
-$seps = 0;
+$nrdisplayed = 0;
 
 // There can be a separator before any rules are listed
 if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
@@ -483,6 +483,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		$display = 'style="display: none;"';
 	} else {
 		$display = "";
+		$nrdisplayed++;
 	}
 
 ?>
@@ -798,14 +799,18 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 
 		$nrules++;
 		endfor;
+
+		if ($nrdisplayed == 0) {
+			print('<tr><td colspan="' . $columns_in_table . '"></td></tr>');
+		}
 ?>
 				</tbody>
 			</table>
 		</div>
 	</div>
 
-<?php if ($nrules == 0): ?>
-	<div class="alert alert-warning" role="alert">
+<?php if ($nrdisplayed == 0): ?>
+	<div class="alert alert-warning" role="alert" style="display: none">
 		<p>
 		<?php if ($_REQUEST['if'] == "FloatingRules"): ?>
 			<?=gettext("No floating rules are currently defined.");?>
@@ -818,7 +823,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 	</div>
 <?php endif;?>
 
-	<nav class="action-buttons">
+	<nav class="action-buttons" style="display: none">
 		<a href="firewall_rules_edit.php?if=<?=htmlspecialchars($if);?>&amp;after=-1" role="button" class="btn btn-sm btn-success" title="<?=gettext('Add rule to the top of the list')?>">
 			<i class="fa fa-level-up icon-embed-btn"></i>
 			<?=gettext("Add");?>
@@ -900,6 +905,10 @@ events.push(function() {
 	});
 
 	$('table tbody.user-entries').show();
+
+	$('table tbody').show();
+	$('div.alert').show();
+	$('nav.action-buttons').show();
 
 	// Check all of the rule checkboxes so that their values are posted
 	$('#order-store').click(function () {

@@ -5480,9 +5480,9 @@ function get_interface_ip($interface = "wan") {
 		return null;
 	}
 
-	if (substr($interface, 0, 4) == '_vip') {
-		return get_configured_carp_interface_list($interface, 'inet', 'ip');
-	} else if (substr($interface, 0, 5) == '_lloc') {
+	if (substr($realif, 0, 4) == '_vip') {
+		return get_configured_carp_interface_list($realif, 'inet', 'ip');
+	} else if (substr($realif, 0, 5) == '_lloc') {
 		/* No link-local address for v4. */
 		return null;
 	}

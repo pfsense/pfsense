@@ -246,8 +246,6 @@ foreach ($a_gateways as $gwname => $gateway) {
 		}
 	}
 
-	$interface = $gateway['friendlyiface'];
-
 	foreach ((array)$pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		if ($itemsplit[0] == $gwname) {

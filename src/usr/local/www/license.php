@@ -72,12 +72,12 @@ include("head.inc");
 			<li><?=gettext("Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.")?></li>
 			<li><?=gettext("Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.")?></li>
 			<li><?=gettext("All advertising materials mentioning features or use of this software must display the following acknowledgment:")?>
-				<p><p><?php printf(gettext("\"This product includes software developed by the %s Project for use in the %s&reg; software distribution."), $g['product_name'], $g['product_name'])?> (<a href="http://<?=$g['product_website']?>/" target="_blank">http://<?=$g['product_website']?>/</a>)."</p></p>
+				<p></p><p><?php printf(gettext("\"This product includes software developed by the %s Project for use in the %s&reg; software distribution."), $g['product_name'], $g['product_name'])?> (<a href="http://<?=$g['product_website']?>/" target="_blank">http://<?=$g['product_website']?>/</a>)."</p>
 			</li>
 			<li><?php printf(gettext("The names \"%s\" and \"%s Project\" must not be used to endorse or promote products derived from this software without prior written permission. For written permission, please contact"), $g['product_name'], $g['product_name'])?> <a href="mailto:<?=$g['product_email']?>"><?=$g['product_email']?></a>.</li>
 			<li><?php printf(gettext("Products derived from this software may not be called \"%s\" nor may \"%s\" appear in their names without prior written permission of the %s."), $g['product_name'], $g['product_name'], $g['product_copyright'])?></li>
 			<li><?=gettext("Redistributions of any form whatsoever must retain the following acknowledgment:")?>
-				<p><p><?php printf(gettext("\"This product includes software developed by the %s Project for use in the %s software distribution"), $g['product_name'], $g['product_name'])?> (<a href="http://<?=$g['product_website']?>/" target="_blank">http://<?=$g['product_website']?>/</a>)."</p></p>
+				<p></p><p><?php printf(gettext("\"This product includes software developed by the %s Project for use in the %s software distribution"), $g['product_name'], $g['product_name'])?> (<a href="http://<?=$g['product_website']?>/" target="_blank">http://<?=$g['product_website']?>/</a>)."</p>
 			</li>
 		</ol>
 		<p class="text-uppercase"><?php printf(gettext("THIS SOFTWARE IS PROVIDED BY THE %s PROJECT ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES "

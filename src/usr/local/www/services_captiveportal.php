@@ -505,6 +505,7 @@ if ($_POST) {
 }
 
 function build_radiusnas_list() {
+	global $config;
 	$list = array();
 
 	$iflist = get_configured_interface_with_descr();

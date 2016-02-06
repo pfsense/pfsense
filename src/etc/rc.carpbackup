@@ -40,7 +40,7 @@ if (isset($_GET)) {
 	$argument = str_replace("\n", "", $argv[1]);
 }
 if (!strstr($argument, "@")) {
-	log_error("Carp MASTER event triggered from wrong source {$argument}");
+	log_error("CARP master event triggered from wrong source {$argument}");
 }
 
 list($vhid, $iface) = explode("@", $argument);
@@ -52,7 +52,7 @@ $carp_iface = "{$friendly}_vip{$vhid}";
 
 if (is_array($vips)) {
 	foreach ($vips as $vip) {
-		$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "BACKUP" for vhid %3$s', $argument, $friendly_descr, $vhid);
+		$notificationmsg = sprintf('HA cluster member "(%1$s): (%2$s)" has resumed CARP state "BACKUP" for vhid %3$s', $argument, $friendly_descr, $vhid);
 
 		notify_via_smtp($notificationmsg);
 		notify_via_growl($notificationmsg);

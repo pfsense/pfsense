@@ -296,7 +296,7 @@ foreach ($a_gateways as $gwname => $gateway) {
 	$group->add(new Form_Select(
 		$gwname . '_vip',
 		'Virtual IP',
-		!isset($pconfig['filterdescriptions']) ? '0':$pconfig['filterdescriptions'],
+		$selected,
 		build_carp_list()
 	))->setHelp($row == $numrows ? 'Virtual IP':null);
 

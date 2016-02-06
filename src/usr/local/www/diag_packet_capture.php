@@ -281,7 +281,7 @@ $protocollist = array(
 	'!carp' => $excl . ' CARP',
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
-	'esp' => 'ESP'
+	'esp' => 'ESP',
 	'!esp' => $excl . 'ESP'
 );
 

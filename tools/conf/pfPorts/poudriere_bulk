@@ -6,6 +6,7 @@ databases/rrdtool
 databases/pecl-rrd
 benchmarks/iperf
 benchmarks/iperf3
+net/py-speedtest-cli
 security/%%PRODUCT_NAME%%
 security/%%PRODUCT_NAME%%-vmware
 sysutils/%%PRODUCT_NAME%%-builder

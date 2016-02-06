@@ -5475,6 +5475,10 @@ function get_possible_traffic_source_addresses($include_ipv6_link_local=false) {
 
 function get_interface_ip($interface = "wan") {
 
+	if (substr($interface, 0, 4) == '_vip') {
+		return get_configured_carp_interface_list($interface);
+	}
+
 	$realif = get_failover_interface($interface, 'inet');
 	if (!$realif) {
 		return null;

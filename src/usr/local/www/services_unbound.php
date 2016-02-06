@@ -141,6 +141,32 @@ if ($_POST) {
 			}
 		}
 
+		// forwarding mode requires having valid DNS servers
+		if (isset($pconfig['forwarding'])) {
+			$founddns = false;
+			if (isset($config['system']['dnsallowoverride'])) {
+				$a_gateways = return_gateways_array();
+				if (is_array($a_gateways)) {
+					foreach ($a_gateways as $gateway) {
+						if ($gateway['dynamic'] == true) {
+							// assume DNS is being obtained dynamically
+							$founddns = true;
+						}
+					}
+				}
+			}
+			if (is_array($config['system']['dnsserver'])) {
+				foreach ($config['system']['dnsserver'] as $dnsserver) {
+					if (is_ipaddr($dnsserver)) {
+						$founddns = true;
+					}
+				}
+			}
+			if ($founddns == false) {
+				$input_errors[] = gettext("At least one DNS server must be specified under System>General Setup to enable Forwarding mode.");
+			}
+		}
+
 		if (empty($pconfig['active_interface'])) {
 			$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
 		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {

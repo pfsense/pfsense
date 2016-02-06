@@ -145,11 +145,10 @@ if ($_POST) {
 		if (isset($pconfig['forwarding'])) {
 			$founddns = false;
 			if (isset($config['system']['dnsallowoverride'])) {
-				$a_gateways = return_gateways_array();
-				if (is_array($a_gateways)) {
-					foreach ($a_gateways as $gateway) {
-						if ($gateway['dynamic'] == true) {
-							// assume DNS is being obtained dynamically
+				$dns_servers = get_dns_servers();
+				if (is_array($dns_servers)) {
+					foreach ($dns_servers as $dns_server) {
+						if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
 							$founddns = true;
 						}
 					}

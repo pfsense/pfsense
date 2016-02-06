@@ -202,7 +202,7 @@ function build_carp_list() {
 			continue;
 		}
 		if ($gateway['friendlyiface'] == link_carp_interface_to_parent($vip)) {
-			$list[$vip] = "$vip - $address";
+			$list[$vip] = "$address";
 		}
 	}
 

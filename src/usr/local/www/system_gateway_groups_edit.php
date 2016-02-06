@@ -190,7 +190,7 @@ function build_gateway_protocol_map (&$a_gateways) {
 }
 
 function build_carp_list() {
-	global $carplist;
+	global $carplist, $gateway;
 
 	$list = array('address' => gettext('Interface Address'));
 
@@ -201,8 +201,9 @@ function build_carp_list() {
 		if (($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address))) {
 			continue;
 		}
-
-		$list[$vip] = "$vip - $address";
+		if ($gateway['friendlyiface'] == link_carp_interface_to_parent($vip)) {
+			$list[$vip] = "$vip - $address";
+		}
 	}
 
 	return($list);
@@ -231,7 +232,7 @@ $section->addInput(new Form_Input(
 ));
 
 
-$carplist = get_configured_carp_interface_list($interface);
+$carplist = get_configured_carp_interface_list();
 $row = 0;
 $numrows = count($a_gateways) - 1;
 

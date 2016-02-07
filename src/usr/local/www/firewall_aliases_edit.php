@@ -375,7 +375,7 @@ if ($_POST) {
 						if (($_POST['type'] == "host") && $subnet_type) {
 							if ($subnet_type == 4) {
 								// For host type aliases, if the user enters an IPv4 subnet, expand it into a list of individual IPv4 addresses.
-								$subned_size = subnet_size($address_item);
+								$subnet_size = subnet_size($address_item);
 								if ($subnet_size > 0 &&
 								    $subnet_size <= ($max_alias_addresses - $alias_address_count)) {
 									$rangeaddresses = subnetv4_expand($address_item);

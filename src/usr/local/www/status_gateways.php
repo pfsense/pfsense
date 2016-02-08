@@ -191,7 +191,7 @@ display_top_tabs($tab_array);
 				}
 ?>
 
-				<td bgcolor="<?=$bgcolor?>">
+				<td style="background-color:<?=$bgcolor?>">
 					<strong><?=$online?></strong> <?php
 					if (!empty($lastchange)) { ?>
 						<br /><i><?=gettext("Last checked")?> <?=$lastchange?></i>

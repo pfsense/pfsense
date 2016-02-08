@@ -146,7 +146,7 @@ if ($_POST) {
 		if (isset($id) && $a_vlans[$id]) {
 			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
 				if (!empty($a_vlans[$id]['vlanif'])) {
-					$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+					$confif = convert_real_interface_to_friendly_interface_name($a_vlan['vlanif']);
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
@@ -262,4 +262,3 @@ $form->add($section);
 print $form;
 
 include("foot.inc");
-

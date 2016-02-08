@@ -1753,7 +1753,9 @@ function resolve_retry($hostname, $retries = 5) {
 }
 
 function format_bytes($bytes) {
-	if ($bytes >= 1073741824) {
+	if ($bytes >= 1099511627776) {
+		return sprintf("%.2f TB", $bytes/1099511627776);
+	} else if ($bytes >= 1073741824) {
 		return sprintf("%.2f GB", $bytes/1073741824);
 	} else if ($bytes >= 1048576) {
 		return sprintf("%.2f MB", $bytes/1048576);

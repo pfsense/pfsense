@@ -90,7 +90,7 @@ if (!is_array($a_user['priv'])) {
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
-uasort($spriv_list, admusercmp);
+uasort($spriv_list, "admusercmp");
 
 if ($_POST) {
 

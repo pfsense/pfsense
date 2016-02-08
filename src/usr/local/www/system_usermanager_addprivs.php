@@ -240,7 +240,7 @@ $form->add($section);
 print($form);
 ?>
 
-<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc"><?=gettext("Select a privilege from the list above for a description")?></div>
 
 <script type="text/javascript">
 //<![CDATA[

@@ -99,8 +99,7 @@ if ($act == "delgroup") {
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
-	$savemsg = gettext("Group") . " {$groupdeleted} " .
-		gettext("successfully deleted") . "<br />";
+	$savemsg = sprintf(gettext("Group %s successfully deleted"), $groupdeleted);
 }
 
 if ($act == "delpriv") {
@@ -124,8 +123,7 @@ if ($act == "delpriv") {
 
 	write_config();
 	$act = "edit";
-	$savemsg = gettext("Privilege") . " {$privdeleted} " .
-		gettext("successfully deleted") . "<br />";
+	$savemsg = sprintf(gettext("Privilege %s successfully deleted"), $privdeleted);
 }
 
 if ($act == "edit") {
@@ -243,7 +241,7 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '"></a></td>';
 		$privhtml .=		'</tr>';
 
 	}

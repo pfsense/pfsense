@@ -123,7 +123,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_client[$id]);
 	write_config();
-	$savemsg = gettext("Client successfully deleted")."<br />";
+	$savemsg = gettext("Client successfully deleted");
 }
 
 if ($_GET['act'] == "new") {
@@ -712,7 +712,7 @@ if ($act=="new" || $act=="edit"):
 				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. You may leave this blank if you don\'t want a site-to-site VPN.');
 
-$section->addInput(new Form_Input(
+	$section->addInput(new Form_Input(
 		'use_shaper',
 		'Limit outgoing bandwidth',
 		'number',

@@ -560,9 +560,9 @@ display_top_tabs($tab_array);
 
 <div class="infoblock">
 	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
-	gettext("You can check your IPsec status at ") . '<a href="status_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
-	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
-	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info', false)?>
+	sprintf(gettext("You can check your IPsec status at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
+	sprintf(gettext("IPsec Debug Mode can be enabled at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
+	sprintf(gettext("IPsec can be set to prefer older SAs at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false)?>
 </div>
 
 <script type="text/javascript">

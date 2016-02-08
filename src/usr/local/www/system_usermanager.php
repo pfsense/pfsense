@@ -118,8 +118,7 @@ if ($_GET['act'] == "deluser") {
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();
-	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br />";
+	$savemsg = sprintf(gettext("User %s successfully deleted"), $userdeleted);
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -160,7 +159,7 @@ if ($_POST['act'] == "delcert") {
 	unset($a_user[$id]['cert'][$_POST['certid']]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+	$savemsg = sprintf(gettext("Certificate %s association removed."), $certdeleted);
 }
 
 if ($_POST['act'] == "delprivid") {
@@ -169,7 +168,7 @@ if ($_POST['act'] == "delprivid") {
 	local_user_set($a_user[$id]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Privilege ") . $privdeleted . gettext(" removed") . "<br />";
+	$savemsg = sprintf(gettext("Privilege %s removed."), $privdeleted);
 }
 
 if ($_POST['save']) {
@@ -396,7 +395,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
-			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a></td>';
 		}
 
 		$privhtml .=			'</td>';

@@ -92,7 +92,7 @@ if (isset($_POST['save'])) {
 
 		write_config();
 
-		$savemsg = gettext("Password successfully changed") . "<br />";
+		$savemsg = gettext("Password successfully changed");
 	}
 }
 

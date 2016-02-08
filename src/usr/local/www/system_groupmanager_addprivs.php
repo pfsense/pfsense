@@ -100,6 +100,10 @@ if (!is_array($a_group['priv'])) {
 	$a_group['priv'] = array();
 }
 
+// Make a local copy and sort it
+$spriv_list = $priv_list;
+uasort($spriv_list, admusercmp);
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -154,16 +158,16 @@ if (isAjax()) {
 }
 
 function build_priv_list() {
-	global $priv_list, $a_group;
+	global $spriv_list, $a_group;
 
 	$list = array();
 
-	foreach ($priv_list as $pname => $pdata) {
+	foreach ($spriv_list as $pname => $pdata) {
 		if (in_array($pname, $a_group['priv'])) {
 			continue;
 		}
 
-		$list[$pname] = $pdata;
+		$list[$pname] = $pdata['name'];
 	}
 
 	return($list);
@@ -197,9 +201,6 @@ if (isset($groupid)) {
 }
 
 $section = new Form_Section('Add privileges for '. $a_group['name']);
-
-$priv_list = array_map(function($p){ return $p['name']; }, $priv_list);
-asort($priv_list, SORT_STRING|SORT_FLAG_CASE);
 
 $section->addInput(new Form_Select(
 	'sysprivs',
@@ -261,16 +262,16 @@ events.push(function() {
 <?php
 
 	// Build a list of privilege descriptions
-	if (is_array($priv_list)) {
+	if (is_array($spriv_list)) {
 		$id = 0;
 
 		$jdescs = "var descs = new Array();\n";
-		foreach ($priv_list as $pname => $pdata) {
+		foreach ($spriv_list as $pname => $pdata) {
 			if (in_array($pname, $a_group['priv'])) {
 				continue;
 			}
 
-			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata));
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";
 			$id++;
 		}

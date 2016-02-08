@@ -138,13 +138,13 @@ if ($_POST) {
 
 		if (isset($id) && $a_secret[$id]) {
 			$a_secret[$id] = $secretent;
-			$text = gettext("Edited");
+			$text = gettext("Edited IPsec Pre-Shared Keys");
 		} else {
 			$a_secret[] = $secretent;
-			$text = gettext("Added");
+			$text = gettext("Added IPsec Pre-Shared Keys");
 		}
 
-		write_config("{$text} " . gettext("IPsec Pre-Shared Keys"));
+		write_config($text);
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec_keys.php");

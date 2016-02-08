@@ -200,7 +200,7 @@ if ($_POST) {
 			$netbits = get_interface_subnet($pconfig['localid_type']);
 
 			if (empty($address) || empty($netbits)) {
-				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
+				$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['localid_type']));
 			}
 		}
 
@@ -230,7 +230,7 @@ if ($_POST) {
 				$netbits = get_interface_subnet($pconfig['natlocalid_type']);
 
 				if (empty($address) || empty($netbits)) {
-					$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['natlocalid_type']) . " " . gettext("has no subnet.");
+					$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['natlocalid_type']));
 				}
 			}
 		}

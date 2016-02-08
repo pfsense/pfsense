@@ -97,7 +97,7 @@ if ($_GET['act'] == "del") {
 	openvpn_delete_csc($a_csc[$id]);
 	unset($a_csc[$id]);
 	write_config();
-	$savemsg = gettext("Client Specific Override successfully deleted")."<br />";
+	$savemsg = gettext("Client Specific Override successfully deleted");
 }
 
 if ($_GET['act'] == "edit") {

@@ -120,7 +120,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['radiussecret'] != $_POST['radiussecret_confirm']) {
-			$input_errors[] = gettext("Secret and confirmation must match");
+			$input_errors[] = gettext("RADIUS secret and confirmation must match");
 		}
 
 		if (!is_numericint($_POST['n_l2tp_units']) || $_POST['n_l2tp_units'] > 255) {

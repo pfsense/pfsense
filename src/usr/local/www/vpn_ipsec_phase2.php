@@ -639,14 +639,14 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	$group = new Form_Group($i == 0 ? 'Encryption Algorithms':'');
 	$group->addClass('encalg');
 
-	// Note: ID attribute of each element created is to be unique.
+	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 	$group->add(new Form_Checkbox(
 		'ealgos[]',
 		null,
 		$algodata['name'],
 		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
-	))->addClass('multi')->setAttribute('id', 'ealgos[]' . '_' . $algodata['name']);
+	))->addClass('multi')->setAttribute('id');
 
 	if (is_array($algodata['keysel'])) {
 		$list = array();
@@ -677,14 +677,14 @@ foreach ($p2_ealgos as $algo => $algodata) {
 $group = new Form_Group('Hash Algorithms');
 
 foreach ($p2_halgos as $algo => $algoname) {
-	// Note: ID attribute of each element created is to be unique.
+	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 	$group->add(new Form_Checkbox(
 		'halgos[]',
 		null,
 		$algoname,
 		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
-	))->addClass('multi')->setAttribute('id', 'halgos[]' . '_' . $algoname);
+	))->addClass('multi')->setAttribute('id');
 }
 
 $section->add($group);

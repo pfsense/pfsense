@@ -4410,4 +4410,35 @@ function upgrade_141_to_142() {
 	}
 }
 
+function upgrade_142_to_143() {
+	global $config;
+	/* Index firewall rule separators per interface */
+
+	foreach ($config['filter']['separator'] as $interface => $separators) {
+
+		foreach ($separators as $sepn => $separator) {
+
+			$seprow = substr($separator['row']['0'], 2);
+			$sepif  = $separator['if'];
+
+			// Determine position of separator within the interface rules.
+			$i = -1; $j = 0;
+			foreach ($config['filter']['rule'] as $rulen => $filterent) {
+
+				if ($i == $seprow) {
+					// Set separator row to it's position within the interface rules.
+					$config['filter']['separator'][$sepif][$sepn]['row'] = 'fr' . $j;
+					continue 2;	// Advance to next separator
+				}
+
+				// Position within the interface rules.
+				if (($filterent['interface'] == $sepif && !isset($filterent['floating'])) || (isset($filterent['floating']) && "floatingrules" == $sepif)) {
+					$j++;
+				}
+				$i++;
+			}
+		}
+	}
+}
+
 ?>

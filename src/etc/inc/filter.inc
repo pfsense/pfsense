@@ -4236,4 +4236,21 @@ function filter_get_antilockout_ports($wantarray = false) {
 
 }
 
+// get rule index within interface
+function ifridx($if, $ridx) {
+	global $config;
+
+	$i = $ifridx = 0;
+	foreach ($config['filter']['rule'] as $rulen => $filterent) {
+		if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+			if ($i == $ridx) {
+				return $ifridx;
+			}
+			$ifridx++;
+		}
+		$i++;
+	}
+	return $i;
+}
+
 ?>

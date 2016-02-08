@@ -913,6 +913,9 @@ if ($_POST) {
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
+				// get rule index within interface
+				$ifridx = ifridx($if, $after);
+
 				// Update the separators
 				$a_separators = &$config['filter']['separator'][strtolower($if)];
 
@@ -920,7 +923,7 @@ if ($_POST) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
 
 					// If the separator is located after the place where the new rule is to go, increment the separator row
-					if ($seprow > $after) {
+					if (($seprow > $ifridx) || ($after == -1)) {
 						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
 					}
 				}

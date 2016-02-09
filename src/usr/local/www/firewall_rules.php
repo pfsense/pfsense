@@ -512,7 +512,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 							</a>
 	<?php
 		if ($filterent['quick'] == 'yes') {
-			print '<i class="fa fa-forward text-succcess" title="'. gettext("&quot;Quick&quot; rule. Applied immediately on match.") .'" style="cursor: pointer;"></i>';
+			print '<i class="fa fa-forward text-success" title="'. gettext("&quot;Quick&quot; rule. Applied immediately on match.") .'" style="cursor: pointer;"></i>';
 		}
 
 		$isadvset = firewall_check_for_advanced_options($filterent);

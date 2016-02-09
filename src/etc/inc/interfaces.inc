@@ -5477,6 +5477,9 @@ function get_interface_ip($interface = "wan") {
 
 	if (substr($interface, 0, 4) == '_vip') {
 		return get_configured_carp_interface_list($interface);
+	} else if (substr($interface, 0, 5) == '_lloc') {
+		/* No link-local address for v4. */
+		return null;
 	}
 
 	$realif = get_failover_interface($interface, 'inet');

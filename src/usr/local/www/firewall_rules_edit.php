@@ -913,11 +913,17 @@ if ($_POST) {
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
+				if (isset($pconfig['floating'])) {
+					$tmpif = 'FloatingRules';
+				} else {
+					$tmpif = $if;
+				}
+
 				// get rule index within interface
-				$ifridx = ifridx($if, $after);
+				$ifridx = ifridx($tmpif, $after);
 
 				// Update the separators
-				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 
 				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);

@@ -858,6 +858,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<dt><i class="fa fa-hand-stop-o text-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="fa fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
+			<dt><i class="fa fa-forward text-success"></i></dt><dd> <?=gettext("&quot;Quick&quot; rule. Applied immediately on match.")?></dd>
 		</dl>
 
 <?php

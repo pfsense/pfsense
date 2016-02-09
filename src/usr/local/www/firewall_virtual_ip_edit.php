@@ -141,23 +141,18 @@ if ($_POST) {
 			if (isset($id) && isset($a_vip[$id])) {
 				$ignore_if = $a_vip[$id]['interface'];
 				$ignore_mode = $a_vip[$id]['mode'];
-				if (isset($a_vip[$id]['uniqid'])) {
+				if (isset($a_vip[$id]['uniqid']))
 					$ignore_uniqid = $a_vip[$id]['uniqid'];
-				}
 			} else {
 				$ignore_if = $_POST['interface'];
 				$ignore_mode = $_POST['mode'];
 			}
 
-			if (!isset($ignore_uniqid)) {
+			if (!isset($ignore_uniqid))
 				$ignore_uniqid = $_POST['uniqid'];
-			}
 
-			if ($ignore_mode == 'carp') {
+			if ($ignore_mode == 'carp' || $ignore_mode == 'ipalias')
 				$ignore_if = "_vip{$ignore_uniqid}";
-			} else {
-				$ignore_if .= "_virtualip{$id}";
-			}
 
 			if (is_ipaddr_configured($_POST['subnet'], $ignore_if)) {
 				$input_errors[] = gettext("This IP address is being used by another interface or VIP.");
@@ -215,37 +210,18 @@ if ($_POST) {
 
 			if ($_POST['interface'] == 'lo0') {
 				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			} else if (strpos($_POST['interface'], '_vip')) {
+			} else if (strstr($_POST['interface'], '_vip')) {
 				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
 			}
 
 			break;
 		case 'ipalias':
-			if (strstr($_POST['interface'], "_vip")) {
-				if (is_ipaddrv4($_POST['subnet'])) {
-					$parent_ip = get_interface_ip($_POST['interface']);
-					$parent_sn = get_interface_subnet($_POST['interface']);
-					$subnet = gen_subnet($parent_ip, $parent_sn);
-				} else if (is_ipaddrv6($_POST['subnet'])) {
-					$parent_ip = get_interface_ipv6($_POST['interface']);
-					$parent_sn = get_interface_subnetv6($_POST['interface']);
-					$subnet = gen_subnetv6($parent_ip, $parent_sn);
-				}
-
-				if (isset($parent_ip) && !ip_in_subnet($_POST['subnet'], "{$subnet}/{$parent_sn}") &&
-				    !ip_in_interface_alias_subnet(link_carp_interface_to_parent($_POST['interface']), $_POST['subnet'])) {
-					$cannot_find = $_POST['subnet'] . "/" . $_POST['subnet_bits'] ;
-					$input_errors[] = sprintf(gettext("Sorry, we could not locate an interface with a matching subnet for %s.  Please add an IP alias in this subnet on this interface."), $cannot_find);
-				}
-
-				unset($parent_ip, $parent_sn, $subnet);
-			}
-
+			/* ipalias works fine with localhost and CARP. */
 			break;
 		default:
 			if ($_POST['interface'] == 'lo0') {
 				$input_errors[] = gettext("For this type of vip localhost is not allowed.");
-			} else if (strpos($_POST['interface'], '_vip')) {
+			} else if (strstr($_POST['interface'], '_vip')) {
 				$input_errors[] = gettext("A CARP parent interface can only be used with IP Alias type Virtual IPs.");
 			}
 
@@ -282,6 +258,10 @@ if ($_POST) {
 				$vipent['password'] = $a_vip[$id]['password'];
 			}
 		}
+
+		/* IPalias specific fields */
+		if ($_POST['mode'] === "ipalias")
+			$vipent['uniqid'] = $_POST['uniqid'];
 
 		/* Common fields */
 		$vipent['descr'] = $_POST['descr'];
@@ -343,10 +323,20 @@ function build_if_list() {
 	$list = array();
 
 	$interfaces = get_configured_interface_with_descr(false, true);
-	$carplist = get_configured_carp_interface_list();
+	$carplist = get_configured_vip_list();
 
-	foreach ($carplist as $cif => $carpip) {
-		$interfaces[$cif] = $carpip . ' (' . get_vip_descr($carpip) . ')';
+	foreach ($carplist as $vipname => $address) {
+		$vip = get_configured_vip($vipname);
+		if ($vip['mode'] != 'carp')
+			continue;
+
+		$interfaces[$vipname] = $address;
+		$interfaces[$vipname] .= " (";
+		if (get_vip_descr($address))
+			$interfaces[$vipname] .= get_vip_descr($address);
+		else
+			$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
+		$interfaces[$vipname] .= ")";
 	}
 
 	$interfaces['lo0'] = 'Localhost';

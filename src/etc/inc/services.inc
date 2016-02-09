@@ -73,7 +73,6 @@ function services_radvd_configure($blacklist = array()) {
 
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
-	$carplist = get_configured_carp_interface_list();
 
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
@@ -106,26 +105,7 @@ function services_radvd_configure($blacklist = array()) {
 			$dhcpv6ifconf['rapriority'] = "medium";
 		}
 
-		/* always start with the real parent, we override with the carp if later */
-		$carpif = false;
-		/* check if we need to listen on a CARP interface */
-		if (!empty($dhcpv6ifconf['rainterface'])) {
-			if (!empty($carplist[$dhcpv6ifconf['rainterface']])) {
-				$dhcpv6if = $dhcpv6ifconf['rainterface'];
-				$carpif = true;
-			}
-		}
-
-		if (strstr($dhcpv6if, "_vip")) {
-			// CARP IP, check if it's enabled and find parent
-			if (!get_carp_status() || get_carp_interface_status($dhcpv6if) != "MASTER") {
-				continue;
-			}
-			$ifparent = link_carp_interface_to_parent($dhcpv6if);
-			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
-		} else {
-			$realif = get_real_interface($dhcpv6if, "inet6");
-		}
+		$realif = get_real_interface($dhcpv6if, "inet6");
 
 		if (isset($radvdifs[$realif])) {
 			continue;
@@ -178,11 +158,7 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		if ($carpif == true) {
-			$radvdconf .= "\t\tDeprecatePrefix off;\n";
-		} else {
-			$radvdconf .= "\t\tDeprecatePrefix on;\n";
-		}
+		$radvdconf .= "\t\tDeprecatePrefix on;\n";
 		switch ($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -225,11 +201,7 @@ function services_radvd_configure($blacklist = array()) {
 			foreach ($dhcpv6ifconf['subnets']['item'] as $subnet) {
 				if (is_subnetv6($subnet)) {
 					$radvdconf .= "\tprefix {$subnet} {\n";
-					if ($carpif == true) {
-						$radvdconf .= "\t\tDeprecatePrefix off;\n";
-					} else {
-						$radvdconf .= "\t\tDeprecatePrefix on;\n";
-					}
+					$radvdconf .= "\t\tDeprecatePrefix on;\n";
 					switch ($dhcpv6ifconf['ramode']) {
 						case "managed":
 							$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -256,15 +228,9 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 		}
-		if ($carpif === true) {
-			$radvdconf .= "\troute ::/0 {\n";
-			$radvdconf .= "\t\tRemoveRoute off;\n";
-			$radvdconf .= "\t};\n";
-		} else {
-			$radvdconf .= "\troute ::/0 {\n";
-			$radvdconf .= "\t\tRemoveRoute on;\n";
-			$radvdconf .= "\t};\n";
-		}
+		$radvdconf .= "\troute ::/0 {\n";
+		$radvdconf .= "\t\tRemoveRoute on;\n";
+		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
 		$dnslist = array();
@@ -322,13 +288,7 @@ function services_radvd_configure($blacklist = array()) {
 			continue;
 		}
 
-		if (strstr($if, "_vip")) {
-			// CARP IP, find parent
-			$ifparent = link_carp_interface_to_parent($if);
-			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
-		} else {
-			$realif = get_real_interface($if, "inet6");
-		}
+		$realif = get_real_interface($if, "inet6");
 
 		/* prevent duplicate entries, manual overrides */
 		if (isset($radvdifs[$realif])) {
@@ -1924,7 +1884,6 @@ function services_dyndns_configure_client($conf) {
 
 	$dns = new updatedns($dnsService = $conf['type'],
 		$dnsHost = $conf['host'],
-		$dnsDomain = $conf['domainname'],
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWildcard = $conf['wildcard'],
@@ -2054,43 +2013,23 @@ function services_dnsmasq_configure() {
 		if (isset($config['dnsmasq']['interface'])) {
 			$interfaces = explode(",", $config['dnsmasq']['interface']);
 			foreach ($interfaces as $interface) {
-				if (is_ipaddrv4($interface)) {
-					$listen_addresses .= " --listen-address={$interface} ";
-				} else if (is_ipaddrv6($interface)) {
-					/*
-					 * XXX: Since dnsmasq does not support link-local address
-					 * with scope specified. These checks are being done.
-					 */
-					if (is_linklocal($interface) && strstr($interface, "%")) {
-						$tmpaddrll6 = explode("%", $interface);
-						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-					} else {
-						$listen_addresses .= " --listen-address={$interface} ";
-					}
-				} else if (strstr($interface, "_vip")) {
-					$laddr = get_configured_carp_interface_list($interface);
-					if (is_ipaddr($laddr)) {
+				$if = get_real_interface($interface);
+				if (does_interface_exist($if)) {
+					$laddr = get_interface_ip($interface);
+					if (is_ipaddrv4($laddr)) {
 						$listen_addresses .= " --listen-address={$laddr} ";
 					}
-				} else {
-					$if = get_real_interface($interface);
-					if (does_interface_exist($if)) {
-						$laddr = get_interface_ip($interface);
-						if (is_ipaddrv4($laddr)) {
-							$listen_addresses .= " --listen-address={$laddr} ";
-						}
-						$laddr6 = get_interface_ipv6($interface);
-						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
-							/*
-							 * XXX: Since dnsmasq does not support link-local address
-							 * with scope specified. These checks are being done.
-							 */
-							if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
-								$tmpaddrll6 = explode("%", $laddr6);
-								$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-							} else {
-								$listen_addresses .= " --listen-address={$laddr6} ";
-							}
+					$laddr6 = get_interface_ipv6($interface);
+					if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
+						/*
+						 * XXX: Since dnsmasq does not support link-local address
+						 * with scope specified. These checks are being done.
+						 */
+						if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
+							$tmpaddrll6 = explode("%", $laddr6);
+							$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
+						} else {
+							$listen_addresses .= " --listen-address={$laddr6} ";
 						}
 					}
 				}

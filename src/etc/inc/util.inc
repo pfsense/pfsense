@@ -1132,108 +1132,98 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
-/* XXX: return the configured carp interface list */
-function get_configured_carp_interface_list($carpinterface = '', $family = 'inet', $what = 'ip') {
+function get_configured_vip_list($family = 'all') {
 	global $config;
 
-	$iflist = array();
+	$list = array();
+	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip']))
+		return ($list);
 
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
-		return $iflist;
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+			continue;
+
+		if ($family == 'all' ||
+		    ($family == 'inet' && is_ipaddrv4($vip['subnet'])) ||
+		    ($family == 'inet6' && is_ipaddrv6($vip['subnet']))) {
+			$list["_vip{$vip['uniqid']}"] = $vip['subnet'];
+		}
+	}
+	return ($list);
+}
+
+function get_configured_vip($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'all', 'vip'));
+}
+
+function get_configured_vip_interface($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'all', 'iface'));
+}
+
+function get_configured_vip_ipv4($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet', 'ip'));
+}
+
+function get_configured_vip_ipv6($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet6', 'ip'));
+}
+
+function get_configured_vip_subnetv4($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet', 'subnet'));
+}
+
+function get_configured_vip_subnetv6($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet6', 'subnet'));
+}
+
+function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
+	global $config;
+
+	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
+		return (NULL);
 	}
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp") {
+		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
 			continue;
-		}
 
-		if (empty($carpinterface)) {
-			$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
+		if ($vipinterface != "_vip{$vip['uniqid']}")
 			continue;
-		}
-
-		if ($carpinterface != "_vip{$vip['uniqid']}") {
-			continue;
-		}
 
 		switch ($what) {
 			case 'subnet':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['subnet_bits'];
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['subnet_bits'];
-				}
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+					return ($vip['subnet_bits']);
+				else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+					return ($vip['subnet_bits']);
 				break;
 			case 'iface':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['interface'];
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['interface'];
-				}
+				return ($vip['interface']);
 				break;
 			case 'vip':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip;
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip;
-				}
+				return ($vip);
 				break;
 			case 'ip':
 			default:
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['subnet'];
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['subnet'];
-				}
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+					return ($vip['subnet']);
+				else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+					return ($vip['subnet']);
 				break;
 		}
 		break;
 	}
 
-	return $iflist;
-}
-
-/* return the configured IP aliases list */
-function get_configured_ip_aliases_list($returnfullentry = false) {
-	global $config;
-
-	$alias_list = array();
-
-	if (is_array($config['virtualip']['vip'])) {
-		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "ipalias") {
-				if ($returnfullentry) {
-					$alias_list[$vip['subnet']] = $vip;
-				} else {
-					$alias_list[$vip['subnet']] = $vip['interface'];
-				}
-			}
-		}
-	}
-
-	return $alias_list;
-}
-
-/* return all configured aliases list (IP, carp, proxyarp and other) */
-function get_configured_vips_list() {
-	global $config;
-
-	$alias_list = array();
-
-	if (is_array($config['virtualip']['vip'])) {
-		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "carp") {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "_vip{$vip['uniqid']}");
-			} else {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
-			}
-		}
-	}
-
-	return $alias_list;
+	return ($list);
 }
 
 /* comparison function for sorting by the order in which interfaces are normally created */
@@ -1319,7 +1309,7 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 
 /*
  *   get_configured_ip_addresses() - Return a list of all configured
- *   interfaces IP Addresses
+ *   IPv4 addresses.
  *
  */
 function get_configured_ip_addresses() {
@@ -1336,7 +1326,7 @@ function get_configured_ip_addresses() {
 			$ip_array[$int] = $ipaddr;
 		}
 	}
-	$interfaces = get_configured_carp_interface_list();
+	$interfaces = get_configured_vip_list('inet');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddr) {
 			$ip_array[$int] = $ipaddr;
@@ -1360,7 +1350,7 @@ function get_configured_ip_addresses() {
 
 /*
  *   get_configured_ipv6_addresses() - Return a list of all configured
- *   interfaces IPv6 Addresses
+ *   IPv6 addresses.
  *
  */
 function get_configured_ipv6_addresses() {
@@ -1373,7 +1363,7 @@ function get_configured_ipv6_addresses() {
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}
-	$interfaces = get_configured_carp_interface_list();
+	$interfaces = get_configured_vip_list('inet6');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddrv6) {
 			$ipv6_array[$int] = $ipaddrv6;

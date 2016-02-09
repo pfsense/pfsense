@@ -244,11 +244,11 @@ function restore_config_section_xmlrpc($raw_params) {
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['content'] = "{$vip['password']}{$vip['advskew']}{$vip['subnet']}{$vip['subnet_bits']}{$vip['advbase']}";
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['interface'] = $vip['interface'];
 					$oldvips["{$vip['interface']}_vip{$vip['vhid']}"]['subnet'] = $vip['subnet'];
-				} else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip' || strpos($vip['interface'], "lo0"))) {
+				} else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip' || strstr($vip['interface'], "lo0"))) {
 					$oldvips[$vip['subnet']]['content'] = "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}";
 					$oldvips[$vip['subnet']]['interface'] = $vip['interface'];
 					$oldvips[$vip['subnet']]['subnet'] = $vip['subnet'];
-				} else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strpos($vip['interface'], "lo0")) {
+				} else if (($vip['mode'] == "ipalias" || $vip['mode'] == 'proxyarp') && !(substr($vip['interface'], 0, 4) == '_vip') || strstr($vip['interface'], "lo0")) {
 					$vipbackup[] = $vip;
 				}
 			}

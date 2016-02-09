@@ -524,16 +524,11 @@ if ($_POST) {
 function build_interface_list() {
 	$interfaces = get_configured_interface_with_descr();
 
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip) {
-		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) . ")";
-	}
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif) {
-		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	$viplist = get_configured_vip_list();
+	foreach ($viplist as $vip => $address) {
+		$interfaces[$vip] = $address;
+		if (get_vip_descr($address))
+			$interfaces[$vip] .= " (". get_vip_descr($address) .")";
 	}
 
 	$grouplist = return_gateway_groups_array();

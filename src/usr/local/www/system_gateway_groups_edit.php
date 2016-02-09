@@ -189,21 +189,15 @@ function build_gateway_protocol_map (&$a_gateways) {
 	return $result;
 }
 
-function build_carp_list() {
-	global $carplist, $gateway;
+function build_vip_list($family = 'all') {
 
 	$list = array('address' => gettext('Interface Address'));
 
-	foreach ($carplist as $vip => $address) {
-		if (($gateway['ipprotocol'] == "inet") && (!is_ipaddrv4($address))) {
-			continue;
-		}
-		if (($gateway['ipprotocol'] == "inet6") && (!is_ipaddrv6($address))) {
-			continue;
-		}
-		if ($gateway['friendlyiface'] == link_carp_interface_to_parent($vip)) {
-			$list[$vip] = "$address";
-		}
+	$viplist = get_configured_vip_list($family);
+	foreach ($viplist as $vip => $address) {
+		$list[$vip] = "$address";
+		if (get_vip_descr($address))
+			$list[$vip] .= " (". get_vip_descr($address) .")";
 	}
 
 	return($list);
@@ -231,10 +225,15 @@ $section->addInput(new Form_Input(
 	$pconfig['name']
 ));
 
-
-$carplist = get_configured_carp_interface_list();
 $row = 0;
 $numrows = count($a_gateways) - 1;
+
+$group = new Form_Group('Gateway Priority');
+$group->add(new Form_StaticText('', ''))->setReadonly();
+$group->add(new Form_StaticText('', ''))->setReadonly();
+$group->add(new Form_StaticText('', ''))->setReadonly();
+$group->add(new Form_StaticText('', ''))->setWidth(3)->setReadonly();
+$section->add($group);
 
 foreach ($a_gateways as $gwname => $gateway) {
 	if (!empty($pconfig['item'])) {
@@ -246,17 +245,19 @@ foreach ($a_gateways as $gwname => $gateway) {
 		}
 	}
 
+	$selected = '0';
+	$vaddress = '';
 	foreach ((array)$pconfig['item'] as $item) {
 		$itemsplit = explode("|", $item);
 		if ($itemsplit[0] == $gwname) {
 			$selected = $itemsplit[1];
+			if (count($itemsplit) >= 3)
+				$vaddress = $itemsplit[2];
 			break;
-		} else {
-			$selected = '0';
 		}
 	}
 
-	$group = new Form_Group($row == 0 ? 'Gateway Priority':null);
+	$group = new Form_Group(null);
 	$group->addClass($gateway['ipprotocol']);
 
 	$group->add(new Form_Input(
@@ -264,8 +265,7 @@ foreach ($a_gateways as $gwname => $gateway) {
 		'Group Name',
 		'text',
 		$gateway['name']
-	))->setHelp($row == $numrows ? 'Gateway':null)
-	  ->setReadonly();
+	))->setReadonly();
 
 	$tr = gettext("Tier");
 	$group->add(new Form_Select(
@@ -280,37 +280,33 @@ foreach ($a_gateways as $gwname => $gateway) {
 			'4' => $tr . ' 4',
 			'5' => $tr . ' 5'
 		)
-	))->setHelp($row == $numrows ? 'Tier':null)->addClass('row')->addClass($gateway['ipprotocol']);
-
-	foreach ((array)$pconfig['item'] as $item) {
-		$itemsplit = explode("|", $item);
-		if ($itemsplit[0] == $gwname) {
-			$selected = $itemsplit[2];
-			break;
-		} else {
-			$selected = "0";
-		}
-	}
+	))->addClass('row')->addClass($gateway['ipprotocol']);
 
 	$group->add(new Form_Select(
 		$gwname . '_vip',
 		'Virtual IP',
-		$selected,
-		build_carp_list()
-	))->setHelp($row == $numrows ? 'Virtual IP':null);
+		$vaddress,
+		build_vip_list($gateway['ipprotocol'])
+	));
 
 	$group->add(new Form_Input(
 		'description',
 		'Group Name',
 		'text',
 		$gateway['descr']
-	))->setWidth(3)->setHelp($row == $numrows ? 'Description':null)
-	  ->setReadonly();
+	))->setWidth(3)->setReadonly();
 
 	$section->add($group);
 
 	$row++;
 } // e-o-foreach
+
+$group = new Form_Group(null);
+$group->add(new Form_StaticText('', ''))->setHelp('Gateway')->setReadonly();
+$group->add(new Form_StaticText('', ''))->setHelp('Tier')->setReadonly();
+$group->add(new Form_StaticText('', ''))->setHelp('Virtual IP')->setReadonly();
+$group->add(new Form_StaticText('', ''))->setWidth(3)->setHelp('Description')->setReadonly();
+$section->add($group);
 
 $section->addInput(new Form_StaticText(
 	'Link Priority',

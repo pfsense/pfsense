@@ -135,10 +135,15 @@ display_top_tabs($tab_array);
 					</tr>
 				</thead>
 				<tbody>
-<?php foreach ($a_gres as $i => $gre): ?>
+<?php foreach ($a_gres as $i => $gre):
+	if (substr($gre['if'], 0, 4) == "_vip")
+		$if = convert_real_interface_to_friendly_descr(get_real_interface($gre['if']));
+	else
+		$if = $gre['if'];
+?>
 					<tr>
 						<td>
-							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($gre['if']))?>
+							<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($if))?>
 						</td>
 						<td>
 							<?=htmlspecialchars($gre['remote-addr'])?>

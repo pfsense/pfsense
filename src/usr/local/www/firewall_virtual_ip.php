@@ -302,10 +302,18 @@ display_top_tabs($tab_array);
 			<tbody>
 <?php
 $interfaces = get_configured_interface_with_descr(false, true);
-$carplist = get_configured_carp_interface_list();
+$viplist = get_configured_vip_list();
 
-foreach ($carplist as $cif => $carpip) {
-	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+foreach ($viplist as $vipname => $address) {
+	$interfaces[$vipname] = $address;
+	$interfaces[$vipname] .= " (";
+	if (get_vip_descr($address))
+		$interfaces[$vipname] .= get_vip_descr($address);
+	else {
+		$vip = get_configured_vip($vipname);
+		$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
+	}
+	$interfaces[$vipname] .= ")";
 }
 
 $interfaces['lo0'] = "Localhost";

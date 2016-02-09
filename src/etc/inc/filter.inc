@@ -1053,7 +1053,9 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 			}
 		}
 	}
-	foreach (get_configured_ip_aliases_list(true) as $vip) {
+	$viplist = get_configured_vip_list();
+	foreach ($viplist as $vid => $address) {
+		$vip = get_configured_vip($vid);
 		$subnet = "{$vip['subnet']}/{$vip['subnet_bits']}";
 		if (is_subnet($subnet) && !(is_subnetv4($subnet) && $vip['subnet_bits'] == 32) && !(is_subnetv6($subnet) && $vip['subnet_bits'] == 128)) {
 			if (is_subnetv4($subnet)) {
@@ -4087,19 +4089,13 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			if (strpos($ph1ent['interface'], "_vip")) {
-				$parentinterface = get_configured_carp_interface_list($ph1ent['interface'], '', 'iface');
-			} else if (is_ipaddr($ph1ent['interface'])) {
-				if (is_array($config['virtualip']['vip'])) {
-					foreach ($config['virtualip']['vip'] as $vip) {
-						if ($ph1ent['interface'] == $vip['subnet']) {
-							$parentinterface = $vip['interface'];
-						}
-					}
-				}
-			} else {
+			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+				$parentinterface = get_configured_vip_interface($ph1ent['interface']);
+				/* IP Alias -> CARP */
+				if (substr($parentinterface, 0, 4) == "_vip")
+					$parentinterface = get_configured_vip_interface($parentinterface);
+			} else
 				$parentinterface = $ph1ent['interface'];
-			}
 			if (empty($FilterIflist[$parentinterface]['descr'])) {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;

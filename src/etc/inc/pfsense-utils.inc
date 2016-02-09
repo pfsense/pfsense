@@ -2714,20 +2714,6 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 		}
 	}
 
-	$interface_list_vips = get_configured_vips_list(true);
-	foreach ($interface_list_vips as $id => $vip) {
-		/* Skip CARP interfaces here since they were already checked above */
-		if ($id == $ignore_vip_id || (substr($ignore_if, 0, 4) == '_vip') && $ignore_vip_if === $vip['if']) {
-			continue;
-		}
-		if (strcasecmp($ipaddr, $vip['ipaddr']) == 0) {
-			$where_entry = array();
-			$where_entry['if'] = $vip['if'];
-			$where_entry['ip_or_subnet'] = $vip['ipaddr'];
-			$where_configured[] = $where_entry;
-		}
-	}
-
 	if ($check_localip) {
 		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
 			$where_entry = array();

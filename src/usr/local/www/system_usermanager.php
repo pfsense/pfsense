@@ -274,7 +274,6 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-
 		conf_mount_rw();
 		$userent = array();
 		if (isset($id) && $a_user[$id]) {
@@ -294,8 +293,12 @@ if ($_POST['save']) {
 			local_user_set_password($userent, $_POST['passwordfld1']);
 		}
 
+		/* only change description if sent */
+		if (isset($_POST['descr'])) {
+			$userent['descr'] = $_POST['descr'];
+		}
+
 		$userent['name'] = $_POST['usernamefld'];
-		$userent['descr'] = $_POST['descr'];
 		$userent['expires'] = $_POST['expires'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];

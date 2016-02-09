@@ -1683,7 +1683,13 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 	fclose($fp);
 	curl_close($ch);
-	return ($http_code == 200) ? true : $http_code;
+	if ($http_code == 200) {
+		return true;
+	} else {
+		log_error("Download file failed with status code $http_code. URL: $url");
+		unlink_if_exists($destination);
+		return false;
+	}
 }
 
 function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {

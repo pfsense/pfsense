@@ -148,9 +148,9 @@ if (count($services) > 0) {
 			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php
 				foreach ($services as $service): 
-					if (!empty(trim($service['name'])) || is_numeric($service['name'])) {
+					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
 			?>
-				<option <?=(in_array($service['name'], $skipservices)?'selected':'')?>><?=$service['name']?></option>
+				<option <?=(in_array($service['dispname'], $skipservices)?'selected':'')?>><?=$service['dispname']?></option>
 			<?php
 					}
 				endforeach;

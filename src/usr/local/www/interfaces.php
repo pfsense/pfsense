@@ -2950,7 +2950,7 @@ if (isset($wancfg['wireless'])) {
 		'Allow packets to pass between wireless clients directly when operating as an access point',
 		$pconfig['apbridge_enable'],
 		'yes'
-	))->setHelp('Disabling the internal bridging is useful when traffic is to be processed with packet filtering');
+	))->setHelp('Provides extra security by isolating clients so they cannot directly communicate with one another');
 
 	$section->addInput(new Form_Checkbox(
 		'wme_enable',
@@ -2963,7 +2963,7 @@ if (isset($wancfg['wireless'])) {
 	$section->addInput(new Form_Checkbox(
 		'hidessid_enable',
 		'Hide SSID',
-		'Force the card to NOT broadcast its SSID (This may cause problems for some clients)',
+		'Disable broadcasting of the SSID for this network (This may cause problems for some clients, and the SSID may still be discovered by other means.)',
 		$pconfig['hidessid_enable'],
 		'yes'
 	));
@@ -3011,19 +3011,19 @@ if (isset($wancfg['wireless'])) {
 
 	$section->addInput(new Form_Input(
 		'wpa_group_rekey',
-		'WPA Pre-Shared Key',
+		'Group Key Rotation',
 		'number',
 		$pconfig['wpa_group_rekey'] ? $pconfig['wpa_group_rekey'] : "60",
 		['min' => '1', 'max' => 9999]
-	))->setHelp('Specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time');
+	))->setHelp('Time between group rekey events, specified in seconds. Allowed values are 1-9999. Must be shorter than Master Key Regeneration time');
 
 	$section->addInput(new Form_Input(
 		'wpa_gmk_rekey',
-		'Master Key Regeneration',
+		'Group Master Key Regeneration',
 		'number',
 		$pconfig['wpa_gmk_rekey'] ? $pconfig['wpa_gmk_rekey'] : "3600",
 		['min' => '1', 'max' => 9999]
-	))->setHelp('Specified in seconds. Allowed values are 1-9999. Must be longer than Key Rotation time');
+	))->setHelp('Time between GMK rekey events, specified in seconds. Allowed values are 1-9999. Must be longer than Group Key Rotation time');
 
 	$section->addInput(new Form_Checkbox(
 		'wpa_strict_rekey',
@@ -3051,21 +3051,21 @@ if (isset($wancfg['wireless'])) {
 		'auth_server_addr',
 		'IP Address',
 		$pconfig['auth_server_addr']
-	))->setHelp('IP address.  (Commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)');
+	))->setHelp('IP address of the RADIUS server');
 
 	$group->add(new Form_Input(
 		'auth_server_port',
 		'Port',
 		'number',
 		$pconfig['auth_server_port']
-	))->setHelp('Server port. Leave blank for the default port 1812');
+	))->setHelp('Server auth port. Default is 1812');
 
 	$group->add(new Form_Input(
 		'auth_server_shared_secret',
-		'Shared secret',
+		'Shared Secret',
 		'number',
 		$pconfig['auth_server_shared_secret']
-	))->setHelp('Shared secret');
+	))->setHelp('RADIUS Shared secret for this firewall');
 
 	$section->add($group);
 
@@ -3075,21 +3075,21 @@ if (isset($wancfg['wireless'])) {
 		'auth_server_addr2',
 		'IP Address',
 		$pconfig['auth_server_addr2']
-	))->setHelp('IP address.  (Commonly a Radius server (FreeRadius, Internet Authentication Services, etc.)');
+	))->setHelp('IP address of the RADIUS server');
 
 	$group->add(new Form_Input(
 		'auth_server_port2',
 		'Port',
 		'number',
 		$pconfig['auth_server_port2']
-	))->setHelp('Server port. Leave blank for the default port 1812');
+	))->setHelp('Server auth port. Default is 1812');
 
 	$group->add(new Form_Input(
 		'auth_server_shared_secret2',
-		'Shared secret',
+		'Shared Secret',
 		'number',
 		$pconfig['auth_server_shared_secret2']
-	))->setHelp('Shared secret');
+	))->setHelp('RADIUS Shared secret for this firewall');
 
 	$section->add($group);
 

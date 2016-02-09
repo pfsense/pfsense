@@ -5312,6 +5312,16 @@ function get_interface_ip($interface = "wan") {
 		return null;
 	}
 
+	if (is_array($config['interfaces'][$interface]) &&
+	    is_ipaddr($config['interfaces'][$interface]['ipaddr'])) {
+		return ($config['interfaces'][$interface]['ipaddr']);
+	}
+
+	/*
+	 * Beaware that find_interface_ip() is our last option, it will
+	 * return the first IP it find on interface, not necessarily the
+	 * main IP address.
+	 */
 	$curip = find_interface_ip($realif);
 	if ($curip && is_ipaddr($curip) && ($curip != "0.0.0.0")) {
 		return $curip;
@@ -5351,8 +5361,15 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 				}
 				break;
 		}
+		if (is_ipaddrv6($config['interfaces'][$interface]['ipaddrv6']))
+			return ($config['interfaces'][$interface]['ipaddrv6']);
 	}
 
+	/*
+	 * Beaware that find_interface_ip() is our last option, it will
+	 * return the first IP it find on interface, not necessarily the
+	 * main IP address.
+	 */
 	$curip = find_interface_ipv6($realif, $flush);
 	if ($curip && is_ipaddrv6($curip) && ($curip != "::")) {
 		return $curip;

@@ -220,12 +220,15 @@ if ($_GET['act'] == "del") {
 		}
 		unset($a_filter[$_GET['id']]);
 
+		// get rule index within interface
+		$ifridx = ifridx($if, $_GET['id']);
+
 		// Update the separators
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
 		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-			if ($seprow >= $_GET['id']) {
+			if ($seprow > $ifridx) {
 				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
 			}
 		}
@@ -256,10 +259,13 @@ if (isset($_POST['del_x'])) {
 			unset($a_filter[$rulei]);
 			$deleted = true;
 
+			// get rule index within interface
+			$ifridx = ifridx($if, $rulei);
+
 			// Update the separators
 			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-				if ($seprow >= $rulei) {
+				if ($seprow > $ifridx) {
 					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
 				}
 			}
@@ -294,9 +300,24 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
 
+		// get the rules of other interfaces listed in config before this interface.
+		for ($i = 0; (isset($a_filter[$i]) && 
+			(($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) 
+			); $i++) {
+			$a_filter_new[] = $a_filter[$i];
+		}
+
+		// include the rules of this interface.
 		// if a rule is not in POST[rule], it has been deleted by the user
 		foreach ($_POST['rule'] as $id) {
 			$a_filter_new[] = $a_filter[$id];
+		}
+
+		// get the rules of other interfaces listed in config after this interface.
+		for ( ; (isset($a_filter[$i])); $i++) {
+			if (($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) {
+				$a_filter_new[] = $a_filter[$i];
+			}
 		}
 
 		$a_filter = $a_filter_new;
@@ -465,28 +486,17 @@ $columns_in_table = 13;
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
-$seps = 0;
+$separators = $config['filter']['separator'][strtolower($if)];
 
 // There can be a separator before any rules are listed
-if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
-	$cellcolor = $config['filter']['separator'][strtolower($if)]['sep0']['color'];
-	print('<tr class="ui-sortable-handle separator">' .
-		'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</span></td>' .
-		'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-		'</tr>' . "\n");
-}
+display_separator($separators, $nrules, $columns_in_table);
 
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
-	if (($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if)) {
-		$display = 'style="display: none;"';
-	} else {
-		$display = "";
-	}
-
+	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 ?>
-					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td>
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -789,20 +799,11 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 					</tr>
 <?php
-		if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
-			foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
-				if ($rulesep['row']['0'] == "fr" . $nrules) {
-					$cellcolor = $rulesep['color'];
-					print('<tr class="ui-sortable-handle separator">' .
-						'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
-						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-						'</tr>' . "\n");
-				}
-			}
-		}
-
 		$nrules++;
-		endfor;
+		// There can be a separator before the next rule listed, or after the last rule listed
+		display_separator($separators, $nrules, $columns_in_table);
+	}
+endfor;
 ?>
 				</tbody>
 			</table>

@@ -553,15 +553,15 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 
 	// Compose an inout array containing the row #, color and text for each separator
 	function save_separators() {
-		var seprow = 0;
+		var row = 0;
 		var sepinput;
 		var sepnum = 0;
 
 		$('#ruletable > tbody > tr').each(function() {
 			if ($(this).hasClass('separator')) {
-				seprow = $(this).prev('tr').attr("id");
+				seprow = $(this).next('tr').attr("id");
 				if (seprow == undefined) {
-					seprow = "fr-1";
+					seprow = "fr" + row;
 				}
 
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
@@ -573,10 +573,10 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
 				$('form').append(sepinput);
 				sepnum++;
-			}
-
-			if ($(this).parent('tbody').hasClass('user-entries')) {
-				seprow++;
+			} else {
+				if ($(this).parent('tbody').hasClass('user-entries')) {
+					row++;
+				}
 			}
 		});
 	}

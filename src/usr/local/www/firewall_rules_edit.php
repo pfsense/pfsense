@@ -913,14 +913,23 @@ if ($_POST) {
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
+				if (isset($pconfig['floating'])) {
+					$tmpif = 'FloatingRules';
+				} else {
+					$tmpif = $if;
+				}
+
+				// get rule index within interface
+				$ifridx = ifridx($tmpif, $after);
+
 				// Update the separators
-				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
 
 				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
 
 					// If the separator is located after the place where the new rule is to go, increment the separator row
-					if ($seprow > $after) {
+					if ($seprow > $ifridx) {
 						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
 					}
 				}

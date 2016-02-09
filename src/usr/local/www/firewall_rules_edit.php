@@ -923,7 +923,7 @@ if ($_POST) {
 					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
 
 					// If the separator is located after the place where the new rule is to go, increment the separator row
-					if (($seprow > $ifridx) || ($after == -1)) {
+					if ($seprow > $ifridx) {
 						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
 					}
 				}

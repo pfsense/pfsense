@@ -65,6 +65,20 @@ require_once("/usr/local/www/widgets/include/services_status.inc");
 
 $services = get_services();
 
+$numsvcs = count($services);
+
+// If there are any duplicated names, add an incrementing suffix
+for ($idx=0; $idx < $numsvcs; $idx++) {
+	$name = $services[$idx]['name'];
+
+	for ($chk = $idx +1, $sfx=2; $chk <$numsvcs; $chk++) {
+		if ($services[$chk]['name'] == $name) {
+			$services[$chk]['name'].= '_' . $sfx++;
+		}
+	}
+}
+
+//print_r($services);
 if ($_POST) {
 	$validNames = array();
 

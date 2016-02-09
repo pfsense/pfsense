@@ -511,13 +511,17 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 								<i class="fa fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
 							</a>
 	<?php
+		if ($filterent['quick'] == 'yes') {
+			print '<i class="fa fa-forward text-succcess" title="'. gettext("&quot;Quick&quot; rule. Applied immediately on match.") .'" style="cursor: pointer;"></i>';
+		}
+
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset) {
 			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
 		}
 
 		if (isset($filterent['log'])) {
-			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'"></i>';
+			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'" style="cursor: pointer;"></i>';
 		}
 	?>
 						</td>

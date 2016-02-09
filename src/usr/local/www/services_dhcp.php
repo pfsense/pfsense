@@ -92,15 +92,35 @@ $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
+	$found_starting_if = false;
+	// First look for an interface with DHCP already enabled.
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-		    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
-			continue;
+		if (is_array($config['dhcpd'][$ifent]) && isset($config['dhcpd'][$ifent]['enable']) && (is_ipaddrv4($oc['ipaddr']))) {
+			$if = $ifent;
+			$found_starting_if = true;
+			break;
 		}
+	}
 
-		$if = $ifent;
-		break;
+	// If there is no DHCP-enabled interface and LAN is a candidate, then choose LAN.
+	if (!$found_starting_if && isset($iflist['lan']) && is_ipaddrv4($config['interfaces']['lan']['ipaddr'])) {
+		$if = 'lan';
+		$found_starting_if = true;
+	}
+
+	// At the last select whatever can be found.
+	if (!$found_starting_if) {
+		foreach ($iflist as $ifent => $ifname) {
+			$oc = $config['interfaces'][$ifent];
+			if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
+				(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+				continue;
+			}
+
+			$if = $ifent;
+			break;
+		}
 	}
 }
 

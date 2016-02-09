@@ -1530,6 +1530,10 @@ function getUserGroups($username, $authcfg, &$attributes = array()) {
 
 function authenticate_user($username, $password, $authcfg = NULL, &$attributes = array()) {
 
+	if (is_array($username) || is_array($password)) {
+		return false;
+	}
+
 	if (!$authcfg) {
 		return local_backed($username, $password);
 	}

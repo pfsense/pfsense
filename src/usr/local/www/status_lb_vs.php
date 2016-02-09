@@ -148,7 +148,7 @@ if (empty($a_vs)) {
 					$bgcolor = WHITE;
 				}
 ?>
-				<td bgcolor="<?=$bgcolor?>">
+				<td style="background-color:<?=$bgcolor?>">
 					<?=$rdr_a[$vsent['name']]['status']?>
 
 <?php

@@ -69,6 +69,24 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
+// This display separators function can be made generic and placed in filter.inc along with it's counter part of firewall rules.
+// Things that would need to be passed instead of global are the config and nnats/nrules count.
+function display_separator() {
+	global $config, $if, $nnats, $columns_in_table;
+
+	if (!empty($config['nat']['separator'])) {
+		foreach ($config['nat']['separator'] as $sepn => $separator) {
+			if ($separator['row'][0] == "fr" . $nnats) {
+				$cellcolor = $separator['color'];
+				print('<tr class="ui-sortable-handle separator">' .
+					'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $separator['text'] . '</span></td>' .
+					'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+					'</tr>' . "\n");
+			}
+		}
+	}
+}
+
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
 }
@@ -145,7 +163,7 @@ if ($_GET['act'] == "del") {
 
 		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-			if ($seprow >= $_GET['id']) {
+			if ($seprow > $_GET['id']) {
 				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
 			}
 		}
@@ -182,7 +200,7 @@ if (isset($_POST['del_x'])) {
 			// Update the separators
 			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
 				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-				if ($seprow >= $rulei) {
+				if ($seprow > $rulei) {
 					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
 				}
 			}
@@ -260,13 +278,7 @@ $columns_in_table = 13;
 $nnats = $i = 0;
 
 // There can be a separator before any rules are listed
-if ($config['nat']['separator']['sep0']['row'][0] == "fr-1") {
-	$cellcolor = $config['nat']['separator']['sep0']['color'];
-	print('<tr class="ui-sortable-handle separator">' .
-		'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $config['nat']['separator']['sep0']['text'] . '</span></td>' .
-		'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-		'</tr>' . "\n");
-}
+display_separator();
 
 foreach ($a_nat as $natent):
 
@@ -428,20 +440,12 @@ foreach ($a_nat as $natent):
 						</td>
 					</tr>
 <?php
-
-		if (isset($config['nat']['separator']['sep0'])) {
-			foreach ($config['nat']['separator'] as $rulesep) {
-				if ($rulesep['row']['0'] == "fr" . $nnats) {
-					$cellcolor = $rulesep['color'];
-					print('<tr class="ui-sortable-handle separator">' .
-						'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
-						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-						'</tr>' . "\n");
-				}
-			}
-		}
 	$i++;
 	$nnats++;
+
+	// There can be a separator before the next rule listed, or after the last rule listed
+	display_separator();
+
 endforeach;
 ?>
 				</tbody>

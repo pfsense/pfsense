@@ -275,7 +275,10 @@ events.push(function() {
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html('<span class="text-info">' + descs[$(this).children('option:selected').index()] + '</span>');
+		var targetoption = $(this).children('option:selected').val();
+		var idx =  $('.shadowselect option[value="' + targetoption + '"]').index();
+
+		$('#pdesc').html('<span class="text-info">' + descs[idx] + '</span>');
 
 		// and update the shadow list from the real list
 		$(".multiselect option").each(function() {

@@ -507,8 +507,9 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		}
 	?>
 						<td title="<?=$title_text?>">
-
-							<i class="fa fa-<?=$iconfn?>"></i>
+							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$i;?>">
+								<i class="fa fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
+							</a>
 	<?php
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset) {

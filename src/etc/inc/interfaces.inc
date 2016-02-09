@@ -3131,7 +3131,7 @@ function interface_vlan_adapt_mtu($vlanifs, $mtu) {
 		    !empty($config['interfaces'][$assignedport]['mtu'])) {
 			$if_mtu = $config['interfaces'][$assignedport]['mtu'];
 		} else {
-			$if_mtu = ($pppoe_mtu != 0 ? $pppoe_mtu : $mtu);
+			$if_mtu = ($pppoe_mtu != 0 ? $pppoe_mtu : ($mtu > 1500 ? 1500 : $mtu));
 		}
 
 		if (get_interface_mtu($vlan['vlanif']) != $if_mtu) {

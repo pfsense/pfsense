@@ -661,10 +661,11 @@ $section->addInput(new Form_Input(
 ));
 
 $group = new Form_Group('');
+// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
 	'Download configuration as XML'
-));
+))->setAttribute('id');
 
 $section->add($group);
 $form->add($section);
@@ -706,10 +707,11 @@ $section->addInput(new Form_Input(
 ));
 
 $group = new Form_Group('');
+// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
 	'Restore Configuration'
-))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore');
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore')->setAttribute('id');
 
 $section->add($group);
 
@@ -720,20 +722,22 @@ if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("pack
 
 	if ($config['installedpackages']['package'] != "") {
 		$group = new Form_Group('');
+		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
 			'Reinstall Packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success');
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success')->setAttribute('id');
 
 		$section->add($group);
 	}
 
 	if (is_subsystem_dirty("packagelock")) {
 		$group = new Form_Group('');
+		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
 			'Clear Package Lock'
-		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning');
+		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning')->setAttribute('id');
 
 		$section->add($group);
 	}

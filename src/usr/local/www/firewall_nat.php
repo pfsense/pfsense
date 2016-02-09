@@ -69,24 +69,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("itemid.inc");
 
-// This display separators function can be made generic and placed in filter.inc along with it's counter part of firewall rules.
-// Things that would need to be passed instead of global are the config and nnats/nrules count.
-function display_separator() {
-	global $config, $if, $nnats, $columns_in_table;
-
-	if (!empty($config['nat']['separator'])) {
-		foreach ($config['nat']['separator'] as $sepn => $separator) {
-			if ($separator['row'][0] == "fr" . $nnats) {
-				$cellcolor = $separator['color'];
-				print('<tr class="ui-sortable-handle separator">' .
-					'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $separator['text'] . '</span></td>' .
-					'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-					'</tr>' . "\n");
-			}
-		}
-	}
-}
-
 if (!is_array($config['nat']['rule'])) {
 	$config['nat']['rule'] = array();
 }
@@ -276,9 +258,10 @@ $columns_in_table = 13;
 <?php
 
 $nnats = $i = 0;
+$separators = $config['nat']['separator'];
 
 // There can be a separator before any rules are listed
-display_separator();
+display_separator($separators, $nnats, $columns_in_table);
 
 foreach ($a_nat as $natent):
 
@@ -444,7 +427,7 @@ foreach ($a_nat as $natent):
 	$nnats++;
 
 	// There can be a separator before the next rule listed, or after the last rule listed
-	display_separator();
+	display_separator($separators, $nnats, $columns_in_table);
 
 endforeach;
 ?>

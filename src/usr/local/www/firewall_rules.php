@@ -133,22 +133,6 @@ function delete_nat_association($id) {
 	}
 }
 
-function display_separator() {
-	global $config, $if, $nrules, $columns_in_table;
-
-	if (!empty($config['filter']['separator'][strtolower($if)])) {
-		foreach ($config['filter']['separator'][strtolower($if)] as $sepn => $separator) {
-			if ($separator['row'][0] == "fr" . $nrules) {
-				$cellcolor = $separator['color'];
-				print('<tr class="ui-sortable-handle separator">' .
-					'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $separator['text'] . '</span></td>' .
-					'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-					'</tr>' . "\n");
-			}
-		}
-	}
-}
-
 if (!is_array($config['filter']['rule'])) {
 	$config['filter']['rule'] = array();
 }
@@ -502,9 +486,10 @@ $columns_in_table = 13;
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
+$separators = $config['filter']['separator'][strtolower($if)];
 
 // There can be a separator before any rules are listed
-display_separator();
+display_separator($separators, $nrules, $columns_in_table);
 
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
@@ -812,7 +797,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <?php
 		$nrules++;
 		// There can be a separator before the next rule listed, or after the last rule listed
-		display_separator();
+		display_separator($separators, $nrules, $columns_in_table);
 	}
 endfor;
 ?>

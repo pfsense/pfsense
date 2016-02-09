@@ -307,9 +307,9 @@ $viplist = get_configured_vip_list();
 foreach ($viplist as $vipname => $address) {
 	$interfaces[$vipname] = $address;
 	$interfaces[$vipname] .= " (";
-	if (get_vip_descr($address))
+	if (get_vip_descr($address)) {
 		$interfaces[$vipname] .= get_vip_descr($address);
-	else {
+	} else {
 		$vip = get_configured_vip($vipname);
 		$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
 	}

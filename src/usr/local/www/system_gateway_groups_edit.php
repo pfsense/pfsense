@@ -196,8 +196,9 @@ function build_vip_list($family = 'all') {
 	$viplist = get_configured_vip_list($family);
 	foreach ($viplist as $vip => $address) {
 		$list[$vip] = "$address";
-		if (get_vip_descr($address))
+		if (get_vip_descr($address)) {
 			$list[$vip] .= " (". get_vip_descr($address) .")";
+		}
 	}
 
 	return($list);
@@ -251,8 +252,9 @@ foreach ($a_gateways as $gwname => $gateway) {
 		$itemsplit = explode("|", $item);
 		if ($itemsplit[0] == $gwname) {
 			$selected = $itemsplit[1];
-			if (count($itemsplit) >= 3)
+			if (count($itemsplit) >= 3) {
 				$vaddress = $itemsplit[2];
+			}
 			break;
 		}
 	}

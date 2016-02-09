@@ -1796,8 +1796,9 @@ function system_ntp_configure($start_ntpd=true) {
 		$ntpcfg .= "interface ignore all\n";
 		foreach ($interfaces as $interface) {
 			$interface = get_real_interface($interface);
-			if (!empty($interface))
+			if (!empty($interface)) {
 				$finterfaces[] = $interface;
+			}
 		}
 		foreach ($finterfaces as $interface) {
 			$ntpcfg .= "interface listen {$interface}\n";

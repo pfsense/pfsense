@@ -2324,8 +2324,9 @@ function interface_ipalias_configure(&$vip) {
 	}
 
 	$af = 'inet';
-	if (is_ipaddrv6($vip['subnet']))
+	if (is_ipaddrv6($vip['subnet'])) {
 		$af = 'inet6';
+	}
 	$iface = $vip['interface'];
 	$vhid = '';
 	if (substr($vip['interface'], 0, 4) == "_vip") {
@@ -4729,8 +4730,9 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 		default:
 			if (substr($interface, 0, 4) == '_vip') {
 				$wanif = get_configured_vip_interface($interface);
-				if (!empty($wanif))
+				if (!empty($wanif)) {
 					$wanif = get_real_interface($wanif);
+				}
 				break;
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				$interface = substr($interface, 5);
@@ -5265,8 +5267,9 @@ function get_possible_listen_ips($include_ipv6_link_local=false) {
 	$viplist = get_configured_vip_list();
 	foreach ($viplist as $vip => $address) {
 		$interfaces[$vip] = $address;
-		if (get_vip_descr($address))
+		if (get_vip_descr($address)) {
 			$interfaces[$vip] .= " (". get_vip_descr($address) .")";
+		}
 	}
 
 	$interfaces['lo0'] = 'Localhost';
@@ -5361,8 +5364,9 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 				}
 				break;
 		}
-		if (is_ipaddrv6($config['interfaces'][$interface]['ipaddrv6']))
+		if (is_ipaddrv6($config['interfaces'][$interface]['ipaddrv6'])) {
 			return ($config['interfaces'][$interface]['ipaddrv6']);
+		}
 	}
 
 	/*
@@ -5411,34 +5415,40 @@ function get_interface_linklocal($interface = "wan") {
 
 function get_interface_subnet($interface = "wan") {
 
-	if (substr($interface, 0, 4) == '_vip')
+	if (substr($interface, 0, 4) == '_vip') {
 		return (get_configured_vip_subnetv4($interface));
+	}
 
 	$realif = get_real_interface($interface);
-	if (!$realif)
+	if (!$realif) {
 		return (NULL);
+	}
 
 	$cursn = find_interface_subnet($realif);
-	if (!empty($cursn))
+	if (!empty($cursn)) {
 		return ($cursn);
+	}
 
 	return (NULL);
 }
 
 function get_interface_subnetv6($interface = "wan") {
 
-	if (substr($interface, 0, 4) == '_vip')
+	if (substr($interface, 0, 4) == '_vip') {
 		return (get_configured_vip_subnetv6($interface));
-	else if (substr($interface, 0, 5) == '_lloc')
+	} else if (substr($interface, 0, 5) == '_lloc') {
 		$interface = substr($interface, 5);
+	}
 
 	$realif = get_real_interface($interface, 'inet6');
-	if (!$realif)
+	if (!$realif) {
 		return (NULL);
+	}
 
 	$cursn = find_interface_subnetv6($realif);
-	if (!empty($cursn))
+	if (!empty($cursn)) {
 		return ($cursn);
+	}
 
 	return (NULL);
 }

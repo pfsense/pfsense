@@ -527,8 +527,9 @@ function build_interface_list() {
 	$viplist = get_configured_vip_list();
 	foreach ($viplist as $vip => $address) {
 		$interfaces[$vip] = $address;
-		if (get_vip_descr($address))
+		if (get_vip_descr($address)) {
 			$interfaces[$vip] .= " (". get_vip_descr($address) .")";
+		}
 	}
 
 	$grouplist = return_gateway_groups_array();

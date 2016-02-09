@@ -1136,13 +1136,15 @@ function get_configured_vip_list($family = 'all') {
 	global $config;
 
 	$list = array();
-	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip']))
+	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
 		return ($list);
+	}
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
 			continue;
+		}
 
 		if ($family == 'all' ||
 		    ($family == 'inet' && is_ipaddrv4($vip['subnet'])) ||
@@ -1193,11 +1195,13 @@ function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what =
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
 			continue;
+		}
 
-		if ($vipinterface != "_vip{$vip['uniqid']}")
+		if ($vipinterface != "_vip{$vip['uniqid']}") {
 			continue;
+		}
 
 		switch ($what) {
 			case 'subnet':
@@ -1214,10 +1218,11 @@ function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what =
 				break;
 			case 'ip':
 			default:
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
 					return ($vip['subnet']);
-				else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
 					return ($vip['subnet']);
+				}
 				break;
 		}
 		break;

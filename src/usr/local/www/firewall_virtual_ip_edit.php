@@ -260,8 +260,9 @@ if ($_POST) {
 		}
 
 		/* IPalias specific fields */
-		if ($_POST['mode'] === "ipalias")
+		if ($_POST['mode'] === "ipalias") {
 			$vipent['uniqid'] = $_POST['uniqid'];
+		}
 
 		/* Common fields */
 		$vipent['descr'] = $_POST['descr'];
@@ -327,15 +328,17 @@ function build_if_list() {
 
 	foreach ($carplist as $vipname => $address) {
 		$vip = get_configured_vip($vipname);
-		if ($vip['mode'] != 'carp')
+		if ($vip['mode'] != 'carp') {
 			continue;
+		}
 
 		$interfaces[$vipname] = $address;
 		$interfaces[$vipname] .= " (";
-		if (get_vip_descr($address))
+		if (get_vip_descr($address)) {
 			$interfaces[$vipname] .= get_vip_descr($address);
-		else
+		} else {
 			$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
+		}
 		$interfaces[$vipname] .= ")";
 	}
 

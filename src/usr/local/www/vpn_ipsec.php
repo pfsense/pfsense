@@ -326,8 +326,9 @@ display_top_tabs($tab_array);
 				$viplist = get_configured_vip_list();
 				foreach ($viplist as $vip => $address) {
 					$iflabels[$vip] = $address;
-					if (get_vip_descr($address))
+					if (get_vip_descr($address)) {
 						$iflabels[$vip] .= " (". get_vip_descr($address) .")";
+					}
 				}
 
 				$grouplist = return_gateway_groups_array();

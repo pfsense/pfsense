@@ -72,10 +72,12 @@ function find_ipalias($carpif) {
 
 	$ips = array();
 	foreach ($config['virtualip']['vip'] as $vip) {
-		if ($vip['mode'] != "ipalias")
+		if ($vip['mode'] != "ipalias") {
 			continue;
-		if ($vip['interface'] != $carpif)
+		}
+		if ($vip['interface'] != $carpif) {
 			continue;
+		}
 		$ips[] = "{$vip['subnet']}/{$vip['subnet_bits']}";
 	}
 
@@ -130,8 +132,9 @@ if ($_POST['disablecarp'] != "") {
 						interface_carp_configure($vip);
 						break;
 					case 'ipalias':
-						if (substr($vip['interface'], 0, 4) == "_vip")
+						if (substr($vip['interface'], 0, 4) == "_vip") {
 							interface_ipalias_configure($vip);
+						}
 						break;
 				}
 			}
@@ -252,8 +255,9 @@ if ($carpcount == 0) {
 						<td>
 <?php
 		printf("{$carp['subnet']}/{$carp['subnet_bits']}");
-		for ($i = 0; $i < count($aliases); $i++)
+		for ($i = 0; $i < count($aliases); $i++) {
 			printf("<br>{$aliases[$i]}");
+		}
 ?>
 						</td>
 						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>

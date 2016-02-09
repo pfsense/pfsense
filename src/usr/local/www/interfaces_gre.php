@@ -136,10 +136,11 @@ display_top_tabs($tab_array);
 				</thead>
 				<tbody>
 <?php foreach ($a_gres as $i => $gre):
-	if (substr($gre['if'], 0, 4) == "_vip")
+	if (substr($gre['if'], 0, 4) == "_vip") {
 		$if = convert_real_interface_to_friendly_descr(get_real_interface($gre['if']));
-	else
+	} else {
 		$if = $gre['if'];
+	}
 ?>
 					<tr>
 						<td>

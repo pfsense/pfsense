@@ -275,16 +275,19 @@ function ipsec_ikeid_next() {
 function ipsec_get_phase1_src(& $ph1ent) {
 
 	if ($ph1ent['interface']) {
-		if (substr($ph1ent['interface'], 0, 4) == "_vip")
+		if (substr($ph1ent['interface'], 0, 4) == "_vip") {
 			$if = $ph1ent['interface'];
-		else
+		} else {
 			$if = get_failover_interface($ph1ent['interface']);
-	} else
+		}
+	} else {
 		$if = "wan";
-	if ($ph1ent['protocol'] == "inet6")
+	}
+	if ($ph1ent['protocol'] == "inet6") {
 		$interfaceip = get_interface_ipv6($if);
-	else
+	} else {
 		$interfaceip = get_interface_ip($if);
+	}
 
 	return $interfaceip;
 }

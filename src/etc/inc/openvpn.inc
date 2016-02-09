@@ -274,8 +274,9 @@ function openvpn_build_bridge_list() {
 
 	foreach ($viplist as $vip => $address) {
 		$serverbridge_interface[$vip.'|'.$address] = $address;
-		if (get_vip_descr($address))
+		if (get_vip_descr($address)) {
 			$serverbridge_interface[$vip.'|'.$address] .= " (". get_vip_descr($address) .")";
+		}
 	}
 
 	foreach ($serverbridge_interface as $iface => $ifacename) {

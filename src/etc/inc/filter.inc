@@ -4092,10 +4092,12 @@ function filter_generate_ipsec_rules($log = array()) {
 			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
 				$parentinterface = get_configured_vip_interface($ph1ent['interface']);
 				/* IP Alias -> CARP */
-				if (substr($parentinterface, 0, 4) == "_vip")
+				if (substr($parentinterface, 0, 4) == "_vip") {
 					$parentinterface = get_configured_vip_interface($parentinterface);
-			} else
+				}
+			} else {
 				$parentinterface = $ph1ent['interface'];
+			}
 			if (empty($FilterIflist[$parentinterface]['descr'])) {
 				$ipfrules .= "# Could not locate interface for IPsec: {$descr}\n";
 				continue;

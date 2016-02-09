@@ -908,8 +908,9 @@ function return_gateway_groups_array() {
 				list($gwname, $tier, $vipname) = explode("|", $item);
 
 				if (is_ipaddr($viplist[$vipname])) {
-					if (!is_array($gwvip_arr[$group['name']]))
+					if (!is_array($gwvip_arr[$group['name']])) {
 						$gwvip_arr[$group['name']] = array();
+					}
 					$gwvip_arr[$group['name']][$gwname] = $vipname;
 				}
 
@@ -1066,8 +1067,9 @@ function get_interface_gateway($interface, &$dynamic = false) {
 
 	if (substr($interface, 0, 4) == '_vip') {
 		$interface = get_configured_vip_interface($interface);
-		if (substr($interface, 0, 4) == '_vip')
+		if (substr($interface, 0, 4) == '_vip') {
 			$interface = get_configured_vip_interface($interface);
+		}
 	}
 
 	$gw = NULL;
@@ -1103,8 +1105,9 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 
 	if (substr($interface, 0, 4) == '_vip') {
 		$interface = get_configured_vip_interface($interface);
-		if (substr($interface, 0, 4) == '_vip')
+		if (substr($interface, 0, 4) == '_vip') {
 			$interface = get_configured_vip_interface($interface);
+		}
 	}
 
 	$gw = NULL;

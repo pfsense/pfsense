@@ -4451,4 +4451,106 @@ function upgrade_142_to_143() {
 	}
 }
 
+function get_vip_from_ip_alias($ipalias) {
+	global $config;
+
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['mode'] != "ipalias")
+			continue;
+		if ($ipalias == $vip['subnet'])
+			return ("_vip{$vip['uniqid']}");
+	}
+
+	return ($ipalias);
+}
+
+function get_vip_from_oldcarp($carp) {
+	global $config;
+
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['mode'] != "carp")
+			continue;
+		if ($carp == "{$vip['interface']}_vip{$vip['vhid']}")
+			return ("_vip{$vip['uniqid']}");
+	}
+
+	return ($carp);
+}
+
+function upgrade_143_to_144() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if ($vip['mode'] == "ipalias") {
+				if (!isset($vip['uniqid'])) {
+					$config['virtualip']['vip'][$idx]['uniqid'] = uniqid();
+				}
+			}
+		}
+	}
+
+	/* Convert IPsec phase 1 entries. */
+	if (is_array($config['ipsec']['phase1'])) {
+		foreach ($config['ipsec']['phase1'] as $idx => $ph1ent) {
+			if (is_ipaddr($ph1ent['interface']) || is_ipaddrv6($ph1ent['interface']))
+				$config['ipsec']['phase1'][$idx]['interface'] = get_vip_from_ip_alias($ph1ent['interface']);
+			else if (strpos($ph1ent['interface'], "_vip"))
+				$config['ipsec']['phase1'][$idx]['interface'] = get_vip_from_oldcarp($ph1ent['interface']);
+		}
+	}
+
+	/* Convert openvpn. */
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $idx => $ovpn) {
+			if (empty($ovpn['interface']))
+				continue;
+			if (is_ipaddr($ovpn['interface']) || is_ipaddrv6($ovpn['interface']))
+				$config['openvpn']['openvpn-server'][$idx]['interface'] = get_vip_from_ip_alias($ovpn['interface']);
+			else if (strpos($ovpn['interface'], "_vip"))
+				$config['openvpn']['openvpn-server'][$idx]['interface'] = get_vip_from_oldcarp($ovpn['interface']);
+		}
+	}
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpn) {
+			if (empty($ovpn['interface']))
+				continue;
+			if (is_ipaddr($ovpn['interface']) || is_ipaddrv6($ovpn['interface']))
+				$config['openvpn']['openvpn-client'][$idx]['interface'] = get_vip_from_ip_alias($ovpn['interface']);
+			else if (strpos($ovpn['interface'], "_vip"))
+				$config['openvpn']['openvpn-client'][$idx]['interface'] = get_vip_from_oldcarp($ovpn['interface']);
+		}
+	}
+
+	/* Convert unbound. */
+	if (is_array($config['unbound']) && !empty($config['unbound']['active_interface'])) {
+		$active_ifs = explode(",", $config['unbound']['active_interface']);
+		$ifs = array();
+		foreach ($active_ifs as $if) {
+			if (is_ipaddr($if) || is_ipaddrv6($if))
+				$ifs[] = get_vip_from_ip_alias($if);
+			else if (strpos($if, "_vip"))
+				$ifs[] = get_vip_from_oldcarp($if);
+			else
+				$ifs[] = $if;
+		}
+		$config['unbound']['active_interface'] = implode(",", $ifs);
+	}
+
+	/* Convert dnsmasq. */
+	if (is_array($config['dnsmasq']) && !empty($config['dnsmasq']['interface'])) {
+		$active_ifs = explode(",", $config['dnsmasq']['interface']);
+		$ifs = array();
+		foreach ($active_ifs as $if) {
+			if (is_ipaddr($if) || is_ipaddrv6($if))
+				$ifs[] = get_vip_from_ip_alias($if);
+			else if (strpos($if, "_vip"))
+				$ifs[] = get_vip_from_oldcarp($if);
+			else
+				$ifs[] = $if;
+		}
+		$config['dnsmasq']['interface'] = implode(",", $ifs);
+	}
+}
+
 ?>

@@ -145,19 +145,19 @@ if ($_REQUEST['getactivity']) {
 $pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
-?>
-<script src="/jquery/jquery-1.11.2.min.js"></script>
-<?php
+
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
 	include("foot.inc");
 	exit;
 }
-?>
-<?php if (!$error): ?>
+
+if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
 //<![CDATA[
+events.push(function() {
+
 	function getqueueactivity() {
 		var url = "/status_queues.php";
 		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
@@ -169,12 +169,15 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 				complete: activitycallback
 			});
 	}
+
 	function activitycallback(transport) {
-		setTimeout('getqueueactivity()', 5100);
+		setTimeout(getqueueactivity, 5100);
 	}
+
 	$(document).ready(function() {
-		setTimeout('getqueueactivity()', 150);
+		setTimeout(getqueueactivity, 150);
 	});
+});
 //]]>
 </script>
 <?php endif;

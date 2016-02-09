@@ -175,7 +175,7 @@ display_top_tabs($tab_array);
 												$bgcolor = WHITE;
 											}
 ?>
-										<td bgcolor="<?=$bgcolor?>">
+										<td style="background-color:<?=$bgcolor?>">
 											<?=htmlspecialchars($member);?>,<br/><?=$online?>
 										</td>
 

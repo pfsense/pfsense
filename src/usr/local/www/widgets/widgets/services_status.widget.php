@@ -73,7 +73,9 @@ for ($idx=0; $idx < $numsvcs; $idx++) {
 
 	for ($chk = $idx +1, $sfx=2; $chk <$numsvcs; $chk++) {
 		if ($services[$chk]['name'] == $name) {
-			$services[$chk]['name'].= '_' . $sfx++;
+			$services[$chk]['dispname'] = $services[$chk]['name'] .'_' . $sfx++;
+		} else {
+			$services[$chk]['dispname'] = $services[$chk]['name'];
 		}
 	}
 }
@@ -113,7 +115,7 @@ $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 if (count($services) > 0) {
 	uasort($services, "service_name_compare");
 	foreach ($services as $service) {
-		if ((!$service['name']) || (in_array($service['name'], $skipservices)) || (!is_service_enabled($service['name']))) {
+		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
 			continue;
 		}
 		if (empty($service['description'])) {
@@ -123,7 +125,7 @@ if (count($services) > 0) {
 ?>
 		<tr>
 			<td><i class="fa fa-<?=get_service_status($service) ? 'check-circle text-success' : 'times-circle text-warning'?>"></i></td>
-			<td><?=$service['name']?></td>
+			<td><?=$service['dispname']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_GET_links($service)?></td>
 		</tr>

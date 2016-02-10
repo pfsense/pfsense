@@ -3313,12 +3313,12 @@ EOD;
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
-		$form .= $this->GetQname()."\" />";
+		$form .= htmlspecialchars($this->GetQname())."\" />";
 		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
-		$form .= $this->GetQname()."\" />";
+		$form .= htmlspecialchars($this->GetQname())."\" />";
 		if ($this->GetNumber() > 0) {
 			$form .= "<input type=\"hidden\" id=\"number\" name=\"number\" value=\"";
-			$form .= $this->GetNumber()."\" />";
+			$form .= htmlspecialchars($this->GetNumber())."\" />";
 		}
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth");
@@ -3335,7 +3335,7 @@ EOD;
 		if (is_array($bandwidth)) {
 			foreach ($bandwidth as $bwidx => $bw) {
 				$form .= "\n<tr><td width='40%'>";
-				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"{$bw['bw']}\" />";
+				$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"bandwidth{$bwidx}\" name=\"bandwidth{$bwidx}\" value=\"" . htmlspecialchars($bw['bw']) . "\" />";
 				//$form .= "</td><td width='20%'>";
 				//$form .= "<input class='formfld unknown' size='10' type=\"text\" id=\"burst{$bwidx}\" name=\"burst{$bwidx}\" value=\"{$bw['burst']}\" />";
 				$form .= "</td><td width='20%'>";
@@ -3392,7 +3392,7 @@ EOD;
 		      .  "limits per host.") . "</span><br />";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none")
-		$form .= $mask['bits'];
+		$form .= htmlspecialchars($mask['bits']);
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
@@ -3400,7 +3400,7 @@ EOD;
 		$form .= "&nbsp; IPV4 mask bits (1-32)<br />";
 		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
 		if ($mask['type'] <> "none")
-		$form .= $mask['bitsv6'];
+		$form .= htmlspecialchars($mask['bitsv6']);
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
@@ -3430,7 +3430,7 @@ EOD;
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Delay") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"delay\" type=\"text\" id=\"delay\" size=\"5\" value=\"";
-		$form .= $this->GetDelay() . "\" />";
+		$form .= htmlspecialchars($this->GetDelay()) . "\" />";
 		$form .= "&nbsp;ms<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 		      .  "should specify 0 here (or leave the field empty)") . "</span><br />";
 		$form .= "</td></tr>";
@@ -3438,7 +3438,7 @@ EOD;
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
-		$form .= $this->GetPlr() . "\" />";
+		$form .= htmlspecialchars($this->GetPlr()) . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 		      .  "should specify 0 here (or leave the field empty). "
 		      .  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
@@ -3447,7 +3447,7 @@ EOD;
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-		$form .= $this->GetQlimit() . "\" />";
+		$form .= htmlspecialchars($this->GetQlimit()) . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 		      .  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
@@ -3458,7 +3458,7 @@ EOD;
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
-		$form .= $this->GetBuckets() . "\" />";
+		$form .= htmlspecialchars($this->GetBuckets()) . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 			.  "should leave the field empty. It increases the hash size set.");
@@ -3640,12 +3640,12 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"newname\" name=\"newname\" value=\"";
-		$form .= $this->GetQname()."\" />";
+		$form .= htmlspecialchars($this->GetQname())."\" />";
 		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"";
-		$form .= $this->GetQname()."\" />";
+		$form .= htmlspecialchars($this->GetQname())."\" />";
 		if ($this->GetNumber() > 0) {
 			$form .= "<input type=\"hidden\" id=\"number\" name=\"number\" value=\"";
-			$form .= $this->GetNumber()."\" />";
+			$form .= htmlspecialchars($this->GetNumber())."\" />";
 		}
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Mask") . "</td>";
@@ -3673,7 +3673,7 @@ class dnqueue_class extends dummynet_class {
 			.  "limits per host.") . "</span><br />";
 		$form .= "255.255.255.255/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbits\" name=\"maskbits\" value=\"";
 		if ($mask['type'] <> "none")
-			$form .= $mask['bits'];
+			$form .= htmlspecialchars($mask['bits']);
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
@@ -3681,7 +3681,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "&nbsp; IPV4 mask bits (1-32)<br />";
 		$form .= "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/&nbsp;<input type=\"text\" class=\"formfld unknown\" size=\"2\" id=\"maskbitsv6\" name=\"maskbitsv6\" value=\"";
 		if ($mask['type'] <> "none")
-			$form .= $mask['bitsv6'];
+			$form .= htmlspecialchars($mask['bitsv6']);
 		$form .= "\"";
 		if ($mask['type'] == "none")
 			$form .= " disabled";
@@ -3710,7 +3710,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Weight") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"weight\" type=\"text\" id=\"weight\" size=\"5\" value=\"";
-		$form .= $this->GetWeight() . "\" />";
+		$form .= htmlspecialchars($this->GetWeight()) . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: For queues under the same parent "
 			.  "this specifies the share that a queue gets(values range from 1 to 100, you can leave it blank otherwise)") . "</span>";
 		$form .= "</td></tr>";
@@ -3718,7 +3718,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Packet loss rate") . "</td>";
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">";
 		$form .= "<input name=\"plr\" type=\"text\" id=\"plr\" size=\"5\" value=\"";
-		$form .= $this->GetPlr() . "\" />";
+		$form .= htmlspecialchars($this->GetPlr()) . "\" />";
 		$form .= "&nbsp;<br /> <span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 			.  "should specify 0 here (or leave the field empty). "
 			.  "A value of 0.001 means one packet in 1000 gets dropped") . "</span>";
@@ -3727,7 +3727,7 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Queue Size") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-		$form .= $this->GetQlimit() . "\" />";
+		$form .= htmlspecialchars($this->GetQlimit()) . "\" />";
 		$form .= "&nbsp;slots<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 			.  "should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, "
@@ -3738,14 +3738,14 @@ class dnqueue_class extends dummynet_class {
 		$form .= "<td valign=\"middle\" class=\"vncellreq\">" . gettext("Bucket Size") . "</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"buckets\" name=\"buckets\" value=\"";
-		$form .= $this->GetBuckets() . "\" />";
+		$form .= htmlspecialchars($this->GetBuckets()) . "\" />";
 		$form .= "&nbsp;" . gettext("slots") . "<br />";
 		$form .= "<span class=\"vexpl\">" . gettext("Hint: in most cases, you "
 			.  "should leave the field empty. It increases the hash size set.");
 		$form .= "</span></td></tr>";
 
 		$form .= "<input type=\"hidden\" id=\"pipe\" name=\"pipe\"";
-		$form .= " value=\"" . $this->GetPipe() . "\" />";
+		$form .= " value=\"" . htmlspecialchars($this->GetPipe()) . "\" />";
 
 		return $form;
 
@@ -3888,7 +3888,7 @@ class layer7 {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"container\" name=\"container\" value=\"";
-		$form .= $this->GetRName()."\" />";
+		$form .= htmlspecialchars($this->GetRName())."\" />";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Description") . "</td>";
 		$form .= "<td class=\"vncellreq\">";

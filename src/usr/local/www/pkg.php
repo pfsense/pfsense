@@ -612,16 +612,6 @@ if ($savemsg) {
 					</td>
 				</tr>
 				<?=$final_footer?>
-<?php
-	#Show save button only when movable is defined
-	if ($pkg['adddeleteeditpagefields']['movable']) {
-?>
-
-
-
-<?php
-	}
-?>
 			</table>
 			</div>
 		<input class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" />

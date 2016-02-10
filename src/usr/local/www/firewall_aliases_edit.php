@@ -260,8 +260,6 @@ if ($_POST) {
 				/* if the item is tar gzipped then extract */
 				if (stristr($_POST['address' . $x], ".tgz")) {
 					process_alias_tgz($temp_filename);
-				} else if (stristr($_POST['address' . $x], ".zip")) {
-					process_alias_unzip($temp_filename);
 				}
 
 				if (!isset($alias['aliasurl'])) {

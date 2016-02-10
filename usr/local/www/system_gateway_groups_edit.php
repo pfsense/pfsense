@@ -273,7 +273,7 @@ jQuery(function ($) {
 				$tr_id = $gwname . "_row";
 				echo "<tr class='gateway_row' id='{$tr_id}'>\n";
 				echo "<td class='listlr'>";
-				echo "<strong>{$gateway['name']} </strong>";
+				echo "<strong>" . htmlspecialchars($gateway['name']) . " </strong>";
 				echo "</td><td class='listr'>";
 				echo "<select name='{$gwname}' class='gateway_tier_selector formfldselect' id='{$gwname}'>\n";
 				echo "<option value='0' $selected[0] >" . gettext("Never") . "</option>\n";
@@ -309,7 +309,7 @@ jQuery(function ($) {
 					echo "<option value='{$vip}' $selected[$vip] >$vip - $address</option>\n";
 				}
 				echo "</select></td>";
-				echo "<td class='listr'><strong>{$gateway['descr']}&nbsp;</strong>";
+				echo "<td class='listr'><strong>" . htmlspecialchars($gateway['descr']) . "&nbsp;</strong>";
 				echo "</td></tr>";
 		 	}
 		?>

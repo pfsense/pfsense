@@ -226,7 +226,7 @@ if ($_POST) {
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
 			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
-				$input_errors[] = gettext("Unable to fetch usable data.");
+				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
 			}
 			if ($_POST["detail0"] <> "") {
 				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {

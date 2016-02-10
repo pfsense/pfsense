@@ -4410,43 +4410,48 @@ function upgrade_141_to_142() {
 	}
 }
 
+// Updated to check for empty separator definitions via is_array()
 function upgrade_142_to_143() {
 	global $config;
 
 	/* Re-index firewall rule separators per interface */
-	if (!empty($config['filter']['separator'])) {
+	if (is_array($config['filter']['separator'])) {
 		foreach ($config['filter']['separator'] as $interface => $separators) {
 
-			foreach ($separators as $sepn => $separator) {
+			if(is_array($separators)) {
+				foreach ($separators as $sepn => $separator) {
 
-				$seprow = substr($separator['row']['0'], 2);
-				$sepif  = $separator['if'];
+					$seprow = substr($separator['row']['0'], 2);
+					$sepif  = $separator['if'];
 
-				// Determine position of separator within the interface rules.
-				$i = -1; $j = 0;
-				foreach ($config['filter']['rule'] as $rulen => $filterent) {
+					// Determine position of separator within the interface rules.
+					$i = -1; $j = 0;
+					foreach ($config['filter']['rule'] as $rulen => $filterent) {
 
-					if ($i == $seprow) {
-						// Set separator row to it's position within the interface rules.
-						$config['filter']['separator'][$sepif][$sepn]['row'] = 'fr' . $j;
-						continue 2;	// Advance to next separator
+						if ($i == $seprow) {
+							// Set separator row to it's position within the interface rules.
+							$config['filter']['separator'][$sepif][$sepn]['row'] = 'fr' . $j;
+							continue 2;	// Advance to next separator
+						}
+
+						// Position within the interface rules.
+						if (($filterent['interface'] == $sepif && !isset($filterent['floating'])) || (isset($filterent['floating']) && "floatingrules" == $sepif)) {
+							$j++;
+						}
+						$i++;
 					}
-
-					// Position within the interface rules.
-					if (($filterent['interface'] == $sepif && !isset($filterent['floating'])) || (isset($filterent['floating']) && "floatingrules" == $sepif)) {
-						$j++;
-					}
-					$i++;
 				}
 			}
 		}
 	}
 
 	/* Re-index nat rule separators */
-	if (!empty($config['nat']['separator'])) {
+	if (is_array($config['nat']['separator'])) {
 		foreach ($config['nat']['separator'] as $sepn => $separator) {
-			$seprow = substr($separator['row']['0'], 2);
-			$config['nat']['separator'][$sepn]['row'] = 'fr' . ($seprow + 1);
+			if (is_array($separator)) {
+				$seprow = substr($separator['row']['0'], 2);
+				$config['nat']['separator'][$sepn]['row'] = 'fr' . ($seprow + 1);
+			}
 		}
 	}
 }

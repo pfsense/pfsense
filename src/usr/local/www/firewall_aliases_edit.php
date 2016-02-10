@@ -286,7 +286,7 @@ if ($_POST) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 3000);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
 					if ($address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);

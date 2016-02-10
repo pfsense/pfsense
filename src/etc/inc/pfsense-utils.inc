@@ -1692,22 +1692,25 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	}
 }
 
-function download_file_with_progress_bar($url_file, $destination_file, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
+function download_file_with_progress_bar($url, $destination, $verify_ssl = true, $readbody = 'read_body', $connect_timeout = 5, $timeout = 0) {
 	global $config, $g;
 	global $ch, $fout, $file_size, $downloaded, $config, $first_progress_update;
 	$file_size = 1;
 	$downloaded = 1;
 	$first_progress_update = TRUE;
 	/* open destination file */
-	$fout = fopen($destination_file, "wb");
+	$fout = fopen($destination, "wb");
 
+	if (!$fout) {
+		return false;
+	}
 	/*
 	 *      Originally by Author: Keyvan Minoukadeh
 	 *      Modified by Scott Ullrich to return Content-Length size
 	 */
-
 	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_URL, $url_file);
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 	curl_setopt($ch, CURLOPT_WRITEFUNCTION, $readbody);
@@ -1733,11 +1736,15 @@ function download_file_with_progress_bar($url_file, $destination_file, $readbody
 
 	@curl_exec($ch);
 	$http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-	if ($fout) {
-		fclose($fout);
-	}
+	fclose($fout);
 	curl_close($ch);
-	return ($http_code == 200) ? true : $http_code;
+	if ($http_code == 200) {
+		return true;
+	} else {
+		log_error("Download file failed with status code $http_code. URL: $url");
+		unlink_if_exists($destination);
+		return false;
+	}
 }
 
 function read_header($ch, $string) {

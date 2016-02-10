@@ -617,9 +617,12 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	if ($bridge['timeout'] <> "") {
 		mwexec("/sbin/ifconfig {$bridgeif} timeout " . escapeshellarg($bridge['timeout']));
 	}
-	if ($bridge['span'] <> "") {
-		$realif = get_real_interface($bridge['span']);
-		mwexec("/sbin/ifconfig {$bridgeif} span {$realif}");
+	if (!empty($bridge['span'])) {
+   		$spanifs = explode(',' , $bridge['span']);
+    		foreach($spanifs as $spanif) {  
+			$realif = get_real_interface($spanif);
+			mwexec("/sbin/ifconfig {$bridgeif} span {$realif}");
+		}
 	}
 	if (!empty($bridge['edge'])) {
 		$edgeifs = explode(',', $bridge['edge']);

@@ -97,8 +97,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
-?>
-<?php
+
 	if ($_POST['Submit'] == "Yes") {
 		echo gettext("Processing...");
 		if (!is_dir("/var/crash")) {

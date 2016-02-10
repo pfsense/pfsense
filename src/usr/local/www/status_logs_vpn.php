@@ -279,16 +279,12 @@ events.push(function() {
 </div>
 <?php
 }
-?>
 
-<?php
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();
 }
-?>
 
-<?php
 function dump_clog_vpn($logfile, $tail) {
 	global $g, $config, $vpntype;
 
@@ -325,9 +321,7 @@ function dump_clog_vpn($logfile, $tail) {
 	}
 	return($rows);
 }
-?>
 
-<?php
 // Log Filter Submit - VPN
 function log_filter_form_vpn_submit() {
 
@@ -359,9 +353,7 @@ function log_filter_form_vpn_submit() {
 		$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 	}
 }
-?>
 
-<?php
 // Filter Section/Form - VPN
 function filter_form_vpn() {
 

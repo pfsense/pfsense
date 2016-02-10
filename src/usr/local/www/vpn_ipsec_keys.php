@@ -107,9 +107,6 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 
-?>
-
-<?php
 if ($savemsg) {
 	print_info_box($savemsg);
 }
@@ -117,9 +114,7 @@ if ($savemsg) {
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
-?>
 
-<?php
 	$tab_array = array();
 	$tab_array[0] = array(gettext("Tunnels"), false, "vpn_ipsec.php");
 	$tab_array[1] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");

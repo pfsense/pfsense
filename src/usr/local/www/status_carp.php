@@ -171,13 +171,9 @@ if (is_array($config['virtualip']['vip'])) {
 	}
 }
 
-
 // If $carpcount > 0 display buttons then display table
 // otherwise display error box and quit
 
-?>
-
-<?php
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
 				   '<a href="system_hasync.php" class="alert-link">' .

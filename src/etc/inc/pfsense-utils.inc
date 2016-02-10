@@ -1989,7 +1989,10 @@ function update_alias_url_data() {
 				unlink($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($alias_url, $temp_filename . "/aliases", $verify_ssl);
+				if (!download_file($alias_url, $temp_filename . "/aliases", $verify_ssl)) {
+					log_error(sprintf(gettext("Failed to download alias %s"), $alias_url));
+					continue;
+				}
 
 				/* if the item is tar gzipped then extract */
 				if (stripos($alias_url, '.tgz')) {

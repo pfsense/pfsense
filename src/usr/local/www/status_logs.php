@@ -251,9 +251,7 @@ events.push(function() {
 </div>
 <?php
 }
-?>
 
-<?php
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();

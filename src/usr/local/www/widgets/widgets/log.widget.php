@@ -188,8 +188,7 @@ $filterlog = conv_log_filter($filter_logfile, $nentries, 50, $filterfieldsarray)
 		</tr>
 	<?php
 	endforeach;
-	?>
-<?php
+
 	if (count($filterlog) == 0) {
 		print '<tr class="text-nowrap"><td colspan=5 class="text-center">';
 		print gettext('No logs to display');

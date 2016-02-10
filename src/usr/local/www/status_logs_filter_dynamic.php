@@ -479,8 +479,7 @@ function toggleListDescriptions() {
 					</tr>
 <?php
 				} // e-o-foreach()
-?>
-<?php
+
 	if (count($filterlog) == 0) {
 		print '<tr class="text-nowrap"><td colspan=6>';
 		print_info_box(gettext('No logs to display'));
@@ -513,9 +512,7 @@ if ($tcpcnt > 0) {
 </div>
 <?php
 }
-?>
 
-<?php
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();

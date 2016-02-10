@@ -373,8 +373,7 @@ print($form);
 						<td>
 <?php
 						$natent['source']['network'] = ($natent['source']['network'] == "(self)") ? "This Firewall" : $natent['source']['network'];
-?>
-<?php
+
 						if (isset($alias['src'])):
 ?>
 							<a href="/firewall_aliases_edit.php?id=<?=$alias['src']?>" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="<?=alias_info_popup($alias['src'])?>" data-html="true">

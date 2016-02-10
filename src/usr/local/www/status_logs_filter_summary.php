@@ -184,9 +184,7 @@ foreach (array_keys($fields) as $field) {
 </div>
 <?php
 }
-?>
 
-<?php
 function cmp($a, $b) {
 	if ($a == $b) {
 		return 0;
@@ -231,9 +229,7 @@ function stat_block($summary, $stat, $num) {
 	print "</table>";
 	print('</div>');
 }
-?>
 
-<?php
 // Create the JSON document for the chart to be displayed
 // Todo: Be good to investigate building this with json_encode and friends some time
 function pie_block($summary, $stat, $num, $chartnum) {
@@ -349,8 +345,6 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 </script>
 <?php
 }
-?>
 
-<?php
 include("foot.inc");
 ?>

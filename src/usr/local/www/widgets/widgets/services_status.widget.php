@@ -67,25 +67,27 @@ $services = get_services();
 
 $numsvcs = count($services);
 
+for ($idx=0; $idx<$numsvcs; $idx++) {
+	$services[$idx]['dispname'] = $services[$idx]['name'];
+}
+
 // If there are any duplicated names, add an incrementing suffix
-for ($idx=0; $idx < $numsvcs; $idx++) {
+for ($idx=1; $idx < $numsvcs; $idx++) {
 	$name = $services[$idx]['name'];
 
 	for ($chk = $idx +1, $sfx=2; $chk <$numsvcs; $chk++) {
-		if ($services[$chk]['name'] == $name) {
-			$services[$chk]['dispname'] = $services[$chk]['name'] .'_' . $sfx++;
-		} else {
-			$services[$chk]['dispname'] = $services[$chk]['name'];
-		}
+		if ($services[$chk]['dispname'] == $name) {
+			$services[$chk]['dispname'] .= '_' . $sfx++;
+		} 
 	}
 }
 
-//print_r($services);
 if ($_POST) {
+
 	$validNames = array();
 
 	foreach ($services as $service) {
-		array_push($validNames, $service['name']);
+		array_push($validNames, $service['dispname']);
 	}
 
 	if (isset($_POST['servicestatusfilter'])) {
@@ -113,7 +115,7 @@ if ($_POST) {
 $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
-	uasort($services, "service_name_compare");
+	uasort($services, "service_dispname_compare");
 	foreach ($services as $service) {
 		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
 			continue;

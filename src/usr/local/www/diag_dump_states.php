@@ -148,7 +148,7 @@ $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
 $form = new Form(false);
 
-$section = new Form_Section('State filter', 'secfilter', COLLAPSIBLE|SEC_CLOSED);
+$section = new Form_Section('State filter', 'secfilter', COLLAPSIBLE|SEC_OPEN);
 
 $section->addInput(new Form_Input(
 	'filter',

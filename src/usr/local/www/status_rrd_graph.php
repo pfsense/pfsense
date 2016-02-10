@@ -67,6 +67,8 @@ require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
 
+global $rrd_graph_list, $rrd_period_list, $rrd_graph_length_list, $rrd_style_list;
+
 unset($input_errors);
 /* if the rrd graphs are not enabled redirect to settings page */
 if (!isset($config['rrd']['enable'])) {
@@ -236,9 +238,6 @@ if ($end < $start) {
 
 $seconds = $end - $start;
 
-$styles = array('inverse' => gettext('Inverse'),
-	'absolute' => gettext('Absolute'));
-
 /* sort names reverse so WAN comes first */
 rsort($databases);
 
@@ -286,17 +285,6 @@ foreach ($databases as $database) {
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
 
-$graphs = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
-$periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
-$graph_length = array(
-	"eighthour" => 28800,
-	"day" => 86400,
-	"week" => 604800,
-	"month" => 2678400,
-	"quarter" => 7948800,
-	"year" => 31622400,
-	"fouryear" => 126230400);
-
 switch ($curcat) {
 	case "vpnusers":
 		$curcattext = gettext("VPN Users");
@@ -330,12 +318,12 @@ if ($captiveportal && is_array($config['captiveportal'])) {
 }
 
 function get_dates($curperiod, $graph) {
-	global $graph_length;
+	global $rrd_graph_length_list;
 	$now = time();
 	$end = $now;
 
 	if ($curperiod == "absolute") {
-		$start = $end - $graph_length[$graph];
+		$start = $end - $rrd_graph_length_list[$graph];
 	} else {
 		$curyear = date('Y', $now);
 		$curmonth = date('m', $now);
@@ -561,14 +549,14 @@ $group->add(new Form_Select(
 	'style',
 	'Style',
 	$curstyle,
-	$styles
+	$rrd_style_list
 ))->setHelp('Style');
 
 $group->add(new Form_Select(
 	'period',
 	'Period',
 	$curperiod,
-	$periods
+	$rrd_period_list
 ))->setHelp('Period');
 
 if ($curcat == 'custom') {
@@ -631,7 +619,7 @@ if ($curcat == 'custom') {
 	$form->add($section);
 	print($form);
 
-	foreach ($graphs as $graph) {
+	foreach ($rrd_graph_list as $graph) {
 		/* check which databases are valid for our category */
 		foreach ($ui_databases as $curdatabase) {
 			if (!preg_match("/($curcat)/i", $curdatabase)) {
@@ -716,7 +704,7 @@ if ($curcat == 'custom') {
 		//alert('updating');
 		var randomid = Math.floor(Math.random()*11);
 		<?php
-		foreach ($graphs as $graph) {
+		foreach ($rrd_graph_list as $graph) {
 			/* check which databases are valid for our category */
 			foreach ($ui_databases as $curdatabase) {
 				if (!stristr($curdatabase, $curcat)) {

@@ -1076,7 +1076,6 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 		DEF:delayraw=$rrddbpath$curdatabase:delay:AVERAGE:step=$step \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE:step=$step \\
 		\"CDEF:delay=delayraw,1000,*\" \\
-		\"CDEF:roundavg=delay,PREV(delay),+,2,/\" \\
 		\"CDEF:loss10=loss,$multiplier,*\" \\
 		\"CDEF:r0=delay,20,MIN\" \\
 		\"CDEF:r1=delay,60,MIN\" \\

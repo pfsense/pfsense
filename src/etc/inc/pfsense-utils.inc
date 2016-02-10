@@ -2218,6 +2218,8 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 			unlink_if_exists($urltable_filename . ".tmp");
 		} else {
 			touch($urltable_filename);
+			conf_mount_ro();
+			return false;
 		}
 		conf_mount_ro();
 		return true;

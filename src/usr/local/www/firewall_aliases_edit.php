@@ -253,7 +253,9 @@ if ($_POST) {
 				unlink_if_exists($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
+				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					continue;
+				}
 
 				/* if the item is tar gzipped then extract */
 				if (stristr($_POST['address' . $x], ".tgz")) {

@@ -913,6 +913,8 @@ if ($_POST) {
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
+				// For copy/dup the $if var is taken from the rule.
+				// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
 				if (isset($pconfig['floating'])) {
 					$tmpif = 'FloatingRules';
 				} else {

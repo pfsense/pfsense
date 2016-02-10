@@ -39,26 +39,33 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("rrd.inc");
 
-global $g;
+global $g, $rrd_graph_list, $rrd_period_list, $rrd_graph_length_list;
+$rrddbpath = "/var/db/rrd/";
+$rrdtmppath = "/tmp/";
 
 $pgtitle = array(gettext("System"),gettext("RRD Graphs"),gettext("Image viewer"));
 
 if ($_GET['database']) {
 	$curdatabase = basename($_GET['database']);
-	$curdatabase = str_replace(array("<", ">", ";", "&", "'", '"'), "", htmlspecialchars_decode($curdatabase, ENT_QUOTES | ENT_HTML401));
+	$curdatabase = str_replace(array("<", ">", ";", "&", "'", '"', '|'), "", htmlspecialchars_decode($curdatabase, ENT_QUOTES | ENT_HTML401));
+	/* Ensure the file is valid and exists */
+	if (!file_exists("{$rrddbpath}{$curdatabase}")) {
+		 $curdatabase = "wan-traffic.rrd";
+	}
 } else {
 	$curdatabase = "wan-traffic.rrd";
 }
 
-if ($_GET['style']) {
+/* Validate the passed style */
+if ($_GET['style'] && array_key_exists($_GET['style'], $rrd_style_list)) {
 	$curstyle = $_GET['style'];
 } else {
 	$curstyle = "inverse";
 }
 
-/* this is used for temp name */
-if ($_GET['graph']) {
-	$curgraph = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401));
+/* This is used for temp name. Check the graph against our known list of valid graphs. */
+if ($_GET['graph'] && in_array($_GET['graph'], $rrd_graph_list)) {
+	$curgraph = htmlspecialchars_decode($_GET['graph'], ENT_QUOTES | ENT_HTML401);
 } else {
 	$curgraph = "custom";
 }
@@ -328,7 +335,7 @@ function timeDiff($time, $opt = array()) {
 
 if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for traffic stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step --vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
 	$graphcmd .= "--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" ";
@@ -481,7 +488,7 @@ if((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdatabas
 elseif(strstr($curdatabase, "-throughput.rrd")) {
 	/* define graphcmd for throughput stats */
 	/* this gathers all interface statistics, the database does not actually exist */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -608,7 +615,7 @@ elseif(strstr($curdatabase, "-throughput.rrd")) {
 }
 elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"packets/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -734,7 +741,7 @@ elseif((strstr($curdatabase, "-packets.rrd")) && (file_exists("$rrddbpath$curdat
 }
 elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for packets stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"snr/channel/rate\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -767,7 +774,7 @@ elseif((strstr($curdatabase, "-wireless.rrd")) && (file_exists("$rrddbpath$curda
 }
 elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for vpn users stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -786,7 +793,7 @@ elseif((strstr($curdatabase, "-vpnusers.rrd")) && (file_exists("$rrddbpath$curda
 }
 elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for states stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start -$seconds -e -$average --step $step ";
 	$graphcmd .= "--vertical-label \"states, ip\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -840,7 +847,7 @@ elseif((strstr($curdatabase, "-states.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for processor stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, number\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -892,7 +899,7 @@ elseif((strstr($curdatabase, "-processor.rrd")) && (file_exists("$rrddbpath$curd
 }
 elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for memory usage stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -944,7 +951,7 @@ elseif((strstr($curdatabase, "-memory.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for mbuf usage stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"utilization, percent\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -988,7 +995,7 @@ elseif((strstr($curdatabase, "-mbuf.rrd")) && (file_exists("$rrddbpath$curdataba
 }
 elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queue stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"bits/sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -1017,7 +1024,7 @@ elseif((strstr($curdatabase, "-queues.rrd")) && (file_exists("$rrddbpath$curdata
 }
 elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for queuedrop stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"drops / sec\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -1047,7 +1054,7 @@ elseif((strstr($curdatabase, "-queuedrops.rrd")) && (file_exists("$rrddbpath$cur
 }
 elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* make a link quality graphcmd, we only have WAN for now, others too follow */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " \\
 		--start $start --end $end --step $step  \\
 		--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
@@ -1083,7 +1090,7 @@ elseif((strstr($curdatabase, "-quality.rrd")) && (file_exists("$rrddbpath$curdat
 }
 elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png \\
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " \\
 		--start $start --end $end --step $step \\
 		--title \"" . php_uname('n') . " - {$prettydb} - {$hperiod} - {$havg} average\" \\
 		--color SHADEA#eeeeee --color SHADEB#eeeeee \\
@@ -1121,7 +1128,7 @@ elseif((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdataba
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\" ";
 }
 elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"signal\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -1140,7 +1147,7 @@ elseif((strstr($curdatabase, "-cellular.rrd")) && (file_exists("$rrddbpath$curda
 }
 elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -1159,7 +1166,7 @@ elseif((strstr($curdatabase, "-loggedin.rrd")) && (file_exists("$rrddbpath$curda
 }
 elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for online Captive Portal users stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"Captive Portal Users\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";
@@ -1181,7 +1188,7 @@ elseif((strstr($curdatabase, "-concurrent.rrd")) && (file_exists("$rrddbpath$cur
 }
 elseif((strstr($curdatabase, "ntpd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* define graphcmd for ntpd (was: mbuf) usage stats */
-	$graphcmd = "$rrdtool graph $rrdtmppath$curdatabase-$curgraph.png ";
+	$graphcmd = "$rrdtool graph " . escapeshellarg("{$rrdtmppath}{$curdatabase}-{$curgraph}.png") . " ";
 	$graphcmd .= "--start $start --end $end --step $step ";
 	$graphcmd .= "--vertical-label \"time\" ";
 	$graphcmd .= "--color SHADEA#eeeeee --color SHADEB#eeeeee ";

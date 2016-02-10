@@ -44,6 +44,8 @@ require_once("filter.inc");
 require("shaper.inc");
 require_once("rrd.inc");
 
+global $rrd_graph_list, $rrd_period_list, $rrd_graph_length_list, $rrd_style_list;
+
 unset($input_errors);
 
 /* if the rrd graphs are not enabled redirect to settings page */
@@ -54,7 +56,6 @@ if(! isset($config['rrd']['enable'])) {
 $rrddbpath = "/var/db/rrd/";
 chdir($rrddbpath);
 $databases = glob("*.rrd");
-
 
 if ($_GET['cat']) {
 	$curcat = htmlspecialchars($_GET['cat']);
@@ -185,14 +186,11 @@ if($end < $start) {
 
 $seconds = $end - $start;
 
-$styles = array('inverse' => gettext('Inverse'),
-		'absolute' => gettext('Absolute'));
-
 // Set default and override later
 $curstyle = "inverse";
 
 if ($_GET['style']) {
-	foreach($styles as $style) 
+	foreach($rrd_style_list as $style)
 		if(strtoupper($style) == strtoupper($_GET['style'])) 
 			$curstyle = $_GET['style'];
 } else {
@@ -245,17 +243,6 @@ foreach($databases as $database) {
 /* append the existing array to the header */
 $ui_databases = array_merge($dbheader, $databases);
 $custom_databases = array_merge($dbheader_custom, $databases);
-
-$graphs = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
-$periods = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
-$graph_length = array(
-	"eighthour" => 28800,
-	"day" => 86400,
-	"week" => 604800,
-	"month" => 2678400,
-	"quarter" => 7948800,
-	"year" => 31622400,
-	"fouryear" => 126230400);
 
 $pgtitle = array(gettext("Status"),gettext("RRD Graphs"));
 
@@ -310,12 +297,12 @@ include("head.inc");
 <?php
 
 function get_dates($curperiod, $graph) {
-	global $graph_length;
+	global $rrd_graph_length_list;
 	$now = time();
 	$end = $now;
 
 	if($curperiod == "absolute") {
-		$start = $end - $graph_length[$graph];
+		$start = $end - $rrd_graph_length_list[$graph];
 	} else {
 		$curyear = date('Y', $now);
 		$curmonth = date('m', $now);
@@ -540,7 +527,7 @@ function get_dates($curperiod, $graph) {
 					<?=gettext("Style:");?>
 					<select name="style" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 					<?php
-					foreach ($styles as $style => $styled) {
+					foreach ($rrd_style_list as $style => $styled) {
 						echo "<option value=\"$style\"";
 						if ($style == $curstyle) echo " selected=\"selected\"";
 						echo ">" . htmlspecialchars($styled) . "</option>\n";
@@ -554,7 +541,7 @@ function get_dates($curperiod, $graph) {
 						<?=gettext("Period:");?>
 						<select name="period" class="formselect" style="z-index: -10;" onchange="document.form1.submit()">
 						<?php
-						foreach ($periods as $period => $value) {
+						foreach ($rrd_period_list as $period => $value) {
 							echo "<option value=\"$period\"";
 							if ($period == $curperiod) echo " selected=\"selected\"";
 							echo ">" . htmlspecialchars($value) . "</option>\n";
@@ -592,7 +579,7 @@ function get_dates($curperiod, $graph) {
 							echo "</td></tr>\n";
 						}
 					} else {
-						foreach($graphs as $graph) {
+						foreach($rrd_graph_list as $graph) {
 							/* check which databases are valid for our category */
 							foreach($ui_databases as $curdatabase) {
 								if(! preg_match("/($curcat)/i", $curdatabase))
@@ -672,7 +659,7 @@ function get_dates($curperiod, $graph) {
 							//alert('updating');
 							var randomid = Math.floor(Math.random()*11);
 							<?php
-							foreach($graphs as $graph) {
+							foreach($rrd_graph_list as $graph) {
 								/* check which databases are valid for our category */
 								foreach($ui_databases as $curdatabase) {
 									if(! stristr($curdatabase, $curcat)) {

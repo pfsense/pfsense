@@ -2005,7 +2005,7 @@ function update_alias_url_data() {
 					}
 				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 3000);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 5000);
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}

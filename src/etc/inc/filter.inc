@@ -4243,21 +4243,23 @@ function ifridx($if, $ridx) {
 	}
 	
 	$i = $ifridx = 0;
-	foreach ($config['filter']['rule'] as $rulen => $filterent) {
-		if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
-			if ($i == $ridx) {
-				return $ifridx;
+	if (is_array($config['filter']['rule'])) {
+		foreach ($config['filter']['rule'] as $rulen => $filterent) {
+			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+				if ($i == $ridx) {
+					return $ifridx;
+				}
+				$ifridx++;
 			}
-			$ifridx++;
+			$i++;
 		}
-		$i++;
 	}
 	return $i;
 }
 
 /* display rules separators */
 function display_separator($separators, $nrules, $columns_in_table) {
-	if (!empty($separators)) {
+	if (is_array($separators)) {
 		foreach ($separators as $sepn => $separator) {
 			if ($separator['row'][0] == "fr" . $nrules) {
 				$cellcolor = $separator['color'];

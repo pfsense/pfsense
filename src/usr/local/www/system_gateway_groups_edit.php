@@ -190,14 +190,17 @@ function build_gateway_protocol_map (&$a_gateways) {
 }
 
 function build_vip_list($family = 'all') {
+	global $gateway;
 
 	$list = array('address' => gettext('Interface Address'));
 
 	$viplist = get_configured_vip_list($family);
 	foreach ($viplist as $vip => $address) {
-		$list[$vip] = "$address";
-		if (get_vip_descr($address)) {
-			$list[$vip] .= " (". get_vip_descr($address) .")";
+		if ($gateway['friendlyiface'] == get_configured_vip_interface($vip)) {
+			$list[$vip] = "$address";
+			if (get_vip_descr($address)) {
+				$list[$vip] .= " (". get_vip_descr($address) .")";
+			}
 		}
 	}
 

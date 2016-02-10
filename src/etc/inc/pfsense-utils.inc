@@ -1938,7 +1938,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1) {
 
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
-		log_error(gettext("Could not process aliases from alias: {$alias_url}"));
+		log_error(gettext("Could not process aliases from alias: {$filename}"));
 		return null;
 	}
 	$items = array();

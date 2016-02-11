@@ -875,7 +875,8 @@ EOD;
 			if (!empty($ph1ent['iketype'])) {
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
-					//$passive = "start";
+				} elseif ($ph1ent['iketype'] == "auto") {
+					$keyexchange = "ike";
 				}
 			}
 

@@ -311,8 +311,10 @@ display_top_tabs($tab_array);
 <?php
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 				echo "V1";
-			} else {
+			} elseif ($ph1ent['iketype'] == "ikev2") {
 				echo "V2";
+			} elseif ($ph1ent['iketype'] == "auto") {
+				echo "Auto";
 			}
 ?>
 						</td>

@@ -404,8 +404,8 @@ if ($_POST) {
 		}
 	}
 
-	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2") {
-		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2");
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto") {
+		$input_errors[] = gettext("Valid arguments for IKE type is v1, v2 or auto");
 	}
 
 	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {

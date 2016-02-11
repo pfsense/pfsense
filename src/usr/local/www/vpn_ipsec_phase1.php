@@ -689,7 +689,7 @@ $section->addInput(new Form_Select(
 	'Key Exchange version',
 	$pconfig['iketype'],
 	array("ikev1" => "V1", "ikev2" => "V2", "auto" => gettext("Auto"))
-))->setHelp('Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2.');
+))->setHelp('Select the Internet Key Exchange protocol version to be used. Auto uses IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder.');
 
 $section->addInput(new Form_Select(
 	'protocol',

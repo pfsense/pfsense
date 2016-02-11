@@ -3117,18 +3117,18 @@ function interface_mtu_wanted_for_pppoe($realif) {
 			continue;
 		}
 
+		$mtus = array();
+		if (!empty($ppp['mtu'])) {
+			$mtus = explode(',', $ppp['mtu']);
+		}
 		$ports = explode(',', $ppp['ports']);
+
 		$mtu_wanted = 1500;
 		foreach ($ports as $pid => $port) {
 			if (get_real_interface($port) != $realif) {
 				continue;
 			}
 
-			if (!empty($ppp['mtu'])) {
-				$mtus = explode(',', $ppp['mtu']);
-			} else {
-				$mtus = array();
-			}
 			// there is an MTU configured on the port in question
 			if (!empty($mtus[$pid])) {
 				$mtu_wanted = intval($mtus[$pid]) + 8;
@@ -3142,7 +3142,6 @@ function interface_mtu_wanted_for_pppoe($realif) {
 					}
 				}
 			}
-			unset($mtus);
 
 			if ($mtu_wanted > $mtu) {
 				$mtu = $mtu_wanted;

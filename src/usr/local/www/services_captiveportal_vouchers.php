@@ -507,7 +507,7 @@ endif;
 
 $form = new Form();
 
-$section = new Form_Section('Create, generate and activate Rolls with Vouchers');
+$section = new Form_Section('Create, Generate and Activate Rolls with Vouchers');
 
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -518,7 +518,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('Create, generate and activate Rolls with Vouchers');
+$section = new Form_Section('Create, Generate and Activate Rolls with Vouchers');
 $section->addClass('rolledit');
 
 $section->addInput(new Form_Textarea(
@@ -588,7 +588,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Voucher database synchronization');
+$section = new Form_Section('Voucher Database Synchronization');
 $section->addClass('rolledit');
 
 $section->addInput(new Form_IpAddress(

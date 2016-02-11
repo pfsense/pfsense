@@ -273,7 +273,7 @@ if (isset($id) && $a_routes[$id]) {
 	));
 }
 
-$section = new Form_Section('Edit route entry');
+$section = new Form_Section('Edit Route Entry');
 
 $section->addInput(new Form_IpAddress(
 	'network',

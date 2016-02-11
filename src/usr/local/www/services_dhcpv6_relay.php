@@ -169,7 +169,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('DHCPv6 Relay configuration');
+$section = new Form_Section('DHCPv6 Relay Configuration');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

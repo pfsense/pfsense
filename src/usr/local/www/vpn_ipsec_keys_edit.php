@@ -165,7 +165,7 @@ include("head.inc");
 
 $form = new Form;
 
-$section = new Form_Section('Edit pre-shared-secret');
+$section = new Form_Section('Edit Pre-Shared-Secret');
 
 $section->addInput(new Form_Input(
 	'ident',

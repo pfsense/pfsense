@@ -657,7 +657,7 @@ $form->addGlobal(new Form_Input(
 
 if ($pkg['advanced_options'] == "enabled") {
 	$advfield_count = 0;
-	$advanced = new Form_Section(gettext("Advanced features"));
+	$advanced = new Form_Section("Advanced Features");
 	$advanced->addClass('advancedoptions');
 }
 
@@ -735,7 +735,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 	// If we get here but have no $section, the package config file probably had no listtopic field
 	// We can create a section with a generic name to fix that
 	if (!$section) {
-		$section = new Form_Section(gettext('General options'));
+		$section = new Form_Section('General Options');
 	}
 
 	switch ($pkga['type']) {

@@ -171,7 +171,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('DHCP Relay configuration');
+$section = new Form_Section('DHCP Relay Configuration');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

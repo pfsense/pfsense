@@ -192,7 +192,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('Graph settings');
+$section = new Form_Section('Graph Settings');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

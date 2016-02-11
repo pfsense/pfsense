@@ -287,7 +287,7 @@ if (!$input_errors && $type) {
 
 <!-- Third table displays "More information" -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More information')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More Information')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>

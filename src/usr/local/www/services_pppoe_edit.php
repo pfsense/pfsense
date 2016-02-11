@@ -435,7 +435,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'radiusissueips',
-	'Radius Issued IP Addresses',
+	'RADIUS Issued IP Addresses',
 	'Assign IP Addresses to users via RADIUS server reply attributes',
 	$pconfig['radiusissueips']
 ));

@@ -233,7 +233,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('SNMP Daemon settings');
+$section = new Form_Section('SNMP Daemon Settings');
 
 $section->addInput(new Form_Input(
 	'pollport',
@@ -276,7 +276,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('SNMP Trap settings');
+$section = new Form_Section('SNMP Trap Settings');
 
 if ($pconfig['trapenable']) {
 	$section->addClass('toggle-traps', 'in');

@@ -214,7 +214,7 @@ if ($savemsg) {
 
 $form = new Form();
 
-$section = new Form_Section('Voucher rolls');
+$section = new Form_Section('Voucher Rolls');
 
 $section->addInput(new Form_Input(
 	'number',

@@ -204,7 +204,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Captive Portal Hostname settings');
+$section = new Form_Section('Captive Portal Hostname Settings');
 
 $section->addInput(new Form_Select(
 	'dir',

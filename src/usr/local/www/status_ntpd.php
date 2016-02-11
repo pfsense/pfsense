@@ -263,7 +263,7 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS information");?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("GPS Information");?></h2></div>
 	<div class="panel-body">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>

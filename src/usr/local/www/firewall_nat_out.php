@@ -553,7 +553,7 @@ if ($mode == "automatic" || $mode == "hybrid"):
 	unset($FilterIflist, $GatewaysList);
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic rules:")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Automatic Rules:")?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-hover table-striped table-condensed">
 				<thead>

@@ -266,7 +266,7 @@ if ($carpcount == 0) {
 </form>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync nodes')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync Nodes')?></h2></div>
 	<div class="panel-body">
 		<ul>
 <?php

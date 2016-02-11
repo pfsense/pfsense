@@ -292,14 +292,14 @@ if ($input_errors) {
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be reinstalled'), $pkgname);
+			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Reinstalled'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be removed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Removed'), $pkgname);
 			break;
 		case 'installed':
 		default:
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be installed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Installed'), $pkgname);
 			break;
 	}
 ?>
@@ -310,11 +310,11 @@ if ($input_errors) {
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<?=gettext("All packages will be reinstalled.");?>
+				<?=gettext("All Packages will be Reinstalled.");?>
 <?php
 			} else if ($_GET['from'] && $_GET['to']) {
 ?>
-				<?=sprintf(gettext('Package: %1$s will be upgraded from %2$s to %3$s.'), '<b>' . $pkgname . '</b>', '<b>' . $_GET['from'] . '</b>', '<b>' . $_GET['to'] . '</b>')?>
+				<?=sprintf(gettext('Package: %1$s will be Upgraded from %2$s to %3$s.'), '<b>' . $pkgname . '</b>', '<b>' . $_GET['from'] . '</b>', '<b>' . $_GET['to'] . '</b>')?>
 <?php
 			} else if ($firmwareupdate) {
 ?>
@@ -400,17 +400,17 @@ if ($_POST) {
 }
 
 if ($_POST['mode'] == 'delete') {
-	$panel_heading_txt = gettext("Package removal");
+	$panel_heading_txt = gettext("Package Removal");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgid);
 } else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
-	$panel_heading_txt = gettext("Package reinstallation");
+	$panel_heading_txt = gettext("Package Reinstallation");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgid);
 } else {
-	$panel_heading_txt = gettext("Package installation");
+	$panel_heading_txt = gettext("Package Installation");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgid);
@@ -439,7 +439,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 		<div class="panel-heading">
 <?php if ($firmwareupdate) {
 ?>
-			<h2 class="panel-title" id="status"><?=gettext("Updating system")?></h2>
+			<h2 class="panel-title" id="status"><?=gettext("Updating System")?></h2>
 <?php } else {
 ?>
 			<h2 class="panel-title" id="status"><?=$panel_heading_txt?></h2>

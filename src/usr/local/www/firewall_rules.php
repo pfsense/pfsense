@@ -396,7 +396,7 @@ $columns_in_table = 13;
 ?>
 <form method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>

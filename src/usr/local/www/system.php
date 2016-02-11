@@ -501,7 +501,7 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the WebConfigurator. css files are located in /usr/local/www/bootstrap/css');
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',

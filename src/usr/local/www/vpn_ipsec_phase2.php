@@ -623,7 +623,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 2 proposal (SA/Key Exchange)');
+$section = new Form_Section('Phase 2 Proposal (SA/Key Exchange)');
 
 $section->addInput(new Form_Select(
 	'proto',

@@ -186,7 +186,7 @@ if ($_GET['act'] == 'add') {
 
 	$form->setMultipartEncoding();
 
-	$section = new Form_Section('Upload a new file');
+	$section = new Form_Section('Upload a New File');
 
 	$section->addInput(new Form_Input(
 		'zone',

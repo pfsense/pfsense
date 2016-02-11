@@ -152,7 +152,7 @@ if (isset($id) && $a_wol[$id]) {
 	));
 }
 
-$section = new Form_Section('Edit WOL entry');
+$section = new Form_Section('Edit WOL Entry');
 
 $section->addInput(new Form_Select(
 	'interface',

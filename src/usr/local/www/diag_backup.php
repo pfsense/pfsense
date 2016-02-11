@@ -623,7 +623,7 @@ display_top_tabs($tab_array);
 $form = new Form(false);
 $form->setMultipartEncoding();	// Allow file uploads
 
-$section = new Form_Section('Backup configuration');
+$section = new Form_Section('Backup Configuration');
 
 $section->addInput(new Form_Select(
 	'backuparea',
@@ -670,7 +670,7 @@ $group->add(new Form_Button(
 $section->add($group);
 $form->add($section);
 
-$section = new Form_Section('Restore backup');
+$section = new Form_Section('Restore Backup');
 
 $section->addInput(new Form_StaticText(
 	null,
@@ -718,7 +718,7 @@ $section->add($group);
 $form->add($section);
 
 if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
-	$section = new Form_Section('Package functions');
+	$section = new Form_Section('Package Functions');
 
 	if ($config['installedpackages']['package'] != "") {
 		$group = new Form_Group('');

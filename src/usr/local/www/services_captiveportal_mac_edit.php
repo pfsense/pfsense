@@ -227,7 +227,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Edit MAC address rules');
+$section = new Form_Section('Edit MAC Address Rules');
 
 $section->addInput(new Form_Select(
 	'action',

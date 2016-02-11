@@ -160,7 +160,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Domain override options');
+$section = new Form_Section('Domain Override Options');
 
 $section->addInput(new Form_Input(
 	'domain',

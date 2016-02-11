@@ -150,7 +150,7 @@ $firewall_rules_dscp_types = array(
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
-	'radius' => "Radius");
+	'radius' => "RADIUS");
 
 $ldap_urltypes = array(
 	'TCP - Standard' => 389,

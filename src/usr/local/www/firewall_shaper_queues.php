@@ -71,7 +71,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$qname = gettext("No queue configured/selected");
+$qname = gettext("No Queue Configured/Selected");
 
 $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();

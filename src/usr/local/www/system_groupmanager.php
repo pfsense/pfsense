@@ -359,7 +359,7 @@ if (isset($id) && $a_group[$id]){
 	));
 }
 
-$section = new Form_Section('Group properties');
+$section = new Form_Section('Group Properties');
 
 if ($_GET['act'] != "new") {
 	$section->addInput(new Form_StaticText(

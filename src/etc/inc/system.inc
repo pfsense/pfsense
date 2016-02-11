@@ -336,10 +336,12 @@ function system_hosts_generate() {
 	}
 
 	$syscfg = $config['system'];
-	if (isset($config['unbound']) && isset($config['unbound']['enable'])) {
-		$dnsmasqcfg = $config['unbound'];
-	} else {
+	// prefer dnsmasq for hosts generation where it's enabled. It relies
+	// on hosts for name resolution of its overrides, unbound does not.
+	if (isset($config['dnsmasq']) && isset($config['dnsmasq']['enable'])) {
 		$dnsmasqcfg = $config['dnsmasq'];
+	} else {
+		$dnsmasqcfg = $config['unbound'];
 	}
 
 	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";

@@ -123,7 +123,7 @@ require("head.inc");
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a file from the filesystem")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a File from the Filesystem")?></h2></div>
 	<div class="panel-body">
 		<div class="content">
 			<form>

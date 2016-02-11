@@ -112,7 +112,7 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Nearby access points or ad-hoc peers")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Nearby Access Points or Ad-Hoc Peers")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
@@ -181,7 +181,7 @@ display_top_tabs($tab_array);
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Associated or ad-hoc peers")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Associated or Ad-Hoc Peers")?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

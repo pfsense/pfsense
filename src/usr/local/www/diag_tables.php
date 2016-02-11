@@ -127,9 +127,9 @@ if ($savemsg) {
 }
 
 if ($tablename == "webConfiguratorlockout") {
-	$displayname = gettext("Web configurator lockout table");
+	$displayname = gettext("Web Configurator Lockout Table");
 } else {
-	$displayname = sprintf(gettext("%s table"), ucfirst($tablename));
+	$displayname = sprintf(gettext("%s Table"), ucfirst($tablename));
 }
 
 $form = new Form(false);

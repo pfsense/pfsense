@@ -133,7 +133,7 @@ switch ($action) {
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test results')?></h2></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test Results')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>

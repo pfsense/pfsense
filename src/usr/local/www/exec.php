@@ -257,7 +257,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	</div>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download File')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
@@ -273,7 +273,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	}
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload File')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
@@ -286,7 +286,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP response</h2></div>");
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP Response</h2></div>");
 
 		$tmpname = tempnam("/tmp", "");
 		$phpfile = fopen($tmpname, "w");

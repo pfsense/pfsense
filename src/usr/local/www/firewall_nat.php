@@ -260,10 +260,16 @@ $columns_in_table = 13;
 $nnats = $i = 0;
 $separators = $config['nat']['separator'];
 
-// There can be a separator before any rules are listed
-display_separator($separators, $nnats, $columns_in_table);
+// Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
+// More efficient than looping through the list of separators on every row.
+$seprows = separator_rows($separators);
 
 foreach ($a_nat as $natent):
+
+	// Display separator(s) for section beginning at rule n
+	if ($seprows[$nnats]) {
+		display_separator($separators, $nnats, $columns_in_table);
+	}
 
 	$alias = rule_columns_with_alias(
 		$natent['source']['address'],
@@ -426,10 +432,12 @@ foreach ($a_nat as $natent):
 	$i++;
 	$nnats++;
 
-	// There can be a separator before the next rule listed, or after the last rule listed
-	display_separator($separators, $nnats, $columns_in_table);
-
 endforeach;
+
+// There can be separator(s) after the last rule listed.
+if ($seprows[$nnats]) {
+	display_separator($separators, $nnats, $columns_in_table);
+}
 ?>
 				</tbody>
 			</table>

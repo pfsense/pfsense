@@ -4285,4 +4285,15 @@ function display_separator($separators, $nrules, $columns_in_table) {
 	}
 }
 
+/* Return a list of separator rows */
+function separator_rows($separators) {
+	$seprowns = array();
+	if (is_array($separators)) {
+		foreach ($separators as $sepn => $separator) {
+			$seprows[substr($separator['row']['0'], 2)] = true;
+		}
+	}
+	return $seprows;
+}
+
 ?>

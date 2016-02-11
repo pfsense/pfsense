@@ -180,7 +180,7 @@ if ($_POST) {
 	if (($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) {
 		switch ($pconfig['localid_type']) {
 			case "network":
-				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numeric($pconfig['localid_netbits'])) {
+				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numericint($pconfig['localid_netbits'])) {
 					$input_errors[] = gettext("A valid local network bit count must be specified.");
 				}
 			case "address":
@@ -207,7 +207,7 @@ if ($_POST) {
 		if (!empty($pconfig['natlocalid_address'])) {
 			switch ($pconfig['natlocalid_type']) {
 				case "network":
-					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits'])) {
+					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numericint($pconfig['natlocalid_netbits'])) {
 						$input_errors[] = gettext("A valid NAT local network bit count must be specified.");
 					}
 					if ($pconfig['localid_type'] == "address") {
@@ -237,7 +237,7 @@ if ($_POST) {
 
 		switch ($pconfig['remoteid_type']) {
 			case "network":
-				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numeric($pconfig['remoteid_netbits'])) {
+				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numericint($pconfig['remoteid_netbits'])) {
 					$input_errors[] = gettext("A valid remote network bit count must be specified.");
 				}
 			case "address":
@@ -382,7 +382,7 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
+	if (($_POST['lifetime'] && !is_numericint($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
 	}
 

@@ -78,13 +78,13 @@ if ($_POST) {
 
 	if ($_POST['disablecheck'] == "yes") {
 		$config['system']['firmware']['disablecheck'] = true;
-	} else {
+	} elseif (isset($config['system']['firmware']['disablecheck'])) {
 		unset($config['system']['firmware']['disablecheck']);
 	}
 
 	if ($_POST['synconupgrade'] == "yes") {
 		$config['system']['gitsync']['synconupgrade'] = true;
-	} else {
+	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
 		unset($config['system']['gitsync']['synconupgrade']);
 	}
 	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];

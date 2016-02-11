@@ -1165,6 +1165,14 @@ EOD;
 				$mobike = 'mobike = no';
 			}
 
+			if (isset($ph1ent['tfc_enable'])) {
+				if (isset($ph1ent['tfc_bytes']) && is_numericint($ph1ent['tfc_bytes'])) {
+					$tfc = "tfc = {$ph1ent['tfc_bytes']}";
+				} else {
+					$tfc = "tfc = %mtu";
+				}
+			}
+
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
 			$leftsubnet_spec = array();
@@ -1338,6 +1346,7 @@ EOD;
 	{$reauth}
 	{$forceencaps}
 	{$mobike}
+	{$tfc}
 	{$rekey}
 	installpolicy = yes
 	{$tunneltype}

@@ -160,6 +160,14 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
+
+	if (isset($a_phase1[$p1index]['tfc_enable'])) {
+		$pconfig['tfc_enable'] = true;
+	}
+
+	if (isset($a_phase1[$p1index]['tfc_bytes'])) {
+		$pconfig['tfc_bytes'] = $a_phase1[$p1index]['tfc_bytes'];
+	}
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
@@ -404,8 +412,12 @@ if ($_POST) {
 		}
 	}
 
+	if ($pconfig['tfc_bytes'] && !is_numericint($pconfig['tfc_bytes'])) {
+		$input_errors[] = gettext("A numeric value must be specified for TFC bytes.");
+	}
+
 	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto") {
-		$input_errors[] = gettext("Valid arguments for IKE type is v1, v2 or auto");
+		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
 	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
@@ -500,6 +512,14 @@ if ($_POST) {
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
 			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
+		}
+
+		if (isset($pconfig['tfc_enable'])) {
+			$ph1ent['tfc_enable'] = true;
+		}
+
+		if (isset($pconfig['tfc_bytes'])) {
+			$ph1ent['tfc_bytes'] = $pconfig['tfc_bytes'];
 		}
 
 		/* generate unique phase1 ikeid */
@@ -865,6 +885,20 @@ $section->addInput(new Form_Select(
 ))->setHelp('Set this option to control the use of MOBIKE');
 
 $section->addInput(new Form_Checkbox(
+	'tfc_enable',
+	'Traffic Flow Confidentiality',
+	'Enable TFC',
+	$pconfig['tfc_enable']
+))->setHelp('Enable Traffic Flow Confidentiality');
+
+$section->addInput(new Form_Input(
+	'tfc_bytes',
+	'TFC Bytes',
+	'Bytes TFC',
+	$pconfig['tfc_bytes']
+))->setHelp('Enter the number of bytes to pad ESP data to, or leave blank to fill to MTU size');
+
+$section->addInput(new Form_Checkbox(
 	'dpd_enable',
 	'Dead Peer Detection',
 	'Enable DPD',
@@ -940,11 +974,14 @@ events.push(function() {
 			hideInput('mode', true);
 			hideInput('mobike', false);
 			hideInput('nat_traversal', true);
+			hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
 			hideInput('nat_traversal', false);
+			hideCheckbox('tfc_enable', true);
+			hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
 		}
 	}
@@ -1056,11 +1093,22 @@ events.push(function() {
 		}
 	}
 
+	function tfcchkbox_change() {
+		hide = !$('#tfc_enable').prop('checked');
+
+		hideInput('tfc_bytes', hide);
+	}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
 		dpdchkbox_change();
+	});
+
+	 // TFC
+	$('#tfc_enable').click(function () {
+		tfcchkbox_change();
 	});
 
 	 // Peer identifier

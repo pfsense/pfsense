@@ -253,7 +253,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
-	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime']))) {
+	if (($pconfig['lifetime'] && !is_numericint($pconfig['lifetime']))) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
@@ -395,11 +395,11 @@ if ($_POST) {
 	}
 
 	if ($pconfig['dpd_enable']) {
-		if (!is_numeric($pconfig['dpd_delay'])) {
+		if (!is_numericint($pconfig['dpd_delay'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD delay.");
 		}
 
-		if (!is_numeric($pconfig['dpd_maxfail'])) {
+		if (!is_numericint($pconfig['dpd_maxfail'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 		}
 	}
@@ -917,7 +917,7 @@ print($form);
 /* determine if we should init the key length */
 $keyset = '';
 if (isset($pconfig['ealgo']['keylen'])) {
-	if (is_numeric($pconfig['ealgo']['keylen'])) {
+	if (is_numericint($pconfig['ealgo']['keylen'])) {
 		$keyset = $pconfig['ealgo']['keylen'];
 	}
 }

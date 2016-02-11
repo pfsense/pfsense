@@ -322,7 +322,7 @@ $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notificat
 display_top_tabs($tab_array);
 
 $form = new Form;
-$section = new Form_Section('Proxy support');
+$section = new Form_Section('Proxy Support');
 
 $section->addInput(new Form_Input(
 	'proxyurl',
@@ -395,7 +395,7 @@ $section->addInput(new Form_Checkbox(
 	'most all scenarios, which instead use gateway groups.');
 
 $form->add($section);
-$section = new Form_Section('Power savings');
+$section = new Form_Section('Power Savings');
 
 $section->addInput(new Form_Checkbox(
 	'powerd_enable',
@@ -561,7 +561,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 if ($g['platform'] == "pfSense") {
-	$section = new Form_Section('Hardware settings');
+	$section = new Form_Section('Hardware Settings');
 
 	$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
 	$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);

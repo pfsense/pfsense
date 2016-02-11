@@ -1704,7 +1704,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('General configuration');
+$section = new Form_Section('General Configuration');
 
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -1785,7 +1785,7 @@ if (count($mediaopts_list) > 0) {
 
 $form->add($section);
 
-$section = new Form_Section('Static IPv4 configuration');
+$section = new Form_Section('Static IPv4 Configuration');
 $section->addClass('staticv4');
 
 $section->addInput(new Form_IpAddress(
@@ -1816,7 +1816,7 @@ $section->add($group);
 
 $form->add($section);
 
-$section = new Form_Section('Static IPv6 configuration');
+$section = new Form_Section('Static IPv6 Configuration');
 $section->addClass('staticv6');
 
 $section->addInput(new Form_IpAddress(
@@ -1846,7 +1846,7 @@ $section->add($group);
 $form->add($section);
 
 // Add new gateway modal pop-up for IPv6
-$modal = new Modal('New IPv6 gateway', 'newgateway6', 'large');
+$modal = new Modal('New IPv6 Gateway', 'newgateway6', 'large');
 
 $modal->addInput(new Form_Checkbox(
 	'defaultgw6',
@@ -1897,7 +1897,7 @@ $form->add($modal);
 
 // ==== DHCP client configuration =============================
 
-$section = new Form_Section('DHCP client configuration');
+$section = new Form_Section('DHCP Client Configuration');
 $section->addClass('dhcp');
 
 $group = new Form_Group('Options');
@@ -2079,7 +2079,7 @@ $form->add($section);
 
 // DHCP6 client config
 
-$section = new Form_Section('DHCP6 client configuration');
+$section = new Form_Section('DHCP6 Client Configuration');
 $section->addClass('dhcp6');
 
 $section->addInput(new Form_Checkbox(
@@ -2147,7 +2147,7 @@ $form->add($section);
 
 // DHCP6 client config - Advanced
 
-$section = new Form_Section('Advanced DHCP6 client configuration');
+$section = new Form_Section('Advanced DHCP6 Client Configuration');
 $section->addClass('dhcp6advanced');
 
 $section->addInput(new Form_Checkbox(
@@ -2742,7 +2742,7 @@ $form->add($section);
 // Wireless interface
 if (isset($wancfg['wireless'])) {
 
-	$section = new Form_Section('Common wireless configuration - Settings apply to all wireless networks on ' . $wlanbaseif . '.');
+	$section = new Form_Section('Common Wireless Configuration - Settings apply to all wireless networks on ' . $wlanbaseif . '.');
 
 	$section->addInput(new Form_Checkbox(
 		'persistcommonwireless',
@@ -2866,7 +2866,7 @@ if (isset($wancfg['wireless'])) {
 	$form->add($section);
 
 	// Regulatory settings
-	$section = new Form_Section('Regulatory settings');
+	$section = new Form_Section('Regulatory Settings');
 
 	$domain_list = array("" => 'Default');
 
@@ -2911,7 +2911,7 @@ if (isset($wancfg['wireless'])) {
 
 	$form->add($section);
 
-	$section = new Form_Section('Network-specific wireless configuration');
+	$section = new Form_Section('Network-Specific Wireless Configuration');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -3035,7 +3035,7 @@ if (isset($wancfg['wireless'])) {
 
 	$form->add($section);
 
-	$section = new Form_Section('802.1x RADIUS options');
+	$section = new Form_Section('802.1x RADIUS Options');
 
 	$section->addInput(new Form_Checkbox(
 		'ieee8021x',
@@ -3104,7 +3104,7 @@ if (isset($wancfg['wireless'])) {
 	$form->add($section);
 }
 
-$section = new Form_Section('Private networks');
+$section = new Form_Section('Private Networks');
 
 $section->addInput(new Form_Checkbox(
 	'blockpriv',
@@ -3153,7 +3153,7 @@ $form->addGlobal(new Form_Input(
 
 
 // Add new gateway modal pop-up
-$modal = new Modal('New gateway', 'newgateway', 'large');
+$modal = new Modal('New Gateway', 'newgateway', 'large');
 
 $modal->addInput(new Form_Checkbox(
 	'defaultgw',

@@ -553,7 +553,7 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('You may enter a description here for your reference (not parsed).');
 
 	$form->add($section);
-	$section = new Form_Section('User Authentication settings');
+	$section = new Form_Section('User Authentication Settings');
 	$section->addClass('authentication');
 
 	$section->addInput(new Form_Input(
@@ -572,7 +572,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Cryptographic settings');
+	$section = new Form_Section('Cryptographic Settings');
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
@@ -674,7 +674,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',

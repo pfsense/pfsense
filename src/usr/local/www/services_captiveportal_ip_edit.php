@@ -244,7 +244,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Edit Captive Portal IP rule');
+$section = new Form_Section('Edit Captive Portal IP Rule');
 
 $section->addInput(new Form_IpAddress(
 	'ip',

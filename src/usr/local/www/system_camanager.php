@@ -489,7 +489,7 @@ if ($act == "edit") {
 	));
 }
 
-$section = new Form_Section('Create / edit CA');
+$section = new Form_Section('Create / Edit CA');
 
 $section->addInput(new Form_Input(
 	'descr',

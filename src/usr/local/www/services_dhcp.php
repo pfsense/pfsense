@@ -879,7 +879,7 @@ $section->add($group);
 $form->add($section);
 
 if (!is_numeric($pool) && !($act == "newpool")) {
-	$section = new Form_Section('Additional pools');
+	$section = new Form_Section('Additional Pools');
 
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
@@ -926,7 +926,7 @@ for ($idx=1; $idx<=4; $idx++) {
 
 $form->add($section);
 
-$section = new Form_Section('Other options');
+$section = new Form_Section('Other Options');
 
 $section->addInput(new Form_IpAddress(
 	'gateway',
@@ -1225,7 +1225,7 @@ if ($pconfig['netboot']) {
 } else {
 	$sectate = COLLAPSIBLE|SEC_CLOSED;
 }
-$section = new Form_Section("Network booting", nwkbootsec, $sectate);
+$section = new Form_Section("Network Booting", nwkbootsec, $sectate);
 
 $section->addInput(new Form_Checkbox(
 	'netboot',

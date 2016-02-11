@@ -953,7 +953,7 @@ $section->add($group);
 
 $form->add($section);
 
-$section = new Form_Section('RADIUS options');
+$section = new Form_Section('RADIUS Options');
 $section->addClass('Radius');
 
 $section->addInput(new Form_Checkbox(
@@ -1032,7 +1032,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$section = new Form_Section('HTTPS options');
+$section = new Form_Section('HTTPS Options');
 $section->addClass('HTTPS');
 
 $section->addInput(new Form_Checkbox(
@@ -1071,7 +1071,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('HTML page contents');
+$section = new Form_Section('HTML Page Contents');
 $section->addClass('HTML');
 
 $section->addInput(new Form_Input(

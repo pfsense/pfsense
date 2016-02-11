@@ -200,7 +200,7 @@ if (isset($groupid)) {
 	));
 }
 
-$section = new Form_Section('Add privileges for '. $a_group['name']);
+$section = new Form_Section('Add Privileges for '. $a_group['name']);
 
 $section->addInput(new Form_Select(
 	'sysprivs',

@@ -694,7 +694,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Cryptographic settings');
+	$section = new Form_Section('Cryptographic Settings');
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
@@ -837,7 +837,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',

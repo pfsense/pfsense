@@ -3965,7 +3965,7 @@ EOD;
 
 		$sform->add($section);
 
-		$section = new Form_Section('Advanced options');
+		$section = new Form_Section('Advanced Options');
 
 		$section->addInput(new Form_Input(
 			'delay',
@@ -4269,7 +4269,7 @@ class dnqueue_class extends dummynet_class {
 
 		$sform->add($section);
 
-		$section = new Form_Section('Advanced options');
+		$section = new Form_Section('Advanced Options');
 
 		$section->addInput(new Form_Input(
 			'weight',

@@ -703,7 +703,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 proposal (Authentication)');
+$section = new Form_Section('Phase 1 Proposal (Authentication)');
 
 $section->addInput(new Form_Select(
 	'authentication_method',
@@ -783,7 +783,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 proposal (Algorithms)');
+$section = new Form_Section('Phase 1 Proposal (Algorithms)');
 
 $group = new Form_Group('Encryption Algorithm');
 

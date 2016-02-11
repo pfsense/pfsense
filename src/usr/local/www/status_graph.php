@@ -154,7 +154,7 @@ include("head.inc");
 $form = new Form(false);
 $form->addClass('auto-submit');
 
-$section = new Form_Section('Graph settings');
+$section = new Form_Section('Graph Settings');
 
 $group = new Form_Group('');
 

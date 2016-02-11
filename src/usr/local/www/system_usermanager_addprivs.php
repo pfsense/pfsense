@@ -177,7 +177,7 @@ display_top_tabs($tab_array);
 
 $form = new Form();
 
-$section = new Form_Section('User privileges');
+$section = new Form_Section('User Privileges');
 
 $section->addInput(new Form_Select(
 	'sysprivs',

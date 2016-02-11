@@ -218,7 +218,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Edit NAT NPt entry');
+$section = new Form_Section('Edit NAT NPt Entry');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',

@@ -299,7 +299,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Edit Load Balancer - Monitor entry');
+$section = new Form_Section('Edit Load Balancer - Monitor Entry');
 
 $section->addInput(new Form_Input(
 	'name',

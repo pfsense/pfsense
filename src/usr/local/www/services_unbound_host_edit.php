@@ -240,7 +240,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Host override options');
+$section = new Form_Section('Host Override Options');
 
 $section->addInput(new Form_Input(
 	'host',
@@ -283,7 +283,7 @@ if (isset($id) && $a_hosts[$id]) {
 
 $form->add($section);
 
-$section = new Form_Section('Additional names for this host');
+$section = new Form_Section('Additional Names for this Host');
 
 if (!$pconfig['aliases']['item']) {
 	$pconfig['aliases']['item'] = array('host' => "");

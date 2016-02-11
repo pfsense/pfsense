@@ -442,7 +442,7 @@ switch ($action) {
 			'View'
 		);
 
-		$section = new Form_Section('View logs');
+		$section = new Form_Section('View Logs');
 
 		$section->addInput(new Form_Input(
 			'action',

@@ -134,7 +134,7 @@ if ($tablename == "webConfiguratorlockout") {
 
 $form = new Form(false);
 
-$section = new Form_Section('Table to display');
+$section = new Form_Section('Table to Display');
 $group = new Form_Group("Table");
 
 $group->add(new Form_Select(

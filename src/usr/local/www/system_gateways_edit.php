@@ -672,7 +672,7 @@ $form->addGlobal(new Form_Input(
 	$pconfig['friendlyiface']
 ));
 
-$section = new Form_Section('Edit gateway');
+$section = new Form_Section('Edit Gateway');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',

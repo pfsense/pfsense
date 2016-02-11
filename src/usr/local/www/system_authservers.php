@@ -450,7 +450,7 @@ $form->addGlobal(new Form_Input(
 	$id
 ));
 
-$section = new Form_Section('Server settings');
+$section = new Form_Section('Server Settings');
 
 $section->addInput($input = new Form_Input(
 	'name',

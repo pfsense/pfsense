@@ -128,7 +128,7 @@ $resetbtn->removeClass('btn-primary')->addClass('btn-danger');
 
 $form = new Form($resetbtn);
 
-$section = new Form_Section('Select states to reset');
+$section = new Form_Section('Select States to Reset');
 
 $section->addInput(new Form_Checkbox(
 	'statetable',

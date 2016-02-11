@@ -1048,7 +1048,7 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Edit Firewall rule');
+$section = new Form_Section('Edit Firewall Rule');
 
 if (isset($id)) {
 	$form->addGlobal(new Form_Input(
@@ -1380,7 +1380,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$form->add($section);
 }
 
-$section = new Form_Section('Extra options');
+$section = new Form_Section('Extra Options');
 $section->addInput(new Form_Checkbox(
 	'log',
 	'Log',
@@ -1416,7 +1416,7 @@ if (!$adv_open) {
 
 $form->add($section);
 
-$section = new Form_Section('Advanced options');
+$section = new Form_Section('Advanced Options');
 $section->addClass('advanced-options');
 
 $section->addInput(new Form_Select(

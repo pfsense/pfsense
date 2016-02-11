@@ -220,7 +220,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Edit gateway group entry');
+$section = new Form_Section('Edit Gateway Group Entry');
 
 $section->addInput(new Form_Input(
 	'name',

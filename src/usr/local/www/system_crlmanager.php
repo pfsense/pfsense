@@ -377,7 +377,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (!isset($id)) {
 		$form = new Form();
 
-		$section = new Form_Section('Create new revocation list');
+		$section = new Form_Section('Create new Revocation List');
 
 		$section->addInput(new Form_Select(
 			'method',
@@ -550,7 +550,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	if (count($ca_certs) == 0) {
 		print_info_box(gettext("No Certificates Found for this CA."), 'danger');
 	} else {
-		$section = new Form_Section('Choose a certificate to revoke');
+		$section = new Form_Section('Choose a Certificate to Revoke');
 		$group = new Form_Group(null);
 
 		$group->add(new Form_Select(

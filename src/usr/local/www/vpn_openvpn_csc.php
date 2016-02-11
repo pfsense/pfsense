@@ -379,7 +379,7 @@ if ($act == "new" || $act == "edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',
@@ -432,7 +432,7 @@ if ($act == "new" || $act == "edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Client settings');
+	$section = new Form_Section('Client Settings');
 
 	// Default domain name
 	$section->addInput(new Form_Checkbox(

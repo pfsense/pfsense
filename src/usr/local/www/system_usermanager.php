@@ -753,7 +753,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$form->add($section);
 
 		// ==== Certificate table section =====================================
-		$section = new Form_Section('User certificates');
+		$section = new Form_Section('User Certificates');
 
 		$section->addInput(new Form_StaticText(
 			null,
@@ -765,7 +765,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	// ==== Add user certificate for a new user
 	if (is_array($config['ca']) && count($config['ca']) > 0) {
-		$section = new Form_Section('Create certificate for user');
+		$section = new Form_Section('Create Certificate for User');
 		$section->addClass('cert-options');
 
 		$nonPrvCas = array();

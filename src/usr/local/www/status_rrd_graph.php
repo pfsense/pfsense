@@ -534,7 +534,7 @@ if ($input_errors && count($input_errors)) {
 
 $form = new Form(false);
 
-$section = new Form_Section('Graph settings');
+$section = new Form_Section('Graph Settings');
 
 $group = new Form_Group('Options');
 

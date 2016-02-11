@@ -650,7 +650,7 @@ if (isset($id) && $a_cert[$id]) {
 	));
 }
 
-$section = new Form_Section('Add a new certificate');
+$section = new Form_Section('Add a New Certificate');
 
 if (!isset($id)) {
 	$section->addInput(new Form_Select(
@@ -950,7 +950,7 @@ print $form;
 		'Update'
 	));
 
-	$section = new Form_Section("Complete signing request for " . $pconfig['descr']);
+	$section = new Form_Section("Complete Signing Request for " . $pconfig['descr']);
 
 	$section->addInput(new Form_Input(
 		'descr',

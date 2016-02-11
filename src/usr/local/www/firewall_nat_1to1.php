@@ -144,7 +144,7 @@ if (isset($_POST['del_x'])) {
 		} else {
 			$a_1to1[$_GET['id']]['disabled'] = true;
 		}
-		if (write_config(gettext("Firewall: NAT: 1 to 1, enable/disable NAT rule"))) {
+		if (write_config(gettext("Firewall: NAT: 1:1, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
 		header("Location: firewall_nat_1to1.php");
@@ -173,7 +173,7 @@ display_top_tabs($tab_array);
 ?>
 <form action="firewall_nat_1to1.php" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1 to 1 mappings")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("NAT 1:1 Mappings")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>

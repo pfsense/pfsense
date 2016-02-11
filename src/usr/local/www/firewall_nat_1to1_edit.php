@@ -397,7 +397,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Edit NAT 1 to 1 entry');
+$section = new Form_Section('Edit NAT 1:1 Entry');
 
 $section->addInput(new Form_Checkbox(
 	'nobinat',

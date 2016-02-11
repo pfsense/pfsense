@@ -488,13 +488,19 @@ $columns_in_table = 13;
 $nrules = 0;
 $separators = $config['filter']['separator'][strtolower($if)];
 
-// There can be a separator before any rules are listed
-display_separator($separators, $nrules, $columns_in_table);
+// Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
+// More efficient than looping through the list of separators on every row.
+$seprows = separator_rows($separators);
 
 for ($i = 0; isset($a_filter[$i]); $i++):
 	$filterent = $a_filter[$i];
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+
+		// Display separator(s) for section beginning at rule n
+		if ($seprows[$nrules]) {
+			display_separator($separators, $nrules, $columns_in_table);
+		}
 ?>
 					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td>
@@ -800,10 +806,13 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 					</tr>
 <?php
 		$nrules++;
-		// There can be a separator before the next rule listed, or after the last rule listed
-		display_separator($separators, $nrules, $columns_in_table);
 	}
 endfor;
+
+// There can be separator(s) after the last rule listed.
+if ($seprows[$nrules]) {
+	display_separator($separators, $nrules, $columns_in_table);
+}
 ?>
 				</tbody>
 			</table>

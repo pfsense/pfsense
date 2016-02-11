@@ -689,7 +689,7 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 // ==== RADIUS section ========================================================
-$section = new Form_Section('Radius Server Settings');
+$section = new Form_Section('RADIUS Server Settings');
 $section->addClass('toggle-radius collapse');
 
 $section->addInput(new Form_Input(

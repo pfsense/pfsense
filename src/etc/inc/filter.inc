@@ -4089,7 +4089,20 @@ function filter_generate_ipsec_rules($log = array()) {
 				}
 			}
 
-			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+			$a_groups = return_gateway_groups_array();
+			if (is_array($a_groups[$ph1ent['interface']])) {
+				// bound to gateway group
+				$parentinterface = get_failover_interface($ph1ent['interface']);
+				if (substr($parentinterface, 0, 4) == "_vip") {
+					$parentinterface = get_configured_vip_interface($parentinterface);
+					/* IP Alias -> CARP */
+					if (substr($parentinterface, 0, 4) == "_vip") {
+						$parentinterface = get_configured_vip_interface($parentinterface);
+					}
+				} else {
+					$parentinterface = convert_real_interface_to_friendly_interface_name($parentinterface);
+				}
+			} elseif (substr($ph1ent['interface'], 0, 4) == "_vip") {
 				$parentinterface = get_configured_vip_interface($ph1ent['interface']);
 				/* IP Alias -> CARP */
 				if (substr($parentinterface, 0, 4) == "_vip") {

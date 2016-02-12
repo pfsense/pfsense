@@ -1964,7 +1964,7 @@ function dyndnsCheckIP($int) {
 	return $ip_address;
 }
 
-function services_dnsmasq_configure() {
+function services_dnsmasq_configure($restart_dhcp = true) {
 	global $config, $g;
 	$return = 0;
 
@@ -2130,7 +2130,7 @@ function services_dnsmasq_configure() {
 		}
 	}
 
-	if (!platform_booting()) {
+	if (!platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
@@ -2139,7 +2139,7 @@ function services_dnsmasq_configure() {
 	return $return;
 }
 
-function services_unbound_configure() {
+function services_unbound_configure($restart_dhcp = true) {
 	global $config, $g;
 	$return = 0;
 
@@ -2174,7 +2174,7 @@ function services_unbound_configure() {
 		system_dhcpleases_configure();
 	}
 
-	if (!platform_booting()) {
+	if (!platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}

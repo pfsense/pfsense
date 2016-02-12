@@ -211,18 +211,6 @@ function restore_config_section_xmlrpc($raw_params) {
 		return $xmlrpc_g['return']['authfail'];
 	}
 
-	/*
-	 * Make sure it doesn't end up with both dnsmasq and unbound enabled
-	 * simultaneously in secondary
-	 * */
-	if (isset($params[0]['unbound']['enable']) && isset($config['dnsmasq']['enable'])) {
-		unset($config['dnsmasq']['enable']);
-		services_dnsmasq_configure();
-	} else if (isset($params[0]['dnsmasq']['enable']) && isset($config['unbound']['enable'])) {
-		unset($config['unbound']['enable']);
-		services_unbound_configure();
-	}
-
 	// Some sections should just be copied and not merged or we end
 	//   up unable to sync the deletion of the last item in a section
 	$sync_full = array('dnsmasq', 'unbound', 'ipsec', 'aliases', 'wol', 'load_balancer', 'openvpn', 'cert', 'ca', 'crl', 'schedules', 'filter', 'nat', 'dhcpd', 'dhcpv6');
@@ -413,7 +401,7 @@ $filter_configure_sig = array(
 );
 
 function filter_configure_xmlrpc($raw_params) {
-	global $xmlrpc_g, $config;
+	global $xmlrpc_g, $g, $config;
 
 	$params = xmlrpc_params_to_php($raw_params);
 	if (!xmlrpc_auth($params)) {
@@ -426,16 +414,35 @@ function filter_configure_xmlrpc($raw_params) {
 	relayd_configure();
 	require_once("openvpn.inc");
 	openvpn_resync_all();
+
+	/* The DNS Resolver and the DNS Forwarder may both be active so long as
+	 * they are running on different ports. See ticket #5882
+	 */
+	$need_dhcp_start = true;
 	if (isset($config['dnsmasq']['enable'])) {
-		services_dnsmasq_configure();
-	} elseif (isset($config['unbound']['enable'])) {
-		services_unbound_configure();
+		/* Configure dnsmasq but tell it NOT to restart DHCP */
+		services_dnsmasq_configure(false);
 	} else {
-		# Both calls above run services_dhcpd_configure(), then we just
-		# need to call it when they are not called to avoid restarting dhcpd
-		# twice, as described on ticket #3797
-		services_dhcpd_configure();
+		/* kill any running dnsmasq since it is not enabled. */
+		if (file_exists("{$g['varrun_path']}/dnsmasq.pid")) {
+			sigkillbypid("{$g['varrun_path']}/dnsmasq.pid", "TERM");
+		}
 	}
+	if (isset($config['unbound']['enable'])) {
+		/* Configure unbound but tell it NOT to restart DHCP */
+		services_unbound_configure(false);
+	} else {
+		/* kill any running Unbound instance since it is not enabled. */
+		if (file_exists("{$g['varrun_path']}/unbound.pid")) {
+			sigkillbypid("{$g['varrun_path']}/unbound.pid", "TERM");
+		}
+	}
+
+	/* Call this separately since the above are manually set to skip the DHCP restart they normally perform.
+	 * This avoids restarting dhcpd twice as described on ticket #3797
+	 */
+	services_dhcpd_configure();
+
 	local_sync_accounts();
 
 	return $xmlrpc_g['return']['true'];

@@ -233,13 +233,13 @@ if ($_POST) {
 	switch ($_GET['mode']) {
 		case 'reinstallall':
 			$headline = gettext("Reinstall all Packages");
+			break;
 		case 'reinstallpkg':
 			if ($_GET['from'] && $_GET['to']) {
 				$headline = gettext("Upgrade Package");
 			} else {
 				$headline = gettext("Reinstall Package");
 			}
-
 			break;
 		case 'delete':
 			$headline = gettext("Remove Package");

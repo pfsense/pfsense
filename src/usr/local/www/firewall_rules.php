@@ -220,18 +220,11 @@ if ($_GET['act'] == "del") {
 		}
 		unset($a_filter[$_GET['id']]);
 
-		// get rule index within interface
-		$ifridx = ifridx($if, $_GET['id']);
-
 		// Update the separators
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
-
-		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-			if ($seprow > $ifridx) {
-				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-			}
-		}
+		$ridx = ifridx($if, $_GET['id']);	// get rule index within interface
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
 
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
@@ -259,16 +252,10 @@ if (isset($_POST['del_x'])) {
 			unset($a_filter[$rulei]);
 			$deleted = true;
 
-			// get rule index within interface
-			$ifridx = ifridx($if, $rulei);
-
 			// Update the separators
-			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-				if ($seprow > $ifridx) {
-					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-				}
-			}
+			$ridx = ifridx($if, $rulei);	// get rule index within interface
+			$mvnrows = -1;
+			move_separators($a_separators, $ridx, $mvnrows);
 		}
 
 		if ($deleted) {

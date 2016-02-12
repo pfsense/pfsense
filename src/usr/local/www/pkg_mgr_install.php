@@ -253,13 +253,12 @@ if ($_POST) {
 if ($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
 	$firmwareversion = get_system_pkg_version();
-	$headline = gettext("System Update") ;
 }
 
 $tab_array = array();
 
 if ($firmwareupdate || ($_POST['id'] == "firmware")) {
-	$pgtitle = array(gettext("System"), gettext("Update"));
+	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {

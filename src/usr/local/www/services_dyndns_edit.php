@@ -270,7 +270,7 @@ function build_if_list() {
 	return($list);
 }
 
-$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Client"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors) {

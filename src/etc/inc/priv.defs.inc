@@ -725,8 +725,8 @@ $priv_list['page-services-dhcpserver']['match'] = array();
 $priv_list['page-services-dhcpserver']['match'][] = "services_dhcp.php*";
 
 $priv_list['page-services-dhcpserver-editstaticmapping'] = array();
-$priv_list['page-services-dhcpserver-editstaticmapping']['name'] = gettext("WebCfg - Services: DHCP Server: Edit static mapping");
-$priv_list['page-services-dhcpserver-editstaticmapping']['descr'] = gettext("Allow access to the 'Services: DHCP Server: Edit static mapping' page.");
+$priv_list['page-services-dhcpserver-editstaticmapping']['name'] = gettext("WebCfg - Services: DHCP Server: Edit Static Mapping");
+$priv_list['page-services-dhcpserver-editstaticmapping']['descr'] = gettext("Allow access to the 'Services: DHCP Server: Edit Static Mapping' page.");
 $priv_list['page-services-dhcpserver-editstaticmapping']['match'] = array();
 $priv_list['page-services-dhcpserver-editstaticmapping']['match'][] = "services_dhcp_edit.php*";
 
@@ -743,8 +743,8 @@ $priv_list['page-services-dhcpv6server']['match'] = array();
 $priv_list['page-services-dhcpv6server']['match'][] = "services_dhcpv6.php*";
 
 $priv_list['page-services-dhcpserverv6-editstaticmapping'] = array();
-$priv_list['page-services-dhcpserverv6-editstaticmapping']['name'] = gettext("WebCfg - Services: DHCPv6 Server: Edit static mapping");
-$priv_list['page-services-dhcpserverv6-editstaticmapping']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server : Edit static mapping' page.");
+$priv_list['page-services-dhcpserverv6-editstaticmapping']['name'] = gettext("WebCfg - Services: DHCPv6 Server: Edit Static Mapping");
+$priv_list['page-services-dhcpserverv6-editstaticmapping']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server : Edit Static Mapping' page.");
 $priv_list['page-services-dhcpserverv6-editstaticmapping']['match'] = array();
 $priv_list['page-services-dhcpserverv6-editstaticmapping']['match'][] = "services_dhcpv6_edit.php*";
 

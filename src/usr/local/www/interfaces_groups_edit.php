@@ -207,7 +207,7 @@ if ($input_errors) {
 <div id="inputerrors"></div>
 <?php
 $tab_array = array();
-$tab_array[0]  = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[0]  = array(gettext("Interface Assignments"), false, "interfaces_assign.php");
 $tab_array[1]  = array(gettext("Interface Groups"), true, "interfaces_groups.php");
 $tab_array[2]  = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[3]  = array(gettext("VLANs"), false, "interfaces_vlan.php");

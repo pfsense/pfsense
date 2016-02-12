@@ -59,12 +59,12 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
-##|*NAME=Interfaces: Assign network ports
-##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
+##|*NAME=Interfaces: Interface Assignments
+##|*DESCR=Allow access to the 'Interfaces: Interface Assignments' page.
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"), gettext("Assign network ports"));
+$pgtitle = array(gettext("Interfaces"), gettext("Interface Assignments"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
@@ -515,16 +515,16 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Assignments"), true, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 $tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
 $tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <form action="interfaces_assign.php" method="post">

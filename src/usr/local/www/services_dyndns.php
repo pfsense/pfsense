@@ -97,7 +97,7 @@ if ($_GET['act'] == "del") {
 		exit;
 	}
 }
-$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Clients"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
 include("head.inc");
 
 if ($input_errors) {
@@ -105,8 +105,8 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Dynamic DNS"), true, "services_dyndns.php");
-$tab_array[] = array(gettext("RFC 2136"), false, "services_rfc2136.php");
+$tab_array[] = array(gettext("Dynamic DNS Clients"), true, "services_dyndns.php");
+$tab_array[] = array(gettext("RFC 2136 Clients"), false, "services_rfc2136.php");
 display_top_tabs($tab_array);
 ?>
 <form action="services_dyndns.php" method="post" name="iform" id="iform">

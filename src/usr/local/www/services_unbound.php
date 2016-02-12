@@ -263,7 +263,7 @@ function build_if_list($selectedifs) {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"));
 $shortcut_section = "resolver";
 
 include_once("head.inc");
@@ -281,8 +281,8 @@ if (is_subsystem_dirty('unbound')) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
-$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+$tab_array[] = array(gettext("General Settings"), true, "services_unbound.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 

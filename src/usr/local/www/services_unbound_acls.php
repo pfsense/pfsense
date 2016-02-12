@@ -222,8 +222,8 @@ if (is_subsystem_dirty('unbound')) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("General settings"), false, "/services_unbound.php");
-$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+$tab_array[] = array(gettext("General Settings"), false, "/services_unbound.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 

@@ -231,7 +231,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitors"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");

@@ -2148,7 +2148,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	}
 	return $v;
 }
-function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
+function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $config;
 
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2184,7 +2184,9 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false) {
 			}
 			unlink_if_exists($tmp_urltable_filename);
 		} else {
-			touch($urltable_filename);
+			if (!$validateonly) {
+				touch($urltable_filename);
+			}
 			conf_mount_ro();
 			return false;
 		}

@@ -225,7 +225,7 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
-			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
+			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
 			}
 			if ($_POST["detail0"] <> "") {

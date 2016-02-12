@@ -132,6 +132,10 @@ if ($_GET['act'] == "del") {
 		if ($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), htmlspecialchars($referenced_by));
 		} else {
+			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
+				// this is a URL table type alias, delete its file as well
+				unlink_if_exists("/var/db/aliastables/" . $a_aliases[$_GET['id']]['name'] . ".txt");
+			}
 			unset($a_aliases[$_GET['id']]);
 			if (write_config()) {
 				filter_configure();

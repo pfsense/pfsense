@@ -884,6 +884,9 @@ $section->addInput(new Form_Select(
 	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
 
+/* FreeBSD doesn't yet have TFC support. this is ready to go once it does
+https://redmine.pfsense.org/issues/4688
+
 $section->addInput(new Form_Checkbox(
 	'tfc_enable',
 	'Traffic Flow Confidentiality',
@@ -897,6 +900,8 @@ $section->addInput(new Form_Input(
 	'Bytes TFC',
 	$pconfig['tfc_bytes']
 ))->setHelp('Enter the number of bytes to pad ESP data to, or leave blank to fill to MTU size');
+
+*/
 
 $section->addInput(new Form_Checkbox(
 	'dpd_enable',
@@ -974,14 +979,14 @@ events.push(function() {
 			hideInput('mode', true);
 			hideInput('mobike', false);
 			hideInput('nat_traversal', true);
-			hideCheckbox('tfc_enable', false);
+			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
 			hideInput('nat_traversal', false);
-			hideCheckbox('tfc_enable', true);
-			hideInput('tfc_bytes', true);
+			//hideCheckbox('tfc_enable', true);
+			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
 		}
 	}
@@ -1093,11 +1098,11 @@ events.push(function() {
 		}
 	}
 
-	function tfcchkbox_change() {
-		hide = !$('#tfc_enable').prop('checked');
-
-		hideInput('tfc_bytes', hide);
-	}
+	//function tfcchkbox_change() {
+	//	hide = !$('#tfc_enable').prop('checked');
+	//
+	//	hideInput('tfc_bytes', hide);
+	//}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
@@ -1107,9 +1112,9 @@ events.push(function() {
 	});
 
 	 // TFC
-	$('#tfc_enable').click(function () {
-		tfcchkbox_change();
-	});
+	//$('#tfc_enable').click(function () {
+	//	tfcchkbox_change();
+	//});
 
 	 // Peer identifier
 	$('#peerid_type').click(function () {

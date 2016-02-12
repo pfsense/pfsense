@@ -4267,7 +4267,7 @@ function ifridx($if, $ridx) {
 			$i++;
 		}
 	}
-	return $i;
+	return $ifridx;
 }
 
 /* display rules separators */

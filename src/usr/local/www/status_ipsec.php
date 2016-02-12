@@ -83,11 +83,11 @@ if ($_GET['act'] == 'connect') {
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
 					mwexec("/usr/local/sbin/ipsec down {$connid}");
-					mwexec("/usr/local/sbin/ipsec up {$connid}");
+					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
 				mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-				mwexec("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
 			}
 		}
 	}

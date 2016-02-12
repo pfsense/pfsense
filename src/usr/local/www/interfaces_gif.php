@@ -100,7 +100,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("GIF"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIFs"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -109,16 +109,16 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Assignments"), false, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 $tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
 $tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[] = array(gettext("GIF"), true, "interfaces_gif.php");
+$tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIFs"), true, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default">

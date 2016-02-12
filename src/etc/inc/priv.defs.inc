@@ -443,8 +443,8 @@ $priv_list['page-interfaces']['match'] = array();
 $priv_list['page-interfaces']['match'][] = "interfaces.php*";
 
 $priv_list['page-interfaces-assignnetworkports'] = array();
-$priv_list['page-interfaces-assignnetworkports']['name'] = gettext("WebCfg - Interfaces: Assign network ports");
-$priv_list['page-interfaces-assignnetworkports']['descr'] = gettext("Allow access to the 'Interfaces: Assign network ports' page.");
+$priv_list['page-interfaces-assignnetworkports']['name'] = gettext("WebCfg - Interfaces: Interface Assignments");
+$priv_list['page-interfaces-assignnetworkports']['descr'] = gettext("Allow access to the 'Interfaces: Interface Assignments' page.");
 $priv_list['page-interfaces-assignnetworkports']['match'] = array();
 $priv_list['page-interfaces-assignnetworkports']['match'][] = "interfaces_assign.php*";
 

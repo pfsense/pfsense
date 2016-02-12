@@ -4296,4 +4296,16 @@ function separator_rows($separators) {
 	return $seprows;
 }
 
+/* If the separator is located after the place ($ridx) where the rule was added or deleted, move the separator ($mvrows) */
+function move_separators(&$a_separators, $ridx, $mvnrows) {
+	if (is_array($a_separators)) {
+		foreach ($a_separators as $sepi => $separator) {
+			$seprow = substr($separator['row']['0'], 2);
+			if ($seprow > $ridx) {
+				$a_separators[$sepi]['row']['0'] = 'fr' . ($seprow + $mvnrows);
+			}
+		}
+	}
+}
+
 ?>

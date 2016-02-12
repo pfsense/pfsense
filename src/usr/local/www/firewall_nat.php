@@ -142,13 +142,9 @@ if ($_GET['act'] == "del") {
 
 		// Update the separators
 		$a_separators = &$config['nat']['separator'];
-
-		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-			if ($seprow > $_GET['id']) {
-				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-			}
-		}
+		$ridx = $_GET['id'];
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
 
 		if (write_config()) {
 			mark_subsystem_dirty('natconf');
@@ -180,12 +176,9 @@ if (isset($_POST['del_x'])) {
 			unset($a_nat[$rulei]);
 
 			// Update the separators
-			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-				if ($seprow > $rulei) {
-					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-				}
-			}
+			$ridx = $rulei;
+			$mvnrows = -1;
+			move_separators($a_separators, $ridx, $mvnrows);
 		}
 
 		if (write_config()) {

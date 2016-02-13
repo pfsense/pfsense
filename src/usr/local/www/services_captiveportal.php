@@ -1186,7 +1186,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print($form);
 
-print_info_box(gettext('Warning:' . '<br />' . 'Don\'t forget to enable the DHCP server on your captive portal interface! ' .
+print_info_box(gettext('Don\'t forget to enable the DHCP server on your captive portal interface! ' .
 					   'Make sure that the default/maximum DHCP lease time is higher than the hard timeout entered on this page. ' .
 					   'Also, the DNS Forwarder or Resolver must be enabled for DNS lookups by unauthenticated clients to work.'));
 

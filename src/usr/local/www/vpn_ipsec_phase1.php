@@ -651,10 +651,10 @@ function build_eal_list() {
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 1"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
 	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 1"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 1"));
 	$editing_mobile = false;
 }
 

@@ -268,7 +268,7 @@ $types = array('proxyarp' => gettext('Proxy ARP'),
 			   'ipalias' => gettext('IP Alias')
 			   );
 
-$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IPs"));
 include("head.inc");
 
 if ($input_errors) {

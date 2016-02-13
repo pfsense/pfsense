@@ -439,7 +439,7 @@ if (count($pools) > 0) {
 }
 
 if (empty($leases)) {
-	print_info_box(gettext("No leases file found. Is the DHCPv6 server active?"), 'warning', false);
+	print_info_box(gettext("No leases file found. Is the DHCP server active?"), 'warning', false);
 }
 
 ?>

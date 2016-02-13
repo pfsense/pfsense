@@ -73,7 +73,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	});
 
 	if (empty($installed_packages)) {
-		print_info_box(gettext("No packages installed.") . " " . gettext('You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.'), 'warning', false);
+		print_info_box("<strong>". gettext("No packages installed.") . "</strong>\n" . " " .
+		    gettext('You can install packages <a href="pkg_mgr.php" class="alert-link">here</a>.') . "\n", 'warning', false);
 		exit;
 	}
 

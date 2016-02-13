@@ -60,7 +60,7 @@
 ##|*MATCH=interfaces_qinq_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"), gettext("QinQ"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");

@@ -186,7 +186,7 @@ function build_parent_list() {
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("GRE"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GREs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

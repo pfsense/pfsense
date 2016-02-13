@@ -58,8 +58,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan-edit
-##|*NAME=Services: Wake on LAN: Edit
-##|*DESCR=Allow access to the 'Services: Wake on LAN: Edit' page.
+##|*NAME=Services: Wake-on-LAN: Edit
+##|*DESCR=Allow access to the 'Services: Wake-on-LAN: Edit' page.
 ##|*MATCH=services_wol_edit.php*
 ##|-PRIV
 
@@ -134,7 +134,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Wake on LAN"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Wake-on-LAN"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors) {

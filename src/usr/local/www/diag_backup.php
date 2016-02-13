@@ -575,7 +575,7 @@ function build_area_list($showall) {
 		"snmpd" => gettext("SNMP Server"),
 		"shaper" => gettext("Traffic Shaper"),
 		"vlans" => gettext("VLANS"),
-		"wol" => gettext("Wake on LAN")
+		"wol" => gettext("Wake-on-LAN")
 		);
 
 	$list = array("" => gettext("All"));

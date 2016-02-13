@@ -296,7 +296,7 @@ $group->add(new Form_MultiCheckbox(
 
 $group->add(new Form_MultiCheckbox(
 	'synchronizewol',
-	'Synchronize Wake on LAN',
+	'Synchronize Wake-on-LAN',
 	'WoL Server settings ',
 	($pconfig['synchronizewol'] === 'on'),
 	'on'

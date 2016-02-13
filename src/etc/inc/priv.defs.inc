@@ -869,14 +869,14 @@ $priv_list['page-services-dnsresolver-edithost']['match'] = array();
 $priv_list['page-services-dnsresolver-edithost']['match'][] = "services_unbound_host_edit.php*";
 
 $priv_list['page-services-wakeonlan'] = array();
-$priv_list['page-services-wakeonlan']['name'] = gettext("WebCfg - Services: Wake on LAN");
-$priv_list['page-services-wakeonlan']['descr'] = gettext("Allow access to the 'Services: Wake on LAN' page.");
+$priv_list['page-services-wakeonlan']['name'] = gettext("WebCfg - Services: Wake-on-LAN");
+$priv_list['page-services-wakeonlan']['descr'] = gettext("Allow access to the 'Services: Wake-on-LAN' page.");
 $priv_list['page-services-wakeonlan']['match'] = array();
 $priv_list['page-services-wakeonlan']['match'][] = "services_wol.php*";
 
 $priv_list['page-services-wakeonlan-edit'] = array();
-$priv_list['page-services-wakeonlan-edit']['name'] = gettext("WebCfg - Services: Wake on LAN: Edit");
-$priv_list['page-services-wakeonlan-edit']['descr'] = gettext("Allow access to the 'Services: Wake on LAN: Edit' page.");
+$priv_list['page-services-wakeonlan-edit']['name'] = gettext("WebCfg - Services: Wake-on-LAN: Edit");
+$priv_list['page-services-wakeonlan-edit']['descr'] = gettext("Allow access to the 'Services: Wake-on-LAN: Edit' page.");
 $priv_list['page-services-wakeonlan-edit']['match'] = array();
 $priv_list['page-services-wakeonlan-edit']['match'][] = "services_wol_edit.php*";
 

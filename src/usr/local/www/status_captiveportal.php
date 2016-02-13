@@ -123,7 +123,11 @@ if (!empty($cpzone)) {
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("Captive portal"));
+if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])) {
+	$pgtitle = array(gettext("Status"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("Active Users"));
+} else {
+	$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
+}
 $shortcut_section = "captiveportal";
 
 include("head.inc");

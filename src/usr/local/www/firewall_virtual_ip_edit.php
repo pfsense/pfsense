@@ -317,7 +317,7 @@ if ($_POST) {
 $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not specify a CIDR range.');
 $proxyarphelp = gettext('Enter a CIDR block of proxy ARP addresses.');
 
-$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Address"), gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"), gettext("Edit"));
 include("head.inc");
 
 function build_if_list() {

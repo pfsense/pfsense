@@ -357,7 +357,7 @@ function build_port_list($selecton) {
 	return($portlist);
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("Bridge"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("Bridges"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

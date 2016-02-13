@@ -402,7 +402,6 @@ if ($queue) {
 	}
 }
 
-//$pgtitle = "Firewall: Shaper: By Interface View";
 include("head.inc");
 
 $tree = '<ul class="tree" >';

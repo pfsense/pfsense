@@ -83,9 +83,6 @@ require("captiveportal.inc");
 global $cpzone;
 global $cpzoneid;
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit MAC address rules"));
-$shortcut_section = "captiveportal";
-
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
@@ -100,6 +97,9 @@ if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
 $a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("MAC"), gettext("Edit"));
+$shortcut_section = "captiveportal";
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];

@@ -784,10 +784,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['enable']
 	));
 } else {
-	$section->addInput(new Form_StaticText(
-		null,
-		'<div class="alert alert-info"> Editing Pool-Specific Options. To return to the Interface, click its tab above. </div>'
-	));
+	print_info_box(gettext('Editing Pool-Specific Options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
 $section->addInput(new Form_Checkbox(

@@ -289,12 +289,24 @@ switch ($curcat) {
 	case "vpnusers":
 		$curcattext = gettext("VPN Users");
 		break;
+	case "captiveportal":
+		$curcattext = gettext("Captive Portal");
+		break;
+	case "ntpd":
+		$curcattext = gettext("NTP");
+		break;
+	case "dhcpd":
+		$curcattext = gettext("DHCP Server");
+		break;
+	case "queuedrops":
+		$curcattext = gettext("QueueDrops");
+		break;
 	default:
 		$curcattext = ucfirst($curcat);
 		break;
 }
 
-$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext($curcattext . " Graphs"));
+$pgtitle = array(gettext("Status"), gettext("RRD Graphs"), gettext($curcattext));
 
 /* Load all CP zones */
 if ($captiveportal && is_array($config['captiveportal'])) {
@@ -441,7 +453,7 @@ function make_tabs() {
 	}
 
 	if ($vpnusers) {
-		$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
+		$tab_array[] = array(gettext("VPN Users"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 	}
 
 	if ($captiveportal) {
@@ -449,7 +461,7 @@ function make_tabs() {
 	}
 
 	if ($ntpd) {
-		$tab_array[] = array("NTPD", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+		$tab_array[] = array("NTP", ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 	}
 
 	if ($dhcpd) {

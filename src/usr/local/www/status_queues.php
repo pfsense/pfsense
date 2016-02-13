@@ -142,7 +142,7 @@ if ($_REQUEST['getactivity']) {
 	echo $finscript;
 	exit;
 }
-$pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues"));
+$pgtitle = array(gettext("Status"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
 

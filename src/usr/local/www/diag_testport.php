@@ -241,9 +241,8 @@ if ($input_errors) {
 	print ($alert_text . '</div>');
 } else {
 	// First time, new page
-	print('<div class="alert alert-warning" role="alert">' .
-		gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
-		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.') . '</div>');
+	print_info_box(gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.'), 'warning', false);
 }
 
 $form = new Form('Test');

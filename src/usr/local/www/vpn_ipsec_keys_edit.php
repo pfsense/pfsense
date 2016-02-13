@@ -203,9 +203,8 @@ print $form;
 
 ?>
 
-<div class="alert alert-info">
-	<strong><?=gettext("Note"); ?>:</strong><br />
-	<?=gettext("PSK for any user can be set by using an identifier of any")?>
-</div>
+<?php
+print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
+?>
 
 <?php include("foot.inc"); ?>

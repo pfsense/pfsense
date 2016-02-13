@@ -439,7 +439,7 @@ if (count($pools) > 0) {
 }
 
 if (empty($leases)) {
-	print '<div class="alert alert-warning" role="alert">' . gettext("No leases file found. Is the DHCP server active?") . '</div>';
+	print_info_box(gettext("No leases file found. Is the DHCP server active?"), 'warning', false);
 }
 
 ?>

@@ -89,11 +89,9 @@ foreach ($package_list as $pkg) {
 	$installed_packages[] = $pkg;
 }
 
-if (empty($installed_packages)):?>
-	<div class="alert alert-warning">
-		<?=gettext("There are no packages currently installed.")?>
-	</div>
-<?php else:?>
+if (empty($installed_packages)):
+	print_info_box(gettext("There are no packages currently installed."), 'warning', false);
+else:?>
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
 		<div class="table-responsive">

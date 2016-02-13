@@ -190,7 +190,7 @@ if (count($sources) > 0) {
 </div>
 <?php
 if ($row == 0) {
-	print('<p class="alert alert-warning">' . gettext('No source tracking entries were found.') . '</p>');
+	print_info_box(gettext('No source tracking entries were found.'), 'warning', false);
 }
 
 include("foot.inc");

@@ -597,6 +597,9 @@ display_top_tabs($tab_array);
 	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><?=gettext('Save')?></button>
 </form>
 <br />
-<p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
+
+<?php
+print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."), 'info', false);
+?>
 
 <?php include("foot.inc")?>

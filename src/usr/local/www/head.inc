@@ -270,7 +270,7 @@ if (count($config['interfaces']) > 1) {
 	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 
-$services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
+$services_menu[] = array(gettext("Wake-on-LAN"), "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")), 0);
 
 // VPN

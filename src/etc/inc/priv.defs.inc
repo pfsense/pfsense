@@ -200,8 +200,8 @@ $priv_list['page-diagnostics-routingtables']['match'] = array();
 $priv_list['page-diagnostics-routingtables']['match'][] = "diag_routes.php*";
 
 $priv_list['page-diagnostics-smart'] = array();
-$priv_list['page-diagnostics-smart']['name'] = gettext("WebCfg - Diagnostics: S.M.A.R.T. Monitor Tools");
-$priv_list['page-diagnostics-smart']['descr'] = gettext("Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.");
+$priv_list['page-diagnostics-smart']['name'] = gettext("WebCfg - Diagnostics: S.M.A.R.T. Status");
+$priv_list['page-diagnostics-smart']['descr'] = gettext("Allow access to the 'Diagnostics: S.M.A.R.T. Status' page.");
 $priv_list['page-diagnostics-smart']['match'] = array();
 $priv_list['page-diagnostics-smart']['match'][] = "diag_smart.php*";
 

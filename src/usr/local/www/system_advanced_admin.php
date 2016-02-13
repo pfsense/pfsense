@@ -336,7 +336,7 @@ display_top_tabs($tab_array);
 ?><div id="container"><?php
 
 $form = new Form;
-$section = new Form_Section('WebConfigurator');
+$section = new Form_Section('webConfigurator');
 $group = new Form_Group('Protocol');
 
 $group->add(new Form_Checkbox(

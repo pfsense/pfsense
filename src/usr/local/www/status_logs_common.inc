@@ -110,7 +110,7 @@ function tab_array_logs_common() {
 	$tab_array[] = array(gettext("System"), $is_system_log, "status_logs.php");
 	$tab_array[] = array(gettext("Firewall"), $is_filter_log, "status_logs_filter.php");
 	$tab_array[] = array(gettext("DHCP"), ($logfile == 'dhcpd'), "status_logs.php?logfile=dhcpd");
-	$tab_array[] = array(gettext("Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
+	$tab_array[] = array(gettext("Captive Portal Auth"), ($logfile == 'portalauth'), "status_logs.php?logfile=portalauth");
 	$tab_array[] = array(gettext("IPsec"), ($logfile == 'ipsec'), "status_logs.php?logfile=ipsec");
 	$tab_array[] = array(gettext("PPP"), ($logfile == 'ppp'), "status_logs.php?logfile=ppp");
 	$tab_array[] = array(gettext("VPN"), $is_pppoe_l2tp_vpn_log, "status_logs_vpn.php");
@@ -125,7 +125,7 @@ function tab_array_logs_common() {
 		$tab_array[] = array(gettext("General"), ($logfile == 'system'), "/status_logs.php");
 		$tab_array[] = array(gettext("Gateways"), ($logfile == 'gateways'), "/status_logs.php?logfile=gateways");
 		$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/status_logs.php?logfile=routing");
-		$tab_array[] = array(gettext("Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
+		$tab_array[] = array(gettext("DNS Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
 		$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/status_logs.php?logfile=wireless");
 	}
 	else if ($is_filter_log) {

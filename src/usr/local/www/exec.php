@@ -218,7 +218,7 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
+	print_info_box(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'warning', false);
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
@@ -269,7 +269,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <?php
 	if ($ulmsg) {
-		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
+		print_info_box($ulmsg, 'success', false);
 	}
 ?>
 	<div class="panel panel-default">

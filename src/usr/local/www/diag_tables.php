@@ -241,10 +241,8 @@ events.push(function() {
 	</div>
 </div>
 
-<?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
-<?php endif ?>
-
 <?php
-
+if (empty($entries)) {
+	print_info_box(gettext("No entries exist in this table"), 'warning', false);
+}
 include("foot.inc");

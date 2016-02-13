@@ -294,7 +294,7 @@ if ($states == 0) {
 		$errmsg = gettext('No states were found');
 	}
 
-	print('<p class="alert alert-warning">' . $errmsg . '</p>');
+	print_info_box($errmsg, 'warning', false);
 }
 
 include("foot.inc");

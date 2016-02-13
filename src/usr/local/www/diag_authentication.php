@@ -109,7 +109,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
+	print_info_box($savemsg, 'success', false);
 }
 
 $form = new Form('Test');

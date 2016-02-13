@@ -94,7 +94,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'alert-success');
+	print_info_box($savemsg, 'success');
 }
 
 $statetablehelp = sprintf(gettext('Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .

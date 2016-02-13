@@ -86,7 +86,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Reset States"));
 include("head.inc");
 
 if ($input_errors) {

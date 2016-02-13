@@ -63,7 +63,7 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
+$pgtitle = array(gettext("Diagnostics"), gettext("SMART Status"));
 $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";

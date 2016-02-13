@@ -75,7 +75,7 @@ if ($_POST['save'] == 'No') {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Halt system"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Halt System"));
 include('head.inc');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {

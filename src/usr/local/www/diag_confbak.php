@@ -132,7 +132,7 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Configuration History"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Config History"));
 include("head.inc");
 
 if ($savemsg) {

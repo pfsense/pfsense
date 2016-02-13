@@ -70,7 +70,7 @@ if ($_POST['Submit'] == " " . gettext("No") . " ") {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Factory defaults"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Factory Defaults"));
 include("head.inc");
 ?>
 

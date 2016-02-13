@@ -73,7 +73,7 @@ require("captiveportal.inc");
 $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 include("head.inc");
 
 

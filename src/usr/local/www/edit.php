@@ -62,7 +62,7 @@
 ##|*MATCH=filebrowser/browser.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Edit File"));
 require("guiconfig.inc");
 
 if ($_POST['action']) {

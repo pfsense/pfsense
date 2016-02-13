@@ -593,7 +593,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Backup/Restore"));
 include("head.inc");
 
 if ($input_errors) {

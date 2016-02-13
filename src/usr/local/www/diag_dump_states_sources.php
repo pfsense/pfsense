@@ -84,7 +84,7 @@ if ($_POST['filter']) {
 }
 
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Show Source Tracking"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Source Tracking"));
 include("head.inc");
 
 $tab_array = array();

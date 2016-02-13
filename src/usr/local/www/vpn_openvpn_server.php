@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-server
-##|*NAME=OpenVPN: Server
-##|*DESCR=Allow access to the 'OpenVPN: Server' page.
+##|*NAME=OpenVPN: Servers
+##|*DESCR=Allow access to the 'OpenVPN: Servers' page.
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
@@ -589,7 +589,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Server"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Servers"));
 $shortcut_section = "openvpn";
 
 include("head.inc");
@@ -607,8 +607,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), true, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), true, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), false, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);

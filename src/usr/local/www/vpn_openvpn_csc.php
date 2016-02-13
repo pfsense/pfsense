@@ -319,8 +319,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), false, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), false, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), true, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);

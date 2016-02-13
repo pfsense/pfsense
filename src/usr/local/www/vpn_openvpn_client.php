@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-client
-##|*NAME=OpenVPN: Client
-##|*DESCR=Allow access to the 'OpenVPN: Client' page.
+##|*NAME=OpenVPN: Clients
+##|*DESCR=Allow access to the 'OpenVPN: Clients' page.
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
 
@@ -67,7 +67,7 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies;
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
 $shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-client'])) {
@@ -441,8 +441,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), false, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), true, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);

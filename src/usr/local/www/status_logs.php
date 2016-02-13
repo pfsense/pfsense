@@ -75,7 +75,7 @@ $allowed_logs = array(
 		    "shortcut" => ""),
 	"dhcpd" => array("name" => gettext("DHCP"),
 		    "shortcut" => "dhcp"),
-	"portalauth" => array("name" => gettext("Captive Portal Authentication"),
+	"portalauth" => array("name" => gettext("Captive Portal Auth"),
 		    "shortcut" => "captiveportal"),
 	"ipsec" => array("name" => gettext("IPsec"),
 		    "shortcut" => "ipsec"),
@@ -85,7 +85,7 @@ $allowed_logs = array(
 		    "shortcut" => "relayd"),
 	"openvpn" => array("name" => gettext("OpenVPN"),
 		    "shortcut" => "openvpn"),
-	"ntpd" => array("name" => gettext("NTPd"),
+	"ntpd" => array("name" => gettext("NTP"),
 		    "shortcut" => "ntp"),
 	"gateways" => array("name" => gettext("Gateways"),
 		    "shortcut" => "gateways"),
@@ -125,7 +125,11 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]));
+if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'))) {
+	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("System"), $allowed_logs[$logfile]["name"]);
+} else {
+	$pgtitle = array(gettext("Status"), gettext("System Logs"), $allowed_logs[$logfile]["name"]);
+}
 include("head.inc");
 
 if (!$input_errors && $savemsg) {

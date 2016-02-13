@@ -233,7 +233,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("System"), false, "status_logs.php");
 $tab_array[] = array(gettext("Firewall"), false, "status_logs_filter.php");
 $tab_array[] = array(gettext("DHCP"), false, "status_logs.php?logfile=dhcpd");
-$tab_array[] = array(gettext("Portal Auth"), false, "status_logs.php?logfile=portalauth");
+$tab_array[] = array(gettext("Captive Portal Auth"), false, "status_logs.php?logfile=portalauth");
 $tab_array[] = array(gettext("IPsec"), false, "status_logs.php?logfile=ipsec");
 $tab_array[] = array(gettext("PPP"), false, "status_logs.php?logfile=ppp");
 $tab_array[] = array(gettext("VPN"), false, "status_logs_vpn.php");

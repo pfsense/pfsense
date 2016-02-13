@@ -118,8 +118,8 @@ $status = ipsec_list_sa();
 $tab_array = array();
 $tab_array[] = array(gettext("Overview"), true, "status_ipsec.php");
 $tab_array[] = array(gettext("Leases"), false, "status_ipsec_leases.php");
-$tab_array[] = array(gettext("SAD"), false, "status_ipsec_sad.php");
-$tab_array[] = array(gettext("SPD"), false, "status_ipsec_spd.php");
+$tab_array[] = array(gettext("SADs"), false, "status_ipsec_sad.php");
+$tab_array[] = array(gettext("SPDs"), false, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 ?>
 

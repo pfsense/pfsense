@@ -65,7 +65,7 @@ global $g, $rrd_graph_list, $rrd_period_list, $rrd_graph_length_list;
 $rrddbpath = "/var/db/rrd/";
 $rrdtmppath = "/tmp/";
 
-$pgtitle = array(gettext("System"), gettext("RRD Graphs"), gettext("Image viewer"));
+$pgtitle = array(gettext("System"), gettext("RRD Graphs"), gettext("Image Viewer"));
 
 if ($_GET['database']) {
 	$curdatabase = basename($_GET['database']);

@@ -112,7 +112,7 @@ manage_log_code();
 status_logs_common_code();
 
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
 if (!$input_errors && $savemsg) {

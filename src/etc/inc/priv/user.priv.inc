@@ -67,8 +67,8 @@ $priv_list['user-pppoe-dialin']['name'] = gettext("User - VPN: PPPOE Dialin");
 $priv_list['user-pppoe-dialin']['descr'] = gettext("Indicates whether the user is allowed to dial in via PPPOE");
 
 $priv_list['page-status-systemlogs-portalauth'] = array();
-$priv_list['page-status-systemlogs-portalauth']['name'] = gettext("WebCfg - Status: System logs: Portal Auth");
-$priv_list['page-status-systemlogs-portalauth']['descr'] = gettext("Allow access to the 'Status: System logs: Portal Auth' page.");
+$priv_list['page-status-systemlogs-portalauth']['name'] = gettext("WebCfg - Status: System Logs: Portal Auth");
+$priv_list['page-status-systemlogs-portalauth']['descr'] = gettext("Allow access to the 'Status: System Logs: Portal Auth' page.");
 $priv_list['page-status-systemlogs-portalauth']['match'] = array();
 $priv_list['page-status-systemlogs-portalauth']['match'][] = "status_logs.php?logfile=portalauth";
 
@@ -91,44 +91,44 @@ $priv_list['page-diagnostics-logs-resolver']['match'] = array();
 $priv_list['page-diagnostics-logs-resolver']['match'][] = "status_logs.php?logfile=resolver";
 
 $priv_list['page-status-systemlogs-ipsecvpn'] = array();
-$priv_list['page-status-systemlogs-ipsecvpn']['name'] = gettext("WebCfg - Status: System logs: IPsec VPN");
-$priv_list['page-status-systemlogs-ipsecvpn']['descr'] = gettext("Allow access to the 'Status: System logs: IPsec VPN' page.");
+$priv_list['page-status-systemlogs-ipsecvpn']['name'] = gettext("WebCfg - Status: System Logs: IPsec VPN");
+$priv_list['page-status-systemlogs-ipsecvpn']['descr'] = gettext("Allow access to the 'Status: System Logs: IPsec VPN' page.");
 $priv_list['page-status-systemlogs-ipsecvpn']['match'] = array();
 $priv_list['page-status-systemlogs-ipsecvpn']['match'][] = "status_logs.php?logfile=ipsec";
 
 $priv_list['page-status-systemlogs-ntpd'] = array();
-$priv_list['page-status-systemlogs-ntpd']['name'] = gettext("WebCfg - Status: System logs: NTP");
-$priv_list['page-status-systemlogs-ntpd']['descr'] = gettext("Allow access to the 'Status: System logs: NTP' page.");
+$priv_list['page-status-systemlogs-ntpd']['name'] = gettext("WebCfg - Status: System Logs: NTP");
+$priv_list['page-status-systemlogs-ntpd']['descr'] = gettext("Allow access to the 'Status: System Logs: NTP' page.");
 $priv_list['page-status-systemlogs-ntpd']['match'] = array();
 $priv_list['page-status-systemlogs-ntpd']['match'][] = "status_logs.php?logfile=ntpd";
 
 $priv_list['page-status-systemlogs-openvpn'] = array();
-$priv_list['page-status-systemlogs-openvpn']['name'] = gettext("WebCfg - Status: System logs: OpenVPN");
-$priv_list['page-status-systemlogs-openvpn']['descr'] = gettext("Allow access to the 'Status: System logs: OpenVPN' page.");
+$priv_list['page-status-systemlogs-openvpn']['name'] = gettext("WebCfg - Status: System Logs: OpenVPN");
+$priv_list['page-status-systemlogs-openvpn']['descr'] = gettext("Allow access to the 'Status: System Logs: OpenVPN' page.");
 $priv_list['page-status-systemlogs-openvpn']['match'] = array();
 $priv_list['page-status-systemlogs-openvpn']['match'][] = "status_logs.php?logfile=openvpn";
 
 $priv_list['page-status-systemlogs-ppp'] = array();
-$priv_list['page-status-systemlogs-ppp']['name'] = gettext("WebCfg - Status: System logs: IPsec VPN");
-$priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the 'Status: System logs: IPsec VPN' page.");
+$priv_list['page-status-systemlogs-ppp']['name'] = gettext("WebCfg - Status: System Logs: IPsec VPN");
+$priv_list['page-status-systemlogs-ppp']['descr'] = gettext("Allow access to the 'Status: System Logs: IPsec VPN' page.");
 $priv_list['page-status-systemlogs-ppp']['match'] = array();
 $priv_list['page-status-systemlogs-ppp']['match'][] = "status_logs.php?logfile=ppp";
 
 $priv_list['page-status-systemlogs-loadbalancer'] = array();
-$priv_list['page-status-systemlogs-loadbalancer']['name'] = gettext("WebCfg - Status: System logs: Load Balancer");
-$priv_list['page-status-systemlogs-loadbalancer']['descr'] = gettext("Allow access to the 'Status: System logs: Load Balancer' page.");
+$priv_list['page-status-systemlogs-loadbalancer']['name'] = gettext("WebCfg - Status: System Logs: Load Balancer");
+$priv_list['page-status-systemlogs-loadbalancer']['descr'] = gettext("Allow access to the 'Status: System Logs: Load Balancer' page.");
 $priv_list['page-status-systemlogs-loadbalancer']['match'] = array();
 $priv_list['page-status-systemlogs-loadbalancer']['match'][] = "status_logs.php?logfile=relayd";
 
 $priv_list['page-status-systemlogs-routing'] = array();
-$priv_list['page-status-systemlogs-routing']['name'] = gettext("WebCfg - Status: System logs: Routing");
-$priv_list['page-status-systemlogs-routing']['descr'] = gettext("Allow access to the 'Status: System logs: System: Routing' page.");
+$priv_list['page-status-systemlogs-routing']['name'] = gettext("WebCfg - Status: System Logs: Routing");
+$priv_list['page-status-systemlogs-routing']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Routing' page.");
 $priv_list['page-status-systemlogs-routing']['match'] = array();
 $priv_list['page-status-systemlogs-routing']['match'][] = "status_logs.php?logfile=routing";
 
 $priv_list['page-status-systemlogs-wireless'] = array();
-$priv_list['page-status-systemlogs-wireless']['name'] = gettext("WebCfg - Status: System logs: Wireless");
-$priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access to the 'Status: System logs: System: Wireless' page.");
+$priv_list['page-status-systemlogs-wireless']['name'] = gettext("WebCfg - Status: System Logs: Wireless");
+$priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Wireless' page.");
 $priv_list['page-status-systemlogs-wireless']['match'] = array();
 $priv_list['page-status-systemlogs-wireless']['match'][] = "status_logs.php?logfile=wireless";
 

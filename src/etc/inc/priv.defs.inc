@@ -98,14 +98,14 @@ $priv_list['page-status-ipsec-leases']['match'] = array();
 $priv_list['page-status-ipsec-leases']['match'][] = "status_ipsec_leases.php*";
 
 $priv_list['page-status-ipsec-sad'] = array();
-$priv_list['page-status-ipsec-sad']['name'] = gettext("WebCfg - Status: IPsec: SAD");
-$priv_list['page-status-ipsec-sad']['descr'] = gettext("Allow access to the 'Status: IPsec: SAD' page.");
+$priv_list['page-status-ipsec-sad']['name'] = gettext("WebCfg - Status: IPsec: SADs");
+$priv_list['page-status-ipsec-sad']['descr'] = gettext("Allow access to the 'Status: IPsec: SADs' page.");
 $priv_list['page-status-ipsec-sad']['match'] = array();
 $priv_list['page-status-ipsec-sad']['match'][] = "status_ipsec_sad.php*";
 
 $priv_list['page-status-ipsec-spd'] = array();
-$priv_list['page-status-ipsec-spd']['name'] = gettext("WebCfg - Status: IPsec: SPD");
-$priv_list['page-status-ipsec-spd']['descr'] = gettext("Allow access to the 'Status: IPsec: SPD' page.");
+$priv_list['page-status-ipsec-spd']['name'] = gettext("WebCfg - Status: IPsec: SPDs");
+$priv_list['page-status-ipsec-spd']['descr'] = gettext("Allow access to the 'Status: IPsec: SPDs' page.");
 $priv_list['page-status-ipsec-spd']['match'] = array();
 $priv_list['page-status-ipsec-spd']['match'][] = "status_ipsec_spd.php*";
 

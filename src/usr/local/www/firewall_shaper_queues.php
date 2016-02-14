@@ -218,7 +218,7 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Queues"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Queue"));
 $shortcut_section = "trafficshaper";
 
 include("head.inc");

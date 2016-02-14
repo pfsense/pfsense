@@ -206,6 +206,10 @@ $actionHelp =
 					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.'), '<span class="text-success"><strong>', '</strong></span>'); 
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
+
+if ($act == "new" || $act == "edit") {
+	$pgtitle[] = gettext('Edit');
+}
 $shortcut_section = "resolver";
 include("head.inc");
 

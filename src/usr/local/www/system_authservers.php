@@ -501,7 +501,7 @@ if (empty($a_ca))
 {
 	$section->addInput(new Form_StaticText(
 		'Peer Certificate Authority',
-		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.'
+		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
 	));
 }
 else

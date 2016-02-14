@@ -1057,7 +1057,7 @@ $section->addInput(new Form_Select(
 	'SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
-))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert Manager</a>');
+))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',

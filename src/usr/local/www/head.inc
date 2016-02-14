@@ -211,7 +211,7 @@ if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
 }
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
-$system_menu[] = array(gettext("Cert Manager"), "/system_camanager.php");
+$system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
 if (!isAllowedPage("system_usermanager.php*")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {

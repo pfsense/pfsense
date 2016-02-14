@@ -227,7 +227,7 @@ $shortcut_section = "ntp";
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
+$tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), true, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
@@ -241,7 +241,7 @@ $section->addInput(new Form_StaticText(
 	'A GPS connected via a serial port may be used as a reference clock for NTP. If the GPS also supports PPS and is properly configured, ' .
 	'and connected, that GPS may also be used as a Pulse Per Second clock reference. NOTE: A USB GPS may work, but is not recommended due to USB bus timing issues.' . '<br />' .
 	'For the best results, NTP should have at least three sources of time. So it is best to configure at least 2 servers under ' .
-	'<a href="services_ntpd.php">Services > NTP</a>' .
+	'<a href="services_ntpd.php">Services > NTP > Settings</a>' .
 	' to minimize clock drift if the GPS data is not valid over time. Otherwise ntpd may only use values from the unsynchronized local clock when providing time to clients.'
 ));
 

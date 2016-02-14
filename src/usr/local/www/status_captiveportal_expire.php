@@ -83,7 +83,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("Expire Vouchers"));
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Expire Vouchers"));
 
 include("head.inc");
 

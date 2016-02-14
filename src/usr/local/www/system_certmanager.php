@@ -79,8 +79,6 @@ $cert_types = array(
 $altname_types = array("DNS", "IP", "email", "URI");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
-
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
 }
@@ -559,6 +557,11 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
+
+if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) || ($act == "csr" || ($_POST['save'] == gettext("Update") && $input_errors))) {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {

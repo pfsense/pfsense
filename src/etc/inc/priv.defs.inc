@@ -44,8 +44,8 @@ $priv_list['page-diagnostics-authentication']['match'] = array();
 $priv_list['page-diagnostics-authentication']['match'][] = "diag_authentication.php*";
 
 $priv_list['page-diagnostics-backup-restore'] = array();
-$priv_list['page-diagnostics-backup-restore']['name'] = gettext("WebCfg - Diagnostics: Backup/restore");
-$priv_list['page-diagnostics-backup-restore']['descr'] = gettext("Allow access to the 'Diagnostics: Backup/restore' page.");
+$priv_list['page-diagnostics-backup-restore']['name'] = htmlspecialchars(gettext("WebCfg - Diagnostics: Backup & Restore"));
+$priv_list['page-diagnostics-backup-restore']['descr'] = htmlspecialchars(gettext("Allow access to the 'Diagnostics: Backup & Restore' page."));
 $priv_list['page-diagnostics-backup-restore']['match'] = array();
 $priv_list['page-diagnostics-backup-restore']['match'][] = "diag_backup.php*";
 
@@ -797,8 +797,8 @@ $priv_list['page-services-igmpproxy-edit']['match'] = array();
 $priv_list['page-services-igmpproxy-edit']['match'][] = "services_igmpproxy_edit.php*";
 
 $priv_list['page-services-ntpd'] = array();
-$priv_list['page-services-ntpd']['name'] = gettext("WebCfg - Services: NTP");
-$priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Services: NTP' page.");
+$priv_list['page-services-ntpd']['name'] = gettext("WebCfg - Services: NTP Settings");
+$priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Services: NTP Settings' page.");
 $priv_list['page-services-ntpd']['match'] = array();
 $priv_list['page-services-ntpd']['match'][] = "services_ntpd.php*";
 

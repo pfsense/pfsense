@@ -67,9 +67,6 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies;
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
-$shortcut_section = "openvpn";
-
 if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
 }
@@ -426,6 +423,13 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "openvpn";
+
 include("head.inc");
 
 if (!$savemsg) {
@@ -611,7 +615,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -625,7 +629,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert Manager &gt; Certificate Revocation</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert. Manager &gt; Certificate Revocation</a>')
 		));
 	}
 

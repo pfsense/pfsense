@@ -124,7 +124,7 @@ if (!empty($cpzone)) {
 }
 
 if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])) {
-	$pgtitle = array(gettext("Status"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("Active Users"));
+	$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Active Users"));
 } else {
 	$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 }

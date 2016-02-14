@@ -88,7 +88,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("MACs"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
 $shortcut_section = "captiveportal";
 
 $actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;' . gettext("Pass"),

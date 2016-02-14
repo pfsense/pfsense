@@ -1903,17 +1903,17 @@ $section->addClass('dhcp');
 $group = new Form_Group('Options');
 
 $group->add(new Form_Checkbox(
-	'dhcpadv',
+	'adv_dhcp_config_advanced',
 	null,
 	'Advanced Configuration',
-	false
+	$pconfig['adv_dhcp_config_advanced']
 ))->setHelp('Use advanced DHCP configuration options.');
 
 $group->add(new Form_Checkbox(
-	'dhcpovr',
+	'adv_dhcp_config_file_override',
 	null,
 	'Configuration Override',
-	false
+	$pconfig['adv_dhcp_config_file_override']
 ))->setHelp('Override the configuration from this file.');
 
 $section->add($group);
@@ -2089,14 +2089,14 @@ $group->add(new Form_Checkbox(
 	'adv_dhcp6_config_advanced',
 	null,
 	'Advanced Configuration',
-	false
+	$pconfig['adv_dhcp6_config_advanced']
 ))->setHelp('Use advanced DHCPv6 configuration options.');
 
 $group->add(new Form_Checkbox(
 	'adv_dhcp6_config_file_override',
 	null,
 	'Configuration Override',
-	false
+	$pconfig['adv_dhcp6_config_file_override']
 ))->setHelp('Override the configuration from this file.');
 
 $section->add($group);
@@ -3536,8 +3536,8 @@ events.push(function() {
 	}
 
 	function setDHCPoptions() {
-		var adv = $('#dhcpadv').prop('checked');
-		var ovr = $('#dhcpovr').prop('checked');
+		var adv = $('#adv_dhcp_config_advanced').prop('checked');
+		var ovr = $('#adv_dhcp_config_file_override').prop('checked');
 
 		if (ovr) {
 			hideInput('dhcphostname', true);
@@ -3642,7 +3642,7 @@ events.push(function() {
 		prefill_provider();
 	});
 
-	$('#dhcpadv, #dhcpovr').click(function () {
+	$('#adv_dhcp_config_advanced, #adv_dhcp_config_file_override').click(function () {
 		setDHCPoptions();
 	});
 

@@ -341,7 +341,7 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 }
 
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply", gettext("Apply changes"));
+	print_info_box($msg, "warning", "apply", gettext("Apply Changes"));
 }
 
 function get_std_save_message($ok) {

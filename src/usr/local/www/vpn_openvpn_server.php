@@ -590,6 +590,10 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Servers"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
 $shortcut_section = "openvpn";
 
 include("head.inc");

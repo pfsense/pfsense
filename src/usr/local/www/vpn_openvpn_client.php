@@ -67,9 +67,6 @@ require_once("pkg-utils.inc");
 
 global $openvpn_topologies;
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
-$shortcut_section = "openvpn";
-
 if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
 }
@@ -425,6 +422,13 @@ if ($_POST) {
 		exit;
 	}
 }
+
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "openvpn";
 
 include("head.inc");
 

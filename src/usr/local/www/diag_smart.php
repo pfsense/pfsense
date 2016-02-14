@@ -70,7 +70,7 @@ $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
 
 if ($action != 'config') {
-	$pgtitle[] = gettext('Information & Tests');
+	$pgtitle[] = htmlspecialchars(gettext('Information & Tests'));
 } else {
 	$pgtitle[] = gettext('Config');
 }
@@ -122,7 +122,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 }
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Information & Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
+$tab_array[0] = array(htmlspecialchars(gettext("Information & Tests")), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
 $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
 display_top_tabs($tab_array);
 

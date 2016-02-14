@@ -93,7 +93,7 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Configuration"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone: %s"), $a_cp[$cpzone]['zone']), gettext("Configuration"));
 $shortcut_section = "captiveportal";
 
 if ($_GET['act'] == "viewhtml") {
@@ -505,6 +505,7 @@ if ($_POST) {
 }
 
 function build_radiusnas_list() {
+	global $config;
 	$list = array();
 
 	$iflist = get_configured_interface_with_descr();
@@ -559,7 +560,7 @@ if ($savemsg) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), true, "services_captiveportal.php?zone={$cpzone}");
-$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+$tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), false, "services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -952,7 +953,7 @@ $section->add($group);
 
 $form->add($section);
 
-$section = new Form_Section('RADIUS options');
+$section = new Form_Section('RADIUS Options');
 $section->addClass('Radius');
 
 $section->addInput(new Form_Checkbox(
@@ -1031,7 +1032,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$section = new Form_Section('HTTPS options');
+$section = new Form_Section('HTTPS Options');
 $section->addClass('HTTPS');
 
 $section->addInput(new Form_Checkbox(
@@ -1070,7 +1071,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('HTML page contents');
+$section = new Form_Section('HTML Page Contents');
 $section->addClass('HTML');
 
 $section->addInput(new Form_Input(
@@ -1185,7 +1186,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print($form);
 
-print_info_box(gettext('Warning:' . '<br />' . 'Don\'t forget to enable the DHCP server on your captive portal interface! ' .
+print_info_box(gettext('Don\'t forget to enable the DHCP server on your captive portal interface! ' .
 					   'Make sure that the default/maximum DHCP lease time is higher than the hard timeout entered on this page. ' .
 					   'Also, the DNS Forwarder or Resolver must be enabled for DNS lookups by unauthenticated clients to work.'));
 

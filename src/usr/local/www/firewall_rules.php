@@ -78,9 +78,10 @@ function get_pf_rules($rules, $tracker) {
 		return (NULL);
 
 	$arr = array();
-	for ($i = 0; $i < count($rules); $i++) {
-		if ($rules[$i]['tracker'] === $tracker)
-			$arr[] = $rules[$i];
+	foreach ($rules as $rule) {
+		if ($rule['tracker'] === $tracker) {
+			$arr[] = $rule;
+		}
 	}
 
 	if (count($arr) == 0)
@@ -99,16 +100,20 @@ function print_states($tracker) {
 	$evaluations = 0;
 	$stcreations = 0;
 	$rules = get_pf_rules($rulescnt, $tracker);
-	for ($j = 0; is_array($rules) && $j < count($rules); $j++) {
-		$bytes += $rules[$j]['bytes'];
-		$states += $rules[$j]['states'];
-		$packets += $rules[$j]['packets'];
-		$evaluations += $rules[$j]['evaluations'];
-		$stcreations += $rules[$j]['state creations'];
-		if (strlen($rulesid) > 0)
-			$rulesid .= ",";
-		$rulesid .= "{$rules[$j]['id']}";
+	if (is_array($rules)) {
+		foreach ($rules as $rule) {
+			$bytes += $rule['bytes'];
+			$states += $rule['states'];
+			$packets += $rule['packets'];
+			$evaluations += $rule['evaluations'];
+			$stcreations += $rule['state creations'];
+			if (strlen($rulesid) > 0) {
+				$rulesid .= ",";
+			}
+			$rulesid .= "{$rule['id']}";
+		}
 	}
+
 	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
 	    $rulesid, gettext("States details"));
 	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
@@ -208,7 +213,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress."),
 									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
@@ -221,14 +226,10 @@ if ($_GET['act'] == "del") {
 		unset($a_filter[$_GET['id']]);
 
 		// Update the separators
-		$a_separators = &$config['filter']['separator'][$if];
-
-		for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-			$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-			if ($seprow >= $_GET['id']) {
-				$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-			}
-		}
+		$a_separators = &$config['filter']['separator'][strtolower($if)];
+		$ridx = ifridx($if, $_GET['id']);	// get rule index within interface
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
 
 		if (write_config()) {
 			mark_subsystem_dirty('filter');
@@ -249,7 +250,7 @@ if (isset($_POST['del_x'])) {
 	$deleted = false;
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
-		$a_separators = &$config['filter']['separator'][$if];
+		$a_separators = &$config['filter']['separator'][strtolower($if)];
 
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
@@ -257,12 +258,9 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 
 			// Update the separators
-			for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-				$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-				if ($seprow >= $rulei) {
-					$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow - 1);
-				}
-			}
+			$ridx = ifridx($if, $rulei);	// get rule index within interface
+			$mvnrows = -1;
+			move_separators($a_separators, $ridx, $mvnrows);
 		}
 
 		if ($deleted) {
@@ -294,9 +292,24 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
 
+		// get the rules of other interfaces listed in config before this interface.
+		for ($i = 0; (isset($a_filter[$i]) && 
+			(($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) 
+			); $i++) {
+			$a_filter_new[] = $a_filter[$i];
+		}
+
+		// include the rules of this interface.
 		// if a rule is not in POST[rule], it has been deleted by the user
 		foreach ($_POST['rule'] as $id) {
 			$a_filter_new[] = $a_filter[$id];
+		}
+
+		// get the rules of other interfaces listed in config after this interface.
+		for ( ; (isset($a_filter[$i])); $i++) {
+			if (($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) {
+				$a_filter_new[] = $a_filter[$i];
+			}
 		}
 
 		$a_filter = $a_filter_new;
@@ -375,7 +388,7 @@ $columns_in_table = 13;
 ?>
 <form method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to change order)")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
 			<table id="ruletable" class="table table-hover table-striped table-condensed">
 				<thead>
@@ -465,28 +478,24 @@ $columns_in_table = 13;
 			<tbody class="user-entries">
 <?php
 $nrules = 0;
-$seps = 0;
+$separators = $config['filter']['separator'][strtolower($if)];
 
-// There can be a separator before any rules are listed
-if ($config['filter']['separator'][strtolower($if)]['sep0']['row'][0] == "fr-1") {
-	$cellcolor = $config['filter']['separator'][strtolower($if)]['sep0']['color'];
-	print('<tr class="ui-sortable-handle separator">' .
-		'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $config['filter']['separator'][strtolower($if)]['sep0']['text'] . '</span></td>' .
-		'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-		'</tr>' . "\n");
-}
+// Get a list of separator rows and use it to call the display separator function only for rows which there are separator(s).
+// More efficient than looping through the list of separators on every row.
+$seprows = separator_rows($separators);
 
-for ($i = 0; isset($a_filter[$i]); $i++):
-	$filterent = $a_filter[$i];
+foreach ($a_filter as $filteri => $filterent):
 
-	if (($filterent['interface'] != $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" != $if)) {
-		$display = 'style="display: none;"';
-	} else {
-		$display = "";
-	}
+	$i = $filteri;
 
+	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+
+		// Display separator(s) for section beginning at rule n
+		if ($seprows[$nrules]) {
+			display_separator($separators, $nrules, $columns_in_table);
+		}
 ?>
-					<tr id="fr<?=$nrules;?>" <?=$display?> onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td>
 							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
 						</td>
@@ -507,16 +516,21 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 		}
 	?>
 						<td title="<?=$title_text?>">
-
-							<i class="fa fa-<?=$iconfn?>"></i>
+							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$i;?>">
+								<i class="fa fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
+							</a>
 	<?php
+		if ($filterent['quick'] == 'yes') {
+			print '<i class="fa fa-forward text-success" title="'. gettext("&quot;Quick&quot; rule. Applied immediately on match.") .'" style="cursor: pointer;"></i>';
+		}
+
 		$isadvset = firewall_check_for_advanced_options($filterent);
 		if ($isadvset) {
 			print '<i class="fa fa-cog" title="'. gettext("advanced setting") .': '. $isadvset .'"></i>';
 		}
 
 		if (isset($filterent['log'])) {
-			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'"></i>';
+			print '<i class="fa fa-tasks" title="'. gettext("traffic is logged") .'" style="cursor: pointer;"></i>';
 		}
 	?>
 						</td>
@@ -784,20 +798,14 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 						</td>
 					</tr>
 <?php
-		if (isset($config['filter']['separator'][strtolower($if)]['sep0'])) {
-			foreach ($config['filter']['separator'][strtolower($if)] as $rulesep) {
-				if ($rulesep['row']['0'] == "fr" . $nrules) {
-					$cellcolor = $rulesep['color'];
-					print('<tr class="ui-sortable-handle separator">' .
-						'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $rulesep['text'] . '</span></td>' .
-						'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
-						'</tr>' . "\n");
-				}
-			}
-		}
-
 		$nrules++;
-		endfor;
+	}
+endforeach;
+
+// There can be separator(s) after the last rule listed.
+if ($seprows[$nrules]) {
+	display_separator($separators, $nrules, $columns_in_table);
+}
 ?>
 				</tbody>
 			</table>
@@ -853,6 +861,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 			<dt><i class="fa fa-hand-stop-o text-warning"></i></dt>		<dd><?=gettext("Reject");?></dd>
 			<dt><i class="fa fa-tasks"></i></dt>	<dd> <?=gettext("Log");?></dd>
 			<dt><i class="fa fa-cog"></i></dt>		<dd> <?=gettext("Advanced filter");?></dd>
+			<dt><i class="fa fa-forward text-success"></i></dt><dd> <?=gettext("&quot;Quick&quot; rule. Applied immediately on match.")?></dd>
 		</dl>
 
 <?php

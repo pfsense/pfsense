@@ -144,7 +144,6 @@ if (platform_booting(true)) {
 				$cfgfstype = "msdosfs";
 				echo gettext("CDROM build") . "\n";
 				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
-				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
 				echo "  " . gettext("TYPE:") . " {$cfgfstype}\n";
 			} else {
 				echo ".";

@@ -386,7 +386,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Schedule information');
+$section = new Form_Section('Schedule Information');
 
 $input = new Form_Input(
 	'name',
@@ -489,7 +489,7 @@ if (isset($id) && $a_schedules[$id]) {
 
 $form->add($section);
 
-$section = new Form_Section('Configured ranges');
+$section = new Form_Section('Configured Ranges');
 $counter = 0;
 
 if ($getSchedule) {

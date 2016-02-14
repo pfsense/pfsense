@@ -56,14 +56,14 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-smart
-##|*NAME=Diagnostics: S.M.A.R.T. Monitor Tools
-##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.
+##|*NAME=Diagnostics: S.M.A.R.T. Status
+##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Status' page.
 ##|*MATCH=diag_smart.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
+$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
 $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";
@@ -133,7 +133,7 @@ switch ($action) {
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test results')?></h2></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test Results')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>
@@ -327,7 +327,7 @@ switch ($action) {
 		$group->add(new Form_Checkbox(
 			'type',
 			null,
-			'SMART Capabilities',
+			'S.M.A.R.T. Capabilities',
 			false,
 			'c'
 		))->displayAsRadio();
@@ -442,7 +442,7 @@ switch ($action) {
 			'View'
 		);
 
-		$section = new Form_Section('View logs');
+		$section = new Form_Section('View Logs');
 
 		$section->addInput(new Form_Input(
 			'action',

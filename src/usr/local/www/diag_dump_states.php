@@ -105,7 +105,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
 include("head.inc");
 ?>
 
@@ -148,7 +148,22 @@ $current_statecount=`pfctl -si | grep "current entries" | awk '{ print $3 }'`;
 
 $form = new Form(false);
 
-$section = new Form_Section('State filter', 'secfilter', COLLAPSIBLE|SEC_CLOSED);
+$section = new Form_Section('State Filter', 'secfilter', COLLAPSIBLE|SEC_OPEN);
+
+$iflist = get_configured_interface_with_descr();
+$iflist['lo0'] = "lo0";
+$iflist['all'] = "all";
+if (isset($_POST['interface']))
+	$ifselect = $_POST['interface'];
+else
+	$ifselect = "all";
+
+$section->addInput(new Form_Select(
+	'interface',
+	'Interface',
+	$ifselect,
+	$iflist
+));
 
 $section->addInput(new Form_Input(
 	'filter',
@@ -195,14 +210,22 @@ print $form;
 				</thead>
 				<tbody>
 <?php
+	$arr = array();
+	/* RuleId filter. */
 	if (isset($_REQUEST['ruleid'])) {
 		$ids = explode(",", $_REQUEST['ruleid']);
-		$arr = array();
 		for ($i = 0; $i < count($ids); $i++)
 			$arr[] = array("ruleid" => intval($ids[$i]));
 	}
 
-	if (isset($arr) && is_array($arr) && count($arr) > 0)
+	/* Interface filter. */
+	if (isset($_POST['interface']) && $_POST['interface'] != "all")
+		$arr[] = array("interface" => get_real_interface($_POST['interface']));
+
+	if (isset($_POST['filter']) && strlen($_POST['filter']) > 0)
+		$arr[] = array("filter" => $_POST['filter']);
+
+	if (count($arr) > 0)
 		$res = pfSense_get_pf_states($arr);
 	else
 		$res = pfSense_get_pf_states();
@@ -266,12 +289,12 @@ print $form;
 
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
-		$errmsg = gettext('No states were found that match the current filter');
+		$errmsg = gettext('No states were found that match the current filter.');
 	} else {
-		$errmsg = gettext('No states were found');
+		$errmsg = gettext('No states were found.');
 	}
 
-	print('<p class="alert alert-warning">' . $errmsg . '</p>');
+	print_info_box($errmsg, 'warning', false);
 }
 
 include("foot.inc");

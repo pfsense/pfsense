@@ -87,7 +87,7 @@ function upload_crash_report($files) {
 	return $response;
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Crash Reporter"));
 include('head.inc');
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";
@@ -97,8 +97,7 @@ $crash_report_header .= php_uname("v") . "\n";
 $crash_report_header .= "\nCrash report details:\n";
 
 exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
-?>
-<?php
+
 	if ($_POST['Submit'] == "Yes") {
 		echo gettext("Processing...");
 		if (!is_dir("/var/crash")) {
@@ -151,7 +150,7 @@ exec("/usr/bin/grep -vi warning /tmp/PHP_errors.log", $php_errors);
 		}
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Unfortunately we have detected a programming bug.")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Unfortunately We Have Detected a Programming Bug")?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<p>

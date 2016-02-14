@@ -440,6 +440,13 @@ function service_name_compare($a, $b) {
 	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
 }
 
+function service_dispname_compare($a, $b) {
+	if (strtolower($a['dispname']) == strtolower($b['dispname'])) {
+		return 0;
+	}
+	return (strtolower($a['name']) < strtolower($b['name'])) ? -1 : 1;
+}
+
 function get_pkg_descr($package_name) {
 	global $config;
 	if (is_array($config['installedpackages']['package'])) {

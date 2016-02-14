@@ -100,6 +100,10 @@ if (!is_array($a_group['priv'])) {
 	$a_group['priv'] = array();
 }
 
+// Make a local copy and sort it
+$spriv_list = $priv_list;
+uasort($spriv_list, "cpusercmp");
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -154,16 +158,16 @@ if (isAjax()) {
 }
 
 function build_priv_list() {
-	global $priv_list, $a_group;
+	global $spriv_list, $a_group;
 
 	$list = array();
 
-	foreach ($priv_list as $pname => $pdata) {
+	foreach ($spriv_list as $pname => $pdata) {
 		if (in_array($pname, $a_group['priv'])) {
 			continue;
 		}
 
-		$list[$pname] = $pdata;
+		$list[$pname] = $pdata['name'];
 	}
 
 	return($list);
@@ -183,7 +187,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -196,10 +200,7 @@ if (isset($groupid)) {
 	));
 }
 
-$section = new Form_Section('Add privileges for '. $a_group['name']);
-
-$priv_list = array_map(function($p){ return $p['name']; }, $priv_list);
-asort($priv_list, SORT_STRING|SORT_FLAG_CASE);
+$section = new Form_Section('Add Privileges for '. $a_group['name']);
 
 $section->addInput(new Form_Select(
 	'sysprivs',
@@ -252,7 +253,7 @@ $form->add($section);
 print $form;
 
 ?>
-<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc"><?=gettext("Select a privilege from the list above for a description")?></div>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -261,16 +262,16 @@ events.push(function() {
 <?php
 
 	// Build a list of privilege descriptions
-	if (is_array($priv_list)) {
+	if (is_array($spriv_list)) {
 		$id = 0;
 
 		$jdescs = "var descs = new Array();\n";
-		foreach ($priv_list as $pname => $pdata) {
+		foreach ($spriv_list as $pname => $pdata) {
 			if (in_array($pname, $a_group['priv'])) {
 				continue;
 			}
 
-			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata));
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";
 			$id++;
 		}
@@ -286,7 +287,10 @@ events.push(function() {
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html('<span class="text-info">' + descs[$(this).children('option:selected').index()] + '</span>');
+		var targetoption = $(this).children('option:selected').val();
+		var idx =  $('.shadowselect option[value="' + targetoption + '"]').index();
+
+		$('#pdesc').html('<span class="text-info">' + descs[idx] + '</span>');
 
 		// and update the shadow list from the real list
 		$(".multiselect option").each(function() {

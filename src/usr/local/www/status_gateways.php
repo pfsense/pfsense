@@ -77,7 +77,7 @@ $gateways_status = return_gateways_status(true);
 $now = time();
 $year = date("Y");
 
-$pgtitle = array(gettext("Status"), gettext("Gateways"));
+$pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateways"));
 $shortcut_section = "gateways";
 include("head.inc");
 
@@ -191,7 +191,7 @@ display_top_tabs($tab_array);
 				}
 ?>
 
-				<td bgcolor="<?=$bgcolor?>">
+				<td style="background-color:<?=$bgcolor?>">
 					<strong><?=$online?></strong> <?php
 					if (!empty($lastchange)) { ?>
 						<br /><i><?=gettext("Last checked")?> <?=$lastchange?></i>

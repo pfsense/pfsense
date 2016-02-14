@@ -128,7 +128,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name));
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -489,7 +489,7 @@ if ($act == "edit") {
 	));
 }
 
-$section = new Form_Section('Create / edit CA');
+$section = new Form_Section('Create / Edit CA');
 
 $section->addInput(new Form_Input(
 	'descr',

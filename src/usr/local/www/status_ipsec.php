@@ -83,11 +83,11 @@ if ($_GET['act'] == 'connect') {
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
 					mwexec("/usr/local/sbin/ipsec down {$connid}");
-					mwexec("/usr/local/sbin/ipsec up {$connid}");
+					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
 				mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
-				mwexec("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
 			}
 		}
 	}
@@ -118,13 +118,13 @@ $status = ipsec_list_sa();
 $tab_array = array();
 $tab_array[] = array(gettext("Overview"), true, "status_ipsec.php");
 $tab_array[] = array(gettext("Leases"), false, "status_ipsec_leases.php");
-$tab_array[] = array(gettext("SAD"), false, "status_ipsec_sad.php");
-$tab_array[] = array(gettext("SPD"), false, "status_ipsec_spd.php");
+$tab_array[] = array(gettext("SADs"), false, "status_ipsec_sad.php");
+$tab_array[] = array(gettext("SPDs"), false, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPsec status");?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("IPsec Status");?></h2></div>
 	<div class="panel-body table responsive">
 		<table class="table table-striped table-condensed table-hover sortable-theme-bootstrap" data-sortable>
 			<thead>
@@ -528,7 +528,7 @@ if (ipsec_enabled()) {
 <div class="infoblock blockopen">
 <?php
 }
-print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 <?php

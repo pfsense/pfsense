@@ -162,7 +162,7 @@ if ($cellular) {
 }
 
 if ($vpnusers) {
-	$tab_array[] = array(gettext("VPN"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
+	$tab_array[] = array(gettext("VPN Users"), ($curcat == "vpnusers"), "status_rrd_graph.php?cat=vpnusers");
 }
 
 if ($captiveportal) {
@@ -170,7 +170,7 @@ if ($captiveportal) {
 }
 
 if ($ntpd) {
-	$tab_array[] = array(gettext("NTPD"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
+	$tab_array[] = array(gettext("NTP"), ($curcat == "ntpd"), "status_rrd_graph.php?cat=ntpd");
 }
 
 if ($dhcpd) {
@@ -192,7 +192,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('Graph settings');
+$section = new Form_Section('Graph Settings');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

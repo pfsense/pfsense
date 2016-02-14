@@ -218,12 +218,12 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_apply_box(gettext("The DNS Resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("General settings"), false, "/services_unbound.php");
-$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+$tab_array[] = array(gettext("General Settings"), false, "/services_unbound.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), true, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 
@@ -313,7 +313,7 @@ if ($act == "new" || $act == "edit") {
 	// NOT 'edit' or 'add'
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Access Lists to control access to the DNS Resolver')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Access Lists to Control Access to the DNS Resolver')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

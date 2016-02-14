@@ -225,25 +225,24 @@ if ($input_errors) {
 	// User asked for a port test
 	if ($retval == 0) {
 		// Good host & port
-		$alert_text = '<div class="alert alert-success" role="alert">' . sprintf(gettext('Port test to host: %1$s Port: %2$s successful'), $host, $port);
+		$alert_text = sprintf(gettext('Port test to host: %1$s Port: %2$s successful.'), $host, $port);
 		if ($showtext) {
 			$alert_text .= ' ' . gettext('Any text received from the host will be shown below the form.');
 		}
+		print_info_box($alert_text, 'success', false);
 	} else {
 		// netcat exit value != 0
-		$alert_text = '<div class="alert alert-danger" role="alert">';
 		if ($showtext) {
-			$alert_text .= gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.');
+			$alert_text = gettext('No output received, or connection failed. Try with "Show Remote Text" unchecked first.');
 		} else {
-			$alert_text .= gettext('Connection failed.');
+			$alert_text = gettext('Connection failed.');
 		}
+		print_info_box($alert_text, 'danger', false);
 	}
-	print ($alert_text . '</div>');
 } else {
 	// First time, new page
-	print('<div class="alert alert-warning" role="alert">' .
-		gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
-		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.') . '</div>');
+	print_info_box(gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.'), 'warning', false);
 }
 
 $form = new Form('Test');

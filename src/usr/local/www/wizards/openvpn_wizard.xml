@@ -56,7 +56,7 @@
 					<value>ldap</value>
 				</option>
 				<option>
-					<name>Radius</name>
+					<name>RADIUS</name>
 					<value>radius</value>
 				</option>
 			</options>

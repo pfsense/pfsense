@@ -90,7 +90,7 @@ $showAllOption = $showAll ? "" : "?showAll";
 		$name = ($tabindex == 0 ? 'IPv4' : 'IPv6');
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=$name?> <?=gettext("system socket information")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=$name?> <?=gettext("System Socket Information")?></h2></div>
 	<div class="panel-body">
 		<div class="table table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>

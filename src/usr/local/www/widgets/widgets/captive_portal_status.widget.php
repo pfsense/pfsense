@@ -65,10 +65,6 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("captiveportal.inc");
 
-?>
-
-<?php
-
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }

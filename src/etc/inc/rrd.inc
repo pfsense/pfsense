@@ -54,6 +54,23 @@
 
 /* include all configuration functions */
 
+global $rrd_graph_list;
+$rrd_graph_list = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
+global $rrd_period_list;
+$rrd_period_list = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
+global $rrd_graph_length_list;
+$rrd_graph_length_list = array(
+	"eighthour" => 28800,
+	"day" => 86400,
+	"week" => 604800,
+	"month" => 2678400,
+	"quarter" => 7948800,
+	"year" => 31622400,
+	"fouryear" => 126230400);
+global $rrd_style_list;
+$rrd_style_list = array('inverse' => gettext('Inverse'),
+		'absolute' => gettext('Absolute'));
+
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	unlink_if_exists($xmldumpfile);
@@ -891,7 +908,7 @@ function enable_rrd_graphing() {
 			/* set up the ntpd rrd file */
 			if (!file_exists("$rrddbpath$ntpd")) {
 				$rrdcreate = "$rrdtool create $rrddbpath$ntpd --step $rrdntpdinterval ";
-				$rrdcreate .= "DS:offset:GAUGE:$ntpdvalid:0:1000 ";
+				$rrdcreate .= "DS:offset:GAUGE:$ntpdvalid:-1000:1000 ";
 				$rrdcreate .= "DS:sjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:cjit:GAUGE:$ntpdvalid:0:1000 ";
 				$rrdcreate .= "DS:wander:GAUGE:$ntpdvalid:0:1000 ";

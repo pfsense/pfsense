@@ -676,7 +676,7 @@ awk '
 		fdisk -i -f ${IMAGES_FINAL_DIR}/_.fdisk ${MD} 2>&1 >> ${LOGFILE}
 		fdisk ${MD} 2>&1 >> ${LOGFILE}
 
-		boot0cfg -B -b ${FINAL_CHROOT_DIR}/${NANO_BOOTLOADER} ${NANO_BOOT0CFG} ${MD} 2>&1 >> ${LOGFILE}
+		boot0cfg -t 100 -B -b ${FINAL_CHROOT_DIR}/${NANO_BOOTLOADER} ${NANO_BOOT0CFG} ${MD} 2>&1 >> ${LOGFILE}
 
 		# Create first image
 		bsdlabel -m i386 -w -B -b ${FINAL_CHROOT_DIR}/boot/boot ${MD}s1 2>&1 >> ${LOGFILE}
@@ -2007,6 +2007,13 @@ CHECK_CHANGED_OPTIONS=yes
 CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
+EOF
+
+	# Create specific items conf
+	[ ! -d /usr/local/etc/poudriere.d ] \
+		&& mkdir -p /usr/local/etc/poudriere.d
+
+	cat <<EOF >/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-poudriere.conf
 GIT_URL="${POUDRIERE_PORTS_GIT_URL}"
 EOF
 

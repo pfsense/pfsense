@@ -83,7 +83,7 @@ $changedesc = gettext("Gateway Groups") . ": ";
 
 $gateways_status = return_gateways_status();
 
-$pgtitle = array(gettext("Status"), gettext("Gateway Groups"));
+$pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateway Groups"));
 $shortcut_section = "gateway-groups";
 include("head.inc");
 
@@ -175,7 +175,7 @@ display_top_tabs($tab_array);
 												$bgcolor = WHITE;
 											}
 ?>
-										<td bgcolor="<?=$bgcolor?>">
+										<td style="background-color:<?=$bgcolor?>">
 											<?=htmlspecialchars($member);?>,<br/><?=$online?>
 										</td>
 

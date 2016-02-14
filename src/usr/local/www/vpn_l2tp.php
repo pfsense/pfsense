@@ -120,7 +120,7 @@ if ($_POST) {
 		}
 
 		if ($_POST['radiussecret'] != $_POST['radiussecret_confirm']) {
-			$input_errors[] = gettext("Secret and confirmation must match");
+			$input_errors[] = gettext("RADIUS secret and confirmation must match");
 		}
 
 		if (!is_numericint($_POST['n_l2tp_units']) || $_POST['n_l2tp_units'] > 255) {
@@ -366,7 +366,7 @@ print($form);
 ?>
 <div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info', false);
+	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients."), 'info', false);
 ?>
 </div>
 

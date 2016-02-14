@@ -141,6 +141,31 @@ if ($_POST) {
 			}
 		}
 
+		// forwarding mode requires having valid DNS servers
+		if (isset($pconfig['forwarding'])) {
+			$founddns = false;
+			if (isset($config['system']['dnsallowoverride'])) {
+				$dns_servers = get_dns_servers();
+				if (is_array($dns_servers)) {
+					foreach ($dns_servers as $dns_server) {
+						if (!ip_in_subnet($dns_server, "127.0.0.0/8")) {
+							$founddns = true;
+						}
+					}
+				}
+			}
+			if (is_array($config['system']['dnsserver'])) {
+				foreach ($config['system']['dnsserver'] as $dnsserver) {
+					if (is_ipaddr($dnsserver)) {
+						$founddns = true;
+					}
+				}
+			}
+			if ($founddns == false) {
+				$input_errors[] = gettext("At least one DNS server must be specified under System>General Setup to enable Forwarding mode.");
+			}
+		}
+
 		if (empty($pconfig['active_interface'])) {
 			$input_errors[] = gettext("One or more Network Interfaces must be selected for binding.");
 		} else if (!isset($config['system']['dnslocalhost']) && (!in_array("lo0", $pconfig['active_interface']) && !in_array("all", $pconfig['active_interface']))) {
@@ -238,7 +263,7 @@ function build_if_list($selectedifs) {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"));
 $shortcut_section = "resolver";
 
 include_once("head.inc");
@@ -252,12 +277,12 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_apply_box(gettext("The DNS Resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("General settings"), true, "services_unbound.php");
-$tab_array[] = array(gettext("Advanced settings"), false, "services_unbound_advanced.php");
+$tab_array[] = array(gettext("General Settings"), true, "services_unbound.php");
+$tab_array[] = array(gettext("Advanced Settings"), false, "services_unbound_advanced.php");
 $tab_array[] = array(gettext("Access Lists"), false, "/services_unbound_acls.php");
 display_top_tabs($tab_array, true);
 

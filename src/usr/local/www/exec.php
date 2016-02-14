@@ -90,7 +90,7 @@ if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	exit;
 } else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s'), htmlentities($_FILES['ulfile']['name']));
+	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s.'), htmlentities($_FILES['ulfile']['name']));
 	unset($_POST['txtCommand']);
 }
 
@@ -122,7 +122,7 @@ $ScriptName = $REQUEST['SCRIPT_NAME'];
 $arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Command Prompt"));
 include("head.inc");
 ?>
 <script type="text/javascript">
@@ -218,7 +218,7 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
+	print_info_box(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'warning', false);
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
@@ -257,7 +257,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	</div>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Download File')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
@@ -269,11 +269,11 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <?php
 	if ($ulmsg) {
-		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
+		print_info_box($ulmsg, 'success', false);
 	}
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload file')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Upload File')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
 				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
@@ -286,7 +286,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
 	if (!isBlank($_POST['txtPHPCommand'])) {
-		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP response</h2></div>");
+		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP Response</h2></div>");
 
 		$tmpname = tempnam("/tmp", "");
 		$phpfile = fopen($tmpname, "w");

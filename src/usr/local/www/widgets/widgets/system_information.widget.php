@@ -269,7 +269,7 @@ $filesystems = get_mounted_filesystems();
 					<div id="memUsagePB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$memUsage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$memUsage?>%">
 					</div>
 				</div>
-				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MB</span>
+				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
 			</td>
 		</tr>
 		<?php if ($showswap == true): ?>
@@ -281,7 +281,7 @@ $filesystems = get_mounted_filesystems();
 					<div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$swapusage?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$swapusage?>%">
 					</div>
 				</div>
-				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MB</span>
+				<span><?=$swapusage?>% of <?= sprintf("%.0f", `/usr/sbin/swapinfo -m | /usr/bin/grep -v Device | /usr/bin/awk '{ print $2;}'`) ?> MiB</span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -293,7 +293,7 @@ $filesystems = get_mounted_filesystems();
 					<tr>
 						<th><?=$fs['mountpoint']?></th>
 						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></td>
-						<td><?=$fs['total_size']?></td>
+						<td><?=$fs['total_size']?>iB</td>
 						<td>
 							<span><?=$fs['percent_used']?>%</span>
 						</td>

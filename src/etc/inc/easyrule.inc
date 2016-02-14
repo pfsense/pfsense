@@ -442,7 +442,7 @@ function easyrule_parse_unblock($int, $host, $ipproto = "inet") {
 				return gettext("Host unblocked successfully");
 			}
 		} else {
-			return gettext("Host ist not on block list: " . $host);
+			return gettext("Host is not on block list: " . $host);
 		}
 	}
 

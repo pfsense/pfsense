@@ -160,6 +160,14 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['dpd_delay'] = $a_phase1[$p1index]['dpd_delay'];
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
+
+	if (isset($a_phase1[$p1index]['tfc_enable'])) {
+		$pconfig['tfc_enable'] = true;
+	}
+
+	if (isset($a_phase1[$p1index]['tfc_bytes'])) {
+		$pconfig['tfc_bytes'] = $a_phase1[$p1index]['tfc_bytes'];
+	}
 } else {
 	/* defaults */
 	$pconfig['interface'] = "wan";
@@ -253,7 +261,7 @@ if ($_POST) {
 		$input_errors[] = gettext("Pre-Shared Key contains invalid characters.");
 	}
 
-	if (($pconfig['lifetime'] && !is_numeric($pconfig['lifetime']))) {
+	if (($pconfig['lifetime'] && !is_numericint($pconfig['lifetime']))) {
 		$input_errors[] = gettext("The P1 lifetime must be an integer.");
 	}
 
@@ -395,17 +403,21 @@ if ($_POST) {
 	}
 
 	if ($pconfig['dpd_enable']) {
-		if (!is_numeric($pconfig['dpd_delay'])) {
+		if (!is_numericint($pconfig['dpd_delay'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD delay.");
 		}
 
-		if (!is_numeric($pconfig['dpd_maxfail'])) {
+		if (!is_numericint($pconfig['dpd_maxfail'])) {
 			$input_errors[] = gettext("A numeric value must be specified for DPD retries.");
 		}
 	}
 
-	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2") {
-		$input_errors[] = gettext("Valid arguments for IKE type is v1 or v2");
+	if ($pconfig['tfc_bytes'] && !is_numericint($pconfig['tfc_bytes'])) {
+		$input_errors[] = gettext("A numeric value must be specified for TFC bytes.");
+	}
+
+	if (!empty($pconfig['iketype']) && $pconfig['iketype'] != "ikev1" && $pconfig['iketype'] != "ikev2" && $pconfig['iketype'] != "auto") {
+		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
 	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
@@ -502,6 +514,14 @@ if ($_POST) {
 			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
 		}
 
+		if (isset($pconfig['tfc_enable'])) {
+			$ph1ent['tfc_enable'] = true;
+		}
+
+		if (isset($pconfig['tfc_bytes'])) {
+			$ph1ent['tfc_bytes'] = $pconfig['tfc_bytes'];
+		}
+
 		/* generate unique phase1 ikeid */
 		if ($ph1ent['ikeid'] == 0) {
 			$ph1ent['ikeid'] = ipsec_ikeid_next();
@@ -524,16 +544,12 @@ if ($_POST) {
 function build_interface_list() {
 	$interfaces = get_configured_interface_with_descr();
 
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip) {
-		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) . ")";
-	}
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif) {
-		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+	$viplist = get_configured_vip_list();
+	foreach ($viplist as $vip => $address) {
+		$interfaces[$vip] = $address;
+		if (get_vip_descr($address)) {
+			$interfaces[$vip] .= " (". get_vip_descr($address) .")";
+		}
 	}
 
 	$grouplist = return_gateway_groups_array();
@@ -635,10 +651,10 @@ function build_eal_list() {
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 1"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
 	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 1"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 1"));
 	$editing_mobile = false;
 }
 
@@ -673,7 +689,7 @@ $section->addInput(new Form_Select(
 	'Key Exchange version',
 	$pconfig['iketype'],
 	array("ikev1" => "V1", "ikev2" => "V2", "auto" => gettext("Auto"))
-))->setHelp('Select the Internet Key Exchange protocol version to be used, IKEv1 or IKEv2.');
+))->setHelp('Select the Internet Key Exchange protocol version to be used. Auto uses IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder.');
 
 $section->addInput(new Form_Select(
 	'protocol',
@@ -707,7 +723,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 proposal (Authentication)');
+$section = new Form_Section('Phase 1 Proposal (Authentication)');
 
 $section->addInput(new Form_Select(
 	'authentication_method',
@@ -787,7 +803,7 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 1 proposal (Algorithms)');
+$section = new Form_Section('Phase 1 Proposal (Algorithms)');
 
 $group = new Form_Group('Encryption Algorithm');
 
@@ -868,6 +884,25 @@ $section->addInput(new Form_Select(
 	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
 
+/* FreeBSD doesn't yet have TFC support. this is ready to go once it does
+https://redmine.pfsense.org/issues/4688
+
+$section->addInput(new Form_Checkbox(
+	'tfc_enable',
+	'Traffic Flow Confidentiality',
+	'Enable TFC',
+	$pconfig['tfc_enable']
+))->setHelp('Enable Traffic Flow Confidentiality');
+
+$section->addInput(new Form_Input(
+	'tfc_bytes',
+	'TFC Bytes',
+	'Bytes TFC',
+	$pconfig['tfc_bytes']
+))->setHelp('Enter the number of bytes to pad ESP data to, or leave blank to fill to MTU size');
+
+*/
+
 $section->addInput(new Form_Checkbox(
 	'dpd_enable',
 	'Dead Peer Detection',
@@ -921,7 +956,7 @@ print($form);
 /* determine if we should init the key length */
 $keyset = '';
 if (isset($pconfig['ealgo']['keylen'])) {
-	if (is_numeric($pconfig['ealgo']['keylen'])) {
+	if (is_numericint($pconfig['ealgo']['keylen'])) {
 		$keyset = $pconfig['ealgo']['keylen'];
 	}
 }
@@ -944,11 +979,14 @@ events.push(function() {
 			hideInput('mode', true);
 			hideInput('mobike', false);
 			hideInput('nat_traversal', true);
+			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
 			hideInput('nat_traversal', false);
+			//hideCheckbox('tfc_enable', true);
+			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
 		}
 	}
@@ -1060,12 +1098,23 @@ events.push(function() {
 		}
 	}
 
+	//function tfcchkbox_change() {
+	//	hide = !$('#tfc_enable').prop('checked');
+	//
+	//	hideInput('tfc_bytes', hide);
+	//}
+
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Enable DPD
 	$('#dpd_enable').click(function () {
 		dpdchkbox_change();
 	});
+
+	 // TFC
+	//$('#tfc_enable').click(function () {
+	//	tfcchkbox_change();
+	//});
 
 	 // Peer identifier
 	$('#peerid_type').click(function () {

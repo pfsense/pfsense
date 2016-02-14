@@ -81,7 +81,7 @@ if ($_POST) {
 		if (authenticate_user($_POST['username'], $_POST['password'], $authcfg, $attributes)) {
 			$savemsg = gettext("User") . ": " . $_POST['username'] . " " . gettext("authenticated successfully.");
 			$groups = getUserGroups($_POST['username'], $authcfg, $attributes);
-			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br />";
+			$savemsg .= "&nbsp;" . gettext("This user is a member of groups") . ": <br /><br />";
 			$savemsg .= "<ul>";
 			foreach ($groups as $group) {
 				$savemsg .= "<li>" . "{$group} " . "</li>";
@@ -104,14 +104,12 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Authentication"));
 $shortcut_section = "authentication";
 include("head.inc");
 
-?>
-<?php
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
 if ($savemsg) {
-	print('<div class="alert alert-success" role="alert">'. $savemsg.'</div>');
+	print_info_box($savemsg, 'success', false);
 }
 
 $form = new Form('Test');

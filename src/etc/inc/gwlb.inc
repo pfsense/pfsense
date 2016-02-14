@@ -495,8 +495,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 
 	// Ensure the interface cache is up to date first
 	$interfaces = get_interface_arr(true);
-	$interfaces_v4 = array();
-	$interfaces_v6 = array();
 
 	$i = -1;
 	/* Process/add all the configured gateways. */
@@ -562,10 +560,8 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 			/* special treatment for tunnel interfaces */
 			if ($gateway['ipprotocol'] == "inet6") {
 				$gateway['interface'] = get_real_interface($gateway['interface'], "inet6", false, false);
-				$interfaces_v6[$gateway['friendlyiface']] = $gateway['friendlyiface'];
 			} else {
-				$gateway['interface'] = get_real_interface($gateway['interface'], "all", false, false);
-				$interfaces_v4[$gateway['friendlyiface']] = $gateway['friendlyiface'];
+				$gateway['interface'] = get_real_interface($gateway['interface'], "inet", false, false);
 			}
 
 			/* entry has a default flag, use it */
@@ -616,10 +612,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 
 		if (!empty($ifcfg['ipaddr']) && is_ipaddrv4($ifcfg['ipaddr'])) {
-			continue;
-		}
-
-		if (isset($interfaces_v4[$ifname])) {
 			continue;
 		}
 
@@ -712,10 +704,6 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		}
 
 		if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6'])) {
-			continue;
-		}
-
-		if (isset($interfaces_v6[$ifname])) {
 			continue;
 		}
 
@@ -910,7 +898,7 @@ function return_gateway_groups_array() {
 		fixup_default_gateway("inet6", $gateways_status, $gateways_arr);
 	}
 	if (is_array($config['gateways']['gateway_group'])) {
-		$carplist = get_configured_carp_interface_list();
+		$viplist = get_configured_vip_list();
 		foreach ($config['gateways']['gateway_group'] as $group) {
 			/* create array with group gateways members separated by tier */
 			$tiers = array();
@@ -919,7 +907,7 @@ function return_gateway_groups_array() {
 			foreach ($group['item'] as $item) {
 				list($gwname, $tier, $vipname) = explode("|", $item);
 
-				if (is_ipaddr($carplist[$vipname])) {
+				if (is_ipaddr($viplist[$vipname])) {
 					if (!is_array($gwvip_arr[$group['name']])) {
 						$gwvip_arr[$group['name']] = array();
 					}
@@ -999,9 +987,8 @@ function return_gateway_groups_array() {
 								$groupmember['int'] = $int;
 								$groupmember['gwip'] = $gatewayip;
 								$groupmember['weight'] = isset($gateway['weight']) ? $gateway['weight'] : 1;
-								if (is_array($gwvip_arr[$group['name']])&& !empty($gwvip_arr[$group['name']][$member])) {
+								if (is_array($gwvip_arr[$group['name']]) && !empty($gwvip_arr[$group['name']][$member]))
 									$groupmember['vip'] = $gwvip_arr[$group['name']][$member];
-								}
 								$gateway_groups_array[$group['name']][] = $groupmember;
 							}
 						}
@@ -1079,7 +1066,10 @@ function get_interface_gateway($interface, &$dynamic = false) {
 	global $config, $g;
 
 	if (substr($interface, 0, 4) == '_vip') {
-		$interface = get_configured_carp_interface_list($interface, 'inet', 'iface');
+		$interface = get_configured_vip_interface($interface);
+		if (substr($interface, 0, 4) == '_vip') {
+			$interface = get_configured_vip_interface($interface);
+		}
 	}
 
 	$gw = NULL;
@@ -1114,7 +1104,10 @@ function get_interface_gateway_v6($interface, &$dynamic = false) {
 	global $config, $g;
 
 	if (substr($interface, 0, 4) == '_vip') {
-		$interface = get_configured_carp_interface_list($interface, 'inet6', 'iface');
+		$interface = get_configured_vip_interface($interface);
+		if (substr($interface, 0, 4) == '_vip') {
+			$interface = get_configured_vip_interface($interface);
+		}
 	}
 
 	$gw = NULL;

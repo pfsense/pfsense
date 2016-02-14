@@ -59,12 +59,12 @@
 
 ##|+PRIV
 ##|*IDENT=page-interfaces-assignnetworkports
-##|*NAME=Interfaces: Assign network ports
-##|*DESCR=Allow access to the 'Interfaces: Assign network ports' page.
+##|*NAME=Interfaces: Interface Assignments
+##|*DESCR=Allow access to the 'Interfaces: Interface Assignments' page.
 ##|*MATCH=interfaces_assign.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Interfaces"), gettext("Assign network ports"));
+$pgtitle = array(gettext("Interfaces"), gettext("Interface Assignments"));
 $shortcut_section = "interfaces";
 
 require("guiconfig.inc");
@@ -488,14 +488,14 @@ include("head.inc");
 if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
 		if ($rebootingnow) {
-			$savemsg = gettext("The system is now rebooting.  Please wait.");
+			$savemsg = gettext("The system is now rebooting. Please wait.");
 			$class = "success";
 		} else {
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 			$class = "warning";
 		}
 	} else {
-		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
+		$savemsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
 		$class = "warning";
 	}
 }
@@ -515,16 +515,16 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Interface assignments"), true, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Assignments"), true, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 $tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
 $tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 ?>
 <form action="interfaces_assign.php" method="post">
@@ -597,6 +597,9 @@ display_top_tabs($tab_array);
 	<button name="Submit" type="submit" class="btn btn-primary" value="<?=gettext('Save')?>"><?=gettext('Save')?></button>
 </form>
 <br />
-<p class="alert alert-info"><?=gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.")?></p>
+
+<?php
+print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."), 'info', false);
+?>
 
 <?php include("foot.inc")?>

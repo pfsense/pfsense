@@ -275,27 +275,18 @@ function ipsec_ikeid_next() {
 function ipsec_get_phase1_src(& $ph1ent) {
 
 	if ($ph1ent['interface']) {
-		if (!is_ipaddr($ph1ent['interface'])) {
-			if (strpos($ph1ent['interface'], '_vip')) {
-				$if = $ph1ent['interface'];
-			} else {
-				$if = get_failover_interface($ph1ent['interface']);
-			}
-			if ($ph1ent['protocol'] == "inet6") {
-				$interfaceip = get_interface_ipv6($if);
-			} else {
-				$interfaceip = get_interface_ip($if);
-			}
+		if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+			$if = $ph1ent['interface'];
 		} else {
-			$interfaceip = $ph1ent['interface'];
+			$if = get_failover_interface($ph1ent['interface']);
 		}
 	} else {
 		$if = "wan";
-		if ($ph1ent['protocol'] == "inet6") {
-			$interfaceip = get_interface_ipv6($if);
-		} else {
-			$interfaceip = get_interface_ip($if);
-		}
+	}
+	if ($ph1ent['protocol'] == "inet6") {
+		$interfaceip = get_interface_ipv6($if);
+	} else {
+		$interfaceip = get_interface_ip($if);
 	}
 
 	return $interfaceip;

@@ -435,7 +435,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'radiusissueips',
-	'Radius Issued IP Addresses',
+	'RADIUS Issued IP Addresses',
 	'Assign IP Addresses to users via RADIUS server reply attributes',
 	$pconfig['radiusissueips']
 ));
@@ -598,7 +598,7 @@ $form->add($section);
 
 print($form);
 
-print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients'));
+print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients.'));
 ?>
 <script type="text/javascript">
 //<![CDATA[

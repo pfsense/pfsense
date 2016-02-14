@@ -231,7 +231,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitor"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitors"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -299,7 +299,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Edit Load Balancer - Monitor entry');
+$section = new Form_Section('Edit Load Balancer - Monitor Entry');
 
 $section->addInput(new Form_Input(
 	'name',

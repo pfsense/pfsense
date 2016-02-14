@@ -118,8 +118,7 @@ if ($_GET['act'] == "deluser") {
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();
-	$savemsg = gettext("User")." {$userdeleted} ".
-				gettext("successfully deleted")."<br />";
+	$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -143,7 +142,7 @@ if (isset($_POST['dellall'])) {
 				unset($a_user[$userid]);
 			}
 		}
-		$savemsg = gettext("Selected users removed successfully!");
+		$savemsg = gettext("Selected users removed successfully.");
 		write_config($savemsg);
 	}
 }
@@ -160,7 +159,7 @@ if ($_POST['act'] == "delcert") {
 	unset($a_user[$id]['cert'][$_POST['certid']]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Certificate") . " {$certdeleted} " . gettext("association removed.") . "<br />";
+	$savemsg = sprintf(gettext("Certificate %s association removed."), $certdeleted);
 }
 
 if ($_POST['act'] == "delprivid") {
@@ -169,7 +168,7 @@ if ($_POST['act'] == "delprivid") {
 	local_user_set($a_user[$id]);
 	write_config();
 	$_POST['act'] = "edit";
-	$savemsg = gettext("Privilege ") . $privdeleted . gettext(" removed") . "<br />";
+	$savemsg = sprintf(gettext("Privilege %s removed."), $privdeleted);
 }
 
 if ($_POST['save']) {
@@ -275,7 +274,6 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-
 		conf_mount_rw();
 		$userent = array();
 		if (isset($id) && $a_user[$id]) {
@@ -295,8 +293,12 @@ if ($_POST['save']) {
 			local_user_set_password($userent, $_POST['passwordfld1']);
 		}
 
+		/* only change description if sent */
+		if (isset($_POST['descr'])) {
+			$userent['descr'] = $_POST['descr'];
+		}
+
 		$userent['name'] = $_POST['usernamefld'];
-		$userent['descr'] = $_POST['descr'];
 		$userent['expires'] = $_POST['expires'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
@@ -396,7 +398,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
-			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="'.gettext('Delete Privilege').'" id="delprivid' .$i. '"></a></td>';
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a></td>';
 		}
 
 		$privhtml .=			'</td>';
@@ -478,7 +480,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $input_errors)) {
@@ -751,7 +753,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$form->add($section);
 
 		// ==== Certificate table section =====================================
-		$section = new Form_Section('User certificates');
+		$section = new Form_Section('User Certificates');
 
 		$section->addInput(new Form_StaticText(
 			null,
@@ -763,7 +765,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	// ==== Add user certificate for a new user
 	if (is_array($config['ca']) && count($config['ca']) > 0) {
-		$section = new Form_Section('Create certificate for user');
+		$section = new Form_Section('Create Certificate for User');
 		$section->addClass('cert-options');
 
 		$nonPrvCas = array();

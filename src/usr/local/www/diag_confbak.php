@@ -132,7 +132,7 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Configuration History"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Config History"));
 include("head.inc");
 
 if ($savemsg) {
@@ -149,7 +149,7 @@ if ($diff) {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
+			<?=sprintf(gettext('Configuration Diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
 		</h2>
 	</div>
 	<div class="panel-body table-responsive">
@@ -173,7 +173,7 @@ if ($diff) {
 		}
 ?>
 			<tr>
-				<td class="diff-text" valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" valign="middle" style="background-color:<?=$color;?>;white-space:pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
 	}

@@ -218,7 +218,7 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 <?php
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("State Table Summary"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States Summary"));
 require_once("guiconfig.inc");
 include("head.inc");
 

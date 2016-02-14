@@ -92,15 +92,35 @@ $iflist = get_configured_interface_with_descr();
 
 /* set the starting interface */
 if (!$if || !isset($iflist[$if])) {
+	$found_starting_if = false;
+	// First look for an interface with DHCP already enabled.
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-		    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
-			continue;
+		if (is_array($config['dhcpd'][$ifent]) && isset($config['dhcpd'][$ifent]['enable']) && (is_ipaddrv4($oc['ipaddr']))) {
+			$if = $ifent;
+			$found_starting_if = true;
+			break;
 		}
+	}
 
-		$if = $ifent;
-		break;
+	// If there is no DHCP-enabled interface and LAN is a candidate, then choose LAN.
+	if (!$found_starting_if && isset($iflist['lan']) && is_ipaddrv4($config['interfaces']['lan']['ipaddr'])) {
+		$if = 'lan';
+		$found_starting_if = true;
+	}
+
+	// At the last select whatever can be found.
+	if (!$found_starting_if) {
+		foreach ($iflist as $ifent => $ifname) {
+			$oc = $config['interfaces'][$ifent];
+			if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
+				(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+				continue;
+			}
+
+			$if = $ifent;
+			break;
+		}
 	}
 }
 
@@ -764,10 +784,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		$pconfig['enable']
 	));
 } else {
-	$section->addInput(new Form_StaticText(
-		null,
-		'<div class="alert alert-info"> Editing Pool-Specific Options. To return to the Interface, click its tab above. </div>'
-	));
+	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
 
 $section->addInput(new Form_Checkbox(
@@ -859,7 +876,7 @@ $section->add($group);
 $form->add($section);
 
 if (!is_numeric($pool) && !($act == "newpool")) {
-	$section = new Form_Section('Additional pools');
+	$section = new Form_Section('Additional Pools');
 
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
@@ -906,7 +923,7 @@ for ($idx=1; $idx<=4; $idx++) {
 
 $form->add($section);
 
-$section = new Form_Section('Other options');
+$section = new Form_Section('Other Options');
 
 $section->addInput(new Form_IpAddress(
 	'gateway',
@@ -1205,7 +1222,7 @@ if ($pconfig['netboot']) {
 } else {
 	$sectate = COLLAPSIBLE|SEC_CLOSED;
 }
-$section = new Form_Section("Network booting", nwkbootsec, $sectate);
+$section = new Form_Section("Network Booting", nwkbootsec, $sectate);
 
 $section->addInput(new Form_Checkbox(
 	'netboot',
@@ -1284,7 +1301,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this interface")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this Interface")?></h2></div>
 	<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed">
 				<thead>

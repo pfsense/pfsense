@@ -260,9 +260,7 @@ $tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
 $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
-?>
 
-<?php
 	if ($savemsg) {
 		print_info_box($savemsg, 'success');
 	}
@@ -274,7 +272,7 @@ display_top_tabs($tab_array);
 
 <form name="mainform" method="post">
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPsec tunnels')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('IPsec Tunnels')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover">
 				<thead>
@@ -313,8 +311,10 @@ display_top_tabs($tab_array);
 <?php
 			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
 				echo "V1";
-			} else {
+			} elseif ($ph1ent['iketype'] == "ikev2") {
 				echo "V2";
+			} elseif ($ph1ent['iketype'] == "auto") {
+				echo "Auto";
 			}
 ?>
 						</td>
@@ -323,14 +323,12 @@ display_top_tabs($tab_array);
 			if ($ph1ent['interface']) {
 				$iflabels = get_configured_interface_with_descr();
 
-				$carplist = get_configured_carp_interface_list();
-				foreach ($carplist as $cif => $carpip) {
-					$iflabels[$cif] = $carpip." (".get_vip_descr($carpip).")";
-				}
-
-				$aliaslist = get_configured_ip_aliases_list();
-				foreach ($aliaslist as $aliasip => $aliasif) {
-					$iflabels[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
+				$viplist = get_configured_vip_list();
+				foreach ($viplist as $vip => $address) {
+					$iflabels[$vip] = $address;
+					if (get_vip_descr($address)) {
+						$iflabels[$vip] .= " (". get_vip_descr($address) .")";
+					}
 				}
 
 				$grouplist = return_gateway_groups_array();
@@ -559,10 +557,9 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-	<?=print_info_box('<strong>' . gettext("Note:") . '</strong><br />' .
-	gettext("You can check your IPsec status at ") . '<a href="status_ipsec.php">' . gettext("Status:IPsec") . '</a>.<br />' .
-	gettext("IPsec Debug Mode can be enabled at ") . '<a href="vpn_ipsec_settings.php">' .gettext("VPN:IPsec:Advanced Settings") . '</a>.<br />' .
-	gettext("IPsec can be set to prefer older SAs at ") . '<a href="vpn_ipsec_settings.php">' . gettext("VPN:IPsec:Advanced Settings") . '</a>', 'info', false)?>
+	<?=print_info_box(sprintf(gettext("You can check your IPsec status at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
+	sprintf(gettext("IPsec debug mode can be enabled at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
+	sprintf(gettext("IPsec can be set to prefer older SAs at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false)?>
 </div>
 
 <script type="text/javascript">

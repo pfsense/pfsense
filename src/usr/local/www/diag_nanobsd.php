@@ -90,7 +90,7 @@ if ($_POST['bootslice']) {
 	   sleep(4);
 	}
 
-	$savemsg = sprintf(gettext("The boot slice has been set to %s"), nanobsd_get_active_slice());
+	$savemsg = sprintf(gettext("The boot slice has been set to %s."), nanobsd_get_active_slice());
 	$class = 'alert-success';
 	// Survey slice info
 	nanobsd_detect_slice_info();
@@ -103,7 +103,7 @@ if ($_POST['destslice'] && $_POST['duplicateslice']) {
 		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
 		$class = 'alert-success';
 	} else {
-		$savemsg = gettext("There was an error while duplicating the slice.	 Operation aborted.");
+		$savemsg = gettext("There was an error while duplicating the slice. Operation aborted.");
 		$class = 'alert-danger';
 	}
 	// Re-Survey slice info
@@ -134,7 +134,7 @@ if ($_POST['setrw']) {
 		write_config(gettext("Changed Permanent Read/Write Setting"));
 		conf_mount_ro();
 	} else {
-		$savemsg = gettext('Saved r/w permanently');
+		$savemsg = gettext('Saved read/write permanently.');
 		$class = 'alert-success';
 	}
 }
@@ -243,7 +243,7 @@ print($form);
 if (file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 ?>
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous upgrade log")?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous Upgrade Log")?></h2></div>
 			<!-- No white space between the <pre> and the first output or it will appear on the page! -->
 			<pre><?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
 				<br /><?=gettext("File list:")?>

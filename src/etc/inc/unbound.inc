@@ -326,7 +326,9 @@ forward-zone:
 
 EOD;
 			foreach ($dnsservers as $dnsserver) {
-				$forward_conf .= "\tforward-addr: $dnsserver\n";
+				if (is_ipaddr($dnsserver) && !ip_in_subnet($dnsserver, "127.0.0.0/8")) {
+					$forward_conf .= "\tforward-addr: $dnsserver\n";
+				}
 			}
 		}
 	} else {

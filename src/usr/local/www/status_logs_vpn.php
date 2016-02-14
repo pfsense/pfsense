@@ -114,7 +114,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -240,7 +240,7 @@ if (!$rawfilter) {
 			</table>
 <?php
 	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 		</div>
@@ -272,23 +272,19 @@ events.push(function() {
 
 <?php
 	if ($rows == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 	</div>
 </div>
 <?php
 }
-?>
 
-<?php
 # Manage Log - Section/Form
 if (!$system_logs_manage_log_form_hidden) {
 	manage_log_section();
 }
-?>
 
-<?php
 function dump_clog_vpn($logfile, $tail) {
 	global $g, $config, $vpntype;
 
@@ -325,9 +321,7 @@ function dump_clog_vpn($logfile, $tail) {
 	}
 	return($rows);
 }
-?>
 
-<?php
 // Log Filter Submit - VPN
 function log_filter_form_vpn_submit() {
 
@@ -359,9 +353,7 @@ function log_filter_form_vpn_submit() {
 		$filterlogentries_qty = getGETPOSTsettingvalue('filterlogentries_qty', null);
 	}
 }
-?>
 
-<?php
 // Filter Section/Form - VPN
 function filter_form_vpn() {
 

@@ -212,11 +212,11 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else if (!$resolved && $type) {
-	print('<div class="alert alert-warning" role="alert">' . sprintf(gettext('Host "%s" could not be resolved'), $host) . '</div>');
+	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), $host), 'warning', false);
 }
 
 if ($createdalias) {
-	print('<div class="alert alert-success" role="alert">' . gettext("Alias was created/updated successfully") . '</div>');
+	print_info_box(gettext("Alias was created/updated successfully."), 'success', false);
 }
 
 $form = new Form('Lookup');
@@ -287,7 +287,7 @@ if (!$input_errors && $type) {
 
 <!-- Third table displays "More information" -->
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More information')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('More Information')?></h2></div>
 	<div class="panel-body">
 		<ul class="list-group">
 			<li class="list-group-item"><a href="/diag_ping.php?host=<?=htmlspecialchars($host)?>&amp;count=3"><?=gettext("Ping")?></a></li>

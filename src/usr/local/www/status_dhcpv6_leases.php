@@ -67,7 +67,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"), gettext("DHCPv6 leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCPv6 Leases"));
 $shortcut_section = "dhcp6";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
@@ -408,7 +408,7 @@ if ($_GET['order']) {
 if (count($pools) > 0) {
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool status')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
 	<div class="panel-body">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
@@ -439,7 +439,7 @@ if (count($pools) > 0) {
 }
 
 if (empty($leases)) {
-	print '<div class="alert alert-warning" role="alert">' . gettext("No leases file found. Is the DHCP server active?") . '</div>';
+	print_info_box(gettext("No leases file found. Is the DHCPv6 server active?"), 'warning', false);
 }
 
 ?>
@@ -523,7 +523,7 @@ foreach ($leases as $data):
 				<td><?=$data['act']?></td>
 				<td>
 <?php if ($data['type'] == $dynamic_string): ?>
-					<a <a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
+					<a class="fa fa-plus-square-o" title="<?=gettext("Add static mapping")?>" href="services_dhcpv6_edit.php?if=<?=$data['if']?>&amp;duid=<?=$data['duid']?>&amp;hostname=<?=htmlspecialchars($data['hostname'])?>"></a>
 <?php endif; ?>
 					<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
 <?php if ($data['type'] == $dynamic_string && $data['online'] != $online_string):?>

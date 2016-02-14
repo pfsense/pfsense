@@ -154,7 +154,7 @@ include("head.inc");
 $form = new Form(false);
 $form->addClass('auto-submit');
 
-$section = new Form_Section('Graph settings');
+$section = new Form_Section('Graph Settings');
 
 $group = new Form_Group('');
 
@@ -255,7 +255,7 @@ if (ipsec_enabled()) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext("Traffic graph");?></h2>
+		<h2 class="panel-title"><?=gettext("Traffic Graph");?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">

@@ -347,7 +347,7 @@ if ($_POST) {
 									conf_mount_ro();
 								}
 								filter_configure();
-								$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
+								$savemsg = gettext("The configuration area has been restored. You may need to reboot the firewall.");
 							}
 						}
 					} else {
@@ -527,7 +527,7 @@ if ($_POST) {
 			exit;
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
-			$savemsg = "Package Lock Cleared";
+			$savemsg = "Package lock cleared.";
 		} else if ($mode == "restore_ver") {
 			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
@@ -575,7 +575,7 @@ function build_area_list($showall) {
 		"snmpd" => gettext("SNMP Server"),
 		"shaper" => gettext("Traffic Shaper"),
 		"vlans" => gettext("VLANS"),
-		"wol" => gettext("Wake on LAN")
+		"wol" => gettext("Wake-on-LAN")
 		);
 
 	$list = array("" => gettext("All"));
@@ -593,7 +593,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Backup/Restore"));
 include("head.inc");
 
 if ($input_errors) {
@@ -623,7 +623,7 @@ display_top_tabs($tab_array);
 $form = new Form(false);
 $form->setMultipartEncoding();	// Allow file uploads
 
-$section = new Form_Section('Backup configuration');
+$section = new Form_Section('Backup Configuration');
 
 $section->addInput(new Form_Select(
 	'backuparea',
@@ -661,15 +661,16 @@ $section->addInput(new Form_Input(
 ));
 
 $group = new Form_Group('');
+// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
 	'Download configuration as XML'
-));
+))->setAttribute('id');
 
 $section->add($group);
 $form->add($section);
 
-$section = new Form_Section('Restore backup');
+$section = new Form_Section('Restore Backup');
 
 $section->addInput(new Form_StaticText(
 	null,
@@ -706,34 +707,37 @@ $section->addInput(new Form_Input(
 ));
 
 $group = new Form_Group('');
+// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 $group->add(new Form_Button(
 	'Submit',
 	'Restore Configuration'
-))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore');
+))->setHelp('The firewall will reboot after restoring the configuration.')->removeClass('btn-primary')->addClass('btn-danger restore')->setAttribute('id');
 
 $section->add($group);
 
 $form->add($section);
 
 if (($config['installedpackages']['package'] != "") || (is_subsystem_dirty("packagelock"))) {
-	$section = new Form_Section('Package functions');
+	$section = new Form_Section('Package Functions');
 
 	if ($config['installedpackages']['package'] != "") {
 		$group = new Form_Group('');
+		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
 			'Reinstall Packages'
-		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success');
+		))->setHelp('Click this button to reinstall all system packages.  This may take a while.')->removeClass('btn-primary')->addClass('btn-success')->setAttribute('id');
 
 		$section->add($group);
 	}
 
 	if (is_subsystem_dirty("packagelock")) {
 		$group = new Form_Group('');
+		// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 		$group->add(new Form_Button(
 			'Submit',
 			'Clear Package Lock'
-		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning');
+		))->setHelp('Click this button to clear the package lock if a package fails to reinstall properly after an upgrade.')->removeClass('btn-primary')->addClass('btn-warning')->setAttribute('id');
 
 		$section->add($group);
 	}

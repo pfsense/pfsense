@@ -444,7 +444,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Edit Advanced Outbound NAT entry');
+$section = new Form_Section('Edit Advanced Outbound NAT Entry');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',

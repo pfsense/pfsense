@@ -270,7 +270,7 @@ if (count($config['interfaces']) > 1) {
 	$services_menu[] = array(gettext("UPnP &amp; NAT-PMP"), "/pkg_edit.php?xml=miniupnpd.xml");
 }
 
-$services_menu[] = array(gettext("Wake on LAN"), "/services_wol.php");
+$services_menu[] = array(gettext("Wake-on-LAN"), "/services_wol.php");
 $services_menu = msort(array_merge($services_menu, return_ext_menu("Services")), 0);
 
 // VPN
@@ -348,7 +348,7 @@ $diagnostics_menu[] = array(gettext("pfInfo"), "/diag_pf_info.php");
 $diagnostics_menu[] = array(gettext("pfTop"), "/diag_pftop.php");
 $diagnostics_menu[] = array(gettext("Reboot"), "/diag_reboot.php");
 $diagnostics_menu[] = array(gettext("Routes"), "/diag_routes.php");
-$diagnostics_menu[] = array(gettext("SMART Status"), "/diag_smart.php");
+$diagnostics_menu[] = array(gettext("S.M.A.R.T. Status"), "/diag_smart.php");
 $diagnostics_menu[] = array(gettext("Sockets"), "/diag_sockets.php");
 $diagnostics_menu[] = array(gettext("States"), "/diag_dump_states.php");
 $diagnostics_menu[] = array(gettext("States Summary"), "/diag_states_summary.php");

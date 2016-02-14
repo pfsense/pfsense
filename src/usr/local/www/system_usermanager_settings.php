@@ -98,7 +98,7 @@ if ($_POST) {
 				if ($authsrv['type'] == "ldap") {
 					$save_and_test = true;
 				} else {
-					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for ldap based backends.");
+					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
 				}
 			}
 		}
@@ -143,7 +143,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), true, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 /* Default to pfsense backend type if none is defined */

@@ -94,7 +94,7 @@ $form->addGlobal(new Form_Input(
 	'hidden',
 	'yes'
 ));
-$section = new Form_Section('Auto update page');
+$section = new Form_Section('Auto Update Page');
 
 $section->addInput(new Form_Checkbox(
 	'refresh',

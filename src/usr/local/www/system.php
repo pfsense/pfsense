@@ -494,14 +494,14 @@ if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
 }
 
-$section = new Form_Section('Web Configurator');
+$section = new Form_Section('webConfigurator');
 
 $section->addInput(new Form_Select(
 	'webguicss',
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('Choose an alternative css file (if installed) to change the appearance of the Web configurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/bootstrap/css');
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',

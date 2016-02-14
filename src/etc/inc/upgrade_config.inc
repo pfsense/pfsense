@@ -4410,4 +4410,163 @@ function upgrade_141_to_142() {
 	}
 }
 
+// Updated to check for empty separator definitions via is_array()
+function upgrade_142_to_143() {
+	global $config;
+
+	/* Re-index firewall rule separators per interface */
+	if (is_array($config['filter']['separator'])) {
+		foreach ($config['filter']['separator'] as $interface => $separators) {
+
+			if(is_array($separators)) {
+				foreach ($separators as $sepn => $separator) {
+
+					$seprow = substr($separator['row']['0'], 2);
+					$sepif  = $separator['if'];
+
+					// Determine position of separator within the interface rules.
+					$i = -1; $j = 0;
+					foreach ($config['filter']['rule'] as $rulen => $filterent) {
+
+						if ($i == $seprow) {
+							// Set separator row to it's position within the interface rules.
+							$config['filter']['separator'][$sepif][$sepn]['row'] = 'fr' . $j;
+							continue 2;	// Advance to next separator
+						}
+
+						// Position within the interface rules.
+						if (($filterent['interface'] == $sepif && !isset($filterent['floating'])) || (isset($filterent['floating']) && "floatingrules" == $sepif)) {
+							$j++;
+						}
+						$i++;
+					}
+				}
+			}
+		}
+	}
+
+	/* Re-index nat rule separators */
+	if (is_array($config['nat']['separator'])) {
+		foreach ($config['nat']['separator'] as $sepn => $separator) {
+			if (is_array($separator)) {
+				$seprow = substr($separator['row']['0'], 2);
+				$config['nat']['separator'][$sepn]['row'] = 'fr' . ($seprow + 1);
+			}
+		}
+	}
+}
+
+function get_vip_from_ip_alias($ipalias) {
+	global $config;
+
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['mode'] != "ipalias") {
+			continue;
+		}
+		if ($ipalias == $vip['subnet']) {
+			return ("_vip{$vip['uniqid']}");
+		}
+	}
+
+	return ($ipalias);
+}
+
+function get_vip_from_oldcarp($carp) {
+	global $config;
+
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['mode'] != "carp") {
+			continue;
+		}
+		if ($carp == "{$vip['interface']}_vip{$vip['vhid']}") {
+			return ("_vip{$vip['uniqid']}");
+		}
+	}
+
+	return ($carp);
+}
+
+function upgrade_143_to_144() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if ($vip['mode'] == "ipalias") {
+				if (!isset($vip['uniqid'])) {
+					$config['virtualip']['vip'][$idx]['uniqid'] = uniqid();
+				}
+			}
+		}
+	}
+
+	/* Convert IPsec phase 1 entries. */
+	if (is_array($config['ipsec']['phase1'])) {
+		foreach ($config['ipsec']['phase1'] as $idx => $ph1ent) {
+			if (is_ipaddr($ph1ent['interface']) || is_ipaddrv6($ph1ent['interface'])) {
+				$config['ipsec']['phase1'][$idx]['interface'] = get_vip_from_ip_alias($ph1ent['interface']);
+			} else if (strpos($ph1ent['interface'], "_vip")) {
+				$config['ipsec']['phase1'][$idx]['interface'] = get_vip_from_oldcarp($ph1ent['interface']);
+			}
+		}
+	}
+
+	/* Convert openvpn. */
+	if (is_array($config['openvpn']['openvpn-server'])) {
+		foreach ($config['openvpn']['openvpn-server'] as $idx => $ovpn) {
+			if (empty($ovpn['interface'])) {
+				continue;
+			}
+			if (is_ipaddr($ovpn['interface']) || is_ipaddrv6($ovpn['interface'])) {
+				$config['openvpn']['openvpn-server'][$idx]['interface'] = get_vip_from_ip_alias($ovpn['interface']);
+			} else if (strpos($ovpn['interface'], "_vip")) {
+				$config['openvpn']['openvpn-server'][$idx]['interface'] = get_vip_from_oldcarp($ovpn['interface']);
+			}
+		}
+	}
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpn) {
+			if (empty($ovpn['interface'])) {
+				continue;
+			}
+			if (is_ipaddr($ovpn['interface']) || is_ipaddrv6($ovpn['interface'])) {
+				$config['openvpn']['openvpn-client'][$idx]['interface'] = get_vip_from_ip_alias($ovpn['interface']);
+			} else if (strpos($ovpn['interface'], "_vip")) {
+				$config['openvpn']['openvpn-client'][$idx]['interface'] = get_vip_from_oldcarp($ovpn['interface']);
+			}
+		}
+	}
+
+	/* Convert unbound. */
+	if (is_array($config['unbound']) && !empty($config['unbound']['active_interface'])) {
+		$active_ifs = explode(",", $config['unbound']['active_interface']);
+		$ifs = array();
+		foreach ($active_ifs as $if) {
+			if (is_ipaddr($if) || is_ipaddrv6($if)) {
+				$ifs[] = get_vip_from_ip_alias($if);
+			} else if (strpos($if, "_vip")) {
+				$ifs[] = get_vip_from_oldcarp($if);
+			} else {
+				$ifs[] = $if;
+			}
+		}
+		$config['unbound']['active_interface'] = implode(",", $ifs);
+	}
+
+	/* Convert dnsmasq. */
+	if (is_array($config['dnsmasq']) && !empty($config['dnsmasq']['interface'])) {
+		$active_ifs = explode(",", $config['dnsmasq']['interface']);
+		$ifs = array();
+		foreach ($active_ifs as $if) {
+			if (is_ipaddr($if) || is_ipaddrv6($if)) {
+				$ifs[] = get_vip_from_ip_alias($if);
+			} else if (strpos($if, "_vip")) {
+				$ifs[] = get_vip_from_oldcarp($if);
+			} else {
+				$ifs[] = $if;
+			}
+		}
+		$config['dnsmasq']['interface'] = implode(",", $ifs);
+	}
+}
+
 ?>

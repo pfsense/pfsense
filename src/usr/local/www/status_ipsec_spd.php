@@ -69,7 +69,7 @@ define(LEFTARROW,  '&#x25c0;');
 require("guiconfig.inc");
 require("ipsec.inc");
 
-$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPD"));
+$pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPDs"));
 $shortcut_section = "ipsec";
 include("head.inc");
 
@@ -78,8 +78,8 @@ $spd = ipsec_dump_spd();
 $tab_array = array();
 $tab_array[0] = array(gettext("Overview"), false, "status_ipsec.php");
 $tab_array[1] = array(gettext("Leases"), false, "status_ipsec_leases.php");
-$tab_array[2] = array(gettext("SAD"), false, "status_ipsec_sad.php");
-$tab_array[3] = array(gettext("SPD"), true, "status_ipsec_spd.php");
+$tab_array[2] = array(gettext("SADs"), false, "status_ipsec_sad.php");
+$tab_array[3] = array(gettext("SPDs"), true, "status_ipsec_spd.php");
 display_top_tabs($tab_array);
 
 if (count($spd)) {
@@ -142,7 +142,7 @@ if (ipsec_enabled()) {
 <div class="infoblock blockopen">
 <?php
 }
-print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 <?php

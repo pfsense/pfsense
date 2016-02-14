@@ -144,6 +144,14 @@ _exit() {
 		kill ${nc_pid}
 	fi
 
+	if [ -n "${delete_annotation}" ]; then
+		pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
+	fi
+
+	if [ -n "${unlock_additional_pkgs}" ]; then
+		pkg_unlock "${pkg_prefix}*"
+	fi
+
 	local _rc=${1:-"0"}
 
 	# If EVENT_PIPE is defined, GUI is calling
@@ -205,18 +213,11 @@ fetch_upgrade_packages() {
 
 	fi
 
-	_echo ">>> Downloading upgrade packages..."
-	if ! pkg_with_pb ${pkg_chroot} upgrade -F 2>&1 | tee -a ${logfile}; then
-		_echo "ERROR: It was not possible to download packages"
-		_exit 1
-	fi
+	_exec "pkg_with_pb ${pkg_chroot} upgrade -F" "Downloading upgrade packages"
 
 	if [ -n "${_pkgs_to_fetch}" ]; then
-		_echo ">>> Fetching packages not present on upgrade partition..."
-		if ! pkg_with_pb ${pkg_chroot} fetch -d ${_pkgs_to_fetch} 2>&1 | tee -a ${logfile}; then
-			_echo "ERROR: It was not possible to fetch packages"
-			_exit 1
-		fi
+		_exec "pkg_with_pb ${pkg_chroot} fetch -d ${_pkgs_to_fetch}" \
+			"Fetching packages not present on upgrade partition"
 	fi
 }
 
@@ -363,6 +364,7 @@ pkg_upgrade() {
 
 	if [ "${next_stage}" = "2" ]; then
 		pkg_lock "${pkg_prefix}*"
+		unlock_additional_pkgs=1
 
 		# XXX: Workaround to upgrade strongswan
 		# If those symlinks are present, pkg exit because it expects them
@@ -383,13 +385,9 @@ pkg_upgrade() {
 		fi
 
 		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
-			_echo "Upgrading necessary packages..."
-			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
-				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
-				pkg_unlock "${pkg_prefix}*"
-				_echo "ERROR: An error occurred when upgrade was running..."
-				_exit 1
-			fi
+			delete_annotation=1
+			_exec "pkg ${pkg_chroot} upgrade" "Upgrading necessary packages"
+			delete_annotation=""
 		fi
 
 		# XXX: workaround for #5300
@@ -400,6 +398,7 @@ pkg_upgrade() {
 		next_stage=3
 
 		pkg_unlock "${pkg_prefix}*"
+		unlock_additional_pkgs=""
 
 		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
 			switch_active_nanobsd_partition
@@ -414,12 +413,9 @@ pkg_upgrade() {
 
 	if [ "${next_stage}" = "3" ]; then
 		if [ $(pkg upgrade -nq | wc -l) -gt 1 ]; then
-			_echo "Upgrading necessary packages..."
-			if ! pkg ${pkg_chroot} upgrade 2>&1 | tee -a ${logfile}; then
-				pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
-				_echo "ERROR: An error occurred when upgrade was running..."
-				_exit 1
-			fi
+			delete_annotation=1
+			_exec "pkg ${pkg_chroot} upgrade" "Upgrading necessary packages"
+			delete_annotation=""
 		fi
 
 		pkg ${pkg_chroot} annotate -q -D ${kernel_pkg} next_stage
@@ -702,6 +698,10 @@ if [ "${do_not_send_host_uuid}" != "true" ]; then
 else
 	export HTTP_USER_AGENT="${product}/${product_version}"
 fi
+
+# Flags used in _exit
+export delete_annotation=""
+export unlock_additional_pkgs=""
 
 # Upgrade process on nanobsd will happen in chroot
 export pkg_chroot=""

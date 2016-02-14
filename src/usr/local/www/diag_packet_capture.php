@@ -126,8 +126,8 @@ $snaplen = 0;//default packet length
 $count = 100;//default number of packets to capture
 
 $fams = array('ip', 'ip6');
-$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp',
-		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp');
+$protos = array('icmp', 'icmp6', 'tcp', 'udp', 'arp', 'carp', 'esp', 'pfsync',
+		        '!icmp', '!icmp6', '!tcp', '!udp', '!arp', '!carp', '!esp', '!pfsync');
 
 $input_errors = array();
 
@@ -279,7 +279,10 @@ $protocollist = array(
 	'!arp' => $excl . ' ARP',
 	'carp' => 'CARP',
 	'!carp' => $excl . ' CARP',
-	'esp' => 'ESP'
+	'pfsync' => 'pfsync',
+	'!pfsync' => $excl . ' pfsync',
+	'esp' => 'ESP',
+	'!esp' => $excl . 'ESP'
 );
 
 include("head.inc");
@@ -460,7 +463,7 @@ if ($do_tcpdump) :
 	if ($action == gettext("Start")) {
 		$matchstr = implode($matches, " and ");
 
-		print_info_box(gettext('Packet Capture is running'), 'info');
+		print_info_box(gettext('Packet capture is running.'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
 		// Debug

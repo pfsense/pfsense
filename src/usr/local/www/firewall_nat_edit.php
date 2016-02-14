@@ -518,15 +518,9 @@ if ($_POST) {
 
 				// Update the separators
 				$a_separators = &$config['nat']['separator'];
-
-				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-
-					// If the separator is located after the place where the new rule is to go, increment the separator row
-					if ($seprow > $after) {
-						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
-					}
-				}
+				$ridx = $after;
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
 			} else {
 				$a_nat[] = $natent;
 			}
@@ -668,7 +662,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Edit Redirect entry');
+$section = new Form_Section('Edit Redirect Entry');
 
 $section->addInput(new Form_Checkbox(
 	'disabled',

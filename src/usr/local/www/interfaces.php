@@ -1691,7 +1691,8 @@ if ($input_errors) {
 
 if (is_subsystem_dirty('interfaces')) {
 	print_apply_box(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
-					gettext("You must apply the changes in order for them to take effect. Don't forget to adjust the DHCP Server range if needed after applying."));
+					gettext("You must apply the changes in order for them to take effect.") . "<br />" .
+					gettext("Don't forget to adjust the DHCP Server range if needed after applying."));
 }
 
 if ($savemsg) {

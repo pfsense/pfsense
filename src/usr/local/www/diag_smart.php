@@ -63,7 +63,17 @@
 
 require("guiconfig.inc");
 
+// What page, aka. action is being wanted
+// If they "get" a page but don't pass all arguments, smartctl will throw an error
+$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
+
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
+
+if ($action != 'config') {
+	$pgtitle[] = gettext('Information & Tests');
+} else {
+	$pgtitle[] = gettext('Config');
+}
 $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";
@@ -104,10 +114,6 @@ function smartmonctl($action) {
 	global $start_script;
 	shell_exec($start_script . escapeshellarg($action));
 }
-
-// What page, aka. action is being wanted
-// If they "get" a page but don't pass all arguments, smartctl will throw an error
-$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
@@ -116,7 +122,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 }
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
+$tab_array[0] = array(gettext("Information & Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
 $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
 display_top_tabs($tab_array);
 

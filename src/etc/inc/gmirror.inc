@@ -93,11 +93,7 @@ function gmirror_html_status() {
 	$mirrors = gmirror_get_status();
 	$output = "";
 	if (count($mirrors) < 1) {
-?>
-<div class="alert alert-warning" role="alert">
-	<p>No Mirrors Found</p>
-</div>
-<?php
+		print_info_box(gettext("No mirrors found."), 'warning', false);
 		return;
 	}
 

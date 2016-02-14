@@ -66,7 +66,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"), gettext("DHCP leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCP Leases"));
 $shortcut_section = "dhcp";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd.leases";

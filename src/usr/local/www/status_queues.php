@@ -84,7 +84,7 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	$error = gettext("Something wrong happened during communication with stat gathering");
+	$error = gettext("Something wrong happened during communication with stat gathering.");
 } else {
 	$stats = "";
 	while (!feof($fd)) {
@@ -142,7 +142,7 @@ if ($_REQUEST['getactivity']) {
 	echo $finscript;
 	exit;
 }
-$pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues"));
+$pgtitle = array(gettext("Status"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
 
@@ -217,7 +217,7 @@ else: ?>
 			<br />
 			<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info', false);
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data."), 'info', false);
 ?>
 			</div>
 		</div>

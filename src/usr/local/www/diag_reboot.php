@@ -73,13 +73,13 @@ require("captiveportal.inc");
 $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Reboot System"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 include("head.inc");
 
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	if (DEBUG) {
-	   print_info_box(gettext("Not actually rebooting (DEBUG is set true)"), 'success');
+		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
 		print('<div><pre>');
 		system_reboot();

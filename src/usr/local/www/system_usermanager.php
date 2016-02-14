@@ -118,7 +118,7 @@ if ($_GET['act'] == "deluser") {
 	$userdeleted = $a_user[$id]['name'];
 	unset($a_user[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("User %s successfully deleted"), $userdeleted);
+	$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -142,7 +142,7 @@ if (isset($_POST['dellall'])) {
 				unset($a_user[$userid]);
 			}
 		}
-		$savemsg = gettext("Selected users removed successfully!");
+		$savemsg = gettext("Selected users removed successfully.");
 		write_config($savemsg);
 	}
 }

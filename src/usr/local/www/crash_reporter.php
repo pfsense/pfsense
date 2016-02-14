@@ -87,7 +87,7 @@ function upload_crash_report($files) {
 	return $response;
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Crash reporter"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Crash Reporter"));
 include('head.inc');
 
 $crash_report_header = "Crash report begins.  Anonymous machine information:\n\n";

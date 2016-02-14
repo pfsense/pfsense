@@ -67,7 +67,7 @@
 require("guiconfig.inc");
 require_once("config.inc");
 
-$pgtitle = array(gettext("Status"), gettext("DHCPv6 leases"));
+$pgtitle = array(gettext("Status"), gettext("DHCPv6 Leases"));
 $shortcut_section = "dhcp6";
 
 $leasesfile = "{$g['dhcpd_chroot_path']}/var/db/dhcpd6.leases";
@@ -439,7 +439,7 @@ if (count($pools) > 0) {
 }
 
 if (empty($leases)) {
-	print '<div class="alert alert-warning" role="alert">' . gettext("No leases file found. Is the DHCP server active?") . '</div>';
+	print_info_box(gettext("No leases file found. Is the DHCPv6 server active?"), 'warning', false);
 }
 
 ?>

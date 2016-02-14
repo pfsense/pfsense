@@ -199,7 +199,7 @@ function build_interfaces_list() {
 	return($list);
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("VLAN"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("VLANs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

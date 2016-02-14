@@ -60,7 +60,7 @@
 ##|*MATCH=vpn_l2tp_users_edit.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("User"), gettext("Edit"));
+$pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"), gettext("Edit"));
 $shortcut_section = "l2tps";
 
 function l2tpusercmp($a, $b) {

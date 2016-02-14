@@ -78,9 +78,10 @@ function get_pf_rules($rules, $tracker) {
 		return (NULL);
 
 	$arr = array();
-	for ($i = 0; $i < count($rules); $i++) {
-		if ($rules[$i]['tracker'] === $tracker)
-			$arr[] = $rules[$i];
+	foreach ($rules as $rule) {
+		if ($rule['tracker'] === $tracker) {
+			$arr[] = $rule;
+		}
 	}
 
 	if (count($arr) == 0)
@@ -99,16 +100,20 @@ function print_states($tracker) {
 	$evaluations = 0;
 	$stcreations = 0;
 	$rules = get_pf_rules($rulescnt, $tracker);
-	for ($j = 0; is_array($rules) && $j < count($rules); $j++) {
-		$bytes += $rules[$j]['bytes'];
-		$states += $rules[$j]['states'];
-		$packets += $rules[$j]['packets'];
-		$evaluations += $rules[$j]['evaluations'];
-		$stcreations += $rules[$j]['state creations'];
-		if (strlen($rulesid) > 0)
-			$rulesid .= ",";
-		$rulesid .= "{$rules[$j]['id']}";
+	if (is_array($rules)) {
+		foreach ($rules as $rule) {
+			$bytes += $rule['bytes'];
+			$states += $rule['states'];
+			$packets += $rule['packets'];
+			$evaluations += $rule['evaluations'];
+			$stcreations += $rule['state creations'];
+			if (strlen($rulesid) > 0) {
+				$rulesid .= ",";
+			}
+			$rulesid .= "{$rule['id']}";
+		}
 	}
+
 	printf("<a href=\"diag_dump_states.php?ruleid=%s\" data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" ",
 	    $rulesid, gettext("States details"));
 	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
@@ -208,7 +213,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress"),
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress."),
 									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
@@ -479,8 +484,9 @@ $separators = $config['filter']['separator'][strtolower($if)];
 // More efficient than looping through the list of separators on every row.
 $seprows = separator_rows($separators);
 
-for ($i = 0; isset($a_filter[$i]); $i++):
-	$filterent = $a_filter[$i];
+foreach ($a_filter as $filteri => $filterent):
+
+	$i = $filteri;
 
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 
@@ -794,7 +800,7 @@ for ($i = 0; isset($a_filter[$i]); $i++):
 <?php
 		$nrules++;
 	}
-endfor;
+endforeach;
 
 // There can be separator(s) after the last rule listed.
 if ($seprows[$nrules]) {

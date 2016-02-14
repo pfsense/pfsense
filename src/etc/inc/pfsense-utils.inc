@@ -423,33 +423,27 @@ function get_carp_interface_status($carpinterface) {
 	global $config;
 
 	foreach ($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp") {
+		if ($carp['mode'] != "carp")
 			continue;
-		}
-		$carpif = "_vip{$carp['uniqid']}";
-		if ($carpinterface !== $carpif) {
+		if ($carpinterface !== "_vip{$carp['uniqid']}")
 			continue;
-		}
 
 		$interface = get_real_interface($carp['interface']);
 		$vhid = $carp['vhid'];
 		$carp_query = '';
 		$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
 		foreach ($carp_query as $int) {
-			if (stripos($int, "MASTER")) {
+			if (stripos($int, "MASTER"))
 				return "MASTER";
-			}
-			if (stripos($int, "BACKUP")) {
+			elseif (stripos($int, "BACKUP"))
 				return "BACKUP";
-			}
-			if (stripos($int, "INIT")) {
+			elseif (stripos($int, "INIT"))
 				return "INIT";
-			}
 		}
 		break;
 	}
 
-	return;
+	return "";
 }
 
 /*

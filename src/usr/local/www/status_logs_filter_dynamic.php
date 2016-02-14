@@ -112,7 +112,7 @@ manage_log_code();
 status_logs_common_code();
 
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -482,7 +482,7 @@ function toggleListDescriptions() {
 
 	if (count($filterlog) == 0) {
 		print '<tr class="text-nowrap"><td colspan=6>';
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 		print '</td></tr>';
 	}
 ?>
@@ -507,7 +507,7 @@ if ($tcpcnt > 0) {
 <div class="infoblock">
 <?php
 	print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
-					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR', 'info', false);
+					gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.', 'info', false);
 ?>
 </div>
 <?php

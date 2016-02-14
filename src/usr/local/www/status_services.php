@@ -195,7 +195,7 @@ if (count($services) > 0) {
 </form>
 <?php
 } else {
-	print_info_box(gettext("No services found"), 'danger');
+	print_info_box(gettext("No services found."), 'danger');
 }
 ?>
 <script type="text/javascript">

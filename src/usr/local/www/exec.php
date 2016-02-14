@@ -90,7 +90,7 @@ if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 	exit;
 } else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
-	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s'), htmlentities($_FILES['ulfile']['name']));
+	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s.'), htmlentities($_FILES['ulfile']['name']));
 	unset($_POST['txtCommand']);
 }
 
@@ -122,7 +122,7 @@ $ScriptName = $REQUEST['SCRIPT_NAME'];
 $arrDT = localtime();
 $intYear = $arrDT[5] + 1900;
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Execute command"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Command Prompt"));
 include("head.inc");
 ?>
 <script type="text/javascript">
@@ -218,7 +218,7 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print('<div class="alert alert-warning" role="alert">' . gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!") . '</div>');
+	print_info_box(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'warning', false);
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
@@ -269,7 +269,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 
 <?php
 	if ($ulmsg) {
-		print('<div class="alert alert-success" role="alert">' . $ulmsg . '</div>');
+		print_info_box($ulmsg, 'success', false);
 	}
 ?>
 	<div class="panel panel-default">

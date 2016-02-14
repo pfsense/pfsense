@@ -192,7 +192,7 @@ function build_parent_list() {
 	return($parentlist);
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("GIF"), gettext("Edit"));
+$pgtitle = array(gettext("Interfaces"), gettext("GIFs"), gettext("Edit"));
 $shortcut_section = "interfaces";
 include("head.inc");
 

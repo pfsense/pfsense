@@ -230,7 +230,7 @@ if ($_GET['act'] == "addopt") {
 	array_push($pconfig['aliases']['item'], array('host' => null, 'domain' => null, 'description' => null));
 }
 
-$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Edit Host Override"));
+$pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"), gettext("Edit Host Override"));
 $shortcut_section = "resolver";
 include("head.inc");
 

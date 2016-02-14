@@ -130,7 +130,7 @@ if ($_GET['act'] == "del") {
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 		if ($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s"), htmlspecialchars($referenced_by));
+			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
 		} else {
 			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
 				// this is a URL table type alias, delete its file as well

@@ -71,7 +71,7 @@ $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
 	include("head.inc");
-	print_info_box(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
 	exit;
 } else {
@@ -79,14 +79,14 @@ if ($xml == "") {
 	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
 	$pkg_realpath = realpath($pkg_full_path);
 	if (empty($pkg_realpath)) {
-		$path_error = sprintf(gettext("ERROR: Package path %s not found."), htmlspecialchars($pkg_full_path));
+		$path_error = sprintf(gettext("Package path %s not found."), htmlspecialchars($pkg_full_path));
 	} else if (substr_compare($pkg_realpath, $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
-		$path_error = sprintf(gettext("ERROR: Invalid path %s specified."), htmlspecialchars($pkg_full_path));
+		$path_error = sprintf(gettext("Invalid path %s specified."), htmlspecialchars($pkg_full_path));
 	}
 
 	if (!empty($path_error)) {
 		include("head.inc");
-		print_info_box($path_error . "<br />" . gettext("Try reinstalling the package."));
+		print_info_box($path_error . "<br />" . gettext("Try reinstalling the package."), 'danger', false);
 		include("foot.inc");
 		die;
 	}
@@ -95,7 +95,7 @@ if ($xml == "") {
 		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	} else {
 		include("head.inc");
-		print_info_box(sprintf(gettext("File not found %s"), htmlspecialchars($xml)));
+		print_info_box(sprintf(gettext("File not found %s."), htmlspecialchars($xml)), 'danger', false);
 		include("foot.inc");
 		exit;
 	}

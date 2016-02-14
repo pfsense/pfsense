@@ -347,7 +347,7 @@ if ($_POST) {
 									conf_mount_ro();
 								}
 								filter_configure();
-								$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
+								$savemsg = gettext("The configuration area has been restored. You may need to reboot the firewall.");
 							}
 						}
 					} else {
@@ -527,7 +527,7 @@ if ($_POST) {
 			exit;
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
-			$savemsg = "Package Lock Cleared";
+			$savemsg = "Package lock cleared.";
 		} else if ($mode == "restore_ver") {
 			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
@@ -575,7 +575,7 @@ function build_area_list($showall) {
 		"snmpd" => gettext("SNMP Server"),
 		"shaper" => gettext("Traffic Shaper"),
 		"vlans" => gettext("VLANS"),
-		"wol" => gettext("Wake on LAN")
+		"wol" => gettext("Wake-on-LAN")
 		);
 
 	$list = array("" => gettext("All"));
@@ -593,7 +593,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Backup/Restore"));
 include("head.inc");
 
 if ($input_errors) {

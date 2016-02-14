@@ -91,7 +91,7 @@ $tab_array[] = array(gettext("Virtual Servers"), true, "status_lb_vs.php");
 display_top_tabs($tab_array);
 
 if (empty($a_vs)) {
-	print('<div class="alert alert-danger">' . gettext("No load balancers have been configured!") . '</div>');
+	print_info_box(gettext("No load balancers have been configured."), 'danger', false);
 } else {
 ?>
 <div class="table-responsive"></div>

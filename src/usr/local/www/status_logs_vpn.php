@@ -114,7 +114,7 @@ if ($filtertext) {
 	$filtertextmeta="?filtertext=$filtertext";
 }
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -240,7 +240,7 @@ if (!$rawfilter) {
 			</table>
 <?php
 	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 		</div>
@@ -272,7 +272,7 @@ events.push(function() {
 
 <?php
 	if ($rows == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 	</div>

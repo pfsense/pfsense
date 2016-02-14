@@ -105,7 +105,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Show States"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
 include("head.inc");
 ?>
 
@@ -289,12 +289,12 @@ print $form;
 
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
-		$errmsg = gettext('No states were found that match the current filter');
+		$errmsg = gettext('No states were found that match the current filter.');
 	} else {
-		$errmsg = gettext('No states were found');
+		$errmsg = gettext('No states were found.');
 	}
 
-	print('<p class="alert alert-warning">' . $errmsg . '</p>');
+	print_info_box($errmsg, 'warning', false);
 }
 
 include("foot.inc");

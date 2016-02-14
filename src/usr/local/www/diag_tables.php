@@ -127,7 +127,7 @@ if ($savemsg) {
 }
 
 if ($tablename == "webConfiguratorlockout") {
-	$displayname = gettext("Web Configurator Lockout Table");
+	$displayname = gettext("webConfigurator Lockout Table");
 } else {
 	$displayname = sprintf(gettext("%s Table"), ucfirst($tablename));
 }
@@ -169,9 +169,9 @@ if ($bogons || !empty($entries)) {
 <?php
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 	if ($last_updated != "") {
-		print_info_box(gettext("Table last updated on ") . $last_updated, 'info', false);
+		print_info_box(gettext("Table last updated on ") . $last_updated . ".", 'info', false);
 	} else {
-		print_info_box(gettext("Date of last update of table is unknown"), 'info', false);
+		print_info_box(gettext("Date of last update of table is unknown."), 'info', false);
 	}
 ?>
 	</div>
@@ -241,10 +241,8 @@ events.push(function() {
 	</div>
 </div>
 
-<?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
-<?php endif ?>
-
 <?php
-
+if (empty($entries)) {
+	print_info_box(gettext("No entries exist in this table."), 'warning', false);
+}
 include("foot.inc");

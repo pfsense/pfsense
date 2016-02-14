@@ -212,11 +212,11 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 } else if (!$resolved && $type) {
-	print('<div class="alert alert-warning" role="alert">' . sprintf(gettext('Host "%s" could not be resolved'), $host) . '</div>');
+	print_info_box(sprintf(gettext('Host "%s" could not be resolved.'), $host), 'warning', false);
 }
 
 if ($createdalias) {
-	print('<div class="alert alert-success" role="alert">' . gettext("Alias was created/updated successfully") . '</div>');
+	print_info_box(gettext("Alias was created/updated successfully."), 'success', false);
 }
 
 $form = new Form('Lookup');

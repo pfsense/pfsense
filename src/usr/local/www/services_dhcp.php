@@ -716,6 +716,10 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
+
+if (!empty($if) && !isset($config['dhcrelay']['enable']) && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+}
 $shortcut_section = "dhcp";
 
 include("head.inc");

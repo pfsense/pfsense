@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd
-##|*NAME=Services: NTP
-##|*DESCR=Allow access to the 'Services: NTP' page.
+##|*NAME=Services: NTP Settings
+##|*DESCR=Allow access to the 'Services: NTP Settings' page.
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
@@ -251,7 +251,7 @@ if (empty($pconfig['interface'])) {
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -263,7 +263,7 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("NTP"), true, "services_ntpd.php");
+$tab_array[] = array(gettext("Settings"), true, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);

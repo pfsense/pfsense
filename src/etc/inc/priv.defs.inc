@@ -797,8 +797,8 @@ $priv_list['page-services-igmpproxy-edit']['match'] = array();
 $priv_list['page-services-igmpproxy-edit']['match'][] = "services_igmpproxy_edit.php*";
 
 $priv_list['page-services-ntpd'] = array();
-$priv_list['page-services-ntpd']['name'] = gettext("WebCfg - Services: NTP");
-$priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Services: NTP' page.");
+$priv_list['page-services-ntpd']['name'] = gettext("WebCfg - Services: NTP Settings");
+$priv_list['page-services-ntpd']['descr'] = gettext("Allow access to the 'Services: NTP Settings' page.");
 $priv_list['page-services-ntpd']['match'] = array();
 $priv_list['page-services-ntpd']['match'][] = "services_ntpd.php*";
 

@@ -164,8 +164,8 @@ $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Availab
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
+$tab_array[] = array(gettext("Available Packages"), true, "pkg_mgr.php");
 display_top_tabs($tab_array);
 ?>
 <div class="panel panel-default" id="search-panel" style="display: none;">

@@ -76,8 +76,8 @@ $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Install
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 $tab_array[] = array(gettext("Installed Packages"), true, "pkg_mgr_installed.php");
+$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 display_top_tabs($tab_array);
 
 $installed_packages = array();

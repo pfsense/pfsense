@@ -207,7 +207,7 @@ $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
-	$system_menu[] = array(gettext("Packages"), "/pkg_mgr_installed.php");
+	$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 }
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");

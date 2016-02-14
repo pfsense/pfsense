@@ -212,8 +212,6 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 	return(false);
 }
 
-$headline = "<br />";
-
 if ($_POST) {
 	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
 		header("Location: pkg_mgr_installed.php");
@@ -229,25 +227,6 @@ if ($_POST) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
-
-	switch ($_GET['mode']) {
-		case 'reinstallall':
-			$headline = gettext("Reinstall all Packages");
-			break;
-		case 'reinstallpkg':
-			if ($_GET['from'] && $_GET['to']) {
-				$headline = gettext("Upgrade Package");
-			} else {
-				$headline = gettext("Reinstall Package");
-			}
-			break;
-		case 'delete':
-			$headline = gettext("Remove Package");
-			break;
-		default:
-			$headline = gettext("Install Package");
-			break;
-	}
 }
 
 if ($_GET && $_GET['id'] == "firmware") {
@@ -262,7 +241,7 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
-	$pgtitle = array(gettext("System"), gettext("Package Manager"), $headline);
+	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
@@ -277,7 +256,6 @@ if ($input_errors) {
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-<!--	<h2><?=$headline?></h2> -->
 <?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));

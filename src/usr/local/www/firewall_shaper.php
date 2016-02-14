@@ -166,7 +166,7 @@ if ($_GET) {
 					$class = 'warning';
 				}
 			} else {
-				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+				$savemsg = gettext("Unable to write config.xml (Access Denied?).");
 				$class = 'warning';
 			}
 

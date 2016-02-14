@@ -99,7 +99,7 @@ if ($act == "delgroup") {
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Group %s successfully deleted"), $groupdeleted);
+	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
 }
 
 if ($act == "delpriv") {
@@ -123,7 +123,7 @@ if ($act == "delpriv") {
 
 	write_config();
 	$act = "edit";
-	$savemsg = sprintf(gettext("Privilege %s successfully deleted"), $privdeleted);
+	$savemsg = sprintf(gettext("Privilege %s successfully deleted."), $privdeleted);
 }
 
 if ($act == "edit") {
@@ -150,7 +150,7 @@ if (isset($_GET['dellall_x'])) {
 				unset($a_group[$groupid]);
 			}
 		}
-		$savemsg = gettext("Selected groups removed successfully!");
+		$savemsg = gettext("Selected groups removed successfully.");
 		write_config($savemsg);
 	}
 }

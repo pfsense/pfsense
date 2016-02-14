@@ -123,7 +123,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_client[$id]);
 	write_config();
-	$savemsg = gettext("Client successfully deleted");
+	$savemsg = gettext("Client successfully deleted.");
 }
 
 if ($_GET['act'] == "new") {

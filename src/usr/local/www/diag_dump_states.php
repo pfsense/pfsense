@@ -289,9 +289,9 @@ print $form;
 
 if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
-		$errmsg = gettext('No states were found that match the current filter');
+		$errmsg = gettext('No states were found that match the current filter.');
 	} else {
-		$errmsg = gettext('No states were found');
+		$errmsg = gettext('No states were found.');
 	}
 
 	print_info_box($errmsg, 'warning', false);

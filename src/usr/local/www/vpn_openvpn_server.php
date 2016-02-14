@@ -126,7 +126,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_server[$id]);
 	write_config();
-	$savemsg = gettext("Server successfully deleted");
+	$savemsg = gettext("Server successfully deleted.");
 }
 
 if ($_GET['act'] == "new") {

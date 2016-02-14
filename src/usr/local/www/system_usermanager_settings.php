@@ -98,7 +98,7 @@ if ($_POST) {
 				if ($authsrv['type'] == "ldap") {
 					$save_and_test = true;
 				} else {
-					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for ldap based backends.");
+					$savemsg = gettext("Settings have been saved, but the test was not performed because it is supported only for LDAP based backends.");
 				}
 			}
 		}

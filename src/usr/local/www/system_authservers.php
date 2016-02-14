@@ -111,7 +111,7 @@ if ($act == "del") {
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
 
-	$savemsg = sprintf(gettext("Authentication Server %s deleted"), htmlspecialchars($serverdeleted));
+	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
 }
 

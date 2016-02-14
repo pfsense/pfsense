@@ -187,7 +187,7 @@ if (!empty($a_vs)) {
 } else {
 ?>						<tr>
 							<td	 colspan="8"> <?php
-								print_info_box(gettext('No virtual servers have been configured'));
+								print_info_box(gettext('No virtual servers have been configured.'));
 ?>							</td>
 						</tr> <?php
 }

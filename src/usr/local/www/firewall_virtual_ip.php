@@ -373,8 +373,8 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
-		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s'), '<a href="status_carp.php">', '</a>'), 'info', false)?>
+	<?=print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings.'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
+		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s.'), '<a href="status_carp.php">', '</a>'), 'info', false)?>
 </div>
 
 <?php

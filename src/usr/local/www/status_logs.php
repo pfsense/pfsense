@@ -196,7 +196,7 @@ if (!$rawfilter) {
 		</table>
 <?php
 	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 		</div>
@@ -244,7 +244,7 @@ events.push(function() {
 
 <?php
 	if ($rows == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 	</div>

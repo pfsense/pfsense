@@ -67,7 +67,7 @@ function admusercmp($a, $b) {
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Add Privileges"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
 
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];

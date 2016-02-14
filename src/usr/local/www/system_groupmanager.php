@@ -67,8 +67,6 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
-
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
 }
@@ -257,6 +255,11 @@ function build_priv_table() {
 	return($privhtml);
 }
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
+
+if ($act == "new" || $act == "edit") {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {

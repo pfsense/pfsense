@@ -243,6 +243,6 @@ events.push(function() {
 
 <?php
 if (empty($entries)) {
-	print_info_box(gettext("No entries exist in this table"), 'warning', false);
+	print_info_box(gettext("No entries exist in this table."), 'warning', false);
 }
 include("foot.inc");

@@ -270,7 +270,7 @@ if ($_POST) {
 		$bridge['ifpathcost'] = $ifpathcost;
 
 		if ($_POST['span'] != "none") {
-			$bridge['span'] = $_POST['span'];
+			$bridge['span'] = implode(',', $_POST['span']);
 		} else {
 			unset($bridge['span']);
 		}
@@ -312,6 +312,7 @@ if ($_POST) {
 	}
 }
 
+/* using build_port_list() for spans now
 function build_spanport_list() {
 	global $ifacelist;
 
@@ -322,7 +323,8 @@ function build_spanport_list() {
 	}
 
 	return($splist);
-}
+} 
+*/
 
 function build_member_list() {
 	global $pconfig, $ifacelist;
@@ -418,11 +420,14 @@ $section->addInput(new Form_Input(
 	$pconfig['timeout']
 ))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 240 seconds');
 
+$spanlist = build_port_list($pconfig['span']);
+
 $section->addInput(new Form_Select(
 	'span',
 	'Span Port',
-	$pconfig['span'],
-	build_spanport_list()
+	$spanlist['selected'],
+	$spanlist['list'],
+	true
 ))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge.' .
 			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
 			'%sThe span interface cannot be part of the bridge member interfaces.%s', ['<strong>', '</strong>']);

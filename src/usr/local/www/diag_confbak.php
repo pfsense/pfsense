@@ -140,8 +140,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
 $tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), false, "diag_backup.php");
+$tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
 display_top_tabs($tab_array);
 
 if ($diff) {

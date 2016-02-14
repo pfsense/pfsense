@@ -616,8 +616,8 @@ if (is_subsystem_dirty('restore')):
 endif;
 
 $tab_array = array();
-$tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
 $tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), true, "diag_backup.php");
+$tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
 display_top_tabs($tab_array);
 
 $form = new Form(false);

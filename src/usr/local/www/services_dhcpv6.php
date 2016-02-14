@@ -436,7 +436,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server/RA"));
+$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
 
 if (!empty($if) && !$dhcrelay_enabled && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];

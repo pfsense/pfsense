@@ -50,14 +50,9 @@ function get_swap_disks() {
 
 function get_disk_slices($disk) {
 	global $g, $debug;
-	$slices_array = array();
-	$slices = trim(exec("/bin/ls " . escapeshellarg("/dev/" . $disk . "s*") . " 2>/dev/null"));
+	$slices = glob("/dev/" . $disk . "s*");
 	$slices = str_replace("/dev/", "", $slices);
-	if ($slices == "ls: No match.") {
-		return;
-	}
-	$slices_array = explode(" ", $slices);
-	return $slices_array;
+	return $slices;
 }
 
 function get_disks() {

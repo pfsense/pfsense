@@ -101,9 +101,9 @@ function gmirror_html_status() {
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th>Name</td>
-			<th>Status</td>
-			<th>Component</td>
+			<th><?=gettext("Name")?></td>
+			<th><?=gettext("Status")?></td>
+			<th><?=gettext("Component")?></td>
 		</tr>
 	</thead>
 	<tbody>
@@ -120,7 +120,10 @@ function gmirror_html_status() {
 			</tr>
 		<?php endforeach; ?>
 	<?php endif; ?>
-<?php endforeach;
+<?php endforeach; ?>
+	</tbody>
+</table>
+<?php
 }
 
 /* List all disks in the system (potential gmirror targets) */

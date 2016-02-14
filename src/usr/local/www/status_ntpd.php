@@ -299,10 +299,10 @@ if (($gps_ok) && ($gps_lat) && ($gps_lon)):
 			<tbody>
 				<tr>
 					<td>
-						<?=printf("%.5f", $gps_lat); ?> (<?=printf("%d", $gps_lat_deg); ?>&deg; <?=printf("%.5f", $gps_lat_min*60); ?><?=$gps_vars[4]; ?>)
+						<?=sprintf("%.5f", $gps_lat); ?> (<?=sprintf("%d", $gps_lat_deg); ?>&deg; <?=sprintf("%.5f", $gps_lat_min*60); ?><?=$gps_vars[4]; ?>)
 					</td>
 					<td>
-						<?=printf("%.5f", $gps_lon); ?> (<?=printf("%d", $gps_lon_deg); ?>&deg; <?=printf("%.5f", $gps_lon_min*60); ?><?=$gps_vars[6]; ?>)
+						<?=sprintf("%.5f", $gps_lon); ?> (<?=sprintf("%d", $gps_lon_deg); ?>&deg; <?=sprintf("%.5f", $gps_lon_min*60); ?><?=$gps_vars[6]; ?>)
 					</td>
 
 <?php

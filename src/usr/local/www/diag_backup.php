@@ -58,8 +58,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-backup-restore
-##|*NAME=Diagnostics: Backup/restore
-##|*DESCR=Allow access to the 'Diagnostics: Backup/restore' page.
+##|*NAME=Diagnostics: Backup & Restore
+##|*DESCR=Allow access to the 'Diagnostics: Backup & Restore' page.
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
 
@@ -593,7 +593,7 @@ function build_area_list($showall) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Backup/Restore"));
+$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), htmlspecialchars(gettext("Backup & Restore")));
 include("head.inc");
 
 if ($input_errors) {
@@ -617,7 +617,7 @@ endif;
 
 $tab_array = array();
 $tab_array[] = array(gettext("Config History"), false, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), true, "diag_backup.php");
+$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), true, "diag_backup.php");
 display_top_tabs($tab_array);
 
 $form = new Form(false);

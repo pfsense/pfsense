@@ -328,7 +328,7 @@ $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")), 0);
 $diagnostics_menu = array();
 $diagnostics_menu[] = array(gettext("ARP Table"), "/diag_arp.php");
 $diagnostics_menu[] = array(gettext("Authentication"), "/diag_authentication.php");
-$diagnostics_menu[] = array(gettext("Backup/Restore"), "/diag_backup.php");
+$diagnostics_menu[] = array(htmlspecialchars(gettext("Backup & Restore")), "/diag_backup.php");
 $diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
 $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
@@ -535,7 +535,7 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 	} else {
 		$pgtitle = array(gettext("System"), gettext("Package Manager"));
 		$warning_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
-		$warning_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> and reinstall packages manually.");
+		$warning_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup & Restore'>Backup & Restore page</a> and reinstall packages manually.");
 	}
 
 	print_info_box($warning_text);

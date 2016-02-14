@@ -366,7 +366,7 @@ print($form);
 ?>
 <div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients!"), 'info', false);
+	print_info_box(gettext("Don't forget to add a firewall rule to permit traffic from L2TP clients."), 'info', false);
 ?>
 </div>
 

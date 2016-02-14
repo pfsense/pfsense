@@ -463,7 +463,7 @@ if ($do_tcpdump) :
 	if ($action == gettext("Start")) {
 		$matchstr = implode($matches, " and ");
 
-		print_info_box(gettext('Packet Capture is running'), 'info');
+		print_info_box(gettext('Packet capture is running.'), 'info');
 
 		$cmd = "/usr/sbin/tcpdump -i {$selectedif} {$disablepromiscuous} {$searchcount} -s {$snaplen} -w {$fp}{$fn} " . escapeshellarg($matchstr);
 		// Debug

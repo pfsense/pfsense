@@ -284,10 +284,10 @@ $pgtitle = array("{$g['product_name']}", "Status");
 include("head.inc");
 
 print_info_box(gettext("Make sure all sensitive information is removed! (Passwords, etc.) before posting " .
-			   "information from this page in public places (like mailing lists)") . '<br />' .
+			   "information from this page in public places (like mailing lists).") . '<br />' .
 		gettext("Common password fields in config.xml have been automatically redacted.") . '<br />' .
 		gettext("When the page has finished loading, the output will be stored in {$output_file}. It may be downloaded via scp or ") .
-		"<a href=\"/exec.php?dlPath={$output_file}\">" . gettext("Diagnostics > Command Prompt") . '</a>');
+		"<a href=\"/exec.php?dlPath={$output_file}\">" . gettext("Diagnostics > Command Prompt.") . '</a>');
 
 listCmds();
 execCmds();

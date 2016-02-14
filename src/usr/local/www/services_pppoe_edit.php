@@ -598,7 +598,7 @@ $form->add($section);
 
 print($form);
 
-print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients'));
+print_info_box(gettext('Don\'t forget to add a firewall rule to permit traffic from PPPoE clients.'));
 ?>
 <script type="text/javascript">
 //<![CDATA[

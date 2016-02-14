@@ -347,7 +347,7 @@ if ($_POST) {
 									conf_mount_ro();
 								}
 								filter_configure();
-								$savemsg = gettext("The configuration area has been restored.  You may need to reboot the firewall.");
+								$savemsg = gettext("The configuration area has been restored. You may need to reboot the firewall.");
 							}
 						}
 					} else {
@@ -527,7 +527,7 @@ if ($_POST) {
 			exit;
 		} else if ($mode == "clearpackagelock") {
 			clear_subsystem_dirty('packagelock');
-			$savemsg = "Package Lock Cleared";
+			$savemsg = "Package lock cleared.";
 		} else if ($mode == "restore_ver") {
 			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {

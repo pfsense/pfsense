@@ -386,7 +386,7 @@ if ($input_errors) {
 <?php endif;
 
 if ($firmwareupdate && !$firmwareversion) {
-	print_info_box(gettext("Unable to retrieve system versions"), 'danger');
+	print_info_box(gettext("Unable to retrieve system versions."), 'danger');
 }
 
 if ($_POST) {

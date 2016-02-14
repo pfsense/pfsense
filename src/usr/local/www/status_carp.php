@@ -177,7 +177,7 @@ if (is_array($config['virtualip']['vip'])) {
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
 				   '<a href="system_hasync.php" class="alert-link">' .
-				   gettext("You can configure high availability sync settings here") .
+				   gettext("You can configure high availability sync settings here.") .
 				   '</a>');
 } else {
 ?>
@@ -199,7 +199,7 @@ if ($carpcount == 0) {
 			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
 			"<br/><br/>" .
 			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
-			gettext("Reset CARP Demotion Status") .
+			gettext("Reset CARP Demotion Status.") .
 			'" />',
 			'danger'
 		);

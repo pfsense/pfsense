@@ -488,14 +488,14 @@ include("head.inc");
 if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
 		if ($rebootingnow) {
-			$savemsg = gettext("The system is now rebooting.  Please wait.");
+			$savemsg = gettext("The system is now rebooting. Please wait.");
 			$class = "success";
 		} else {
 			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 			$class = "warning";
 		}
 	} else {
-		$savemsg = gettext("Interface mismatch detected.  Please resolve the mismatch and click 'Apply changes'.  The firewall will reboot afterwards.");
+		$savemsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
 		$class = "warning";
 	}
 }

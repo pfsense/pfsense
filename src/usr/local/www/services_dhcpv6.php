@@ -436,7 +436,12 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server/RA"));
+
+if (!empty($if) && !$dhcrelay_enabled && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+}
+$pgtitle[] = gettext("DHCPv6 Server");
 $shortcut_section = "dhcp6";
 
 include("head.inc");

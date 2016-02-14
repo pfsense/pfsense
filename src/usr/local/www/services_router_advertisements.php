@@ -234,7 +234,12 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Router Advertisements"));
+$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server/RA"));
+
+if (!empty($if) && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+}
+$pgtitle[] = gettext("Router Advertisements");
 
 include("head.inc");
 

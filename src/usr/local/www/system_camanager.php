@@ -72,8 +72,6 @@ $ca_methods = array(
 $ca_keylens = array("512", "1024", "2048", "4096");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
-
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -350,6 +348,11 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
+
+if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {

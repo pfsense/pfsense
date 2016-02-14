@@ -67,8 +67,6 @@ require_once("vpn.inc");
 
 global $openssl_crl_status;
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation"));
-
 $crl_methods = array(
 	"internal" => gettext("Create an internal Certificate Revocation List"),
 	"existing" => gettext("Import an existing Certificate Revocation List"));
@@ -292,6 +290,11 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation"));
+
+if ($act == "new" || $act == gettext("Save") || $input_errors || $act == "edit") {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 ?>
 

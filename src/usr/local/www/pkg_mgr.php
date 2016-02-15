@@ -207,11 +207,11 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
 	<div id="pkgtbl" class="panel-body table-responsive">
 		<div id="waitmsg">
-			<?=print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>')?>
+			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>'); ?>
 		</div>
 
 		<div id="errmsg" style="display: none;">
-			<?=print_info_box("<ul><li>" . gettext("Unable to retrieve package information.") . "</li></ul>", 'danger')?>
+			<?php print_info_box("<ul><li>" . gettext("Unable to retrieve package information.") . "</li></ul>", 'danger'); ?>
 		</div>
 	</div>
 </div>

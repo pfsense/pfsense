@@ -132,7 +132,7 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Backup/Restore"), gettext("Config History"));
+$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
 include("head.inc");
 
 if ($savemsg) {
@@ -140,8 +140,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
+$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), false, "diag_backup.php");
 $tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
 display_top_tabs($tab_array);
 
 if ($diff) {

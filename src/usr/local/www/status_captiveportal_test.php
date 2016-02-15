@@ -92,15 +92,16 @@ if ($_POST) {
 	if ($_POST['vouchers']) {
 		$test_results = voucher_auth($_POST['vouchers'], 1);
 		$output = "";
+		$class = 'warning';
 
 		foreach ($test_results as $result) {
+			$output .= htmlspecialchars($result) . '<br />';
+
 			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$output .= '<span class="text-success">' . htmlspecialchars($result) . '</span>' . '<br />';
-			} else {
-				$output .= '<span class="text-danger">' . htmlspecialchars($result) . '</span>' . '<br />';
+				$class = 'success';
 			}
 		}
-		print_info_box($output);
+		print_info_box($output, $class, false);
 	}
 }
 
@@ -112,7 +113,7 @@ $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.
 $tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-$form = new Form;
+$form = new Form('Test');
 
 $section = new Form_Section('Test Vouchers');
 

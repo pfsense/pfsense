@@ -87,6 +87,16 @@ $pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['z
 
 include("head.inc");
 
+if ($_POST) {
+	if ($_POST['vouchers']) {
+		if (voucher_expire($_POST['vouchers'])) {
+			print_info_box(gettext('Voucher successfully marked.'), 'success');
+		} else {
+			print_info_box(gettext('Voucher could not be processed.'), 'danger');
+		}
+	}
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
@@ -114,15 +124,5 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 print($form);
-
-if ($_POST) {
-	if ($_POST['vouchers']) {
-		if (voucher_expire($_POST['vouchers'])) {
-			print_info_box(gettext('Voucher successfully marked.'), 'success');
-		} else {
-			print_info_box(gettext('Voucher could not be processed.'), 'danger');
-		}
-	}
-}
 
 include("foot.inc");

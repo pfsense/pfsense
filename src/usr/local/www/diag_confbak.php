@@ -173,7 +173,7 @@ if ($diff) {
 		}
 ?>
 			<tr>
-				<td class="diff-text" valign="middle" style="background-color:<?=$color;?>;white-space:pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" style="vertical-align:middle; background-color:<?=$color;?>; white-space:pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
 	}
@@ -245,7 +245,7 @@ if (is_array($confvers)):
 			</thead>
 			<tbody>
 				<!-- First row is the current configuration -->
-				<tr valign="top">
+				<tr style="vertical-align:top;">
 					<td></td>
 					<td>
 						<input type="radio" name="newtime" value="current" />

@@ -177,8 +177,8 @@ if (!empty($a_vs)) {
 						<td><?=htmlspecialchars($a_v['descr'])?></td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit virtual server')?>"	href="load_balancer_virtual_server_edit.php?id=<?=$i?>"></a>
-							<a class="fa fa-clone"	title="<?=gettext('Copy virtual server')?>"	href="load_balancer_virtual_server_edit.php?act=dup&id=<?=$i?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&id=<?=$i?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy virtual server')?>"	href="load_balancer_virtual_server_edit.php?act=dup&amp;id=<?=$i?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete virtual server')?>"	href="load_balancer_virtual_server.php?act=del&amp;id=<?=$i?>"></a>
 						</td>
 					</tr>
 <?php

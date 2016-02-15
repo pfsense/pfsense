@@ -245,7 +245,7 @@ if (is_array($confvers)):
 			</thead>
 			<tbody>
 				<!-- First row is the current configuration -->
-				<tr valign="top">
+				<tr style="vertical-align:top;">
 					<td></td>
 					<td>
 						<input type="radio" name="newtime" value="current" />

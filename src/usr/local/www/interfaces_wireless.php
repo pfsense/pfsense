@@ -164,14 +164,14 @@ foreach ($a_clones as $clone) {
 ?>
 				</tbody>
 			</table>
-
-			<nav class="action-buttons">
-				<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
-					<i class="fa fa-plus icon-embed-btn"></i>
-					<?=gettext("Add")?></a>
-			</nav>
 		</div>
 	</div>
 </div>
+
+<nav class="action-buttons">
+	<a href="interfaces_wireless_edit.php" class="btn btn-success btn-sm">
+		<i class="fa fa-plus icon-embed-btn"></i>
+		<?=gettext("Add")?></a>
+</nav>
 <?php
 include("foot.inc");

@@ -142,11 +142,11 @@ display_top_tabs($tab_array);
 	<table class="table table-striped table-hover table-condensed">
 		<thead>
 			<tr>
-				<th><a href="?order=0&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Voucher"); ?></a></th>
-				<th><a href="?order=1&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Roll"); ?></a></th>
-				<th><a href="?order=2&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Activated at"); ?></a></th>
-				<th><a href="?order=3&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires in"); ?></a></th>
-				<th><a href="?order=4&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires at"); ?></a></th>
+				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&order=0&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Voucher"); ?></a></th>
+				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&order=1&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Roll"); ?></a></th>
+				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&order=2&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Activated at"); ?></a></th>
+				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&order=3&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires in"); ?></a></th>
+				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&order=4&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires at"); ?></a></th>
 			</tr>
 		</thead>
 		<tbody>

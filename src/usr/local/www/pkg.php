@@ -70,6 +70,7 @@ function domTT_title($title_msg) {
 $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");

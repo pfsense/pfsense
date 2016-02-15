@@ -92,7 +92,7 @@ $iflist = array_intersect_key(
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpdv6'])) {
-	foreach ($config['dhcpdv6'] as $dhcp) {
+	foreach ($config['dhcpdv6'] as $dhcpif => $dhcp) {
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;

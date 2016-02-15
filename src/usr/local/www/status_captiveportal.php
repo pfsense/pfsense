@@ -145,7 +145,7 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-if (count($a_cp) >	1) {
+if (count($a_cp) > 1) {
 	$form = new Form(false);
 
 	$section = new Form_Section('Captive Portal Zone');

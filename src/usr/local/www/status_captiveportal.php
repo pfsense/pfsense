@@ -81,7 +81,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 if (count($a_cp) == 1) {
- $cpzone = current(array_keys($a_cp));
+	$cpzone = current(array_keys($a_cp));
 }
 
 /* If the zone does not exist, do not display the invalid zone */

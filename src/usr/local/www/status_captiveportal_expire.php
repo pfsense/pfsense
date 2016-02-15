@@ -90,9 +90,9 @@ include("head.inc");
 if ($_POST) {
 	if ($_POST['vouchers']) {
 		if (voucher_expire($_POST['vouchers'])) {
-			print_info_box(gettext('Voucher successfully marked.'), 'success');
+			print_info_box(gettext('Voucher(s) successfully marked.'), 'success', false);
 		} else {
-			print_info_box(gettext('Voucher could not be processed.'), 'danger');
+			print_info_box(gettext('Voucher(s) could not be processed.'), 'danger', false);
 		}
 	}
 }
@@ -105,7 +105,7 @@ $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test
 $tab_array[] = array(gettext("Expire Vouchers"), true, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-$form = new Form;
+$form = new Form('Expire');
 
 $section = new Form_Section('Expire Vouchers');
 

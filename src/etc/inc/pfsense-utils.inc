@@ -177,10 +177,10 @@ function hardware_offloading_applyflags($iface) {
 			$flags_off |= IFCAP_RXCSUM;
 		}
 	} else {
-		if (isset($options['caps']['txcsum']) && !isset($options['encaps']['txcsum'])) {
+		if (isset($options['caps']['txcsum'])) {
 			$flags_on |= IFCAP_TXCSUM;
 		}
-		if (isset($options['caps']['rxcsum']) && !isset($options['encaps']['rxcsum'])) {
+		if (isset($options['caps']['rxcsum'])) {
 			$flags_on |= IFCAP_RXCSUM;
 		}
 	}
@@ -188,21 +188,19 @@ function hardware_offloading_applyflags($iface) {
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
-		if (!isset($options['encaps']['tso']) || !isset($options['encaps']['tso4']) || !isset($options['encaps']['tso6'])) {
-			$flags_on |= IFCAP_TSO;
-		}
+		$flags_on |= IFCAP_TSO;
 	}
 
-	if (isset($config['system']['disablelargereceiveoffloading']) && isset($options['encaps']['lro'])) {
+	if (isset($config['system']['disablelargereceiveoffloading'])) {
 		$flags_off |= IFCAP_LRO;
-	} else if (isset($options['caps']['lro']) && !isset($options['encaps']['lro'])) {
+	} else if (isset($options['caps']['lro'])) {
 		$flags_on |= IFCAP_LRO;
 	}
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if (!isset($config['system']['polling']) && isset($options['encaps']['polling'])) {
+	if (!isset($config['system']['polling'])) {
 		$flags_off |= IFCAP_POLLING;
-	} else if (isset($options['caps']['polling']) && !isset($options['encaps']['polling'])) {
+	} else if (isset($options['caps']['polling'])) {
 		$flags_on |= IFCAP_POLLING;
 	}
 

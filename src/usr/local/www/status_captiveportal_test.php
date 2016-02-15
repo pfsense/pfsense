@@ -88,6 +88,22 @@ $shortcut_section = "captiveportal-vouchers";
 
 include("head.inc");
 
+if ($_POST) {
+	if ($_POST['vouchers']) {
+		$test_results = voucher_auth($_POST['vouchers'], 1);
+		$output = "";
+
+		foreach ($test_results as $result) {
+			if (strpos($result, " good ") || strpos($result, " granted ")) {
+				$output .= '<span class="text-success">' . htmlspecialchars($result) . '</span>' . '<br />';
+			} else {
+				$output .= '<span class="text-danger">' . htmlspecialchars($result) . '</span>' . '<br />';
+			}
+		}
+		print_info_box($output);
+	}
+}
+
 $tab_array = array();
 $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
@@ -115,22 +131,5 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 print($form);
-
-if ($_POST) {
-	if ($_POST['vouchers']) {
-		$test_results = voucher_auth($_POST['vouchers'], 1);
-		$output = "";
-
-		foreach ($test_results as $result) {
-			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$output .= '<span class="text-success">' . htmlspecialchars($result) . '</span>' . '<br />';
-			} else {
-				$output .= '<span class="text-danger">' . htmlspecialchars($result) . '</span>' . '<br />';
-			}
-		}
-
-		print_info_box($output);
-	}
-}
 
 include("foot.inc");

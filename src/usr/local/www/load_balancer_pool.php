@@ -195,8 +195,8 @@ foreach ($a_pool as $pool) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit pool')?>"	href="load_balancer_pool_edit.php?id=<?=$idx?>"></a>
-							<a class="fa fa-clone"	title="<?=gettext('Copy pool')?>"	href="load_balancer_pool_edit.php?act=dup&id=<?=$idx?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&id=<?=$idx?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy pool')?>"	href="load_balancer_pool_edit.php?act=dup&amp;id=<?=$idx?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete pool')?>"	href="load_balancer_pool.php?act=del&amp;id=<?=$idx?>"></a>
 						</td>
 					</tr>
 <?php

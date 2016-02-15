@@ -122,11 +122,14 @@ if (!empty($cpzone)) {
 		usort($cpdb, "clientcmp");
 	}
 }
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
-if (!empty($cpzone) && isset($config['voucher'][$cpzone]['enable'])) {
-	$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Active Users"));
-} else {
-	$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
+if (!empty($cpzone)) {
+	$pgtitle[] = $a_cp[$cpzone]['zone'];
+
+	if (isset($config['voucher'][$cpzone]['enable'])) {
+		$pgtitle[] = gettext("Active Users");
+	}
 }
 $shortcut_section = "captiveportal";
 
@@ -171,7 +174,7 @@ if (count($a_cp) > 1) {
 if (!empty($cpzone)): ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
 	<div class="panel-body table-responsive">
 
 		<table class="table table-striped table-hover table-condensed">

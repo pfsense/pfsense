@@ -516,7 +516,7 @@ function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		if ("<?=$pkgid?>" == "firmware") {
-			$('#final').html("<b>" + "<?=gettext('System update successfully completed.')?>" + "</b>");
+			$('#final').html("<?=gettext('System update successfully completed.')?>");
 		} else {
 			$('#final').html("<?=$pkg_success_txt?>");
 		}

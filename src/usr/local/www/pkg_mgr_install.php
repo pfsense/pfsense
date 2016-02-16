@@ -280,7 +280,6 @@ if ($input_errors) {
 			break;
 	}
 ?>
-	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h2 class="panel-title">
@@ -306,7 +305,7 @@ if ($input_errors) {
 			</h2>
 		</div>
 		<div class="panel-body">
-		<br />
+			<div class="content">
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
 	if ($firmwareupdate) {
@@ -359,6 +358,7 @@ if ($input_errors) {
 <?php
 	}
 	?>
+			</div>
 		</div>
 	</div>
 <?php endif;

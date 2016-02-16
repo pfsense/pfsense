@@ -324,19 +324,15 @@ function build_if_list() {
 	$list = array();
 
 	$interfaces = get_configured_interface_with_descr(false, true);
-	$carplist = get_configured_vip_list();
+	$carplist = get_configured_vip_list('all', VIP_CARP);
 
 	foreach ($carplist as $vipname => $address) {
-		$vip = get_configured_vip($vipname);
-		if ($vip['mode'] != 'carp') {
-			continue;
-		}
-
 		$interfaces[$vipname] = $address;
 		$interfaces[$vipname] .= " (";
 		if (get_vip_descr($address)) {
 			$interfaces[$vipname] .= get_vip_descr($address);
 		} else {
+			$vip = get_configured_vip($vipname);
 			$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
 		}
 		$interfaces[$vipname] .= ")";

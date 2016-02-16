@@ -123,6 +123,7 @@ function get_shortcut_main_link($shortcut_section, $addspace = true, $service = 
 	if (!empty($link) && ($_SERVER['REQUEST_URI'] != "/{$link}")) {
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related settings") . "\"><i class=\"fa fa-sliders\"></i></a>";
 	}
+	return "";
 }
 
 function get_shortcut_status_link($shortcut_section, $addspace = true, $service = array()) {
@@ -151,6 +152,7 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 	if (!empty($link)) {
 		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa fa-cog\"></i></a>";
 	}
+	return "";
 }
 
 function get_shortcut_log_link($shortcut_section, $addspace = true) {
@@ -159,6 +161,7 @@ function get_shortcut_log_link($shortcut_section, $addspace = true) {
 	if (!empty($shortcut_section) && !empty($shortcuts[$shortcut_section]['log'])) {
 		return "{$space}<a href=\"{$shortcuts[$shortcut_section]['log']}\" title=\"" . gettext("Related log entries") . "\"><i class=\"fa fa-list-alt\"></i></a>";
 	}
+	return "";
 }
 
 // Load shortcuts

@@ -626,7 +626,8 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 
 	/* Remove all additional packages */
 
-	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade -r ALL_PACKAGES");
+	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
+	    "-r ALL_PACKAGES");
 
 	conf_mount_rw();
 	if (!$lock) {
@@ -634,12 +635,13 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	}
 
 	/* create conf directory, if necessary */
-	safe_mkdir("{$g['cf_conf_path']}");
+	safe_mkdir($g['cf_conf_path']);
 
 	/* clear out /conf */
 	$dh = opendir($g['conf_path']);
 	while ($filename = readdir($dh)) {
-		if (($filename != ".") && ($filename != "..") && (!is_dir($g['conf_path'] . "/" . $filename))) {
+		if (($filename != ".") && ($filename != "..") &&
+		    (!is_dir($g['conf_path'] . "/" . $filename))) {
 			unlink_if_exists($g['conf_path'] . "/" . $filename);
 		}
 	}
@@ -647,7 +649,8 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	unlink_if_exists($g['tmp_path'] . "/config.cache");
 
 	/* copy default configuration */
-	copy("{$g['conf_default_path']}/config.xml", "{$g['conf_path']}/config.xml");
+	copy("{$g['conf_default_path']}/config.xml",
+	    "{$g['cf_conf_path']}/config.xml");
 
 	disable_security_checks();
 

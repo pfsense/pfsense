@@ -269,14 +269,14 @@ if ($input_errors) {
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Reinstalled'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to reinstall package %s?'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Removed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to remove package %s?'), $pkgname);
 			break;
 		case 'installed':
 		default:
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Installed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to install package %s?'), $pkgname);
 			break;
 	}
 ?>
@@ -287,11 +287,11 @@ if ($input_errors) {
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<?=gettext("All Packages will be Reinstalled.");?>
+				<?=gettext("Are you sure you want to reinstall all packages?");?>
 <?php
 			} else if ($_GET['from'] && $_GET['to']) {
 ?>
-				<?=sprintf(gettext('Package: %1$s will be Upgraded from %2$s to %3$s.'), '<b>' . $pkgname . '</b>', '<b>' . $_GET['from'] . '</b>', '<b>' . $_GET['to'] . '</b>')?>
+				<?=sprintf(gettext('Are you sure you want to upgrade package %1$s from %2$s to %3$s?'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
 			} else if ($firmwareupdate) {
 ?>
@@ -299,7 +299,7 @@ if ($input_errors) {
 <?php
 			} else {
 ?>
-				<?=$pkgtxt;?>.
+				<?=$pkgtxt;?>
 <?php
 			}
 ?>

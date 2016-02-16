@@ -295,7 +295,7 @@ if ($input_errors) {
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=$g['product_name']?> <?=gettext(" System Update")?>
+				<?=sprintf(gettext('Are you sure you want to update %s system?'), $g['product_name'])?>
 <?php
 			} else {
 ?>

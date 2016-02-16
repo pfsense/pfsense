@@ -337,11 +337,14 @@ $section->addInput(new Form_Textarea(
 	'Custom options',
 	$pconfig['custom_options']
 ))->setHelp('Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline')
-	->addClass('advanced');
+  ->addClass('advanced');
 
 $form->add($section);
 print($form);
 
+?>
+<div class="infoblock">
+<?php
 print_callout('<p>' .
 	gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
 		    ' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.') . '</p><p>' .
@@ -354,6 +357,9 @@ print_callout('<p>' .
 	'</p>'
 );
 
+?>
+</div>
+<?php
 print_callout(gettext("Entries in this section override individual results from the forwarders.") . " " .
 	gettext("Use these for changing DNS results or for adding custom DNS records.")
 );

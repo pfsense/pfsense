@@ -270,7 +270,7 @@ if ($_POST) {
 			if ($pkg['aftersaveredirect'] != "") {
 				pfSenseHeader($pkg['aftersaveredirect']);
 			} elseif (!$pkg['adddeleteeditpagefields']) {
-				pfSenseHeader("pkg_edit.php?xml={$xml}&amp;id=0");
+				pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
 			} elseif (!$pkg['preoutput']) {
 				pfSenseHeader("pkg.php?xml=" . $xml);
 			}

@@ -266,6 +266,10 @@ if (isset($_POST['submit'])) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+		if (($_POST['nonak']) && !empty($_POST['failover_peerip'])) {
+			$input_errors[] = gettext("Ignore Denied Clients may not be used when a Failover Peer IP is defined.");
+		}
+
 		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from']))) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		}
@@ -803,7 +807,7 @@ $section->addInput(new Form_Checkbox(
 	'Ignore denied clients',
 	'Denied clients will be ignored rather than rejected.',
 	$pconfig['nonak']
-));
+))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
 
 
 if (is_numeric($pool) || ($act == "newpool")) {

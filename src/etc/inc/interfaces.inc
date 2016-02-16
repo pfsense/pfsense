@@ -520,13 +520,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		$smallermtu = 1500;
 	}
 
-	if (platform_booting() || !empty($bridge['bridgeif'])) {
+	if (!empty($bridge['bridgeif'])) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
-	} else {
-		$bridgeif = pfSense_interface_create("bridge");
-		$bridge['bridgeif'] = $bridgeif;
 	}
 
 	$bridgemtu = interface_find_child_cfgmtu($bridge['bridgeif']);

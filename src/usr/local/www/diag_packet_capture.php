@@ -149,6 +149,7 @@ foreach (array('server', 'client') as $mode) {
 if ($_POST) {
 	$host = $_POST['host'];
 	$selectedif = $_POST['interface'];
+	$promiscuous = isset($_POST['promiscuous']);
 	$count = $_POST['count'];
 	$snaplen = $_POST['snaplen'];
 	$port = $_POST['port'];
@@ -282,7 +283,7 @@ $protocollist = array(
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP',
-	'!esp' => $excl . 'ESP'
+	'!esp' => $excl . ' ESP'
 );
 
 include("head.inc");
@@ -306,7 +307,7 @@ $section->addInput(new Form_Checkbox(
 	'promiscuous',
 	'Promiscuous',
 	'Packet capture will be performed using promiscuous mode',
-	$pconfig['promiscuous']
+	$promiscuous
 ))->setHelp('Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
 			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
 			'Packet capture' . '</a>');

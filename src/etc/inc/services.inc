@@ -793,7 +793,7 @@ EOPP;
 				$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 			$deny_action = "deny";
-			if (isset($poolconf['nonak'])) {
+			if (isset($poolconf['nonak']) && empty($poolconf['failover_peerip'])) {
 				$deny_action = "ignore";
 			}
 			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));

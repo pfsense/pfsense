@@ -266,6 +266,10 @@ if (isset($_POST['submit'])) {
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
+		if (($_POST['nonak']) && !empty($_POST['failover_peerip'])) {
+			$input_errors[] = gettext("Ignore Denied Clients may not be used when a Failover Peer IP is defined.");
+		}
+
 		if (($_POST['range_from'] && !is_ipaddrv4($_POST['range_from']))) {
 			$input_errors[] = gettext("A valid range must be specified.");
 		}
@@ -716,6 +720,10 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
+
+if (!empty($if) && !isset($config['dhcrelay']['enable']) && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+}
 $shortcut_section = "dhcp";
 
 include("head.inc");
@@ -799,7 +807,7 @@ $section->addInput(new Form_Checkbox(
 	'Ignore denied clients',
 	'Denied clients will be ignored rather than rejected.',
 	$pconfig['nonak']
-));
+))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
 
 
 if (is_numeric($pool) || ($act == "newpool")) {

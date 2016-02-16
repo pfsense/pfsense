@@ -81,6 +81,7 @@ if ($_POST['xml']) {
 $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -269,7 +270,7 @@ if ($_POST) {
 			if ($pkg['aftersaveredirect'] != "") {
 				pfSenseHeader($pkg['aftersaveredirect']);
 			} elseif (!$pkg['adddeleteeditpagefields']) {
-				pfSenseHeader("pkg_edit.php?xml={$xml}&amp;id=0");
+				pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
 			} elseif (!$pkg['preoutput']) {
 				pfSenseHeader("pkg.php?xml=" . $xml);
 			}

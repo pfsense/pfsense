@@ -212,8 +212,6 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 	return(false);
 }
 
-$headline = "<br />";
-
 if ($_POST) {
 	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
 		header("Location: pkg_mgr_installed.php");
@@ -229,25 +227,6 @@ if ($_POST) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
-
-	switch ($_GET['mode']) {
-		case 'reinstallall':
-			$headline = gettext("Reinstall all Packages");
-			break;
-		case 'reinstallpkg':
-			if ($_GET['from'] && $_GET['to']) {
-				$headline = gettext("Upgrade Package");
-			} else {
-				$headline = gettext("Reinstall Package");
-			}
-			break;
-		case 'delete':
-			$headline = gettext("Remove Package");
-			break;
-		default:
-			$headline = gettext("Install Package");
-			break;
-	}
 }
 
 if ($_GET && $_GET['id'] == "firmware") {
@@ -262,13 +241,19 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
-	$pgtitle = array(gettext("System"), gettext("Package Manager"), $headline);
-	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
+	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
+	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
 }
 
 include("head.inc");
+
+if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
+	?>
+	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+<?php
+}
 display_top_tabs($tab_array);
 
 if ($input_errors) {
@@ -277,7 +262,6 @@ if ($input_errors) {
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-<!--	<h2><?=$headline?></h2> -->
 <?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall'))):
 	if (empty($_GET['mode']) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
@@ -291,51 +275,50 @@ if ($input_errors) {
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Reinstalled'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to reinstall package %s?'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Removed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to remove package %s?'), $pkgname);
 			break;
 		case 'installed':
 		default:
-			$pkgtxt = sprintf(gettext('Package <b>%s</b> will be Installed'), $pkgname);
+			$pkgtxt = sprintf(gettext('Are you sure you want to install package %s?'), $pkgname);
 			break;
 	}
 ?>
-	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h2 class="panel-title">
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<?=gettext("All Packages will be Reinstalled.");?>
+				<?=gettext("Are you sure you want to reinstall all packages?");?>
 <?php
 			} else if ($_GET['from'] && $_GET['to']) {
 ?>
-				<?=sprintf(gettext('Package: %1$s will be Upgraded from %2$s to %3$s.'), '<b>' . $pkgname . '</b>', '<b>' . $_GET['from'] . '</b>', '<b>' . $_GET['to'] . '</b>')?>
+				<?=sprintf(gettext('Are you sure you want to upgrade package %1$s from %2$s to %3$s?'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=$g['product_name']?> <?=gettext(" System Update")?>
+				<?=sprintf(gettext('Are you sure you want to update %s system?'), $g['product_name'])?>
 <?php
 			} else {
 ?>
-				<?=$pkgtxt;?>.
+				<?=$pkgtxt;?>
 <?php
 			}
 ?>
 			</h2>
 		</div>
 		<div class="panel-body">
-		<br />
+			<div class="content">
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
 	if ($firmwareupdate) {
 ?>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Current base system")?>
+				<?=gettext("Current Base System")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['installed_version']?>
@@ -344,7 +327,7 @@ if ($input_errors) {
 
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Latest base system")?>
+				<?=gettext("Latest Base System")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['version']?>
@@ -381,6 +364,7 @@ if ($input_errors) {
 <?php
 	}
 	?>
+			</div>
 		</div>
 	</div>
 <?php endif;
@@ -400,17 +384,17 @@ if ($_POST) {
 
 if ($_POST['mode'] == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgid);
 } else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
 	$panel_heading_txt = gettext("Package Reinstallation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgid);
 } else {
 	$panel_heading_txt = gettext("Package Installation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgid);
 }
@@ -449,9 +433,6 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
-
-	<div id="final" class="alert" role="alert" style=":display: none;"></div>
-
 <?php endif?>
 </form>
 
@@ -535,12 +516,12 @@ function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		if ("<?=$pkgid?>" == "firmware") {
-			$('#final').html("<b>" + "<?=gettext('System update successfully completed')?>" + "</b>");
+			$('#final').html("<?=gettext('System update successfully completed.')?>");
 		} else {
 			$('#final').html("<?=$pkg_success_txt?>");
 		}
 	} else {
-		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
+		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed.')?>");
 	}
 
 	$('#final').show();
@@ -553,7 +534,7 @@ function show_failure() {
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_fail_txt?>");
 	} else {
-		$('#final').html("<?=gettext('Reinstallation of all packages failed')?>");
+		$('#final').html("<?=gettext('Reinstallation of all packages failed.')?>");
 	}
 	$('#final').show();
 }
@@ -562,11 +543,11 @@ function show_failure() {
 function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
-		$('#final').html("<?=$pkg_wait_txt?>" + "<br />" +
-			"<?=gettext("(Some packages may take several minutes!)")?>");
+		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
+			"<?=gettext("This may take several minutes!")?>" + "</p>");
 	} else {
-		$('#final').html("<?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "<br />" +
-			"<?=gettext("(Some packages may take several minutes!)")?>");
+		$('#final').html("<p><?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "</p><p>" +
+			"<?=gettext("This may take several minutes!")?>" + "</p>");
 	}
 	$('#final').show();
 }

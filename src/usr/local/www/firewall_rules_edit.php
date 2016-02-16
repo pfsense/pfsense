@@ -1028,7 +1028,12 @@ function build_if_list() {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Rules"));
+
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$pgtitle[] = gettext('Floating');
+}
+$pgtitle[] = gettext("Edit");
 $shortcut_section = "firewall";
 
 $page_filename = "firewall_rules_edit.php";

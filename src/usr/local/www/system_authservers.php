@@ -64,9 +64,6 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
-$shortcut_section = "authentication";
-
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -377,6 +374,12 @@ if($_POST && $input_errors) {
 	$pconfig['ldap_template'] = $_POST['ldap_tmpltype'];
 }
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
+
+if ($act == "new" || $act == "edit" || $input_errors) {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "authentication";
 include("head.inc");
 
 if ($input_errors) {
@@ -501,7 +504,7 @@ if (empty($a_ca))
 {
 	$section->addInput(new Form_StaticText(
 		'Peer Certificate Authority',
-		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.'
+		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
 	));
 }
 else

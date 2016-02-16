@@ -285,12 +285,12 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-<?=print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
+<?php print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
 			   gettext("Virtual IP.") . '</a>' . '<br />' .
 			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
-					   'using the WAN IP address will no longer function.'), 'info', false)?>
+					   'using the WAN IP address will no longer function.'), 'info', false); ?>
 
 </div>
 

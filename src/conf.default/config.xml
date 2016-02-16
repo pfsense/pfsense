@@ -100,7 +100,6 @@
 			<ipaddr/>
 		</ipv6nat>
 	</diag>
-	<bridge/>
 	<syslog/>
 	<nat>
 		<outbound>

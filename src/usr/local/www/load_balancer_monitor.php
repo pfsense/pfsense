@@ -160,8 +160,8 @@ foreach ($a_monitor as $monitor) {
 						</td>
 						<td>
 							<a class="fa fa-pencil"	title="<?=gettext('Edit monitor')?>"	href="load_balancer_monitor_edit.php?id=<?=$idx?>"></a>
-							<a class="fa fa-clone"	title="<?=gettext('Copy monitor')?>"	href="load_balancer_monitor_edit.php?act=dup&id=<?=$idx?>"></a>
-							<a class="fa fa-trash"	title="<?=gettext('Delete monitor')?>"	href="load_balancer_monitor.php?act=del&id=<?=$idx?>"></a>
+							<a class="fa fa-clone"	title="<?=gettext('Copy monitor')?>"	href="load_balancer_monitor_edit.php?act=dup&amp;id=<?=$idx?>"></a>
+							<a class="fa fa-trash"	title="<?=gettext('Delete monitor')?>"	href="load_balancer_monitor.php?act=del&amp;id=<?=$idx?>"></a>
 						</td>
 					</tr>
 <?php

@@ -207,11 +207,11 @@ $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
 if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
-	$system_menu[] = array(gettext("Packages"), "/pkg_mgr_installed.php");
+	$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 }
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
-$system_menu[] = array(gettext("Cert Manager"), "/system_camanager.php");
+$system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
 if (!isAllowedPage("system_usermanager.php*")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager_passwordmg.php");
 } else {
@@ -253,7 +253,7 @@ $services_menu[] = array(gettext("DHCPv6 Relay"), "/services_dhcpv6_relay.php");
 
 if ($g['services_dhcp_server_enable']) {
 	$services_menu[] = array(gettext("DHCP Server"), "/services_dhcp.php");
-	$services_menu[] = array(gettext("DHCPv6 Server/RA"), "/services_dhcpv6.php");
+	$services_menu[] = array(htmlspecialchars(gettext("DHCPv6 Server & RA")), "/services_dhcpv6.php");
 }
 
 $services_menu[] = array(gettext("Dynamic DNS"), "/services_dyndns.php");
@@ -328,7 +328,7 @@ $status_menu = msort(array_merge($status_menu, return_ext_menu("Status")), 0);
 $diagnostics_menu = array();
 $diagnostics_menu[] = array(gettext("ARP Table"), "/diag_arp.php");
 $diagnostics_menu[] = array(gettext("Authentication"), "/diag_authentication.php");
-$diagnostics_menu[] = array(gettext("Backup/Restore"), "/diag_backup.php");
+$diagnostics_menu[] = array(htmlspecialchars(gettext("Backup & Restore")), "/diag_backup.php");
 $diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
 $diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
@@ -382,7 +382,6 @@ if (!$g['disablehelpmenu']) {
 	$help_menu[] = array(gettext("Developers Wiki"), "https://www.pfsense.org/j.php?jumpto=devwiki");
 	$help_menu[] = array(gettext("Paid Support"), "https://www.pfsense.org/j.php?jumpto=portal");
 	$help_menu[] = array(gettext("pfSense Book"), "https://www.pfsense.org/j.php?jumpto=book");
-	$help_menu[] = array(gettext("Search Portal"), "https://www.pfsense.org/j.php?jumpto=searchportal");
 	$help_menu[] = array(gettext("FreeBSD Handbook"), "https://www.pfsense.org/j.php?jumpto=fbsdhandbook");
 	$help_menu = msort(array_merge($help_menu, return_ext_menu("Help")), 0);
 }
@@ -513,9 +512,17 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	}
 }
 
-echo '<li>'. get_shortcut_main_link($shortcut_section, false). '</li>';
-echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
-echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
+if ('' != ($link = get_shortcut_main_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
+
+if ('' != ($link = get_shortcut_status_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
+
+if ('' != ($link = get_shortcut_log_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
 
 ?>
 	<?php if (!$g['disablehelpicon']): ?>
@@ -535,7 +542,7 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 	} else {
 		$pgtitle = array(gettext("System"), gettext("Package Manager"));
 		$warning_text = gettext("Packages are currently being reinstalled in the background.<p>Do not make changes in the GUI until this is complete.");
-		$warning_text .= gettext("<p>If the above message is still displayed after a couple of hours, use the 'Clear Package Lock' button on the <a href='diag_backup.php' title='Backup/Restore'>Backup/Restore page</a> and reinstall packages manually.");
+		$warning_text .= sprintf(gettext('<p>If the above message is still displayed after a couple of hours, use the \'Clear Package Lock\' button on the <a href="diag_backup.php" title="%1$s">%1$s page</a> and reinstall packages manually.'), htmlspecialchars(gettext('Backup & Restore')));
 	}
 
 	print_info_box($warning_text);

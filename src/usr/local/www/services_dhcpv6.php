@@ -157,11 +157,14 @@ $ifcfgsn = get_interface_subnetv6($if);
 $dhcrelay_enabled = false;
 $dhcrelaycfg = $config['dhcrelay6'];
 
-if (is_array($dhcrelaycfg)) {
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-		if (isset($dhcrelayifconf['enable']) && isset($iflist[$dhcrelayif]) &&
-		    (!link_interface_to_bridge($dhcrelayif))) {
+if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycfg['interface']) && !empty($dhcrelaycfg['interface'])) {
+	$dhcrelayifs = explode(",", $dhcrelaycfg['interface']);
+
+	foreach ($dhcrelayifs as $dhcrelayif) {
+
+		if (isset($iflist[$dhcrelayif]) && (!link_interface_to_bridge($dhcrelayif))) {
 			$dhcrelay_enabled = true;
+			break;
 		}
 	}
 }
@@ -436,7 +439,12 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
+$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+
+if (!empty($if) && !$dhcrelay_enabled && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+	$pgtitle[] = gettext("DHCPv6 Server");
+}
 $shortcut_section = "dhcp6";
 
 include("head.inc");
@@ -450,7 +458,7 @@ if ($savemsg) {
 }
 
 if ($dhcrelay_enabled) {
-	print_info_box(gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface."), 'danger');
+	print_info_box(gettext("DHCPv6 Relay is currently enabled. Cannot enable the DHCPv6 Server service while the DHCPv6 Relay is enabled on any interface."), 'danger', false);
 	include("foot.inc");
 	exit;
 }

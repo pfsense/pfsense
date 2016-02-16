@@ -492,8 +492,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
-	$commonrx = true;
-	$commontx = true;
 	$foundgif = false;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);
@@ -522,13 +520,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		$smallermtu = 1500;
 	}
 
-	if (platform_booting() || !empty($bridge['bridgeif'])) {
+	if (!empty($bridge['bridgeif'])) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
-	} else {
-		$bridgeif = pfSense_interface_create("bridge");
-		$bridge['bridgeif'] = $bridgeif;
 	}
 
 	$bridgemtu = interface_find_child_cfgmtu($bridge['bridgeif']);
@@ -2160,7 +2155,8 @@ function interfaces_sync_setup() {
 		mwexec("/sbin/ifconfig pfsync0 -syncdev -syncpeer down", false);
 	}
 
-	if ($config['virtualip']['vip']) {
+	$carplist = get_configured_vip_list('all', VIP_CARP);
+	if (isset($carplist) && is_array($carplist) && count($carplist) > 0) {
 		set_single_sysctl("net.inet.carp.allow", "1");
 	} else {
 		set_single_sysctl("net.inet.carp.allow", "0");
@@ -5037,18 +5033,24 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 	if (is_array($config['virtualip']['vip'])) {
 		$result = array();
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($int == $vip['interface']) {
-				if ($action == "update") {
-					interfaces_vips_configure($int);
-				} else {
-					if (empty($vhid) || ($vhid == $vip['vhid'])) {
-						$result[] = $vip;
-					}
+			if (substr($vip['interface'], 0, 4) == "_vip")
+				$iface = get_configured_vip_interface($vip['interface']);
+			else
+				$iface = $vip['interface'];
+			if ($int != $iface)
+				continue;
+			if ($action == "update") {
+				interfaces_vips_configure($int);
+			} else {
+				if (empty($vhid) || ($vhid == $vip['vhid'])) {
+					$result[] = $vip;
 				}
 			}
 		}
 		return $result;
 	}
+
+	return NULL;
 }
 
 /****f* interfaces/link_interface_to_bridge

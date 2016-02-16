@@ -162,8 +162,8 @@ display_top_tabs($tab_array);
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box(gettext('Interface Groups allow you to setup rules for multiple interfaces without duplicating the rules.<br />' .
-					   'If you remove members from an interface group, the group rules are no longer applicable to that interface.'), 'info', false)?>
+	<?php print_info_box(gettext('Interface Groups allow you to setup rules for multiple interfaces without duplicating the rules.<br />' .
+					   'If you remove members from an interface group, the group rules are no longer applicable to that interface.'), 'info', false); ?>
 
 </div>
 <?php

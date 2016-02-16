@@ -177,10 +177,10 @@ function hardware_offloading_applyflags($iface) {
 			$flags_off |= IFCAP_RXCSUM;
 		}
 	} else {
-		if (isset($options['caps']['txcsum']) && !isset($options['encaps']['txcsum'])) {
+		if (isset($options['caps']['txcsum'])) {
 			$flags_on |= IFCAP_TXCSUM;
 		}
-		if (isset($options['caps']['rxcsum']) && !isset($options['encaps']['rxcsum'])) {
+		if (isset($options['caps']['rxcsum'])) {
 			$flags_on |= IFCAP_RXCSUM;
 		}
 	}
@@ -188,21 +188,19 @@ function hardware_offloading_applyflags($iface) {
 	if (isset($config['system']['disablesegmentationoffloading'])) {
 		$flags_off |= IFCAP_TSO;
 	} else if (isset($options['caps']['tso']) || isset($options['caps']['tso4']) || isset($options['caps']['tso6'])) {
-		if (!isset($options['encaps']['tso']) || !isset($options['encaps']['tso4']) || !isset($options['encaps']['tso6'])) {
-			$flags_on |= IFCAP_TSO;
-		}
+		$flags_on |= IFCAP_TSO;
 	}
 
-	if (isset($config['system']['disablelargereceiveoffloading']) && isset($options['encaps']['lro'])) {
+	if (isset($config['system']['disablelargereceiveoffloading'])) {
 		$flags_off |= IFCAP_LRO;
-	} else if (isset($options['caps']['lro']) && !isset($options['encaps']['lro'])) {
+	} else if (isset($options['caps']['lro'])) {
 		$flags_on |= IFCAP_LRO;
 	}
 
 	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if (!isset($config['system']['polling']) && isset($options['encaps']['polling'])) {
+	if (!isset($config['system']['polling'])) {
 		$flags_off |= IFCAP_POLLING;
-	} else if (isset($options['caps']['polling']) && !isset($options['encaps']['polling'])) {
+	} else if (isset($options['caps']['polling'])) {
 		$flags_on |= IFCAP_POLLING;
 	}
 
@@ -417,30 +415,27 @@ function convert_ip_to_network_format($ip, $subnet) {
 }
 
 /*
- * get_carp_interface_status($carpinterface): returns the status of a carp ip
+ * get_carp_interface_status($carpid): returns the status of a carp uniqid
  */
-function get_carp_interface_status($carpinterface) {
-	global $config;
+function get_carp_interface_status($carpid) {
 
-	foreach ($config['virtualip']['vip'] as $carp) {
-		if ($carp['mode'] != "carp")
-			continue;
-		if ($carpinterface !== "_vip{$carp['uniqid']}")
-			continue;
+	$carpiface = get_configured_vip_interface($carpid);
+	if ($carpiface == NULL)
+		return "";
+	$interface = get_real_interface($carpiface);
+	if ($interface == NULL)
+		return "";
 
-		$interface = get_real_interface($carp['interface']);
-		$vhid = $carp['vhid'];
-		$carp_query = '';
-		$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
-		foreach ($carp_query as $int) {
-			if (stripos($int, "MASTER"))
-				return "MASTER";
-			elseif (stripos($int, "BACKUP"))
-				return "BACKUP";
-			elseif (stripos($int, "INIT"))
-				return "INIT";
-		}
-		break;
+	$vhid = $carp['vhid'];
+	$carp_query = '';
+	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
+	foreach ($carp_query as $int) {
+		if (stripos($int, "MASTER"))
+			return "MASTER";
+		elseif (stripos($int, "BACKUP"))
+			return "BACKUP";
+		elseif (stripos($int, "INIT"))
+			return "INIT";
 	}
 
 	return "";

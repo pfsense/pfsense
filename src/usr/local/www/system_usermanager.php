@@ -69,8 +69,6 @@ require("certs.inc");
 require("guiconfig.inc");
 
 // start admin user code
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
-
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$id = $_POST['userid'];
 }
@@ -466,6 +464,11 @@ function build_cert_table() {
 	return($certhtml);
 }
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
+
+if ($act == "new" || $act == "edit" || $input_errors) {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {
@@ -549,17 +552,13 @@ foreach ($a_user as $i => $userent):
 </nav>
 </form>
 
-<div class="infoblock">
-	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
-	"the webConfigurator can be assigned directly or inherited from group memberships. " .
-	"An icon that appears grey indicates that it is a system defined object. " .
-	"Some system object properties can be modified but they cannot be deleted.") .
-	'<br /><br />' .
-	gettext("Accounts added here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal."), 'info', false)?>
-</div>
-
 <?php
+	print_callout('<p>' . gettext("Additional users can be added here. User permissions for accessing " .
+		"the webConfigurator can be assigned directly or inherited from group memberships. " .
+		"Some system object properties can be modified but they cannot be deleted.") . '</p>' .
+		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
+		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
+	);
 	include("foot.inc");
 	exit;
 }

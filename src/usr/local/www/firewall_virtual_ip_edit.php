@@ -324,19 +324,15 @@ function build_if_list() {
 	$list = array();
 
 	$interfaces = get_configured_interface_with_descr(false, true);
-	$carplist = get_configured_vip_list();
+	$carplist = get_configured_vip_list('all', VIP_CARP);
 
 	foreach ($carplist as $vipname => $address) {
-		$vip = get_configured_vip($vipname);
-		if ($vip['mode'] != 'carp') {
-			continue;
-		}
-
 		$interfaces[$vipname] = $address;
 		$interfaces[$vipname] .= " (";
 		if (get_vip_descr($address)) {
 			$interfaces[$vipname] .= get_vip_descr($address);
 		} else {
+			$vip = get_configured_vip($vipname);
 			$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
 		}
 		$interfaces[$vipname] .= ")";
@@ -483,8 +479,8 @@ print($form);
 ?>
 
 <div class="infoblock">
-	<?=print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
-			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), 'info', false)?>
+	<?php print_info_box(gettext("Proxy ARP and Other type Virtual IPs cannot be bound to by anything running on the firewall, such as IPsec, OpenVPN, etc.  Use a CARP or IP Alias type address for these types.") . '<br />' .
+			   sprintf(gettext("For more information on CARP and the above values, visit the OpenBSD %s"), '<a href="http://www.openbsd.org/faq/pf/carp.html">CARP FAQ</a>.'), 'info', false); ?>
 </div>
 
 <script type="text/javascript">

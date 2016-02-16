@@ -72,7 +72,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Interfaces"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Interface"));
 $shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();
@@ -509,7 +509,7 @@ if ($dfltmsg) {
 ?>
 <div>
 	<div class="infoblock">
-		<?=print_info_box($default_shaper_msg, 'info', false)?>
+		<?php print_info_box($default_shaper_msg, 'info', false); ?>
 	</div>
 </div>
 <?php

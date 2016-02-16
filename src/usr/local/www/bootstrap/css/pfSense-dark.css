@@ -65,10 +65,6 @@ table.sortable-theme-bootstrap {
     color: #e0e0e0;
 }
 
-.page-header {
-    border: 0;
-}
-
 .breadcrumb {
     background-color: #303030;
     box-shadow: 1px 1px 3px #151515;
@@ -357,4 +353,64 @@ textarea {
 .ui-autocomplete {
     color: #212121;
     background-color: #e0e0e0;
+}
+
+/* Callouts */
+.bs-callout {
+    padding: 10px 15px;
+    margin: 20px 0;
+    border: 1px solid #424242;
+    border-left-width: 5px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.bs-callout code {
+    border-radius: 3px;
+}
+
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+
+/* Callout contextual classes */
+.bs-callout-default {
+    border-left-color: #777;
+}
+
+.bs-callout-default h4 {
+    color: #777;
+}
+
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+
+.bs-callout-info {
+    border-left-color: #01579B;
+}
+
+.bs-callout-info h4 {
+    color: #01579B;
 }

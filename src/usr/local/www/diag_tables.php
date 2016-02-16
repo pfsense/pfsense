@@ -208,6 +208,11 @@ events.push(function() {
 //]]>
 </script>
 
+<?php
+if (empty($entries)) {
+	print_info_box(gettext("No entries exist in this table."), 'warning', false);
+} else {
+?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=$displayname?></h2></div>
 	<div class="panel-body">
@@ -242,7 +247,6 @@ events.push(function() {
 </div>
 
 <?php
-if (empty($entries)) {
-	print_info_box(gettext("No entries exist in this table."), 'warning', false);
 }
+
 include("foot.inc");

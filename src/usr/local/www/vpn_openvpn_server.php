@@ -590,6 +590,10 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Servers"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
 $shortcut_section = "openvpn";
 
 include("head.inc");
@@ -734,7 +738,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -748,7 +752,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -762,7 +766,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert Manager") . '</a>', '</span>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);
@@ -782,7 +786,7 @@ if ($act=="new" || $act=="edit"):
 		'DH Parameter length (bits)',
 		$pconfig['dh_length'],
 		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
+		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(

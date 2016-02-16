@@ -144,7 +144,7 @@ function get_pkg_table() {
 
 		$pkgtbl .= 	'</td>' . "\n";
 		$pkgtbl .= '<td>' . "\n";
-		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">install</a>' . "\n";
+		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">Install</a>' . "\n";
 
 		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
 			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";

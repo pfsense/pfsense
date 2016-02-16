@@ -492,8 +492,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 
 	/* Calculate smaller mtu and enforce it */
 	$smallermtu = 0;
-	$commonrx = true;
-	$commontx = true;
 	$foundgif = false;
 	foreach ($members as $member) {
 		$realif = get_real_interface($member);

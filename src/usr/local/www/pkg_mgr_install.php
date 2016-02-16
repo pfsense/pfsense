@@ -544,10 +544,10 @@ function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_wait_txt?>" + "<br />" +
-			"<?=gettext("(Some packages may take several minutes!)")?>");
+			"<?=gettext("This make take several minutes!")?>");
 	} else {
 		$('#final').html("<?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "<br />" +
-			"<?=gettext("(Some packages may take several minutes!)")?>");
+			"<?=gettext("This make take several minutes!")?>");
 	}
 	$('#final').show();
 }

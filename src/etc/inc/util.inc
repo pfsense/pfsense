@@ -1240,7 +1240,7 @@ function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what =
 		break;
 	}
 
-	return ($list);
+	return (NULL);
 }
 
 /* comparison function for sorting by the order in which interfaces are normally created */

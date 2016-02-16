@@ -543,11 +543,11 @@ function show_failure() {
 function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
-		$('#final').html("<?=$pkg_wait_txt?>" + "<br />" +
-			"<?=gettext("This make take several minutes!")?>");
+		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
+			"<?=gettext("This make take several minutes!")?>" + "</p>");
 	} else {
-		$('#final').html("<?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "<br />" +
-			"<?=gettext("This make take several minutes!")?>");
+		$('#final').html("<p><?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "</p><p>" +
+			"<?=gettext("This make take several minutes!")?>" + "</p>");
 	}
 	$('#final').show();
 }

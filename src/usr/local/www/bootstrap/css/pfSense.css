@@ -43,13 +43,9 @@ h1 a:link, h1 a:visited {
     text-decoration: none !important;
 }
 
-h1.page-header {
-    display: none;
-}
-
-h1 a:hover, h1 a:active {
-    color: #000000;
-    text-decoration: none !important;
+h1 a:hover, h1 a:active { 
+    color: #000000; 
+    text-decoration: none !important; 
 }
 
 .container.fixed {
@@ -89,11 +85,6 @@ tr.disabled th {
 .table-responsive {
     clear: both;
     margin-bottom: 0px;
-}
-
-.page-header {
-    padding-bottom: 4px;
-    margin-bottom: 10px;
 }
 
 /* navigation */
@@ -286,10 +277,6 @@ tr.disabled th {
 .header {
     position: relative;
     margin: 10px 0 20px 0;
-}
-
-.header .page-header {
-    margin-top: 0;
 }
 
 .header .context-links {

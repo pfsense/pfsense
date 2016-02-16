@@ -378,17 +378,17 @@ if ($_POST) {
 
 if ($_POST['mode'] == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgid);
 } else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
 	$panel_heading_txt = gettext("Package Reinstallation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgid);
 } else {
 	$panel_heading_txt = gettext("Package Installation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgid);
 }
@@ -513,12 +513,12 @@ function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		if ("<?=$pkgid?>" == "firmware") {
-			$('#final').html("<b>" + "<?=gettext('System update successfully completed')?>" + "</b>");
+			$('#final').html("<b>" + "<?=gettext('System update successfully completed.')?>" + "</b>");
 		} else {
 			$('#final').html("<?=$pkg_success_txt?>");
 		}
 	} else {
-		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed')?>");
+		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed.')?>");
 	}
 
 	$('#final').show();
@@ -531,7 +531,7 @@ function show_failure() {
 	if ("<?=$_POST['mode']?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_fail_txt?>");
 	} else {
-		$('#final').html("<?=gettext('Reinstallation of all packages failed')?>");
+		$('#final').html("<?=gettext('Reinstallation of all packages failed.')?>");
 	}
 	$('#final').show();
 }

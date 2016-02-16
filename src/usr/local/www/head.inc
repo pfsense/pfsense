@@ -512,9 +512,17 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	}
 }
 
-echo '<li>'. get_shortcut_main_link($shortcut_section, false). '</li>';
-echo '<li>'. get_shortcut_status_link($shortcut_section, false). '</li>';
-echo '<li>'. get_shortcut_log_link($shortcut_section, false). '</li>';
+if ('' != ($link = get_shortcut_main_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
+
+if ('' != ($link = get_shortcut_status_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
+
+if ('' != ($link = get_shortcut_log_link($shortcut_section, false))) {
+	echo '<li>' . $link . '</li>';
+}
 
 ?>
 	<?php if (!$g['disablehelpicon']): ?>

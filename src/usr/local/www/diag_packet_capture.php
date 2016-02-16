@@ -282,7 +282,7 @@ $protocollist = array(
 	'pfsync' => 'pfsync',
 	'!pfsync' => $excl . ' pfsync',
 	'esp' => 'ESP',
-	'!esp' => $excl . 'ESP'
+	'!esp' => $excl . ' ESP'
 );
 
 include("head.inc");

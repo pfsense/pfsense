@@ -56,6 +56,10 @@
  *
  */
 
+define(VIP_ALL, 1);
+define(VIP_CARP, 2);
+define(VIP_IPALIAS, 3);
+
 /* kill a process by pid file */
 function killbypid($pidfile) {
 	return sigkillbypid($pidfile, "TERM");
@@ -1132,7 +1136,7 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
-function get_configured_vip_list($family = 'all') {
+function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
 	$list = array();
@@ -1142,8 +1146,16 @@ function get_configured_vip_list($family = 'all') {
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
-			continue;
+
+		if ($type == VIP_CARP) {
+			if ($vip['mode'] != "carp")
+				continue;
+		} elseif ($type == VIP_IPALIAS) {
+			if ($vip['mode'] != "ipalias")
+				continue;
+		} else {
+			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+				continue;
 		}
 
 		if ($family == 'all' ||

@@ -248,6 +248,12 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 }
 
 include("head.inc");
+
+if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
+	?>
+	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+<?php
+}
 display_top_tabs($tab_array);
 
 if ($input_errors) {
@@ -312,7 +318,7 @@ if ($input_errors) {
 ?>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Current base system")?>
+				<?=gettext("Current Base System")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['installed_version']?>
@@ -321,7 +327,7 @@ if ($input_errors) {
 
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
-				<?=gettext("Latest base system")?>
+				<?=gettext("Latest Base System")?>
 			</label>
 			<div class="col-sm-10">
 				<?=$firmwareversion['version']?>
@@ -427,9 +433,6 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
-
-	<div id="final" class="alert" role="alert" style=":display: none;"></div>
-
 <?php endif?>
 </form>
 

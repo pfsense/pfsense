@@ -624,12 +624,12 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
-	/* Remove all additional packages */
+	conf_mount_rw();
 
+	/* Remove all additional packages */
 	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
 	    "-r ALL_PACKAGES");
 
-	conf_mount_rw();
 	if (!$lock) {
 		$lockkey = lock('config', LOCK_EX);
 	}

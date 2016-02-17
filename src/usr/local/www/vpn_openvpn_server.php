@@ -686,7 +686,8 @@ if ($act=="new" || $act=="edit"):
 		'local_port',
 		'Local port',
 		'number',
-		$pconfig['local_port']
+		$pconfig['local_port'],
+		['min' => '0']
 	));
 
 	$section->addInput(new Form_Input(

@@ -496,7 +496,8 @@ if ($act=="new" || $act=="edit"):
 		'local_port',
 		'Local port',
 		'number',
-		$pconfig['local_port']
+		$pconfig['local_port'],
+		['min' => '0']
 	))->setHelp('Set this option if you would like to bind to a specific port. Leave this blank or enter 0 for a random dynamic port.');
 
 	$section->addInput(new Form_Input(

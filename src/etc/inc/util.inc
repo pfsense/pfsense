@@ -972,11 +972,9 @@ function get_v6_ptr_zones($subnet, $bits) {
 			$change_part--;
 		}
 
-		/* Convert desired part to decimal and increase 1 */
+		/* Increase 1 to desired part */
 		$parts = explode(":", Net_IPv6::uncompress($small_subnet));
-		$dec = base_convert($parts[$change_part], 16, 10) + 1;
-		/* Move back to hex and rebuild IP address */
-		$parts[$change_part] = base_convert($dec, 10, 16);
+		$parts[$change_part]++;
 		$small_subnet = implode(":", $parts);
 	}
 

@@ -64,6 +64,10 @@ require_once("voucher.inc");
 function get_default_captive_portal_html() {
 	global $config, $g, $cpzone;
 
+	$translated_text1 = sprintf(gettext("%s captive portal"), $g['product_name']);
+	$translated_text2 = sprintf(gettext("Welcome to the %s Captive Portal!"), $g['product_name']);
+	$translated_text3 = gettext("Username:");
+	$translated_text4 = gettext("Password:");
 	$htmltext = <<<EOD
 <html>
 <body>
@@ -76,7 +80,7 @@ function get_default_captive_portal_html() {
 		<td style="border-bottom:1px solid #000000">
 			<font color='white'>
 			<b>
-				{$g['product_name']} captive portal
+				{$translated_text1}
 			</b>
 			</font>
 		</td>
@@ -106,27 +110,29 @@ function get_default_captive_portal_html() {
 								<br />
 								<div id='loginbox'>
 								<table>
-									<tr><td colspan="2"><center>Welcome to the {$g['product_name']} Captive Portal!</td></tr>
+									<tr><td colspan="2"><center>{$translated_text2}</td></tr>
 									<tr><td>&nbsp;</td></tr>
-									<tr><td align="right">Username:</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
-									<tr><td align="right">Password:</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+									<tr><td align="right">{$translated_text3}</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+									<tr><td align="right">{$translated_text4}</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
 									<tr><td>&nbsp;</td></tr>
 
 EOD;
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
+		$translated_text = gettext("Enter Voucher Code:");
 		$htmltext .= <<<EOD
 									<tr>
-										<td align="right">Enter Voucher Code: </td>
+										<td align="right">{$translated_text} </td>
 										<td><input name="auth_voucher" type="text" style="border:1px dashed;" size="22"></td>
 									</tr>
 
 EOD;
 	}
 
+	$translated_text = gettext("Continue");
 	$htmltext .= <<<EOD
 									<tr>
-										<td colspan="2"><center><input name="accept" type="submit" value="Continue"></center></td>
+										<td colspan="2"><center><input name="accept" type="submit" value="{$translated_text}"></center></td>
 									</tr>
 								</table>
 								</div>
@@ -280,26 +286,30 @@ function captiveportal_configure_zone($cpcfg) {
 			$logouttext = base64_decode($cpcfg['page']['logouttext']);
 		} else {
 			/* example page */
+			$translated_text1 = gettext("Redirecting...");
+			$translated_text2 = gettext("Redirecting to");
+			$translated_text3 = gettext("Logout");
+			$translated_text4 = gettext("Click the button below to disconnect");
 			$logouttext = <<<EOD
 <html>
-<head><title>Redirecting...</title></head>
+<head><title>{$translated_text1}</title></head>
 <body>
 <span style="font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">
-<b>Redirecting to <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
+<b>{$translated_text2} <a href="<?=\$my_redirurl;?>"><?=\$my_redirurl;?></a>...</b>
 </span>
 <script type="text/javascript">
 //<![CDATA[
 LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusbar=0,menubar=0,resizable=0,width=256,height=64');
 if (LogoutWin) {
 	LogoutWin.document.write('<html>');
-	LogoutWin.document.write('<head><title>Logout</title></head>') ;
+	LogoutWin.document.write('<head><title>{$translated_text3}</title></head>') ;
 	LogoutWin.document.write('<body bgcolor="#435370">');
 	LogoutWin.document.write('<div align="center" style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
-	LogoutWin.document.write('<b>Click the button below to disconnect</b><p />');
+	LogoutWin.document.write('<b>{$translated_text4}</b><p />');
 	LogoutWin.document.write('<form method="POST" action="<?=\$logouturl;?>">');
 	LogoutWin.document.write('<input name="logout_id" type="hidden" value="<?=\$sessionid;?>" />');
 	LogoutWin.document.write('<input name="zone" type="hidden" value="<?=\$cpzone;?>" />');
-	LogoutWin.document.write('<input name="logout" type="submit" value="Logout" />');
+	LogoutWin.document.write('<input name="logout" type="submit" value="{$translated_text3}" />');
 	LogoutWin.document.write('</form>');
 	LogoutWin.document.write('</div></body>');
 	LogoutWin.document.write('</html>');

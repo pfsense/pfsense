@@ -797,7 +797,7 @@ function filter_generate_aliases() {
 			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
 				// skip aliases with numeric-only names. redmine #4289
-				file_notice("Filter_Reload", "Aliases with numeric-only names are not valid. Skipping alias " . $aliased['name']);
+				file_notice("Filter_Reload", sprintf(gettext("Aliases with numeric-only names are not valid. Skipping alias %s"), $aliased['name']));
 				continue;
 			}
 			$addrlist = filter_generate_nested_alias($aliased['name'], $aliased['address'], $aliasnesting, $aliasaddrnesting);
@@ -1501,13 +1501,13 @@ function filter_generate_reflection_proxy($rule, $nordr, $rdr_ifs, $srcaddr, $ds
 				}
 
 				if (($inetdport + $delta + 1) - $starting_localhost_port_tmp > 500) {
-					log_error("Not installing NAT reflection rules for a port range > 500");
+					log_error(gettext("Not installing NAT reflection rules for a port range > 500"));
 					$inetdport = $starting_localhost_port;
 					$toadd_array = array();
 					$toomanyports = true;
 					break;
 				} else if (($inetdport + $delta) > 19990) {
-					log_error("Installing partial NAT reflection rules. Maximum 1,000 reached.");
+					log_error(gettext("Installing partial NAT reflection rules. Maximum 1,000 reached."));
 					$delta = 19990 - $inetdport;
 					$loc_pt[1] = $loc_pt[0] + $delta;
 					if ($delta == 0) {
@@ -2419,7 +2419,7 @@ function filter_generate_port(& $rule, $target = "source", $isnat = false) {
 			$srcport = explode("-", $rule[$target]['port']);
 			$srcporta = alias_expand($srcport[0]);
 			if (!$srcporta) {
-				log_error(sprintf(gettext("filter_generate_port: %s is not a valid {$target} port."), $srcport[0]));
+				log_error(sprintf(gettext('filter_generate_port: %1$s is not a valid %2$s port.'), $srcport[0], $target));
 			} else if ((!$srcport[1]) || ($srcport[0] == $srcport[1])) {
 				$src .= " port {$srcporta} ";
 			} else if (($srcport[0] == 1) && ($srcport[1] == 65535)) {
@@ -2655,7 +2655,7 @@ function filter_generate_user_rule($rule) {
 	if (isset($rule['disabled'])) {
 		return "# rule " . $rule['descr'] . " disabled \n";
 	}
-	update_filter_reload_status("Creating filter rules {$rule['descr']} ...");
+	update_filter_reload_status(sprintf(gettext("Creating filter rules %s ..."), $rule['descr']));
 	$int = "";
 	$aline = array();
 
@@ -2706,16 +2706,16 @@ function filter_generate_user_rule($rule) {
 
 	/* check for unresolvable aliases */
 	if ($rule['source']['address'] && !alias_expand($rule['source']['address'])) {
-		$error_text = "Unresolvable source alias '{$rule['source']['address']}' for rule '{$rule['descr']}'";
+		$error_text = sprintf(gettext("Unresolvable source alias '%1\$s' for rule '%2\$s'"), $rule['source']['address'], $rule['descr']);
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
 	if ($rule['destination']['address'] && !alias_expand($rule['destination']['address'])) {
-		$error_text = "Unresolvable destination alias '{$rule['destination']['address']}' for rule '{$rule['descr']}'";
+		$error_text = sprintf(gettext("Unresolvable destination alias '%1\$s' for rule '%2\$s'"), $rule['destination']['address'], $rule['descr']);
 		file_notice("Filter_Reload", $error_text);
 		return "# {$error_text}";
 	}
-	update_filter_reload_status("Setting up pass/block rules");
+	update_filter_reload_status(gettext("Setting up pass/block rules"));
 	$type = $rule['type'];
 	if ($type != "pass" && $type != "block" && $type != "reject" && $type != "match") {
 		/* default (for older rules) is pass */
@@ -2766,7 +2766,7 @@ function filter_generate_user_rule($rule) {
 		} else if (isset($config['system']['skip_rules_gw_down'])) {
 			return "# rule " . $rule['descr'] . " disabled because gateway " . $rule['gateway'] . " is down ";
 		} else {
-			log_error("The gateway: {$rule['gateway']} is invalid or unknown, not using it.");
+			log_error(sprintf(gettext("The gateway: %s is invalid or unknown, not using it."), $rule['gateway']));
 		}
 	}
 
@@ -3030,7 +3030,7 @@ function filter_generate_user_rule($rule) {
 					}
 					return "# schedule finished - {$rule['descr']}";
 				} else if ($g['debug']) {
-					log_error("[TDR DEBUG] status true -- rule type '$type'");
+					log_error(sprintf(gettext("[TDR DEBUG] status true -- rule type '%s'"), $type));
 				}
 
 				$aline['schedlabel'] = " schedule \"{$sched['schedlabel']}\" ";
@@ -4278,7 +4278,7 @@ function display_separator($separators, $nrules, $columns_in_table) {
 				$cellcolor = $separator['color'];
 				print('<tr class="ui-sortable-handle separator">' .
 					'<td class="' . $cellcolor . '" colspan="' . ($columns_in_table -1) . '">' . '<span class="' . $cellcolor . '">' . $separator['text'] . '</span></td>' .
-					'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="delete this separator"></i></a></td>' .
+					'<td  class="' . $cellcolor . '"><a href="#"><i class="fa fa-trash no-confirm sepdel" title="' . gettext("delete this separator") . '"></i></a></td>' .
 					'</tr>' . "\n");
 			}
 		}

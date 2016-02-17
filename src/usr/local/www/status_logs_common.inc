@@ -299,7 +299,7 @@ function filter_form_system() {
 
 		$btnsubmit = new Form_Button(
 			'filterlogentries_submit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);
@@ -328,7 +328,7 @@ function filter_form_system() {
 
 		$btnsubmit = new Form_Button(
 			'filtersubmit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);
@@ -507,7 +507,7 @@ function filter_form_firewall() {
 
 		$btnsubmit = new Form_Button(
 			'filterlogentries_submit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);
@@ -547,7 +547,7 @@ function filter_form_firewall() {
 
 		$btnsubmit = new Form_Button(
 			'filtersubmit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);
@@ -958,7 +958,7 @@ function manage_log_section() {
 
 	$btnsavesettings = new Form_Button(
 		'save_settings',
-		' ' . gettext('Save'),
+		gettext('Save'),
 		null,
 		'fa-save'
 	);
@@ -973,7 +973,7 @@ function manage_log_section() {
 
 	$btnclear = new Form_Button(
 		'clear',
-		' ' . gettext('Clear log'),
+		gettext('Clear log'),
 		null,
 		'fa-trash'
 	);

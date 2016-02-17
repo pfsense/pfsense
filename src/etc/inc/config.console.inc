@@ -447,7 +447,7 @@ EOD;
 		}
 
 		printf(gettext("%sWriting configuration..."), "\n");
-		write_config("Console assignment of interfaces");
+		write_config(gettext("Console assignment of interfaces"));
 		printf(gettext("done.%s"), "\n");
 
 		fclose($fp);

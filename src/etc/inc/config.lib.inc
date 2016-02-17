@@ -693,7 +693,7 @@ function config_restore($conffile) {
 
 	conf_mount_ro();
 
-	write_config(gettext("Reverted to") . " " . array_pop(explode("/", $conffile)) . ".", false);
+	write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
 
 	return 0;
 }

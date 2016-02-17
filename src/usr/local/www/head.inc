@@ -434,6 +434,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
 			<?php endforeach?>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
 				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
@@ -472,15 +474,23 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
 			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available Widgets")?>">
-				<i style="cursor:pointer" class="fa fa-plus"></i>
+				<i class="fa fa-plus icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
 
+	<?php if (isset($widgets)): ?>
+		<li>
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
+				<i class="fa fa-save icon-pointer"></i>
+			</a>
+		</li>
+	<?php endif?>
+	
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">
-				<i style="cursor:pointer" class="fa fa-filter"></i>
+				<i class="fa fa-filter icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif ?>
@@ -488,7 +498,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	<?php if ($system_logs_manage_log_form_hidden): ?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage Log")?>">
-				<i style="cursor:pointer" class="fa fa-wrench"></i>
+				<i class="fa fa-wrench icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif ?>

@@ -257,7 +257,7 @@ function parse_vpn_login_log_line($line) {
 		return $flent;
 	} else {
 		if($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}
@@ -279,7 +279,7 @@ function parse_vpn_service_log_line($line) {
 		return $flent;
 	} else {
 		if($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}
@@ -302,7 +302,7 @@ function parse_unknown_log_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}
@@ -325,7 +325,7 @@ function parse_system_log_line($line) {
 		return $flent;
 	} else {
 		if ($g['debug']) {
-			log_error(sprintf(gettext("There was a error parsing log entry: %s.   Please report to mailing list or forum."), $line));
+			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
 	}

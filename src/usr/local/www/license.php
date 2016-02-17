@@ -66,7 +66,8 @@ include("head.inc");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("License")?></h2></div>
 	<div class="panel-body content">
-		<p><?php printf(gettext("Copyright &copy; %s %s. All rights reserved."), $g['product_copyright_years'], $g['product_copyright'])?></p>
+		<p><strong><?php printf(gettext("%s is Copyright &copy; %s %s. All rights reserved."), $g['product_name'], $g['product_copyright_years'], $g['product_copyright'])?></strong></p>
+		<p><?=gettext("m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All rights reserved.")?></p>
 		<p><?=gettext("Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:")?></p>
 		<ol type="1">
 			<li><?=gettext("Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.")?></li>

@@ -468,7 +468,7 @@ function filter_form_vpn() {
 		}
 		$btnsubmit = new Form_Button(
 			'filterlogentries_submit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);
@@ -497,7 +497,7 @@ function filter_form_vpn() {
 
 		$btnsubmit = new Form_Button(
 			'filtersubmit',
-			' ' . gettext('Apply Filter'),
+			gettext('Apply Filter'),
 			null,
 			'fa-filter'
 		);

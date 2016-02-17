@@ -1097,13 +1097,13 @@ EOD;
 		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
 	}
 
-	$log_sockets = array();
-	$log_sockets[] = "{$g['dhcpd_chroot_path']}/var/run/log";
+	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");
 
 	if (isset($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			if (isset($package['logging']['logsocket']) && '' != $package['logging']['logsocket'] &&
-			    is_dir(pathinfo($package['logging']['logsocket'], PATHINFO_DIRNAME)) && !in_array($package['logging']['logsocket'], $log_sockets)) {
+			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
+			    is_dir(dirname($package['logging']['logsocket'])) &&
+			    !in_array($package['logging']['logsocket'], $log_sockets)) {
 				$log_sockets[] = $package['logging']['logsocket'];
 			}
 		}

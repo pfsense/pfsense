@@ -83,7 +83,7 @@ $apkg = $_GET['pkg'];
 if (!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
 	if (isset($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			if (isset($package['logging']['logfilename']) && '' != $package['logging']['logfilename']) {
+			if (isset($package['logging']['logfilename']) && $package['logging']['logfilename'] != '') {
 				$pkgwithlogging = true;
 				$apkg = $package['name'];
 				$apkgid = $i;

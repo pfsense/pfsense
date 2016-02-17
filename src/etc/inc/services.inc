@@ -1360,8 +1360,15 @@ EOD;
 			if ($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
-			$dnscfgv6 .= "	ddns-update-style interim;\n";
+			if (empty($dhcpv6ifconf['ddnsclientupdates'])) {
+				$ddnsclientupdates = 'allow';
+			} else {
+				$ddnsclientupdates = $dhcpv6ifconf['ddnsclientupdates'];
+			}
+			$dnscfgv6 .= "	{$ddnsclientupdates} client-updates;\n";
 			$nsupdate = true;
+		} else {
+			$dnscfgv6 .= "	do-forward-updates false;\n";
 		}
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
@@ -1380,21 +1387,33 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain']) {
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			$ifcfgsnv6 = "64";
+			$subnetv6 = gen_subnetv6($dhcpv6ifconf['range']['from'], $ifcfgsnv6);
+		}
+
+		$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
+
+		if (isset($dhcpv6ifconf['ddnsupdate']) &&
+		    !empty($dhcpv6ifconf['ddnsdomain'])) {
 			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain'];
+			$newzone['domain-name'] = $dhcpv6ifconf['ddnsdomain'];
 			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
 			$newzone['ddnsdomainkeyname'] = $dhcpv6ifconf['ddnsdomainkeyname'];
 			$newzone['ddnsdomainkey'] = $dhcpv6ifconf['ddnsdomainkey'];
 			$ddns_zones[] = $newzone;
+			if (isset($dhcpv6ifconf['ddnsreverse'])) {
+				$ptr_zones = get_v6_ptr_zones($subnetv6, $ifcfgsnv6);
+				foreach ($ptr_zones as $ptr_zone) {
+					$reversezone = array();
+					$reversezone['domain-name'] = $ptr_zone;
+					$reversezone['dns-servers'][] =
+					    $dhcpv6ifconf['ddnsdomainprimary'];
+					$ddns_zones[] = $reversezone;
+				}
+			}
 		}
 
-		if (is_ipaddrv6($ifcfgipv6)) {
-			$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
-		} else {
-			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
-			$dhcpdv6conf .= "subnet6 {$subnet6}/64";
-		}
 		$dhcpdv6conf .= " {\n";
 
 		$dhcpdv6conf .= <<<EOD
@@ -1493,7 +1512,7 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain']) {
+		if ($dhcpv6ifconf['ddnsdomain']) {
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
 			$dhcpdv6conf .= dhcpdzones($ddns_zones);
 		}

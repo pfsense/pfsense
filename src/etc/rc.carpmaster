@@ -40,7 +40,7 @@ if (isset($_GET)) {
 	$argument = str_replace("\n", "", $argv[1]);
 }
 if (!strstr($argument, "@")) {
-	log_error("Carp MASTER event triggered from wrong source {$argument}");
+	log_error("CARP master event triggered from wrong source {$argument}");
 }
 
 list($vhid, $iface) = explode("@", $argument);
@@ -50,7 +50,7 @@ $friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
 $vips = link_interface_to_vips($friendly, '', $vhid);
 $carp_iface = "{$friendly}_vip{$vhid}";
 foreach ($vips as $vip) {
-	$notificationmsg = sprintf('Carp cluster member "(%1$s): (%2$s)" has resumed the state "MASTER" for vhid %3$s', $argument, $friendly_descr, $vhid);
+	$notificationmsg = sprintf('HA cluster member "(%1$s): (%2$s)" has resumed CARP state "MASTER" for vhid %3$s', $argument, $friendly_descr, $vhid);
 
 	notify_via_smtp($notificationmsg);
 	notify_via_growl($notificationmsg);
@@ -59,10 +59,22 @@ foreach ($vips as $vip) {
 
 /* Start OpenVPN clients running on this VIP, since they should be in the stopped state while the VIP is CARP Backup. */
 global $config;
+$a_groups = return_gateway_groups_array();
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 	foreach ($config['openvpn']['openvpn-client'] as $settings) {
+		if (substr($settings['interface'], 0, 4) == '_vip') {
+			$openvpn_vip = $settings['interface'];
+		} else if (is_array($a_groups[$settings['interface']])) {
+			// interface is a gateway group, check CARP VIP
+			if (substr($a_groups[$settings['interface']][0]['vip'], 0, 4) == '_vip') {
+				$openvpn_vip = $a_groups[$settings['interface']][0]['vip'];
+			}
+		} else {
+			// this OpenVPN instance not on a CARP IP
+			continue;
+		}
 		foreach ($vips as $vip) {
-			if ($settings['interface'] == "_vip{$vip['uniqid']}") {
+			if ($openvpn_vip == "_vip{$vip['uniqid']}") {
 				log_error("Starting OpenVPN client instance on {$friendly_descr} because of transition to CARP master.");
 				openvpn_restart('client', $settings);
 			}

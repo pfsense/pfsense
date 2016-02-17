@@ -239,7 +239,7 @@ else:
 
 	<!-- GEOM mirror table -->
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('GEOM Mirror information - Mirror Status')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('GEOM Mirror Information - Mirror Status')?></h2></div>
 		<div class="panel-body table-responsive">
 
 <?php
@@ -248,9 +248,9 @@ else:
 			<table class="table table-striped stable-hover table-condensed">
 				<thead>
 					<tr>
-						<th="><?=gettext("Name"); ?></th>
-						<th=><?=gettext("Status"); ?></th>
-						<th=><?=gettext("Component"); ?></th>
+						<th><?=gettext("Name"); ?></th>
+						<th><?=gettext("Status"); ?></th>
+						<th><?=gettext("Component"); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -321,7 +321,7 @@ else:
 
 	<!-- Consumer information table -->
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Consumer information - Available consumers')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Consumer Information - Available Consumers')?></h2></div>
 		<div class="panel-body table-responsive">
 <?php
 	if (count($unused_consumers) > 0): ?>

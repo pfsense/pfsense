@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-ntpd
-##|*NAME=Services: NTP
-##|*DESCR=Allow access to the 'Services: NTP' page.
+##|*NAME=Services: NTP Settings
+##|*DESCR=Allow access to the 'Services: NTP Settings' page.
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
@@ -229,22 +229,9 @@ function build_interface_list() {
 	$iflist = array('options' => array(), 'selected' => array());
 
 	$interfaces = get_configured_interface_with_descr();
-	$carplist = get_configured_carp_interface_list();
-
-	foreach ($carplist as $cif => $carpip) {
-		$interfaces[$cif] = $carpip . " (" . get_vip_descr($carpip) .")";
-	}
-
-	$aliaslist = get_configured_ip_aliases_list();
-
-	foreach ($aliaslist as $aliasip => $aliasif) {
-		$interfaces[$aliasip] = $aliasip." (".get_vip_descr($aliasip).")";
-	}
-
-	$size = (count($interfaces) < 10) ? count($interfaces) : 10;
-
 	foreach ($interfaces as $iface => $ifacename) {
-		if (!is_ipaddr(get_interface_ip($iface)) && !is_ipaddr($iface)) {
+		if (!is_ipaddr(get_interface_ip($iface)) &&
+		    !is_ipaddrv6(get_interface_ipv6($iface))) {
 			continue;
 		}
 
@@ -264,7 +251,7 @@ if (empty($pconfig['interface'])) {
 } else {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
-$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("NTP"));
+$pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
 $shortcut_section = "ntp";
 include("head.inc");
 
@@ -276,7 +263,7 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("NTP"), true, "services_ntpd.php");
+$tab_array[] = array(gettext("Settings"), true, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);

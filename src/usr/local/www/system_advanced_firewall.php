@@ -59,8 +59,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-advanced-firewall
-##|*NAME=System: Advanced: Firewall and NAT
-##|*DESCR=Allow access to the 'System: Advanced: Firewall and NAT' page.
+##|*NAME=System: Advanced: Firewall & NAT
+##|*DESCR=Allow access to the 'System: Advanced: Firewall & NAT' page.
 ##|*MATCH=system_advanced_firewall.php*
 ##|-PRIV
 
@@ -401,7 +401,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Firewall and NAT"));
+$pgtitle = array(gettext("System"), gettext("Advanced"), htmlspecialchars(gettext("Firewall & NAT")));
 include("head.inc");
 
 if ($input_errors) {
@@ -413,7 +413,7 @@ if ($savemsg) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Admin Access"), false, "system_advanced_admin.php");
-$tab_array[] = array(gettext("Firewall / NAT"), true, "system_advanced_firewall.php");
+$tab_array[] = array(htmlspecialchars(gettext("Firewall & NAT")), true, "system_advanced_firewall.php");
 $tab_array[] = array(gettext("Networking"), false, "system_advanced_network.php");
 $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
@@ -679,7 +679,7 @@ if (count($config['interfaces']) > 1) {
 	$form->add($section);
 }
 
-$section = new Form_Section('State Timeouts in seconds. (Leave blank for default)');
+$section = new Form_Section('State Timeouts in Seconds. (Leave blank for default)');
 
 $tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
 foreach ($tcpTimeouts as $name) {

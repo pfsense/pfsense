@@ -111,7 +111,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Interfaces"), gettext("QinQ"));
+$pgtitle = array(gettext("Interfaces"), gettext("QinQs"));
 $shortcut_section = "interfaces";
 include("head.inc");
 
@@ -120,16 +120,16 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Assignments"), false, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 $tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[] = array(gettext("VLANs"), false, "interfaces_vlan.php");
 $tab_array[] = array(gettext("QinQs"), true, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 ?>
@@ -188,9 +188,9 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
+	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q QinQ tagging properly. <br />On cards that do not explicitly support it, ' .
 		'QinQ tagging will still work, but the reduced MTU may cause problems.<br />' .
-		'See the %s handbook for information on supported cards.'), $g['product_name']), 'info', false)?>
+		'See the %s handbook for information on supported cards.'), $g['product_name']), 'info', false); ?>
 </div>
 
 <?php

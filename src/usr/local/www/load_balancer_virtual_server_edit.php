@@ -190,7 +190,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Server"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"), gettext("Edit"));
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");
@@ -201,7 +201,7 @@ if ($input_errors) {
 
 $form = new Form();
 
-$section = new Form_Section('Edit Load Balancer - Virtual Server entry');
+$section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(
 	'name',

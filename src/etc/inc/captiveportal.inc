@@ -1300,7 +1300,7 @@ function captiveportal_init_radius_servers() {
 		$cprdsrvlck = lock("captiveportalradius{$cpzone}", LOCK_EX);
 		$fd = @fopen("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db", "w");
 		if (!$fd) {
-			captiveportal_syslog("Error: cannot open radius DB file in captiveportal_configure().\n");
+			captiveportal_syslog("Error: cannot open RADIUS DB file in captiveportal_configure().\n");
 			unlock($cprdsrvlck);
 			return 1;
 		}

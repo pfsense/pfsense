@@ -913,17 +913,19 @@ if ($_POST) {
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
-				// Update the separators
-				$a_separators = &$config['filter']['separator'][strtolower($if)];
-
-				for ($idx=0; isset($a_separators['sep' . $idx]); $idx++ ) {
-					$seprow = substr($a_separators['sep' . $idx]['row']['0'], 2);
-
-					// If the separator is located after the place where the new rule is to go, increment the separator row
-					if ($seprow > $after) {
-						$a_separators['sep' . $idx]['row']['0'] = 'fr' . ($seprow + 1);
-					}
+				// For copy/dup the $if var is taken from the rule.
+				// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
+				if (isset($pconfig['floating'])) {
+					$tmpif = 'FloatingRules';
+				} else {
+					$tmpif = $if;
 				}
+
+				// Update the separators
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$ridx = ifridx($tmpif, $after);	// get rule index within interface
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
 			} else {
 				$a_filter[] = $filterent;
 			}
@@ -1026,7 +1028,12 @@ function build_if_list() {
 	return($iflist);
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Rules"), gettext("Edit"));
+$pgtitle = array(gettext("Firewall"), gettext("Rules"));
+
+if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$pgtitle[] = gettext('Floating');
+}
+$pgtitle[] = gettext("Edit");
 $shortcut_section = "firewall";
 
 $page_filename = "firewall_rules_edit.php";
@@ -1037,7 +1044,7 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Edit Firewall rule');
+$section = new Form_Section('Edit Firewall Rule');
 
 if (isset($id)) {
 	$form->addGlobal(new Form_Input(
@@ -1369,7 +1376,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$form->add($section);
 }
 
-$section = new Form_Section('Extra options');
+$section = new Form_Section('Extra Options');
 $section->addInput(new Form_Checkbox(
 	'log',
 	'Log',
@@ -1377,7 +1384,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
 	'for everything. If you want to do a lot of logging, consider using a remote '.
-	'syslog server (see the <a href="status_logs_settings.php">Status: System logs: '.
+	'syslog server (see the <a href="status_logs_settings.php">Status: System Logs: '.
 	'Settings</a> page).');
 
 $section->addInput(new Form_Input(
@@ -1405,7 +1412,7 @@ if (!$adv_open) {
 
 $form->add($section);
 
-$section = new Form_Section('Advanced options');
+$section = new Form_Section('Advanced Options');
 $section->addClass('advanced-options');
 
 $section->addInput(new Form_Select(

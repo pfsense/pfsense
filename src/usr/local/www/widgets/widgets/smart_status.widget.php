@@ -69,7 +69,7 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 			<th></th>
 			<th><?=gettext("Drive")?></th>
 			<th><?=gettext("Ident")?></th>
-			<th><?=gettext("SMART Status")?></th>
+			<th><?=gettext("S.M.A.R.T. Status")?></th>
 		</tr>
 	</thead>
 	<tbody>

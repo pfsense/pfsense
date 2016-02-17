@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-server
-##|*NAME=OpenVPN: Server
-##|*DESCR=Allow access to the 'OpenVPN: Server' page.
+##|*NAME=OpenVPN: Servers
+##|*DESCR=Allow access to the 'OpenVPN: Servers' page.
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
@@ -126,7 +126,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_server[$id]);
 	write_config();
-	$savemsg = gettext("Server successfully deleted");
+	$savemsg = gettext("Server successfully deleted.");
 }
 
 if ($_GET['act'] == "new") {
@@ -589,7 +589,11 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Server"));
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Servers"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
 $shortcut_section = "openvpn";
 
 include("head.inc");
@@ -607,8 +611,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), true, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), true, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), false, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);
@@ -694,7 +698,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Cryptographic settings');
+	$section = new Form_Section('Cryptographic Settings');
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
@@ -734,7 +738,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -748,7 +752,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -762,7 +766,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert Manager") . '</a>', '</span>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);
@@ -782,7 +786,7 @@ if ($act=="new" || $act=="edit"):
 		'DH Parameter length (bits)',
 		$pconfig['dh_length'],
 		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>'));
+		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(
@@ -837,7 +841,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',

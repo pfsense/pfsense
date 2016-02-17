@@ -129,7 +129,7 @@ include("head.inc"); ?>
 ?>
 
 <div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client connections')?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext('Client Connections')?></h2></div>
 		<div class="panel-body table-responsive">
 			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
@@ -356,7 +356,7 @@ if ($DisplayNote) {
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-	print_info_box(gettext("No OpenVPN instances defined"));
+	print_info_box(gettext("No OpenVPN instances defined."));
 }
 ?>
 </form>

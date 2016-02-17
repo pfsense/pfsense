@@ -132,7 +132,7 @@ manage_log_code();
 status_logs_common_code();
 
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -304,7 +304,7 @@ if (!$rawfilter) {
 		</table>
 <?php
 	if (count($filterlog) == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 		</div>
@@ -347,7 +347,7 @@ events.push(function() {
 
 <?php
 	if ($rows == 0) {
-		print_info_box(gettext('No logs to display'));
+		print_info_box(gettext('No logs to display.'));
 	}
 ?>
 	</div>
@@ -359,7 +359,7 @@ events.push(function() {
 <div class="infoblock">
 <?php
 print_info_box('<a href="https://doc.pfsense.org/index.php/What_are_TCP_Flags%3F">' .
-	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR' . '<br />' .
+	gettext("TCP Flags") . '</a>: F - FIN, S - SYN, A or . - ACK, R - RST, P - PSH, U - URG, E - ECE, C - CWR.' . '<br />' .
 	'<i class="fa fa-minus-square-o icon-primary"></i> = Add to block list., <i class="fa fa-plus-square-o icon-primary"></i> = Pass traffic, <i class="fa fa-info icon-primary"></i> = Resolve', 'info', false);
 ?>
 </div>

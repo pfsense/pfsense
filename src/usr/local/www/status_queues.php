@@ -84,7 +84,7 @@ if (!file_exists("{$g['varrun_path']}/qstats.pid") || !isvalidpid("{$g['varrun_p
 }
 $fd = @fsockopen("unix://{$g['varrun_path']}/qstats");
 if (!$fd) {
-	$error = gettext("Something wrong happened during communication with stat gathering");
+	$error = gettext("Something wrong happened during communication with stat gathering.");
 } else {
 	$stats = "";
 	while (!feof($fd)) {
@@ -142,22 +142,22 @@ if ($_REQUEST['getactivity']) {
 	echo $finscript;
 	exit;
 }
-$pgtitle = array(gettext("Status"), gettext("Traffic shaper"), gettext("Queues"));
+$pgtitle = array(gettext("Status"), gettext("Queues"));
 $shortcut_section = "trafficshaper";
 include("head.inc");
-?>
-<script src="/jquery/jquery-1.11.2.min.js"></script>
-<?php
+
 if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) < 1) {
 	print_info_box(gettext("Traffic shaping is not configured."));
 	include("foot.inc");
 	exit;
 }
-?>
-<?php if (!$error): ?>
+
+if (!$error): ?>
 <form action="status_queues.php" method="post">
 <script type="text/javascript">
 //<![CDATA[
+events.push(function() {
+
 	function getqueueactivity() {
 		var url = "/status_queues.php";
 		var pars = "getactivity=yes&stats=" + $("#selStatistic").val();
@@ -169,12 +169,15 @@ if (!is_array($config['shaper']['queue']) || count($config['shaper']['queue']) <
 				complete: activitycallback
 			});
 	}
+
 	function activitycallback(transport) {
-		setTimeout('getqueueactivity()', 5100);
+		setTimeout(getqueueactivity, 5100);
 	}
+
 	$(document).ready(function() {
-		setTimeout('getqueueactivity()', 150);
+		setTimeout(getqueueactivity, 150);
 	});
+});
 //]]>
 </script>
 <?php endif;
@@ -214,7 +217,7 @@ else: ?>
 			<br />
 			<div class="infoblock blockopen">
 <?php
-	print_info_box(gettext("Queue graphs take 5 seconds to sample data"), 'info', false);
+	print_info_box(gettext("Queue graphs take 5 seconds to sample data."), 'info', false);
 ?>
 			</div>
 		</div>

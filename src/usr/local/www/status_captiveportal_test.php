@@ -83,10 +83,27 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Test Vouchers"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Test Vouchers"));
 $shortcut_section = "captiveportal-vouchers";
 
 include("head.inc");
+
+if ($_POST) {
+	if ($_POST['vouchers']) {
+		$test_results = voucher_auth($_POST['vouchers'], 1);
+		$output = "";
+		$class = 'warning';
+
+		foreach ($test_results as $result) {
+			$output .= htmlspecialchars($result) . '<br />';
+
+			if (strpos($result, " good ") || strpos($result, " granted ")) {
+				$class = 'success';
+			}
+		}
+		print_info_box($output, $class, false);
+	}
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
@@ -96,7 +113,7 @@ $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.
 $tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-$form = new Form;
+$form = new Form('Test');
 
 $section = new Form_Section('Test Vouchers');
 
@@ -115,22 +132,5 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 print($form);
-
-if ($_POST) {
-	if ($_POST['vouchers']) {
-		$test_results = voucher_auth($_POST['vouchers'], 1);
-		$output = "";
-
-		foreach ($test_results as $result) {
-			if (strpos($result, " good ") || strpos($result, " granted ")) {
-				$output .= '<span class="text-success">' . htmlspecialchars($result) . '</span>' . '<br />';
-			} else {
-				$output .= '<span class="text-danger">' . htmlspecialchars($result) . '</span>' . '<br />';
-			}
-		}
-
-		print_info_box($output);
-	}
-}
 
 include("foot.inc");

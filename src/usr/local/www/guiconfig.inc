@@ -150,7 +150,7 @@ $firewall_rules_dscp_types = array(
 
 $auth_server_types = array(
 	'ldap' => "LDAP",
-	'radius' => "Radius");
+	'radius' => "RADIUS");
 
 $ldap_urltypes = array(
 	'TCP - Standard' => 389,
@@ -341,7 +341,34 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 }
 
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply", gettext("Apply changes"));
+	print_info_box($msg, "warning", "apply", gettext("Apply Changes"));
+}
+
+/*
+ * Print Bootstrap callout
+ *
+ * @param string $msg     message to display
+ * @param string $class   contextual class, defaults to info (default | danger | warning | info)
+ * @param string $heading optional callout heading
+ */
+function print_callout($msg, $class = 'info', $heading = '') {
+
+	if ('' == $msg) {
+		return;
+	}
+	$class = strtolower($class);
+	$callout = '';
+
+	if ($class != 'default' && $class != 'danger' && $class != 'warning' && $class = 'info') {
+		$class = 'info';
+	}
+	$callout .= '<div class="bs-callout bs-callout-' . $class . '">';
+
+	if ('' != $heading) {
+		$callout .= '<h4>' . $heading . '</h4>';
+	}
+	$callout .= $msg . '</div>';
+	echo $callout;
 }
 
 function get_std_save_message($ok) {
@@ -487,11 +514,6 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	if (!is_array($title)) {
-		return '<h1 class="page-header"><a href="">' . $title . '</a></h1>';
-	}
-
-	$heading = '<h1 class="page-header"><a href="">' . end($title) . '</a></h1>';
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else

@@ -92,8 +92,8 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = "<p><b>" . gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "</b></p>" .
-		"<p><b>" . gettext("Only interfaces configured with a static IP will be shown.") . "</b></p>";
+	$savemsg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
+	    gettext("Only interfaces configured with a static IP will be shown.");
 }
 
 $iflist = get_configured_interface_with_descr();
@@ -122,7 +122,6 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
 	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
 
-	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
 	$pconfig['rasamednsasdhcp6'] = isset($config['dhcpdv6'][$if]['rasamednsasdhcp6']);
@@ -144,7 +143,6 @@ $priority_modes = array(
 	"low" => 	gettext("Low"),
 	"medium" => gettext("Normal"),
 	"high" => 	gettext("High"));
-$carplist = get_configured_carp_interface_list();
 
 $subnets_help = '<span class="help-block">' .
 	gettext("Subnets are specified in CIDR format.  " .
@@ -206,7 +204,6 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
 		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
-		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
 
 		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
@@ -237,7 +234,12 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Router Advertisements"));
+$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+
+if (!empty($if) && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+}
+$pgtitle[] = gettext("Router Advertisements");
 
 include("head.inc");
 
@@ -325,36 +327,10 @@ $section->addInput(new Form_Input(
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
 			'The default is 14400 seconds.');
 
-$carplistif = array();
-if (count($carplist) > 0) {
-	foreach ($carplist as $ifname => $vip) {
-		if ((preg_match("/^{$if}_/", $ifname)) && (is_ipaddrv6($vip))) {
-			$carplistif[$ifname] = $vip;
-		}
-	}
-}
-
-if (count($carplistif) > 0) {
-	$list = array();
-
-	foreach ($carplistif as $ifname => $vip) {
-		$list['interface'] = strtoupper($if);
-		$list[$ifname] = $ifname . ' - ' . $vip;
-	}
-
-	$section->addInput(new Form_Select(
-		'rainterface',
-		'RA Interface',
-		$pconfig['rainterface'],
-		$list
-	))->setHelp('Select the Interface for the Router Advertisement (RA) Daemon.');
-}
-
 $section->addInput(new Form_StaticText(
 	'RA Subnets',
 	$subnets_help
 ));
-
 
 if (empty($pconfig['subnets'])) {
 	$pconfig['subnets'] = array('0' => '/128');

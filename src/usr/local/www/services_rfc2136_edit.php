@@ -179,7 +179,7 @@ function build_if_list() {
 	return($list);
 }
 
-$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Client"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"), gettext("Edit"));
 include("head.inc");
 
 if ($input_errors) {
@@ -192,7 +192,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('RFC 2136 client');
+$section = new Form_Section('RFC 2136 Client');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

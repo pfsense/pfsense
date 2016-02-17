@@ -132,7 +132,7 @@ cleanup_backupcache(false);
 $confvers = get_backups();
 unset($confvers['versions']);
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Configuration History"));
+$pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
 include("head.inc");
 
 if ($savemsg) {
@@ -140,8 +140,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
+$tab_array[] = array(htmlspecialchars(gettext("Backup & Restore")), false, "diag_backup.php");
 $tab_array[] = array(gettext("Config History"), true, "diag_confbak.php");
-$tab_array[] = array(gettext("Backup/Restore"), false, "diag_backup.php");
 display_top_tabs($tab_array);
 
 if ($diff) {
@@ -149,7 +149,7 @@ if ($diff) {
 <div class="panel panel-default">
 	<div class="panel-heading">
 		<h2 class="panel-title">
-			<?=sprintf(gettext('Configuration diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
+			<?=sprintf(gettext('Configuration Diff from %1$s to %2$s'), date(gettext("n/j/y H:i:s"), $oldtime), date(gettext("n/j/y H:i:s"), $newtime))?>
 		</h2>
 	</div>
 	<div class="panel-body table-responsive">
@@ -173,7 +173,7 @@ if ($diff) {
 		}
 ?>
 			<tr>
-				<td class="diff-text" valign="middle" bgcolor="<?=$color; ?>" style="white-space: pre-wrap;"><?=htmlentities($line)?></td>
+				<td class="diff-text" style="vertical-align:middle; background-color:<?=$color;?>; white-space:pre-wrap;"><?=htmlentities($line)?></td>
 			</tr>
 <?php
 	}
@@ -213,12 +213,12 @@ if (is_array($confvers)) {
 ?>
 <div>
 	<div class="infoblock blockopen">
-		<?=print_info_box(
+		<?php print_info_box(
 			gettext(
 				'To view the differences between an older configuration and a newer configuration, ' .
 				'select the older configuration using the left column of radio options and select the newer configuration in the right column, ' .
 				'then press the "Diff" button.'),
-			'info', false)?>
+			'info', false); ?>
 	</div>
 </div>
 <?php
@@ -245,7 +245,7 @@ if (is_array($confvers)):
 			</thead>
 			<tbody>
 				<!-- First row is the current configuration -->
-				<tr valign="top">
+				<tr style="vertical-align:top;">
 					<td></td>
 					<td>
 						<input type="radio" name="newtime" value="current" />

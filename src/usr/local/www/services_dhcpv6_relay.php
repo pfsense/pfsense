@@ -92,7 +92,7 @@ $iflist = array_intersect_key(
  */
 $dhcpd_enabled = false;
 if (is_array($config['dhcpdv6'])) {
-	foreach ($config['dhcpdv6'] as $dhcp) {
+	foreach ($config['dhcpdv6'] as $dhcpif => $dhcp) {
 		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
 			$dhcpd_enabled = true;
 			break;
@@ -154,7 +154,7 @@ $shortcut_section = "dhcp6";
 include("head.inc");
 
 if ($dhcpd_enabled) {
-	echo '<div class="alert alert-danger">' . gettext("DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface.") . '</div>';
+	print_info_box(gettext("DHCPv6 Server is currently enabled. Cannot enable the DHCPv6 Relay service while the DHCPv6 Server is enabled on any interface."), 'danger', false);
 	include("foot.inc");
 	exit;
 }
@@ -169,7 +169,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('DHCPv6 Relay configuration');
+$section = new Form_Section('DHCPv6 Relay Configuration');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

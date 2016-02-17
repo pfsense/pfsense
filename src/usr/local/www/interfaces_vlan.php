@@ -106,23 +106,23 @@ if ($_POST['act'] == "del") {
 }
 
 
-$pgtitle = array(gettext("Interfaces"), gettext("VLAN"));
+$pgtitle = array(gettext("Interfaces"), gettext("VLANs"));
 $shortcut_section = "interfaces";
 include('head.inc');
 
 if ($input_errors) print_input_errors($input_errors);
 
 $tab_array = array();
-$tab_array[] = array(gettext("Interface assignments"), false, "interfaces_assign.php");
+$tab_array[] = array(gettext("Interface Assignments"), false, "interfaces_assign.php");
 $tab_array[] = array(gettext("Interface Groups"), false, "interfaces_groups.php");
 $tab_array[] = array(gettext("Wireless"), false, "interfaces_wireless.php");
 $tab_array[] = array(gettext("VLANs"), true, "interfaces_vlan.php");
 $tab_array[] = array(gettext("QinQs"), false, "interfaces_qinq.php");
 $tab_array[] = array(gettext("PPPs"), false, "interfaces_ppps.php");
-$tab_array[] = array(gettext("GRE"), false, "interfaces_gre.php");
-$tab_array[] = array(gettext("GIF"), false, "interfaces_gif.php");
+$tab_array[] = array(gettext("GREs"), false, "interfaces_gre.php");
+$tab_array[] = array(gettext("GIFs"), false, "interfaces_gif.php");
 $tab_array[] = array(gettext("Bridges"), false, "interfaces_bridge.php");
-$tab_array[] = array(gettext("LAGG"), false, "interfaces_lagg.php");
+$tab_array[] = array(gettext("LAGGs"), false, "interfaces_lagg.php");
 display_top_tabs($tab_array);
 
 ?>
@@ -180,10 +180,10 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-	<?=print_info_box(sprintf(gettext('NOTE: Not all drivers/NICs support 802.1Q '.
+	<?php print_info_box(sprintf(gettext('Not all drivers/NICs support 802.1Q '.
 		'VLAN tagging properly. <br />On cards that do not explicitly support it, VLAN '.
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
-		'%s handbook for information on supported cards.'), $g['product_name']), 'info', false)?>
+		'%s handbook for information on supported cards.'), $g['product_name']), 'info', false); ?>
 </div>
 <script type="text/javascript">
 //<![CDATA[

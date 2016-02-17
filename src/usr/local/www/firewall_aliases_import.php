@@ -193,7 +193,7 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Alias details');
+$section = new Form_Section('Alias Details');
 
 $section->addInput(new Form_Input(
 	'name',

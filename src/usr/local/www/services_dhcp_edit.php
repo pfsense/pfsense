@@ -407,7 +407,13 @@ $ip = $_SERVER['REMOTE_ADDR'];
 $mymac = `/usr/sbin/arp -an | grep '('{$ip}')' | cut -d" " -f4`;
 $mymac = str_replace("\n", "", $mymac);
 
-$pgtitle = array(gettext("Services"), gettext("DHCP"), gettext("Edit static mapping"));
+$iflist = get_configured_interface_with_descr();
+$ifname = '';
+
+if (!empty($if) && isset($iflist[$if])) {
+	$ifname = $iflist[$if];
+}
+$pgtitle = array(gettext("Services"), gettext("DHCP Server"), $ifname, gettext("Edit Static Mapping"));
 $shortcut_section = "dhcp";
 
 include("head.inc");

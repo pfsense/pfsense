@@ -67,9 +67,6 @@ require_once("pkg-utils.inc");
 
 global $openvpn_tls_server_modes;
 
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
-$shortcut_section = "openvpn";
-
 if (!is_array($config['openvpn']['openvpn-csc'])) {
 	$config['openvpn']['openvpn-csc'] = array();
 }
@@ -97,7 +94,7 @@ if ($_GET['act'] == "del") {
 	openvpn_delete_csc($a_csc[$id]);
 	unset($a_csc[$id]);
 	write_config();
-	$savemsg = gettext("Client Specific Override successfully deleted")."<br />";
+	$savemsg = gettext("Client specific override successfully deleted.");
 }
 
 if ($_GET['act'] == "edit") {
@@ -308,6 +305,13 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "openvpn";
+
 include("head.inc");
 
 if ($input_errors) {
@@ -319,8 +323,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), false, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), false, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), false, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), true, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);
@@ -379,7 +383,7 @@ if ($act == "new" || $act == "edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',
@@ -432,7 +436,7 @@ if ($act == "new" || $act == "edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Client settings');
+	$section = new Form_Section('Client Settings');
 
 	// Default domain name
 	$section->addInput(new Form_Checkbox(

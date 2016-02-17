@@ -156,7 +156,7 @@ $shortcut_section = "dhcp";
 include("head.inc");
 
 if ($dhcpd_enabled) {
-	echo '<div class="alert alert-danger">' . gettext("DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface.") . '</div>';
+	print_info_box(gettext("DHCP Server is currently enabled. Cannot enable the DHCP Relay service while the DHCP Server is enabled on any interface."), 'danger', false);
 	include("foot.inc");
 	exit;
 }
@@ -171,7 +171,7 @@ if ($savemsg) {
 
 $form = new Form;
 
-$section = new Form_Section('DHCP Relay configuration');
+$section = new Form_Section('DHCP Relay Configuration');
 
 $section->addInput(new Form_Checkbox(
 	'enable',

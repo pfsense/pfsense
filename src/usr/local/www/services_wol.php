@@ -58,8 +58,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-wakeonlan
-##|*NAME=Services: Wake on LAN
-##|*DESCR=Allow access to the 'Services: Wake on LAN' page.
+##|*NAME=Services: Wake-on-LAN
+##|*DESCR=Allow access to the 'Services: Wake-on-LAN' page.
 ##|*MATCH=services_wol.php*
 ##|-PRIV
 
@@ -143,13 +143,13 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Wake on LAN"));
+$pgtitle = array(gettext("Services"), gettext("Wake-on-LAN"));
 include("head.inc");
 ?>
 <div class="infoblock blockopen">
 <?php
 print_info_box(gettext('This service can be used to wake up (power on) computers by sending special "Magic Packets".') . '<br />' .
-			   gettext('The NIC in the computer that is to be woken up must support Wake on LAN and must be properly configured (WOL cable, BIOS settings).'),
+			   gettext('The NIC in the computer that is to be woken up must support Wake-on-LAN and must be properly configured (WOL cable, BIOS settings).'),
 			   'info', false);
 
 ?>
@@ -166,7 +166,7 @@ if ($savemsg) {
 
 $form = new Form('Send');
 
-$section = new Form_Section('Wake on LAN');
+$section = new Form_Section('Wake-on-LAN');
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -188,7 +188,7 @@ print $form;
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext("Wake on LAN devices");?></h2>
+		<h2 class="panel-title"><?=gettext("Wake-on-LAN Devices");?></h2>
 	</div>
 
 	<div class="panel-body">

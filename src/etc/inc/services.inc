@@ -73,7 +73,6 @@ function services_radvd_configure($blacklist = array()) {
 
 	$Iflist = get_configured_interface_list();
 	$Iflist = array_merge($Iflist, get_configured_pppoe_server_interfaces());
-	$carplist = get_configured_carp_interface_list();
 
 	$radvdconf = "# Automatically Generated, do not edit\n";
 
@@ -106,26 +105,7 @@ function services_radvd_configure($blacklist = array()) {
 			$dhcpv6ifconf['rapriority'] = "medium";
 		}
 
-		/* always start with the real parent, we override with the carp if later */
-		$carpif = false;
-		/* check if we need to listen on a CARP interface */
-		if (!empty($dhcpv6ifconf['rainterface'])) {
-			if (!empty($carplist[$dhcpv6ifconf['rainterface']])) {
-				$dhcpv6if = $dhcpv6ifconf['rainterface'];
-				$carpif = true;
-			}
-		}
-
-		if (strstr($dhcpv6if, "_vip")) {
-			// CARP IP, check if it's enabled and find parent
-			if (!get_carp_status() || get_carp_interface_status($dhcpv6if) != "MASTER") {
-				continue;
-			}
-			$ifparent = link_carp_interface_to_parent($dhcpv6if);
-			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
-		} else {
-			$realif = get_real_interface($dhcpv6if, "inet6");
-		}
+		$realif = get_real_interface($dhcpv6if, "inet6");
 
 		if (isset($radvdifs[$realif])) {
 			continue;
@@ -178,11 +158,7 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		if ($carpif == true) {
-			$radvdconf .= "\t\tDeprecatePrefix off;\n";
-		} else {
-			$radvdconf .= "\t\tDeprecatePrefix on;\n";
-		}
+		$radvdconf .= "\t\tDeprecatePrefix on;\n";
 		switch ($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -225,11 +201,7 @@ function services_radvd_configure($blacklist = array()) {
 			foreach ($dhcpv6ifconf['subnets']['item'] as $subnet) {
 				if (is_subnetv6($subnet)) {
 					$radvdconf .= "\tprefix {$subnet} {\n";
-					if ($carpif == true) {
-						$radvdconf .= "\t\tDeprecatePrefix off;\n";
-					} else {
-						$radvdconf .= "\t\tDeprecatePrefix on;\n";
-					}
+					$radvdconf .= "\t\tDeprecatePrefix on;\n";
 					switch ($dhcpv6ifconf['ramode']) {
 						case "managed":
 							$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -256,15 +228,9 @@ function services_radvd_configure($blacklist = array()) {
 				}
 			}
 		}
-		if ($carpif === true) {
-			$radvdconf .= "\troute ::/0 {\n";
-			$radvdconf .= "\t\tRemoveRoute off;\n";
-			$radvdconf .= "\t};\n";
-		} else {
-			$radvdconf .= "\troute ::/0 {\n";
-			$radvdconf .= "\t\tRemoveRoute on;\n";
-			$radvdconf .= "\t};\n";
-		}
+		$radvdconf .= "\troute ::/0 {\n";
+		$radvdconf .= "\t\tRemoveRoute on;\n";
+		$radvdconf .= "\t};\n";
 
 		/* add DNS servers */
 		$dnslist = array();
@@ -322,13 +288,7 @@ function services_radvd_configure($blacklist = array()) {
 			continue;
 		}
 
-		if (strstr($if, "_vip")) {
-			// CARP IP, find parent
-			$ifparent = link_carp_interface_to_parent($if);
-			$realif = convert_friendly_interface_to_real_interface_name($ifparent);
-		} else {
-			$realif = get_real_interface($if, "inet6");
-		}
+		$realif = get_real_interface($if, "inet6");
 
 		/* prevent duplicate entries, manual overrides */
 		if (isset($radvdifs[$realif])) {
@@ -833,7 +793,7 @@ EOPP;
 				$dhcpdconf .= "		allow members of \"" . str_replace(':', '', $mac) . "\";\n";
 			}
 			$deny_action = "deny";
-			if (isset($poolconf['nonak'])) {
+			if (isset($poolconf['nonak']) && empty($poolconf['failover_peerip'])) {
 				$deny_action = "ignore";
 			}
 			$mac_deny_list = array_unique(explode(',', $poolconf['mac_deny']));
@@ -1400,8 +1360,15 @@ EOD;
 			if ($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
-			$dnscfgv6 .= "	ddns-update-style interim;\n";
+			if (empty($dhcpv6ifconf['ddnsclientupdates'])) {
+				$ddnsclientupdates = 'allow';
+			} else {
+				$ddnsclientupdates = $dhcpv6ifconf['ddnsclientupdates'];
+			}
+			$dnscfgv6 .= "	{$ddnsclientupdates} client-updates;\n";
 			$nsupdate = true;
+		} else {
+			$dnscfgv6 .= "	do-forward-updates false;\n";
 		}
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
@@ -1420,21 +1387,33 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain']) {
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			$ifcfgsnv6 = "64";
+			$subnetv6 = gen_subnetv6($dhcpv6ifconf['range']['from'], $ifcfgsnv6);
+		}
+
+		$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
+
+		if (isset($dhcpv6ifconf['ddnsupdate']) &&
+		    !empty($dhcpv6ifconf['ddnsdomain'])) {
 			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain'];
+			$newzone['domain-name'] = $dhcpv6ifconf['ddnsdomain'];
 			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
 			$newzone['ddnsdomainkeyname'] = $dhcpv6ifconf['ddnsdomainkeyname'];
 			$newzone['ddnsdomainkey'] = $dhcpv6ifconf['ddnsdomainkey'];
 			$ddns_zones[] = $newzone;
+			if (isset($dhcpv6ifconf['ddnsreverse'])) {
+				$ptr_zones = get_v6_ptr_zones($subnetv6, $ifcfgsnv6);
+				foreach ($ptr_zones as $ptr_zone) {
+					$reversezone = array();
+					$reversezone['domain-name'] = $ptr_zone;
+					$reversezone['dns-servers'][] =
+					    $dhcpv6ifconf['ddnsdomainprimary'];
+					$ddns_zones[] = $reversezone;
+				}
+			}
 		}
 
-		if (is_ipaddrv6($ifcfgipv6)) {
-			$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
-		} else {
-			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
-			$dhcpdv6conf .= "subnet6 {$subnet6}/64";
-		}
 		$dhcpdv6conf .= " {\n";
 
 		$dhcpdv6conf .= <<<EOD
@@ -1533,7 +1512,7 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain']) {
+		if ($dhcpv6ifconf['ddnsdomain']) {
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
 			$dhcpdv6conf .= dhcpdzones($ddns_zones);
 		}
@@ -2004,7 +1983,7 @@ function dyndnsCheckIP($int) {
 	return $ip_address;
 }
 
-function services_dnsmasq_configure() {
+function services_dnsmasq_configure($restart_dhcp = true) {
 	global $config, $g;
 	$return = 0;
 
@@ -2054,43 +2033,23 @@ function services_dnsmasq_configure() {
 		if (isset($config['dnsmasq']['interface'])) {
 			$interfaces = explode(",", $config['dnsmasq']['interface']);
 			foreach ($interfaces as $interface) {
-				if (is_ipaddrv4($interface)) {
-					$listen_addresses .= " --listen-address={$interface} ";
-				} else if (is_ipaddrv6($interface)) {
-					/*
-					 * XXX: Since dnsmasq does not support link-local address
-					 * with scope specified. These checks are being done.
-					 */
-					if (is_linklocal($interface) && strstr($interface, "%")) {
-						$tmpaddrll6 = explode("%", $interface);
-						$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-					} else {
-						$listen_addresses .= " --listen-address={$interface} ";
-					}
-				} else if (strstr($interface, "_vip")) {
-					$laddr = get_configured_carp_interface_list($interface);
-					if (is_ipaddr($laddr)) {
+				$if = get_real_interface($interface);
+				if (does_interface_exist($if)) {
+					$laddr = get_interface_ip($interface);
+					if (is_ipaddrv4($laddr)) {
 						$listen_addresses .= " --listen-address={$laddr} ";
 					}
-				} else {
-					$if = get_real_interface($interface);
-					if (does_interface_exist($if)) {
-						$laddr = get_interface_ip($interface);
-						if (is_ipaddrv4($laddr)) {
-							$listen_addresses .= " --listen-address={$laddr} ";
-						}
-						$laddr6 = get_interface_ipv6($interface);
-						if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
-							/*
-							 * XXX: Since dnsmasq does not support link-local address
-							 * with scope specified. These checks are being done.
-							 */
-							if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
-								$tmpaddrll6 = explode("%", $laddr6);
-								$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
-							} else {
-								$listen_addresses .= " --listen-address={$laddr6} ";
-							}
+					$laddr6 = get_interface_ipv6($interface);
+					if (is_ipaddrv6($laddr6) && !isset($config['dnsmasq']['strictbind'])) {
+						/*
+						 * XXX: Since dnsmasq does not support link-local address
+						 * with scope specified. These checks are being done.
+						 */
+						if (is_linklocal($laddr6) && strstr($laddr6, "%")) {
+							$tmpaddrll6 = explode("%", $laddr6);
+							$listen_addresses .= " --listen-address={$tmpaddrll6[0]} ";
+						} else {
+							$listen_addresses .= " --listen-address={$laddr6} ";
 						}
 					}
 				}
@@ -2190,7 +2149,7 @@ function services_dnsmasq_configure() {
 		}
 	}
 
-	if (!platform_booting()) {
+	if (!platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}
@@ -2199,7 +2158,7 @@ function services_dnsmasq_configure() {
 	return $return;
 }
 
-function services_unbound_configure() {
+function services_unbound_configure($restart_dhcp = true) {
 	global $config, $g;
 	$return = 0;
 
@@ -2234,7 +2193,7 @@ function services_unbound_configure() {
 		system_dhcpleases_configure();
 	}
 
-	if (!platform_booting()) {
+	if (!platform_booting() && $restart_dhcp) {
 		if (services_dhcpd_configure() != 0) {
 			$return = 1;
 		}

@@ -174,13 +174,10 @@ if ($_REQUEST['getdyndnsstatus']) {
 		}
 		if ($dyndns['type'] == '_rfc2136_') : ?>
 			RFC 2136
-		<? endif;
-		?>
+		<?php endif; ?>
 		</td>
 		<td>
-		<?php
-		print(htmlspecialchars($hostname));
-		?>
+		<?php print(htmlspecialchars($hostname)); ?>
 		</td>
 		<td>
 		<div id="dyndnsstatus<?= $dyndnsid;?>"><?= gettext("Checking ...");?></div>

@@ -83,9 +83,19 @@ if (!is_array($config['captiveportal'])) {
 }
 $a_cp =& $config['captiveportal'];
 
-$pgtitle = array(gettext("Status"), gettext("Captive portal"), gettext("Expire Vouchers"), $a_cp[$cpzone]['zone']);
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Expire Vouchers"));
 
 include("head.inc");
+
+if ($_POST) {
+	if ($_POST['vouchers']) {
+		if (voucher_expire($_POST['vouchers'])) {
+			print_info_box(gettext('Voucher(s) successfully marked.'), 'success', false);
+		} else {
+			print_info_box(gettext('Voucher(s) could not be processed.'), 'danger', false);
+		}
+	}
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
@@ -95,7 +105,7 @@ $tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test
 $tab_array[] = array(gettext("Expire Vouchers"), true, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-$form = new Form;
+$form = new Form('Expire');
 
 $section = new Form_Section('Expire Vouchers');
 
@@ -114,15 +124,5 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 print($form);
-
-if ($_POST) {
-	if ($_POST['vouchers']) {
-		if (voucher_expire($_POST['vouchers'])) {
-			print_info_box(gettext('Voucher successfully marked'), 'success');
-		} else {
-			print_info_box(gettext('Error: Voucher could not be processed'), 'danger');
-		}
-	}
-}
 
 include("foot.inc");

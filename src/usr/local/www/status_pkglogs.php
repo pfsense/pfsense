@@ -101,7 +101,11 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 	}
 }
 
-$pgtitle = array(gettext("Status"), gettext("Package logs"));
+$pgtitle = array(gettext("Status"), gettext("Package Logs"));
+
+if ($pkgwithlogging && !empty($apkg)) {
+	$pgtitle[] = $apkg;
+}
 include("head.inc");
 
 if ($pkgwithlogging == false) {
@@ -126,7 +130,7 @@ if ($pkgwithlogging == false) {
 ?>
 
 	<div class="panel panel-default">
-		<div class="panel-heading"><h2 class="panel-title"><?=printf(gettext('Last %1$s %2$s log entries'), $nentries, $curtab)?></h2></div>
+		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Last %1$s %2$s Log Entries'), $nentries, $curtab)?></h2></div>
 		<div class="panel-body">
 			<pre>
 <?php

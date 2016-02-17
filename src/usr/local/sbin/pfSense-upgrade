@@ -137,7 +137,7 @@ _exit() {
 	fi
 
 	if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
-		/etc/rc.conf_mount_ro
+		/usr/local/bin/php /etc/rc.conf_mount_ro
 	fi
 
 	if [ -n "${nc_pid}" ] && ps -p ${nc_pid} >/dev/null 2>&1; then
@@ -826,7 +826,7 @@ if pgrep -qF ${pid_file} >/dev/null 2>&1; then
 fi
 
 if [ -z "${booting}" -o "${boot_stage}" != "2" ]; then
-	/etc/rc.conf_mount_rw
+	/usr/local/bin/php /etc/rc.conf_mount_rw
 fi
 
 if [ -n "${booting}" ]; then

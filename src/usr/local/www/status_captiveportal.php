@@ -81,7 +81,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 if (count($a_cp) == 1) {
- $cpzone = current(array_keys($a_cp));
+	$cpzone = current(array_keys($a_cp));
 }
 
 /* If the zone does not exist, do not display the invalid zone */
@@ -122,8 +122,15 @@ if (!empty($cpzone)) {
 		usort($cpdb, "clientcmp");
 	}
 }
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
-$pgtitle = array(gettext("Status"), gettext("Captive portal"));
+if (!empty($cpzone)) {
+	$pgtitle[] = $a_cp[$cpzone]['zone'];
+
+	if (isset($config['voucher'][$cpzone]['enable'])) {
+		$pgtitle[] = gettext("Active Users");
+	}
+}
 $shortcut_section = "captiveportal";
 
 include("head.inc");
@@ -141,7 +148,7 @@ endif;
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 
-if (count($a_cp) >	1) {
+if (count($a_cp) > 1) {
 	$form = new Form(false);
 
 	$section = new Form_Section('Captive Portal Zone');
@@ -167,7 +174,7 @@ if (count($a_cp) >	1) {
 if (!empty($cpzone)): ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status (")?><?=$a_cp[$cpzone]['zone']?>)</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
 	<div class="panel-body table-responsive">
 
 		<table class="table table-striped table-hover table-condensed">
@@ -253,17 +260,10 @@ if (!empty($cpzone)): ?>
 </div>
 <?php
 else:
-	// If no zones have been defined . .
-?>
-<div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Captive Portal Status")?></h2></div>
-	<div class="panel-body"><br />
-<?php
-	print_info_box(sprintf(gettext('No captive portal zones have been configured. You may add new zones here: %1$sServices->Captive portal%2$s'), '<a href="services_captiveportal_zones.php">', '</a>'));
-?>
-	</div>
-</div>
-<?php
+	if (empty($a_cp)) {
+		// If no zones have been defined
+		print_info_box(sprintf(gettext('No Captive Portal zones have been configured. You may add new zones here: %1$sServices > Captive Portal%2$s.'), '<a href="services_captiveportal_zones.php">', '</a>'), 'warning', false);
+	}
 endif;
 ?>
 

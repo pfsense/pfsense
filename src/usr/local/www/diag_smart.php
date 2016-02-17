@@ -56,14 +56,24 @@
 
 ##|+PRIV
 ##|*IDENT=page-diagnostics-smart
-##|*NAME=Diagnostics: S.M.A.R.T. Monitor Tools
-##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Monitor Tools' page.
+##|*NAME=Diagnostics: S.M.A.R.T. Status
+##|*DESCR=Allow access to the 'Diagnostics: S.M.A.R.T. Status' page.
 ##|*MATCH=diag_smart.php*
 ##|-PRIV
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Monitor Tools"));
+// What page, aka. action is being wanted
+// If they "get" a page but don't pass all arguments, smartctl will throw an error
+$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
+
+$pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
+
+if ($action != 'config') {
+	$pgtitle[] = htmlspecialchars(gettext('Information & Tests'));
+} else {
+	$pgtitle[] = gettext('Config');
+}
 $smartctl = "/usr/local/sbin/smartctl";
 $smartd = "/usr/local/sbin/smartd";
 $start_script = "/usr/local/etc/rc.d/smartd.sh";
@@ -104,10 +114,6 @@ function smartmonctl($action) {
 	global $start_script;
 	shell_exec($start_script . escapeshellarg($action));
 }
-
-// What page, aka. action is being wanted
-// If they "get" a page but don't pass all arguments, smartctl will throw an error
-$action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
@@ -116,7 +122,7 @@ if (!file_exists('/dev/' . $targetdev)) {
 }
 
 $tab_array = array();
-$tab_array[0] = array(gettext("Information/Tests"), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
+$tab_array[0] = array(htmlspecialchars(gettext("Information & Tests")), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
 $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
 display_top_tabs($tab_array);
 
@@ -133,7 +139,7 @@ switch ($action) {
 		$output = add_colors(shell_exec($smartctl . " -t " . escapeshellarg($test) . " /dev/" . escapeshellarg($targetdev)));
 ?>
 		<div class="panel  panel-default">
-			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test results')?></h2></div>
+			<div class="panel-heading"><h2 class="panel-title"><?=gettext('Test Results')?></h2></div>
 			<div class="panel-body">
 				<pre><?=$output?></pre>
 			</div>
@@ -327,7 +333,7 @@ switch ($action) {
 		$group->add(new Form_Checkbox(
 			'type',
 			null,
-			'SMART Capabilities',
+			'S.M.A.R.T. Capabilities',
 			false,
 			'c'
 		))->displayAsRadio();
@@ -442,7 +448,7 @@ switch ($action) {
 			'View'
 		);
 
-		$section = new Form_Section('View logs');
+		$section = new Form_Section('View Logs');
 
 		$section->addInput(new Form_Input(
 			'action',

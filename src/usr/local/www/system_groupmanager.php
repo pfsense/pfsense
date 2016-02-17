@@ -67,8 +67,6 @@
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
-
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
 }
@@ -99,8 +97,7 @@ if ($act == "delgroup") {
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
-	$savemsg = gettext("Group") . " {$groupdeleted} " .
-		gettext("successfully deleted") . "<br />";
+	$savemsg = sprintf(gettext("Group %s successfully deleted."), $groupdeleted);
 }
 
 if ($act == "delpriv") {
@@ -124,8 +121,7 @@ if ($act == "delpriv") {
 
 	write_config();
 	$act = "edit";
-	$savemsg = gettext("Privilege") . " {$privdeleted} " .
-		gettext("successfully deleted") . "<br />";
+	$savemsg = sprintf(gettext("Privilege %s successfully deleted."), $privdeleted);
 }
 
 if ($act == "edit") {
@@ -152,7 +148,7 @@ if (isset($_GET['dellall_x'])) {
 				unset($a_group[$groupid]);
 			}
 		}
-		$savemsg = gettext("Selected groups removed successfully!");
+		$savemsg = gettext("Selected groups removed successfully.");
 		write_config($savemsg);
 	}
 }
@@ -243,7 +239,7 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
-		$privhtml .=			'<td><a class="fa fa-trash" title="'.gettext('Delete Privilege').'"	href="system_groupmanager.php?act=delpriv&amp;groupid='.$id.'&amp;privid='.$i.'"></a></td>';
+		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '"></a></td>';
 		$privhtml .=		'</tr>';
 
 	}
@@ -259,6 +255,11 @@ function build_priv_table() {
 	return($privhtml);
 }
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
+
+if ($act == "new" || $act == "edit") {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {
@@ -272,7 +273,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), true, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
@@ -361,7 +362,7 @@ if (isset($id) && $a_group[$id]){
 	));
 }
 
-$section = new Form_Section('Group properties');
+$section = new Form_Section('Group Properties');
 
 if ($_GET['act'] != "new") {
 	$section->addInput(new Form_StaticText(

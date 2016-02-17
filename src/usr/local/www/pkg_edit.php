@@ -81,8 +81,9 @@ if ($_POST['xml']) {
 $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
+	$pgtitle = array(gettext("Package"), gettext("Editor"));
 	include("head.inc");
-	print_info_box(gettext("ERROR: No valid package defined."));
+	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
 	die;
 } else {
@@ -269,7 +270,7 @@ if ($_POST) {
 			if ($pkg['aftersaveredirect'] != "") {
 				pfSenseHeader($pkg['aftersaveredirect']);
 			} elseif (!$pkg['adddeleteeditpagefields']) {
-				pfSenseHeader("pkg_edit.php?xml={$xml}&amp;id=0");
+				pfSenseHeader("pkg_edit.php?xml={$xml}&id=0");
 			} elseif (!$pkg['preoutput']) {
 				pfSenseHeader("pkg.php?xml=" . $xml);
 			}
@@ -657,7 +658,7 @@ $form->addGlobal(new Form_Input(
 
 if ($pkg['advanced_options'] == "enabled") {
 	$advfield_count = 0;
-	$advanced = new Form_Section(gettext("Advanced features"));
+	$advanced = new Form_Section("Advanced Features");
 	$advanced->addClass('advancedoptions');
 }
 
@@ -735,7 +736,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 	// If we get here but have no $section, the package config file probably had no listtopic field
 	// We can create a section with a generic name to fix that
 	if (!$section) {
-		$section = new Form_Section(gettext('General options'));
+		$section = new Form_Section('General Options');
 	}
 
 	switch ($pkga['type']) {

@@ -225,8 +225,8 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("You must provide a valid URL.");
-			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true)) {
-				$input_errors[] = gettext("Unable to fetch usable data.");
+			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true, true)) {
+				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
 			}
 			if ($_POST["detail0"] <> "") {
 				if ((strpos($_POST["detail0"], "||") === false) && (substr($_POST["detail0"], 0, 1) != "|") && (substr($_POST["detail0"], -1, 1) != "|")) {
@@ -253,13 +253,13 @@ if ($_POST) {
 				unlink_if_exists($temp_filename);
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
-				download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl);
+				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					continue;
+				}
 
 				/* if the item is tar gzipped then extract */
 				if (stristr($_POST['address' . $x], ".tgz")) {
 					process_alias_tgz($temp_filename);
-				} else if (stristr($_POST['address' . $x], ".zip")) {
-					process_alias_unzip($temp_filename);
 				}
 
 				if (!isset($alias['aliasurl'])) {
@@ -284,7 +284,7 @@ if ($_POST) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 3000);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
 					if ($address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("You must provide a valid URL. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
@@ -375,7 +375,7 @@ if ($_POST) {
 						if (($_POST['type'] == "host") && $subnet_type) {
 							if ($subnet_type == 4) {
 								// For host type aliases, if the user enters an IPv4 subnet, expand it into a list of individual IPv4 addresses.
-								$subned_size = subnet_size($address_item);
+								$subnet_size = subnet_size($address_item);
 								if ($subnet_size > 0 &&
 								    $subnet_size <= ($max_alias_addresses - $alias_address_count)) {
 									$rangeaddresses = subnetv4_expand($address_item);

@@ -13,9 +13,13 @@ fi
 
 if [ "${PROTOCOL}" == "inet" && -s "/tmp/${IF}_defaultgw" ]; then
 	GW=`head -n 1 /tmp/${IF}_defaultgw`
-	[ -n "${GW}" ] \
-		&& /sbin/route -q delete default ${GW}
+	DGW=`/sbin/route -n get -inet default | /usr/bin/awk '/gateway:/ {print $2}'`
+	# Only remove the default gateway if it matches the gateway for this interface. See redmine #1837
+	if [ "${GW}" = "${DGW}" ]; then
+		/sbin/route -q delete default ${GW}
+	fi
 fi
+
 if [ "${PROTOCOL}" == "inet6" ]; then
 	/usr/local/sbin/ppp-ipv6 ${IF} down
 fi

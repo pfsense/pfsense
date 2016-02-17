@@ -180,7 +180,7 @@ if ($_POST) {
 	if (($pconfig['mode'] == "tunnel") || ($pconfig['mode'] == "tunnel6")) {
 		switch ($pconfig['localid_type']) {
 			case "network":
-				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numeric($pconfig['localid_netbits'])) {
+				if (($pconfig['localid_netbits'] != 0 && !$pconfig['localid_netbits']) || !is_numericint($pconfig['localid_netbits'])) {
 					$input_errors[] = gettext("A valid local network bit count must be specified.");
 				}
 			case "address":
@@ -200,14 +200,14 @@ if ($_POST) {
 			$netbits = get_interface_subnet($pconfig['localid_type']);
 
 			if (empty($address) || empty($netbits)) {
-				$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['localid_type']) . " " . gettext("has no subnet.");
+				$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['localid_type']));
 			}
 		}
 
 		if (!empty($pconfig['natlocalid_address'])) {
 			switch ($pconfig['natlocalid_type']) {
 				case "network":
-					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numeric($pconfig['natlocalid_netbits'])) {
+					if (($pconfig['natlocalid_netbits'] != 0 && !$pconfig['natlocalid_netbits']) || !is_numericint($pconfig['natlocalid_netbits'])) {
 						$input_errors[] = gettext("A valid NAT local network bit count must be specified.");
 					}
 					if ($pconfig['localid_type'] == "address") {
@@ -230,14 +230,14 @@ if ($_POST) {
 				$netbits = get_interface_subnet($pconfig['natlocalid_type']);
 
 				if (empty($address) || empty($netbits)) {
-					$input_errors[] = gettext("Invalid Local Network.") . " " . convert_friendly_interface_to_friendly_descr($pconfig['natlocalid_type']) . " " . gettext("has no subnet.");
+					$input_errors[] = gettext("Invalid Local Network.") . " " . sprintf(gettext("%s has no subnet."), convert_friendly_interface_to_friendly_descr($pconfig['natlocalid_type']));
 				}
 			}
 		}
 
 		switch ($pconfig['remoteid_type']) {
 			case "network":
-				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numeric($pconfig['remoteid_netbits'])) {
+				if (($pconfig['remoteid_netbits'] != 0 && !$pconfig['remoteid_netbits']) || !is_numericint($pconfig['remoteid_netbits'])) {
 					$input_errors[] = gettext("A valid remote network bit count must be specified.");
 				}
 			case "address":
@@ -382,7 +382,7 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['lifetime'] && !is_numeric($_POST['lifetime']))) {
+	if (($_POST['lifetime'] && !is_numericint($_POST['lifetime']))) {
 		$input_errors[] = gettext("The P2 lifetime must be an integer.");
 	}
 
@@ -438,10 +438,10 @@ if ($_POST) {
 }
 
 if ($pconfig['mobile']) {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Client"), gettext("Edit Phase 2"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 2"));
 	$editing_mobile = true;
 } else {
-	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnel"), gettext("Edit Phase 2"));
+	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 2"));
 	$editing_mobile = false;
 }
 $shortcut_section = "ipsec";
@@ -623,7 +623,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Phase 2 proposal (SA/Key Exchange)');
+$section = new Form_Section('Phase 2 Proposal (SA/Key Exchange)');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -639,13 +639,14 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	$group = new Form_Group($i == 0 ? 'Encryption Algorithms':'');
 	$group->addClass('encalg');
 
+	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 	$group->add(new Form_Checkbox(
 		'ealgos[]',
 		null,
 		$algodata['name'],
 		(is_array($pconfig['ealgos']) && in_array($algo, $pconfig['ealgos'])),
 		$algo
-	))->addClass('multi');
+	))->addClass('multi')->setAttribute('id');
 
 	if (is_array($algodata['keysel'])) {
 		$list = array();
@@ -676,13 +677,14 @@ foreach ($p2_ealgos as $algo => $algodata) {
 $group = new Form_Group('Hash Algorithms');
 
 foreach ($p2_halgos as $algo => $algoname) {
+	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
 	$group->add(new Form_Checkbox(
 		'halgos[]',
 		null,
 		$algoname,
 		(empty($pconfig['halgos']) ? '' : in_array($algo, $pconfig['halgos'])),
 		$algo
-	))->addClass('multi');
+	))->addClass('multi')->setAttribute('id');
 }
 
 $section->add($group);

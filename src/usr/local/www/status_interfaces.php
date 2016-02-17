@@ -117,7 +117,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifinfo['hwif'])?>)</h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($ifname)?><?=gettext(" Interface "); ?>(<?=htmlspecialchars($ifdescr)?>, <?=htmlspecialchars($ifinfo['hwif'])?>)</h2></div>
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php
@@ -207,14 +207,11 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 <?php
 	endforeach;
+
+print_info_box(gettext("Using dial-on-demand will bring the connection up again if any packet ".
+	    "triggers it. To substantiate this point: disconnecting manually ".
+	    "will <strong>not</strong> prevent dial-on-demand from making connections ".
+	    "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
+	    "is kept disconnected."), 'warning', false);
+include("foot.inc");
 ?>
-
-<div class="alert alert-warning" role="alert">
-	<?=gettext("Using dial-on-demand will bring the connection up again if any packet ".
-	"triggers it. To substantiate this point: disconnecting manually ".
-	"will <strong>not</strong> prevent dial-on-demand from making connections ".
-	"to the outside! Don't use dial-on-demand if you want to make sure that the line ".
-	"is kept disconnected.");?>
-</div>
-
-<?php include("foot.inc"); ?>

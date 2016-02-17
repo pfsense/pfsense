@@ -66,7 +66,7 @@ require("guiconfig.inc");
 if ($_POST) {
 	if ($_POST['clear']) {
 		upnp_action('restart');
-		$savemsg = gettext("Rules have been cleared and the daemon restarted");
+		$savemsg = gettext("Rules have been cleared and the daemon restarted.");
 	}
 }
 

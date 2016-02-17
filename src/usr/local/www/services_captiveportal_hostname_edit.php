@@ -77,9 +77,6 @@ require("captiveportal.inc");
 
 global $cpzone, $cpzoneid;
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit allowed Hostname"));
-$shortcut_section = "captiveportal";
-
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
@@ -95,6 +92,9 @@ if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
 $a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
+$shortcut_section = "captiveportal";
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
@@ -204,7 +204,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Captive Portal Hostname settings');
+$section = new Form_Section('Captive Portal Hostname Settings');
 
 $section->addInput(new Form_Select(
 	'dir',

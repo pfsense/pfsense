@@ -146,7 +146,7 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("NTP"), false, "services_ntpd.php");
+$tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), true, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
@@ -161,7 +161,7 @@ $section->addInput(new Form_StaticText(
 	'A serial GPS may also be used, but the serial GPS driver would usually be the better option. ' .
 	'A PPS signal only provides a reference to the change of a second, so at least one other source to number the seconds is required.' . '<br /><br />' .
 	'At least 3 additional time sources should be configured under ' .
-	'<a href="services_ntpd.php">' . 'Services > NTP' . '</a>' . ' to reliably supply the time of each PPS pulse.'
+	'<a href="services_ntpd.php">' . 'Services > NTP > Settings' . '</a>' . ' to reliably supply the time of each PPS pulse.'
 ));
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);

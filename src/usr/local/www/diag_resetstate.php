@@ -86,7 +86,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Reset state"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Reset States"));
 include("head.inc");
 
 if ($input_errors) {
@@ -94,7 +94,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'alert-success');
+	print_info_box($savemsg, 'success');
 }
 
 $statetablehelp = sprintf(gettext('Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
@@ -128,7 +128,7 @@ $resetbtn->removeClass('btn-primary')->addClass('btn-danger');
 
 $form = new Form($resetbtn);
 
-$section = new Form_Section('Select states to reset');
+$section = new Form_Section('Select States to Reset');
 
 $section->addInput(new Form_Checkbox(
 	'statetable',

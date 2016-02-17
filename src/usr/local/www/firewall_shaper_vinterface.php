@@ -55,8 +55,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-firewall-trafficshaper-limiter
-##|*NAME=Firewall: Traffic Shaper: Limiter
-##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Limiter' page.
+##|*NAME=Firewall: Traffic Shaper: Limiters
+##|*DESCR=Allow access to the 'Firewall: Traffic Shaper: Limiters' page.
 ##|*MATCH=firewall_shaper_vinterface.php*
 ##|-PRIV
 
@@ -70,7 +70,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiter"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiters"));
 $shortcut_section = "trafficshaper-limiters";
 $dfltmsg = false;
 
@@ -180,7 +180,7 @@ if ($_GET) {
 				}
 
 			} else {
-				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+				$savemsg = gettext("Unable to write config.xml (Access Denied?).");
 				$class = 'danger';
 			}
 
@@ -414,7 +414,7 @@ if (is_subsystem_dirty('shaper')) {
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-$tab_array[] = array(gettext("Limiter"), true, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Limiters"), true, "firewall_shaper_vinterface.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 ?>

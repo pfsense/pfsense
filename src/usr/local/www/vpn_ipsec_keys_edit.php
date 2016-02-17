@@ -138,13 +138,13 @@ if ($_POST) {
 
 		if (isset($id) && $a_secret[$id]) {
 			$a_secret[$id] = $secretent;
-			$text = gettext("Edited");
+			$text = gettext("Edited IPsec Pre-Shared Keys");
 		} else {
 			$a_secret[] = $secretent;
-			$text = gettext("Added");
+			$text = gettext("Added IPsec Pre-Shared Keys");
 		}
 
-		write_config("{$text} " . gettext("IPsec Pre-Shared Keys"));
+		write_config($text);
 		mark_subsystem_dirty('ipsec');
 
 		header("Location: vpn_ipsec_keys.php");
@@ -152,7 +152,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Key"), gettext("Edit"));
+$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"), gettext("Edit"));
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -165,7 +165,7 @@ include("head.inc");
 
 $form = new Form;
 
-$section = new Form_Section('Edit pre-shared-secret');
+$section = new Form_Section('Edit Pre-Shared-Secret');
 
 $section->addInput(new Form_Input(
 	'ident',
@@ -203,9 +203,8 @@ print $form;
 
 ?>
 
-<div class="alert alert-info">
-	<strong><?=gettext("Note"); ?>:</strong><br />
-	<?=gettext("PSK for any user can be set by using an identifier of any")?>
-</div>
+<?php
+print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
+?>
 
 <?php include("foot.inc"); ?>

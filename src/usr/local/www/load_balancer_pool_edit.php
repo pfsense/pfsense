@@ -216,7 +216,7 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pool"), gettext("Edit"));
+$pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pools"), gettext("Edit"));
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -340,7 +340,7 @@ $form = new Form(new Form_Button(
 	gettext("Save")
 ));
 
-$section = new Form_Section('Add/edit Load Balancer - Pool entry');
+$section = new Form_Section('Add/Edit Load Balancer - Pool Entry');
 
 $section->addInput(new Form_Input(
 	'name',
@@ -383,7 +383,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Add item to the pool');
+$section = new Form_Section('Add Item to the Pool');
 
 $monitorlist = array();
 
@@ -422,7 +422,7 @@ $section->add($group);
 
 $form->add($section);
 
-$section = new Form_Section('Current pool members');
+$section = new Form_Section('Current Pool Members');
 
 $group = new Form_Group('Members');
 

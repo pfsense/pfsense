@@ -72,8 +72,6 @@ $ca_methods = array(
 $ca_keylens = array("512", "1024", "2048", "4096");
 $openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
 
-$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
-
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -128,7 +126,7 @@ if ($act == "del") {
 	$name = $a_ca[$id]['descr'];
 	unset($a_ca[$id]);
 	write_config();
-	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted"), htmlspecialchars($name));
+	$savemsg = sprintf(gettext("Certificate Authority %s and its CRLs (if any) successfully deleted."), htmlspecialchars($name));
 	pfSenseHeader("system_camanager.php");
 	exit;
 }
@@ -350,6 +348,11 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("CAs"));
+
+if ($act == "new" || $act == "edit" || $act == gettext("Save") || $input_errors) {
+	$pgtitle[] = gettext('Edit');
+}
 include("head.inc");
 
 if ($input_errors) {
@@ -489,7 +492,7 @@ if ($act == "edit") {
 	));
 }
 
-$section = new Form_Section('Create / edit CA');
+$section = new Form_Section('Create / Edit CA');
 
 $section->addInput(new Form_Input(
 	'descr',

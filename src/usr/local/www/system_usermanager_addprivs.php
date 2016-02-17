@@ -67,7 +67,7 @@ function admusercmp($a, $b) {
 
 require("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Add Privileges"));
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
 
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
@@ -90,7 +90,7 @@ if (!is_array($a_user['priv'])) {
 
 // Make a local copy and sort it
 $spriv_list = $priv_list;
-uasort($spriv_list, admusercmp);
+uasort($spriv_list, "admusercmp");
 
 if ($_POST) {
 
@@ -172,12 +172,12 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), true, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), false, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), false, "system_authservers.php");
 display_top_tabs($tab_array);
 
 $form = new Form();
 
-$section = new Form_Section('User privileges');
+$section = new Form_Section('User Privileges');
 
 $section->addInput(new Form_Select(
 	'sysprivs',
@@ -240,7 +240,7 @@ $form->add($section);
 print($form);
 ?>
 
-<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc">Select a privilege from the list above for a description</div>
+<div class="panel panel-body alert-info col-sm-10 col-sm-offset-2" id="pdesc"><?=gettext("Select a privilege from the list above for a description")?></div>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -275,7 +275,10 @@ events.push(function() {
 
 	// When the 'sysprivs" selector is clicked, we display a description
 	$('.multiselect').click(function() {
-		$('#pdesc').html('<span class="text-info">' + descs[$(this).children('option:selected').index()] + '</span>');
+		var targetoption = $(this).children('option:selected').val();
+		var idx =  $('.shadowselect option[value="' + targetoption + '"]').index();
+
+		$('#pdesc').html('<span class="text-info">' + descs[idx] + '</span>');
 
 		// and update the shadow list from the real list
 		$(".multiselect option").each(function() {

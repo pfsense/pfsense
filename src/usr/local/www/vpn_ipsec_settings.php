@@ -271,7 +271,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('Start IPsec in debug mode based on sections selected');
+$section = new Form_Section('Start IPsec in Debug Mode Based on Sections Selected');
 
 foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(

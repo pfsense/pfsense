@@ -90,18 +90,18 @@ if (!$authcfg) {
 
 	echo "<table>";
 
-	echo "<tr><td>" . gettext("Attempting connection to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
+	echo "<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>");
 	if (ldap_test_connection($authcfg)) {
-		echo "<td><span class=\"text-center text-success\">OK</span></td></tr>";
+		echo "<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>";
 
-		echo "<tr><td>" . gettext("Attempting bind to") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
+		echo "<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>");
 		if (ldap_test_bind($authcfg)) {
-			echo "<td><span class=\"text-center text-success\">OK</span></td></tr>";
+			echo "<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>";
 
-			echo "<tr><td>" . gettext("Attempting to fetch Organizational Units from") . " " . "<td><center>" . htmlspecialchars($auth_server). "</b></center></td>";
+			echo "<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>");
 			$ous = ldap_get_user_ous(true, $authcfg);
 			if (count($ous)>1) {
-				echo "<td><span class=\"text-center text-success\">OK</span></td></tr>";
+				echo "<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>";
 				echo "</table>";
 				if (is_array($ous)) {
 					echo "<br/>";
@@ -130,7 +130,7 @@ if (!$authcfg) {
 ?>
 				</pre>
 
-				<a href="javascript:window.close();" class="btn btn-primary">Return</a>
+				<a href="javascript:window.close();" class="btn btn-primary"><?=gettext("Return")?></a>
 			</div>
 		</div>
 	</div>

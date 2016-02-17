@@ -64,11 +64,27 @@ require_once("guiconfig.inc");
 require_once("globals.inc");
 
 unset($interface_arr_cache);
-unset($carp_interface_count_cache);
 unset($interface_ip_arr_cache);
 
+
+function find_ipalias($carpif) {
+	global $config;
+
+	$ips = array();
+	foreach ($config['virtualip']['vip'] as $vip) {
+		if ($vip['mode'] != "ipalias") {
+			continue;
+		}
+		if ($vip['interface'] != $carpif) {
+			continue;
+		}
+		$ips[] = "{$vip['subnet']}/{$vip['subnet_bits']}";
+	}
+
+	return ($ips);
+}
+
 $status = get_carp_status();
-$status = intval($status);
 
 if ($_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
@@ -80,28 +96,27 @@ if ($_POST['disablecarp'] != "") {
 		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
 			foreach ($viparr as $vip) {
-				switch ($vip['mode']) {
-					case "carp":
-						interface_vip_bring_down($vip);
+				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+					continue;
+				if ($vip['mode'] == "ipalias" && substr($vip['interface'], 0, 4) != "_vip")
+					continue;
 
-						/*
-						 * Reconfigure radvd when necessary
-						 * XXX: Is it the best way to do it?
-						 */
-						if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-							foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-								if ($dhcpv6if !== $vip['interface'] ||
-								    $dhcpv6ifconf['ramode'] === "disabled") {
-									continue;
-								}
+				interface_vip_bring_down($vip);
 
-								services_radvd_configure();
-								break;
-							}
+				/*
+				 * Reconfigure radvd when necessary
+				 * XXX: Is it the best way to do it?
+				 */
+				if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+					foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+						if ($dhcpv6if !== $vip['interface'] ||
+						    $dhcpv6ifconf['ramode'] === "disabled") {
+							continue;
 						}
 
-						sleep(1);
+						services_radvd_configure();
 						break;
+					}
 				}
 			}
 		}
@@ -115,10 +130,9 @@ if ($_POST['disablecarp'] != "") {
 				switch ($vip['mode']) {
 					case "carp":
 						interface_carp_configure($vip);
-						sleep(1);
 						break;
 					case 'ipalias':
-						if (strpos($vip['interface'], '_vip')) {
+						if (substr($vip['interface'], 0, 4) == "_vip") {
 							interface_ipalias_configure($vip);
 						}
 						break;
@@ -157,17 +171,13 @@ if (is_array($config['virtualip']['vip'])) {
 	}
 }
 
-
 // If $carpcount > 0 display buttons then display table
 // otherwise display error box and quit
 
-?>
-
-<?php
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
 				   '<a href="system_hasync.php" class="alert-link">' .
-				   gettext("You can configure high availability sync settings here") .
+				   gettext("You can configure high availability sync settings here.") .
 				   '</a>');
 } else {
 ?>
@@ -189,7 +199,7 @@ if ($carpcount == 0) {
 			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
 			"<br/><br/>" .
 			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
-			gettext("Reset CARP Demotion Status") .
+			gettext("Reset CARP Demotion Status.") .
 			'" />',
 			'danger'
 		);
@@ -219,9 +229,9 @@ if ($carpcount == 0) {
 			continue;
 		}
 
-		$ipaddress = $carp['subnet'];
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
+		$aliases = find_ipalias("_vip{$carp['uniqid']}");
 
 		if ($carp_enabled == false) {
 			$icon = 'times-circle';
@@ -238,7 +248,14 @@ if ($carpcount == 0) {
 ?>
 					<tr>
 						<td><?=convert_friendly_interface_to_friendly_descr($carp['interface'])?>@<?=$vhid?></td>
-						<td><?=$ipaddress?></td>
+						<td>
+<?php
+		printf("{$carp['subnet']}/{$carp['subnet_bits']}");
+		for ($i = 0; $i < count($aliases); $i++) {
+			printf("<br>{$aliases[$i]}");
+		}
+?>
+						</td>
 						<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?=$status?></td>
 					</tr>
 <?php }?>
@@ -249,12 +266,18 @@ if ($carpcount == 0) {
 </form>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync nodes')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('pfSync Nodes')?></h2></div>
 	<div class="panel-body">
 		<ul>
 <?php
-	foreach (explode("\n", exec_command("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u")) as $node) {
-		echo '<li>'. $node .'</li>';
+
+	$nodes = array();
+	$states = pfSense_get_pf_states();
+	for ($i = 0; $states != NULL && $i < count($states); $i++) {
+		$nodes[$states[$i]['creatorid']] = 1;
+	}
+	foreach ($nodes as $node => $nenabled) {
+		echo "<li>$node</li>";
 	}
 ?>
 		</ul>

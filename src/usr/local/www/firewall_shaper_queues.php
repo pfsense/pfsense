@@ -71,7 +71,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$qname = gettext("No queue configured/selected");
+$qname = gettext("No Queue Configured/Selected");
 
 $shaperIFlist = get_configured_interface_with_descr();
 read_altq_config();
@@ -218,7 +218,7 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Queues"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Queue"));
 $shortcut_section = "trafficshaper";
 
 include("head.inc");
@@ -242,7 +242,7 @@ if (is_subsystem_dirty('shaper')) {
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), false, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), true, "firewall_shaper_queues.php");
-$tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Limiters"), false, "firewall_shaper_vinterface.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 

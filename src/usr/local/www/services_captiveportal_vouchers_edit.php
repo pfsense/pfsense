@@ -68,9 +68,6 @@ require("shaper.inc");
 require("captiveportal.inc");
 require_once("voucher.inc");
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Edit Voucher Rolls"));
-$shortcut_section = "captiveportal-vouchers";
-
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
@@ -85,6 +82,9 @@ if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();
 }
 $a_cp =& $config['captiveportal'];
+
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
+$shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'])) {
 	$config['voucher'] = array();
@@ -214,7 +214,7 @@ if ($savemsg) {
 
 $form = new Form();
 
-$section = new Form_Section('Voucher rolls');
+$section = new Form_Section('Voucher Rolls');
 
 $section->addInput(new Form_Input(
 	'number',

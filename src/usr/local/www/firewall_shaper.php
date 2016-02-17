@@ -72,7 +72,7 @@ if ($_GET['reset'] != "") {
 	exit;
 }
 
-$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Interfaces"));
+$pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Interface"));
 $shortcut_section = "trafficshaper";
 
 $shaperIFlist = get_configured_interface_with_descr();
@@ -166,7 +166,7 @@ if ($_GET) {
 					$class = 'warning';
 				}
 			} else {
-				$savemsg = gettext("Unable to write config.xml (Access Denied?)");
+				$savemsg = gettext("Unable to write config.xml (Access Denied?).");
 				$class = 'warning';
 			}
 
@@ -402,7 +402,6 @@ if ($queue) {
 	}
 }
 
-//$pgtitle = "Firewall: Shaper: By Interface View";
 include("head.inc");
 
 $tree = '<ul class="tree" >';
@@ -436,7 +435,7 @@ if (is_subsystem_dirty('shaper')) {
 $tab_array = array();
 $tab_array[] = array(gettext("By Interface"), true, "firewall_shaper.php");
 $tab_array[] = array(gettext("By Queue"), false, "firewall_shaper_queues.php");
-$tab_array[] = array(gettext("Limiter"), false, "firewall_shaper_vinterface.php");
+$tab_array[] = array(gettext("Limiters"), false, "firewall_shaper_vinterface.php");
 $tab_array[] = array(gettext("Wizards"), false, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
@@ -510,7 +509,7 @@ if ($dfltmsg) {
 ?>
 <div>
 	<div class="infoblock">
-		<?=print_info_box($default_shaper_msg, 'info', false)?>
+		<?php print_info_box($default_shaper_msg, 'info', false); ?>
 	</div>
 </div>
 <?php

@@ -62,25 +62,30 @@
 ##|*MATCH=filebrowser/browser.php*
 ##|-PRIV
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Edit file"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Edit File"));
 require("guiconfig.inc");
 
 if ($_POST['action']) {
-	$button_html = '<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>';
-	$alert_danger_html = '<div class="alert alert-danger" role="alert">' . $button_html;
-	$alert_success_html = '<div class="alert alert-success" role="alert">' . $button_html;
 	switch ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
-				print('|5|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
+				print('|5|');
+				print_info_box(gettext("No file name specified."), 'danger', false);
+				print('|');
 			} elseif (is_dir($_POST['file'])) {
-				print('|4|' . $alert_danger_html . gettext("Loading a directory is not supported") . '</div>' . '|');
+				print('|4|');
+				print_info_box(gettext("Loading a directory is not supported."), 'danger', false);
+				print('|');
 			} elseif (!is_file($_POST['file'])) {
-				print('|3|' . $alert_danger_html . gettext("File does not exist or is not a regular file") . '</div>' . '|');
+				print('|3|');
+				print_info_box(gettext("File does not exist or is not a regular file."), 'danger', false);
+				print('|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if ($data === false) {
-					print('|1|' . $alert_danger_html . gettext("Failed to read file") . '</div>' . '|');
+					print('|1|');
+					print_info_box(gettext("Failed to read file."), 'danger', false);
+					print('|');
 				} else {
 					$data = base64_encode($data);
 					print("|0|{$_POST['file']}|{$data}|");
@@ -90,7 +95,9 @@ if ($_POST['action']) {
 
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
-				print('|' . $alert_danger_html . gettext("No file name specified") . '</div>' . '|');
+				print('|');
+				print_info_box(gettext("No file name specified."), 'danger', false);
+				print('|');
 			} else {
 				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
@@ -103,11 +110,17 @@ if ($_POST['action']) {
 					disable_security_checks();
 				}
 				if ($ret === false) {
-					print('|' . $alert_danger_html . gettext("Failed to write file") . '</div>' . '|');
+					print('|');
+					print_info_box(gettext("Failed to write file."), 'danger', false);
+					print('|');
 				} elseif ($ret != strlen($_POST['data'])) {
-					print('|' . $alert_danger_html . gettext("Error while writing file") . '</div>' . '|');
+					print('|');
+					print_info_box(gettext("Error while writing file."), 'danger', false);
+					print('|');
 				} else {
-					print('|' . $alert_success_html . gettext("File saved successfully") . '</div>' . '|');
+					print('|');
+					print_info_box(gettext("File saved successfully."), 'success', false);
+					print('|');
 				}
 			}
 			exit;
@@ -119,11 +132,11 @@ require("head.inc");
 ?>
 <!-- file status box -->
 <div style="display:none; background:#eeeeee;" id="fileStatusBox">
-	<strong id="fileStatus"></strong>
+	<div id="fileStatus"></div>
 </div>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a file from the filesystem")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Save / Load a File from the Filesystem")?></h2></div>
 	<div class="panel-body">
 		<div class="content">
 			<form>

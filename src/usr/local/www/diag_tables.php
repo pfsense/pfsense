@@ -127,14 +127,14 @@ if ($savemsg) {
 }
 
 if ($tablename == "webConfiguratorlockout") {
-	$displayname = gettext("Web configurator lockout table");
+	$displayname = gettext("webConfigurator Lockout Table");
 } else {
-	$displayname = sprintf(gettext("%s table"), ucfirst($tablename));
+	$displayname = sprintf(gettext("%s Table"), ucfirst($tablename));
 }
 
 $form = new Form(false);
 
-$section = new Form_Section('Table to display');
+$section = new Form_Section('Table to Display');
 $group = new Form_Group("Table");
 
 $group->add(new Form_Select(
@@ -169,9 +169,9 @@ if ($bogons || !empty($entries)) {
 <?php
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 	if ($last_updated != "") {
-		print_info_box(gettext("Table last updated on ") . $last_updated, 'info', false);
+		print_info_box(gettext("Table last updated on ") . $last_updated . ".", 'info', false);
 	} else {
-		print_info_box(gettext("Date of last update of table is unknown"), 'info', false);
+		print_info_box(gettext("Date of last update of table is unknown."), 'info', false);
 	}
 ?>
 	</div>
@@ -208,6 +208,11 @@ events.push(function() {
 //]]>
 </script>
 
+<?php
+if (empty($entries)) {
+	print_info_box(gettext("No entries exist in this table."), 'warning', false);
+} else {
+?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=$displayname?></h2></div>
 	<div class="panel-body">
@@ -241,10 +246,7 @@ events.push(function() {
 	</div>
 </div>
 
-<?php if (empty($entries)): ?>
-	<div class="alert alert-warning" role="alert"><?=gettext("No entries exist in this table")?></div>
-<?php endif ?>
-
 <?php
+}
 
 include("foot.inc");

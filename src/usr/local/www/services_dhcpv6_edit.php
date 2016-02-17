@@ -214,7 +214,13 @@ if ($_POST) {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6"), gettext("Edit static mapping"));
+$iflist = get_configured_interface_with_descr();
+$ifname = '';
+
+if (!empty($if) && isset($iflist[$if])) {
+	$ifname = $iflist[$if];
+}
+$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")), $ifname, gettext("DHCPv6 Server"), gettext("Edit Static Mapping"));
 $shortcut_section = "dhcp6";
 
 include("head.inc");

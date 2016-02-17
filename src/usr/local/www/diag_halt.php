@@ -75,17 +75,15 @@ if ($_POST['save'] == 'No') {
 	exit;
 }
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Halt system"));
+$pgtitle = array(gettext("Diagnostics"), gettext("Halt System"));
 include('head.inc');
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 	<meta http-equiv="refresh" content="70;url=/">
-	<div class="alert alert-success" role="alert">
-		<?=gettext("The system is halting now. This may take one minute or so.")?>
-	</div>
-
 <?php
+	print_info_box(gettext("The system is halting now. This may take one minute or so."), 'success', false);
+
 	if (DEBUG) {
 	   print(sprintf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />"));
 	} else {

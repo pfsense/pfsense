@@ -98,7 +98,7 @@ if ($view == 'summary') { $view_title = gettext("Summary View"); }
 status_logs_common_code();
 
 
-$pgtitle = array(gettext("Status"), gettext("System logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
+$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
 if (!$input_errors && $savemsg) {
@@ -158,7 +158,7 @@ $infomsg = sprintf(gettext('This is a summary of the last %1$s lines of the fire
 ?>
 <div>
 	<div class="infoblock blockopen">
-		<?=print_info_box($infomsg, 'info', false);?>
+		<?php print_info_box($infomsg, 'info', false); ?>
 	</div>
 </div>
 
@@ -184,9 +184,7 @@ foreach (array_keys($fields) as $field) {
 </div>
 <?php
 }
-?>
 
-<?php
 function cmp($a, $b) {
 	if ($a == $b) {
 		return 0;
@@ -231,9 +229,7 @@ function stat_block($summary, $stat, $num) {
 	print "</table>";
 	print('</div>');
 }
-?>
 
-<?php
 // Create the JSON document for the chart to be displayed
 // Todo: Be good to investigate building this with json_encode and friends some time
 function pie_block($summary, $stat, $num, $chartnum) {
@@ -349,8 +345,6 @@ var pie = new d3pie("pieChart<?=$chartnum?>", {
 </script>
 <?php
 }
-?>
 
-<?php
 include("foot.inc");
 ?>

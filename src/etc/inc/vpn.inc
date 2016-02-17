@@ -275,7 +275,6 @@ function vpn_ipsec_configure($restart = false) {
 	$ipmap = array();
 	$rgmap = array();
 	$filterdns_list = array();
-	$listeniflist = array();
 	$aggressive_mode_psk = false;
 	unset($iflist);
 	$ifacesuse = array();
@@ -289,14 +288,14 @@ function vpn_ipsec_configure($restart = false) {
 				continue;
 			}
 
-			if (strpos($ph1ent['interface'], '_vip')) {
-				$vpninterface = explode('_vip', $ph1ent['interface']);
-				$ifacesuse[] = get_real_interface($vpninterface[0]);
+			if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+				$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+				$ifacesuse[] = get_real_interface($vpninterface);
 			} else {
 				$vpninterface = get_failover_interface($ph1ent['interface']);
-				if (strpos($vpninterface, '_vip')) {
-					$vpninterface = explode('_vip', $vpninterface);
-					$ifacesuse[] = get_real_interface($vpninterface[0]);
+				if (substr($vpninterface, 0, 4) == "_vip") {
+					$vpninterface = get_configured_vip_interface($vpninterface);
+					$ifacesuse[] = get_real_interface($vpninterface);
 				} elseif (!empty($vpninterface)) {
 					$ifacesuse[] = $vpninterface;
 				}
@@ -307,7 +306,6 @@ function vpn_ipsec_configure($restart = false) {
 			}
 
 			$ikeid = $ph1ent['ikeid'];
-			$listeniflist = get_real_interface($a_phase1['interface']);
 
 			$ep = ipsec_get_phase1_src($ph1ent);
 			if (!is_ipaddr($ep)) {
@@ -388,10 +386,10 @@ function vpn_ipsec_configure($restart = false) {
 						}
 						/* if no valid src IP was found in configured interfaces, try the vips */
 						if (is_null($srcip)) {
-							$viplist = get_configured_vips_list();
-							foreach ($viplist as $vip) {
-								if (ip_in_subnet($vip['ipaddr'], $local_subnet)) {
-									$srcip = $vip['ipaddr'];
+							$viplist = get_configured_vip_list();
+							foreach ($viplist as $vip => $address) {
+								if (ip_in_subnet($address, $local_subnet)) {
+									$srcip = $address;
 									break;
 								}
 							}
@@ -877,7 +875,8 @@ EOD;
 			if (!empty($ph1ent['iketype'])) {
 				if ($ph1ent['iketype'] == "ikev2") {
 					$keyexchange = "ikev2";
-					//$passive = "start";
+				} elseif ($ph1ent['iketype'] == "auto") {
+					$keyexchange = "ike";
 				}
 			}
 
@@ -897,16 +896,14 @@ EOD;
 				}
 
 				if ($ph1ent['protocol'] == 'inet') {
-					if (strpos($ph1ent['interface'], '_vip')) {
-						$vpninterface = explode('_vip', $ph1ent['interface']);
-						$ifacesuse = get_real_interface($vpninterface[0]);
-						$vpninterface = $vpninterface[0];
+					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface);
 					} else {
 						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (strpos($ifacesuse, '_vip')) {
-							$vpninterface = explode('_vip', $ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface[0]);
-							$vpninterface = $vpninterface[0];
+						if (substr($ifacesuse, 0, 4) == "_vip") {
+							$vpninterface = get_configured_vip_interface($ifacesuse);
+							$ifacesuse = get_real_interface($vpninterface);
 						} else {
 							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 						}
@@ -926,16 +923,14 @@ EOD;
 						}
 					}
 				} else if ($ph1ent['protocol'] == 'inet6') {
-					if (strpos($ph1ent['interface'], '_vip')) {
-						$vpninterface = explode('_vip', $ph1ent['interface']);
-						$ifacesuse = get_real_interface($vpninterface[0]);
-						$vpninterface = $vpninterface[0];
+					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+						$ifacesuse = get_real_interface($vpninterface);
 					} else {
 						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (strpos($ifacesuse, '_vip')) {
-							$vpninterface = explode('_vip', $ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface[0]);
-							$vpninterface = $vpninterface[0];
+						if (substr($ifacesuse, 0, 4) == "_vip") {
+							$vpninterface = get_configured_vip_interface($ifacesuse);
+							$ifacesuse = get_real_interface($vpninterface);
 						} else {
 							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 						}
@@ -1170,6 +1165,14 @@ EOD;
 				$mobike = 'mobike = no';
 			}
 
+			if (isset($ph1ent['tfc_enable'])) {
+				if (isset($ph1ent['tfc_bytes']) && is_numericint($ph1ent['tfc_bytes'])) {
+					$tfc = "tfc = {$ph1ent['tfc_bytes']}";
+				} else {
+					$tfc = "tfc = %mtu";
+				}
+			}
+
 			$ipseclifetime = 0;
 			$rightsubnet_spec = array();
 			$leftsubnet_spec = array();
@@ -1343,6 +1346,7 @@ EOD;
 	{$reauth}
 	{$forceencaps}
 	{$mobike}
+	{$tfc}
 	{$rekey}
 	installpolicy = yes
 	{$tunneltype}

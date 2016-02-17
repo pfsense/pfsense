@@ -64,9 +64,6 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
-$shortcut_section = "authentication";
-
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
@@ -111,7 +108,7 @@ if ($act == "del") {
 	/* Remove server from temp list used later on this page. */
 	unset($a_server[$_GET['id']]);
 
-	$savemsg = sprintf(gettext("Authentication Server %s deleted"), htmlspecialchars($serverdeleted));
+	$savemsg = sprintf(gettext("Authentication Server %s deleted."), htmlspecialchars($serverdeleted));
 	write_config($savemsg);
 }
 
@@ -377,6 +374,12 @@ if($_POST && $input_errors) {
 	$pconfig['ldap_template'] = $_POST['ldap_tmpltype'];
 }
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Authentication Servers"));
+
+if ($act == "new" || $act == "edit" || $input_errors) {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "authentication";
 include("head.inc");
 
 if ($input_errors) {
@@ -391,7 +394,7 @@ $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
 $tab_array[] = array(gettext("Settings"), false, "system_usermanager_settings.php");
-$tab_array[] = array(gettext("Servers"), true, "system_authservers.php");
+$tab_array[] = array(gettext("Authentication Servers"), true, "system_authservers.php");
 display_top_tabs($tab_array);
 
 if (!($act == "new" || $act == "edit" || $input_errors)) {
@@ -450,7 +453,7 @@ $form->addGlobal(new Form_Input(
 	$id
 ));
 
-$section = new Form_Section('Server settings');
+$section = new Form_Section('Server Settings');
 
 $section->addInput($input = new Form_Input(
 	'name',
@@ -501,7 +504,7 @@ if (empty($a_ca))
 {
 	$section->addInput(new Form_StaticText(
 		'Peer Certificate Authority',
-		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert Manager</a>.'
+		'No Certificate Authorities defined.<br/>Create one under <a href="system_camanager.php">System &gt; Cert. Manager</a>.'
 	));
 }
 else
@@ -689,7 +692,7 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 // ==== RADIUS section ========================================================
-$section = new Form_Section('Radius Server Settings');
+$section = new Form_Section('RADIUS Server Settings');
 $section->addClass('toggle-radius collapse');
 
 $section->addInput(new Form_Input(

@@ -268,7 +268,7 @@ $types = array('proxyarp' => gettext('Proxy ARP'),
 			   'ipalias' => gettext('IP Alias')
 			   );
 
-$pgtitle = array(gettext("Firewall"), gettext("Virtual IP Addresses"));
+$pgtitle = array(gettext("Firewall"), gettext("Virtual IPs"));
 include("head.inc");
 
 if ($input_errors) {
@@ -302,10 +302,18 @@ display_top_tabs($tab_array);
 			<tbody>
 <?php
 $interfaces = get_configured_interface_with_descr(false, true);
-$carplist = get_configured_carp_interface_list();
+$viplist = get_configured_vip_list();
 
-foreach ($carplist as $cif => $carpip) {
-	$interfaces[$cif] = $carpip." (".get_vip_descr($carpip).")";
+foreach ($viplist as $vipname => $address) {
+	$interfaces[$vipname] = $address;
+	$interfaces[$vipname] .= " (";
+	if (get_vip_descr($address)) {
+		$interfaces[$vipname] .= get_vip_descr($address);
+	} else {
+		$vip = get_configured_vip($vipname);
+		$interfaces[$vipname] .= "vhid: {$vip['vhid']}";
+	}
+	$interfaces[$vipname] .= ")";
 }
 
 $interfaces['lo0'] = "Localhost";
@@ -365,8 +373,8 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?=print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
-		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s'), '<a href="status_carp.php">', '</a>'), 'info', false)?>
+	<?php print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings.'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
+		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s.'), '<a href="status_carp.php">', '</a>'), 'info', false); ?>
 </div>
 
 <?php

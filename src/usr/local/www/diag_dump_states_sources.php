@@ -84,7 +84,7 @@ if ($_POST['filter']) {
 }
 
 
-$pgtitle = array(gettext("Diagnostics"), gettext("Show Source Tracking"));
+$pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Source Tracking"));
 include("head.inc");
 
 $tab_array = array();
@@ -137,7 +137,7 @@ print $form;
 
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Current source tracking entries")?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Current Source Tracking Entries")?></h2></div>
 	<div class="panel-body">
 		<table class="table table-striped">
 			<thead>
@@ -190,7 +190,7 @@ if (count($sources) > 0) {
 </div>
 <?php
 if ($row == 0) {
-	print('<p class="alert alert-warning">' . gettext('No source tracking entries were found.') . '</p>');
+	print_info_box(gettext('No source tracking entries were found.'), 'warning', false);
 }
 
 include("foot.inc");

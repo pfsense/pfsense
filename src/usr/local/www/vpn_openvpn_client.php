@@ -56,8 +56,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-openvpn-client
-##|*NAME=OpenVPN: Client
-##|*DESCR=Allow access to the 'OpenVPN: Client' page.
+##|*NAME=OpenVPN: Clients
+##|*DESCR=Allow access to the 'OpenVPN: Clients' page.
 ##|*MATCH=vpn_openvpn_client.php*
 ##|-PRIV
 
@@ -66,9 +66,6 @@ require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
 global $openvpn_topologies;
-
-$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client"));
-$shortcut_section = "openvpn";
 
 if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
@@ -123,7 +120,7 @@ if ($_GET['act'] == "del") {
 	}
 	unset($a_client[$id]);
 	write_config();
-	$savemsg = gettext("Client successfully deleted")."<br />";
+	$savemsg = gettext("Client successfully deleted.");
 }
 
 if ($_GET['act'] == "new") {
@@ -426,6 +423,13 @@ if ($_POST) {
 	}
 }
 
+$pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Clients"));
+
+if ($act=="new" || $act=="edit") {
+	$pgtitle[] = gettext('Edit');
+}
+$shortcut_section = "openvpn";
+
 include("head.inc");
 
 if (!$savemsg) {
@@ -441,8 +445,8 @@ if ($savemsg) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Server"), false, "vpn_openvpn_server.php");
-$tab_array[] = array(gettext("Client"), true, "vpn_openvpn_client.php");
+$tab_array[] = array(gettext("Servers"), false, "vpn_openvpn_server.php");
+$tab_array[] = array(gettext("Clients"), true, "vpn_openvpn_client.php");
 $tab_array[] = array(gettext("Client Specific Overrides"), false, "vpn_openvpn_csc.php");
 $tab_array[] = array(gettext("Wizards"), false, "wizard.php?xml=openvpn_wizard.xml");
 add_package_tabs("OpenVPN", $tab_array);
@@ -553,7 +557,7 @@ if ($act=="new" || $act=="edit"):
 	))->setHelp('You may enter a description here for your reference (not parsed).');
 
 	$form->add($section);
-	$section = new Form_Section('User Authentication settings');
+	$section = new Form_Section('User Authentication Settings');
 	$section->addClass('authentication');
 
 	$section->addInput(new Form_Input(
@@ -572,7 +576,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Cryptographic settings');
+	$section = new Form_Section('Cryptographic Settings');
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
@@ -611,7 +615,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert Manager</a>')
+			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -625,7 +629,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert Manager &gt; Certificate Revocation</a>')
+			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_crlmanager.php">System &gt; Cert. Manager &gt; Certificate Revocation</a>')
 		));
 	}
 
@@ -674,7 +678,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section('Tunnel settings');
+	$section = new Form_Section('Tunnel Settings');
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',
@@ -712,7 +716,7 @@ if ($act=="new" || $act=="edit"):
 				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX. ' .
 				'If this is a site-to-site VPN, enter the remote LAN/s here. You may leave this blank if you don\'t want a site-to-site VPN.');
 
-$section->addInput(new Form_Input(
+	$section->addInput(new Form_Input(
 		'use_shaper',
 		'Limit outgoing bandwidth',
 		'number',

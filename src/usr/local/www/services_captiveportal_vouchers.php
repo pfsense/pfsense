@@ -108,7 +108,7 @@ if (empty($a_cp[$cpzone])) {
 	exit;
 }
 
-$pgtitle = array(gettext("Services"), gettext("Captive Portal"), sprintf(gettext("Zone %s"), $a_cp[$cpzone]['zone']), gettext("Vouchers"));
+$pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"));
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -436,7 +436,7 @@ if ($savemsg) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
-$tab_array[] = array(gettext("MAC"), false, "services_captiveportal_mac.php?zone={$cpzone}");
+$tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed IP Addresses"), false, "services_captiveportal_ip.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Allowed Hostnames"), false, "services_captiveportal_hostname.php?zone={$cpzone}");
 $tab_array[] = array(gettext("Vouchers"), true, "services_captiveportal_vouchers.php?zone={$cpzone}");
@@ -507,7 +507,7 @@ endif;
 
 $form = new Form();
 
-$section = new Form_Section('Create, generate and activate Rolls with Vouchers');
+$section = new Form_Section('Create, Generate and Activate Rolls with Vouchers');
 
 $section->addInput(new Form_Checkbox(
 	'enable',
@@ -518,7 +518,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-$section = new Form_Section('Create, generate and activate Rolls with Vouchers');
+$section = new Form_Section('Create, Generate and Activate Rolls with Vouchers');
 $section->addClass('rolledit');
 
 $section->addInput(new Form_Textarea(
@@ -588,7 +588,7 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-$section = new Form_Section('Voucher database synchronization');
+$section = new Form_Section('Voucher Database Synchronization');
 $section->addClass('rolledit');
 
 $section->addInput(new Form_IpAddress(

@@ -132,6 +132,8 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
+	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
+	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
@@ -157,11 +159,14 @@ $ifcfgsn = get_interface_subnetv6($if);
 $dhcrelay_enabled = false;
 $dhcrelaycfg = $config['dhcrelay6'];
 
-if (is_array($dhcrelaycfg)) {
-	foreach ($dhcrelaycfg as $dhcrelayif => $dhcrelayifconf) {
-		if (isset($dhcrelayifconf['enable']) && isset($iflist[$dhcrelayif]) &&
-		    (!link_interface_to_bridge($dhcrelayif))) {
+if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycfg['interface']) && !empty($dhcrelaycfg['interface'])) {
+	$dhcrelayifs = explode(",", $dhcrelaycfg['interface']);
+
+	foreach ($dhcrelayifs as $dhcrelayif) {
+
+		if (isset($iflist[$dhcrelayif]) && (!link_interface_to_bridge($dhcrelayif))) {
 			$dhcrelay_enabled = true;
+			break;
 		}
 	}
 }
@@ -361,6 +366,8 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
+		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -436,7 +443,12 @@ if ($_GET['act'] == "del") {
 	}
 }
 
-$pgtitle = array(gettext("Services"), gettext("DHCPv6 Server"));
+$pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+
+if (!empty($if) && !$dhcrelay_enabled && isset($iflist[$if])) {
+	$pgtitle[] = $iflist[$if];
+	$pgtitle[] = gettext("DHCPv6 Server");
+}
 $shortcut_section = "dhcp6";
 
 include("head.inc");
@@ -450,7 +462,7 @@ if ($savemsg) {
 }
 
 if ($dhcrelay_enabled) {
-	print_info_box(gettext("DHCP Relay is currently enabled. Cannot enable the DHCP Server service while the DHCP Relay is enabled on any interface."), 'danger');
+	print_info_box(gettext("DHCPv6 Relay is currently enabled. Cannot enable the DHCPv6 Server service while the DHCPv6 Relay is enabled on any interface."), 'danger', false);
 	include("foot.inc");
 	exit;
 }
@@ -721,6 +733,26 @@ $section->addInput(new Form_Input(
 	$pconfig['ddnsdomainkey']
 ))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
+$section->addInput(new Form_Select(
+	'ddnsclientupdates',
+	'DDNS Client Updates',
+	$pconfig['ddnsclientupdates'],
+	array(
+	    'allow' => gettext('Allow'),
+	    'deny' => gettext('Deny'),
+	    'ignore' => gettext('Ignore'))
+))->setHelp('How Forward entries are handled when client indicates they wish to update DNS.  ' .
+	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
+	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
+	    'update and the client can also attempt the update usually using a different domain name.');
+
+$section->addInput(new Form_Checkbox(
+	'ddnsreverse',
+	'DDNS Reverse',
+	'Add reverse dynamic DNS entries.',
+	$pconfig['ddnsreverse']
+));
+
 $btnntp = new Form_Button(
 	'btnntp',
 	'Advanced'
@@ -894,7 +926,7 @@ print_info_box(
 ?>
 </div>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCPv6 Static Mappings for this interface.");?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCPv6 Static Mappings for this Interface");?></h2></div>
 	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed">
 			<thead>
@@ -959,6 +991,8 @@ events.push(function() {
 		hideInput('ddnsdomainprimary', hide);
 		hideInput('ddnsdomainkeyname', hide);
 		hideInput('ddnsdomainkey', hide);
+		hideInput('ddnsclientupdates', hide);
+		hideCheckbox('ddnsreverse', hide);
 	}
 
 	// Make the 'Copy My MAC' button a plain button, not a submit button

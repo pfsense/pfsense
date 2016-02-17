@@ -56,6 +56,10 @@
  *
  */
 
+define(VIP_ALL, 1);
+define(VIP_CARP, 2);
+define(VIP_IPALIAS, 3);
+
 /* kill a process by pid file */
 function killbypid($pidfile) {
 	return sigkillbypid($pidfile, "TERM");
@@ -927,6 +931,58 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	return ($subnetv6_start1 == $subnetv6_start2);
 }
 
+/* return all PTR zones for a IPv6 network */
+function get_v6_ptr_zones($subnet, $bits) {
+	$result = array();
+
+	if (!is_ipaddrv6($subnet)) {
+		return $result;
+	}
+
+	if (!is_numericint($bits) || $bits > 128) {
+		return $result;
+	}
+
+	/*
+	 * Find a small nibble boundary subnet mask
+	 * e.g. a /29 will create 8 /32 PTR zones
+	 */
+	$small_sn = $bits;
+	while ($small_sn % 4 != 0) {
+		$small_sn++;
+	}
+
+	/* Get network prefix */
+	$small_subnet = Net_IPv6::getNetmask($subnet, $bits);
+
+	/*
+	 * While small network is part of bigger one, increase 4-bit in last
+	 * digit to get next small network
+	 */
+	while (Net_IPv6::isInNetmask($small_subnet, $subnet, $bits)) {
+		/* Get a pure hex value */
+		$unpacked = unpack('H*hex', inet_pton($small_subnet));
+		/* Create PTR record using $small_sn / 4 chars */
+		$result[] = implode('.', array_reverse(str_split(substr(
+		    $unpacked['hex'], 0, $small_sn / 4)))).'.ip6.arpa';
+
+		/* Detect what part of IP should be increased */
+		$change_part = (int) ($small_sn / 16);
+		if ($small_sn % 16 == 0) {
+			$change_part--;
+		}
+
+		/* Convert desired part to decimal and increase 1 */
+		$parts = explode(":", Net_IPv6::uncompress($small_subnet));
+		$dec = base_convert($parts[$change_part], 16, 10) + 1;
+		/* Move back to hex and rebuild IP address */
+		$parts[$change_part] = base_convert($dec, 10, 16);
+		$small_subnet = implode(":", $parts);
+	}
+
+	return $result;
+}
+
 /* return true if $addr is in $subnet, false if not */
 function ip_in_subnet($addr, $subnet) {
 	if (is_ipaddrv6($addr) && is_subnetv6($subnet)) {
@@ -1132,108 +1188,111 @@ function is_inrange($test, $start, $end) {
 	return is_ipaddrv6($test) ? is_inrange_v6($test, $start, $end) : is_inrange_v4($test, $start, $end);
 }
 
-/* XXX: return the configured carp interface list */
-function get_configured_carp_interface_list($carpinterface = '', $family = 'inet', $what = 'ip') {
+function get_configured_vip_list($family = 'all', $type = VIP_ALL) {
 	global $config;
 
-	$iflist = array();
-
+	$list = array();
 	if (!is_array($config['virtualip']['vip']) || empty($config['virtualip']['vip'])) {
-		return $iflist;
+		return ($list);
 	}
 
 	$viparr = &$config['virtualip']['vip'];
 	foreach ($viparr as $vip) {
-		if ($vip['mode'] != "carp") {
+
+		if ($type == VIP_CARP) {
+			if ($vip['mode'] != "carp")
+				continue;
+		} elseif ($type == VIP_IPALIAS) {
+			if ($vip['mode'] != "ipalias")
+				continue;
+		} else {
+			if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+				continue;
+		}
+
+		if ($family == 'all' ||
+		    ($family == 'inet' && is_ipaddrv4($vip['subnet'])) ||
+		    ($family == 'inet6' && is_ipaddrv6($vip['subnet']))) {
+			$list["_vip{$vip['uniqid']}"] = $vip['subnet'];
+		}
+	}
+	return ($list);
+}
+
+function get_configured_vip($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'all', 'vip'));
+}
+
+function get_configured_vip_interface($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'all', 'iface'));
+}
+
+function get_configured_vip_ipv4($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet', 'ip'));
+}
+
+function get_configured_vip_ipv6($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet6', 'ip'));
+}
+
+function get_configured_vip_subnetv4($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet', 'subnet'));
+}
+
+function get_configured_vip_subnetv6($vipinterface = '') {
+
+	return (get_configured_vip_detail($vipinterface, 'inet6', 'subnet'));
+}
+
+function get_configured_vip_detail($vipinterface = '', $family = 'inet', $what = 'ip') {
+	global $config;
+
+	if (empty($vipinterface) || !is_array($config['virtualip']['vip']) ||
+	    empty($config['virtualip']['vip'])) {
+		return (NULL);
+	}
+
+	$viparr = &$config['virtualip']['vip'];
+	foreach ($viparr as $vip) {
+		if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias") {
 			continue;
 		}
 
-		if (empty($carpinterface)) {
-			$iflist["_vip{$vip['uniqid']}"] = $vip['subnet'];
-			continue;
-		}
-
-		if ($carpinterface != "_vip{$vip['uniqid']}") {
+		if ($vipinterface != "_vip{$vip['uniqid']}") {
 			continue;
 		}
 
 		switch ($what) {
 			case 'subnet':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['subnet_bits'];
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['subnet_bits'];
-				}
+				if ($family == 'inet' && is_ipaddrv4($vip['subnet']))
+					return ($vip['subnet_bits']);
+				else if ($family == 'inet6' && is_ipaddrv6($vip['subnet']))
+					return ($vip['subnet_bits']);
 				break;
 			case 'iface':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['interface'];
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['interface'];
-				}
+				return ($vip['interface']);
 				break;
 			case 'vip':
-				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip;
-				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip;
-				}
+				return ($vip);
 				break;
 			case 'ip':
 			default:
 				if ($family == 'inet' && is_ipaddrv4($vip['subnet'])) {
-					return $vip['subnet'];
+					return ($vip['subnet']);
 				} else if ($family == 'inet6' && is_ipaddrv6($vip['subnet'])) {
-					return $vip['subnet'];
+					return ($vip['subnet']);
 				}
 				break;
 		}
 		break;
 	}
 
-	return $iflist;
-}
-
-/* return the configured IP aliases list */
-function get_configured_ip_aliases_list($returnfullentry = false) {
-	global $config;
-
-	$alias_list = array();
-
-	if (is_array($config['virtualip']['vip'])) {
-		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "ipalias") {
-				if ($returnfullentry) {
-					$alias_list[$vip['subnet']] = $vip;
-				} else {
-					$alias_list[$vip['subnet']] = $vip['interface'];
-				}
-			}
-		}
-	}
-
-	return $alias_list;
-}
-
-/* return all configured aliases list (IP, carp, proxyarp and other) */
-function get_configured_vips_list() {
-	global $config;
-
-	$alias_list = array();
-
-	if (is_array($config['virtualip']['vip'])) {
-		$viparr = &$config['virtualip']['vip'];
-		foreach ($viparr as $vip) {
-			if ($vip['mode'] == "carp") {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => "_vip{$vip['uniqid']}");
-			} else {
-				$alias_list[] = array("ipaddr" => $vip['subnet'], "if" => $vip['interface']);
-			}
-		}
-	}
-
-	return $alias_list;
+	return (NULL);
 }
 
 /* comparison function for sorting by the order in which interfaces are normally created */
@@ -1319,7 +1378,7 @@ function get_configured_interface_with_descr($only_opt = false, $withdisabled = 
 
 /*
  *   get_configured_ip_addresses() - Return a list of all configured
- *   interfaces IP Addresses
+ *   IPv4 addresses.
  *
  */
 function get_configured_ip_addresses() {
@@ -1336,7 +1395,7 @@ function get_configured_ip_addresses() {
 			$ip_array[$int] = $ipaddr;
 		}
 	}
-	$interfaces = get_configured_carp_interface_list();
+	$interfaces = get_configured_vip_list('inet');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddr) {
 			$ip_array[$int] = $ipaddr;
@@ -1360,7 +1419,7 @@ function get_configured_ip_addresses() {
 
 /*
  *   get_configured_ipv6_addresses() - Return a list of all configured
- *   interfaces IPv6 Addresses
+ *   IPv6 addresses.
  *
  */
 function get_configured_ipv6_addresses() {
@@ -1373,7 +1432,7 @@ function get_configured_ipv6_addresses() {
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}
-	$interfaces = get_configured_carp_interface_list();
+	$interfaces = get_configured_vip_list('inet6');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddrv6) {
 			$ipv6_array[$int] = $ipaddrv6;
@@ -1753,12 +1812,14 @@ function resolve_retry($hostname, $retries = 5) {
 }
 
 function format_bytes($bytes) {
-	if ($bytes >= 1073741824) {
-		return sprintf("%.2f GB", $bytes/1073741824);
+	if ($bytes >= 1099511627776) {
+		return sprintf("%.2f TiB", $bytes/1099511627776);
+	} else if ($bytes >= 1073741824) {
+		return sprintf("%.2f GiB", $bytes/1073741824);
 	} else if ($bytes >= 1048576) {
-		return sprintf("%.2f MB", $bytes/1048576);
+		return sprintf("%.2f MiB", $bytes/1048576);
 	} else if ($bytes >= 1024) {
-		return sprintf("%.0f KB", $bytes/1024);
+		return sprintf("%.0f KiB", $bytes/1024);
 	} else {
 		return sprintf("%d B", $bytes);
 	}

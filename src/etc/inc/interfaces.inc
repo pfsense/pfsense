@@ -551,7 +551,22 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 	}
 
 	if (isset($bridge['enablestp'])) {
-		/* Choose spanning tree proto */
+		interface_bridge_configure_stp($bridge);
+	}
+
+	interface_bridge_configure_advanced($bridge);
+
+	if ($bridge['bridgeif']) {
+		interfaces_bring_up($bridge['bridgeif']);
+	} else {
+		log_error(gettext("bridgeif not defined -- could not bring interface up"));
+	}
+}
+
+function interface_bridge_configure_stp($bridge) {
+	if (isset($bridge['enablestp'])) {
+		$bridgeif = $bridge['bridgeif'];
+		/* configure spanning tree proto */
 		mwexec("/sbin/ifconfig {$bridgeif} proto " . escapeshellarg($bridge['proto']));
 
 		if (!empty($bridge['stp'])) {
@@ -605,6 +620,10 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			}
 		}
 	}
+}
+
+function interface_bridge_configure_advanced($bridge) {
+	$bridgeif = $bridge['bridgeif'];
 
 	if ($bridge['maxaddr'] <> "") {
 		mwexec("/sbin/ifconfig {$bridgeif} maxaddr " . escapeshellarg($bridge['maxaddr']));
@@ -661,12 +680,6 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 			mwexec("/sbin/ifconfig {$bridgeif} private {$realif}");
 		}
 	}
-
-	if ($bridge['bridgeif']) {
-		interfaces_bring_up($bridge['bridgeif']);
-	} else {
-		log_error(gettext("bridgeif not defined -- could not bring interface up"));
-	}
 }
 
 function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = false) {
@@ -687,6 +700,14 @@ function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = fals
 	}
 
 	pfSense_bridge_add_member($bridgeif, $interface);
+	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+		foreach ($config['bridges']['bridged'] as $bridge) {
+			if ($bridgeif == $bridge['bridgeif']) {
+				interface_bridge_configure_stp($bridge);
+				interface_bridge_configure_advanced($bridge);
+			}
+		}
+	}
 }
 
 function interfaces_lagg_configure($realif = "") {

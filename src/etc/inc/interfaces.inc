@@ -524,6 +524,11 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
+	} else {
+		// if called directly, as interfaces_bridge_edit.php does, and bridgeif isn't set
+		// normally set by interfaces_bridge_configure, but not upon creation of new bridge
+		$bridgeif = pfSense_interface_create("bridge");
+		$bridge['bridgeif'] = $bridgeif;
 	}
 
 	$bridgemtu = interface_find_child_cfgmtu($bridge['bridgeif']);

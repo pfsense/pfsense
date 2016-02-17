@@ -263,6 +263,9 @@ if ($_POST) {
 			if (empty($config['interfaces'][$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
 			}
+			if (substr($config['interfaces'][$ifmembers]['if'], 0, 6) == "bridge") {
+				$input_errors[] = gettext("A bridge interface cannot be a member of a bridge.");
+			}
 			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
 			    $config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap") {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
@@ -370,16 +373,19 @@ if ($_POST) {
 	}
 }
 
+// port list with the exception of assigned bridge interfaces to prevent invalid configs
 function build_port_list($selecton) {
-	global $ifacelist;
+	global $config, $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		$portlist['list'][$ifn] = $ifdescr;
+		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
+			$portlist['list'][$ifn] = $ifdescr;
 
-		if (in_array($ifn, explode(',', $selecton))) {
-			array_push($portlist['selected'], $ifn);
+			if (in_array($ifn, explode(',', $selecton))) {
+				array_push($portlist['selected'], $ifn);
+			}
 		}
 	}
 

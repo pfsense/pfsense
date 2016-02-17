@@ -4224,7 +4224,7 @@ function interface_dhcp_configure($interface = "wan") {
 	/* generate dhclient_wan.conf */
 	$fd = fopen("{$g['varetc_path']}/dhclient_{$interface}.conf", "w");
 	if (!$fd) {
-		printf(printf(gettext("Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for writing.%s"), $interface, "\n"));
+		log_error(sprintf(gettext("Error: cannot open dhclient_%s.conf in interface_dhcp_configure() for writing."), $interface));
 		return 1;
 	}
 

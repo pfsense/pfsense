@@ -605,7 +605,7 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 		$ifn,
 		$ifdescr . ' Priority',
 		'number',
-		$pconfig[$ifn],
+		$pconfig['ifpriority'][$ifn],
 		['placeholder' => 128, 'min' => 0, 'max' => 240, 'step' => 16]
 	))->setHelp('Set the Spanning Tree priority of interface to value. The default is 128. The minimum is 0 and the maximum is 240. Increments of 16.');
 }
@@ -613,10 +613,10 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 $i = 0;
 foreach ($ifacelist as $ifn => $ifdescr) {
 	$section->addInput(new Form_Input(
-		$ifn . $i,
+		$ifn . 0,
 		$ifdescr . ' Path cost',
 		'number',
-		$ifpathcost[$ifn],
+		$pconfig['ifpathcost'][$ifn],
 		[ 'placeholder' => 0, 'min' => 1, 'max' => 200000000]
 	))->setHelp('Set the Spanning Tree path cost of interface to value. The default is calculated from the link speed. '.
 		'To change a previously selected path cost back to automatic, set the cost to 0. The minimum is 1 and the maximum is 200000000.');

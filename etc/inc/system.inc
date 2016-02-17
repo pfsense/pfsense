@@ -366,15 +366,29 @@ function system_hosts_generate() {
 								$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
 		}
 		if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
-			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf)
-				if(is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable']))
-						foreach ($dhcpifconf['staticmap'] as $host)
-							if ($host['ipaddrv6'] && $host['hostname'] && $host['domain'])
-								$dhosts .= "{$host['ipaddrv6']}	{$host['hostname']}.{$host['domain']} {$host['hostname']}\n";
-							else if ($host['ipaddrv6'] && $host['hostname'] && $dhcpifconf['domain'])
-								$dhosts .= "{$host['ipaddrv6']}	{$host['hostname']}.{$dhcpifconf['domain']} {$host['hostname']}\n";
-							else if ($host['ipaddrv6'] && $host['hostname'])
-								$dhosts .= "{$host['ipaddrv6']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
+				if (is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable'])) {
+					$isdelegated = $config['interfaces'][$dhcpif]['ipaddrv6'] == 'track6';
+					if ($isdelegated) {
+						$prefix = array_slice(explode(':', Net_IPv6::uncompress(get_interface_ipv6($dhcpif))), 0, 4);
+					}
+					foreach ($dhcpifconf['staticmap'] as $host) {
+						$ipaddrv6 = $host['ipaddrv6'];
+						if ($ipaddrv6 && $host['hostname']) {
+							if ($isdelegated) {
+								$suffix = array_slice(explode(':', Net_IPv6::uncompress($ipaddrv6)), 4);
+								$ipaddrv6 = Net_IPv6::compress(implode(':', array_merge($prefix, $suffix)));
+							}
+							if ($host['domain'])
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']} {$host['hostname']}\n";
+							else if ($dhcpifconf['domain'])
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$dhcpifconf['domain']} {$host['hostname']}\n";
+							else
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+						}
+					}
+				}
+			}
 		}
 
 		if (isset($dnsmasqcfg['dhcpfirst']))

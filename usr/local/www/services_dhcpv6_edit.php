@@ -132,8 +132,13 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6']))) {
-		$input_errors[] = gettext("A valid IPv6 address must be specified.");
+	if ($_POST['ipaddrv6']) {
+		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
+			$input_errors[] = gettext("A valid IPv6 address must be specified.");
+		}
+		if ($config['interfaces'][$if]['ipaddrv6'] == 'track6' && !Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', 64)) {
+			$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+		}
 	}
 	if (empty($_POST['duid'])) {
 		$input_errors[] = gettext("A valid DUID must be specified.");

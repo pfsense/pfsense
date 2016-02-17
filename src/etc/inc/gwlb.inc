@@ -199,7 +199,7 @@ function setup_gateways_monitor() {
 
 	$gateways_arr = return_gateways_array();
 	if (!is_array($gateways_arr)) {
-		log_error("No gateways to monitor. dpinger will not run.");
+		log_error(gettext("No gateways to monitor. dpinger will not run."));
 		stop_dpinger();
 		return;
 	}
@@ -247,7 +247,7 @@ function setup_gateways_monitor() {
 			 * not strictly necessary but is a added level of protection.
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
-				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 				if (interface_isppp_type($gateway['friendlyiface'])) {
 					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
 						" -iface " . escapeshellarg($gateway['interface']), true);
@@ -289,7 +289,7 @@ function setup_gateways_monitor() {
 			 * not strictly necessary but is a added level of protection.
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
-				log_error("Removing static route for monitor {$gateway['monitor']} and adding a new route through {$gateway['gateway']}");
+				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
 				if (interface_isppp_type($gateway['friendlyiface'])) {
 					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
 						" -iface " . escapeshellarg($gateway['interface']), true);
@@ -318,8 +318,7 @@ function setup_gateways_monitor() {
 		}
 
 		if (start_dpinger($gateway) != 0) {
-			log_error("Error starting gateway monitor for " .
-			    $gateway['name']);
+			log_error(sprintf(gettext("Error starting gateway monitor for %s"), $gateway['name']));
 		}
 	}
 
@@ -332,7 +331,7 @@ function get_dpinger_status($gwname) {
 	$running_processes = running_dpinger_processes();
 
 	if (!isset($running_processes[$gwname])) {
-		log_error("dpinger: No dpinger session running for gateway {$gwname}");
+		log_error(sprint(gettext('dpinger: No dpinger session running for gateway %s'), $gwname));
 		return false;
 	}
 
@@ -346,7 +345,7 @@ function get_dpinger_status($gwname) {
 
 	$fp = stream_socket_client("unix://{$proc['socket']}", $errno, $errstr, 10);
 	if (!$fp) {
-		log_error("dpinger: cannot connect to status socket {$proc['socket']} - $errstr ($errno)");
+		log_error(sprintf(gettext('dpinger: cannot connect to status socket %1$s - %2$s (%3$s)'), $proc['socket'], $errstr, $errno));
 		return false;
 	}
 
@@ -925,15 +924,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext("MONITOR: %s is down, omitting from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s is down, omitting from routing group %2$s'), $group['name'], $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = sprintf(gettext("MONITOR: %s has packet loss, omitting from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s has packet loss, omitting from routing group %2$s'), $group['name'], $gwname);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = sprintf(gettext("MONITOR: %s has high latency, omitting from routing group {$group['name']}"), $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $group['name'], $gwname);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
@@ -955,7 +954,7 @@ function return_gateway_groups_array() {
 			if ($tiers_count == 0) {
 				/* Oh dear, we have no members! Engage Plan B */
 				if (!platform_booting()) {
-					$msg = gettext("Gateways status could not be determined, considering all as up/active. (Group: {$group['name']})");
+					$msg = sprintf(gettext('Gateways status could not be determined, considering all as up/active. (Group: %s)'), $group['name']);
 					log_error($msg);
 					notify_via_growl($msg);
 					//notify_via_smtp($msg);
@@ -998,7 +997,7 @@ function return_gateway_groups_array() {
 				if (count($gateway_groups_array[$group['name']]) > 0) {
 					break;
 				} else {
-					log_error("GATEWAYS: Group {$group['name']} did not have any gateways up on tier {$tieridx}!");
+					log_error(sprintf(gettext('GATEWAYS: Group %1$s did not have any gateways up on tier %2$s!'), $group['name'], $tieridx));
 				}
 			}
 		}

@@ -434,6 +434,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
 				</li>
 			<?php endforeach?>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
 				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">

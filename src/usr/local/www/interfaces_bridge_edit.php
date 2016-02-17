@@ -66,6 +66,14 @@ if (!is_array($config['bridges']['bridged'])) {
 	$config['bridges']['bridged'] = array();
 }
 
+function is_aoadv_used($pconfig) {
+        if (isset($pconfig['static']) || isset($pconfig['private']) || isset($pconfig['stp']) || isset($pconfig['span']) || isset($pconfig['edge']) || isset($pconfig['autoedge']) || isset($pconfig['ptp']) || isset($pconfig['autoptp']) || isset($pconfig['maxaddr']) || isset($pconfig['timeout']) || isset($pconfig['maxage']) || isset($pconfig['fwdelay']) || isset($pconfig['hellotime']) || isset($pconfig['priority']) || isset($pconfig['proto']) || isset($pconfig['holdcnt'])) {
+                return true;
+        }
+
+        return false;
+}
+
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
@@ -421,11 +429,13 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
+$showadvanced = is_aoadv_used($pconfig);
+
 $section->addInput(new Form_Checkbox(
 	'showadvanced',
 	'Advanced',
 	'Show advanced options',
-	$pconfig['showadvanced']
+	$showadvanced
 ))->toggles('.toggle-advanced');
 
 $form->add($section);
@@ -433,7 +443,7 @@ $form->add($section);
 $section = new Form_Section('Advanced Configuration');
 
 // Set initial toggle state manually for now
-if ($pconfig['showadvanced']) {
+if ($showadvanced) {
 	$section->addClass('toggle-advanced in');
 } else {
 	$section->addClass('toggle-advanced collapse');
@@ -540,7 +550,7 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if ($pconfig['showadvanced']) {
+if ($showadvanced) {
 	$section->addClass('toggle-advanced in');
 } else {
 	$section->addClass('toggle-advanced collapse');

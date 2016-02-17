@@ -477,6 +477,14 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</li>
 	<?php endif?>
 
+	<?php if (isset($widgets)): ?>
+		<li>
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
+				<i style="cursor:pointer" class="fa fa-save"></i>
+			</a>
+		</li>
+	<?php endif?>
+	
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">

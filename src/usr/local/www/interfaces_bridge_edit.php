@@ -438,14 +438,14 @@ $section->addInput(new Form_Input(
 	'Cache Size',
 	'text',
 	$pconfig['maxaddr']
-))->setHelp('Set the size of the bridge address cache. The default is 100 entries');
+))->setHelp('Set the size of the bridge address cache. The default is 2000 entries');
 
 $section->addInput(new Form_Input(
 	'timeout',
 	'Cache expire time',
 	'text',
 	$pconfig['timeout']
-))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 240 seconds');
+))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 1200 seconds');
 
 $spanlist = build_port_list($pconfig['span']);
 

@@ -23,7 +23,13 @@
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/jquery/pfSense.js"></script>
 	<script src="/jquery/pfSenseHelpers.js"></script>
+<?php
+	if (!isset($nosorting)) {
+?>
 	<script src="/sortable/sortable.js"></script>
+<?php
+	}
+?>
 	<script type="text/javascript">
 	//<![CDATA[
 		// Un-hide the "Top of page" icons if the page is larger than the window

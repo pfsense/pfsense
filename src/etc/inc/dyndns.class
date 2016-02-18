@@ -224,7 +224,7 @@
 
 			// Ensure that we were able to lookup the IP
 			if (!is_ipaddr($this->_dnsIP)) {
-				log_error(sprintf(gettext('Dynamic DNS (%s$1) There was an error trying to determine the public IP for interface - %2$s(%3$s). Probably interface is not a WAN interface.'), $this->_FQDN, $dnsIf, $this->_if));
+				log_error(sprintf(gettext('Dynamic DNS (%1$s) There was an error trying to determine the public IP for interface - %2$s(%3$s). Probably interface is not a WAN interface.'), $this->_FQDN, $dnsIf, $this->_if));
 				unlock($dyndnslck);
 				return;
 			}
@@ -301,7 +301,7 @@
 			}
 
 			if (strstr($this->_dnsRequestIf, "_vip")) {
-				$parentif = link_carp_interface_to_parent($this->_dnsRequestIf);
+				$parentif = get_configured_vip_interface($this->_dnsRequestIf);
 				$realparentif = convert_friendly_interface_to_real_interface_name($parentif);
 			} else {
 				$realparentif = $this->_dnsRequestIf;

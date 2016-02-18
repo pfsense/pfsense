@@ -265,6 +265,4 @@ if (empty($entries)) {
 <?php
 }
 
-$nosorting = TRUE;
-
 include("foot.inc");

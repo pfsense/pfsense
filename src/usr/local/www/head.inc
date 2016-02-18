@@ -473,7 +473,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
-			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available Widgets")?>">
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
 				<i class="fa fa-plus icon-pointer"></i>
 			</a>
 		</li>
@@ -489,7 +489,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 	
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
-			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log Filter")?>">
+			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log filter")?>">
 				<i class="fa fa-filter icon-pointer"></i>
 			</a>
 		</li>
@@ -497,7 +497,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if ($system_logs_manage_log_form_hidden): ?>
 		<li>
-			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage Log")?>">
+			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage log")?>">
 				<i class="fa fa-wrench icon-pointer"></i>
 			</a>
 		</li>
@@ -621,7 +621,7 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal"><?=gettext("Close")?></button>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark all as read")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark All as Read")?></button>
 			</div>
 		</div>
 	</div>

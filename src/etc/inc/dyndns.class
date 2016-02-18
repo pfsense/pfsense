@@ -1613,12 +1613,12 @@
 			}
 
 			if ($this->_useIPv6 == true) {
-				$ip_address = find_interface_ipv6($this->_if);
+				$ip_address = get_interface_ipv6($this->_if);
 				if (!is_ipaddrv6($ip_address)) {
 					return 0;
 				}
 			} else {
-				$ip_address = find_interface_ip($this->_if);
+				$ip_address = get_interface_ip($this->_if);
 				if (!is_ipaddr($ip_address)) {
 					return 0;
 				}

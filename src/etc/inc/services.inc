@@ -354,7 +354,7 @@ function services_radvd_configure($blacklist = array()) {
 
 	/* write radvd.conf */
 	if (!@file_put_contents("{$g['varetc_path']}/radvd.conf", $radvdconf)) {
-		log_error("Error: cannot open radvd.conf in services_radvd_configure().\n");
+		log_error(gettext("Error: cannot open radvd.conf in services_radvd_configure()."));
 		if (platform_booting()) {
 			printf("Error: cannot open radvd.conf in services_radvd_configure().\n");
 		}
@@ -371,7 +371,7 @@ function services_radvd_configure($blacklist = array()) {
 		/* we need to shut down the radvd cleanly, it will send out the prefix
 		 * information with a lifetime of 0 to notify clients of a (possible) new prefix */
 		if (isvalidpid("{$g['varrun_path']}/radvd.pid")) {
-			log_error("Shutting down Router Advertisment daemon cleanly");
+			log_error(gettext("Shutting down Router Advertisment daemon cleanly"));
 			killbypid("{$g['varrun_path']}/radvd.pid");
 			@unlink("{$g['varrun_path']}/radvd.pid");
 		}
@@ -1216,7 +1216,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1", $dhcprestore, $dhcpreturn);
 				$dhcprestore = implode(" ", $dhcprestore);
 				if ($dhcpreturn <> 0) {
-					log_error("DHCP leases v6 restore failed exited with $dhcpreturn, the error is: $dhcprestore\n");
+					log_error(sprintf(gettext('DHCP leases v6 restore failed exited with %1$s, the error is: %2$s'), $dhcpreturn, $dhcprestore));
 				}
 			}
 		}
@@ -1678,7 +1678,7 @@ function services_dhcrelay_configure() {
 	 */
 	$srvips = explode(",", $dhcrelaycfg['server']);
 	if (!is_array($srvips)) {
-		log_error("No destination IP has been configured!");
+		log_error(gettext("No destination IP has been configured!"));
 		return;
 	}
 
@@ -1751,7 +1751,7 @@ function services_dhcrelay_configure() {
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs)) {
-		log_error("No suitable interface found for running dhcrelay!");
+		log_error(gettext("No suitable interface found for running dhcrelay!"));
 		return; /* XXX */
 	}
 
@@ -1875,7 +1875,7 @@ function services_dhcrelay6_configure() {
 
 	/* fire up dhcrelay */
 	if (empty($dhcrelayifs) || empty($srvifaces)) {
-		log_error("No suitable interface found for running dhcrelay -6!");
+		log_error(gettext("No suitable interface found for running dhcrelay -6!"));
 		return; /* XXX */
 	}
 
@@ -2237,7 +2237,7 @@ read := "{$config['snmpd']['rocommunity']}"
 
 EOD;
 
-/* No docs on what write strings do there for disable for now.
+/* No docs on what write strings do there so disable for now.
 		if (isset($config['snmpd']['rwenable']) && preg_match('/^\S+$/', $config['snmpd']['rwcommunity'])) {
 			$snmpdconf .= <<<EOD
 # write string
@@ -2277,7 +2277,7 @@ begemotSnmpdCommunityString.0.1 = $(read)
 
 EOD;
 
-/* No docs on what write strings do there for disable for now.
+/* No docs on what write strings do there so disable for now.
 		if (isset($config['snmpd']['rwcommunity']) && preg_match('/^\S+$/', $config['snmpd']['rwcommunity'])) {
 			$snmpdconf .= <<<EOD
 begemotSnmpdCommunityString.0.2 = $(write)
@@ -2503,12 +2503,12 @@ EOD;
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
-						$notify_text .= sprintf(gettext("DynDNS updated IP Address (A) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
+						$notify_text .= sprintf(gettext('DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
 						@file_put_contents($cacheFile, "{$wanip}|{$currentTime}");
-						log_error("phpDynDNS: updating cache file {$cacheFile}: {$wanip}");
+						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $cacheFile, $wanip));
 						$need_update = true;
 					} else {
-						log_error("phpDynDNS: Not updating {$dnsupdate['host']} A record because the IP address has not changed.");
+						log_error(sprintf(gettext("phpDynDNS: Not updating %s A record because the IP address has not changed."), $dnsupdate['host']));
 					}
 				} else {
 					@unlink($cacheFile);
@@ -2519,12 +2519,12 @@ EOD;
 					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
-						$notify_text .= sprintf(gettext("DynDNS updated IPv6 Address (AAAA) for {$dnsupdate['host']} on %s (%s) to %s"), convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
+						$notify_text .= sprintf(gettext('DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
 						@file_put_contents("{$cacheFile}.ipv6", "{$wanipv6}|{$currentTime}");
-						log_error("phpDynDNS: updating cache file {$cacheFile}.ipv6: {$wanipv6}");
+						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s.ipv6: %2$s'), $cacheFile, $wanipv6));
 						$need_update = true;
 					} else {
-						log_error("phpDynDNS: Not updating {$dnsupdate['host']} AAAA record because the IPv6 address has not changed.");
+						log_error(sprintf(gettext("phpDynDNS: Not updating %s AAAA record because the IPv6 address has not changed."), $dnsupdate['host']));
 					}
 				} else {
 					@unlink("{$cacheFile}.ipv6");

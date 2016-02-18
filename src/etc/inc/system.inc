@@ -450,7 +450,7 @@ function system_hosts_generate() {
 	}
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
-		log_error("Error: cannot open hosts file in system_hosts_generate().\n");
+		log_error(gettext("Error: cannot open hosts file in system_hosts_generate()."));
 		return 1;
 	}
 	fwrite($fd, $hosts);
@@ -600,7 +600,7 @@ function system_routing_configure($interface = "") {
 		foreach ($config['installedpackages']['olsrd']['config'] as $olsrd) {
 			if (($olsrd['enabledyngw'] == "on") && ($olsrd['enable'] == "on")) {
 				$dont_add_route = true;
-				log_error(sprintf(gettext("Not adding default route because OLSR dynamic gateway is enabled.")));
+				log_error(gettext("Not adding default route because OLSR dynamic gateway is enabled."));
 				break;
 			}
 		}
@@ -628,7 +628,7 @@ function system_routing_configure($interface = "") {
 		if (!empty($interface) && $interface != $interfacegw) {
 			;
 		} else if (is_ipaddrv4($gatewayip)) {
-			log_error("ROUTING: setting default route to $gatewayip");
+			log_error(sprintf(gettext("ROUTING: setting default route to %s"), $gatewayip));
 			mwexec("/sbin/route change -inet default " . escapeshellarg($gatewayip));
 		}
 
@@ -639,7 +639,7 @@ function system_routing_configure($interface = "") {
 			if (is_linklocal($gatewayipv6) && !strpos($gatewayipv6, '%')) {
 				$ifscope = "%{$defaultifv6}";
 			}
-			log_error("ROUTING: setting IPv6 default route to {$gatewayipv6}{$ifscope}");
+			log_error(sprintf(gettext("ROUTING: setting IPv6 default route to %s"), $gatewayipv6 . $ifscope));
 			mwexec("/sbin/route change -inet6 default " . escapeshellarg("{$gatewayipv6}{$ifscope}"));
 		}
 	}
@@ -1093,11 +1093,11 @@ function system_webgui_create_certificate() {
 		$config['cert'] = array();
 	}
 	$a_cert =& $config['cert'];
-	log_error("Creating SSL Certificate for this host");
+	log_error(gettext("Creating SSL Certificate for this host"));
 
 	$cert = array();
 	$cert['refid'] = uniqid();
-	$cert['descr'] = gettext("webConfigurator default ({$cert['refid']})");
+	$cert['descr'] = sprintf(gettext("webConfigurator default (%s)"), $cert['refid']);
 
 	$dn = array(
 		'countryName' => "US",
@@ -1109,7 +1109,7 @@ function system_webgui_create_certificate() {
 	$old_err_level = error_reporting(0); /* otherwise openssl_ functions throw warnings directly to a page screwing menu tab */
 	if (!cert_create($cert, null, 2048, 2000, $dn, "self-signed", "sha256")) {
 		while ($ssl_err = openssl_error_string()) {
-			log_error("Error creating WebGUI Certificate: openssl library returns: " . $ssl_err);
+			log_error(sprintf(gettext("Error creating WebGUI Certificate: openssl library returns: %s"), $ssl_err));
 		}
 		error_reporting($old_err_level);
 		return null;
@@ -1118,7 +1118,7 @@ function system_webgui_create_certificate() {
 
 	$a_cert[] = $cert;
 	$config['system']['webgui']['ssl-certref'] = $cert['refid'];
-	write_config(gettext("Generated new self-signed HTTPS certificate ({$cert['refid']})"));
+	write_config(sprintf(gettext("Generated new self-signed HTTPS certificate (%s)"), $cert['refid']));
 	return $cert;
 }
 
@@ -1809,7 +1809,7 @@ function system_ntp_configure($start_ntpd=true) {
 
 	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
-		log_error("Could not open {$g['varetc_path']}/ntpd.conf for writing");
+		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), $g['varetc_path']));
 		return;
 	}
 

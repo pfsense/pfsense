@@ -543,7 +543,7 @@ function WakeOnLan($addr, $mac) {
 		}
 		$e = socket_sendto($s, $msg, strlen($msg), 0, $addr, 2050);
 		socket_close($s);
-		log_error(sprintf(gettext('Magic Packet sent (%1$s) to {%2$s} MAC=%3$s'), $e, $addr, $mac));
+		log_error(sprintf(gettext('Magic Packet sent (%1$s) to (%2$s) MAC=%3$s'), $e, $addr, $mac));
 		return true;
 	}
 
@@ -1586,7 +1586,7 @@ function load_crypto() {
 	}
 
 	if (!empty($config['system']['crypto_hardware']) && !is_module_loaded($config['system']['crypto_hardware'])) {
-		log_error("Loading {$config['system']['crypto_hardware']} cryptographic accelerator module.");
+		log_error(sprintf(gettext("Loading %s cryptographic accelerator module."), $config['system']['crypto_hardware']));
 		mwexec("/sbin/kldload {$config['system']['crypto_hardware']}");
 	}
 }
@@ -1603,7 +1603,7 @@ function load_thermal_hardware() {
 	}
 
 	if (!empty($config['system']['thermal_hardware']) && !is_module_loaded($config['system']['thermal_hardware'])) {
-		log_error("Loading {$config['system']['thermal_hardware']} thermal monitor module.");
+		log_error(sprintf(gettext("Loading %s thermal monitor module."), $config['system']['thermal_hardware']));
 		mwexec("/sbin/kldload {$config['system']['thermal_hardware']}");
 	}
 }
@@ -1679,7 +1679,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	if ($http_code == 200) {
 		return true;
 	} else {
-		log_error("Download file failed with status code $http_code. URL: $url");
+		log_error(sprintf(gettext('Download file failed with status code %1$s. URL: %2$s'), $http_code, $url));
 		unlink_if_exists($destination);
 		return false;
 	}
@@ -1734,7 +1734,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	if ($http_code == 200) {
 		return true;
 	} else {
-		log_error("Download file failed with status code $http_code. URL: $url");
+		log_error(sprintf(gettext('Download file failed with status code %1$s. URL: %2$s'), $http_code, $url));
 		unlink_if_exists($destination);
 		return false;
 	}
@@ -1931,7 +1931,7 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1) {
 
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
-		log_error(gettext("Could not process aliases from alias: {$filename}"));
+		log_error(sprintf(gettext("Could not process aliases from alias: %s"), $filename));
 		return null;
 	}
 	$items = array();
@@ -2022,13 +2022,13 @@ function process_alias_tgz($temp_filename) {
 	/* foreach through all extracted files and build up aliases file */
 	$fd = @fopen("{$temp_filename}/aliases", "w");
 	if (!$fd) {
-		log_error(gettext("Could not open {$temp_filename}/aliases for writing!"));
+		log_error(sprintf(gettext("Could not open %s/aliases for writing!"), $temp_filename));
 		return false;
 	}
 	foreach ($files_to_process as $f2p) {
 		$tmpfd = @fopen($f2p, 'r');
 		if (!$tmpfd) {
-			log_error(gettext("The following file could not be read {$f2p} from {$temp_filename}"));
+			log_error(sprintf(gettext('The following file could not be read %1$s from %2$s'), $f2p, $temp_filename));
 			continue;
 		}
 		while (($tmpbuf = fread($tmpfd, 65536)) !== FALSE) {
@@ -2837,7 +2837,7 @@ function huawei_rssi_to_string($rssi) {
 }
 
 function huawei_mode_to_string($mode, $submode) {
-	$modes[0] = "None";
+	$modes[0] = gettext("None");
 	$modes[1] = "AMPS";
 	$modes[2] = "CDMA";
 	$modes[3] = "GSM/GPRS";
@@ -2845,7 +2845,7 @@ function huawei_mode_to_string($mode, $submode) {
 	$modes[5] = "WCDMA";
 	$modes[6] = "GPS";
 
-	$submodes[0] = "No Service";
+	$submodes[0] = gettext("No Service");
 	$submodes[1] = "GSM";
 	$submodes[2] = "GPRS";
 	$submodes[3] = "EDGE";
@@ -2855,28 +2855,28 @@ function huawei_mode_to_string($mode, $submode) {
 	$submodes[7] = "HSDPA+HSUPA";
 	$submodes[8] = "TD-SCDMA";
 	$submodes[9] = "HSPA+";
-	$string = "{$modes[$mode]}, {$submodes[$submode]} Mode";
+	$string = "{$modes[$mode]}, {$submodes[$submode]} " . gettext("Mode");
 	return $string;
 }
 
 function huawei_service_to_string($state) {
-	$modes[0] = "No";
-	$modes[1] = "Restricted";
-	$modes[2] = "Valid";
-	$modes[3] = "Restricted Regional";
-	$modes[4] = "Powersaving";
-	$string = "{$modes[$state]} Service";
+	$modes[0] = gettext("No Service");
+	$modes[1] = gettext("Restricted Service");
+	$modes[2] = gettext("Valid Service");
+	$modes[3] = gettext("Restricted Regional Service");
+	$modes[4] = gettext("Powersaving Service");
+	$string = $modes[$state];
 	return $string;
 }
 
 function huawei_simstate_to_string($state) {
-	$modes[0] = "Invalid SIM/locked";
-	$modes[1] = "Valid SIM";
-	$modes[2] = "Invalid SIM CS";
-	$modes[3] = "Invalid SIM PS";
-	$modes[4] = "Invalid SIM CS/PS";
-	$modes[255] = "Missing SIM";
-	$string = "{$modes[$state]} State";
+	$modes[0] = gettext("Invalid SIM/locked State");
+	$modes[1] = gettext("Valid SIM State");
+	$modes[2] = gettext("Invalid SIM CS State");
+	$modes[3] = gettext("Invalid SIM PS State");
+	$modes[4] = gettext("Invalid SIM CS/PS State");
+	$modes[255] = gettext("Missing SIM State");
+	$string = $modes[$state];
 	return $string;
 }
 
@@ -2885,8 +2885,8 @@ function zte_rssi_to_string($rssi) {
 }
 
 function zte_mode_to_string($mode, $submode) {
-	$modes[0] = "No Service";
-	$modes[1] = "Limited Service";
+	$modes[0] = gettext("No Service");
+	$modes[1] = gettext("Limited Service");
 	$modes[2] = "GPRS";
 	$modes[3] = "GSM";
 	$modes[4] = "UMTS";
@@ -2897,25 +2897,25 @@ function zte_mode_to_string($mode, $submode) {
 	$submodes[1] = "PS_ONLY";
 	$submodes[2] = "CS_PS";
 	$submodes[3] = "CAMPED";
-	$string = "{$modes[$mode]}, {$submodes[$submode]} Mode";
+	$string = "{$modes[$mode]}, {$submodes[$submode]} " . gettext("Mode");
 	return $string;
 }
 
-function zte_service_to_string($state) {
-	$modes[0] = "Initializing";
-	$modes[1] = "Network Lock error";
-	$modes[2] = "Network Locked";
-	$modes[3] = "Unlocked or correct MCC/MNC";
-	$string = "{$modes[$state]} Service";
+function zte_service_to_string($service) {
+	$modes[0] = gettext("Initializing Service");
+	$modes[1] = gettext("Network Lock error Service");
+	$modes[2] = gettext("Network Locked Service");
+	$modes[3] = gettext("Unlocked or correct MCC/MNC Service");
+	$string = $modes[$service];
 	return $string;
 }
 
 function zte_simstate_to_string($state) {
-	$modes[0] = "No action";
-	$modes[1] = "Network lock";
-	$modes[2] = "(U)SIM card lock";
-	$modes[3] = "Network Lock and (U)SIM card Lock";
-	$string = "{$modes[$state]} State";
+	$modes[0] = gettext("No action State");
+	$modes[1] = gettext("Network lock State");
+	$modes[2] = gettext("(U)SIM card lock State");
+	$modes[3] = gettext("Network Lock and (U)SIM card Lock State");
+	$string = $modes[$state];
 	return $string;
 }
 

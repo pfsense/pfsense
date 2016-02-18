@@ -546,7 +546,7 @@ if ('' != ($link = get_shortcut_log_link($shortcut_section, false))) {
 	</header>
 <?php
 /* if upgrade in progress, alert user */
-if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' && platform_booting())) {
+if (is_subsystem_dirty('packagelock') || (file_exists('/conf/needs_package_sync') && platform_booting())) {
 	if (file_exists('/conf/needs_package_sync') && platform_booting()) {
 		$warning_text = sprintf(gettext("<p>%s is booting, then packages will be reinstalled in the background.</p><p>Do not make changes in the GUI until this is complete.</p>"), $g['product_name']);
 	} else {

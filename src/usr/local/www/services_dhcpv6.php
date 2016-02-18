@@ -215,7 +215,8 @@ if ($_POST) {
 			    $_POST['prefixrange_length']);
 			$netmask = Net_IPv6::compress($netmask);
 
-			if ($netmask != Net_IPv6::compress($_POST['prefixrange_from'])) {
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_from']))) {
 				$input_errors[] = sprintf(gettext(
 				    "Prefix Delegation From address is not a valid IPv6 Netmask for %s"),
 				    $netmask . '/' . $_POST['prefixrange_length']);
@@ -225,7 +226,8 @@ if ($_POST) {
 			    $_POST['prefixrange_length']);
 			$netmask = Net_IPv6::compress($netmask);
 
-			if ($netmask != Net_IPv6::compress($_POST['prefixrange_to'])) {
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_to']))) {
 				$input_errors[] = sprintf(gettext(
 				    "Prefix Delegation To address is not a valid IPv6 Netmask for %s"),
 				    $netmask . '/' . $_POST['prefixrange_length']);

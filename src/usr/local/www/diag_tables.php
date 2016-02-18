@@ -226,6 +226,17 @@ if (empty($entries)) {
 				</thead>
 				<tbody>
 <?php
+		// This is a band-aid for a yet to be root caused performance issue with large tables.  Suspected is css and/or sorting.
+ 		if (count($entries) > 3000) {
+			print "<tr><td colspan='2'><pre>";
+			foreach ($entries as $entry) {
+				$entry = trim($entry);
+					print $entry . "\n";
+			}
+			print "</pre></td></tr>";
+		} else {
+?>
+<?php
 		foreach ($entries as $entry):
 			$entry = trim($entry);
 ?>
@@ -240,6 +251,7 @@ if (empty($entries)) {
 						</td>
 					</tr>
 <?php endforeach ?>
+<?php } ?>
 				</tbody>
 			</table>
 		</div>

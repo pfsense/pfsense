@@ -69,7 +69,7 @@ require_once("config.inc");
 
 // Setting DEBUG to true causes the dangerous stuff on this page to be simulated rather than executed.
 // MUST be set to false for production of course
-define(DEBUG, false);
+define('DEBUG', false);
 
 $pgtitle = array(gettext("Diagnostics"), gettext("NanoBSD"));
 include("head.inc");

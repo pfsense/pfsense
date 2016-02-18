@@ -56,9 +56,9 @@
  *
  */
 
-define(VIP_ALL, 1);
-define(VIP_CARP, 2);
-define(VIP_IPALIAS, 3);
+define('VIP_ALL', 1);
+define('VIP_CARP', 2);
+define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
 function killbypid($pidfile) {

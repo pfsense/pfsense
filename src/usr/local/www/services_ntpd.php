@@ -61,7 +61,7 @@
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
-define(NUMTIMESERVERS, 10);		// The maximum number of configurable time servers
+define('NUMTIMESERVERS', 10);		// The maximum number of configurable time servers
 require("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");

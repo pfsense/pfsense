@@ -688,6 +688,7 @@ function interface_bridge_configure_advanced($bridge) {
 }
 
 function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = false) {
+	global $config;
 
 	if (!does_interface_exist($bridgeif) || !does_interface_exist($interface)) {
 		return;
@@ -705,7 +706,7 @@ function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = fals
 	}
 
 	pfSense_bridge_add_member($bridgeif, $interface);
-	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+	if (is_array($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if ($bridgeif == $bridge['bridgeif']) {
 				interface_bridge_configure_stp($bridge);

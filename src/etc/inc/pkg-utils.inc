@@ -947,7 +947,7 @@ function package_reinstall_all() {
 
 	/* During boot after upgrade, wait for internet connection */
 	if ($upgrade) {
-		update_status(gettext("Waiting for internet connection to update pkg metadata and fini package reinstallation"));
+		update_status(gettext("Waiting for internet connection to update pkg metadata and finish package reinstallation"));
 		while (true) {
 			if (pkg_update(true)) {
 				break;

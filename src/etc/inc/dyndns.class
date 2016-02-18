@@ -224,7 +224,7 @@
 
 			// Ensure that we were able to lookup the IP
 			if (!is_ipaddr($this->_dnsIP)) {
-				log_error(sprintf(gettext('Dynamic DNS (%1$s) There was an error trying to determine the public IP for interface - %2$s(%3$s). Probably interface is not a WAN interface.'), $this->_FQDN, $dnsIf, $this->_if));
+				log_error(sprintf(gettext('Dynamic DNS (%1$s) There was an error trying to determine the public IP for interface - %2$s (%3$s %4$s).'), $this->_FQDN, $dnsIf, $this->_if, $this->_dnsIP));
 				unlock($dyndnslck);
 				return;
 			}

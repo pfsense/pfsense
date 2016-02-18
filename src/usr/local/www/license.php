@@ -117,7 +117,7 @@ include("head.inc");
 				<strong>PF</strong> (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)
 			</li>
 			<li class="list-group-item">
-				<strong>MPD</strong> - Multi-link PPP daemon for FreeBSD (<a href="http://www.dellroad.org/mpd" target="_blank">http://www.dellroad.org/mpd</a>)<br />
+				<strong>MPD</strong> - Multi-link PPP daemon for FreeBSD (<a href="http://mpd.sourceforge.net/" target="_blank">http://mpd.sourceforge.net/</a>)<br />
 				<?=gettext("Copyright"); ?> &copy; 2003-2004, Archie L. Cobbs, Michael Bretterklieber, Alexander Motin<br />
 				<?=gettext("All rights reserved.")?>
 			</li>
@@ -130,19 +130,8 @@ include("head.inc");
 				<?=gettext("Copyright"); ?> &copy; 2000-2012 Simon Kelley.
 			</li>
 			<li class="list-group-item">
-				<strong>IPsec-Tools</strong> (<a href="http://ipsec-tools.sourceforge.net/" target="_blank">http://ipsec-tools.sourceforge.net/</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2002 WIDE Project. All rights reserved.")?>
-			</li>
-			<li class="list-group-item">
-				<strong>msntp</strong> (<a href="http://www.hpcf.cam.ac.uk/export" target="_blank">http://www.hpcf.cam.ac.uk/export</a>)<br />
-				<?=gettext("Copyright"); ?> &copy;<?=gettext(" 1996, 1997, 2000 N.M. Maclaren, University of Cambridge. All rights reserved.")?>
-			</li>
-			<li class="list-group-item">
-				<strong>UCD-SNMP</strong> (<a href="http://www.ece.ucdavis.edu/ucd-snmp" target="_blank">http://www.ece.ucdavis.edu/ucd-snmp</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; <?=gettext("1989, 1991, 1992 by Carnegie Mellon University.")?><br />
-				<?=gettext("Copyright"); ?> &copy; <?=gettext("1996, 1998-2000 The Regents of the University of California. All rights reserved")?>.<br />
-				<?=gettext("Copyright"); ?> &copy; <?=gettext("2001-2002, Network Associates Technology, Inc. All rights reserved.")?><br />
-				<?=gettext("Portions of this code are copyright")?> &copy; <?=gettext("2001-2002, Cambridge Broadband Ltd. All rights reserved.")?>
+				<strong>strongSwan</strong> (<a href="https://www.strongswan.org/" target="_blank">https://www.strongswan.org</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; <?=gettext("2005-2016 University of Applied Sciences Rapperswil")?>
 			</li>
 			<li class="list-group-item">
 				<strong>choparp</strong> (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br />

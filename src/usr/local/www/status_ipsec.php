@@ -78,7 +78,7 @@ if ($_GET['act'] == 'connect') {
 	if (ctype_digit($_GET['ikeid'])) {
 		$ph1ent = ipsec_get_phase1($_GET['ikeid']);
 		if (!empty($ph1ent)) {
-			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1') {
+			if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == 'ikev1' || isset($ph1ent['splitconn'])) {
 				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");

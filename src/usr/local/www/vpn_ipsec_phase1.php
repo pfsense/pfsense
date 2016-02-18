@@ -161,6 +161,10 @@ if (isset($p1index) && $a_phase1[$p1index]) {
 		$pconfig['dpd_maxfail'] = $a_phase1[$p1index]['dpd_maxfail'];
 	}
 
+	if (isset($a_phase1[$p1index]['splitconn'])) {
+		$pconfig['splitconn'] = true;
+	}
+
 	if (isset($a_phase1[$p1index]['tfc_enable'])) {
 		$pconfig['tfc_enable'] = true;
 	}
@@ -512,6 +516,12 @@ if ($_POST) {
 		if (isset($pconfig['dpd_enable'])) {
 			$ph1ent['dpd_delay'] = $pconfig['dpd_delay'];
 			$ph1ent['dpd_maxfail'] = $pconfig['dpd_maxfail'];
+		}
+
+		if (isset($pconfig['splitconn'])) {
+			$ph1ent['splitconn'] = true;
+		} else {
+			unset($ph1ent['splitconn']);
 		}
 
 		if (isset($pconfig['tfc_enable'])) {
@@ -884,6 +894,13 @@ $section->addInput(new Form_Select(
 	array('on' => gettext('Enable'), 'off' => gettext('Disable'))
 ))->setHelp('Set this option to control the use of MOBIKE');
 
+$section->addInput(new Form_Checkbox(
+	'splitconn',
+	'Split connections',
+	'Enable this to split connection entries with multiple phase 2 configurations. Required for remote endpoints that support only a single traffic selector per child SA.',
+	$pconfig['splitconn']
+));
+
 /* FreeBSD doesn't yet have TFC support. this is ready to go once it does
 https://redmine.pfsense.org/issues/4688
 
@@ -981,6 +998,7 @@ events.push(function() {
 			hideInput('nat_traversal', true);
 			//hideCheckbox('tfc_enable', false);
 			hideCheckbox('reauth_enable', false);
+			hideCheckbox('splitconn', false);
 		} else {
 			hideInput('mode', false);
 			hideInput('mobike', true);
@@ -988,6 +1006,7 @@ events.push(function() {
 			//hideCheckbox('tfc_enable', true);
 			//hideInput('tfc_bytes', true);
 			hideCheckbox('reauth_enable', true);
+			hideCheckbox('splitconn', true);
 		}
 	}
 

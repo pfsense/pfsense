@@ -1390,7 +1390,7 @@ EOD;
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 
-			if (!isset($ph1ent['mobile']) && $keyexchange == 'ikev1') {
+			if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {

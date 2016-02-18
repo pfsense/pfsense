@@ -99,9 +99,12 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
+		$valid_if_ipaddrv6 = (bool) (is_ipaddrv6($oc['ipaddrv6']) &&
+		    !is_linklocal($oc['ipaddrv6']));
 
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		if ((!is_array($config['dhcpdv6'][$ifent]) ||
+		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+		    !$valid_if_ipaddrv6) {
 			continue;
 		}
 		$if = $ifent;

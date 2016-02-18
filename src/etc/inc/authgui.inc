@@ -264,7 +264,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2 class="panel-title"><?=gettext("Login to pfSense")?></h2>
+						<h2 class="panel-title"><?=sprintf(gettext("Login to %s"), $g['product_name'])?></h2>
 					</div>
 
 					<div class="panel-body">

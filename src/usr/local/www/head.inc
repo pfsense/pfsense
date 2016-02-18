@@ -558,8 +558,6 @@ if (is_subsystem_dirty('packagelock') || file_exists('/conf/needs_package_sync' 
 	print_info_box($warning_text);
 }
 
-$pgtitle_output = true;
-
 /*	If this page is being remotely managed then do not allow the loading of the contents. */
 if ($config['remote_managed_pages']['item']) {
 	foreach ($config['remote_managed_pages']['item'] as $rmp) {

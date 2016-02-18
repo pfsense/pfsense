@@ -530,7 +530,7 @@ class altq_root_queue {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
-			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
+			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 
@@ -667,7 +667,7 @@ class altq_root_queue {
 			}
 
 			if ($default == false) {
-				$error = "SHAPER: no default queue specified for interface ". $this->GetInterface() . ". The interface queue will be enforced as default.";
+				$error = sprintf(gettext("SHAPER: no default queue specified for interface %s."), $this->GetInterface()) . " " . gettext("The interface queue will be enforced as default.");
 				file_notice("Shaper", $error, "Error occurred", "");
 				unset($error);
 				return "\n";
@@ -1168,10 +1168,10 @@ class priq_queue {
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
 		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
-			$input_errors[] = "Bandwidth must be an integer.";
+			$input_errors[] = gettext("Bandwidth must be an integer.");
 		}
 		if ($data['bandwidth'] < 0) {
-			$input_errors[] = "Bandwidth cannot be negative.";
+			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
@@ -1700,7 +1700,7 @@ class hfsc_queue extends priq_queue {
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
-			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
+			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 
@@ -2527,7 +2527,7 @@ class cbq_queue extends priq_queue {
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
-			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
+			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 		switch ($q->GetBwscale()) {
@@ -3466,7 +3466,7 @@ class dnpipe_class extends dummynet_class {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
-			log_error("SHAPER: could not create queue " . $q->GetQname() . " on interface {$interface} because: " . print_r($input_errors, true));
+			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 		$number = dnqueue_find_nextnumber();

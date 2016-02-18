@@ -299,7 +299,7 @@ function get_services() {
 				$pconfig = array();
 				$pconfig['name'] = "captiveportal";
 				$pconfig['zone'] = $zone;
-				$pconfig['description'] = gettext("Captive Portal") . ": ".htmlspecialchars($setting['zone']);
+				$pconfig['description'] = gettext("Captive Portal") . ": " . htmlspecialchars($setting['zone']);
 				$services[] = $pconfig;
 			}
 		}
@@ -387,7 +387,7 @@ function get_services() {
 					$pconfig['mode'] = $mode;
 					$pconfig['id'] = $id;
 					$pconfig['vpnid'] = $setting['vpnid'];
-					$pconfig['description'] = gettext("OpenVPN") . " ".$mode.": ".htmlspecialchars($setting['description']);
+					$pconfig['description'] = gettext("OpenVPN") . " " . $mode . ": " . htmlspecialchars($setting['description']);
 					$services[] = $pconfig;
 				}
 			}

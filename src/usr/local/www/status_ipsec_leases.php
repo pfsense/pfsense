@@ -60,8 +60,6 @@
 ##|*MATCH=status_ipsec_leases.php*
 ##|-PRIV
 
-define(DEBUG, true); // Force dummy data for testing. Setting up a pFSense box to get real data is far too hard!
-
 require("guiconfig.inc");
 require("ipsec.inc");
 

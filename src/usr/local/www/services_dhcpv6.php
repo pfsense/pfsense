@@ -579,18 +579,14 @@ $f1 = new Form_Input(
 	null,
 	'text',
 	$pconfig['range_from']
-);
-
-$f1->setHelp('To');
+)->setHelp('From');
 
 $f2 = new Form_Input(
 	'range_to',
 	null,
 	'text',
 	$pconfig['range_to']
-);
-
-$f2->setHelp('From');
+)->setHelp('To');
 
 $group = new Form_Group('Range');
 
@@ -604,18 +600,15 @@ $f1 = new Form_Input(
 	null,
 	'text',
 	$pconfig['prefixrange_from']
-);
-
-$f1->setHelp('To');
+)->setHelp('From');
 
 $f2 = new Form_Input(
 	'prefixrange_to',
 	null,
 	'text',
 	$pconfig['prefixrange_to']
-);
+)->setHelp('To');
 
-$f2->setHelp('From');
 $group = new Form_Group('Prefix Delegation Range');
 
 $group->add($f1);

@@ -153,8 +153,12 @@ if (is_array($config['dhcpdv6'][$if])) {
 }
 
 if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
+	$trackifname = $config['interfaces'][$if]['track6-interface'];
+	$trackcfg = $config['interfaces'][$trackifname];
+	$ifcfgsn = 64 - $trackcfg['dhcp6-ia-pd-len'];
 	$ifcfgip = '::';
-	$ifcfgsn = 64;
+
+	$str_help_mask = dhcpv6_pd_str_help($ifcfgsn);
 } else {
 	$ifcfgip = get_interface_ipv6($if);
 	$ifcfgsn = get_interface_subnetv6($if);
@@ -244,16 +248,20 @@ if ($_POST) {
 			if (!is_ipaddrv6($_POST['range_from'])) {
 				$input_errors[] = gettext("A valid range must be specified.");
 			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
-			    !Net_IPv6::isInNetmask($_POST['range_from'], '::', 64)) {
-				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			    !Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
 			}
 		}
 		if ($_POST['range_to']) {
 			if (!is_ipaddrv6($_POST['range_to'])) {
 				$input_errors[] = gettext("A valid range must be specified.");
 			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
-			    !Net_IPv6::isInNetmask($_POST['range_to'], '::', 64)) {
-				$input_errors[] = gettext("The prefix (upper 64 bits) must be zero.  Use the form ::x:x:x:x");
+			    !Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
 			}
 		}
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway']))) {

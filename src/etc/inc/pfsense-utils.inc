@@ -2871,6 +2871,42 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 	    substr($suffix, $prefix_len));
 }
 
+function dhcpv6_pd_str_help($pdlen) {
+	$result = '';
+
+	switch ($pdlen) {
+	case 48:
+		$result = '::xxxx:xxxx:xxxx:xxxx:xxxx';
+		break;
+	case 52:
+		$result = '::xxx:xxxx:xxxx:xxxx:xxxx';
+		break;
+	case 56:
+		$result = '::xx:xxxx:xxxx:xxxx:xxxx';
+		break;
+	case 60:
+		$result = '::x:xxxx:xxxx:xxxx:xxxx';
+		break;
+	/*
+	 * XXX 63, 62 and 61 should use same mask of 60 but it would
+	 * we let user chose this bit it can end up out of PD network
+	 *
+	 * Leave this with the same of 64 for now until we find a way to
+	 * let user chose it. The side-effect is users with PD with one
+	 * of these lengths will not be able to setup DHCP server range
+	 * for full PD size, only for last /64 network
+	 */
+	case 61:
+	case 62:
+	case 63:
+	case 64:
+		$result = '::xxxx:xxxx:xxxx:xxxx';
+		break;
+	}
+
+	return $result;
+}
+
 function huawei_rssi_to_string($rssi) {
 	$dbm = array();
 	$i = 0;

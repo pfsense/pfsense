@@ -313,7 +313,7 @@ export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${FREEBSD_SRC_DIR}/release/pkg_repos"}
 export PKG_REPO_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}.conf.template"}
-export PKG_REPO_DEVEL_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-devel.conf.template"}
+export PKG_REPO_DEVEL_TEMPLATE=${PKG_REPO_DEVEL_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-devel.conf.template"}
 export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}
 
 export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"}

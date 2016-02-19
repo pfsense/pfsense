@@ -1344,6 +1344,12 @@ EOD;
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 
+		if ($ifcfgv6['ipaddrv6'] == 'track6') {
+			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
+			$trackcfg = $config['interfaces'][$trackifname];
+			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
+		}
+
 		if ($is_olsr_enabled == true) {
 			if ($dhcpv6ifconf['netmask']) {
 				$subnetmask = gen_subnet_maskv6($dhcpv6ifconf['netmask']);
@@ -1423,8 +1429,8 @@ EOD;
 		$range_from = $dhcpv6ifconf['range']['from'];
 		$range_to = $dhcpv6ifconf['range']['to'];
 		if ($ifcfgv6['ipaddrv6'] == 'track6') {
-			$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from);
-			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to);
+			$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from, $pdlen);
+			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to, $pdlen);
 		}
 
 		$dhcpdv6conf .= <<<EOD
@@ -1439,8 +1445,8 @@ EOD;
 		if (is_ipaddrv6($dhcpv6ifconf['dns6ip'])) {
 			$dns6ip = $dhcpv6ifconf['dns6ip'];
 			if ($ifcfgv6['ipaddrv6'] == 'track6' &&
-			    Net_IPv6::isInNetmask($dns6ip, '::', 64)) {
-				$dns6ip = merge_ipv6_delegated_prefix($ifcfgipv6, $dns6ip);
+			    Net_IPv6::isInNetmask($dns6ip, '::', $pdlen)) {
+				$dns6ip = merge_ipv6_delegated_prefix($ifcfgipv6, $dns6ip, $pdlen);
 			}
 			$dhcpdv6conf .= "	option dhcp6.name-servers {$dns6ip};\n";
 		}
@@ -1462,8 +1468,8 @@ EOD;
 					continue;
 				}
 				if ($ifcfgv6['ipaddrv6'] == 'track6' &&
-				    Net_IPv6::isInNetmask($ntpserver, '::', 64)) {
-					$ntpserver =merge_ipv6_delegated_prefix($ifcfgipv6, $ntpserver);
+				    Net_IPv6::isInNetmask($ntpserver, '::', $pdlen)) {
+					$ntpserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ntpserver, $pdlen);
 				}
 				$ntpservers[] = $ntpserver;
 			}
@@ -1491,8 +1497,8 @@ EOD;
 		if ($dhcpv6ifconf['ldap'] <> "") {
 			$ldapserver = $dhcpv6ifconf['ldap'];
 			if ($ifcfgv6['ipaddrv6'] == 'track6' &&
-			    Net_IPv6::isInNetmask($ldapserver, '::', 64)) {
-				$ldapserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ldapserver);
+			    Net_IPv6::isInNetmask($ldapserver, '::', $pdlen)) {
+				$ldapserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ldapserver, $pdlen);
 			}
 			$dhcpdv6conf .= "	option ldap-server \"{$ldapserver}\";\n";
 		}
@@ -1519,7 +1525,7 @@ EOD;
 				if ($sm['ipaddrv6']) {
 					$ipaddrv6 = $sm['ipaddrv6'];
 					if ($ifcfgv6['ipaddrv6'] == 'track6') {
-						$ipaddrv6 = merge_ipv6_delegated_prefix($ifcfgipv6, $ipaddrv6);
+						$ipaddrv6 = merge_ipv6_delegated_prefix($ifcfgipv6, $ipaddrv6, $pdlen);
 					}
 					$dhcpdv6conf .= "	fixed-address6 {$ipaddrv6};\n";
 				}

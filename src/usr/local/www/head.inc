@@ -179,9 +179,10 @@ function return_ext_menu($section) {
 	return $extarray;
 }
 
-function output_menu($arrayitem, $target = null) {
+function output_menu($arrayitem, $target = null, $section = "") {
 	foreach ($arrayitem as $item) {
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout") {
+		/* If the user has access to help pages, also show the full help menu. See #5909 */
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section = "Help") && isAllowedPage("help.php"))) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -431,7 +432,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'])?></ul>
+					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
 				</li>
 			<?php endforeach?>
 			</ul>

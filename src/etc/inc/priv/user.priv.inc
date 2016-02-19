@@ -8,7 +8,7 @@ $priv_list['user-services-captiveportal-login']['descr'] = gettext("Indicates wh
 
 $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = gettext("WebCfg - Help pages");
-$priv_list['page-help-all']['descr'] = gettext("Show all items on help menu");
+$priv_list['page-help-all']['descr'] = gettext("Show all items on help menu and allow access to Help shortcut links");
 $priv_list['page-help-all']['match'] = array();
 $priv_list['page-help-all']['match'][] = "*help.php";
 

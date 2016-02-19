@@ -74,6 +74,12 @@ $allowedpages = getAllowedPages($_SESSION['Username'], $_SESSION['user_radius_at
 /*
  * redirect to first allowed page if requesting a wrong url
  */
+
+/* Fix this up otherwise the privilege check will fail. See Redmine #5909. */
+if ($_SERVER['REQUEST_URI'] == "/") {
+	$_SERVER['REQUEST_URI'] = "/index.php";
+}
+
 if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);

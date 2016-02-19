@@ -91,62 +91,62 @@ function vpn_logging_cfgtxt() {
 /* include all configuration functions */
 function vpn_ipsec_convert_to_modp($index) {
 
-	$convertion = "";
+	$conversion = "";
 	switch ($index) {
 		case '1':
-			$convertion = "modp768";
+			$conversion = "modp768";
 			break;
 		case '2':
-			$convertion = "modp1024";
+			$conversion = "modp1024";
 			break;
 		case '5':
-			$convertion = "modp1536";
+			$conversion = "modp1536";
 			break;
 		case '14':
-			$convertion = "modp2048";
+			$conversion = "modp2048";
 			break;
 		case '15':
-			$convertion = "modp3072";
+			$conversion = "modp3072";
 			break;
 		case '16':
-			$convertion = "modp4096";
+			$conversion = "modp4096";
 			break;
 		case '17':
-			$convertion = "modp6144";
+			$conversion = "modp6144";
 			break;
 		case '18':
-			$convertion = "modp8192";
+			$conversion = "modp8192";
 			break;
 		case '19':
-			$convertion = "ecp256";
+			$conversion = "ecp256";
 			break;
 		case '20':
-			$convertion = "ecp384";
+			$conversion = "ecp384";
 			break;
 		case '21':
-			$convertion = "ecp521";
+			$conversion = "ecp521";
 			break;
 		case '22':
-			$convertion = "modp1024s160";
+			$conversion = "modp1024s160";
 			break;
 		case '23':
-			$convertion = "modp2048s224";
+			$conversion = "modp2048s224";
 			break;
 		case '24':
-			$convertion = "modp2048s256";
+			$conversion = "modp2048s256";
 			break;
 		case '28':
-			$convertion = "ecp256bp";
+			$conversion = "ecp256bp";
 			break;
 		case '29':
-			$convertion = "ecp384bp";
+			$conversion = "ecp384bp";
 			break;
 		case '30':
-			$convertion = "ecp512bp";
+			$conversion = "ecp512bp";
 			break;
 	}
 
-	return $convertion;
+	return $conversion;
 }
 
 function vpn_ipsec_configure($restart = false) {
@@ -309,7 +309,7 @@ function vpn_ipsec_configure($restart = false) {
 
 			$ep = ipsec_get_phase1_src($ph1ent);
 			if (!is_ipaddr($ep)) {
-				log_error("IPsec ERROR: Could not find phase 1 source for connection {$ph1ent['descr']}. Omitting from configuration file.");
+				log_error(sprintf(gettext("IPsec ERROR: Could not find phase 1 source for connection %s. Omitting from configuration file."), $ph1ent['descr']));
 				continue;
 			}
 
@@ -338,7 +338,7 @@ function vpn_ipsec_configure($restart = false) {
 				}
 			}
 			if (array_search($rg, $rgmap)) {
-				log_error("The remote gateway {$rg} already exists on another phase 1 entry");
+				log_error(sprintf(gettext("The remote gateway %s already exists on another phase 1 entry"), $rg));
 				continue;
 			}
 			$rgmap[$ph1ent['remote-gateway']] = $rg;
@@ -1390,7 +1390,7 @@ EOD;
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 
-			if (!isset($ph1ent['mobile']) && $keyexchange == 'ikev1') {
+			if (!isset($ph1ent['mobile']) && ($keyexchange == 'ikev1' || isset($ph1ent['splitconn']))) {
 				if (!empty($rightsubnet_spec)) {
 					$ipsecfin = '';
 					foreach ($rightsubnet_spec as $idx => $rsubnet) {
@@ -1403,7 +1403,7 @@ EOD;
 						$ipsecfin .= "\tleftsubnet = " . $leftsubnet_spec[$idx] . "\n";
 					}
 				} else {
-					log_error("No phase2 specifications for tunnel with REQID = {$ikeid}");
+					log_error(sprintf(gettext("No phase2 specifications for tunnel with REQID = %s"), $ikeid));
 				}
 			} else {
 				$ipsecfin = "\nconn con{$ph1ent['ikeid']}\n";

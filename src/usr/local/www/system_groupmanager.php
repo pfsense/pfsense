@@ -74,6 +74,7 @@ if (!is_array($config['system']['group'])) {
 $a_group = &$config['system']['group'];
 
 unset($id);
+
 if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$id = $_POST['groupid'];
 }
@@ -83,6 +84,19 @@ if (isset($_GET['groupid']) && is_numericint($_GET['groupid'])) {
 }
 
 $act = (isset($_GET['act']) ? $_GET['act'] : '');
+
+function cpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+function admin_groups_sort() {
+	global $a_group;
+
+	if (!is_array($a_group)) {
+		return;
+	}
+
+	usort($a_group, "cpusercmp");
+}
 
 if ($act == "delgroup") {
 
@@ -202,6 +216,8 @@ if (isset($_POST['save'])) {
 			$group['gid'] = $config['system']['nextgid']++;
 			$a_group[] = $group;
 		}
+
+		admin_groups_sort();
 
 		conf_mount_rw();
 		local_group_set($group);

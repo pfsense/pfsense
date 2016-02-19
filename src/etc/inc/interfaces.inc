@@ -524,6 +524,11 @@ function interface_bridge_configure(&$bridge, $checkmember = 0) {
 		pfSense_interface_destroy($bridge['bridgeif']);
 		pfSense_interface_create($bridge['bridgeif']);
 		$bridgeif = escapeshellarg($bridge['bridgeif']);
+	} else {
+		// if called directly, as interfaces_bridge_edit.php does, and bridgeif isn't set
+		// normally set by interfaces_bridge_configure, but not upon creation of new bridge
+		$bridgeif = pfSense_interface_create("bridge");
+		$bridge['bridgeif'] = $bridgeif;
 	}
 
 	$bridgemtu = interface_find_child_cfgmtu($bridge['bridgeif']);
@@ -683,6 +688,7 @@ function interface_bridge_configure_advanced($bridge) {
 }
 
 function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = false) {
+	global $config;
 
 	if (!does_interface_exist($bridgeif) || !does_interface_exist($interface)) {
 		return;
@@ -700,7 +706,7 @@ function interface_bridge_add_member($bridgeif, $interface, $flagsapplied = fals
 	}
 
 	pfSense_bridge_add_member($bridgeif, $interface);
-	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
+	if (is_array($config['bridges']['bridged'])) {
 		foreach ($config['bridges']['bridged'] as $bridge) {
 			if ($bridgeif == $bridge['bridgeif']) {
 				interface_bridge_configure_stp($bridge);

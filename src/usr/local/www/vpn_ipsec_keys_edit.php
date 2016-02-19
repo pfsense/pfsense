@@ -157,11 +157,8 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 
-?>
-
-<?php if ($input_errors) print_input_errors($input_errors); ?>
-
-<?php
+if ($input_errors)
+	print_input_errors($input_errors);
 
 $form = new Form;
 
@@ -201,10 +198,6 @@ $form->add($section);
 
 print $form;
 
-?>
-
-<?php
 print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
-?>
 
-<?php include("foot.inc"); ?>
+include("foot.inc");

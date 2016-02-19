@@ -783,6 +783,8 @@
 /usr/local/www/diag_patterns.php
 /usr/local/www/diag_pkglogs.php
 /usr/local/www/diag_showbogons.php
+/usr/local/www/edit.php
+/usr/local/www/exec.php
 /usr/local/diag_system_pftop.php
 /usr/local/www/dom-drag.js
 /usr/local/www/draglist.js

@@ -99,9 +99,13 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
+		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
+		    (is_ipaddrv6($oc['ipaddrv6']) &&
+		    !is_linklocal($oc['ipaddrv6'])));
 
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		if ((!is_array($config['dhcpdv6'][$ifent]) ||
+		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+		    !$valid_if_ipaddrv6) {
 			continue;
 		}
 		$if = $ifent;
@@ -148,8 +152,17 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-$ifcfgip = get_interface_ipv6($if);
-$ifcfgsn = get_interface_subnetv6($if);
+if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
+	$trackifname = $config['interfaces'][$if]['track6-interface'];
+	$trackcfg = $config['interfaces'][$trackifname];
+	$ifcfgsn = 64 - $trackcfg['dhcp6-ia-pd-len'];
+	$ifcfgip = '::';
+
+	$str_help_mask = dhcpv6_pd_str_help($ifcfgsn);
+} else {
+	$ifcfgip = get_interface_ipv6($if);
+	$ifcfgsn = get_interface_subnetv6($if);
+}
 
 /*	 set the enabled flag which will tell us if DHCP relay is enabled
  *	 on any interface. We will use this to disable DHCP server since
@@ -205,11 +218,51 @@ if ($_POST) {
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to']))) {
 			$input_errors[] = gettext("A valid prefix range must be specified.");
 		}
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+
+		if ($_POST['prefixrange_from'] && $_POST['prefixrange_to'] &&
+		    $_POST['prefixrange_length']) {
+			$netmask = Net_IPv6::getNetmask($_POST['prefixrange_from'],
+			    $_POST['prefixrange_length']);
+			$netmask = Net_IPv6::compress($netmask);
+
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_from']))) {
+				$input_errors[] = sprintf(gettext(
+				    "Prefix Delegation From address is not a valid IPv6 Netmask for %s"),
+				    $netmask . '/' . $_POST['prefixrange_length']);
+			}
+
+			$netmask = Net_IPv6::getNetmask($_POST['prefixrange_to'],
+			    $_POST['prefixrange_length']);
+			$netmask = Net_IPv6::compress($netmask);
+
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_to']))) {
+				$input_errors[] = sprintf(gettext(
+				    "Prefix Delegation To address is not a valid IPv6 Netmask for %s"),
+				    $netmask . '/' . $_POST['prefixrange_length']);
+			}
 		}
-		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+
+		if ($_POST['range_from']) {
+			if (!is_ipaddrv6($_POST['range_from'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+			    !Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
+			}
+		}
+		if ($_POST['range_to']) {
+			if (!is_ipaddrv6($_POST['range_to'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+			    !Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
+			}
 		}
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway']))) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
@@ -478,10 +531,13 @@ $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
+	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
+	    (is_ipaddrv6($oc['ipaddrv6']) &&
+	    !is_linklocal($oc['ipaddrv6'])));
 
-
-	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+	if ((!is_array($config['dhcpdv6'][$ifent]) ||
+	    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+	    !$valid_if_ipaddrv6) {
 		continue;
 	}
 
@@ -576,7 +632,7 @@ $f1 = new Form_Input(
 	$pconfig['range_from']
 );
 
-$f1->setHelp('To');
+$f1->setHelp('From');
 
 $f2 = new Form_Input(
 	'range_to',
@@ -585,7 +641,7 @@ $f2 = new Form_Input(
 	$pconfig['range_to']
 );
 
-$f2->setHelp('From');
+$f2->setHelp('To');
 
 $group = new Form_Group('Range');
 
@@ -601,7 +657,7 @@ $f1 = new Form_Input(
 	$pconfig['prefixrange_from']
 );
 
-$f1->setHelp('To');
+$f1->setHelp('From');
 
 $f2 = new Form_Input(
 	'prefixrange_to',
@@ -610,7 +666,8 @@ $f2 = new Form_Input(
 	$pconfig['prefixrange_to']
 );
 
-$f2->setHelp('From');
+$f2->setHelp('To');
+
 $group = new Form_Group('Prefix Delegation Range');
 
 $group->add($f1);

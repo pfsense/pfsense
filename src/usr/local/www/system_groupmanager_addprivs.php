@@ -64,20 +64,6 @@
 ##|*MATCH=system_groupmanager_addprivs.php*
 ##|-PRIV
 
-function cpusercmp($a, $b) {
-	return strcasecmp($a['name'], $b['name']);
-}
-
-function admin_groups_sort() {
-	global $config;
-
-	if (!is_array($config['system']['group'])) {
-		return;
-	}
-
-	usort($config['system']['group'], "cpusercmp");
-}
-
 require("guiconfig.inc");
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"), gettext("Edit"), gettext("Add Privileges"));
@@ -141,8 +127,6 @@ if ($_POST) {
 				}
 			}
 		}
-
-		admin_groups_sort();
 
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);

@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 	print_info_box(gettext("The system is halting now. This may take one minute or so."), 'success', false);
 
 	if (DEBUG) {
-	   print(sprintf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />"));
+	   printf(gettext("Not actually halting (DEBUG is set true)%s"), "<br />");
 	} else {
 		print('<pre>');
 		system_halt();

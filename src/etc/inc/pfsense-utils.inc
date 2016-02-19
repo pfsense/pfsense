@@ -2823,12 +2823,52 @@ function calculate_ipv6_delegation_length($if) {
 	return($pdlen);
 }
 
-function merge_ipv6_delegated_prefix($prefix, $suffix) {
-	$prefix_array = explode(':', Net_IPv6::uncompress($prefix));
-	$suffix_array = explode(':', Net_IPv6::uncompress($suffix));
-	return Net_IPv6::compress(implode(':',
-	    array_merge(array_slice($prefix_array, 0, 4),
-	    array_slice($suffix_array, 4))));
+function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
+	$prefix = Net_IPv6::uncompress($prefix, true);
+	$suffix = Net_IPv6::uncompress($suffix, true);
+
+	/*
+	 * xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx
+	 *                ^^^^ ^
+	 *                |||| \-> 64
+	 *                |||\---> 63, 62, 61, 60
+	 *                ||\----> 56
+	 *                |\-----> 52
+	 *                \------> 48
+	 */
+
+	switch ($len) {
+	case 48:
+		$prefix_len = 15;
+		break;
+	case 52:
+		$prefix_len = 16;
+		break;
+	case 56:
+		$prefix_len = 17;
+		break;
+	case 60:
+		$prefix_len = 18;
+		break;
+	/*
+	 * XXX 63, 62 and 61 should use 18 but PD can change and if
+	 * we let user chose this bit it can end up out of PD network
+	 *
+	 * Leave this with 20 for now until we find a way to let user
+	 * chose it. The side-effect is users with PD with one of these
+	 * lengths will not be able to setup DHCP server range for full
+	 * PD size, only for last /64 network
+	 */
+	case 63:
+	case 62:
+	case 61:
+	default:
+		$prefix_len = 20;
+		break;
+	}
+
+	return Net_IPv6::compress(substr($prefix, 0, $prefix_len) .
+	    substr($suffix, $prefix_len));
 }
 
 function huawei_rssi_to_string($rssi) {

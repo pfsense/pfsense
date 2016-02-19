@@ -551,7 +551,7 @@ foreach ($a_user as $i => $userent):
 	</button>
 </nav>
 </form>
-
+<div class="infoblock">
 <?php
 	print_callout('<p>' . gettext("Additional users can be added here. User permissions for accessing " .
 		"the webConfigurator can be assigned directly or inherited from group memberships. " .
@@ -559,6 +559,7 @@ foreach ($a_user as $i => $userent):
 		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
 		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
 	);
+?></div><?php
 	include("foot.inc");
 	exit;
 }

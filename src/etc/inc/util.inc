@@ -277,7 +277,7 @@ function refcount_reference($reference) {
 			refcount_init($reference);
 			$shmid = @shmop_open($reference, "w", 0, 0);
 			if (!$shmid) {
-				log_error(gettext("Could not open shared memory {$reference}"));
+				log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
 				unlock($shm_lck);
 				return;
 			}
@@ -302,7 +302,7 @@ function refcount_unreference($reference) {
 		$shmid = @shmop_open($reference, "w", 0, 0);
 		if (!$shmid) {
 			refcount_init($reference);
-			log_error(gettext("Could not open shared memory {$reference}"));
+			log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
 			unlock($shm_lck);
 			return;
 		}
@@ -329,7 +329,7 @@ function refcount_read($reference) {
 	/* There is no need for locking. */
 	$shmid = @shmop_open($reference, "a", 0, 0);
 	if (!$shmid) {
-		log_error(gettext("Could not open shared memory for read {$reference}"));
+		log_error(sprintf(gettext("Could not open shared memory for read %s"), $reference));
 		return -1;
 	}
 	$shm_data = @shmop_read($shmid, 0, 10);

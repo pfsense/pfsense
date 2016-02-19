@@ -93,23 +93,23 @@ EOF;
 		XML_RPC_encode($execcmd)
 	);
 
-	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url . ":" . $port));
 	$msg = new XML_RPC_Message($method, $params);
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
 	if (!is_object($resp)) {
-		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url . ":" . $port);
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
 		return false;
 	} elseif ($resp->faultCode()) {
-		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		$error = sprintf(gettext('An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %1$s - Code %2$s'), $url . ":" . $port, $resp->faultCode() . ": " . $resp->faultString());
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
 		return false;
 	} else {
-		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+		log_error(sprintf(gettext("CaptivePortalVoucherSync XMLRPC reload data success with %s (pfsense.exec_php)."), $url . ":" . $port));
 	}
 
 	$toreturn = XML_RPC_Decode($resp->value());
@@ -153,23 +153,23 @@ EOF;
 		XML_RPC_encode($execcmd)
 	);
 
-	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url . ":" . $port));
 	$msg = new XML_RPC_Message($method, $params);
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
 	if (!is_object($resp)) {
-		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url . ":" . $port);
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
 		return false;
 	} elseif ($resp->faultCode()) {
-		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		$error = sprintf(gettext('An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %1$s - Code %2$s'), $url . ":" . $port, $resp->faultCode() . ": " . $resp->faultString());
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
 		return false;
 	} else {
-		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+		log_error(sprintf(gettext("CaptivePortalVoucherSync XMLRPC reload data success with %s (pfsense.exec_php)."), $url . ":" . $port));
 	}
 
 	$toreturn = XML_RPC_Decode($resp->value());
@@ -212,23 +212,23 @@ EOF;
 		XML_RPC_encode($execcmd)
 	);
 
-	log_error("Captive Portal Voucher XMLRPC sync data {$url}:{$port}.");
+	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url . ":" . $port));
 	$msg = new XML_RPC_Message($method, $params);
 	$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
 	$cli->setCredentials($username, $password);
 	$resp = $cli->send($msg, "250");
 	if (!is_object($resp)) {
-		$error = "A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} (pfsense.exec_php).";
+		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url . ":" . $port);
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
 		return null; // $timeleft
 	} elseif ($resp->faultCode()) {
-		$error = "An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with {$url}:{$port} - Code " . $resp->faultCode() . ": " . $resp->faultString();
+		$error = sprintf(gettext('An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %1$s - Code %2$s'), $url . ":" . $port, $resp->faultCode() . ": " . $resp->faultString());
 		log_error($error);
 		file_notice("CaptivePortalVoucherSync", $error, "Error code received", "");
 		return null; // $timeleft
 	} else {
-		log_error("CaptivePortalVoucherSync XMLRPC reload data success with {$url}:{$port} (pfsense.exec_php).");
+		log_error(sprintf(gettext("CaptivePortalVoucherSync XMLRPC reload data success with %s (pfsense.exec_php)."), $url . ":" . $port));
 	}
 	$toreturn = XML_RPC_Decode($resp->value());
 	if (!is_array($config['voucher'])) {
@@ -237,7 +237,7 @@ EOF;
 
 	if (is_array($toreturn['voucher']) && is_array($toreturn['voucher']['roll'])) {
 		$config['voucher'][$cpzone]['roll'] = $toreturn['voucher']['roll'];
-		write_config("Captive Portal Voucher database synchronized with {$url}");
+		write_config(sprintf(gettext("Captive Portal Voucher database synchronized with %s"), $url));
 		voucher_configure_zone(true);
 		unset($toreturn['voucher']);
 	} else if (!isset($toreturn['timeleft'])) {
@@ -324,11 +324,11 @@ function voucher_expire($voucher_received) {
 					$unsetindexes[] = $cpentry[5];
 				}
 			} else {
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registered Roll");
+				captiveportal_syslog(sprintf(gettext('%1$s (%2$s/%3$s): not found on any registered Roll'), $voucher, $roll, $nr));
 			}
 		} else {
 			// hmm, thats weird ... not what I expected
-			captiveportal_syslog("$voucher invalid: {$output[0]}!!");
+			captiveportal_syslog(sprintf(gettext('%1$s invalid: %2$s!!'), $voucher, $output[0]));
 		}
 	}
 
@@ -415,8 +415,9 @@ function voucher_auth($voucher_received, $test = 0) {
 	foreach ($a_vouchers_received as $voucher) {
 		$v = escapeshellarg($voucher);
 		if (strlen($voucher) < 5) {
-			$test_result[] = "{$voucher} invalid: Too short!";
-			captiveportal_syslog("{$voucher} invalid: Too short!");
+			$voucher_err_text = sprintf(gettext("%s invalid: Too short!"), $voucher);
+			$test_result[] = $voucher_err_text;
+			captiveportal_syslog($voucher_err_text);
 			$error++;
 			continue;   // seems too short to be a voucher!
 		}
@@ -452,25 +453,28 @@ function voucher_auth($voucher_received, $test = 0) {
 					$pos = $nr >> 3; // divide by 8 -> octet
 					$mask = 1 << ($nr % 8);
 					if (ord($bitstring[$roll][$pos]) & $mask) {
-						$test_result[] = "$voucher ($roll/$nr) already used and expired";
-						captiveportal_syslog("$voucher ($roll/$nr) already used and expired");
+						$voucher_err_text = sprintf(gettext('%1$s (%2$s/%3$s) already used and expired'), $voucher, $roll, $nr);
+						$test_result[] = $voucher_err_text;
+						captiveportal_syslog($voucher_err_text);
 						$total_minutes = -1;    // voucher expired
 						$error++;
 					} else {
 						// mark bit for this voucher as used
 						$bitstring[$roll][$pos] = chr(ord($bitstring[$roll][$pos]) | $mask);
-						$test_result[] = "$voucher ($roll/$nr) good for {$minutes_per_roll[$roll]} Minutes";
+						$test_result[] = sprintf(gettext('%1$s (%2$s/%3$s) good for %4$s Minutes'), $voucher, $roll, $nr, $minutes_per_roll[$roll]);
 						$total_minutes += $minutes_per_roll[$roll];
 					}
 				}
 			} else {
-				$test_result[] = "$voucher ($roll/$nr): not found on any registered Roll";
-				captiveportal_syslog("$voucher ($roll/$nr): not found on any registered Roll");
+				$voucher_err_text = sprintf(gettext('%1$s (%2$s/%3$s): not found on any registered Roll'), $voucher, $roll, $nr);
+				$test_result[] = $voucher_err_text;
+				captiveportal_syslog($voucher_err_text);
 			}
 		} else {
 			// hmm, thats weird ... not what I expected
-			$test_result[] = "$voucher invalid: $result !!";
-			captiveportal_syslog("$voucher invalid: $result !!");
+			$voucher_err_text = sprintf(gettext('%1$s invalid: %2$s !!'), $voucher, $result);
+			$test_result[] = $voucher_err_text;
+			captiveportal_syslog($voucher_err_text);
 			$error++;
 		}
 	}
@@ -647,7 +651,7 @@ function voucher_write_used_db($roll, $vdb) {
 		fwrite($fd, $vdb . "\n");
 		fclose($fd);
 	} else {
-		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%s_used_%2$s.db'), $g['vardb_path'], $cpzone, $roll));
+		voucher_log(LOG_ERR, sprintf(gettext('cant write %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
 	}
 }
 
@@ -733,7 +737,7 @@ function voucher_read_used_db($roll) {
 			$vdb = trim(fgets($fd));
 			fclose($fd);
 		} else {
-			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%s_used_%2$s.db'), $g['vardb_path'], $cpzone, $roll));
+			voucher_log(LOG_ERR, sprintf(gettext('cant read %1$s/voucher_%2$s_used_%3$s.db'), $g['vardb_path'], $cpzone, $roll));
 		}
 	}
 	return base64_decode($vdb);
@@ -805,7 +809,7 @@ function voucher_save_db_to_config_zone() {
 
 	unlock($voucherlck);
 
-	write_config("Syncing vouchers");
+	write_config(gettext("Syncing vouchers"));
 	return;
 }
 

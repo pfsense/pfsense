@@ -421,15 +421,14 @@ function system_hosts_generate() {
 			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
 				if (is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable'])) {
 					$isdelegated = $config['interfaces'][$dhcpif]['ipaddrv6'] == 'track6';
-					if ($isdelegated) {
-						$prefix = array_slice(explode(':', Net_IPv6::uncompress(get_interface_ipv6($dhcpif))), 0, 4);
-					}
 					foreach ($dhcpifconf['staticmap'] as $host) {
 						$ipaddrv6 = $host['ipaddrv6'];
 						if ($ipaddrv6 && $host['hostname']) {
 							if ($isdelegated) {
-								$suffix = array_slice(explode(':', Net_IPv6::uncompress($ipaddrv6)), 4);
-								$ipaddrv6 = Net_IPv6::compress(implode(':', array_merge($prefix, $suffix)));
+								$trackifname = $config['interfaces'][$dhcpif]['track6-interface'];
+								$trackcfg = $config['interfaces'][$trackifname];
+								$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
+								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $pdlen);
 							}
 							if ($host['domain']) {
 								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']} {$host['hostname']}\n";

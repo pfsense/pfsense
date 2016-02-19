@@ -4002,7 +4002,7 @@ function upgrade_124_to_125() {
 			if (!function_exists("file_notice")) {
 				require_once("notices.inc");
 			}
-			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
+			file_notice("WirelessSettings", sprintf(gettext("WEP is no longer supported. It will be disabled on the %s interface and the interface will be disabled. Please reconfigure the interface."), $ifname));
 			unset($config['interfaces'][$ifname]['wireless']['wep']);
 			if (isset($intf['enable'])) {
 				unset($config['interfaces'][$ifname]['enable']);
@@ -4212,8 +4212,7 @@ function upgrade_132_to_133() {
 			    $p1['encryption-algorithm']['name'] == 'des') {
 				$p1['disabled'] = true;
 				file_notice("IPsec",
-				    "DES is no longer supported, IPsec phase 1 " .
-				    "item '{$p1['descr']}' is being disabled.");
+				    sprintf(gettext("DES is no longer supported, IPsec phase 1 item '%s' is being disabled."), $p1['descr']));
 			}
 		}
 	}
@@ -4230,8 +4229,7 @@ function upgrade_132_to_133() {
 				if ($ealgo['name'] == 'des') {
 					$p2['disabled'] = true;
 					file_notice("IPsec",
-					    "DES is no longer supported, IPsec phase 2 " .
-					    "item '{$p2['descr']}' is being disabled.");
+					    sprintf(gettext("DES is no longer supported, IPsec phase 2 item '%s' is being disabled."), $p2['descr']));
 				}
 			}
 		}
@@ -4276,7 +4274,7 @@ function upgrade_135_to_136() {
 	global $config;
 
 	if (isset($config['l7shaper'])) {
-		file_notice("L7shaper", "Layer 7 shaping is no longer supported. Its configuration has been removed.");
+		file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		unset($config['l7shaper']);
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {

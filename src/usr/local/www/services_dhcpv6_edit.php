@@ -155,8 +155,19 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['ipaddrv6'] && !is_ipaddrv6($_POST['ipaddrv6']))) {
-		$input_errors[] = gettext("A valid IPv6 address must be specified.");
+	if ($_POST['ipaddrv6']) {
+		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
+			$input_errors[] = gettext("A valid IPv6 address must be specified.");
+		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
+			$trackifname = $config['interfaces'][$if]['track6-interface'];
+			$trackcfg = $config['interfaces'][$trackifname];
+			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
+			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $pdlen, dhcpv6_pd_str_help($ifcfgsn));
+			}
+		}
 	}
 
 	if (empty($_POST['duid'])) {

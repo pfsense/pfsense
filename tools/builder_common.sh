@@ -1481,7 +1481,8 @@ builder_setup() {
 			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
-			${PKG_REPO_CONF_BRANCH}
+			${PKG_REPO_CONF_BRANCH} \
+			${IS_RELEASE}
 	fi
 
 	pkg install ${PRODUCT_NAME}-builder
@@ -2318,7 +2319,7 @@ snapshots_scp_files() {
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"
 
 	# Ensure directory(s) are available
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/livecd_installer"
+	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/installer"
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
 	if [ -d $STAGINGAREA/virtualization ]; then
@@ -2328,9 +2329,9 @@ snapshots_scp_files() {
 	# ensure permissions are correct for r+w
 	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/."
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*iso* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-memstick* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/livecd_installer/
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}-*Update* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \

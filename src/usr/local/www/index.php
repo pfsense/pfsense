@@ -489,8 +489,6 @@ events.push(function() {
 	});
 
 
-	$('.context-links li:last').prev('li').html('<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore"><i class="fa fa-save"></i></a>');
-
 	$('#btnstore').click(function() {
 		updateWidgets();
 		dirty = false;

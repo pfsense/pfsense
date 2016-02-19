@@ -1,6 +1,6 @@
 <?php
 /*
-	exec.php
+	diag_command.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -64,7 +64,7 @@
 ##|*IDENT=page-diagnostics-command
 ##|*NAME=Diagnostics: Command
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
-##|*MATCH=exec.php*
+##|*MATCH=diag_command.php*
 ##|-PRIV
 
 $allowautocomplete = true;
@@ -218,7 +218,7 @@ if (isBlank($_POST['txtRecallBuffer'])) {
 <?php
 
 if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank($ulmsg)) {
-	print_info_box(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'warning', false);
+	print_callout(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'danger', gettext('Advanced Users Only'));
 }
 
 if (!isBlank($_POST['txtCommand'])):?>
@@ -240,7 +240,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 	</div>
 <?php endif; ?>
 
-<form action="exec.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
+<form action="diag_command.php" method="post" enctype="multipart/form-data" name="frmExecPlus" onsubmit="return frmExecPlus_onSubmit( this );">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
 		<div class="panel-body">

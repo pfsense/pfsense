@@ -248,9 +248,9 @@ else:
 			<table class="table table-striped stable-hover table-condensed">
 				<thead>
 					<tr>
-						<th="><?=gettext("Name"); ?></th>
-						<th=><?=gettext("Status"); ?></th>
-						<th=><?=gettext("Component"); ?></th>
+						<th><?=gettext("Name"); ?></th>
+						<th><?=gettext("Status"); ?></th>
+						<th><?=gettext("Component"); ?></th>
 					</tr>
 				</thead>
 				<tbody>

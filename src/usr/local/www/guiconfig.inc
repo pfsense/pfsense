@@ -344,6 +344,33 @@ function print_apply_box($msg) {
 	print_info_box($msg, "warning", "apply", gettext("Apply Changes"));
 }
 
+/*
+ * Print Bootstrap callout
+ *
+ * @param string $msg     message to display
+ * @param string $class   contextual class, defaults to info (default | danger | warning | info)
+ * @param string $heading optional callout heading
+ */
+function print_callout($msg, $class = 'info', $heading = '') {
+
+	if ('' == $msg) {
+		return;
+	}
+	$class = strtolower($class);
+	$callout = '';
+
+	if ($class != 'default' && $class != 'danger' && $class != 'warning' && $class = 'info') {
+		$class = 'info';
+	}
+	$callout .= '<div class="bs-callout bs-callout-' . $class . '">';
+
+	if ('' != $heading) {
+		$callout .= '<h4>' . $heading . '</h4>';
+	}
+	$callout .= $msg . '</div>';
+	echo $callout;
+}
+
 function get_std_save_message($ok) {
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
@@ -487,11 +514,6 @@ function gentitle($title) {
 }
 
 function genhtmltitle($title) {
-	if (!is_array($title)) {
-		return '<h1 class="page-header"><a href="">' . $title . '</a></h1>';
-	}
-
-	$heading = '<h1 class="page-header"><a href="">' . end($title) . '</a></h1>';
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else

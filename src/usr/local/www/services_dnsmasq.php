@@ -337,27 +337,33 @@ $section->addInput(new Form_Textarea(
 	'Custom options',
 	$pconfig['custom_options']
 ))->setHelp('Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline')
-	->addClass('advanced');
+  ->addClass('advanced');
 
 $form->add($section);
 print($form);
+
 ?>
-<div class="infoblock blockopen">
+<div class="infoblock">
 <?php
-print_info_box(
-	sprintf(
-		gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
-			' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.' .
-			' The DNS forwarder will use the DNS servers entered in %1$sSystem: General setup%3$s or' .
-			' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
-			' If you don\'t use that option (or if you use a static IP address on WAN),' .
-			' you must manually specify at least one DNS server on the %2$sSystem:General setup%3$s page.'),
-		'<a href="system.php">',
-		'<a href="system.php">',
-		'</a>'),
-	'info', false);
+print_callout('<p>' .
+	gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
+		    ' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.') . '</p><p>' .
+	sprintf(gettext('The DNS forwarder will use the DNS servers entered in %1$sSystem > General Setup%2$s or' .
+				    ' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
+				    ' If you don\'t use that option (or if you use a static IP address on WAN),' .
+				    ' you must manually specify at least one DNS server on the %1$sSystem > General Setup%2$s page.'),
+			'<a href="system.php">',
+			'</a>') .
+	'</p>'
+);
+
 ?>
 </div>
+<?php
+print_callout(gettext("Entries in this section override individual results from the forwarders.") . " " .
+	gettext("Use these for changing DNS results or for adding custom DNS records.")
+);
+?>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
@@ -434,12 +440,11 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Entries in this section override individual results from the forwarders.") . " " .
-				gettext("Use these for changing DNS results or for adding custom DNS records."), 'info', false);
+print_callout(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
+	" authoritative DNS server to be queried for that domain.")
+);
 ?>
-</div>
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
@@ -488,11 +493,5 @@ endforeach;
 	</a>
 </nav>
 
-<div class="infoblock blockopen">
-<?php
-print_info_box(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-						" authoritative DNS server to be queried for that domain."), 'info', false);
-?>
-</div>
 <?php
 include("foot.inc");

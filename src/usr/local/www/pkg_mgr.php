@@ -144,7 +144,7 @@ function get_pkg_table() {
 
 		$pkgtbl .= 	'</td>' . "\n";
 		$pkgtbl .= '<td>' . "\n";
-		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">install</a>' . "\n";
+		$pkgtbl .= '<a title="' . gettext("Click to install") . '" href="pkg_mgr_install.php?id=' . $index['name'] . '" class="btn btn-success btn-sm">Install</a>' . "\n";
 
 		if (!$g['disablepackageinfo'] && $index['pkginfolink'] && $index['pkginfolink'] != $index['www']) {
 			$pkgtbl .= '<a target="_blank" title="' . gettext("View more information") . '" href="' . htmlspecialchars($index['pkginfolink']) . '" class="btn btn-default btn-sm">info</a>' . "\n";
@@ -207,11 +207,11 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
 	<div id="pkgtbl" class="panel-body table-responsive">
 		<div id="waitmsg">
-			<?=print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>')?>
+			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>'); ?>
 		</div>
 
 		<div id="errmsg" style="display: none;">
-			<?=print_info_box("<ul><li>" . gettext("Unable to retrieve package information.") . "</li></ul>", 'danger')?>
+			<?php print_info_box("<ul><li>" . gettext("Unable to retrieve package information.") . "</li></ul>", 'danger'); ?>
 		</div>
 	</div>
 </div>

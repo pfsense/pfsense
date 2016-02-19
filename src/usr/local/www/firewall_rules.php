@@ -292,23 +292,30 @@ if (isset($_POST['del_x'])) {
 	if (is_array($_POST['rule']) && !empty($_POST['rule'])) {
 		$a_filter_new = array();
 
-		// get the rules of other interfaces listed in config before this interface.
-		for ($i = 0; (isset($a_filter[$i]) && 
-			(($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) 
-			); $i++) {
-			$a_filter_new[] = $a_filter[$i];
+		// Include the rules of other interfaces listed in config before this (the selected) interface.
+		foreach ($a_filter as $filteri_before => $filterent) {
+			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+				break;
+			} else {
+				$a_filter_new[] = $filterent;
+			}
 		}
 
-		// include the rules of this interface.
-		// if a rule is not in POST[rule], it has been deleted by the user
+		// Include the rules of this (the selected) interface.
+		// If a rule is not in POST[rule], it has been deleted by the user
 		foreach ($_POST['rule'] as $id) {
 			$a_filter_new[] = $a_filter[$id];
 		}
 
-		// get the rules of other interfaces listed in config after this interface.
-		for ( ; (isset($a_filter[$i])); $i++) {
-			if (($a_filter[$i]['interface'] != $if && !isset($a_filter[$i]['floating'])) || (isset($a_filter[$i]['floating']) && "FloatingRules" != $if)) {
-				$a_filter_new[] = $a_filter[$i];
+		// Include the rules of other interfaces listed in config after this (the selected) interface.
+		foreach ($a_filter as $filteri_after => $filterent) {
+			if ($filteri_before > $filteri_after) {
+				continue;
+			}
+			if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
+				continue;
+			} else {
+				$a_filter_new[] = $filterent;
 			}
 		}
 
@@ -486,8 +493,6 @@ $seprows = separator_rows($separators);
 
 foreach ($a_filter as $filteri => $filterent):
 
-	$i = $filteri;
-
 	if (($filterent['interface'] == $if && !isset($filterent['floating'])) || (isset($filterent['floating']) && "FloatingRules" == $if)) {
 
 		// Display separator(s) for section beginning at rule n
@@ -495,9 +500,9 @@ foreach ($a_filter as $filteri => $filterent):
 			display_separator($separators, $nrules, $columns_in_table);
 		}
 ?>
-					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$i;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
+					<tr id="fr<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" ondblclick="document.location='firewall_rules_edit.php?id=<?=$filteri;?>';" <?=(isset($filterent['disabled']) ? ' class="disabled"' : '')?>>
 						<td>
-							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$i;?>"/>
+							<input type="checkbox" id="frc<?=$nrules;?>" onClick="fr_toggle(<?=$nrules;?>)" name="rule[]" value="<?=$filteri;?>"/>
 						</td>
 
 	<?php
@@ -516,7 +521,7 @@ foreach ($a_filter as $filteri => $filterent):
 		}
 	?>
 						<td title="<?=$title_text?>">
-							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$i;?>">
+							<a href="?if=<?=htmlspecialchars($if);?>&amp;act=toggle&amp;id=<?=$filteri;?>">
 								<i class="fa fa-<?=$iconfn?>" title="<?=gettext("click to toggle enabled/disabled status");?>"></i>
 							</a>
 	<?php
@@ -784,17 +789,17 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
-							<a href="firewall_rules_edit.php?id=<?=$i;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
-							<a href="firewall_rules_edit.php?dup=<?=$i;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
+							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
+							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
 ?>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-check-square-o" title="<?=gettext('Enable')?>"></a>
 <?php } else {
 ?>
-							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
+							<a href="?act=toggle&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-ban" title="<?=gettext('Disable')?>"></a>
 <?php }
 ?>
-							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$i;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>"></a>
+							<a href="?act=del&amp;if=<?=htmlspecialchars($if);?>&amp;id=<?=$filteri;?>" class="fa fa-trash" title="<?=gettext('Delete this rule')?>"></a>
 						</td>
 					</tr>
 <?php

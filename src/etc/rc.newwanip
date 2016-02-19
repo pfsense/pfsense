@@ -150,13 +150,7 @@ if (!empty($grouptmp)) {
 unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp)) {
-	if (is_array($config['bridges']['bridged']) && count($config['bridges']['bridged'])) {
-		foreach ($config['bridges']['bridged'] as $bridge) {
-			if ($bridge['bridgeif'] == $bridgetmp) {
-				interface_bridge_configure($bridge);
-			}
-		}
-	}
+	interface_bridge_add_member($bridgetmp, $interface_real);
 }
 
 // Do not process while booting

@@ -63,8 +63,8 @@
 ##|*MATCH=status_ipsec_spd.php*
 ##|-PRIV
 
-define(RIGHTARROW, '&#x25ba;');
-define(LEFTARROW,  '&#x25c0;');
+define('RIGHTARROW', '&#x25ba;');
+define('LEFTARROW',  '&#x25c0;');
 
 require("guiconfig.inc");
 require("ipsec.inc");

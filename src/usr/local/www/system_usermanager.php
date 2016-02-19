@@ -551,18 +551,15 @@ foreach ($a_user as $i => $userent):
 	</button>
 </nav>
 </form>
-
 <div class="infoblock">
-	<?=print_info_box(gettext("Additional users can be added here. User permissions for accessing " .
-	"the webConfigurator can be assigned directly or inherited from group memberships. " .
-	"An icon that appears grey indicates that it is a system defined object. " .
-	"Some system object properties can be modified but they cannot be deleted.") .
-	'<br /><br />' .
-	gettext("Accounts added here are also used for other parts of the system " .
-	"such as OpenVPN, IPsec, and Captive Portal."), 'info', false)?>
-</div>
-
 <?php
+	print_callout('<p>' . gettext("Additional users can be added here. User permissions for accessing " .
+		"the webConfigurator can be assigned directly or inherited from group memberships. " .
+		"Some system object properties can be modified but they cannot be deleted.") . '</p>' .
+		'<p>' . gettext("Accounts added here are also used for other parts of the system " .
+		"such as OpenVPN, IPsec, and Captive Portal.") . '</p>'
+	);
+?></div><?php
 	include("foot.inc");
 	exit;
 }
@@ -849,30 +846,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Select every option in the specified multiselect
-	function AllServers(id, selectAll) {
-	   for (i = 0; i < id.length; i++)	   {
-		   id.eq(i).prop('selected', selectAll);
-	   }
-	}
-
-	// Move all selected options from one multiselect to another
-	function moveOptions(From, To)	{
-		var len = From.length;
-		var option;
-
-		if (len > 0) {
-			for (i=0; i<len; i++) {
-				if (From.eq(i).is(':selected')) {
-					option = From.eq(i).val();
-					value  = From.eq(i).text();
-					To.append(new Option(value, option));
-					From.eq(i).remove();
-				}
-			}
-		}
-	}
 
 	// Make buttons plain buttons, not submit
 	$("#movetodisabled").prop('type','button');

@@ -71,7 +71,7 @@ function handle_argument_group($iface, $argument2) {
 	}
 	if ($staticv4 === true && $staticv6 === true) {
 		$friendly = convert_friendly_interface_to_friendly_descr($iface);
-		log_error("Hotplug event detected for {$friendly}({$iface}) but ignoring since interface is configured with static IP ({$ipaddr} {$ip6addr})");
+		log_error("Hotplug event detected for {$friendly}({$iface}) static IP ({$ipaddr} {$ip6addr})");
 		interfaces_staticarp_configure($iface);
 		switch ($argument2) {
 			case 'start':

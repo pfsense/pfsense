@@ -61,7 +61,7 @@
 ##|*MATCH=services_ntpd.php*
 ##|-PRIV
 
-define(NUMTIMESERVERS, 10);		// The maximum number of configurable time servers
+define('NUMTIMESERVERS', 10);		// The maximum number of configurable time servers
 require("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
@@ -408,7 +408,7 @@ $btnadvrestr->removeClass('btn-primary')->addClass('btn-default btn-sm');
 $section->addInput(new Form_StaticText(
 	'Access Restrictions',
 	$btnadvrestr
-))->setHelp('These options control access to NTP from the WAN.');
+))->setHelp('These options control access to NTP server.');
 
 $section->addInput(new Form_Checkbox(
 	'kod',

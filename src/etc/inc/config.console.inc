@@ -81,7 +81,7 @@ function set_networking_interfaces_ports() {
 	/* Function flow is based on $key and $auto_assign or the lack thereof */
 	$key = null;
 
-	/* Only present auto interface option if running from LiveCD and interface mismatch*/
+	/* Only present auto interface option if running from the installer media and interface mismatch*/
 	if ((preg_match("/cdrom/", $g['platform'])) && is_interface_mismatch()) {
 		$auto_assign = false;
 	}
@@ -107,7 +107,7 @@ EOD;
 	if ($auto_assign) {
 		echo <<<EOD
 
-		!!! LiveCD Detected: Auto Interface Option !!!!
+		!!! Installation Media Detected: Auto Interface Option !!!!
 BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
 
 EOD;
@@ -447,7 +447,7 @@ EOD;
 		}
 
 		printf(gettext("%sWriting configuration..."), "\n");
-		write_config("Console assignment of interfaces");
+		write_config(gettext("Console assignment of interfaces"));
 		printf(gettext("done.%s"), "\n");
 
 		fclose($fp);

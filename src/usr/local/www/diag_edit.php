@@ -1,6 +1,6 @@
 <?php
 /*
-	edit.php
+	diag_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -57,7 +57,7 @@
 ##|*IDENT=page-diagnostics-edit
 ##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
-##|*MATCH=edit.php*
+##|*MATCH=diag_edit.php*
 ##|*MATCH=browser.php*
 ##|*MATCH=filebrowser/browser.php*
 ##|-PRIV

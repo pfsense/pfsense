@@ -330,9 +330,9 @@ $diagnostics_menu = array();
 $diagnostics_menu[] = array(gettext("ARP Table"), "/diag_arp.php");
 $diagnostics_menu[] = array(gettext("Authentication"), "/diag_authentication.php");
 $diagnostics_menu[] = array(htmlspecialchars(gettext("Backup & Restore")), "/diag_backup.php");
-$diagnostics_menu[] = array(gettext("Command Prompt"), "/exec.php");
+$diagnostics_menu[] = array(gettext("Command Prompt"), "/diag_comand.php");
 $diagnostics_menu[] = array(gettext("DNS Lookup"), "/diag_dns.php");
-$diagnostics_menu[] = array(gettext("Edit File"), "/edit.php");
+$diagnostics_menu[] = array(gettext("Edit File"), "/diag_edit.php");
 $diagnostics_menu[] = array(gettext("Factory Defaults"), "/diag_defaults.php");
 
 if (file_exists("/var/run/gmirror_active")) {
@@ -487,7 +487,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 			</a>
 		</li>
 	<?php endif?>
-	
+
 	<?php if ($system_logs_filter_form_hidden): ?>
 		<li>
 			<a onclick="$('#filter-form').toggle(360)" title="<?=gettext("Log filter")?>">

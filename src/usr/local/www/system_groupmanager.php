@@ -477,30 +477,6 @@ print $form;
 //<![CDATA[
 events.push(function() {
 
-	// Select every option in the specified multiselect
-	function AllServers(id, selectAll) {
-	   for (i = 0; i < id.length; i++)	   {
-		   id.eq(i).prop('selected', selectAll);
-	   }
-	}
-
-	// Move all selected options from one multiselect to another
-	function moveOptions(From, To)	{
-		var len = From.length;
-		var option, value;
-
-		if (len > 1) {
-			for (i=0; i<len; i++) {
-				if (From.eq(i).is(':selected')) {
-					option = From.eq(i).val();
-					value = From.eq(i).text();
-					To.append(new Option(value, option));
-					From.eq(i).remove();
-				}
-			}
-		}
-	}
-
 	// Make buttons plain buttons, not submit
 	$("#movetodisabled").prop('type','button');
 	$("#movetoenabled").prop('type','button');

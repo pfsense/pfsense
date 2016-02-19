@@ -119,7 +119,7 @@ function xmlrpc_auth(&$params) {
 
 	array_shift($params);
 	unset($params['xmlrpcauth']);
-	log_error("webConfigurator authentication error for 'admin' from {$_SERVER['REMOTE_ADDR']} during sync settings.");
+	log_error(sprintf(gettext("webConfigurator authentication error for 'admin' from %s during sync settings."), $_SERVER['REMOTE_ADDR']));
 	return false;
 }
 

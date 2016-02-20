@@ -790,7 +790,7 @@ function manage_log_section() {
 		$manage_log_active = true;
 	}
 
-	if ($filter_active) {
+	if ($manage_log_active) {
 		$panel_state = 'in';
 		$panel_body_state = SEC_OPEN;
 	} else {

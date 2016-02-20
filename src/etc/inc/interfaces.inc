@@ -51,6 +51,8 @@
  *
  *  ====================================================================
  *
+ * function interfaces_wireless_configure is Copyright (C) 2005 Espen Johansen
+ *
  */
 
 /* include all configuration functions */

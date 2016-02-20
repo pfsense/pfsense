@@ -496,13 +496,18 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</li>
 	<?php endif ?>
 
-	<?php if ($system_logs_manage_log_form_hidden): ?>
+	<?php if ($system_logs_manage_log_form_hidden): 
+			/* If the user does not have access to status logs settings page, then exclude the manage log panel icon from the title bar. */
+			if (isAllowedPage("status_logs_settings.php")) {
+	?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage log")?>">
 				<i class="fa fa-wrench icon-pointer"></i>
 			</a>
 		</li>
-	<?php endif ?>
+	<?php	}
+		endif
+	?>
 
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {

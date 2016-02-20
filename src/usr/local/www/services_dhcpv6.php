@@ -729,7 +729,7 @@ $section->addInput(new Form_Input(
 	'Default lease time',
 	'text',
 	$pconfig['deftime']
-))->setHelp('Seconds . Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
+))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
 			'The default is 7200 seconds.');
 
 $section->addInput(new Form_Input(

@@ -1701,12 +1701,26 @@ function alias_get_type($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-	global $aliastable;
+	global $config, $aliastable;
+	$urltable_prefix = "/var/db/aliastables/";
+	$urltable_filename = $urltable_prefix . $name . ".txt";
 
 	if (isset($aliastable[$name])) {
 		// alias names cannot be strictly numeric. redmine #4289
 		if (is_numericint($name)) {
 			return null;
+		}
+		// make sure if it's a ports alias, it actually exists. redmine #5845
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($alias['name'] == $name) {
+				if ($alias['type'] == "urltable_ports") {
+					if (is_URL($alias['url']) && file_exists($urltable_filename) && filesize($urltable_filename)) {
+						return "\${$name}";
+					} else {
+						return null;
+					}
+				}
+			}
 		}
 		return "\${$name}";
 	} else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name)) {

@@ -262,9 +262,8 @@ $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
-	// We need at least one interface configured with a NON-LOCAL IPv6 static address. fd80:8dba:82e1::/64 fits the bill
-	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+	// We need interfaces configured with a static IPv6 address or track6 for PD. 
+	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6") {
 		continue;
 	}
 

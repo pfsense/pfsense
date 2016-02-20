@@ -1343,6 +1343,9 @@ EOD;
 			continue;
 		}
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			continue;
+		}
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 

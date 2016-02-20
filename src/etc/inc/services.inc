@@ -279,6 +279,9 @@ function services_radvd_configure($blacklist = array()) {
 		if (!isset($config['interfaces'][$if]['enable'])) {
 			continue;
 		}
+		if ($config['dhcpdv6'][$if]['ramode'] == "disabled") {
+			continue;
+		}
 		/* Do not put in the config an interface which is down */
 		if (isset($blacklist[$if])) {
 			continue;

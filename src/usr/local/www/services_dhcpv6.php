@@ -600,9 +600,14 @@ $section->addInput(new Form_Checkbox(
 
 if (is_ipaddrv6($ifcfgip)) {
 
+	if ($ifcfgip == "::") {
+		$sntext = "Prefix Delegation";
+	} else {
+		$sntext = gen_subnetv6($ifcfgip, $ifcfgsn);
+	}
 	$section->addInput(new Form_StaticText(
 		'Subnet',
-		gen_subnetv6($ifcfgip, $ifcfgsn)
+		$sntext
 		));
 
 	$section->addInput(new Form_StaticText(
@@ -613,7 +618,7 @@ if (is_ipaddrv6($ifcfgip)) {
 	$section->addInput(new Form_StaticText(
 		'Available Range',
 		$range_from = gen_subnetv6($ifcfgip, $ifcfgsn) . ' to ' . gen_subnetv6_max($ifcfgip, $ifcfgsn)
-		));
+		))->setHelp($trackifname ? 'Prefix Delegation subnet will be appended to the beginning of the defined range':'');
 }
 
 if ($is_olsr_enabled) {

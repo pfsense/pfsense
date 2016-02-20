@@ -2066,6 +2066,9 @@ function is_interface_vlan_mismatch() {
 
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
+			if (substr($vlan['if'], 0, 4) == "lagg") {
+				return false;
+			}
 			if (does_interface_exist($vlan['if']) == false) {
 				return true;
 			}

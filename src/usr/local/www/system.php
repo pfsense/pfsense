@@ -180,6 +180,7 @@ if ($_POST) {
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
+		$dnslist[] = $_POST[$dnsname];
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter);
 		} else {
@@ -198,6 +199,10 @@ if ($_POST) {
 				}
 			}
 		}
+	}
+
+	if (count($dnslist) != count(array_unique($dnslist))) {
+		$input_errors[] = gettext('Each configured DNS server must have a unique IP address. Remove the duplicated IP.');
 	}
 
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());

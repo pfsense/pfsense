@@ -4769,7 +4769,8 @@ function get_real_interface($interface = "wan", $family = "all", $realv6iface = 
 				break;
 			} else if (substr($interface, 0, 5) == '_lloc') {
 				$interface = substr($interface, 5);
-			} else if (does_interface_exist($interface, $flush)) {
+			} else if (strstr($interface, "_vlan") ||
+			    does_interface_exist($interface, $flush)) {
 				/*
 				 * If a real interface was already passed simply
 				 * pass the real interface back.  This encourages

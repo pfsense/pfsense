@@ -203,7 +203,7 @@ if ($_POST) {
 		}
 	}
 
-	if (count($dnslist) != count(array_unique($dnslist))) {
+	if (count(array_filter($dnslist)) != count(array_unique(array_filter($dnslist)))) {
 		$input_errors[] = gettext('Each configured DNS server must have a unique IP address. Remove the duplicated IP.');
 	}
 

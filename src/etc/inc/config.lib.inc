@@ -524,6 +524,7 @@ function safe_write_file($file, $content, $force_binary) {
  * INPUTS
  *   $desc	- string containing the a description of configuration changes
  *   $backup	- boolean: do not back up current configuration if false.
+ *   $write_config_only	- boolean: do not sync or reload anything; just save the configuration if true.
  * RESULT
  *   null
  ******/

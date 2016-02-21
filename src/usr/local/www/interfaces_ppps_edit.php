@@ -79,9 +79,7 @@ if (!is_array($config['ppps']['ppp'])) {
 
 $a_ppps = &$config['ppps']['ppp'];
 
-$iflist = get_configured_interface_with_descr();
-$portlist = get_interface_list();
-$portlist = array_merge($portlist, $iflist);
+$portlist = get_configured_interface_with_descr();
 
 if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	foreach ($config['vlans']['vlan'] as $vlan) {
@@ -89,23 +87,17 @@ if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 	}
 }
 
-if ($_GET && $_GET['type']) {
-	$pconfig['type'] = $_GET['type'];
+if (isset($_REQUEST['type'])) {
+	$pconfig['type'] = $_REQUEST['type'];
 }
 
-if (is_numericint($_GET['id'])) {
-	$id = $_GET['id'];
-}
-
-if (isset($_POST['id']) && is_numericint($_POST['id'])) {
-	$id = $_POST['id'];
+if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
+	$id = $_REQUEST['id'];
 }
 
 if (isset($id) && $a_ppps[$id]) {
-	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
 	$pconfig['type'] = $a_ppps[$id]['type'];
-	//$pconfig['if'] = $a_ppps[$id]['if'];
-	$pconfig['interfaces'] = $a_ppps[$id]['ports'];
+	$pconfig['interfaces'] = explode(",", $a_ppps[$id]['ports']);
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
 	if (isset($a_ppps[$id]['ondemand'])) {
@@ -114,10 +106,18 @@ if (isset($id) && $a_ppps[$id]) {
 	$pconfig['idletimeout'] = $a_ppps[$id]['idletimeout'];
 	$pconfig['uptime'] = $a_ppps[$id]['uptime'];
 	$pconfig['descr'] = $a_ppps[$id]['descr'];
-	$pconfig['bandwidth'] = explode(",", $a_ppps[$id]['bandwidth']);
-	$pconfig['mtu'] = explode(",", $a_ppps[$id]['mtu']);
-	$pconfig['mru'] = explode(",", $a_ppps[$id]['mru']);
-	$pconfig['mrru'] = explode(",", $a_ppps[$id]['mrru']);
+	$bandwidth = explode(",", $a_ppps[$id]['bandwidth']);
+	for ($i = 0; $i < count($bandwidth); $i++)
+		$pconfig['bandwidth'][$pconfig['interfaces'][$i]] = $bandwidth[$i];
+	$mtu = explode(",", $a_ppps[$id]['mtu']);
+	for ($i = 0; $i < count($mtu); $i++)
+		$pconfig['mtu'][$pconfig['interfaces'][$i]] = $mtu[$i];
+	$mru = explode(",", $a_ppps[$id]['mru']);
+	for ($i = 0; $i < count($mru); $i++)
+		$pconfig['mru'][$pconfig['interfaces'][$i]] = $mru[$i];
+	$mrru = explode(",", $a_ppps[$id]['mrru']);
+	for ($i = 0; $i < count($mrru); $i++)
+		$pconfig['mrru'][$pconfig['interfaces'][$i]] = $mrru[$i];
 
 	if (isset($a_ppps[$id]['shortseq'])) {
 		$pconfig['shortseq'] = true;
@@ -203,12 +203,9 @@ if (isset($id) && $a_ppps[$id]) {
 			}
 			break;
 	}
-
-} else {
-	$pconfig['ptpid'] = interfaces_ptpid_next();
 }
 
-if ($_POST) {
+if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -257,7 +254,13 @@ if ($_POST) {
 			$input_errors[] = gettext("Please choose a Link Type.");
 			break;
 	}
-	if ($_POST['passwordfld'] != $_POST['passwordfld_confirm']) {
+	if ($_POST['passwordfld'] == $_POST['passwordfld_confirm']) {
+		if ($_POST['passwordfld'] != DMYPWD) {
+			$pconfig['password'] = $_POST['passwordfld'];
+		} else {
+			$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
+		}
+	} else {
 		$input_errors[] = gettext("Password and confirmed password must match.");
 	}
 	if ($_POST['type'] == "ppp" && count($_POST['interfaces']) > 1) {
@@ -296,6 +299,7 @@ if ($_POST) {
 		}
 	}
 
+	$port_data = array();
 	if (is_array($_POST['interfaces'])) {
 		foreach ($_POST['interfaces'] as $iface) {
 			if ($_POST['localip'][$iface] && !is_ipaddr($_POST['localip'][$iface])) {
@@ -314,11 +318,34 @@ if ($_POST) {
 				$input_errors[] = sprintf(gettext("The MRU for %s must be greater than 576 bytes."), $iface);
 			}
 		}
+
+		// Loop through fields associated with an individual link/port and make an array of the data
+		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
+		foreach ($_POST['interfaces'] as $iface) {
+			foreach ($port_fields as $field_label) {
+				if (isset($_POST[$field_label . $iface]) &&
+				    strlen($_POST[$field_label . $iface]) > 0) {
+					$port_data[$field_label][] = $_POST[$field_label . $iface];
+					$pconfig[$field_label][$iface] = $_POST[$field_label . $iface];
+					$parent_array = get_parent_interface($iface);
+					$parent = $parent_array[0];
+					$friendly = convert_real_interface_to_friendly_interface_name($parent);
+					if ($field_label == "mtu" && isset($config['interfaces'][$friendly]['mtu']) &&
+					    $_POST[$field_label . $iface] > ($config['interfaces'][$friendly]['mtu'] - 8)) {
+						$input_errors[] = sprintf(gettext("The MTU (%d) is too big for %s (maximum allowed with current settings: %d)."),
+						    $_POST[$field_label . $iface], $iface, $config['interfaces'][$friendly]['mtu'] - 8);
+					}
+				}
+			}
+		}
 	}
 
 	if (!$input_errors) {
 		$ppp = array();
-		$ppp['ptpid'] = $_POST['ptpid'];
+		if (!isset($id))
+			$ppp['ptpid'] = interfaces_ptpid_next();
+		else
+			$ppp['ptpid'] = $a_ppps[$id]['ptpid'];
 		$ppp['type'] = $_POST['type'];
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
@@ -339,16 +366,6 @@ if ($_POST) {
 			$ppp['descr'] = $_POST['descr'];
 		} else {
 			unset($ppp['descr']);
-		}
-
-		// Loop through fields associated with an individual link/port and make an array of the data
-		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
-		foreach ($_POST['interfaces'] as $iface) {
-			foreach ($port_fields as $field_label) {
-				if (isset($_POST[$field_label][$iface])) {
-					$port_data[$field_label][] = $_POST[$field_label][$iface];
-				}
-			}
 		}
 
 		switch ($_POST['type']) {
@@ -413,7 +430,9 @@ if ($_POST) {
 		$ppp['protocomp'] = $_POST['protocomp'] ? true : false;
 		$ppp['vjcomp'] = $_POST['vjcomp'] ? true : false;
 		$ppp['tcpmssfix'] = $_POST['tcpmssfix'] ? true : false;
-		$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
+		if (is_array($port_data['bandwidth'])) {
+			$ppp['bandwidth'] = implode(',', $port_data['bandwidth']);
+		}
 		if (is_array($port_data['mtu'])) {
 			$ppp['mtu'] = implode(',', $port_data['mtu']);
 		}
@@ -876,43 +895,41 @@ $section->addInput(new Form_Checkbox(
 
 // Display the Link parameters. We will hide this by default, then un-hide the selected ones on clicking 'Advanced'
 $j = 0;
-
-foreach ($linklist['list'] as $ifnm =>$nm) {
+foreach ($linklist['list'] as $ifnm => $nm) {
 
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
 
 	$group->add(new Form_Input(
-		'bandwidth' . $j,
+		'bandwidth' . $ifnm,
 		null,
 		'text',
-		$pconfig['bandwidth'][$j]
+		$pconfig['bandwidth'][$ifnm]
 	))->setHelp('Bandwidth');
 
 	$group->add(new Form_Input(
-		'mtu' . $j,
+		'mtu' . $ifnm,
 		null,
 		'text',
-		$pconfig['mtu'][$j]
+		$pconfig['mtu'][$ifnm]
 	))->setHelp('MTU');
 
 	$group->add(new Form_Input(
-		'mru' . $j,
+		'mru' . $ifnm,
 		null,
 		'text',
-		$pconfig['mru'][$j]
+		$pconfig['mru'][$ifnm]
 	))->setHelp('MRU');
 
 	$group->add(new Form_Input(
-		'mrru' . $j,
+		'mrru' . $ifnm,
 		null,
 		'text',
-		$pconfig['mrru'][$j]
+		$pconfig['mrru'][$ifnm]
 	))->setHelp('MRRU');
 
 	$j++;
 
 	$section->add($group);
-
 	$group->addClass('localip sec-advanced')->addClass('linkparam' . $ifnm);
 }
 
@@ -931,13 +948,6 @@ if (isset($id) && $a_ppps[$id]) {
 		$id
 	));
 }
-
-$section->addInput(new Form_Input(
-	'ptpid',
-	null,
-	'hidden',
-	$ptpid
-));
 
 $form->add($section);
 
@@ -1006,9 +1016,8 @@ events.push(function() {
 		hideClass('linkparam', true);
 		hideInput('linkparamhelp', true);
 
-		var selected = $('#interfaces').val();
-		var length = $("#interfaces :selected").length;
-
+		var selected = $(".interfaces").val();
+		var length = $(".interfaces :selected").length;
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 

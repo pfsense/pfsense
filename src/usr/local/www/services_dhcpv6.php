@@ -596,7 +596,7 @@ $section->addInput(new Form_Checkbox(
 	'DHCPv6 Server',
 	'Enable DHCPv6 server on interface ' . $iflist[$if],
 	$pconfig['enable']
-))->toggles('.form-group:not(:first-child)');
+));
 
 if (is_ipaddrv6($ifcfgip)) {
 
@@ -952,11 +952,11 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 
 $btnaddopt = new Form_Button(
-	'addrowt',
+	'addrow',
 	'Add Option'
 );
 
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm')->addClass('adnloptions');
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
 
@@ -977,7 +977,7 @@ print_info_box(
 		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
 		'<a href="system.php">',
 		'<a href="services_dnsmasq.php"/>',
-		'</a>') . 
+		'</a>') .
 	'<br />' .
 	sprintf(
 		gettext('The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page.'),
@@ -1112,10 +1112,24 @@ events.push(function() {
 	// Show additional  controls
 	$("#btnadnl").click(function() {
 		hideClass('adnloptions', false);
-		hideInput('btnaddopt', false);
+		hideInput('addrow', false);
+		checkLastRow();
 	});
 
+    $('#enable').click(function() {
+        do_toggle();
+    });
+
+    function do_toggle() {
+	    if ($('#enable').prop('checked')) {
+	       $('.form-group:not(:first-child)').show();
+	    } else {
+	       $('.form-group:not(:first-child)').hide();
+	    }
+	}
+
 	// On initial load
+	do_toggle();
 	hideDDNS(true);
 	hideClass('ntpclass', true);
 	hideInput('tftp', true);
@@ -1123,7 +1137,8 @@ events.push(function() {
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
 	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
-	hideInput('btnaddopt', true);
+	hideInput('addrow', true);
+
 });
 //]]>
 </script>

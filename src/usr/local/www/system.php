@@ -180,7 +180,9 @@ if ($_POST) {
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsname="dns{$dnscounter}";
 		$dnsgwname="dns{$dnscounter}gw";
-		$dnslist[] = $_POST[$dnsname];
+		if ($_POST[$dnsname]) {
+			$dnslist[] = $_POST[$dnsname];
+		}
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
 			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter);
 		} else {

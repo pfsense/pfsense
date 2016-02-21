@@ -304,7 +304,7 @@ endif;
 ?>
 			</tbody>
 		</table>
-	</form>
-</div>
+	</div>
+</form>
 
 <?php include("foot.inc");

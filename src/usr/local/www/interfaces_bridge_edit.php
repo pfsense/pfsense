@@ -66,6 +66,14 @@ if (!is_array($config['bridges']['bridged'])) {
 	$config['bridges']['bridged'] = array();
 }
 
+function is_aoadv_used($pconfig) {
+        if (isset($pconfig['static']) || isset($pconfig['private']) || isset($pconfig['stp']) || isset($pconfig['span']) || isset($pconfig['edge']) || isset($pconfig['autoedge']) || isset($pconfig['ptp']) || isset($pconfig['autoptp']) || isset($pconfig['maxaddr']) || isset($pconfig['timeout']) || isset($pconfig['maxage']) || isset($pconfig['fwdelay']) || isset($pconfig['hellotime']) || isset($pconfig['priority']) || isset($pconfig['proto']) || isset($pconfig['holdcnt'])) {
+                return true;
+        }
+
+        return false;
+}
+
 $a_bridges = &$config['bridges']['bridged'];
 
 $ifacelist = get_configured_interface_with_descr();
@@ -263,6 +271,9 @@ if ($_POST) {
 			if (empty($config['interfaces'][$ifmembers])) {
 				$input_errors[] = gettext("A member interface passed does not exist in configuration");
 			}
+			if (substr($config['interfaces'][$ifmembers]['if'], 0, 6) == "bridge") {
+				$input_errors[] = gettext("A bridge interface cannot be a member of a bridge.");
+			}
 			if (is_array($config['interfaces'][$ifmembers]['wireless']) &&
 			    $config['interfaces'][$ifmembers]['wireless']['mode'] != "hostap") {
 				$input_errors[] = gettext("Bridging a wireless interface is only possible in hostap mode.");
@@ -370,16 +381,19 @@ if ($_POST) {
 	}
 }
 
+// port list with the exception of assigned bridge interfaces to prevent invalid configs
 function build_port_list($selecton) {
-	global $ifacelist;
+	global $config, $ifacelist;
 
 	$portlist = array('list' => array(), 'selected' => array());
 
 	foreach ($ifacelist as $ifn => $ifdescr) {
-		$portlist['list'][$ifn] = $ifdescr;
+		if (substr($config['interfaces'][$ifn]['if'], 0, 6) != "bridge") {
+			$portlist['list'][$ifn] = $ifdescr;
 
-		if (in_array($ifn, explode(',', $selecton))) {
-			array_push($portlist['selected'], $ifn);
+			if (in_array($ifn, explode(',', $selecton))) {
+				array_push($portlist['selected'], $ifn);
+			}
 		}
 	}
 
@@ -415,11 +429,13 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
+$showadvanced = is_aoadv_used($pconfig);
+
 $section->addInput(new Form_Checkbox(
 	'showadvanced',
 	'Advanced',
 	'Show advanced options',
-	$pconfig['showadvanced']
+	$showadvanced
 ))->toggles('.toggle-advanced');
 
 $form->add($section);
@@ -427,7 +443,7 @@ $form->add($section);
 $section = new Form_Section('Advanced Configuration');
 
 // Set initial toggle state manually for now
-if ($pconfig['showadvanced']) {
+if ($showadvanced) {
 	$section->addClass('toggle-advanced in');
 } else {
 	$section->addClass('toggle-advanced collapse');
@@ -438,14 +454,14 @@ $section->addInput(new Form_Input(
 	'Cache Size',
 	'text',
 	$pconfig['maxaddr']
-))->setHelp('Set the size of the bridge address cache. The default is 100 entries');
+))->setHelp('Set the size of the bridge address cache. The default is 2000 entries');
 
 $section->addInput(new Form_Input(
 	'timeout',
 	'Cache expire time',
 	'text',
 	$pconfig['timeout']
-))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 240 seconds');
+))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 1200 seconds');
 
 $spanlist = build_port_list($pconfig['span']);
 
@@ -534,7 +550,7 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if ($pconfig['showadvanced']) {
+if ($showadvanced) {
 	$section->addClass('toggle-advanced in');
 } else {
 	$section->addClass('toggle-advanced collapse');
@@ -605,7 +621,7 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 		$ifn,
 		$ifdescr . ' Priority',
 		'number',
-		$pconfig[$ifn],
+		$pconfig['ifpriority'][$ifn],
 		['placeholder' => 128, 'min' => 0, 'max' => 240, 'step' => 16]
 	))->setHelp('Set the Spanning Tree priority of interface to value. The default is 128. The minimum is 0 and the maximum is 240. Increments of 16.');
 }
@@ -613,10 +629,10 @@ foreach ($ifacelist as $ifn => $ifdescr) {
 $i = 0;
 foreach ($ifacelist as $ifn => $ifdescr) {
 	$section->addInput(new Form_Input(
-		$ifn . $i,
+		$ifn . 0,
 		$ifdescr . ' Path cost',
 		'number',
-		$ifpathcost[$ifn],
+		$pconfig['ifpathcost'][$ifn],
 		[ 'placeholder' => 0, 'min' => 1, 'max' => 200000000]
 	))->setHelp('Set the Spanning Tree path cost of interface to value. The default is calculated from the link speed. '.
 		'To change a previously selected path cost back to automatic, set the cost to 0. The minimum is 1 and the maximum is 200000000.');

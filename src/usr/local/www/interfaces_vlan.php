@@ -150,7 +150,14 @@ display_top_tabs($tab_array);
 	foreach ($a_vlans as $vlan) {
 ?>
 						<tr>
-							<td><?=htmlspecialchars($vlan['if']);?></td>
+							<td>
+<?php
+	printf("%s", htmlspecialchars($vlan['if']));
+	$iface = convert_real_interface_to_friendly_interface_name($vlan['if']);
+	if (isset($iface) && strlen($iface) > 0)
+		printf(" (%s)", htmlspecialchars($iface));
+?>
+							</td>
 							<td><?=htmlspecialchars($vlan['tag']);?></td>
 							<td><?=htmlspecialchars($vlan['pcp']);?></td>
 							<td><?=htmlspecialchars($vlan['descr']);?></td>

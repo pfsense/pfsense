@@ -69,7 +69,7 @@ require_once("rrd.inc");
 require_once("system.inc");
 
 // This causes the step #, field type and field name to be printed at the top of the page
-define(DEBUG, false);
+define('DEBUG', false);
 
 global $g;
 

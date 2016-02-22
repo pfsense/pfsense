@@ -56,9 +56,9 @@
  *
  */
 
-define(VIP_ALL, 1);
-define(VIP_CARP, 2);
-define(VIP_IPALIAS, 3);
+define('VIP_ALL', 1);
+define('VIP_CARP', 2);
+define('VIP_IPALIAS', 3);
 
 /* kill a process by pid file */
 function killbypid($pidfile) {
@@ -277,7 +277,7 @@ function refcount_reference($reference) {
 			refcount_init($reference);
 			$shmid = @shmop_open($reference, "w", 0, 0);
 			if (!$shmid) {
-				log_error(gettext("Could not open shared memory {$reference}"));
+				log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
 				unlock($shm_lck);
 				return;
 			}
@@ -302,7 +302,7 @@ function refcount_unreference($reference) {
 		$shmid = @shmop_open($reference, "w", 0, 0);
 		if (!$shmid) {
 			refcount_init($reference);
-			log_error(gettext("Could not open shared memory {$reference}"));
+			log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
 			unlock($shm_lck);
 			return;
 		}
@@ -329,7 +329,7 @@ function refcount_read($reference) {
 	/* There is no need for locking. */
 	$shmid = @shmop_open($reference, "a", 0, 0);
 	if (!$shmid) {
-		log_error(gettext("Could not open shared memory for read {$reference}"));
+		log_error(sprintf(gettext("Could not open shared memory for read %s"), $reference));
 		return -1;
 	}
 	$shm_data = @shmop_read($shmid, 0, 10);
@@ -929,6 +929,56 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 		return false;
 	}
 	return ($subnetv6_start1 == $subnetv6_start2);
+}
+
+/* return all PTR zones for a IPv6 network */
+function get_v6_ptr_zones($subnet, $bits) {
+	$result = array();
+
+	if (!is_ipaddrv6($subnet)) {
+		return $result;
+	}
+
+	if (!is_numericint($bits) || $bits > 128) {
+		return $result;
+	}
+
+	/*
+	 * Find a small nibble boundary subnet mask
+	 * e.g. a /29 will create 8 /32 PTR zones
+	 */
+	$small_sn = $bits;
+	while ($small_sn % 4 != 0) {
+		$small_sn++;
+	}
+
+	/* Get network prefix */
+	$small_subnet = Net_IPv6::getNetmask($subnet, $bits);
+
+	/*
+	 * While small network is part of bigger one, increase 4-bit in last
+	 * digit to get next small network
+	 */
+	while (Net_IPv6::isInNetmask($small_subnet, $subnet, $bits)) {
+		/* Get a pure hex value */
+		$unpacked = unpack('H*hex', inet_pton($small_subnet));
+		/* Create PTR record using $small_sn / 4 chars */
+		$result[] = implode('.', array_reverse(str_split(substr(
+		    $unpacked['hex'], 0, $small_sn / 4)))).'.ip6.arpa';
+
+		/* Detect what part of IP should be increased */
+		$change_part = (int) ($small_sn / 16);
+		if ($small_sn % 16 == 0) {
+			$change_part--;
+		}
+
+		/* Increase 1 to desired part */
+		$parts = explode(":", Net_IPv6::uncompress($small_subnet));
+		$parts[$change_part]++;
+		$small_subnet = implode(":", $parts);
+	}
+
+	return $result;
 }
 
 /* return true if $addr is in $subnet, false if not */
@@ -1651,12 +1701,26 @@ function alias_get_type($name) {
 
 /* expand a host or network alias, if necessary */
 function alias_expand($name) {
-	global $aliastable;
+	global $config, $aliastable;
+	$urltable_prefix = "/var/db/aliastables/";
+	$urltable_filename = $urltable_prefix . $name . ".txt";
 
 	if (isset($aliastable[$name])) {
 		// alias names cannot be strictly numeric. redmine #4289
 		if (is_numericint($name)) {
 			return null;
+		}
+		// make sure if it's a ports alias, it actually exists. redmine #5845
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($alias['name'] == $name) {
+				if ($alias['type'] == "urltable_ports") {
+					if (is_URL($alias['url']) && file_exists($urltable_filename) && filesize($urltable_filename)) {
+						return "\${$name}";
+					} else {
+						return null;
+					}
+				}
+			}
 		}
 		return "\${$name}";
 	} else if (is_ipaddr($name) || is_subnet($name) || is_port($name) || is_portrange($name)) {
@@ -2002,6 +2066,9 @@ function is_interface_vlan_mismatch() {
 
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
+			if (substr($vlan['if'], 0, 4) == "lagg") {
+				return false;
+			}
 			if (does_interface_exist($vlan['if']) == false) {
 				return true;
 			}

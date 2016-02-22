@@ -295,7 +295,7 @@ $shortcuts['l2tps']['log'] = "status_logs_vpn.php?vpntype=l2tp";
 
 $shortcuts['carp'] = array();
 $shortcuts['carp']['main'] = "system_hasync.php";
-$shortcuts['carp']['status'] = "carp_status.php";
+$shortcuts['carp']['status'] = "status_carp.php";
 
 $shortcuts['snmp'] = array();
 $shortcuts['snmp']['main'] = "services_snmp.php";

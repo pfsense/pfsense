@@ -98,7 +98,7 @@ function restore_rrd() {
 		unset($rrdrestore);
 		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
 		if ($rrdreturn != 0) {
-			log_error("RRD restore failed exited with $rrdreturn, the error is: $rrdrestore\n");
+			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
 			return;
 		}
 		foreach ($rrdrestore as $xml_file) {
@@ -109,12 +109,12 @@ function restore_rrd() {
 			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
 			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
 			if (!file_exists("/{$xml_file}")) {
-				log_error("Could not extract {$xml_file} RRD xml file from archive!");
+				log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
 				continue;
 			}
 			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
 			if ($status) {
-				log_error("rrdtool restore -f '{$xml_file}' '{$rrd_file}' failed returning {$status}.");
+				log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
 				continue;
 			}
 			unset($output);
@@ -512,17 +512,17 @@ function enable_rrd_graphing() {
 				switch ($altq->GetBwscale()) {
 					case "Gb":
 						$factor = 1024 * 1024 * 1024;
-							break;
+						break;
 					case "Mb":
-							$factor = 1024 * 1024;
-							break;
+						$factor = 1024 * 1024;
+						break;
 					case "Kb":
-							$factor = 1024;
-							break;
+						$factor = 1024;
+						break;
 					case "b":
 					default:
-							$factor = 1;
-							break;
+						$factor = 1;
+						break;
 				}
 				$qbandwidth = $altq->GetBandwidth() * $factor;
 				if ($qbandwidth <= 0) {
@@ -1008,6 +1008,7 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 
 	gw=\$(echo "\$t" | awk '{ print \$1 }')
 	delay=\$(echo "\$t" | awk '{ print \$2 }')
+	stddev=\$(echo "\$t" | awk '{ print \$3 }')
 	loss=\$(echo "\$t" | awk '{ print \$4 }')
 
 	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
@@ -1019,20 +1020,27 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		# Convert delay to millisecond
 		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
 	fi
+	if echo "\$stddev" | grep -Eqv '^[0-9]+\$'; then
+		stddev="U"
+	else
+		# Convert stddev to millisecond
+		stddev=\$(echo "scale=7; \$stddev / 1000 / 1000" | /usr/bin/bc)
+	fi
 
 	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
 		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
 		DS:loss:GAUGE:120:0:100 \\
 		DS:delay:GAUGE:120:0:100000 \\
+		DS:stddev:GAUGE:120:0:100000 \\
 		RRA:AVERAGE:0.5:1:1200 \\
 		RRA:AVERAGE:0.5:5:720 \\
 		RRA:AVERAGE:0.5:60:1860 \\
 		RRA:AVERAGE:0.5:1440:2284
 
-		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:U:U
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay:stddev N:U:U:U
 	fi
 
-	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:\$loss:\$delay
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay:stddev N:\$loss:\$delay:\$stddev
 done
 
 EOD;

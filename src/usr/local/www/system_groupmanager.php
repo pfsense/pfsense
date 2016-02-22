@@ -74,6 +74,7 @@ if (!is_array($config['system']['group'])) {
 $a_group = &$config['system']['group'];
 
 unset($id);
+
 if (isset($_POST['groupid']) && is_numericint($_POST['groupid'])) {
 	$id = $_POST['groupid'];
 }
@@ -83,6 +84,19 @@ if (isset($_GET['groupid']) && is_numericint($_GET['groupid'])) {
 }
 
 $act = (isset($_GET['act']) ? $_GET['act'] : '');
+
+function cpusercmp($a, $b) {
+	return strcasecmp($a['name'], $b['name']);
+}
+function admin_groups_sort() {
+	global $a_group;
+
+	if (!is_array($a_group)) {
+		return;
+	}
+
+	usort($a_group, "cpusercmp");
+}
 
 if ($act == "delgroup") {
 
@@ -202,6 +216,8 @@ if (isset($_POST['save'])) {
 			$group['gid'] = $config['system']['nextgid']++;
 			$a_group[] = $group;
 		}
+
+		admin_groups_sort();
 
 		conf_mount_rw();
 		local_group_set($group);
@@ -460,30 +476,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Select every option in the specified multiselect
-	function AllServers(id, selectAll) {
-	   for (i = 0; i < id.length; i++)	   {
-		   id.eq(i).prop('selected', selectAll);
-	   }
-	}
-
-	// Move all selected options from one multiselect to another
-	function moveOptions(From, To)	{
-		var len = From.length;
-		var option, value;
-
-		if (len > 1) {
-			for (i=0; i<len; i++) {
-				if (From.eq(i).is(':selected')) {
-					option = From.eq(i).val();
-					value = From.eq(i).text();
-					To.append(new Option(value, option));
-					From.eq(i).remove();
-				}
-			}
-		}
-	}
 
 	// Make buttons plain buttons, not submit
 	$("#movetodisabled").prop('type','button');

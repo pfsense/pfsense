@@ -54,40 +54,53 @@
 
 /* IPsec defines */
 global $ipsec_loglevels;
-$ipsec_loglevels = array("dmn" => "Daemon", "mgr" => "SA Manager", "ike" => "IKE SA", "chd" => "IKE Child SA",
-	"job" => "Job Processing", "cfg" => "Configuration backend", "knl" => "Kernel Interface",
-	"net" => "Networking", "asn" => "ASN encoding", "enc" => "Message encoding",
-	"imc" => "Integrity checker", "imv" => "Integrity Verifier", "pts" => "Platform Trust Service",
-	"tls" => "TLS handler", "esp" => "IPsec traffic", "lib" => "StrongSwan Lib");
+$ipsec_loglevels = array(
+	"dmn" => gettext("Daemon"),
+	"mgr" => gettext("SA Manager"),
+	"ike" => gettext("IKE SA"),
+	"chd" => gettext("IKE Child SA"),
+	"job" => gettext("Job Processing"),
+	"cfg" => gettext("Configuration backend"),
+	"knl" => gettext("Kernel Interface"),
+	"net" => gettext("Networking"),
+	"asn" => gettext("ASN encoding"),
+	"enc" => gettext("Message encoding"),
+	"imc" => gettext("Integrity checker"),
+	"imv" => gettext("Integrity Verifier"),
+	"pts" => gettext("Platform Trust Service"),
+	"tls" => gettext("TLS handler"),
+	"esp" => gettext("IPsec traffic"),
+	"lib" => gettext("StrongSwan Lib")
+);
 
 global $ipsec_log_sevs;
 $ipsec_log_sevs = array(
-	'-1' => 'Silent',
-	'0' => 'Audit',
-	'1' => 'Control',
-	'2' => 'Diag',
-	'3' => 'Raw',
-	'4' => 'Highest'
+	'-1' => gettext('Silent'),
+	'0' => gettext('Audit'),
+	'1' => gettext('Control'),
+	'2' => gettext('Diag'),
+	'3' => gettext('Raw'),
+	'4' => gettext('Highest')
 );
 
 global $ipsec_log_cats;
 $ipsec_log_cats = array(
-	"dmn" => "Daemon",
-	"mgr" => "SA Manager",
-	"ike" => "IKE SA",
-	"chd" => "IKE Child SA",
-	"job" => "Job Processing",
-	"cfg" => "Configuration backend",
-	"knl" => "Kernel Interface",
-	"net" => "Networking",
-	"asn" => "ASN encoding",
-	"enc" => "Message encoding",
-	"imc" => "Integrity checker",
-	"imv" => "Integrity Verifier",
-	"pts" => "Platform Trust Service",
-	"tls" => "TLS handler",
-	"esp" => "IPsec traffic",
-	"lib" => "StrongSwan Lib"
+	"dmn" => gettext("Daemon"),
+	"mgr" => gettext("SA Manager"),
+	"ike" => gettext("IKE SA"),
+	"chd" => gettext("IKE Child SA"),
+	"job" => gettext("Job Processing"),
+	"cfg" => gettext("Configuration backend"),
+	"knl" => gettext("Kernel Interface"),
+	"net" => gettext("Networking"),
+	"asn" => gettext("ASN encoding"),
+	"enc" => gettext("Message encoding"),
+	"imc" => gettext("Integrity checker"),
+	"imv" => gettext("Integrity Verifier"),
+	"pts" => gettext("Platform Trust Service"),
+	"tls" => gettext("TLS handler"),
+	"esp" => gettext("IPsec traffic"),
+	"lib" => gettext("StrongSwan Lib")
 );
 
 global $my_identifier_list;
@@ -98,7 +111,8 @@ $my_identifier_list = array(
 	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
 	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
 	'keyid tag' => array('desc' => gettext('KeyID tag'), 'mobile' => true),
-	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true));
+	'dyn_dns' => array('desc' => gettext('Dynamic DNS'), 'mobile' => true)
+);
 
 global $peer_identifier_list;
 $peer_identifier_list = array(
@@ -108,19 +122,21 @@ $peer_identifier_list = array(
 	'fqdn' => array('desc' => gettext('Distinguished name'), 'mobile' => true),
 	'user_fqdn' => array('desc' => gettext('User distinguished name'), 'mobile' => true),
 	'asn1dn' => array('desc' => gettext('ASN.1 distinguished Name'), 'mobile' => true),
-	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true));
+	'keyid tag' => array('desc' =>gettext('KeyID tag'), 'mobile' => true)
+);
 
 global $ipsec_idhandling;
 $ipsec_idhandling = array(
 	'yes' => 'YES', 'no' => 'NO', 'never' => 'NEVER', 'keep' => 'KEEP'
-	);
+);
 
 global $p1_ealgos;
 $p1_ealgos = array(
 	'aes' => array('name' => 'AES', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'));
+	'cast128' => array('name' => 'CAST128')
+);
 
 global $p2_ealgos;
 $p2_ealgos = array(
@@ -130,7 +146,8 @@ $p2_ealgos = array(
 	'aes256gcm' => array('name' => 'AES256-GCM', 'keysel' => array('lo' => 64, 'hi' => 128, 'step' => 32)),
 	'blowfish' => array('name' => 'Blowfish', 'keysel' => array('lo' => 128, 'hi' => 256, 'step' => 64)),
 	'3des' => array('name' => '3DES'),
-	'cast128' => array('name' => 'CAST128'));
+	'cast128' => array('name' => 'CAST128')
+);
 
 global $p1_halgos;
 $p1_halgos = array(
@@ -175,49 +192,52 @@ $p2_halgos = array(
 
 global $p1_authentication_methods;
 $p1_authentication_methods = array(
-	'hybrid_rsa_server' => array('name' => 'Hybrid RSA + Xauth', 'mobile' => true),
-	'xauth_rsa_server' => array('name' => 'Mutual RSA + Xauth', 'mobile' => true),
-	'xauth_psk_server' => array('name' => 'Mutual PSK + Xauth', 'mobile' => true),
-	'eap-tls' => array('name' => 'EAP-TLS', 'mobile' => true),
-	'eap-radius' => array('name' => 'EAP-RADIUS', 'mobile' => true),
-	'eap-mschapv2' => array('name' => 'EAP-MSChapv2', 'mobile' => true),
-	'rsasig' => array('name' => 'Mutual RSA', 'mobile' => false),
-	'pre_shared_key' => array('name' => 'Mutual PSK', 'mobile' => false));
+	'hybrid_rsa_server' => array('name' => gettext('Hybrid RSA + Xauth'), 'mobile' => true),
+	'xauth_rsa_server' => array('name' => gettext('Mutual RSA + Xauth'), 'mobile' => true),
+	'xauth_psk_server' => array('name' => gettext('Mutual PSK + Xauth'), 'mobile' => true),
+	'eap-tls' => array('name' => gettext('EAP-TLS'), 'mobile' => true),
+	'eap-radius' => array('name' => gettext('EAP-RADIUS'), 'mobile' => true),
+	'eap-mschapv2' => array('name' => gettext('EAP-MSChapv2'), 'mobile' => true),
+	'rsasig' => array('name' => gettext('Mutual RSA'), 'mobile' => false),
+	'pre_shared_key' => array('name' => gettext('Mutual PSK'), 'mobile' => false)
+);
 
 global $ipsec_preshared_key_type;
 $ipsec_preshared_key_type = array(
 	'PSK' => 'PSK',
 	'EAP' => 'EAP'
-	);
+);
 
 global $p2_modes;
 $p2_modes = array(
-	'tunnel' => 'Tunnel IPv4',
-	'tunnel6' => 'Tunnel IPv6',
-	'transport' => 'Transport');
+	'tunnel' => gettext('Tunnel IPv4'),
+	'tunnel6' => gettext('Tunnel IPv6'),
+	'transport' => gettext('Transport')
+);
 
 global $p2_protos;
 $p2_protos = array(
 	'esp' => 'ESP',
-	'ah' => 'AH');
+	'ah' => 'AH'
+);
 
 global $p2_pfskeygroups;
 $p2_pfskeygroups = array(
-	0 => 'off',
-	1  => '1 (768 bit)',
-	2  => '2 (1024 bit)',
-	5  => '5 (1536 bit)',
-	14 => '14 (2048 bit)',
-	15 => '15 (3072 bit)',
-	16 => '16 (4096 bit)',
-	17 => '17 (6144 bit)',
-	18 => '18 (8192 bit)',
-	19 => '19 (nist ecp256)',
-	20 => '20 (nist ecp384)',
-	21 => '21 (nist ecp521)',
-	28 => '28 (brainpool ecp256)',
-	29 => '29 (brainpool ecp384)',
-	30 => '30 (brainpool ecp512)'
+	0 => gettext('off'),
+	1  => gettext('1 (768 bit)'),
+	2  => gettext('2 (1024 bit)'),
+	5  => gettext('5 (1536 bit)'),
+	14 => gettext('14 (2048 bit)'),
+	15 => gettext('15 (3072 bit)'),
+	16 => gettext('16 (4096 bit)'),
+	17 => gettext('17 (6144 bit)'),
+	18 => gettext('18 (8192 bit)'),
+	19 => gettext('19 (nist ecp256)'),
+	20 => gettext('20 (nist ecp384)'),
+	21 => gettext('21 (nist ecp521)'),
+	28 => gettext('28 (brainpool ecp256)'),
+	29 => gettext('29 (brainpool ecp384)'),
+	30 => gettext('30 (brainpool ecp512)')
 );
 
 function ipsec_enabled() {

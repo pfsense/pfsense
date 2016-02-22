@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>14.4</version>
+	<version>14.6</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -90,6 +90,17 @@
 			</range>
 		</lan>
 	</dhcpd>
+	<dhcpdv6>
+		<lan>
+			<enable/>
+			<range>
+				<from>::1000</from>
+				<to>::2000</to>
+			</range>
+			<ramode>assist</ramode>
+			<rapriority>medium</rapriority>
+		</lan>
+	</dhcpdv6>
 	<snmpd>
 		<syslocation/>
 		<syscontact/>

@@ -524,6 +524,7 @@ function safe_write_file($file, $content, $force_binary) {
  * INPUTS
  *   $desc	- string containing the a description of configuration changes
  *   $backup	- boolean: do not back up current configuration if false.
+ *   $write_config_only	- boolean: do not sync or reload anything; just save the configuration if true.
  * RESULT
  *   null
  ******/
@@ -693,7 +694,7 @@ function config_restore($conffile) {
 
 	conf_mount_ro();
 
-	write_config(gettext("Reverted to") . " " . array_pop(explode("/", $conffile)) . ".", false);
+	write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
 
 	return 0;
 }

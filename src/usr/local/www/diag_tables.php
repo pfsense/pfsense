@@ -169,10 +169,14 @@ if ($bogons || !empty($entries)) {
 <?php
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
 	if ($last_updated != "") {
-		print_info_box(gettext("Table last updated on ") . $last_updated . ".", 'info', false);
+		$last_update_msg = sprintf(gettext("Table last updated on %s."), $last_updated);
 	} else {
-		print_info_box(gettext("Date of last update of table is unknown."), 'info', false);
+		$last_update_msg = gettext("Date of last update of table is unknown.");
 	}
+
+	$records_count_msg = sprintf(gettext("%s records."), number_format(count($entries), 0, gettext("."), gettext(",")));
+
+	print_info_box($last_update_msg . "&nbsp; &nbsp; " . $records_count_msg, 'info', false);
 ?>
 	</div>
 </div>
@@ -226,6 +230,17 @@ if (empty($entries)) {
 				</thead>
 				<tbody>
 <?php
+		// This is a band-aid for a yet to be root caused performance issue with large tables.  Suspected is css and/or sorting.
+ 		if (count($entries) > 3000) {
+			print "<tr><td colspan='2'><pre>";
+			foreach ($entries as $entry) {
+				$entry = trim($entry);
+					print $entry . "\n";
+			}
+			print "</pre></td></tr>";
+		} else {
+?>
+<?php
 		foreach ($entries as $entry):
 			$entry = trim($entry);
 ?>
@@ -240,6 +255,7 @@ if (empty($entries)) {
 						</td>
 					</tr>
 <?php endforeach ?>
+<?php } ?>
 				</tbody>
 			</table>
 		</div>

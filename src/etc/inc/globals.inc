@@ -54,12 +54,12 @@
 // Global defines
 
 // Automatic panel collapse
-define(COLLAPSIBLE, 0x08);
-define(SEC_CLOSED, 0x04);
-define(SEC_OPEN, 0x00);
+define('COLLAPSIBLE', 0x08);
+define('SEC_CLOSED', 0x04);
+define('SEC_OPEN', 0x00);
 
 // AddPassword method defines
-define(DMYPWD, "********");
+define('DMYPWD', "********");
 
 global $g;
 $g = array(
@@ -99,7 +99,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "14.4",
+	"latest_config" => "14.6",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",

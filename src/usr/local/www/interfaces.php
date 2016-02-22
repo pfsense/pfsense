@@ -826,11 +826,13 @@ if ($_POST['apply']) {
 			// Need code to handle MLPPP if we ever use $realhwif for MLPPP handling
 			$parent_realhwif = $realhwif_array[0];
 			$parent_if = convert_real_interface_to_friendly_interface_name($parent_realhwif);
-			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu'])) {
-				if ($_POST['mtu'] > intval($config['interfaces'][$parent_if]['mtu'])) {
-					$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
-				}
-			}
+			$mtu = 0;
+			if (!empty($parent_if) && !empty($config['interfaces'][$parent_if]['mtu']))
+				$mtu = intval($config['interfaces'][$parent_if]['mtu']);
+			if ($mtu == 0)
+				$mtu = get_interface_mtu($parent_realhwif);
+			if ($_POST['mtu'] > $mtu)
+				$input_errors[] = gettext("The MTU of a VLAN cannot be greater than that of its parent interface.");
 		} else {
 			foreach ($config['interfaces'] as $idx => $ifdata) {
 				if (($idx == $if) || !preg_match('/_vlan[0-9]/', $ifdata['if'])) {
@@ -846,7 +848,7 @@ if ($_POST['apply']) {
 				}
 
 				if (isset($ifdata['mtu']) && $ifdata['mtu'] > $_POST['mtu']) {
-					$input_errors[] = sprintf(gettext("Interface %s (VLAN) has MTU set to a larger value"), $ifdata['descr']);
+					$input_errors[] = sprintf(gettext("Interface %s (VLAN) has MTU set to a larger value."), $ifdata['descr']);
 				}
 			}
 		}

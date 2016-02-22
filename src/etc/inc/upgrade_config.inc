@@ -56,6 +56,9 @@
 if (!function_exists("dump_rrd_to_xml")) {
 	require("rrd.inc");
 }
+if (!function_exists("read_altq_config")) {
+	require("shaper.inc");
+}
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -3999,7 +4002,7 @@ function upgrade_124_to_125() {
 			if (!function_exists("file_notice")) {
 				require_once("notices.inc");
 			}
-			file_notice("WirelessSettings", "WEP is no longer supported. It will be disabled on the {$ifname} interface and the interface will be disabled. Please reconfigure the interface.");
+			file_notice("WirelessSettings", sprintf(gettext("WEP is no longer supported. It will be disabled on the %s interface and the interface will be disabled. Please reconfigure the interface."), $ifname));
 			unset($config['interfaces'][$ifname]['wireless']['wep']);
 			if (isset($intf['enable'])) {
 				unset($config['interfaces'][$ifname]['enable']);
@@ -4209,8 +4212,7 @@ function upgrade_132_to_133() {
 			    $p1['encryption-algorithm']['name'] == 'des') {
 				$p1['disabled'] = true;
 				file_notice("IPsec",
-				    "DES is no longer supported, IPsec phase 1 " .
-				    "item '{$p1['descr']}' is being disabled.");
+				    sprintf(gettext("DES is no longer supported, IPsec phase 1 item '%s' is being disabled."), $p1['descr']));
 			}
 		}
 	}
@@ -4227,8 +4229,7 @@ function upgrade_132_to_133() {
 				if ($ealgo['name'] == 'des') {
 					$p2['disabled'] = true;
 					file_notice("IPsec",
-					    "DES is no longer supported, IPsec phase 2 " .
-					    "item '{$p2['descr']}' is being disabled.");
+					    sprintf(gettext("DES is no longer supported, IPsec phase 2 item '%s' is being disabled."), $p2['descr']));
 				}
 			}
 		}
@@ -4273,7 +4274,7 @@ function upgrade_135_to_136() {
 	global $config;
 
 	if (isset($config['l7shaper'])) {
-		file_notice("L7shaper", "Layer 7 shaping is no longer supported. Its configuration has been removed.");
+		file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		unset($config['l7shaper']);
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {
@@ -4567,6 +4568,94 @@ function upgrade_143_to_144() {
 		}
 		$config['dnsmasq']['interface'] = implode(",", $ifs);
 	}
+}
+
+function upgrade_144_to_145() {
+	global $config;
+
+	// Enable DHCPv6 server and radvd config for track6 interfaces, 
+	// matching what used to be automatically enabled with no user 
+	// configurability. 
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $ifname => $ifcfg) {
+			if (isset($ifcfg['enable'])) {
+				if ($ifcfg['ipaddrv6'] == "track6") {
+					$config['dhcpdv6'][$ifname]['enable'] = true;
+					$config['dhcpdv6'][$ifname]['range']['from'] = "::1000";
+					$config['dhcpdv6'][$ifname]['range']['to'] = "::2000";
+					$config['dhcpdv6'][$ifname]['ramode'] = "assist";
+					$config['dhcpdv6'][$ifname]['rapriority'] = "medium";
+				}
+			}
+		}
+	}
+}
+
+function upgrade_145_to_146() {
+	// Add standard deviation to the quality rrds
+	global $config, $g;
+
+	$rrddbpath = "/var/db/rrd";
+	$rrdtool = "/usr/local/bin/rrdtool";
+
+	$awkcmd = "/usr/bin/awk '";
+	$awkcmd .= "{\n";
+	$awkcmd .= "    if (sub(/<\\/v><\\/row>/, \"</v><v>NaN</v></row>\") == 0)\n";
+	$awkcmd .= "    {\n";
+	$awkcmd .= "        if (/<\\/cdp_prep>/)\n";
+	$awkcmd .= "        {\n";
+	$awkcmd .= "            print \"			<ds>\"\n";
+	$awkcmd .= "            print \"			<primary_value> 0.0000000000e+00 </primary_value>\"\n";
+	$awkcmd .= "            print \"			<secondary_value> 0.0000000000e+00 </secondary_value>\"\n";
+	$awkcmd .= "            print \"			<value> NaN </value>\"\n";
+	$awkcmd .= "            print \"			<unknown_datapoints> 0 </unknown_datapoints>\"\n";
+	$awkcmd .= "            print \"			</ds>\"\n";
+	$awkcmd .= "        }\n";
+	$awkcmd .= "        else if (/<!-- Round Robin Archives -->/)\n";
+	$awkcmd .= "        {\n";
+	$awkcmd .= "            print \"	<ds>\"\n";
+	$awkcmd .= "            print \"		<name> stddev </name>\"\n";
+	$awkcmd .= "            print \"		<type> GAUGE </type>\"\n";
+	$awkcmd .= "            print \"		<minimal_heartbeat> 120 </minimal_heartbeat>\"\n";
+	$awkcmd .= "            print \"		<min> 0.0000000000e+00 </min>\"\n";
+	$awkcmd .= "            print \"		<max> 1.0000000000e+05 </max>\\n\"\n";
+	$awkcmd .= "            print \"		<!-- PDP Status -->\"\n";
+	$awkcmd .= "            print \"		<last_ds> 0 </last_ds>\"\n";
+	$awkcmd .= "            print \"		<value> 0.0000000000e+00 </value>\"\n";
+	$awkcmd .= "            print \"		<unknown_sec> 0 </unknown_sec>\"\n";
+	$awkcmd .= "            print \"	</ds>\\n\"\n";
+	$awkcmd .= "        }\n";
+	$awkcmd .= "    }\n";
+	$awkcmd .= "    print;\n";
+	$awkcmd .= "}'";
+
+	if ($g['platform'] != $g['product_name']) {
+		/* restore the databases, if we have one */
+		if (restore_rrd()) {
+			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
+		}
+	}
+
+	$databases = return_dir_as_array($rrddbpath, '/-quality\.rrd$/');
+	foreach ($databases as $database) {
+		$xmldump = "{$g['tmp_path']}/{$database}.xml";
+
+		if (platform_booting()) {
+			echo "Update RRD database {$database}.\n";
+		}
+
+		exec("$rrdtool dump {$rrddbpath}/{$database} | {$awkcmd} > {$xmldump}");
+		exec("$rrdtool restore -f {$xmldump} {$rrddbpath}/{$database}");
+		@unlink("{$xmldump}");
+	}
+
+	if (!platform_booting()) {
+		enable_rrd_graphing();
+	}
+	/* Let's save the RRD graphs after we run enable RRD graphing */
+	/* The function will restore the rrd.tgz so we will save it after */
+	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
 ?>

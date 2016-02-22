@@ -177,7 +177,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 		<?php endif; ?>
 		</td>
 		<td>
-		<?php print(htmlspecialchars($hostname)); ?>
+		<?=htmlspecialchars($hostname);?>
 		</td>
 		<td>
 		<div id="dyndnsstatus<?= $dyndnsid;?>"><?= gettext("Checking ...");?></div>

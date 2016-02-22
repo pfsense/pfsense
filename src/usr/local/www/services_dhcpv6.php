@@ -99,9 +99,13 @@ $iflist = array_merge($iflist, get_configured_pppoe_server_interfaces());
 if (!$if || !isset($iflist[$if])) {
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
+		$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
+		    (is_ipaddrv6($oc['ipaddrv6']) &&
+		    !is_linklocal($oc['ipaddrv6'])));
 
-		if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-		    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+		if ((!is_array($config['dhcpdv6'][$ifent]) ||
+		    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+		    !$valid_if_ipaddrv6) {
 			continue;
 		}
 		$if = $ifent;
@@ -132,6 +136,8 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['ddnsdomainkeyname'] = $config['dhcpdv6'][$if]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $config['dhcpdv6'][$if]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($config['dhcpdv6'][$if]['ddnsupdate']);
+	$pconfig['ddnsreverse'] = isset($config['dhcpdv6'][$if]['ddnsreverse']);
+	$pconfig['ddnsclientupdates'] = $config['dhcpdv6'][$if]['ddnsclientupdates'];
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $config['dhcpdv6'][$if]['ntpserver'];
 	$pconfig['tftp'] = $config['dhcpdv6'][$if]['tftp'];
 	$pconfig['ldap'] = $config['dhcpdv6'][$if]['ldap'];
@@ -146,8 +152,17 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$a_maps = &$config['dhcpdv6'][$if]['staticmap'];
 }
 
-$ifcfgip = get_interface_ipv6($if);
-$ifcfgsn = get_interface_subnetv6($if);
+if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
+	$trackifname = $config['interfaces'][$if]['track6-interface'];
+	$trackcfg = $config['interfaces'][$trackifname];
+	$ifcfgsn = 64 - $trackcfg['dhcp6-ia-pd-len'];
+	$ifcfgip = '::';
+
+	$str_help_mask = dhcpv6_pd_str_help($ifcfgsn);
+} else {
+	$ifcfgip = get_interface_ipv6($if);
+	$ifcfgsn = get_interface_subnetv6($if);
+}
 
 /*	 set the enabled flag which will tell us if DHCP relay is enabled
  *	 on any interface. We will use this to disable DHCP server since
@@ -203,11 +218,51 @@ if ($_POST) {
 		if (($_POST['prefixrange_to'] && !is_ipaddrv6($_POST['prefixrange_to']))) {
 			$input_errors[] = gettext("A valid prefix range must be specified.");
 		}
-		if (($_POST['range_from'] && !is_ipaddrv6($_POST['range_from']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+
+		if ($_POST['prefixrange_from'] && $_POST['prefixrange_to'] &&
+		    $_POST['prefixrange_length']) {
+			$netmask = Net_IPv6::getNetmask($_POST['prefixrange_from'],
+			    $_POST['prefixrange_length']);
+			$netmask = Net_IPv6::compress($netmask);
+
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_from']))) {
+				$input_errors[] = sprintf(gettext(
+				    "Prefix Delegation From address is not a valid IPv6 Netmask for %s"),
+				    $netmask . '/' . $_POST['prefixrange_length']);
+			}
+
+			$netmask = Net_IPv6::getNetmask($_POST['prefixrange_to'],
+			    $_POST['prefixrange_length']);
+			$netmask = Net_IPv6::compress($netmask);
+
+			if ($netmask != Net_IPv6::compress(strtolower(
+			    $_POST['prefixrange_to']))) {
+				$input_errors[] = sprintf(gettext(
+				    "Prefix Delegation To address is not a valid IPv6 Netmask for %s"),
+				    $netmask . '/' . $_POST['prefixrange_length']);
+			}
 		}
-		if (($_POST['range_to'] && !is_ipaddrv6($_POST['range_to']))) {
-			$input_errors[] = gettext("A valid range must be specified.");
+
+		if ($_POST['range_from']) {
+			if (!is_ipaddrv6($_POST['range_from'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+			    !Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
+			}
+		}
+		if ($_POST['range_to']) {
+			if (!is_ipaddrv6($_POST['range_to'])) {
+				$input_errors[] = gettext("A valid range must be specified.");
+			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
+			    !Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
+				$input_errors[] = sprintf(gettext(
+				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    $ifcfgsn, $str_help_mask);
+			}
 		}
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway']))) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified for the gateway.");
@@ -364,6 +419,8 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$config['dhcpdv6'][$if]['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$config['dhcpdv6'][$if]['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$config['dhcpdv6'][$if]['ddnsreverse'] = ($_POST['ddnsreverse']) ? true : false;
+		$config['dhcpdv6'][$if]['ddnsclientupdates'] = $_POST['ddnsclientupdates'];
 
 		unset($config['dhcpdv6'][$if]['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -474,10 +531,13 @@ $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
+	$valid_if_ipaddrv6 = (bool) ($oc['ipaddrv6'] == 'track6' ||
+	    (is_ipaddrv6($oc['ipaddrv6']) &&
+	    !is_linklocal($oc['ipaddrv6'])));
 
-
-	if ((is_array($config['dhcpdv6'][$ifent]) && !isset($config['dhcpdv6'][$ifent]['enable']) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6'])))) ||
-	    (!is_array($config['dhcpdv6'][$ifent]) && !(is_ipaddrv6($oc['ipaddrv6']) && (!is_linklocal($oc['ipaddrv6']))))) {
+	if ((!is_array($config['dhcpdv6'][$ifent]) ||
+	    !isset($config['dhcpdv6'][$ifent]['enable'])) &&
+	    !$valid_if_ipaddrv6) {
 		continue;
 	}
 
@@ -536,13 +596,18 @@ $section->addInput(new Form_Checkbox(
 	'DHCPv6 Server',
 	'Enable DHCPv6 server on interface ' . $iflist[$if],
 	$pconfig['enable']
-))->toggles('.form-group:not(:first-child)');
+));
 
 if (is_ipaddrv6($ifcfgip)) {
 
+	if ($ifcfgip == "::") {
+		$sntext = "Prefix Delegation";
+	} else {
+		$sntext = gen_subnetv6($ifcfgip, $ifcfgsn);
+	}
 	$section->addInput(new Form_StaticText(
 		'Subnet',
-		gen_subnetv6($ifcfgip, $ifcfgsn)
+		$sntext
 		));
 
 	$section->addInput(new Form_StaticText(
@@ -553,7 +618,7 @@ if (is_ipaddrv6($ifcfgip)) {
 	$section->addInput(new Form_StaticText(
 		'Available Range',
 		$range_from = gen_subnetv6($ifcfgip, $ifcfgsn) . ' to ' . gen_subnetv6_max($ifcfgip, $ifcfgsn)
-		));
+		))->setHelp($trackifname ? 'Prefix Delegation subnet will be appended to the beginning of the defined range':'');
 }
 
 if ($is_olsr_enabled) {
@@ -572,7 +637,7 @@ $f1 = new Form_Input(
 	$pconfig['range_from']
 );
 
-$f1->setHelp('To');
+$f1->setHelp('From');
 
 $f2 = new Form_Input(
 	'range_to',
@@ -581,7 +646,7 @@ $f2 = new Form_Input(
 	$pconfig['range_to']
 );
 
-$f2->setHelp('From');
+$f2->setHelp('To');
 
 $group = new Form_Group('Range');
 
@@ -597,7 +662,7 @@ $f1 = new Form_Input(
 	$pconfig['prefixrange_from']
 );
 
-$f1->setHelp('To');
+$f1->setHelp('From');
 
 $f2 = new Form_Input(
 	'prefixrange_to',
@@ -606,7 +671,8 @@ $f2 = new Form_Input(
 	$pconfig['prefixrange_to']
 );
 
-$f2->setHelp('From');
+$f2->setHelp('To');
+
 $group = new Form_Group('Prefix Delegation Range');
 
 $group->add($f1);
@@ -663,7 +729,7 @@ $section->addInput(new Form_Input(
 	'Default lease time',
 	'text',
 	$pconfig['deftime']
-))->setHelp('Seconds . Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
+))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
 			'The default is 7200 seconds.');
 
 $section->addInput(new Form_Input(
@@ -728,6 +794,26 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ddnsdomainkey']
 ))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
+
+$section->addInput(new Form_Select(
+	'ddnsclientupdates',
+	'DDNS Client Updates',
+	$pconfig['ddnsclientupdates'],
+	array(
+	    'allow' => gettext('Allow'),
+	    'deny' => gettext('Deny'),
+	    'ignore' => gettext('Ignore'))
+))->setHelp('How Forward entries are handled when client indicates they wish to update DNS.  ' .
+	    'Allow prevents DHCP from updating Forward entries, Deny indicates that DHCP will ' .
+	    'do the updates and the client should not, Ignore specifies that DHCP will do the ' .
+	    'update and the client can also attempt the update usually using a different domain name.');
+
+$section->addInput(new Form_Checkbox(
+	'ddnsreverse',
+	'DDNS Reverse',
+	'Add reverse dynamic DNS entries.',
+	$pconfig['ddnsreverse']
+));
 
 $btnntp = new Form_Button(
 	'btnntp',
@@ -866,11 +952,11 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 
 $btnaddopt = new Form_Button(
-	'addrowt',
+	'addrow',
 	'Add Option'
 );
 
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm')->addClass('adnloptions');
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
 
@@ -891,7 +977,7 @@ print_info_box(
 		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
 		'<a href="system.php">',
 		'<a href="services_dnsmasq.php"/>',
-		'</a>') . 
+		'</a>') .
 	'<br />' .
 	sprintf(
 		gettext('The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page.'),
@@ -967,6 +1053,8 @@ events.push(function() {
 		hideInput('ddnsdomainprimary', hide);
 		hideInput('ddnsdomainkeyname', hide);
 		hideInput('ddnsdomainkey', hide);
+		hideInput('ddnsclientupdates', hide);
+		hideCheckbox('ddnsreverse', hide);
 	}
 
 	// Make the 'Copy My MAC' button a plain button, not a submit button
@@ -1024,10 +1112,24 @@ events.push(function() {
 	// Show additional  controls
 	$("#btnadnl").click(function() {
 		hideClass('adnloptions', false);
-		hideInput('btnaddopt', false);
+		hideInput('addrow', false);
+		checkLastRow();
 	});
 
+    $('#enable').click(function() {
+        do_toggle();
+    });
+
+    function do_toggle() {
+	    if ($('#enable').prop('checked')) {
+	       $('.form-group:not(:first-child)').show();
+	    } else {
+	       $('.form-group:not(:first-child)').hide();
+	    }
+	}
+
 	// On initial load
+	do_toggle();
 	hideDDNS(true);
 	hideClass('ntpclass', true);
 	hideInput('tftp', true);
@@ -1035,7 +1137,8 @@ events.push(function() {
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
 	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
-	hideInput('btnaddopt', true);
+	hideInput('addrow', true);
+
 });
 //]]>
 </script>

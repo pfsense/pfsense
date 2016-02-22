@@ -230,7 +230,7 @@ if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
 	conf_mount_ro();
 	exit();
 } else {
-	$nobackup = true; // do not backup embedded, livecd
+	$nobackup = true; // do not backup embedded
 }
 
 if ($nobackup == false) {

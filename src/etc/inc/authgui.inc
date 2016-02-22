@@ -74,6 +74,12 @@ $allowedpages = getAllowedPages($_SESSION['Username'], $_SESSION['user_radius_at
 /*
  * redirect to first allowed page if requesting a wrong url
  */
+
+/* Fix this up otherwise the privilege check will fail. See Redmine #5909. */
+if ($_SERVER['REQUEST_URI'] == "/") {
+	$_SERVER['REQUEST_URI'] = "/index.php";
+}
+
 if (!isAllowedPage($_SERVER['REQUEST_URI'])) {
 	if (count($allowedpages) > 0) {
 		$page = str_replace('*', '', $allowedpages[0]);
@@ -264,7 +270,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2 class="panel-title">Login to pfSense</h2>
+						<h2 class="panel-title"><?=sprintf(gettext("Login to %s"), $g['product_name'])?></h2>
 					</div>
 
 					<div class="panel-body">
@@ -275,22 +281,22 @@ if (isset($config['system']['webgui']['webguicss'])) {
 
 						<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
 							<div class="form-group">
-								<label for="usernamefld" class="col-sm-3 control-label">Username</label>
+								<label for="usernamefld" class="col-sm-3 control-label"><?=gettext("Username")?></label>
 								<div class="col-sm-9 col-md-7">
-									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="Enter your username" autocorrect="off" autocapitalize="none" spellcheck="false">
+									<input type="text" class="form-control" name="usernamefld" id="usernamefld" placeholder="<?=gettext("Enter your username")?>" autocorrect="off" autocapitalize="none" spellcheck="false">
 								</div>
 							</div>
 
 							<div class="form-group">
-								<label for="passwordfld" class="col-sm-3 control-label">Password</label>
+								<label for="passwordfld" class="col-sm-3 control-label"><?=gettext("Password")?></label>
 								<div class="col-sm-9 col-md-7">
-									<input type="password" class="form-control" name="passwordfld" id="passwordfld" placeholder="Enter your password">
+									<input type="password" class="form-control" name="passwordfld" id="passwordfld" placeholder="<?=gettext("Enter your password")?>">
 								</div>
 							</div>
 
 							<div class="form-group">
 								<div class="col-sm-offset-3 col-sm-9 col-md-7">
-									<button type="submit" class="btn btn-primary" name="login">Login</button>
+									<button type="submit" class="btn btn-primary" name="login"><?=gettext("Login")?></button>
 								</div>
 							</div>
 						</form>

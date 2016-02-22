@@ -74,10 +74,10 @@ $openvpn_dev_mode = array("tun", "tap");
 
 global $openvpn_verbosity_level;
 $openvpn_verbosity_level = array(
-	0 =>	"none",
-	1 =>	"default",
+	0 =>	gettext("none"),
+	1 =>	gettext("default"),
 	2 =>	"2",
-	3 =>	"3 (recommended)",
+	3 =>	gettext("3 (recommended)"),
 	4 =>	"4",
 	5 => 	"5",
 	6 => 	"6",
@@ -107,11 +107,11 @@ $openvpn_dh_lengths = array(
 
 global $openvpn_cert_depths;
 $openvpn_cert_depths = array(
-	1 => "One (Client+Server)",
-	2 => "Two (Client+Intermediate+Server)",
-	3 => "Three (Client+2xIntermediate+Server)",
-	4 => "Four (Client+3xIntermediate+Server)",
-	5 => "Five (Client+4xIntermediate+Server)"
+	1 => gettext("One (Client+Server)"),
+	2 => gettext("Two (Client+Intermediate+Server)"),
+	3 => gettext("Three (Client+2xIntermediate+Server)"),
+	4 => gettext("Four (Client+3xIntermediate+Server)"),
+	5 => gettext("Five (Client+4xIntermediate+Server)")
 );
 
 global $openvpn_server_modes;
@@ -214,7 +214,7 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 	global $a_cert;
 
 	if ($include_none) {
-		$list = array('' => 'None (Username and/or Password required)');
+		$list = array('' => gettext('None (Username and/or Password required)'));
 	} else {
 		$list = array();
 	}
@@ -222,8 +222,8 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 	$non_server_list = array();
 
 	if ($prioritize_server_certs) {
-		$list[' '] = "===== Server Certificates =====";
-		$non_server_list['  '] = "===== Non-Server Certificates =====";
+		$list[' '] = gettext("===== Server Certificates =====");
+		$non_server_list['  '] = gettext("===== Non-Server Certificates =====");
 	}
 
 	foreach ($a_cert as $cert) {
@@ -233,18 +233,18 @@ function openvpn_build_cert_list($include_none = false, $prioritize_server_certs
 		$purpose = cert_get_purpose($cert['crt'], true);
 
 		if ($purpose['server'] == "Yes") {
-			$properties[] = "Server: Yes";
+			$properties[] = gettext("Server: Yes");
 		} elseif ($prioritize_server_certs) {
-			$properties[] = "Server: NO";
+			$properties[] = gettext("Server: NO");
 		}
 		if ($ca) {
-			$properties[] = "CA: {$ca['descr']}";
+			$properties[] = sprintf(gettext("CA: %s"), $ca['descr']);
 		}
 		if (cert_in_use($cert['refid'])) {
-			$properties[] = "In Use";
+			$properties[] = gettext("In Use");
 		}
 		if (is_cert_revoked($cert)) {
-			$properties[] = "Revoked";
+			$properties[] = gettext("Revoked");
 		}
 
 		if (!empty($properties)) {
@@ -426,7 +426,7 @@ function openvpn_get_digestlist() {
 }
 
 function openvpn_get_engines() {
-	$openssl_engines = array('none' => 'No Hardware Crypto Acceleration');
+	$openssl_engines = array('none' => gettext('No Hardware Crypto Acceleration'));
 	exec("/usr/bin/openssl engine -t -c", $openssl_engine_output);
 	$openssl_engine_output = implode("\n", $openssl_engine_output);
 	$openssl_engine_output = preg_replace("/\\n\\s+/", "|", $openssl_engine_output);
@@ -492,7 +492,7 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	$networks = explode(',', $value);
 
 	if (!$multiple && (count($networks) > 1)) {
-		return sprintf(gettext("The field '%s' must contain a single valid %s CIDR range."), $name, $ipproto);
+		return sprintf(gettext("The field '%1\$s' must contain a single valid %2\$s CIDR range."), $name, $ipproto);
 	}
 
 	foreach ($networks as $network) {
@@ -507,7 +507,7 @@ function openvpn_validate_cidr($value, $name, $multiple = false, $ipproto = "ipv
 	}
 
 	if ($error) {
-		return sprintf(gettext("The field '%s' must contain only valid %s CIDR range(s) separated by commas."), $name, $ipproto);
+		return sprintf(gettext("The field '%1\$s' must contain only valid %2\$s CIDR range(s) separated by commas."), $name, $ipproto);
 	} else {
 		return false;
 	}
@@ -1113,7 +1113,7 @@ function openvpn_restart($mode, $settings) {
 		while (posix_kill($pid, 0)) {
 			usleep(250000);
 			if ($i > 10) {
-				log_error("OpenVPN ID $mode_id PID $pid still running, killing.");
+				log_error(sprintf(gettext('OpenVPN ID %1$s PID %2$s still running, killing.'), $mode_id, $pid));
 				posix_kill($pid, SIGKILL);
 				usleep(500000);
 			}
@@ -1329,9 +1329,9 @@ function openvpn_resync_all($interface = "") {
 	}
 */
 	if ($interface <> "") {
-		log_error("Resyncing OpenVPN instances for interface " . convert_friendly_interface_to_friendly_descr($interface) . ".");
+		log_error(sprintf(gettext("Resyncing OpenVPN instances for interface %s."), convert_friendly_interface_to_friendly_descr($interface)));
 	} else {
-		log_error("Resyncing OpenVPN instances.");
+		log_error(gettext("Resyncing OpenVPN instances."));
 	}
 
 	if (is_array($config['openvpn']['openvpn-server'])) {
@@ -1368,7 +1368,7 @@ function openvpn_resync_gwgroup($gwgroupname = "") {
 		if (is_array($config['openvpn']['openvpn-server'])) {
 			foreach ($config['openvpn']['openvpn-server'] as & $settings) {
 				if ($gwgroupname == $settings['interface']) {
-					log_error("Resyncing OpenVPN for gateway group " . $gwgroupname . " server " . $settings["description"] . ".");
+					log_error(sprintf(gettext('Resyncing OpenVPN for gateway group %1$s server %2$s.'), $gwgroupname, $settings["description"]));
 					openvpn_resync('server', $settings);
 				}
 			}
@@ -1377,7 +1377,7 @@ function openvpn_resync_gwgroup($gwgroupname = "") {
 		if (is_array($config['openvpn']['openvpn-client'])) {
 			foreach ($config['openvpn']['openvpn-client'] as & $settings) {
 				if ($gwgroupname == $settings['interface']) {
-					log_error("Resyncing OpenVPN for gateway group " . $gwgroupname . " client " . $settings["description"] . ".");
+					log_error(sprintf(gettext('Resyncing OpenVPN for gateway group %1$s client %2$s.'), $gwgroupname, $settings["description"]));
 					openvpn_resync('client', $settings);
 				}
 			}
@@ -1386,7 +1386,7 @@ function openvpn_resync_gwgroup($gwgroupname = "") {
 		// Note: no need to resysnc Client Specific (csc) here, as changes to the OpenVPN real interface do not effect these.
 
 	} else {
-		log_error("openvpn_resync_gwgroup called with null gwgroup parameter.");
+		log_error(gettext("openvpn_resync_gwgroup called with null gwgroup parameter."));
 	}
 }
 
@@ -1487,8 +1487,8 @@ function openvpn_get_server_status($server, $socket) {
 	} else {
 		$conn = array();
 		$conn['common_name'] = "[error]";
-		$conn['remote_host'] = "Unable to contact daemon";
-		$conn['virtual_addr'] = "Service not running?";
+		$conn['remote_host'] = gettext("Unable to contact daemon");
+		$conn['virtual_addr'] = gettext("Service not running?");
 		$conn['bytes_recv'] = 0;
 		$conn['bytes_sent'] = 0;
 		$conn['connect_time'] = 0;
@@ -1615,8 +1615,8 @@ function openvpn_get_client_status($client, $socket) {
 
 	} else {
 		$DisplayNote=true;
-		$client['remote_host'] = "Unable to contact daemon";
-		$client['virtual_addr'] = "Service not running?";
+		$client['remote_host'] = gettext("Unable to contact daemon");
+		$client['virtual_addr'] = gettext("Service not running?");
 		$client['bytes_recv'] = 0;
 		$client['bytes_sent'] = 0;
 		$client['connect_time'] = 0;

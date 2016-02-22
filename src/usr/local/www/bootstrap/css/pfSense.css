@@ -96,8 +96,17 @@ tr.disabled th {
     background-color: #212121;
 }
 
+.navbar-brand > img {
+    /* reduce logo size */
+    max-width: 127px;
+    max-height: 36px;
+    width: auto;
+    height: auto;
+}
+
 .navbar-brand {
-    padding-top: 3px;
+    /* vertically center logo  */
+    padding-top: 7px;
 }
 
 .nav>li>a {

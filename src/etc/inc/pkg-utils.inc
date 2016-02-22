@@ -554,10 +554,10 @@ function sync_package($package_name) {
 		if (file_exists($include_file)) {
 			require_once($include_file);
 		} else {
-			log_error("Reinstalling package {$package['name']} because its include file({$include_file}) is missing!");
+			log_error(sprintf(gettext('Reinstalling package %1$s because its include file(%2$s) is missing!'), $package['name'], $include_file));
 			uninstall_package($package['name']);
 			if (install_package($package['name']) != 0) {
-				log_error("Reinstalling package {$package['name']} failed. Take appropriate measures!!!");
+				log_error(sprintf(gettext("Reinstalling package %s failed. Take appropriate measures!!!"), $package['name']));
 				return;
 			}
 			if (file_exists($include_file)) {
@@ -667,7 +667,7 @@ function install_package_xml($package_name) {
 		$to_output = gettext("overwrite!") . "\n";
 	}
 	unlink_if_exists('/conf/needs_package_sync');
-	write_config("Intermediate config write during package install for {$pkg_info['name']}.");
+	write_config(sprintf(gettext("Intermediate config write during package install for %s."), $pkg_info['name']));
 	conf_mount_ro();
 	update_status($to_output);
 
@@ -704,7 +704,7 @@ function install_package_xml($package_name) {
 			} else {
 				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
-				update_status("Include " . basename($pkg_config['include_file']) . " is missing!\n");
+				update_status(sprintf(gettext("Include %s is missing!"), basename($pkg_config['include_file'])) . "\n");
 
 				uninstall_package($package_name);
 				write_config($changedesc);
@@ -862,7 +862,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		 * XXX: Otherwise inclusion of config.inc again invalidates actions taken.
 		 *	Same is done during installation.
 		 */
-		write_config("Intermediate config write during package removal for {$package_name}.");
+		write_config(sprintf(gettext("Intermediate config write during package removal for %s."), $package_name));
 
 		/*
 		 * If a require exists, include it.	 this will
@@ -878,7 +878,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 			} else {
 				pkg_debug("Missing include {$pkg_config['include_file']}\n");
 				$missing_include = true;
-				update_status("Include file " . basename($pkg_config['include_file']) . " could not be found for inclusion.\n");
+				update_status(sprintf(gettext("Include file %s could not be found for inclusion."), basename($pkg_config['include_file'])) . "\n");
 			}
 		}
 		/* ermal
@@ -901,14 +901,14 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 				eval_once($pkg_config['custom_php_deinstall_command']);
 				update_status(gettext("done.") . "\n");
 			} else {
-				update_status("\nNot executing custom deinstall hook because an include is missing.\n");
+				update_status("\n". gettext("Not executing custom deinstall hook because an include is missing.") . "\n");
 			}
 		}
 	}
 	/* syslog */
 	$need_syslog_restart = false;
 	if (is_array($pkg_info['logging']) && $pkg_info['logging']['logfilename'] <> "") {
-		update_status("Syslog entries... ");
+		update_status(gettext("Syslog entries... "));
 		@unlink("{$g['varlog_path']}/{$pkg_info['logging']['logfilename']}");
 		update_status("done.\n");
 		$need_syslog_restart = true;
@@ -919,7 +919,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		update_status(gettext("Configuration... "));
 		unset($config['installedpackages']['package'][$pkgid]);
 		update_status(gettext("done.") . "\n");
-		write_config("Removed {$package_name} package.\n");
+		write_config(sprintf(gettext("Removed %s package."), $package_name));
 	}
 
 	/* remove package entry from /etc/syslog.conf if needed */
@@ -947,7 +947,7 @@ function package_reinstall_all() {
 
 	/* During boot after upgrade, wait for internet connection */
 	if ($upgrade) {
-		update_status(gettext("Waiting for internet connection to update pkg metadata and fini package reinstallation"));
+		update_status(gettext("Waiting for internet connection to update pkg metadata and finish package reinstallation"));
 		while (true) {
 			if (pkg_update(true)) {
 				break;
@@ -1003,7 +1003,7 @@ function stop_packages() {
 
 	global $config, $g;
 
-	log_error("Stopping all packages.");
+	log_error(gettext("Stopping all packages."));
 
 	$rcfiles = glob(RCFILEPREFIX . "*.sh");
 	if (!$rcfiles) {

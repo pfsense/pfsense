@@ -279,6 +279,9 @@ function services_radvd_configure($blacklist = array()) {
 		if (!isset($config['interfaces'][$if]['enable'])) {
 			continue;
 		}
+		if ($config['dhcpdv6'][$if]['ramode'] == "disabled") {
+			continue;
+		}
 		/* Do not put in the config an interface which is down */
 		if (isset($blacklist[$if])) {
 			continue;
@@ -1246,8 +1249,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		if (isset($blacklist[$ifname])) {
 			continue;
 		}
-		if (!empty($config['interfaces'][$ifname]['track6-interface']) &&
-		    (empty($dhcpdv6cfg[$ifname]) || !isset($dhcpdv6cfg[$ifname]['enable']))) {
+		if (!empty($config['interfaces'][$ifname]['track6-interface']) && isset($dhcpdv6cfg[$ifname]['enable'])) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
 			if (!is_ipaddrv6($ifcfgipv6)) {
@@ -1341,6 +1343,9 @@ EOD;
 			continue;
 		}
 		$ifcfgipv6 = get_interface_ipv6($dhcpv6if);
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			continue;
+		}
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
 

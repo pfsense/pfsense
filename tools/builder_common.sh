@@ -1481,7 +1481,8 @@ builder_setup() {
 			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
-			${PKG_REPO_CONF_BRANCH}
+			${PKG_REPO_CONF_BRANCH} \
+			${IS_RELEASE}
 	fi
 
 	pkg install ${PRODUCT_NAME}-builder

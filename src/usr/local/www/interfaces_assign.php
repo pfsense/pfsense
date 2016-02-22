@@ -80,6 +80,10 @@ function interface_assign_description($portinfo, $portname) {
 	global $ovpn_descrs;
 	if ($portinfo['isvlan']) {
 		$descr = sprintf(gettext('VLAN %1$s on %2$s'), $portinfo['tag'], $portinfo['if']);
+		$iface = convert_real_interface_to_friendly_interface_name($portinfo['if']);
+		if (isset($iface) && strlen($iface) > 0) {
+			$descr .= " - $iface";
+		}
 		if ($portinfo['descr']) {
 			$descr .= " (" . $portinfo['descr'] . ")";
 		}

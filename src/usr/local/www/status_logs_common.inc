@@ -777,6 +777,11 @@ function manage_log_code() {
 # Manage Log Section/Form
 function manage_log_section() {
 
+	/* If the user does not have access to status logs settings page, then exclude the manage log panel from the page. */
+	if (!isAllowedPage("status_logs_settings.php")) {
+		return;
+	}
+
 	global $input_errors, $allowed_logs, $logfile, $config, $pconfig;
 	global $system_logs_manage_log_form_hidden;
 
@@ -785,7 +790,7 @@ function manage_log_section() {
 		$manage_log_active = true;
 	}
 
-	if ($filter_active) {
+	if ($manage_log_active) {
 		$panel_state = 'in';
 		$panel_body_state = SEC_OPEN;
 	} else {

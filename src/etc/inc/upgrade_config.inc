@@ -4567,4 +4567,25 @@ function upgrade_143_to_144() {
 	}
 }
 
+function upgrade_144_to_145() {
+	global $config;
+
+	// Enable DHCPv6 server and radvd config for track6 interfaces, 
+	// matching what used to be automatically enabled with no user 
+	// configurability. 
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $ifname => $ifcfg) {
+			if (isset($ifcfg['enable'])) {
+				if ($ifcfg['ipaddrv6'] == "track6") {
+					$config['dhcpdv6'][$ifname]['enable'] = true;
+					$config['dhcpdv6'][$ifname]['range']['from'] = "::1000";
+					$config['dhcpdv6'][$ifname]['range']['to'] = "::2000";
+					$config['dhcpdv6'][$ifname]['ramode'] = "assist";
+					$config['dhcpdv6'][$ifname]['rapriority'] = "medium";
+				}
+			}
+		}
+	}
+}
+
 ?>

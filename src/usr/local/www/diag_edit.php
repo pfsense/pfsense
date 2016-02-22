@@ -1,6 +1,6 @@
 <?php
 /*
-	edit.php
+	diag_edit.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -57,7 +57,7 @@
 ##|*IDENT=page-diagnostics-edit
 ##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
-##|*MATCH=edit.php*
+##|*MATCH=diag_edit.php*
 ##|*MATCH=browser.php*
 ##|*MATCH=filebrowser/browser.php*
 ##|-PRIV
@@ -70,21 +70,21 @@ if ($_POST['action']) {
 		case 'load':
 			if (strlen($_POST['file']) < 1) {
 				print('|5|');
-				print_info_box(gettext("No file name specified."), 'danger', false);
+				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
 			} elseif (is_dir($_POST['file'])) {
 				print('|4|');
-				print_info_box(gettext("Loading a directory is not supported."), 'danger', false);
+				print_info_box(gettext("Loading a directory is not supported."), 'danger');
 				print('|');
 			} elseif (!is_file($_POST['file'])) {
 				print('|3|');
-				print_info_box(gettext("File does not exist or is not a regular file."), 'danger', false);
+				print_info_box(gettext("File does not exist or is not a regular file."), 'danger');
 				print('|');
 			} else {
 				$data = file_get_contents(urldecode($_POST['file']));
 				if ($data === false) {
 					print('|1|');
-					print_info_box(gettext("Failed to read file."), 'danger', false);
+					print_info_box(gettext("Failed to read file."), 'danger');
 					print('|');
 				} else {
 					$data = base64_encode($data);
@@ -96,7 +96,7 @@ if ($_POST['action']) {
 		case 'save':
 			if (strlen($_POST['file']) < 1) {
 				print('|');
-				print_info_box(gettext("No file name specified."), 'danger', false);
+				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
 			} else {
 				conf_mount_rw();
@@ -111,15 +111,15 @@ if ($_POST['action']) {
 				}
 				if ($ret === false) {
 					print('|');
-					print_info_box(gettext("Failed to write file."), 'danger', false);
+					print_info_box(gettext("Failed to write file."), 'danger');
 					print('|');
 				} elseif ($ret != strlen($_POST['data'])) {
 					print('|');
-					print_info_box(gettext("Error while writing file."), 'danger', false);
+					print_info_box(gettext("Error while writing file."), 'danger');
 					print('|');
 				} else {
 					print('|');
-					print_info_box(gettext("File saved successfully."), 'success', false);
+					print_info_box(gettext("File saved successfully."), 'success');
 					print('|');
 				}
 			}

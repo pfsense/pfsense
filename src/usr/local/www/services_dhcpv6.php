@@ -596,13 +596,18 @@ $section->addInput(new Form_Checkbox(
 	'DHCPv6 Server',
 	'Enable DHCPv6 server on interface ' . $iflist[$if],
 	$pconfig['enable']
-))->toggles('.form-group:not(:first-child)');
+));
 
 if (is_ipaddrv6($ifcfgip)) {
 
+	if ($ifcfgip == "::") {
+		$sntext = "Prefix Delegation";
+	} else {
+		$sntext = gen_subnetv6($ifcfgip, $ifcfgsn);
+	}
 	$section->addInput(new Form_StaticText(
 		'Subnet',
-		gen_subnetv6($ifcfgip, $ifcfgsn)
+		$sntext
 		));
 
 	$section->addInput(new Form_StaticText(
@@ -613,7 +618,7 @@ if (is_ipaddrv6($ifcfgip)) {
 	$section->addInput(new Form_StaticText(
 		'Available Range',
 		$range_from = gen_subnetv6($ifcfgip, $ifcfgsn) . ' to ' . gen_subnetv6_max($ifcfgip, $ifcfgsn)
-		));
+		))->setHelp($trackifname ? 'Prefix Delegation subnet will be appended to the beginning of the defined range':'');
 }
 
 if ($is_olsr_enabled) {
@@ -724,7 +729,7 @@ $section->addInput(new Form_Input(
 	'Default lease time',
 	'text',
 	$pconfig['deftime']
-))->setHelp('Seconds . Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
+))->setHelp('Lease time in seconds. Used for clients that do not ask for a specific expiration time. ' . ' <br />' .
 			'The default is 7200 seconds.');
 
 $section->addInput(new Form_Input(
@@ -947,11 +952,11 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 
 $btnaddopt = new Form_Button(
-	'addrowt',
+	'addrow',
 	'Add Option'
 );
 
-$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm')->addClass('adnloptions');
+$btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $section->addInput($btnaddopt);
 
@@ -972,7 +977,7 @@ print_info_box(
 		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
 		'<a href="system.php">',
 		'<a href="services_dnsmasq.php"/>',
-		'</a>') . 
+		'</a>') .
 	'<br />' .
 	sprintf(
 		gettext('The DHCP lease table can be viewed on the %1$sStatus: DHCPv6 leases%2$s page.'),
@@ -1107,10 +1112,24 @@ events.push(function() {
 	// Show additional  controls
 	$("#btnadnl").click(function() {
 		hideClass('adnloptions', false);
-		hideInput('btnaddopt', false);
+		hideInput('addrow', false);
+		checkLastRow();
 	});
 
+    $('#enable').click(function() {
+        do_toggle();
+    });
+
+    function do_toggle() {
+	    if ($('#enable').prop('checked')) {
+	       $('.form-group:not(:first-child)').show();
+	    } else {
+	       $('.form-group:not(:first-child)').hide();
+	    }
+	}
+
 	// On initial load
+	do_toggle();
 	hideDDNS(true);
 	hideClass('ntpclass', true);
 	hideInput('tftp', true);
@@ -1118,7 +1137,8 @@ events.push(function() {
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
 	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
-	hideInput('btnaddopt', true);
+	hideInput('addrow', true);
+
 });
 //]]>
 </script>

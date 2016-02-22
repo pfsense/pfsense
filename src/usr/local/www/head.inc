@@ -182,7 +182,7 @@ function return_ext_menu($section) {
 function output_menu($arrayitem, $target = null, $section = "") {
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section = "Help") && isAllowedPage("help.php"))) {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -496,16 +496,21 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</li>
 	<?php endif ?>
 
-	<?php if ($system_logs_manage_log_form_hidden): ?>
+	<?php if ($system_logs_manage_log_form_hidden): 
+			/* If the user does not have access to status logs settings page, then exclude the manage log panel icon from the title bar. */
+			if (isAllowedPage("status_logs_settings.php")) {
+	?>
 		<li>
 			<a onclick="$('#manage-log-form').toggle(360)" title="<?=gettext("Manage log")?>">
 				<i class="fa fa-wrench icon-pointer"></i>
 			</a>
 		</li>
-	<?php endif ?>
+	<?php	}
+		endif
+	?>
 
 <?php
-if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
+if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service']) && isAllowedPage('status_services.php')) {
 	$ssvc = array();
 	switch ($shortcut_section) {
 		case "openvpn":
@@ -523,15 +528,15 @@ if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service'])) {
 	}
 }
 
-if ('' != ($link = get_shortcut_main_link($shortcut_section, false))) {
+if (('' != ($link = get_shortcut_main_link($shortcut_section, false))) && (isAllowedPage($shortcuts[$shortcut_section]['main']))) {
 	echo '<li>' . $link . '</li>';
 }
 
-if ('' != ($link = get_shortcut_status_link($shortcut_section, false))) {
+if (('' != ($link = get_shortcut_status_link($shortcut_section, false))) && (isAllowedPage($shortcuts[$shortcut_section]['status']))) {
 	echo '<li>' . $link . '</li>';
 }
 
-if ('' != ($link = get_shortcut_log_link($shortcut_section, false))) {
+if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllowedPage($shortcuts[$shortcut_section]['log']))) {
 	echo '<li>' . $link . '</li>';
 }
 

@@ -56,6 +56,9 @@
 if (!function_exists("dump_rrd_to_xml")) {
 	require("rrd.inc");
 }
+if (!function_exists("read_altq_config")) {
+	require("shaper.inc");
+}
 
 /* Upgrade functions must be named:
 *    upgrade_XXX_to_YYY
@@ -4586,6 +4589,73 @@ function upgrade_144_to_145() {
 			}
 		}
 	}
+}
+
+function upgrade_145_to_146() {
+	// Add standard deviation to the quality rrds
+	global $config, $g;
+
+	$rrddbpath = "/var/db/rrd";
+	$rrdtool = "/usr/local/bin/rrdtool";
+
+	$awkcmd = "/usr/bin/awk '";
+	$awkcmd .= "{\n";
+	$awkcmd .= "    if (sub(/<\\/v><\\/row>/, \"</v><v>NaN</v></row>\") == 0)\n";
+	$awkcmd .= "    {\n";
+	$awkcmd .= "        if (/<\\/cdp_prep>/)\n";
+	$awkcmd .= "        {\n";
+	$awkcmd .= "            print \"			<ds>\"\n";
+	$awkcmd .= "            print \"			<primary_value> 0.0000000000e+00 </primary_value>\"\n";
+	$awkcmd .= "            print \"			<secondary_value> 0.0000000000e+00 </secondary_value>\"\n";
+	$awkcmd .= "            print \"			<value> NaN </value>\"\n";
+	$awkcmd .= "            print \"			<unknown_datapoints> 0 </unknown_datapoints>\"\n";
+	$awkcmd .= "            print \"			</ds>\"\n";
+	$awkcmd .= "        }\n";
+	$awkcmd .= "        else if (/<!-- Round Robin Archives -->/)\n";
+	$awkcmd .= "        {\n";
+	$awkcmd .= "            print \"	<ds>\"\n";
+	$awkcmd .= "            print \"		<name> stddev </name>\"\n";
+	$awkcmd .= "            print \"		<type> GAUGE </type>\"\n";
+	$awkcmd .= "            print \"		<minimal_heartbeat> 120 </minimal_heartbeat>\"\n";
+	$awkcmd .= "            print \"		<min> 0.0000000000e+00 </min>\"\n";
+	$awkcmd .= "            print \"		<max> 1.0000000000e+05 </max>\\n\"\n";
+	$awkcmd .= "            print \"		<!-- PDP Status -->\"\n";
+	$awkcmd .= "            print \"		<last_ds> 0 </last_ds>\"\n";
+	$awkcmd .= "            print \"		<value> 0.0000000000e+00 </value>\"\n";
+	$awkcmd .= "            print \"		<unknown_sec> 0 </unknown_sec>\"\n";
+	$awkcmd .= "            print \"	</ds>\\n\"\n";
+	$awkcmd .= "        }\n";
+	$awkcmd .= "    }\n";
+	$awkcmd .= "    print;\n";
+	$awkcmd .= "}'";
+
+	if ($g['platform'] != $g['product_name']) {
+		/* restore the databases, if we have one */
+		if (restore_rrd()) {
+			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
+			@rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/backup/rrd.tgz");
+		}
+	}
+
+	$databases = return_dir_as_array($rrddbpath, '/-quality\.rrd$/');
+	foreach ($databases as $database) {
+		$xmldump = "{$g['tmp_path']}/{$database}.xml";
+
+		if (platform_booting()) {
+			echo "Update RRD database {$database}.\n";
+		}
+
+		exec("$rrdtool dump {$rrddbpath}/{$database} | {$awkcmd} > {$xmldump}");
+		exec("$rrdtool restore -f {$xmldump} {$rrddbpath}/{$database}");
+		@unlink("{$xmldump}");
+	}
+
+	if (!platform_booting()) {
+		enable_rrd_graphing();
+	}
+	/* Let's save the RRD graphs after we run enable RRD graphing */
+	/* The function will restore the rrd.tgz so we will save it after */
+	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
 ?>

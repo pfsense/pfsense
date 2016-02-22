@@ -1008,6 +1008,7 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 
 	gw=\$(echo "\$t" | awk '{ print \$1 }')
 	delay=\$(echo "\$t" | awk '{ print \$2 }')
+	stddev=\$(echo "\$t" | awk '{ print \$3 }')
 	loss=\$(echo "\$t" | awk '{ print \$4 }')
 
 	if echo "\$loss" | grep -Eqv '^[0-9]+\$'; then
@@ -1019,20 +1020,27 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 		# Convert delay to millisecond
 		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
 	fi
+	if echo "\$stddev" | grep -Eqv '^[0-9]+\$'; then
+		stddev="U"
+	else
+		# Convert stddev to millisecond
+		stddev=\$(echo "scale=7; \$stddev / 1000 / 1000" | /usr/bin/bc)
+	fi
 
 	if [ ! -f {$rrddbpath}\$gw-quality.rrd ]; then
 		{$rrdtool} create {$rrddbpath}\$gw-quality.rrd --step 60 \\
 		DS:loss:GAUGE:120:0:100 \\
 		DS:delay:GAUGE:120:0:100000 \\
+		DS:stddev:GAUGE:120:0:100000 \\
 		RRA:AVERAGE:0.5:1:1200 \\
 		RRA:AVERAGE:0.5:5:720 \\
 		RRA:AVERAGE:0.5:60:1860 \\
 		RRA:AVERAGE:0.5:1440:2284
 
-		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:U:U
+		{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay:stddev N:U:U:U
 	fi
 
-	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay N:\$loss:\$delay
+	{$rrdtool} update {$rrddbpath}\$gw-quality.rrd -t loss:delay:stddev N:\$loss:\$delay:\$stddev
 done
 
 EOD;

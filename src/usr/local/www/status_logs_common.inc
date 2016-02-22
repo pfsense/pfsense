@@ -62,10 +62,12 @@ require_once("filter_log.inc");
 
 // Status Logs Common - Code
 function status_logs_common_code() {
-	global $g, $config, $specific_log, $nentries, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
+	global $g, $config, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
 	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
+
+	$specific_log = basename($logfile) . '_settings';
 
 	isset($config['syslog'][$specific_log]['nentries']) ? $nentries = $config['syslog'][$specific_log]['nentries'] : $nentries = $config['syslog']['nentries'];
 
@@ -95,6 +97,15 @@ function status_logs_common_code() {
 	if ($logfile == 'filter' && $view == 'summary') {
 		$system_logs_filter_form_hidden = false;
 		$system_logs_manage_log_form_hidden = false;
+	}
+
+	// Formatted/Raw Display
+	if ($config['syslog'][$specific_log]['format'] == 'formatted') {
+		$rawfilter = false;
+	} else if ($config['syslog'][$specific_log]['format'] == 'raw') {
+		$rawfilter = true;
+	} else {	//  Use the general logging options setting (global).
+		$rawfilter = isset($config['syslog']['rawfilter']);
 	}
 }
 
@@ -600,7 +611,13 @@ function status_logs_build_if_list() {
 
 // Manage Log Section - Code
 function manage_log_code() {
-	global $logfile, $specific_log, $config, $pconfig, $rawfilter, $save_settings, $input_errors, $savemsg;
+
+	/* If the user does not have access to status logs settings page, then don't accept a manage log form submission. */
+	if (!isAllowedPage("status_logs_settings.php")) {
+		return;
+	}
+
+	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $savemsg;
 
 	$specific_log = basename($logfile) . '_settings';
 
@@ -761,16 +778,6 @@ function manage_log_code() {
 				}
 			}
 		}
-	}
-
-
-	// Formatted/Raw Display
-	if ($config['syslog'][$specific_log]['format'] == 'formatted') {
-		$rawfilter = false;
-	} else if ($config['syslog'][$specific_log]['format'] == 'raw') {
-		$rawfilter = true;
-	} else {	//  Use the general logging options setting (global).
-		$rawfilter = isset($config['syslog']['rawfilter']);
 	}
 }
 

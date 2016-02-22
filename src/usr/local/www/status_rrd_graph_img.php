@@ -263,6 +263,8 @@ $colorqueuesdropdown	= array('000000', '7B7B7B', '999999', 'BBBBBB', 'CCCCCC', '
 
 /* Quality Graph Delay	>420,	 180-420, 60-180,  20-60,	<20,	 Delay Avg */
 $colorqualityrtt	= array('990000', 'a83c3c', 'b36666', 'bd9090', 'cccccc', '000000');
+/* Quality Graph Standard Deviation */
+$colorqualitystddev	= '55333355';
 /* Quality Graph Loss */
 $colorqualityloss	= 'ee0000';
 
@@ -1074,29 +1076,36 @@ if ((strstr($curdatabase, "-traffic.rrd")) && (file_exists("$rrddbpath$curdataba
 		--height 200 --width 620 \\
 		--lower-limit 0 \\
 		DEF:delayraw=$rrddbpath$curdatabase:delay:AVERAGE:step=$step \\
+		DEF:stddevraw=$rrddbpath$curdatabase:stddev:AVERAGE:step=$step \\
 		DEF:loss=$rrddbpath$curdatabase:loss:AVERAGE:step=$step \\
 		\"CDEF:delay=delayraw,1000,*\" \\
+		\"CDEF:stddev=stddevraw,1000,*\" \\
 		\"CDEF:loss10=loss,$multiplier,*\" \\
 		\"CDEF:r0=delay,20,MIN\" \\
 		\"CDEF:r1=delay,60,MIN\" \\
 		\"CDEF:r2=delay,180,MIN\" \\
 		\"CDEF:r3=delay,420,MIN\" \\
-		COMMENT:\"\t\t\t\t\tDelay\t\t\t\tPacket loss\\n\" \\
+		COMMENT:\"\t\t\t\t\tDelay\t\t\t\tStddev\t\t\t   Loss\\n\" \\
 		AREA:delay#$colorqualityrtt[0]:\"> 420      ms\" \\
-		GPRINT:delay:MIN:\"\t\tMin\\: %7.2lf ms\" \\
-		GPRINT:loss:MIN:\"\tMin\\: %3.1lf %%\\n\" \\
+		GPRINT:delay:MIN:\"\t\t Min\\: %7.2lf ms\" \\
+		GPRINT:stddev:MIN:\"\t Min\\: %7.2lf ms\" \\
+		GPRINT:loss:MIN:\"\t Min\\: %4.1lf %%\\n\" \\
 		AREA:r3#$colorqualityrtt[1]:\"180-420    ms\" \\
-		GPRINT:delay:AVERAGE:\"\t\tAvg\\: %7.2lf ms\" \\
-		GPRINT:loss:AVERAGE:\"\tAvg\\: %3.1lf %%\\n\" \\
+		GPRINT:delay:AVERAGE:\"\t\t Avg\\: %7.2lf ms\" \\
+		GPRINT:stddev:AVERAGE:\"\t Avg\\: %7.2lf ms\" \\
+		GPRINT:loss:AVERAGE:\"\t Avg\\: %4.1lf %%\\n\" \\
 		AREA:r2#$colorqualityrtt[2]:\"60-180     ms\" \\
-		GPRINT:delay:MAX:\"\t\tMax\\: %7.2lf ms\" \\
-		GPRINT:loss:MAX:\"\tMax\\: %3.1lf %%\\n\" \\
+		GPRINT:delay:MAX:\"\t\t Max\\: %7.2lf ms\" \\
+		GPRINT:stddev:MAX:\"\t Max\\: %7.2lf ms\" \\
+		GPRINT:loss:MAX:\"\t Max\\: %4.1lf %%\\n\" \\
 		AREA:r1#$colorqualityrtt[3]:\"20-60      ms\\n\" \\
 		AREA:r0#$colorqualityrtt[4]:\"< 20       ms\" \\
 		GPRINT:delay:LAST:\"\t\tLast\\: %7.2lf ms\" \\
-		GPRINT:loss:LAST:\"\tLast\: %3.1lf %%\\n\" \\
+		GPRINT:stddev:LAST:\"\tLast\\: %7.2lf ms\" \\
+		GPRINT:loss:LAST:\"\tLast\: %4.1lf %%\\n\" \\
 		AREA:loss10#$colorqualityloss:\"Packet loss\\n\" \\
 		LINE1:delay#$colorqualityrtt[5]:\"Delay average\\n\" \\
+		LINE1:stddev#$colorqualitystddev:\"Stddev average\\n\" \\
 		COMMENT:\"\t\t\t\t\t\t\t\t\t\t\t\t\t" . strftime('%b %d %H\:%M\:%S %Y') . "\"";
 } elseif ((strstr($curdatabase, "spamd.rrd")) && (file_exists("$rrddbpath$curdatabase"))) {
 	/* graph a spamd statistics graph */

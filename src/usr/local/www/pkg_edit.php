@@ -922,6 +922,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				}
 			}
 
+			$descr = (isset($pkga['description'])) ? $pkga['description'] : "";
 			if ($grouping) {
 				$group->add(new Form_Select(
 					$pkga['fieldname'],
@@ -929,7 +930,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 					$srcoptions,
 					isset($pkga['multiple'])
-				))->setOnchange($onchange);
+				))->setHelp($descr)->setOnchange($onchange);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
 					$advanced->addInput(new Form_Select(
@@ -938,7 +939,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])
-					))->setOnchange($onchange);
+					))->setHelp($descr)->setOnchange($onchange);
 				} else {
 					$section->addInput(new Form_Select(
 						$pkga['fieldname'],
@@ -946,7 +947,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						isset($pkga['multiple']) ? $srcselected:$srcselected[0],
 						$srcoptions,
 						isset($pkga['multiple'])
-					))->setOnchange($onchange);
+					))->setHelp($descr)->setOnchange($onchange);
 				}
 			}
 

@@ -907,16 +907,45 @@ if ($_POST) {
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_rules/pre_write_config");
 
 		if (isset($id) && $a_filter[$id]) {
-			$a_filter[$id] = $filterent;
+			$tmpif = $filterent['interface'];
+			if (($tmpif == $if) || (isset($pconfig['floating']))) {
+				$a_filter[$id] = $filterent;
+			} else {							// rule moved to different interface
+				// Update the separators of previous interface.
+				$a_separators = &$config['filter']['separator'][strtolower($if)];
+				$ridx = ifridx($if, $id);		// get rule index within interface
+				$mvnrows = -1;
+				move_separators($a_separators, $ridx, $mvnrows);
+
+				$a_filter[$id] = $filterent;	// save edited rule to new interface
+
+				// Update the separators of new interface.
+				$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+				$ridx = ifridx($tmpif, $id);	// get rule index within interface
+				if ($ridx == 0) {				// rule was placed at the top
+					$ridx = -1;					// move all separators
+				}
+				$mvnrows = +1;
+				move_separators($a_separators, $ridx, $mvnrows);
+			}
+
 		} else {
 			$filterent['created'] = make_config_revision_entry();
 			if (is_numeric($after)) {
 				array_splice($a_filter, $after+1, 0, array($filterent));
 
-				// For copy/dup the $if var is taken from the rule.
+				// For copy/dup the $if var is taken from the rule submission.
 				// In the case of floating rules that could be anything.  But never "FloatingRules" that is needed.
 				if (isset($pconfig['floating'])) {
 					$tmpif = 'FloatingRules';
+				} else if (isset($filterent['interface'])) {
+					$tmpif = $filterent['interface'];
+					if ($tmpif != $if) {					// rule copied to different interface
+						$ridx = ifridx($tmpif, $after+1);	// get rule index within interface
+						if ($ridx == 0) {					// rule was placed at the top
+							$after = -1;					// move all separators
+						}
+					}
 				} else {
 					$tmpif = $if;
 				}

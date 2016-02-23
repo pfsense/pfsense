@@ -46,10 +46,12 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
+export BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING="yes"
+
 # Name of the product you are building, only ESF can build and distribute
 # pfSense® software
-export PRODUCT_NAME="nonSense"
-export PRODUCT_URL="https://PRODUCT_URL/"
+export PRODUCT_NAME="pfSense"
+export PRODUCT_URL="https://www.pfsense.org/"
 
 # Define FreeBSD repository, branch and specific commit
 #export FREEBSD_REPO_BASE=https://github.com/freebsd/freebsd.git
@@ -75,7 +77,7 @@ export PRODUCT_URL="https://PRODUCT_URL/"
 #export PKG_RSYNC_DESTDIR="/usr/local/www/beta/packages"
 
 # pkg repo URL
-#export PKG_REPO_SERVER="pkg+http://beta.pfsense.org/packages"
+export PKG_REPO_SERVER="pkg+http://firmware.netgate.com/packages"
 
 # Branch to replace pkg.conf template, defaults to $GIT_REPO_BRANCH_OR_TAG
 #export PKG_REPO_CONF_BRANCH="BRANCH"

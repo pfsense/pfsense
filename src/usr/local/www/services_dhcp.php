@@ -426,14 +426,14 @@ if (isset($_POST['submit'])) {
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = ip2ulong(long2ip32(ip2long($ifcfgip) & gen_subnet_mask_long($ifcfgsn)));
-			$subnet_end = ip2ulong(long2ip32(ip2long($ifcfgip) | (~gen_subnet_mask_long($ifcfgsn))));
+			$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
+			$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
 
-			if (ip2ulong($_POST['range_from']) > ip2ulong($_POST['range_to'])) {
+			if (ip_greater_than($_POST['range_from'], $_POST['range_to'])) {
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 			}
 
-			if (ip2ulong($_POST['range_from']) < $subnet_start || ip2ulong($_POST['range_to']) > $subnet_end) {
+			if (!is_inrange_v4($_POST['range_from'], $subnet_start, $subnet_end)) {
 				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 
@@ -461,15 +461,12 @@ if (isset($_POST['submit'])) {
 				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."), $iflist[$if]);
 			}
 
-			$dynsubnet_start = ip2ulong($_POST['range_from']);
-			$dynsubnet_end = ip2ulong($_POST['range_to']);
 			if (is_array($a_maps)) {
 				foreach ($a_maps as $map) {
 					if (empty($map['ipaddr'])) {
 						continue;
 					}
-					if ((ip2ulong($map['ipaddr']) >= $dynsubnet_start) &&
-					    (ip2ulong($map['ipaddr']) <= $dynsubnet_end)) {
+					if (is_inrange_v4($map['ipaddr'], $_POST['range_from'], $_POST['range_to'])) {
 						$input_errors[] = sprintf(gettext("The DHCP range cannot overlap any static DHCP mappings."));
 						break;
 					}

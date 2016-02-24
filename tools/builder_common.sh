@@ -1483,6 +1483,10 @@ builder_setup() {
 			${_arch} \
 			${PKG_REPO_CONF_BRANCH} \
 			${IS_RELEASE}
+
+		# Use fingerprint keys from repo
+		sed -i '' -e "/fingerprints:/ s,\"/,\"${BUILDER_ROOT}/src/," \
+			${PKG_REPO_PATH}
 	fi
 
 	pkg install ${PRODUCT_NAME}-builder

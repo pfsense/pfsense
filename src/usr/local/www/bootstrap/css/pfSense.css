@@ -859,3 +859,9 @@ a[href]:after {
 .bs-callout-info h4 {
     color: #01579B;
 }
+
+/* Disable 300 ms click delay so event handlers are effective. */
+/* Makes posible for non-touch compatible features to work; e.g. double tap rule to edit. */
+body{
+	touch-action: manipulation;
+}

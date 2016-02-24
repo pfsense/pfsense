@@ -5022,7 +5022,8 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 			if ($action == "update") {
 				interfaces_vips_configure($int);
 			} else {
-				if (empty($vhid) || ($vhid == $vip['vhid'])) {
+				if (empty($vhid) || ($vhid == $vip['vhid']) ||
+				    substr($vip['interface'], 0, 4) == "_vip") {
 					$result[] = $vip;
 				}
 			}

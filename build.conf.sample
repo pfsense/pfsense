@@ -81,3 +81,5 @@ export PKG_REPO_SERVER="pkg+http://firmware.netgate.com/packages"
 
 # Branch to replace pkg.conf template, defaults to $GIT_REPO_BRANCH_OR_TAG
 #export PKG_REPO_CONF_BRANCH="BRANCH"
+
+export PKG_REPO_SIGNING_COMMAND="ssh sign@smartcard.pfmechanics.com sudo ./sign.sh"

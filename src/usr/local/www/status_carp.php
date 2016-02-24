@@ -102,22 +102,6 @@ if ($_POST['disablecarp'] != "") {
 					continue;
 
 				interface_vip_bring_down($vip);
-
-				/*
-				 * Reconfigure radvd when necessary
-				 * XXX: Is it the best way to do it?
-				 */
-				if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-					foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-						if ($dhcpv6if !== $vip['interface'] ||
-						    $dhcpv6ifconf['ramode'] === "disabled") {
-							continue;
-						}
-
-						services_radvd_configure();
-						break;
-					}
-				}
 			}
 		}
 		$savemsg = sprintf(gettext("%s IPs have been disabled. Please note that disabling does not survive a reboot and some configuration changes will re-enable."), $carp_counter);

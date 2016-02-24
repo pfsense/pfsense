@@ -5022,7 +5022,8 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 			if ($action == "update") {
 				interfaces_vips_configure($int);
 			} else {
-				if (empty($vhid) || ($vhid == $vip['vhid'])) {
+				if (empty($vhid) || ($vhid == $vip['vhid']) ||
+				    substr($vip['interface'], 0, 4) == "_vip") {
 					$result[] = $vip;
 				}
 			}
@@ -5554,7 +5555,7 @@ function is_altq_capable($int) {
 	 */
 	$capable = array("ae", "age", "alc", "ale", "an", "aue", "axe", "bce",
 			"bfe", "bge", "bridge", "cas", "dc", "de", "ed", "em", "ep", "epair", "et", "fxp", "gem",
-			"hme", "hn", "igb", "ixgbe", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
+			"hme", "hn", "igb", "ix", "jme", "le", "lem", "msk", "mxge", "my", "nfe",
 			"nge", "npe", "nve", "re", "rl", "sf", "sge", "sis", "sk",
 			"ste", "stge", "ti", "txp", "udav", "ural", "vge", "vmx", "vr", "vte", "xl",
 			"ndis", "tun", "ovpns", "ovpnc", "vlan", "pppoe", "pptp", "ng",

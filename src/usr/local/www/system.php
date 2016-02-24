@@ -175,7 +175,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The domain may only contain the characters a-z, 0-9, '-' and '.'.");
 	}
 
-	$ignore_posted_dnsgw = array();
+	$dnslist = $ignore_posted_dnsgw = array();
 
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsname="dns{$dnscounter}";

@@ -1179,166 +1179,166 @@ EOD;
 			$reqids = array();
 			$ealgoAHsp2arr = array();
 			$ealgoESPsp2arr = array();
-		if (is_array($a_phase2) && count($a_phase2)) {
-			foreach ($a_phase2 as $ph2ent) {
-				if ($ikeid != $ph2ent['ikeid']) {
-					continue;
-				}
+			if (is_array($a_phase2) && count($a_phase2)) {
+				foreach ($a_phase2 as $ph2ent) {
+					if ($ikeid != $ph2ent['ikeid']) {
+						continue;
+					}
 
-				if (isset($ph2ent['disabled'])) {
-					continue;
-				}
+					if (isset($ph2ent['disabled'])) {
+						continue;
+					}
 
-				if (isset($ph2ent['mobile']) && !isset($a_client['enable'])) {
-					continue;
-				}
+					if (isset($ph2ent['mobile']) && !isset($a_client['enable'])) {
+						continue;
+					}
 
-				if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
-					$tunneltype = "type = tunnel";
+					if (($ph2ent['mode'] == 'tunnel') or ($ph2ent['mode'] == 'tunnel6')) {
+						$tunneltype = "type = tunnel";
 
-					$localid_type = $ph2ent['localid']['type'];
-					$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
+						$localid_type = $ph2ent['localid']['type'];
+						$leftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['localid'], false, $ph2ent['mode']);
 
-					/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
-					if (($localid_type == "none" || $localid_type == "mobile") &&
-					    isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid) == 1)) {
-						$left_spec = '%any';
-					} else {
-						if ($localid_type != "address") {
-							$localid_type = "subnet";
-						}
-						// Don't let an empty subnet into config, it can cause parse errors. Ticket #2201.
-						if (!is_ipaddr($leftsubnet_data) && !is_subnet($leftsubnet_data) && ($leftsubnet_data != "0.0.0.0/0")) {
-							log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
-							continue;
-						}
-						if (!empty($ph2ent['natlocalid'])) {
-							$natleftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
-							if ($ph2ent['natlocalid']['type'] != "address") {
-								if (is_subnet($natleftsubnet_data)) {
-									$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
-								}
-							} else {
-								if (is_ipaddr($natleftsubnet_data)) {
-									$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
-								}
+						/* Do not print localid in some cases, such as a pure-psk or psk/xauth single phase2 mobile tunnel */
+						if (($localid_type == "none" || $localid_type == "mobile") &&
+						    isset($ph1ent['mobile']) && (ipsec_get_number_of_phase2($ikeid) == 1)) {
+							$left_spec = '%any';
+						} else {
+							if ($localid_type != "address") {
+								$localid_type = "subnet";
 							}
-							$natfilterrules = true;
+							// Don't let an empty subnet into config, it can cause parse errors. Ticket #2201.
+							if (!is_ipaddr($leftsubnet_data) && !is_subnet($leftsubnet_data) && ($leftsubnet_data != "0.0.0.0/0")) {
+								log_error("Invalid IPsec Phase 2 \"{$ph2ent['descr']}\" - {$ph2ent['localid']['type']} has no subnet.");
+								continue;
+							}
+							if (!empty($ph2ent['natlocalid'])) {
+								$natleftsubnet_data = ipsec_idinfo_to_cidr($ph2ent['natlocalid'], false, $ph2ent['mode']);
+								if ($ph2ent['natlocalid']['type'] != "address") {
+									if (is_subnet($natleftsubnet_data)) {
+										$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
+									}
+								} else {
+									if (is_ipaddr($natleftsubnet_data)) {
+										$leftsubnet_data = "{$natleftsubnet_data}|{$leftsubnet_data}";
+									}
+								}
+								$natfilterrules = true;
+							}
+						}
+
+						$leftsubnet_spec[] = $leftsubnet_data;
+
+						if (!isset($ph2ent['mobile'])) {
+							$tmpsubnet = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
+							$rightsubnet_spec[] = $tmpsubnet;
+						} else if (!empty($a_client['pool_address'])) {
+							$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
+						}
+					} else {
+						$tunneltype = "type = transport";
+
+						if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
+						    ($ph1ent['authentication_method'] == "pre_shared_key")) &&
+						    isset($ph1ent['mobile'])) {
+							$left_spec = "%any";
+						} else {
+							$tmpsubnet = ipsec_get_phase1_src($ph1ent);
+							$leftsubnet_spec[] = $tmpsubnet;
+						}
+
+						if (!isset($ph2ent['mobile'])) {
+							$rightsubnet_spec[] = $right_spec;
 						}
 					}
 
-					$leftsubnet_spec[] = $leftsubnet_data;
-
-					if (!isset($ph2ent['mobile'])) {
-						$tmpsubnet = ipsec_idinfo_to_cidr($ph2ent['remoteid'], false, $ph2ent['mode']);
-						$rightsubnet_spec[] = $tmpsubnet;
-					} else if (!empty($a_client['pool_address'])) {
-						$rightsubnet_spec[] = "{$a_client['pool_address']}/{$a_client['pool_netbits']}";
-					}
-				} else {
-					$tunneltype = "type = transport";
-
-					if ((($ph1ent['authentication_method'] == "xauth_psk_server") ||
-					     ($ph1ent['authentication_method'] == "pre_shared_key")) &&
-					    isset($ph1ent['mobile'])) {
-						$left_spec = "%any";
-					} else {
-						$tmpsubnet = ipsec_get_phase1_src($ph1ent);
-						$leftsubnet_spec[] = $tmpsubnet;
+					if (isset($a_client['pfs_group']) && isset($ph2ent['mobile'])) {
+						$ph2ent['pfsgroup'] = $a_client['pfs_group'];
 					}
 
-					if (!isset($ph2ent['mobile'])) {
-						$rightsubnet_spec[] = $right_spec;
-					}
-				}
+					if ($ph2ent['protocol'] == 'esp') {
+						if (is_array($ph2ent['encryption-algorithm-option'])) {
+							foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
+								$ealg_id = $ealg['name'];
+								$ealg_kl = $ealg['keylen'];
 
-				if (isset($a_client['pfs_group']) && isset($ph2ent['mobile'])) {
-					$ph2ent['pfsgroup'] = $a_client['pfs_group'];
-				}
-
-				if ($ph2ent['protocol'] == 'esp') {
-					if (is_array($ph2ent['encryption-algorithm-option'])) {
-						foreach ($ph2ent['encryption-algorithm-option'] as $ealg) {
-							$ealg_id = $ealg['name'];
-							$ealg_kl = $ealg['keylen'];
-
-							if (!empty($ealg_kl) && $ealg_kl == "auto") {
-								if (empty($p2_ealgos) || !is_array($p2_ealgos)) {
-									require("ipsec.inc");
-								}
-								$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
-								$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
-								$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
-								/* XXX: in some cases where include ordering is suspect these variables
-								 * are somehow 0 and we enter this loop forever and timeout after 900
-								 * seconds wrecking bootup */
-								if ($key_hi != 0 and $key_lo != 0 and $key_step != 0) {
-									for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
-										if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
-											foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
-												$halgo = str_replace('hmac_', '', $halgo);
-												$tmpealgo = "{$ealg_id}{$keylen}-{$halgo}";
+								if (!empty($ealg_kl) && $ealg_kl == "auto") {
+									if (empty($p2_ealgos) || !is_array($p2_ealgos)) {
+										require("ipsec.inc");
+									}
+									$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
+									$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];
+									$key_step = $p2_ealgos[$ealg_id]['keysel']['step'];
+									/* XXX: in some cases where include ordering is suspect these variables
+									 * are somehow 0 and we enter this loop forever and timeout after 900
+									 * seconds wrecking bootup */
+									if ($key_hi != 0 and $key_lo != 0 and $key_step != 0) {
+										for ($keylen = $key_hi; $keylen >= $key_lo; $keylen -= $key_step) {
+											if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+												foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
+													$halgo = str_replace('hmac_', '', $halgo);
+													$tmpealgo = "{$ealg_id}{$keylen}-{$halgo}";
+													$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
+													if (!empty($modp)) {
+														$tmpealgo .= "-{$modp}";
+													}
+													$ealgoESPsp2arr[] = $tmpealgo;
+												}
+											} else {
+												$tmpealgo = "{$ealg_id}{$keylen}";
 												$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 												if (!empty($modp)) {
 													$tmpealgo .= "-{$modp}";
 												}
 												$ealgoESPsp2arr[] = $tmpealgo;
 											}
-										} else {
-											$tmpealgo = "{$ealg_id}{$keylen}";
+										}
+									}
+								} else {
+									if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+										foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
+											$halgo = str_replace('hmac_', '', $halgo);
+											$tmpealgo = "{$ealg_id}{$ealg_kl}-{$halgo}";
 											$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 											if (!empty($modp)) {
 												$tmpealgo .= "-{$modp}";
 											}
 											$ealgoESPsp2arr[] = $tmpealgo;
 										}
-									}
-								}
-							} else {
-								if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
-									foreach ($ph2ent['hash-algorithm-option'] as $halgo) {
-										$halgo = str_replace('hmac_', '', $halgo);
-										$tmpealgo = "{$ealg_id}{$ealg_kl}-{$halgo}";
+									} else {
+										$tmpealgo = "{$ealg_id}{$ealg_kl}";
 										$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
 										if (!empty($modp)) {
 											$tmpealgo .= "-{$modp}";
 										}
 										$ealgoESPsp2arr[] = $tmpealgo;
 									}
-								} else {
-									$tmpealgo = "{$ealg_id}{$ealg_kl}";
-									$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-									if (!empty($modp)) {
-										$tmpealgo .= "-{$modp}";
-									}
-									$ealgoESPsp2arr[] = $tmpealgo;
 								}
 							}
 						}
-					}
-				} else if ($ph2ent['protocol'] == 'ah') {
-					if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
-						$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
-						foreach ($ph2ent['hash-algorithm-option'] as $tmpAHalgo) {
-							$tmpAHalgo = str_replace('hmac_', '', $tmpAHalgo);
-							if (!empty($modp)) {
-								$tmpAHalgo = "-{$modp}";
+					} else if ($ph2ent['protocol'] == 'ah') {
+						if (!empty($ph2ent['hash-algorithm-option']) && is_array($ph2ent['hash-algorithm-option'])) {
+							$modp = vpn_ipsec_convert_to_modp($ph2ent['pfsgroup']);
+							foreach ($ph2ent['hash-algorithm-option'] as $tmpAHalgo) {
+								$tmpAHalgo = str_replace('hmac_', '', $tmpAHalgo);
+								if (!empty($modp)) {
+									$tmpAHalgo = "-{$modp}";
+								}
+								$ealgoAHsp2arr[] = $tmpAHalgo;
 							}
-							$ealgoAHsp2arr[] = $tmpAHalgo;
 						}
 					}
-				}
 
-				$reqids[] = $ph2ent['reqid'];
+					$reqids[] = $ph2ent['reqid'];
 
-				if (!empty($ph2ent['lifetime'])) {
-					if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime'])) {
-						$ipseclifetime = intval($ph2ent['lifetime']);
+					if (!empty($ph2ent['lifetime'])) {
+						if ($ipseclifetime == 0 || intval($ipseclifetime) > intval($ph2ent['lifetime'])) {
+							$ipseclifetime = intval($ph2ent['lifetime']);
+						}
 					}
-				}
 
+				}
 			}
-		}
 
 			$ipsecconnect =<<<EOD
 	fragmentation = yes

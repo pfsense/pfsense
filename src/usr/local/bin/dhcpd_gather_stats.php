@@ -190,7 +190,9 @@ if (is_array($config['dhcpd'][$argv[1]])) {
 	$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
 	$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
 
-	$result['range'] = (ip2ulong($config['dhcpd'][$dhcpif]['range']['to'])) - (ip2ulong($config['dhcpd'][$dhcpif]['range']['from']));
+	$result['range'] = ip_range_size_v4(
+	    $config['dhcpd'][$dhcpif]['range']['from'],
+	    $config['dhcpd'][$dhcpif]['range']['to']);
 	
 	foreach ($leases as $data) {
 		if ($data['act'] != "active" && $data['act'] != "static" && $_GET['all'] != 1)

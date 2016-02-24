@@ -72,7 +72,6 @@ $cert_methods = array(
 
 $cert_keylens = array("512", "1024", "2048", "4096");
 $cert_types = array(
-	"ca" => "Certificate Authority",
 	"server" => "Server Certificate",
 	"user" => "User Certificate");
 

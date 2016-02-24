@@ -226,6 +226,9 @@ if (is_array($dhcpdconf)) {
 $ifcfgip = $config['interfaces'][$if]['ipaddr'];
 $ifcfgsn = $config['interfaces'][$if]['subnet'];
 
+$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
+$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
+
 function validate_partial_mac_list($maclist) {
 	$macs = explode(',', $maclist);
 
@@ -426,9 +429,6 @@ if (isset($_POST['submit'])) {
 
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = gen_subnetv4($ifcfgip, $ifcfgsn);
-			$subnet_end = gen_subnetv4_max($ifcfgip, $ifcfgsn);
-
 			if (ip_greater_than($_POST['range_from'], $_POST['range_to'])) {
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 			}
@@ -827,13 +827,7 @@ $section->addInput(new Form_StaticText(
 ));
 
 // Compose a string to display the required address ranges
-$range_from = ip2long(gen_subnetv4($ifcfgip, $ifcfgsn));
-$range_from++;
-
-$range_to = ip2long(gen_subnetv4_max($ifcfgip, $ifcfgsn));
-$range_to--;
-
-$rangestr = long2ip32($range_from) . ' - ' . long2ip32($range_to);
+$rangestr = ip_after($subnet_start) . ' - ' . ip_before($subnet_end);
 
 if (is_numeric($pool) || ($act == "newpool")) {
 	$rangestr .= '<br />' . gettext('In-use DHCP Pool Ranges:');

@@ -67,6 +67,42 @@
 require("guiconfig.inc");
 require_once("filter.inc");
 
+function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
+	$retval = 0;
+	$retvaldhcp = 0;
+	$retvaldns = 0;
+	/* Stop DHCPv6 so we can cleanup leases */
+	killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
+	// dhcp_clean_leases();
+	/* dnsmasq_configure calls dhcpd_configure */
+	/* no need to restart dhcpd twice */
+	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
+		$retvaldns = services_dnsmasq_configure();
+		if ($retvaldns == 0) {
+			clear_subsystem_dirty('hosts');
+			clear_subsystem_dirty('staticmaps');
+		}
+	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
+		$retvaldns = services_unbound_configure();
+		if ($retvaldns == 0) {
+			clear_subsystem_dirty('unbound');
+			clear_subsystem_dirty('staticmaps');
+		}
+	} else {
+		$retvaldhcp = services_dhcpd_configure();
+		if ($retvaldhcp == 0) {
+			clear_subsystem_dirty('staticmaps');
+		}
+	}
+	if ($dhcpdv6_enable_changed) {
+		$retvalfc = filter_configure();
+	}
+	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
+		$retval = 1;
+	}
+	return get_std_save_message($retval);
+}
+
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
@@ -184,7 +220,9 @@ if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycf
 	}
 }
 
-if ($_POST) {
+if ($_POST['apply'] == "Apply Changes") {
+	$savemsg = dhcpv6_apply_changes(false);
+} elseif ($_POST['Submit'] == "Save") {
 	unset($input_errors);
 
 	$old_dhcpdv6_enable = ($pconfig['enable'] == true);
@@ -445,39 +483,7 @@ if ($_POST) {
 
 		write_config();
 
-		$retval = 0;
-		$retvaldhcp = 0;
-		$retvaldns = 0;
-		/* Stop DHCPv6 so we can cleanup leases */
-		killbypid("{$g['dhcpd_chroot_path']}{$g['varrun_path']}/dhcpdv6.pid");
-		// dhcp_clean_leases();
-		/* dnsmasq_configure calls dhcpd_configure */
-		/* no need to restart dhcpd twice */
-		if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-			$retvaldns = services_dnsmasq_configure();
-			if ($retvaldns == 0) {
-				clear_subsystem_dirty('hosts');
-				clear_subsystem_dirty('staticmaps');
-			}
-		} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
-			$retvaldns = services_unbound_configure();
-			if ($retvaldns == 0) {
-				clear_subsystem_dirty('unbound');
-				clear_subsystem_dirty('staticmaps');
-			}
-		} else {
-			$retvaldhcp = services_dhcpd_configure();
-			if ($retvaldhcp == 0) {
-				clear_subsystem_dirty('staticmaps');
-			}
-		}
-		if ($dhcpdv6_enable_changed) {
-			$retvalfc = filter_configure();
-		}
-		if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
-			$retval = 1;
-		}
-		$savemsg = get_std_save_message($retval);
+		$savemsg = dhcpv6_apply_changes($dhcpdv6_enable_changed);
 	}
 }
 

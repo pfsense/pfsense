@@ -34,13 +34,14 @@ require_once("notices.inc");
 require_once("openvpn.inc");
 require_once("interfaces.inc");
 
-if (isset($_GET)) {
+if (isset($_GET['interface'])) {
 	$argument = $_GET['interface'];
 } else {
 	$argument = str_replace("\n", "", $argv[1]);
 }
 if (!strstr($argument, "@")) {
 	log_error("CARP master event triggered from wrong source {$argument}");
+	exit;
 }
 
 list($vhid, $iface) = explode("@", $argument);
@@ -48,9 +49,13 @@ list($vhid, $iface) = explode("@", $argument);
 $friendly = convert_real_interface_to_friendly_interface_name($iface);
 $friendly_descr = convert_friendly_interface_to_friendly_descr($friendly);
 $vips = link_interface_to_vips($friendly, '', $vhid);
-$carp_iface = "{$friendly}_vip{$vhid}";
+if (!is_array($vips)) {
+	log_error("CARP master event triggered from wrong source {$argument} - no associated VIPs");
+	exit;
+}
 foreach ($vips as $vip) {
-	$notificationmsg = sprintf('HA cluster member "(%1$s): (%2$s)" has resumed CARP state "MASTER" for vhid %3$s', $argument, $friendly_descr, $vhid);
+	$notificationmsg = sprintf('HA cluster member "(%1$s@%2$s): (%3$s)" has resumed CARP state "MASTER" for vhid %4$s',
+	    $vip['subnet'], $iface, $friendly_descr, $vhid);
 
 	notify_via_smtp($notificationmsg);
 	notify_via_growl($notificationmsg);
@@ -83,27 +88,12 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'
 }
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
 	foreach ($config['openvpn']['openvpn-server'] as $settings) {
-		if ($settings['interface'] == $carp_iface) {
-			log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
-			openvpn_restart('server', $settings);
+		foreach ($vips as $vip) {
+			if ($settings['interface'] == "_vip{$vip['uniqid']}") {
+				log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
+				openvpn_restart('server', $settings);
+			}
 		}
-	}
-}
-
-/* Reconfigure radvd when necessary */
-if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
-	$found = false;
-	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
-		if ($dhcpv6ifconf['rainterface'] != $carp_iface) {
-			continue;
-		}
-
-		$found = true;
-		break;
-	}
-
-	if ($found === true) {
-		services_radvd_configure();
 	}
 }
 

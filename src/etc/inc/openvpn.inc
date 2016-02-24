@@ -792,7 +792,7 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 			case 'p2p_shared_key':
 				if (!empty($ip) && !empty($mask)) {
-					list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
+					list($ip1, $ip2) = openvpn_get_interface_ip($ip, $cidr);
 					if ($settings['dev_mode'] == 'tun') {
 						$conf .= "ifconfig {$ip1} {$ip2}\n";
 					} else {
@@ -939,9 +939,9 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		if (!empty($settings['tunnel_network'])) {
-			list($ip, $mask) = explode('/', $settings['tunnel_network']);
-			$mask = gen_subnet_mask($mask);
-			list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
+			list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+			$mask = gen_subnet_mask($cidr);
+			list($ip1, $ip2) = openvpn_get_interface_ip($tunnel_ip, $cidr);
 			if ($settings['dev_mode'] == 'tun') {
 				$conf .= "ifconfig {$ip2} {$ip1}\n";
 			} else {
@@ -1716,10 +1716,10 @@ function openvpn_create_dirs() {
 	}
 }
 
-function openvpn_get_interface_ip($ip, $mask) {
-	$baselong = ip2long32($ip) & ip2long($mask);
-	$ip1 = long2ip32($baselong + 1);
-	$ip2 = long2ip32($baselong + 2);
+function openvpn_get_interface_ip($ip, $cidr) {
+	$subnet = gen_subnetv4($ip, $cidr);
+	$ip1 = ip_after($subnet);
+	$ip2 = ip_after($ip1);
 	return array($ip1, $ip2);
 }
 
@@ -1754,7 +1754,7 @@ function openvpn_clear_route($mode, $settings) {
 	}
 
 	if ($clear_route && !empty($ip) && !empty($mask)) {
-		list($ip1, $ip2) = openvpn_get_interface_ip($ip, $mask);
+		list($ip1, $ip2) = openvpn_get_interface_ip($ip, $cidr);
 		$ip_to_clear = ($mode == "server") ? $ip1 : $ip2;
 		/* XXX: Family for route? */
 		mwexec("/sbin/route -q delete {$ip_to_clear}");

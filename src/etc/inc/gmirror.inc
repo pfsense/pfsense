@@ -284,7 +284,7 @@ function gmirror_get_consumer_metadata($consumer) {
 	if (!is_valid_consumer($consumer)) {
 		return array();
 	}
-	$output = "";
+	$output = array();
 	exec("/sbin/gmirror dump " . escapeshellarg($consumer), $output);
 	return array_map('trim', $output);
 }
@@ -341,7 +341,7 @@ function gmirror_get_all_unused_consumer_sizes_on_disk($disk) {
 	if (!is_valid_disk($disk) || !is_consumer_unused($disk)) {
 		return array();
 	}
-	$output = "";
+	$output = array();
 	exec("/sbin/geom part list " . escapeshellarg($disk) . " | /usr/bin/egrep '(Name:|Mediasize:)' | /usr/bin/cut -c4- | /usr/bin/sed -l -e 'N;s/\\nMediasize://;P;D;' | /usr/bin/cut -c7-", $output);
 	if (empty($output)) {
 		exec("/sbin/geom disk list " . escapeshellarg($disk) . " | /usr/bin/egrep '(Name:|Mediasize:)' | /usr/bin/cut -c4- | /usr/bin/sed -l -e 'N;s/\\nMediasize://;P;D;' | /usr/bin/cut -c7-", $output);

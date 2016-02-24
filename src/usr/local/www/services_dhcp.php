@@ -438,8 +438,12 @@ if (isset($_POST['submit'])) {
 			}
 
 			if (is_numeric($pool) || ($act == "newpool")) {
-				if (!((ip2ulong($_POST['range_from']) > ip2ulong($config['dhcpd'][$if]['range']['to'])) ||
-				      (ip2ulong($_POST['range_to']) < ip2ulong($config['dhcpd'][$if]['range']['from'])))) {
+				if (is_inrange_v4($_POST['range_from'],
+				    $config['dhcpd'][$if]['range']['from'],
+				    $config['dhcpd'][$if]['range']['to']) ||
+				    is_inrange_v4($_POST['range_to'],
+				    $config['dhcpd'][$if]['range']['from'],
+				    $config['dhcpd'][$if]['range']['to'])) {
 					$input_errors[] = gettext("The specified range must not be within the DHCP range for this interface.");
 				}
 			}
@@ -449,8 +453,10 @@ if (isset($_POST['submit'])) {
 					continue;
 				}
 
-				if (!((ip2ulong($_POST['range_from']) > ip2ulong($p['range']['to'])) ||
-				      (ip2ulong($_POST['range_to']) < ip2ulong($p['range']['from'])))) {
+				if (is_inrange_v4($_POST['range_from'],
+				    $p['range']['from'], $p['range']['to']) ||
+				    is_inrange_v4($_POST['range_to'],
+				    $p['range']['from'], $p['range']['to'])) {
 					$input_errors[] = gettext("The specified range must not be within the range configured on a DHCP pool for this interface.");
 					break;
 				}

@@ -433,7 +433,8 @@ if (isset($_POST['submit'])) {
 				$input_errors[] = gettext("The range is invalid (first element higher than second element).");
 			}
 
-			if (!is_inrange_v4($_POST['range_from'], $subnet_start, $subnet_end)) {
+			if (!is_inrange_v4($_POST['range_from'], $subnet_start, $subnet_end) ||
+			    !is_inrange_v4($_POST['range_to'], $subnet_start, $subnet_end)) {
 				$input_errors[] = gettext("The specified range lies outside of the current subnet.");
 			}
 

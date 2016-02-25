@@ -327,13 +327,13 @@ pfSense_handle_custom_code("/usr/local/pkg/dashboard/pre_dashboard");
 	<div class="panel-heading">
 		<h2 class="panel-title"><?=gettext("Available Widgets"); ?>
 			<span class="widget-heading-icon">
-				<a data-toggle="collapse" href="#widget-available_panel-body" id="widgets-available">
+				<a data-toggle="collapse" href="#widgets-available_panel-body" id="widgets-available">
 					<i class="fa fa-plus-circle"></i>
 				</a>
 			</span>
 		</h2>
 	</div>
-	<div id="widget-available_panel-body" class="panel-body collapse <?=$panel_body_state?>">
+	<div id="widgets-available_panel-body" class="panel-body collapse <?=$panel_body_state?>">
 		<div class="content">
 			<div class="row">
 <?php

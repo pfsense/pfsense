@@ -1122,16 +1122,16 @@ events.push(function() {
 		checkLastRow();
 	});
 
-    $('#enable').click(function() {
-        do_toggle();
-    });
+	$('#enable').click(function() {
+	    do_toggle();
+	});
 
-    function do_toggle() {
-	    if ($('#enable').prop('checked')) {
-	       $('.form-group:not(:first-child)').show();
-	    } else {
-	       $('.form-group:not(:first-child)').hide();
-	    }
+	function do_toggle() {
+		if ($('#enable').prop('checked')) {
+			$('.form-group:not(:first-child)').show();
+		} else {
+			$('.form-group:not(:first-child)').hide();
+		}
 	}
 
 	// On initial load

@@ -1311,7 +1311,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 			if (does_interface_exist("$realif")) {
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-				interface_ipalias_cleanup($interface);
+				interface_vip_cleanup($interface, "inet4");
 				if ($destroy == true) {
 					pfSense_interface_flags($realif, -IFF_UP);
 				}
@@ -1321,7 +1321,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 		default:
 			if (does_interface_exist("$realif")) {
 				mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " delete", true);
-				interface_ipalias_cleanup($interface);
+				interface_vip_cleanup($interface, "inet4");
 				if ($destroy == true) {
 					pfSense_interface_flags($realif, -IFF_UP);
 				}
@@ -1347,7 +1347,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				if (is_ipaddrv6($ip6) && $ip6 != "::") {
 					mwexec("/sbin/ifconfig " . escapeshellarg($realifv6) . " inet6 {$ip6} delete", true);
 				}
-				interface_ipalias_cleanup($interface, "inet6");
+				interface_vip_cleanup($interface, "inet6");
 				if ($destroy == true) {
 					pfSense_interface_flags($realif, -IFF_UP);
 				}
@@ -1370,7 +1370,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 						mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ip6} delete", true);
 					}
 				}
-				interface_ipalias_cleanup($interface, "inet6");
+				interface_vip_cleanup($interface, "inet6");
 				if ($destroy == true) {
 					pfSense_interface_flags($realif, -IFF_UP);
 				}
@@ -1386,7 +1386,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 				if (!empty($ifcfg['ipaddrv6']) && is_ipaddrv6($ifcfg['ipaddrv6'])) {
 					mwexec("/sbin/ifconfig " . escapeshellarg($realif) . " inet6 {$ifcfg['ipaddrv6']} delete", true);
 				}
-				interface_ipalias_cleanup($interface, "inet6");
+				interface_vip_cleanup($interface, "inet6");
 				if ($destroy == true) {
 					pfSense_interface_flags($realif, -IFF_UP);
 				}
@@ -2277,18 +2277,34 @@ function interface_proxyarp_configure($interface = "") {
 	}
 }
 
-function interface_ipalias_cleanup($interface, $inet = "inet4") {
+function interface_vip_cleanup($interface, $inet = "all", $type = VIP_ALL) {
 	global $g, $config;
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if ($vip['mode'] == "ipalias" && $vip['interface'] == $interface) {
-				if ($inet == "inet6" && is_ipaddrv6($vip['subnet'])) {
-					interface_vip_bring_down($vip);
-				} else if ($inet == "inet4" && is_ipaddrv4($vip['subnet'])) {
-					interface_vip_bring_down($vip);
-				}
+
+			$iface = $vip['interface'];
+			if (substr($iface, 0, 4) == "_vip")
+				$iface = get_configured_vip_interface($vip['interface']);
+			if ($iface != $interface)
+				continue;
+			if ($type == VIP_CARP) {
+				if ($vip['mode'] != "carp")
+					continue;
+			} elseif ($type == VIP_IPALIAS) {
+				if ($vip['mode'] != "ipalias")
+					continue;
+			} else {
+				if ($vip['mode'] != "carp" && $vip['mode'] != "ipalias")
+					continue;
 			}
+
+			if ($inet == "inet6" && is_ipaddrv6($vip['subnet']))
+				interface_vip_bring_down($vip);
+			else if ($inet == "inet4" && is_ipaddrv4($vip['subnet']))
+				interface_vip_bring_down($vip);
+			else if ($inet == "all")
+				interface_vip_bring_down($vip);
 		}
 	}
 }
@@ -2313,7 +2329,10 @@ function interfaces_vips_configure($interface = "") {
 					$anyproxyarp = true;
 					break;
 				case "ipalias":
-					if ($interface <> "" && $vip['interface'] <> $interface) {
+					$iface = $vip['interface'];
+					if (substr($iface, 0, 4) == "_vip")
+						$iface = get_configured_vip_interface($vip['interface']);
+					if ($interface <> "" && $iface <> $interface) {
 						continue;
 					}
 					interface_ipalias_configure($vip);

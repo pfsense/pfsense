@@ -4658,7 +4658,6 @@ function upgrade_145_to_146() {
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
-<<<<<<< HEAD
 function upgrade_bgpd_146_to_147() {
 	global $config;
 

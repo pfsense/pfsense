@@ -1142,8 +1142,13 @@ events.push(function() {
 	hideInput('ldap', true);
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
-	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
-	hideInput('addrow', true);
+	if ($('#enable').prop('checked')) {
+		hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
+		hideInput('addrow', <?php echo json_encode($noopts); ?>);
+	} else {
+		hideClass('adnloptions', true);
+		hideInput('addrow', true);
+	}
 
 });
 //]]>

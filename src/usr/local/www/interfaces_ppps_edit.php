@@ -79,14 +79,6 @@ if (!is_array($config['ppps']['ppp'])) {
 
 $a_ppps = &$config['ppps']['ppp'];
 
-$portlist = get_configured_interface_with_descr();
-
-if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
-	foreach ($config['vlans']['vlan'] as $vlan) {
-		$portlist[$vlan['vlanif']] = $vlan;
-	}
-}
-
 if (isset($_REQUEST['type'])) {
 	$pconfig['type'] = $_REQUEST['type'];
 }
@@ -496,11 +488,8 @@ function build_country_list() {
 	return($list);
 }
 
-$port_count = 0;
-$serport_count = 0;
-
 function build_link_list() {
-	global $pconfig, $portlist, $port_count, $serport_count;
+	global $config, $pconfig;
 
 	$linklist = array('list' => array(), 'selected' => array());
 
@@ -531,6 +520,12 @@ function build_link_list() {
 		}
 	} else {
 		$port_count = 0;
+		$portlist = get_interface_list();
+		if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $vlan) {
+				$portlist[$vlan['vlanif']] = $vlan;
+			}
+		}
 		foreach ($portlist as $ifn => $ifinfo) {
 			$port_count++;
 			$string = "";
@@ -539,6 +534,12 @@ function build_link_list() {
 				$string .= $ifn;
 				if ($ifinfo['mac']) {
 					$string .= " ({$ifinfo['mac']})";
+				}
+				if ($ifinfo['friendly']) {
+					$string .= " - {$ifinfo['friendly']}";
+				}
+				if ($ifinfo['descr']) {
+					$string .= " - {$ifinfo['descr']}";
 				}
 			} else {
 				$string .= $ifinfo;

@@ -4658,6 +4658,7 @@ function upgrade_145_to_146() {
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
+<<<<<<< HEAD
 function upgrade_bgpd_146_to_147() {
 	global $config;
 
@@ -4710,6 +4711,18 @@ function upgrade_146_to_147() {
 
 	upgrade_bgpd_146_to_147();
 	upgrade_quagga_146_to_147();
+}
+
+function upgrade_147_to_148() {
+	global $config;
+
+	if (is_array($config['system']['authserver'])) {
+		foreach ($config['system']['authserver'] as & $authserver) {
+			if (isset($authserver['type']) && $authserver['type'] == 'radius') {
+				$authserver['radius_protocol'] = 'PAP';
+			}
+		}
+	}
 }
 
 ?>

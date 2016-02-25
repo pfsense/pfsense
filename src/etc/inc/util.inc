@@ -1471,7 +1471,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pfsync',
 				'enc',
 				'tun',
-				'carp',
 				'lagg',
 				'vip',
 				'ipfw'

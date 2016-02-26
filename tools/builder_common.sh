@@ -138,7 +138,8 @@ core_pkg_create() {
 		-i '' \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
-		-e "s,%%FLAVOR%%,${_flavor},g" \
+		-e "s,%%FLAVOR%%,${_flavor:+-}${_flavor},g" \
+		-e "s,%%FLAVOR_DESC%%, (${_flavor}),g" \
 		-e "s,%%VERSION%%,${_version},g" \
 		${_metadir}/* \
 		${_plist} \
@@ -1059,7 +1060,6 @@ clone_to_staging_area() {
 	local _exclude_files="${CORE_PKG_TMP}/base_exclude_files"
 	sed \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
-		-e "s,%%FLAVOR%%,${_flavor},g" \
 		-e "s,%%VERSION%%,${_version},g" \
 		${BUILDER_TOOLS}/templates/core_pkg/base/exclude_files \
 		> ${_exclude_files}
@@ -1122,7 +1122,7 @@ clone_to_staging_area() {
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}
-	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config "vmware" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# Restore default values to be used by serial package
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "${_old_wan_if}" ${DEFAULTCONF}

@@ -1115,18 +1115,25 @@ clone_to_staging_area() {
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
 
+	# Save current WAN and LAN if value
+	local _old_wan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/wan/if")
+	local _old_lan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/lan/if")
+
 	# Change default interface names to match vmware driver
-	sed -i '' -e 's,em0,vmx0,' -e 's,em1,vmx1,' ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}
 	core_pkg_create default-config-vmware "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# Restore default values to be used by serial package
-	sed -i '' -e 's,vmx0,em0,' -e 's,vmx1,em1,' ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "${_old_wan_if}" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "${_old_lan_if}" ${DEFAULTCONF}
 
 	# Activate serial console in config.xml
-	# If it was there before, clear the setting to be sure we don't add it twice.
-	sed -i "" -e "/		<enableserial\/>/d" ${DEFAULTCONF}
-	# Enable serial in the config
-	sed -i "" -e "s/	<\/system>/		<enableserial\/>\\$(echo -e \\\n)	<\/system>/" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
+	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" \
+		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
+	rm -f ${DEFAULTCONF}.tmp
 
 	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 

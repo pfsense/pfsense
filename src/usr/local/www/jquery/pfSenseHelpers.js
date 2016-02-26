@@ -450,19 +450,11 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 	body.on('shown.bs.collapse', function(){
 		$(el).children('i').toggleClass('fa-minus-circle', true);
 		$(el).children('i').toggleClass('fa-plus-circle', false);
-
-		if($(el).closest('a').attr('id') != 'widgets-available') {
-			updateWidgets();
-		}
 	});
 
 	body.on('hidden.bs.collapse', function(){
 		$(el).children('i').toggleClass('fa-minus-circle', false);
 		$(el).children('i').toggleClass('fa-plus-circle', true);
-
-		if($(el).closest('a').attr('id') != 'widgets-available') {
-			updateWidgets();
-		}
 	});
 });
 

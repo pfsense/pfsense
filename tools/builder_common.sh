@@ -139,7 +139,7 @@ core_pkg_create() {
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
 		-e "s,%%FLAVOR%%,${_flavor:+-}${_flavor},g" \
-		-e "s,%%FLAVOR_DESC%%,${_flavor:+" (${_flavor})"},g" \
+		-e "s,%%FLAVOR_DESC%%,${_flavor:+ (${_flavor})},g" \
 		-e "s,%%VERSION%%,${_version},g" \
 		${_metadir}/* \
 		${_plist} \

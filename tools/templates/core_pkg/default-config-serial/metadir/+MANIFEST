@@ -1,8 +1,8 @@
-name: "%%PRODUCT_NAME%%-default-config-serial"
+name: "%%PRODUCT_NAME%%-default-config-serial%%FLAVOR%%"
 version: "%%VERSION%%"
-origin: "security/%%PRODUCT_NAME%%-default-config-serial"
+origin: "security/%%PRODUCT_NAME%%-default-config-serial%%FLAVOR%%"
 comment: <<EOD
-%%PRODUCT_NAME%% default config (serial)
+%%PRODUCT_NAME%% default serial config%%FLAVOR_DESC%%
 EOD
 maintainer: development@pfsense.org
 prefix: /

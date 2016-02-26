@@ -1209,7 +1209,7 @@ clone_to_staging_area() {
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
 	core_pkg_create default-config-serial "APU" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
-	# FW-7551
+	# FW-7551-C2758
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "igb0" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "igb1" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt1/if" -v "igb2" ${DEFAULTCONF}
@@ -1223,7 +1223,7 @@ clone_to_staging_area() {
 	## Format
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
-	core_pkg_create default-config-serial "FW-7551" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config-serial "FW-7551-C2758" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# SG-2440
 	## Enable powerd

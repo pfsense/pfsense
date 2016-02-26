@@ -134,8 +134,10 @@ $(function() {
 			if ($(this).attr('title') != undefined)
 				q = 'Are you sure you wish to '+ $(this).attr('title').toLowerCase() + '?';
 
-			if (!confirm(q))
+			if (!confirm(q)) {
 				e.preventDefault();
+				e.stopPropagation();	// Don't leave ancestor(s) selected.
+			}
 		}
 	});
 

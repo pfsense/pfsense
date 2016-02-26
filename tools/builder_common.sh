@@ -1116,8 +1116,8 @@ clone_to_staging_area() {
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
 
 	# Save current WAN and LAN if value
-	local _old_wan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/wan/if ${DEFAULTCONF}")
-	local _old_lan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/lan/if ${DEFAULTCONF}")
+	local _old_wan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/wan/if" ${DEFAULTCONF})
+	local _old_lan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/lan/if" ${DEFAULTCONF})
 
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}

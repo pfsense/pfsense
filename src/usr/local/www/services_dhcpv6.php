@@ -1122,16 +1122,16 @@ events.push(function() {
 		checkLastRow();
 	});
 
-    $('#enable').click(function() {
-        do_toggle();
-    });
+	$('#enable').click(function() {
+	    do_toggle();
+	});
 
-    function do_toggle() {
-	    if ($('#enable').prop('checked')) {
-	       $('.form-group:not(:first-child)').show();
-	    } else {
-	       $('.form-group:not(:first-child)').hide();
-	    }
+	function do_toggle() {
+		if ($('#enable').prop('checked')) {
+			$('.form-group:not(:first-child)').show();
+		} else {
+			$('.form-group:not(:first-child)').hide();
+		}
 	}
 
 	// On initial load
@@ -1142,8 +1142,13 @@ events.push(function() {
 	hideInput('ldap', true);
 	hideInput('bootfile_url', true);
 	hideCheckbox('shownetboot', true);
-	hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
-	hideInput('addrow', true);
+	if ($('#enable').prop('checked')) {
+		hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
+		hideInput('addrow', <?php echo json_encode($noopts); ?>);
+	} else {
+		hideClass('adnloptions', true);
+		hideInput('addrow', true);
+	}
 
 });
 //]]>

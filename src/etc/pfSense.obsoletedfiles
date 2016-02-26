@@ -92,6 +92,7 @@
 /etc/rc.d/swap1
 /etc/rc.d/usbd
 /etc/rc.d/uzip
+/etc/rc.dhclient_cron
 /etc/rc.dyndns.storecache
 /etc/rc.firewall6
 /etc/rc.firmware

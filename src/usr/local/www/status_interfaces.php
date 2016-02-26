@@ -152,7 +152,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['linklocal'], gettext('IPv6 Link Local'), $ifinfo['linklocal']);
 				showDef($ifinfo['ipaddrv6'], gettext('IPv6 Address'), $ifinfo['ipaddrv6']);
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
-				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . $ifinfo['gatewayv6']);
+				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
 				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")) {
 					$dns_servers = get_dns_servers();

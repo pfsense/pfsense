@@ -253,7 +253,7 @@ print $form;
 			$info = $res[$i]['dst'];
 			if ($res[$i]['dst-orig'])
 				$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$info .= " -> ";
+			$info .= " <- ";
 			$info .= $res[$i]['src'];
 			if ($res[$i]['src-orig'])
 				$info .= " (" . $res[$i]['src-orig'] . ")";

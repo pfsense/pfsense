@@ -4658,4 +4658,58 @@ function upgrade_145_to_146() {
 	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
+function upgrade_bgpd_146_to_147() {
+	global $config;
+
+	if (!isset($config['installedpackages']['openbgpd']['config']) ||
+	    !is_array($config['installedpackages']['openbgpd']['config'])) {
+		return;
+	}
+	$openbgpd_conf = &$config['installedpackages']['openbgpd']['config'][0];
+	if (!isset($openbgpd_conf['carpstatusip']) &&
+	    !is_ipaddr($openbgpd_conf['carpstatusip'])) {
+		return;
+	}
+
+	if (!is_array($config['virtualip']['vip']))
+		return;
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['subnet'] == $openbgpd_conf['carpstatusip']) {
+			$openbgpd_conf['carpstatusvid'] = "_vip{$vip['uniqid']}";
+			unset($openbgpd_conf['carpstatusip']);
+			return;
+		}
+	}
+}
+
+function upgrade_quagga_146_to_147() {
+	global $config;
+
+	if (!isset($config['installedpackages']['quaggaospfd']['config']) ||
+	    !is_array($config['installedpackages']['quaggaospfd']['config'])) {
+		return;
+	}
+	$ospfd_conf = &$config['installedpackages']['quaggaospfd']['config'][0];
+	if (!isset($ospfd_conf['carpstatusip']) &&
+	    !is_ipaddr($ospfd_conf['carpstatusip'])) {
+		return;
+	}
+
+	if (!is_array($config['virtualip']['vip']))
+		return;
+	foreach ($config['virtualip']['vip'] as $idx => $vip) {
+		if ($vip['subnet'] == $ospfd_conf['carpstatusip']) {
+			$ospfd_conf['carpstatusvid'] = "_vip{$vip['uniqid']}";
+			unset($ospfd_conf['carpstatusip']);
+			return;
+		}
+	}
+}
+
+function upgrade_146_to_147() {
+
+	upgrade_bgpd_146_to_147();
+	upgrade_quagga_146_to_147();
+}
+
 ?>

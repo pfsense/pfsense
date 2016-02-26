@@ -331,7 +331,7 @@ function get_dpinger_status($gwname) {
 	$running_processes = running_dpinger_processes();
 
 	if (!isset($running_processes[$gwname])) {
-		log_error(sprint(gettext('dpinger: No dpinger session running for gateway %s'), $gwname));
+		log_error(sprintf(gettext('dpinger: No dpinger session running for gateway %s'), $gwname));
 		return false;
 	}
 

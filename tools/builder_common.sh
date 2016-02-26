@@ -1115,18 +1115,54 @@ clone_to_staging_area() {
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
 
-	# Save current WAN and LAN if value
-	local _old_wan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/wan/if" ${DEFAULTCONF})
-	local _old_lan_if=$(xml sel -t -v "${XML_ROOTOBJ}/interfaces/lan/if" ${DEFAULTCONF})
+	# Make a copy of original default config to avoid need of adding items back
+	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
+
+	# Replace <loginautocomplete/> by <noautocomplete/>
+	xml ed -L -P -r "${XML_ROOTOBJ}/system/webgui/loginautocomplete" \
+		-v "noautocomplete" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/ipaddrv6" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/subnetv6" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/track6-interface" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/track6-prefix" ${DEFAULTCONF}
+	# Format xml to remove blank lines left by ed -d
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
 
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}
 	core_pkg_create default-config "vmware" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
-	# Restore default values to be used by serial package
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "${_old_wan_if}" ${DEFAULTCONF}
-	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "${_old_lan_if}" ${DEFAULTCONF}
+	# LEC-2310 config
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "re0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "re1" ${DEFAULTCONF}
+	core_pkg_create default-config "LEC-2310" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# XG-1540
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "ix0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "ix1" ${DEFAULTCONF}
+	## Add OPT1
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt1" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/lan" -t elem -n "opt1" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "if" -v "igb0" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "descr" -v "OPT1" ${DEFAULTCONF}
+	## Add OPT2
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt2" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "opt2" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "if" -v "igb1" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "descr" -v "OPT2" ${DEFAULTCONF}
+	## Enable powerd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/powerd_enable" ${DEFAULTCONF}
+	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "powerd_enable" \
+		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	## Format
+	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
+	rm -f ${DEFAULTCONF}.tmp
+	core_pkg_create default-config "XG-1540" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore original config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
 
 	# Activate serial console in config.xml
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
@@ -1138,6 +1174,128 @@ clone_to_staging_area() {
 	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 
 	core_pkg_create default-config-serial "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Make a copy of original default serial config to avoid need of adding items back
+	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
+
+	# SG-2220
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "igb0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "igb1" ${DEFAULTCONF}
+	## Enable AESNI
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/crypto_hardware" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "crypto_hardware" -v "aesni" ${DEFAULTCONF}
+	## Enable powerd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/powerd_enable" ${DEFAULTCONF}
+	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "powerd_enable" \
+		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	## Format
+	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
+	rm -f ${DEFAULTCONF}.tmp
+	core_pkg_create default-config-serial "SG-2220" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore original serial config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
+
+	# APU
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "re1" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "re2" ${DEFAULTCONF}
+	## Add OPT1
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt1" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/lan" -t elem -n "opt1" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "if" -v "re0" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "descr" -v "OPT1" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config-serial "APU" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# FW-7551
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "igb0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "igb1" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt1/if" -v "igb2" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt2" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "opt2" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "if" -v "igb3" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "descr" -v "OPT2" ${DEFAULTCONF}
+	## Enable AESNI
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/crypto_hardware" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "crypto_hardware" -v "aesni" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config-serial "FW-7551" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# SG-2440
+	## Enable powerd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/powerd_enable" ${DEFAULTCONF}
+	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "powerd_enable" \
+		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	## Format
+	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
+	rm -f ${DEFAULTCONF}.tmp
+	core_pkg_create default-config-serial "SG-2440" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore original serial config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
+
+	# FW-7535-7541
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "em5" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "em4" ${DEFAULTCONF}
+	## Add OPT1
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt1" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/lan" -t elem -n "opt1" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "if" -v "em3" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "descr" -v "OPT1" ${DEFAULTCONF}
+	## Add OPT2
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt2" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/opt1" -t elem -n "opt2" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "if" -v "em2" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "descr" -v "OPT2" ${DEFAULTCONF}
+	## Add OPT3
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt3" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/opt2" -t elem -n "opt3" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt3" -t elem -n "if" -v "em1" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt3" -t elem -n "descr" -v "OPT3" ${DEFAULTCONF}
+	## Add OPT4
+	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/opt4" ${DEFAULTCONF}
+	xml ed -L -P -a "${XML_ROOTOBJ}/interfaces/opt3" -t elem -n "opt4" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt4" -t elem -n "if" -v "em0" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/interfaces/opt4" -t elem -n "descr" -v "OPT4" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config-serial "FW-7535-7541" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# SG-4860
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "igb1" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "igb0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt1/if" -v "igb2" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt2/if" -v "igb3" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt3/if" -v "igb4" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt4/if" -v "igb5" ${DEFAULTCONF}
+	## Enable AESNI
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/crypto_hardware" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "crypto_hardware" -v "aesni" ${DEFAULTCONF}
+	## Enable powerd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/powerd_enable" ${DEFAULTCONF}
+	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "powerd_enable" \
+		${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	## Format
+	xml fo -t ${DEFAULTCONF}.tmp > ${DEFAULTCONF}
+	rm -f ${DEFAULTCONF}.tmp
+	core_pkg_create default-config-serial "SG-4860" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# SG-8860
+	core_pkg_create default-config-serial "SG-8860" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# XG-2758
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "igb0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "igb2" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt1/if" -v "igb1" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt2/if" -v "igb3" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt3/if" -v "ix0" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/opt4/if" -v "ix1" ${DEFAULTCONF}
+	core_pkg_create default-config-serial "XG-2758" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	rm -f ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 	rm -f ${STAGE_CHROOT_DIR}/cf/conf/config.xml

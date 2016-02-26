@@ -790,7 +790,7 @@ a[href]:after {
 }
 
 /** Eliminate overflow in available widgets, log filter, and manage log panels. (cause of scroll bar) */
-#widget-available_panel-body>.content>.row,
+#widgets-available_panel-body>.content>.row,
 #filter-panel_panel-body>.form-group,
 #manage-log-panel_panel-body>.form-group,
 /** optionally prevent more globally by using the class hierarchy */

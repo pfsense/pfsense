@@ -138,6 +138,8 @@ function tab_array_logs_common() {
 		$tab_array[] = array(gettext("Routing"), ($logfile == 'routing'), "/status_logs.php?logfile=routing");
 		$tab_array[] = array(gettext("DNS Resolver"), ($logfile == 'resolver'), "/status_logs.php?logfile=resolver");
 		$tab_array[] = array(gettext("Wireless"), ($logfile == 'wireless'), "/status_logs.php?logfile=wireless");
+		if (has_hw_watchdog())
+			$tab_array[] = array(gettext("Watchdog"), ($logfile == 'watchdogd'), "/status_logs.php?logfile=watchdogd");
 	}
 	else if ($is_filter_log) {
 		$tab_array[] = array(gettext("Normal View"), ($view == 'normal'), "/status_logs_filter.php");

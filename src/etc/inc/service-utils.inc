@@ -59,6 +59,7 @@ require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
 require_once("gwlb.inc");
+require_once("system.inc");
 
 define("RCFILEPREFIX", "/usr/local/etc/rc.d/");
 function write_rcfile($params) {
@@ -288,6 +289,13 @@ function get_services() {
 		$services[] = $pconfig;
 	}
 
+	if (watchdogd_enabled()) {
+		$pconfig = array();
+		$pconfig['name'] = "watchdogd";
+		$pconfig['description'] = gettext("Watchdog daemon");
+		$services[] = $pconfig;
+	}
+
 	$pconfig = array();
 	$pconfig['name'] = "ntpd";
 	$pconfig['description'] = gettext("NTP clock sync");
@@ -479,6 +487,9 @@ function get_service_status($service) {
 			break;
 		case 'ipsec':
 			$running = is_pid_running("{$g['varrun_path']}/charon.pid");
+			break;
+		case 'watchdogd':
+			$running = is_pid_running("{$g['varrun_path']}/watchdogd.pid");
 			break;
 		default:
 			$running = is_service_running($service['name']);
@@ -678,6 +689,9 @@ function service_control_start($name, $extras) {
 		case 'relayd':
 			relayd_configure();
 			break;
+		case 'watchdogd':
+			watchdogd_configure();
+			break;
 		default:
 			start_service($name);
 			break;
@@ -748,6 +762,9 @@ function service_control_stop($name, $extras) {
 		case 'relayd':
 			mwexec('pkill relayd');
 			break;
+		case 'watchdogd':
+			killbypid("{$g['varrun_path']}/watchdogd.pid");
+			break;
 		default:
 			stop_service($name);
 			break;
@@ -816,6 +833,9 @@ function service_control_restart($name, $extras) {
 			break;
 		case 'relayd':
 			relayd_configure(true);
+			break;
+		case 'watchdogd':
+			watchdogd_configure();
 			break;
 		default:
 			restart_service($name);

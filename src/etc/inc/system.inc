@@ -860,6 +860,9 @@ function clear_all_log_files($restart = false) {
 	foreach ($log_files as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}
+	if (watchdogd_enabled()) {
+		clear_log_file("{$g['varlog_path']}/watchdogd.log", false);
+	}
 
 	if ($restart) {
 		system_syslogd_start();
@@ -898,6 +901,8 @@ function system_syslogd_start() {
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
 		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'pptps', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
+		if (watchdogd_enabled())
+			array_push($separatelogfacilities, 'watchdogd');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
@@ -997,6 +1002,12 @@ function system_syslogd_start() {
 		$syslogconf .= "!filterlog\n";
 		$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/filter.log\n";
 		if (isset($syslogcfg['filter'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
+
+		$syslogconf .= "!watchdogd\n";
+		$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/watchdogd.log\n";
+		if (isset($syslogcfg['watchdogd'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
@@ -2060,23 +2071,58 @@ function system_enable_arp_wrong_if() {
 	));
 }
 
-function enable_watchdog() {
+function has_hw_watchdog() {
+
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+		case 'RCC-VE':
+		case 'RCC-DFF':
+			return (1);
+			break;
+	}
+
+	return (0);
+}
+
+function watchdogd_enabled() {
 	global $config;
-	return;
-	$install_watchdog = false;
-	$supported_watchdogs = array("Geode");
-	$file = file_get_contents("/var/log/dmesg.boot");
-	foreach ($supported_watchdogs as $sd) {
-		if (stristr($file, "Geode")) {
-			$install_watchdog = true;
-		}
+
+	if (has_hw_watchdog() && isset($config['system']['watchdogd_enable']))
+		return (1);
+
+	return (0);
+}
+
+function watchdogd_configure() {
+	global $config;
+
+	if (get_service_status(array("name" => "watchdogd")))
+		service_control_stop("watchdogd", NULL);
+
+	if (!watchdogd_enabled())
+		return;
+
+	$platform = system_identify_specific_platform();
+	switch ($platform['name']) {
+		case 'RCC-VE':
+		case 'RCC-DFF':
+			mwexec("/sbin/kldload ichwd");
+			break;
 	}
-	if ($install_watchdog == true) {
-		if (is_process_running("watchdogd")) {
-			mwexec("/usr/bin/killall watchdogd", true);
-		}
-		exec("/usr/sbin/watchdogd");
-	}
+	$timeout = "";
+	if (is_numeric($config['system']['watchdogd_timeout']))
+		$timeout = "-t {$config['system']['watchdogd_timeout']}";
+	mwexec("/usr/sbin/watchdogd $timeout");
+}
+
+function enable_watchdog() {
+
+	if (!watchdogd_enabled())
+		return;
+
+	printf("Starting watchdog daemon...");
+	watchdogd_configure();
+	printf("done.\n");
 }
 
 function system_check_reset_button() {

@@ -95,6 +95,8 @@ $allowed_logs = array(
 		    "shortcut" => "resolver"),
 	"wireless" => array("name" => gettext("Wireless"),
 		    "shortcut" => "wireless"),
+	"watchdogd" => array("name" => gettext("Watchdog"),
+		    "shortcut" => "watchdogd"),
 );
 
 // The logs to display are specified in a GET argument. Default to 'system' logs

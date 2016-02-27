@@ -308,4 +308,9 @@ $shortcuts['authentication']['status'] = "diag_authentication.php";
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";
 $shortcuts['aliases']['status'] = "diag_tables.php";
+
+$shortcuts['watchdogd'] = array();
+$shortcuts['watchdogd']['service'] = "watchdogd";
+$shortcuts['watchdogd']['log'] = "status_logs.php?logfile=watchdogd";
+
 ?>

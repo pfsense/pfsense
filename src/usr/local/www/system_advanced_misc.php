@@ -67,6 +67,7 @@
 require("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
+require_once("service-utils.inc");
 require_once("shaper.inc");
 require_once("vpn.inc");
 require_once("vslb.inc");
@@ -80,6 +81,8 @@ $pconfig['lb_use_sticky'] = isset($config['system']['lb_use_sticky']);
 $pconfig['srctrack'] = $config['system']['srctrack'];
 $pconfig['gw_switch_default'] = isset($config['system']['gw_switch_default']);
 $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
+$pconfig['watchdogd_enable'] = isset($config['system']['watchdogd_enable']);
+$pconfig['watchdogd_timeout'] = $config['system']['watchdogd_timeout'];
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
@@ -112,6 +115,16 @@ $crypto_modules = array(
 $thermal_hardware_modules = array(
 	'coretemp' => gettext("Intel Core* CPU on-die thermal sensor"),
 	'amdtemp' => gettext("AMD K8, K10 and K11 CPU on-die thermal sensor"));
+
+$watchdogd_timeout_list = array(
+	'128' => '128',
+	'64' => '64',
+	'32' => '32',
+	'16' => '16',
+	'8' => '8',
+	'4' => '4',
+	'2' => '2',
+	'1' => '1');
 
 if ($_POST) {
 
@@ -229,6 +242,13 @@ if ($_POST) {
 			unset($config['system']['powerd_enable']);
 		}
 
+		$config['system']['watchdogd_timeout'] = $_POST['watchdogd_timeout'];
+		if ($_POST['watchdogd_enable'] == "yes") {
+			$config['system']['watchdogd_enable'] = true;
+		} else {
+			unset($config['system']['watchdogd_enable']);
+		}
+
 		$config['system']['powerd_ac_mode'] = $_POST['powerd_ac_mode'];
 		$config['system']['powerd_battery_mode'] = $_POST['powerd_battery_mode'];
 		$config['system']['powerd_normal_mode'] = $_POST['powerd_normal_mode'];
@@ -297,6 +317,9 @@ if ($_POST) {
 		load_thermal_hardware();
 		if ($need_relayd_restart) {
 			relayd_configure();
+		}
+		if (has_hw_watchdog()) {
+			service_control_restart("watchdogd", NULL);
 		}
 	}
 }
@@ -445,6 +468,26 @@ $section->addInput(new Form_Select(
 ));
 
 $form->add($section);
+if (has_hw_watchdog()) {
+	$section = new Form_Section('Watchdog');
+	$section->addInput(new Form_Checkbox(
+		'watchdogd_enable',
+		'Watchdog',
+		'Enable watchdogd',
+		$pconfig['watchdogd_enable']
+	))->setHelp('The watchdogd utility enables the hardware watchdog (when available).  '.
+		'If watchdogd is unable to interface with the hardware watchdog over a specific '.
+		'timeout, the hardware will take actions to assist in restarting the computer.');
+
+	$section->addInput(new Form_Select(
+		'watchdogd_timeout',
+		'Watchdog Timeout',
+		$pconfig['watchdogd_timeout'],
+		$watchdogd_timeout_list
+	))->setHelp('The desired watchdog timeout in seconds.');
+
+	$form->add($section);
+}
 $section = new Form_Section('Cryptographic & Thermal Hardware');
 
 $section->addInput(new Form_Select(

@@ -395,7 +395,7 @@ function parse_firewall_log_line($line) {
 				$flent['urg'] = $rule_data[$field++];
 				$flent['options'] = explode(";", $rule_data[$field++]);
 			}
-		} else if ($flent['protoid'] == '1') { // ICMP
+		} else if ($flent['protoid'] == '1' || $flent['protoid'] == '58') {	// ICMP (IPv4 & IPv6)
 			$flent['src'] = $flent['srcip'];
 			$flent['dst'] = $flent['dstip'];
 

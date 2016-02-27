@@ -114,7 +114,7 @@ include("head.inc");
 				<?=gettext("Copyright"); ?> &copy; <?=gettext("1995-2003 Internet Software Consortium")?>
 			</li>
 			<li class="list-group-item">
-				<strong>PF</strong> (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)
+				<strong>PF</strong> originally from OpenBSD (<a href="http://www.openbsd.org/faq/pf" target="_blank">http://www.openbsd.org</a>)
 			</li>
 			<li class="list-group-item">
 				<strong>MPD</strong> - Multi-link PPP daemon for FreeBSD (<a href="http://mpd.sourceforge.net/" target="_blank">http://mpd.sourceforge.net/</a>)<br />
@@ -122,21 +122,45 @@ include("head.inc");
 				<?=gettext("All rights reserved.")?>
 			</li>
 			<li class="list-group-item">
-				<strong>Circular log support for FreeBSD syslogd</strong> (<a href="http://software.wheelhouse.org/syslogd/" target="_blank">http://software.wheelhouse.org/syslogd/</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)
+				<strong>bind-tools</strong> (<a href="https://www.isc.org/downloads/bind/" target="_blank">https://www.isc.org/downloads/bind/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2004-2013 Internet Systems Consortium, Inc. ("ISC")
 			</li>
 			<li class="list-group-item">
-				<strong>Dnsmasq</strong> - a DNS forwarder for NAT firewalls (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; 2000-2012 Simon Kelley.
-			</li>
-			<li class="list-group-item">
-				<strong>strongSwan</strong> (<a href="https://www.strongswan.org/" target="_blank">https://www.strongswan.org</a>)<br />
-				<?=gettext("Copyright"); ?> &copy; <?=gettext("2005-2016 University of Applied Sciences Rapperswil")?>
+				<strong>ca_root_nss</strong> Root certificates from certificate authorities included in the (<a href="https://developer.mozilla.org/en-US/docs/Mozilla/Projects/NSS" target="_blank">Mozilla
+NSS library</a>)<br />
 			</li>
 			<li class="list-group-item">
 				<strong>choparp</strong> (<a href="http://choparp.sourceforge.net/" target="_blank">http://choparp.sourceforge.net</a>)<br />
 				<?=gettext("Copyright"); ?> &copy; 1997 Takamichi Tateoka (tree@mma.club.uec.ac.jp)<br />
 				<?=gettext("Copyright"); ?> &copy; 2002 Thomas Quinot (thomas@cuivre.fr.eu.org)
+			</li>
+			<li class="list-group-item">
+				<strong>Circular log support for FreeBSD syslogd</strong> (<a href="http://software.wheelhouse.org/syslogd/" target="_blank">http://software.wheelhouse.org/syslogd/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2001 Jeff Wheelhouse (jdw@wwwi.com)
+			</li>
+			<li class="list-group-item">
+				<strong>cpdup</strong> (<a href="http://apollo.backplane.com/FreeSrc/" target="_blank">http://apollo.backplane.com/FreeSrc/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1997-1999 Matthew Dillon and Dima Ruban.
+			</li>
+			<li class="list-group-item">
+				<strong>curl</strong> (<a href="https://curl.haxx.se/" target="_blank">https://curl.haxx.se/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1998-2016 Daniel Stenberg.
+			</li>
+			<li class="list-group-item">
+				<strong>Dnsmasq</strong> - a DNS forwarder for NAT firewalls (<a href="http://www.thekelleys.org.uk" target="_blank">http://www.thekelleys.org.uk</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2000-2016 Simon Kelley.
+			</li>
+			<li class="list-group-item">
+				<strong>dpinger</strong> - Pinger engine for monitoring latency and loss (<a href="https://github.com/dennypage/dpinger" target="_blank">https://github.com/dennypage/dpinger</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2015-2016 Denny Page.
+			</li>
+			<li class="list-group-item">
+				<strong>ipmitool</strong> - command-line interface to IPMI-enabled devices (<a href="https://sourceforge.net/projects/ipmitool/" target="_blank">https://sourceforge.net/projects/ipmitool/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2003-2016 Sun Microsystems, Inc.
+			</li>
+			<li class="list-group-item">
+				<strong>strongSwan</strong> (<a href="https://www.strongswan.org/" target="_blank">https://www.strongswan.org</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; <?=gettext("2005-2016 University of Applied Sciences Rapperswil")?>
 			</li>
 			<li class="list-group-item">
 				<strong>php-radius</strong> (<a href="http://www.mavetju.org/programming/php.php" target="_blank">http://www.mavetju.org/programming/php.php</a>)<br />
@@ -148,8 +172,49 @@ include("head.inc");
 				<?=gettext("Copyright"); ?> &copy; 2000,2001,2002,2003,2004 Thomas Krennwallner &lt;krennwallner@aon.at&gt;
 			</li>
 			<li class="list-group-item">
+				<strong>openldap-client</strong> (<a href="http://www.openldap.org/" target="_blank">http://www.openldap.org/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1999-2016 The OpenLDAP Foundation
+			</li>
+			<li class="list-group-item">
 				<strong>OpenVPN</strong> (<a href="http://openvpn.net/" target="_blank">http://openvpn.net/</a>)<br />
 				<?=gettext("Copyright (C) 2002-2016 OpenVPN Solutions LLC ")?>
+			</li>
+			<li class="list-group-item">
+				<strong>pftop</strong> (<a href="http://www.eee.metu.edu.tr/~canacar/pftop/" target="_blank">http://www.eee.metu.edu.tr/~canacar/pftop/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2001, 2007 Can Erkin Acar<br />
+				<?=gettext("Copyright"); ?> &copy; 2001 Daniel Hartmeier
+			</li>
+			<li class="list-group-item">
+				<strong>radvd</strong> IPv6 router advertisement daemon(<a href="http://www.litech.org/radvd/" target="_blank">http://www.litech.org/radvd/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1996-2015 Lars Fenneberg, Pedro Roque
+			</li>
+			<li class="list-group-item">
+				<strong>rate</strong> command line traffic analysis tool(<a href="http://s-tech.elsat.net.pl/bmtools/" target="_blank">http://s-tech.elsat.net.pl/bmtools/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2003-2016 Mateusz 'mteg' Golicz
+			</li>
+			<li class="list-group-item">
+				<strong>relayd</strong> server load balancing with pf (<a href="http://www.openbsd.org" target="_blank">http://www.openbsd.org</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2007-2016 Reyk Floeter
+			</li>
+			<li class="list-group-item">
+				<strong>rrdtool</strong> data logging and graphing system for time series data (<a href="http://oss.oetiker.ch/rrdtool/" target="_blank">http://oss.oetiker.ch/rrdtool/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1998-2016 Tobias Oetiker
+			</li>
+			<li class="list-group-item">
+				<strong>scponly</strong> (<a href="https://github.com/scponly/scponly/wiki" target="_blank">https://github.com/scponly/scponly/wiki</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2001, 2002, 2003 Joe Boyle
+			</li>
+			<li class="list-group-item">
+				<strong>smartmontools</strong> (<a href="https://www.smartmontools.org/" target="_blank">https://www.smartmontools.org/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 2002-2016 Bruce Allen, Christian Franke
+			</li>
+			<li class="list-group-item">
+				<strong>sqlite3</strong> (<a href="https://www.sqlite.org/" target="_blank">https://www.sqlite.org/</a>)<br />
+				<?=gettext("Public Domain"); ?>
+			</li>
+			<li class="list-group-item">
+				<strong>xinetd</strong> (<a href="http://www.xinetd.org/" target="_blank">http://www.xinetd.org/</a>)<br />
+				<?=gettext("Copyright"); ?> &copy; 1992-2016 Panagiotis Tsirigotis
 			</li>
 		</ul>
 	</div>

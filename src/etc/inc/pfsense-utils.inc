@@ -1919,7 +1919,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
-function parse_aliases_file($filename, $type = "url", $max_items = -1) {
+function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = false) {
 	/*
 	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
 	 * $type = if set to 'url' then subnets and ips will be returned,
@@ -1935,31 +1935,36 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1) {
 		return null;
 	}
 	$items = array();
+	$comments = array();
 	/* NOTE: fgetss() is not a typo RTFM before being smart */
 	while (($fc = fgetss($fd)) !== FALSE) {
 		$tmp = trim($fc, " \t\n\r");
 		if (empty($tmp)) {
 			continue;
 		}
-		$tmp_str = strstr($tmp, '#', true);
-		if (!empty($tmp_str)) {
-			$tmp = $tmp_str;
-		}
-		$tmp_str = strstr($tmp, ' ', true);
-		if (!empty($tmp_str)) {
-			$tmp = $tmp_str;
-		}
-		$valid = ($type == "url" && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-			 ($type == "url_ports" && (is_port($tmp) || is_portrange($tmp)));
-		if ($valid) {
-			$items[] = $tmp;
-			if (count($items) == $max_items) {
-				break;
+		if (($kflc) && (strpos($tmp, '#') === 0)) {	// Keep Full Line Comments (lines beginning with #).
+			$comments[] = $tmp;
+		} else {
+			$tmp_str = strstr($tmp, '#', true);
+			if (!empty($tmp_str)) {
+				$tmp = $tmp_str;
+			}
+			$tmp_str = strstr($tmp, ' ', true);
+			if (!empty($tmp_str)) {
+				$tmp = $tmp_str;
+			}
+			$valid = ($type == "url" && (is_ipaddr($tmp) || is_subnet($tmp))) ||
+				($type == "url_ports" && (is_port($tmp) || is_portrange($tmp)));
+			if ($valid) {
+				$items[] = $tmp;
+				if (count($items) == $max_items) {
+					break;
+				}
 			}
 		}
 	}
 	fclose($fd);
-	return $items;
+	return array_merge($comments, $items);
 }
 
 function update_alias_url_data() {
@@ -2166,13 +2171,14 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 		unlink_if_exists($tmp_urltable_filename);
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
-			mwexec("/usr/bin/sed -i \"\" -E 's/\;.*//g; /^[[:space:]]*($|#)/d' " . escapeshellarg($tmp_urltable_filename));
+			// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
+			mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
-				$ports = parse_aliases_file($tmp_urltable_filename, "url_ports", "-1");
-				$ports = group_ports($ports);
+				$ports = parse_aliases_file($tmp_urltable_filename, "url_ports", "-1", true);
+				$ports = group_ports($ports, true);
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			} else {
-				$urltable = parse_aliases_file($tmp_urltable_filename, "url", "-1");
+				$urltable = parse_aliases_file($tmp_urltable_filename, "url", "-1", true);
 				file_put_contents($urltable_filename, implode("\n", $urltable));
 			}
 			unlink_if_exists($tmp_urltable_filename);

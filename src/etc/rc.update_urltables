@@ -32,11 +32,24 @@ if (count($todo) > 0) {
 		sleep($wait);
 	}
 
+	// Set whether or not to force the table update before it's time.
+	if (!empty($argv[2]) && ($argv[2] == "forceupdate")) {
+		$forceupdate = true;
+	} else {
+		$forceupdate = false;
+	}
+
 	log_error("{$argv[0]}: Starting URL table alias updates");
 
 	$filter_reload = false;
 	foreach ($todo as $t) {
-		$r = process_alias_urltable($t['name'], $t['url'], $t['freq']);
+
+		// Update a specifically named URL table only.
+		if (!empty($argv[3]) && ($argv[3] != $t['name'])) {
+			continue;
+		}
+
+		$r = process_alias_urltable($t['name'], $t['url'], $t['freq'], $forceupdate);
 		if ($r == 1) {
 			$result = "";
 			// TODO: Change it when pf supports tables with ports

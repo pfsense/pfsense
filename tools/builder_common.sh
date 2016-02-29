@@ -1117,10 +1117,6 @@ clone_to_staging_area() {
 	# Default full-install config uses em5 and em4 for WAN and LAN
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "em5" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "em4" ${DEFAULTCONF}
-	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-
-	# Make a copy of original default config to avoid need of adding items back
-	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
 
 	# Replace <loginautocomplete/> by <noautocomplete/>
 	xml ed -L -P -r "${XML_ROOTOBJ}/system/webgui/loginautocomplete" \
@@ -1132,6 +1128,11 @@ clone_to_staging_area() {
 	# Format xml to remove blank lines left by ed -d
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+
+	# Make a copy of original default config to avoid need of adding items back
+	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
+
+	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}

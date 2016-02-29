@@ -1111,9 +1111,13 @@ clone_to_staging_area() {
 	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	local DEFAULTCONF=${STAGE_CHROOT_DIR}/conf.default/config.xml
+
+	# Default full-install config uses em5 and em4 for WAN and LAN
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "em5" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "em4" ${DEFAULTCONF}
+	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
 	# Make a copy of original default config to avoid need of adding items back
 	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig

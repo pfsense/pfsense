@@ -1126,6 +1126,11 @@ clone_to_staging_area() {
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/subnetv6" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/track6-interface" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/track6-prefix" ${DEFAULTCONF}
+	# Enable watchdogd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/watchdogd_enable" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/watchdogd_timeout" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "watchdogd_enable" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "watchdogd_timeout" -v "128" ${DEFAULTCONF}
 	# Format xml to remove blank lines left by ed -d
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}

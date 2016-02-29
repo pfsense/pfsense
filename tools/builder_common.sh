@@ -1173,6 +1173,19 @@ create_final_staging_area() {
 
 customize_stagearea_for_image() {
 	local _image_type="$1"
+	local _default_config=""
+
+	if [ -n "$2" ]; then
+		_default_config="$2"
+	elif [ "${_image_type}" = "nanobsd" -o \
+	     "${_image_type}" = "memstickserial" -o \
+	     "${_image_type}" = "memstickadi" ]; then
+		_default_config="default-config-serial"
+	elif [ "${_image_type}" = "ova" ]; then
+		_default_config="default-config-vmware"
+	else
+		_default_config="default-config"
+	fi
 
 	# Prepare final stage area
 	create_final_staging_area
@@ -1211,15 +1224,7 @@ customize_stagearea_for_image() {
 		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
-	if [ "${_image_type}" = "nanobsd" -o \
-	     "${_image_type}" = "memstickserial" -o \
-	     "${_image_type}" = "memstickadi" ]; then
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
-	elif [ "${_image_type}" = "ova" ]; then
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
-	else
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
-	fi
+	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
 }
 
 create_distribution_tarball() {

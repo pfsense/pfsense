@@ -1121,6 +1121,7 @@ clone_to_staging_area() {
 	# Replace <loginautocomplete/> by <noautocomplete/>
 	xml ed -L -P -r "${XML_ROOTOBJ}/system/webgui/loginautocomplete" \
 		-v "noautocomplete" ${DEFAULTCONF}
+	# Remove IPv6 default settings from LAN XXX: Should we really do it?
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/ipaddrv6" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/subnetv6" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/interfaces/lan/track6-interface" ${DEFAULTCONF}

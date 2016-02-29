@@ -1172,13 +1172,15 @@ create_final_staging_area() {
 }
 
 customize_stagearea_for_image() {
+	local _image_type="$1"
+
 	# Prepare final stage area
 	create_final_staging_area
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
 
-	if [ "${1}" = "nanobsd" -o \
-	     "${1}" = "nanobsd-vga" ]; then
+	if [ "${_image_type}" = "nanobsd" -o \
+	     "${_image_type}" = "nanobsd-vga" ]; then
 
 		mkdir -p ${FINAL_CHROOT_DIR}/root/var/db \
 			 ${FINAL_CHROOT_DIR}/root/var/cache \
@@ -1200,20 +1202,20 @@ customize_stagearea_for_image() {
 		pkg_chroot_add ${FINAL_CHROOT_DIR} repo-devel
 	fi
 
-	if [ "${1}" = "iso" -o \
-	     "${1}" = "memstick" -o \
-	     "${1}" = "memstickserial" -o \
-	     "${1}" = "memstickadi" ]; then
+	if [ "${_image_type}" = "iso" -o \
+	     "${_image_type}" = "memstick" -o \
+	     "${_image_type}" = "memstickserial" -o \
+	     "${_image_type}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
 		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
-	if [ "${1}" = "nanobsd" -o \
-	     "${1}" = "memstickserial" -o \
-	     "${1}" = "memstickadi" ]; then
+	if [ "${_image_type}" = "nanobsd" -o \
+	     "${_image_type}" = "memstickserial" -o \
+	     "${_image_type}" = "memstickadi" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
-	elif [ "${1}" = "ova" ]; then
+	elif [ "${_image_type}" = "ova" ]; then
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config

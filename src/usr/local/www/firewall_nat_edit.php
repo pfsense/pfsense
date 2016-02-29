@@ -755,7 +755,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->setPattern('[.a-zA-Z0-9_]+')->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
+))->setPattern('[.a-zA-Z0-9_:]+')->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -822,7 +822,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->setPattern('[.a-zA-Z0-9_]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
+))->setPattern('[.a-zA-Z0-9_:]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -866,7 +866,7 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
 	$pconfig['localip']
-))->setPattern('[.a-zA-Z0-9_]+')->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
+))->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
 			'e.g.: 192.168.1.12');
 
 $group = new Form_Group('Redirect target port');

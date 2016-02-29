@@ -108,6 +108,7 @@ export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
 export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
+export XML_ROOTOBJ=${XML_ROOTOBJ:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
 
 if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then
 	echo ">>>ERROR: According the following license, only Electric Sheep Fencing can build genuine pfSense® software"
@@ -176,7 +177,7 @@ export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 if [ "${TARGET}" = "i386" ]; then
 	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
 else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm"}
+	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
 fi
 
 # Area that the final image will appear in

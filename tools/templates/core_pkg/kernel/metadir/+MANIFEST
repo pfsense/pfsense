@@ -1,8 +1,8 @@
-name: "%%PRODUCT_NAME%%-kernel-%%FLAVOR%%"
+name: "%%PRODUCT_NAME%%-kernel%%FLAVOR%%"
 version: "%%VERSION%%"
 origin: "security/%%PRODUCT_NAME%%-kernel"
 comment: <<EOD
-%%PRODUCT_NAME%% kernel
+%%PRODUCT_NAME%% kernel%%FLAVOR_DESC%%
 EOD
 maintainer: development@pfsense.org
 prefix: /

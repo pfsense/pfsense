@@ -145,7 +145,7 @@ if (count($services) > 0) {
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
 	<div class="form-group">
-		<label for="inputPassword3" class="col-sm-3 control-label"><?=gettext('Hidden services')?></label>
+		<label class="col-sm-3 control-label"><?=gettext('Hidden services')?></label>
 		<div class="col-sm-6">
 			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php

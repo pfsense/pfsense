@@ -1132,7 +1132,22 @@ clone_to_staging_area() {
 	# Make a copy of original default config to avoid need of adding items back
 	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
 
+	## Enable AESNI
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/crypto_hardware" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "crypto_hardware" -v "aesni" ${DEFAULTCONF}
+	## Enable powerd
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/powerd_enable" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "powerd_enable" ${DEFAULTCONF}
+	## Enable serial
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
 	core_pkg_create default-config "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Restore original config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
 
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}

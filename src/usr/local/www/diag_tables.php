@@ -226,7 +226,7 @@ if ($bogons || $urltable || !empty($entries)) {
 	}
 
 	if ($table_comments) {
-		print_info_box($last_update_msg . " &nbsp; &nbsp; " . $records_count_msg . " &nbsp; &nbsp; " . 
+		print_info_box($last_update_msg . " &nbsp; &nbsp; " . $records_count_msg . "<br />" .
 		'<span style="display:none" class="infoblock">' . ' ' . gettext("Hide table comments.") . '<br />' . $table_comments . '</span>' .
 		'<span style="display:none"   id="showtblcom">' . ' ' . gettext("Show table comments.") . '</span>' .
 		'' , 'info', false);

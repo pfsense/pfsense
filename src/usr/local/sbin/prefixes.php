@@ -47,7 +47,7 @@ while (( $line = fgets($fd, 4096)) !== false) {
 
 	/* closing bracket */
 	if (preg_match("/^}/i", $line)) {
-		if (isset($duid) && $duid !== false) {
+		if (isset($duid) && $duid !== false && $active === true) {
 			switch ($type) {
 				case "ia-na":
 					$duid_arr[$duid][$type] = $ia_na;

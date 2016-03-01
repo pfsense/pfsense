@@ -439,8 +439,13 @@ foreach ($leases as $data):
 					</td>
 					<td><?=htmlentities($data['hostname'])?></td>
 					<td><?=htmlentities($data['descr'])?></td>
-					<td><?=adjust_gmt($data['start'])?></td>
-					<td><?=adjust_gmt($data['end'])?></td>
+					<? if ($data['type'] != "static"): ?>
+						<td><?=adjust_gmt($data['start'])?></td>
+						<td><?=adjust_gmt($data['end'])?></td>
+					<? else: ?>
+						<td><?=gettext("n/a")?></td>
+						<td><?=gettext("n/a")?></td>
+					<? endif; ?>
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>

@@ -865,3 +865,20 @@ a[href]:after {
 body{
 	touch-action: manipulation;
 }
+
+/* D3 Styles */
+
+svg {
+    display: block;
+}
+
+#chart, svg {
+    margin: 0px;
+    padding: 10px 0;
+    height: 420px;
+    width: 100%;
+}
+
+#chart .nvtooltip > h3 {
+    font-size: 14px;
+}

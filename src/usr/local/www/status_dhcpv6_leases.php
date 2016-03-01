@@ -596,7 +596,7 @@ foreach ($prefixes as $data):
 					<?=$data['prefix']?>
 <?php if ($mappings[$data['duid']]): ?>
 					<br />
-					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
+					<?=gettext('Routed To')?>: <?=$mappings[$data['duid']]?>
 <?php endif; ?>
 				</td>
 				<td><?=$data['iaid']?></td>

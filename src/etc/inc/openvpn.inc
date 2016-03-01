@@ -959,7 +959,7 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 		}
 
-		if ($settings['auth_user'] || $settings['auth_pass']) {
+		if (($settings['auth_user'] || $settings['auth_pass']) && $settings['mode'] == "p2p_tls") {
 			$up_file = "{$g['varetc_path']}/openvpn/{$mode_id}.up";
 			$conf .= "auth-user-pass {$up_file}\n";
 			if ($settings['auth_user']) {

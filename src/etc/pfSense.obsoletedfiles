@@ -1030,3 +1030,4 @@
 /var/etc/pppoe-vpn
 /var/mail/_relayd
 /var/mail/unbound
+/usr/local/www/d3pie

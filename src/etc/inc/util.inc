@@ -1106,14 +1106,17 @@ function is_portoralias($port) {
 }
 
 /* create ranges of sequential port numbers (200:215) and remove duplicates */
-function group_ports($ports) {
+function group_ports($ports, $kflc = false) {
 	if (!is_array($ports) || empty($ports)) {
 		return;
 	}
 
 	$uniq = array();
+	$comments = array();
 	foreach ($ports as $port) {
-		if (is_portrange($port)) {
+		if (($kflc) && (strpos($port, '#') === 0)) {	// Keep Full Line Comments (lines beginning with #).
+			$comments[] = $port;
+		} else if (is_portrange($port)) {
 			list($begin, $end) = explode(":", $port);
 			if ($begin > $end) {
 				$aux = $begin;
@@ -1155,7 +1158,7 @@ function group_ports($ports) {
 		}
 	}
 
-	return $result;
+	return array_merge($comments, $result);
 }
 
 /* returns true if $val is a valid shaper bandwidth value */

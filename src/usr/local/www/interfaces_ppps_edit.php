@@ -941,16 +941,16 @@ $linkparamhelp = new Form_StaticText(
 
 $section->addInput($linkparamhelp);
 
+$form->add($section);
+
 if (isset($id) && $a_ppps[$id]) {
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'id',
 		null,
 		'hidden',
 		$id
 	));
 }
-
-$form->add($section);
 
 print($form);
 

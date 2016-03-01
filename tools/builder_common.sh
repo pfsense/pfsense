@@ -477,6 +477,24 @@ make_world() {
 	unset makeargs
 }
 
+nanobsd_image_filename() {
+	local _size="$1"
+	local _type="$2"
+	local _upgrade="$3"
+
+	if [ -z "$upgrade" ]; then
+		local _template=${NANOBSD_IMG_TEMPLATE}
+	else
+		local _template=${NANOBSD_UPGRADE_TEMPLATE}
+	fi
+
+	echo "$_template" | sed \
+		-e "s,%%SIZE%%,${_size},g" \
+		-e "s,%%TYPE%%,${_type},g"
+
+	return 0
+}
+
 # This routine originated in nanobsd.sh
 nanobsd_set_flash_details () {
 	a1=$(echo $1 | tr '[:upper:]' '[:lower:]')
@@ -587,8 +605,8 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}${TIMESTAMP_SUFFIX}.img"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/${PRODUCT_NAME}-${PRODUCT_VERSION}-${_NANO_MEDIASIZE}-${TARGET}-${1}-upgrade${TIMESTAMP_SUFFIX}.img"
+		IMG="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1})"
+		IMGUPDATE="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} 1)"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -1172,13 +1190,28 @@ create_final_staging_area() {
 }
 
 customize_stagearea_for_image() {
+	local _image_type="$1"
+	local _default_config=""
+
+	if [ -n "$2" ]; then
+		_default_config="$2"
+	elif [ "${_image_type}" = "nanobsd" -o \
+	     "${_image_type}" = "memstickserial" -o \
+	     "${_image_type}" = "memstickadi" ]; then
+		_default_config="default-config-serial"
+	elif [ "${_image_type}" = "ova" ]; then
+		_default_config="default-config-vmware"
+	else
+		_default_config="default-config"
+	fi
+
 	# Prepare final stage area
 	create_final_staging_area
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
 
-	if [ "${1}" = "nanobsd" -o \
-	     "${1}" = "nanobsd-vga" ]; then
+	if [ "${_image_type}" = "nanobsd" -o \
+	     "${_image_type}" = "nanobsd-vga" ]; then
 
 		mkdir -p ${FINAL_CHROOT_DIR}/root/var/db \
 			 ${FINAL_CHROOT_DIR}/root/var/cache \
@@ -1200,24 +1233,16 @@ customize_stagearea_for_image() {
 		pkg_chroot_add ${FINAL_CHROOT_DIR} repo-devel
 	fi
 
-	if [ "${1}" = "iso" -o \
-	     "${1}" = "memstick" -o \
-	     "${1}" = "memstickserial" -o \
-	     "${1}" = "memstickadi" ]; then
+	if [ "${_image_type}" = "iso" -o \
+	     "${_image_type}" = "memstick" -o \
+	     "${_image_type}" = "memstickserial" -o \
+	     "${_image_type}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
 		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
-	if [ "${1}" = "nanobsd" -o \
-	     "${1}" = "memstickserial" -o \
-	     "${1}" = "memstickadi" ]; then
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-serial
-	elif [ "${1}" = "ova" ]; then
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config-vmware
-	else
-		pkg_chroot_add ${FINAL_CHROOT_DIR} default-config
-	fi
+	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
 }
 
 create_distribution_tarball() {
@@ -2259,8 +2284,8 @@ snapshots_create_latest_symlink() {
 snapshots_copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
-			FILENAMEFULL="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}${TIMESTAMP_SUFFIX}.img.gz"
-			FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${FILESIZE}-${TARGET}-${NANOTYPE}-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+			FILENAMEFULL="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE}).gz"
+			FILENAMEUPGRADE="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} 1).gz"
 			mkdir -p $STAGINGAREA/nanobsd
 			mkdir -p $STAGINGAREA/nanobsdupdates
 
@@ -2372,13 +2397,13 @@ snapshots_scp_files() {
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd 1).gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
 			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
 			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="${PRODUCT_NAME}-${PRODUCT_VERSION}-${i}-${TARGET}-nanobsd-vga-upgrade${TIMESTAMP_SUFFIX}.img.gz"
+		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd-vga 1).gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
 			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \

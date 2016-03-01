@@ -68,10 +68,32 @@ require_once("guiconfig.inc");
 
 // Set default table
 $tablename = "sshlockout";
-$bogons = false;
 
 if ($_REQUEST['type']) {
 	$tablename = $_REQUEST['type'];
+}
+
+// Gather selected alias metadata.
+if (isset($config['aliases']['alias'])) {
+	foreach ($config['aliases']['alias'] as $alias) {
+		if ( $alias['name'] == $tablename ) {
+			$tmp = array();
+			$tmp['type'] = $alias['type'];
+			$tmp['name'] = $alias['name'];
+			$tmp['url']  = $alias['url'];
+			$tmp['freq'] = $alias['updatefreq'];
+			break;
+		}
+	}
+}
+
+# Determine if selected alias is either a bogons or URL table.
+if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
+	$bogons = true;
+} else if (preg_match('/urltable/i', $tmp['type'])) {
+	$urltable = true;
+} else {
+	$bogons = $urltable = false;
 }
 
 if ($_REQUEST['delete']) {
@@ -93,27 +115,34 @@ if ($_POST['clearall']) {
 	unset($entries);
 }
 
-if (($tablename == "bogons") || ($tablename == "bogonsv6")) {
-	$bogons = true;
+if ($_POST['Download'] && ($bogons || $urltable)) {
 
-	if ($_POST['Download']) {
-		mwexec_bg("/etc/rc.update_bogons.sh now");
-		$maxtimetowait = 0;
-		$loading = true;
-		while ($loading == true) {
-			$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep bogons`;
-			if ($isrunning == "") {
-				$loading = false;
-			}
-			$maxtimetowait++;
-			if ($maxtimetowait > 89) {
-				$loading = false;
-			}
-			sleep(1);
+	if ($bogons) {				// If selected table is either bogons or bogonsv6.
+		$mwexec_bg_cmd = '/etc/rc.update_bogons.sh now';
+		$table_type = 'bogons';
+		$db_name = 'bogons';
+	} else if ($urltable) {		//  If selected table is a URL table alias.
+		$mwexec_bg_cmd = '/etc/rc.update_urltables now forceupdate ' . $tablename;
+		$table_type = 'urltables';
+		$db_name = $tablename;
+	}
+
+	mwexec_bg($mwexec_bg_cmd);
+	$maxtimetowait = 0;
+	$loading = true;
+	while ($loading == true) {
+		$isrunning = `/bin/ps awwwux | /usr/bin/grep -v grep | /usr/bin/grep $table_type`;
+		if ($isrunning == "") {
+			$loading = false;
 		}
-		if ($maxtimetowait < 90) {
-			$savemsg = gettext("The bogons database has been updated.");
+		$maxtimetowait++;
+		if ($maxtimetowait > 89) {
+			$loading = false;
 		}
+		sleep(1);
+	}
+	if ($maxtimetowait < 90) {
+		$savemsg = sprintf(gettext("The %s database has been updated."), $db_name);
 	}
 }
 
@@ -144,8 +173,8 @@ $group->add(new Form_Select(
 	array_combine($tables, $tables)
 ));
 
-if ($bogons || !empty($entries)) {
-	if ($bogons) {
+if ($bogons || $urltable || !empty($entries)) {
+	if ($bogons || $urltable) {
 		$group->add(new Form_Button(
 			'Download',
 			'Update'
@@ -162,12 +191,24 @@ $section->add($group);
 $form->add($section);
 print $form;
 
-if ($bogons || !empty($entries)) {
+if ($bogons || $urltable || !empty($entries)) {
 ?>
 <div>
 	<div class="infoblock blockopen">
 <?php
-	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# last updated" /etc/' . escapeshellarg($tablename) . '|cut -d"(" -f2|tr -d ")" ');
+	if ($bogons) {
+		$table_file = '/etc/' . escapeshellarg($tablename);
+	} else if ($urltable) {
+		$table_file = '/var/db/aliastables/' . escapeshellarg($tablename) . '.txt';
+	} else {
+		$table_file = '';
+	}
+
+	$datestrregex = '(Mon|Tue|Wed|Thr|Fri|Sat|Sun).* GMT';
+	$datelineregex = 'last.*' . $datestrregex;
+
+	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# ' . $datelineregex . '" ' . $table_file . '|/usr/bin/grep -i -m 1 -E -o "' . $datestrregex . '"');
+
 	if ($last_updated != "") {
 		$last_update_msg = sprintf(gettext("Table last updated on %s."), $last_updated);
 	} else {
@@ -176,7 +217,22 @@ if ($bogons || !empty($entries)) {
 
 	$records_count_msg = sprintf(gettext("%s records."), number_format(count($entries), 0, gettext("."), gettext(",")));
 
-	print_info_box($last_update_msg . "&nbsp; &nbsp; " . $records_count_msg, 'info', false);
+	# Display up to 10 comment lines (lines that begin with '#').
+	unset($comment_lines);
+	$res = exec('/usr/bin/grep -i -m 10 -E "^#" ' . $table_file, $comment_lines);
+
+	foreach ($comment_lines as $comment_line) {
+		$table_comments .= "$comment_line" . "<br />";
+	}
+
+	if ($table_comments) {
+		print_info_box($last_update_msg . " &nbsp; &nbsp; " . $records_count_msg . "<br />" .
+		'<span style="display:none" class="infoblock">' . ' ' . gettext("Hide table comments.") . '<br />' . $table_comments . '</span>' .
+		'<span style="display:none"   id="showtblcom">' . ' ' . gettext("Show table comments.") . '</span>' .
+		'' , 'info', false);
+	} else {
+		print_info_box($last_update_msg . "&nbsp; &nbsp; " . $records_count_msg, 'info', false);
+	}
 ?>
 	</div>
 </div>
@@ -187,6 +243,13 @@ if ($bogons || !empty($entries)) {
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
+
+	$('#showtblcom').show();
+
+	$('[id^="showinfo1"]').click(function() {
+			$('#showtblcom').toggle();
+	});
+
 	$('a[data-entry]').on('click', function() {
 		var el = $(this);
 
@@ -249,7 +312,7 @@ if (empty($entries)) {
 							<?=$entry?>
 						</td>
 						<td>
-							<?php if (!$bogons): ?>
+							<?php if (!$bogons && !$urltable): ?>
 								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>"><?=gettext("Remove")?></a>
 							<?php endif ?>
 						</td>

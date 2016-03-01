@@ -357,7 +357,7 @@ while ($i < $leases_count) {
 		$prefixes[] = $entry;
 	} else {
 		$leases[] = $entry;
-		$mappings[$entry['iaid'] . $entry['duid']] = $entry['ip'];
+		$mappings[$entry['duid']] = $entry['ip'];
 	}
 	$l++;
 	$i++;
@@ -543,6 +543,7 @@ foreach ($leases as $data):
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
+				<th><!-- icon --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
 				<th><?=gettext("IAID")?></th>
 				<th><?=gettext("DUID")?></th>
@@ -593,7 +594,7 @@ foreach ($prefixes as $data):
 				<td><i class="fa <?=$icon?>"></i></td>
 				<td>
 					<?=$data['prefix']?>
-<?php if ($mappings[$data['iaid'] . $data['duid']]): ?>
+<?php if ($mappings[$data['duid']]): ?>
 					<br />
 					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
 <?php endif; ?>

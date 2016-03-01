@@ -119,7 +119,7 @@ function extract_duid($ia_string) {
 				continue;
 			}
 			else if ($len - $i >= 4) {
-				if (preg_match('/[0-7]{3}/', substr($ia_string, $i+1, $i+4))) {
+				if (preg_match('/[0-3][0-7]{2}/', substr($ia_string, $i+1, 3))) {
 					$i += 3;
 					continue;
 				}

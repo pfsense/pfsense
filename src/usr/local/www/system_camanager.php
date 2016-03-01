@@ -447,7 +447,7 @@ foreach ($a_ca as $i => $ca):
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-sign-in"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>

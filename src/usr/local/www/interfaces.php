@@ -541,7 +541,7 @@ if ($_POST['apply']) {
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (!preg_match("/^staticv4/", $_POST['type']))) {
 		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
 	}
-	if (isset($config['dhcpdv6']) && isset($config['dhcpdv6'][$if]['enable']) && (!preg_match("/^staticv6/", $_POST['type6']))) {
+	if (isset($config['dhcpdv6']) && isset($config['dhcpdv6'][$if]['enable']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
 		$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only with a static IPv6 configuration. Please disable the DHCPv6 Server service on this interface first, then change the interface configuration.");
 	}
 

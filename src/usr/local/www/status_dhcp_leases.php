@@ -406,21 +406,36 @@ foreach ($leases as $data):
 	}
 
 	if ($data['act'] != $static_string) {
-		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if (!is_array($dhcpifconf['range'])) {
 				continue;
 			}
 			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
 				$data['if'] = $dhcpif;
-				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
-				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];
-				$dhcp_leases_subnet_counter[$dlsc]['to'] = $dhcpifconf['range']['to'];
-				$dhcp_leases_subnet_counter[$dlsc]['count'] = $dhcp_leases_subnet_counter[$dlsc]['count']+1;
+				$dlskey = $dhcpif . "-" . $dhcpifconf['range']['from'];
+				$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $dhcpif;
+				$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcpifconf['range']['from'];
+				$dhcp_leases_subnet_counter[$dlskey]['to'] = $dhcpifconf['range']['to'];
+				$dhcp_leases_subnet_counter[$dlskey]['count'] += 1;
 				break;
 			}
 
-			$dlsc++;
+			// Check if the IP is in the range of any DHCP pools
+			if (is_array($dhcpifconf['pool'])) {
+				foreach ($dhcpifconf['pool'] as $dhcppool) {
+					if (is_array($dhcppool['range'])) {
+						if (is_inrange_v4($data['ip'], $dhcppool['range']['from'], $dhcppool['range']['to'])) {
+							$data['if'] = $dhcpif;
+							$dlskey = $dhcpif . "-" . $dhcppool['range']['from'];
+							$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $dhcpif;
+							$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcppool['range']['from'];
+							$dhcp_leases_subnet_counter[$dlskey]['to'] = $dhcppool['range']['to'];
+							$dhcp_leases_subnet_counter[$dlskey]['count'] += 1;
+							break 2;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -439,8 +454,13 @@ foreach ($leases as $data):
 					</td>
 					<td><?=htmlentities($data['hostname'])?></td>
 					<td><?=htmlentities($data['descr'])?></td>
-					<td><?=adjust_gmt($data['start'])?></td>
-					<td><?=adjust_gmt($data['end'])?></td>
+					<? if ($data['type'] != "static"): ?>
+						<td><?=adjust_gmt($data['start'])?></td>
+						<td><?=adjust_gmt($data['end'])?></td>
+					<? else: ?>
+						<td><?=gettext("n/a")?></td>
+						<td><?=gettext("n/a")?></td>
+					<? endif; ?>
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>
@@ -478,7 +498,10 @@ foreach ($leases as $data):
 				</tr>
 			</thead>
 			<tbody>
-<?php foreach ($dhcp_leases_subnet_counter as $listcounters):?>
+<?php
+	ksort($dhcp_leases_subnet_counter);
+	foreach ($dhcp_leases_subnet_counter as $listcounters):
+?>
 				<tr>
 					<td><?=$iflist[$listcounters['dhcpif']]?></td>
 					<td><?=$listcounters['from']?></td>

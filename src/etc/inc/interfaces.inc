@@ -4679,6 +4679,27 @@ function get_parent_interface($interface, $avoidrecurse = false) {
 	return $parents;
 }
 
+/*
+ *  get_parent_physical_interface($interface):
+ *   - returns an array of parent interface(s) for a given interface friendly name (e.g. wan)
+ *  differs from get_parent_interface in that it traverses to find the physical NICs on lagg
+ */
+function get_parent_physical_interface($interface) {
+	global $config;
+
+	$realif = get_parent_interface($interface);
+
+	if (substr($realif[0], 0, 4) == "lagg") {
+		foreach ($config['laggs']['lagg'] as $lagg) {
+			if ($realif[0] == $lagg['laggif']) {
+				return explode(",", $lagg['members']);
+			}
+		}
+	} else {
+		return $realif;
+	}
+}
+
 function interface_is_wireless_clone($wlif) {
 	if (!stristr($wlif, "_wlan")) {
 		return false;

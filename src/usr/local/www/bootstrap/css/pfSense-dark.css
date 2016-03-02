@@ -232,6 +232,14 @@ caption {
     background-color: #303030;
 }
 
+.table-bordered {
+    border: 1px solid #303030;
+}
+
+.table-bordered>thead {
+    background-color: #000;
+}
+
 .table .table {
     background-color: #424242;
 }

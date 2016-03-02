@@ -20,7 +20,6 @@ function get_stats() {
 	$stats['datetime'] = update_date_time();
 	$stats['interfacestatistics'] = get_interfacestats();
 	$stats['interfacestatus'] = get_interfacestatus();
-	$stats['gateways'] = get_gatewaystats();
 	$stats['cpufreq'] = get_cpufreq();
 	$stats['load_average'] = get_load_average();
 	$stats['mbuf'] = get_mbuf();
@@ -28,88 +27,6 @@ function get_stats() {
 	$stats['statepercent'] = get_pfstate(true);
 	$stats = join("|", $stats);
 	return $stats;
-}
-
-function get_gatewaystats() {
-	global $config;
-	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
-	} else {
-		$display_type = "gw_ip";
-	}
-
-	$a_gateways = return_gateways_array();
-	$gateways_status = array();
-	$gateways_status = return_gateways_status(true);
-	$data = "";
-	$isfirst = true;
-	foreach ($a_gateways as $gname => $gw) {
-		if (!$isfirst) {
-			$data .= ",";
-		}
-		$isfirst = false;
-		$data .= $gw['name'] . ",";
-
-		$monitor_address = "";
-		$monitor_address_disp = "";
-		if ($display_type == "monitor_ip" || $display_type == "both_ip") {
-			$monitor_address = $gw['monitor'];
-			if ($monitor_address != "" && $display_type == "both_ip") {
-				$monitor_address_disp = " (" . $monitor_address . ")";
-			} else {
-				$monitor_address_disp = $monitor_address;
-			}
-		}
-
-		if ($gateways_status[$gname]) {
-			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
-				$if_gw = lookup_gateway_ip_by_name($gname);
-			} else {
-				$if_gw = "";
-			}
-			if ($monitor_address == $if_gw) {
-				$monitor_address_disp = "";
-			}
-
-			$data .= "<b>" . $if_gw . $monitor_address_disp . "</b>,";
-			$gws = $gateways_status[$gname];
-			switch (strtolower($gws['status'])) {
-				case "none":
-					$online = "Online";
-					$bgcolor = "#90EE90";  // lightgreen
-					break;
-				case "down":
-					$online = "Offline";
-					$bgcolor = "#F08080";  // lightcoral
-					break;
-				case "delay":
-					$online = "Latency";
-					$bgcolor = "#F0E68C";  // khaki
-					break;
-				case "loss":
-					$online = "Packetloss";
-					$bgcolor = "#F0E68C";  // khaki
-					break;
-				default:
-					$online = "Pending";
-					break;
-			}
-		} else {
-			if ($display_type == "gw_ip" || $display_type == "both_ip" || ($display_type == "monitor_ip" && $monitor_address == "")) {
-				$if_gw = "~";
-			} else {
-				$if_gw = "";
-			}
-			$data .= $if_gw . $monitor_address_disp . ",";
-			$gws['delay'] = "~";
-			$gws['loss'] = "~";
-			$online = "Unknown";
-			$bgcolor = "#ADD8E6";  // lightblue
-		}
-		$data .= ($online == "Pending") ? "{$online},{$online}," : "{$gws['delay']},{$gws['loss']},";
-		$data .= "{$online}^{$bgcolor}";
-	}
-	return $data;
 }
 
 function get_uptime() {

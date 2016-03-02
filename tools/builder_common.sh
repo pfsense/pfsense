@@ -1160,6 +1160,8 @@ clone_to_staging_area() {
 	## Enable serial
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "115200" ${DEFAULTCONF}
 	## Format
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
@@ -1204,6 +1206,8 @@ clone_to_staging_area() {
 	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
 
 	# Activate serial console in config.xml
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "115200" ${DEFAULTCONF}
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
 	xml ed -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" \
 		${DEFAULTCONF} > ${DEFAULTCONF}.tmp

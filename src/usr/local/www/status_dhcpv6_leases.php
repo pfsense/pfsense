@@ -162,9 +162,13 @@ function parse_duid($duid_string) {
 			$n = substr($duid_string, $i+1, 1);
 			if (($n == '\\') || ($n == '"')) {
 				$parsed_duid[] = sprintf("%02x", ord($n));
-			} elseif (is_numeric($n)) {
-				$parsed_duid[] = sprintf("%02x", octdec(substr($duid_string, $i+1, 3)));
-				$i += 3;
+				$i += 1;
+			} else {
+				$n = substr($duid_string, $i+1, 3);
+				if (preg_match('/[0-3][0-7]{2}/', $n)) {
+					$parsed_duid[] = sprintf("%02x", octdec($n));
+					$i += 3;
+				}
 			}
 		} else {
 			$parsed_duid[] = sprintf("%02x", ord($s));
@@ -357,7 +361,7 @@ while ($i < $leases_count) {
 		$prefixes[] = $entry;
 	} else {
 		$leases[] = $entry;
-		$mappings[$entry['iaid'] . $entry['duid']] = $entry['ip'];
+		$mappings[$entry['duid']] = $entry['ip'];
 	}
 	$l++;
 	$i++;
@@ -543,6 +547,7 @@ foreach ($leases as $data):
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
+				<th><!-- icon --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
 				<th><?=gettext("IAID")?></th>
 				<th><?=gettext("DUID")?></th>
@@ -593,9 +598,9 @@ foreach ($prefixes as $data):
 				<td><i class="fa <?=$icon?>"></i></td>
 				<td>
 					<?=$data['prefix']?>
-<?php if ($mappings[$data['iaid'] . $data['duid']]): ?>
+<?php if ($mappings[$data['duid']]): ?>
 					<br />
-					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
+					<?=gettext('Routed To')?>: <?=$mappings[$data['duid']]?>
 <?php endif; ?>
 				</td>
 				<td><?=$data['iaid']?></td>

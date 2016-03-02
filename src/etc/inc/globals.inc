@@ -115,6 +115,9 @@ $g = array(
 	"language" => "en_US"
 );
 
+/* Read all XML files in following dir and load menu entries */
+$g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
+
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");
 

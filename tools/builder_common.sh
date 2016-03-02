@@ -1170,6 +1170,28 @@ clone_to_staging_area() {
 	# Restore original config
 	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
 
+	# Default alix config uses em5 and em4 for WAN and LAN
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vr1" ${DEFAULTCONF}
+	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vr0" ${DEFAULTCONF}
+	## Enable glxsb
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/crypto_hardware" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "crypto_hardware" -v "glxsb" ${DEFAULTCONF}
+	## Enable serial
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "38400" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config "alix" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
+	core_pkg_create default-config-serial "alix" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	rm -f ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
+
+	# Restore original config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
+
 	# Change default interface names to match vmware driver
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/wan/if" -v "vmx0" ${DEFAULTCONF}
 	xml ed -P -L -u "${XML_ROOTOBJ}/interfaces/lan/if" -v "vmx1" ${DEFAULTCONF}

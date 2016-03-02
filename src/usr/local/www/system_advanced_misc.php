@@ -130,11 +130,11 @@ if ($_POST) {
 	}
 
 	if (!empty($_POST['use_mfs_tmp_size']) && (!is_numeric($_POST['use_mfs_tmp_size']) || ($_POST['use_mfs_tmp_size'] < 40))) {
-		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MB.");
+		$input_errors[] = gettext("/tmp Size must be numeric and should not be less than 40MiB.");
 	}
 
 	if (!empty($_POST['use_mfs_var_size']) && (!is_numeric($_POST['use_mfs_var_size']) || ($_POST['use_mfs_var_size'] < 60))) {
-		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MB.");
+		$input_errors[] = gettext("/var Size must be numeric and should not be less than 60MiB.");
 	}
 
 	if (!empty($_POST['proxyport']) && !is_port($_POST['proxyport'])) {
@@ -526,8 +526,8 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['use_mfs_tmp_size'],
 	['placeholder' => 40]
-))->setHelp('Set the size, in MB, for the /tmp '.
-	'RAM disk. Leave blank for 40MB. Do not set lower than 40.');
+))->setHelp('Set the size, in MiB, for the /tmp '.
+	'RAM disk. Leave blank for 40MiB. Do not set lower than 40.');
 
 $section->addInput(new Form_Input(
 	'use_mfs_var_size',
@@ -535,8 +535,8 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['use_mfs_var_size'],
 	['placeholder' => 60]
-))->setHelp('Set the size, in MB, for the /var '.
-	'RAM disk. Leave blank for 60MB. Do not set lower than 60.');
+))->setHelp('Set the size, in MiB, for the /var '.
+	'RAM disk. Leave blank for 60MiB. Do not set lower than 60.');
 
 $section->addInput(new Form_Input(
 	'rrdbackup',

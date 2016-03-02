@@ -287,7 +287,7 @@ function build_date_table() {
 
 		$mostr .=
 			'<table class="table table-condensed table-bordered" id="calTable' . $monthcounter . $yearcounter . '" >
-				<thead><tr class="info"><td colspan="7" class="text-center"><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
+				<thead><tr><td colspan="7" class="text-center"><b>' . date("F_Y", mktime(0, 0, 0, date($monthcounter), 1, date($yearcounter))) . '</b></td>
 				</tr>
 				<tr>
 					<th class="text-center" style="cursor: pointer;" onclick="daytoggle(\'w1p1\');">' . gettext("Mon") . '</th>
@@ -341,9 +341,9 @@ function build_date_table() {
 
 				}
 
-			$mostr .= '</tbody></table>';
+			$mostr .= '</tbody></table><br /><p>';
 			$mostr .= gettext('Click individual date to select that date only. Click the appropriate weekday Header to select all occurrences of that weekday. ');
-			$mostr .= '</div>';
+			$mostr .= '</p></div>';
 
 		if ($monthcounter == 12) {
 			$monthcounter = 1;
@@ -721,20 +721,6 @@ var month_array = ['January','February','March','April','May','June','July','Aug
 var day_array = ['Mon','Tues','Wed','Thur','Fri','Sat','Sun'];
 var schCounter = 0;
 
-function rgb2hex(rgb) {
-	var parts = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-
-	if (parts == null) {
-		return;
-	}
-
-	function hex(x) {
-		return ("0" + parseInt(x).toString(16)).slice(-2);
-	}
-
-	return ("#" + hex(parts[1]) + hex(parts[2]) + hex(parts[3])).toUpperCase();
-}
-
 function repeatExistingDays() {
 	var tempstr, tempstrdaypos, week, daypos, dayposdone = "";
 
@@ -753,7 +739,7 @@ function repeatExistingDays() {
 		tempstr = 'w' + week + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1") {
-			if (rgb2hex(daycell.style.backgroundColor) == "#F08080") {  // lightcoral
+			if ($("#"+tempstr).hasClass("bg-info")) { 
 				daytogglerepeating(week,daypos,true);
 			} else {
 				daytogglerepeating(week,daypos,false);
@@ -777,9 +763,9 @@ function daytogglerepeating(week, daypos, bExists) {
 
 		if (daycell != null) {
 			if (bExists) {
-				daycell.style.backgroundColor = "#FFFFFF";	// white
+				$("#"+tempstr).removeClass("bg-info");
 			} else {
-				daycell.style.backgroundColor = "#F08080";	// lightcoral
+				$("#"+tempstr).addClass("bg-info");
 			}
 
 			if (dayoriginalpos != "-1") {
@@ -817,17 +803,17 @@ function daytoggle(id) {
 		var daycell = document.getElementById(idmod);
 
 		if (daycell != null) {
-			if (rgb2hex(daycell.style.backgroundColor) == "#FF0000") {  // red
-				daycell.style.backgroundColor = "#FFFFFF";	// white
+			if ($("#"+idmod).hasClass("bg-success")) {  
+				$("#"+idmod).removeClass("bg-success");
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
-			} else if (rgb2hex(daycell.style.backgroundColor) == "#F08080") { // lightcoral
+			} else if ($("#"+idmod).hasClass("bg-info")) { 
 				daytogglerepeating(week,daypos,true);
 			} else { //color is white cell
 				if (!runrepeat) {
-					daycell.style.backgroundColor = "#FF0000";	// red
+					$("#"+idmod).addClass("bg-success");
 				} else {
-					daycell.style.backgroundColor = "#F08080";	// lightcoral
+					$("#"+idmod).addClass("bg-info");
 					daytogglerepeating(week,daypos,false);
 				}
 				daysSelected += id + ",";
@@ -1115,7 +1101,7 @@ function clearCalendar() {
 			tempstr = 'w' + j + 'p' + k;
 			daycell = eval('document.getElementById(tempstr)');
 			if (daycell != null) {
-				daycell.style.backgroundColor = "#FFFFFF";	// white
+				$("#"+tempstr).removeClass("bg-success bg-info");
 			}
 		}
 	}

@@ -145,7 +145,7 @@ require("head.inc");
 				<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
 				<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
 				<span class="pull-right">
-					<button id="btngoto" class="btn btn-default btn-sm"><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" width="6"></input>
+					<button id="btngoto" class="btn btn-default btn-sm"><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" />
 				</span>
 			</form>
 
@@ -159,7 +159,7 @@ require("head.inc");
 				}
 				//]]>
 				</script>
-				<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols=""></textarea>
+				<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols="20"></textarea>
 			</div>
 		</div>
 	</div>

@@ -3529,10 +3529,18 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			interface_track6_6rd_configure($interface, $wancfg);
 			break;
 		case "dhcp6":
-			$parentrealif = get_real_interface($wancfg['track6-interface']);
-			$pidv6 = find_dhcp6c_process($parentrealif);
-			if ($pidv6) {
-				posix_kill($pidv6, SIGHUP);
+			if ($linkupevent == true) {
+				/*
+				 * NOTE: Usually come here from rc.linkup calling so just call directly instead of generating event
+				 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
+				 *
+				 * XXX: Probably DHCPv6 client should handle this automagically itself?
+				 */
+				$parentrealif = get_real_interface($wancfg['track6-interface']);
+				$pidv6 = find_dhcp6c_process($parentrealif);
+				if ($pidv6) {
+					posix_kill($pidv6, SIGHUP);
+				}
 			}
 			break;
 	}

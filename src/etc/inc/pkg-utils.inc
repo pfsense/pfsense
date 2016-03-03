@@ -453,6 +453,37 @@ function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 }
 
 /*
+ * If binary pkg is installed but post-install tasks were not
+ * executed yet, fo it now.
+ * This scenario can happen when a pkg is pre-installed during
+ * build phase, and at this point, cannot find a running system
+ * to register itself in config.xml and also execute custom
+ * install functions
+ */
+function register_all_installed_packages() {
+	global $g, $config, $pkg_interface;
+
+	$pkg_info = get_pkg_info('all', 'all', true);
+
+	foreach ($pkg_info as $pkg) {
+		if (!isset($pkg['installed'])) {
+			continue;
+		}
+
+		pkg_remove_prefix($pkg['name']);
+
+		if (is_package_installed($pkg['name'])) {
+			continue;
+		}
+
+		update_status(sprintf(gettext(
+		    "Running last steps of %s installation.") . "\n",
+		    $pkg['name']));
+		install_package_xml($pkg['name']);
+	}
+}
+
+/*
  * resync_all_package_configs() Force packages to setup their configuration and rc.d files.
  * This function may also print output to the terminal indicating progress.
  */

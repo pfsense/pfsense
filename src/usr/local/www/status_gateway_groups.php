@@ -65,12 +65,6 @@
 ##|-PRIV
 
 define('COLOR', true);
-define('LIGHTGREEN', '#90EE90');
-define('LIGHTCORAL', '#F08080');
-define('KHAKI',		 '#F0E68C');
-define('LIGHTGRAY',	 '#D3D3D3');
-define('LIGHTBLUE',	 '#ADD8E6');
-define('WHITE',		 '#FFFFFF');
 
 require("guiconfig.inc");
 
@@ -156,26 +150,26 @@ display_top_tabs($tab_array);
 											$status = $gateways_status[$monitor]['status'];
 											if (stristr($status, "down")) {
 													$online = gettext("Offline");
-													$bgcolor = LIGHTCORAL;
+													$bgcolor = "bg-danger";
 											} elseif (stristr($status, "loss")) {
 													$online = gettext("Warning, Packetloss");
-													$bgcolor = KHAKI;
+													$bgcolor = "bg-warning";
 											} elseif (stristr($status, "delay")) {
 													$online = gettext("Warning, Latency");
-													$bgcolor = KHAKI;
+													$bgcolor = "bg-warning";
 											} elseif ($status == "none") {
 													$online = gettext("Online");
-													$bgcolor = LIGHTGREEN;
+													$bgcolor = "bg-success";
 											} else {
 												$online = gettext("Gathering data");
-												$bgcolor = LIGHTBLUE;
+												$bgcolor = "bg-info";
 											}
 
 											if (!COLOR) {
-												$bgcolor = WHITE;
+												$bgcolor = "";
 											}
 ?>
-										<td style="background-color:<?=$bgcolor?>">
+										<td class="<?=$bgcolor?>">
 											<?=htmlspecialchars($member);?>,<br/><?=$online?>
 										</td>
 

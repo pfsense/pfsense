@@ -31,6 +31,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("pkg-utils.inc");
+
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=9;
@@ -411,13 +413,15 @@ if (file_exists("/sbin/shutdown.old")) {
 /* Resync / Reinstall packages if need be */
 if (file_exists('/conf/needs_package_sync') &&
     ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
-	require_once("pkg-utils.inc");
 	mark_subsystem_dirty('packagelock');
 	if (package_reinstall_all()) {
 		@unlink('/conf/needs_package_sync');
 	}
 	clear_subsystem_dirty('packagelock');
 }
+
+/* Detect installed binary pkgs that are not registered in the system */
+register_all_installed_packages();
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */

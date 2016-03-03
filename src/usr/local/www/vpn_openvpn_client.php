@@ -687,7 +687,7 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this client and the server ' .
-				'expressed using CIDR (eg. 10.0.8.0/24). The first network address will be assigned to ' .
+				'expressed using CIDR (eg. 10.0.8.0/24). The second network address will be assigned to ' .
 				'the client virtual interface.');
 
 	$section->addInput(new Form_Input(
@@ -696,8 +696,8 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this client and the server	expressed using CIDR (eg. fe80::/64). ' .
-				'The first network address will be assigned to the server virtual interface.');
+				'communications between this client and the server expressed using CIDR (eg. fe80::/64). ' .
+				'The second network address will be assigned to the client virtual interface.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',

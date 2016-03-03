@@ -338,7 +338,6 @@ if ($g['platform'] == $g['product_name']) {
 }
 
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
-$status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");

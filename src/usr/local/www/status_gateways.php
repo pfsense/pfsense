@@ -64,11 +64,6 @@
 require("guiconfig.inc");
 
 define('COLOR', true);
-define('LIGHTGREEN', '#90EE90');
-define('LIGHTCORAL', '#F08080');
-define('KHAKI',		 '#F0E68C');
-define('LIGHTGRAY',	 '#D3D3D3');
-define('WHITE',		 '#FFFFFF');
 
 $a_gateways = return_gateways_array();
 $gateways_status = array();
@@ -162,36 +157,36 @@ display_top_tabs($tab_array);
 					$status = $gateways_status[$gname];
 					if (stristr($status['status'], "force_down")) {
 						$online = gettext("Offline (forced)");
-						$bgcolor = LIGHTCORAL;
+						$bgcolor = "bg-danger";
 					} elseif (stristr($status['status'], "down")) {
 						$online = gettext("Offline");
-						$bgcolor = LIGHTCORAL;
+						$bgcolor = "bg-danger";
 					} elseif (stristr($status['status'], "loss")) {
 						$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
-						$bgcolor = KHAKI;
+						$bgcolor = "bg-warning";
 					} elseif (stristr($status['status'], "delay")) {
 						$online = gettext("Warning, Latency") . ': ' . $status['delay'];
-						$bgcolor = KHAKI;
+						$bgcolor = "bg-warning";
 					} elseif ($status['status'] == "none") {
 						$online = gettext("Online");
-						$bgcolor = LIGHTGREEN;
+						$bgcolor = "bg-success";
 					}
 				} else if (isset($gateway['monitor_disable'])) {
 						$online = gettext("Online");
-						$bgcolor = LIGHTGREEN;
+						$bgcolor = "bg-success";
 				} else {
 					$online = gettext("Pending");
-					$bgcolor = LIGHTGRAY;
+					$bgcolor = "bg-info";
 				}
 
 				$lastchange = $gateways_status[$gname]['lastcheck'];
 
 				if (!COLOR) {
-				   $bgcolor = WHITE;
+				   $bgcolor = "";
 				}
 ?>
 
-				<td style="background-color:<?=$bgcolor?>">
+				<td class="<?=$bgcolor?>">
 					<strong><?=$online?></strong> <?php
 					if (!empty($lastchange)) { ?>
 						<br /><i><?=gettext("Last checked")?> <?=$lastchange?></i>

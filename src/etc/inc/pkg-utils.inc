@@ -365,7 +365,7 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $info = 'all') {
+function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 	global $g, $input_errors;
 
 	$out = '';
@@ -381,7 +381,12 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
 
-	$rc = pkg_exec("search --raw-format json-compact " . $pkgs, $out, $err);
+	$extra_param = "";
+	if ($only_local) {
+		$extra_param = "-U ";
+	}
+
+	$rc = pkg_exec("search {$extra_param}--raw-format json-compact " . $pkgs, $out, $err);
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(

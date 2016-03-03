@@ -376,11 +376,11 @@ function stats(x) {
 	updateTemp(values[4]);
 	updateInterfaceStats(values[6]);
 	updateInterfaces(values[7]);
-	updateCpuFreq(values[9]);
-	updateLoadAverage(values[10]);
-	updateMbuf(values[11]);
-	updateMbufMeter(values[12]);
-	updateStateMeter(values[13]);
+	updateCpuFreq(values[8]);
+	updateLoadAverage(values[9]);
+	updateMbuf(values[10]);
+	updateMbufMeter(values[11]);
+	updateStateMeter(values[12]);
 }
 
 function updateMemory(x) {

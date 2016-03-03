@@ -303,6 +303,8 @@ switch ($action) {
 			'View'
 		);
 
+		$btnview->setAttribute('id');
+
 		$section = new Form_Section('Information');
 
 		$section->addInput(new Form_Input(
@@ -310,7 +312,7 @@ switch ($action) {
 			null,
 			'hidden',
 			'info'
-		));
+		))->setAttribute('id');
 
 		$group = new Form_Group('Info type');
 
@@ -361,7 +363,7 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		));
+		))->setAttribute('id');
 
 		$section->addInput(new Form_StaticText(
 			'',
@@ -379,6 +381,8 @@ switch ($action) {
 			'Test'
 		);
 
+		$btntest->setAttribute('id');
+
 		$section = new Form_Section('Perform self-tests');
 
 		$section->addInput(new Form_Input(
@@ -386,7 +390,7 @@ switch ($action) {
 			null,
 			'hidden',
 			'test'
-		));
+		))->setAttribute('id');
 
 		$group = new Form_Group('Test type');
 
@@ -430,7 +434,7 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		));
+		))->setAttribute('id');
 
 		$section->addInput(new Form_StaticText(
 			'',
@@ -448,6 +452,8 @@ switch ($action) {
 			'View'
 		);
 
+		$btnview->setAttribute('id');
+
 		$section = new Form_Section('View Logs');
 
 		$section->addInput(new Form_Input(
@@ -455,7 +461,7 @@ switch ($action) {
 			null,
 			'hidden',
 			'logs'
-		));
+		))->setAttribute('id');
 
 		$group = new Form_Group('Log type');
 
@@ -482,7 +488,7 @@ switch ($action) {
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		));
+		))->setAttribute('id');
 
 		$section->addInput(new Form_StaticText(
 			'',
@@ -498,7 +504,7 @@ switch ($action) {
 			'Abort'
 		);
 
-		$btnabort->removeClass('btn-primary')->addClass('btn-danger');
+		$btnabort->removeClass('btn-primary')->addClass('btn-danger')->setAttribute('id');
 
 		$form = new Form(false);
 
@@ -509,14 +515,14 @@ switch ($action) {
 			null,
 			'hidden',
 			'abort'
-		));
+		))->setAttribute('id');
 
 		$section->addInput(new Form_Select(
 			'device',
 			'Device: /dev/',
 			false,
 			array_combine($devs, $devs)
-		));
+		))->setAttribute('id');
 
 		$section->addInput(new Form_StaticText(
 			'',

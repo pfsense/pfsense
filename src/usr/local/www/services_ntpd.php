@@ -157,42 +157,6 @@ if ($_POST) {
 			unset($config['ntpd']['peerstats']);
 		}
 
-		if (empty($_POST['kod'])) {
-			$config['ntpd']['kod'] = 'on';
-		} elseif (isset($config['ntpd']['kod'])) {
-			unset($config['ntpd']['kod']);
-		}
-
-		if (empty($_POST['nomodify'])) {
-			$config['ntpd']['nomodify'] = 'on';
-		} elseif (isset($config['ntpd']['nomodify'])) {
-			unset($config['ntpd']['nomodify']);
-		}
-
-		if (!empty($_POST['noquery'])) {
-			$config['ntpd']['noquery'] = $_POST['noquery'];
-		} elseif (isset($config['ntpd']['noquery'])) {
-			unset($config['ntpd']['noquery']);
-		}
-
-		if (!empty($_POST['noserve'])) {
-			$config['ntpd']['noserve'] = $_POST['noserve'];
-		} elseif (isset($config['ntpd']['noserve'])) {
-			unset($config['ntpd']['noserve']);
-		}
-
-		if (empty($_POST['nopeer'])) {
-			$config['ntpd']['nopeer'] = 'on';
-		} elseif (isset($config['ntpd']['nopeer'])) {
-			unset($config['ntpd']['nopeer']);
-		}
-
-		if (empty($_POST['notrap'])) {
-			$config['ntpd']['notrap'] = 'on';
-		} elseif (isset($config['ntpd']['notrap'])) {
-			unset($config['ntpd']['notrap']);
-		}
-
 		if ((empty($_POST['statsgraph'])) == (isset($config['ntpd']['statsgraph']))) {
 			$enable_rrd_graphing = true;
 		}
@@ -264,6 +228,7 @@ if ($savemsg) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), true, "services_ntpd.php");
+$tab_array[] = array(gettext("ACLs"), false, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
@@ -397,61 +362,6 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['peerstats']
 ));
 
-// Access restrictions section
-$btnadvrestr = new Form_Button(
-	'btnadvrestr',
-	'Advanced'
-);
-
-$btnadvrestr->removeClass('btn-primary')->addClass('btn-default btn-sm');
-
-$section->addInput(new Form_StaticText(
-	'Access Restrictions',
-	$btnadvrestr
-))->setHelp('These options control access to NTP server.');
-
-$section->addInput(new Form_Checkbox(
-	'kod',
-	null,
-	'Enable Kiss-o\'-death packets (default: checked).',
-	!$pconfig['kod']
-));
-
-$section->addInput(new Form_Checkbox(
-	'nomodify',
-	null,
-	'Deny state modifications (i.e. run time configuration) by ntpq and ntpdc (default: checked).',
-	!$pconfig['nomodify']
-));
-
-$section->addInput(new Form_Checkbox(
-	'noquery',
-	null,
-	'Disable ntpq and ntpdc queries (default: unchecked).',
-	$pconfig['noquery']
-));
-
-$section->addInput(new Form_Checkbox(
-	'noserve',
-	null,
-	'Disable all except ntpq and ntpdc queries (default: unchecked).',
-	$pconfig['noserve']
-));
-
-$section->addInput(new Form_Checkbox(
-	'nopeer',
-	null,
-	'Deny packets that attempt a peer association (default: checked).',
-	!$pconfig['nopeer']
-));
-
-$section->addInput(new Form_Checkbox(
-	'notrap',
-	null,
-	'Deny mode 6 control message trap service (default: checked).',
-	!$pconfig['notrap']
-))->addClass('advrestrictions');
-
 // Leap seconds section
 $btnleap = new Form_Button(
 	'btnleap',
@@ -479,6 +389,7 @@ $section->addInput(new Form_Input(
 ))->addClass('btn-default');
 
 $form->add($section);
+
 print($form);
 
 ?>
@@ -507,16 +418,6 @@ events.push(function() {
 	// Make the ‘clear’ button a plain button, not a submit button
 	$('#btnadvrestr').prop('type','button');
 
-	// On click, show the controls in the restrictions section
-	$("#btnadvrestr").click(function() {
-		hideCheckbox('kod', false);
-		hideCheckbox('nomodify', false);
-		hideCheckbox('noquery', false);
-		hideCheckbox('noserve', false);
-		hideCheckbox('nopeer', false);
-		hideCheckbox('notrap', false);
-	});
-
 	// Make the ‘btnleap’ button a plain button, not a submit button
 	$('#btnleap').prop('type','button');
 
@@ -530,12 +431,6 @@ events.push(function() {
 	hideCheckbox('clockstats', true);
 	hideCheckbox('loopstats', true);
 	hideCheckbox('peerstats', true);
-	hideCheckbox('kod', true);
-	hideCheckbox('nomodify', true);
-	hideCheckbox('noquery', true);
-	hideCheckbox('noserve', true);
-	hideCheckbox('nopeer', true);
-	hideCheckbox('notrap', true);
 	hideInput('leaptext', true);
 	hideInput('leapfile', true);
 

@@ -1249,7 +1249,7 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		if (isset($blacklist[$ifname])) {
 			continue;
 		}
-		if (!empty($config['interfaces'][$ifname]['track6-interface']) && isset($dhcpdv6cfg[$ifname]['enable'])) {
+		if (!empty($config['interfaces'][$ifname]['track6-interface']) && !isset($dhcpdv6cfg[$ifname]['enable'])) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
 			if (!is_ipaddrv6($ifcfgipv6)) {

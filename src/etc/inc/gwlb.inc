@@ -61,9 +61,9 @@ function return_dpinger_defaults() {
 		"latencyhigh" => "500",
 		"losslow" => "10",
 		"losshigh" => "20",
-		"interval" => "250",
-		"loss_interval" => "1250",
-		"time_period" => "30000",
+		"interval" => "500",
+		"loss_interval" => "2000",
+		"time_period" => "60000",
 		"alert_interval" => "1000",
 		"data_payload" => "0");
 }

@@ -56,6 +56,8 @@ export PRODUCT_URL="https://www.pfsense.org/"
 # Define FreeBSD repository, branch and specific commit
 #export FREEBSD_REPO_BASE=https://github.com/freebsd/freebsd.git
 #export FREEBSD_BRANCH=stable/10
+export FREEBSD_BRANCH=RELENG_2_3
+export FREEBSD_PARENT_BRANCH=releng/10.3
 #export GIT_FREEBSD_COSHA1=##HASH##
 
 # Do not clean FreeBSD obj dirs

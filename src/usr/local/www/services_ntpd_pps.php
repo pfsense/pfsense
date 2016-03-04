@@ -147,6 +147,7 @@ if ($savemsg) {
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
+$tab_array[] = array(gettext("ACLs"), false, "services_ntpd_acls.php");
 $tab_array[] = array(gettext("Serial GPS"), false, "services_ntpd_gps.php");
 $tab_array[] = array(gettext("PPS"), true, "services_ntpd_pps.php");
 display_top_tabs($tab_array);

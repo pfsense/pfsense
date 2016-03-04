@@ -454,7 +454,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 
 /*
  * If binary pkg is installed but post-install tasks were not
- * executed yet, fo it now.
+ * executed yet, do it now.
  * This scenario can happen when a pkg is pre-installed during
  * build phase, and at this point, cannot find a running system
  * to register itself in config.xml and also execute custom

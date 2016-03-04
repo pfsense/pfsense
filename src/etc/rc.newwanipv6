@@ -75,7 +75,6 @@ $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 if (empty($interface)) {
 	filter_configure();
-	// restart_packages();
 	return;
 }
 
@@ -89,8 +88,7 @@ if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp
  *	i.e. OpenVPN might be in tap mode and not have an ip.
  */
 if ((empty($curwanipv6) || !is_ipaddrv6($curwanipv6)) && substr($interface_real, 0, 4) != "ovpn") {
-	log_error("rc.newwanipv6: Failed to update {$interface_descr}[{$interface}] IPv6, restarting...");
-	// send_event("interface reconfigure {$interface}");
+	log_error("rc.newwanipv6: No IPv6 address found for interface {$interface_descr} [{$interface}].");
 	return;
 }
 

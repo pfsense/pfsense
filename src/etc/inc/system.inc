@@ -1718,7 +1718,6 @@ function system_ntp_configure($start_ntpd=true) {
 	unset($ts);
 
 	$ntpcfg .= "\n\n";
-	$ntpcfg .= "disable monitor\n"; //prevent NTP reflection attack, see https://forum.pfsense.org/index.php/topic,67189.msg389132.html#msg389132
 	if (!empty($config['ntpd']['clockstats']) || !empty($config['ntpd']['loopstats']) || !empty($config['ntpd']['peerstats'])) {
 		$ntpcfg .= "enable stats\n";
 		$ntpcfg .= 'statistics';
@@ -1743,7 +1742,8 @@ function system_ntp_configure($start_ntpd=true) {
 	}
 	$ntpcfg .= "\n";
 	$ntpcfg .= "driftfile {$driftfile}\n";
-	/* Access restrictions */
+
+	/* Default Access restrictions */
 	$ntpcfg .= 'restrict default';
 	if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
 		$ntpcfg .= ' kod limited';
@@ -1782,7 +1782,40 @@ function system_ntp_configure($start_ntpd=true) {
 	if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
 		$ntpcfg .= ' notrap';
 	}
+	/* Custom Access Restrictions */
+	if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
+		$networkacl = $config['ntpd']['restrictions']['row'];
+		foreach ($networkacl as $acl) {
+			$ntpcfg .= "\nrestrict ";
+			if (is_ipaddrv6($acl['acl_network'])) {
+				$ntpcfg .= "-6 {$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
+			} elseif (is_ipaddrv4($acl['acl_network'])) {
+				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask($acl['mask']) . " ";
+			} else {
+				continue;
+			}
+			if (!empty($acl['kod'])) {
+				$ntpcfg .= ' kod limited';
+			}
+			if (!empty($acl['nomodify'])) {
+				$ntpcfg .= ' nomodify';
+			}
+			if (!empty($acl['noquery'])) {
+				$ntpcfg .= ' noquery';
+			}
+			if (!empty($acl['nopeer'])) {
+				$ntpcfg .= ' nopeer';
+			}
+			if (!empty($acl['noserve'])) {
+				$ntpcfg .= ' noserve';
+			}
+			if (!empty($acl['notrap'])) {
+				$ntpcfg .= ' notrap';
+			}
+		}
+	}
 	$ntpcfg .= "\n";
+	/* End Custom Access Restrictions */
 
 	/* A leapseconds file is really only useful if this clock is stratum 1 */
 	$ntpcfg .= "\n";

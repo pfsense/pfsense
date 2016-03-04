@@ -425,6 +425,16 @@ function gen_subnet_mask($bits) {
 	return long2ip(gen_subnet_mask_long($bits));
 }
 
+/* Convert a prefix length to an IPv6 address-like mask notation. Very rare but at least ntp needs it. See #4463 */
+function gen_subnet_mask_v6($bits) {
+	/* Binary representation of the prefix length */
+	$bin = str_repeat('1', $bits);
+	/* Pad right with zeroes to reach the full address length */
+	$bin = str_pad($bin, 128, '0', STR_PAD_RIGHT);
+	/* Convert back to an IPv6 address style notation */
+	return Net_IPv6::_bin2Ip($bin);
+}
+
 /* Convert long int to IPv4 address
    Returns '' if not valid IPv4 (including if any bits >32 are non-zero) */
 function long2ip32($ip) {

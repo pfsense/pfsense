@@ -997,19 +997,6 @@ $priv_list['page-status-trafficshaper-queues']['descr'] = gettext("Allow access 
 $priv_list['page-status-trafficshaper-queues']['match'] = array();
 $priv_list['page-status-trafficshaper-queues']['match'][] = "status_queues.php*";
 
-$priv_list['page-status-rrdgraphs'] = array();
-$priv_list['page-status-rrdgraphs']['name'] = gettext("WebCfg - Status: RRD Graphs");
-$priv_list['page-status-rrdgraphs']['descr'] = gettext("Allow access to the 'Status: RRD Graphs' page.");
-$priv_list['page-status-rrdgraphs']['match'] = array();
-$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph.php*";
-$priv_list['page-status-rrdgraphs']['match'][] = "status_rrd_graph_img.php*";
-
-$priv_list['page-status-rrdgraph-settings'] = array();
-$priv_list['page-status-rrdgraph-settings']['name'] = gettext("WebCfg - Status: RRD Graphs: Settings");
-$priv_list['page-status-rrdgraph-settings']['descr'] = gettext("Allow access to the 'Status: RRD Graphs: Settings' page.");
-$priv_list['page-status-rrdgraph-settings']['match'] = array();
-$priv_list['page-status-rrdgraph-settings']['match'][] = "status_rrd_graph_settings.php*";
-
 $priv_list['page-status-services'] = array();
 $priv_list['page-status-services']['name'] = gettext("WebCfg - Status: Services");
 $priv_list['page-status-services']['descr'] = gettext("Allow access to the 'Status: Services' page.");

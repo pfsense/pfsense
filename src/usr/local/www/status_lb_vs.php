@@ -62,11 +62,6 @@
 ##|-PRIV
 
 define('COLOR', true);
-define('LIGHTGREEN', '#90EE90');
-define('LIGHTCORAL', '#F08080');
-define('KHAKI',		 '#F0E68C');
-define('LIGHTGRAY',	 '#D3D3D3');
-define('WHITE',		 '#FFFFFF');
 
 require_once("guiconfig.inc");
 require_once("vslb.inc");
@@ -132,23 +127,23 @@ if (empty($a_vs)) {
 				<?php
 				switch (trim($rdr_a[$vsent['name']]['status'])) {
 					case 'active':
-					  $bgcolor = LIGHTGREEN;
+					  $bgcolor = "bg-success";
 					  $rdr_a[$vsent['name']]['status'] = gettext("Active");
 					  break;
 					case 'down':
-					  $bgcolor = LIGHTCORAL;
+					  $bgcolor = "bg-danger";
 					  $rdr_a[$vsent['name']]['status'] = gettext("Down");
 					  break;
 					default:
-					  $bgcolor = LIGHTGRAY;
+					  $bgcolor = "bg-info";
 					  $rdr_a[$vsent['name']]['status'] = gettext('Unknown - relayd not running?');
 				  }
 
 				if (!COLOR) {
-					$bgcolor = WHITE;
+					$bgcolor = "";
 				}
 ?>
-				<td style="background-color:<?=$bgcolor?>">
+				<td class="<?=$bgcolor?>">
 					<?=$rdr_a[$vsent['name']]['status']?>
 
 <?php

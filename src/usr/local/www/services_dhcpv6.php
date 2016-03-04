@@ -191,7 +191,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 if ($config['interfaces'][$if]['ipaddrv6'] == 'track6') {
 	$trackifname = $config['interfaces'][$if]['track6-interface'];
 	$trackcfg = $config['interfaces'][$trackifname];
-	$ifcfgsn = 64 - $trackcfg['dhcp6-ia-pd-len'];
+	$ifcfgsn = "64";
 	$ifcfgip = '::';
 
 	$str_help_mask = dhcpv6_pd_str_help($ifcfgsn);

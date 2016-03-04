@@ -512,7 +512,7 @@ function build_radiusnas_list() {
 	foreach ($iflist as $ifdesc => $ifdescr) {
 		$ipaddr = get_interface_ip($ifdesc);
 		if (is_ipaddr($ipaddr)) {
-			$list[$ifdescr] = $ifdescr . ' - ' . $ipaddr;
+			$list[$ifdesc] = $ifdescr . ' - ' . $ipaddr;
 		}
 	}
 

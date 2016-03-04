@@ -376,12 +376,11 @@ function stats(x) {
 	updateTemp(values[4]);
 	updateInterfaceStats(values[6]);
 	updateInterfaces(values[7]);
-	updateGatewayStats(values[8]);
-	updateCpuFreq(values[9]);
-	updateLoadAverage(values[10]);
-	updateMbuf(values[11]);
-	updateMbufMeter(values[12]);
-	updateStateMeter(values[13]);
+	updateCpuFreq(values[8]);
+	updateLoadAverage(values[9]);
+	updateMbuf(values[10]);
+	updateMbufMeter(values[11]);
+	updateStateMeter(values[12]);
 }
 
 function updateMemory(x) {
@@ -456,21 +455,6 @@ function updateStateMeter(x) {
 	}
 	if ($('#statePB')) {
 		setProgress('statePB', parseInt(x));
-	}
-}
-
-function updateGatewayStats(x) {
-	if (widgetActive("gateways")) {
-		gateways_split = x.split(",");
-		for (var y=0; y<gateways_split.length; y++) {
-			gateways_field_split = gateways_split[y].split("^");
-			if ($('#gateway' + (y + 1))) {
-				$('#gateway' + (y + 1)).html(gateways_field_split[0]);
-				if (gateways_field_split[1]) {
-					$('#gateway' + (y + 1)).css('background-color',gateways_field_split[1]);
-				}
-			}
-		}
 	}
 }
 

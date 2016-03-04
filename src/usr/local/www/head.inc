@@ -138,41 +138,75 @@ if (($pagename == "pkg.php") || ($pagename == "pkg_edit.php") || ($pagename == "
 // Build the full help URL.
 $helpurl .= "{$g['help_base_url']}?page={$pagename}";
 
+/*
+ * Read files from $g['ext_menu_path']/*.xml and fill an array with menu info
+ */
+function read_ext_menu_path_data() {
+	global $g;
+
+	$result = array();
+
+	if (!is_dir($g['ext_menu_path'])) {
+		return $result;
+	}
+
+	foreach (glob("{$g['ext_menu_path']}/*.xml") as $menu_xml) {
+		$xml_data = parse_xml_config_pkg($menu_xml, "packagegui");
+		if (empty($xml_data['menu'])) {
+			continue;
+		}
+		foreach ($xml_data['menu'] as $menu) {
+			$result[] = $menu;
+		}
+	}
+
+	return $result;
+}
+
 // Create a menu entry of any installed packages in the specified category
 // (Now reads the menu information from $config['installedpackages']['menu'] only)
 function return_ext_menu($section) {
-	global $config;
+	global $config, $ext_menu_path_data;
 
 	$htmltext = "";
 	$extarray = array();
+	$ext_menu_entries = array();
 
 	if ((!empty($config['installedpackages']['package'])) && (!empty($config['installedpackages']['menu']))) {
 		foreach ($config['installedpackages']['menu'] as $menu) {
 //			print('Name: ' . $menu['name'] . ', Pkg category: ' . $menu['category'] . ', Section: ' . $section . '<br />');
-			if ($menu['section'] != $section) {
-				continue;
+			if ($menu['section'] == $section) {
+				$ext_menu_entries[] = $menu;
 			}
+		}
+	}
 
-			if ($menu['url'] != "") {
-				$test_url = $menu['url'];
-				$addresswithport = getenv("HTTP_HOST");
-				$colonpos = strpos($addresswithport, ":");
+	foreach ($ext_menu_path_data as $menu) {
+		if ($menu['section'] == $section) {
+			$ext_menu_entries[] = $menu;
+		}
+	}
 
-				if ($colonpos !== false) {
-					//my url is actually just the IP address of the pfsense box
-					$myurl = substr($addresswithport, 0, $colonpos);
-				} else {
-					$myurl = $addresswithport;
-				}
-				$description = str_replace('$myurl', $myurl, $menu['url']);
+	foreach ($ext_menu_entries as $menu) {
+		if ($menu['url'] != "") {
+			$test_url = $menu['url'];
+			$addresswithport = getenv("HTTP_HOST");
+			$colonpos = strpos($addresswithport, ":");
+
+			if ($colonpos !== false) {
+				//my url is actually just the IP address of the pfsense box
+				$myurl = substr($addresswithport, 0, $colonpos);
 			} else {
-				$description = '/pkg.php?xml=' . $menu['configfile'];
-				$test_url=$description;
+				$myurl = $addresswithport;
 			}
+			$description = str_replace('$myurl', $myurl, $menu['url']);
+		} else {
+			$description = '/pkg.php?xml=' . $menu['configfile'];
+			$test_url=$description;
+		}
 
-			if (isAllowedPage($test_url)) {
-				$extarray[] = array($menu['name'], $description);
-			}
+		if (isAllowedPage($test_url)) {
+			$extarray[] = array($menu['name'], $description);
 		}
 	}
 
@@ -199,6 +233,8 @@ function output_menu($arrayitem, $target = null, $section = "") {
 		}
 	}
 }
+
+$ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
@@ -302,7 +338,6 @@ if ($g['platform'] == $g['product_name']) {
 }
 
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
-$status_menu[] = array(gettext("RRD Graphs"), "/status_rrd_graph.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
 $status_menu[] = array(gettext("Traffic Graph"), "/status_graph.php?if=wan");

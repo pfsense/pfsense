@@ -71,11 +71,6 @@ require_once("shaper.inc");
 require_once("vslb.inc");
 
 define('COLOR', true);
-define('LIGHTGREEN', '#90EE90');
-define('LIGHTCORAL', '#F08080');
-define('KHAKI',		 '#F0E68C');
-define('LIGHTGRAY',	 '#D3D3D3');
-define('WHITE',		 '#FFFFFF');
 
 if (!is_array($config['load_balancer']['lbpool'])) {
 	$config['load_balancer']['lbpool'] = array();
@@ -219,15 +214,15 @@ foreach ($a_pool as $pool):
 		if ($server['ip']['addr'] != "") {
 			switch ($server['ip']['state']) {
 				case 'up':
-					$bgcolor = LIGHTGREEN;	// lightgreen
+					$bgcolor = "bg-success";
 					$checked = "checked";
 					break;
 				case 'disabled':
-					$bgcolor = WHITE;
+					$bgcolor = "";
 					$checked = "";
 					break;
 				default:
-					$bgcolor = LIGHTCORAL;	// lightcoral
+					$bgcolor = "bg-danger";	
 					$checked = "checked";
 			}
 ?>
@@ -235,14 +230,14 @@ foreach ($a_pool as $pool):
 <?php
 			switch ($pool['mode']) {
 				case 'loadbalance':
-					print("<td><input type=\"checkbox\" name=\"{$pool['name']}|" . str_replace('.', '_', $server['ip']['addr']) . "\" {$checked} /></td>\n");
+					print("<td class=\"{$bgcolor}\"><input type=\"checkbox\" name=\"{$pool['name']}|" . str_replace('.', '_', $server['ip']['addr']) . "\" {$checked} /></td>\n");
 					break;
 				case 'failover':
-					print("<td><input type=\"radio\" name=\"{$pool['name']}\" value=\"{$server['ip']['addr']}\" {$checked} /></td>\n");
+					print("<td class=\"{$bgcolor}\"><input type=\"radio\" name=\"{$pool['name']}\" value=\"{$server['ip']['addr']}\" {$checked} /></td>\n");
 					break;
 			}
 
-			print("<td bgcolor=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td bgcolor=\"{$bgcolor}\">&nbsp;");
+			print("<td class=\"{$bgcolor}\">&nbsp;{$server['ip']['addr']}:{$pool['port']}&nbsp;</td><td class=\"{$bgcolor}\">&nbsp;");
 
 			if ($server['ip']['avail']) {
 				print(" ({$server['ip']['avail']}) ");

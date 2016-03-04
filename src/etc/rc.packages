@@ -49,6 +49,11 @@ if ($argc == 1) {
 	exit;
 }
 
+/* If PHP is not running, silently abort and run registration during boot */
+if (!isvalidpid('/var/run/php-fpm.pid')) {
+	exit;
+}
+
 $pkg = '';
 $when = '';
 

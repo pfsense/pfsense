@@ -1240,57 +1240,6 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		sleep(1);
 	}
 
-	/*
-	 * We add a fake entry for interfaces that are set to track6
-	 * another WAN unless DHCP has been configured
-	 */
-	foreach ($Iflist as $ifname) {
-		/* Do not put in the config an interface which is down */
-		if (isset($blacklist[$ifname])) {
-			continue;
-		}
-		if (!empty($config['interfaces'][$ifname]['track6-interface']) && isset($dhcpdv6cfg[$ifname]['enable'])) {
-			$realif = get_real_interface($ifname, "inet6");
-			$ifcfgipv6 = get_interface_ipv6($ifname);
-			if (!is_ipaddrv6($ifcfgipv6)) {
-				continue;
-			}
-			$ifcfgipv6 = Net_IPv6::getNetmask($ifcfgipv6, 64);
-			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			$pdlen = calculate_ipv6_delegation_length($trackifname);
-			$ifcfgipv6arr =explode(":", $ifcfgipv6);
-			$dhcpdv6cfg[$ifname] = array();
-			$dhcpdv6cfg[$ifname]['enable'] = true;
-			/* range */
-			$ifcfgipv6arr[7] = "1000";
-			$dhcpdv6cfg[$ifname]['range'] = array();
-			$dhcpdv6cfg[$ifname]['range']['from'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
-			$ifcfgipv6arr[7] = "2000";
-			$dhcpdv6cfg[$ifname]['range']['to'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
-			/* prefix length > 0? We can add dhcp6 prefix delegation server */
-			if ($pdlen > 2) {
-				$pdlenmax = $pdlen;
-				$pdlenhalf = $pdlenmax -1;
-				$pdlenmin = (64 - ceil($pdlenhalf / 4));
-				$dhcpdv6cfg[$ifname]['prefixrange'] = array();
-				$dhcpdv6cfg[$ifname]['prefixrange']['prefixlength'] = $pdlenmin;
-
-				/* set the delegation start to half the current address block */
-				$range = Net_IPv6::parseAddress($ifcfgipv6, (64 - $pdlenmax));
-				$range['start'] = Net_IPv6::getNetmask($range['end'], (64 - $pdlenhalf));
-
-				/* set the end range to a multiple of the prefix delegation size, required by dhcpd */
-				$range = Net_IPv6::parseAddress($range['end'], (64 - $pdlenhalf));
-				$range['end'] = Net_IPv6::getNetmask($range['end'], (64 - round($pdlen / 2)));
-
-				$dhcpdv6cfg[$ifname]['prefixrange']['from'] = Net_IPv6::compress($range['start']);
-				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
-			}
-			$dhcpdv6cfg[$ifname]['dns6ip'] = get_interface_ipv6($ifname);
-		}
-	}
-
 	$custoptionsv6 = "";
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if (is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {

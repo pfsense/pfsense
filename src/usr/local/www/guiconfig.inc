@@ -359,7 +359,7 @@ function print_callout($msg, $class = 'info', $heading = '') {
 	$class = strtolower($class);
 	$callout = '';
 
-	if ($class != 'default' && $class != 'danger' && $class != 'warning' && $class = 'info') {
+	if ($class != 'default' && $class != 'danger' && $class != 'warning' && $class != 'info') {
 		$class = 'info';
 	}
 	$callout .= '<div class="bs-callout bs-callout-' . $class . '">';

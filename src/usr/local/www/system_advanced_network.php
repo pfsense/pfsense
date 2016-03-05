@@ -226,7 +226,7 @@ $section->addInput(new Form_Checkbox(
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
-	'IPv6 be used. If you check this option, IPv4 will be preferred over IPv6.');
+	'IPv6 will be used. If you check this option, IPv4 will be preferred over IPv6.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

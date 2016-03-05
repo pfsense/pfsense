@@ -206,8 +206,7 @@ $group->add(new Form_Checkbox(
 	'IPv6 over IPv4 Tunneling',
 	'Enable IPv4 NAT encapsulation of IPv6 packets',
 	$pconfig['ipv6nat_enable']
-))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
-	'blocks traffic.');
+));
 
 $group->add(new Form_Input(
 	'ipv6nat_ipaddr',

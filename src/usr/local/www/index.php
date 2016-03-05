@@ -252,6 +252,7 @@ if ($fd) {
 
 ##build widget saved list information
 if ($config['widgets'] && $config['widgets']['sequence'] != "") {
+	$dashboardcolumns = isset($config['system']['webgui']['dashboardcolumns']) ? $config['system']['webgui']['dashboardcolumns'] : 2;
 	$pconfig['sequence'] = $config['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
@@ -267,6 +268,11 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 			} else {
 				$col = "col2";
 			}
+		}
+
+		// Limit the column to the current dashboard columns.
+		if (substr($col, 3) > $dashboardcolumns) {
+			$col = "col" . $dashboardcolumns;
 		}
 
 		$offset = strpos($file, '-container');

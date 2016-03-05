@@ -147,7 +147,7 @@ $ipsecconnected = array();
 
 if (is_array($status)) {
 	foreach ($status as $ikeid => $ikesa) {
-	$con_id = substr($ikeid, 3);
+		$con_id = substr($ikeid, 3);
 
 		if ($ikesa['version'] == 1) {
 			$ph1idx = substr($con_id, 0, strrpos(substr($con_id, 0, -1), '00'));

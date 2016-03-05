@@ -854,6 +854,9 @@
 /usr/local/www/services_usermanager.php
 /usr/local/www/shortcuts/pkg_upnp.php
 /usr/local/www/sortable/sortable.min.js
+/usr/local/www/status_rrd_graph.php
+/usr/local/www/status_rrd_graph_img.php
+/usr/local/www/status_rrd_graph_settings.php
 /usr/local/www/status_slbd_pool.php
 /usr/local/www/status_slbd_vs.php
 /usr/local/www/system_advanced.php

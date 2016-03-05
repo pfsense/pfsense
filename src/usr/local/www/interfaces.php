@@ -452,6 +452,15 @@ if ($_POST['apply']) {
 				if (isset($config['interfaces'][$ifapply]['enable'])) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
+					if ($config['interfaces'][$ifapply]['ipaddrv6'] == "track6") {
+						/* call interface_track6_configure with linkup true so
+						   IPv6 IPs are added back. dhcp6c needs a HUP. Can't
+						   just call interface_configure with linkup true as
+						   that skips bridge membership addition. 
+						*/
+						$wancfg = $config['interfaces'][$ifapply];
+						interface_track6_configure($ifapply, $wancfg, true);
+					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||

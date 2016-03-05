@@ -354,11 +354,6 @@ function get_package_id($package_name) {
 	return -1;
 }
 
-/* Keep backward compatibility since snort/suricata use this function */
-function get_pkg_id($package_name) {
-	return get_package_id($package_name);
-}
-
 /* Return internal_name when it's defined, otherwise, returns name */
 function get_package_internal_name($package_data) {
 	if (isset($package_data['internal_name']) && ($package_data['internal_name'] != "")) {
@@ -370,7 +365,7 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $info = 'all') {
+function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 	global $g, $input_errors;
 
 	$out = '';
@@ -386,7 +381,12 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 		$pkgs = $g['pkg_prefix'];
 	}
 
-	$rc = pkg_exec("search --raw-format json-compact " . $pkgs, $out, $err);
+	$extra_param = "";
+	if ($only_local) {
+		$extra_param = "-U ";
+	}
+
+	$rc = pkg_exec("search {$extra_param}--raw-format json-compact " . $pkgs, $out, $err);
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(
@@ -450,6 +450,37 @@ function get_pkg_info($pkgs = 'all', $info = 'all') {
 	});
 
 	return $result;
+}
+
+/*
+ * If binary pkg is installed but post-install tasks were not
+ * executed yet, do it now.
+ * This scenario can happen when a pkg is pre-installed during
+ * build phase, and at this point, cannot find a running system
+ * to register itself in config.xml and also execute custom
+ * install functions
+ */
+function register_all_installed_packages() {
+	global $g, $config, $pkg_interface;
+
+	$pkg_info = get_pkg_info('all', 'all', true);
+
+	foreach ($pkg_info as $pkg) {
+		if (!isset($pkg['installed'])) {
+			continue;
+		}
+
+		pkg_remove_prefix($pkg['name']);
+
+		if (is_package_installed($pkg['name'])) {
+			continue;
+		}
+
+		update_status(sprintf(gettext(
+		    "Running last steps of %s installation.") . "\n",
+		    $pkg['name']));
+		install_package_xml($pkg['name']);
+	}
 }
 
 /*

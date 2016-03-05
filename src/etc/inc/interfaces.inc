@@ -271,6 +271,14 @@ function interface_vlan_configure(&$vlan) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
+	/* configure interface if assigned */
+	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
+	if ($assignedif) {
+		if (isset($config['interfaces'][$assignedif]['enable'])) {
+			interface_configure($assignedif, true);
+		}
+	}
+
 	/* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 
@@ -3529,10 +3537,18 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			interface_track6_6rd_configure($interface, $wancfg);
 			break;
 		case "dhcp6":
-			$parentrealif = get_real_interface($wancfg['track6-interface']);
-			$pidv6 = find_dhcp6c_process($parentrealif);
-			if ($pidv6) {
-				posix_kill($pidv6, SIGHUP);
+			if ($linkupevent == true) {
+				/*
+				 * NOTE: Usually come here from rc.linkup calling so just call directly instead of generating event
+				 * 	Instead of disrupting all other v4 configuration just restart DHCPv6 client for now
+				 *
+				 * XXX: Probably DHCPv6 client should handle this automagically itself?
+				 */
+				$parentrealif = get_real_interface($wancfg['track6-interface']);
+				$pidv6 = find_dhcp6c_process($parentrealif);
+				if ($pidv6) {
+					posix_kill($pidv6, SIGHUP);
+				}
 			}
 			break;
 	}

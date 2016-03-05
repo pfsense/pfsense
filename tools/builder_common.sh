@@ -2116,9 +2116,12 @@ poudriere_update_jails() {
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})
 
+		local _create_or_update="-u"
+		local _create_or_update_text="Updating"
 		if ! poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
-			echo ">>> Poudriere jail ${jail_name} not found, skipping..." | tee -a ${LOGFILE}
-			continue
+			echo ">>> Poudriere jail ${jail_name} not found, creating..." | tee -a ${LOGFILE}
+			_create_or_update="-c -v ${FREEBSD_PARENT_BRANCH} -a ${jail_arch} -m svn"
+			_create_or_update_text="Creating"
 		fi
 
 		if [ "${jail_arch}" = "arm.armv6" ]; then
@@ -2127,10 +2130,10 @@ poudriere_update_jails() {
 			native_xtools=""
 		fi
 
-		echo -n ">>> Updating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere jail -u -j "${jail_name}" -P ${_jail_patch} ${native_xtools} >/dev/null 2>&1; then
+		echo -n ">>> ${_create_or_update_text} jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
+		if ! script -aq ${LOGFILE} poudriere jail ${_create_or_update} -j "${jail_name}" -P ${_jail_patch} ${native_xtools} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error updating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
+			echo ">>> ERROR: Error ${_create_or_update_text} jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 		echo "Done!" | tee -a ${LOGFILE}

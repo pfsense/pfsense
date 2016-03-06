@@ -98,9 +98,15 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
+			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
+			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
+			if (is_array($ifstatus) && $ifstatus['linkstateup'])
+				$status = "  (up)";
+			else
+				$status = "(down)";
 			$ifsmallist = trim($ifsmallist . " " . $iface);
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "  (up)" : "(down)", substr($ifa['dmesg'], 0, 48));
+				$status, substr($ifa['dmesg'], 0, 48));
 		}
 	}
 

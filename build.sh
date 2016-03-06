@@ -157,6 +157,7 @@ while test "$1" != ""; do
 			;;
 		--print-flags)
 			BUILDACTION="printflags"
+			_USE_OLD_DATESTRING=YES
 			;;
 		--clean-builder)
 			BUILDACTION="cleanbuilder"
@@ -199,6 +200,7 @@ while test "$1" != ""; do
 			IMAGETYPE="${1}"
 			;;
 		-V)
+			_USE_OLD_DATESTRING=YES
 			shift
 			[ -n "${1}" ] \
 				&& var_to_print="${1}"

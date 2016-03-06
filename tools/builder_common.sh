@@ -482,7 +482,7 @@ nanobsd_image_filename() {
 	local _type="$2"
 	local _upgrade="$3"
 
-	if [ -z "$upgrade" ]; then
+	if [ -z "$_upgrade" ]; then
 		local _template=${NANOBSD_IMG_TEMPLATE}
 	else
 		local _template=${NANOBSD_UPGRADE_TEMPLATE}
@@ -1602,7 +1602,7 @@ create_memstick_serial_image() {
 }
 
 create_memstick_adi_image() {
-	LOGFILE=${BUILDER_LOGS}/memstickadi${TARGET}
+	LOGFILE=${BUILDER_LOGS}/memstickadi.${TARGET}
 	if [ "${MEMSTICKADIPATH}" = "" ]; then
 		echo ">>> MEMSTICKADIPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return

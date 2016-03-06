@@ -1324,7 +1324,7 @@ $nginx_config .= <<<EOD
 		client_max_body_size 200m;
 
 		gzip on;
-		gzip_types text/html text/plain text/css text/javascript;
+		gzip_types text/plain text/css text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json;
 
 EOD;
 

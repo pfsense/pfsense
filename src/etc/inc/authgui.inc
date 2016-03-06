@@ -277,7 +277,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 <?php if (!empty($_SESSION['Login_Error'])): ?>
 						<div class="alert alert-danger" role="alert"><?=$_SESSION['Login_Error'];?></div>
 <?php endif ?>
-						<div class="alert alert-warning" class="hidden" id="no_cookies"><?= gettext("Your browser must support cookies to login."); ?></div>
+						<div class="alert alert-warning hidden" id="no_cookies"><?= gettext("Your browser must support cookies to login."); ?></div>
 
 						<form method="post" <?= $loginautocomplete ?> action="<?=$_SERVER['SCRIPT_NAME'];?>" class="form-horizontal">
 							<div class="form-group">

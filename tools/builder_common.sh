@@ -1397,7 +1397,7 @@ create_memstick_serial_image() {
 }
 
 create_memstick_adi_image() {
-	LOGFILE=${BUILDER_LOGS}/memstickadi${TARGET}
+	LOGFILE=${BUILDER_LOGS}/memstickadi.${TARGET}
 	if [ "${MEMSTICKADIPATH}" = "" ]; then
 		echo ">>> MEMSTICKADIPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return

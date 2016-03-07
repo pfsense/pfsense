@@ -91,7 +91,7 @@ if (count($wolcomputers) > 0):
 			<td>
 				<?= convert_friendly_interface_to_friendly_descr($wolent['interface']) ?>
 			</td>
-			<td class="text-center">
+			<td>
 		<?php if ($status == 'expires'): ?>
 				<i class="fa fa-arrow-right" data-toggle="tooltip" title="<?= gettext("Online") ?>"></i>
 		<?php elseif ($status == 'permanent'): ?>

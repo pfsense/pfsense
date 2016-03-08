@@ -326,6 +326,7 @@ foreach ($data as &$entry) {
 		$entry['dnsresolve'] = "Z_ ";
 	}
 }
+unset($entry);
 
 // Sort the data alpha first
 $data = msort($data, "dnsresolve");

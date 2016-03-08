@@ -97,9 +97,9 @@ $carp_enabled = get_carp_status();
 				$status = "DISABLED";
 			} else {
 				if ($status == "MASTER") {
-					$icon = 'check-circle';
+					$icon = 'play-circle';
 				} else if ($status == "BACKUP") {
-					$icon = 'minus-circle';
+					$icon = 'pause-circle';
 				} else if ($status == "INIT") {
 					$icon = 'question-circle';
 				}

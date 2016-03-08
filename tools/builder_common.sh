@@ -1508,7 +1508,7 @@ create_memstick_adi_image() {
 	fi
 
 	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstickadi" "default-config-serial-SG-2220"
+		customize_stagearea_for_image "memstickadi"
 		install_default_kernel ${DEFAULT_KERNEL}
 	fi
 

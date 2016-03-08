@@ -2454,14 +2454,14 @@ if ($pconfig['track6-prefix-id'] == "") {
 }
 
 $section->addInput(new Form_Input(
-	'track6-prefix-id--hex' . $iface,
+	'track6-prefix-id--hex',
 	'IPv6 Prefix ID',
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
 ))->setHelp('<span id="track6-prefix-id-range"></span>The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
 
 $section->addInput(new Form_Input(
-	'track6-prefix-id-max' . $iface,
+	'track6-prefix-id-max',
 	null,
 	'hidden',
 	0
@@ -3620,6 +3620,10 @@ events.push(function() {
 
 	$('#type6').on('change', function() {
 		updateTypeSix(this.value);
+	});
+
+	$('#track6-interface').on('change', function() {
+		update_track6_prefix();
 	});
 
 	$('#pppoe-reset-type').on('change', function() {

@@ -1412,28 +1412,28 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
-	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKPATH} ]; then
-			rm -f $MEMSTICKPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	trap "-" 1 2 15 EXIT
-	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
-	gzip -qf $MEMSTICKPATH &
-	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	create_mfsbsd_image ${MEMSTICKPATH}
+
+	#makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
+	#if [ $? -ne 0 ]; then
+	#	if [ -f ${MEMSTICKPATH} ]; then
+	#		rm -f $MEMSTICKPATH
+	#	fi
+	#	echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
+	#	print_error_pfS
+	#fi
+	#MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
+	## Just in case
+	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
+	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
+	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
+	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
+	#trap "-" 1 2 15 EXIT
+	#mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
+	#gzip -qf $MEMSTICKPATH &
+	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
-
-	create_mfsbsd_image ${MFSBSDPATH}
 }
 
 create_memstick_serial_image() {
@@ -1476,28 +1476,28 @@ create_memstick_serial_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
-	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKSERIALPATH} ]; then
-			rm -f $MEMSTICKSERIALPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during MEMSTICKSERIAL image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKSERIALPATH)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	trap "-" 1 2 15 EXIT
-	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
-	gzip -qf $MEMSTICKSERIALPATH &
-	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	create_mfsbsd_image ${MEMSTICKSERIALPATH}
+
+	#makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
+	#if [ $? -ne 0 ]; then
+	#	if [ -f ${MEMSTICKSERIALPATH} ]; then
+	#		rm -f $MEMSTICKSERIALPATH
+	#	fi
+	#	echo ">>> ERROR: Something wrong happened during MEMSTICKSERIAL image creation. STOPPING!" | tee -a ${LOGFILE}
+	#	print_error_pfS
+	#fi
+	#MD=$(mdconfig -a -t vnode -f $MEMSTICKSERIALPATH)
+	## Just in case
+	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
+	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
+	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
+	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
+	#trap "-" 1 2 15 EXIT
+	#mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
+	#gzip -qf $MEMSTICKSERIALPATH &
+	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKSERIAL created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
-
-	create_mfsbsd_image ${MFSBSDSERIALPATH}
 }
 
 create_memstick_adi_image() {
@@ -1542,28 +1542,28 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
-	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKADIPATH} ]; then
-			rm -f $MEMSTICKADIPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during MEMSTICKADI image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKADIPATH)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	trap "-" 1 2 15 EXIT
-	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
-	gzip -qf $MEMSTICKADIPATH &
-	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	create_mfsbsd_image ${MEMSTICKADIPATH}
+
+	#makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
+	#if [ $? -ne 0 ]; then
+	#	if [ -f ${MEMSTICKADIPATH} ]; then
+	#		rm -f $MEMSTICKADIPATH
+	#	fi
+	#	echo ">>> ERROR: Something wrong happened during MEMSTICKADI image creation. STOPPING!" | tee -a ${LOGFILE}
+	#	print_error_pfS
+	#fi
+	#MD=$(mdconfig -a -t vnode -f $MEMSTICKADIPATH)
+	## Just in case
+	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
+	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
+	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
+	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
+	#trap "-" 1 2 15 EXIT
+	#mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
+	#gzip -qf $MEMSTICKADIPATH &
+	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
-
-	create_mfsbsd_image ${MFSBSDADIPATH}
 }
 
 # Create pkg conf on desired place with desired arch/branch
@@ -2423,8 +2423,7 @@ snapshots_copy_to_staging_nanobsd() {
 snapshots_copy_to_staging_iso_updates() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} \
-	    ${MEMSTICKADIPATH} ${MFSBSDPATH} ${MFSBSDADIPATH} ${MFSBSDSERIALPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH}; do
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
@@ -2471,8 +2470,6 @@ snapshots_scp_files() {
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*iso* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-mfsbsd* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/

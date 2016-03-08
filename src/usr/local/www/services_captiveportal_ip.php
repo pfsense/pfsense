@@ -141,9 +141,9 @@ display_top_tabs($tab_array, true);
 	<table class="table table-hover table-striped table-condensed">
 		<thead>
 			<tr>
-			  <th><?=gettext("IP Addresses"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th><!-- Buttons --></th>
+				<th><?=gettext("IP Addresses"); ?></th>
+				<th><?=gettext("Description"); ?></th>
+				<th><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 

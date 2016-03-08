@@ -375,7 +375,7 @@ print_callout(gettext("Entries in this section override individual results from 
 					<th><?=gettext("Domain")?></th>
 					<th><?=gettext("IP")?></th>
 					<th><?=gettext("Description")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -455,7 +455,7 @@ print_callout(gettext("Entries in this area override an entire domain, and subdo
 					<th><?=gettext("Domain")?></th>
 					<th><?=gettext("IP")?></th>
 					<th><?=gettext("Description")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 

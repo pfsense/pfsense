@@ -400,18 +400,18 @@ $form = new Form(new Form_Button(
 $section = new Form_Section('Edit NAT 1:1 Entry');
 
 $section->addInput(new Form_Checkbox(
-	'nobinat',
-	'Negate',
-	'This rule will be excluded from the NAT',
-	$pconfig['nobinat']
-))->setHelp('Use this to exclude addresses from a rule that follows this one');
+	'disabled',
+	'Disabled',
+	'Disable this rule',
+	$pconfig['disabled']
+))->setHelp('When disabled, the rule will not have any effect.');
 
 $section->addInput(new Form_Checkbox(
-	'disabled',
+	'nobinat',
 	'No BINAT (NOT)',
-	'Disable redirection for traffic matching this rule',
-	$pconfig['disabled']
-))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
+	'Do not perform binat for the specified address',
+	$pconfig['nobinat']
+))->setHelp('Excludes the address from a later, more general, rule');
 
 $iflist = get_configured_interface_with_descr(false, true);
 

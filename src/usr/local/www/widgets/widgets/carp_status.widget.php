@@ -65,7 +65,13 @@ $carp_enabled = get_carp_status();
 
 ?>
 <div class="content">
-<table>
+<table class="table table-striped table-hover">
+	<thead>
+		<th>CARP Interface</th>
+		<th>IP Address</th>
+		<th>Status</th>
+	</thead>
+	<tbody>
 <?php
 	if (is_array($config['virtualip']['vip'])) {
 		$carpint=0;
@@ -80,36 +86,32 @@ $carp_enabled = get_carp_status();
 			$advskew = $carp['advskew'];
 			$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 ?>
-<tr>
-	<td>
-		<i class="fa fa-inbox"></i>
-		<a href="/system_hasync.php">
-			<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?>
-		</a>
-	</td>
-	<td>
-<?php
-			if ($carp_enabled == false) {
+		<tr>
+			<td>
+				<a href="/system_hasync.php">
+					<?=htmlspecialchars(convert_friendly_interface_to_friendly_descr($carp['interface']) . "@{$vhid}");?>
+				</a>
+			</td>
+<?php			if ($carp_enabled == false) {
+				$icon = 'times-circle';
 				$status = "DISABLED";
-				echo '<i class="fa fa-ban"></i>';
 			} else {
 				if ($status == "MASTER") {
-					echo '<i class="fa fa-arrow-right"></i>';
+					$icon = 'check-circle';
 				} else if ($status == "BACKUP") {
-					echo '<i class="fa fa-arrow-right"></i>';
+					$icon = 'check-circle-o';
 				} else if ($status == "INIT") {
-					echo '<i class="fa fa-list-alt"></i>';
+					$icon = 'question-circle';
 				}
 			}
 			if ($ipaddress) {
 ?>
-				&nbsp;
-				<?=htmlspecialchars($status);?> &nbsp;
-				<?=htmlspecialchars($ipaddress);?>
+				<td><?=htmlspecialchars($ipaddress);?></td>
+				<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
 <?php
 			}
 ?>
-</td></tr>
+		</tr>
 <?php
 		}
 	} else {
@@ -118,5 +120,6 @@ $carp_enabled = get_carp_status();
 <?php
 	}
 ?>
+	</tbody>
 </table>
 </div>

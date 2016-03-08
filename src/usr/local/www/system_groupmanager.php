@@ -248,6 +248,7 @@ function build_priv_table() {
 	$privhtml .=		'<thead>';
 	$privhtml .=			'<th>' . gettext('Name') . '</th>';
 	$privhtml .=			'<th>' . gettext('Description') . '</th>';
+	$privhtml .=			'<th>' . gettext('Action') . '</th>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 

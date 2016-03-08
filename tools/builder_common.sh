@@ -551,10 +551,8 @@ create_nanobsd_diskimage () {
 	if [ "${1}" = "nanobsd" ]; then
 		# It's serial
 		export NANO_BOOTLOADER="boot/boot0sio"
-		local _default_config="default-config-serial-alix"
 	elif [ "${1}" = "nanobsd-vga" ]; then
 		# It's vga
-		local _default_config="default-config-alix"
 		export NANO_BOOTLOADER="boot/boot0"
 	else
 		echo ">>> ERROR: Type of image to create unknown"
@@ -573,7 +571,7 @@ create_nanobsd_diskimage () {
 
 	LOGFILE=${BUILDER_LOGS}/${1}.${TARGET}
 	# Prepare folder to be put in image
-	customize_stagearea_for_image "${1}" "${_default_config}"
+	customize_stagearea_for_image "${1}"
 	install_default_kernel ${DEFAULT_KERNEL} "no"
 
 	echo ">>> Fixing up NanoBSD Specific items..." | tee -a ${LOGFILE}

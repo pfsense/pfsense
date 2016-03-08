@@ -246,8 +246,11 @@ function build_priv_table() {
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
 	$privhtml .=		'<thead>';
-	$privhtml .=			'<th>' . gettext('Name') . '</th>';
-	$privhtml .=			'<th>' . gettext('Description') . '</th>';
+	$privhtml .=			'<tr>';
+	$privhtml .=				'<th>' . gettext('Name') . '</th>';
+	$privhtml .=				'<th>' . gettext('Description') . '</th>';
+	$privhtml .=				'<th>' . gettext('Action') . '</th>';
+	$privhtml .=			'</tr>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 

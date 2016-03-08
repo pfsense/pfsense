@@ -1323,7 +1323,7 @@ create_memstick_image() {
 	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}|
+	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
 	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
 	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
 	trap "-" 1 2 15 EXIT

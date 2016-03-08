@@ -615,7 +615,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<th><?=gettext("Internal")?></th>
 						<th><?=gettext("Certificates")?></th>
 						<th><?=gettext("In Use")?></th>
-						<th></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>

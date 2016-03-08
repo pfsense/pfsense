@@ -954,7 +954,7 @@ events.push(function() {
 	});
 
 	 // Remoteid
-	$('#remoteid_type').click(function () {
+	$('#remoteid_type').change(function () {
 		typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 	});
 

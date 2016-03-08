@@ -1456,6 +1456,71 @@ create_distribution_tarball() {
 	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs -cJf ${FINAL_CHROOT_DIR}/install/${PRODUCT_NAME}.txz .
 }
 
+create_mfsbsd_image() {
+	local IMGPATH="$1"
+	local FSDIR="${SCRATCHDIR}/mfsbsd"
+
+	if [ -z "${IMGPATH}" ]; then
+		return
+	fi
+
+	if [ -d "${FSDIR}" ]; then
+		chflags -R noschg ${FSDIR}
+		rm -rf ${FSDIR}
+	fi
+	mkdir -p ${FSDIR}
+
+	echo -n ">>> Copying /boot to image root... " | tee -a ${LOGFILE}
+	cp -r ${FINAL_CHROOT_DIR}/boot ${FSDIR}
+	echo "Done!" | tee -a ${LOGFILE}
+
+	echo -n ">>> Making root filesystem image... " | tee -a ${LOGFILE}
+	makefs ${FSDIR}/mfsroot ${FINAL_CHROOT_DIR}
+	echo "Done!" | tee -a ${LOGFILE}
+
+	echo -n ">>> Compressing root filesystem image... " | tee -a ${LOGFILE}
+	gzip ${FSDIR}/mfsroot
+	echo "Done!" | tee -a ${LOGFILE}
+
+	echo -n ">>> Setting loader.conf... " | tee -a ${LOGFILE}
+	echo 'geom_uzip_load="YES"' >> ${FSDIR}/boot/loader.conf
+	echo 'tmpfs_load="YES"' >> ${FSDIR}/boot/loader.conf
+	echo 'mfs_load="YES"' >> ${FSDIR}/boot/loader.conf
+	echo 'mfs_type="mfs_root"' >> ${FSDIR}/boot/loader.conf
+	echo 'mfs_name="/mfsroot"' >> ${FSDIR}/boot/loader.conf
+	echo 'vfs.root.mountfrom="ufs:/dev/md0"' >> ${FSDIR}/boot/loader.conf
+	echo "Done!" | tee -a ${LOGFILE}
+
+	echo ">>> Creating mfsbsd to ${IMGPATH}." 2>&1 | tee -a ${LOGFILE}
+	LOGFILE=${BUILDER_LOGS}/mfsbsd.${TARGET}
+
+	if [ "${IMGPATH}" = "" ]; then
+		echo ">>> IMGPATH is empty skipping generation of mfsbsd image!" | tee -a ${LOGFILE}
+		return
+	fi
+
+	makefs -B little -o label=${PRODUCT_NAME} ${IMGPATH} ${SCRATCHDIR}/mfsbsd
+	if [ $? -ne 0 ]; then
+		if [ -f ${IMGPATH} ]; then
+			rm -f $IMGPATH
+		fi
+		echo ">>> ERROR: Something wrong happened during mfsbsd image creation. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	MD=$(mdconfig -a -t vnode -f $IMGPATH)
+	# Just in case
+	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
+	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
+	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
+	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
+	trap "-" 1 2 15 EXIT
+	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
+	gzip -qf $IMGPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+
+	echo ">>> mfsbsd created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+}
+
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
 	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
@@ -1497,7 +1562,6 @@ create_iso_image() {
 }
 
 create_memstick_image() {
-
 	LOGFILE=${BUILDER_LOGS}/memstick.${TARGET}
 	if [ "${MEMSTICKPATH}" = "" ]; then
 		echo ">>> MEMSTICKPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
@@ -1537,6 +1601,8 @@ create_memstick_image() {
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+
+	create_mfsbsd_image ${MFSBSDPATH}
 }
 
 create_memstick_serial_image() {
@@ -1599,6 +1665,8 @@ create_memstick_serial_image() {
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKSERIAL created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+
+	create_mfsbsd_image ${MFSBSDSERIALPATH}
 }
 
 create_memstick_adi_image() {
@@ -1663,6 +1731,8 @@ create_memstick_adi_image() {
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+
+	create_mfsbsd_image ${MFSBSDADIPATH}
 }
 
 # Create pkg conf on desired place with desired arch/branch
@@ -2575,6 +2645,8 @@ snapshots_scp_files() {
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*iso* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
+		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
+	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-mfsbsd* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/

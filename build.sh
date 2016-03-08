@@ -338,7 +338,7 @@ if [ -z "${IMAGETYPE}" ]; then
 fi
 
 if [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="iso fullupdate nanobsd nanobsd-vga memstick memstickserial"
+	_IMAGESTOBUILD="fullupdate nanobsd memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
 	fi

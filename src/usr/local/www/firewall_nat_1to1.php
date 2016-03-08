@@ -210,7 +210,7 @@ display_top_tabs($tab_array);
 							<a href="?act=toggle&amp;id=<?=$i?>">
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 				if (isset($natent['nobinat'])) { ?>
-								&nbsp;<i class="fa fa-hand-paper-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 				} ?>
 							</a>
 						</td>

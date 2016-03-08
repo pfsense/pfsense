@@ -183,9 +183,9 @@ if (!$rawfilter) {
 						</td>
 						<td style="word-wrap:break-word; word-break:break-all; white-space:normal">
 							<?php if ($filterent['action'] == "login") { ?>
-							<i class="fa fa-arrow-left" title="in"></i>
+							<i class="fa fa-sign-in" title="User Logged In"></i>
 							<?php } else if ($filterent['action'] == "logout") { ?>
-							<i class="fa fa-arrow-right" title="out"></i>
+							<i class="fa fa-sign-out" title="User Logged Out"></i>
 							<?php } else { ?>
 							<i><?=htmlspecialchars($filterent['action'])?></i>
 							<?php } ?>
@@ -310,9 +310,9 @@ function dump_clog_vpn($logfile, $tail) {
 		echo "<td>" . htmlspecialchars(join(" ", array_slice($logent, 0, 3))) . "</td>\n";
 
 		if ($llent[0] == "login") {
-			echo "<td><i class=\"fa fa-arrow-left\" alt=\"in\"></i></td>\n";
+			echo "<td><i class=\"fa fa-sign-in\" title=\"User Logged In\"></i></td>\n";
 		} else {
-			echo "<td><i class=\"fa fa-arrow-right\" alt=\"out\"></i></td>\n";
+			echo "<td><i class=\"fa fa-sign-out\" title=\"User Logged Out\"></i></td>\n";
 		}
 
 		echo "<td>" . htmlspecialchars($llent[3]) . "</td>\n";

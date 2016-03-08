@@ -171,9 +171,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				print(		"<td>" . htmlspecialchars($ipsec['descr']) . "</td>\n");
 
 				if ($ipsec['status'] == "true") {
-					print('<td><i class="fa fa-chevron-up"></i></td>' . "\n");
+					print('<td><i class="fa fa-arrow-up"></i></td>' . "\n");
 				} else {
-					print('<td><i class="fa fa-chevron-down"></i></td>' . "\n");
+					print('<td><i class="fa fa-arrow-down"></i></td>' . "\n");
 				}
 
 				print(	"</tr>\n");

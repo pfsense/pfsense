@@ -2592,7 +2592,8 @@ snapshots_copy_to_staging_nanobsd() {
 snapshots_copy_to_staging_iso_updates() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} \
+	    ${MEMSTICKADIPATH} ${MFSBSDPATH} ${MFSBSDADIPATH} ${MFSBSDSERIALPATH}; do
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi

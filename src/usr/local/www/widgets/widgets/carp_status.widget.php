@@ -99,7 +99,7 @@ $carp_enabled = get_carp_status();
 				if ($status == "MASTER") {
 					$icon = 'check-circle';
 				} else if ($status == "BACKUP") {
-					$icon = 'check-circle-o';
+					$icon = 'minus-circle';
 				} else if ($status == "INIT") {
 					$icon = 'question-circle';
 				}

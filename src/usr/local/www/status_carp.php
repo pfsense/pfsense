@@ -224,7 +224,7 @@ if ($carpcount == 0) {
 			if ($status == "MASTER") {
 				$icon = 'check-circle';
 			} else if ($status == "BACKUP") {
-				$icon = 'check-circle-o';
+				$icon = 'minus-circle';
 			} else if ($status == "INIT") {
 				$icon = 'question-circle';
 			}

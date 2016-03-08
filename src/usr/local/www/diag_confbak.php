@@ -184,10 +184,7 @@ if ($diff) {
 <?php
 }
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form(false);
 
 $section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
 
@@ -203,6 +200,11 @@ $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 $section->addInput(new Form_StaticText(
 	'Current space used by backups',
 	$space
+));
+
+$section->addInput(new Form_Button(
+	'Submit',
+	gettext("Save")
 ));
 
 $form->add($section);

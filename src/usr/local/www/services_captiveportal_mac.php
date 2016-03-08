@@ -208,7 +208,7 @@ display_top_tabs($tab_array, true);
 				<th><?=gettext('Action')?></th>
 				<th><?=gettext("MAC address")?></th>
 				<th><?=gettext("Description")?></th>
-				<th><!-- Buttons --></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 

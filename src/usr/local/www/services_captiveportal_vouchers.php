@@ -456,7 +456,7 @@ display_top_tabs($tab_array, true);
 						<th><?=gettext("Minutes/Ticket")?></th>
 						<th><?=gettext("# of Tickets")?></th>
 						<th><?=gettext("Comment")?></th>
-						<th><?=gettext("Action")?></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>

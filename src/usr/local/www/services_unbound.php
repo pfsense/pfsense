@@ -439,7 +439,7 @@ events.push(function() {
 					<th><?=gettext("Domain")?></th>
 					<th><?=gettext("IP")?></th>
 					<th><?=gettext("Description")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -515,7 +515,7 @@ endforeach;
 					<th><?=gettext("Domain")?></th>
 					<th><?=gettext("IP")?></th>
 					<th><?=gettext("Description")?></th>
-					<th></th>
+					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
 

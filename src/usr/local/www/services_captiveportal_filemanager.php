@@ -217,9 +217,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 						<tr>
 							<th><?=gettext("Name"); ?></th>
 							<th><?=gettext("Size"); ?></th>
-							<th>
-								<!-- Buttons -->
-							</th>
+							<th><?=gettext("Actions"); ?></th>
 						</tr>
 					</thead>
 					<tbody>

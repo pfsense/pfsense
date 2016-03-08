@@ -803,7 +803,7 @@ if ($_POST['apply']) {
 	if (($_POST['pptp_subnet0'] && !is_numeric($_POST['pptp_subnet0']))) {
 		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
 	}
-	if (($_POST['pptp_remote0'] && !is_ipaddrv4($_POST['pptp_remote0']) && !is_hostname($_POST['gateway'][$iface]))) {
+	if (($_POST['pptp_remote0'] && !is_ipaddrv4($_POST['pptp_remote0']) && !is_hostname($_POST['pptp_remote0']))) {
 		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	}
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) {

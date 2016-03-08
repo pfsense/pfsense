@@ -418,9 +418,6 @@ foreach ($a_ca as $i => $ca):
 		$issuer_name = $issuer_ca['descr'];
 	}
 
-	// TODO : Need gray certificate icon
-	$internal = (!!$ca['prv']);
-
 	foreach ($a_cert as $cert) {
 		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
@@ -435,7 +432,7 @@ foreach ($a_ca as $i => $ca):
 ?>
 				<tr>
 					<td><?=$name?></td>
-					<td><?=$internal?></td>
+					<td><i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>

@@ -669,9 +669,9 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 ?>
 					<tr>
 						<td><?=$tmpcrl['descr']; ?></td>
-						<td><?=($internal) ? "YES" : "NO"; ?></td>
+						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td><?=($inuse) ? "YES" : "NO"; ?></td>
+						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
 						<td>
 							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>"></a>
 <?php

@@ -690,7 +690,7 @@ function netgate_hardware_setup() {
 		break;
 	}
 
-	write_confit(gettext("Default hardware detection on first boot"));
+	write_config(gettext("Default hardware detection on first boot"));
 }
 
 function check_for_alternate_interfaces() {

@@ -306,8 +306,8 @@ display_top_tabs($tab_array);
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
-	<a href="firewall_aliases_import.php" role="button" class="btn btn-default btn-sm">
-		<i class="fa fa-download icon-embed-btn"></i>
+	<a href="firewall_aliases_import.php" role="button" class="btn btn-primary btn-sm">
+		<i class="fa fa-upload icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>
 </nav>

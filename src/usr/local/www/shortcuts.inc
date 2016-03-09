@@ -150,7 +150,7 @@ function get_shortcut_status_link($shortcut_section, $addspace = true, $service 
 			break;
 	}
 	if (!empty($link)) {
-		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa fa-cog\"></i></a>";
+		return "{$space}<a href=\"{$link}\" title=\"" . gettext("Related status") . "\"><i class=\"fa fa-bar-chart\"></i></a>";
 	}
 	return "";
 }

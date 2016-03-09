@@ -944,27 +944,27 @@ events.push(function() {
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Protocol
-	$('#proto').click(function () {
+	$('#proto').change(function () {
 		change_protocol();
 	});
 
 	 // Localid
-	$('#localid_type').click(function () {
+	$('#localid_type').change(function () {
 		typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
 	});
 
 	 // Remoteid
-	$('#remoteid_type').click(function () {
+	$('#remoteid_type').change(function () {
 		typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 	});
 
 	 // NATLocalid
-	$('#natlocalid_type').click(function () {
+	$('#natlocalid_type').change(function () {
 		typesel_change_natlocal(<?=htmlspecialchars($pconfig['natlocalid_netbits'])?>);
 	});
 
 	 // Mode
-	$('#mode').click(function () {
+	$('#mode').change(function () {
 		change_mode();
 	});
 

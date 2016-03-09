@@ -474,11 +474,14 @@ foreach ($leases as $data):
 	}
 
 	if ($data['act'] == $active_string) {
+		/* Active DHCP Lease */
 		$icon = 'fa-check-circle-o';
 	} elseif ($data['act'] == $expired_string) {
+		/* Expired DHCP Lease */
 		$icon = 'fa-ban';
 	} else {
-		$icon = 'fa-times-circle-o';
+		/* Static Mapping */
+		$icon = 'fa-user';
 	}
 
 	if ($data['act'] == $static_string) {

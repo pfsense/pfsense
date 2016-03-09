@@ -3288,7 +3288,7 @@ events.push(function() {
 				$('.dhcp6advanced, .none, .staticv6, ._6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
-			case "6rd_": {
+			case "_6rd": {
 				$('.dhcp6advanced, .none, .dhcp6, .staticv6, ._6to4, .track6, .slaac').hide();
 				break;
 			}

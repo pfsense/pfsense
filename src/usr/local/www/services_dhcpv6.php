@@ -1133,6 +1133,8 @@ events.push(function() {
 	function do_toggle() {
 		if ($('#enable').prop('checked')) {
 			$('.form-group:not(:first-child)').show();
+			hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
+			hideInput('addrow', <?php echo json_encode($noopts); ?>);
 		} else {
 			$('.form-group:not(:first-child)').hide();
 		}

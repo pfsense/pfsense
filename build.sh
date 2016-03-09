@@ -340,9 +340,8 @@ fi
 if [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="fullupdate nanobsd memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
-		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
+		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi ova"
 	fi
-	_IMAGESTOBUILD="${_IMAGESTOBUILD} ova"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
 fi

@@ -2332,6 +2332,13 @@ snapshots_copy_to_staging_iso_updates() {
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
 	fi
 
+	if [ -f "${OVAPATH}" ]; then
+		mkdir -p ${STAGINGAREA}/virtualization
+		sha256 ${OVAPATH} > ${OVAPATH}.sha256
+		cp -l ${OVAPATH}* $STAGINGAREA/virtualization 2>/dev/null
+		snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${OVAPATH})
+	fi
+
 	# NOTE: Updates need a file with output similar to date output
 	# Use the file generated at start of snapshots_dobuilds() to be consistent on times
 	if [ -z "${_IS_RELEASE}" ]; then

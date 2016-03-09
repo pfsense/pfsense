@@ -154,8 +154,13 @@ $section->addInput(new Form_StaticText(
 	$NANOBSD_SIZE
 ));
 
-$slicebtn = new Form_Button('bootslice', 'Switch Slice');
-$slicebtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$slicebtn = new Form_Button(
+	'bootslice',
+	'Switch Slice',
+	null,
+	'fa-retweet'
+);
+$slicebtn->addClass('btn-warning btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Bootup slice',
@@ -163,8 +168,9 @@ $section->addInput(new Form_StaticText(
 ));
 
 $refcount = refcount_read(1000);
+$mounted_rw = is_writable("/");
 
-if (is_writable("/")) {
+if ($mounted_rw) {
 	/* refcount_read returns -1 when shared memory section does not exist */
 	/* refcount can be zero here when the user has set nanobsd_force_rw */
 	/* refcount 1 is normal, so only display the count for abnormal values */
@@ -182,9 +188,14 @@ if (is_writable("/")) {
 
 // Only show the changero button if force read/write is off, or the file system is not in writable state, or there is an unusual refcount.
 // If force read/write is on, and the file system is in writable state, and refcount is normal then the user has no reason to mess about.
-if (!isset($config['system']['nanobsd_force_rw']) || !is_writable("/") || ($refcount > 1)) {
-	$robtn = new Form_Button('changero', $btnlbl);
-	$robtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+if (!isset($config['system']['nanobsd_force_rw']) || !$mounted_rw || ($refcount > 1)) {
+	$robtn = new Form_Button(
+		'changero',
+		$btnlbl,
+		null,
+		($mounted_rw) ? 'fa-lock' : 'fa-unlock'
+	);
+	$robtn->addClass(($mounted_rw) ? 'btn-success' : 'btn-warning' . ' btn-sm');
 	$lbl .= ' ' . $robtn;
 }
 
@@ -200,8 +211,13 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['nanobsd_force_rw'])
 ));
 
-$permbtn = new Form_Button('setrw', 'Save');
-$permbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$permbtn = new Form_Button(
+	'setrw',
+	'Save',
+	null,
+	'fa-save'
+);
+$permbtn->addClass('btn-primary btn-sm');
 
 $section->addInput(new Form_StaticText(
 	null,
@@ -215,8 +231,13 @@ $section->addInput(new Form_Input(
 	$COMPLETE_PATH
 ));
 
-$dupbtn = new Form_Button('duplicateslice', 'Duplicate ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH);
-$dupbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$dupbtn = new Form_Button(
+	'duplicateslice',
+	'Duplicate ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH,
+	null,
+	'fa-clone'
+);
+$dupbtn->addClass('btn-success btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Duplicate boot slice',
@@ -229,8 +250,13 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (file_exists("/conf/upgrade_log.txt")) {
-	$viewbtn = new Form_Button('viewupgradelog', 'View log');
-	$viewbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+	$viewbtn = new Form_Button(
+		'viewupgradelog',
+		'View log',
+		null,
+		'fa-file-text-o'
+	);
+	$viewbtn->addClass('btn-primary btn-sm');
 
 	$section->addInput(new Form_StaticText(
 		'View previous upgrade log',

@@ -581,6 +581,118 @@ function vlan_setup() {
 	}
 }
 
+function netgate_hardware_setup() {
+	global $config;
+
+	$platform = system_identify_specific_platform();
+
+	/* Determine interfaces */
+	switch ($_platform['name']) {
+	case 'C2758':
+		$config['interfaces']['wan']['if'] = 'igb0';
+		$config['interfaces']['lan']['if'] = 'igb1';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'igb2',
+			'descr' => 'OPT1'
+		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'igb3',
+			'descr' => 'OPT2'
+		);
+		break;
+	case 'APU':
+		$config['interfaces']['wan']['if'] = 're1';
+		$config['interfaces']['lan']['if'] = 're2';
+		$config['interfaces']['opt1'] = array(
+			'if' => 're0',
+			'descr' => 'OPT1'
+		);
+		break;
+	case 'RCC-VE':
+	case 'RCC-DFF':
+		/* SG-4460 or SG-8860 */
+		if (does_interface_exist('igb4')) {
+			$config['interfaces']['wan']['if'] = 'igb1';
+			$config['interfaces']['lan']['if'] = 'igb0';
+		} else {
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
+		}
+		/* It has 4 ports */
+		if (does_interface_exist('igb3')) {
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb2',
+				'descr' => 'OPT1',
+				'enable' => true,
+				'ipaddr' => 'dhcp'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT2'
+			);
+		}
+		/* It has 6 ports */
+		if (does_interface_exist('igb5')) {
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb4',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'igb5',
+				'descr' => 'OPT4'
+			);
+		}
+		break;
+	case 'XG-1540':
+		$config['interfaces']['wan']['if'] = 'ix0';
+		$config['interfaces']['lan']['if'] = 'ix1';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'igb0',
+			'enable' => true,
+			'ipaddr' => 'dhcp',
+			'descr' => 'OPT1'
+		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'igb1',
+			'descr' => 'OPT2'
+		);
+		break;
+	case 'RCC':
+		$config['interfaces']['wan']['if'] = 'igb0';
+		$config['interfaces']['lan']['if'] = 'igb1';
+		$config['interfaces']['opt1'] = array(
+			'if' => 'igb2',
+			'ipaddr' => 'dhcp',
+			'descr' => 'OPT1'
+		);
+		$config['interfaces']['opt2'] = array(
+			'if' => 'igb3',
+			'descr' => 'OPT2'
+		);
+		$config['interfaces']['opt3'] = array(
+			'if' => 'ix0',
+			'descr' => 'OPT3'
+		);
+		$config['interfaces']['opt4'] = array(
+			'if' => 'ix0',
+			'descr' => 'OPT4'
+		);
+		break;
+	}
+
+	/* Enable powerd */
+	switch ($_platform['name']) {
+	case 'RCC':
+	case 'RCC-VE':
+	case 'RCC-DFF':
+	case 'XG-1540':
+		$config['system']['powerd_enable'] = true;
+		break;
+	}
+
+	write_confit(gettext("Default hardware detection on first boot"));
+}
+
 function check_for_alternate_interfaces() {
 	global $config;
 

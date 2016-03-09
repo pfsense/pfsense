@@ -167,6 +167,7 @@ echo "done.\n";
 system_do_shell_commands(1);
 
 if (file_exists("/conf/trigger_initial_wizard")) {
+	netgate_hardware_setup();
 	check_for_alternate_interfaces();
 }
 

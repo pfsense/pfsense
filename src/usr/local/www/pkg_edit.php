@@ -1444,8 +1444,10 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			// Add row button
 			$section->addInput(new Form_Button(
 				'addrow',
-				'Add'
-			))->removeClass('btn-primary')->addClass('btn-success');
+				'Add',
+				null,
+				'fa-plus'
+			))->addClass('btn-success');
 
 			break;
 

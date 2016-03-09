@@ -155,7 +155,7 @@ if ($do_traceroute) {
 	}
 }
 
-$form = new Form('Traceroute');
+$form = new Form(false);
 
 $section = new Form_Section('Traceroute');
 
@@ -203,6 +203,14 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, traceroute uses UDP but that may be blocked by some routers. Check this box to use ICMP instead, which may succeed. ');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Traceroute',
+	null,
+	'fa-rss'
+))->addClass('btn-primary');
+
 print $form;
 
 /* Show the traceroute results */

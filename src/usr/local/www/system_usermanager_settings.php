@@ -179,8 +179,10 @@ $section->addInput(new Form_Select(
 
 $form->addGlobal(new Form_Button(
 	'savetest',
-	'Save & Test'
-))->removeClass('btn-primary')->addClass('btn-default');
+	'Save & Test',
+	null,
+	'fa-wrench'
+))->addClass('btn-info');
 
 $form->add($section);
 print $form;

@@ -177,13 +177,17 @@ if ($bogons || $urltable || !empty($entries)) {
 	if ($bogons || $urltable) {
 		$group->add(new Form_Button(
 			'Download',
-			'Update'
-		))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+			'Update',
+			null,
+			'fa-refresh'
+		))->addClass('btn-success btn-sm');
 	} elseif (!empty($entries)) {
 		$group->add(new Form_Button(
 			'clearall',
-			'Clear Table'
-		))->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+			'Clear Table',
+			null,
+			'fa-undo'
+		))->addClass('btn-danger btn-sm');
 	}
 }
 
@@ -313,7 +317,9 @@ if (empty($entries)) {
 						</td>
 						<td>
 							<?php if (!$bogons && !$urltable): ?>
-								<a class="btn btn-xs btn-default" data-entry="<?=htmlspecialchars($entry)?>"><?=gettext("Remove")?></a>
+								<a style="cursor: pointer;" data-entry="<?=htmlspecialchars($entry)?>">
+									<i class="fa fa-trash" title="<?= gettext("Remove this entry") ?>"></i>
+								</a>
 							<?php endif ?>
 						</td>
 					</tr>

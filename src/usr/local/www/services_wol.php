@@ -164,7 +164,7 @@ if ($savemsg) {
 	print_info_box($savemsg, $class);
 }
 
-$form = new Form('Send');
+$form = new Form(false);
 
 $section = new Form_Section('Wake-on-LAN');
 
@@ -181,6 +181,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$mac
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
+
+$section->addInput(new Form_Button(
+	'Submit',
+	'Send',
+	null,
+	'fa-power-off'
+))->addClass('btn-primary');
 
 $form->add($section);
 print $form;
@@ -227,10 +234,12 @@ print $form;
 	</div>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 
 		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
+			<i class="fa fa-power-off icon-embed-btn"></i>
 			<?=gettext("Wake all devices")?>
 		</a>
 	</div>

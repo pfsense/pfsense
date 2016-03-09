@@ -887,8 +887,10 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
 		'Add pool',
-		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool'
+		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool',
+		'fa-plus'
 	);
+	$btnaddpool->addClass('btn-success');
 
 	$section->addInput(new Form_StaticText(
 		'Add',

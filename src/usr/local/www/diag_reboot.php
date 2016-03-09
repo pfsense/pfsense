@@ -143,8 +143,14 @@ events.push(function() {
 		<div class="content">
 			<p><?=gettext('Click "Reboot" to reboot the system immediately, or "No" to go to the system dashboard without rebooting. (There will be a brief delay before the dashboard appears.)')?></p>
 			<form action="diag_reboot.php" method="post">
-				<input type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>">
-				<a href="/" class="btn btn-default"><?=gettext("No")?></a>
+				<button type="submit" class="btn btn-danger pull-center" name="Submit" value="<?=gettext("Reboot")?>" title="<?=gettext("Reboot the system")?>">
+					<i class="fa fa-refresh"></i>
+					<?=gettext("Reboot")?>
+				</button>
+				<a href="/" class="btn btn-success">
+					<i class="fa fa-play"></i>
+					<?=gettext("No")?>
+				</a>
 			</form>
 		</div>
 	</div>

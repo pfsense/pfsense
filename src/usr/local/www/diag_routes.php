@@ -99,7 +99,7 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
-$form = new Form('Update');
+$form = new Form(false);
 $form->addGlobal(new Form_Input(
 	'isAjax',
 	null,
@@ -132,6 +132,14 @@ $section->addInput(new Form_Input(
 ))->setHelp('Use a regular expression to filter IP address or hostnames');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Update',
+	null,
+	'fa-refresh'
+))->addClass('btn-primary');
+
 print $form;
 ?>
 <script type="text/javascript">

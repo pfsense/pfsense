@@ -173,8 +173,8 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Simple filter such as 192.168, v6, icmp or ESTABLISHED']
 ));
 
-$filterbtn = new Form_Button('filterbtn', 'Filter', null);
-$filterbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$filterbtn = new Form_Button('filterbtn', 'Filter', null, 'fa-filter');
+$filterbtn->addClass('btn-primary btn-sm');
 $section->addInput(new Form_StaticText(
 	'',
 	$filterbtn

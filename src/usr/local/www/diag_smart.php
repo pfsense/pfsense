@@ -149,8 +149,14 @@ switch ($action) {
 			<input type="hidden" name="device" value="<?=$targetdev?>" />
 			<input type="hidden" name="action" value="abort" />
 			<nav class="action-buttons">
-				<input type="submit" name="submit"	class="btn btn-danger" value="<?=gettext("Abort")?>" />
-				<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+				<button type="submit" name="submit" class="btn btn-danger" value="<?=gettext("Abort")?>">
+					<i class="fa fa-times icon-embed-btn"></i>
+					<?=gettext("Abort Test")?>
+				</button>
+				<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
+					<i class="fa fa-undo icon-embed-btn"></i>
+					<?=gettext("Back")?>
+				</a>
 			</nav>
 		</form>
 
@@ -178,7 +184,10 @@ switch ($action) {
 		</div>
 
 		<nav class="action-buttons">
-			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
+				<i class="fa fa-undo icon-embed-btn"></i>
+				<?=gettext("Back")?>
+			</a>
 		</nav>
 <?php
 		break;
@@ -203,7 +212,10 @@ switch ($action) {
 		</div>
 
 		<nav class="action-buttons">
-			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-default"><?=gettext("Back")?></a>
+			<a href="<?=$_SERVER['PHP_SELF']?>" class="btn btn-info">
+				<i class="fa fa-undo icon-embed-btn"></i>
+				<?=gettext("Back")?>
+			</a>
 		</nav>
 <?php
 		break;
@@ -282,8 +294,10 @@ switch ($action) {
 	if (!empty($pconfig['smartmonemail'])) {
 		$form->addGlobal(new Form_Button(
 			'test',
-			'Send test email'
-		))->removeClass('btn-primary')->addClass('btn-default');
+			'Send test email',
+			null,
+			'fa-send'
+		))->addClass('btn-info');
 	}
 
 	print($form);
@@ -300,9 +314,11 @@ switch ($action) {
 
 		$btnview = new Form_Button(
 			'submit',
-			'View'
+			'View',
+			null,
+			'fa-file-o'
 		);
-
+		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
 
 		$section = new Form_Section('Information');
@@ -378,9 +394,11 @@ switch ($action) {
 
 		$btntest = new Form_Button(
 			'submit',
-			'Test'
+			'Test',
+			null,
+			'fa-wrench'
 		);
-
+		$btntest->addClass('btn-primary');
 		$btntest->setAttribute('id');
 
 		$section = new Form_Section('Perform self-tests');
@@ -449,9 +467,11 @@ switch ($action) {
 
 		$btnview =  new Form_Button(
 			'submit',
-			'View'
+			'View',
+			null,
+			'fa-file-o'
 		);
-
+		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
 
 		$section = new Form_Section('View Logs');
@@ -501,10 +521,12 @@ switch ($action) {
 // Abort
 		$btnabort = new Form_Button(
 			'submit',
-			'Abort'
+			'Abort',
+			null,
+			'fa-times'
 		);
 
-		$btnabort->removeClass('btn-primary')->addClass('btn-danger')->setAttribute('id');
+		$btnabort->addClass('btn-danger')->setAttribute('id');
 
 		$form = new Form(false);
 

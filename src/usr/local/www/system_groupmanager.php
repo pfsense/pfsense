@@ -268,7 +268,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -449,13 +449,17 @@ if ($pconfig['gid'] != 1998) { // all users group
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Members" >'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Members"',
+		null,
+		'fa-angle-double-right'
+	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'< Move to "Not members'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Not members',
+		null,
+		'fa-angle-double-left'
+	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
 	$section->add($group);

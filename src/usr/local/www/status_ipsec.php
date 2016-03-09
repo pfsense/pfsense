@@ -274,13 +274,15 @@ if (is_array($status)) {
 <?php
 		if ($ikesa['state'] != 'ESTABLISHED') {
 ?>
-					<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="<?=gettext("Connect VPN");?>" >
+						<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-success" data-toggle="tooltip" title="<?=gettext("Connect VPN");?>" >
+							<i class="fa fa-sign-in icon-embed-btn"></i>
 							<?=gettext("Connect VPN")?>
 						</a>
 <?php
 		} else {
 ?>
 						<a href="status_ipsec.php?act=ikedisconnect&amp;ikeid=<?=$con_id; ?>" class="btn btn-xs btn-danger" data-toggle="tooltip" title="<?=gettext("Disconnect VPN");?>">
+							<i class="fa fa-trash icon-embed-btn"></i>
 							<?=gettext("Disconnect")?>
 						</a><br />
 <?php
@@ -294,7 +296,8 @@ if (is_array($status)) {
 		if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 ?>
 						<div id="btnchildsa-<?=$ikeid?>">
-							<a type="button" onclick="show_childsa('childsa-<?=$ikeid?>','btnchildsa-<?=$ikeid?>');" class="btn btn-sm btn-default" />
+							<a type="button" onclick="show_childsa('childsa-<?=$ikeid?>','btnchildsa-<?=$ikeid?>');" class="btn btn-sm btn-info" />
+								<i class="fa fa-plus-circle icon-embed-btn"></i>
 								<?=gettext('Show child SA entries')?>
 							</a>
 						</div>
@@ -390,6 +393,7 @@ if (is_array($status)) {
 									</td>
 									<td>
 										<a href="status_ipsec.php?act=childdisconnect&amp;ikeid=<?=$con_id; ?>&amp;ikesaid=<?=$childsa['uniqueid']; ?>" class="btn btn-xs btn-warning" data-toggle="tooltip" title="<?=gettext('Disconnect Child SA')?>">
+											<i class="fa fa-trash icon-embed-btn"></i>
 											<?=gettext("Disconnect")?>
 										</a>
 									</td>
@@ -491,6 +495,7 @@ foreach ($a_phase1 as $ph1ent) {
 					</td>
 					<td >
 						<a href="status_ipsec.php?act=connect&amp;ikeid=<?=$ph1ent['ikeid']; ?>" class="btn btn-xs btn-success">
+							<i class="fa fa-sign-in icon-embed-btn"></i>
 							<?=gettext("Connect VPN")?>
 						</a>
 					</td>

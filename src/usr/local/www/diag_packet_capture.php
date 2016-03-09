@@ -393,25 +393,33 @@ $processisrunning = ($processcheck != "");
 if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'startbtn',
-		'Start'
-	))->removeClass('btn-primary')->addClass('btn-success');
+		'Start',
+		null,
+		'fa-play-circle'
+	))->addClass('btn-success');
 } else {
 	$form->addGlobal(new Form_Button(
 		'stopbtn',
-		'Stop'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Stop',
+		null,
+		'fa-stop-circle'
+	))->addClass('btn-warning');
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'viewbtn',
-		'View Capture'
-	))->removeClass('btn-primary');
+		'View Capture',
+		null,
+		'fa-file-text-o'
+	))->addClass('btn-primary');
 
 	$form->addGlobal(new Form_Button(
 		'downloadbtn',
-		'Download Capture'
-	))->removeClass('btn-primary');
+		'Download Capture',
+		null,
+		'fa-download'
+	))->addClass('btn-primary');
 
 	$section->addInput(new Form_StaticText(
 		'Last capture',

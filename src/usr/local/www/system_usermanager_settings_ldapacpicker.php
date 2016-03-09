@@ -83,26 +83,9 @@ if ($_GET) {
 ?>
 <html>
 	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
-
-		<STYLE type="text/css">
-			TABLE {
-				border-width: 1px 1px 1px 1px;
-				border-spacing: 0px;
-				border-style: solid solid solid solid;
-				border-color: gray gray gray gray;
-				border-collapse: separate;
-				background-color: collapse;
-			}
-			TD {
-				border-width: 0px 0px 0px 0px;
-				border-spacing: 0px;
-				border-style: solid solid solid solid;
-				border-color: gray gray gray gray;
-				border-collapse: collapse;
-				background-color: white;
-			}
-		</STYLE>
+		<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
 	</head>
 <script type="text/javascript">
 //<![CDATA[
@@ -126,14 +109,20 @@ function post_choices() {
 </script>
 
 	<body>
+	<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('LDAP Containers')?></h2></div>
+	<div class="panel-body">
 		<form method="post" action="system_usermanager_settings_ldapacpicker.php">
 <?php if (empty($ous)): ?>
 			<p><?=gettext("Could not connect to the LDAP server. Please check your LDAP configuration.");?></p>
-			<input type='button' class="btn btn-sm btn-default" value='<?=gettext("Close"); ?>' onClick="window.close();">
+			<button type='button' class="btn btn-sm btn-warning" value='<?=gettext("Close"); ?>' onClick="window.close();">
+				<i class="fa fa-undo icon-embed-btn"></i>
+				<?=gettext("Close"); ?>
+			</button>
 <?php else: ?>
-			<b><?=gettext("Please select which containers to Authenticate against:");?></b>
-			<p/>
-			<div class="table-responsive">
+			<b><?=gettext("Select containers for authentication:");?></b>
+			<br/>
+			<div class="table">
 				<table class="table table-hover table-striped">
 					<tbody>
 <?php
@@ -144,19 +133,22 @@ function post_choices() {
 			} else {
 				$CHECKED="";
 			}
-			echo "			<tr><td><div class='checkbox'><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></div></td></tr>\n";
+			echo "			<tr><td><input type='checkbox' value='{$ou}' id='ou' name='ou[]'{$CHECKED}> {$ou}<br /></td></tr>\n";
 		}
 	}
 ?>
-
 					</tbody>
 				</table>
 			</div>
 			<p/>
 
-			<input type='button' class="btn btn-sm btn-primary" value='<?=gettext("Save");?>' onClick="post_choices();">
+			<button type='button' class="btn btn-sm btn-primary" value='<?=gettext("Save");?>' onClick="post_choices();">
+				<i class="fa fa-save icon-embed-btn"></i>
+				<?=gettext("Save");?>
+			</button>
 <?php endif; ?>
 		</form>
+	</div>
 	</body>
 	<script src="/bootstrap/js/bootstrap.min.js"></script>
 </html>

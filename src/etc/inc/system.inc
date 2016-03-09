@@ -970,7 +970,7 @@ function system_syslogd_start() {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
 		}
 
-		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c\n";
+		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/dhcpd.log\n";
 		}
@@ -1313,7 +1313,7 @@ $nginx_config .= <<<EOD
 		client_max_body_size 200m;
 
 		gzip on;
-		gzip_types text/html text/plain text/css text/javascript;
+		gzip_types text/plain text/css text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json;
 
 EOD;
 

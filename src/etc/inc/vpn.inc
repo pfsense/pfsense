@@ -474,6 +474,7 @@ charon {
 	init_limit_half_open = 1000
 	install_routes = no
 	load_modular = yes
+	ignore_acquire_ts = yes
 	{$i_dont_care_about_security_and_use_aggressive_mode_psk}
 	{$accept_unencrypted}
 	cisco_unity = {$unity_enabled}

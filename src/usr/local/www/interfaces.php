@@ -452,6 +452,15 @@ if ($_POST['apply']) {
 				if (isset($config['interfaces'][$ifapply]['enable'])) {
 					interface_bring_down($ifapply, false, $ifcfgo);
 					interface_configure($ifapply, true);
+					if ($config['interfaces'][$ifapply]['ipaddrv6'] == "track6") {
+						/* call interface_track6_configure with linkup true so
+						   IPv6 IPs are added back. dhcp6c needs a HUP. Can't
+						   just call interface_configure with linkup true as
+						   that skips bridge membership addition. 
+						*/
+						$wancfg = $config['interfaces'][$ifapply];
+						interface_track6_configure($ifapply, $wancfg, true);
+					}
 				} else {
 					interface_bring_down($ifapply, true, $ifcfgo);
 					if (isset($config['dhcpd'][$ifapply]['enable']) ||
@@ -794,7 +803,7 @@ if ($_POST['apply']) {
 	if (($_POST['pptp_subnet0'] && !is_numeric($_POST['pptp_subnet0']))) {
 		$input_errors[] = gettext("A valid PPTP subnet bit count must be specified.");
 	}
-	if (($_POST['pptp_remote0'] && !is_ipaddrv4($_POST['pptp_remote0']) && !is_hostname($_POST['gateway'][$iface]))) {
+	if (($_POST['pptp_remote0'] && !is_ipaddrv4($_POST['pptp_remote0']) && !is_hostname($_POST['pptp_remote0']))) {
 		$input_errors[] = gettext("A valid PPTP remote IP address must be specified.");
 	}
 	if (($_POST['pptp_idletimeout'] != "") && !is_numericint($_POST['pptp_idletimeout'])) {
@@ -2445,14 +2454,14 @@ if ($pconfig['track6-prefix-id'] == "") {
 }
 
 $section->addInput(new Form_Input(
-	'track6-prefix-id--hex' . $iface,
+	'track6-prefix-id--hex',
 	'IPv6 Prefix ID',
 	'text',
 	sprintf("%x", $pconfig['track6-prefix-id'])
 ))->setHelp('<span id="track6-prefix-id-range"></span>The value in this field is the (Delegated) IPv6 prefix ID. This determines the configurable network ID based on the dynamic IPv6 connection. The default value is 0.');
 
 $section->addInput(new Form_Input(
-	'track6-prefix-id-max' . $iface,
+	'track6-prefix-id-max',
 	null,
 	'hidden',
 	0
@@ -3279,7 +3288,7 @@ events.push(function() {
 				$('.dhcp6advanced, .none, .staticv6, ._6rd, ._6to4, .track6, .slaac').hide();
 				break;
 			}
-			case "6rd_": {
+			case "_6rd": {
 				$('.dhcp6advanced, .none, .dhcp6, .staticv6, ._6to4, .track6, .slaac').hide();
 				break;
 			}
@@ -3611,6 +3620,10 @@ events.push(function() {
 
 	$('#type6').on('change', function() {
 		updateTypeSix(this.value);
+	});
+
+	$('#track6-interface').on('change', function() {
+		update_track6_prefix();
 	});
 
 	$('#pppoe-reset-type').on('change', function() {

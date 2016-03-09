@@ -271,6 +271,14 @@ function interface_vlan_configure(&$vlan) {
 	/* invalidate interface cache */
 	get_interface_arr(true);
 
+	/* configure interface if assigned */
+	$assignedif = convert_real_interface_to_friendly_interface_name($vlanif);
+	if ($assignedif) {
+		if (isset($config['interfaces'][$assignedif]['enable'])) {
+			interface_configure($assignedif, true);
+		}
+	}
+
 	/* XXX: ermal -- for now leave it here at the moment it does not hurt. */
 	interfaces_bring_up($if);
 

@@ -98,9 +98,15 @@ EOD;
 		$iflist = array();
 	} else {
 		foreach ($iflist as $iface => $ifa) {
+			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
+			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
+			if (is_array($ifstatus) && $ifstatus['linkstateup'])
+				$status = "  (up)";
+			else
+				$status = "(down)";
 			$ifsmallist = trim($ifsmallist . " " . $iface);
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
-				$ifa['up'] ? "  (up)" : "(down)", substr($ifa['dmesg'], 0, 48));
+				$status, substr($ifa['dmesg'], 0, 48));
 		}
 	}
 
@@ -330,6 +336,11 @@ EOD;
 
 	if (in_array($key, array('y', 'Y'))) {
 		if ($lanif) {
+			if (is_array($config['interfaces']['lan'])) {
+				$upints = pfSense_interface_listget(IFF_UP);
+				if (in_array($config['interfaces']['lan']['if'], $upints))
+					interface_bring_down('lan', true);
+			}
 			if (!is_array($config['interfaces']['lan'])) {
 				$config['interfaces']['lan'] = array();
 			}
@@ -403,6 +414,11 @@ EOD;
 			}
 		}
 
+		if (is_array($config['interfaces']['wan'])) {
+			$upints = pfSense_interface_listget(IFF_UP);
+			if (in_array($config['interfaces']['wan']['if'], $upints))
+				interface_bring_down('wan', true);
+		}
 		if (!is_array($config['interfaces']['wan'])) {
 			$config['interfaces']['wan'] = array();
 		}
@@ -420,6 +436,11 @@ EOD;
 		}
 
 		for ($i = 0; $i < count($optif); $i++) {
+			if (is_array($config['interfaces']['opt' . ($i+1)])) {
+				$upints = pfSense_interface_listget(IFF_UP);
+				if (in_array($config['interfaces']['opt' . ($i+1)]['if'], $upints))
+					interface_bring_down('opt' . ($i+1), true);
+			}
 			if (!is_array($config['interfaces']['opt' . ($i+1)])) {
 				$config['interfaces']['opt' . ($i+1)] = array();
 			}

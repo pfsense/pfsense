@@ -237,7 +237,7 @@ display_top_tabs($tab_array);
 	<nav class="action-buttons">
 		<input type="hidden" name="if" id="if" value="<?=htmlspecialchars($if)?>" />
 		<button type="submit" class="btn btn-success" name="rescanwifi" id="rescanwifi" value="Rescan">
-			<i class="fa fa-undo icon-embed-btn"></i>
+			<i class="fa fa-refresh icon-embed-btn"></i>
 			<?=gettext("Rescan")?>
 		</button>
 	</nav>

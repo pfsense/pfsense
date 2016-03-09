@@ -170,7 +170,7 @@ display_top_tabs($tab_array);
 											}
 ?>
 										<td class="<?=$bgcolor?>">
-											<?=htmlspecialchars($member);?>,<br/><?=$online?>
+											<?=htmlspecialchars($member);?><br/><?=$online?>
 										</td>
 
 <?php

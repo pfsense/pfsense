@@ -364,6 +364,10 @@ print($form);
 <?php
 				endif;
 ?>
+<?php 				if (isset($natent['nonat'])): ?>
+							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+<?php 				endif; ?>
+
 						</td>
 
 						<td>
@@ -491,13 +495,11 @@ print($form);
 						</td>
 
 						<td>
-<?php
-						if (isset($natent['staticnatport'])) {
-							echo gettext("YES");
-						} else {
-							echo gettext("NO");
-						}
-?>
+<?php						if (isset($natent['staticnatport'])) { ?>
+							<i class="fa fa-check" title="Keep Source Port Static"></i>
+<?php						} else { ?>
+							<i class="fa fa-random" title="Randomize Source Port"></i>
+<?php						} ?>
 						</td>
 
 						<td>
@@ -642,13 +644,11 @@ if ($mode == "automatic" || $mode == "hybrid"):
 ?>
 						</td>
 						<td>
-<?php
-		if (isset($natent['staticnatport'])) {
-			echo gettext("YES");
-		} else {
-			echo gettext("NO");
-		}
-?>
+<?php						if (isset($natent['staticnatport'])) { ?>
+							<i class="fa fa-check" title="Keep Source Port Static"></i>
+<?php						} else { ?>
+							<i class="fa fa-random" title="Randomize Source Port"></i>
+<?php						} ?>
 						</td>
 						<td>
 							<?=htmlspecialchars($natent['descr'])?>

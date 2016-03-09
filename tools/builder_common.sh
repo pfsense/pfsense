@@ -482,7 +482,7 @@ nanobsd_image_filename() {
 	local _type="$2"
 	local _upgrade="$3"
 
-	if [ -z "$upgrade" ]; then
+	if [ -z "$_upgrade" ]; then
 		local _template=${NANOBSD_IMG_TEMPLATE}
 	else
 		local _template=${NANOBSD_UPGRADE_TEMPLATE}
@@ -1323,7 +1323,7 @@ create_memstick_image() {
 	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}|
+	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
 	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
 	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
 	trap "-" 1 2 15 EXIT
@@ -1397,7 +1397,7 @@ create_memstick_serial_image() {
 }
 
 create_memstick_adi_image() {
-	LOGFILE=${BUILDER_LOGS}/memstickadi${TARGET}
+	LOGFILE=${BUILDER_LOGS}/memstickadi.${TARGET}
 	if [ "${MEMSTICKADIPATH}" = "" ]; then
 		echo ">>> MEMSTICKADIPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return
@@ -2317,7 +2317,7 @@ snapshots_copy_to_staging_nanobsd() {
 snapshots_copy_to_staging_iso_updates() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH}; do
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
@@ -2330,12 +2330,6 @@ snapshots_copy_to_staging_iso_updates() {
 		sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
 		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
-	fi
-
-	if [ "${TARGET}" = "amd64" -a -f "${MEMSTICKADIPATH}.gz" ]; then
-		sha256 ${MEMSTICKADIPATH}.gz > ${MEMSTICKADIPATH}.sha256
-		cp -l ${MEMSTICKADIPATH}* $STAGINGAREA/ 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${MEMSTICKADIPATH})
 	fi
 
 	# NOTE: Updates need a file with output similar to date output

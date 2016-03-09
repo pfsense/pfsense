@@ -206,8 +206,7 @@ $group->add(new Form_Checkbox(
 	'IPv6 over IPv4 Tunneling',
 	'Enable IPv4 NAT encapsulation of IPv6 packets',
 	$pconfig['ipv6nat_enable']
-))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
-	'blocks traffic.');
+));
 
 $group->add(new Form_Input(
 	'ipv6nat_ipaddr',
@@ -226,8 +225,8 @@ $section->addInput(new Form_Checkbox(
 	'Prefer IPv4 over IPv6',
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
-))->setHelp('By default, if a hostname resolves IPv6 and IPv4 addresses IPv6 will '.
-	'be used, if you check this option, IPv4 will be used instead of IPv6.');
+))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
+	'IPv6 will be used. If you check this option, IPv4 will be preferred over IPv6.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

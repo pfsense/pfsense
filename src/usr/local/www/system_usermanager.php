@@ -378,6 +378,7 @@ function build_priv_table() {
 	$privhtml .=				'<th>' . gettext('Inherited from') . '</th>';
 	$privhtml .=				'<th>' . gettext('Name') . '</th>';
 	$privhtml .=				'<th>' . gettext('Description') . '</th>';
+	$privhtml .=				'<th>' . gettext('Action') . '</th>';
 	$privhtml .=			'</tr>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
@@ -396,7 +397,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
-			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a></td>';
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
 		$privhtml .=			'</td>';

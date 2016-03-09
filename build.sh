@@ -342,6 +342,7 @@ if [ "$IMAGETYPE" = "all" ]; then
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
 	fi
+	_IMAGESTOBUILD="${_IMAGESTOBUILD} ova"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
 fi

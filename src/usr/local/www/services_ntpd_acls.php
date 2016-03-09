@@ -317,8 +317,10 @@ foreach ($networkacl as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
 	$group->addClass('repeatable');
 	$section->add($group);
@@ -328,8 +330,10 @@ foreach ($networkacl as $item) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
 
 $form->add($section);
 

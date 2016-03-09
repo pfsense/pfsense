@@ -167,7 +167,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form('Ping');
+$form = new Form(false);
 
 $section = new Form_Section('Ping');
 
@@ -201,6 +201,14 @@ $section->addInput(new Form_Select(
 ))->setHelp('Select the maximum number of pings');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Ping',
+	null,
+	'fa-rss'
+))->addClass('btn-primary');
+
 print $form;
 
 if ($do_ping && !empty($result) && !$input_errors) {

@@ -279,16 +279,20 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
 	 $section->add($group);
 }
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
 
 $section->addInput(new Form_StaticText(
 	null,

@@ -141,11 +141,22 @@ require("head.inc");
 		<div class="content">
 			<form>
 				<input type="text" class="form-control" id="fbTarget"/>
-				<input type="button" class="btn btn-default btn-sm"	  onclick="loadFile();" value="<?=gettext('Load')?>" />
-				<input type="button" class="btn btn-default btn-sm"	  id="fbOpen"		   value="<?=gettext('Browse')?>" />
-				<input type="button" class="btn btn-default btn-sm"	  onclick="saveFile();" value="<?=gettext('Save')?>" />
+				<div class="btn-group">
+					<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
+						<i class="fa fa-file-text-o"></i>
+						<?=gettext('Load')?>
+					</button>
+					<button type="button" class="btn btn-default btn-sm" id="fbOpen"		value="<?=gettext('Browse')?>">
+						<i class="fa fa-list"></i>
+						<?=gettext('Browse')?>
+					</button>
+					<button type="button" class="btn btn-default btn-sm" onclick="saveFile();"	value="<?=gettext('Save')?>">
+						<i class="fa fa-save"></i>
+						<?=gettext('Save')?>
+					</button>
+				</div>
 				<span class="pull-right">
-					<button id="btngoto" class="btn btn-default btn-sm"><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" />
+					<button id="btngoto" class="btn btn-default btn-sm"><i class="fa fa-forward"></i><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" />
 				</span>
 			</form>
 

@@ -297,8 +297,10 @@ if ($act == "new" || $act == "edit") {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			'Delete'
-		))->removeClass('btn-primary')->addClass('btn-warning');
+			'Delete',
+			null,
+			'fa-trash'
+		))->addClass('btn-warning');
 
 		$group->addClass('repeatable');
 		$section->add($group);
@@ -308,8 +310,10 @@ if ($act == "new" || $act == "edit") {
 
 	$form->addGlobal(new Form_Button(
 		'addrow',
-		'Add network'
-	))->removeClass('btn-primary')->addClass('btn-success');
+		'Add Network',
+		null,
+		'fa-plus'
+	))->addClass('btn-success');
 
 	$form->add($section);
 	print($form);

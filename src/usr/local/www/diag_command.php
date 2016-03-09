@@ -245,13 +245,26 @@ if (!isBlank($_POST['txtCommand'])):?>
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext('Execute Shell Command')?></h2></div>
 		<div class="panel-body">
 			<div class="content">
-				<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-4"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
+				<input id="txtCommand" name="txtCommand" placeholder="Command" type="text" class="col-sm-7"	 value="<?=htmlspecialchars($_POST['txtCommand'])?>" />
 				<br /><br />
 				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
-				<input type="button" class="btn btn-default btn-sm" name="btnRecallPrev" value="<" onclick="btnRecall_onClick( this.form, -1 );" />
-				<button type="submit" class="btn btn-default btn-sm" value="EXEC"><?=gettext("Execute"); ?></button>
-				<input type="button" class="btn btn-default btn-sm" name="btnRecallNext" value=">" onclick="btnRecall_onClick( this.form,  1 );" />
-				<input type="button" class="btn btn-default btn-sm" value="<?=gettext("Clear"); ?>" onclick="return Reset_onClick( this.form );" />
+
+				<div class="btn-group">
+					<button type="button" class="btn btn-default btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
+						<i class="fa fa-angle-double-left"></i>
+					</button>
+					<button type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
+						<i class="fa fa-terminal icon-inverse"></i>
+						<?=gettext("Execute"); ?>
+					</button>
+					<button type="button" class="btn btn-default btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
+						<i class="fa fa-angle-double-right"></i>
+					</a>
+					<button type="button" class="btn btn-default btn-sm" onclick="return Reset_onClick( this.form );" title="<?=gettext("Clear command entry")?>">
+						<i class="fa fa-undo"></i>
+						<?=gettext("Clear"); ?>
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -262,7 +275,10 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<div class="content">
 				<input name="dlPath" type="text" id="dlPath" placeholder="File to download" class="col-sm-4" value="<?=htmlspecialchars($_GET['dlPath']);?>"/>
 				<br /><br />
-				<button name="submit" type="submit" class="btn btn-default btn-sm" id="download" value="DOWNLOAD"><?=gettext("Download")?></button>
+				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="download" value="DOWNLOAD">
+					<i class="fa fa-download icon-embed-btn"></i>
+					<?=gettext("Download")?>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -278,7 +294,10 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<div class="content">
 				<input name="ulfile" type="file" class="btn btn-default btn-sm btn-file" id="ulfile" />
 				<br />
-				<button name="submit" type="submit" class="btn btn-default btn-sm" id="upload" value="UPLOAD"><?=gettext("Upload")?></button>
+				<button name="submit" type="submit" class="btn btn-primary btn-sm" id="upload" value="UPLOAD">
+					<i class="fa fa-upload icon-embed-btn"></i>
+					<?=gettext("Upload")?>
+				</button>
 			</div>
 		</div>
 	</div>
@@ -325,7 +344,10 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<div class="content">
 				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 				<br />
-				<input type="submit" class="btn btn-default btn-sm" value="<?=gettext("Execute")?>" />
+				<button type="submit" class="btn btn-warning btn-sm" value="<?=gettext("Execute")?>" title="<?=gettext("Execute this PHP Code")?>">
+					<i class="fa fa-terminal icon-inverse"></i>
+					<?=gettext("Execute")?>
+				</button>
 				<?=gettext("Example"); ?>: <code>print("Hello World!");</code>
 			</div>
 		</div>

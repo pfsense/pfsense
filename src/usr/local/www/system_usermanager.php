@@ -413,7 +413,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -459,7 +459,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$certhtml .= '</nav>';
 
 	return($certhtml);
@@ -716,13 +716,17 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Member of" list >'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Member of" list',
+		null,
+		'fa-angle-double-right'
+	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'< Move to "Not member of" list'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Not member of" list',
+		null,
+		'fa-angle-double-left'
+	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
 	$section->add($group);

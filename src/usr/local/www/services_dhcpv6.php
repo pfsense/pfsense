@@ -947,10 +947,12 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$btn = new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
+		'Delete',
+		null,
+		'fa-trash'
 	);
 
-	$btn->removeClass('btn-primary')->addClass('btn-warning');
+	$btn->addClass('btn-warning');
 	$group->add($btn);
 	$section->add($group);
 	$counter++;
@@ -959,7 +961,9 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 $btnaddopt = new Form_Button(
 	'addrow',
-	'Add Option'
+	'Add Option',
+	null,
+	'fa-plus'
 );
 
 $btnaddopt->removeClass('btn-primary')->addClass('btn-success btn-sm');

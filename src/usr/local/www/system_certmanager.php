@@ -826,8 +826,10 @@ foreach ($pconfig['altnames']['item'] as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
 	$group->addClass('repeatable');
 
@@ -838,8 +840,10 @@ foreach ($pconfig['altnames']['item'] as $item) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
 
 $form->add($section);
 $section = new Form_Section('External Signing Request');

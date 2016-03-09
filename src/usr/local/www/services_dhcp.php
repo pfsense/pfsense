@@ -887,8 +887,10 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
 		'Add pool',
-		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool'
+		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool',
+		'fa-plus'
 	);
+	$btnaddpool->addClass('btn-success');
 
 	$section->addInput(new Form_StaticText(
 		'Add',
@@ -1208,8 +1210,10 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
 	$section->add($group);
 
@@ -1218,8 +1222,10 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add'
-))->removeClass('btn-primary')->addClass('btn-success');
+	'Add',
+	null,
+	'fa-plus'
+))->addClass('btn-success');
 
 $form->add($section);
 

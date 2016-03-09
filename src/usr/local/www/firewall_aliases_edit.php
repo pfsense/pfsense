@@ -743,8 +743,10 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
 	$section->add($group);
 	$counter++;
@@ -752,8 +754,10 @@ while ($counter < count($addresses)) {
 
 $form->addGlobal(new Form_Button(
 	'addrow',
-	$btn_str[$tab]
-))->removeClass('btn-primary')->addClass('btn-success addbtn');
+	$btn_str[$tab],
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
 $form->add($section);
 
@@ -785,6 +789,7 @@ events.push(function() {
 
 		var buttonstr = <?=json_encode($btn_str);?>;
 		$('.btn-success').prop('value', buttonstr[tab]);
+		$('.btn-success').html('<i class="fa fa-plus icon-embed-btn"></i>' + buttonstr[tab]);
 
 		// Set the input field label by tab
 		var labelstr = <?=json_encode($label_str);?>;

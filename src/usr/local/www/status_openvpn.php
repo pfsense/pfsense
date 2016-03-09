@@ -192,8 +192,12 @@ include("head.inc"); ?>
 		if (is_array($server['routes']) && count($server['routes'])):
 ?>
 <div id="shroutebut-<?= $i ?>">
-	<input type="button" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>" /> - <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
-		<br /><br />
+	<button type="button" class="btn btn-info" onClick="show_routes('tabroute-<?= $i ?>','shroutebut-<?= $i ?>')" value="<?php echo gettext("Show Routing Table"); ?>">
+		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<?php echo gettext("Show Routing Table"); ?>
+	</button>
+	- <?= gettext("Display OpenVPN's internal routing table for this server.") ?>
+	<br /><br />
 </div>
 <div class="panel panel-default" id="tabroute-<?=$i?>" style="display: none;">
 		<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?> <?=gettext("Routing Table"); ?></h2></div>

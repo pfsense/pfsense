@@ -122,7 +122,7 @@ events.push(function() {
 
 <?php
 
-$form = new Form;
+$form = new Form(false);
 $section = new Form_Section('Filters');
 
 $section->addInput(new Form_Input(
@@ -133,6 +133,14 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Filter',
+	null,
+	'fa-filter'
+))->addClass('btn-primary');
+
 print $form;
 
 ?>

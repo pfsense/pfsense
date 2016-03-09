@@ -454,6 +454,7 @@ print($tree);
 if (count($altq_list_queues) > 0) {
 ?>
 					<a href="firewall_shaper.php?action=resetall" class="btn btn-sm btn-danger">
+						<i class="fa fa-trash icon-embed-btn"></i>
 						<?=gettext('Remove Shaper')?>
 					</a>
 <?php
@@ -476,7 +477,8 @@ if (!$dfltmsg && $sform)  {
 			$sform->addGlobal(new Form_Button(
 				'add',
 				'Add new Queue',
-				$url
+				$url,
+				'fa-plus'
 			))->removeClass('btn-default')->addClass('btn-success');
 
 		}
@@ -490,7 +492,8 @@ if (!$dfltmsg && $sform)  {
 		$sform->addGlobal(new Form_Button(
 			'delete',
 			$queue ? 'Delete this queue':'Disable shaper on interface',
-			$url
+			$url,
+			'fa-trash'
 		))->removeClass('btn-default')->addClass('btn-danger');
 
 	}

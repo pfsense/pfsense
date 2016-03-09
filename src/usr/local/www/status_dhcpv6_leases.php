@@ -624,9 +624,9 @@ foreach ($prefixes as $data):
 </div>
 
 <?php if ($_GET['all']): ?>
-	<a class="btn btn-default" href="status_dhcpv6_leases.php?all=0"><?=gettext("Show active and static leases only")?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>
-	<a class="btn btn-default" href="status_dhcpv6_leases.php?all=1"><?=gettext("Show all configured leases")?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>
 <?php endif;
 
 include("foot.inc");

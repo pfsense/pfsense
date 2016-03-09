@@ -245,7 +245,7 @@ if ($input_errors) {
 		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.'), 'warning', false);
 }
 
-$form = new Form('Test');
+$form = new Form(false);
 
 $section = new Form_Section('Test Port');
 
@@ -296,6 +296,14 @@ $section->addInput(new Form_Select(
 					" For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work.");
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Test',
+	null,
+	'fa-wrench'
+))->addClass('btn-primary');
+
 print $form;
 
 // If the command succeeded, the user asked to see the output and there is output, then show it.

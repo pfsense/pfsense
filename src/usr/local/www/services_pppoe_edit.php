@@ -554,8 +554,10 @@ if ($usernames != "") {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			'Delete'
-		))->removeClass('btn-primary')->addClass('btn-warning');
+			'Delete',
+			null,
+			'fa-trash'
+		))->addClass('btn-warning');
 
 		$section->add($group);
 
@@ -565,10 +567,12 @@ if ($usernames != "") {
 
 $btnaddrow = new Form_Button(
 	'addrow',
-	'Add user'
+	'Add user',
+	null,
+	'fa-plus'
 );
 
-$btnaddrow->removeClass('btn-primary')->addClass('btn-success');
+$btnaddrow->addClass('btn-success');
 
 $section->addInput(new Form_StaticText(
 	null,

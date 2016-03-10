@@ -1299,10 +1299,8 @@ create_memstick_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstick"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstick"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
@@ -1341,10 +1339,8 @@ create_memstick_serial_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstickserial"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstickserial"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
@@ -1403,10 +1399,8 @@ create_memstick_adi_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstickadi"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstickadi"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 

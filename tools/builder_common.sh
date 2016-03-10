@@ -1405,10 +1405,8 @@ create_memstick_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstick"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstick"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
@@ -1449,10 +1447,8 @@ create_memstick_serial_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstickserial"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstickserial"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
@@ -1513,10 +1509,8 @@ create_memstick_adi_image() {
 		return
 	fi
 
-	if [ ! -d ${FINAL_CHROOT_DIR}/boot ]; then
-		customize_stagearea_for_image "memstickadi"
-		install_default_kernel ${DEFAULT_KERNEL}
-	fi
+	customize_stagearea_for_image "memstickadi"
+	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
@@ -2018,6 +2012,7 @@ poudriere_rename_ports() {
 	for d in $(find ${_ports_dir} -depth 2 -type d -name '*pfSense*'); do
 		local _pdir=$(dirname ${d})
 		local _pname=$(echo $(basename ${d}) | sed "s,pfSense,${PRODUCT_NAME},")
+		local _plist=""
 
 		if [ -e ${_pdir}/${_pname} ]; then
 			rm -rf ${_pdir}/${_pname}
@@ -2025,11 +2020,15 @@ poudriere_rename_ports() {
 
 		cp -r ${d} ${_pdir}/${_pname}
 
+		if [ -f ${_pdir}/${_pname}/pkg-plist ]; then
+			_plist=${_pdir}/${_pname}/pkg-plist
+		fi
+
 		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
 			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
 			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
 			${_pdir}/${_pname}/Makefile \
-			${_pdir}/${_pname}/pkg-descr
+			${_pdir}/${_pname}/pkg-descr ${_plist}
 
 		# PHP module is special
 		if echo "${_pname}" | grep -q "^php[0-9]*-${PRODUCT_NAME}-module"; then

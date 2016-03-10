@@ -1817,8 +1817,10 @@ $group->add(new Form_Select(
 
 $group->add(new Form_Button(
 	'addgw',
-	'Add a new gateway'
-))->removeClass('btn-primary')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+	'Add a new gateway',
+	null,
+	'fa-plus'
+))->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none".' .
@@ -1848,8 +1850,10 @@ $group->add(new Form_Select(
 
 $group->add(new Form_Button(
 	'addgw6',
-	'Add a new gateway'
-))->removeClass('btn-primary')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
+	'Add a new gateway',
+	null,
+	'fa-plus'
+))->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none". ');
@@ -1888,17 +1892,21 @@ $modal->addInput(new Form_Input(
 
 $btnaddgw6 = new Form_Button(
 	'add6',
-	'Add'
+	'Add',
+	null,
+	'fa-plus'
 );
 
-$btnaddgw6->removeClass('btn-primary')->addClass('btn-success');
+$btnaddgw6->addClass('btn-success');
 
 $btncnxgw6 = new Form_Button(
 	'cnx6',
-	'Cancel'
+	'Cancel',
+	null,
+	'fa-undo'
 );
 
-$btncnxgw6->removeClass('btn-primary')->addClass('btn-default');
+$btncnxgw6->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
@@ -3200,17 +3208,21 @@ $modal->addInput(new Form_Input(
 
 $btnaddgw = new Form_Button(
 	'add',
-	'Add'
+	'Add',
+	null,
+	'fa-plus'
 );
 
-$btnaddgw->removeClass('btn-primary')->addClass('btn-success');
+$btnaddgw->addClass('btn-success');
 
 $btncnxgw = new Form_Button(
 	'cnx',
-	'Cancel'
+	'Cancel',
+	null,
+	'fa-undo'
 );
 
-$btncnxgw->removeClass('btn-primary')->addClass('btn-default');
+$btncnxgw->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,

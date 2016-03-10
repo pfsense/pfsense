@@ -285,23 +285,20 @@ $filesystems = get_mounted_filesystems();
 			</td>
 		</tr>
 		<?php endif; ?>
+
+<?php $diskidx = 0; foreach ($filesystems as $fs): ?>
 		<tr>
-			<th><?=gettext("Disk usage");?></th>
+			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
 			<td>
-				<table class="table">
-<?php foreach ($filesystems as $fs): ?>
-					<tr>
-						<th><?=$fs['mountpoint']?></th>
-						<td><?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></td>
-						<td><?=$fs['total_size']?>iB</td>
-						<td>
-							<span><?=$fs['percent_used']?>%</span>
-						</td>
-					</tr>
-<?php endforeach; ?>
-				</table>
+				<div class="progress" >
+					<div id="diskspace<?=$diskidx?>" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$fs['percent_used']?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$fs['percent_used']?>%">
+					</div>
+				</div>
+				<span><?=$fs['percent_used']?>%<?=gettext(" of ")?><?=$fs['total_size']?>iB - <?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></spa>
 			</td>
 		</tr>
+<?php $diskidx++; endforeach; ?>
+
 	</tbody>
 </table>
 

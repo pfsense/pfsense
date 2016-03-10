@@ -259,7 +259,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 					</button>
 					<button type="button" class="btn btn-default btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
 						<i class="fa fa-angle-double-right"></i>
-					</a>
+					</button>
 					<button type="button" class="btn btn-default btn-sm" onclick="return Reset_onClick( this.form );" title="<?=gettext("Clear command entry")?>">
 						<i class="fa fa-undo"></i>
 						<?=gettext("Clear"); ?>

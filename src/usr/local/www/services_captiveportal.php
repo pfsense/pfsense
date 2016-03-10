@@ -1102,23 +1102,28 @@ if ($pconfig['httpslogin_enable']) {
 }
 
 if ($pconfig['page']['htmltext']) {
-	$section->addInput(new Form_Button(
+	$group = new Form_Group('Current Portal Page');
+	$group->add(new Form_Button(
 		'btnview',
-		'View current page',
-		$href
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
+		'View',
+		$href,
+		'fa-file-text-o'
+	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Download current page',
-		'?zone=' . $cpzone . '&act=gethtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
+		'Download',
+		'?zone=' . $cpzone . '&act=gethtmlhtml',
+		'fa-download'
+	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Restore default portal page',
-		'?zone=' . $cpzone . '&act=delhtmlhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+		'Restore Default Page',
+		'?zone=' . $cpzone . '&act=delhtmlhtml',
+		'fa-undo'
+	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+	$section->add($group);
 }
 
 $section->addInput(new Form_Input(
@@ -1131,23 +1136,28 @@ $section->addInput(new Form_Input(
 			'server, if any.')->addClass('btn btn-info btn-sm');
 
 if ($pconfig['page']['errtext']) {
-	$section->addInput(new Form_Button(
+	$group = new Form_Group('Current Auth Error Page');
+	$group->add(new Form_Button(
 		'btnview',
-		'View current page',
-		'?zone=' . $cpzone . '&act=viewerrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs');
+		'View',
+		'?zone=' . $cpzone . '&act=viewerrhtml',
+		'fa-file-text-o'
+	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Download current page',
-		'?zone=' . $cpzone . '&act=geterrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
+		'Download',
+		'?zone=' . $cpzone . '&act=geterrhtml',
+		'fa-download'
+	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Restore default error page',
-		'?zone=' . $cpzone . '&act=delerrhtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+		'Restore Default Page',
+		'?zone=' . $cpzone . '&act=delerrhtml',
+		'fa-undo'
+	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+	$section->add($group);
 }
 
 $section->addInput(new Form_Input(
@@ -1158,23 +1168,28 @@ $section->addInput(new Form_Input(
 ))->setHelp('The contents of the HTML/PHP file that you upload here are displayed on authentication success when the logout popup is enabled.')->addClass('btn btn-info btn-sm');
 
 if ($pconfig['page']['logouttext']) {
-	$section->addInput(new Form_Button(
+	$group = new Form_Group('Current Logout Page');
+	$group->add(new Form_Button(
 		'btnview',
-		'View current page',
-		'?zone=' . $cpzone . '&act=viewlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-default btn-xs')->setAttribute("target", "_blank");
+		'View',
+		'?zone=' . $cpzone . '&act=viewlogouthtml',
+		'fa-file-text-o'
+	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Download current page',
-		'?zone=' . $cpzone . '&act=getlogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
+		'Download',
+		'?zone=' . $cpzone . '&act=getlogouthtml',
+		'fa-download'
+	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
-	$section->addInput(new Form_Button(
+	$group->add(new Form_Button(
 		'btndownload',
-		'Restore default logout page',
-		'?zone=' . $cpzone . '&act=dellogouthtml'
-	))->removeClass('btn-primary')->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+		'Restore Default Page',
+		'?zone=' . $cpzone . '&act=dellogouthtml',
+		'fa-undo'
+	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
+	$section->add($group);
 }
 $section->addInput(new Form_Input(
 	'zone',

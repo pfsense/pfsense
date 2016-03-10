@@ -274,12 +274,18 @@ endif;
 if (!empty($cpzone)):
 	if ($_GET['showact']): ?>
 		<input type="hidden" name="showact" value="0" />
-		<input type="submit" class="btn btn-default" value="<?=gettext("Don't show last activity")?>" />
+		<button type="submit" class="btn btn-info" value="<?=gettext("Don't show last activity")?>">
+			<i class="fa fa-minus-circle icon-embed-btn"></i>
+			<?=gettext("Hide Last Activity")?>
+		</button>
 <?php
 	else:
 ?>
 		<input type="hidden" name="showact" value="1" />
-		<input type="submit" class="btn btn-default" value="<?=gettext("Show last activity")?>" />
+		<button type="submit" class="btn btn-info" value="<?=gettext("Show last activity")?>">
+			<i class="fa fa-plus-circle icon-embed-btn"></i>
+			<?=gettext("Show Last Activity")?>
+		</button>
 <?php
 	endif;
 ?>

@@ -78,11 +78,6 @@ if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
 
-if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
-	exit;
-}
-
 if ($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
 	exec("/usr/bin/openssl rsa -pubout < /tmp/key64.private > /tmp/key64.public");
@@ -90,6 +85,11 @@ if ($_REQUEST['generatekey']) {
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");
 	print json_encode(['public' => $publickey, 'private' => $privatekey]);
+	exit;
+}
+
+if (empty($cpzone)) {
+	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
@@ -674,7 +674,7 @@ events.push(function() {
 	// Set initial state
 	setShowHide($('#enable').is(":checked"));
 
-	var generateButton = $('<a class="btn btn-xs btn-default"><?=gettext("Generate new keys");?></a>');
+	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new keys");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
 			type: 'get',

@@ -571,8 +571,10 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Button(
 	'Select',
-	'Select a container'
-))->removeClass('btn-primary')->addClass('btn-default');
+	'Select a container',
+	null,
+	'fa-search'
+))->addClass('btn-info');
 
 $section->add($group);
 

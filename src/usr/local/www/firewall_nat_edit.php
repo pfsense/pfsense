@@ -721,10 +721,12 @@ $section->addInput(new Form_Select(
 
 $btnsrcadv = new Form_Button(
 	'srcadv',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnsrcadv->removeClass('btn-primary')->addClass('btn-default');
+$btnsrcadv->addClass('btn-info');
 
 $section->addInput(new Form_StaticText(
 	'Source',

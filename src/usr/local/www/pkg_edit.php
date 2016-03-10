@@ -1307,10 +1307,22 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		// Create form button
 		case "button":
+			$newbtnicon = "fa-save";
+			if ($pkga['buttonicon'] != "") {
+				$newbtnicon = $pkga['buttonicon'];
+			}
+			$newbtnclass = "btn-primary";
+			if ($pkga['buttonclass'] != "") {
+				$newbtnclass = $pkga['buttonclass'];
+			}
+
 			$newbtn = new Form_Button(
 				$pkga['fieldname'],
-				$pkga['fieldname']
+				$pkga['fieldname'],
+				null,
+				$newbtnicon
 			);
+			$newbtn->addClass($newbtnclass);
 
 			if (grouping) {
 				$group->add(new Form_StaticText(
@@ -1498,8 +1510,10 @@ $form->addGlobal(new Form_Input(
 if (!empty($advanced)) {
 	$form->addGlobal(new Form_Button(
 		'showadv',
-		'Show advanced options'
-	))->removeClass('btn-primary')->addClass('btn-default');
+		'Show Advanced Options',
+		null,
+		'fa-cog'
+	))->addClass('btn-info');
 
 	$form->add($advanced);
 }

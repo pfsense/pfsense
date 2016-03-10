@@ -1363,8 +1363,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
 			'btnsrcadv',
-			'Show advanced'
-		))->removeClass('btn-primary');
+			'Show advanced',
+			null,
+			'fa-cog'
+		))->addClass('btn-info');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];

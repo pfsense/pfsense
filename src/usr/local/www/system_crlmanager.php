@@ -572,8 +572,10 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$group->add(new Form_Button(
 			'submit',
-			'Add'
-			))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+			'Add',
+			null,
+			'fa-plus'
+			))->addClass('btn-success btn-sm');
 
 		$section->add($group);
 

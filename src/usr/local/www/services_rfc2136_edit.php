@@ -334,8 +334,10 @@ if (isset($id) && $a_rfc2136[$id]) {
 
 	$form->addGlobal(new Form_Button(
 		'force',
-		'Save & Force Update'
-	))->removeClass('btn-primary')->addClass('btn-info');
+		'Save & Force Update',
+		null,
+		'fa-refresh'
+	))->addClass('btn-info');
 }
 
 $form->add($section);

@@ -1276,7 +1276,9 @@ events.push(function() {
 	typesel_change();
 	proto_change();
 	nordr_change();
-	hideSource(true);
+
+	var source_defined = <?= ($pconfig['srcnot'] || ($pconfig['src'] != "any") || ($pconfig['srcbeginport'] != "any") || ($pconfig['srcendport'] != "any"))? 1:0 ?>;
+	hideSource(!source_defined);
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;

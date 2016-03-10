@@ -843,10 +843,25 @@ create_ova_image() {
 
 	mkdir -p ${OVA_TMP}
 
-	# first partition size (freebsd-ufs)
-	local OVA_FIRST_PART_SIZE_IN_GB=$((VMDK_DISK_CAPACITY_IN_GB-OVA_SWAP_PART_SIZE_IN_GB))
-	# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
-	local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+	if [ -z "${OVA_SWAP_PART_SIZE_IN_GB}" -o "${OVA_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
+		# first partition size (freebsd-ufs)
+		local OVA_FIRST_PART_SIZE_IN_GB=${VMDK_DISK_CAPACITY_IN_GB}
+		# Calculate real first partition size, removing 128 blocks (65536 bytes) beginning/loader
+		local OVA_FIRST_PART_SIZE=$((${OVA_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Unset swap partition size variable
+		unset OVA_SWAP_PART_SIZE
+		# Parameter used by mkimg
+		unset OVA_SWAP_PART_PARAM
+	else
+		# first partition size (freebsd-ufs)
+		local OVA_FIRST_PART_SIZE_IN_GB=$((VMDK_DISK_CAPACITY_IN_GB-OVA_SWAP_PART_SIZE_IN_GB))
+		# Use first partition size in g
+		local OVA_FIRST_PART_SIZE="${OVA_FIRST_PART_SIZE_IN_GB}g"
+		# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
+		local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Parameter used by mkimg
+		local OVA_SWAP_PART_PARAM="-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE}"
+	fi
 
 	# Prepare folder to be put in image
 	customize_stagearea_for_image "ova"
@@ -855,14 +870,16 @@ create_ova_image() {
 	# Fill fstab
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
 	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
-	echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	if [ -n "${OVA_SWAP_PART_SIZE}" ]; then
+		echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	fi
 
 	# Create / partition
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
 		-o label=${PRODUCT_NAME} \
-		-s ${OVA_FIRST_PART_SIZE_IN_GB}g \
+		-s ${OVA_FIRST_PART_SIZE} \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
 
@@ -884,7 +901,7 @@ create_ova_image() {
 		-b /boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
-		-p freebsd-swap/swap0::${OVA_SWAP_PART_SIZE} \
+		${OVA_SWAP_PART_PARAM} \
 		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}
 
 	if [ $? -ne 0 -o ! -f ${OVA_TMP}/${OVFRAW} ]; then

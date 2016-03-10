@@ -70,7 +70,7 @@ export FREEBSD_PARENT_BRANCH=releng/10.3
 export RSYNCIP="firmware.netgate.com"
 export RSYNCUSER="wwwsync"
 export RSYNCPATH="/firmware/beta/snapshots"
-export RSYNCLOGS="/firmware/beta/snapshots/logs"
+export RSYNCLOGS="/firmware/beta/snapshots/logs/$(uname -m)"
 
 # rsync data to upload pkg repo
 export PKG_RSYNC_HOSTNAME="firmware.netgate.com"

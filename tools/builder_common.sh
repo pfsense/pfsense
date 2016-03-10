@@ -1906,6 +1906,7 @@ poudriere_rename_ports() {
 	for d in $(find ${_ports_dir} -depth 2 -type d -name '*pfSense*'); do
 		local _pdir=$(dirname ${d})
 		local _pname=$(echo $(basename ${d}) | sed "s,pfSense,${PRODUCT_NAME},")
+		local _plist=""
 
 		if [ -e ${_pdir}/${_pname} ]; then
 			rm -rf ${_pdir}/${_pname}
@@ -1913,11 +1914,15 @@ poudriere_rename_ports() {
 
 		cp -r ${d} ${_pdir}/${_pname}
 
+		if [ -f ${_pdir}/${_pname}/pkg-plist ]; then
+			_plist=${_pdir}/${_pname}/pkg-plist
+		fi
+
 		sed -i '' -e "s,pfSense,${PRODUCT_NAME},g" \
 			  -e "s,https://www.pfsense.org,${PRODUCT_URL},g" \
 			  -e "/^MAINTAINER=/ s,^.*$,MAINTAINER=	${PRODUCT_EMAIL}," \
 			${_pdir}/${_pname}/Makefile \
-			${_pdir}/${_pname}/pkg-descr
+			${_pdir}/${_pname}/pkg-descr ${_plist}
 
 		# PHP module is special
 		if echo "${_pname}" | grep -q "^php[0-9]*-${PRODUCT_NAME}-module"; then

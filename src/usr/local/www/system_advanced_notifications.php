@@ -277,11 +277,11 @@ $section->addPassword(new Form_Input(
 	$pconfig['password']
 ))->setHelp('Enter the password of the remote growl notification device.');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Button(
 	'test-growl',
-	'Test Growl',
-	'submit',
-	'Test Growl settings'
+	'Test Growl Settings',
+	null,
+	'fa-rss'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.');
 
@@ -368,11 +368,11 @@ $section->addInput(new Form_Select(
 	$smtp_authentication_mechanisms
 ))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN. ');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Button(
 	'test-smtp',
-	'Test SMTP',
-	'submit',
-	'Test SMTP settings'
+	'Test SMTP Settings',
+	null,
+	'fa-send'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 

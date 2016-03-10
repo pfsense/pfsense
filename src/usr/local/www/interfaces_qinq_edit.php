@@ -256,10 +256,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('QinQ Configuration');
 
@@ -321,6 +318,7 @@ foreach ($item as $ww) {
 	$member = $item[$counter];
 
 	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
+	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
 		'members',
@@ -329,11 +327,24 @@ foreach ($item as $ww) {
 		$ww
 	))->setWidth(6); // Width must be <= 8 to make room for the duplication buttons
 
-$counter++;
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
-$group->enableDuplication(null, true); // Buttons are in-line with the input
-$section->add($group);
+	$counter++;
+
+	$section->add($group);
 }
+
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add Tag',
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
 $form->add($section);
 

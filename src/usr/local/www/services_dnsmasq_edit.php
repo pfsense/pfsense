@@ -321,7 +321,7 @@ if ($pconfig['aliases']['item']) {
 			'deleterow' . $counter,
 			'Delete',
 			null,
-			'fa-plus'
+			'fa-trash'
 		))->addClass('btn-warning');
 
 		$section->add($group);

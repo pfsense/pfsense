@@ -119,14 +119,7 @@ if (isset($config['system']['lb_use_sticky'])) {
 $tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
-$resetbtn = new Form_Button(
-	'Submit',
-	'Reset'
-);
-
-$resetbtn->removeClass('btn-primary')->addClass('btn-danger');
-
-$form = new Form($resetbtn);
+$form = new Form(false);
 
 $section = new Form_Section('Select States to Reset');
 
@@ -147,6 +140,14 @@ if (isset($config['system']['lb_use_sticky'])) {
 }
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Reset',
+	null,
+	'fa-trash'
+))->addClass('btn-danger');
+
 print $form;
 ?>
 

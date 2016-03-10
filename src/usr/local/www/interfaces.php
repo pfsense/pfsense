@@ -1711,10 +1711,7 @@ if ($savemsg) {
 }
 
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('General Configuration');
 

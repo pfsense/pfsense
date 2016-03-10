@@ -243,10 +243,7 @@ $tab_array[] = array(gettext("NTP"), false, "status_logs.php?logfile=ntpd");
 $tab_array[] = array(gettext("Settings"), true, "status_logs_settings.php");
 display_top_tabs($tab_array);
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('General Logging Options');
 
@@ -336,8 +333,10 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Button(
 	'resetlogs',
-	'Reset Log Files'
-))->addClass('btn-danger btn-xs')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
+	'Reset Log Files',
+	null,
+	'fa-trash'
+))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');
 
 $form->add($section);
 $section = new Form_Section('Remote Logging Options');

@@ -114,10 +114,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form(new Form_Button(
-	'submit',
-	'Continue'
-));
+$form = new Form(false);
 
 $section = new Form_Section('Add Captive Portal Zone');
 
@@ -132,6 +129,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Save & Continue',
+	null,
+	'fa-save'
+))->addClass('btn-primary');
 
 print($form);
 

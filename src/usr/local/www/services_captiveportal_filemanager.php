@@ -179,10 +179,7 @@ display_top_tabs($tab_array, true);
 
 if ($_GET['act'] == 'add') {
 
-	$form = new Form(new Form_Button(
-		'Submit',
-		'Upload'
-	));
+	$form = new Form(false);
 
 	$form->setMultipartEncoding();
 
@@ -201,8 +198,15 @@ if ($_GET['act'] == 'add') {
 		'file'
 	));
 
-
 	$form->add($section);
+
+	$form->addGlobal(new Form_Button(
+		'Submit',
+		'Upload',
+		null,
+		'fa-upload'
+	))->addClass('btn-primary');
+
 	print($form);
 }
 

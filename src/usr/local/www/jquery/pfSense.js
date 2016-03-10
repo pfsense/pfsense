@@ -40,8 +40,8 @@ $(function() {
 	{
 		var groups = $('div.form-group.user-duplication-horiz');
 		var controlsContainer = $('<div class="col-sm-2"></div>');
-		var plus = $('<a class="btn btn-sm btn-success">Add</a>');
-		var minus = $('<a class="btn btn-sm btn-warning">Delete</a>');
+		var plus = $('<a class="btn btn-sm btn-success"><i class="fa fa-plus icon-embed-btn"></i>Add</a>');
+		var minus = $('<a class="btn btn-sm btn-warning"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>');
 
 		minus.on('click', function(){
 			$(this).parents('div.form-group').remove();
@@ -69,8 +69,8 @@ $(function() {
 	{
 		var groups = $('div.form-group.user-duplication');
 		var controlsContainer = $('<div class="col-sm-10 col-sm-offset-2 controls"></div>');
-		var plus = $('<a class="btn btn-xs btn-success">Add</a>');
-		var minus = $('<a class="btn btn-xs btn-warning">Delete</a>');
+		var plus = $('<a class="btn btn-xs btn-success"><i class="fa fa-plus icon-embed-btn"></i>Add</a>');
+		var minus = $('<a class="btn btn-xs btn-warning"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>');
 
 		minus.on('click', function(){
 			$(this).parents('div.form-group').remove();
@@ -185,7 +185,7 @@ $(function() {
 	    container = self.$tip;
 	    timeout = self.timeout;
 	    container.one('mouseenter', function(){
-	      //We entered the actual popover – call off the dogs
+	      //We entered the actual popover - call off the dogs
 	      clearTimeout(timeout);
 	      //Let's monitor popover content instead
 	      container.one('mouseleave', function(){

@@ -845,6 +845,9 @@ create_ova_image() {
 
 	mkdir -p ${OVA_TMP}
 
+	# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
+	local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+
 	# Prepare folder to be put in image
 	customize_stagearea_for_image "ova"
 	install_default_kernel ${DEFAULT_KERNEL} "no"

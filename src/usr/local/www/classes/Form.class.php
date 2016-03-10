@@ -44,11 +44,15 @@ class Form extends Form_Element
 		if (!isset($submit))
 			$submit = 'Save';
 
-		if (gettype($submit) == 'string')
+		if (gettype($submit) == 'string') {
 			$submit = new Form_Button(
 				'save',
-				$submit
+				$submit,
+				null,
+				'fa-save'
 			);
+			$submit->addClass('btn-primary');
+		}
 
 		if (false !== $submit)
 			$this->addGlobal($submit);

@@ -182,9 +182,11 @@ if ($carpcount == 0) {
 			"<br/>" .
 			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
 			"<br/><br/>" .
-			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
+			'<button type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 			gettext("Reset CARP Demotion Status.") .
-			'" />',
+			'"><i class="fa fa-undo icon-embed-btn"></i>' .
+			gettext("Reset CARP Demotion Status.") .
+			'</button>',
 			'danger'
 		);
 	}

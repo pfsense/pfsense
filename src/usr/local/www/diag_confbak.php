@@ -301,7 +301,12 @@ if (is_array($confvers)):
 	endforeach;
 ?>
 				<tr>
-					<td colspan="2"><input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" /></td>
+					<td colspan="2">
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+							<i class="fa fa-exchange icon-embed-btn"></i>
+							<?=gettext("Diff"); ?>
+						</button>
+					</td>
 					<td colspan="5"></td>
 				</tr>
 <?php

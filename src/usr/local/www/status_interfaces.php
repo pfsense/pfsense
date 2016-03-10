@@ -82,7 +82,10 @@ $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' 
 					'<input type="hidden" name="if" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
-					'<input type="submit" name="submit" class="btn btn-warning btn-xs" value="%s" />' .
+					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
+					'<i class="fa fa-refresh icon-embed-btn"></i>' .
+					'%s' .
+					'</button>' .
 					'</form>';
 
 // Display a term/definition pair
@@ -100,7 +103,7 @@ function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl);
+		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl);
 		print('</dd>');
 	}
 }

@@ -82,7 +82,9 @@ function is_posnumericint($arg) {
 function is_aoadv_used($rule_config) {
 	// Note that the user could set "tag" or "tagged" to the string "0", which is valid but empty().
 	// And if the user enters "0" in other fields, we want to present an error message, and keep the Advanced Options section open.
-	if ((isset($rule_config['allowopts'])) ||
+	if (($rule_config['os'] != "") ||
+	    ($rule_config['dscp'] != "") ||
+	    (isset($rule_config['allowopts'])) ||
 	    (isset($rule_config['disablereplyto'])) ||
 	    ($rule_config['tag'] != "") ||
 	    ($rule_config['tagged'] != "") ||
@@ -92,7 +94,21 @@ function is_aoadv_used($rule_config) {
 	    ($rule_config['max-src-states'] != "") ||
 	    ($rule_config['max-src-conn-rate'] != "") ||
 	    ($rule_config['max-src-conn-rates'] != "") ||
-	    ($rule_config['statetimeout'] != "")) {
+	    ($rule_config['statetimeout'] != "") ||
+	    ($rule_config['tcpflags1'] != "") ||
+	    ($rule_config['tcpflags2'] != "") ||
+	    ($rule_config['tcpflags_any']) ||
+	    ($rule_config['nopfsync']) ||
+	    (($rule_config['statetype'] != "") && ($rule_config['statetype'] != "keep state")) ||
+	    ($rule_config['nosync']) ||
+	    ($rule_config['vlanprio'] != "") ||
+	    ($rule_config['vlanprioset'] != "") ||
+	    ($rule_config['sched'] != "") ||
+	    ($rule_config['gateway'] != "") ||
+	    ($rule_config['dnpipe'] != "") ||
+	    ($rule_config['pdnpipe'] != "") ||
+	    ($rule_config['ackqueue'] != "") ||
+	    ($rule_config['defaultqueue'] != "")) {
 		return true;
 	}
 

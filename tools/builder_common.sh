@@ -402,8 +402,6 @@ print_flags() {
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
 	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
-	printf "   OVA_FIRST_PART_SIZE_IN_GB: %s\n" $OVA_FIRST_PART_SIZE_IN_GB
-	printf "    OVA_SWAP_PART_SIZE_IN_GB: %s\n" $OVA_SWAP_PART_SIZE_IN_GB
 	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
 	printf "                     OVFVMDK: %s\n" $OVFVMDK
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
@@ -845,6 +843,8 @@ create_ova_image() {
 
 	mkdir -p ${OVA_TMP}
 
+	# first partition size (freebsd-ufs)
+	local OVA_FIRST_PART_SIZE_IN_GB=$((VMDK_DISK_CAPACITY_IN_GB-OVA_SWAP_PART_SIZE_IN_GB))
 	# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
 	local OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
 

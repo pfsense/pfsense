@@ -781,10 +781,7 @@ if ($tabscounter == 0) {
 display_top_tabs($tab_array);
 
 // This form uses a non-standard submit button name
-$form = new Form(new Form_Button(
-	'submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('General Options');
 

@@ -3,7 +3,6 @@
 	<title>Services/UPnP &amp; NAT-PMP</title>
 	<name>miniupnpd</name>
 	<version>20100712</version>
-	<savetext>Change</savetext>
 	<include_file>/usr/local/pkg/miniupnpd.inc</include_file>
 	<menu>
 		<name>UPnP &amp; NAT-PMP</name>

@@ -210,12 +210,8 @@ export OVFRAW=${OVFRAW:-"${PRODUCT_NAME}-disk1.raw"}
 export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}-disk1.vmdk"}
 # 8 gigabyte on disk VMDK size
 export VMDK_DISK_CAPACITY_IN_GB=${VMDK_DISK_CAPACITY_IN_GB:-"8"}
-# first partition size (freebsd-ufs)
-export OVA_FIRST_PART_SIZE_IN_GB=${OVA_FIRST_PART_SIZE_IN_GB:-"6"}
 # swap partition size (freebsd-swap)
-export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"2"}
-# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
-export OVA_SWAP_PART_SIZE=$((${OVA_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"0"}
 # Temporary place to save files
 export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}
 # end of OVF

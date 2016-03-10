@@ -233,10 +233,7 @@ $tab_array[] = array(gettext("Configuration"), true, "vpn_l2tp.php");
 $tab_array[] = array(gettext("Users"), false, "vpn_l2tp_users.php");
 display_top_tabs($tab_array);
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section("Enable L2TP");
 

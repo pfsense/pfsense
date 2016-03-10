@@ -113,7 +113,7 @@ $tab_array[] = array(gettext("Test Vouchers"), true, "status_captiveportal_test.
 $tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
 display_top_tabs($tab_array);
 
-$form = new Form('Test');
+$form = new Form(false);
 
 $section = new Form_Section('Test Vouchers');
 
@@ -131,6 +131,14 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Test',
+	null,
+	'fa-wrench'
+))->addClass('btn-primary');
+
 print($form);
 
 include("foot.inc");

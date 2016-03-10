@@ -951,10 +951,7 @@ $form->add($section);
 print $form;
 
 } else if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {
-	$form = new Form(new Form_Button(
-		'save',
-		'Update'
-	));
+	$form = new Form(false);
 
 	$section = new Form_Section("Complete Signing Request for " . $pconfig['descr']);
 
@@ -997,6 +994,14 @@ print $form;
 	 }
 
 	$form->add($section);
+
+	$form->addGlobal(new Form_Button(
+		'Submit',
+		'Update',
+		null,
+		'fa-save'
+	))->addClass('btn-primary');
+
 	print($form);
 } else {
 ?>

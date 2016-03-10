@@ -367,10 +367,12 @@ $section->addInput(new Form_Checkbox(
 
 $btnadvdns = new Form_Button(
 	'btnadvdns',
-	'Custom options'
+	'Custom options',
+	null,
+	'fa-cog'
 );
 
-$btnadvdns->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadvdns->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Custom options',

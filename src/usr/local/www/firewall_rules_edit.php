@@ -1443,10 +1443,12 @@ $adv_open = is_aoadv_used($pconfig);
 
 $btnadvanced = new Form_Button(
 	'toggle-advanced',
-	'Advanced options'
+	'Advanced Options',
+	null,
+	'fa-cog'
 );
 
-$btnadvanced->removeClass('btn-primary')->addClass('btn-default');
+$btnadvanced->addClass('btn-info');
 
 if (!$adv_open) {
 	$section->addInput(new Form_StaticText(

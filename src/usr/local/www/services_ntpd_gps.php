@@ -374,14 +374,16 @@ $section->addInput(new Form_Input(
 // Statistics logging section
 $btnadvgps = new Form_Button(
 	'btnadvgps',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadvgps->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadvgps->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'GPS Initialization',
-	$btnadvgps . '&nbsp;' . 'Show GPS Initialization commands'
+	$btnadvgps
 ));
 
 $section->addInput(new Form_Textarea(
@@ -399,7 +401,9 @@ $group->add(new Form_Input(
 
 $btncalc = new Form_Button(
 	'btncalc',
-	'Calculate'
+	'Calculate',
+	null,
+	'fa-calculator'
 );
 
 $btncalc->removeClass('btn-primary')->addClass('btn-success btn-sm');

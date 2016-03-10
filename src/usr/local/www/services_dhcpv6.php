@@ -754,14 +754,16 @@ $section->addInput(new Form_Checkbox(
 
 $btndyndns = new Form_Button(
 	'btndyndns',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btndyndns->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btndyndns->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
-	$btndyndns . '&nbsp;' . 'Show dynamic DNS settings'
+	$btndyndns
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -820,14 +822,16 @@ $section->addInput(new Form_Checkbox(
 
 $btnntp = new Form_Button(
 	'btnntp',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnntp->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnntp->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
-	$btnntp . '&nbsp;' . 'Show NTP Configuration'
+	$btnntp
 ));
 
 $group = new Form_Group('NTP Servers');
@@ -854,14 +858,16 @@ $section->add($group);
 
 $btnldap = new Form_Button(
 	'btnldap',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnldap->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnldap->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'LDAP',
-	$btnldap . '&nbsp;' . 'Show LDAP Configuration'
+	$btnldap
 ));
 
 $section->addInput(new Form_Input(
@@ -873,14 +879,16 @@ $section->addInput(new Form_Input(
 
 $btnnetboot = new Form_Button(
 	'btnnetboot',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnnetboot->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnnetboot->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Network booting',
-	$btnnetboot . '&nbsp;' . 'Show Network booting'
+	$btnnetboot
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -899,14 +907,16 @@ $section->addInput(new Form_Input(
 
 $btnadnl = new Form_Button(
 	'btnadnl',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadnl->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadnl->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
-	$btnadnl . '&nbsp;' . 'Additional BOOTP/DHCP Options'
+	$btnadnl
 ));
 
 $form->add($section);

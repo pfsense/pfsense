@@ -713,13 +713,15 @@ if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
-		'Advanced options'
+		'Advanced Options',
+		null,
+		'fa-cog'
 	);
 
 	$advdflt = true;
 
 	$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
-	$btnadvanced->removeClass('btn-primary')->addClass('btn-default');
+	$btnadvanced->addClass('btn-info');
 
 	$section->addInput(new Form_StaticText(
 		null,

@@ -630,12 +630,25 @@ if ($pkg['savehelp'] != "") {
 	$savehelp = $pkg['savehelp'];
 }
 
+$saveicon = "fa-save";
+if ($pkg['saveicon'] != "") {
+	$saveicon = $pkg['saveicon'];
+}
+
+$savebtnclass = "btn-primary";
+if ($pkg['savebtnclass'] != "") {
+	$savebtnclass = $pkg['savebtnclass'];
+}
+
 $grouping = false; // Indicates the elements we are composing are part of a combined group
 
 $savebutton = new Form_Button(
 	'submit',
-	$savevalue
+	$savevalue,
+	null,
+	$saveicon
 );
+$savebutton->addClass($savebtnclass);
 
 if ($savehelp) {
 	$savebutton->setHelp($savehelp);

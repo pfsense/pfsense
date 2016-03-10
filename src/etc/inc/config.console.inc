@@ -587,7 +587,7 @@ function netgate_hardware_setup() {
 	$platform = system_identify_specific_platform();
 
 	/* Determine interfaces */
-	switch ($_platform['name']) {
+	switch ($platform['name']) {
 	case 'C2758':
 		$config['interfaces']['wan']['if'] = 'igb0';
 		$config['interfaces']['lan']['if'] = 'igb1';
@@ -681,7 +681,7 @@ function netgate_hardware_setup() {
 	}
 
 	/* Enable powerd */
-	switch ($_platform['name']) {
+	switch ($platform['name']) {
 	case 'RCC':
 	case 'RCC-VE':
 	case 'RCC-DFF':

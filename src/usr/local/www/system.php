@@ -96,6 +96,7 @@ $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguilef
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
+$pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -252,6 +253,9 @@ if ($_POST) {
 
 		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
 		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
+
+		unset($config['system']['webgui']['statusmonitoringsettingspanel']);
+		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -546,6 +550,13 @@ $group->add(new Form_Checkbox(
 	'Manage Log',
 	$pconfig['systemlogsmanagelogpanel']
 ))->setHelp('Show the Manage Log panel in System Logs.');
+
+$group->add(new Form_Checkbox(
+	'statusmonitoringsettingspanel',
+	null,
+	'Monitoring Settings',
+	$pconfig['statusmonitoringsettingspanel']
+))->setHelp('Show the Settings panel in Status Monitoring.');
 
 $group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.
 <br /><span class="badge" title="This feature is in BETA">BETA</span>');

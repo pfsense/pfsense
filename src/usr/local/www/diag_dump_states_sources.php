@@ -136,7 +136,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Filter',
+	gettext('Filter'),
 	null,
 	'fa-filter'
 ))->addClass('btn-primary');

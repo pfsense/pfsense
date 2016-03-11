@@ -143,7 +143,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Reset',
+	gettext('Reset'),
 	null,
 	'fa-trash'
 ))->addClass('btn-danger');

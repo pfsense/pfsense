@@ -261,7 +261,7 @@ foreach ($item as $ww) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete',
+		gettext('Delete'),
 		null,
 		'fa-trash'
 	))->removeClass('btn-primary')->addClass('btn-warning');
@@ -272,7 +272,7 @@ foreach ($item as $ww) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add network',
+	gettext('Add network'),
 	null,
 	'fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');

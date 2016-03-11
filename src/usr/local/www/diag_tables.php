@@ -177,14 +177,14 @@ if ($bogons || $urltable || !empty($entries)) {
 	if ($bogons || $urltable) {
 		$group->add(new Form_Button(
 			'Download',
-			'Update',
+			gettext('Update'),
 			null,
 			'fa-refresh'
 		))->addClass('btn-success btn-sm');
 	} elseif (!empty($entries)) {
 		$group->add(new Form_Button(
 			'clearall',
-			'Clear Table',
+			gettext('Clear Table'),
 			null,
 			'fa-undo'
 		))->addClass('btn-danger btn-sm');

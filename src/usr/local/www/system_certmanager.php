@@ -826,7 +826,7 @@ foreach ($pconfig['altnames']['item'] as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete',
+		gettext('Delete'),
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');
@@ -840,7 +840,7 @@ foreach ($pconfig['altnames']['item'] as $item) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add',
+	gettext('Add'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success');
@@ -997,7 +997,7 @@ print $form;
 
 	$form->addGlobal(new Form_Button(
 		'save',
-		'Update',
+		gettext('Update'),
 		null,
 		'fa-save'
 	))->addClass('btn-primary');

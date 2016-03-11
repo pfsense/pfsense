@@ -721,7 +721,7 @@ $section->addInput(new Form_Select(
 
 $btnsrcadv = new Form_Button(
 	'srcadv',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );

@@ -476,7 +476,7 @@ if (!$dfltmsg && $sform)  {
 
 			$sform->addGlobal(new Form_Button(
 				'add',
-				'Add new Queue',
+				gettext('Add new Queue'),
 				$url,
 				'fa-plus'
 			))->addClass('btn-success');
@@ -491,7 +491,7 @@ if (!$dfltmsg && $sform)  {
 
 		$sform->addGlobal(new Form_Button(
 			'delete',
-			$queue ? 'Delete this queue':'Disable shaper on interface',
+			$queue ? gettext('Delete this queue'):gettext('Disable shaper on interface'),
 			$url,
 			'fa-trash'
 		))->addClass('btn-danger');

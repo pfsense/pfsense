@@ -179,7 +179,7 @@ $section->addInput(new Form_Select(
 
 $form->addGlobal(new Form_Button(
 	'savetest',
-	'Save & Test',
+	gettext('Save & Test'),
 	null,
 	'fa-wrench'
 ))->addClass('btn-info');

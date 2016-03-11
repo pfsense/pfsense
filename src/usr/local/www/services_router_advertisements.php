@@ -355,7 +355,7 @@ foreach ($pconfig['subnets'] as $subnet) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete',
+		gettext('Delete'),
 		null,
 		'fa-trash'
 	))->removeClass('btn-primary')->addClass('btn-warning');
@@ -369,7 +369,7 @@ foreach ($pconfig['subnets'] as $subnet) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add',
+	gettext('Add'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success');

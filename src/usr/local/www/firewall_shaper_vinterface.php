@@ -446,7 +446,7 @@ if ($dfltmsg) {
 
 			$sform->addGlobal(new Form_Button(
 				'add',
-				'Add new Queue',
+				gettext('Add new Queue'),
 				$url,
 				'fa-plus'
 			))->addClass('btn-success');
@@ -461,7 +461,7 @@ if ($dfltmsg) {
 
 			$sform->addGlobal(new Form_Button(
 				'delete',
-				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
+				($queue && ($qname != $pipe)) ? gettext('Delete this queue'):gettext('Delete Limiter'),
 				$url,
 				'fa-trash'
 			))->addClass('btn-danger');

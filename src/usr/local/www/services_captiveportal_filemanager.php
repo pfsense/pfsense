@@ -202,7 +202,7 @@ if ($_GET['act'] == 'add') {
 
 	$form->addGlobal(new Form_Button(
 		'Submit',
-		'Upload',
+		gettext('Upload'),
 		null,
 		'fa-upload'
 	))->addClass('btn-primary');

@@ -319,7 +319,7 @@ if ($pconfig['aliases']['item']) {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			'Delete',
+			gettext('Delete'),
 			null,
 			'fa-trash'
 		))->addClass('btn-warning');
@@ -331,7 +331,7 @@ if ($pconfig['aliases']['item']) {
 
 $form->addGlobal(new Form_Button(
 	'addrow',
-	'Add Host Name',
+	gettext('Add Host Name'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success addbtn');

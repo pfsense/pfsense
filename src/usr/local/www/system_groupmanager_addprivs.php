@@ -212,7 +212,7 @@ $section->addInput(new Form_Input(
 
 $btnfilter = new Form_Button(
 	'btnfilter',
-	'Filter',
+	gettext('Filter'),
 	null,
 	'fa-filter'
 );
@@ -223,7 +223,7 @@ $form->addGlobal($btnfilter);
 
 $btnclear = new Form_Button(
 	'btnclear',
-	'Clear',
+	gettext('Clear'),
 	null,
 	'fa-times'
 );

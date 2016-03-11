@@ -156,7 +156,7 @@ $section->addInput(new Form_StaticText(
 
 $slicebtn = new Form_Button(
 	'bootslice',
-	'Switch Slice',
+	gettext('Switch Slice'),
 	null,
 	'fa-retweet'
 );
@@ -213,7 +213,7 @@ $section->addInput(new Form_Checkbox(
 
 $permbtn = new Form_Button(
 	'setrw',
-	'Save',
+	gettext('Save'),
 	null,
 	'fa-save'
 );
@@ -233,7 +233,7 @@ $section->addInput(new Form_Input(
 
 $dupbtn = new Form_Button(
 	'duplicateslice',
-	'Duplicate ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH,
+	gettext('Duplicate') . ' ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH,
 	null,
 	'fa-clone'
 );
@@ -252,7 +252,7 @@ $section->addInput(new Form_StaticText(
 if (file_exists("/conf/upgrade_log.txt")) {
 	$viewbtn = new Form_Button(
 		'viewupgradelog',
-		'View log',
+		gettext('View log'),
 		null,
 		'fa-file-text-o'
 	);

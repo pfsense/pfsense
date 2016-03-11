@@ -449,14 +449,14 @@ if ($pconfig['gid'] != 1998) { // all users group
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Members"',
+		gettext('Move to "Members"'),
 		null,
 		'fa-angle-double-right'
 	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'Move to "Not members',
+		gettext('Move to "Not members'),
 		null,
 		'fa-angle-double-left'
 	))->removeClass('btn-primary')->addClass('btn-info btn-sm');

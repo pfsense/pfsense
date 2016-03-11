@@ -299,7 +299,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Test',
+	gettext('Test'),
 	null,
 	'fa-wrench'
 ))->addClass('btn-primary');

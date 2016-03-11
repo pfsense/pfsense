@@ -184,7 +184,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Button(
 	'Submit',
-	'Send',
+	gettext('Send'),
 	null,
 	'fa-power-off'
 ))->addClass('btn-primary');

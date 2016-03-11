@@ -393,14 +393,14 @@ $processisrunning = ($processcheck != "");
 if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'startbtn',
-		'Start',
+		gettext('Start'),
 		null,
 		'fa-play-circle'
 	))->addClass('btn-success');
 } else {
 	$form->addGlobal(new Form_Button(
 		'stopbtn',
-		'Stop',
+		gettext('Stop'),
 		null,
 		'fa-stop-circle'
 	))->addClass('btn-warning');
@@ -409,14 +409,14 @@ if (($action == gettext("Stop") or $action == "") and $processisrunning != true)
 if (file_exists($fp.$fn) and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'viewbtn',
-		'View Capture',
+		gettext('View Capture'),
 		null,
 		'fa-file-text-o'
 	))->addClass('btn-primary');
 
 	$form->addGlobal(new Form_Button(
 		'downloadbtn',
-		'Download Capture',
+		gettext('Download Capture'),
 		null,
 		'fa-download'
 	))->addClass('btn-primary');

@@ -873,10 +873,10 @@ svg {
     display: block;
 }
 
-#chart, svg {
+#chart, #chart svg {
     margin: 0px;
     padding: 10px 0;
-    height: 420px;
+    height: 445px;
     width: 100%;
 }
 

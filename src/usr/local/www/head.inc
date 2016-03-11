@@ -554,7 +554,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if ($status_monitoring): ?>
 		<li>
-			<a id="update" title="<?=gettext("Refresh Graph")?>">
+			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
 				<i class="fa fa-repeat icon-pointer"></i>
 			</a>
 		</li>

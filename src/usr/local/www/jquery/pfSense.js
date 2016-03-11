@@ -143,7 +143,7 @@ $(function() {
 
 	// Add toggle-all when there are multiple checkboxes
 	$('.control-label + .checkbox.multi').each(function() {
-		var a = $('<a name="btntoggleall" class="btn btn-xs btn-default">toggle all</a>');
+		var a = $('<a name="btntoggleall" class="btn btn-xs btn-info"><i class="fa fa-check-square-o icon-embed-btn"></i>Toggle All</a>');
 
 		a.on('click', function() {
 			var wrap = $(this).parents('.form-group').find('.checkbox.multi'),

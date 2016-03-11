@@ -793,6 +793,7 @@ a[href]:after {
 #widget-available_panel-body>.content>.row,
 #filter-panel_panel-body>.form-group,
 #manage-log-panel_panel-body>.form-group,
+#monitoring-settings-panel_panel-body>.form-group,
 /** optionally prevent more globally by using the class hierarchy */
 .panel-body.collapse.in>.content>.row,
 .panel-body.collapse.in>.form-group

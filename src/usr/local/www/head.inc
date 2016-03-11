@@ -544,6 +544,22 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		endif
 	?>
 
+	<?php if ($monitoring_settings_form_hidden): ?>
+		<li>
+			<a onclick="$('#monitoring-settings-form').toggle(360);" title="<?=gettext("Settings")?>">
+				<i class="fa fa-wrench icon-pointer"></i>
+			</a>
+		</li>
+	<?php endif?>
+
+	<?php if ($status_monitoring): ?>
+		<li>
+			<a id="update" title="<?=gettext("Refresh Graph")?>">
+				<i class="fa fa-repeat icon-pointer"></i>
+			</a>
+		</li>
+	<?php endif?>
+
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service']) && isAllowedPage('status_services.php')) {
 	$ssvc = array();

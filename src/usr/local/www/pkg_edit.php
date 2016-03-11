@@ -678,6 +678,9 @@ if ($pkg['advanced_options'] == "enabled") {
 $js_array = array();
 
 // Now loop through all of the fields defined in the XML
+if (!is_array($pkg['fields']['field'])) {
+	$pkg['fields']['field'] = array();
+}
 foreach ($pkg['fields']['field'] as $pkga) {
 
 	$action = "";
@@ -1497,7 +1500,9 @@ foreach ($pkg['fields']['field'] as $pkga) {
 	$i++;
 } // e-o-foreach field described in the XML
 
-$form->add($section);
+if ($section) {
+	$form->add($section);
+}
 
 $form->addGlobal(new Form_Input(
 	'id',

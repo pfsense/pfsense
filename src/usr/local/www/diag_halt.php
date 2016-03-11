@@ -106,9 +106,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 					<i class="fa fa-stop-circle"></i>
 					<?=gettext("Halt")?>
 				</button>
-				<a href="/" class="btn btn-success">
-					<i class="fa fa-play"></i>
-					<?=gettext("No")?>
+				<a href="/" class="btn btn-info">
+					<i class="fa fa-undo"></i>
+					<?=gettext("Cancel")?>
 				</a>
 			</form>
 		</div>

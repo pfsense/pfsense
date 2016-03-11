@@ -94,6 +94,8 @@ $certs_available = false;
 
 if (is_array($a_cert) && count($a_cert)) {
 	$certs_available = true;
+} else {
+	$a_cert = array();
 }
 
 if (!$pconfig['webguiproto'] || !$certs_available) {

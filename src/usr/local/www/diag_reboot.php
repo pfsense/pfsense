@@ -147,9 +147,9 @@ events.push(function() {
 					<i class="fa fa-refresh"></i>
 					<?=gettext("Reboot")?>
 				</button>
-				<a href="/" class="btn btn-success">
-					<i class="fa fa-play"></i>
-					<?=gettext("No")?>
+				<a href="/" class="btn btn-info">
+					<i class="fa fa-undo"></i>
+					<?=gettext("Cancel")?>
 				</a>
 			</form>
 		</div>

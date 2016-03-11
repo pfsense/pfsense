@@ -321,7 +321,7 @@ foreach ($item as $ww) {
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
-		'members',
+		'members[]',
 		null,
 		'text',
 		$ww

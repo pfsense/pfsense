@@ -222,7 +222,7 @@ if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycf
 
 if ($_POST['apply'] == "Apply Changes") {
 	$savemsg = dhcpv6_apply_changes(false);
-} elseif ($_POST['Submit'] == "Save") {
+} elseif ($_POST['save'] == "Save") {
 	unset($input_errors);
 
 	$old_dhcpdv6_enable = ($pconfig['enable'] == true);

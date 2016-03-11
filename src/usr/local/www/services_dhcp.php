@@ -242,7 +242,7 @@ function validate_partial_mac_list($maclist) {
 	return true;
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['save'])) {
 
 	unset($input_errors);
 
@@ -616,7 +616,7 @@ if (isset($_POST['submit'])) {
 	}
 }
 
-if ((isset($_POST['submit']) || isset($_POST['apply'])) && (!$input_errors)) {
+if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
@@ -780,7 +780,6 @@ if ($tabscounter == 0) {
 
 display_top_tabs($tab_array);
 
-// This form uses a non-standard submit button name
 $form = new Form();
 
 $section = new Form_Section('General Options');

@@ -996,7 +996,7 @@ print $form;
 	$form->add($section);
 
 	$form->addGlobal(new Form_Button(
-		'Submit',
+		'save',
 		'Update',
 		null,
 		'fa-save'

@@ -78,11 +78,6 @@ if (empty($interface)) {
 	return;
 }
 
-//Do not process while booting
-if (platform_booting() && $config['interfaces'][$interface]['ipaddrv6'] != "dhcp6") {
-	return;
-}
-
 /*
  * NOTE: Take care of openvpn and similar if you generate the event to reconfigure an interface.
  *	i.e. OpenVPN might be in tap mode and not have an ip.

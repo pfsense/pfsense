@@ -589,49 +589,7 @@ if (file_exists("/etc/ca_countries")) {
 }
 
 if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
-$form = new Form;
-
-if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {
-	$form->setAction('system_certmanager.php?act=csr');
-
-	$section = new Form_Section('Complete Signing Request');
-
-	if (isset($id) && $a_cert[$id]) {
-		$form->addGlobal(new Form_Input(
-			'id',
-			null,
-			'hidden',
-			$id
-		));
-	}
-
-	$section->addInput(new Form_Input(
-		'descr',
-		'Descriptive name',
-		'text',
-		$pconfig['descr']
-	));
-
-	$section->addInput(new Form_Textarea(
-		'csr',
-		'Signing request data',
-		$pconfig['csr']
-	))->setReadonly()->setHelp('Copy the certificate signing data from here and '.
-		'forward it to your certificate authority for signing.');
-
-	$section->addInput(new Form_Textarea(
-		'cert',
-		'Final certificate data',
-		$pconfig['cert']
-	))->setHelp('Paste the certificate received from your certificate authority here.');
-
-	$form->add($section);
-	print $form;
-
-	include("foot.inc");
-	exit;
-}
-
+$form = new Form();
 $form->setAction('system_certmanager.php?act=edit');
 
 if (isset($userid) && $a_user) {
@@ -939,7 +897,6 @@ foreach ($config['cert'] as $cert)	{
 	$existCerts[ $cert['refid'] ] = $cert['descr'];
 }
 
-
 $section->addInput(new Form_Select(
 	'certref',
 	'Existing Certificates',
@@ -952,6 +909,7 @@ print $form;
 
 } else if ($act == "csr" || (($_POST['save'] == gettext("Update")) && $input_errors)) {
 	$form = new Form(false);
+	$form->setAction('system_certmanager.php?act=csr');
 
 	$section = new Form_Section("Complete Signing Request for " . $pconfig['descr']);
 

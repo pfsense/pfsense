@@ -182,14 +182,15 @@ $section->addInput(new Form_Input(
 	$mac
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
 
-$section->addInput(new Form_Button(
+$form->add($section);
+
+$form->addGlobal(new Form_Button(
 	'Submit',
 	'Send',
 	null,
 	'fa-power-off'
 ))->addClass('btn-primary');
 
-$form->add($section);
 print $form;
 ?>
 
@@ -223,8 +224,9 @@ print $form;
 								<?=htmlspecialchars($wolent['descr']);?>
 							</td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"></a>
 							</td>
 						</tr>
 					<?php endforeach?>
@@ -240,7 +242,7 @@ print $form;
 
 		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
 			<i class="fa fa-power-off icon-embed-btn"></i>
-			<?=gettext("Wake all devices")?>
+			<?=gettext("Wake All Devices")?>
 		</a>
 	</div>
 </div>

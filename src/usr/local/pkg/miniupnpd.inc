@@ -243,8 +243,8 @@
 				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
 
 				/* set model number */
-                                if (!empty($upnp_config['modelnumber'])){
-                                        $config_text .= "model_number=" . $upnp_config['modelnumber'] . "\n";
+				if (!empty($upnp_config['modelnumber'])){
+					$config_text .= "model_number=" . $upnp_config['modelnumber'] . "\n";
 				} else {
 					$config_text .= "model_number=" . $g['product_version'] . "\n";
 				}

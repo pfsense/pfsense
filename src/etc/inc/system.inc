@@ -2232,6 +2232,9 @@ function system_identify_specific_platform() {
 		case 'DFFv2':
 			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
 			break;
+		case 'RCC':
+			return (array('name' => 'RCC', 'descr' => 'Netgate RCC'));
+			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));

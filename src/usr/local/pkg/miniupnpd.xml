@@ -133,6 +133,12 @@
 			<type>input</type>
 			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
 		</field>
+		<field>
+			<fielddescr>Custom model number</fielddescr>
+			<fieldname>modelnumber</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the firmware version of pfSense will be used.</description>
+		</field>
 	</fields>
 	<custom_php_command_before_form>
 		before_form_miniupnpd($pkg);

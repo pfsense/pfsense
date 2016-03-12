@@ -1929,6 +1929,10 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
 	 */
 
+	if (filesize($filename) == 0) {
+		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));
+		return null;
+	}
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
 		log_error(sprintf(gettext("Could not process aliases from alias: %s"), $filename));
@@ -2179,7 +2183,9 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			} else {
 				$urltable = parse_aliases_file($tmp_urltable_filename, "url", "-1", true);
-				file_put_contents($urltable_filename, implode("\n", $urltable));
+				if (is_array($urltable)) {
+					file_put_contents($urltable_filename, implode("\n", $urltable));
+				}
 			}
 			unlink_if_exists($tmp_urltable_filename);
 		} else {

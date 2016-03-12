@@ -243,8 +243,11 @@
 				$config_text .= "serial=".strtoupper(substr(upnp_uuid(), 0, 8))."\n";
 
 				/* set model number */
-				$config_text .= "model_number=" . $g['product_version'] . "\n";
-
+                                if (!empty($upnp_config['modelnumber'])){
+                                        $config_text .= "model_number=" . $upnp_config['modelnumber'] . "\n";
+				} else {
+					$config_text .= "model_number=" . $g['product_version'] . "\n";
+				}
 				/* upnp access restrictions */
 				if (is_array($upnp_config['row'])) {
 					foreach ($upnp_config['row'] as $row) {

@@ -127,6 +127,12 @@
 				</rowhelperfield>
 			</rowhelper>
 		</field>
+		<field>
+			<fielddescr>Custom presentation URL</fielddescr>
+			<fieldname>presentationurl</fieldname>
+			<type>input</type>
+			<description>If left blank the default value of the WebGUI of this firewall will be used.</description>
+		</field>
 	</fields>
 	<custom_php_command_before_form>
 		before_form_miniupnpd($pkg);

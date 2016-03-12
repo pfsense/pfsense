@@ -228,7 +228,9 @@
 				$config_text .= "secure_mode=yes\n";
 
 				/* set webgui url */
-				if (!empty($config['system']['webgui']['protocol'])) {
+				if (!empty($upnp_config['presentationurl'])){
+					$config_text .= "presentation_url=" . $upnp_config['presentationurl'] . "\n";
+				} elseif (!empty($config['system']['webgui']['protocol'])) {
 					$config_text .= "presentation_url={$config['system']['webgui']['protocol']}://{$webgui_ip}";
 					if (!empty($config['system']['webgui']['port'])) {
 						$config_text .= ":{$config['system']['webgui']['port']}";

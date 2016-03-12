@@ -603,7 +603,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'priority',
 	'Priority',
-	'text',
+	'number',
 	$pconfig['priority'],
 	['placeholder' => 32768, 'min' => 0, 'max' => 61440]
 ))->setHelp('Set the bridge priority for Spanning Tree. The default is 32768. The minimum is 0 and the maximum is 61440. ');

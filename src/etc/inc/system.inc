@@ -2123,6 +2123,7 @@ function system_check_reset_button() {
 		case 'FW7541':
 		case 'APU':
 		case 'RCC-VE':
+		case 'RCC':
 		case 'RCC-DFF':
 			break;
 		default:
@@ -2186,12 +2187,15 @@ function system_identify_specific_platform() {
 		case 'DFFv2':
 			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
 			break;
+		case 'RCC':
+			return (array('name' => 'RCC', 'descr' => 'Netgate RCC'));
+			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
 			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
 			break;
 		case 'SYS-5018D-FN4T':
-			return (array('name' => 'D1540-XG', 'descr' => 'Super Micro D1540-XG'));
+			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;
 	}
 

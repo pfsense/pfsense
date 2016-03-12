@@ -1324,7 +1324,12 @@ EOD;
 		$nginx_config .= "\t\tssl_session_timeout     10m;\n";
 		$nginx_config .= "\t\tkeepalive_timeout       70;\n";
 		$nginx_config .= "\t\tssl_session_cache       shared:SSL:10m;\n";
-		$nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
+		if ($captive_portal !== false) {
+			// leave TLSv1.0 for CP for now for compatibility
+			$nginx_config .= "\t\tssl_protocols   TLSv1 TLSv1.1 TLSv1.2;\n";
+		} else {
+			$nginx_config .= "\t\tssl_protocols   TLSv1.1 TLSv1.2;\n";
+		}
 		$nginx_config .= "\t\tssl_ciphers \"EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH\";\n";
 		$nginx_config .= "\t\tssl_prefer_server_ciphers       on;\n";
 		$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";

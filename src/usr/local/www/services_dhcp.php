@@ -242,7 +242,7 @@ function validate_partial_mac_list($maclist) {
 	return true;
 }
 
-if (isset($_POST['submit'])) {
+if (isset($_POST['save'])) {
 
 	unset($input_errors);
 
@@ -616,7 +616,7 @@ if (isset($_POST['submit'])) {
 	}
 }
 
-if ((isset($_POST['submit']) || isset($_POST['apply'])) && (!$input_errors)) {
+if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
@@ -780,7 +780,6 @@ if ($tabscounter == 0) {
 
 display_top_tabs($tab_array);
 
-// This form uses a non-standard submit button name
 $form = new Form();
 
 $section = new Form_Section('General Options');
@@ -1000,10 +999,12 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 // DDNS
 $btnadv = new Form_Button(
 	'btnadvdns',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
@@ -1048,10 +1049,12 @@ $section->addInput(new Form_Input(
 // Advanced MAC
 $btnadv = new Form_Button(
 	'btnadvmac',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'MAC address control',
@@ -1075,10 +1078,12 @@ $section->addInput(new Form_Input(
 // Advanced NTP
 $btnadv = new Form_Button(
 	'btnadvntp',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP',
@@ -1100,10 +1105,12 @@ $section->addInput(new Form_IpAddress(
 // Advanced TFTP
 $btnadv = new Form_Button(
 	'btnadvtftp',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP',
@@ -1119,10 +1126,12 @@ $section->addInput(new Form_IpAddress(
 // Advanced LDAP
 $btnadv = new Form_Button(
 	'btnadvldap',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'LDAP',
@@ -1141,10 +1150,12 @@ $form->add($section);
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadv->removeClass('btn-primary')->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',

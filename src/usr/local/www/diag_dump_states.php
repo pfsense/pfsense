@@ -173,7 +173,12 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Simple filter such as 192.168, v6, icmp or ESTABLISHED']
 ));
 
-$filterbtn = new Form_Button('filterbtn', 'Filter', null, 'fa-filter');
+$filterbtn = new Form_Button(
+	'filterbtn',
+	'Filter',
+	null,
+	'fa-filter'
+);
 $filterbtn->addClass('btn-primary btn-sm');
 $section->addInput(new Form_StaticText(
 	'',
@@ -181,8 +186,13 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))) {
-	$killbtn = new Form_Button('killfilter', 'Kill States');
-	$killbtn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+	$killbtn = new Form_Button(
+		'killfilter',
+		'Kill States',
+		null,
+		'fa-trash'
+	);
+	$killbtn->addClass('btn-danger btn-sm');
 	$section->addInput(new Form_StaticText(
 		'Kill filtered states',
 		$killbtn

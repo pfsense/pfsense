@@ -184,9 +184,9 @@ if ($bogons || $urltable || !empty($entries)) {
 	} elseif (!empty($entries)) {
 		$group->add(new Form_Button(
 			'clearall',
-			'Clear Table',
+			'Empty Table',
 			null,
-			'fa-undo'
+			'fa-trash'
 		))->addClass('btn-danger btn-sm');
 	}
 }

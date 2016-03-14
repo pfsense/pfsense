@@ -74,6 +74,7 @@ if (isset($config['system']['authserver'][0]['host'])) {
 <html lang="en">
 <head>
 	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css" />
 	<title><?=gettext("Test Authentication server"); ?></title>
 </head>
 <body id="system_usermanager_settings_test" class="no-menu">
@@ -130,7 +131,7 @@ if (!$authcfg) {
 ?>
 				</pre>
 
-				<a href="javascript:window.close();" class="btn btn-primary"><?=gettext("Return")?></a>
+				<a href="javascript:window.close();" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Return")?></a>
 			</div>
 		</div>
 	</div>

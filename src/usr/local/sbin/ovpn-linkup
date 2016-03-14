@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# let the configuration system know that the ip has changed.
-#/usr/local/sbin/pfSctl -c "interface newip $interface"
-
 if [ "${dev_type}" = "tun" ]; then
 	if [ -n "${route_vpn_gateway}" ]; then
 		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
@@ -12,6 +9,10 @@ if [ "${dev_type}" = "tun" ]; then
 		/bin/echo ${ifconfig_local} > /tmp/${1}_router
 	else
 		/bin/echo ${5} > /tmp/${1}_router
+	fi
+else
+	if [ -n "${route_vpn_gateway}" ]; then
+		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
 	fi
 fi
 

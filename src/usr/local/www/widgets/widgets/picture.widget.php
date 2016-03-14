@@ -80,5 +80,8 @@ if ($_POST) {
 <form action="/widgets/widgets/picture.widget.php" method="post" enctype="multipart/form-data" class="form-inline">
 	<label for="pictfile"><?=gettext('New picture:')?> </label>
 	<input id="pictfile" name="pictfile" type="file" class="form-control" />
-	<button type="submit" class="btn btn-default"><?=gettext('Upload')?></button>
+	<button type="submit" class="btn btn-primary btn-xs">
+		<i class="fa fa-upload icon-embed-btn"></i>
+		<?=gettext('Upload')?>
+	</button>
 </form>

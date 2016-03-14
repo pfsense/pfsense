@@ -246,7 +246,9 @@ $macaddress = new Form_Input(
 
 $btnmymac = new Form_Button(
 	'btnmymac',
-	'Copy My MAC'
+	'Copy My MAC',
+	null,
+	'fa-clone'
 	);
 
 $btnmymac->removeClass('btn-primary')->addClass('btn-success btn-sm');

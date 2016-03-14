@@ -658,7 +658,7 @@ $section->addInput($egw);
 $section->addInput(new Form_Checkbox(
 	'defaultgw',
 	'Default Gateway',
-	'This will select the above gateway as the default gateway',
+	'This will select the above gateway as the default gateway.',
 	$pconfig['defaultgw']
 ));
 
@@ -667,7 +667,7 @@ $section->addInput(new Form_Checkbox(
 	'Gateway Monitoring',
 	'Disable Gateway Monitoring',
 	$pconfig['monitor_disable']
-))->toggles('.toggle-monitor-ip')->setHelp('This will consider this gateway as always being up');
+))->toggles('.toggle-monitor-ip')->setHelp('This will consider this gateway as always being up.');
 
 $group = new Form_Group('Monitor IP');
 $group->addClass('toggle-monitor-ip', 'collapse');
@@ -691,7 +691,7 @@ $section->addInput(new Form_Checkbox(
 	'Force state',
 	'Mark Gateway as Down',
 	$pconfig['force_down']
-))->setHelp('This will force this gateway to be considered Down');
+))->setHelp('This will force this gateway to be considered down.');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -713,13 +713,15 @@ if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
-		'Advanced options'
+		'Advanced Options',
+		null,
+		'fa-cog'
 	);
 
 	$advdflt = true;
 
 	$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
-	$btnadvanced->removeClass('btn-primary')->addClass('btn-default');
+	$btnadvanced->addClass('btn-info');
 
 	$section->addInput(new Form_StaticText(
 		null,

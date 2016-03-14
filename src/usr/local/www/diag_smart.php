@@ -316,7 +316,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-o'
+			'fa-file-text-o'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');
@@ -469,7 +469,7 @@ switch ($action) {
 			'submit',
 			'View',
 			null,
-			'fa-file-o'
+			'fa-file-text-o'
 		);
 		$btnview->addClass('btn-primary');
 		$btnview->setAttribute('id');

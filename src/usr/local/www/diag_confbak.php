@@ -204,8 +204,10 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Button(
 	'Submit',
-	gettext("Save")
-));
+	gettext("Save"),
+	null,
+	'fa-save'
+))->addClass('btn-primary');
 
 $form->add($section);
 
@@ -236,7 +238,10 @@ if (is_array($confvers)):
 			<thead>
 				<tr>
 					<th colspan="2">
-						<input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" />
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+							<i class="fa fa-exchange icon-embed-btn"></i>
+							<?=gettext("Diff"); ?>
+						</button>
 					</th>
 					<th><?=gettext("Date")?></th>
 					<th><?=gettext("Version")?></th>
@@ -296,7 +301,12 @@ if (is_array($confvers)):
 	endforeach;
 ?>
 				<tr>
-					<td colspan="2"><input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" /></td>
+					<td colspan="2">
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+							<i class="fa fa-exchange icon-embed-btn"></i>
+							<?=gettext("Diff"); ?>
+						</button>
+					</td>
 					<td colspan="5"></td>
 				</tr>
 <?php

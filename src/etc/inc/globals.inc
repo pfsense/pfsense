@@ -115,9 +115,6 @@ $g = array(
 	"language" => "en_US"
 );
 
-/* Read all XML files in following dir and load menu entries */
-$g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
-
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");
 
@@ -197,6 +194,9 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 if (file_exists("/etc/inc/globals_override.inc")) {
 	@include("globals_override.inc");
 }
+
+/* Read all XML files in following dir and load menu entries */
+$g["ext_menu_path"] = "/usr/local/share/{$g['product_name']}/menu";
 
 function platform_booting($on_console = false) {
 	global $g;

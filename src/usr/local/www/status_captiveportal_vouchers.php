@@ -138,33 +138,36 @@ $tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_ex
 display_top_tabs($tab_array);
 ?>
 
-<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-		<thead>
-			<tr>
-				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=0&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Voucher"); ?></a></th>
-				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=1&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Roll"); ?></a></th>
-				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=2&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Activated at"); ?></a></th>
-				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=3&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires in"); ?></a></th>
-				<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=4&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires at"); ?></a></th>
-			</tr>
-		</thead>
-		<tbody>
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext("Vouchers in Use (%d)"), count($db))?></h2></div>
+	<div class="panel-body table-responsive">
+		<table class="table table-striped table-hover table-condensed">
+			<thead>
+				<tr>
+					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=0&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Voucher"); ?></a></th>
+					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=1&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Roll"); ?></a></th>
+					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=2&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Activated at"); ?></a></th>
+					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=3&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires in"); ?></a></th>
+					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=4&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires at"); ?></a></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 foreach ($db as $dbent):
 ?>
-			<tr>
-				<td><?=$dbent[0]?></td>
-				<td><?=$dbent[1]?></td>
-				<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[2]))?></td>
-				<td><?=$dbent[3]?><?=gettext("min"); ?></td>
-				<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[4]))?></td>
-			</tr>
+				<tr>
+					<td><?=$dbent[0]?></td>
+					<td><?=$dbent[1]?></td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[2]))?></td>
+					<td><?=$dbent[3]?><?=gettext("min"); ?></td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[4]))?></td>
+				</tr>
 <?php
 endforeach;
 ?>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <?php include("foot.inc");

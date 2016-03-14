@@ -342,7 +342,10 @@ if ($input_errors) {
 			</label>
 			<div class="col-sm-10">
 				<input type="hidden" name="id" value="firmware" />
-				<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
+					<i class="fa fa-check icon-embed-btn"></i>
+					<?=gettext("Confirm")?>
+				</button>
 			</div>
 		</div>
 <?php
@@ -360,7 +363,10 @@ if ($input_errors) {
 	} else {
 ?>
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
-			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
+				<i class="fa fa-check icon-embed-btn"></i>
+				<?=gettext("Confirm")?>
+			</button>
 <?php
 	}
 	?>

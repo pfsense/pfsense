@@ -819,10 +819,12 @@ $section->add($group);
 
 $btnadvanced = new Form_Button(
 		'btnadvanced',
-		'Show'
+		'Advanced',
+		null,
+		'fa-cog'
 );
 
-$btnadvanced->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadvanced->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Advanced options',

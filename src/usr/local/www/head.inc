@@ -544,6 +544,22 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		endif
 	?>
 
+	<?php if ($monitoring_settings_form_hidden): ?>
+		<li>
+			<a onclick="$('#monitoring-settings-form').toggle(360);" title="<?=gettext("Settings")?>">
+				<i class="fa fa-wrench icon-pointer"></i>
+			</a>
+		</li>
+	<?php endif?>
+
+	<?php if ($status_monitoring): ?>
+		<li>
+			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
+				<i class="fa fa-repeat icon-pointer"></i>
+			</a>
+		</li>
+	<?php endif?>
+
 <?php
 if (!$hide_service_status && !empty($shortcuts[$shortcut_section]['service']) && isAllowedPage('status_services.php')) {
 	$ssvc = array();
@@ -661,8 +677,8 @@ if (are_notices_pending()):?>
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal"><?=gettext("Close")?></button>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><?=gettext("Mark All as Read")?></button>
+				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Close")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 			</div>
 		</div>
 	</div>

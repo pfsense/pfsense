@@ -592,14 +592,16 @@ $section->addInput(new Form_Input(
 
 $btndyndns = new Form_Button(
 	'btndyndns',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btndyndns->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btndyndns->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
-	$btndyndns . '&nbsp;' . 'Show dynamic DNS settings'
+	$btndyndns
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -638,14 +640,16 @@ $section->addInput(new Form_Input(
 
 $btnntp = new Form_Button(
 	'btnntp',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnntp->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnntp->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
-	$btnntp . '&nbsp;' . 'Show NTP Configuration'
+	$btnntp
 ));
 
 $group = new Form_Group('NTP Servers');
@@ -672,14 +676,16 @@ $section->add($group);
 
 $btntftp = new Form_Button(
 	'btntftp',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btntftp->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btntftp->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP servers',
-	$btntftp . '&nbsp;' . 'Show TFTP Configuration'
+	$btntftp
 ));
 
 $section->addInput(new Form_Input(

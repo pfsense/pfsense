@@ -67,9 +67,11 @@ $carp_enabled = get_carp_status();
 <div class="content">
 <table class="table table-striped table-hover">
 	<thead>
-		<th>CARP Interface</th>
-		<th>IP Address</th>
-		<th>Status</th>
+		<tr>
+			<th>CARP Interface</th>
+			<th>IP Address</th>
+			<th>Status</th>
+		</tr>
 	</thead>
 	<tbody>
 <?php
@@ -109,6 +111,10 @@ $carp_enabled = get_carp_status();
 				<td><?=htmlspecialchars($ipaddress);?></td>
 				<td><i class="fa fa-<?=$icon?>"></i>&nbsp;<?= htmlspecialchars($status) ?></td>
 <?php
+			} else {
+?>
+				<td colspan="2">
+<?php
 			}
 ?>
 		</tr>
@@ -116,7 +122,7 @@ $carp_enabled = get_carp_status();
 		}
 	} else {
 ?>
-		<tr><td><?=gettext('No CARP Interfaces Defined.')?> <?=sprintf(gettext('Click %1$shere%2$s to configure CARP.'), '<a href="status_carp.php">', '</a>')?></td></tr>
+		<tr><td colspan="3"><?=gettext('No CARP Interfaces Defined.')?> <?=sprintf(gettext('Click %1$shere%2$s to configure CARP.'), '<a href="status_carp.php">', '</a>')?></td></tr>
 <?php
 	}
 ?>

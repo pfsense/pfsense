@@ -104,11 +104,11 @@ include("head.inc");
 				<p>
 					<button name="Submit" type="submit" class="btn btn-sm btn-danger" value=" <?=gettext("Yes")?> " title="<?=gettext("Perform a factory reset")?>">
 						<i class="fa fa-undo"></i>
-						<?=gettext("Yes, Factory reset")?>
+						<?=gettext("Factory Reset")?>
 					</button>
 					<button name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("No")?> " title="<?=gettext("Return to the dashboard")?>">
 						<i class="fa fa-save"></i>
-						<?=gettext("No, Keep this configuration")?>
+						<?=gettext("Keep Configuration")?>
 					</button>
 				</p>
 			</form>

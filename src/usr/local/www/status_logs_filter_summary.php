@@ -207,7 +207,7 @@ function stat_block($summary, $stat, $num) {
 			$numentries++;
 			$outstr = $k[$i];
 			if (is_ipaddr($outstr)) {
-				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-success" title="' . gettext("Reverse Resolve with DNS") . '">' . gettext("Lookup") . '</a></td></tr>');
+				print('<tr><td>' . $outstr . '</td>' . '<td>' . $summary[$stat][$k[$i]] . '</td><td><a href="diag_dns.php?host=' . $outstr . '" class="btn btn-xs btn-primary" title="' . gettext("Reverse Resolve with DNS") . '"><i class="fa fa-search icon-embed-btn"></i>' . gettext("Lookup") . '</a></td></tr>');
 
 			} elseif (substr_count($outstr, '/') == 1) {
 				list($proto, $port) = explode('/', $outstr);

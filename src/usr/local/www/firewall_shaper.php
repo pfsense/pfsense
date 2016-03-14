@@ -479,7 +479,7 @@ if (!$dfltmsg && $sform)  {
 				'Add new Queue',
 				$url,
 				'fa-plus'
-			))->removeClass('btn-default')->addClass('btn-success');
+			))->addClass('btn-success');
 
 		}
 
@@ -494,7 +494,7 @@ if (!$dfltmsg && $sform)  {
 			$queue ? 'Delete this queue':'Disable shaper on interface',
 			$url,
 			'fa-trash'
-		))->removeClass('btn-default')->addClass('btn-danger');
+		))->addClass('btn-danger');
 
 	}
 

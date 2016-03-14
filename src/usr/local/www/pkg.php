@@ -375,7 +375,11 @@ if ($savemsg) {
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo "&nbsp;&nbsp;" . gettext("Filter text: ") . "<input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /><input type='submit' value='Filter' />";
+					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . $_REQUEST['pkg_filter'] . '" />';
+					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
+					echo '<i class="fa fa-filter icon-embed-btn"></i>';
+					echo gettext("Filter");
+					echo "</button>";
 				}
 				echo "</td></tr><tr><td><font size='-3'>&nbsp;</font></td></tr>";
 			}
@@ -597,7 +601,7 @@ if ($savemsg) {
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:gettext("Add a new item"));
 ?>
-								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><?=gettext('Add')?></a></td>
+								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {

@@ -313,7 +313,7 @@ function verify_gzip_file($fname) {
 // $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button. 
 // Note that there is also a shortcut function print_apply_box here that creates a standard "apply" box for you.
 // In many cases just substitute that for print_info_box_np() to easily get a warning style "Apply changes" box.
-function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "") {
+function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
 
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
@@ -327,8 +327,11 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 		if (empty($btntext)) {
 			$btntext = $btnname;
 		}
+		if (!empty($btnicon)) {
+			$btnicon = '<i class="fa ' . $btnicon . ' icon-embed-btn"></i>';
+		}
 
-		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-default" name="'. $btnname . '" value="' . $btntext . '">' . $btntext . '</button>';
+		$msg .= '<form method="post" class="pull-right"><button type="submit" class="btn btn-' . $btnclass . '" name="'. $btnname . '" value="' . $btntext . '">' . $btnicon . $btntext . '</button>';
 
 		if ($_POST['if']) {
 			$msg .= "<input type=\"hidden\" name=\"if\" value=\"" . htmlspecialchars($_POST['if']) . "\" />";
@@ -341,7 +344,7 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 }
 
 function print_apply_box($msg) {
-	print_info_box($msg, "warning", "apply", gettext("Apply Changes"));
+	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
 }
 
 /*

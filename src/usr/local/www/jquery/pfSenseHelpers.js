@@ -479,8 +479,8 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 
 		$('#ruletable > tbody:last').append('<tr>' +
 			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
-			'<td class="' + gColor + '" colspan="2"><button class="btn btn-default btn-sm" id="btnnewsep">' + svtxt + '</button>' +
-			'<button class="btn btn-default btn-sm" id="btncncsep">' + cncltxt + '</button>' +
+			'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
+			'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
 			'&nbsp;&nbsp;&nbsp;&nbsp;' +
 			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
 			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +

@@ -335,10 +335,12 @@ $section->addInput(new Form_Checkbox(
 // Statistics logging section
 $btnadvstats = new Form_Button(
 	'btnadvstats',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnadvstats->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnadvstats->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Statistics Logging',
@@ -369,10 +371,12 @@ $section->addInput(new Form_Checkbox(
 // Leap seconds section
 $btnleap = new Form_Button(
 	'btnleap',
-	'Advanced'
+	'Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnleap->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$btnleap->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Leap seconds',

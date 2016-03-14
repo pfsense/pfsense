@@ -449,7 +449,7 @@ if ($dfltmsg) {
 				'Add new Queue',
 				$url,
 				'fa-plus'
-			))->removeClass('btn-default')->addClass('btn-success');
+			))->addClass('btn-success');
 		}
 
 		if ($action != "add") {
@@ -464,7 +464,7 @@ if ($dfltmsg) {
 				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
 				$url,
 				'fa-trash'
-			))->removeClass('btn-default')->addClass('btn-danger');
+			))->addClass('btn-danger');
 		}
 	}
 

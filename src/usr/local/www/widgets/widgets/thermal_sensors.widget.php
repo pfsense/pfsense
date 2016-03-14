@@ -268,7 +268,10 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-right" colspan="3">
-				<input type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="formbtn" value="Save" />
+				<button type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="btn btn-primary btn-sm" value="Save">
+					<i class="fa fa-save icon-embed-btn"></i>
+					<?=gettext("Save")?>
+				</button>
 			</td>
 		</tr>
 		<tr>

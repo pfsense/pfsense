@@ -811,8 +811,10 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 			case "submit":
 				$form->addGlobal(new Form_Button(
 					$name,
-					$field['name']
-				));
+					$field['name'],
+					null,
+					'fa-angle-double-right'
+				))->addClass('btn-primary');
 
 				break;
 			case "listtopic":

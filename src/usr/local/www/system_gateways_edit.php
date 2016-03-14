@@ -858,7 +858,7 @@ $section->addInput(new Form_StaticText(
 		'also controls the resolution of loss reporting. To determine the resolution, ' .
 		'the following formula can be used:') .
 	'<br/><br/>' .
-	gettext('&nbsp &nbsp 100 * probe interval / (time period - loss interval)') .
+	gettext('&nbsp;&nbsp;&nbsp;&nbsp;100 * probe interval / (time period - loss interval)') .
 	'<br/><br/>' .
 	gettext('Rounding up to the nearest whole number will yield the resolution of loss ' .
 		'reporting in percent. The default values provide a resolution of 1%.') .

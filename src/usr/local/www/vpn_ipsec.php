@@ -302,7 +302,7 @@ display_top_tabs($tab_array);
 					<tr id="fr<?=$i?>" onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
 						<td>
 							<input type="checkbox" id="frc<?=$i?>" onclick="fr_toggle(<?=$i?>)" name="p1entry[]" value="<?=$i?>"  />
-							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
+							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
 						</td>
 						<td>
 							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled' ? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled' ? 'Enable' : 'Disable') ?></button>

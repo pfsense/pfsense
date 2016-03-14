@@ -177,7 +177,7 @@ else:?>
 <?php if (is_array($pkg['deps']) && count($pkg['deps'])):?>
 			<br /><br /><?= gettext("Package Dependencies")?>:<br/>
 	<?php foreach ($pkg['deps'] as $pdep):?>
-			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>">&nbsp;<i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) . '-' . $pdep['version']?></small></a>&emsp;
+			<a target="_blank" href="https://freshports.org/<?=$pdep['origin']?>">&nbsp;<i class="fa fa-paperclip"></i> <?= basename($pdep['origin']) . '-' . $pdep['version']?></a>&emsp;
 	<?php endforeach;?>
 <?php endif;?>
 		</td>

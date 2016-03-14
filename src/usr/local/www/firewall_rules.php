@@ -789,6 +789,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
+							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=gettext("Move checked rules above this one")?>"></a>
 							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
@@ -900,6 +901,30 @@ configsection = "filter";
 
 events.push(function() {
 
+	// "Move to here" (anchor) action
+	$('[id^=Xmove_]').click(function (event) {
+
+		event.stopImmediatePropagation();
+
+		var anchor_row = $(this).parents("tr:first");
+
+		$('#ruletable > tbody  > tr').each(function() {
+			ruleid = this.id.slice(2);
+
+			if (ruleid && !isNaN(ruleid)) {
+				if ($('#frc' + ruleid).prop('checked')) {
+					$(this).insertBefore(anchor_row);
+					fr_toggle(ruleid, "fr");
+				}
+			}
+		});
+
+		$('#order-store').removeAttr('disabled');
+		reindex_rules($(anchor_row).parent('tbody'));
+		dirty = true;
+
+	});
+
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
@@ -934,7 +959,6 @@ events.push(function() {
 			return undefined;
 		}
 	});
-
 });
 //]]>
 </script>

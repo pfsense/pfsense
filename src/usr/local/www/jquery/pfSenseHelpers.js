@@ -579,9 +579,15 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 		section.find('tr').each(function() {
 			if(this.id) {
 				$(this).attr("id", "fr" + row);
+				$(this).attr("onclick", "fr_toggle(" + row + ")")
+				$(this).find('input:checkbox:first').each(function() {
+					$(this).attr("id", "frc" + row);
+					$(this).attr("onclick", "fr_toggle(" + row + ")");
+				});
+
 				row++;
 			}
-		})
+		});
 	}
 
 	function handle_colors() {

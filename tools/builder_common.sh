@@ -1318,8 +1318,10 @@ create_distribution_tarball() {
 create_mfsbsd_image() {
 	local IMGPATH="$1"
 	local FSDIR="${SCRATCHDIR}/mfsbsd"
+	local MNTDIR="${SCRATCHDIR}/mfsbsd-mnt"
 
 	if [ -z "${IMGPATH}" ]; then
+		echo ">>> IMGPATH is empty skipping generation of mfsbsd image!" | tee -a ${LOGFILE}
 		return
 	fi
 
@@ -1327,7 +1329,11 @@ create_mfsbsd_image() {
 		chflags -R noschg ${FSDIR}
 		rm -rf ${FSDIR}
 	fi
-	mkdir -p ${FSDIR}
+	if [ -d "${MNTDIR}" ]; then
+		chflags -R noschg ${MNTDIR}
+		rm -rf ${MNTDIR}
+	fi
+	mkdir -p ${FSDIR} ${MNTDIR}
 
 	echo -n ">>> Copying /boot to image root... " | tee -a ${LOGFILE}
 	cp -r ${FINAL_CHROOT_DIR}/boot ${FSDIR}
@@ -1348,15 +1354,19 @@ create_mfsbsd_image() {
 	echo 'vfs.root.mountfrom="ufs:/dev/md0"' >> ${FSDIR}/boot/loader.conf
 	echo "Done!" | tee -a ${LOGFILE}
 
+	# Get total size of directory containing mfsbsd system
+	local SIZE=$(du -skA ${FSDIR} | awk '{print $1}')
+	# Convert it to bytes
+	SIZE=$((SIZE*1024))
+	local BLOCKSIZE=$((16*1024*1024))
+	local NUMBLOCKS=$((SIZE/BLOCKSIZE+1))
+
 	echo ">>> Creating mfsbsd to ${IMGPATH}." 2>&1 | tee -a ${LOGFILE}
 	LOGFILE=${BUILDER_LOGS}/mfsbsd.${TARGET}
 
-	if [ "${IMGPATH}" = "" ]; then
-		echo ">>> IMGPATH is empty skipping generation of mfsbsd image!" | tee -a ${LOGFILE}
-		return
-	fi
+	dd if=/dev/zero of=${IMGPATH} bs=${BLOCKSIZE} seek=${NUMBLOCKS} count=1 \
+		2>&1 | tee -a ${LOGFILE}
 
-	makefs -B little -o label=${PRODUCT_NAME} ${IMGPATH} ${SCRATCHDIR}/mfsbsd
 	if [ $? -ne 0 ]; then
 		if [ -f ${IMGPATH} ]; then
 			rm -f $IMGPATH
@@ -1364,12 +1374,15 @@ create_mfsbsd_image() {
 		echo ">>> ERROR: Something wrong happened during mfsbsd image creation. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	MD=$(mdconfig -a -t vnode -f $IMGPATH)
-	# Just in case
+	MD=$(mdconfig -f $IMGPATH)
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
+	bsdlabel -w -B /dev/${MD} 2>&1 | tee -a ${LOGFILE}
+	newfs /dev/${MD}a 2>&1 | tee -a ${LOGFILE}
+	mount /dev/${MD}a ${MNTDIR}
+	trap "umount ${MNTDIR}; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+	clone_directory_contents ${FSDIR} ${MNTDIR}
+	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
+	umount ${MNTDIR}
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
 	gzip -qf $IMGPATH &

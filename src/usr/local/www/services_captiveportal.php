@@ -1105,21 +1105,21 @@ if ($pconfig['page']['htmltext']) {
 	$group = new Form_Group('Current Portal Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		gettext('View'),
 		$href,
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Download',
+		gettext('Download'),
 		'?zone=' . $cpzone . '&act=gethtmlhtml',
 		'fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Restore Default Page',
+		gettext('Restore Default Page'),
 		'?zone=' . $cpzone . '&act=delhtmlhtml',
 		'fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
@@ -1139,21 +1139,21 @@ if ($pconfig['page']['errtext']) {
 	$group = new Form_Group('Current Auth Error Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		gettext('View'),
 		'?zone=' . $cpzone . '&act=viewerrhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Download',
+		gettext('Download'),
 		'?zone=' . $cpzone . '&act=geterrhtml',
 		'fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Restore Default Page',
+		gettext('Restore Default Page'),
 		'?zone=' . $cpzone . '&act=delerrhtml',
 		'fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");
@@ -1171,21 +1171,21 @@ if ($pconfig['page']['logouttext']) {
 	$group = new Form_Group('Current Logout Page');
 	$group->add(new Form_Button(
 		'btnview',
-		'View',
+		gettext('View'),
 		'?zone=' . $cpzone . '&act=viewlogouthtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Download',
+		gettext('Download'),
 		'?zone=' . $cpzone . '&act=getlogouthtml',
 		'fa-download'
 	))->addClass('btn btn-primary btn-xs')->setAttribute("target", "_blank");
 
 	$group->add(new Form_Button(
 		'btndownload',
-		'Restore Default Page',
+		gettext('Restore Default Page'),
 		'?zone=' . $cpzone . '&act=dellogouthtml',
 		'fa-undo'
 	))->addClass('btn btn-danger btn-xs')->setAttribute("target", "_blank");

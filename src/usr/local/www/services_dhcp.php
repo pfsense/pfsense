@@ -882,7 +882,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 
 	$btnaddpool = new Form_Button(
 		'btnaddpool',
-		'Add pool',
+		gettext('Add pool'),
 		'services_dhcp.php?if=' . htmlspecialchars($if) . '&act=newpool',
 		'fa-plus'
 	);
@@ -999,7 +999,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 // DDNS
 $btnadv = new Form_Button(
 	'btnadvdns',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1049,7 +1049,7 @@ $section->addInput(new Form_Input(
 // Advanced MAC
 $btnadv = new Form_Button(
 	'btnadvmac',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1078,7 +1078,7 @@ $section->addInput(new Form_Input(
 // Advanced NTP
 $btnadv = new Form_Button(
 	'btnadvntp',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1105,7 +1105,7 @@ $section->addInput(new Form_IpAddress(
 // Advanced TFTP
 $btnadv = new Form_Button(
 	'btnadvtftp',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1126,7 +1126,7 @@ $section->addInput(new Form_IpAddress(
 // Advanced LDAP
 $btnadv = new Form_Button(
 	'btnadvldap',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1150,7 +1150,7 @@ $form->add($section);
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
-	'Advanced',
+	gettext('Advanced'),
 	null,
 	'fa-cog'
 );
@@ -1218,7 +1218,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		'Delete',
+		gettext('Delete'),
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');
@@ -1230,7 +1230,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	'Add',
+	gettext('Add'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success');

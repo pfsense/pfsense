@@ -246,7 +246,7 @@ $macaddress = new Form_Input(
 
 $btnmymac = new Form_Button(
 	'btnmymac',
-	'Copy My MAC',
+	gettext('Copy My MAC'),
 	null,
 	'fa-clone'
 	);

@@ -572,7 +572,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$group->add(new Form_Button(
 			'submit',
-			'Add',
+			gettext('Add'),
 			null,
 			'fa-plus'
 			))->addClass('btn-success btn-sm');

@@ -1754,7 +1754,7 @@ $macaddress = new Form_Input(
 
 $btnmymac = new Form_Button(
 	'btnmymac',
-	'Copy My MAC',
+	gettext('Copy My MAC'),
 	null,
 	'fa-clone'
 	);
@@ -1816,7 +1816,7 @@ $group->add(new Form_Select(
 
 $group->add(new Form_Button(
 	'addgw',
-	'Add a new gateway',
+	gettext('Add a new gateway'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
@@ -1849,7 +1849,7 @@ $group->add(new Form_Select(
 
 $group->add(new Form_Button(
 	'addgw6',
-	'Add a new gateway',
+	gettext('Add a new gateway'),
 	null,
 	'fa-plus'
 ))->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
@@ -1891,7 +1891,7 @@ $modal->addInput(new Form_Input(
 
 $btnaddgw6 = new Form_Button(
 	'add6',
-	'Add',
+	gettext('Add'),
 	null,
 	'fa-plus'
 );
@@ -1900,7 +1900,7 @@ $btnaddgw6->addClass('btn-success');
 
 $btncnxgw6 = new Form_Button(
 	'cnx6',
-	'Cancel',
+	gettext('Cancel'),
 	null,
 	'fa-undo'
 );
@@ -2558,7 +2558,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Button(
 	'btnadvppp',
-	'Advanced PPP',
+	gettext('Advanced PPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
 ))->addClass('btn-info')->setHelp('Create a new PPP configuration');
@@ -2684,7 +2684,7 @@ $section->add($group);
 
 $section->addInput(new Form_Button(
 	'btnadvppp',
-	'Advanced and MLPPP',
+	gettext('Advanced and MLPPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
 ))->addClass('btn-info')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
@@ -2747,7 +2747,7 @@ if (isset($pconfig['pptp_localip'][1]) || isset($pconfig['pptp_subnet'][1]) || i
 
 $section->addInput(new Form_Button(
 	'btnadvppp',
-	'Advanced and MLPPP',
+	gettext('Advanced and MLPPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
 ))->addClass('btn-info')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
@@ -3198,7 +3198,7 @@ $modal->addInput(new Form_Input(
 
 $btnaddgw = new Form_Button(
 	'add',
-	'Add',
+	gettext('Add'),
 	null,
 	'fa-plus'
 );
@@ -3207,7 +3207,7 @@ $btnaddgw->addClass('btn-success');
 
 $btncnxgw = new Form_Button(
 	'cnx',
-	'Cancel',
+	gettext('Cancel'),
 	null,
 	'fa-undo'
 );

@@ -279,7 +279,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Button(
 	'test-growl',
-	'Test Growl Settings',
+	gettext('Test Growl Settings'),
 	null,
 	'fa-rss'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
@@ -370,7 +370,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Button(
 	'test-smtp',
-	'Test SMTP Settings',
+	gettext('Test SMTP Settings'),
 	null,
 	'fa-send'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.

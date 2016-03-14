@@ -716,14 +716,14 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Member of" list',
+		gettext('Move to "Member of" list'),
 		null,
 		'fa-angle-double-right'
 	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'Move to "Not member of" list',
+		gettext('Move to "Not member of" list'),
 		null,
 		'fa-angle-double-left'
 	))->removeClass('btn-primary')->addClass('btn-info btn-sm');

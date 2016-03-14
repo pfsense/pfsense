@@ -1460,7 +1460,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 					// Delete row button
 					$group->add(new Form_Button(
 						'deleterow' . $rowcounter,
-						'Delete',
+						gettext('Delete'),
 						null,
 						'fa-trash'
 					))->removeClass('btn-primary')->addClass('btn-warning btn-sm');
@@ -1472,7 +1472,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			// Add row button
 			$section->addInput(new Form_Button(
 				'addrow',
-				'Add',
+				gettext('Add'),
 				null,
 				'fa-plus'
 			))->addClass('btn-success');
@@ -1515,7 +1515,7 @@ $form->addGlobal(new Form_Input(
 if (!empty($advanced)) {
 	$form->addGlobal(new Form_Button(
 		'showadv',
-		'Show Advanced Options',
+		gettext('Show Advanced Options'),
 		null,
 		'fa-cog'
 	))->addClass('btn-info');

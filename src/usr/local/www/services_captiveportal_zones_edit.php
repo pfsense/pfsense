@@ -132,7 +132,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Save & Continue',
+	gettext('Save & Continue'),
 	null,
 	'fa-save'
 ))->addClass('btn-primary');

@@ -126,7 +126,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Expire',
+	gettext('Expire'),
 	null,
 	'fa-trash'
 ))->addClass('btn-warning');

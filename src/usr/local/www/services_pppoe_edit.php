@@ -554,7 +554,7 @@ if ($usernames != "") {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			'Delete',
+			gettext('Delete'),
 			null,
 			'fa-trash'
 		))->addClass('btn-warning');
@@ -567,7 +567,7 @@ if ($usernames != "") {
 
 $btnaddrow = new Form_Button(
 	'addrow',
-	'Add user',
+	gettext('Add user'),
 	null,
 	'fa-plus'
 );

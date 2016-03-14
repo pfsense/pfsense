@@ -333,7 +333,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Button(
 	'resetlogs',
-	'Reset Log Files',
+	gettext('Reset Log Files'),
 	null,
 	'fa-trash'
 ))->addClass('btn-danger btn-sm')->setHelp('Clears all local log files and reinitializes them as empty logs. This also restarts the DHCP daemon. Use the Save button first if you have made any setting changes.');

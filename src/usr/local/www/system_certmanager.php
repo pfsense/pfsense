@@ -784,7 +784,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			'Delete',
+			gettext('Delete'),
 			null,
 			'fa-trash'
 		))->addClass('btn-warning');
@@ -798,7 +798,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Button(
 		'addrow',
-		'Add',
+		gettext('Add'),
 		null,
 		'fa-plus'
 	))->addClass('btn-success');
@@ -955,7 +955,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$form->addGlobal(new Form_Button(
 		'save',
-		'Update',
+		gettext('Update'),
 		null,
 		'fa-save'
 	))->addClass('btn-primary');

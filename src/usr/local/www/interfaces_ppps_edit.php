@@ -819,7 +819,7 @@ $section->add($group);
 
 $btnadvanced = new Form_Button(
 		'btnadvanced',
-		'Advanced',
+		gettext('Advanced'),
 		null,
 		'fa-cog'
 );

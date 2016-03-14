@@ -206,7 +206,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	'Traceroute',
+	gettext('Traceroute'),
 	null,
 	'fa-rss'
 ))->addClass('btn-primary');

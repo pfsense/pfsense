@@ -53,13 +53,13 @@ class Form_Button extends Form_Input
 		{
 			$this->_tagSelfClosing = false;
 			$this->_tagName = 'button';
-			$this->_attributes['value'] = $title;
+			$this->_attributes['value'] = gettext($title);
 			$this->_attributes['icon'] = $icon;
 		}
 		else
 		{
 			$this->_tagSelfClosing = true;
-			$this->_attributes['value'] = $title;
+			$this->_attributes['value'] = gettext($title);
 			$this->addClass('btn-primary');
 		}
 

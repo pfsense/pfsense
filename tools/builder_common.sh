@@ -1348,6 +1348,7 @@ create_mfsbsd_image() {
 	echo "Done!" | tee -a ${LOGFILE}
 
 	echo -n ">>> Setting loader.conf... " | tee -a ${LOGFILE}
+	echo 'autoboot_delay="3"' >> ${FSDIR}/boot/loader.conf
 	echo 'mfs_load="YES"' >> ${FSDIR}/boot/loader.conf
 	echo 'mfs_type="mfs_root"' >> ${FSDIR}/boot/loader.conf
 	echo 'mfs_name="/mfsroot"' >> ${FSDIR}/boot/loader.conf

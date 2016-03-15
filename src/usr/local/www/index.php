@@ -393,7 +393,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 
 		//if col$currentColumnNumber exists
 		if (isset($widgetColumns['col'.$currentColumnNumber])) {
-			echo '<div class="test col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
 			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
 
 			foreach ($columnWidgets as $widgetname => $widgetconfig) {
@@ -432,7 +432,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 			}
 			echo "</div>";
 		} else {
-			echo '<div class="test2 col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
 		}
 		
 	}

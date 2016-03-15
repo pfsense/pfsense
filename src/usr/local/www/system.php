@@ -526,7 +526,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['dashboardcolumns'],
 	[min => 1, max => 4]
-))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+));
 
 $group = new Form_Group('Associated Panels Show/Hide');
 

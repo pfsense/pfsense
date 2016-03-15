@@ -752,18 +752,18 @@ $section->addInput(new Form_Checkbox(
 			'By checking this box DHCPv6 lease time will be displayed in local time and set to time zone selected. ' .
 			'This will be used for all DHCPv6 interfaces lease time.');
 
-$btndyndns = new Form_Button(
-	'btndyndns',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvdns',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btndyndns->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
-	$btndyndns
+	$btnadv
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -820,18 +820,18 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ddnsreverse']
 ));
 
-$btnntp = new Form_Button(
-	'btnntp',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvntp',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnntp->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
-	$btnntp
+	$btnadv
 ));
 
 $group = new Form_Group('NTP Servers');
@@ -856,18 +856,18 @@ $group->addClass('ntpclass');
 
 $section->add($group);
 
-$btnldap = new Form_Button(
-	'btnldap',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvldap',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnldap->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'LDAP',
-	$btnldap
+	$btnadv
 ));
 
 $section->addInput(new Form_Input(
@@ -877,18 +877,18 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ));
 
-$btnnetboot = new Form_Button(
-	'btnnetboot',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvnetboot',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnnetboot->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Network booting',
-	$btnnetboot
+	$btnadv
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -905,18 +905,18 @@ $section->addInput(new Form_Input(
 	$pconfig['bootfile_url']
 ));
 
-$btnadnl = new Form_Button(
-	'btnadnl',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnadnl->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
-	$btnadnl
+	$btnadv
 ));
 
 $form->add($section);
@@ -1064,72 +1064,200 @@ endif;
 //<![CDATA[
 events.push(function() {
 
-	function hideDDNS(hide) {
-		hideCheckbox('ddnsupdate', hide);
-		hideInput('ddnsdomain', hide);
-		hideInput('ddnsdomainprimary', hide);
-		hideInput('ddnsdomainkeyname', hide);
-		hideInput('ddnsdomainkey', hide);
-		hideInput('ddnsclientupdates', hide);
-		hideCheckbox('ddnsreverse', hide);
+	// Show advanced DNS options ======================================================================================
+	var showadvdns = false;
+
+	function show_advdns(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (!$pconfig['ddnsupdate'] &&
+			    empty($pconfig['ddnsdomain']) &&
+			    empty($pconfig['ddnsdomainprimary']) &&
+			    empty($pconfig['ddnsdomainkeyname']) &&
+			    empty($pconfig['ddnsdomainkey']) &&
+			    (empty($pconfig['ddnsclientupdates']) || ($pconfig['ddnsclientupdates'] == "allow")) &&
+			    !$pconfig['ddnsreverse']) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvdns = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvdns = !showadvdns;
+		}
+
+		hideCheckbox('ddnsupdate', !showadvdns);
+		hideInput('ddnsdomain', !showadvdns);
+		hideInput('ddnsdomainprimary', !showadvdns);
+		hideInput('ddnsdomainkeyname', !showadvdns);
+		hideInput('ddnsdomainkey', !showadvdns);
+		hideInput('ddnsclientupdates', !showadvdns);
+		hideCheckbox('ddnsreverse', !showadvdns);
+
+		if (showadvdns) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	// Make the 'Copy My MAC' button a plain button, not a submit button
-	$("#btnmymac").prop('type','button');
+	$('#btnadvdns').prop('type', 'button');
 
-	// On click, copy the hidden 'mymac' text to the 'mac' input
-	$("#btnmymac").click(function() {
-		$('#mac').val('<?=$mymac?>');
+	$('#btnadvdns').click(function(event) {
+		show_advdns();
 	});
 
-	// Make the 'tftp' button a plain button, not a submit button
-	$("#btntftp").prop('type','button');
+	// Show advanced NTP options ======================================================================================
+	var showadvntp = false;
 
-	// Show tftp controls
-	$("#btntftp").click(function() {
-		hideInput('tftp', false);
+	function show_advntp(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvntp = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvntp = !showadvntp;
+		}
+
+		hideInput('ntp1', !showadvntp);
+		hideInput('ntp2', !showadvntp);
+
+		if (showadvntp) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvntp').prop('type', 'button');
+
+	$('#btnadvntp').click(function(event) {
+		show_advntp();
 	});
 
-	// Make the 'ntp' button a plain button, not a submit button
-	$("#btnntp").prop('type','button');
+	// Show advanced LDAP options ======================================================================================
+	var showadvldap = false;
 
-	// Show ntp controls
-	$("#btnntp").click(function() {
-		hideClass('ntpclass', false);
+	function show_advldap(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['ldap'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvldap = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvldap = !showadvldap;
+		}
+
+		hideInput('ldap', !showadvldap);
+
+		if (showadvldap) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvldap').prop('type', 'button');
+
+	$('#btnadvldap').click(function(event) {
+		show_advldap();
 	});
 
-	// Make the 'ddns' button a plain button, not a submit button
-	$("#btndyndns").prop('type','button');
+	// Show advanced Netboot options ======================================================================================
+	var showadvnetboot = false;
 
-	// Show ddns controls
-	$("#btndyndns").click(function() {
-		hideDDNS(false);
+	function show_advnetboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (!$pconfig['shownetboot'] && empty($pconfig['bootfile_url'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnetboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnetboot = !showadvnetboot;
+		}
+
+		hideCheckbox('shownetboot', !showadvnetboot);
+		hideInput('bootfile_url', !showadvnetboot);
+
+		if (showadvnetboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnetboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnetboot').prop('type', 'button');
+
+	$('#btnadvnetboot').click(function(event) {
+		show_advnetboot();
 	});
 
-	// Make the 'ldap' button a plain button, not a submit button
-	$("#btnldap").prop('type','button');
+	// Show advanced additional opts options ===========================================================================
+	var showadvopts = false;
 
-	// Show ldap controls
-	$("#btnldap").click(function() {
-		hideInput('ldap', false);
-	});
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['numberoptions']) ||
+			    (empty($pconfig['numberoptions']['item'][0]['number']) && (empty($pconfig['numberoptions']['item'][0]['value'])))) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvopts = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
 
-	// Make the 'netboot' button a plain button, not a submit button
-	$("#btnnetboot").prop('type','button');
+		hideClass('adnloptions', !showadvopts);
+		hideInput('addrow', !showadvopts);
 
-	// Show netboot controls
-	$("#btnnetboot").click(function() {
-		hideInput('bootfile_url', false);
-		hideCheckbox('shownetboot', false);
-	});
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
 
-	// Make the 'additional options' button a plain button, not a submit button
-	$("#btnadnl").prop('type','button');
+	$('#btnadvopts').prop('type', 'button');
 
-	// Show additional  controls
-	$("#btnadnl").click(function() {
-		hideClass('adnloptions', false);
-		hideInput('addrow', false);
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
 		checkLastRow();
 	});
 
@@ -1149,12 +1277,11 @@ events.push(function() {
 
 	// On initial load
 	do_toggle();
-	hideDDNS(true);
-	hideClass('ntpclass', true);
-	hideInput('tftp', true);
-	hideInput('ldap', true);
-	hideInput('bootfile_url', true);
-	hideCheckbox('shownetboot', true);
+	show_advdns(true);
+	show_advntp(true);
+	show_advldap(true);
+	show_advnetboot(true);
+	show_advopts(true);
 	if ($('#enable').prop('checked')) {
 		hideClass('adnloptions', <?php echo json_encode($noopts); ?>);
 		hideInput('addrow', <?php echo json_encode($noopts); ?>);

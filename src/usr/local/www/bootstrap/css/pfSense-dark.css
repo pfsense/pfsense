@@ -160,7 +160,6 @@ ul.context-links li a {
 }
 
 .btn-primary {
-    color: #212121;
     background-color: #607D8B;
     border-color: #37474F;
 }
@@ -181,7 +180,6 @@ ul.context-links li a {
 }
 
 .btn-primary:hover {
-    color: #212121;
     background-color: #455A64;
     border-color: #37474F;
 }

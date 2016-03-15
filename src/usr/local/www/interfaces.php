@@ -2561,7 +2561,7 @@ $section->addInput(new Form_Button(
 	gettext('Advanced PPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setHelp('Create a new PPP configuration');
+))->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration');
 
 $form->add($section);
 
@@ -2687,7 +2687,7 @@ $section->addInput(new Form_Button(
 	gettext('Advanced and MLPPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
+))->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
 
 $form->add($section);
 
@@ -2750,7 +2750,7 @@ $section->addInput(new Form_Button(
 	gettext('Advanced and MLPPP'),
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
+))->addClass('btn-info')->setAttribute('id')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
 
 $form->add($section);
 

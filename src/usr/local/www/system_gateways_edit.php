@@ -700,43 +700,25 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference (not parsed).');
 
-// If any of the advanced options are non-default, we will not show the "Advanced" button
-// and will display the advanced section
-if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
-    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
-    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
-    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
-    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
-    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
-    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
+// Add a button to provide access to the advanced fields
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
 
-	$btnadvanced = new Form_Button(
-		'toggle-advanced',
-		'Advanced Options',
-		null,
-		'fa-cog'
-	);
+$btnadv->addClass('btn-info btn-sm');
 
-	$advdflt = true;
-
-	$btnadvanced->toggles('.advanced-options')->setAttribute('type', 'button');
-	$btnadvanced->addClass('btn-info');
-
-	$section->addInput(new Form_StaticText(
-		null,
-		$btnadvanced
-	));
-}
+$section->addInput(new Form_StaticText(
+	null,
+	$btnadv
+));
 
 $form->add($section);
 $section = new Form_Section('Advanced');
 
-if (isset($advdflt)) {
-	$section->addClass('collapse');
-}
-
-$section->addClass('advanced-options');
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Select(
 	'weight',
@@ -886,5 +868,60 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 print $form;
+?>
 
-include("foot.inc");
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// Show advanced additional opts options ===========================================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
+			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
+			    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
+			    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
+			    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
+			    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
+			    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
+			    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvopts = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('adnlopts', !showadvopts);
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').prop('type', 'button');
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	show_advopts(true);
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

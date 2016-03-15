@@ -590,18 +590,18 @@ $section->addInput(new Form_Input(
 	$pconfig['maxtime']
 ))->setHelp('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds.');
 
-$btndyndns = new Form_Button(
-	'btndyndns',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvdns',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btndyndns->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
-	$btndyndns
+	$btnadv
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -638,18 +638,18 @@ $section->addInput(new Form_Input(
 	$pconfig['ddnsdomainkey']
 ))->setHelp('Enter the dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
-$btnntp = new Form_Button(
-	'btnntp',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvntp',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnntp->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
-	$btnntp
+	$btnadv
 ));
 
 $group = new Form_Group('NTP Servers');
@@ -674,18 +674,18 @@ $group->addClass('ntpclass');
 
 $section->add($group);
 
-$btntftp = new Form_Button(
-	'btntftp',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvtftp',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btntftp->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP servers',
-	$btntftp
+	$btnadv
 ));
 
 $section->addInput(new Form_Input(
@@ -703,13 +703,119 @@ print($form);
 //<![CDATA[
 events.push(function() {
 
-	function hideDDNS(hide) {
-		hideCheckbox('ddnsupdate', hide);
-		hideInput('ddnsdomain', hide);
-		hideInput('ddnsdomainprimary', hide);
-		hideInput('ddnsdomainkeyname', hide);
-		hideInput('ddnsdomainkey', hide);
+	// Show advanced DNS options ======================================================================================
+	var showadvdns = false;
+
+	function show_advdns(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvdns = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvdns = !showadvdns;
+		}
+
+		hideCheckbox('ddnsupdate', !showadvdns);
+		hideInput('ddnsdomain', !showadvdns);
+		hideInput('ddnsdomainprimary', !showadvdns);
+		hideInput('ddnsdomainkeyname', !showadvdns);
+		hideInput('ddnsdomainkey', !showadvdns);
+
+		if (showadvdns) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
 	}
+
+	$('#btnadvdns').prop('type', 'button');
+
+	$('#btnadvdns').click(function(event) {
+		show_advdns();
+	});
+
+	// Show advanced NTP options ======================================================================================
+	var showadvntp = false;
+
+	function show_advntp(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['ntp1']) && empty($pconfig['ntp2'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvntp = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvntp = !showadvntp;
+		}
+
+		hideInput('ntp1', !showadvntp);
+		hideInput('ntp2', !showadvntp);
+
+		if (showadvntp) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvntp').prop('type', 'button');
+
+	$('#btnadvntp').click(function(event) {
+		show_advntp();
+	});
+
+	// Show advanced TFTP options ======================================================================================
+	var showadvtftp = false;
+
+	function show_advtftp(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['tftp'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvtftp = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvtftp = !showadvtftp;
+		}
+
+		hideInput('tftp', !showadvtftp);
+
+		if (showadvtftp) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvtftp').prop('type', 'button');
+
+	$('#btnadvtftp').click(function(event) {
+		show_advtftp();
+	});
 
 	// Make the ‘Copy My MAC’ button a plain button, not a submit button
 	$("#btnmymac").prop('type','button');
@@ -719,34 +825,10 @@ events.push(function() {
 		$('#mac').val('<?=$mymac?>');
 	});
 
-	// Make the ‘tftp’ button a plain button, not a submit button
-	$("#btntftp").prop('type','button');
-
-	// Show tftp controls
-	$("#btntftp").click(function() {
-		hideInput('tftp', false);
-	});
-
-	// Make the ‘ntp’ button a plain button, not a submit button
-	$("#btnntp").prop('type','button');
-
-	// Show ntp controls
-	$("#btnntp").click(function() {
-		hideClass('ntpclass', false);
-	});
-
-	// Make the ‘ddns’ button a plain button, not a submit button
-	$("#btndyndns").prop('type','button');
-
-	// Show ddns controls
-	$("#btndyndns").click(function() {
-		hideDDNS(false);
-	});
-
 	// On initial load
-	hideDDNS(true);
-	hideClass('ntpclass', true);
-	hideInput('tftp', true);
+	show_advdns(true);
+	show_advntp(true);
+	show_advtftp(true);
 });
 //]]>
 </script>

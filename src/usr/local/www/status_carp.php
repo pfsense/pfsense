@@ -224,11 +224,11 @@ if ($carpcount == 0) {
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'play-circle';
+				$icon = 'play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'pause-circle';
+				$icon = 'pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle';
+				$icon = 'question-circle text-danger';
 			}
 		}
 ?>

@@ -199,6 +199,16 @@ ul.context-links li a {
     border-color: #B71C1C;
 }
 
+.btn-warning {
+    background-color: #FFA000;
+    border-color: #FF8F00;
+}
+
+.btn-warning.active, .btn-warning.focus, .btn-warning:active, .btn-warning:focus, .btn-warning:hover, .open>.dropdown-toggle.btn-warning {
+    background-color: #FF8F00;
+    border-color: #FF6F00;
+}
+
 /* end common colors */
 
 caption {

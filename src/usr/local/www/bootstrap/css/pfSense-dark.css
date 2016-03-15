@@ -164,7 +164,7 @@ ul.context-links li a {
     border-color: #1976D2;
 }
 
-.btn-info:hover {
+.btn-info.active, .btn-info.focus, .btn-info:active, .btn-info:focus, .btn-info:hover, .open>.dropdown-toggle.btn-info {
     background-color: #1565C0;
     border-color: #0D47A1;
 }
@@ -174,7 +174,7 @@ ul.context-links li a {
     border-color: #37474F;
 }
 
-.btn-primary:hover {
+.btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open>.dropdown-toggle.btn-primary {
     background-color: #455A64;
     border-color: #37474F;
 }
@@ -192,6 +192,11 @@ ul.context-links li a {
 .btn-danger {
     background-color: #D32F2F;
     border-color: #D32F2F;
+}
+
+.btn-danger.active, .btn-danger.focus, .btn-danger:active, .btn-danger:focus, .btn-danger:hover, .open>.dropdown-toggle.btn-danger {
+    background-color: #C62828;
+    border-color: #B71C1C;
 }
 
 /* end common colors */

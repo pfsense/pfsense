@@ -159,8 +159,23 @@ ul.context-links li a {
     border-color: #212121;
 }
 
+.btn-info {
+    background-color: #2196F3;
+    border-color: #1976D2;
+}
+
+.btn-info:hover {
+    background-color: #1565C0;
+    border-color: #0D47A1;
+}
+
 .btn-primary {
     background-color: #607D8B;
+    border-color: #37474F;
+}
+
+.btn-primary:hover {
+    background-color: #455A64;
     border-color: #37474F;
 }
 
@@ -179,10 +194,6 @@ ul.context-links li a {
     border-color: #D32F2F;
 }
 
-.btn-primary:hover {
-    background-color: #455A64;
-    border-color: #37474F;
-}
 /* end common colors */
 
 caption {

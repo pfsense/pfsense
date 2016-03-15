@@ -170,13 +170,13 @@ ul.context-links li a {
 }
 
 .btn-primary {
-    background-color: #607D8B;
-    border-color: #37474F;
+    background-color: #009688;
+    border-color: #00796B;
 }
 
 .btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open>.dropdown-toggle.btn-primary {
-    background-color: #455A64;
-    border-color: #37474F;
+    background-color: #00796B;
+    border-color: #00695C;
 }
 
 .btn-success {

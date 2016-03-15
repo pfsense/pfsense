@@ -389,10 +389,11 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 	$columnWidth = 12 / $numColumns;
 
 	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
-		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
+		
 
 		//if col$currentColumnNumber exists
 		if (isset($widgetColumns['col'.$currentColumnNumber])) {
+			echo '<div class="test col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
 			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
 
 			foreach ($columnWidgets as $widgetname => $widgetconfig) {
@@ -429,10 +430,11 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 				</div>
 				<?php
 			}
+			echo "</div>";
 		} else {
-			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
+			echo '<div class="test2 col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
 		}
-		echo "</div>";
+		
 	}
 ?>
 

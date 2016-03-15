@@ -904,10 +904,10 @@ events.push(function() {
 	// "Move to here" (anchor) action
 	$('[id^=Xmove_]').click(function (event) {
 
-		// Prent click from toggleing row
+		// Prevent click from toggling row
 		event.stopImmediatePropagation();
 
-		// Save teh traget rule position
+		// Save the target rule position
 		var anchor_row = $(this).parents("tr:first");
 
 		$('#ruletable > tbody  > tr').each(function() {
@@ -923,7 +923,7 @@ events.push(function() {
 			}
 		});
 
-		// Tempoerarily set background color so user can more easily see the moved rules, then fade
+		// Temporarily set background color so user can more easily see the moved rules, then fade
 		$('.highlight').effect("highlight", {color: "#739b4b;"}, 4000);
 		$('#ruletable tr').removeClass("highlight");
 		$('#order-store').removeAttr('disabled');
@@ -958,7 +958,7 @@ events.push(function() {
 		saving = true;
 	});
 
-	// provide a warning message if the user tries to change page before saving
+	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if ((!saving && dirty) || newSeperator) {
 			return ("<?=gettext('You have moved one or more rules but have not yet saved')?>");

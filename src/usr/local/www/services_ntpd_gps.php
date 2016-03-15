@@ -374,7 +374,7 @@ $section->addInput(new Form_Input(
 // Statistics logging section
 $btnadvgps = new Form_Button(
 	'btnadvgps',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -401,7 +401,7 @@ $group->add(new Form_Input(
 
 $btncalc = new Form_Button(
 	'btncalc',
-	gettext('Calculate'),
+	'Calculate',
 	null,
 	'fa-calculator'
 );

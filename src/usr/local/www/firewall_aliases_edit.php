@@ -743,7 +743,7 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		gettext('Delete'),
+		'Delete',
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');

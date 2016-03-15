@@ -279,7 +279,7 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		gettext('Delete'),
+		'Delete',
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');
@@ -289,7 +289,7 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 
 $section->addInput(new Form_Button(
 	'addrow',
-	gettext('Add'),
+	'Add',
 	null,
 	'fa-plus'
 ))->addClass('btn-success');
@@ -335,7 +335,7 @@ $section->addInput(new Form_Checkbox(
 // Statistics logging section
 $btnadvstats = new Form_Button(
 	'btnadvstats',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -371,7 +371,7 @@ $section->addInput(new Form_Checkbox(
 // Leap seconds section
 $btnleap = new Form_Button(
 	'btnleap',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );

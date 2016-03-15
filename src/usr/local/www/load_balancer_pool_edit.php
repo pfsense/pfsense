@@ -412,7 +412,7 @@ $group->add(new Form_IpAddress(
 
 $group->add(new Form_Button(
 	'btnaddtopool',
-	gettext('Add to pool'),
+	'Add to pool',
 	null,
 	'fa-plus'
 ))->addClass('btn-success');
@@ -457,14 +457,14 @@ $group = new Form_Group('');
 
 $group->add(new Form_Button(
 	'removedisabled',
-	gettext('Remove'),
+	'Remove',
 	null,
 	'fa-trash'
 ))->addClass('btn-danger btn-sm');
 
 $group->add(new Form_Button(
 	'removeenabled',
-	gettext('Remove'),
+	'Remove',
 	null,
 	'fa-trash'
 ))->addClass('btn-danger btn-sm');
@@ -475,14 +475,14 @@ $group = new Form_Group('');
 
 $group->add(new Form_Button(
 	'movetoenabled',
-	gettext('Move to enabled list'),
+	'Move to enabled list',
 	null,
 	'fa-angle-double-right'
 ))->addClass('btn-info btn-sm');
 
 $group->add(new Form_Button(
 	'movetodisabled',
-	gettext('Move to disabled list'),
+	'Move to disabled list',
 	null,
 	'fa-angle-double-left'
 ))->addClass('btn-info btn-sm');

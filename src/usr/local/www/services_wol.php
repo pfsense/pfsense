@@ -186,7 +186,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	gettext('Send'),
+	'Send',
 	null,
 	'fa-power-off'
 ))->addClass('btn-primary');

@@ -233,7 +233,7 @@ $section->addInput(new Form_Input(
 if (!empty($resolved)) {
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		gettext('Add alias'),
+		'Add alias',
 		null,
 		'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
@@ -243,7 +243,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	gettext('Lookup'),
+	'Lookup',
 	null,
 	'fa-search'
 ))->addClass('btn-primary');

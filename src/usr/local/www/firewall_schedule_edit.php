@@ -468,14 +468,14 @@ $group = new Form_Group(null);
 
 $group->add(new Form_Button(
 	'btnaddtime',
-	gettext('Add Time'),
+	'Add Time',
 	null,
 	'fa-plus'
 ))->addClass('btn-success btn-sm');
 
 $group->add(new Form_Button(
 	'btnclrsel',
-	gettext('Clear selection'),
+	'Clear selection',
 	null,
 	'fa-undo'
 ))->addClass('btn-info btn-sm');
@@ -654,7 +654,7 @@ if ($getSchedule) {
 
 			$group->add(new Form_Button(
 				'Delete' . $counter,
-				gettext('Delete'),
+				'Delete',
 				null,
 				'fa-trash'
 			))->addClass('btn-xs btn-warning');

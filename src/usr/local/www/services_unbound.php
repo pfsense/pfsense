@@ -367,7 +367,7 @@ $section->addInput(new Form_Checkbox(
 
 $btnadvdns = new Form_Button(
 	'btnadvdns',
-	gettext('Custom options'),
+	'Custom options',
 	null,
 	'fa-cog'
 );

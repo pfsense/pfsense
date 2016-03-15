@@ -135,7 +135,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	gettext('Update'),
+	'Update',
 	null,
 	'fa-refresh'
 ))->addClass('btn-primary');

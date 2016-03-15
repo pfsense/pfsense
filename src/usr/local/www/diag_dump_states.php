@@ -175,7 +175,7 @@ $section->addInput(new Form_Input(
 
 $filterbtn = new Form_Button(
 	'filterbtn',
-	gettext('Filter'),
+	'Filter',
 	null,
 	'fa-filter'
 );
@@ -188,7 +188,7 @@ $section->addInput(new Form_StaticText(
 if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))) {
 	$killbtn = new Form_Button(
 		'killfilter',
-		gettext('Kill States'),
+		'Kill States',
 		null,
 		'fa-trash'
 	);

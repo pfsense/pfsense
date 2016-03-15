@@ -444,7 +444,7 @@ if (isset($id) && $a_dyndns[$id]) {
 
 	$form->addGlobal(new Form_Button(
 		'force',
-		gettext('Save & Force Update'),
+		'Save & Force Update',
 		null,
 		'fa-refresh'
 	))->removeClass('btn-primary')->addClass('btn-info');

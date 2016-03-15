@@ -204,7 +204,7 @@ $form->add($section);
 
 $form->addGlobal(new Form_Button(
 	'Submit',
-	gettext('Ping'),
+	'Ping',
 	null,
 	'fa-rss'
 ))->addClass('btn-primary');

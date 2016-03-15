@@ -571,7 +571,7 @@ $group->add(new Form_Input(
 
 $group->add(new Form_Button(
 	'Select',
-	gettext('Select a container'),
+	'Select a container',
 	null,
 	'fa-search'
 ))->addClass('btn-info');

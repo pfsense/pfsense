@@ -434,7 +434,7 @@ $macaddress = new Form_Input(
 
 $btnmymac = new Form_Button(
 	'btnmymac',
-	gettext('Copy My MAC'),
+	'Copy My MAC',
 	null,
 	'fa-clone'
 	);
@@ -592,7 +592,7 @@ $section->addInput(new Form_Input(
 
 $btndyndns = new Form_Button(
 	'btndyndns',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -640,7 +640,7 @@ $section->addInput(new Form_Input(
 
 $btnntp = new Form_Button(
 	'btnntp',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -676,7 +676,7 @@ $section->add($group);
 
 $btntftp = new Form_Button(
 	'btntftp',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );

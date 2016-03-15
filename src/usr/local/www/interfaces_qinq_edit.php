@@ -329,7 +329,7 @@ foreach ($item as $ww) {
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
-		gettext('Delete'),
+		'Delete',
 		null,
 		'fa-trash'
 	))->addClass('btn-warning');
@@ -341,7 +341,7 @@ foreach ($item as $ww) {
 
 $form->addGlobal(new Form_Button(
 	'addrow',
-	gettext('Add Tag'),
+	'Add Tag',
 	null,
 	'fa-plus'
 ))->addClass('btn-success addbtn');

@@ -297,7 +297,7 @@ if ($act == "new" || $act == "edit") {
 
 		$group->add(new Form_Button(
 			'deleterow' . $counter,
-			gettext('Delete'),
+			'Delete',
 			null,
 			'fa-trash'
 		))->addClass('btn-warning');
@@ -310,7 +310,7 @@ if ($act == "new" || $act == "edit") {
 
 	$form->addGlobal(new Form_Button(
 		'addrow',
-		gettext('Add Network'),
+		'Add Network',
 		null,
 		'fa-plus'
 	))->addClass('btn-success');

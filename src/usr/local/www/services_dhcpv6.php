@@ -754,7 +754,7 @@ $section->addInput(new Form_Checkbox(
 
 $btndyndns = new Form_Button(
 	'btndyndns',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -822,7 +822,7 @@ $section->addInput(new Form_Checkbox(
 
 $btnntp = new Form_Button(
 	'btnntp',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -858,7 +858,7 @@ $section->add($group);
 
 $btnldap = new Form_Button(
 	'btnldap',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -879,7 +879,7 @@ $section->addInput(new Form_Input(
 
 $btnnetboot = new Form_Button(
 	'btnnetboot',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -907,7 +907,7 @@ $section->addInput(new Form_Input(
 
 $btnadnl = new Form_Button(
 	'btnadnl',
-	gettext('Advanced'),
+	'Advanced',
 	null,
 	'fa-cog'
 );
@@ -954,7 +954,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 	$btn = new Form_Button(
 		'deleterow' . $counter,
-		gettext('Delete'),
+		'Delete',
 		null,
 		'fa-trash'
 	);
@@ -968,7 +968,7 @@ foreach ($pconfig['numberoptions']['item'] as $item) {
 
 $btnaddopt = new Form_Button(
 	'addrow',
-	gettext('Add Option'),
+	'Add Option',
 	null,
 	'fa-plus'
 );

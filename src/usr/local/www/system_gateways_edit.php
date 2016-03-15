@@ -713,7 +713,7 @@ if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 
 	$btnadvanced = new Form_Button(
 		'toggle-advanced',
-		gettext('Advanced Options'),
+		'Advanced Options',
 		null,
 		'fa-cog'
 	);

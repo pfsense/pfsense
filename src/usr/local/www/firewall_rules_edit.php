@@ -1363,7 +1363,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
 			'btnsrcadv',
-			gettext('Show advanced'),
+			'Show advanced',
 			null,
 			'fa-cog'
 		))->addClass('btn-info');
@@ -1445,7 +1445,7 @@ $adv_open = is_aoadv_used($pconfig);
 
 $btnadvanced = new Form_Button(
 	'toggle-advanced',
-	gettext('Advanced Options'),
+	'Advanced Options',
 	null,
 	'fa-cog'
 );

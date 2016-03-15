@@ -904,8 +904,10 @@ events.push(function() {
 	// "Move to here" (anchor) action
 	$('[id^=Xmove_]').click(function (event) {
 
+		// Prent click from toggleing row
 		event.stopImmediatePropagation();
 
+		// Save teh traget rule position
 		var anchor_row = $(this).parents("tr:first");
 
 		$('#ruletable > tbody  > tr').each(function() {
@@ -913,12 +915,17 @@ events.push(function() {
 
 			if (ruleid && !isNaN(ruleid)) {
 				if ($('#frc' + ruleid).prop('checked')) {
+					// Move the selected rows, un-select them and add highlight class
 					$(this).insertBefore(anchor_row);
 					fr_toggle(ruleid, "fr");
+					$('#fr' + ruleid).addClass("highlight");
 				}
 			}
 		});
 
+		// Tempoerarily set background color so user can more easily see the moved rules, then fade
+		$('.highlight').effect("highlight", {color: "#739b4b;"}, 4000);
+		$('#ruletable tr').removeClass("highlight");
 		$('#order-store').removeAttr('disabled');
 		reindex_rules($(anchor_row).parent('tbody'));
 		dirty = true;

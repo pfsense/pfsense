@@ -1001,6 +1001,155 @@ ova_setup_ovf_template() {
 		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }
 
+create_virt_images() {
+	local _image_type="${1}"
+	local _default_config="${2}"
+
+	if [ -z "${_image_type}" ]; then
+		return
+	fi
+
+	if [ -z "${_default_config}" ]; then
+		_default_config="default-config"
+	fi
+
+	unset _mkimg_output
+	case "${_image_type}" in
+		azure)
+			local _mkimg_output="${VIRT_TMP}/${VIRT_RAW}"
+			local _format="vhd"
+			;;
+		kvm|openstack)
+			local _mkimg_output="${VIRT_TMP}/${VIRT_RAW}"
+			local _format="qcow2"
+			;;
+		*)
+			local _format="img"
+			;;
+	esac
+	local _image_path=$(echo "${VIRTPATH_TMPL}" | \
+		sed -e "s,%%TYPE%%,${_image_type},g; s,%%EXT%%,${_format},")
+	_mkimg_output=${_mkimg_output:-${_image_path}}
+
+	LOGFILE=${BUILDER_LOGS}/virt.${TARGET}.log
+
+	[ -d "${VIRT_TMP}" ] \
+		&& rm -rf ${VIRT_TMP}
+
+	mkdir -p ${VIRT_TMP}
+
+	if [ -z "${VIRT_SWAP_PART_SIZE_IN_GB}" -o "${VIRT_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
+		# first partition size (freebsd-ufs)
+		local VIRT_FIRST_PART_SIZE_IN_GB=${VIRT_DISK_CAPACITY_IN_GB}
+		# Calculate real first partition size, removing 128 blocks (65536 bytes) beginning/loader
+		local VIRT_FIRST_PART_SIZE=$((${VIRT_FIRST_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Unset swap partition size variable
+		unset VIRT_SWAP_PART_SIZE
+		# Parameter used by mkimg
+		unset VIRT_SWAP_PART_PARAM
+	else
+		# first partition size (freebsd-ufs)
+		local VIRT_FIRST_PART_SIZE_IN_GB=$((VIRT_DISK_CAPACITY_IN_GB-VIRT_SWAP_PART_SIZE_IN_GB))
+		# Use first partition size in g
+		local VIRT_FIRST_PART_SIZE="${VIRT_FIRST_PART_SIZE_IN_GB}g"
+		# Calculate real swap size, removing 128 blocks (65536 bytes) beginning/loader
+		local VIRT_SWAP_PART_SIZE=$((${VIRT_SWAP_PART_SIZE_IN_GB}*1024*1024*1024-65536))
+		# Parameter used by mkimg
+		local VIRT_SWAP_PART_PARAM="-p freebsd-swap/swap0::${VIRT_SWAP_PART_SIZE}"
+	fi
+
+	# Prepare folder to be put in image
+	customize_stagearea_for_image "${_image_type}" "${_default_config}"
+	install_default_kernel ${DEFAULT_KERNEL} "no"
+
+	# Fill fstab
+	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
+	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	if [ -n "${VIRT_SWAP_PART_SIZE}" ]; then
+		echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
+	fi
+
+	# Create / partition
+	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
+	makefs \
+		-B little \
+		-o label=${PRODUCT_NAME} \
+		-s ${VIRT_FIRST_PART_SIZE} \
+		${VIRT_TMP}/${VIRT_UFS} \
+		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
+
+	if [ $? -ne 0 -o ! -f ${VIRT_TMP}/${VIRT_UFS} ]; then
+		if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
+			rm -f ${VIRT_TMP}/${VIRT_UFS}
+		fi
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating virt / partition. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	echo "Done!" | tee -a ${LOGFILE}
+
+	# Create raw disk
+	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
+	mkimg \
+		-s gpt \
+		-f raw \
+		-b ${FINAL_CHROOT_DIR}/boot/pmbr \
+		-p freebsd-boot:=/boot/gptboot \
+		-p freebsd-ufs/${PRODUCT_NAME}:=${VIRT_TMP}/${VIRT_UFS} \
+		${VIRT_SWAP_PART_PARAM} \
+		-o ${_mkimg_output} 2>&1 >> ${LOGFILE}
+
+	if [ $? -ne 0 -o ! -f ${_mkimg_output} ]; then
+		if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
+			rm -f ${VIRT_TMP}/${VIRT_UFS}
+		fi
+		if [ -f ${_mkimg_output} ]; then
+			rm -f ${_mkimg_output}
+		fi
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating temporary virt image. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	echo "Done!" | tee -a ${LOGFILE}
+
+	# We don't need it anymore
+	rm -f ${VIRT_TMP}/${VIRT_UFS} >/dev/null 2>&1
+
+	if [ "${_format}" != "img" ]; then
+		mkimg \
+			-f ${_format} \
+			-s mbr \
+			-b ${FINAL_CHROOT_DIR}/boot/mbr \
+			-o ${_image_path} \
+			-p freebsd:=${_mkimg_output} 2>&! >> ${LOGFILE}
+
+		if [ $? -ne 0 -o ! -f ${_image_path} ]; then
+			if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
+				rm -f ${VIRT_TMP}/${VIRT_UFS}
+			fi
+			if [ -f ${_mkimg_output} ]; then
+				rm -f ${_mkimg_output}
+			fi
+			echo "Failed!" | tee -a ${LOGFILE}
+			echo ">>> ERROR: Error creating final virt image. STOPPING!" | tee -a ${LOGFILE}
+			print_error_pfS
+		fi
+	fi
+
+	if [ "${_mkimg_output}" != ${_image_path} ]; then
+		rm -f ${_mkimg_output}
+	fi
+
+	if [ "${_image_type}" = "img" ]; then
+		gzip -qf $_image_path &
+		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	fi
+
+	EXTRA_IMAGES="${EXTRA_IMAGES} ${_image_path}"
+
+	echo ">>> VIRT created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+}
+
 # Cleans up previous builds
 clean_builder() {
 	# Clean out directories
@@ -2485,6 +2634,18 @@ snapshots_copy_to_staging_iso_updates() {
 		sha256 ${OVAPATH} > ${OVAPATH}.sha256
 		cp -l ${OVAPATH}* $STAGINGAREA/virtualization 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${OVAPATH})
+	fi
+
+	if [ -n "${EXTRA_IMAGES}" ]; then
+		mkdir -p ${STAGINGAREA}/virtualization
+		for IMG in ${EXTRA_IMAGES}; do
+			if [ -f "${IMG}.gz" ]; then
+				IMG="${IMG}.gz"
+			fi
+			sha256 ${IMG} > ${IMG}.sha256
+			cp -l ${IMG}* $STAGINGAREA/virtualization 2>/dev/null
+			snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${IMG})
+		done
 	fi
 
 	# NOTE: Updates need a file with output similar to date output

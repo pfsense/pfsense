@@ -866,6 +866,9 @@ events.push(function() {
 <?php endif; ?>
 
 		$('#containers').modal('show');
+		$('#serverlist').parent('div').prev('label').remove();
+		$('#serverlist').parent('div').removeClass("col-sm-10");
+		$('#serverlist').parent('div').addClass("col-sm-12");
 
 		ajaxRequest = $.ajax(
 			{

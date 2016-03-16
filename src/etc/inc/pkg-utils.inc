@@ -157,8 +157,6 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	/* XXX: should be a tunnable? */
 	$timeout = 300; // seconds
 	$error_log = '';
-	$started = time();
-	$maxwaittime = 10; // Number of seconds to wait for a response fromteh pacakge we are calling
 
 	do {
 		$write = array();
@@ -184,15 +182,6 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		}
 
 		$status = proc_get_status($process);
-
-		$now = time();
-
-		if (($now - $started) >= $maxwaittime) {
-			$rc = -1;
-			proc_terminate($process);
-			break;
-		}
-
 	} while ($status['running']);
 
 	fclose($pipes[1]);
@@ -201,9 +190,7 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 
 	conf_mount_ro();
 
-	if (!isset($rc)) {
-		$rc = $status['exitcode'];
-	}
+	$rc = $status['exitcode'];
 
 	pkg_debug("pkg_call(): rc = {$rc}\n");
 	if ($rc == 0) {

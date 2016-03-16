@@ -64,7 +64,7 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
-// Test LDAP setting in response to an ajax request from this page.
+// Test LDAP settings in response to an AJAX request from this page.
 if ($_REQUEST['ajax']) {
 
 	if (isset($config['system']['authserver'][0]['host'])) {
@@ -87,19 +87,22 @@ if ($_REQUEST['ajax']) {
 
 			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
 			if (ldap_test_bind($authcfg)) {
-				print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
+				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
 
 				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
 				$ous = ldap_get_user_ous(true, $authcfg);
+
 				if (count($ous)>1) {
-					print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
+					print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
 					print('<tr ><td colspan="3">');
+
 					if (is_array($ous)) {
 						print("<b>" . gettext("Organization units found") . "</b>");
 						print('<table class="table table-hover">');
 						foreach ($ous as $ou) {
 							print("<tr><td>" . $ou . "</td></tr>");
 						}
+
 					print("</td></tr>");
 					print("</table>");
 					}
@@ -110,11 +113,11 @@ if ($_REQUEST['ajax']) {
 				print("</table><p/>");
 
 			} else {
-				print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+				print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
 				print("</table><p/>");
 			}
 		} else {
-			print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
 			print("</table><p/>");
 		}
 
@@ -250,8 +253,7 @@ $form->add($modal);
 
 print $form;
 
-
-
+// If the user clicked "Save & Test" shw the modal and populate it with the test results via AJAX
 if ($save_and_test) {
 ?>
 <script type="text/javascript">
@@ -266,10 +268,10 @@ events.push(function() {
 			{
 				url: "/system_usermanager_settings.php",
 				type: "post",
-				data: 	{
+				data: {
 					ajax: "ajax",
 					authserver: authserver
-					}
+				}
 			}
 		);
 

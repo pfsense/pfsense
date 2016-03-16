@@ -985,6 +985,7 @@ ova_setup_ovf_template() {
 		-e "s,%%OS_TYPE%%,${_os_type},g" \
 		-e "s,%%OS_DESCR%%,${_os_descr},g" \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
+		-e "s,%%PRODUCT_NAME_SUFFIX%%,${PRODUCT_NAME_SUFFIX},g" \
 		-e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION},g" \
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
 		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/license.txt" \

@@ -203,11 +203,11 @@ export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"1024M"}
 # Name of ovf file included inside OVA archive
 export OVFTEMPLATE=${OVFTEMPLATE:-"${BUILDER_TOOLS}/templates/ovf/${PRODUCT_NAME}.ovf"}
 # / partition to be used by mkimg
-export OVFUFS=${OVFUFS:-"${PRODUCT_NAME}-disk1.ufs"}
+export OVFUFS=${OVFUFS:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-disk1.ufs"}
 # Raw disk to be converted to vmdk
-export OVFRAW=${OVFRAW:-"${PRODUCT_NAME}-disk1.raw"}
+export OVFRAW=${OVFRAW:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-disk1.raw"}
 # On disk name of VMDK file included in OVA
-export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}-disk1.vmdk"}
+export OVFVMDK=${OVFVMDK:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-disk1.vmdk"}
 # 8 gigabyte on disk VMDK size
 export VMDK_DISK_CAPACITY_IN_GB=${VMDK_DISK_CAPACITY_IN_GB:-"8"}
 # swap partition size (freebsd-swap)

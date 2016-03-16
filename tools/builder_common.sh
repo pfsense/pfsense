@@ -1121,7 +1121,7 @@ create_virt_images() {
 			-s mbr \
 			-b ${FINAL_CHROOT_DIR}/boot/mbr \
 			-o ${_image_path} \
-			-p freebsd:=${_mkimg_output} 2>&! >> ${LOGFILE}
+			-p freebsd:=${_mkimg_output} 2>&1 >> ${LOGFILE}
 
 		if [ $? -ne 0 -o ! -f ${_image_path} ]; then
 			if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then

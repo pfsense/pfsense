@@ -153,11 +153,11 @@
     </VirtualHardwareSection>
     <ProductSection xsi:type="ovf:ProductSection_Type">
       <Info>Describes product information for the service</Info>
-      <Product>%%PRODUCT_NAME%%%%PRODUCT_NAME_SUFFIX%%</Product>
+      <Product>Netgate pfSense Certified firewall and VPN appliance</Product>
       <Vendor>%%VENDOR_NAME%%</Vendor>
       <Version>%%PRODUCT_VERSION%%</Version>
-      <ProductUrl>%%PRODUCT_URL%%</ProductUrl>
-      <VendorUrl>%%PRODUCT_URL%%</VendorUrl>
+      <ProductUrl>http://www.netgate.com</ProductUrl>
+      <VendorUrl>http://www.netgate.com</VendorUrl>
     </ProductSection>
     <AnnotationSection ovf:required="false">
       <Info>A human-readable annotation</Info>

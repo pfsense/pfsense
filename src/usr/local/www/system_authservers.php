@@ -86,7 +86,7 @@ if ($_REQUEST['ajax']) {
 	if (empty($ous)) {
 		print('<span class="text-danger">Could not connect to the LDAP server. Please check your LDAP configuration.</span>');
 	} else {
-		$section = new Form_Section("Select containers for authentication");
+		$modal = new Modal("Select LDAP containers for authentication", "containers", true);
 		$group = new Form_MultiCheckboxGroup('Containers');
 
 		if (is_array($ous)) {
@@ -105,24 +105,25 @@ if ($_REQUEST['ajax']) {
 			}
 		}
 
-		$section->add($group);
+		$modal->add($group);
 
 		// Create a "Save button"
-		$btnsvcont = new Form_Button(
+
+		$btnsv = new Form_Button(
 			'svcontbtn',
 			'Save',
 			null,
 			'fa-save'
 		);
 
-		$btnsvcont->addClass("btn-primary");
+		$btnsv->removeClass("btn-default)")->addClass("btn-primary");
 
-		$section->addInput(new Form_StaticText(
+		$modal->addInput(new Form_StaticText(
 			'',
-			$btnsvcont
+			$btnsv
 		));
 
-		print($section);
+		print($modal);
 	}
 
 	exit;
@@ -824,8 +825,8 @@ $form->add($section);
 $modal = new Modal("LDAP containers", "containers", true);
 
 $modal->addInput(new Form_StaticText(
-	'Test results',
-	'<span id="serverlist">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+	'',
+	'Testing pfSense LDAP settings... One moment please...' . $g['product_name']
 ));
 
 $form->add($modal);
@@ -864,12 +865,12 @@ events.push(function() {
 <?php else: ?>
 			cert = '';
 <?php endif; ?>
-
+/*
 		$('#containers').modal('show');
 		$('#serverlist').parent('div').prev('label').remove();
 		$('#serverlist').parent('div').removeClass("col-sm-10");
 		$('#serverlist').parent('div').addClass("col-sm-12");
-
+*/
 		ajaxRequest = $.ajax(
 			{
 				url: "/system_authservers.php",
@@ -892,7 +893,9 @@ events.push(function() {
 
 		// Deal with the results of the above ajax call
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
-			$('#serverlist').html(response);
+			$('#containers').replaceWith(response);
+
+			$('#containers').modal('show');
 
 			// The button handler needs to be here because until the modal has been populated
 			// the controls we need to attach handlers to do not exist

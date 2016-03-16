@@ -389,7 +389,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Textarea(
 	'gpsinitcmd',
 	null,
-	$pconfig['initcmd']
+	base64_decode($pconfig['initcmd'])
 ))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand your GPS documentation before making any changes here');
 
 $group = new Form_Group('NMEA Checksum Calculator');
@@ -525,7 +525,7 @@ events.push(function() {
 		$('#result').val(NMEAChecksum($('#nmeastring').val()));
 	});
 
-	// When the 'GPS' selector is changed, we set tth gps defaults
+	// When the 'GPS' selector is changed, we set the gps defaults
 	$('#gpstype').on('change', function() {
 		set_gps_default($(this).val());
 	});
@@ -533,7 +533,9 @@ events.push(function() {
 	hideInput('gpsinitcmd', true);
 	hideClass('calculator', true);
 
-	set_gps_default('<?=$pconfig['type']?>');
+	if ('<?=$pconfig['initcmd']?>' == '') {
+		set_gps_default('<?=$pconfig['type']?>');
+	}
 
 	//	Checkboxes gpsprefer and gpsnoselect are mutually exclusive
 	$('#gpsprefer').click(function() {

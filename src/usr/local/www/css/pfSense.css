@@ -1,5 +1,5 @@
-@import url("/bootstrap/css/bootstrap.min.css");
-@import url("/bootstrap/fonts/roboto.css");
+@import url("/vendor/bootstrap/css/bootstrap.min.css");
+@import url("/css/fonts/roboto.css");
 
 html {
     position: relative;

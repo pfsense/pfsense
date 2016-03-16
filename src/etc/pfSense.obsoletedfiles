@@ -1036,3 +1036,7 @@
 /var/mail/_relayd
 /var/mail/unbound
 /usr/local/www/d3pie
+/usr/local/www/bootstrap
+/usr/local/www/jquery
+/usr/local/www/sortable
+/usr/local/www/font-awesome

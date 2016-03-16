@@ -66,11 +66,11 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
 }
 
-$cssfile = "/bootstrap/css/pfSense.css";
+$cssfile = "/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
-		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
+	if (file_exists("/usr/local/www/css/" . $config['system']['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $config['system']['webgui']['webguicss'];
 	}
 }
 
@@ -85,8 +85,8 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="/sortable/sortable-theme-bootstrap.css">
+	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
 	<script type="text/javascript">
 	//<![CDATA[

@@ -333,18 +333,18 @@ $section->addInput(new Form_Checkbox(
 			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>');
 
 // Statistics logging section
-$btnadvstats = new Form_Button(
+$btnadv = new Form_Button(
 	'btnadvstats',
-	'Advanced',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnadvstats->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Statistics Logging',
-	$btnadvstats
+	$btnadv
 ))->setHelp('Warning: These options will create persistent daily log files in /var/log/ntp.');
 
 $section->addInput(new Form_Checkbox(
@@ -369,18 +369,18 @@ $section->addInput(new Form_Checkbox(
 ));
 
 // Leap seconds section
-$btnleap = new Form_Button(
-	'btnleap',
-	'Advanced',
+$btnadv = new Form_Button(
+	'btnadvleap',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnleap->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Leap seconds',
-	$btnleap
+	$btnadv
 ))->setHelp('A leap second file allows NTP to advertize an upcoming leap second addition or subtraction. ' .
 			'Normally this is only useful if this server is a stratum 1 time server. ');
 
@@ -413,34 +413,86 @@ print($form);
 //<![CDATA[
 events.push(function() {
 
-	// Make the ‘clear’ button a plain button, not a submit button
-	$('#btnadvstats').prop('type','button');
+	// Show advanced stats options ============================================
+	var showadvstats = false;
 
-	// On click, show the controls in the stats section
-	$("#btnadvstats").click(function() {
-		hideCheckbox('clockstats', false);
-		hideCheckbox('loopstats', false);
-		hideCheckbox('peerstats', false);
+	function show_advstats(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (!$pconfig['clockstats'] && !$pconfig['loopstats'] && !$pconfig['peerstats']) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvstats = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvstats = !showadvstats;
+		}
+
+		hideCheckbox('clockstats', !showadvstats);
+		hideCheckbox('loopstats', !showadvstats);
+		hideCheckbox('peerstats', !showadvstats);
+
+		if (showadvstats) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvstats').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvstats').prop('type', 'button');
+
+	$('#btnadvstats').click(function(event) {
+		show_advstats();
 	});
 
-	// Make the ‘clear’ button a plain button, not a submit button
-	$('#btnadvrestr').prop('type','button');
+	// Show advanced leap second options ======================================
+	var showadvleap = false;
 
-	// Make the ‘btnleap’ button a plain button, not a submit button
-	$('#btnleap').prop('type','button');
+	function show_advleap(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			// Note: leapfile is not a field saved in the config, so no need to test for it here.
+			// leapsec is the encoded text in the config, leaptext is not a pconfig[] key.
+			if (empty($pconfig['leapsec'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvleap = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvleap = !showadvleap;
+		}
 
-	// On click, show the controls in the leap seconds section
-	$("#btnleap").click(function() {
-		hideInput('leaptext', false);
-		hideInput('leapfile', false);
+		hideInput('leaptext', !showadvleap);
+		hideInput('leapfile', !showadvleap);
+
+		if (showadvleap) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvleap').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvleap').prop('type', 'button');
+
+	$('#btnadvleap').click(function(event) {
+		show_advleap();
 	});
 
-	// Set intial states
-	hideCheckbox('clockstats', true);
-	hideCheckbox('loopstats', true);
-	hideCheckbox('peerstats', true);
-	hideInput('leaptext', true);
-	hideInput('leapfile', true);
+	// Set initial states
+	show_advstats(true);
+	show_advleap(true);
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

@@ -67,11 +67,26 @@ if (!is_array($config['bridges']['bridged'])) {
 }
 
 function is_aoadv_used($pconfig) {
-        if (isset($pconfig['static']) || isset($pconfig['private']) || isset($pconfig['stp']) || isset($pconfig['span']) || isset($pconfig['edge']) || isset($pconfig['autoedge']) || isset($pconfig['ptp']) || isset($pconfig['autoptp']) || isset($pconfig['maxaddr']) || isset($pconfig['timeout']) || isset($pconfig['maxage']) || isset($pconfig['fwdelay']) || isset($pconfig['hellotime']) || isset($pconfig['priority']) || isset($pconfig['proto']) || isset($pconfig['holdcnt'])) {
-                return true;
-        }
+	if (($pconfig['static'] !="") ||
+	    ($pconfig['private'] != "") ||
+	    ($pconfig['stp'] != "") ||
+	    ($pconfig['span'] != "") ||
+	    ($pconfig['edge'] != "") ||
+	    ($pconfig['autoedge'] != "") ||
+	    ($pconfig['ptp'] != "") ||
+	    ($pconfig['autoptp'] != "") ||
+	    ($pconfig['maxaddr'] != "") ||
+	    ($pconfig['timeout'] != "") ||
+	    ($pconfig['maxage'] != "") ||
+	    ($pconfig['fwdelay'] != "") ||
+	    ($pconfig['hellotime'] != "") ||
+	    ($pconfig['priority'] != "") ||
+	    (($pconfig['proto'] != "") && ($pconfig['proto'] != "rstp")) ||
+	    ($pconfig['holdcnt'] != "")) {
+		return true;
+	}
 
-        return false;
+	return false;
 }
 
 $a_bridges = &$config['bridges']['bridged'];
@@ -429,25 +444,26 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-$showadvanced = is_aoadv_used($pconfig);
+// Advanced Additional options
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
 
-$section->addInput(new Form_Checkbox(
-	'showadvanced',
-	'Advanced',
-	'Show advanced options',
-	$showadvanced
-))->toggles('.toggle-advanced');
+$btnadv->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Advanced Options',
+	$btnadv
+));
 
 $form->add($section);
 
 $section = new Form_Section('Advanced Configuration');
 
-// Set initial toggle state manually for now
-if ($showadvanced) {
-	$section->addClass('toggle-advanced in');
-} else {
-	$section->addClass('toggle-advanced collapse');
-}
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Input(
 	'maxaddr',
@@ -550,11 +566,7 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if ($showadvanced) {
-	$section->addClass('toggle-advanced in');
-} else {
-	$section->addClass('toggle-advanced collapse');
-}
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -657,5 +669,45 @@ if (isset($id) && $a_bridges[$id]) {
 
 $form->add($section);
 print($form);
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
 
-include("foot.inc");
+	// Show advanced additional opts options ======================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+			showadvopts = <?php if (is_aoadv_used($pconfig)) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('adnlopts', !showadvopts);
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').prop('type', 'button');
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	show_advopts(true);
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

@@ -1083,7 +1083,7 @@ create_virt_images() {
 			rm -f ${VIRT_TMP}/${VIRT_UFS}
 		fi
 		echo "Failed!" | tee -a ${LOGFILE}
-		echo ">>> ERROR: Error creating virt / partition. STOPPING!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 	echo "Done!" | tee -a ${LOGFILE}
@@ -1107,7 +1107,7 @@ create_virt_images() {
 			rm -f ${_mkimg_output}
 		fi
 		echo "Failed!" | tee -a ${LOGFILE}
-		echo ">>> ERROR: Error creating temporary virt image. STOPPING!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating temporary virt ${_image_type} image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 	echo "Done!" | tee -a ${LOGFILE}
@@ -1131,7 +1131,7 @@ create_virt_images() {
 				rm -f ${_mkimg_output}
 			fi
 			echo "Failed!" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating final virt image. STOPPING!" | tee -a ${LOGFILE}
+			echo ">>> ERROR: Error creating final virt ${_image_type} image. STOPPING!" | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 	fi
@@ -1147,7 +1147,7 @@ create_virt_images() {
 
 	EXTRA_IMAGES="${EXTRA_IMAGES} ${_image_path}"
 
-	echo ">>> VIRT created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
+	echo ">>> VIRT ${_image_type} created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
 # Cleans up previous builds

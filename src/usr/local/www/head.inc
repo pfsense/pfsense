@@ -507,18 +507,18 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 ?>
 		<ul class="context-links">
 
-	<?php if ($dashboard_available_widgets_hidden): ?>
+	<?php if (isset($widgets)): ?>
 		<li>
-			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
-				<i class="fa fa-plus icon-pointer"></i>
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
+				<i class="fa fa-save icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
 
-	<?php if (isset($widgets)): ?>
+	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
-			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
-				<i class="fa fa-save icon-pointer"></i>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
+				<i class="fa fa-plus icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>

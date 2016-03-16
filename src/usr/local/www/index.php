@@ -484,7 +484,10 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: function(){dirty = true;}
+		update: function(){
+			dirty = true;
+			$('#btnstore').removeClass('invisible');
+		}
 	});
 
 	// On clicking a widget to install . .
@@ -500,6 +503,7 @@ events.push(function() {
 	$('#btnstore').click(function() {
 		updateWidgets();
 		dirty = false;
+		$(this).addClass('invisible');
 		$('[name=widgetForm]').submit();
 	});
 

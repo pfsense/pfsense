@@ -1140,10 +1140,8 @@ create_virt_images() {
 		rm -f ${_mkimg_output}
 	fi
 
-	if [ "${_image_type}" = "img" ]; then
-		gzip -qf $_image_path &
-		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
-	fi
+	gzip -qf $_image_path &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	EXTRA_IMAGES="${EXTRA_IMAGES} ${_image_path}"
 

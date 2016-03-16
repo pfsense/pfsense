@@ -64,9 +64,74 @@
 require("guiconfig.inc");
 require_once("auth.inc");
 
+// Have we been called to populate the "Select a container" modal?
+if ($_REQUEST['ajax']) {
+
+	$ous = array();
+	$authcfg = array();
+
+	$authcfg['ldap_port'] = $_REQUEST['port'];
+	$authcfg['ldap_basedn'] = $_REQUEST['basedn'];
+	$authcfg['host'] = $_REQUEST['host'];
+	$authcfg['ldap_scope'] = $_REQUEST['scope'];
+	$authcfg['ldap_binddn'] = $_REQUEST['binddn'];
+	$authcfg['ldap_bindpw'] = $_REQUEST['bindpw'];
+	$authcfg['ldap_urltype'] = $_REQUEST['urltype'];
+	$authcfg['ldap_protver'] = $_REQUEST['proto'];
+	$authcfg['ldap_authcn'] = explode(";", $_REQUEST['authcn']);
+	$authcfg['ldap_caref'] = $_REQUEST['cert'];
+
+	$ous = ldap_get_user_ous(true, $authcfg);
+
+	if (empty($ous)) {
+		print('<span class="text-danger">Could not connect to the LDAP server. Please check your LDAP configuration.</span>');
+	} else {
+		$section = new Form_Section("Select containers for authentication");
+		$group = new Form_MultiCheckboxGroup('Containers');
+
+		if (is_array($ous)) {
+			$idx = 0;
+
+			foreach ($ous as $ou) {
+				$group->add(new Form_MultiCheckbox(
+					'ou' . $idx,
+					'',
+					$ou,
+					in_array($ou, $authcfg['ldap_authcn']),
+					$ou
+				));
+
+				$idx++;
+			}
+		}
+
+		$section->add($group);
+
+		// Create a "Save button"
+		$btnsvcont = new Form_Button(
+			'svcontbtn',
+			'Save',
+			null,
+			'fa-save'
+		);
+
+		$btnsvcont->addClass("btn-primary");
+
+		$section->addInput(new Form_StaticText(
+			'',
+			$btnsvcont
+		));
+
+		print($section);
+	}
+
+	exit;
+}
+
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -754,11 +819,24 @@ if (isset($id) && $a_server[$id])
 }
 
 $form->add($section);
+
+// Create a largely empty modal to show the available containers. We will populate it via AJAX later
+$modal = new Modal("LDAP containers", "containers", true);
+
+$modal->addInput(new Form_StaticText(
+	'Test results',
+	'<span id="serverlist">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+));
+
+$form->add($modal);
+
 print $form;
 ?>
 <script type="text/javascript">
 //<![CDATA[
-events.push(function(){
+events.push(function() {
+
+	// Create an AJAX request (to this page) to get the container list and controls
 	function select_clicked() {
 		if (document.getElementById("ldap_port").value == '' ||
 			document.getElementById("ldap_host").value == '' ||
@@ -776,26 +854,68 @@ events.push(function(){
 				return;
 			}
 		}
-		var url = 'system_usermanager_settings_ldapacpicker.php?';
-		url += 'port=' + document.getElementById("ldap_port").value;
-		url += '&host=' + document.getElementById("ldap_host").value;
-		url += '&scope=' + document.getElementById("ldap_scope").value;
-		url += '&basedn=' + document.getElementById("ldap_basedn").value;
-		url += '&binddn=' + document.getElementById("ldap_binddn").value;
-		url += '&bindpw=' + document.getElementById("ldap_bindpw").value;
-		url += '&urltype=' + document.getElementById("ldap_urltype").value;
-		url += '&proto=' + document.getElementById("ldap_protver").value;
-		url += '&authcn=' + document.getElementById("ldapauthcontainers").value;
-		<?php if (count($a_ca) > 0): ?>
-			url += '&cert=' + document.getElementById("ldap_caref").value;
-		<?php else: ?>
-			url += '&cert=';
-		<?php endif; ?>
 
-		var oWin = window.open(url, "pfSensePop", "width=620,height=400,top=150,left=150");
-		if (oWin == null || typeof(oWin) == "undefined") {
-			alert("<?=gettext('Popup blocker detected.	Action aborted.');?>");
-		}
+		var ajaxRequest;
+		var authserver = $('#authmode').val();
+		var cert;
+
+<?php if (count($a_ca) > 0): ?>
+			cert = $('#ldap_caref').val();
+<?php else: ?>
+			cert = '';
+<?php endif; ?>
+
+		$('#containers').modal('show');
+
+		ajaxRequest = $.ajax(
+			{
+				url: "/system_authservers.php",
+				type: "post",
+				data: {
+					ajax: 	"ajax",
+					port: 	$('#ldap_port').val(),
+					host: 	$('#ldap_host').val(),
+					scope: 	$('#ldap_scope').val(),
+					basedn: $('#ldap_basedn').val(),
+					binddn: $('#ldap_binddn').val(),
+					bindpw: $('#ldap_bindpw').val(),
+					urltype:$('#ldap_urltype').val(),
+					proto:  $('#ldap_protver').val(),
+					authcn: $('#ldapauthcontainers').val(),
+					cert:   cert
+				}
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#serverlist').html(response);
+
+			// The button handler needs to be here because until the modal has been populated
+			// the controls we need to attach handlers to do not exist
+			$('#svcontbtn').prop("type", "button");
+			$('#svcontbtn').removeAttr("href");
+
+			$('#svcontbtn').click(function () {
+				var ous = $('[id^=ou]').length;
+				var i;
+
+				$('#ldapauthcontainers').val("");
+
+				for (i = 0; i < ous; i++) {
+					if ($('#ou' + i).prop("checked")) {
+						if ($('#ldapauthcontainers').val() != "") {
+							$('#ldapauthcontainers').val($('#ldapauthcontainers').val() +";");
+						}
+
+						$('#ldapauthcontainers').val($('#ldapauthcontainers').val() + $('#ou' + i).val());
+					}
+				}
+
+				$('#containers').modal('hide');
+			});
+		});
+
 	}
 
 	function set_ldap_port() {

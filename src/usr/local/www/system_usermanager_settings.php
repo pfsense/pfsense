@@ -253,7 +253,7 @@ $form->add($modal);
 
 print $form;
 
-// If the user clicked "Save & Test" shw the modal and populate it with the test results via AJAX
+// If the user clicked "Save & Test" show the modal and populate it with the test results via AJAX
 if ($save_and_test) {
 ?>
 <script type="text/javascript">

@@ -1363,7 +1363,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
 			'btnsrcadv',
-			'Show advanced',
+			'Display Advanced',
 			null,
 			'fa-cog'
 		))->addClass('btn-info');
@@ -1744,7 +1744,7 @@ events.push(function() {
 	var portsenabled = 1;
 	var editenabled = 1;
 	var optionsvisible = 0;
-	var srcportsvisible = 0;
+	var srcportsvisible = false;
 
 	function ext_change() {
 
@@ -1805,6 +1805,13 @@ events.push(function() {
 
 	function show_source_port_range() {
 		hideClass('srcprtr', !srcportsvisible);
+
+		if (srcportsvisible) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
@@ -1890,14 +1897,19 @@ events.push(function() {
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
-			hideClass('srcprtr', !srcportsvisible);
-			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
+			hideInput('btnsrcadv', false);
+			if (($('#srcbeginport').val() == "any") && ($('#srcendport').val() == "any")) {
+				srcportsvisible = false;
+			} else {
+				srcportsvisible = true;
+			}
 		} else {
-			hideClass('srcprtr', true);
 			hideClass('dstprtr', true);
-			srcportsvisible = 0;
-			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
+			hideInput('btnsrcadv', true);
+			srcportsvisible = false;
 		}
+
+		show_source_port_range();
 	}
 
 	function src_rep_change() {
@@ -1921,7 +1933,6 @@ events.push(function() {
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		srcportsvisible = true;
 		show_source_port_range();
-		hideInput('btnsrcadv', true);
 	<?php endif; ?>
 
 	// Make it a regular button, not a submit
@@ -1937,7 +1948,6 @@ events.push(function() {
 	$('#btnsrcadv').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
-		$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 	});
 
 	$('#srcendport').on('change', function() {

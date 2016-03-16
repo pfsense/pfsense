@@ -406,31 +406,39 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	# Clean up items that should be cleaned each run
 	staginareas_clean_each_run
 
-	if [ "${_IMGTOBUILD}" = "iso" ]; then
-		create_iso_image
-	elif [ "${_IMGTOBUILD}" = "memstick" ]; then
-		create_memstick_image
-	elif [ "${_IMGTOBUILD}" = "memstickserial" ]; then
-		create_memstick_serial_image
-	elif [ "${_IMGTOBUILD}" = "memstickadi" ]; then
-		create_memstick_adi_image
-	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
-		create_Full_update_tarball
-	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-		if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
-		elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
-		elif [ "${TARGET}" = "amd64" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
-		fi
-		# Create the NanoBSD disk image
-		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
-	elif [ "${_IMGTOBUILD}" = "ova" ]; then
-		install_pkg_install_ports ${PRODUCT_NAME}-vmware
-		create_ova_image
-		install_pkg_install_ports
-	fi
+	case "${_IMGTOBUILD}" in
+		iso)
+			create_iso_image
+			;;
+		memstick)
+			create_memstick_image
+			;;
+		memstickserial)
+			create_memstick_serial_image
+			;;
+		memstickadi)
+			create_memstick_adi_image
+			;;
+		fullupdate)
+			create_Full_update_tarball
+			;;
+		nanobsd|nanobsd-vga)
+			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
+			elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
+			elif [ "${TARGET}" = "amd64" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
+			fi
+			# Create the NanoBSD disk image
+			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
+			;;
+		ova)
+			install_pkg_install_ports ${PRODUCT_NAME}-vmware
+			create_ova_image
+			install_pkg_install_ports
+			;;
+	esac
 done
 
 core_pkg_create_repo

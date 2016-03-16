@@ -16,4 +16,6 @@ if [ ! -d /cf/conf/backup ]; then
 	mkdir /cf/conf/backup
 fi
 
+echo "%%FLAVOR%%" > /etc/default-config-flavor
+
 exit 0

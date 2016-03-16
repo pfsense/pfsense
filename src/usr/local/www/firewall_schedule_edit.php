@@ -627,28 +627,28 @@ if ($getSchedule) {
 			$group->add(new Form_Input(
 				'tempFriendlyTime',
 				null,
-				'readonly',
+				'text',
 				$tempFriendlyTime
 			))->setWidth(2)->setHelp($counter == $maxrows ? 'Day(s)':'');
 
 			$group->add(new Form_Input(
 				'starttime' . $counter,
 				null,
-				'readonly',
+				'text',
 				$starttime
 			))->setWidth(2)->setHelp($counter == $maxrows ? 'Start time':'');
 
 			$group->add(new Form_Input(
 				'stoptime' . $counter,
 				null,
-				'readonly',
+				'text',
 				$stoptime
 			))->setWidth(2)->setHelp($counter == $maxrows ? 'Stop time':'');
 
 			$group->add(new Form_Input(
 				'timedescr' . $counter,
 				null,
-				'readonly',
+				'text',
 				$timedescr
 			))->setWidth(2)->setHelp($counter == $maxrows ? 'Description':'');
 
@@ -1140,19 +1140,19 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	'<div class="form-group schedulegrp' + counter + '">' +
 		'<label for="tempFriendlyTime" class="col-sm-2 control-label"></label>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="tempFriendlyTime" id="tempFriendlyTime" type="readonly" value="' + tempFriendlyTime + '"/>' +
+			'<input class="form-control" name="tempFriendlyTime" id="tempFriendlyTime" type="text" value="' + tempFriendlyTime + '"/>' +
 			'<span class="help-block">Day(s)</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="starttime@" id="starttime@" type="readonly" value="' + starttimehour + ':' + starttimemin + '"/>' +
+			'<input class="form-control" name="starttime@" id="starttime@" type="text" value="' + starttimehour + ':' + starttimemin + '"/>' +
 			'<span class="help-block">Start time</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="stoptime@" id="stoptime@" type="readonly" value="' + stoptimehour + ':' + stoptimemin + '"/>' +
+			'<input class="form-control" name="stoptime@" id="stoptime@" type="text" value="' + stoptimehour + ':' + stoptimemin + '"/>' +
 			'<span class="help-block">Stop time</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="timedescr@" id="timedescr@" type="readonly" value="' + tempdescr + '"/>' +
+			'<input class="form-control" name="timedescr@" id="timedescr@" type="text" value="' + tempdescr + '"/>' +
 			'<span class="help-block">Description</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +

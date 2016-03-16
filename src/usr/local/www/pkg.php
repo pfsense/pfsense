@@ -619,7 +619,7 @@ if ($savemsg) {
 				<?=$final_footer?>
 			</table>
 			</div>
-		<input class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" />
+		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
 
 </form>
 <?php

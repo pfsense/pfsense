@@ -2239,7 +2239,7 @@ function system_identify_specific_platform() {
 			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
 			break;
 		case 'RCC':
-			return (array('name' => 'RCC', 'descr' => 'Netgate RCC'));
+			return (array('name' => 'RCC', 'descr' => 'Netgate XG-2758'));
 			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':

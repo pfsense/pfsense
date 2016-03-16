@@ -789,6 +789,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
+							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=gettext("Move checked rules above this one")?>"></a>
 							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
@@ -900,6 +901,37 @@ configsection = "filter";
 
 events.push(function() {
 
+	// "Move to here" (anchor) action
+	$('[id^=Xmove_]').click(function (event) {
+
+		// Prevent click from toggling row
+		event.stopImmediatePropagation();
+
+		// Save the target rule position
+		var anchor_row = $(this).parents("tr:first");
+
+		$('#ruletable > tbody  > tr').each(function() {
+			ruleid = this.id.slice(2);
+
+			if (ruleid && !isNaN(ruleid)) {
+				if ($('#frc' + ruleid).prop('checked')) {
+					// Move the selected rows, un-select them and add highlight class
+					$(this).insertBefore(anchor_row);
+					fr_toggle(ruleid, "fr");
+					$('#fr' + ruleid).addClass("highlight");
+				}
+			}
+		});
+
+		// Temporarily set background color so user can more easily see the moved rules, then fade
+		$('.highlight').effect("highlight", {color: "#739b4b;"}, 4000);
+		$('#ruletable tr').removeClass("highlight");
+		$('#order-store').removeAttr('disabled');
+		reindex_rules($(anchor_row).parent('tbody'));
+		dirty = true;
+
+	});
+
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is
 	// a work-around for very slow sorting on FireFox
 	$('table tbody.user-entries').hide();
@@ -926,7 +958,7 @@ events.push(function() {
 		saving = true;
 	});
 
-	// provide a warning message if the user tries to change page before saving
+	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if ((!saving && dirty) || newSeperator) {
 			return ("<?=gettext('You have moved one or more rules but have not yet saved')?>");
@@ -934,7 +966,6 @@ events.push(function() {
 			return undefined;
 		}
 	});
-
 });
 //]]>
 </script>

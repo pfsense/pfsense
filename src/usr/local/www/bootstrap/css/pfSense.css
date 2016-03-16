@@ -160,6 +160,10 @@ tr.disabled th {
 .dropdown-menu>li>a {
     padding: 5px 20px;
 }
+
+.navbar-right>li>a {
+    padding: 14px 15px 10px 15px;
+}
 /* end navigation */
 
 .alert {

@@ -1145,8 +1145,6 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
 
-$form->add($section);
-
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
@@ -1161,6 +1159,8 @@ $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
 	$btnadv
 ));
+
+$form->add($section);
 
 $section = new Form_Section('Additional BOOTP/DHCP Options');
 $section->addClass('adnlopts');

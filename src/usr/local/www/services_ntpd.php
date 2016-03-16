@@ -169,8 +169,8 @@ if ($_POST) {
 			enable_rrd_graphing();
 		}
 
-		if (!empty($_POST['leaptxt'])) {
-			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptxt']);
+		if (!empty($_POST['leaptext'])) {
+			$config['ntpd']['leapsec'] = base64_encode($_POST['leaptext']);
 		} elseif (isset($config['ntpd']['leapsec'])) {
 			unset($config['ntpd']['leapsec']);
 		}

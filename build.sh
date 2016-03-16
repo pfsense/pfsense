@@ -195,7 +195,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
+		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -340,7 +340,9 @@ fi
 if [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="nanobsd"
 	if [ "${TARGET}" = "amd64" ]; then
-		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick memstickserial memstickadi ova"
+		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick \
+			memstickserial memstickadi ova ec2 ec2-csm azure \
+			kvm openstack-csm"
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
@@ -437,6 +439,9 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			install_pkg_install_ports ${PRODUCT_NAME}-vmware
 			create_ova_image
 			install_pkg_install_ports
+			;;
+		*)
+			create_virt_images ${_IMGTOBUILD} "default-config-${_IMGTOBUILD}"
 			;;
 	esac
 done

@@ -1341,6 +1341,27 @@ clone_to_staging_area() {
 	# Make a copy of original default config to avoid need of adding items back
 	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
 
+	# Activate serial console in config.xml
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "9600" ${DEFAULTCONF}
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/enableserial" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "enableserial" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config "ec2" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config "ec2-csm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
+	# Activate serial console in config.xml
+	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "115200" ${DEFAULTCONF}
+	## Format
+	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
+	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
+	core_pkg_create default-config "kvm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config "azure" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config "openstack-csm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+
 	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 
 	# Activate serial console in config.xml

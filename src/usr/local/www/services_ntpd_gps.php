@@ -372,18 +372,18 @@ $section->addInput(new Form_Input(
 ))->setHelp('This may be used to change the GPS Clock ID (default: GPS).');
 
 // Statistics logging section
-$btnadvgps = new Form_Button(
+$btnadv = new Form_Button(
 	'btnadvgps',
-	'Advanced',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnadvgps->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'GPS Initialization',
-	$btnadvgps
+	$btnadv
 ));
 
 $section->addInput(new Form_Textarea(
@@ -449,49 +449,82 @@ events.push(function() {
 		return(hexsum);
 	}
 
+	function get_base64_gps_string(type) {
+
+		switch (type) {
+			case "Default":
+				return "JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ0K";
+				break;
+
+			case "Garmin":
+				return "JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg==";
+				break;
+
+			case "Generic":
+				return "";
+				break;
+
+			case "MediaTek":
+				return "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDAsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyOA0KJFBNVEszMDEsMioyRQ0KJFBNVEszMjAsMCoyRg0KJFBNVEszMzAsMCoyRQ0KJFBNVEszODYsMCoyMw0KJFBNVEszOTcsMCoyMw0KJFBNVEsyNTEsNDgwMCoxNA0K";
+				break;
+
+			case "SiRF":
+				return "JFBTUkYxMDMsMDAsMDAsMDEsMDEqMjUNCiRQU1JGMTAzLDAxLDAwLDAxLDAxKjI0DQokUFNSRjEwMywwMiwwMCwwMCwwMSoyNA0KJFBTUkYxMDMsMDMsMDAsMDAsMDEqMjQNCiRQU1JGMTAzLDA0LDAwLDAxLDAxKjI0DQokUFNSRjEwMywwNSwwMCwwMCwwMSoyNA0KJFBTUkYxMDAsMSw0ODAwLDgsMSwwKjBFDQo=";
+				break;
+
+			case "U-Blox":
+				return "JFBVQlgsNDAsR0dBLDEsMSwxLDEsMCwwKjVBDQokUFVCWCw0MCxHTEwsMSwxLDEsMSwwLDAqNUMNCiRQVUJYLDQwLEdTQSwwLDAsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR1NWLDAsMCwwLDAsMCwwKjU5DQokUFVCWCw0MCxSTUMsMSwxLDEsMSwwLDAqNDcNCiRQVUJYLDQwLFZURywwLDAsMCwwLDAsMCo1RQ0KJFBVQlgsNDAsR1JTLDAsMCwwLDAsMCwwKjVEDQokUFVCWCw0MCxHU1QsMCwwLDAsMCwwLDAqNUINCiRQVUJYLDQwLFpEQSwxLDEsMSwxLDAsMCo0NA0KJFBVQlgsNDAsR0JTLDAsMCwwLDAsMCwwKjREDQokUFVCWCw0MCxEVE0sMCwwLDAsMCwwLDAqNDYNCiRQVUJYLDQwLEdQUSwwLDAsMCwwLDAsMCo1RA0KJFBVQlgsNDAsVFhULDAsMCwwLDAsMCwwKjQzDQokUFVCWCw0MCxUSFMsMCwwLDAsMCwwLDAqNTQNCiRQVUJYLDQxLDEsMDAwNywwMDAzLDQ4MDAsMCoxMw0K";
+				break;
+
+			case "SureGPS":
+				return "JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg==";
+				break;
+			default:
+				return "";
+		}
+	}
+
+	function get_gps_string(type) {
+		return atob(get_base64_gps_string(type));
+	}
+
 	function set_gps_default(type) {
 		$('#gpsnmea').val(0);
 		$('#gpsspeed').val(0);
 		$('#gpsfudge1').val(0);
+		$('#gpsinitcmd').val(get_gps_string(type));
 
 		//stuff the JS object as needed for each type
 		switch (type) {
 			case "Default":
 				$('#gpsfudge1').val("0.155");
 				$('#gpsfudge2').val("");
-				$('#gpsinitcmd').val(atob("JFBVQlgsNDAsR1NWLDAsMCwwLDAqNTkNCiRQVUJYLDQwLEdMTCwwLDAsMCwwKjVDDQokUFVCWCw0MCxaREEsMCwwLDAsMCo0NA0KJFBVQlgsNDAsVlRHLDAsMCwwLDAqNUUNCiRQVUJYLDQwLEdTViwwLDAsMCwwKjU5DQokUFVCWCw0MCxHU0EsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR0dBLDAsMCwwLDANCiRQVUJYLDQwLFRYVCwwLDAsMCwwDQokUFVCWCw0MCxSTUMsMCwwLDAsMCo0Ng0KJFBVQlgsNDEsMSwwMDA3LDAwMDMsNDgwMCwwDQokUFVCWCw0MCxaREEsMSwxLDEsMQ0K"));
 				break;
 
 			case "Garmin":
 				$('#gpsfudge2').val("0.600");
-				$('#gpsinitcmd').val(atob("JFBHUk1DLCwsLCwsLCwsLDMsLDIsOCo1RQ0KJFBHUk1DMSwsMSwsLCwsLFcsLCwsLCwsKjMwDQokUEdSTU8sLDMqNzQNCiRQR1JNTyxHUFJNQywxKjNEDQokUEdSTU8sR1BHR0EsMSoyMA0KJFBHUk1PLEdQR0xMLDEqMjYNCg=="));
 				break;
 
 			case "Generic":
 				$('#gpsfudge2').val("0.400");
-				$('#gpsinitcmd').val("");
 				break;
 
 			case "MediaTek":
 				$('#gpsfudge2').val("0.400");
-				$('#gpsinitcmd').val(atob("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDAsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyOA0KJFBNVEszMDEsMioyRQ0KJFBNVEszMjAsMCoyRg0KJFBNVEszMzAsMCoyRQ0KJFBNVEszODYsMCoyMw0KJFBNVEszOTcsMCoyMw0KJFBNVEsyNTEsNDgwMCoxNA0K"));
 				break;
 
 			case "SiRF":
 				$('#gpsfudge2').val("0.704"); //valid for 4800, 0.688 @ 9600, 0.640 @ USB
-				$('#gpsinitcmd').val(atob("JFBTUkYxMDMsMDAsMDAsMDEsMDEqMjUNCiRQU1JGMTAzLDAxLDAwLDAxLDAxKjI0DQokUFNSRjEwMywwMiwwMCwwMCwwMSoyNA0KJFBTUkYxMDMsMDMsMDAsMDAsMDEqMjQNCiRQU1JGMTAzLDA0LDAwLDAxLDAxKjI0DQokUFNSRjEwMywwNSwwMCwwMCwwMSoyNA0KJFBTUkYxMDAsMSw0ODAwLDgsMSwwKjBFDQo="));
 				break;
 
 			case "U-Blox":
 				$('#gpsfudge2').val("0.400");
-				$('#gpsinitcmd').val(atob("JFBVQlgsNDAsR0dBLDEsMSwxLDEsMCwwKjVBDQokUFVCWCw0MCxHTEwsMSwxLDEsMSwwLDAqNUMNCiRQVUJYLDQwLEdTQSwwLDAsMCwwLDAsMCo0RQ0KJFBVQlgsNDAsR1NWLDAsMCwwLDAsMCwwKjU5DQokUFVCWCw0MCxSTUMsMSwxLDEsMSwwLDAqNDcNCiRQVUJYLDQwLFZURywwLDAsMCwwLDAsMCo1RQ0KJFBVQlgsNDAsR1JTLDAsMCwwLDAsMCwwKjVEDQokUFVCWCw0MCxHU1QsMCwwLDAsMCwwLDAqNUINCiRQVUJYLDQwLFpEQSwxLDEsMSwxLDAsMCo0NA0KJFBVQlgsNDAsR0JTLDAsMCwwLDAsMCwwKjREDQokUFVCWCw0MCxEVE0sMCwwLDAsMCwwLDAqNDYNCiRQVUJYLDQwLEdQUSwwLDAsMCwwLDAsMCo1RA0KJFBVQlgsNDAsVFhULDAsMCwwLDAsMCwwKjQzDQokUFVCWCw0MCxUSFMsMCwwLDAsMCwwLDAqNTQNCiRQVUJYLDQxLDEsMDAwNywwMDAzLDQ4MDAsMCoxMw0K"));
 				break;
 
 			case "SureGPS":
 				$('#gpsnmea').val(1);
 				$('#gpsspeed').val(16);
 				$('#gpsfudge2').val("0.407");
-				$('#gpsinitcmd').val(atob("JFBNVEsyMjUsMCoyQg0KJFBNVEszMTQsMSwxLDAsMSwwLDUsMCwwLDAsMCwwLDAsMCwwLDAsMCwwLDEsMCoyRA0KJFBNVEszMDEsMioyRQ0KJFBNVEszOTcsMCoyMw0KJFBNVEsxMDIqMzENCiRQTVRLMzEzLDEqMkUNCiRQTVRLNTEzLDEqMjgNCiRQTVRLMzE5LDAqMjUNCiRQTVRLNTI3LDAuMDAqMDANCiRQTVRLMjUxLDk2MDAqMTcNCg=="));
 				break;
 			default:
 				return;
@@ -506,13 +539,41 @@ events.push(function() {
 		$('#gpssubsec').prop('checked', false);
 	}
 
-	// Make the ‘Advanced’ button a plain button, not a submit button
-	$('#btnadvgps').prop('type','button');
+	// Show advanced GPS options ==============================================
+	var showadvgps = false;
 
-	// On click, show the controls in the GPS Initialization section
-	$("#btnadvgps").click(function() {
-		hideInput('gpsinitcmd', false);
-		hideClass('calculator', false);
+	function show_advgps(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+			// If the string in initcmd matches the GPS string for the currently-selected type or is empty
+			// then we have default settings - do not show the advanced stuff.
+			if (('<?=$pconfig['initcmd'] ?>' == get_base64_gps_string($('#gpstype').val())) ||
+			    ('<?=$pconfig['initcmd']?>' == '')) {
+				showadvgps = false;
+			} else {
+				showadvgps = true;
+			}
+		} else {
+			// It was a click, swap the state.
+			showadvgps = !showadvgps;
+		}
+
+		hideInput('gpsinitcmd', !showadvgps);
+		hideClass('calculator', !showadvgps);
+
+		if (showadvgps) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvgps').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvgps').prop('type', 'button');
+
+	$('#btnadvgps').click(function(event) {
+		show_advgps();
 	});
 
 	// Make the ‘Calculate’ button a plain button, not a submit button
@@ -530,9 +591,6 @@ events.push(function() {
 		set_gps_default($(this).val());
 	});
 
-	hideInput('gpsinitcmd', true);
-	hideClass('calculator', true);
-
 	if ('<?=$pconfig['initcmd']?>' == '') {
 		set_gps_default('<?=$pconfig['type']?>');
 	}
@@ -549,6 +607,10 @@ events.push(function() {
 			$('#gpsprefer').prop('checked', false);
 		}
 	});
+
+	// ---------- On initial page load ---------------------------------------
+
+	show_advgps(true);
 });
 //]]>
 </script>

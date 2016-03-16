@@ -867,6 +867,7 @@
 /usr/local/www/system_firmware_settings.php
 /usr/local/www/system_firmware_restorefullbackup.php
 /usr/local/www/system_usermanager_addcert.php
+/usr/local/www/system_usermanager_settings_test.php
 /usr/local/www/themes
 /usr/local/www/ticker.js
 /usr/local/www/tree-images

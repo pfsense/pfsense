@@ -720,13 +720,13 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
 
 $btnsrcadv = new Form_Button(
-	'srcadv',
-	'Advanced',
+	'btnsrcadv',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnsrcadv->addClass('btn-info');
+$btnsrcadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Source',
@@ -1009,9 +1009,8 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var portsenabled = 1;
-	var dstenabled = 1;
-	var showsource = 0;
+	var portsenabled = true;
+	var srcenabled = <?= ($pconfig['srcnot'] || ($pconfig['src'] != "any") || ($pconfig['srcbeginport'] != "any") || ($pconfig['srcendport'] != "any"))? 1:0 ?>;
 	var iface_old = '';
 
 	// ---------- jQuery functions, lovingly converted from the original javascript------------------------------------------
@@ -1031,14 +1030,14 @@ events.push(function() {
 			disableInput('srcendport_cust', true);
 		}
 
-		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled) {
 			disableInput('dstbeginport_cust', false);
 		} else {
 			$('#dstbeginport_cust').val('');
 			disableInput('dstbeginport_cust', true);
 		}
 
-		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+		if (($('#dstendport').find(":selected").index() == 0) && portsenabled) {
 			disableInput('dstendport_cust', false);
 		} else {
 			$('#dstendport_cust').val('');
@@ -1062,10 +1061,8 @@ events.push(function() {
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);
 //			disableInput('localbeginport_cust', false);
-			if (dstenabled) {
-				disableInput('dstbeginport', false);
-				disableInput('dstendport', false);
-			}
+			disableInput('dstbeginport', false);
+			disableInput('dstendport', false);
 		}
 	}
 
@@ -1134,13 +1131,13 @@ events.push(function() {
 
 	function proto_change() {
 		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
-			portsenabled = 1;
+			portsenabled = true;
 		} else {
-			portsenabled = 0;
+			portsenabled = false;
 		}
 
 		if (portsenabled) {
-			hideClass('srcportrange', showsource == 1);
+			hideClass('srcportrange', !srcenabled);
 			hideClass('dstportrange', false);
 			hideClass('lclportrange', false);
 		} else {
@@ -1175,24 +1172,22 @@ events.push(function() {
 				break;
 		}
 
-		if (dstenabled) {
-			switch ($('#dsttype').find(":selected").index()) {
-				case 1: // single
-					disableInput('dst', false);
-					$('#dstmask').val('');
-					disableInput('dstmask', true);;
-					break;
-				case 2: // network /
-					disableInput('dst', false);
-					disableInput('dstmask', false);
-					break;
-				default:
-					$('#dst').val('');
-					disableInput('dst', true);
-					$('#dstmask').val('');
-					disableInput('dstmask', true);
-					break;
-			}
+		switch ($('#dsttype').find(":selected").index()) {
+			case 1: // single
+				disableInput('dst', false);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);;
+				break;
+			case 2: // network /
+				disableInput('dst', false);
+				disableInput('dstmask', false);
+				break;
+			default:
+				$('#dst').val('');
+				disableInput('dst', true);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);
+				break;
 		}
 	}
 
@@ -1211,9 +1206,15 @@ events.push(function() {
 	}
 
 	function hideSource(hide) {
+		var text;
 		hideClass('srcadv', hide);
 		hideClass('srcportrange', hide || !portsenabled);
-		hideInput('srcadv', !hide);
+		if (hide) {
+			text = "<?=gettext('Display Advanced');?>";
+		} else {
+			text = "<?=gettext('Hide Advanced');?>";
+		}
+		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------
@@ -1263,21 +1264,20 @@ events.push(function() {
 		typesel_change();
 	});
 
-    $("#srcadv").click(function() {
-        hideSource(false);
-    });
+	$("#btnsrcadv").click(function() {
+		srcenabled = !srcenabled;
+		hideSource(!srcenabled);
+	});
 	// ---------- On initial page load --------------------------------------------------------------------------------
 
-	$("#srcadv").prop('type', 'button');
+	$("#btnsrcadv").prop('type', 'button');
+	hideSource(!srcenabled);
 	ext_change();
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	iface_old = $('#interface').val();
 	typesel_change();
 	proto_change();
 	nordr_change();
-
-	var source_defined = <?= ($pconfig['srcnot'] || ($pconfig['src'] != "any") || ($pconfig['srcbeginport'] != "any") || ($pconfig['srcendport'] != "any"))? 1:0 ?>;
-	hideSource(!source_defined);
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;

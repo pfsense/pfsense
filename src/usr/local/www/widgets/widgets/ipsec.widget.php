@@ -335,7 +335,7 @@ function get_ipsec_stats() {
 		$('tbody', '#ipsec-' + curtab).html(response);
 
 		// and do it again
-		setTimeout(get_ipsec_stats, 16000);
+		setTimeout(get_ipsec_stats, 6000);
 	});
 }
 

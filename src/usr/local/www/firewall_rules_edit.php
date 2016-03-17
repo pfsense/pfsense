@@ -1925,7 +1925,8 @@ events.push(function() {
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
 			hideInput('btnsrcadv', false);
-			if (($('#srcbeginport').val() == "any") && ($('#srcendport').val() == "any")) {
+			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&
+			    (($('#srcendport').val() == "any") || ($('#srcendport').val() == ""))) {
 				srcportsvisible = false;
 			} else {
 				srcportsvisible = true;

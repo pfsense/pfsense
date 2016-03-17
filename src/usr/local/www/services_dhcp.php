@@ -1343,7 +1343,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		foreach ($a_maps as $mapent) {
 ?>
 					<tr>
-						<td align="center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+						<td class="text-center" ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?php if (isset($mapent['arp_table_static_entry'])): ?>
 								<i class="fa fa-check"></i>
 							<?php endif; ?>

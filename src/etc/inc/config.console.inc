@@ -582,7 +582,7 @@ function vlan_setup() {
 }
 
 function netgate_hardware_setup() {
-	global $config;
+	global $config, $g;
 
 	$platform = system_identify_specific_platform();
 
@@ -688,6 +688,298 @@ function netgate_hardware_setup() {
 	case 'XG-1540':
 		$config['system']['powerd_enable'] = true;
 		break;
+	}
+
+	if (file_exists("{$g['etc_path']}/default-config-flavor")) {
+		$flavor = file_get_contents(
+		    "{$g['etc_path']}/default-config-flavor");
+
+		switch ($flavor) {
+		case "ec2":
+		case "ec2-csm":
+		case "azure":
+		case "kvm":
+		case "openstack-csm":
+			$config['sysctl']['item'][] = array(
+				'tunable' => 'debug.trace_on_panic',
+				'value'   => 1,
+				'descr'   => 'Print stack trace on kernel panic'
+			);
+			$config['sysctl']['item'][] = array(
+				'tunable' => 'debug.debugger_on_panic',
+				'value'   => 0,
+				'descr'   => 'Run debugger on kernel panic'
+			);
+
+			$config['system']['enablesshd'] = true;
+
+			unset($config['interfaces']['wan']['blockpriv']);
+			unset($config['interfaces']['wan']['ipaddrv6']);
+			unset($config['dhcpd']);
+			break;
+		}
+
+		switch ($flavor) {
+		case "kvm":
+			$config['interfaces']['wan']['if'] = 'vtnet0';
+			$config['interfaces']['lan']['if'] = 'vtnet1';
+			unset($config['interfaces']['lan']['ipaddrv6']);
+			break;
+
+		case "openstack":
+		case "azure":
+		case "ec2":
+		case "ec2-csm":
+			if (is_array($config['user'])) {
+				foreach ($config['user'] as &$user) {
+					if ($user['name'] == 'admin') {
+						$user['priv'][] = 'user-ipsec-xauth-dialin';
+						break;
+					}
+				}
+				unset ($user);
+			}
+
+			$config['system']['webgui']['nohttpreferercheck'] = true;
+			$config['system']['webgui']['max_procs'] = 2;
+			$config['system']['webgui']['nodnsrebindcheck'] = true;
+
+			if ($flavor != 'openstack') {
+				$config['system']['webgui']['noantilockout'] = true;
+			}
+
+			$replace_msg = ' _replace_src_wirh_mgmtnet_';
+			if ($flavor == 'openstack') {
+				$config['interfaces']['wan']['if'] = 'vtnet0';
+			} elseif ($flavor == 'azure') {
+				$replace_msg = '';
+				$config['interfaces']['wan']['if'] = 'hn0';
+				$config['system']['webgui']['ssl-certref'] = '51b5ec443d315';
+			} else {
+				$config['interfaces']['wan']['if'] = 'xn0';
+			}
+
+			unset($config['interfaces']['lan']);
+
+			$rules = array();
+
+			$rule = array();
+			$rule['type'] = 'pass';
+			$rule['interface'] = 'wan';
+			$rule['protocol'] = 'inet';
+			$rule['statetype'] = 'keep state';
+			$rule['protocol'] = 'icmp';
+			$rule['source']['any'] = true;
+			$rule['destination']['network'] = 'wanip';
+			$rule['descr'] = 'Default ICMP rule';
+			$rule['tracker'] = (int)microtime(true);
+			$rules[] = $rule;
+
+			$rule = array();
+			$rule['type'] = 'pass';
+			$rule['interface'] = 'wan';
+			$rule['protocol'] = 'inet';
+			$rule['statetype'] = 'keep state';
+			$rule['protocol'] = 'tcp';
+			$rule['source']['any'] = true;
+			$rule['destination']['network'] = 'wanip';
+			$rule['destination']['port'] = 22;
+			$rule['descr'] = 'Default SSH rule' . $replace_msg;
+			$rule['tracker'] = (int)microtime(true);
+			$rules[] = $rule;
+
+			$rule = array();
+			$rule['type'] = 'pass';
+			$rule['interface'] = 'wan';
+			$rule['protocol'] = 'inet';
+			$rule['statetype'] = 'keep state';
+			$rule['protocol'] = 'tcp';
+			$rule['source']['any'] = true;
+			$rule['destination']['network'] = 'wanip';
+			$rule['destination']['port'] = 443;
+			$rule['descr'] = 'Default HTTPS rule' . $replace_msg;
+			$rule['tracker'] = (int)microtime(true);
+			$rules[] = $rule;
+
+			$rule = array();
+			$rule['type'] = 'pass';
+			$rule['interface'] = 'wan';
+			$rule['protocol'] = 'inet';
+			$rule['statetype'] = 'keep state';
+			$rule['protocol'] = 'tcp';
+			$rule['source']['any'] = true;
+			$rule['destination']['network'] = 'wanip';
+			$rule['destination']['port'] = 80;
+			$rule['descr'] = 'Default HTTP rule' . $replace_msg;
+			$rule['tracker'] = (int)microtime(true);
+			$rules[] = $rule;
+
+			if ($flavor == 'ec2') {
+				$rule = array();
+				$rule['type'] = 'pass';
+				$rule['interface'] = 'wan';
+				$rule['protocol'] = 'inet';
+				$rule['statetype'] = 'keep state';
+				$rule['protocol'] = 'udp';
+				$rule['source']['any'] = true;
+				$rule['destination']['network'] = 'wanip';
+				$rule['destination']['port'] = 1194;
+				$rule['descr'] = 'Default OpenVPN rule';
+				$rule['tracker'] = (int)microtime(true);
+				$rule['disabled'] = true;
+				$rules[] = $rule;
+
+				$rule = array();
+				$rule['type'] = 'pass';
+				$rule['interface'] = 'openvpn';
+				$rule['protocol'] = 'inet';
+				$rule['statetype'] = 'keep state';
+				$rule['source']['any'] = true;
+				$rule['destination']['any'] = true;
+				$rule['descr'] = 'Default Traffic from OpenVPN tunnel rule';
+				$rule['tracker'] = (int)microtime(true);
+				$rule['disabled'] = true;
+				$rules[] = $rule;
+
+				$rule = array();
+				$rule['type'] = 'pass';
+				$rule['interface'] = 'enc0';
+				$rule['protocol'] = 'inet46';
+				$rule['source']['any'] = true;
+				$rule['destination']['any'] = true;
+				$rule['descr'] = 'Default allow IPsec to any rule';
+				$rule['tracker'] = (int)microtime(true);
+				$rules[] = $rule;
+			}
+
+			$rule = array();
+			$rule['type'] = 'pass';
+			$rule['interface'] = 'lan';
+			$rule['protocol'] = 'inet';
+			$rule['source']['network'] = 'lan';
+			$rule['destination']['any'] = true;
+			$rule['descr'] = 'Default allow LAN to any rule';
+			$rule['tracker'] = '0100000101';
+			$rules[] = $rule;
+
+			$config['filter']['rule'] = $rules;
+			unset($rule, $rules);
+
+			$gw = array();
+			$gw['interface'] = 'wan';
+			$gw['gateway'] = 'dynamic';
+			$gw['name'] = 'WAN_DHCP';
+			$gw['weight'] = 1;
+			$gw['ipprotocol'] = 'inet';
+			$gw['interval'] = true;
+			$gw['descr'] = 'Interface WAN_DHCP Gateway';
+			$gw['monitor_disable'] = true;
+			$gw['default_gw'] = true;
+			$config['gateways']['gateway_item'] = array();
+			$config['gateways']['gateway_item'][] = $gw;
+			unset($gw);
+
+			if ($flavor == 'ec2-csm' || $flavor == 'openstack') {
+				/* Following items are for ec2 and azure */
+				break;
+			}
+
+			$vip = array();
+			$vip['mode'] = 'ipalias';
+			$vip['interface'] = 'lo0';
+			$vip['descr'] = 'Loopback interface for IPsec client DNS';
+			$vip['type'] = 'single';
+			$vip['subnet_bits'] = 24;
+			$vip['subnet'] = '172.19.0.1';
+			$config['virtualip']['vip'] = array();
+			$config['virtualip']['vip'][] = $vip;
+			unset($vip);
+
+			if ($flavor != 'ec2') {
+				/* following changes are ec2 only */
+				break;
+			}
+
+			$client = array();
+			$client['enable'] = true;
+			$client['user_source'] = 'Local Database';
+			$client['group_source'] = 'none';
+			$client['pool_address'] = '172.25.53.0';
+			$client['pool_netbits'] = 24;
+			$client['save_passwd'] = true;
+			$client['dns_server1'] = '172.19.0.1';
+			$client['login_banner'] = 'Welcome to the Netgate IPsec VPN on AWS';
+			$config['ipsec']['client'] = $client;
+			unset($client);
+
+			$p1 = array();
+			$p1['ikeid'] = 1;
+			$p1['interface'] = 'wan';
+			$p1['mobile'] = true;
+			$p1['disabled'] = true;
+			$p1['mode'] = 'aggressive';
+			$p1['protocol'] = 'inet';
+			$p1['myid_type'] = 'myaddress';
+			$p1['myid_data'] = true;
+			$p1['peerid_type'] = 'user_fqdn';
+			$p1['peerid_data'] = 'admin@pfsense';
+			$p1['encryption-algorithm']['name'] = 'aes';
+			$p1['encryption-algorithm']['keylen'] = 128;
+			$p1['hash-algorithm'] = 'sha1';
+			$p1['dhgroup'] = 2;
+			$p1['lifetime'] = 86400;
+			$p1['pre-shared-key'] = 'netgate-aws-ipsec';
+			$p1['private-key'] = true;
+			$p1['certref'] = true;
+			$p1['caref'] = true;
+			$p1['authentication-method'] = 'xauth_psk_server';
+			$p1['generate_policy'] = 'unique';
+			$p1['proposal_check'] = 'strict';
+			$p1['descr'] = 'Mobile IPsec clients';
+			$p1['nat_traversal'] = 'force';
+			$p1['dpd_delay'] = 10;
+			$p1['dpd_maxfail'] = 5;
+			$p1['iketype'] = 'ikev1';
+			$config['ipsec']['phase1'] = array();
+			$config['ipsec']['phase1'][] = $p1;
+			unset($p1);
+
+			$p2 = array();
+			$p2['ikeid'] = 1;
+			$p2['mode'] = 'tunnel';
+			$p2['localid']['type'] = 'network';
+			$p2['localid']['address'] = '0.0.0.0';
+			$p2['localid']['netbits'] = 0;
+			$p2['remoteid']['type'] = 'mobile';
+			$p2['protocol'] = 'esp';
+			$p2['encryption-algorithm-option']['name'] = 'aes';
+			$p2['encryption-algorithm-option']['keylen'] = 128;
+			$p2['hash-algorithm-option'] = 'hmac_sha1';
+			$p2['pfsgroup'] = 0;
+			$p2['lifetime'] = 28800;
+			$p2['pinghost'] = true;
+			$p2['mobile'] = true;
+			$p2['uniqid'] = uniqid();
+			$p2['reqid'] = 1;
+			$p2['descr'] = 'Netgate Mobile IPsec';
+			$config['ipsec']['phase2'] = array();
+			$config['ipsec']['phase2'][] = $p2;
+			unset($p2);
+
+			$config['ipsec']['enable'] = true;
+
+			$alias = array();
+			$alias['name'] = 'Networks_to_NAT';
+			$alias['address'] = '127.0.0.0/8 172.24.42.0/24 172.25.53.0/24';
+			$alias['descr'] = 'Networks that may originate internet traffic';
+			$alias['type'] = 'network';
+			$alias['detail'] = 'Loopback||Default Remote Access VPN||Default Mobile IPsec VPN';
+			$config['aliases']['alias'] = array();
+			$config['aliases']['alias'][] = $alias;
+			unset($alias);
+
+			break;
+		}
 	}
 
 	write_config(gettext("Default hardware detection on first boot"));

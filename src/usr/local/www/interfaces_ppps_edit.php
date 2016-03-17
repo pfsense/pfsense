@@ -1001,6 +1001,10 @@ events.push(function() {
 			    ($pconfig['pppoe_pr_preset_val'] == "") &&
 			    (!$pconfig['ondemand']) &&
 			    ($pconfig['idletimeout'] == "") &&
+			    (!$pconfig['pppoe_monthly']) &&
+			    (!$pconfig['pppoe_weekly']) &&
+			    (!$pconfig['pppoe_daily']) &&
+			    (!$pconfig['pppoe_hourly']) &&
 			    (!$pconfig['vjcomp']) &&
 			    (!$pconfig['tcpmssfix']) &&
 			    (!$pconfig['shortseq']) &&

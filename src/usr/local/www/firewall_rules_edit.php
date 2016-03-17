@@ -1363,10 +1363,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
 			'btnsrcadv',
-			'Show advanced',
+			'Display Advanced',
 			null,
 			'fa-cog'
-		))->addClass('btn-info');
+		))->addClass('btn-info btn-sm');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
@@ -1441,23 +1441,19 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('You may enter a description here for your reference.');
 
-$adv_open = is_aoadv_used($pconfig);
-
-$btnadvanced = new Form_Button(
-	'toggle-advanced',
-	'Advanced Options',
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
 	null,
 	'fa-cog'
 );
 
-$btnadvanced->addClass('btn-info');
+$btnadv->addClass('btn-info btn-sm');
 
-if (!$adv_open) {
-	$section->addInput(new Form_StaticText(
-		null,
-		$btnadvanced
-	));
-}
+$section->addInput(new Form_StaticText(
+	'Advanced Options',
+	$btnadv
+));
 
 $form->add($section);
 
@@ -1743,8 +1739,39 @@ events.push(function() {
 
 	var portsenabled = 1;
 	var editenabled = 1;
-	var optionsvisible = 0;
-	var srcportsvisible = 0;
+	var srcportsvisible = false;
+
+	// Show advanced additional opts options ======================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+			showadvopts = <?php if (is_aoadv_used($pconfig)) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('advanced-options', !showadvopts);
+		if ($('#tcpflags_any').prop('checked')) {
+			$('.table-flags').addClass('hidden');
+		}
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').prop('type', 'button');
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
 
 	function ext_change() {
 
@@ -1805,6 +1832,13 @@ events.push(function() {
 
 	function show_source_port_range() {
 		hideClass('srcprtr', !srcportsvisible);
+
+		if (srcportsvisible) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
@@ -1890,14 +1924,19 @@ events.push(function() {
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
-			hideClass('srcprtr', !srcportsvisible);
-			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
+			hideInput('btnsrcadv', false);
+			if (($('#srcbeginport').val() == "any") && ($('#srcendport').val() == "any")) {
+				srcportsvisible = false;
+			} else {
+				srcportsvisible = true;
+			}
 		} else {
-			hideClass('srcprtr', true);
 			hideClass('dstprtr', true);
-			srcportsvisible = 0;
-			$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
+			hideInput('btnsrcadv', true);
+			srcportsvisible = false;
 		}
+
+		show_source_port_range();
 	}
 
 	function src_rep_change() {
@@ -1915,17 +1954,15 @@ events.push(function() {
 
 	typesel_change();
 
-	hideClass('advanced-options',  ! "<?=$adv_open?>");
+	show_advopts(true);
 	hideClass('srcportrange', true);
 
 	<?php if ((!empty($pconfig['srcbeginport']) && $pconfig['srcbeginport'] != "any") || (!empty($pconfig['srcendport']) && $pconfig['srcendport'] != "any")): ?>
 		srcportsvisible = true;
 		show_source_port_range();
-		hideInput('btnsrcadv', true);
 	<?php endif; ?>
 
 	// Make it a regular button, not a submit
-	$('#toggle-advanced').prop('type','button');
 	$("#btnsrcadv").prop('type','button');
 
 	// on click . .
@@ -1937,7 +1974,6 @@ events.push(function() {
 	$('#btnsrcadv').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
-		$("#btnsrcadv").prop('value', srcportsvisible ? 'Hide advanced':'Show advanced');
 	});
 
 	$('#srcendport').on('change', function() {
@@ -1971,14 +2007,6 @@ events.push(function() {
 
 	$('#ipprotocol').on('change', function() {
 		proto_change();
-	});
-
-	$('#toggle-advanced').click(function() {
-		optionsvisible = 1;
-		hideClass('advanced-options', false);
-		if ($('#tcpflags_any').prop('checked')) {
-			$('.table-flags').addClass('hidden');
-		}
 	});
 
 	$('#tcpflags_any').click(function () {

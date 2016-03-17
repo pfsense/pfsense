@@ -1144,10 +1144,13 @@ events.push(function() {
 			hideClass('srcportrange', true);
 			hideClass('dstportrange', true);
 			hideClass('lclportrange', true);
+			$('#dstbeginport').prop("selectedIndex", 0).selectmenu();
 			$('#dstbeginport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#dstbeginport_cust').val('');
+			$('#dstendport').prop("selectedIndex", 0).selectmenu();
 			$('#dstendport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#dstendport_cust').val('');
+			$('#localbeginport').prop("selectedIndex", 0).selectmenu();
 			$('#localbeginport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#localbeginport_cust').val('');
 		}

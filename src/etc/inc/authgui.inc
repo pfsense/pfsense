@@ -237,7 +237,7 @@ if ($local_ip == false) {
 $cssfile = "/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if (file_exists("css/" . $config['system']['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/css/" . $config['system']['webgui']['webguicss'])) {
 		$cssfile = "/css/" . $config['system']['webgui']['webguicss'];
 	}
 }

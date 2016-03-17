@@ -205,7 +205,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="/css/pfSense.css" />
 	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
 	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 </head>
@@ -484,7 +484,10 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: function(){dirty = true;}
+		update: function(){
+			dirty = true;
+			$('#btnstore').removeClass('invisible');
+		}
 	});
 
 	// On clicking a widget to install . .
@@ -500,6 +503,7 @@ events.push(function() {
 	$('#btnstore').click(function() {
 		updateWidgets();
 		dirty = false;
+		$(this).addClass('invisible');
 		$('[name=widgetForm]').submit();
 	});
 

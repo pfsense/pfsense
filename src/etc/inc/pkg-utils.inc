@@ -100,7 +100,7 @@ function pkg_update($force = false) {
 }
 
 /* return an array with necessary environment vars for pkg */
-function pkg_env() {
+function pkg_env($extra_env = array()) {
 	global $config, $g;
 
 	$pkg_env_vars = array(
@@ -115,11 +115,15 @@ function pkg_env() {
 		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
 	}
 
+	foreach ($extra_env as $key => $value) {
+		$pkg_env_vars[$key] = $value;
+	}
+
 	return $pkg_env_vars;
 }
 
 /* Execute a pkg call */
-function pkg_call($params, $mute = false) {
+function pkg_call($params, $mute = false, $extra_env = array()) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -140,7 +144,7 @@ function pkg_call($params, $mute = false) {
 
 	pkg_debug("pkg_call(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env());
+	    '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		conf_mount_ro();
@@ -153,8 +157,6 @@ function pkg_call($params, $mute = false) {
 	/* XXX: should be a tunnable? */
 	$timeout = 300; // seconds
 	$error_log = '';
-	$started = time();
-	$maxwaittime = 10; // Number of seconds to wait for a response fromteh pacakge we are calling
 
 	do {
 		$write = array();
@@ -180,15 +182,6 @@ function pkg_call($params, $mute = false) {
 		}
 
 		$status = proc_get_status($process);
-
-		$now = time();
-
-		if (($now - $started) >= $maxwaittime) {
-			$rc = -1;
-			proc_terminate($process);
-			break;
-		}
-
 	} while ($status['running']);
 
 	fclose($pipes[1]);
@@ -197,9 +190,7 @@ function pkg_call($params, $mute = false) {
 
 	conf_mount_ro();
 
-	if (!isset($rc)) {
-		$rc = $status['exitcode'];
-	}
+	$rc = $status['exitcode'];
 
 	pkg_debug("pkg_call(): rc = {$rc}\n");
 	if ($rc == 0) {
@@ -217,7 +208,7 @@ function pkg_call($params, $mute = false) {
 }
 
 /* Execute pkg with $params, fill stdout and stderr and return pkg rc */
-function pkg_exec($params, &$stdout, &$stderr) {
+function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 	global $g, $config;
 
 	if (empty($params)) {
@@ -238,7 +229,7 @@ function pkg_exec($params, &$stdout, &$stderr) {
 
 	pkg_debug("pkg_exec(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
-	    '/', pkg_env());
+	    '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
 		conf_mount_ro();

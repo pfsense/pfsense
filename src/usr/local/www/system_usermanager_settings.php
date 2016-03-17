@@ -62,13 +62,78 @@
 ##|-PRIV
 
 require("guiconfig.inc");
+require_once("auth.inc");
+
+// Test LDAP settings in response to an AJAX request from this page.
+if ($_REQUEST['ajax']) {
+
+	if (isset($config['system']['authserver'][0]['host'])) {
+		$auth_server = $config['system']['authserver'][0]['host'];
+		$authserver = $_REQUEST['authserver'];
+		$authcfg = auth_get_authserver($authserver);
+	}
+
+	if (!$authcfg) {
+		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		exit;
+	} else {
+		print("<pre>");
+
+		print('<table class="table table-hover table-striped table-condensed">');
+
+		print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		if (ldap_test_connection($authcfg)) {
+			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
+
+			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			if (ldap_test_bind($authcfg)) {
+				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+
+				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+				$ous = ldap_get_user_ous(true, $authcfg);
+
+				if (count($ous)>1) {
+					print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
+					print('<tr ><td colspan="3">');
+
+					if (is_array($ous)) {
+						print("<b>" . gettext("Organization units found") . "</b>");
+						print('<table class="table table-hover">');
+						foreach ($ous as $ou) {
+							print("<tr><td>" . $ou . "</td></tr>");
+						}
+
+					print("</td></tr>");
+					print("</table>");
+					}
+				} else {
+					print("<td><span class=\"text-alert\">" . gettext("failed") . "</span></td></tr>");
+				}
+
+				print("</table><p/>");
+
+			} else {
+				print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
+				print("</table><p/>");
+			}
+		} else {
+			print('<td><span class="text-alert">' . gettext("failed") . "</span></td></tr>");
+			print("</table><p/>");
+		}
+
+		print("</pre>");
+		exit;
+	}
+}
 
 $pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
+
 if (isset($config['system']['webgui']['authmode'])) {
 	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
 } else {
 	$pconfig['authmode'] = "Local Database";
 }
+
 $pconfig['backend'] = &$config['system']['webgui']['backend'];
 
 // Page title for main admin
@@ -130,15 +195,6 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
-if ($save_and_test) {
-	echo "<script>\n";
-	echo "//<![CDATA[\n";
-	echo "myRef = window.open('system_usermanager_settings_test.php?authserver=".$pconfig['authmode']."','mywin','left=20,top=20,width=700,height=550,toolbar=1,resizable=0');\n";
-	echo "if (myRef==null || typeof(myRef)=='undefined') alert('" . gettext("Popup blocker detected.  Action aborted.") ."');\n";
-	echo "//]]>\n";
-	echo "</script>\n";
-}
-
 $tab_array = array();
 $tab_array[] = array(gettext("Users"), false, "system_usermanager.php");
 $tab_array[] = array(gettext("Groups"), false, "system_groupmanager.php");
@@ -185,6 +241,53 @@ $form->addGlobal(new Form_Button(
 ))->addClass('btn-info');
 
 $form->add($section);
+
+$modal = new Modal("LDAP settings", "testresults", true);
+
+$modal->addInput(new Form_StaticText(
+	'Test results',
+	'<span id="ldaptestop">Testing pfSense LDAP settings... One moment please...' . $g['product_name'] . '</span>'
+));
+
+$form->add($modal);
+
 print $form;
+
+// If the user clicked "Save & Test" show the modal and populate it with the test results via AJAX
+if ($save_and_test) {
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	function test_LDAP() {
+		var ajaxRequest;
+		var authserver = $('#authmode').val();
+
+		ajaxRequest = $.ajax(
+			{
+				url: "/system_usermanager_settings.php",
+				type: "post",
+				data: {
+					ajax: "ajax",
+					authserver: authserver
+				}
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#ldaptestop').html(response);
+		});
+	}
+
+	$('#testresults').modal('show');
+
+	test_LDAP();
+});
+</script>
+<?php
+
+}
 
 include("foot.inc");

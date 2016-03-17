@@ -1,5 +1,5 @@
-@import url("/bootstrap/css/bootstrap.min.css");
-@import url("/bootstrap/fonts/roboto.css");
+@import url("/vendor/bootstrap/css/bootstrap.min.css");
+@import url("/css/fonts/roboto.css");
 
 html {
     position: relative;
@@ -581,11 +581,6 @@ footer a {
 
 .widget-heading-icon .fa:hover {
     color: #e0e0e0;
-}
-
-/* ipsec widget placeholder */
-#ipsec-Overview, #ipsec-tunnel, #ipsec-mobile {
-    background-color:#EEEEEE;
 }
 
 /* All pfSense textareas benefit from using a fixed width font **/

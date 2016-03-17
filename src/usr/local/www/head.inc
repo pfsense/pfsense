@@ -66,11 +66,11 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
 }
 
-$cssfile = "/bootstrap/css/pfSense.css";
+$cssfile = "/css/pfSense.css";
 
 if (isset($config['system']['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/bootstrap/css/" . $config['system']['webgui']['webguicss'])) {
-		$cssfile = "/bootstrap/css/" . $config['system']['webgui']['webguicss'];
+	if (file_exists("/usr/local/www/css/" . $config['system']['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $config['system']['webgui']['webguicss'];
 	}
 }
 
@@ -85,8 +85,8 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 <head>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="<?=$cssfile?>" />
-	<link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="/sortable/sortable-theme-bootstrap.css">
+	<link rel="stylesheet" href="/vendor/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/vendor/sortable/sortable-theme-bootstrap.css">
 	<title><?=$tabtitle?></title>
 	<script type="text/javascript">
 	//<![CDATA[
@@ -507,18 +507,18 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 ?>
 		<ul class="context-links">
 
-	<?php if ($dashboard_available_widgets_hidden): ?>
+	<?php if (isset($widgets)): ?>
 		<li>
-			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
-				<i class="fa fa-plus icon-pointer"></i>
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
+				<i class="fa fa-save icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
 
-	<?php if (isset($widgets)): ?>
+	<?php if ($dashboard_available_widgets_hidden): ?>
 		<li>
-			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
-				<i class="fa fa-save icon-pointer"></i>
+			<a onclick="$('#widget-available').toggle(360);" title="<?=gettext("Available widgets")?>">
+				<i class="fa fa-plus icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -677,7 +677,7 @@ if (are_notices_pending()):?>
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-undo icon-embed-btn"></i><?=gettext("Close")?></button>
+				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 			</div>
 		</div>

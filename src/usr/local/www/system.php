@@ -490,12 +490,10 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 $csslist = array();
-$css = glob("/usr/local/www/bootstrap/css/*.css");
+$css = glob("/usr/local/www/css/*.css");
 foreach ($css as $file) {
 	$file = basename($file);
-	if (substr($file, 0, 9) !== 'bootstrap') {
-		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
-	}
+	$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
 }
 
 asort($csslist);
@@ -511,7 +509,7 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/');
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',

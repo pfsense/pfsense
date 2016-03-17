@@ -817,24 +817,24 @@ $group->add(new Form_Checkbox(
 
 $section->add($group);
 
-$btnadvanced = new Form_Button(
-		'btnadvanced',
-		'Advanced',
+$btnadv = new Form_Button(
+		'btnadvopts',
+		'Display Advanced',
 		null,
 		'fa-cog'
 );
 
-$btnadvanced->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Advanced options',
-	$btnadvanced
+	$btnadv
 ));
 
 $form->add($section);
 
 $section = new Form_Section('Advanced Configuration');
-$section->addClass('sec-advanced'); // This will allow the section to be hidden/shown by calling e.g.: hideClass('advanced', true);
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Checkbox(
 	'ondemand',
@@ -961,41 +961,78 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var showadvanced = false;
+	// Show advanced additional opts options ======================================================
+	var showadvopts = false;
 
-	function setAdvVisible() {
-		// Update the button text and toggle showadvanced
-		if (showadvanced) {
-			$("#btnadvanced").prop('value', 'Hide');
-			showadvanced = false;
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (($pconfig['apn'] == "") &&
+			    ($pconfig['apnum'] == "") &&
+			    ($pconfig['simpin'] == "") &&
+			    ($pconfig['pin-wait'] == "") &&
+			    ($pconfig['initstr'] == "") &&
+			    ($pconfig['connect-timeout'] == "") &&
+			    (!$pconfig['uptime']) &&
+			    ($pconfig['pppoe_resethour'] == "") &&
+			    ($pconfig['pppoe_resetminute'] == "") &&
+			    ($pconfig['pppoe_resetdate'] == "") &&
+			    ($pconfig['pppoe_pr_preset_val'] == "") &&
+			    (!$pconfig['ondemand']) &&
+			    ($pconfig['idletimeout'] == "") &&
+			    (!$pconfig['vjcomp']) &&
+			    (!$pconfig['tcpmssfix']) &&
+			    (!$pconfig['shortseq']) &&
+			    (!$pconfig['acfcomp']) &&
+			    (!$pconfig['protocomp'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvopts = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
 		} else {
-			$("#btnadvanced").prop('value', 'Show');
-			showadvanced = true;
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
 		}
 
-		hideClass('sec-advanced', showadvanced);
+		hideClass('adnlopts', !showadvopts);
 
 		// The options that follow are only shown if type == 'ppp'
 		var ppptype = ($('#type').val() == 'ppp');
 
-		hideInput('apn', showadvanced || !ppptype);
-		hideInput('apnum', showadvanced || !ppptype);
-		hideInput('simpin', showadvanced || !ppptype);
-		hideInput('pin-wait', showadvanced || !ppptype);
-		hideInput('initstr', showadvanced || !ppptype);
-		hideInput('connect-timeout', showadvanced || !ppptype);
-		hideCheckbox('uptime', showadvanced || !ppptype);
+		hideInput('apn', !(showadvopts && ppptype));
+		hideInput('apnum', !(showadvopts && ppptype));
+		hideInput('simpin', !(showadvopts && ppptype));
+		hideInput('pin-wait', !(showadvopts && ppptype));
+		hideInput('initstr', !(showadvopts && ppptype));
+		hideInput('connect-timeout', !(showadvopts && ppptype));
+		hideCheckbox('uptime', !(showadvopts && ppptype));
 
 		// The options that follow are only shown if type == 'pppoe'
-		var pppoetype = ($('#type').val() != 'pppoe');
+		var pppoetype = ($('#type').val() == 'pppoe');
 
-		hideClass('pppoe', pppoetype);
-		hideInput('pppoe-reset-type', pppoetype || showadvanced);
+		hideClass('pppoe', !pppoetype);
+		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
 
 		hideResetDisplay(true);
-
 		hideInterfaces();
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	}
+
+	$('#btnadvopts').prop('type', 'button');
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
 
 	function hideResetDisplay(hide) {
 
@@ -1024,7 +1061,7 @@ events.push(function() {
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
-			if (!showadvanced) {
+			if (!showadvopts) {
 				hideClass('linkparam' + selected[i], false);
 				hideInput('linkparamhelp', false);
 			}
@@ -1102,13 +1139,6 @@ events.push(function() {
 		});
 	}
 
-	// Make the ‘btnadvanced’ button a plain button, not a submit button
-	$("#btnadvanced").prop('type','button');
-
-	$("#btnadvanced").click(function() {
-		setAdvVisible();
-	});
-
 	$('#pppoe-reset-type').on('change', function() {
 		hideResetDisplay(false);
 	});
@@ -1139,7 +1169,7 @@ events.push(function() {
 	});
 
 	// Set element visibility on initial page load
-	setAdvVisible();
+	show_advopts(true);
 
 	hideClass('linkparam', true);
 

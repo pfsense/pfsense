@@ -59,7 +59,7 @@
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
 ##|*MATCH=diag_edit.php*
 ##|*MATCH=browser.php*
-##|*MATCH=filebrowser/browser.php*
+##|*MATCH=vendor/filebrowser/browser.php*
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit File"));
@@ -430,4 +430,4 @@ var Base64 = {
 
 <?php include("foot.inc");
 
-outputJavaScriptFileInline("filebrowser/browser.js");
+outputJavaScriptFileInline("vendor/filebrowser/browser.js");

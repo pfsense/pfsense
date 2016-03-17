@@ -259,7 +259,7 @@ $priv_list['page-diagnostics-edit']['descr'] = gettext("Allow access to the 'Dia
 $priv_list['page-diagnostics-edit']['match'] = array();
 $priv_list['page-diagnostics-edit']['match'][] = "diag_edit.php*";
 $priv_list['page-diagnostics-edit']['match'][] = "browser.php*";
-$priv_list['page-diagnostics-edit']['match'][] = "filebrowser/browser.php*";
+$priv_list['page-diagnostics-edit']['match'][] = "vendor/filebrowser/browser.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = gettext("WebCfg - Diagnostics: Command");

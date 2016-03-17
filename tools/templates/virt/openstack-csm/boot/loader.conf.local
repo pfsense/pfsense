@@ -1,0 +1,5 @@
+autoboot_delay="-1"
+beastie_disable="YES"
+hw.memtest.tests=0
+hw.broken_txfifo=1
+

@@ -1069,6 +1069,14 @@ create_virt_images() {
 		echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 	fi
 
+	local _tmpl_dir="${BUILDER_TOOLS}/templates/virt/${_image_type}"
+	for _file in boot.config boot/loader.conf boot/loader.conf.local; do
+		if [ -f "${_tmpl_dir}/${_file}" ]; then
+			install -o root -g wheel -m 0644 ${_tmpl_dir}/${_file} \
+				${FINAL_CHROOT_DIR}/$(dirname ${_file})
+		fi
+	done
+
 	# Create / partition
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \

@@ -714,7 +714,6 @@ function netgate_hardware_setup() {
 			$config['system']['enablesshd'] = true;
 
 			unset($config['interfaces']['wan']['blockpriv']);
-			unset($config['interfaces']['wan']['ipaddrv6']);
 			unset($config['dhcpd']);
 			break;
 		}
@@ -729,6 +728,8 @@ function netgate_hardware_setup() {
 		case "azure":
 		case "ec2":
 		case "ec2-csm":
+			unset($config['interfaces']['wan']['ipaddrv6']);
+
 			if (is_array($config['user'])) {
 				foreach ($config['user'] as &$user) {
 					if ($user['name'] == 'admin') {

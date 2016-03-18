@@ -199,7 +199,7 @@ if (is_array($status)) {
 			if ($ikesa['remote-id'] == '%any') {
 				$identity = htmlspecialchars(gettext('Any identifier'));
 			} else {
-				$identity = htmlspecialchars($ikesa['remote']['identification']);
+				$identity = htmlspecialchars($ikesa['remote-id']);
 			}
 		}
 		if (!empty($ikesa['remote-xauth-id'])) {

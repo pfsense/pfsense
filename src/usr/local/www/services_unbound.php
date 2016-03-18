@@ -221,6 +221,12 @@ if ($_POST) {
 	}
 }
 
+if ($pconfig['custom_options']) {
+	$customoptions = true;
+} else {
+	$customoptions = false;
+}
+
 if ($_GET['act'] == "del") {
 	if ($_GET['type'] == 'host') {
 		if ($a_hosts[$_GET['id']]) {
@@ -400,10 +406,11 @@ events.push(function() {
 		var text;
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
-			if ('<?=$pconfig['custom_options']?>' == '') {
-				showadvcustom = false;
-			} else {
+			var customoptions = "<?=$customoptions?>";
+			if (customoptions) {
 				showadvcustom = true;
+			} else {
+				showadvcustom = false;
 			}
 		} else {
 			// It was a click, swap the state.

@@ -156,7 +156,7 @@
       <Product>Netgate pfSense Certified firewall and VPN appliance</Product>
       <Vendor>%%VENDOR_NAME%%</Vendor>
       <Version>%%PRODUCT_VERSION%%</Version>
-      <ProductUrl>http://www.netgate.com</ProductUrl>
+      <ProductUrl>%%PRODUCT_URL%%</ProductUrl>
       <VendorUrl>http://www.netgate.com</VendorUrl>
     </ProductSection>
     <AnnotationSection ovf:required="false">

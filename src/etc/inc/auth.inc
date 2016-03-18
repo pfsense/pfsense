@@ -205,8 +205,9 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 						break;
 					}
 				}
-				$interface_list_ipv6s = get_configured_ipv6_addresses();
+				$interface_list_ipv6s = get_configured_ipv6_addresses(true);
 				foreach ($interface_list_ipv6s as $ilipv6s) {
+					$ilipv6s = explode('%', $ilipv6s)[0];
 					if (strcasecmp($referrer_host, $ilipv6s) == 0) {
 						$found_host = true;
 						break;

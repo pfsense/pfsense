@@ -147,9 +147,15 @@ if ($_POST) {
 		$gre['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gre['remote-addr'] = $_POST['remote-addr'];
 		$gre['descr'] = $_POST['descr'];
-		$gre['link1'] = isset($_POST['link1']);
-		$gre['link2'] = isset($_POST['link2']);
-		$gre['link0'] = isset($_POST['link0']);
+		if (isset($_POST['link0'])) {
+			$gre['link0'] = '';
+		}
+		if (isset($_POST['link1'])) {
+			$gre['link1'] = '';
+		}
+		if (isset($_POST['link2'])) {
+			$gre['link2'] = '';
+		}
 		$gre['greif'] = $_POST['greif'];
 
 		$gre['greif'] = interface_gre_configure($gre);

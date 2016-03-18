@@ -389,7 +389,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 	$columnWidth = 12 / $numColumns;
 
 	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
-		
+
 
 		//if col$currentColumnNumber exists
 		if (isset($widgetColumns['col'.$currentColumnNumber])) {
@@ -434,7 +434,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 		} else {
 			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
 		}
-		
+
 	}
 ?>
 
@@ -513,6 +513,14 @@ events.push(function() {
 			return ("<?=gettext('You have moved one or more widgets but have not yet saved')?>");
 		} else {
 			return undefined;
+		}
+	});
+
+	// Show the fa-save icon in the breadcrumb bar if the user opens or closes a panel (In case he/she wants to save the new state)
+	// (Sometimes this will cause us to see the icon when we don't need it, but better that than the other way round)
+	$('.panel').on('hidden.bs.collapse shown.bs.collapse', function (e) {
+	    if (e.currentTarget.id != 'widget-available') {
+			$('#btnstore').removeClass("invisible");
 		}
 	});
 });

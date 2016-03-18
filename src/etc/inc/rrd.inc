@@ -979,7 +979,7 @@ function enable_rrd_graphing() {
 
 					/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 					if (platform_booting()) {
-						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
+						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U");
 					}
 
 					$rrdupdatesh .= "\n";

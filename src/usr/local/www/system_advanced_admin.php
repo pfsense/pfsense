@@ -123,7 +123,7 @@ if ($_POST) {
 	if ($_POST['althostnames']) {
 		$althosts = explode(" ", $_POST['althostnames']);
 		foreach ($althosts as $ah) {
-			if (!is_hostname($ah)) {
+			if (!is_ipaddr($ah) && !is_hostname($ah)) {
 				$input_errors[] = sprintf(gettext("Alternate hostname %s is not a valid hostname."), htmlspecialchars($ah));
 			}
 		}

@@ -23,6 +23,7 @@
 	<script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 	<script src="/js/pfSense.js"></script>
 	<script src="/js/pfSenseHelpers.js"></script>
+	<script src="/js/polyfills.js"></script>
 	<script src="/vendor/sortable/sortable.js"></script>
 
 	<script type="text/javascript">

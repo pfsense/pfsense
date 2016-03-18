@@ -154,8 +154,12 @@ if ($_POST) {
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gif['remote-addr'] = $_POST['remote-addr'];
 		$gif['descr'] = $_POST['descr'];
-		$gif['link1'] = isset($_POST['link1']);
-		$gif['link0'] = isset($_POST['link0']);
+		if (isset($_POST['link0'])) {
+			$gif['link0'] = '';
+		}
+		if (isset($_POST['link1'])) {
+			$gif['link1'] = '';
+		}
 		$gif['gifif'] = $_POST['gifif'];
 		$gif['gifif'] = interface_gif_configure($gif);
 

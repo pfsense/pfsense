@@ -509,8 +509,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if (isset($widgets)): ?>
 		<li>
-		<!--	<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible"> -->
-			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
 				<i class="fa fa-save icon-pointer"></i>
 			</a>
 		</li>

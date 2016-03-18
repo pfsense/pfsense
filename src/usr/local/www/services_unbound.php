@@ -406,12 +406,7 @@ events.push(function() {
 		var text;
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
-			var customoptions = "<?=$customoptions?>";
-			if (customoptions) {
-				showadvcustom = true;
-			} else {
-				showadvcustom = false;
-			}
+			showadvcustom = "<?=$customoptions?>";
 		} else {
 			// It was a click, swap the state.
 			showadvcustom = !showadvcustom;

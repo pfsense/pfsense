@@ -966,8 +966,6 @@ function netgate_hardware_setup() {
 			$config['ipsec']['phase2'][] = $p2;
 			unset($p2);
 
-			$config['ipsec']['enable'] = true;
-
 			$alias = array();
 			$alias['name'] = 'Networks_to_NAT';
 			$alias['address'] = '127.0.0.0/8 172.24.42.0/24 172.25.53.0/24';

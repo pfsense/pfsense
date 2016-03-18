@@ -79,6 +79,10 @@ if (!is_array($config['ppps']['ppp'])) {
 
 $a_ppps = &$config['ppps']['ppp'];
 
+$iflist = get_configured_interface_with_descr();
+$portlist = get_interface_list();
+$portlist = array_merge($portlist, $iflist);
+
 if (isset($_REQUEST['type'])) {
 	$pconfig['type'] = $_REQUEST['type'];
 }
@@ -87,7 +91,12 @@ if (isset($_REQUEST['id']) && is_numericint($_REQUEST['id'])) {
 	$id = $_REQUEST['id'];
 }
 
+if (isset($_POST['id']) && is_numericint($_POST['id'])) {
+	$id = $_POST['id'];
+}
+
 if (isset($id) && $a_ppps[$id]) {
+	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
 	$pconfig['type'] = $a_ppps[$id]['type'];
 	$pconfig['interfaces'] = explode(",", $a_ppps[$id]['ports']);
 	$pconfig['username'] = $a_ppps[$id]['username'];
@@ -195,6 +204,8 @@ if (isset($id) && $a_ppps[$id]) {
 			}
 			break;
 	}
+} else {
+	$pconfig['ptpid'] = interfaces_ptpid_next();
 }
 
 if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
@@ -338,6 +349,7 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 			$ppp['ptpid'] = interfaces_ptpid_next();
 		else
 			$ppp['ptpid'] = $a_ppps[$id]['ptpid'];
+
 		$ppp['type'] = $_POST['type'];
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
@@ -945,6 +957,13 @@ $section->addInput($linkparamhelp);
 
 $form->add($section);
 
+$form->addGlobal(new Form_Input(
+	'ptpid',
+	null,
+	'hidden',
+	$pconfig['ptpid']
+));
+
 if (isset($id) && $a_ppps[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
@@ -982,6 +1001,10 @@ events.push(function() {
 			    ($pconfig['pppoe_pr_preset_val'] == "") &&
 			    (!$pconfig['ondemand']) &&
 			    ($pconfig['idletimeout'] == "") &&
+			    (!$pconfig['pppoe_monthly']) &&
+			    (!$pconfig['pppoe_weekly']) &&
+			    (!$pconfig['pppoe_daily']) &&
+			    (!$pconfig['pppoe_hourly']) &&
 			    (!$pconfig['vjcomp']) &&
 			    (!$pconfig['tcpmssfix']) &&
 			    (!$pconfig['shortseq']) &&
@@ -1015,9 +1038,9 @@ events.push(function() {
 		var pppoetype = ($('#type').val() == 'pppoe');
 
 		hideClass('pppoe', !pppoetype);
+		hideResetDisplay(!(showadvopts && pppoetype));
 		hideInput('pppoe-reset-type', !(showadvopts && pppoetype));
 
-		hideResetDisplay(true);
 		hideInterfaces();
 
 		if (showadvopts) {
@@ -1026,7 +1049,7 @@ events.push(function() {
 			text = "<?=gettext('Display Advanced');?>";
 		}
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
-	}
+	} // e-o-show_advopts
 
 	$('#btnadvopts').prop('type', 'button');
 

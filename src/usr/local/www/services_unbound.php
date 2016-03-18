@@ -365,18 +365,18 @@ $section->addInput(new Form_Checkbox(
 					'resolved. You should also set the domain in %s'.
 					'System: General setup%s to the proper value.','<a href="system.php">','</a>'));
 
-$btnadvdns = new Form_Button(
-	'btnadvdns',
+$btnadv = new Form_Button(
+	'btnadvcustom',
 	'Custom options',
 	null,
 	'fa-cog'
 );
 
-$btnadvdns->addClass('btn-info btn-sm');
+$btnadv->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
-	'Custom options',
-	$btnadvdns . '&nbsp;' . 'Show custom options'
+	'Display Custom Options',
+	$btnadv
 ));
 
 $section->addInput(new Form_Textarea (
@@ -393,6 +393,33 @@ print($form);
 //<![CDATA[
 events.push(function() {
 
+	// Show advanced custom options ==============================================
+	var showadvcustom = false;
+
+	function show_advcustom(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+			if ('<?=$pconfig['custom_options']?>' == '') {
+				showadvcustom = false;
+			} else {
+				showadvcustom = true;
+			}
+		} else {
+			// It was a click, swap the state.
+			showadvcustom = !showadvcustom;
+		}
+
+		hideInput('custom_options', !showadvcustom);
+
+		if (showadvcustom) {
+			text = "<?=gettext('Hide Custom Options');?>";
+		} else {
+			text = "<?=gettext('Display Custom Options');?>";
+		}
+		$('#btnadvcustom').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
 	// If the enable checkbox is not checked, hide all inputs
 	function hideGeneral() {
 		var hide = ! $('#enable').prop('checked');
@@ -404,15 +431,16 @@ events.push(function() {
 		hideCheckbox('forwarding', hide);
 		hideCheckbox('regdhcp', hide);
 		hideCheckbox('regdhcpstatic', hide);
-		hideInput('btnadvdns', hide);
+		hideInput('btnadvcustom', hide);
+		hideInput('custom_options', hide || !showadvcustom);
 	}
 
 	// Make the 'additional options' button a plain button, not a submit button
-	$("#btnadvdns").prop('type','button');
+	$("#btnadvcustom").prop('type','button');
 
-	// Un-hide additional  controls
-	$("#btnadvdns").click(function() {
-		hideInput('custom_options', false);
+	// Un-hide additional controls
+	$('#btnadvcustom').click(function(event) {
+		show_advcustom();
 	});
 
 	// When 'enable' is clicked, disable/enable the following hide inputs
@@ -426,6 +454,7 @@ events.push(function() {
 	}
 
 	hideGeneral();
+	show_advcustom(true);
 
 });
 //]]>

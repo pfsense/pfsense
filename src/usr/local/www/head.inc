@@ -509,7 +509,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 
 	<?php if (isset($widgets)): ?>
 		<li>
-			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible">
+		<!--	<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore" class="invisible"> -->
+			<a href="#" title="<?=gettext("Save dashboard layout")?>" id="btnstore">
 				<i class="fa fa-save icon-pointer"></i>
 			</a>
 		</li>
@@ -531,7 +532,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</li>
 	<?php endif ?>
 
-	<?php if ($system_logs_manage_log_form_hidden): 
+	<?php if ($system_logs_manage_log_form_hidden):
 			/* If the user does not have access to status logs settings page, then exclude the manage log panel icon from the title bar. */
 			if (isAllowedPage("status_logs_settings.php")) {
 	?>

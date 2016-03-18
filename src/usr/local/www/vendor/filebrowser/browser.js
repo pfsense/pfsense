@@ -17,7 +17,7 @@ function fbBrowse(path) {
 	}
 
 	$.ajax(
-		"/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
+		"/vendor/filebrowser/browser.php?path=" + encodeURI(path ? path : "/"),
 		{ type: "get", complete: fbComplete }
 	);
 

@@ -436,8 +436,11 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 			;;
 		ova)
-			install_pkg_install_ports ${PRODUCT_NAME}-vmware
+			old_custom_package_list="${custom_package_list}"
+			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-pkg-Open-VM-Tools"
+			install_pkg_install_ports
 			create_ova_image
+			export custom_package_list="${old_custom_package_list}"
 			install_pkg_install_ports
 			;;
 		*)

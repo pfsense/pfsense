@@ -824,11 +824,6 @@ $form->add($section);
 // Create a largely empty modal to show the available containers. We will populate it via AJAX later
 $modal = new Modal("LDAP containers", "containers", true);
 
-$modal->addInput(new Form_StaticText(
-	'',
-	'Testing pfSense LDAP settings... One moment please...' . $g['product_name']
-));
-
 $form->add($modal);
 
 print $form;

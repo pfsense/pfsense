@@ -979,6 +979,9 @@ function netgate_hardware_setup() {
 		}
 	}
 
+	// Remove the trigger
+	unset($config['system']['trigger_virt_setup']);
+
 	write_config(gettext("Default hardware detection on first boot"));
 }
 

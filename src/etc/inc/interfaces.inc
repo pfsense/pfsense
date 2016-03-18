@@ -5383,7 +5383,7 @@ function get_interface_ip($interface = "wan") {
 	}
 }
 
-function get_interface_ipv6($interface = "wan", $flush = false) {
+function get_interface_ipv6($interface = "wan", $flush = false, $linklocal_fallback = false) {
 	global $config;
 
 	if (substr($interface, 0, 4) == '_vip') {
@@ -5432,7 +5432,7 @@ function get_interface_ipv6($interface = "wan", $flush = false) {
 		 * NOTE: On the case when only the prefix is requested,
 		 * the communication on WAN will be done over link-local.
 		 */
-		if (is_array($config['interfaces'][$interface]) && isset($config['interfaces'][$interface]['dhcp6prefixonly'])) {
+		if ($linklocal_fallback || (is_array($config['interfaces'][$interface]) && isset($config['interfaces'][$interface]['dhcp6prefixonly']))) {
 			$curip = find_interface_ipv6_ll($realif, $flush);
 			if ($curip && is_ipaddrv6($curip) && ($curip != "::")) {
 				return $curip;

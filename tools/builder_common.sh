@@ -1368,6 +1368,9 @@ clone_to_staging_area() {
 	core_pkg_create default-config "azure" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "openstack-csm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 
+	# Restore original config
+	cp ${SCRATCHDIR}/default_config.orig ${DEFAULTCONF}
+
 	echo force > ${STAGE_CHROOT_DIR}/cf/conf/enableserial_force
 
 	# Activate serial console in config.xml

@@ -1347,6 +1347,8 @@ clone_to_staging_area() {
 	# Make a copy of original default config to avoid need of adding items back
 	cp ${DEFAULTCONF} ${SCRATCHDIR}/default_config.orig
 
+	# Add a flag to trigger initial settings
+	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "trigger_virt_setup" ${DEFAULTCONF}
 	# Activate serial console in config.xml
 	xml ed -L -P -d "${XML_ROOTOBJ}/system/serialspeed" ${DEFAULTCONF}
 	xml ed -L -P -s "${XML_ROOTOBJ}/system" -t elem -n "serialspeed" -v "9600" ${DEFAULTCONF}

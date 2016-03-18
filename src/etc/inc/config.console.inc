@@ -699,6 +699,7 @@ function netgate_hardware_setup() {
 		case "ec2-csm":
 		case "azure":
 		case "kvm":
+		case "bhyve":
 		case "openstack-csm":
 			$config['sysctl']['item'][] = array(
 				'tunable' => 'debug.trace_on_panic',
@@ -720,6 +721,7 @@ function netgate_hardware_setup() {
 
 		switch ($flavor) {
 		case "kvm":
+		case "bhyve":
 			$config['interfaces']['wan']['if'] = 'vtnet0';
 			$config['interfaces']['lan']['if'] = 'vtnet1';
 			break;

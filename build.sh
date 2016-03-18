@@ -195,7 +195,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|azure|openstack-csm)
+		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -342,7 +342,7 @@ if [ "$IMAGETYPE" = "all" ]; then
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick \
 			memstickserial memstickadi ova ec2 ec2-csm azure \
-			kvm openstack-csm"
+			kvm bhyve openstack-csm"
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"

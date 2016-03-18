@@ -1339,6 +1339,7 @@ clone_to_staging_area() {
 	xml fo -t ${DEFAULTCONF} > ${DEFAULTCONF}.tmp
 	mv ${DEFAULTCONF}.tmp ${DEFAULTCONF}
 	core_pkg_create default-config "kvm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	core_pkg_create default-config "bhyve" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "azure" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create default-config "openstack-csm" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 

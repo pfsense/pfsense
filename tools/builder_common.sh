@@ -1013,23 +1013,20 @@ create_virt_images() {
 		_default_config="default-config"
 	fi
 
-	unset _mkimg_output
+	local _format="raw"
+	local _ext="img"
 	case "${_image_type}" in
 		azure)
-			local _mkimg_output="${VIRT_TMP}/${VIRT_RAW}"
-			local _format="vhd"
+			_format="vhd"
+			_ext="vhd"
 			;;
 		kvm|openstack)
-			local _mkimg_output="${VIRT_TMP}/${VIRT_RAW}"
-			local _format="qcow2"
-			;;
-		*)
-			local _format="img"
+			_format="qcow2"
+			_ext="qcow2"
 			;;
 	esac
 	local _image_path=$(echo "${VIRTPATH_TMPL}" | \
-		sed -e "s,%%TYPE%%,${_image_type},g; s,%%EXT%%,${_format},")
-	_mkimg_output=${_mkimg_output:-${_image_path}}
+		sed -e "s,%%TYPE%%,${_image_type},g; s,%%EXT%%,${_ext},")
 
 	LOGFILE=${BUILDER_LOGS}/virt.${TARGET}.log
 
@@ -1096,57 +1093,32 @@ create_virt_images() {
 	fi
 	echo "Done!" | tee -a ${LOGFILE}
 
-	# Create raw disk
-	echo -n ">>> Creating raw disk... " | tee -a ${LOGFILE}
+	# Create image
+	echo -n ">>> Creating virt image (${_image_type})... " | tee -a ${LOGFILE}
 	mkimg \
 		-s gpt \
-		-f raw \
+		-f ${_format} \
 		-b ${FINAL_CHROOT_DIR}/boot/pmbr \
 		-p freebsd-boot:=/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${VIRT_TMP}/${VIRT_UFS} \
 		${VIRT_SWAP_PART_PARAM} \
-		-o ${_mkimg_output} 2>&1 >> ${LOGFILE}
+		-o ${_image_path} 2>&1 >> ${LOGFILE}
 
-	if [ $? -ne 0 -o ! -f ${_mkimg_output} ]; then
+	if [ $? -ne 0 -o ! -f ${_image_path} ]; then
 		if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
 			rm -f ${VIRT_TMP}/${VIRT_UFS}
 		fi
-		if [ -f ${_mkimg_output} ]; then
-			rm -f ${_mkimg_output}
+		if [ -f ${_image_path} ]; then
+			rm -f ${_image_path}
 		fi
 		echo "Failed!" | tee -a ${LOGFILE}
-		echo ">>> ERROR: Error creating temporary virt ${_image_type} image. STOPPING!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error creating virt image (${_image_type}). STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 	echo "Done!" | tee -a ${LOGFILE}
 
 	# We don't need it anymore
 	rm -f ${VIRT_TMP}/${VIRT_UFS} >/dev/null 2>&1
-
-	if [ "${_format}" != "img" ]; then
-		mkimg \
-			-f ${_format} \
-			-s mbr \
-			-b ${FINAL_CHROOT_DIR}/boot/mbr \
-			-o ${_image_path} \
-			-p freebsd:=${_mkimg_output} 2>&1 >> ${LOGFILE}
-
-		if [ $? -ne 0 -o ! -f ${_image_path} ]; then
-			if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
-				rm -f ${VIRT_TMP}/${VIRT_UFS}
-			fi
-			if [ -f ${_mkimg_output} ]; then
-				rm -f ${_mkimg_output}
-			fi
-			echo "Failed!" | tee -a ${LOGFILE}
-			echo ">>> ERROR: Error creating final virt ${_image_type} image. STOPPING!" | tee -a ${LOGFILE}
-			print_error_pfS
-		fi
-	fi
-
-	if [ "${_mkimg_output}" != ${_image_path} ]; then
-		rm -f ${_mkimg_output}
-	fi
 
 	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"

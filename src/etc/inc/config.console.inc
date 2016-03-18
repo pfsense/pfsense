@@ -691,8 +691,8 @@ function netgate_hardware_setup() {
 	}
 
 	if (file_exists("{$g['etc_path']}/default-config-flavor")) {
-		$flavor = file_get_contents(
-		    "{$g['etc_path']}/default-config-flavor");
+		$flavor_array = file("{$g['etc_path']}/default-config-flavor");
+		$flavor = chop($flavor_array[0]);
 
 		switch ($flavor) {
 		case "ec2":

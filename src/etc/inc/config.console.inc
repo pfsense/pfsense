@@ -723,7 +723,6 @@ function netgate_hardware_setup() {
 		case "kvm":
 			$config['interfaces']['wan']['if'] = 'vtnet0';
 			$config['interfaces']['lan']['if'] = 'vtnet1';
-			unset($config['interfaces']['lan']['ipaddrv6']);
 			break;
 
 		case "openstack":

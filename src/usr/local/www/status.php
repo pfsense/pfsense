@@ -276,6 +276,8 @@ defCmdT("System Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 defCmdT("sysctl values", "/sbin/sysctl -a");
 defCmdT("Kernel Environment", "/bin/kenv");
 defCmdT("Installed OS Packages", "/usr/sbin/pkg info");
+defCmdT("System Devices-PCI", "/usr/sbin/pciconf -lvb");
+defCmdT("System Devices-USB", "/usr/sbin/usbconfig dump_device_desc");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

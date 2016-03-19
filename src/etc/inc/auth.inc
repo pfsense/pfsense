@@ -742,16 +742,11 @@ function local_group_set($group, $reset = false) {
 		return;
 	}
 
-	/* read from group db */
-	$fd = popen("/usr/sbin/pw groupshow {$group_name} 2>&1", "r");
-	$pwread = fgets($fd);
-	pclose($fd);
-
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3)) {
-		$group_op = "groupadd";
+	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1") == 0) {
+		$group_op = "groupmod -l";
 	} else {
-		$group_op = "groupmod";
+		$group_op = "groupadd -n";
 	}
 
 	/* add or mod group db */

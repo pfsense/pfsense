@@ -177,7 +177,7 @@ if (isset($_POST['save'])) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname'])) {
+	if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['groupname'])) {
 		$input_errors[] = gettext("The group name contains invalid characters.");
 	}
 

@@ -1957,7 +1957,7 @@ install_pkg_install_ports() {
 	# Install all necessary packages
 	pkg_chroot ${STAGE_CHROOT_DIR} install ${MAIN_PKG} ${custom_package_list}
 	# Make sure required packages are set as non-automatic
-	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 ${MAIN_PKG} ${custom_package_list}
+	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 pkg ${MAIN_PKG} ${custom_package_list}
 	# Remove unnecessary packages
 	pkg_chroot ${STAGE_CHROOT_DIR} autoremove
 	echo ">>> Installing built ports (packages) in chroot (${STAGE_CHROOT_DIR})... (finshied)"

@@ -4718,8 +4718,21 @@ function upgrade_147_to_148() {
 	// Ensure there are no spaces in group names by
 	// replacing spaces with underscores
 	if (is_array($config['system']['group'])) {
+		$exgrps = array();
+
+		// Make a list of the existing group names so we can check for dups
+		foreach ($config['system']['group'] as $grp) {
+			$exgrps[] = $grp['name'];
+		}
+
 		foreach ($config['system']['group'] as $grp) {
 			$grp['name'] = str_replace(" ", "_", $grp['name']);
+
+			// In the unlikely event that there is already a group with this name
+			// just replace the whole thing with a unique string
+			if (in_array($grp['name'], $exgrps)) {
+				$grp['name'] = uniqid();
+			}
 		}
 	}
 }

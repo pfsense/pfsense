@@ -4318,7 +4318,7 @@ function upgrade_137_to_138() {
 	global $config;
 
 	// the presence of unityplugin tag used to disable loading of unity plugin
-	// it's now disabled by default, and config tag is to enable. Unset accordingly. 
+	// it's now disabled by default, and config tag is to enable. Unset accordingly.
 	if (is_array($config['ipsec'])) {
 		if (isset($config['ipsec']['unityplugin'])) {
 			unset($config['ipsec']['unityplugin']);
@@ -4330,7 +4330,7 @@ function upgrade_138_to_139() {
 	global $config;
 
 	// clean up state killing on gateway failure. having kill_states set used to mean it was disabled
-	// now set gw_down_kill_states if enabled. 
+	// now set gw_down_kill_states if enabled.
 	if (!isset($config['system']['kill_states'])) {
 		$config['system']['gw_down_kill_states'] = true;
 	} else {
@@ -4353,7 +4353,7 @@ function upgrade_139_to_140() {
 }
 
 function upgrade_140_to_141() {
-	global $config; 
+	global $config;
 
 	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
@@ -4573,9 +4573,9 @@ function upgrade_143_to_144() {
 function upgrade_144_to_145() {
 	global $config;
 
-	// Enable DHCPv6 server and radvd config for track6 interfaces, 
-	// matching what used to be automatically enabled with no user 
-	// configurability. 
+	// Enable DHCPv6 server and radvd config for track6 interfaces,
+	// matching what used to be automatically enabled with no user
+	// configurability.
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
@@ -4712,4 +4712,15 @@ function upgrade_146_to_147() {
 	upgrade_quagga_146_to_147();
 }
 
+function upgrade_147_to_148() {
+	global $config;
+
+	// Ensure there are no spaces in group names by
+	// replacing spaces with underscores
+	if (is_array($config['system']['group'])) {
+		foreach ($config['system']['group'] as $grp) {
+			$grp['name'] = str_replace(" ", "_", $grp['name']);
+		}
+	}
+}
 ?>

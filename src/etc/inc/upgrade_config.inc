@@ -4725,13 +4725,16 @@ function upgrade_147_to_148() {
 			$exgrps[] = $grp['name'];
 		}
 
-		foreach ($config['system']['group'] as $grp) {
-			$grp['name'] = str_replace(" ", "_", $grp['name']);
-
-			// In the unlikely event that there is already a group with this name
-			// just replace the whole thing with a unique string
-			if (in_array($grp['name'], $exgrps)) {
-				$grp['name'] = uniqid();
+		foreach ($config['system']['group'] as $idx => $grp) {
+			if (strstr($grp['name'], " ")) {
+				$newgrpname = str_replace(" ", "_", $grp['name']);
+				// In the unlikely event that there is already a group with this name
+				// just replace the whole thing with a unique string
+				if (in_array($newgrpname, $exgrps)) {
+					$config['system']['group'][$idx]['name'] = uniqid();
+				} else {
+					$config['system']['group'][$idx]['name'] = $newgrpname;
+				}
 			}
 		}
 	}

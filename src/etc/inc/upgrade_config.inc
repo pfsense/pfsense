@@ -4725,8 +4725,10 @@ function upgrade_147_to_148() {
 			$exgrps[] = $grp['name'];
 		}
 
+		$cleargroups = false;
 		foreach ($config['system']['group'] as $idx => $grp) {
 			if (strstr($grp['name'], " ")) {
+				$cleargroups = true;
 				$newgrpname = str_replace(" ", "_", $grp['name']);
 				// In the unlikely event that there is already a group with this name
 				// just replace the whole thing with a unique string
@@ -4735,6 +4737,17 @@ function upgrade_147_to_148() {
 				} else {
 					$config['system']['group'][$idx]['name'] = $newgrpname;
 				}
+			}
+		}
+
+		// if there was a space in a group name, there may be multiple
+		// groups with the same name in the group file. To prevent pw 
+		// from getting into a neverending loop, delete all user-defined
+		// groups here. local_sync_accounts will run shortly after this
+		// and add them back. redmine #6012
+		if ($cleargroups) {
+			foreach ($config['system']['group'] as $grp) {
+				mwexec("/usr/sbin/pw groupdel -g {$grp['gid']}");
 			}
 		}
 	}

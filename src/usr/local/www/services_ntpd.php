@@ -340,7 +340,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Statistics Logging',
@@ -376,7 +376,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Leap seconds',
@@ -445,8 +445,6 @@ events.push(function() {
 		$('#btnadvstats').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvstats').prop('type', 'button');
-
 	$('#btnadvstats').click(function(event) {
 		show_advstats();
 	});
@@ -483,8 +481,6 @@ events.push(function() {
 		}
 		$('#btnadvleap').html('<i class="fa fa-cog"></i> ' + text);
 	}
-
-	$('#btnadvleap').prop('type', 'button');
 
 	$('#btnadvleap').click(function(event) {
 		show_advleap();

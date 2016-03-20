@@ -1759,7 +1759,7 @@ $btnmymac = new Form_Button(
 	'fa-clone'
 	);
 
-$btnmymac->addClass('btn-success btn-sm');
+$btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
 
 $group = new Form_Group('MAC controls');
 $group->add($macaddress);
@@ -1819,7 +1819,7 @@ $group->add(new Form_Button(
 	'Add a new gateway',
 	null,
 	'fa-plus'
-))->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none".' .
@@ -1852,7 +1852,7 @@ $group->add(new Form_Button(
 	'Add a new gateway',
 	null,
 	'fa-plus'
-))->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
+))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway6')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none". ');
@@ -1896,7 +1896,7 @@ $btnaddgw6 = new Form_Button(
 	'fa-plus'
 );
 
-$btnaddgw6->addClass('btn-success');
+$btnaddgw6->setAttribute('type','button')->addClass('btn-success');
 
 $btncnxgw6 = new Form_Button(
 	'cnx6',
@@ -1905,7 +1905,7 @@ $btncnxgw6 = new Form_Button(
 	'fa-undo'
 );
 
-$btncnxgw6->addClass('btn-warning');
+$btncnxgw6->setAttribute('type','button')->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
@@ -2561,7 +2561,7 @@ $section->addInput(new Form_Button(
 	'Advanced PPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration');
 
 $form->add($section);
 
@@ -2687,7 +2687,7 @@ $section->addInput(new Form_Button(
 	'Advanced and MLPPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Click for additional PPPoE configuration options. Save first if changes have been made.');
 
 $form->add($section);
 
@@ -2750,7 +2750,7 @@ $section->addInput(new Form_Button(
 	'Advanced and MLPPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->addClass('btn-info')->setAttribute('id')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp($mlppp_text . 'Click for additional PPTP and L2TP configuration options. Save first if changes have been made.');
 
 $form->add($section);
 
@@ -3203,7 +3203,7 @@ $btnaddgw = new Form_Button(
 	'fa-plus'
 );
 
-$btnaddgw->addClass('btn-success');
+$btnaddgw->setAttribute('type','button')->addClass('btn-success');
 
 $btncnxgw = new Form_Button(
 	'cnx',
@@ -3212,7 +3212,7 @@ $btncnxgw = new Form_Button(
 	'fa-undo'
 );
 
-$btncnxgw->addClass('btn-warning');
+$btncnxgw->setAttribute('type','button')->addClass('btn-warning');
 
 $modal->addInput(new Form_StaticText(
 	null,
@@ -3592,12 +3592,6 @@ events.push(function() {
 	updateType($('#type').val());
 	updateTypeSix($('#type6').val());
 	show_reset_settings($('#pppoe-reset-type').val());
-	$("#add").prop('type', 'button');
-	$("#cnx").prop('type', 'button');
-	$("#addgw").prop('type', 'button');
-	$("#add6").prop('type', 'button');
-	$("#cnx6").prop('type', 'button');
-	$("#addgw6").prop('type', 'button');
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();

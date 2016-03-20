@@ -719,14 +719,14 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'Move to "Member of" list',
 		null,
 		'fa-angle-double-right'
-	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
 		'Move to "Not member of" list',
 		null,
 		'fa-angle-double-left'
-	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
 	$section->add($group);
@@ -851,10 +851,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Make buttons plain buttons, not submit
-	$("#movetodisabled").prop('type','button');
-	$("#movetoenabled").prop('type','button');
 
 	// On click . .
 	$("#movetodisabled").click(function() {

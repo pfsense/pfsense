@@ -452,14 +452,14 @@ if ($pconfig['gid'] != 1998) { // all users group
 		'Move to "Members"',
 		null,
 		'fa-angle-double-right'
-	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
 		'Move to "Not members',
 		null,
 		'fa-angle-double-left'
-	))->removeClass('btn-primary')->addClass('btn-info btn-sm');
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
 	$section->add($group);
@@ -483,11 +483,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Make buttons plain buttons, not submit
-	$("#movetodisabled").prop('type','button');
-	$("#movetoenabled").prop('type','button');
-
 
 	// On click . .
 	$("#movetodisabled").click(function() {

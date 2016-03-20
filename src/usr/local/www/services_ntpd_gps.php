@@ -379,7 +379,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'GPS Initialization',
@@ -406,7 +406,7 @@ $btncalc = new Form_Button(
 	'fa-calculator'
 );
 
-$btncalc->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btncalc->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $group->add($btncalc);
 
@@ -570,14 +570,10 @@ events.push(function() {
 		$('#btnadvgps').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvgps').prop('type', 'button');
-
 	$('#btnadvgps').click(function(event) {
 		show_advgps();
 	});
 
-	// Make the ‘Calculate’ button a plain button, not a submit button
-	$('#btncalc').prop('type','button');
 	$('#result').prop("disabled", true);
 
 	// Onclick read the string from the nmeastring box, calculate the checksum

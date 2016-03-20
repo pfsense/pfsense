@@ -625,7 +625,7 @@ if ($getSchedule) {
 
 			$group = new Form_Group('');
 			$group->add(new Form_Input(
-				'tempFriendlyTime',
+				'tempFriendlyTime' . $counter,
 				null,
 				'text',
 				$tempFriendlyTime
@@ -1138,9 +1138,9 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	// Template for the schedule definition. '@' will be replaced with the row number using .replace()
 	rowhtml =
 	'<div class="form-group schedulegrp' + counter + '">' +
-		'<label for="tempFriendlyTime" class="col-sm-2 control-label"></label>' +
+		'<label for="tempFriendlyTime@" class="col-sm-2 control-label"></label>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="tempFriendlyTime" id="tempFriendlyTime" type="text" value="' + tempFriendlyTime + '"/>' +
+			'<input class="form-control" name="tempFriendlyTime@" id="tempFriendlyTime@" type="text" value="' + tempFriendlyTime + '"/>' +
 			'<span class="help-block">Day(s)</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +

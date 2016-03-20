@@ -1278,11 +1278,11 @@ worker_processes  {$max_procs};
 
 EOD;
 
-if (!isset($config['syslog']['nolognginx'])) {
-	$nginx_config .= "error_log  syslog:server=unix:/var/run/log,facility=local5;\n";
-}
+	if (!isset($config['syslog']['nolognginx'])) {
+		$nginx_config .= "error_log  syslog:server=unix:/var/run/log,facility=local5;\n";
+	}
 
-$nginx_config .= <<<EOD
+	$nginx_config .= <<<EOD
 
 events {
     worker_connections  1024;
@@ -1301,24 +1301,16 @@ http {
 
 EOD;
 
-if ($captive_portal !== false) {
-	$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
-}
-
-$nginx_config .= <<<EOD
-
-	server {
-		listen {$nginx_port};
-		listen [::]:{$nginx_port};
-		client_max_body_size 200m;
-
-		gzip on;
-		gzip_types text/plain text/css text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json;
-
-EOD;
+	if ($captive_portal !== false) {
+		$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
+	}
 
 	if ($cert <> "" and $key <> "") {
-		$nginx_config .= "\t\tssl             on;\n";
+		$nginx_config .= "\n";
+		$nginx_config .= "\tserver {\n";
+		$nginx_config .= "\t\tlisten {$nginx_port} ssl;\n";
+		$nginx_config .= "\t\tlisten [::]:{$nginx_port} ssl;\n";
+		$nginx_config .= "\n";
 		$nginx_config .= "\t\tssl_certificate         {$g['varetc_path']}/{$cert_location};\n";
 		$nginx_config .= "\t\tssl_certificate_key     {$g['varetc_path']}/{$key_location};\n";
 		$nginx_config .= "\t\tssl_session_timeout     10m;\n";
@@ -1338,8 +1330,22 @@ EOD;
 		$nginx_config .= "\t\tssl_stapling on;\n";
 		$nginx_config .= "\t\tssl_stapling_verify on;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
+	} else {
 		$nginx_config .= "\n";
+		$nginx_config .= "\tserver {\n";
+		$nginx_config .= "\t\tlisten {$nginx_port};\n";
+		$nginx_config .= "\t\tlisten [::]:{$nginx_port};\n";
 	}
+
+	$nginx_config .= <<<EOD
+
+		client_max_body_size 200m;
+
+		gzip on;
+		gzip_types text/plain text/css text/javascript application/x-javascript text/xml application/xml application/xml+rss application/json;
+
+
+EOD;
 
 	if ($captive_portal !== false) {
 		$nginx_config .= <<<EOD
@@ -1410,7 +1416,7 @@ EOD;
 	server {
 		listen 80;
 		listen [::]:80;
-		rewrite         ^ https://\$http_host$redirectport\$request_uri? permanent;
+		return 301 https://\$http_host$redirectport\$request_uri;
 	}
 
 EOD;

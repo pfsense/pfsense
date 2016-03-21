@@ -74,18 +74,6 @@ $do_ping = false;
 $host = '';
 $count = DEFAULT_COUNT;
 
-function create_sourceaddresslist() {
-	$sourceips = get_possible_traffic_source_addresses(true);
-
-	$list = array("" => gettext('Default'));
-
-	foreach ($sourceips as $sipvalue => $sipname) {
-		$list[$sipvalue] = $sipname;
-	}
-
-	return $list;
-}
-
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 	unset($do_ping);
@@ -190,7 +178,7 @@ $section->addInput(new Form_Select(
 	'sourceip',
 	'Source address',
 	$sourceip,
-	create_sourceaddresslist()
+	array('' => gettext('Automatically selected (default)')) + get_possible_traffic_source_addresses(true)
 ))->setHelp('Select source address for the ping');
 
 $section->addInput(new Form_Select(

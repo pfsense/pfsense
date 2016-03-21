@@ -80,18 +80,6 @@ $ttl = DEFAULT_TTL;
 $ipproto = 'ipv4';
 $sourceip = 'any';
 
-function create_sourceaddresslist() {
-	$list = array('any' => gettext('Any'));
-
-	$sourceips = get_possible_traffic_source_addresses(true);
-
-	foreach ($sourceips as $sipvalue => $sipname) {
-		$list[$sipvalue] = $sipname;
-	}
-
-	return($list);
-}
-
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 
@@ -178,7 +166,7 @@ $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
 	$sourceip,
-	create_sourceaddresslist()
+	array('any' => gettext('Any')) + get_possible_traffic_source_addresses(true);
 ))->setHelp('Select source address for the trace');
 
 $section->addInput(new Form_Select(

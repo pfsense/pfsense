@@ -101,6 +101,7 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -218,6 +219,20 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
+function get_gw_family($gwname) {
+	$gateways = return_gateways_array();
+
+	if (is_array($gateways)) {
+		foreach ($gateways as $gw) {
+			if ($gw['name'] == $gwname) {
+				return($gw['ipprotocol']);
+			}
+		}
+	}
+
+	return("none");
+}
+
 $form = new Form();
 
 $section = new Form_Section('Edit Gateway Group Entry');
@@ -239,10 +254,24 @@ $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setWidth(3)->setReadonly();
 $section->add($group);
 
+// Determine the protocol familily this group pertains to. We loop through every item
+// just in case any have been removed and so have no family (orphans?)
+
+if (is_array($pconfig['item'])) {
+	foreach ($pconfig['item'] as $idx => $item) {
+		$itemsplit = explode("|", $item);
+
+		$family = get_gw_family($itemsplit[0]);
+
+		if (($family == "inet") || ($family == "inet6")) {
+			break;
+		}
+	}
+}
+
 foreach ($a_gateways as $gwname => $gateway) {
 	if (!empty($pconfig['item'])) {
 		$af = explode("|", $pconfig['item'][0]);
-		$family = $a_gateways[$af[0]]['ipprotocol'];
 		if ($gateway['ipprotocol'] != $family) {
 			$rows++;
 			continue;

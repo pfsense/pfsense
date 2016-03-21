@@ -726,7 +726,7 @@ $btnsrcadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnsrcadv->addClass('btn-info btn-sm');
+$btnsrcadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Source',
@@ -1267,7 +1267,6 @@ events.push(function() {
 	});
 	// ---------- On initial page load --------------------------------------------------------------------------------
 
-	$("#btnsrcadv").prop('type', 'button');
 	hideSource(!srcenabled);
 	ext_change();
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');

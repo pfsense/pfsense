@@ -378,7 +378,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Display Custom Options',
@@ -406,7 +406,7 @@ events.push(function() {
 		var text;
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
-			showadvcustom = "<?=$customoptions?>";
+			showadvcustom = <?=($customoptions ? 'true' : 'false');?>;
 		} else {
 			// It was a click, swap the state.
 			showadvcustom = !showadvcustom;
@@ -436,9 +436,6 @@ events.push(function() {
 		hideInput('btnadvcustom', hide);
 		hideInput('custom_options', hide || !showadvcustom);
 	}
-
-	// Make the 'additional options' button a plain button, not a submit button
-	$("#btnadvcustom").prop('type','button');
 
 	// Un-hide additional controls
 	$('#btnadvcustom').click(function(event) {

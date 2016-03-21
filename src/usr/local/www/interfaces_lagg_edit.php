@@ -212,6 +212,19 @@ if ($_POST) {
 				interface_configure($confif);
 			}
 
+			// reconfigure any VLANs with this lagg as their parent
+			if (is_array($config['vlans']['vlan'])) {
+				foreach ($config['vlans']['vlan'] as $vlan) {
+					if ($vlan['if'] == $lagg['laggif']) {
+						interface_vlan_configure($vlan);
+						$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+						if ($confif != "") {
+							interface_configure($confif);
+						}
+					}
+				}
+			}
+
 			header("Location: interfaces_lagg.php");
 			exit;
 		}

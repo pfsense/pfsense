@@ -439,7 +439,7 @@ $btnmymac = new Form_Button(
 	'fa-clone'
 	);
 
-$btnmymac->removeClass('btn-primary')->addClass('btn-success btn-sm');
+$btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
 $group = new Form_Group('MAC controls');
 $group->add($macaddress);
@@ -597,7 +597,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
@@ -645,7 +645,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP servers',
@@ -681,7 +681,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP servers',
@@ -738,8 +738,6 @@ events.push(function() {
 		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvdns').prop('type', 'button');
-
 	$('#btnadvdns').click(function(event) {
 		show_advdns();
 	});
@@ -775,8 +773,6 @@ events.push(function() {
 		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvntp').prop('type', 'button');
-
 	$('#btnadvntp').click(function(event) {
 		show_advntp();
 	});
@@ -811,14 +807,9 @@ events.push(function() {
 		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvtftp').prop('type', 'button');
-
 	$('#btnadvtftp').click(function(event) {
 		show_advtftp();
 	});
-
-	// Make the ‘Copy My MAC’ button a plain button, not a submit button
-	$("#btnmymac").prop('type','button');
 
 	// On click, copy the hidden 'mymac' text to the 'mac' input
 	$("#btnmymac").click(function() {

@@ -640,7 +640,7 @@ $group->add(new Form_Button(
 	'Select a container',
 	null,
 	'fa-search'
-))->addClass('btn-info');
+))->setAttribute('type','button')->addClass('btn-info');
 
 $section->add($group);
 
@@ -959,7 +959,6 @@ events.push(function() {
 <?php endif; ?>
 
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
-	$("#Select").prop('type','button');
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
 
 	if($('#ldap_port').val() == "")

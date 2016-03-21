@@ -1004,7 +1004,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Dynamic DNS',
@@ -1054,7 +1054,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'MAC address control',
@@ -1083,7 +1083,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'NTP',
@@ -1110,7 +1110,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'TFTP',
@@ -1131,7 +1131,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'LDAP',
@@ -1153,7 +1153,7 @@ $btnadv = new Form_Button(
 	'fa-cog'
 );
 
-$btnadv->addClass('btn-info btn-sm');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Additional BOOTP/DHCP Options',
@@ -1426,8 +1426,6 @@ events.push(function() {
 		$('#btnadvdns').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvdns').prop('type', 'button');
-
 	$('#btnadvdns').click(function(event) {
 		show_advdns();
 	});
@@ -1462,8 +1460,6 @@ events.push(function() {
 		}
 		$('#btnadvmac').html('<i class="fa fa-cog"></i> ' + text);
 	}
-
-	$('#btnadvmac').prop('type', 'button');
 
 	$('#btnadvmac').click(function(event) {
 		show_advmac();
@@ -1500,8 +1496,6 @@ events.push(function() {
 		$('#btnadvntp').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvntp').prop('type', 'button');
-
 	$('#btnadvntp').click(function(event) {
 		show_advntp();
 	});
@@ -1535,8 +1529,6 @@ events.push(function() {
 		}
 		$('#btnadvtftp').html('<i class="fa fa-cog"></i> ' + text);
 	}
-
-	$('#btnadvtftp').prop('type', 'button');
 
 	$('#btnadvtftp').click(function(event) {
 		show_advtftp();
@@ -1572,8 +1564,6 @@ events.push(function() {
 		$('#btnadvldap').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
-	$('#btnadvldap').prop('type', 'button');
-
 	$('#btnadvldap').click(function(event) {
 		show_advldap();
 	});
@@ -1608,8 +1598,6 @@ events.push(function() {
 		}
 		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
 	}
-
-	$('#btnadvopts').prop('type', 'button');
 
 	$('#btnadvopts').click(function(event) {
 		show_advopts();

@@ -1518,7 +1518,7 @@ if (!empty($advanced)) {
 		'Show Advanced Options',
 		null,
 		'fa-cog'
-	))->addClass('btn-info');
+	))->setAttribute('type','button')->addClass('btn-info');
 
 	$form->add($advanced);
 }
@@ -1548,8 +1548,6 @@ if ($pkg['fields']['field'] != "") { ?>
 	checkLastRow();
 
 	// Show advanced section if you click the showadv button
-	$('#showadv').prop('type', 'button');
-
 	$("#showadv").click(function() {
 		advanced_visible = !advanced_visible;
 

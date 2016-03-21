@@ -4318,7 +4318,7 @@ function upgrade_137_to_138() {
 	global $config;
 
 	// the presence of unityplugin tag used to disable loading of unity plugin
-	// it's now disabled by default, and config tag is to enable. Unset accordingly. 
+	// it's now disabled by default, and config tag is to enable. Unset accordingly.
 	if (is_array($config['ipsec'])) {
 		if (isset($config['ipsec']['unityplugin'])) {
 			unset($config['ipsec']['unityplugin']);
@@ -4330,7 +4330,7 @@ function upgrade_138_to_139() {
 	global $config;
 
 	// clean up state killing on gateway failure. having kill_states set used to mean it was disabled
-	// now set gw_down_kill_states if enabled. 
+	// now set gw_down_kill_states if enabled.
 	if (!isset($config['system']['kill_states'])) {
 		$config['system']['gw_down_kill_states'] = true;
 	} else {
@@ -4353,7 +4353,7 @@ function upgrade_139_to_140() {
 }
 
 function upgrade_140_to_141() {
-	global $config; 
+	global $config;
 
 	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
@@ -4573,9 +4573,9 @@ function upgrade_143_to_144() {
 function upgrade_144_to_145() {
 	global $config;
 
-	// Enable DHCPv6 server and radvd config for track6 interfaces, 
-	// matching what used to be automatically enabled with no user 
-	// configurability. 
+	// Enable DHCPv6 server and radvd config for track6 interfaces,
+	// matching what used to be automatically enabled with no user
+	// configurability.
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
@@ -4712,4 +4712,44 @@ function upgrade_146_to_147() {
 	upgrade_quagga_146_to_147();
 }
 
+function upgrade_147_to_148() {
+	global $config;
+
+	// Ensure there are no spaces in group names by
+	// replacing spaces with underscores
+	if (is_array($config['system']['group'])) {
+		$exgrps = array();
+
+		// Make a list of the existing group names so we can check for dups
+		foreach ($config['system']['group'] as $grp) {
+			$exgrps[] = $grp['name'];
+		}
+
+		$cleargroups = false;
+		foreach ($config['system']['group'] as $idx => $grp) {
+			if (strstr($grp['name'], " ")) {
+				$cleargroups = true;
+				$newgrpname = str_replace(" ", "_", $grp['name']);
+				// In the unlikely event that there is already a group with this name
+				// just replace the whole thing with a unique string
+				if (in_array($newgrpname, $exgrps)) {
+					$config['system']['group'][$idx]['name'] = uniqid();
+				} else {
+					$config['system']['group'][$idx]['name'] = $newgrpname;
+				}
+			}
+		}
+
+		// if there was a space in a group name, there may be multiple
+		// groups with the same name in the group file. To prevent pw 
+		// from getting into a neverending loop, delete all user-defined
+		// groups here. local_sync_accounts will run shortly after this
+		// and add them back. redmine #6012
+		if ($cleargroups) {
+			foreach ($config['system']['group'] as $grp) {
+				mwexec("/usr/sbin/pw groupdel -g {$grp['gid']}");
+			}
+		}
+	}
+}
 ?>

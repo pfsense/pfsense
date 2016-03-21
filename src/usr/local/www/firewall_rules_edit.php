@@ -484,7 +484,7 @@ if ($_POST) {
 	}
 
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
-		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginposrt']);
+		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
 	if ($_POST['srcendport'] && !is_portoralias($_POST['srcendport'])) {
 			$input_errors[] = sprintf(gettext("%s is not a valid end source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcendport']);

@@ -1069,7 +1069,7 @@ create_virt_images() {
 
 	# Fill fstab
 	echo ">>> Installing platform specific items..." | tee -a ${LOGFILE}
-	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	0	0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo "/dev/gpt/${PRODUCT_NAME}	/	ufs		rw	1	1" > ${FINAL_CHROOT_DIR}/etc/fstab
 	if [ -n "${VIRT_SWAP_PART_SIZE}" ]; then
 		echo "/dev/gpt/swap0	none	swap	sw	0	0" >> ${FINAL_CHROOT_DIR}/etc/fstab
 	fi
@@ -1086,7 +1086,7 @@ create_virt_images() {
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
-		-o label=${PRODUCT_NAME} \
+		-o label=${PRODUCT_NAME},version=2 \
 		-s ${VIRT_FIRST_PART_SIZE} \
 		${VIRT_TMP}/${VIRT_UFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
@@ -1097,6 +1097,14 @@ create_virt_images() {
 		fi
 		echo "Failed!" | tee -a ${LOGFILE}
 		echo ">>> ERROR: Error creating virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
+		print_error_pfS
+	fi
+	echo "Done!" | tee -a ${LOGFILE}
+
+	echo -n ">>> Enabling SUJ on recently created disk... " | tee -a ${LOGFILE}
+	if ! tunefs -j enable ${OVA_TMP}/${OVFUFS} 2>&1 >>${LOGFILE}; then
+		echo "Failed!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error enabling SUJ on disk. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 	echo "Done!" | tee -a ${LOGFILE}

@@ -1513,7 +1513,7 @@ create_mfsbsd_image() {
 	echo "Done!" | tee -a ${LOGFILE}
 
 	echo -n ">>> Making root filesystem image... " | tee -a ${LOGFILE}
-	makefs ${FSDIR}/mfsroot ${FINAL_CHROOT_DIR}
+	makefs -o version=2 ${FSDIR}/mfsroot ${FINAL_CHROOT_DIR}
 	echo "Done!" | tee -a ${LOGFILE}
 
 	echo -n ">>> Compressing root filesystem image... " | tee -a ${LOGFILE}

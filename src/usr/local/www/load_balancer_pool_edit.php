@@ -282,13 +282,6 @@ events.push(function() {
 		}
 	}
 
-	// Make buttons plain buttons, not a submit
-	$("#btnaddtopool").prop('type','button');
-	$("#removeenabled").prop('type','button');
-	$("#removedisabled").prop('type','button');
-	$("#movetodisabled").prop('type','button');
-	$("#movetoenabled").prop('type','button');
-
 	// On click . .
 	$("#btnaddtopool").click(function() {
 		$('[name="servers[]"]').append(new Option($('#ipaddr').val(), $('#ipaddr').val()));
@@ -415,7 +408,7 @@ $group->add(new Form_Button(
 	'Add to pool',
 	null,
 	'fa-plus'
-))->addClass('btn-success');
+))->setAttribute('type','button')->addClass('btn-success');
 
 $section->add($group);
 
@@ -460,14 +453,14 @@ $group->add(new Form_Button(
 	'Remove',
 	null,
 	'fa-trash'
-))->addClass('btn-danger btn-sm');
+))->setAttribute('type','button')->addClass('btn-danger btn-sm');
 
 $group->add(new Form_Button(
 	'removeenabled',
 	'Remove',
 	null,
 	'fa-trash'
-))->addClass('btn-danger btn-sm');
+))->setAttribute('type','button')->addClass('btn-danger btn-sm');
 
 $section->add($group);
 
@@ -478,14 +471,14 @@ $group->add(new Form_Button(
 	'Move to enabled list',
 	null,
 	'fa-angle-double-right'
-))->addClass('btn-info btn-sm');
+))->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $group->add(new Form_Button(
 	'movetodisabled',
 	'Move to disabled list',
 	null,
 	'fa-angle-double-left'
-))->addClass('btn-info btn-sm');
+))->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->add($group);
 

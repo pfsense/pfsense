@@ -46,8 +46,8 @@ if [ -e /root/force_fsck ]; then
 fi
 
 if [ "${PLATFORM}" != "cdrom" ]; then
-	/sbin/fsck -p -F
 	FSCK_ACTION_NEEDED=0
+	/sbin/fsck -p -F
 	case $? in
 	0)
 		echo "Filesystems are clean, continuing..."

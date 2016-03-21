@@ -1341,7 +1341,7 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
 		if [ -f ${MEMSTICKPATH} ]; then
 			rm -f $MEMSTICKPATH
@@ -1401,7 +1401,7 @@ create_memstick_serial_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
 		if [ -f ${MEMSTICKSERIALPATH} ]; then
 			rm -f $MEMSTICKSERIALPATH
@@ -1463,7 +1463,7 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME} ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
 		if [ -f ${MEMSTICKADIPATH} ]; then
 			rm -f $MEMSTICKADIPATH

@@ -341,8 +341,8 @@ if [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="nanobsd"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick \
-			memstickserial memstickadi ova ec2 ec2-csm azure \
-			kvm bhyve openstack-csm"
+			memstickserial memstickadi ova ec2 azure \
+			kvm bhyve"
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"

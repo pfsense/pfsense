@@ -476,14 +476,17 @@ function ip_after($ip, $offset = 1) {
    Returns '' if not a valid IPv4/IPv6 address */
 function ip_to_hex($ip) {
 	$type = is_ipaddr($ip);
+	$expectedlen = -1;
 	// is_ipaddr() returns 4/6 if valid IPv4/IPv6, or '' if not valid
 	if ($type == 4) {
 		$result = str_pad(strtolower(dechex(ip2long32($ip))), 8, '0', STR_PAD_LEFT);
+		$expectedlen = 8;
 	} elseif ($type == 6) {
 		$result = strtolower(str_replace(Net_IPv6::uncompress($ip, true), ':', ''));
+		$expectedlen = 32;
 	}
 	// probably redundant not to return already but guarantees catching any subtle issues in hex conversion
-	if (isset($result) && ctype_xdigit($result) && (strlen($result) == 8 || strlen($result == 32))) {
+	if (isset($result) && ctype_xdigit($result) && strlen($result) == $expectedlen) {
 		return $result;
 	} else {
 		return '';

@@ -76,7 +76,7 @@ function get_default_captive_portal_html() {
 	<input name="zone" type="hidden" value="\$PORTAL_ZONE\$">
 	<center>
 	<table cellpadding="6" cellspacing="0" width="550" height="380" style="border:1px solid #000000">
-	<tr height="10" bgcolor="#990000">
+	<tr height="10" style="background-color:#990000">
 		<td style="border-bottom:1px solid #000000">
 			<font color='white'>
 			<b>
@@ -112,8 +112,8 @@ function get_default_captive_portal_html() {
 								<table>
 									<tr><td colspan="2"><center>{$translated_text2}</td></tr>
 									<tr><td>&nbsp;</td></tr>
-									<tr><td align="right">{$translated_text3}</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
-									<tr><td align="right">{$translated_text4}</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
+									<tr><td class="text-right">{$translated_text3}</td><td><input name="auth_user" type="text" style="border: 1px dashed;"></td></tr>
+									<tr><td class="text-right">{$translated_text4}</td><td><input name="auth_pass" type="password" style="border: 1px dashed;"></td></tr>
 									<tr><td>&nbsp;</td></tr>
 
 EOD;
@@ -122,7 +122,7 @@ EOD;
 		$translated_text = gettext("Enter Voucher Code:");
 		$htmltext .= <<<EOD
 									<tr>
-										<td align="right">{$translated_text} </td>
+										<td class="text-right">{$translated_text} </td>
 										<td><input name="auth_voucher" type="text" style="border:1px dashed;" size="22"></td>
 									</tr>
 
@@ -303,8 +303,8 @@ LogoutWin = window.open('', 'Logout', 'toolbar=0,scrollbars=0,location=0,statusb
 if (LogoutWin) {
 	LogoutWin.document.write('<html>');
 	LogoutWin.document.write('<head><title>{$translated_text3}</title></head>') ;
-	LogoutWin.document.write('<body bgcolor="#435370">');
-	LogoutWin.document.write('<div align="center" style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
+	LogoutWin.document.write('<body style="background-color:#435370">');
+	LogoutWin.document.write('<div class="text-center" style="color: #ffffff; font-family: Tahoma, Verdana, Arial, Helvetica, sans-serif; font-size: 11px;">') ;
 	LogoutWin.document.write('<b>{$translated_text4}</b><p />');
 	LogoutWin.document.write('<form method="POST" action="<?=\$logouturl;?>">');
 	LogoutWin.document.write('<input name="logout_id" type="hidden" value="<?=\$sessionid;?>" />');

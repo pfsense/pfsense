@@ -121,6 +121,20 @@ if ($_GET['act'] == "del") {
 	}
 }
 
+function gateway_exists($gwname) {
+	$gateways = return_gateways_array();
+
+	if (is_array($gateways)) {
+		foreach ($gateways as $gw) {
+			if ($gw['name'] == $gwname) {
+				return(true);
+			}
+		}
+	}
+
+	return(false);
+}
+
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"));
 $shortcut_section = "gateway-groups";
 
@@ -167,7 +181,9 @@ foreach ($a_gateway_groups as $gateway_group):
 <?php
 	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
-		print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
+		if (gateway_exists($itemsplit[0])) {
+			print(htmlspecialchars(strtoupper($itemsplit[0])) . "<br />\n");
+		}
 	}
 ?>
 						</td>
@@ -175,7 +191,9 @@ foreach ($a_gateway_groups as $gateway_group):
 <?php
 	foreach ($gateway_group['item'] as $item) {
 		$itemsplit = explode("|", $item);
-		print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
+		if (gateway_exists($itemsplit[0])) {
+			print("Tier ". htmlspecialchars($itemsplit[1]) . "<br />\n");
+		}
 	}
 ?>
 						</td>

@@ -146,6 +146,13 @@ if (file_exists("/etc/platform")) {
 	}
 }
 
+if (file_exists("{$g['etc_path']}/default-config-flavor")) {
+	$flavor_array = file("{$g['etc_path']}/default-config-flavor");
+	$g['default-config-flavor'] = chop($flavor_array[0]);
+} else {
+	$g['default-config-flavor'] = '';
+}
+
 /* Default sysctls */
 $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.inet.tcp.blackhole" => "2",

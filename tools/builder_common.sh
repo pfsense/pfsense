@@ -1479,7 +1479,7 @@ customize_stagearea_for_image() {
 	fi
 
 	case "${_image_type}" in
-		ec2*)
+		azure|ec2*|openstack-csm)
 			sed -i '' -e 's,^root:[^:]*:,root:*LOCKED:,' \
 				${FINAL_CHROOT_DIR}/etc/master.passwd
 			chroot ${FINAL_CHROOT_DIR} pwd_mkdb /etc/master.passwd

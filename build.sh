@@ -445,6 +445,15 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 		ec2)
 			old_custom_package_list="${custom_package_list}"
+			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-ec2_setup \
+				${PRODUCT_NAME}-openvpn_connect_profile"
+			install_pkg_install_ports
+			create_virt_images ${_IMGTOBUILD} "default-config-${_IMGTOBUILD}"
+			export custom_package_list="${old_custom_package_list}"
+			install_pkg_install_ports
+			;;
+		ec2-csm|openstack-csm)
+			old_custom_package_list="${custom_package_list}"
 			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-ec2_setup"
 			install_pkg_install_ports
 			create_virt_images ${_IMGTOBUILD} "default-config-${_IMGTOBUILD}"

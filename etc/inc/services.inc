@@ -910,6 +910,11 @@ EOD;
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
 				}
+				if ($sm['ddnshostname']) {
+					$ddnsdhhostname = str_replace(" ", "_", $sm['hostname']);
+					$ddnddhhostname = str_replace(".", "_", $ddnsdhhostname);
+					$dhcpdconf .= "	ddns-hostname \"{$ddnsdhhostname}\";\n";
+				}
 				if ($sm['filename'])
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
 
@@ -1350,6 +1355,11 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdv6conf .= "	option host-name {$dhhostname};\n";
+				}
+				if ($sm['ddnshostname']) {
+					$ddnsdhhostname = str_replace(" ", "_", $sm['hostname']);
+					$ddnddhhostname = str_replace(".", "_", $ddnsdhhostname);
+					$dhcpdconf .= "	ddns-hostname \"{$ddnsdhhostname}\";\n";
 				}
 				if ($sm['filename'])
 					$dhcpdv6conf .= "	filename \"{$sm['filename']}\";\n";

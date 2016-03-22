@@ -710,6 +710,8 @@ function netgate_hardware_setup() {
 
 		$config['system']['enablesshd'] = true;
 
+		$config['system']['doinitialsetup'] = true;
+
 		unset($config['interfaces']['wan']['blockpriv']);
 		unset($config['dhcpd']);
 		break;

@@ -500,9 +500,11 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
-		switch (substr($g['default-config-flavor'], 0, 3)) {
-		case "ec2":
+		switch ($g['default-config-flavor']) {
 		case "azure":
+		case "ec2":
+		case "ec2-csm":
+		case "openstack-csm":
 			/* Do nothing */
 			break;
 		default:

@@ -61,7 +61,7 @@ function rescue_detect_keypress() {
 	if (in_array($key, array("r", "R"))) {
 		putenv("TERM=cons25");
 		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer rescue");
+		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
 	} else {
 		putenv("TERM=cons25");
 		echo "\n\nInstaller mode selected...\n";

@@ -1479,6 +1479,14 @@ customize_stagearea_for_image() {
 		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
+	case "${_image_type}" in
+		ec2*)
+			sed -i '' -e 's,^root:[^:]*:,root:*LOCKED:,' \
+				${FINAL_CHROOT_DIR}/etc/master.passwd
+			chroot ${FINAL_CHROOT_DIR} pwd_mkdb /etc/master.passwd
+	esac
+
+
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
 }
 

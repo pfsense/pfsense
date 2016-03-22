@@ -166,7 +166,7 @@ $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
 	$sourceip,
-	array('any' => gettext('Any')) + get_possible_traffic_source_addresses(true);
+	array('any' => gettext('Any')) + get_possible_traffic_source_addresses(true)
 ))->setHelp('Select source address for the trace');
 
 $section->addInput(new Form_Select(

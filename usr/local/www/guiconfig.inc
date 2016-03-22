@@ -1073,13 +1073,19 @@ function alias_info_popup($alias_id){
 			// TODO: Change it when pf supports tables with ports
 			if ($alias_name['type'] == "urltable") {
 				exec("/sbin/pfctl -t {$alias_name['name']} -T show | wc -l", $total_entries);
-				$counter=preg_replace("/\D/","",$total_entries[0]);
-				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -10002", $alias_addresses);
+				$alias_entries = preg_replace("/\D/","",$total_entries[0]);
+				exec("/sbin/pfctl -t {$alias_name['name']} -T show | head -102", $alias_addresses);
 			} else {
+				// This reads in the whole file and then chops it down to max of 100 entries.
+				// For big files it would be better to just read in up to the first 100 lines.
 				$urlfn = alias_expand_urltable($alias_name['name']);
 				$alias_addresses = explode("\n", file_get_contents($urlfn));
-				$counter = count($alias_addresses);
+				$alias_entries = count($alias_addresses);
+				if ($alias_entries > 100) {
+					$alias_addresses = array_splice($alias_addresses, 100);
+				}
 			}
+			$counter = count($alias_addresses);
 			$alias_objects_with_details .= "<tr><td colspan=\"3\" $close_title class=\"vncell\">{$alias_name['url']}</td></tr>";
 			$x=0;
 			foreach ($alias_addresses as $alias_ports_address ) {
@@ -1104,13 +1110,14 @@ function alias_info_popup($alias_id){
 			if ($x > 0) {
 				$alias_objects_with_details .= "</tr>";
 			}
-			if ($counter > 10002) {
-				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". gettext("listing only first 10k items") . "</td><tr>";
+			if ($counter < $alias_entries) {
+				$alias_objects_with_details .= "<tr><td colspan=\"3\"> ". sprintf(gettext("listing only first %s of %s items"), $counter, $alias_entries) . "</td><tr>";
 			}
 		}
 		else{
 			$alias_addresses = explode (" ", $alias_name['address']);
 			$alias_details = explode ("||", $alias_name['detail']);
+			$alias_entries = count($alias_addresses);
 			$counter = 0;
 			foreach ($alias_addresses as $alias_ports_address) {
 				$alias_objects_with_details .= "<tr><td $close_title width=\"5%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">{$alias_addresses[$counter]}</td>";
@@ -1121,6 +1128,9 @@ function alias_info_popup($alias_id){
 					$alias_objects_with_details .="<td $close_title width=\"95%\" class=\"vncell\" style=\"background: #FFFFFF;color: #000000;\">&nbsp;</td>";
 				$alias_objects_with_details .= "</tr>";
 				$counter++;
+				if ($counter >= 100) {
+					break;
+				}
 			}
 		}
 		$alias_objects_with_details .= "</table>";
@@ -1129,7 +1139,11 @@ function alias_info_popup($alias_id){
 	if ($strlength >= $maxlength)
 		$alias_descr_substr = substr($alias_descr_substr, 0, $maxlength) . "...";
 	$item_text = ($counter > 1 ? "items" : "item");
-	$alias_caption = htmlspecialchars($alias_descr_substr) . " - {$counter} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
+	$counter_text = $counter;
+	if ($counter < $alias_entries) {
+		$counter_text .= " of " . $alias_entries;
+	}
+	$alias_caption = htmlspecialchars($alias_descr_substr) . " - {$counter_text} {$item_text}<a href=\"/firewall_aliases_edit.php?id={$alias_id}\" title=\"".gettext('edit this alias')."\">&nbsp;&nbsp;edit </a>";
 	$strlength = strlen ($alias_caption);
 	print "<h1>{$alias_caption}</h1>" . $alias_objects_with_details;
 }

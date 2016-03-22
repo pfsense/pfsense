@@ -116,7 +116,7 @@ $filesystems = get_mounted_filesystems();
 	<tbody>
 		<tr>
 			<td width="25%" class="vncellt"><?=gettext("Name");?></td>
-			<td width="75%" class="listr"><?php echo $config['system']['hostname'] . "." . $config['system']['domain']; ?></td>
+			<td width="75%" class="listr"><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
 		<tr>
 			<td width="25%" valign="top" class="vncellt"><?=gettext("Version");?></td>

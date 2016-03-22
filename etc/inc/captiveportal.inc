@@ -915,6 +915,7 @@ function captiveportal_disconnect($dbent, $radiusservers,$term_cause = 1,$stop_t
 function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutReason = "LOGOUT") {
 	global $g, $config;
 
+	$sessionid = SQLite3::escapeString($sessionid);
 	$radiusservers = captiveportal_get_radius_servers();
 
 	/* read database */
@@ -1325,7 +1326,7 @@ function radius($username,$password,$clientip,$clientmac,$type, $radiusctx = nul
 }
 
 function captiveportal_opendb() {
-	global $g, $cpzone;
+	global $g, $config, $cpzone, $cpzoneid;
 
 	$db_path = "{$g['vardb_path']}/captiveportal{$cpzone}.db";
 	$createquery = "CREATE TABLE IF NOT EXISTS captiveportal (" .
@@ -1339,11 +1340,13 @@ function captiveportal_opendb() {
 
 	try {
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 	} catch (Exception $e) {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Trying again.");
 		unlink_if_exists($db_path);
 		try {
 			$DB = new SQLite3($db_path);
+			$DB->busyTimeout(60000);
 		} catch (Exception $e) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: " . $e->getMessage() . " -- Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1354,6 +1357,7 @@ function captiveportal_opendb() {
 		captiveportal_syslog("Could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Trying again.");
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if (!$DB) {
 			captiveportal_syslog("Still could not open {$db_path} as an sqlite database for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and ensure there is enough free space.");
 			return;
@@ -1368,8 +1372,22 @@ function captiveportal_opendb() {
 		unset($DB);
 		unlink_if_exists($db_path);
 		$DB = new SQLite3($db_path);
+		$DB->busyTimeout(60000);
 		if ($DB->exec($createquery)) {
 			captiveportal_syslog("Successfully reinitialized tables for {$cpzone} -- database has been reset.");
+			if (!is_numericint($cpzoneid)) {
+				if (is_array($config['captiveportal'])) {
+					foreach ($config['captiveportal'] as $cpkey => $cp) {
+						if ($cpzone == $cp['zone']) {
+							$cpzoneid = $cp['zoneid'];
+						}
+					}
+				}
+			}
+			if (is_numericint($cpzoneid)) {
+				mwexec("/sbin/ipfw -x $cpzoneid table all flush");
+				captiveportal_syslog("Flushed tables for {$cpzone} after database reset.");
+			}
 		} else {
 			captiveportal_syslog("Still unable to create tables for {$cpzone}. Error message: {$DB->lastErrorMsg()}. Remove the database file manually and try again.");
 		}
@@ -1444,12 +1462,17 @@ function captiveportal_write_elements() {
 	if (is_array($cpcfg['element'])) {
 		conf_mount_rw();
 		foreach ($cpcfg['element'] as $data) {
-			if (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
+			/* Do not attempt to decode or write out empty files. */
+			if (empty($data['content']) || empty(base64_decode($data['content']))) {
+				unlink_if_exists("{$g['captiveportal_element_path']}/{$data['name']}");
+				touch("{$g['captiveportal_element_path']}/{$data['name']}");
+			} elseif (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
 				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
 				return 1;
 			}
-			if (!file_exists("{$g['captiveportal_path']}/{$data['name']}"))
+			if (!file_exists("{$g['captiveportal_path']}/{$data['name']}")) {
 				@symlink("{$g['captiveportal_element_path']}/{$data['name']}", "{$g['captiveportal_path']}/{$data['name']}");
+			}
 		}
 		conf_mount_ro();
 	}

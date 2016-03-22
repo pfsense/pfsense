@@ -646,7 +646,7 @@ class altq_root_queue {
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\"><br /><span class=\"vexpl\">" . gettext("Name") . "</span></td>";
 		$form .= "<td class=\"vncellreq\">";
-		$form .= "<strong>".$this->GetQname()."</strong>";
+		$form .= "<strong>".htmlspecialchars($this->GetQname())."</strong>";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Scheduler Type ");
 		$form .= "</td>";
@@ -681,7 +681,7 @@ class altq_root_queue {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">" . gettext("Bandwidth");
 		$form .= "</td><td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"bandwidth\" name=\"bandwidth\" value=\"";
-		$form .= $this->GetBandwidth() . "\" />";
+		$form .= htmlspecialchars($this->GetBandwidth()) . "\" />";
 		$form .= "<select id=\"bandwidthtype\" name=\"bandwidthtype\" class=\"formselect\">";
 		$form .= "<option value=\"Kb\"";
 		if ($this->GetBwscale() == "Kb")
@@ -704,13 +704,13 @@ class altq_root_queue {
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">Queue Limit</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<input type=\"text\" id=\"qlimit\" name=\"qlimit\" value=\"";
-		$form .= $this->GetQlimit();
+		$form .= htmlspecialchars($this->GetQlimit());
 		$form .= "\" />";
 		$form .= "</td></tr>";
 		$form .= "<tr><td valign=\"middle\" class=\"vncellreq\">TBR Size</td>";
 		$form .= "<td class=\"vncellreq\">";
 		$form .= "<br /><input type=\"text\" id=\"tbrconfig\" name=\"tbrconfig\" value=\"";
-		$form .= $this->GetTbrConfig();
+		$form .= htmlspecialchars($this->GetTbrConfig());
 		$form .= "\" />";
 		$form .= "<br /> <span class=\"vexpl\">";
 		$form .= gettext("Adjusts the size, in bytes, of the token bucket regulator. "
@@ -718,8 +718,8 @@ class altq_root_queue {
 		      .  "bandwidth are used to determine the size.");
 		$form .= "</span></td></tr>";
 		$form .= "<input type=\"hidden\" id=\"interface\" name=\"interface\"";
-		$form .= " value=\"" . $this->GetInterface() . "\" />";
-		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"".$this->GetQname()."\" />";
+		$form .= " value=\"" . htmlspecialchars($this->GetInterface()) . "\" />";
+		$form .= "<input type=\"hidden\" id=\"name\" name=\"name\" value=\"".htmlspecialchars($this->GetQname())."\" />";
 
 
 		return $form;

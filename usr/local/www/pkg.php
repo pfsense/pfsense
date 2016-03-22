@@ -41,11 +41,6 @@
 require_once("guiconfig.inc");
 require_once("pkg-utils.inc");
 
-function gentitle_pkg($pgname) {
-	global $config;
-	return $config['system']['hostname'] . "." . $config['system']['domain'] . " - " . $pgname;
-}
-
 function domTT_title($title_msg){
 	print "onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\" onmouseover=\"domTT_activate(this, event, 'content', '".gettext($title_msg)."', 'trail', true, 'delay', 0, 'fade', 'both', 'fadeMax', 93, 'styleClass', 'niceTitle');\"";
 }
@@ -56,8 +51,15 @@ if($xml == "") {
 	print_info_box_np(gettext("ERROR: No package defined."));
 	exit;
 } else {
-	if(file_exists("/usr/local/pkg/" . $xml))
-		$pkg = parse_xml_config_pkg("/usr/local/pkg/" . $xml, "packagegui");
+	$pkg_xml_prefix = "/usr/local/pkg/";
+	$pkg_full_path = "{$pkg_xml_prefix}/{$xml}";
+	if (substr_compare(realpath($pkg_full_path), $pkg_xml_prefix, 0, strlen($pkg_xml_prefix))) {
+		print_info_box_np(gettext("ERROR: Invalid path specified."));
+		die;
+	}
+
+	if(file_exists($pkg_full_path))
+		$pkg = parse_xml_config_pkg($pkg_full_path, "packagegui");
 	else {
 		echo "File not found " . htmlspecialchars($xml);
 		exit;

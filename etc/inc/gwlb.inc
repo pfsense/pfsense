@@ -405,14 +405,14 @@ function return_gateways_status($byname = false) {
 	foreach($gateways_arr as $gwitem) {
 		if(!isset($gwitem['monitor_disable']))
 			continue;
-		if(!is_ipaddr($gwitem['monitorip'])) {
+		if(!is_ipaddr($gwitem['monitor'])) {
 			$realif = $gwitem['interface'];
 			$tgtip = get_interface_gateway($realif);
 			if (!is_ipaddr($tgtip))
 				$tgtip = "none";
 			$srcip = find_interface_ip($realif);
 		} else {
-			$tgtip = $gwitem['monitorip'];
+			$tgtip = $gwitem['monitor'];
 			$srcip = find_interface_ip($realif);
 		}
 		if($byname == true)
@@ -429,7 +429,7 @@ function return_gateways_status($byname = false) {
 			$status[$target]['loss'] = "100.0%";
 			$status[$target]['status'] = "down";
 		} else {
-			$status[$target]['monitorip'] = $tgtip;
+			$status[$target]['monitor'] = $tgtip;
 			$status[$target]['srcip'] = $srcip;
 			$status[$target]['name'] = $gwitem['name'];
 			$status[$target]['lastcheck'] = date('r');

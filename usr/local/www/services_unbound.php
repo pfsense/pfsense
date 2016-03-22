@@ -76,9 +76,6 @@ if (isset($config['unbound']['regdhcp'])) {
 if (isset($config['unbound']['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
 }
-if (isset($config['unbound']['txtsupport'])) {
-	$pconfig['txtsupport'] = true;
-}
 
 $pconfig['port'] = $config['unbound']['port'];
 $pconfig['custom_options'] = base64_decode($config['unbound']['custom_options']);
@@ -159,11 +156,6 @@ if ($_POST) {
 		} else {
 			unset($a_unboundcfg['regdhcpstatic']);
 		}
-		if (isset($_POST['txtsupport'])) {
-			$a_unboundcfg['txtsupport'] = true;
-		} else {
-			unset($a_unboundcfg['txtsupport']);
-		}
 		if (is_array($_POST['active_interface']) && !empty($_POST['active_interface'])) {
 			$a_unboundcfg['active_interface'] = implode(",", $_POST['active_interface']);
 		}
@@ -213,7 +205,7 @@ include_once("head.inc");
 function enable_change(enable_over) {
 	var endis;
 	endis = !(jQuery('#enable').is(":checked") || enable_over);
-	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#txtsupport,#custom_options").prop('disabled', endis);
+	jQuery("#active_interface,#outgoing_interface,#dnssec,#forwarding,#regdhcp,#regdhcpstatic,#dhcpfirst,#port,#custom_options").prop('disabled', endis);
 }
 function show_advanced_dns() {
 	jQuery("#showadv").show();
@@ -356,14 +348,6 @@ function show_advanced_dns() {
 											"be registered in the DNS Resolver, so that their name can be ".
 											"resolved. You should also set the domain in %s".
 											"System: General setup%s to the proper value."),'<a href="system.php">','</a>');?></p>
-								</td>
-							</tr>
-							<tr>
-								<td width="22%" valign="top" class="vncellreq"><?=gettext("TXT Comment Support");?></td>
-								<td width="78%" class="vtable"><p>
-									<input name="txtsupport" type="checkbox" id="txtsupport" value="yes" <?php echo (isset($pconfig['txtsupport']) ? "checked=\"checked\"" : "");?> />
-									<strong><?=gettext("If this option is set, then any descriptions associated with Host entries and DHCP Static mappings will create a corresponding TXT record.");?><br />
-									</strong></p>
 								</td>
 							</tr>
 							<tr>

@@ -201,7 +201,13 @@ $status = ipsec_list_sa();
 				} else {
 					echo gettext("Unknown");
 				}
-				if (isset($ikesa['local-nat-t'])) {
+				/*
+				 * XXX: local-nat-t was defined by pfSense
+				 * When strongswan team accepted the change, they changed it to
+				 * nat-local. Keep both for a while and remove local-nat-t in
+				 * the future
+				 */
+				if (isset($ikesa['local-nat-t']) || isset($ikesa['nat-local'])) {
 					echo " NAT-T";
 				}
 
@@ -239,7 +245,13 @@ $status = ipsec_list_sa();
 				} else {
 					echo gettext("Unknown");
 				}
-				if (isset($ikesa['remote-nat-t'])) {
+				/*
+				 * XXX: remote-nat-t was defined by pfSense
+				 * When strongswan team accepted the change, they changed it to
+				 * nat-remote. Keep both for a while and remove remote-nat-t in
+				 * the future
+				 */
+				if (isset($ikesa['remote-nat-t']) || isset($ikesa['nat-remote'])) {
 					echo " NAT-T";
 				}
 ?>
@@ -308,7 +320,7 @@ $status = ipsec_list_sa();
 				</td>
 			</tr>
 <?php
-			if (is_array($ikesa['child-sas'])) {
+			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 ?>
 			<tr>
 				<td class="listrborder" colspan="9">
@@ -410,7 +422,7 @@ $status = ipsec_list_sa();
 							</td>
 							<td>
 								<center>
-									<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['reqid']; ?>">
+									<a href="diag_ipsec.php?act=childdisconnect&amp;ikeid=<?php echo $con_id; ?>&amp;ikesaid=<?php echo $childsa['uniqueid']; ?>">
 									<img src ="/themes/<?php echo $g['theme']; ?>/images/icons/icon_x.gif" alt=<?php echo gettext("Disconnect Child SA");?> title=<?php echo gettext("Disconnect Child SA");?> border="0"/>
 									</a>
 								</center>

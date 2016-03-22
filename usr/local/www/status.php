@@ -170,7 +170,7 @@ defCmdT("Generated Ruleset Limits","/bin/cat {$g['tmp_path']}/rules.limits");
 defCmdT("pf NAT Rules", "/sbin/pfctl -vvsn");
 defCmdT("pf Firewall Rules", "/sbin/pfctl -vvsr");
 defCmdT("pf Tables","/sbin/pfctl -vs Tables");
-defCmdT("pf State Table Contents", "/sbin/pfctl -ss");
+defCmdT("pf State Table Contents", "/sbin/pfctl -vvss");
 defCmdT("pf Info", "/sbin/pfctl -si");
 defCmdT("pf Show All", "/sbin/pfctl -sa");
 defCmdT("pf Queues","/sbin/pfctl -s queue -v");
@@ -256,6 +256,8 @@ if (file_exists("/tmp/PHP_errors.log")) {
 defCmdT("System Message Buffer","/sbin/dmesg -a");
 defCmdT("System Message Buffer (Boot)","/bin/cat /var/log/dmesg.boot");
 defCmdT("sysctl values","/sbin/sysctl -a");
+defCmdT("Kernel Environment", "/bin/kenv");
+defCmdT("Installed OS Packages", "/usr/local/sbin/pbi_info");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

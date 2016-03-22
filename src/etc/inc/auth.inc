@@ -500,8 +500,12 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
-		if (substr($g['default-config-flavor'], 0, 3) == "ec2") {
-			/* Skip it for ec2 variants */
+		switch (substr($g['default-config-flavor'], 0, 3)) {
+		case "ec2":
+		case "azure":
+			/* Do nothing */
+			break;
+		default:
 			$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -513,6 +517,7 @@ function local_user_set(& $user) {
 				fwrite($fd, $user['bcrypt-hash']);
 			}
 			pclose($fd);
+			break;
 		}
 		$user_group = "wheel";
 		$user_home = "/root";

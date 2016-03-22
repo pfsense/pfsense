@@ -1229,7 +1229,6 @@ clone_to_staging_area() {
 	fi
 
 	if [ -f ${STAGE_CHROOT_DIR}/etc/master.passwd ]; then
-		chroot ${STAGE_CHROOT_DIR} cap_mkdb /etc/master.passwd
 		chroot ${STAGE_CHROOT_DIR} pwd_mkdb /etc/master.passwd
 	fi
 	mkdir -p ${STAGE_CHROOT_DIR}/etc/mtree

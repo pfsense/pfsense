@@ -436,6 +436,10 @@ fi
 
 /usr/local/sbin/${product}-upgrade -y -b 3
 
+if [ -f /usr/local/sbin/ec2_setup.php ]; then
+	/usr/local/sbin/ec2_setup.php
+fi
+
 # Log product version to syslog
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`

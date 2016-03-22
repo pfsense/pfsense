@@ -33,7 +33,11 @@
 
 require_once("pkg-utils.inc");
 
+$run_installer = false;
+
 function rescue_detect_keypress() {
+	global $run_installer;
+
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=3;
 	echo "\n";
@@ -63,9 +67,8 @@ function rescue_detect_keypress() {
 		echo "\n\nRecovery mode selected...\n";
 		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
 	} else {
-		putenv("TERM=cons25");
-		echo "\n\nInstaller mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+		$run_installer = true;
+		return;
 	}
 
 	passthru("/etc/rc.reboot");
@@ -443,6 +446,14 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 }
 
 led_normalize();
+
+if ($run_installer) {
+	putenv("TERM=cons25");
+	echo "\n\nInstaller mode selected...\n";
+	passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	passthru("/etc/rc.reboot");
+	exit;
+}
 
 conf_mount_ro();
 

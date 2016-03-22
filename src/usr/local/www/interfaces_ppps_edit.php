@@ -1082,7 +1082,7 @@ events.push(function() {
 		for (var i=0; i<length; i++) {
 			hideClass('localip' + selected[i], false);
 
-			if (!showadvopts) {
+			if (showadvopts) {
 				hideClass('linkparam' + selected[i], false);
 				hideInput('linkparamhelp', false);
 			}

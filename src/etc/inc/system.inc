@@ -1341,8 +1341,6 @@ EOD;
 		$nginx_config .= "\t\tadd_header Strict-Transport-Security \"max-age=31536000\";\n";
 		$nginx_config .= "\t\tadd_header X-Content-Type-Options nosniff;\n";
 		$nginx_config .= "\t\tssl_session_tickets off;\n";
-		$nginx_config .= "\t\tssl_stapling on;\n";
-		$nginx_config .= "\t\tssl_stapling_verify on;\n";
 		$nginx_config .= "\t\tssl_dhparam /etc/dh-parameters.4096;\n";
 	} else {
 		$nginx_config .= "\n";

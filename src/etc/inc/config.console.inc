@@ -647,20 +647,70 @@ function netgate_hardware_setup() {
 		}
 		break;
 	case 'XG-1540':
-		$config['interfaces']['wan']['if'] = 'ix0';
-		$config['interfaces']['lan']['if'] = 'ix1';
-		$config['interfaces']['opt1'] = array(
-			'if' => 'igb0',
-			'descr' => 'OPT1'
-		);
+		if (does_interface_exist('igb2')) {
+			/* It has 4 port Intel 1Gb expansion card */
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb1';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb2',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT2'
+			);
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb4',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'ix0',
+				'descr' => 'OPT4'
+			);
+			$config['interfaces']['opt5'] = array(
+				'if' => 'igb5',
+				'descr' => 'OPT5'
+			);
+			$config['interfaces']['opt6'] = array(
+				'if' => 'ix1',
+				'descr' => 'OPT6'
+			);
+		} elseif (does_interface_exist('cxl0')) {
+			/* It has 2 port Chelsio 10Gb expansion card */
+			$config['interfaces']['wan']['if'] = 'cxl0';
+			$config['interfaces']['lan']['if'] = 'cxl1';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'ix0',
+				'descr' => 'OPT2'
+			);
+			$config['interfaces']['opt3'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT3'
+			);
+			$config['interfaces']['opt4'] = array(
+				'if' => 'ix1',
+				'descr' => 'OPT4'
+			);
+		} else {
+			$config['interfaces']['wan']['if'] = 'ix0';
+			$config['interfaces']['lan']['if'] = 'ix1';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT2'
+			);
+		}
 		if ($g['platform'] == 'cdrom') {
 			$config['interfaces']['opt1']['enable'] = true;
 			$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
 		}
-		$config['interfaces']['opt2'] = array(
-			'if' => 'igb1',
-			'descr' => 'OPT2'
-		);
 		break;
 	case 'RCC':
 		$config['interfaces']['wan']['if'] = 'igb0';

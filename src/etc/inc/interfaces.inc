@@ -798,8 +798,6 @@ function interface_lagg_configure($lagg) {
 		hardware_offloading_applyflags($member);
 		mwexec("/sbin/ifconfig " . escapeshellarg($laggif) . " laggport " . escapeshellarg($member));
 	}
-	pfSense_interface_capabilities($laggif, -$flags_off);
-	pfSense_interface_capabilities($laggif, $flags_on);
 
 	mwexec("/sbin/ifconfig {$laggif} laggproto " . escapeshellarg($lagg['proto']));
 
@@ -1181,7 +1179,7 @@ function interfaces_configure() {
 			log_error(sprintf(gettext("Configuring %s"), $ifname));
 		}
 
-		// bridge interface needs reconfigure, then re-add VIPs, to ensure find_interface_ip is correct. 
+		// bridge interface needs reconfigure, then re-add VIPs, to ensure find_interface_ip is correct.
 		// redmine #3997
 		interface_reconfigure($if, $reload);
 		interfaces_vips_configure($if);

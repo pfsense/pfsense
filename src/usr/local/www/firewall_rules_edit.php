@@ -1632,12 +1632,12 @@ foreach (return_gateways_array() as $gwname => $gw) {
 		continue;
 	}
 
-	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gateway_addr_str);
+	$gateways[ $gwname ] = $gw['name'] . (empty($gw['gateway'])? '' : ' - '. $gw['gateway']) . (empty($gw['descr'])? '' : ' - '. $gw['descr']);
 }
 
 foreach ((array)$a_gatewaygroups as $gwg_name => $gwg_data) {
 	if ((empty($pconfig['ipprotocol'])) || ($pconfig['ipprotocol'] == $gwg_data['ipprotocol'])) {
-		$gateways[ $gwg_name ] = $gwg_name;
+		$gateways[ $gwg_name ] = $gwg_name . (empty($gwg_data['descr'])? '' : ' - '. $gwg_data['descr']);
 	}
 }
 

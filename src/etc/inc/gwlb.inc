@@ -899,6 +899,7 @@ function return_gateway_groups_array() {
 	if (is_array($config['gateways']['gateway_group'])) {
 		$viplist = get_configured_vip_list();
 		foreach ($config['gateways']['gateway_group'] as $group) {
+			$gateway_groups_array[$group['name']]['descr'] = $group['descr'];
 			/* create array with group gateways members separated by tier */
 			$tiers = array();
 			$backupplan = array();

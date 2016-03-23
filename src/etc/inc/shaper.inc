@@ -215,7 +215,7 @@ function get_obj_bandwidth($obj) {
 
 	switch ($match[1]) {
 		case '%':
-			$objbw = ($bw / 100) * get_interface_bandwidth($object);
+			$objbw = ($bw / 100) * get_interface_bandwidth($obj);
 			break;
 		default:
 			$objbw = $bw * get_bandwidthtype_scale($scale);
@@ -250,10 +250,6 @@ function get_hfsc_bandwidth($object, $bw) {
 
 function get_interface_bandwidth($object) {
 	global $altq_list_queues;
-
-	if (!$object) {
-		return 0;
-	}
 
 	$int = $object->GetInterface();
 	$altq =& $altq_list_queues[$int];

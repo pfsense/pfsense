@@ -585,6 +585,7 @@ function netgate_hardware_setup() {
 	global $config, $g;
 
 	$platform = system_identify_specific_platform();
+	$flavor = $g['default-config-flavor'];
 
 	/* Determine interfaces */
 	switch ($platform['name']) {

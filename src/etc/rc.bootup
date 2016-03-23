@@ -68,6 +68,8 @@ function rescue_detect_keypress() {
 		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
 	} else {
 		$run_installer = true;
+		/* Make sure / is read-write */
+		exec('/sbin/mount -u /');
 		return;
 	}
 

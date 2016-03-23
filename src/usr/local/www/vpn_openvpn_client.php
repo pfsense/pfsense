@@ -776,8 +776,7 @@ if ($act=="new" || $act=="edit"):
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options you would like to add to the OpenVPN server configuration here, separated by semicolon' . '<br />' .
-				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"');
+	))->setHelp('Enter any additional options you would like to add to the OpenVPN client configuration here, separated by semicolon');
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',

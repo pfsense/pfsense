@@ -205,6 +205,26 @@ function get_bandwidthtype_scale($type) {
 	return intval($factor);
 }
 
+function get_obj_bandwidth($obj) {
+	$bw = $obj->GetBandwidth();
+	$scale = $obj->GetBWscale();
+
+	$pattern= "/(b|Kb|Mb|Gb|%)/";
+	if (!preg_match($pattern, $scale, $match))
+		return 0;
+
+	switch ($match[1]) {
+		case '%':
+			$objbw = ($bw / 100) * get_interface_bandwidth($object);
+			break;
+		default:
+			$objbw = $bw * get_bandwidthtype_scale($scale);
+			break;
+	}
+
+	return floatval($objbw);
+}
+
 function get_hfsc_bandwidth($object, $bw) {
 	$pattern= "/[0-9]+/";
 	if (preg_match($pattern, $bw, $match)) {
@@ -405,6 +425,16 @@ class altq_root_queue {
 		return $bwscaletext;
 	}
 
+	function GetTotalBw() {
+		$sum = 0;
+		foreach ($this->queues as $q) {
+			$sum += $q->GetTotalBw();
+			$sum += get_obj_bandwidth($q);
+		}
+
+		return $sum;
+	}
+
 	function validate_input($data, &$input_errors) {
 
 		$reqdfields[] = "bandwidth";
@@ -414,12 +444,18 @@ class altq_root_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
+		if (!isset($data['bandwidth']) || strlen($data['bandwidth']) == 0) {
+			$input_errors[] = gettext("Bandwidth must be set.  This is usually the interface speed.");
+		}
 		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 		}
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
+		$sum = $this->GetTotalBw();
+		if ($sum > $data['bandwidth'] * get_bandwidthtype_scale($data['bandwidthtype']))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
@@ -527,6 +563,7 @@ class altq_root_queue {
 		$q->SetInterface($this->GetInterface());
 		$q->SetEnabled("on");
 		$q->SetParent($this);
+		$q->SetRoot($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
@@ -908,11 +945,18 @@ class priq_queue {
 	var $qparent;
 	var $link;
 	var $available_bw; /* in b/s */
+	var $qroot;
 
 	/* This is here to help with form building and building rules/lists */
 	var $subqueues = array();
 
 	/* Accessor functions */
+	function SetRoot($root) {
+		$this->qroot = $root;
+	}
+	function GetRoot() {
+		return $this->qroot;
+	}
 	function GetAvailableBandwidth() {
 		return $this->available_bw;
 	}
@@ -984,6 +1028,17 @@ class priq_queue {
 	}
 	function SetFirsttime($number) {
 		$this->firsttime = $number;
+	}
+	function GetTotalBw() {
+		$sum = 0;
+		if (!isset($this->subqueues) || !is_array($this->subqueues))
+			return 0;
+		foreach ($this->subqueues as $q) {
+			$sum += $q->GetTotalBw();
+			$sum += get_obj_bandwidth($q);
+		}
+
+		return $sum;
 	}
 	function GetBwscale() {
 		return $this->qbandwidthtype;
@@ -1171,6 +1226,10 @@ class priq_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
+		$root = $this->GetRoot();
+		$sum = $root->GetTotalBw();
+		if ($sum > $root->GetBandwidth() * get_bandwidthtype_scale($root->GetBwscale()))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
@@ -1693,6 +1752,7 @@ class hfsc_queue extends priq_queue {
 		$q =& new hfsc_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
+		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
@@ -2520,6 +2580,7 @@ class cbq_queue extends priq_queue {
 		$q =& new cbq_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
+		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
 		if (count($input_errors)) {
@@ -3459,6 +3520,7 @@ class dnpipe_class extends dummynet_class {
 		$q->SetEnabled("on");
 		$q->SetPipe($this->GetQname());
 		$q->SetParent($this);
+		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {

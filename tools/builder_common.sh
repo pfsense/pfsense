@@ -881,11 +881,8 @@ create_ova_image() {
 	fi
 
 	echo -n ">>> Setting loader.conf... " | tee -a ${LOGFILE}
-	echo '-S115200 -D' >> ${FINAL_CHROOT_DIR}/boot.config
 	echo 'autoboot_delay="3"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
-	echo 'boot_multicons="YES"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
-	echo 'console="vidconsole,comconsole"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
-	echo 'comconsole_speed="115200"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'console="vidconsole"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 	echo 'kern.ipc.nmbclusters="1000000"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 	echo 'kern.ipc.nmbclusters="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 	echo 'kern.ipc.nmbclusters="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local

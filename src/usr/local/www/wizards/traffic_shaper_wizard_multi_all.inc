@@ -886,7 +886,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
 			}
 			array_push($tmppath, "qInternet");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
 			//echo "qInternet <br />";
 			//var_dump($input_errors);
@@ -918,7 +918,7 @@ function apply_all_chosen_items() {
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		array_push($tmppath, "qACK");
-		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+		$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
 		//echo "qACK <br />";
 		//var_dump($input_errors);
@@ -949,7 +949,7 @@ function apply_all_chosen_items() {
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		array_push($tmppath, $tmpcf['name']);
-		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+		$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
 		//echo "qDefault <br />";
 			//var_dump($input_errors);
@@ -998,7 +998,7 @@ function apply_all_chosen_items() {
 					}
 				}
 				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qP2P <br />";
 				//var_dump($input_errors);
@@ -1038,7 +1038,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qVoIP <br />";
 				//var_dump($input_errors);
@@ -1069,7 +1069,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qGames <br />";
 				//var_dump($input_errors);
@@ -1100,7 +1100,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qHigh <br />";
 				//var_dump($input_errors);
@@ -1141,7 +1141,7 @@ function apply_all_chosen_items() {
 					$tmpcf['linkshare'] = "on";
 				}
 				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qLow <br />";
 				//var_dump($input_errors);
@@ -1280,7 +1280,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, $tmpcf['name']);
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
 			//echo "qDefault <br />";
 			//var_dump($input_errors);
@@ -1310,7 +1310,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			array_push($tmppath, "qInternet");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
 			//echo "qInternet <br />";
 			//var_dump($input_errors);
@@ -1342,7 +1342,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, "qACK");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
 			//echo "qACK <br />";
 			//var_dump($input_errors);
@@ -1391,7 +1391,7 @@ function apply_all_chosen_items() {
 					}
 				}
 				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qP2P <br />";
 				//var_dump($input_errors);
@@ -1431,7 +1431,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qVoIP <br />";
 				//var_dump($input_errors);
@@ -1462,7 +1462,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qGames <br />";
 				//var_dump($input_errors);
@@ -1493,7 +1493,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qHigh <br />";
 				//var_dump($input_errors);
@@ -1534,7 +1534,7 @@ function apply_all_chosen_items() {
 					$tmpcf['linkshare'] = "on";
 				}
 				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qLow <br />";
 				//var_dump($input_errors);

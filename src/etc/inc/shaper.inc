@@ -251,6 +251,10 @@ function get_hfsc_bandwidth($object, $bw) {
 function get_interface_bandwidth($object) {
 	global $altq_list_queues;
 
+	if (!is_object($object)) {
+		return 0;
+	}
+
 	$int = $object->GetInterface();
 	$altq =& $altq_list_queues[$int];
 	if ($altq) {
@@ -540,6 +544,9 @@ class altq_root_queue {
 		if (!is_array($this->queues)) {
 			$this->queues = array();
 		}
+		if (!is_string($interface)) {
+			$interface = $this->GetInterface();
+		}
 
 		switch ($this->GetScheduler()) {
 			case "PRIQ":
@@ -560,7 +567,7 @@ class altq_root_queue {
 				break;
 		}
 		$q->SetLink($path);
-		$q->SetInterface($this->GetInterface());
+		$q->SetInterface($interface);
 		$q->SetEnabled("on");
 		$q->SetParent($this);
 		$q->SetRoot($this);
@@ -1749,8 +1756,11 @@ class hfsc_queue extends priq_queue {
 		if (!is_array($this->subqueues)) {
 			$this->subqueues = array();
 		}
+		if (!is_string($interface)) {
+			$interface = $this->GetInterface();
+		}
 		$q =& new hfsc_queue();
-		$q->SetInterface($this->GetInterface());
+		$q->SetInterface($interface);
 		$q->SetParent($this);
 		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);
@@ -2577,8 +2587,11 @@ class cbq_queue extends priq_queue {
 		if (!is_array($this->subqueues)) {
 			$this->subqueues = array();
 		}
+		if (!is_string($interface)) {
+			$interface = $this->GetInterface();
+		}
 		$q =& new cbq_queue();
-		$q->SetInterface($this->GetInterface());
+		$q->SetInterface($interface);
 		$q->SetParent($this);
 		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);

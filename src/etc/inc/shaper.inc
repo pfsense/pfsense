@@ -215,7 +215,7 @@ function get_obj_bandwidth($obj) {
 
 	switch ($match[1]) {
 		case '%':
-			$objbw = $bw / 100 * get_interface_bandwidth($object);
+			$objbw = ($bw / 100) * get_interface_bandwidth($object);
 			break;
 		default:
 			$objbw = $bw * get_bandwidthtype_scale($scale);

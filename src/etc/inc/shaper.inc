@@ -251,6 +251,10 @@ function get_hfsc_bandwidth($object, $bw) {
 function get_interface_bandwidth($object) {
 	global $altq_list_queues;
 
+	if (!$object) {
+		return 0;
+	}
+
 	$int = $object->GetInterface();
 	$altq =& $altq_list_queues[$int];
 	if ($altq) {

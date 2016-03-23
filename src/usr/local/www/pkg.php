@@ -490,9 +490,9 @@ if ($savemsg) {
 				}
 			}
 			if ($pkg['adddeleteeditpagefields']['movable']) {
-				echo "<tr valign=\"top\" class=\"sortable\" id=\"id_{$i}\">\n";
+				echo "<tr style=\"vertical-align: top\" class=\"sortable\" id=\"id_{$i}\">\n";
 			} else {
-				echo "<tr valign=\"top\">\n";
+				echo "<tr style=\"vertical-align: top\">\n";
 			}
 			if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
@@ -534,7 +534,7 @@ if ($savemsg) {
 				} // foreach columnitem
 			} // if columnitem
 ?>
-					<td valign="middle" class="list text-nowrap">
+					<td style="vertical-align: middle" class="list text-nowrap">
 						<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 							<tr>
 <?php

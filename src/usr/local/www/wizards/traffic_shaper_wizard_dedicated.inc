@@ -1065,15 +1065,15 @@ function apply_all_chosen_items() {
 			$otherpriority = false;
 			$remainbw = 0;
 
-			if ($config['ezshaper']['step3']['enable']) {
-				$voip = true;
-				$voipbw = $config['ezshaper']['step3']["local{$i}download"];
-				$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
-				if ($sched != HFSC) {
-					if ($voipbwunit == "%")
-						$factor = $downbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($voipbwunit);
+		if ($config['ezshaper']['step3']['enable']) {
+			$voip = true;
+			$voipbw = $config['ezshaper']['step3']["local{$i}download"];
+			$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
+			if ($sched != "HFSC") {
+				if ($voipbwunit == "%")
+					$factor = $downbw/100;
+				else
+					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
 				$remainbw += floatval($voipbw) * $factor;
 			} else
 				$remainbw += 32000; /* 32Kbit/s reserved for HFSC link sharing */

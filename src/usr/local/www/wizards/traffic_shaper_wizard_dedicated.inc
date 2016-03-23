@@ -800,7 +800,7 @@ function apply_all_chosen_items() {
 				//$tmpcf['priority'] = 6;
 				$tmpcf['ecn'] = "on";
 				$tmpcf['enabled'] = "on";
-				If ($sched == "CBQ") {
+				if ($sched == "CBQ") {
 					$tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}upload"]);
 					$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
 				}
@@ -827,7 +827,7 @@ function apply_all_chosen_items() {
 			$tmpcf['priority'] = 6;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
+			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
 				$tmpcf['bandwidth'] = $remainbw * 0.2;
 				$tmpcf['bandwidthtype'] = "%";
@@ -1161,7 +1161,7 @@ function apply_all_chosen_items() {
 			//$tmpcf['priority'] = 6;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
+			if ($sched == "CBQ") {
 				$tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}download"]);
 				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
 			}
@@ -1187,7 +1187,7 @@ function apply_all_chosen_items() {
 		$tmpcf['priority'] = 6;
 		$tmpcf['ecn'] = "on";
 		$tmpcf['enabled'] = "on";
-		If ($sched == "CBQ") {
+		if ($sched == "CBQ") {
 			$tmpcf['borrow'] = "on";
 			$tmpcf['bandwidth'] = $remainbw * 0.2;
 			$tmpcf['bandwidthtype'] = "%";

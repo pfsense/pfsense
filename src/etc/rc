@@ -436,12 +436,6 @@ fi
 
 /usr/local/sbin/${product}-upgrade -y -b 3
 
-FIRST_BOOT=$(/usr/local/sbin/read_xml_tag.sh boolean system/doinitialsetup)
-if [ "${FIRST_BOOT}" = "true" ]; then
-	# Cleanup SSH notices noise
-	rm -f /tmp/notices
-fi
-
 if [ -f /usr/local/sbin/ec2_setup.php ]; then
 	/usr/local/sbin/ec2_setup.php
 fi

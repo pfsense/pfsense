@@ -623,10 +623,12 @@ function netgate_hardware_setup() {
 		if (does_interface_exist('igb3')) {
 			$config['interfaces']['opt1'] = array(
 				'if' => 'igb2',
-				'descr' => 'OPT1',
-				'enable' => true,
-				'ipaddr' => 'dhcp'
+				'descr' => 'OPT1'
 			);
+			if ($g['platform'] == 'cdrom') {
+				$config['interfaces']['opt1']['enable'] = true;
+				$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
+			}
 			$config['interfaces']['opt2'] = array(
 				'if' => 'igb3',
 				'descr' => 'OPT2'
@@ -649,10 +651,12 @@ function netgate_hardware_setup() {
 		$config['interfaces']['lan']['if'] = 'ix1';
 		$config['interfaces']['opt1'] = array(
 			'if' => 'igb0',
-			'enable' => true,
-			'ipaddr' => 'dhcp',
 			'descr' => 'OPT1'
 		);
+		if ($g['platform'] == 'cdrom') {
+			$config['interfaces']['opt1']['enable'] = true;
+			$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
+		}
 		$config['interfaces']['opt2'] = array(
 			'if' => 'igb1',
 			'descr' => 'OPT2'
@@ -663,9 +667,12 @@ function netgate_hardware_setup() {
 		$config['interfaces']['lan']['if'] = 'igb1';
 		$config['interfaces']['opt1'] = array(
 			'if' => 'igb2',
-			'ipaddr' => 'dhcp',
 			'descr' => 'OPT1'
 		);
+		if ($g['platform'] == 'cdrom') {
+			$config['interfaces']['opt1']['enable'] = true;
+			$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
+		}
 		$config['interfaces']['opt2'] = array(
 			'if' => 'igb3',
 			'descr' => 'OPT2'

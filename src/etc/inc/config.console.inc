@@ -682,7 +682,7 @@ function netgate_hardware_setup() {
 			'descr' => 'OPT3'
 		);
 		$config['interfaces']['opt4'] = array(
-			'if' => 'ix0',
+			'if' => 'ix1',
 			'descr' => 'OPT4'
 		);
 		break;

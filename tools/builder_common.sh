@@ -799,7 +799,7 @@ awk '
 		trap "-" 1 2 15 EXIT
 
 		if [ "${TARGET}" = "amd64" ]; then
-			echo ">>> [nanoo] Creating FW-* variant"
+			echo ">>> [nanoo] Creating FW-75xx variant"
 			cp -f ${IMG} ${IMG_FW}
 			MD=$(mdconfig -a -t vnode -f ${IMG_FW} -x ${NANO_SECTS} -y ${NANO_HEADS})
 			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT

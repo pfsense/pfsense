@@ -1010,9 +1010,14 @@ function netgate_hardware_setup() {
 		$p2['localid']['netbits'] = 0;
 		$p2['remoteid']['type'] = 'mobile';
 		$p2['protocol'] = 'esp';
-		$p2['encryption-algorithm-option']['name'] = 'aes';
-		$p2['encryption-algorithm-option']['keylen'] = 128;
-		$p2['hash-algorithm-option'] = 'hmac_sha1';
+		$ealgo_entry = array();
+		$ealgo_entry['name'] = 'aes';
+		$ealgo_entry['keylen'] = 128;
+		$p2['encryption-algorithm-option'] = array();
+		$p2['encryption-algorithm-option'][] = $ealgo_entry;
+		unset($ealgo_entry);
+		$p2['hash-algorithm-option'] = array();
+		$p2['hash-algorithm-option'][] = 'hmac_sha1';
 		$p2['pfsgroup'] = 0;
 		$p2['lifetime'] = 28800;
 		$p2['pinghost'] = true;

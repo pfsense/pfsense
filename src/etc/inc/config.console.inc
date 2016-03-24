@@ -806,7 +806,7 @@ function netgate_hardware_setup() {
 			$config['system']['webgui']['noantilockout'] = true;
 		}
 
-		$replace_msg = ' _replace_src_wirh_mgmtnet_';
+		$replace_msg = ' _replace_src_with_mgmtnet_';
 		if ($flavor == 'openstack') {
 			$config['interfaces']['wan']['if'] = 'vtnet0';
 		} elseif ($flavor == 'azure') {

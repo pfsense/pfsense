@@ -105,8 +105,7 @@ tr.disabled th {
 }
 
 .navbar-brand {
-    /* vertically center logo  */
-    padding-top: 7px;
+    padding: 7px 0 0 5px;
 }
 
 .nav>li>a {

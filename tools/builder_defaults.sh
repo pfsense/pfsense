@@ -105,7 +105,7 @@ fi
 
 # Product details
 export PRODUCT_NAME=${PRODUCT_NAME:-"nonSense"}
-export PRODUCT_NAME_SUFFIX=${PRODUCT_NAME_SUFFIX:-}
+export PRODUCT_NAME_SUFFIX=${PRODUCT_NAME_SUFFIX:-"-CE"}
 export PRODUCT_URL=${PRODUCT_URL:-""}
 export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}

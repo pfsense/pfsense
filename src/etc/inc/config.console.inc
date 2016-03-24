@@ -824,7 +824,7 @@ function netgate_hardware_setup() {
 		$rule = array();
 		$rule['type'] = 'pass';
 		$rule['interface'] = 'wan';
-		$rule['protocol'] = 'inet';
+		$rule['ipprotocol'] = 'inet';
 		$rule['statetype'] = 'keep state';
 		$rule['protocol'] = 'icmp';
 		$rule['source']['any'] = true;
@@ -836,7 +836,7 @@ function netgate_hardware_setup() {
 		$rule = array();
 		$rule['type'] = 'pass';
 		$rule['interface'] = 'wan';
-		$rule['protocol'] = 'inet';
+		$rule['ipprotocol'] = 'inet';
 		$rule['statetype'] = 'keep state';
 		$rule['protocol'] = 'tcp';
 		$rule['source']['any'] = true;
@@ -849,7 +849,7 @@ function netgate_hardware_setup() {
 		$rule = array();
 		$rule['type'] = 'pass';
 		$rule['interface'] = 'wan';
-		$rule['protocol'] = 'inet';
+		$rule['ipprotocol'] = 'inet';
 		$rule['statetype'] = 'keep state';
 		$rule['protocol'] = 'tcp';
 		$rule['source']['any'] = true;
@@ -862,7 +862,7 @@ function netgate_hardware_setup() {
 		$rule = array();
 		$rule['type'] = 'pass';
 		$rule['interface'] = 'wan';
-		$rule['protocol'] = 'inet';
+		$rule['ipprotocol'] = 'inet';
 		$rule['statetype'] = 'keep state';
 		$rule['protocol'] = 'tcp';
 		$rule['source']['any'] = true;
@@ -876,7 +876,7 @@ function netgate_hardware_setup() {
 			$rule = array();
 			$rule['type'] = 'pass';
 			$rule['interface'] = 'wan';
-			$rule['protocol'] = 'inet';
+			$rule['ipprotocol'] = 'inet';
 			$rule['statetype'] = 'keep state';
 			$rule['protocol'] = 'udp';
 			$rule['source']['any'] = true;
@@ -890,7 +890,7 @@ function netgate_hardware_setup() {
 			$rule = array();
 			$rule['type'] = 'pass';
 			$rule['interface'] = 'openvpn';
-			$rule['protocol'] = 'inet';
+			$rule['ipprotocol'] = 'inet';
 			$rule['statetype'] = 'keep state';
 			$rule['source']['any'] = true;
 			$rule['destination']['any'] = true;
@@ -902,7 +902,7 @@ function netgate_hardware_setup() {
 			$rule = array();
 			$rule['type'] = 'pass';
 			$rule['interface'] = 'enc0';
-			$rule['protocol'] = 'inet46';
+			$rule['ipprotocol'] = 'inet46';
 			$rule['source']['any'] = true;
 			$rule['destination']['any'] = true;
 			$rule['descr'] = 'Default allow IPsec to any rule';

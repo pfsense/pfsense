@@ -443,7 +443,7 @@ $columns_in_table = 13;
 					</tr>
 <?php 	endif;?>
 <?php 	if ($showprivate): ?>
-					<tr id="frrfc1918">
+					<tr id="private">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td><?php print_states(intval(RFC1918_TRACKER)); ?></td>
@@ -462,7 +462,7 @@ $columns_in_table = 13;
 					</tr>
 <?php 	endif;?>
 <?php 	if ($showblockbogons): ?>
-					<tr id="frrfc1918">
+					<tr id="bogons">
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td><?php print_states(intval(BOGONS_TRACKER)); ?></td>

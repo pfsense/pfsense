@@ -1169,7 +1169,7 @@ if ($act=="new" || $act=="edit"):
 					'None: Only fatal errors' . '<br />' .
 					'Default through 4: Normal usage range' . '<br />' .
 					'5: Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets' .'<br />' .
-					'6: Debug info range');
+					'6-11: Debug info range');
 
 	$section->addInput(new Form_Input(
 		'act',

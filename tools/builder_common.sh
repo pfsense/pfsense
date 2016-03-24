@@ -480,7 +480,9 @@ nanobsd_image_filename() {
 	local _type="$2"
 	local _upgrade="$3"
 
-	if [ -z "$_upgrade" ]; then
+	if [ "$_upgrade" = "FW" ]; then
+		local _template=${NANOBSD_FW_TEMPLATE}
+	elif [ -z "$_upgrade" ]; then
 		local _template=${NANOBSD_IMG_TEMPLATE}
 	else
 		local _template=${NANOBSD_UPGRADE_TEMPLATE}
@@ -610,6 +612,7 @@ create_nanobsd_diskimage () {
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
 		IMG="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1})"
+		IMG_FW="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} FW)"
 		IMGUPDATE="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} 1)"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
@@ -795,6 +798,16 @@ awk '
 		# Restore default action
 		trap "-" 1 2 15 EXIT
 
+		if [ "${TARGET}" = "amd64" ]; then
+			echo ">>> [nanoo] Creating FW-* variant"
+			cp -f ${IMG} ${IMG_FW}
+			MD=$(mdconfig -a -t vnode -f ${IMG_FW} -x ${NANO_SECTS} -y ${NANO_HEADS})
+			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+			boot0cfg -v -B ${MD} 2>&1 >> ${LOGFILE}
+			mdconfig -d -u $MD
+			trap "-" 1 2 15 EXIT
+		fi
+
 		# Check each image and ensure that they are over
 		# 3 megabytes.  If either image is under 20 megabytes
 		# in size then error out.
@@ -813,12 +826,17 @@ awk '
 		# Wrap up the show, Johnny
 		echo ">>> NanoBSD Image completed for size: $_NANO_MEDIASIZE." | tee -a ${LOGFILE}
 
+		if [ -f "${IMG_FW}" ]; then
+			gzip -qf $IMG_FW &
+			_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+		fi
 		gzip -qf $IMG &
 		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 		gzip -qf $IMGUPDATE &
 		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 	done
 
+	unset IMG_FW
 	unset IMG
 	unset IMGUPDATE
 	unset IMGUPDATESIZE
@@ -2626,13 +2644,19 @@ snapshots_copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
 			FILENAMEFULL="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE}).gz"
+			FILENAMEFW="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} FW).gz"
 			FILENAMEUPGRADE="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} 1).gz"
+
 			mkdir -p $STAGINGAREA/nanobsd
 			mkdir -p $STAGINGAREA/nanobsdupdates
 
 			cp -l $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
+			cp -l $IMAGES_FINAL_DIR/$FILENAMEFW $STAGINGAREA/nanobsd/ 2>/dev/null
 			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
+			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFW ]; then
+				sha256 $STAGINGAREA/nanobsd/$FILENAMEFW > $STAGINGAREA/nanobsd/$FILENAMEFW.sha256 2>/dev/null
+			fi
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
 				sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.sha256 2>/dev/null
 			fi

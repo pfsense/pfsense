@@ -450,6 +450,10 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 led_normalize();
 
 if ($run_installer) {
+       //  critical disable dns rebind protection to allow installer
+       //  to work on RFC-1918 address space
+       $config['system']['webgui']['nodnsrebindcheck'] = true;
+
 	putenv("TERM=cons25");
 	echo "\n\nInstaller mode selected...\n";
 	passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");

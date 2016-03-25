@@ -990,9 +990,7 @@ function netgate_hardware_setup() {
 		$p1['private-key'] = true;
 		$p1['certref'] = true;
 		$p1['caref'] = true;
-		$p1['authentication-method'] = 'xauth_psk_server';
-		$p1['generate_policy'] = 'unique';
-		$p1['proposal_check'] = 'strict';
+		$p1['authentication_method'] = 'xauth_psk_server';
 		$p1['descr'] = 'Mobile IPsec clients';
 		$p1['nat_traversal'] = 'force';
 		$p1['dpd_delay'] = 10;

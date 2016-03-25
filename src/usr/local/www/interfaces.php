@@ -354,6 +354,7 @@ switch ($wancfg['ipaddrv6']) {
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
+$pconfig['blocklin'] = isset($wancfg['blocklin']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
 $pconfig['mss'] = $wancfg['mss'];
@@ -1390,6 +1391,11 @@ if ($_POST['apply']) {
 			$wancfg['blockbogons'] = true;
 		} else {
 			unset($wancfg['blockbogons']);
+		}
+		if($_POST['blocklin'] == "yes") {
+			$wancfg['blocklin'] = true;
+		} else {
+			unset($wancfg['blocklin']);
 		}
 		$wancfg['spoofmac'] = $_POST['spoofmac'];
 		if (empty($_POST['mtu'])) {
@@ -3140,6 +3146,15 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
 			'never appear in the Internet routing table, and so should not appear as the source address in any packets you receive.' . '<br />' .
 			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings');
+
+$section->addInput(new Form_Checkbox(
+	'blocklin',
+	'Block local identification networks',
+	'',
+	$pconfig['blocklin'],
+	'yes'
+))->setHelp('Blocks traffic from IP addresses that are reserved for local identification networks per RFC 6890 (0/8). ' .
+			'This option should generally be turned on, unless this network interface serves DHCP clients.');
 
 $form->add($section);
 

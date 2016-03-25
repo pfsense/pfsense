@@ -100,7 +100,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		ENTRIES_V4=`pfctl -vvsTables | awk '/-\tbogons$/ {getline; print $2}'`
 		LINES_V4=`wc -l /tmp/bogons | awk '{ print $1 }'`
 		if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT-${ENTRIES_V4:-0}+LINES_V4)) ]; then
-			egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8" /tmp/bogons > /etc/bogons
+			egrep -v "^192.168.0.0/16|^172.16.0.0/12|^10.0.0.0/8|^0.0.0.0/8" /tmp/bogons > /etc/bogons
 			RESULT=`/sbin/pfctl -t bogons -T replace -f /etc/bogons 2>&1`
 			echo "$RESULT" | awk '{ print "Bogons V4 file downloaded: " $0 }' | logger
 		else

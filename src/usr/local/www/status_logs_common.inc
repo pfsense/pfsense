@@ -637,6 +637,7 @@ function manage_log_code() {
 		$pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 		$pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
 		$pconfig['logbogons'] = !isset($config['syslog']['nologbogons']);
+		$pconfig['loglinets'] = !isset($config['syslog']['nologlinets']);
 		$pconfig['logprivatenets'] = !isset($config['syslog']['nologprivatenets']);
 		$pconfig['filterdescriptions'] = $config['syslog']['filterdescriptions'];
 	}
@@ -661,6 +662,7 @@ function manage_log_code() {
 			$logdefaultblock = getGETPOSTsettingvalue('logdefaultblock',  null);
 			$logdefaultpass = getGETPOSTsettingvalue('logdefaultpass', null);
 			$logbogons = getGETPOSTsettingvalue('logbogons', null);
+			$loglinets  = getGETPOSTsettingvalue('loglinets',  null);
 			$logprivatenets  = getGETPOSTsettingvalue('logprivatenets',  null);
 			$filterdescriptions  = getGETPOSTsettingvalue('filterdescriptions',  null);
 		}
@@ -722,11 +724,13 @@ function manage_log_code() {
 				$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
 				$oldnologdefaultpass = isset($config['syslog']['nologdefaultpass']);
 				$oldnologbogons = isset($config['syslog']['nologbogons']);
+				$oldnologlinets = isset($config['syslog']['nologlinets']);
 				$oldnologprivatenets = isset($config['syslog']['nologprivatenets']);
 
 				$config['syslog']['nologdefaultblock'] = $logdefaultblock ? false : true;
 				$config['syslog']['nologdefaultpass'] = $logdefaultpass ? true : false;
 				$config['syslog']['nologbogons'] = $logbogons ? false : true;
+				$config['syslog']['nologlinets'] = $loglinets ? false : true;
 				$config['syslog']['nologprivatenets'] = $logprivatenets ? false : true;
 
 				if (is_numeric($filterdescriptions) && $filterdescriptions > 0) {
@@ -739,6 +743,7 @@ function manage_log_code() {
 				    ($oldnologdefaultblock !== $config['syslog']['nologdefaultblock']) ||
 				    ($oldnologdefaultpass !== $config['syslog']['nologdefaultpass']) ||
 				    ($oldnologbogons !== $config['syslog']['nologbogons']) ||
+				    ($oldnologlinets !== $config['syslog']['nologlinets']) ||
 				    ($oldnologprivatenets !== $config['syslog']['nologprivatenets'])) {
 					$logging_changed = $firewall_logging_changed = true;
 				}
@@ -942,6 +947,13 @@ function manage_log_section() {
 			null,
 			'Log packets blocked by \'Block Bogon Networks\' rules',
 			$pconfig['logbogons']
+		));
+
+		$section->addInput(new Form_Checkbox(
+			'loglinets',
+			null,
+			'Log packets blocked by \'Block Local Identification Networks\' rules',
+			$pconfig['loglinets']
 		));
 
 		$section->addInput(new Form_Checkbox(

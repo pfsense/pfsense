@@ -354,7 +354,6 @@ switch ($wancfg['ipaddrv6']) {
 
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
-$pconfig['blocklin'] = isset($wancfg['blocklin']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
 $pconfig['mtu'] = $wancfg['mtu'];
 $pconfig['mss'] = $wancfg['mss'];

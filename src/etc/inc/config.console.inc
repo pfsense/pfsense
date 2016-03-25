@@ -788,8 +788,8 @@ function netgate_hardware_setup() {
 	case "ec2-csm":
 		unset($config['interfaces']['wan']['ipaddrv6']);
 
-		if (is_array($config['user'])) {
-			foreach ($config['user'] as &$user) {
+		if (is_array($config['system']['user'])) {
+			foreach ($config['system']['user'] as &$user) {
 				if ($user['name'] == 'admin') {
 					$user['priv'][] = 'user-ipsec-xauth-dialin';
 					break;

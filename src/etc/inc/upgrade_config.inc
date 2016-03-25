@@ -4752,4 +4752,18 @@ function upgrade_147_to_148() {
 		}
 	}
 }
+
+function upgrade_148_to_149() {
+	global $config;
+
+	if (is_array($config['interfaces'])) {
+		foreach ($config['interfaces'] as $key => $interface) {
+			if (isset($interface['blockbogons'])) {
+				$config['interfaces'][$key]['blocklin'] = true;
+		}
+	}
+
+	if (isset($config['syslog']['nologbogons'])) {
+		$config['syslog']['nologlinets'] = true;
+}
 ?>

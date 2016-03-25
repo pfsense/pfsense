@@ -148,6 +148,7 @@ $icmp6types = array(
 define("ANTILOCKOUT_TRACKER", 10000);
 define("BOGONS_TRACKER", 11000);
 define("RFC1918_TRACKER", 12000);
+define("RFC6890_TRACKER", 13000);
 
 $tracker = 1000000000;
 $negate_tracker = 10000000;
@@ -3347,6 +3348,26 @@ block in $privnetlog quick on \${$oc['descr']} from 127.0.0.0/8 to any tracker $
 block in $privnetlog quick on \${$oc['descr']} from 172.16.0.0/12 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 172.16/12")}"
 block in $privnetlog quick on \${$oc['descr']} from 192.168.0.0/16 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block private networks from {$oc['descr']} block 192.168/16")}"
 block in $privnetlog quick on \${$oc['descr']} from fc00::/7 to any tracker $rfc1918_tracker label "{$fix_rule_label("Block ULA networks from {$oc['descr']} block fc00::/7")}"
+
+EOD;
+			}
+		}
+
+		/* block local identification networks ? */
+		if(!isset($config['syslog']['nologlinets']))
+			$linetlog = "log";
+		else
+			$linetlog = "";
+
+		$saved_tracker += 10;
+		$tracker = $saved_tracker;
+
+		if(isset($config['interfaces'][$on]['blocklin'])) {
+			if($isbridged == false) {
+				$rfc6890_tracker = RFC6890_TRACKER;
+				$ipfrules .= <<<EOD
+# block anything from local identification networks on interfaces with the option set
+block in $linetlog quick on \${$oc['descr']} from 0.0.0.0/8 to any tracker $rfc6890_tracker label "{$fix_rule_label("Block local identification networks from {$oc['descr']} block 0/8")}"
 
 EOD;
 			}

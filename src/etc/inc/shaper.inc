@@ -453,9 +453,10 @@ class altq_root_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
-		$sum = $this->GetTotalBw();
-		if ($sum > $data['bandwidth'] * get_bandwidthtype_scale($data['bandwidthtype']))
-			$input_errors[] = "The sum of child bandwidth is higher than parent.";
+		// This is wrong.  Disabled until a proper fix is committed.
+		//$sum = $this->GetTotalBw();
+		//if ($sum > $data['bandwidth'] * get_bandwidthtype_scale($data['bandwidthtype']))
+		//	$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
@@ -1226,10 +1227,11 @@ class priq_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
-		$root = $this->GetRoot();
-		$sum = $root->GetTotalBw();
-		if ($sum > $root->GetBandwidth() * get_bandwidthtype_scale($root->GetBwscale()))
-			$input_errors[] = "The sum of child bandwidth is higher than parent.";
+		// This is wrong.  Disabled until a proper fix is committed.
+		//$root = $this->GetRoot();
+		//$sum = $root->GetTotalBw();
+		//if ($sum > $root->GetBandwidth() * get_bandwidthtype_scale($root->GetBwscale()))
+		//	$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");

@@ -1167,9 +1167,9 @@ if ($act=="new" || $act=="edit"):
 		$openvpn_verbosity_level
 		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended if you want a good summary of what\'s happening without being swamped by output' . '<br /><br />' .
 					'None: Only fatal errors' . '<br />' .
-					'Default: Normal usage range' . '<br />' .
+					'Default through 4: Normal usage range' . '<br />' .
 					'5: Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets' .'<br />' .
-					'6: Debug info range');
+					'6-11: Debug info range');
 
 	$section->addInput(new Form_Input(
 		'act',

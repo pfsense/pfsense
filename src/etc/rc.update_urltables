@@ -38,6 +38,8 @@ foreach ($config['aliases']['alias'] as $alias) {
 		$tmp['name'] = $alias['name'];
 		$tmp['url']  = $alias['url'];
 		$tmp['freq'] = $alias['updatefreq'];
+		$tmp['exclude_private_networks'] = isset($alias['exclude_private_networks']);
+		$tmp['exclude_local_identification_networks'] = isset($alias['exclude_local_identification_networks']);
 		$todo[] = $tmp;
 	}
 }
@@ -69,7 +71,7 @@ if (count($todo) > 0) {
 			continue;
 		}
 
-		$r = process_alias_urltable($t['name'], $t['type'], $t['url'], $t['freq'], $forceupdate);
+		$r = process_alias_urltable($t['name'], $t['type'], $t['url'], $t['freq'], $forceupdate, $validateonly = false, $t['exclude_private_networks'], $t['exclude_local_identification_networks']);
 		if ($r == 1) {
 			$result = "";
 			// TODO: Change it when pf supports tables with ports

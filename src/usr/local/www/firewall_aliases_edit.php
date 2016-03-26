@@ -122,6 +122,10 @@ if (isset($id) && $a_aliases[$id]) {
 		$pconfig['address'] = $a_aliases[$id]['url'];
 		$pconfig['updatefreq'] = $a_aliases[$id]['updatefreq'];
 	}
+
+	$pconfig['exclude_private_networks'] = isset($a_aliases[$id]['exclude_private_networks']);
+	$pconfig['exclude_local_identification_networks'] = isset($a_aliases[$id]['exclude_local_identification_networks']);
+
 	if ($a_aliases[$id]['aliasurl'] <> "") {
 		if (is_array($a_aliases[$id]['aliasurl'])) {
 			$pconfig['address'] = implode(" ", $a_aliases[$id]['aliasurl']);
@@ -176,6 +180,9 @@ if ($_POST) {
 	$alias['name'] = $_POST['name'];
 	$alias['type'] = $_POST['type'];
 
+	$alias['exclude_private_networks'] = ($_POST['exclude_private_networks']) ? true : false;
+	$alias['exclude_local_identification_networks'] = ($_POST['exclude_local_identification_networks']) ? true : false;
+
 	if (preg_match("/urltable/i", $_POST['type'])) {
 		$address = "";
 
@@ -188,7 +195,7 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("A valid URL must be provided.");
-			} elseif (!process_alias_urltable($alias['name'], $alias['type'], $alias['url'], 0, true, true)) {
+			} elseif (!process_alias_urltable($alias['name'], $alias['type'], $alias['url'], 0, $forceupdate = true, $validateonly = true, $alias['exclude_private_networks'], $alias['exclude_local_identification_networks'])) {
 				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
 			}
 			if ($_POST["detail0"] <> "") {
@@ -247,7 +254,7 @@ if ($_POST) {
 				}
 
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $_POST['type'], 5000, $kflc = false, $alias['exclude_private_networks'], $alias['exclude_local_identification_networks']);
 					if ($address == null) {
 						/* nothing was found */
 						$input_errors[] = sprintf(gettext("A valid URL must be provided. Could not fetch usable data from '%s'."), $_POST['address' . $x]);
@@ -660,6 +667,36 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 $section = new Form_Section($section_str[$tab]);
+
+// Make the exclude reserved networks options group, and give it an id so we can show/hide it later
+$group = new Form_Group('Exclude Reserved Networks');
+
+// Make the exclude private networks option, and give it an id so we can show/hide it later
+$group->add(new Form_Checkbox(
+	'exclude_private_networks',
+	null,
+	'Exclude Private Networks',
+	$pconfig['exclude_private_networks']
+))->setAttribute('id','epnoption')->setHelp('Exclude private networks (RFC 1918) from the list for compatibility with private network interfaces. ' .
+'<br />' .
+'( IPv4: 192.168.0.0/16, 172.16.0.0/12, 10.0.0.0/8 ) ' .
+'<br />' .
+'( IPv6: fc00::/7 )');
+
+// Make the exclude local identification networks (dhcp) option, and give it an id so we show/hide it later
+$group->add(new Form_Checkbox(
+	'exclude_local_identification_networks',
+	null,
+	'Exclude Local Identification Networks (DHCP)',
+	$pconfig['exclude_local_identification_networks']
+))->setAttribute('id','elinoption')->setHelp('Exclude local identification networks (RFC 6890) from the list for compatibility with DHCP server interfaces.' .
+'<br />' .
+'( IPv4: 0.0.0.0/8 )');
+
+$group->setAttribute('id', 'ernoptions');
+
+$section->add($group);
+
 // Make somewhere to park the help text, and give it a class so we can update it later
 $section->addInput(new Form_StaticText(
 	'Hint',
@@ -748,6 +785,12 @@ events.push(function() {
 
 		// Show or hide the slash plus address_subnet field so the user does not even see it if it is not relevant.
 		hideMask('address_subnet', disable_subnets);
+
+		if (tab == 'url' || tab == 'urltable') {
+			$("#ernoptions").show();
+		} else {
+			$("#ernoptions").hide();
+		}
 
 		// Set the help text to match the tab
 		var helparray = <?=json_encode($help);?>;

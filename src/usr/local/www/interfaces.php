@@ -2404,7 +2404,7 @@ $section->addInput(new Form_Select(
 	'6RD IPv4 Prefix length',
 	$pconfig['prefix-6rd-v4plen'],
 	array_combine(range(0, 32), range(0, 32))
-))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix.');
+))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means embed the entire IPv4 address in the 6RD prefix.');
 
 $form->add($section);
 
@@ -3377,7 +3377,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Sorry, we could not create the IPv4 gateway at this time.");
+			alert("Could not create the IPv4 gateway at this time.");
 		}
 
 		$("#newgateway").modal('hide');
@@ -3426,7 +3426,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Sorry, we could not create the IPv6 gateway at this time.");
+			alert("Could not create the IPv6 gateway at this time.");
 		}
 
 		$("#newgateway6").modal('hide');

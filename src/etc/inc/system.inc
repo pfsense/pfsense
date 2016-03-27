@@ -1240,7 +1240,6 @@ function system_generate_nginx_config($filename,
 			$maxprocperip = 10;
 		}
 		$captive_portal_maxprocperip = "\t\tlimit_conn addr $maxprocperip;\n";
-
 	}
 
 	if (empty($port)) {
@@ -1353,6 +1352,7 @@ EOD;
 $captive_portal_maxprocperip
 $cp_hostcheck
 $cp_rewrite
+		log_not_found off;
 
 EOD;
 

@@ -901,7 +901,7 @@ class Net_IPv6
 
             for ($i = 0; $i < count($ipv6); $i++) {
 
-                if(4 < strlen($ipv6[$i])) {
+                if ((4 < strlen($ipv6[$i])) || (0 == strlen($ipv6[$i]))) {
 
                     return false;
 

@@ -250,14 +250,14 @@ if (!isBlank($_POST['txtCommand'])):?>
 				<input type="hidden" name="txtRecallBuffer" value="<?=htmlspecialchars($_POST['txtRecallBuffer']) ?>" />
 
 				<div class="btn-group">
-					<button type="button" class="btn btn-warning btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
+					<button type="button" class="btn btn-success btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
 						<i class="fa fa-angle-double-left"></i>
 					</button>
-					<button type="submit" class="btn btn-success btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
+					<button type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
 						<i class="fa fa-bolt"></i>
 						<?=gettext("Execute"); ?>
 					</button>
-					<button type="button" class="btn btn-warning btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
+					<button type="button" class="btn btn-success btn-sm" name="btnRecallNext" onclick="btnRecall_onClick( this.form,  1 );" title="<?=gettext("Recall Next Command")?>">
 						<i class="fa fa-angle-double-right"></i>
 					</button>
 					<button style="margin-left: 13px;" type="button" class="btn btn-default btn-sm" onclick="return Reset_onClick( this.form );" title="<?=gettext("Clear command entry")?>">
@@ -344,7 +344,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<div class="content">
 				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 				<br />
-				<button type="submit" class="btn btn-success btn-sm" value="<?=gettext("Execute")?>" title="<?=gettext("Execute this PHP Code")?>">
+				<button type="submit" class="btn btn-warning btn-sm" value="<?=gettext("Execute")?>" title="<?=gettext("Execute this PHP Code")?>">
 					<i class="fa fa-bolt"></i>
 					<?=gettext("Execute")?>
 				</button>

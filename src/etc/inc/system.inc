@@ -2212,6 +2212,21 @@ EOD;
 	return 0;
 }
 
+function system_get_serial() {
+	unset($output);
+	$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+	$serial = $output[0];
+
+	$vm_guest = get_single_sysctl('kern.vm_guest');
+
+	if (strlen($serial) >= 10 && strlen($serial) <= 16 &&
+	    $vm_guest == 'none') {
+		return $serial;
+	}
+
+	return get_single_sysctl('kern.hostuuid');
+}
+
 /*
  * attempt to identify the specific platform (for embedded systems)
  * Returns an array with two elements:
@@ -2221,13 +2236,7 @@ EOD;
 function system_identify_specific_platform() {
 	global $g;
 
-	if ($g['platform'] == 'generic-pc') {
-		return array('name' => 'generic-pc', 'descr' => gettext("Generic PC"));
-	}
-
-	if ($g['platform'] == 'generic-pc-cdrom') {
-		return array('name' => 'generic-pc-cdrom', 'descr' => gettext("Generic PC (CD-ROM)"));
-	}
+	$hw_model = get_single_sysctl('hw.model');
 
 	/* Try to guess from smbios strings */
 	unset($output);
@@ -2240,7 +2249,24 @@ function system_identify_specific_platform() {
 			return (array('name' => 'APU', 'descr' => 'Netgate APU'));
 			break;
 		case 'RCC-VE':
-			return (array('name' => 'RCC-VE', 'descr' => 'Netgate RCC-VE'));
+			$result = array();
+			$result['name'] = 'RCC-VE';
+
+			/* Detect specific models */
+			if (!function_exists('does_interface_exist')) {
+				require_once("interfaces.inc");
+			}
+			if (!does_interface_exist('igb4')) {
+				$result['model'] = 'SG-2440';
+			} elseif (strpos($hw_model, "C2558") !== false) {
+				$result['model'] = 'SG-4860';
+			} elseif (strpos($hw_model, "C2758") !== false) {
+				$result['model'] = 'SG-8860';
+			} else {
+				$result['model'] = 'RCC-VE';
+			}
+			$result['descr'] = 'Netgate ' . $result['model'];
+			return $result;
 			break;
 		case 'DFFv2':
 			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
@@ -2262,29 +2288,27 @@ function system_identify_specific_platform() {
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 	}
 
-	$dmesg = get_single_sysctl('hw.model');
-
-	if (strpos($dmesg, "PC Engines WRAP") !== false) {
+	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}
 
-	if (strpos($dmesg, "PC Engines ALIX") !== false) {
+	if (strpos($hw_model, "PC Engines ALIX") !== false) {
 		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
 	}
 
-	if (preg_match("/Soekris net45../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net45../", $hw_model, $matches)) {
 		return array('name' => 'net45xx', 'descr' => $matches[0]);
 	}
 
-	if (preg_match("/Soekris net48../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net48../", $hw_model, $matches)) {
 		return array('name' => 'net48xx', 'descr' => $matches[0]);
 	}
 
-	if (preg_match("/Soekris net55../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net55../", $hw_model, $matches)) {
 		return array('name' => 'net55xx', 'descr' => $matches[0]);
 	}
 
-	unset($dmesg);
+	unset($hw_model);
 
 	$dmesg_boot = system_get_dmesg_boot();
 	if (strpos($dmesg_boot, "PC Engines ALIX") !== false) {

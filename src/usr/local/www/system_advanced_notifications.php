@@ -267,8 +267,7 @@ $section->addInput(new Form_Input(
 	'IP Address',
 	'text',
 	$pconfig['ipaddress']
-))->setHelp('This is the IP address that you would like to send growl '.
-	'notifications to.');
+))->setHelp('This is the IP address to send growl notifications to.');
 
 $section->addPassword(new Form_Input(
 	'password',
@@ -342,8 +341,7 @@ $section->addInput(new Form_Input(
 	'Notification E-Mail address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
-))->setHelp('Enter the e-mail address that you would like email '.
-	'notifications sent to.');
+))->setHelp('Enter the e-mail address to send email notifications to.');
 
 // This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(

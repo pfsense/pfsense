@@ -86,7 +86,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	if ($_POST['ipv6nat_enable'] && !is_ipaddr($_POST['ipv6nat_ipaddr'])) {
-		$input_errors[] = gettext("You must specify an IP address to NAT IPv6 packets.");
+		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
 	}
 
 	ob_flush();
@@ -226,7 +226,7 @@ $section->addInput(new Form_Checkbox(
 	'Prefer to use IPv4 even if IPv6 is available',
 	$pconfig['prefer_ipv4']
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
-	'IPv6 will be used. If you check this option, IPv4 will be preferred over IPv6.');
+	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
@@ -238,7 +238,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['polling_enable']
 ))->setHelp('Device polling is a technique that lets the system periodically poll '.
 	'network devices for new data instead of relying on interrupts. This prevents '.
-	'your webConfigurator, SSH, etc. from being inaccessible due to interrupt floods '.
+	'the webConfigurator, SSH, etc. from being inaccessible due to interrupt floods '.
 	'when under extreme load. Generally this is not recommended. Not all NICs support '.
 	'polling; see the %s homepage for a list of supported cards', [$g["product_name"]]);
 
@@ -251,7 +251,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Checking this option will disable hardware checksum offloading.<br/>'.
 	'Checksum offloading is broken in some hardware, particularly some Realtek cards. '.
 	'Rarely, drivers may have problems with checksum offloading and some specific '.
-	'NICs.This will take effect after you reboot the machine or re-configure each '.
+	'NICs. This will take effect after a machine reboot or re-configure of each '.
 	'interface.');
 
 $section->addInput(new Form_Checkbox(
@@ -262,7 +262,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Checking this option will disable hardware TCP segmentation '.
 	'offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware '.
 	'drivers, and may impact performance with some specific NICs.This will take '.
-	'effect after you reboot the machine or re-configure each interface.');
+	'effect after a machine reboot or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(
 	'disablelargereceiveoffloading',
@@ -271,8 +271,8 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['disablelargereceiveoffloading'])
 ))->setHelp('Checking this option will disable hardware large receive offloading '.
 	'(LRO). This offloading is broken in some hardware drivers, and may impact '.
-	'performance with some specific NICs.This will take effect after you reboot the '.
-	'machine or re-configure each interface.');
+	'performance with some specific NICs.This will take effect after a machine reboot '.
+	'or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(
 	'sharednet',

@@ -463,7 +463,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable all packet filtering.',
 	isset($config['system']['disablefilter'])
 ))->setHelp('Note: This converts %s into a routing only platform!<br/>'.
-	'Note: This will also turn off NAT! If you only want to disable NAT, '.
+	'Note: This will also turn off NAT! To only disable NAT, '.
 	'and not firewall rules, visit the <a href="firewall_nat_out.php">Outbound '.
 	'NAT</a> page.', [$g["product_name"]]);
 
@@ -509,7 +509,7 @@ $section->addInput(new Form_Input(
 	$pconfig['maximumstates'],
 	['min' => 1, 'placeholder' => pfsense_default_state_size()]
 ))->setHelp('Maximum number of connections to hold in the firewall state table. '.
-	'<br/>Note: Leave this blank for the default. On your system the default '.
+	'<br/>Note: Leave this blank for the default. On this system the default '.
 	'size is: %d', [pfsense_default_state_size()]);
 
 $section->addInput(new Form_Input(
@@ -520,7 +520,7 @@ $section->addInput(new Form_Input(
 	['placeholder' => pfsense_default_table_entries_size()]
 ))->setHelp('Maximum number of table entries for systems such as aliases, '.
 	'sshlockout, snort, etc, combined.<br/>Note: Leave this blank for the '.
-	'default. On your system the default size is: %d',
+	'default. On this system the default size is: %d',
 	[pfsense_default_table_entries_size()]);
 
 $section->addInput(new Form_Input(
@@ -535,8 +535,8 @@ $section->addInput(new Form_Checkbox(
 	'Static route filtering',
 	'Bypass firewall rules for traffic on the same interface',
 	$pconfig['bypassstaticroutes']
-))->setHelp('This option only applies if you have defined one or more static '.
-	'routes. If it is enabled, traffic that enters and leaves through the same '.
+))->setHelp('This option only applies if one or more static routes have been defined. '.
+	'If it is enabled, traffic that enters and leaves through the same '.
 	'interface will not be checked by the firewall. This may be desirable in some '.
 	'situations where multiple subnets are connected to the same interface.');
 
@@ -552,9 +552,9 @@ $section->addInput(new Form_Checkbox(
 	'Disable reply-to',
 	'Disable reply-to on WAN rules',
 	$pconfig['disablereplyto']
-))->setHelp('With Multi-WAN you generally want to ensure traffic leaves the same '.
+))->setHelp('With Multi-WAN it is generally desired to ensure traffic leaves the same '.
 	'interface it arrives on, hence reply-to is added automatically by default. When '.
-	'using bridging, you must disable this behavior if the WAN gateway IP is '.
+	'using bridging, this behavior must be disabled if the WAN gateway IP is '.
 	'different from the gateway IP of the hosts behind the bridged interface.');
 
 $section->addInput(new Form_Checkbox(
@@ -562,10 +562,9 @@ $section->addInput(new Form_Checkbox(
 	'Disable Negate rules',
 	'Disable Negate rule on policy routing rules',
 	$pconfig['disablenegate']
-))->setHelp('With Multi-WAN you generally want to ensure traffic reaches directly '.
-	'connected networks and VPN networks when using policy routing. You can disable '.
-	'this for special purposes but it requires manually creating rules for these '.
-	'networks');
+))->setHelp('With Multi-WAN it is generally desired to ensure traffic reaches directly '.
+	'connected networks and VPN networks when using policy routing. This can be disabled '.
+	'for special purposes but it requires manually creating rules for these networks.');
 
 $section->addInput(new Form_Input(
 	'aliasesresolveinterval',
@@ -650,7 +649,7 @@ if (count($config['interfaces']) > 1) {
 	$section->addInput(new Form_Checkbox(
 		'enablebinatreflection',
 		'Enable NAT Reflection for 1:1 NAT',
-		'Automatic creation of additional NAT redirect rules from within your internal networks.',
+		'Automatic creation of additional NAT redirect rules from within the internal networks.',
 		isset($config['system']['enablebinatreflection'])
 	))->setHelp('Note: Reflection on 1:1 mappings is only for the inbound component of '.
 		'the 1:1 mappings. This functions the same as the pure NAT mode for port '.
@@ -674,7 +673,7 @@ if (count($config['interfaces']) > 1) {
 		$pconfig['tftpinterface'],
 		get_configured_interface_with_descr(),
 		true
-	))->setHelp('Choose the interfaces where you want TFTP proxy helper to be enabled.');
+	))->setHelp('Choose the interfaces on which to enable TFTP proxy helper.');
 
 	$form->add($section);
 }

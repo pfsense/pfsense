@@ -497,12 +497,12 @@ $section->addInput(new Form_Select(
 	['' => gettext('None')] + $crypto_modules
 ))->setHelp('A cryptographic '.
 	'accelerator module will use hardware support to speed up some cryptographic '.
-	'functions on systems which have the chip. Do not enable this option if you have '.
+	'functions on systems which have the chip. Do not enable this option with '.
 	'a Hifn cryptographic acceleration card, as this will take precedence and the '.
 	'Hifn card will not be used. Acceleration should be automatic for IPsec when '.
-	'using a cipher supported by your chip, such as AES-128. OpenVPN should be set '.
-	'for AES-128-CBC and have cryptodev enabled for hardware acceleration.If you do '.
-	'not have a crypto chip in your system, this option will have no effect. To '.
+	'using a cipher supported by the chip, such as AES-128. OpenVPN should be set '.
+	'for AES-128-CBC and have cryptodev enabled for hardware acceleration. If there '.
+	'is not a crypto chip in the system, this option will have no effect. To '.
 	'unload the selected module, set this option to "none" and then reboot.');
 
 $section->addInput(new Form_Select(
@@ -510,11 +510,11 @@ $section->addInput(new Form_Select(
 	'Thermal Sensors',
 	$pconfig['thermal_hardware'],
 	array('' => 'None/ACPI') + $thermal_hardware_modules
-))->setHelp('If you have a '.
-	'supported CPU, selecting a themal sensor will load the appropriate driver to '.
+))->setHelp('With a '.
+	'supported CPU, selecting a thermal sensor will load the appropriate driver to '.
 	'read its temperature. Setting this to "None" will attempt to read the '.
 	'temperature from an ACPI-compliant motherboard sensor instead, if one is '.
-	'present.If you do not have a supported thermal sensor chip in your system, this '.
+	'present. If there is not a supported thermal sensor chip in the system, this '.
 	'option will have no effect. To unload the selected module, set this option to '.
 	'"none" and then reboot.');
 
@@ -558,7 +558,7 @@ $section->addInput(new Form_Checkbox(
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
 	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
-))->setHelp('Set this if you wish to use /tmp and /var as RAM disks (memory file '.
+))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
 	'cause the data in /tmp and /var to be lost at reboot, including log data. RRD '.
 	'and DHCP Leases will be retained.');
@@ -589,7 +589,7 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 24, 'placeholder' => 'frequency between 1 and 24 hours']
 ))->setHelp('This will periodically backup the RRD data so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
-	'frequent the backup, the more writes will happen to your media.');
+	'frequent the backup, the more writes will happen to the media.');
 
 $section->addInput(new Form_Input(
 	'dhcpbackup',
@@ -599,7 +599,7 @@ $section->addInput(new Form_Input(
 	['min' => 1, 'max' => 24, 'placeholder' => 'frequency between 1 and 24 hours']
 ))->setHelp('This will periodically backup the DHCP leases so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
-	'frequent the backup, the more writes will happen to your media.');
+	'frequent the backup, the more writes will happen to the media.');
 
 $form->add($section);
 

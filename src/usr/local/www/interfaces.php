@@ -441,7 +441,7 @@ if (isset($wancfg['wireless'])) {
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces')) {
-		$input_errors[] = gettext("You have already applied your settings!");
+		$input_errors[] = gettext("The settings have already been applied!");
 	} else {
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
@@ -622,7 +622,7 @@ if ($_POST['apply']) {
 			break;
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
 				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
@@ -632,7 +632,7 @@ if ($_POST['apply']) {
 			foreach ($ifdescrs as $ifent => $ifdescr) {
 				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
 					if ($config[interfaces][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
-						$input_errors[] = gettext("You can only have one interface configured in 6rd with same prefix.");
+						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
 				}
@@ -641,36 +641,36 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			break;
 		case "6to4":
 			foreach ($ifdescrs as $ifent => $ifdescr) {
 				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
-					$input_errors[] = sprintf(gettext("You can only have one interface configured as 6to4."), $_POST['type6']);
+					$input_errors[] = sprintf(gettext("Only one interface can be configured as 6to4."), $_POST['type6']);
 					break;
 				}
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			break;
 		case "track6":
 			/* needs to check if $track6-prefix-id is used on another interface */
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("You have to reassign the interface to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 
 			if (empty($_POST['track6-interface'])) {
-				$input_errors[] = gettext("You have to select a valid interface to track.");
+				$input_errors[] = gettext("A valid interface to track must be selected.");
 			}
 
 			if ($_POST['track6-prefix-id--hex'] != "" && !is_numeric("0x" . $_POST['track6-prefix-id--hex'])) {
-				$input_errors[] = gettext("You must enter a valid hexadecimal number for the IPv6 prefix ID.");
+				$input_errors[] = gettext("A valid hexadecimal number must be entered for the IPv6 prefix ID.");
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
 				if ($track6_prefix_id < 0 || $track6_prefix_id > $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
-					$input_errors[] = gettext("You specified an IPv6 prefix ID that is out of range.") .
+					$input_errors[] = gettext("The specified IPv6 Prefix ID is out of range.") .
 						" ({$_POST['track6-interface']}) - (0) - (" . sprintf('%x', $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) . ")";
 				} else {
 					foreach ($ifdescrs as $ifent => $ifdescr) {
@@ -1620,7 +1620,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = sprintf(gettext("Unable to change mode to %s.	 You may already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
+			$input_errors[] = sprintf(gettext("Unable to change mode to %s. The maximum number of wireless clones supported in this mode may have been reached."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
 		}
@@ -1702,7 +1702,7 @@ if ($input_errors) {
 
 if (is_subsystem_dirty('interfaces')) {
 	print_apply_box(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
-					gettext("You must apply the changes in order for them to take effect.") . "<br />" .
+					gettext("The changes must be applied to take effect.") . "<br />" .
 					gettext("Don't forget to adjust the DHCP Server range if needed after applying."));
 }
 
@@ -1773,7 +1773,7 @@ $section->addInput(new Form_Input(
 	'MTU',
 	'number',
 	$pconfig['mtu']
-))->setHelp('If you leave this field blank, the adapter\'s default MTU will be used. ' .
+))->setHelp('If this field is blank, the adapter\'s default MTU will be used. ' .
 			'This is typically 1500 bytes but can vary in some circumstances.');
 
 $section->addInput(new Form_Input(
@@ -1781,7 +1781,7 @@ $section->addInput(new Form_Input(
 	'MSS',
 	'number',
 	$pconfig['mss']
-))->setHelp('If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP ' .
+))->setHelp('If a value is entered in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP ' .
 			'header size) will be in effect.');
 
 if (count($mediaopts_list) > 0) {
@@ -1790,8 +1790,8 @@ if (count($mediaopts_list) > 0) {
 		'Speed and Duplex',
 		rtrim($mediaopt_from_config),
 		build_mediaopts_list()
-	))->setHelp('Here you can explicitly set speed and duplex mode for this interface.' . '<br />' .
-				'WARNING: You MUST leave this set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');
+	))->setHelp('Explicitly set speed and duplex mode for this interface.' . '<br />' .
+				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');
 }
 
 $form->add($section);
@@ -1823,7 +1823,7 @@ $group->add(new Form_Button(
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
 				'On local LANs the upstream gateway should be "none".' .
-				gettext('You can manage gateways by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>');
+				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>');
 
 $section->add($group);
 
@@ -2390,21 +2390,21 @@ $section->addInput(new Form_Input(
 	'6RD Prefix',
 	'text',
 	$pconfig['prefix-6rd']
-))->sethelp('6RD IPv6 prefix assigned by your ISP. e.g. "2001:db8::/32"');
+))->sethelp('6RD IPv6 prefix assigned by the ISP. e.g. "2001:db8::/32"');
 
 $section->addInput(new Form_Input(
 	'gateway-6rd',
 	'6RD Border relay',
 	'text',
 	$pconfig['gateway-6rd']
-))->sethelp('6RD IPv4 gateway address assigned by your ISP');
+))->sethelp('6RD IPv4 gateway address assigned by the ISP');
 
 $section->addInput(new Form_Select(
 	'prefix-6rd-v4plen',
 	'6RD IPv4 Prefix length',
 	$pconfig['prefix-6rd-v4plen'],
 	array_combine(range(0, 32), range(0, 32))
-))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means we embed the entire IPv4 address in the 6RD prefix.');
+))->setHelp('6RD IPv4 prefix length. Normally specified by the ISP. A value of 0 means embed the entire IPv4 address in the 6RD prefix.');
 
 $form->add($section);
 
@@ -2500,7 +2500,7 @@ $section->addInput(new Form_Select(
 	'Plan',
 	$pconfig['providerplan'],
 	[]
-))->setHelp('Select to fill in data for your service provider.');
+))->setHelp('Select to fill in service provider data.');
 
 $section->addInput(new Form_Input(
 	'ppp_username',
@@ -2641,7 +2641,7 @@ $group->add(new Form_Input(
 	$pconfig['pppoe_resetdate']
 ))->setHelp('Specific date (mm/dd/yyyy)');
 
-$group->setHelp('If you leave the date field empty, the reset will be executed each day at the time you specified using the minutes and hour field');
+$group->setHelp('Leave the date field empty, for the reset to be executed each day at the time specified by the minutes and hour fields');
 
 $section->add($group);
 
@@ -2727,7 +2727,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Dial-On-Demand mode ',
 	$pconfig['pptp_dialondemand'],
 	'enable'
-))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. ' .
+))->setHelp('This option causes the interface to operate in dial-on-demand mode, allowing it to be a virtual full time connection. ' .
 			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
 
 $section->addInput(new Form_Input(
@@ -2830,7 +2830,7 @@ if (isset($wancfg['wireless'])) {
 		$pconfig['channel'],
 		$mode_list
 	))->setHelp('Legend: wireless standards - channel # (frequency @ max TX power / TX power allowed in reg. domain)' . '<br />' .
-				'Not all channels may be supported by your card.  Auto may override the wireless standard selected above.');
+				'Not all channels may be supported by some cards.  Auto may override the wireless standard selected above.');
 
 	if (ANTENNAS) {
 		if (isset($wl_sysctl["{$wl_sysctl_prefix}.diversity"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.txantenna"]) || isset($wl_sysctl["{$wl_sysctl_prefix}.rxantenna"])) {
@@ -3123,13 +3123,13 @@ $section = new Form_Section('Reserved Networks');
 
 $section->addInput(new Form_Checkbox(
 	'blockpriv',
-	'Block private networks',
+	'Block private networks and loopback addresses',
 	'',
 	$pconfig['blockpriv'],
 	'yes'
 ))->setHelp('Blocks traffic from IP addresses that are reserved for private networks per RFC 1918 (10/8, 172.16/12, 192.168/16) ' .
-			' as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network ' .
-			'lies in such a private address space, too.');
+			'and unique local addresses per RFC 4193 (fc00::/7) as well as loopback addresses (127/8). This option should ' .
+			'generally be turned on, unless this network interface resides in such a private address space, too.');
 
 $section->addInput(new Form_Checkbox(
 	'blockbogons',
@@ -3138,7 +3138,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['blockbogons'],
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
-			'never appear in the Internet routing table, and so should not appear as the source address in any packets you receive.' . '<br />' .
+			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.' . '<br />' .
 			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings');
 
 $form->add($section);
@@ -3377,7 +3377,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Sorry, we could not create your IPv4 gateway at this time.");
+			alert("The IPv4 gateway could not be created.");
 		}
 
 		$("#newgateway").modal('hide');
@@ -3426,7 +3426,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Sorry, we could not create your IPv6 gateway at this time.");
+			alert("The IPv6 gateway could not be created.");
 		}
 
 		$("#newgateway6").modal('hide');

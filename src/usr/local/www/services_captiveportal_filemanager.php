@@ -115,7 +115,7 @@ if ($_POST) {
 
 	if (is_uploaded_file($_FILES['new']['tmp_name'])) {
 
-		if (!stristr($_FILES['new']['name'], "captiveportal-")) {
+		if ((!stristr($_FILES['new']['name'], "captiveportal-")) && ($_FILES['new']['name'] != 'favicon.ico')) {
 			$name = "captiveportal-" . $_FILES['new']['name'];
 		} else {
 			$name = $_FILES['new']['name'];
@@ -278,7 +278,8 @@ endif;
 	<div class="panel-body">
 	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
-	"You may reference them directly from your portal page HTML code using relative paths. " .
+	"You may also upload an icon file called favicon.ico that will not be prefixed. " .
+	"You may reference these files directly from your portal page HTML code using relative paths. " .
 	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
 	"file manager. Then you can include it in your portal page like this:")?><br /><br />
 	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br />

@@ -251,7 +251,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Checking this option will disable hardware checksum offloading.<br/>'.
 	'Checksum offloading is broken in some hardware, particularly some Realtek cards. '.
 	'Rarely, drivers may have problems with checksum offloading and some specific '.
-	'NICs. This will take effect after a machine reboot or re-configure each '.
+	'NICs. This will take effect after a machine reboot or re-configure of each '.
 	'interface.');
 
 $section->addInput(new Form_Checkbox(
@@ -262,7 +262,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Checking this option will disable hardware TCP segmentation '.
 	'offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware '.
 	'drivers, and may impact performance with some specific NICs.This will take '.
-	'effect after a machine reboot or re-configure each interface.');
+	'effect after a machine reboot or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(
 	'disablelargereceiveoffloading',
@@ -272,7 +272,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('Checking this option will disable hardware large receive offloading '.
 	'(LRO). This offloading is broken in some hardware drivers, and may impact '.
 	'performance with some specific NICs.This will take effect after a machine reboot '.
-	'or re-configure each interface.');
+	'or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(
 	'sharednet',

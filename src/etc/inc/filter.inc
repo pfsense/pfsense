@@ -904,6 +904,7 @@ function filter_generate_gateways() {
 			$route = "";
 			/* hey, that's not a group member! */
 			unset($members['ipprotocol']);
+			unset($members['descr']);
 			if (count($members) > 0) {
 				$foundlb = 0;
 				$routeto = "";

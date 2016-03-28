@@ -2216,29 +2216,29 @@ function system_identify_specific_platform() {
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 	}
 
-	$dmesg = get_single_sysctl('hw.model');
+	$hw_model = get_single_sysctl('hw.model');
 
-	if (strpos($dmesg, "PC Engines WRAP") !== false) {
+	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}
 
-	if (strpos($dmesg, "PC Engines ALIX") !== false) {
+	if (strpos($hw_model, "PC Engines ALIX") !== false) {
 		return array('name' => 'alix', 'descr' => gettext('PC Engines ALIX'));
 	}
 
-	if (preg_match("/Soekris net45../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net45../", $hw_model, $matches)) {
 		return array('name' => 'net45xx', 'descr' => $matches[0]);
 	}
 
-	if (preg_match("/Soekris net48../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net48../", $hw_model, $matches)) {
 		return array('name' => 'net48xx', 'descr' => $matches[0]);
 	}
 
-	if (preg_match("/Soekris net55../", $dmesg, $matches)) {
+	if (preg_match("/Soekris net55../", $hw_model, $matches)) {
 		return array('name' => 'net55xx', 'descr' => $matches[0]);
 	}
 
-	unset($dmesg);
+	unset($hw_model);
 
 	$dmesg_boot = system_get_dmesg_boot();
 	if (strpos($dmesg_boot, "PC Engines ALIX") !== false) {

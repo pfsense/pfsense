@@ -82,11 +82,11 @@ if ($_GET['act'] == 'connect') {
 				$ph2entries = ipsec_get_number_of_phase2($_GET['ikeid']);
 				for ($i = 0; $i < $ph2entries; $i++) {
 					$connid = escapeshellarg("con{$_GET['ikeid']}00{$i}");
-					mwexec("/usr/local/sbin/ipsec down {$connid}");
+					mwexec_bg("/usr/local/sbin/ipsec down {$connid}");
 					mwexec_bg("/usr/local/sbin/ipsec up {$connid}");
 				}
 			} else {
-				mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+				mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
 				mwexec_bg("/usr/local/sbin/ipsec up con" . escapeshellarg($_GET['ikeid']));
 			}
 		}
@@ -94,15 +94,15 @@ if ($_GET['act'] == 'connect') {
 } else if ($_GET['act'] == 'ikedisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
 		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "[" . escapeshellarg($_GET['ikesaid']) . "]");
 		} else {
-			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']));
 		}
 	}
 } else if ($_GET['act'] == 'childdisconnect') {
 	if (ctype_digit($_GET['ikeid'])) {
 		if (!empty($_GET['ikesaid']) && ctype_digit($_GET['ikesaid'])) {
-			mwexec("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
+			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
 		}
 	}
 }

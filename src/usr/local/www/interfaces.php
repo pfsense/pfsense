@@ -3119,7 +3119,7 @@ if (isset($wancfg['wireless'])) {
 	$form->add($section);
 }
 
-$section = new Form_Section('Private Networks');
+$section = new Form_Section('Reserved Networks');
 
 $section->addInput(new Form_Checkbox(
 	'blockpriv',

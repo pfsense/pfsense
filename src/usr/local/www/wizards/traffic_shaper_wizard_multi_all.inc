@@ -860,16 +860,12 @@ function apply_all_chosen_items() {
 		}
 
 		if ($sched != "PRIQ") {
-			if ($sched == "CBQ")
-				$q =& new cbq_queue();
-			else if ($sched == "HFSC")
-				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qInternet";
 			//$tmpcf['priority'] = 6;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
+			if ($sched == "CBQ") {
 				$tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}upload"]);
 				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
 			}
@@ -886,7 +882,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
 			}
 			array_push($tmppath, "qInternet");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
 			//echo "qInternet <br />";
 			//var_dump($input_errors);
@@ -894,18 +890,12 @@ function apply_all_chosen_items() {
 			$altq =& $qtmp;
 		}
 
-		if ($sched == "PRIQ")
-			$q =& new priq_queue();
-		else if ($sched == "CBQ")
-			$q =& new cbq_queue();
-		else if ($sched == "HFSC")
-			$q =& new hfsc_queue();
 		$tmpcf = array();
 		$tmpcf['name'] = "qACK";
 		$tmpcf['priority'] = 6;
 		$tmpcf['ecn'] = "on";
 		$tmpcf['enabled'] = "on";
-		If ($sched == "CBQ") {
+		if ($sched == "CBQ") {
 			$tmpcf['borrow'] = "on";
 			$tmpcf['bandwidth'] = $remainbw * 0.2;
 			$tmpcf['bandwidthtype'] = "%";
@@ -918,18 +908,12 @@ function apply_all_chosen_items() {
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		array_push($tmppath, "qACK");
-		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+		$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
 		//echo "qACK <br />";
 		//var_dump($input_errors);
 		$qtmp->wconfig();
 
-		if ($sched == "PRIQ")
-			$q =& new priq_queue();
-		else if ($sched == "CBQ")
-			$q =& new cbq_queue();
-		else if ($sched == "HFSC")
-			$q =& new hfsc_queue();
 		$tmpcf = array();
 		if ($p2pcatchall)
 			$tmpcf['name'] = "qOthersDefault";
@@ -949,19 +933,13 @@ function apply_all_chosen_items() {
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		array_push($tmppath, $tmpcf['name']);
-		$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+		$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 		array_pop($tmppath);
 		//echo "qDefault <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
 
 			if ($p2p) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
@@ -998,7 +976,7 @@ function apply_all_chosen_items() {
 					}
 				}
 				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qP2P <br />";
 				//var_dump($input_errors);
@@ -1006,12 +984,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($voip) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
@@ -1038,7 +1010,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qVoIP <br />";
 				//var_dump($input_errors);
@@ -1046,12 +1018,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($games) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
@@ -1069,7 +1035,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qGames <br />";
 				//var_dump($input_errors);
@@ -1077,12 +1043,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($otherpriority) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
@@ -1100,19 +1060,12 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qHigh <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 
-
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 2;
@@ -1141,7 +1094,7 @@ function apply_all_chosen_items() {
 					$tmpcf['linkshare'] = "on";
 				}
 				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qLow <br />";
 				//var_dump($input_errors);
@@ -1194,7 +1147,7 @@ function apply_all_chosen_items() {
 			$voip = true;
 			$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 			$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
-			if ($sched != HFSC) {
+			if ($sched != "HFSC") {
 				if ($voipbwunit == "%")
 					$factor = $lanbw/100;
 				else
@@ -1258,12 +1211,6 @@ function apply_all_chosen_items() {
 		}
 
 		if (!$p2pcatchall) {
-			if ($sched == "PRIQ")
-				$q =& new priq_queue();
-			else if ($sched == "CBQ")
-				$q =& new cbq_queue();
-			else if ($sched == "HFSC")
-				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qLink";
 			$tmpcf['priority'] = 2;
@@ -1280,7 +1227,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, $tmpcf['name']);
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
 			//echo "qDefault <br />";
 			//var_dump($input_errors);
@@ -1288,16 +1235,12 @@ function apply_all_chosen_items() {
 		}
 
 		if ($sched != "PRIQ") {
-			if ($sched == "CBQ")
-				$q =& new cbq_queue();
-			else if ($sched == "HFSC")
-				$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qInternet";
 			//$tmpcf['priority'] = 6;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
+			if ($sched == "CBQ") {
 				$tmpcf['bandwidth'] = $lanbw/1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
@@ -1310,7 +1253,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			array_push($tmppath, "qInternet");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
 			//echo "qInternet <br />";
 			//var_dump($input_errors);
@@ -1318,18 +1261,12 @@ function apply_all_chosen_items() {
 			$altq =& $qtmp;
 		}
 
-			if ($sched == "PRIQ")
-				$q =& new priq_queue();
-			else if ($sched == "CBQ")
-				$q =& new cbq_queue();
-			else if ($sched == "HFSC")
-			$q =& new hfsc_queue();
 			$tmpcf = array();
 			$tmpcf['name'] = "qACK";
 			$tmpcf['priority'] = 6;
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
-			If ($sched == "CBQ") {
+			if ($sched == "CBQ") {
 				$tmpcf['borrow'] = "on";
 				$tmpcf['bandwidth'] = $remainbw * 0.2;
 				$tmpcf['bandwidthtype'] = "%";
@@ -1342,19 +1279,13 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "%";
 			}
 			array_push($tmppath, "qACK");
-			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+			$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 			array_pop($tmppath);
 			//echo "qACK <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
 
 			if ($p2p) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qP2P";
 				$tmpcf['priority'] = 1;
@@ -1391,7 +1322,7 @@ function apply_all_chosen_items() {
 					}
 				}
 				array_push($tmppath, "qP2P");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qP2P <br />";
 				//var_dump($input_errors);
@@ -1399,12 +1330,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($voip) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qVoIP";
 				$tmpcf['priority'] = 7;
@@ -1431,7 +1356,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "Kb";
 				}
 				array_push($tmppath, "qVoIP");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qVoIP <br />";
 				//var_dump($input_errors);
@@ -1439,12 +1364,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($games) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qGames";
 				$tmpcf['priority'] = 5;
@@ -1462,7 +1381,7 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qGames");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qGames <br />";
 				//var_dump($input_errors);
@@ -1470,12 +1389,6 @@ function apply_all_chosen_items() {
 			}
 
 			if ($otherpriority) {
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersHigh";
 				$tmpcf['priority'] = 4;
@@ -1493,19 +1406,12 @@ function apply_all_chosen_items() {
 					$tmpcf['bandwidthtype'] = "%";
 				}
 				array_push($tmppath, "qOthersHigh");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qHigh <br />";
 				//var_dump($input_errors);
 				$qtmp->wconfig();
 
-
-				if ($sched == "PRIQ")
-					$q =& new priq_queue();
-				else if ($sched == "CBQ")
-					$q =& new cbq_queue();
-				else if ($sched == "HFSC")
-					$q =& new hfsc_queue();
 				$tmpcf = array();
 				$tmpcf['name'] = "qOthersLow";
 				$tmpcf['priority'] = 3;
@@ -1534,7 +1440,7 @@ function apply_all_chosen_items() {
 					$tmpcf['linkshare'] = "on";
 				}
 				array_push($tmppath, "qOthersLow");
-				$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
+				$qtmp =& $altq->add_queue($altq->GetInterface(), $tmpcf, $tmppath, $input_errors);
 				array_pop($tmppath);
 				//echo "qLow <br />";
 				//var_dump($input_errors);

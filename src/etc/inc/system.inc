@@ -2183,6 +2183,8 @@ function system_identify_specific_platform() {
 		return array('name' => 'generic-pc-cdrom', 'descr' => gettext("Generic PC (CD-ROM)"));
 	}
 
+	$hw_model = get_single_sysctl('hw.model');
+
 	/* Try to guess from smbios strings */
 	unset($output);
 	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output);
@@ -2194,7 +2196,24 @@ function system_identify_specific_platform() {
 			return (array('name' => 'APU', 'descr' => 'Netgate APU'));
 			break;
 		case 'RCC-VE':
-			return (array('name' => 'RCC-VE', 'descr' => 'Netgate RCC-VE'));
+			$result = array();
+			$result['name'] = 'RCC-VE';
+
+			/* Detect specific models */
+			if (!function_exists('does_interface_exist')) {
+				require_once("interfaces.inc");
+			}
+			if (!does_interface_exist('igb4')) {
+				$result['model'] = 'SG-2440';
+			} elseif (strpos($hw_model, "C2558") !== false) {
+				$result['model'] = 'SG-4860';
+			} elseif (strpos($hw_model, "C2758") !== false) {
+				$result['model'] = 'SG-8860';
+			} else {
+				$result['model'] = 'RCC-VE';
+			}
+			$result['descr'] = 'Netgate ' . $result['model'];
+			return $result;
 			break;
 		case 'DFFv2':
 			return (array('name' => 'RCC-DFF', 'descr' => 'Netgate RCC-DFF'));
@@ -2215,8 +2234,6 @@ function system_identify_specific_platform() {
 	if ($g['platform'] != 'nanobsd') {
 		return array('name' => $g['platform'], 'descr' => $g['platform']);
 	}
-
-	$hw_model = get_single_sysctl('hw.model');
 
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));

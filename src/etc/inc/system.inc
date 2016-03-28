@@ -2175,14 +2175,6 @@ EOD;
 function system_identify_specific_platform() {
 	global $g;
 
-	if ($g['platform'] == 'generic-pc') {
-		return array('name' => 'generic-pc', 'descr' => gettext("Generic PC"));
-	}
-
-	if ($g['platform'] == 'generic-pc-cdrom') {
-		return array('name' => 'generic-pc-cdrom', 'descr' => gettext("Generic PC (CD-ROM)"));
-	}
-
 	$hw_model = get_single_sysctl('hw.model');
 
 	/* Try to guess from smbios strings */

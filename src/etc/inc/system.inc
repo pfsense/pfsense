@@ -2166,6 +2166,21 @@ EOD;
 	return 0;
 }
 
+function system_get_serial() {
+	unset($output);
+	$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+	$serial = $output[0];
+
+	$vm_guest = get_single_sysctl('kern.vm_guest');
+
+	if (strlen($serial) >= 10 && strlen($serial) <= 16 &&
+	    $vm_guest == 'none') {
+		return $serial;
+	}
+
+	return get_single_sysctl('kern.hostuuid');
+}
+
 /*
  * attempt to identify the specific platform (for embedded systems)
  * Returns an array with two elements:

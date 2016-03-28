@@ -622,7 +622,7 @@ if ($_POST['apply']) {
 			break;
 		case "dhcp6":
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("The interface has to be reassigned to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			if ($_POST['dhcp6-ia-pd-send-hint'] && strtolower($_POST['dhcp6-ia-pd-len']) == 'none') {
 				$input_errors[] = gettext('DHCPv6 Prefix Delegation size must be provided when Send IPv6 prefix hint flag is checked');
@@ -632,7 +632,7 @@ if ($_POST['apply']) {
 			foreach ($ifdescrs as $ifent => $ifdescr) {
 				if ($if != $ifent && ($config[interfaces][$ifent]['ipaddrv6'] == $_POST['type6'])) {
 					if ($config[interfaces][$ifent]['prefix-6rd'] == $_POST['prefix-6rd']) {
-						$input_errors[] = gettext("Only one interface can be configured in 6rd with same prefix.");
+						$input_errors[] = gettext("Only one interface can be configured within a single 6rd prefix.");
 						break;
 					}
 				}
@@ -641,7 +641,7 @@ if ($_POST['apply']) {
 				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("The interface has to be reassigned to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			break;
 		case "6to4":
@@ -652,13 +652,13 @@ if ($_POST['apply']) {
 				}
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("The interface has to be reassigned to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 			break;
 		case "track6":
 			/* needs to check if $track6-prefix-id is used on another interface */
 			if (in_array($wancfg['ipaddrv6'], array())) {
-				$input_errors[] = sprintf(gettext("The interface has to be reassigned to be able to configure as %s."), $_POST['type6']);
+				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);
 			}
 
 			if (empty($_POST['track6-interface'])) {
@@ -670,7 +670,7 @@ if ($_POST['apply']) {
 			} else {
 				$track6_prefix_id = intval($_POST['track6-prefix-id--hex'], 16);
 				if ($track6_prefix_id < 0 || $track6_prefix_id > $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) {
-					$input_errors[] = gettext("An IPv6 prefix ID that is out of range was specified.") .
+					$input_errors[] = gettext("The specified IPv6 Prefix ID is out of range.") .
 						" ({$_POST['track6-interface']}) - (0) - (" . sprintf('%x', $_POST['ipv6-num-prefix-ids-' . $_POST['track6-interface']]) . ")";
 				} else {
 					foreach ($ifdescrs as $ifent => $ifdescr) {
@@ -1620,7 +1620,7 @@ function check_wireless_mode() {
 		$old_wireless_mode = $wancfg['wireless']['mode'];
 		$wancfg['wireless']['mode'] = $_POST['mode'];
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
-			$input_errors[] = sprintf(gettext("Unable to change mode to %s.	 May already have the maximum number of wireless clones supported in this mode."), $wlan_modes[$wancfg['wireless']['mode']]);
+			$input_errors[] = sprintf(gettext("Unable to change mode to %s. The maximum number of wireless clones supported in this mode may have been reached."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
 			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
 		}
@@ -1702,7 +1702,7 @@ if ($input_errors) {
 
 if (is_subsystem_dirty('interfaces')) {
 	print_apply_box(sprintf(gettext("The %s configuration has been changed."), $wancfg['descr']) . "<br />" .
-					gettext("The changes must be applied in order for them to take effect.") . "<br />" .
+					gettext("The changes must be applied to take effect.") . "<br />" .
 					gettext("Don't forget to adjust the DHCP Server range if needed after applying."));
 }
 
@@ -3377,7 +3377,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Could not create the IPv4 gateway at this time.");
+			alert("The IPv4 gateway could not be created.");
 		}
 
 		$("#newgateway").modal('hide');
@@ -3426,7 +3426,7 @@ events.push(function() {
 		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
 			alert(request.responseText);
 		} else {
-			alert("Could not create the IPv6 gateway at this time.");
+			alert("The IPv6 gateway could not be created.");
 		}
 
 		$("#newgateway6").modal('hide');

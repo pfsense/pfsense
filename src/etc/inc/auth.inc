@@ -738,7 +738,7 @@ function local_group_set($group, $reset = false) {
 		$group_members = implode(",", $group['member']);
 	}
 
-	if (empty($group_name)) {
+	if (empty($group_name) || $group['scope'] == "remote") {
 		return;
 	}
 

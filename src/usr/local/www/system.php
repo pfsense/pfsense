@@ -190,10 +190,10 @@ if ($_POST) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
 					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = sprintf(gettext('You can not specify IPv6 gateway "%1$s" for IPv4 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
+						$input_errors[] = sprintf(gettext('The IPv6 gateway "%1$s" can not be specified for IPv4 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = sprintf(gettext('You can not specify IPv4 gateway "%1$s" for IPv6 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
+						$input_errors[] = sprintf(gettext('The IPv4 gateway "%1$s" can not be specified for IPv6 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 				} else {
 					// The user selected a gateway but did not provide a DNS address. Be nice and set the gateway back to "none".
@@ -215,7 +215,7 @@ if ($_POST) {
 			if (interface_has_gateway($_POST[$dnsgwitem])) {
 				foreach ($direct_networks_list as $direct_network) {
 					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("You can not assign a gateway to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
+						$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 					}
 				}
 			}
@@ -472,14 +472,14 @@ $section->addInput(new Form_Select(
 	'Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonelist)
-))->setHelp('Select the location closest to you');
+))->setHelp('Select the timezone or location within the timezone to be used by this system.');
 $section->addInput(new Form_Input(
 	'timeservers',
 	'Timeservers',
 	'text',
 	$pconfig['timeservers']
 ))->setHelp('Use a space to separate multiple hosts (only one required). '.
-	'Remember to set up at least one DNS server if you enter a host name here!');
+	'Remember to set up at least one DNS server if a host name is entered here!');
 $section->addInput(new Form_Select(
 	'language',
 	'Language',

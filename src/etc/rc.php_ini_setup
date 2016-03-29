@@ -359,6 +359,7 @@ for EXT in $PHPMODULESLC; do
 	for LM in $LOADED_MODULES; do
 		if [ "$EXT" = "$LM" ]; then
 			SHOULDREMOVE="false"
+			break
 		fi
 	done
 	# Handle low memory situations

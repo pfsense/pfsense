@@ -178,13 +178,13 @@ if (isset($_POST['save'])) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if ($_POST['gtype'] == local) {
+	if ($_POST['gtype'] != "remote") {
 		if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['groupname'])) {
-			$input_errors[] = gettext("The group name contains invalid characters.");
+			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
 		}
 	} else {
 		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
-			$input_errors[] = gettext("The group name contains invalid characters.");
+			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
 		}
 	}
 

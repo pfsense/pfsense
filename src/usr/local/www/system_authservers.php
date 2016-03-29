@@ -84,7 +84,7 @@ if ($_REQUEST['ajax']) {
 	$ous = ldap_get_user_ous(true, $authcfg);
 
 	if (empty($ous)) {
-		print('<span class="text-danger">Could not connect to the LDAP server. Please check your LDAP configuration.</span>');
+		print('<span class="text-danger">Could not connect to the LDAP server. Please check the LDAP configuration.</span>');
 	} else {
 		$modal = new Modal("Select LDAP containers for authentication", "containers", true);
 		$group = new Form_MultiCheckboxGroup('Containers');
@@ -632,7 +632,7 @@ $group->add(new Form_Input(
 	'text',
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
-	'base dn above or you can specify full container path containing a dc= '.
+	'base dn above or the full container path can be specified containing a dc= '.
 	'component.<br/>Example: CN=Users;DC=example,DC=com or OU=Staff;OU=Freelancers');
 
 $group->add(new Form_Button(
@@ -805,7 +805,7 @@ $section->addInput(new Form_Input(
 	$pconfig['radius_timeout']
 ))->setHelp('This value controls how long, in seconds, that the RADIUS '.
 	'server may take to respond to an authentication request. If left blank, the '.
-	'default value is 5 seconds. NOTE: If you are using an interactive two-factor '.
+	'default value is 5 seconds. NOTE: If using an interactive two-factor '.
 	'authentication system, increase this timeout to account for how long it will '.
 	'take the user to receive and enter a token.');
 

@@ -406,7 +406,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['description']
-))->setHelp('Group description, for your own information only');
+))->setHelp('Group description, for administrative information only');
 
 $form->add($section);
 if ($pconfig['gid'] != 1998) { // all users group

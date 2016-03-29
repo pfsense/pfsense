@@ -340,7 +340,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 				$members = explode(",", strtoupper($bridge['members']));
 				foreach ($members as $member) {
 					if ($member == $ifnames[0]) {
-						$input_errors[] = sprintf(gettext('You cannot set port %1$s to interface %2$s because this interface is a member of %3$s.'), $portname, $member, $portname);
+						$input_errors[] = sprintf(gettext('Cannot set port %1$s to interface %2$s because this interface is a member of %3$s.'), $portname, $member, $portname);
 						break;
 					}
 				}
@@ -506,7 +506,7 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 
 if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
-	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 	echo "<br /></p>\n";
 } elseif ($savemsg) {
 	print_info_box($savemsg, $class);

@@ -120,7 +120,7 @@ if ($_POST) {
 	if (isset($id)) {
 		if ($_POST['tag'] && $_POST['tag'] != $a_vlans[$id]['tag']) {
 			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL) {
-				$input_errors[] = gettext("Interface is assigned and you cannot change the VLAN tag while assigned.");
+				$input_errors[] = gettext("The VLAN tag cannot be changed while the interface is assigned.");
 			}
 		}
 	}
@@ -242,8 +242,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr'],
 	['placeholder' => 'Description']
-))->setWidth(6)->setHelp('You may enter a group description here '.
-	'for your reference (not parsed).');
+))->setWidth(6)->setHelp('A group description may be entered here for administrative reference (not parsed).');
 
 $form->addGlobal(new Form_Input(
 	'vlanif',

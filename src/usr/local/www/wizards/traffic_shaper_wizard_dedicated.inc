@@ -1089,8 +1089,8 @@ function apply_all_chosen_items() {
 
 			$altq->SetInterface($config['ezshaper']['step2']["local{$i}interface"]);
 			$altq->SetScheduler($config['ezshaper']['step2']["local{$i}downloadscheduler"]);
-			//$altq->SetBandwidth($config['ezshaper']['step2']["conn{$i}download"]);
-			//$altq->SetBwscale($config['ezshaper']['step2']["conn{$i}downloadspeed"]);
+			$altq->SetBandwidth($downbw / 1000);
+			$altq->SetBwscale("Kb");
 			$altq->SetEnabled("on");
 			$altq_list_queues[$altq->GetQname()] =& $altq;
 			array_push($tmppath, $config['ezshaper']['step2']["local{$i}interface"]);
@@ -1178,6 +1178,7 @@ function apply_all_chosen_items() {
 			$remainbw = 100 - $remainbw;
 		}
 
+		$downqbw = $downbw;
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1206,6 +1207,8 @@ function apply_all_chosen_items() {
 			//echo "qDefault <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
+
+			$downqbw *= 0.8; /* $downqbw - 20% */
 		}
 
 		if ($sched != "PRIQ") {
@@ -1219,16 +1222,16 @@ function apply_all_chosen_items() {
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
-				$tmpcf['bandwidth'] = floatval($config['ezshaper']['step2']["conn{$i}download"]);
-				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+				$tmpcf['bandwidth'] = $downqbw / 1000;
+				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			else if ($sched == "HFSC") {
 				$tmpcf['upperlimit'] = "on";
-				$tmpcf['upperlimit3'] = floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+				$tmpcf['upperlimit3'] = ($downqbw / 1000) . "Kb";
 				$tmpcf['linkshare'] = "on";
-				$tmpcf['linkshare3'] = floatval($config['ezshaper']['step2']["conn{$i}download"]) . $config['ezshaper']['step2']["conn{$i}downloadspeed"];
-				$tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}download"]);
-				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}downloadspeed"];
+				$tmpcf['linkshare3'] = ($downqbw / 1000) . "Kb";
+				$tmpcf['bandwidth'] =  $downqbw / 1000;
+				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			array_push($tmppath, "qInternet");
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);

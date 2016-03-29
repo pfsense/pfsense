@@ -261,7 +261,7 @@ if (is_array($status)) {
 					<td>
 <?php
 		if ($ikesa['state'] == 'ESTABLISHED') {
-			print('<span style="color:green">');
+			print('<span class="text-success">');
 		} else {
 			print('<span>');
 		}
@@ -304,7 +304,7 @@ if (is_array($status)) {
 
 						<table class="table table-hover table-condensed" id="childsa-<?=$ikeid?>" style="display:none">
 							<thead>
-								<tr class="info">
+								<tr class="bg-info">
 									<th><?=gettext("Local subnets")?></th>
 									<th><?=gettext("Local SPI(s)")?></th>
 									<th><?=gettext("Remote subnets")?></th>
@@ -517,7 +517,7 @@ unset($ipsecconnected, $phase1, $rgmap);
 function show_childsa(id, buttonid) {
 	document.getElementById(buttonid).innerHTML='';
 	aodiv = document.getElementById(id);
-	aodiv.style.display = "block";
+	aodiv.style.display = "table";
 }
 //]]>
 </script>

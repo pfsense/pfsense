@@ -885,6 +885,7 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidth'] =  floatval($config['ezshaper']['step2']["conn{$i}upload"]);
 				$tmpcf['bandwidthtype'] = $config['ezshaper']['step2']["conn{$i}uploadspeed"];
 			}
+
 			array_push($tmppath, "qInternet");
 			$qtmp =& $altq->add_queue($q, $tmpcf, $tmppath, $input_errors);
 			//array_pop($tmppath);
@@ -1166,8 +1167,8 @@ function apply_all_chosen_items() {
 
 		$altq->SetInterface($config['ezshaper']['step2']["local{$i}interface"]);
 		$altq->SetScheduler($config['ezshaper']['step2']["local{$i}downloadscheduler"]);
-		//$altq->SetBandwidth($lanbw/1000);
-		//$altq->SetBwscale("Kb");
+		$altq->SetBandwidth($lanbw/1000);
+		$altq->SetBwscale("Kb");
 		$altq->SetEnabled("on");
 		$altq_list_queues[$altq->GetQname()] =& $altq;
 		array_push($tmppath, $config['ezshaper']['step2']["local{$i}interface"]);
@@ -1257,6 +1258,7 @@ function apply_all_chosen_items() {
 			$remainbw = 100 - $remainbw;
 		}
 
+		$lanqbw = $lanbw;
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1285,6 +1287,8 @@ function apply_all_chosen_items() {
 			//echo "qDefault <br />";
 			//var_dump($input_errors);
 			$qtmp->wconfig();
+
+			$lanqbw *= 0.8; /* lanqbw - 20% */
 		}
 
 		if ($sched != "PRIQ") {
@@ -1298,15 +1302,15 @@ function apply_all_chosen_items() {
 			$tmpcf['ecn'] = "on";
 			$tmpcf['enabled'] = "on";
 			If ($sched == "CBQ") {
-				$tmpcf['bandwidth'] = $lanbw/1000;
+				$tmpcf['bandwidth'] = $lanqbw/1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			else if ($sched == "HFSC") {
-				$tmpcf['linkshare3'] = $lanbw/1000 . "Kb";
-				$tmpcf['upperlimit3'] = $lanbw/1000 . "Kb";
+				$tmpcf['linkshare3'] = ($lanqbw/1000) . "Kb";
+				$tmpcf['upperlimit3'] = ($lanqbw/1000) . "Kb";
 				$tmpcf['upperlimit'] = "on";
 				$tmpcf['linkshare'] = "on";
-				$tmpcf['bandwidth'] =  $lanbw/1000;
+				$tmpcf['bandwidth'] =  $lanqbw/1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			array_push($tmppath, "qInternet");

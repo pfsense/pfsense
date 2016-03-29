@@ -205,9 +205,7 @@ function get_bandwidthtype_scale($type) {
 	return intval($factor);
 }
 
-function get_obj_bandwidth($obj) {
-	$bw = $obj->GetBandwidth();
-	$scale = $obj->GetBWscale();
+function get_bandwidth($bw, $scale, $obj) {
 
 	$pattern= "/(b|Kb|Mb|Gb|%)/";
 	if (!preg_match($pattern, $scale, $match))
@@ -215,7 +213,7 @@ function get_obj_bandwidth($obj) {
 
 	switch ($match[1]) {
 		case '%':
-			$objbw = ($bw / 100) * get_interface_bandwidth($obj);
+			$objbw = ($bw / 100) * get_queue_bandwidth($obj);
 			break;
 		default:
 			$objbw = $bw * get_bandwidthtype_scale($scale);
@@ -225,6 +223,9 @@ function get_obj_bandwidth($obj) {
 	return floatval($objbw);
 }
 
+/*
+ * XXX - unused
+ *
 function get_hfsc_bandwidth($object, $bw) {
 	$pattern= "/[0-9]+/";
 	if (preg_match($pattern, $bw, $match)) {
@@ -236,7 +237,7 @@ function get_hfsc_bandwidth($object, $bw) {
 	if (preg_match($pattern, $bw, $match)) {
 		switch ($match[1]) {
 			case '%':
-				$bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
+				$bw_1 = ($bw_1 / 100) * get_interface_bandwidth($object);
 				break;
 			default:
 				$bw_1 = $bw_1 * get_bandwidthtype_scale($match[0]);
@@ -246,6 +247,27 @@ function get_hfsc_bandwidth($object, $bw) {
 	} else {
 		return 0;
 	}
+}
+*/
+
+function get_queue_bandwidth($obj) {
+	$bw = $obj->GetBandwidth();
+	$scale = $obj->GetBwscale();
+
+	$pattern= "/(b|Kb|Mb|Gb|%)/";
+	if (!preg_match($pattern, $scale, $match))
+		return 0;
+
+	switch ($match[1]) {
+		case '%':
+			$objbw = ($bw / 100) * get_queue_bandwidth($obj->GetParent());
+			break;
+		default:
+			$objbw = $bw * get_bandwidthtype_scale($scale);
+			break;
+	}
+
+	return floatval($objbw);
 }
 
 function get_interface_bandwidth($object) {
@@ -318,15 +340,8 @@ class altq_root_queue {
 	var $queues = array();
 	var $qenabled = false;
 	var $link;
-	var $available_bw; /* in b/s */
 
 	/* Accessor functions */
-	function GetAvailableBandwidth() {
-		return $this->available_bw;
-	}
-	function SetAvailableBandwidth($bw) {
-		$this->available_bw = $bw;
-	}
 	function GetDefaultQueuePresent() {
 		if (!empty($this->queues)) {
 			foreach ($this->queues as $q) {
@@ -425,11 +440,24 @@ class altq_root_queue {
 		return $bwscaletext;
 	}
 
-	function GetTotalBw() {
+	function CheckBandwidth($bw, $bwtype) {
+		$sum = $this->GetTotalBw();
+		if ($sum > $bw * get_bandwidthtype_scale($bwtype))
+			return 1;
+		foreach ($this->queues as $q) {
+			if ($q->CheckBandwidth(0, ''))
+				return 1;
+		}
+
+		return 0;
+	}
+
+	function GetTotalBw($qignore = NULL) {
 		$sum = 0;
 		foreach ($this->queues as $q) {
-			$sum += $q->GetTotalBw();
-			$sum += get_obj_bandwidth($q);
+			if ($qignore != NULL && $qignore == $q)
+				continue;
+			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $this);
 		}
 
 		return $sum;
@@ -453,10 +481,14 @@ class altq_root_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
-		// This is wrong.  Disabled until a proper fix is committed.
-		//$sum = $this->GetTotalBw();
-		//if ($sum > $data['bandwidth'] * get_bandwidthtype_scale($data['bandwidthtype']))
-		//	$input_errors[] = "The sum of child bandwidth is higher than parent.";
+		if ($data['bandwidthtype'] == "%") {
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
+			}
+		}
+		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
+
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
@@ -564,26 +596,9 @@ class altq_root_queue {
 		$q->SetInterface($this->GetInterface());
 		$q->SetEnabled("on");
 		$q->SetParent($this);
-		$q->SetRoot($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
 
-		if (isset($queue['bandwidth'])) {
-			switch ($queue['bandwidthtype']) {
-				case "%":
-					$myBw = $this->GetAvailableBandwidth() * $queue['bandwidth'] / 100;
-					break;
-				default:
-					$myBw = $queue['bandwidth'] * get_bandwidthtype_scale($queue['bandwidthtype']);
-					break;
-			}
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 		$this->queues[$q->GetQname()] = &$q;
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($queue['queue'])) {
@@ -642,10 +657,8 @@ class altq_root_queue {
 	}
 
 	function delete_queue() {
-		foreach ($this->queues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
+		foreach ($this->queues as $q)
 			$q->delete_queue();
-		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -945,25 +958,11 @@ class priq_queue {
 	var $qenabled = "";
 	var $qparent;
 	var $link;
-	var $available_bw; /* in b/s */
-	var $qroot;
 
 	/* This is here to help with form building and building rules/lists */
 	var $subqueues = array();
 
 	/* Accessor functions */
-	function SetRoot($root) {
-		$this->qroot = $root;
-	}
-	function GetRoot() {
-		return $this->qroot;
-	}
-	function GetAvailableBandwidth() {
-		return $this->available_bw;
-	}
-	function SetAvailableBandwidth($bw) {
-		$this->available_bw = $bw;
-	}
 	function SetLink($link) {
 		$this->link = $link;
 	}
@@ -1030,13 +1029,27 @@ class priq_queue {
 	function SetFirsttime($number) {
 		$this->firsttime = $number;
 	}
-	function GetTotalBw() {
-		$sum = 0;
-		if (!isset($this->subqueues) || !is_array($this->subqueues))
-			return 0;
+	function CheckBandwidth($bw, $bwtype) {
+		$parent = $this->GetParent();
+		$sum = $parent->GetTotalBw(($bw > 0) ? $this : NULL);
+		if ($bw > 0)
+			$sum += get_bandwidth($bw, $bwtype, $parent);
+		if ($sum > get_queue_bandwidth($parent))
+			return 1;
+
 		foreach ($this->subqueues as $q) {
-			$sum += $q->GetTotalBw();
-			$sum += get_obj_bandwidth($q);
+			if ($q->CheckBandwidth(0, ''))
+				return 1;
+		}
+
+		return 0;
+	}
+	function GetTotalBw($qignore = NULL) {
+		$sum = 0;
+		foreach ($this->subqueues as $q) {
+			if ($qignore != NULL && $qignore == $q)
+				continue;
+			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $q->GetParent());
 		}
 
 		return $sum;
@@ -1227,11 +1240,13 @@ class priq_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
-		// This is wrong.  Disabled until a proper fix is committed.
-		//$root = $this->GetRoot();
-		//$sum = $root->GetTotalBw();
-		//if ($sum > $root->GetBandwidth() * get_bandwidthtype_scale($root->GetBwscale()))
-		//	$input_errors[] = "The sum of child bandwidth is higher than parent.";
+		if ($data['bandwidthtype'] == "%") {
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
+			}
+		}
+		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
@@ -1754,26 +1769,11 @@ class hfsc_queue extends priq_queue {
 		$q =& new hfsc_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
-		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
 
 		$q->SetEnabled("on");
 		$q->SetLink($path);
-		switch ($q->GetBwscale()) {
-			case "%":
-				$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-				break;
-			default:
-				$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-				break;
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 		$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
@@ -1894,10 +1894,8 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-				$q->delete_queue();
-		}
+		foreach ($this->subqueues as $q)
+			$q->delete_queue();
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -1950,22 +1948,9 @@ class hfsc_queue extends priq_queue {
 
 			if ($data['bandwidthtype'] == "%") {
 				if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
+					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 				}
 			}
-		/*
-			$parent =& $this->GetParent();
-			switch ($data['bandwidthtype']) {
-			case "%":
-				$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-			default:
-				$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-				break;
-			}
-			if ($parent->GetAvailableBandwidth() < $myBw) {
-				$input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
-			}
-		*/
 		}
 
 		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
@@ -2582,23 +2567,8 @@ class cbq_queue extends priq_queue {
 		$q =& new cbq_queue();
 		$q->SetInterface($this->GetInterface());
 		$q->SetParent($this);
-		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
-		switch ($q->GetBwscale()) {
-			case "%":
-				$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-				break;
-			default:
-				$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-				break;
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 		$q->SetEnabled("on");
 		$q->SetLink($path);
@@ -2696,10 +2666,8 @@ class cbq_queue extends priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-				$q->delete_queue();
-		}
+		foreach ($this->subqueues as $q)
+			$q->delete_queue();
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -2715,36 +2683,6 @@ class cbq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-
-
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
-		}
-
-		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
-			}
-		}
-
-/*
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-		case "%":
-			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-			break;
-		default:
-			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-			break;
-		}
-		if ($parent->GetAvailableBandwidth() < floatval($myBw)) {
-			$input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
-		}
- */
 	}
 
 	function ReadConfig(&$q) {
@@ -3025,36 +2963,6 @@ class fairq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-
-
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
-		}
-
-
-		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
-			}
-		}
-
-/*
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-		case "%":
-			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-		default:
-			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-			break;
-		}
-		if ($parent->GetAvailableBandwidth() < floatval($myBw)) {
-			$input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
-		}
-*/
 	}
 
 	function ReadConfig(&$q) {
@@ -3522,7 +3430,6 @@ class dnpipe_class extends dummynet_class {
 		$q->SetEnabled("on");
 		$q->SetPipe($this->GetQname());
 		$q->SetParent($this);
-		$q->SetRoot($this->GetRoot());
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {

@@ -4752,4 +4752,31 @@ function upgrade_147_to_148() {
 		}
 	}
 }
+
+function upgrade_148_to_149() {
+	global $config;
+	global $altq_list_queues;
+
+        if (!isset($config['shaper']['queue']) || !is_array($config['shaper']['queue']))
+                return;
+
+	read_altq_config();
+
+	/* Set root queue bandwidth. */
+	foreach ($altq_list_queues as $altq) {
+		$sum = $altq->GetTotalBw();
+		while ($sum > get_queue_bandwidth($altq)) {
+			if (intval(($sum / 1000) * 1.2) < (1024 * 1024))
+				/* 1Gb where possible. */
+				$bw = 1024 * 1024;
+			else
+				/* Increase by 20% until it fits. */
+				$bw = intval(($sum / 1000) * 1.2);
+			$altq->SetBandwidth($bw);
+			$altq->SetBwscale("Kb");
+			$altq->wconfig();
+			$sum = $altq->GetTotalBw();
+		}
+	}
+}
 ?>

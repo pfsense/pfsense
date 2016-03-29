@@ -395,14 +395,7 @@ if (isset($id) && $a_group[$id]){
 }
 
 $section = new Form_Section('Group Properties');
-/*
-if ($_GET['act'] != "new") {
-	$section->addInput(new Form_StaticText(
-		'Defined by',
-		strtoupper($pconfig['gtype'])
-	));
-}
-*/
+
 $section->addInput($input = new Form_Input(
 	'groupname',
 	'Group name',
@@ -424,7 +417,7 @@ if ($pconfig['gtype'] == "system") {
 		'gtype',
 		'Scope',
 		$pconfig['gtype'],
-		["local" => "Local", "remote" => "Remote"]
+		["local" => gettext("Local"), "remote" => gettext("Remote")]
 	));
 }
 

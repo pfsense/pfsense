@@ -302,7 +302,7 @@ if ($_POST) {
 			}
 			if (is_ipaddr($_POST['monitor'])) {
 				if (($gateway['monitor'] <> "") && ($_POST['monitor'] == $gateway['monitor']) && ($gateway['attribute'] !== "system")) {
-					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. You must choose a different monitor IP.'), $_POST['monitor']);
+					$input_errors[] = sprintf(gettext('The monitor IP address "%s" is already in use. A different monitor IP must be chosen.'), $_POST['monitor']);
 					break;
 				}
 			}
@@ -698,7 +698,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for reference (not parsed).');
 
 // Add a button to provide access to the advanced fields
 $btnadv = new Form_Button(
@@ -845,8 +845,8 @@ $section->addInput(new Form_StaticText(
 	gettext('Rounding up to the nearest whole number will yield the resolution of loss ' .
 		'reporting in percent. The default values provide a resolution of 1%.') .
 	'<br/><br/>' .
-	gettext('The default settings are recommended for most use cases. However if you ' .
-		'change the settings, please observe the following restrictions:') .
+	gettext('The default settings are recommended for most use cases. However if ' .
+		'changing the settings, please observe the following restrictions:') .
 	'<br/><br/>' .
 	gettext('- The time period must be greater than twice the probe interval plus the loss ' .
 		'interval. This guarantees there is at least one completed probe at all times. ') .

@@ -1227,9 +1227,9 @@ function apply_all_chosen_items() {
 			}
 			else if ($sched == "HFSC") {
 				$tmpcf['upperlimit'] = "on";
-				$tmpcf['upperlimit3'] = $downqbw / 1000 . "Kb";
+				$tmpcf['upperlimit3'] = ($downqbw / 1000) . "Kb";
 				$tmpcf['linkshare'] = "on";
-				$tmpcf['linkshare3'] = $downqbw / 1000 . "Kb";
+				$tmpcf['linkshare3'] = ($downqbw / 1000) . "Kb";
 				$tmpcf['bandwidth'] =  $downqbw / 1000;
 				$tmpcf['bandwidthtype'] = "Kb";
 			}

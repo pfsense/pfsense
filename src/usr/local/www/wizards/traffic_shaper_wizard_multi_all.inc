@@ -1306,8 +1306,8 @@ function apply_all_chosen_items() {
 				$tmpcf['bandwidthtype'] = "Kb";
 			}
 			else if ($sched == "HFSC") {
-				$tmpcf['linkshare3'] = $lanqbw/1000 . "Kb";
-				$tmpcf['upperlimit3'] = $lanqbw/1000 . "Kb";
+				$tmpcf['linkshare3'] = ($lanqbw/1000) . "Kb";
+				$tmpcf['upperlimit3'] = ($lanqbw/1000) . "Kb";
 				$tmpcf['upperlimit'] = "on";
 				$tmpcf['linkshare'] = "on";
 				$tmpcf['bandwidth'] =  $lanqbw/1000;

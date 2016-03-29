@@ -4766,7 +4766,7 @@ function upgrade_148_to_149() {
 	foreach ($altq_list_queues as $altq) {
 		$sum = $altq->GetTotalBw();
 		while ($sum > get_queue_bandwidth($altq)) {
-			if (intval(($sum / 1000) * 1.2) < 1024 * 1024)
+			if (intval(($sum / 1000) * 1.2) < (1024 * 1024))
 				/* 1Gb where possible. */
 				$bw = 1024 * 1024;
 			else

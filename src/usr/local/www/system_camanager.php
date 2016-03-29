@@ -523,7 +523,7 @@ $section->addInput(new Form_Textarea(
 	'Certificate Private Key (optional)',
 	$pconfig['key']
 ))->setHelp('Paste the private key for the above certificate here. This is '.
-	'optional in most cases, but required if you need to generate a '.
+	'optional in most cases, but is required when generating a '.
 	'Certificate Revocation List (CRL).');
 
 $section->addInput(new Form_Input(

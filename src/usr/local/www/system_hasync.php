@@ -171,8 +171,8 @@ $section->addInput(new Form_Select(
 	$iflist
 ))->setHelp('If Synchronize States is enabled this interface will be used for communication.<br />' .
 			'We recommend setting this to an interface other than LAN! A dedicated interface works the best.<br />' .
-			'You must define an IP on each machine participating in this failover group.<br />' .
-			'You must have an IP assigned to the interface on any participating sync nodes.');
+			'An IP must be defined on each machine participating in this failover group.<br />' .
+			'An IP must be assigned to the interface on any participating sync nodes.');
 
 $section->addInput(new Form_Input(
 	'pfsyncpeerip',
@@ -201,7 +201,7 @@ $section->addInput(new Form_Input(
 	'Remote System Username',
 	'text',
 	$pconfig['username']
-))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing your configuration.<br />' .
+))->setHelp('Enter the webConfigurator username of the system entered above for synchronizing the configuration.<br />' .
 			'Do not use the Synchronize Config to IP and username option on backup cluster members!');
 
 $section->addPassword(new Form_Input(
@@ -209,7 +209,7 @@ $section->addPassword(new Form_Input(
 	'Remote System Password',
 	'password',
 	$pconfig['passwordfld']
-))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing your configuration.<br />' .
+))->setHelp('Enter the webConfigurator password of the system entered above for synchronizing the configuration.<br />' .
 			'Do not use the Synchronize Config to IP and password option on backup cluster members!');
 
 $group = new Form_MultiCheckboxGroup('Select options to sync');

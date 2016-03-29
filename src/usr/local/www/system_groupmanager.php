@@ -88,6 +88,7 @@ $act = (isset($_GET['act']) ? $_GET['act'] : '');
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
 function admin_groups_sort() {
 	global $a_group;
 
@@ -246,6 +247,8 @@ if (isset($_POST['save'])) {
 		header("Location: system_groupmanager.php");
 		exit;
 	}
+
+	$pconfig['name'] = $_POST['groupname'];
 }
 
 function build_priv_table() {
@@ -287,11 +290,13 @@ $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
 }
+
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
+
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }

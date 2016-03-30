@@ -1530,7 +1530,7 @@ setup_pkg_repo() {
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
 	sed \
-		-e "s/%%ARCH%%/${_arch}_${_target_arch}/" \
+		-e "s/%%ARCH%%/${_target_arch}/" \
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
 		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \

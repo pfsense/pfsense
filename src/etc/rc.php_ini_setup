@@ -74,8 +74,7 @@ else
 	fi
 fi
 
-/usr/bin/sort -u /usr/local/etc/php/extensions.ini > /tmp/extensions.ini
-/bin/mv /tmp/extensions.ini /usr/local/etc/php/extensions.ini
+/usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
 
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
@@ -133,6 +132,8 @@ PHPMODULES="$PHPMODULES json"
 PHPMODULES="$PHPMODULES bcmath"
 # filter
 PHPMODULES="$PHPMODULES filter"
+# rrd
+PHPMODULES="$PHPMODULES rrd"
 
 PHP_ZEND_MODULES=""
 
@@ -356,6 +357,7 @@ for EXT in $PHPMODULESLC; do
 	for LM in $LOADED_MODULES; do
 		if [ "$EXT" = "$LM" ]; then
 			SHOULDREMOVE="false"
+			break
 		fi
 	done
 	# Handle low memory situations

@@ -65,10 +65,14 @@ table.sortable-theme-bootstrap {
     color: #e0e0e0;
 }
 
-.breadcrumb {
+/** Page header with title and breadcrumb */
+.header {
     background-color: #303030;
     box-shadow: 1px 1px 3px #151515;
-    font-size: 22px;
+}
+
+.breadcrumb {
+    background-color: #303030;
 }
 
 .breadcrumb>li+li:before {

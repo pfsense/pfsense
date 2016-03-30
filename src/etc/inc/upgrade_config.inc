@@ -4729,14 +4729,7 @@ function upgrade_147_to_148() {
 		foreach ($config['system']['group'] as $idx => $grp) {
 			if (strstr($grp['name'], " ")) {
 				$cleargroups = true;
-				$newgrpname = str_replace(" ", "_", $grp['name']);
-				// In the unlikely event that there is already a group with this name
-				// just replace the whole thing with a unique string
-				if (in_array($newgrpname, $exgrps)) {
-					$config['system']['group'][$idx]['name'] = uniqid();
-				} else {
-					$config['system']['group'][$idx]['name'] = $newgrpname;
-				}
+				$config['system']['group'][$idx]['scope'] = "remote";
 			}
 		}
 
@@ -4766,16 +4759,31 @@ function upgrade_148_to_149() {
 	foreach ($altq_list_queues as $altq) {
 		$sum = $altq->GetTotalBw();
 		while ($sum > get_queue_bandwidth($altq)) {
-			if (intval(($sum / 1000) * 1.2) < (1024 * 1024))
+			if (intval(($sum / 1000) * 1.2) < (1024 * 1024)) {
 				/* 1Gb where possible. */
 				$bw = 1024 * 1024;
-			else
+			} else {
 				/* Increase by 20% until it fits. */
 				$bw = intval(($sum / 1000) * 1.2);
+			}
 			$altq->SetBandwidth($bw);
 			$altq->SetBwscale("Kb");
 			$altq->wconfig();
 			$sum = $altq->GetTotalBw();
+		}
+	}
+}
+
+function upgrade_149_to_150() {
+	global $config;
+
+	if (is_array($config['dhcpdv6'])) {
+                foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (isset($dhcpdv6['rainterface'])) {
+				if (strstr($dhcpdv6['rainterface'], "_vip")) {
+					$dhcpdv6['rainterface'] = get_vip_from_oldcarp($dhcpdv6['rainterface']);
+				}
+			}
 		}
 	}
 }

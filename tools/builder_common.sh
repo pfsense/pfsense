@@ -152,6 +152,26 @@ core_pkg_create() {
 		rm -f ${_plist}.tmp ${plist}.exclude
 	fi
 
+	# Add license information
+	local _portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${_metadir}/+MANIFEST)
+	local _licenses_dir="/usr/local/share/licenses/${_portname}-${_version}"
+	mkdir -p ${_root}${_licenses_dir}
+	cp ${BUILDER_ROOT}/license.txt ${_root}${_licenses_dir}/ESF
+	echo "This package has a single license: ESF (Electric Sheep Fencing License)." \
+		> ${_root}${_licenses_dir}/LICENSE
+	cat <<EOF >${_root}${_licenses_dir}/catalog.mk
+_LICENSE=ESF
+_LICENSE_NAME=Electric Sheep Fencing License
+_LICENSE_PERMS=dist-mirror dist-sell pkg-mirror pkg-sell auto-accept
+_LICENSE_GROUPS=
+_LICENSE_DISTFILES=
+EOF
+	cat <<EOF >>${_plist}
+${_licenses_dir}/catalog.mk
+${_licenses_dir}/LICENSE
+${_licenses_dir}/ESF
+EOF
+
 	mkdir -p ${CORE_PKG_REAL_PATH}/All
 	if ! pkg create -o ${CORE_PKG_REAL_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
 		echo ">>> ERROR: Error building package ${_template} ${_flavor}"

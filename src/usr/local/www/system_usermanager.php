@@ -660,7 +660,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'Full name',
 		'text',
 		htmlspecialchars($pconfig['descr'])
-	))->setHelp('User\'s full name, for your own information only');
+	))->setHelp('User\'s full name, for administrative information only');
 
 	if ($ro) {
 		$input->setDisabled();

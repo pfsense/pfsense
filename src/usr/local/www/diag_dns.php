@@ -99,7 +99,9 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 				if (!$isfirst) {
 					$addresses .= " ";
 				}
-				$addresses .= rtrim($re) . "/32";
+				$re = rtrim($re);
+				$sn = is_ipaddrv6($re) ? '/128' : '/32';
+				$addresses .= $re . $sn;
 				$isfirst = false;
 			}
 		}

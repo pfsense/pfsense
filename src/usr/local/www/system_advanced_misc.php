@@ -293,11 +293,19 @@ if ($_POST) {
 		$config['system']['use_mfs_var_size'] = $_POST['use_mfs_var_size'];
 
 		if (isset($_POST['rrdbackup'])) {
-			$config['system']['rrdbackup'] = $_POST['rrdbackup'];
+			if (($_POST['rrdbackup'] > 0) && ($_POST['rrdbackup'] <= 24)) {
+				$config['system']['rrdbackup'] = intval($_POST['rrdbackup']);
+			} else {
+				unset($config['system']['rrdbackup']);
+			}
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
 		}
 		if (isset($_POST['dhcpbackup'])) {
-			$config['system']['dhcpbackup'] = $_POST['dhcpbackup'];
+			if (($_POST['dhcpbackup'] > 0) && ($_POST['dhcpbackup'] <= 24)) {
+				$config['system']['dhcpbackup'] = intval($_POST['dhcpbackup']);
+			} else {
+				unset($config['system']['dhcpbackup']);
+			}
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 		}
 
@@ -586,7 +594,7 @@ $section->addInput(new Form_Input(
 	'Periodic RRD Backup',
 	'number',
 	$config['system']['rrdbackup'],
-	['min' => 1, 'max' => 24, 'placeholder' => 'frequency between 1 and 24 hours']
+	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
 ))->setHelp('This will periodically backup the RRD data so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');
@@ -596,7 +604,7 @@ $section->addInput(new Form_Input(
 	'Periodic DHCP Leases Backup',
 	'number',
 	$config['system']['dhcpbackup'],
-	['min' => 1, 'max' => 24, 'placeholder' => 'frequency between 1 and 24 hours']
+	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
 ))->setHelp('This will periodically backup the DHCP leases so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');

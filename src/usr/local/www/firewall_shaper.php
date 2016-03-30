@@ -200,7 +200,7 @@ if ($_GET) {
 		} else if ($addnewaltq) {
 			$q = new altq_root_queue();
 		} else {
-			$input_errors[] = gettext("Could not create new queue/discipline! Did you remember to apply any recent changes?");
+			$input_errors[] = gettext("Could not create new queue/discipline! Any recent changes may need to be applied first.");
 		}
 
 		if ($q) {
@@ -429,7 +429,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();

@@ -257,7 +257,7 @@ if ($_POST) {
 
 	if ($addnewpipe) {
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter");
 		} else {
 			$dnpipe =& new dnpipe_class();
 
@@ -283,7 +283,7 @@ if ($_POST) {
 		}
 	} else if ($parentqueue) { /* Add a new queue */
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter");
 		} else if ($dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);
@@ -408,7 +408,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();

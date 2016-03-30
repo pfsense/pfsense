@@ -285,8 +285,8 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-<?php print_info_box(gettext('Depending on the way the WAN connection is setup, a ') . '<a href="firewall_virtual_ip.php">' .
-			   gettext("Virtual IP") . '</a>' . 'may also be needed.' . '<br />' .
+<?php print_info_box(gettext('Depending on the way the WAN connection is setup, this may also need a ') . '<a href="firewall_virtual_ip.php">' .
+			   gettext("Virtual IP") . '</a>' . '<br />' .
 			   gettext('If a 1:1 NAT entry is added for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
 					   'the WAN IP address is used, any services on this system (IPsec, OpenVPN server, etc.) ' .

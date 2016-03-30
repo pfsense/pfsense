@@ -309,7 +309,7 @@ if ($_POST) {
 	/* if user enters an alias and selects "network" then disallow. */
 	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
 	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
-		$input_errors[] = gettext("Alias entries must specifie a single host or alias.");
+		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {

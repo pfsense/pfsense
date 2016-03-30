@@ -1853,7 +1853,7 @@ setup_pkg_repo() {
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
 	sed \
-		-e "s/%%ARCH%%/${_arch}_${_target_arch}/" \
+		-e "s/%%ARCH%%/${_target_arch}/" \
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
 		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
@@ -2216,18 +2216,18 @@ poudriere_create_patch() {
 
 poudriere_possible_archs() {
 	local _arch=$(uname -m)
-	local _archs="i386.i386"
+	local _archs="i386"
 
 	# If host is amd64, we'll create both repos, and if possible armv6
 	if [ "${_arch}" = "amd64" ]; then
-		_archs="amd64.amd64 ${_archs}"
+		_archs="amd64 ${_archs}"
 
 		if [ -f /usr/local/bin/qemu-arm-static ]; then
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
 			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} arm.armv6"
+				_archs="${_archs} armv6"
 			fi
 		fi
 	fi

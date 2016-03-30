@@ -2028,7 +2028,7 @@ events.push(function() {
 		} else if (val == 'synproxy state') {
 			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
 		} else if (val == 'none') {
-			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if for doing advanced queueing in certain situations';
+			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful for doing advanced queueing in certain situations';
 		}
 
 		dispstr += '</span>';

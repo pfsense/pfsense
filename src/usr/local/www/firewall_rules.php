@@ -874,7 +874,7 @@ if ($seprows[$nrules]) {
 	if ("FloatingRules" != $if) {
 		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
-			gettext("This means that if block rules are used, it is important to pay attention to " .
+			gettext("This means that if block rules are used, it is important to pay attention " .
 			"to the rule order. Everything that isn't explicitly passed is blocked " .
 			"by default. "));
 	} else {

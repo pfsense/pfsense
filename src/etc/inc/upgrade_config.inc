@@ -4773,4 +4773,18 @@ function upgrade_148_to_149() {
 		}
 	}
 }
+
+function upgrade_149_to_150() {
+	global $config;
+
+	if (is_array($config['dhcpdv6'])) {
+                foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (isset($dhcpdv6['rainterface'])) {
+				if (strstr($dhcpdv6['rainterface'], "_vip")) {
+					$dhcpdv6['rainterface'] = get_vip_from_oldcarp($dhcpdv6['rainterface']);
+				}
+			}
+		}
+	}
+}
 ?>

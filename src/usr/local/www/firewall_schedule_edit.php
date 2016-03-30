@@ -409,7 +409,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed). ');
+))->setHelp('A description may be entered here for administrative reference (not parsed). ');
 
 $section->addInput(new Form_Select(
 	'monthsel',
@@ -462,7 +462,7 @@ $section->addInput(new Form_Input(
 	'Time range description',
 	'text',
 	$pconfig['timerangedescr']
-))->setHelp('You may enter a description here for your reference (not parsed). ');
+))->setHelp('A description may be entered here for administrative reference (not parsed). ');
 
 $group = new Form_Group(null);
 
@@ -844,7 +844,7 @@ function update_month() {
 
 function checkForRanges() {
 	if (daysSelected != "") {
-		alert("You have not saved the specified time range. Please click 'Add Time' button to save the time range.");
+		alert("The specified time range has not been saved. Please click 'Add Time' button to save the time range.");
 		return false;
 	} else {
 		return true;
@@ -1084,7 +1084,7 @@ function addTimeRange() {
 
 	} else {
 		//no days were selected, alert user
-		alert ("You must select at least 1 day before adding time");
+		alert ("At least 1 day must be selected before adding time");
 	}
 }
 

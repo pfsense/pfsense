@@ -309,7 +309,7 @@ if ($_POST) {
 	/* if user enters an alias and selects "network" then disallow. */
 	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
 	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
-		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+		$input_errors[] = gettext("Alias entries must specifie a single host or alias.");
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {
@@ -673,7 +673,7 @@ $section->addInput(new Form_Checkbox(
 	'No RDR (NOT)',
 	'Disable redirection for traffic matching this rule',
 	$pconfig['nordr']
-))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
+))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 
@@ -796,8 +796,8 @@ $group->add(new Form_Input(
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the source port or port range for this rule. This is usually random and almost never ' .
-				'equal to the destination port range (and should usually be \'any\'). You can leave the \'to\' field ' .
-				'empty if you only want to filter a single port.');
+				'equal to the destination port range (and should usually be \'any\'). The \'to\' field ' .
+				'may be left empty if only filtering a single port.');
 
 $section->add($group);
 
@@ -857,7 +857,7 @@ $group->add(new Form_Input(
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the port or port range for the destination of the packet for this mapping. ' .
-				'You can leave the \'to\' field empty if you only want to map a single port ');
+				'The \'to\' field may be left empty if only mapping a single port. ');
 
 $section->add($group);
 
@@ -865,7 +865,7 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
 	$pconfig['localip']
-))->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
+))->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Enter the internal IP address of the server on which to map the ports.' . '<br />' .
 			'e.g.: 192.168.1.12');
 
 $group = new Form_Group('Redirect target port');
@@ -896,7 +896,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 
 $section->addInput(new Form_Checkbox(

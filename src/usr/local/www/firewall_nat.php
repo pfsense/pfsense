@@ -212,7 +212,7 @@ if ($savemsg) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('You must apply the changes in order for them to take effect.'));
+					gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();
@@ -506,7 +506,7 @@ events.push(function() {
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (!saving && dirty) {
-			return ("<?=gettext('You have moved one or more Port Forward rules but have not yet saved')?>");
+			return ("<?=gettext('One or more Port Forward rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
 		}

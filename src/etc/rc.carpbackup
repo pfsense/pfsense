@@ -98,6 +98,22 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'
 	}
 }
 
+/* Reconfigure radvd when necessary */
+if (isset($config['dhcpdv6']) && is_array($config['dhcpdv6'])) {
+	$rafound = false;
+	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		foreach ($vips as $vip) {
+			if ($dhcpv6ifconf['rainterface'] == "_vip{$vip['uniqid']}") {
+				log_error("Stopping radvd instance on {$friendly_descr} because of transition to CARP master.");
+				$rafound = true;
+			}
+		}
+	}
+	if ($rafound) {
+		services_radvd_configure();
+	}
+}
+
 $pluginparams = array();
 $pluginparams['type'] = 'carp';
 $pluginparams['event'] = 'rc.carpbackup';

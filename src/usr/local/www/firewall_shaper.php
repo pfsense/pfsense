@@ -260,27 +260,6 @@ if ($_POST) {
 	if ($addnewaltq) {
 		$altq =& new altq_root_queue();
 		$altq->SetInterface($interface);
-
-		switch ($altq->GetBwscale()) {
-				case "Mb":
-					$factor = 1000 * 1000;
-					break;
-				case "Kb":
-					$factor = 1000;
-					break;
-				case "b":
-					$factor = 1;
-					break;
-				case "Gb":
-					$factor = 1000 * 1000 * 1000;
-					break;
-				case "%": /* We don't use it for root_XXX queues. */
-				default: /* XXX assume Kb by default. */
-					$factor = 1000;
-					break;
-			}
-
-		$altq->SetAvailableBandwidth($altq->GetBandwidth() * $factor);
 		$altq->ReadConfig($_POST);
 		$altq->validate_input($_POST, $input_errors);
 		if (!$input_errors) {

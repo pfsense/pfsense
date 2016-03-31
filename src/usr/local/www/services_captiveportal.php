@@ -1022,7 +1022,7 @@ $section->addInput(new Form_Select(
 	'MAC address format',
 	$pconfig['radmac_format'],
 	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
-))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if the username format also needs changed for ' .
+))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if the username format also needs to be changed for ' .
 			'RADIUS MAC authentication.' . '<br />' .
 			'Default: 00:11:22:33:44:55' . '<br />' .
 			'Single dash: 001122-334455' . '<br />' .

@@ -280,7 +280,7 @@ endif;
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
 	"They may be referenced directly from the portal page HTML code using relative paths. " .
 	"Example: An image uploaded with the name 'captiveportal-test.jpg' using the " .
-	"file manager. Can then be included in the portal page like this:")?><br /><br />
+	"file manager can then be included in the portal page like this:")?><br /><br />
 	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br />
 	<?=gettext("In addition, .php files can also be uploaded for execution.	The filename can be passed " .
 	"to the custom page from the initial page by using text similar to:")?><br /><br />

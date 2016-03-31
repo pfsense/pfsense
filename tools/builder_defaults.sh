@@ -135,6 +135,8 @@ if [ "${_cur_git_repo_branch_or_tag}" = "HEAD" ]; then
 else
 	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
 fi
+# Use vX_Y instead of RELENG_X_Y for poudriere to make it shorter
+POUDRIERE_BRANCH=$(echo "${GIT_REPO_BRANCH_OR_TAG}" | sed 's,RELENG_,v,')
 
 GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e 's,/[^/]*$,,')
 
@@ -267,7 +269,7 @@ echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
-export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE_BRANCH}"}
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/factory-ports.git"}
@@ -279,7 +281,7 @@ export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/usr/local/www/beta"}
 export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
-export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
+export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${POUDRIERE_BRANCH}"}
 
 # Command used to sign pkg repo
 export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
@@ -310,7 +312,7 @@ esac
 
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
-export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}
+export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}
 export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 

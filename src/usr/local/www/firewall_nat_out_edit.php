@@ -607,10 +607,9 @@ $group->addClass('natportgrp');
 $group->add(new Form_Input(
 	'natport',
 	null,
-	'number',
-	$pconfig['natport'],
-	['min' => '1', 'max' => '65536']
-))->setHelp('Enter the source port for the outbound NAT mapping.');
+	'text',
+	$pconfig['natport']
+))->setHelp('Enter the source port or range for the outbound NAT mapping.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',

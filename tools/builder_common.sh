@@ -1937,10 +1937,8 @@ poudriere_jail_name() {
 		return 1
 	fi
 
-	# Poudriere doesn't like periods in jail names
-	_jail_arch=$(echo "${_jail_arch}" | tr '.' '_')
-
-	echo "${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${_jail_arch}"
+	# Remove arch
+	echo "${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${_jail_arch##*.}"
 }
 
 poudriere_rename_ports() {

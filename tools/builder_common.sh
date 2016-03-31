@@ -1893,18 +1893,18 @@ poudriere_create_patch() {
 
 poudriere_possible_archs() {
 	local _arch=$(uname -m)
-	local _archs="i386"
+	local _archs="i386.i386"
 
 	# If host is amd64, we'll create both repos, and if possible armv6
 	if [ "${_arch}" = "amd64" ]; then
-		_archs="amd64 ${_archs}"
+		_archs="amd64.amd64 ${_archs}"
 
 		if [ -f /usr/local/bin/qemu-arm-static ]; then
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
 			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} armv6"
+				_archs="${_archs} arm.armv6"
 			fi
 		fi
 	fi

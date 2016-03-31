@@ -248,7 +248,7 @@ foreach ($a_dyndns as $dyndns):
 
 <div>
 	<?=gettext('IP addresses appearing in <span class="text-success">green</span> are up to date with Dynamic DNS provider. ')?>
-	<?=gettext('You can force an update for an IP address on the edit page for that service.')?>
+	<?=gettext('An update for an IP address can be forced on the edit page for that service.')?>
 </div>
 
 <?php

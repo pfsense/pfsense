@@ -126,7 +126,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'descr',
 	'Zone description'
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 

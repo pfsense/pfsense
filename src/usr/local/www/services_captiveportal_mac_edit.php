@@ -139,7 +139,7 @@ if ($_POST) {
 			$iflist = get_interface_list();
 			foreach ($iflist as $if) {
 				if ($_POST['mac'] == strtolower($if['mac'])) {
-					$input_errors[] = sprintf(gettext("The MAC address %s belongs to a local interface, you cannot use it here."), $_POST['mac']);
+					$input_errors[] = sprintf(gettext("The MAC address %s belongs to a local interface. It cannot be used here."), $_POST['mac']);
 					break;
 				}
 			}
@@ -264,7 +264,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed)');
+))->setHelp('A description may be entered here for administrative reference (not parsed)');
 
 $section->addInput(new Form_Input(
 	'bw_up',

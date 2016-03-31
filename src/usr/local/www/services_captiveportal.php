@@ -640,7 +640,7 @@ $section->addInput(new Form_Input(
 	'Pre-authentication redirect URL',
 	'text',
 	$pconfig['preauthurl']
-))->setHelp('Use this field to set $PORTAL_REDIRURL$ variable which can be accessed using your custom captive portal index.php page or error pages.');
+))->setHelp('Use this field to set $PORTAL_REDIRURL$ variable which can be accessed using the custom captive portal index.php page or error pages.');
 
 $section->addInput(new Form_Input(
 	'redirurl',
@@ -679,7 +679,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Pass-through MAC automatic additions',
 	$pconfig['passthrumacadd']
 ))->setHelp(sprintf('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
-			'never have to authenticate again. To remove the passthrough MAC entry you either have to log in and remove it manually from the ' .
+			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
 			'%s or send a POST from another system.'  .
 			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>'));
 
@@ -689,7 +689,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Pass-through MAC automatic addition with username',
 	$pconfig['passthrumacaddusername']
 ))->setHelp(sprintf('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
-			'To remove the passthrough MAC entry you either have to log in and remove it manually from the %s or send a POST from another system.',
+			'To remove the passthrough MAC entry either log in and remove it manually from the %s or send a POST from another system.',
 			'<a href="services_captiveportal_mac.php">MAC tab</a>'));
 
 $section->addInput(new Form_Checkbox(
@@ -1022,7 +1022,7 @@ $section->addInput(new Form_Select(
 	'MAC address format',
 	$pconfig['radmac_format'],
 	['default' => 'Default', 'singledash' => gettext('Single dash'), 'ietf' => 'IETF', 'cisco' => 'Cisco', 'unformatted' => gettext('Unformatted')]
-))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if you also need to change the username format for ' .
+))->setHelp('This option changes the MAC address format used in the whole RADIUS system. Change this if the username format also needs changed for ' .
 			'RADIUS MAC authentication.' . '<br />' .
 			'Default: 00:11:22:33:44:55' . '<br />' .
 			'Single dash: 001122-334455' . '<br />' .
@@ -1048,7 +1048,7 @@ $section->addInput(new Form_Input(
 	'HTTPS server name',
 	'text',
 	$pconfig['httpsname']
-))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in your certificate ' .
+))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in the certificate ' .
 			'(otherwise, the client browser will most likely display a security warning). ' .
 			'Make sure captive portal clients can resolve this name in DNS and verify on the client that the IP resolves to the correct interface IP on pfSense.');
 
@@ -1057,7 +1057,7 @@ $section->addInput(new Form_Select(
 	'SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
-))->setHelp('If no certificates are defined, you may define one here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');
+))->setHelp('If no certificates are defined, one may be defined here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');
 
 $section->addInput(new Form_Checkbox(
 	'nohttpsforwards',
@@ -1132,8 +1132,8 @@ $section->addInput(new Form_Input(
 	'Auth error page contents',
 	'file',
 	$pconfig['errfile']
-))->setHelp('The contents of the HTML/PHP file that you upload here are displayed when an authentication error occurs. ' .
-			'You may include "$PORTAL_MESSAGE$", which will be replaced by the error or reply messages from the RADIUS ' .
+))->setHelp('The contents of the HTML/PHP file that is uploaded here are displayed when an authentication error occurs. ' .
+			'It may include "$PORTAL_MESSAGE$", which will be replaced by the error or reply messages from the RADIUS ' .
 			'server, if any.')->addClass('btn btn-info btn-sm');
 
 if ($pconfig['page']['errtext']) {
@@ -1166,7 +1166,7 @@ $section->addInput(new Form_Input(
 	'Logout page contents',
 	'file',
 	$pconfig['logoutfile']
-))->setHelp('The contents of the HTML/PHP file that you upload here are displayed on authentication success when the logout popup is enabled.')->addClass('btn btn-info btn-sm');
+))->setHelp('The contents of the HTML/PHP file that is uploaded here are displayed on authentication success when the logout popup is enabled.')->addClass('btn btn-info btn-sm');
 
 if ($pconfig['page']['logouttext']) {
 	$group = new Form_Group('Current Logout Page');
@@ -1202,7 +1202,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 print($form);
 
-print_info_box(gettext('Don\'t forget to enable the DHCP server on your captive portal interface! ' .
+print_info_box(gettext('Don\'t forget to enable the DHCP server on the captive portal interface! ' .
 					   'Make sure that the default/maximum DHCP lease time is higher than the hard timeout entered on this page. ' .
 					   'Also, the DNS Forwarder or Resolver must be enabled for DNS lookups by unauthenticated clients to work.'));
 

@@ -2187,7 +2187,7 @@ pkg_repo_rsync() {
 }
 
 poudriere_create_patch() {
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${GIT_REPO_BRANCH_OR_TAG}.patch"
+	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
 
 	if [ -z "${FREEBSD_PARENT_BRANCH}" ]; then
 		echo ">>> ERROR: FREEBSD_PARENT_BRANCH is not set"
@@ -2216,18 +2216,18 @@ poudriere_create_patch() {
 
 poudriere_possible_archs() {
 	local _arch=$(uname -m)
-	local _archs="i386"
+	local _archs="i386.i386"
 
 	# If host is amd64, we'll create both repos, and if possible armv6
 	if [ "${_arch}" = "amd64" ]; then
-		_archs="amd64 ${_archs}"
+		_archs="amd64.amd64 ${_archs}"
 
 		if [ -f /usr/local/bin/qemu-arm-static ]; then
 			# Make sure binmiscctl is ok
 			/usr/local/etc/rc.d/qemu_user_static forcestart >/dev/null 2>&1
 
 			if binmiscctl lookup armv6 >/dev/null 2>&1; then
-				_archs="${_archs} armv6"
+				_archs="${_archs} arm.armv6"
 			fi
 		fi
 	fi
@@ -2260,10 +2260,8 @@ poudriere_jail_name() {
 		return 1
 	fi
 
-	# Poudriere doesn't like periods in jail names
-	_jail_arch=$(echo "${_jail_arch}" | tr '.' '_')
-
-	echo "${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${_jail_arch}"
+	# Remove arch
+	echo "${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${_jail_arch##*.}"
 }
 
 poudriere_rename_ports() {
@@ -2352,7 +2350,7 @@ poudriere_create_ports_tree() {
 poudriere_init() {
 	local _error=0
 	local _archs=$(poudriere_possible_archs)
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${GIT_REPO_BRANCH_OR_TAG}.patch"
+	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
@@ -2484,7 +2482,7 @@ EOF
 
 poudriere_update_jails() {
 	local _archs=$(poudriere_possible_archs)
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${GIT_REPO_BRANCH_OR_TAG}.patch"
+	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
@@ -2576,7 +2574,7 @@ poudriere_bulk() {
 			_ref_bulk="${POUDRIERE_BULK}"
 		fi
 
-		_bulk=${SCRATCHDIR}/poudriere_bulk.${GIT_REPO_BRANCH_OR_TAG}
+		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_ref_bulk} > ${_bulk}
 
 		if ! poudriere bulk -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME}; then

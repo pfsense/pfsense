@@ -266,7 +266,7 @@ display_top_tabs($tab_array);
 	}
 
 	if (is_subsystem_dirty('ipsec')) {
-		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 	}
 ?>
 
@@ -557,7 +557,7 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-	<?php print_info_box(sprintf(gettext("You can check your IPsec status at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
+	<?php print_info_box(sprintf(gettext("The IPsec status can be checked at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
 	sprintf(gettext("IPsec debug mode can be enabled at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
 	sprintf(gettext("IPsec can be set to prefer older SAs at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false); ?>
 </div>

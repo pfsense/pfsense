@@ -328,7 +328,7 @@ $section->addInput(new Form_Checkbox(
 	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication.' .
 	'This is very similar to Aggressive Mode, and has the same security implications: ' .
 	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload.' .
-	'It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).'
+	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
 );
 
 $section->addInput(new Form_Checkbox(

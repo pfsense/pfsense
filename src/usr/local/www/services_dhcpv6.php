@@ -504,7 +504,7 @@ if ($_GET['act'] == "del") {
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
 
-if (!empty($if) && !$dhcrelay_enabled && isset($iflist[$if])) {
+if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
 	$pgtitle[] = gettext("DHCPv6 Server");
 }
@@ -522,8 +522,6 @@ if ($savemsg) {
 
 if ($dhcrelay_enabled) {
 	print_info_box(gettext("DHCPv6 Relay is currently enabled. Cannot enable the DHCPv6 Server service while the DHCPv6 Relay is enabled on any interface."), 'danger', false);
-	include("foot.inc");
-	exit;
 }
 
 if (is_subsystem_dirty('staticmaps')) {
@@ -589,6 +587,11 @@ $tab_array = array();
 $tab_array[] = array(gettext("DHCPv6 Server"),		 true,	"services_dhcpv6.php?if={$if}");
 $tab_array[] = array(gettext("Router Advertisements"), false, "services_router_advertisements.php?if={$if}");
 display_top_tabs($tab_array, false, 'nav nav-tabs');
+
+if ($dhcrelay_enabled) {
+	include("foot.inc");
+	exit;
+}
 
 $form = new Form();
 

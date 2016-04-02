@@ -255,10 +255,6 @@ $clients = openvpn_get_active_clients();
 <?php
 }
 
-if ($DisplayNote) {
-	echo "<br /><b>". gettext("NOTE") . ":</b> ". gettext("You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen");
-}
-
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	echo gettext("No OpenVPN instances defined");
 }

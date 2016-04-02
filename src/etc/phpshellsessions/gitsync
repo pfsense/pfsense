@@ -1,4 +1,4 @@
-/*   cvs_sync
+<?/*   cvs_sync
  *   Written by Scott Ullrich
  *   (C)2005-2007 Scott Ullrich
  *   (C)2010-2012 Erik Fonnesbeck
@@ -43,6 +43,7 @@ $valid_args = array(
 	    "\tthan gitsync.\n",
 	"--verbose" => "\tDisplay constructed command.  In combination with the --diff\n" .
 	    "\toption, display the array of different and missing files.\n",
+	"--dry-run" => "\tDry-run only.  No files copied.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();
@@ -459,7 +460,9 @@ if (!empty($files_to_copy)) {
 	if(isset($args["--verbose"])) {
 		echo "===> Command: \n$command\n";
 	}
-	exec($command);
+	if(!isset($args["--dry-run"])) {
+		exec($command);
+	}
 } else {
 	echo "Already up-to-date.\n";
 	$upgrading = true;

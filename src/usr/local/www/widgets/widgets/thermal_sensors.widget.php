@@ -276,7 +276,7 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-left" colspan="3">
-				<span><?=gettext('* You can configure a proper Thermal Sensor / Module under')?> <br />
+				<span><?=gettext('* A proper Thermal Sensor / Module can be configured under')?> <br />
 				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php"><?=gettext('System')?> &gt; <?=gettext('Advanced')?> &gt; <?=gettext('Miscellaneous')?> : <?=gettext('Thermal Sensors')?> <?=gettext('section')?></a>.</span>
 			</td>
 		</tr>

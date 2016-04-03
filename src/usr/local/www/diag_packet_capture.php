@@ -337,7 +337,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.' . '<br />' .
 			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
 			'Separating with a pipe ("|") performs a boolean "OR".' . '<br />' .
-			'If you leave this field blank, all packets on the specified interface will be captured.');
+			'If this field is left blank, all packets on the specified interface will be captured.');
 
 $section->addInput(new Form_Input(
 	'port',
@@ -345,7 +345,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$port
 ))->setHelp('The port can be either the source or destination port. The packet capture will look for this port in either field. ' .
-			'Leave blank if you do not want to filter by port.');
+			'Leave blank if not filtering by port.');
 
 $section->addInput(new Form_Input(
 	'snaplen',

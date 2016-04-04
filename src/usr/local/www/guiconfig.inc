@@ -384,7 +384,7 @@ function get_std_save_message($ok) {
 		}
 	}
 	if ($filter_related) {
-		$to_return .= "<br />" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
+		$to_return .= "<br />" . gettext("<a href=\"status_filter_reload.php\">Monitor</a> the filter reload progress.");
 	}
 	return $to_return;
 }

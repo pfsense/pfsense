@@ -344,13 +344,13 @@ if ($_POST) {
 						continue;
 					}
 					if (($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
+						$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
 					}
 					if (($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("You can not assign an IPv4 gateway group on IPv6 Address Family rule");
+						$input_errors[] = gettext("An IPv4 gateway group can not be assigned on an IPv6 Address Family rule");
 					}
 					if (($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("You can not assign an IPv6 gateway group on IPv4 Address Family rule");
+						$input_errors[] = gettext("An IPv6 gateway group can not be assigned on an IPv4 Address Family rule");
 					}
 				}
 			}
@@ -358,18 +358,18 @@ if ($_POST) {
 	}
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
 		if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
-			$input_errors[] = gettext("You can not assign a gateway to a rule that applies to IPv4 and IPv6");
+			$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
 		}
 		if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("You can not assign an IPv4 Gateway to an IPv6 Filter rule");
+			$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
 		}
 		if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("You can not assign an IPv6 Gateway to an IPv4 Filter rule");
+			$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
 		}
 	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {
 		if ($_POST['ipprotocol'] == "inet46") {
-			$input_errors[] = gettext("You can not assign a ICMP type to a rule that applies to IPv4 and IPv6");
+			$input_errors[] = gettext("An ICMP type can not be assigned to a rule that applies to IPv4 and IPv6");
 		}
 	}
 
@@ -497,7 +497,7 @@ if ($_POST) {
 	}
 	if (!$_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
 		if (is_alias($_POST['srcendport_cust'])) {
-			$input_errors[] = 'If you put port alias in Source port range to: field you must put the same port alias in from: field';
+			$input_errors[] = 'If a port alias is put in the Source port range to: field the same port alias must be put in the from: field';
 		}
 	}
 	if ($_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
@@ -506,12 +506,12 @@ if ($_POST) {
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
 		    ((!is_alias($_POST['srcbeginport_cust']) && $_POST['srcbeginport_cust'] != '') && is_alias($_POST['srcendport_cust']))) {
-			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Source port range from: and to: field';
+			$input_errors[] = 'Numbers and port aliases cannot be specified at the same time in Source port range from: and to: field';
 		}
 	}
 	if (!$_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
 		if (is_alias($_POST['dstendport_cust'])) {
-			$input_errors[] = 'If you put port alias in Destination port range to: field you must put the same port alias in from: field';
+			$input_errors[] = 'If a port alias is put in the Destination port range to: field the same port alias must be put in the from: field';
 		}
 	}
 	if ($_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
@@ -520,7 +520,7 @@ if ($_POST) {
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
 		    ((!is_alias($_POST['dstbeginport_cust']) && $_POST['dstbeginport_cust'] != '') && is_alias($_POST['dstendport_cust']))) {
-			$input_errors[] = 'You cannot specify numbers and port aliases at the same time in Destination port range from: and to: field';
+			$input_errors[] = 'Numbers and port aliases cannot be specified at the same time in Destination port range from: and to: field';
 		}
 	}
 
@@ -534,12 +534,12 @@ if ($_POST) {
 	/* if user enters an alias and selects "network" then disallow. */
 	if ($_POST['srctype'] == "network") {
 		if (is_alias($_POST['src'])) {
-			$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+			$input_errors[] = gettext("Alias entries must be a single host or alias.");
 		}
 	}
 	if ($_POST['dsttype'] == "network") {
 		if (is_alias($_POST['dst'])) {
-			$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+			$input_errors[] = gettext("Alias entries must be a single host or alias.");
 		}
 	}
 
@@ -564,15 +564,15 @@ if ($_POST) {
 			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
 		}
 		if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
-			$input_errors[] = gettext("You can not use IPv6 addresses in IPv4 rules.");
+			$input_errors[] = gettext("IPv6 addresses can not be used in IPv4 rules.");
 		}
 		if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
-			$input_errors[] = gettext("You can not use IPv4 addresses in IPv6 rules.");
+			$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
 		}
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("You can not use a IPv4 or IPv6 address in combined IPv4 + IPv6 rules.");
+		$input_errors[] = gettext("An IPv4 or IPv6 address can not be used in combined IPv4 + IPv6 rules.");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -598,26 +598,26 @@ if ($_POST) {
 
 	if ($_POST['ackqueue'] != "") {
 		if ($_POST['defaultqueue'] == "") {
-			$input_errors[] = gettext("You have to select a queue when you select an acknowledge queue too.");
+			$input_errors[] = gettext("A queue must be selected when an acknowledge queue is also selected.");
 		} else if ($_POST['ackqueue'] == $_POST['defaultqueue']) {
 			$input_errors[] = gettext("Acknowledge queue and Queue cannot be the same.");
 		}
 	}
 	if (isset($_POST['floating']) && $_POST['pdnpipe'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
-		$input_errors[] = gettext("You can not use limiters in Floating rules without choosing a direction.");
+		$input_errors[] = gettext("Limiters can not be used in Floating rules without choosing a direction.");
 	}
 	if (isset($_POST['floating']) && $_POST['gateway'] != "" && (empty($_POST['direction']) || $_POST['direction'] == "any")) {
-		$input_errors[] = gettext("You can not use gateways in Floating rules without choosing a direction.");
+		$input_errors[] = gettext("Gateways can not be used in Floating rules without choosing a direction.");
 	}
 	if ($_POST['pdnpipe'] && $_POST['pdnpipe'] != "") {
 		if ($_POST['dnpipe'] == "") {
-			$input_errors[] = gettext("You must select a queue for the In direction before selecting one for Out too.");
+			$input_errors[] = gettext("A queue must be selected for the In direction before selecting one for Out too.");
 		} else if ($_POST['pdnpipe'] == $_POST['dnpipe']) {
 			$input_errors[] = gettext("In and Out Queue cannot be the same.");
 		} else if ($dnqlist[$_POST['pdnpipe']][0] == "?" && $dnqlist[$_POST['dnpipe']][0] <> "?") {
-			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
+			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
 		} else if ($dnqlist[$_POST['dnpipe']][0] == "?" && $dnqlist[$_POST['pdnpipe']][0] <> "?") {
-			$input_errors[] = gettext("You cannot select one queue and one virtual interface for IN and Out. Both must be from the same type.");
+			$input_errors[] = gettext("A queue and a virtual interface cannot be selected for IN and Out. Both must be from the same type.");
 		}
 		if ($_POST['direction'] == "out" && empty($_POST['gateway'])) {
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
@@ -629,55 +629,55 @@ if ($_POST) {
 
 	if (!in_array($_POST['proto'], array("tcp", "tcp/udp"))) {
 		if (!empty($_POST['max-src-conn'])) {
-			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for TCP protocol.");
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) can only be specified for TCP protocol.");
 		}
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
-			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for TCP protocol.");
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for TCP protocol.");
 		}
 		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for TCP protocol.");
+			$input_errors[] = gettext("The state timeout (advanced option) can only be specified for TCP protocol.");
 		}
 	}
 
 	if ($_POST['type'] <> "pass") {
 		if (!empty($_POST['max'])) {
-			$input_errors[] = gettext("You can only specify the maximum state entries (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The maximum state entries (advanced option) can only be specified for Pass type rules.");
 		}
 		if (!empty($_POST['max-src-nodes'])) {
-			$input_errors[] = gettext("You can only specify the maximum number of unique source hosts (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The maximum number of unique source hosts (advanced option) can only be specified for Pass type rules.");
 		}
 		if (!empty($_POST['max-src-conn'])) {
-			$input_errors[] = gettext("You can only specify the maximum number of established connections per host (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) can only be specified for Pass type rules.");
 		}
 		if (!empty($_POST['max-src-states'])) {
-			$input_errors[] = gettext("You can only specify the maximum state entries per host (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The maximum state entries per host (advanced option) can only be specified for Pass type rules.");
 		}
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
-			$input_errors[] = gettext("You can only specify the maximum new connections per host / per second(s) (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) can only be specified for Pass type rules.");
 		}
 		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("You can only specify the state timeout (advanced option) for Pass type rules.");
+			$input_errors[] = gettext("The state timeout (advanced option) can only be specified for Pass type rules.");
 		}
 	}
 
 	if ($_POST['statetype'] == "none") {
 		if (!empty($_POST['max'])) {
-			$input_errors[] = gettext("You cannot specify the maximum state entries (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The maximum state entries (advanced option) cannot be specified if statetype is none.");
 		}
 		if (!empty($_POST['max-src-nodes'])) {
-			$input_errors[] = gettext("You cannot specify the maximum number of unique source hosts (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The maximum number of unique source hosts (advanced option) cannot be specified if statetype is none.");
 		}
 		if (!empty($_POST['max-src-conn'])) {
-			$input_errors[] = gettext("You cannot specify the maximum number of established connections per host (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The maximum number of established connections per host (advanced option) cannot be specified if statetype is none.");
 		}
 		if (!empty($_POST['max-src-states'])) {
-			$input_errors[] = gettext("You cannot specify the maximum state entries per host (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The maximum state entries per host (advanced option) cannot be specified if statetype is none.");
 		}
 		if (!empty($_POST['max-src-conn-rate']) || !empty($_POST['max-src-conn-rates'])) {
-			$input_errors[] = gettext("You cannot specify the maximum new connections per host / per second(s) (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The maximum new connections per host / per second(s) (advanced option) cannot be specified if statetype is none.");
 		}
 		if (!empty($_POST['statetimeout'])) {
-			$input_errors[] = gettext("You cannot specify the state timeout (advanced option) if statetype is none.");
+			$input_errors[] = gettext("The state timeout (advanced option) cannot be specified if statetype is none.");
 		}
 	}
 
@@ -722,7 +722,7 @@ if ($_POST) {
 			}
 		}
 		if (empty($outoftcpflags) && !empty($settcpflags)) {
-			$input_errors[] = gettext("If you specify TCP flags that should be set you should specify out of which flags as well.");
+			$input_errors[] = gettext("If TCP flags that should be set is specified, then out of which flags should be specified as well.");
 		}
 	}
 
@@ -1161,7 +1161,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		'Quick',
 		'Apply the action immediately on match.',
 		$pconfig['quick']
-	))->setHelp('Set this option if you need to apply this action to traffic that '.
+	))->setHelp('Set this option to apply this action to traffic that '.
 		'matches this rule immediately.');
 }
 
@@ -1179,7 +1179,7 @@ if ($edit_disabled) {
 		'Associated filter rule',
 		'<span class="help-block">' .
 		'This is associated with a NAT rule.<br/>' .
-		'You cannot edit the interface, protocol, source, or destination of associated filter rules.'.
+		'Editing the interface, protocol, source, or destination of associated filter rules is not permitted.'.
 		$extra .
 		'</span>'
 		));
@@ -1277,14 +1277,14 @@ $section->addInput(new Form_Select(
 	'ICMP type',
 	$pconfig['icmptype'],
 	$icmptypes
-))->setHelp('If you selected ICMP for the protocol above, you may specify an ICMP type here.');
+))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
 
 $section->addInput(new Form_Select(
 	'icmp6type',
 	'ICMPv6 type',
 	$pconfig['icmptype'],
 	$icmp6types
-))->setHelp('If you selected ICMP for the protocol above, you may specify an ICMP type here.');
+))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
 
 $form->add($section);
 
@@ -1411,11 +1411,11 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	if ($type == 'src')
 		$group->setHelp('Specify the source port or port range for this rule. This is '.
 			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b>). You can leave the "To" field '.
-			'empty if you only want to filter a single port.');
+			'should usually be <b>any</b>).  The "To" field may be left '.
+			'empty if only filtering a single port.');
 	else
 		$group->setHelp('Specify the destination port or port range for this rule. ' .
-			'You can leave the "To" field empty if you only want to filter a '.
+			'The "To" field may be left empty if only filtering a '.
 			'single port.');
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
@@ -1430,7 +1430,7 @@ $section->addInput(new Form_Checkbox(
 	'Log packets that are handled by this rule',
 	$pconfig['log']
 ))->setHelp('Hint: the firewall has limited local log space. Don\'t turn on logging '.
-	'for everything. If you want to do a lot of logging, consider using a remote '.
+	'for everything. If doing a lot of logging, consider using a remote '.
 	'syslog server (see the <a href="status_logs_settings.php">Status: System Logs: '.
 	'Settings</a> page).');
 
@@ -1439,7 +1439,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference.');
+))->setHelp('A description may be entered here for administrative reference.');
 
 $btnadv = new Form_Button(
 	'btnadvopts',
@@ -1494,7 +1494,7 @@ $section->addInput(new Form_Input(
 	'Tag',
 	'text',
 	$pconfig['tag']
-))->setHelp('You can mark a packet matching this rule and use this mark to match '.
+))->setHelp('A packet matching this rule can be marked and this mark used to match '.
 	'on other NAT/filter rules. It is called <b>Policy filtering</b>.');
 
 $section->addInput(new Form_Input(
@@ -1502,7 +1502,7 @@ $section->addInput(new Form_Input(
 	'Tagged',
 	'text',
 	$pconfig['tagged']
-))->setHelp('You can match packet on a mark placed before on another rule.');
+))->setHelp('A packet can be matched on a mark placed before on another rule.');
 
 $section->addInput(new Form_Input(
 	'max',
@@ -1577,7 +1577,7 @@ $section->addInput(new Form_Select(
 		'synproxy state' => gettext('Synproxy'),
 		'none' => gettext('None'),
 	)
-))->setHelp('Select which type of state tracking mechanism you would like to use.  If in doubt, use keep state' . '<br />' .
+))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state' . '<br />' .
 			'<span></span>');
 
 $section->addInput(new Form_Checkbox(
@@ -1666,9 +1666,9 @@ $group->add(new Form_Select(
 ));
 
 $section->add($group)->setHelp('Choose the Out queue/Virtual interface only if '.
-	'you have also selected In. The Out selection is applied to traffic leaving '.
+	'In is also selected. The Out selection is applied to traffic leaving '.
 	'the interface where the rule is created, the In selection is applied to traffic coming '.
-	'into the chosen interface.<br />If you are creating a floating rule, if the '.
+	'into the chosen interface.<br />If creating a floating rule, if the '.
 	'direction is In then the same rules apply, if the direction is Out the '.
 	'selections are reversed, Out is for incoming and In is for outgoing.'
 );
@@ -1702,7 +1702,7 @@ $group->add(new Form_Select(
 	$list
 ));
 
-$section->add($group)->setHelp('Choose the Acknowledge Queue only if you have '.
+$section->add($group)->setHelp('Choose the Acknowledge Queue only if there is a '.
 	'selected Queue.'
 );
 
@@ -2028,7 +2028,7 @@ events.push(function() {
 		} else if (val == 'synproxy state') {
 			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
 		} else if (val == 'none') {
-			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful if you\'re doing advanced queueing in certain situations';
+			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful for doing advanced queueing in certain situations';
 		}
 
 		dispstr += '</span>';

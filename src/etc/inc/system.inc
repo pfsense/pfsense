@@ -1892,24 +1892,6 @@ function system_ntp_configure($start_ntpd=true) {
 	return;
 }
 
-function sync_system_time() {
-	global $config, $g;
-
-	if (platform_booting()) {
-		echo gettext("Syncing system time before startup...");
-	}
-
-	/* foreach through servers and write out to ntpd.conf */
-	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
-		mwexec("/usr/local/sbin/ntpdate -s $ts");
-	}
-
-	if (platform_booting()) {
-		echo gettext("done.") . "\n";
-	}
-
-}
-
 function system_halt() {
 	global $g;
 

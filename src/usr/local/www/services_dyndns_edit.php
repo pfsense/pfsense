@@ -333,8 +333,8 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
-			'he.net tunnelbroker: Enter your tunnel ID' . '<br />' .
-			'GleSYS: Enter your record ID' . '<br />' .
+			'he.net tunnelbroker: Enter the tunnel ID' . '<br />' .
+			'GleSYS: Enter the record ID' . '<br />' .
 			'DNSimple: Enter only the domain name.' . '<br />' .
 			'Namecheap: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by Namecheap.');
 
@@ -345,8 +345,8 @@ $section->addInput(new Form_Input(
 	'MX',
 	'text',
 	$pconfig['mx']
-))->setHelp('Note: With DynDNS service you can only use a hostname, not an IP address. '.
-			'Set this option only if you need a special MX record. Not all services support this.');
+))->setHelp('Note: With DynDNS service only a hostname can be used, not an IP address. '.
+			'Set this option only if a special MX record is needed. Not all services support this.');
 
 $section->addInput(new Form_Checkbox(
 	'wildcard',
@@ -382,8 +382,8 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['username']
 ))->setHelp('Username is required for all types except Namecheap, FreeDNS and Custom Entries.' . '<br />' .
-			'Route 53: Enter your Access Key ID.' . '<br />' .
-			'GleSYS: Enter your API user.' . '<br />' .
+			'Route 53: Enter the Access Key ID.' . '<br />' .
+			'GleSYS: Enter the API user.' . '<br />' .
 			'For Custom Entries, Username and Password represent HTTP Authentication username and passwords.');
 
 $section->addPassword(new Form_Input(
@@ -391,17 +391,17 @@ $section->addPassword(new Form_Input(
 	'Password',
 	'password',
 	$pconfig['password']
-))->setHelp('FreeDNS (freedns.afraid.org): Enter your "Authentication Token" provided by FreeDNS.' . '<br />' .
-			'Route 53: Enter your Secret Access Key.' . '<br />' .
-			'GleSYS: Enter your API key.' . '<br />' .
-			'DNSimple: Enter your API token.');
+))->setHelp('FreeDNS (freedns.afraid.org): Enter the "Authentication Token" provided by FreeDNS.' . '<br />' .
+			'Route 53: Enter the Secret Access Key.' . '<br />' .
+			'GleSYS: Enter the API key.' . '<br />' .
+			'DNSimple: Enter the API token.');
 
 $section->addInput(new Form_Input(
 	'zoneid',
 	'Zone ID',
 	'text',
 	$pconfig['zoneid']
-))->setHelp('Enter Zone ID that you received when you created your domain in Route 53.' . '<br />' .
+))->setHelp('Enter Zone ID that was received when creating the domain in Route 53.' . '<br />' .
 			'DNSimple: Enter the Record ID of record to update.');
 
 $section->addInput(new Form_Input(
@@ -415,9 +415,9 @@ $section->addInput(new Form_Textarea(
 	'resultmatch',
 	'Result Match',
 	$pconfig['resultmatch']
-))->sethelp('This field should be identical to what your DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.' . '<br />' .
-			'If you need the new IP to be included in the request, put %IP% in its place.' . '<br />' .
-			'If you need to include multiple possible values, separate them with a |. If your provider includes a |, escape it with \\|)' . '<br />' .
+))->sethelp('This field should be identical to what the DDNS Provider will return if the update succeeds, leave it blank to disable checking of returned results.' . '<br />' .
+			'To include the new IP in the request, put %IP% in its place.' . '<br />' .
+			'To include multiple possible values, separate them with a |. If the provider includes a |, escape it with \\|)' . '<br />' .
 			'Tabs (\\t), newlines (\\n) and carriage returns (\\r) at the beginning or end of the returned results are removed before comparison.');
 
 $section->addInput(new Form_Input(
@@ -425,14 +425,14 @@ $section->addInput(new Form_Input(
 	'TTL',
 	'text',
 	$pconfig['ttl']
-))->setHelp('Choose TTL for your dns record.');
+))->setHelp('Choose TTL for the dns record.');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_dyndns[$id]) {
 	$section->addInput(new Form_Input(

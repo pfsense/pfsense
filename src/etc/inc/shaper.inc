@@ -848,7 +848,7 @@ class altq_root_queue {
 				  'FAIRQ' => 'FAIRQ',
 				  'CODELQ' => 'CODELQ',
 				  'PRIQ' => 'PRIQ')
-		))->setHelp('Changing this changes all child queues! Beware you can lose information.');
+		))->setHelp('Changing this changes all child queues! Beware information can be lost.');
 
 		$group = new Form_group('Bandwidth');
 
@@ -3500,7 +3500,7 @@ class dnpipe_class extends dummynet_class {
 			}
 		}
 		if ($schedule == 0 && $entries > 1) {
-			$input_errors[] = gettext("You need to specify a schedule for every additional entry");
+			$input_errors[] = gettext("A schedule needs to be specified for every additional entry");
 		}
 		if ($schedulenone > 0 && $entries > 1) {
 			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected");
@@ -3929,7 +3929,7 @@ EOD;
 			'Description',
 			'text',
 			$this->GetDescription()
-		))->setHelp('You may enter a description here for your reference (not parsed).');
+		))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 		$sform->add($section);
 
@@ -3940,7 +3940,7 @@ EOD;
 			'Delay (ms)',
 			'text',
 			$this->GetDelay() > 0 ? $this->GetDelay():null
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty)');
+		))->setHelp('In most cases, zero (0) should specified here (or leave the field empty)');
 
 		$section->addInput(new Form_Input(
 			'plr',
@@ -3948,7 +3948,7 @@ EOD;
 			'number',
 			$this->GetPlr(),
 			['step' => '0.001', 'min' => '0.000']
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty). ' .
+		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
 					'A value of 0.001 means one packet in 1000 gets dropped');
 
 		$section->addInput(new Form_Input(
@@ -3956,7 +3956,7 @@ EOD;
 			'Queue size (slots)',
 			'number',
 			$this->GetQlimit()
-		))->setHelp('In most cases, you should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ' .
+		))->setHelp('In most cases, the field should be left empty. All packets in this pipe are placed into a fixed-size queue first, ' .
 					'then they are delayed by value specified in the Delay field, and then they are delivered to their destination.');
 
 		$section->addInput(new Form_Input(
@@ -3964,7 +3964,7 @@ EOD;
 			'Bucket size (slots)',
 			'number',
 			$this->GetBuckets()
-		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
+		))->setHelp('In most cases, this field should be left empty. It increases the hash size set');
 
 		$sform->add($section);
 
@@ -4233,7 +4233,7 @@ class dnqueue_class extends dummynet_class {
 			'Description',
 			'text',
 			$this->GetDescription()
-		))->setHelp('You may enter a description here for your reference (not parsed).');
+		))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 		$sform->add($section);
 
@@ -4246,7 +4246,7 @@ class dnqueue_class extends dummynet_class {
 			$this->GetWeight(),
 			['min' => '1', 'max' => '100']
 		))->setHelp('For queues under the same parent this specifies the share that a queue gets(values range from 1 to 100),' .
-					' you can leave it blank otherwise');
+					' it can be left blank otherwise.');
 
 		$section->addInput(new Form_Input(
 			'plr',
@@ -4254,7 +4254,7 @@ class dnqueue_class extends dummynet_class {
 			'number',
 			$this->GetPlr(),
 			['step' => '0.001', 'min' => '0.000']
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty). ' .
+		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
 					'A value of 0.001 means one packet in 1000 gets dropped');
 
 		$section->addInput(new Form_Input(
@@ -4262,7 +4262,7 @@ class dnqueue_class extends dummynet_class {
 			'Queue size (slots)',
 			'number',
 			$this->GetQlimit()
-		))->setHelp('In most cases, you should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ' .
+		))->setHelp('In most cases, the field should be left empty. All packets in this pipe are placed into a fixed-size queue first, ' .
 					'then they are delayed by value specified in the Delay field, and then they are delivered to their destination.');
 
 		$section->addInput(new Form_Input(
@@ -4270,7 +4270,7 @@ class dnqueue_class extends dummynet_class {
 			'Bucket size (slots)',
 			'number',
 			$this->GetBuckets()
-		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
+		))->setHelp('In most cases, this field should be left empty. It increases the hash size set');
 
 		$section->addInput(new Form_Input(
 			'pipe',
@@ -4667,7 +4667,7 @@ function build_iface_without_this_queue($iface, $qname) {
 }
 
 $default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
-$default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
+$default_shaper_msg .= gettext("The tree on the left navigates through the queues.<br />"
 	. "Buttons at the bottom represent queue actions and are activated accordingly.");
 
 $dn_default_shaper_msg = $default_shaper_msg;

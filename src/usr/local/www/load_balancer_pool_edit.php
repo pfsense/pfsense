@@ -116,7 +116,7 @@ if ($_POST) {
 	}
 
 	if (preg_match('/[ \/]/', $_POST['name'])) {
-		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+		$input_errors[] = gettext("Spaces or slashes cannot be used in the 'name' field.");
 	}
 
 	if (strlen($_POST['name']) > 16) {
@@ -361,7 +361,7 @@ $section->addInput(new Form_Input(
 	'Port',
 	'text',
 	$pconfig['port']
-))->setHelp('This is the port your servers are listening on. You may also specify a port alias listed in Firewall -> Aliases here.');
+))->setHelp('This is the port the servers are listening on. A port alias listed in Firewall -> Aliases may also be specified here.');
 
 $section->addInput(new Form_Input(
 	'retry',
@@ -391,7 +391,7 @@ if (count($config['load_balancer']['monitor_type'])) {
 } else {
 	$section->addInput(new Form_StaticText(
 		'Monitor',
-		'Please add a monitor IP address on the monitors tab if you wish to use this feature."'
+		'Please add a monitor IP address on the monitors tab to use this feature."'
 	));
 }
 

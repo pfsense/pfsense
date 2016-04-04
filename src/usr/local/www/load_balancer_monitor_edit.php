@@ -127,7 +127,7 @@ if ($_POST) {
 	}
 
 	if (preg_match('/[ \/]/', $_POST['name'])) {
-		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+		$input_errors[] = gettext("Spaces or slashes cannot be used in the 'name' field.");
 	}
 
 	if (strlen($_POST['name']) > 16) {

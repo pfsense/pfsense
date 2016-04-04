@@ -276,14 +276,14 @@ endif;
 <div class="infoblock panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Notes");?></h2></div>
 	<div class="panel-body">
-	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
+	<?=gettext("Any files that are uploaded here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
-	"You may reference them directly from your portal page HTML code using relative paths. " .
-	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
-	"file manager. Then you can include it in your portal page like this:")?><br /><br />
+	"They may be referenced directly from the portal page HTML code using relative paths. " .
+	"Example: An image uploaded with the name 'captiveportal-test.jpg' using the " .
+	"file manager can then be included in the portal page like this:")?><br /><br />
 	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br />
-	<?=gettext("In addition, you can also upload .php files for execution.	You can pass the filename " .
-	"to your custom page from the initial page by using text similar to:")?><br /><br />
+	<?=gettext("In addition, .php files can also be uploaded for execution.	The filename can be passed " .
+	"to the custom page from the initial page by using text similar to:")?><br /><br />
 	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br />
 	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
 	</div>

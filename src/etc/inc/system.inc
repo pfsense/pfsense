@@ -1572,7 +1572,7 @@ function system_ntp_setup_pps($serialport) {
 }
 
 
-function system_ntp_configure($start_ntpd=true) {
+function system_ntp_configure() {
 	global $config, $g;
 
 	$driftfile = "/var/db/ntpd.drift";
@@ -1865,11 +1865,6 @@ function system_ntp_configure($start_ntpd=true) {
 	/* open configuration for writing or bail */
 	if (!@file_put_contents("{$g['varetc_path']}/ntpd.conf", $ntpcfg)) {
 		log_error(sprintf(gettext("Could not open %s/ntpd.conf for writing"), $g['varetc_path']));
-		return;
-	}
-
-	/* At bootup we just want to write out the config. */
-	if (!$start_ntpd) {
 		return;
 	}
 

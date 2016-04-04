@@ -308,11 +308,9 @@ services_dnsmasq_configure();
 /* start unbound service */
 services_unbound_configure();
 
-/* Do an initial time sync */
+/* Enable ntpd */
 echo "Starting NTP time client...";
-/* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
-system_ntp_configure(false);
-mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
+system_ntp_configure();
 echo "done.\n";
 
 /* start load balancer daemon */

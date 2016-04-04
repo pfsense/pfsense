@@ -292,6 +292,29 @@ pkg_upgrade() {
 			pkg_update force
 		fi
 
+		if is_pkg_installed ${product}-repo-devel; then
+			local _repo_pkg="${product}-repo-devel"
+		else
+			local _repo_pkg="${product}-repo"
+		fi
+
+		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
+			cp /usr/local/etc/pkg/repos/${product}.conf \
+				/tmp/${product}.conf.copy
+			_exec "pkg upgrade ${_repo_pkg}" "Upgrading ${_repo_pkg}" mute
+			# If conf differs, for an update
+			if ! cmp -s /usr/local/etc/pkg/repos/${product}.conf /tmp/${product}.conf.copy; then
+				pkg_update force
+
+				# New repo may contain newer pkg
+				if [ "$(compare_pkg_version pkg)" = "<" ]; then
+					_exec "pkg upgrade pkg" "Upgrading pkg" mute
+					pkg_update force
+				fi
+			fi
+			rm -f /tmp/${product}.conf.copy
+		fi
+
 		if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
 			_echo "Your packages are up to date"
 			_exit 0

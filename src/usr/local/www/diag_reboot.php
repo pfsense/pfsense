@@ -77,7 +77,7 @@ $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 include("head.inc");
 
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if (($_SERVER['REQUEST_METHOD'] == 'POST') && ($_POST['override'] != "yes")) {
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
@@ -156,6 +156,16 @@ events.push(function() {
 	</div>
 </div>
 
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+	//If we have been called with $_POST['override'] == "yes", then just reload the page to simulate the user clicking "Reboot"
+	if ( "<?=$_POST['override']?>" == "yes") {
+		$('form').submit();
+	}
+});
+//]]>
+</script>
 <?php
 
 }

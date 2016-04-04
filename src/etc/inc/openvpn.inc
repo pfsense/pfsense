@@ -1614,7 +1614,6 @@ function openvpn_get_client_status($client, $socket) {
 		fclose($fp);
 
 	} else {
-		$DisplayNote=true;
 		$client['remote_host'] = gettext("Unable to contact daemon");
 		$client['virtual_addr'] = gettext("Service not running?");
 		$client['bytes_recv'] = 0;

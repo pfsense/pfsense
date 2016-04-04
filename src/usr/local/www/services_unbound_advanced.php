@@ -231,7 +231,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -306,7 +306,7 @@ $section->addInput(new Form_Select(
 	$pconfig['edns_buffer_size'],
 	array_combine(array("512", "1480", "4096"), array("512", "1480", "4096"))
 ))->setHelp('Number of bytes size to advertise as the EDNS reassembly buffer size. This is the value that is used in UDP datagrams sent to peers. ' .
-			'RFC recommendation is 4096 (which is the default). If you have fragmentation reassemble problems, usually seen as timeouts, then a value of 1480 should help. ' .
+			'RFC recommendation is 4096 (which is the default). If fragmentation reassemble problems occur, usually seen as timeouts, then a value of 1480 should help. ' .
 			'The 512 value bypasses most MTU path problems, but it can generate an excessive amount of TCP fallback.');
 
 $section->addInput(new Form_Select(

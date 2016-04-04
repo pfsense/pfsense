@@ -602,11 +602,11 @@ $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will 
 <script>
 //<![CDATA[
 events.push(function() {
-	// Record the state of the Ue Ramsidk checkbox on page load
+	// Record the state of the Use Ramdisk checkbox on page load
 	use_ramdisk = $('#use_mfs_tmpvar').prop('checked');
 
 	$('form').submit(function(event) {
-		// Has the Use ramdisk checkbox changes state?
+		// Has the Use ramdisk checkbox changed state?
 		if ($('#use_mfs_tmpvar').prop('checked') != use_ramdisk) {
 			if (confirm("<?=$ramdisk_msg?>")) {
 				$('form').append('<input type="hidden" name="doreboot" id="doreboot" value="yes"/>');

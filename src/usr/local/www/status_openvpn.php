@@ -356,7 +356,7 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
- 	print_info_box(gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
+ 	print_info_box(gettext("If there are custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

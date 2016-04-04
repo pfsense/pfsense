@@ -161,7 +161,7 @@ if (is_array($config['virtualip']['vip'])) {
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
 				   '<a href="system_hasync.php" class="alert-link">' .
-				   gettext("You can configure high availability sync settings here.") .
+				   gettext("High availability sync settings can be configured here.") .
 				   '</a>');
 } else {
 ?>

@@ -261,7 +261,7 @@ if (!empty($cpzone)): ?>
 else:
 	if (empty($a_cp)) {
 		// If no zones have been defined
-		print_info_box(sprintf(gettext('No Captive Portal zones have been configured. You may add new zones here: %1$sServices > Captive Portal%2$s.'), '<a href="services_captiveportal_zones.php">', '</a>'), 'warning', false);
+		print_info_box(sprintf(gettext('No Captive Portal zones have been configured. New zones may be added here: %1$sServices > Captive Portal%2$s.'), '<a href="services_captiveportal_zones.php">', '</a>'), 'warning', false);
 	}
 endif;
 ?>

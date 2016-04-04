@@ -253,9 +253,9 @@ $section->addInput(new Form_Select(
 	'GPS Type',
 	$pconfig['type'],
 	array_combine($gpstypes, $gpstypes)
-))->setHelp('This option allows you to select a predefined configuration. ' .
-			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if your GPS is not listed.' . '<br /><br />' .
-			'The predefined configurations assume your GPS has already been set to NMEA mode.');
+))->setHelp('This option allows a predefined configuration to be selected. ' .
+			'Default is the configuration of pfSense 2.1 and earlier (not recommended). Select Generic if the GPS is not listed.' . '<br /><br />' .
+			'The predefined configurations assume the GPS has already been set to NMEA mode.');
 
 $serialports = glob("/dev/cua?[0-9]{,.[0-9]}", GLOB_BRACE);
 
@@ -312,7 +312,7 @@ $section->addInput(new Form_Input(
 	'Stratum (0-16)',
 	'text',
 	$pconfig['stratum']
-))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful if, for some reason, you want ntpd to prefer a different clock');
+))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock');
 
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
@@ -390,7 +390,7 @@ $section->addInput(new Form_Textarea(
 	'gpsinitcmd',
 	null,
 	base64_decode($pconfig['initcmd'])
-))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand your GPS documentation before making any changes here');
+))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here');
 
 $group = new Form_Group('NMEA Checksum Calculator');
 

@@ -90,7 +90,7 @@ include("head.inc");
 	<div class="panel-body">
 		<div class="content">
 			<form action="diag_defaults.php" method="post">
-				<p><strong><?=sprintf(gettext('Resetting the system to factory defaults will remove all user configuration and apply the following settings:'), "&quot;")?></strong></p>
+				<p><strong><?=gettext('Resetting the system to factory defaults will remove all user configuration and apply the following settings:')?></strong></p>
 				<ul>
 					<li><?=gettext("Reset to factory defaults")?></li>
 					<li><?=gettext("LAN IP address will be reset to 192.168.1.1")?></li>

@@ -106,7 +106,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('igmpproxy')) {
-	print_apply_box(gettext('The IGMP entry list has been changed.') . '<br />' . gettext('You must apply the changes in order for them to take effect.'));
+	print_apply_box(gettext('The IGMP entry list has been changed.') . '<br />' . gettext('The changes must be applied for them to take effect.'));
 }
 ?>
 
@@ -180,7 +180,7 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-<?php print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces you would like the proxy to allow. ' .
+<?php print_info_box(gettext('Please add the interface for upstream, the allowed subnets, and the downstream interfaces for the proxy to allow. ' .
 					   'Only one "upstream" interface can be configured.'), 'info', false); ?>
 </div>
 <?php

@@ -226,7 +226,7 @@ if ($_POST) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
 				if (!$_POST['encrypt_password']) {
-					$input_errors[] = gettext("A password for decryption must be supplied and confirmed.");
+					$input_errors[] = gettext("A password for encryption must be supplied and confirmed.");
 				}
 			}
 
@@ -301,7 +301,7 @@ if ($_POST) {
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
 				if (!$_POST['decrypt_password']) {
-					$input_errors[] = gettext("A password for encryption must be supplied and confirmed.");
+					$input_errors[] = gettext("A password for decryption must be supplied and confirmed.");
 				}
 			}
 

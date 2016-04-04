@@ -3078,7 +3078,7 @@ if (isset($wancfg['wireless'])) {
 	$group->add(new Form_Input(
 		'auth_server_shared_secret',
 		'Shared Secret',
-		'number',
+		'text',
 		$pconfig['auth_server_shared_secret']
 	))->setHelp('RADIUS Shared secret for this firewall');
 
@@ -3102,7 +3102,7 @@ if (isset($wancfg['wireless'])) {
 	$group->add(new Form_Input(
 		'auth_server_shared_secret2',
 		'Shared Secret',
-		'number',
+		'text',
 		$pconfig['auth_server_shared_secret2']
 	))->setHelp('RADIUS Shared secret for this firewall');
 

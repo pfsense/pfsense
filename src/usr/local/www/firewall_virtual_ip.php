@@ -276,7 +276,7 @@ if ($input_errors) {
 } else if ($savemsg) {
 	print_info_box($savemsg, 'success');
 } else if (is_subsystem_dirty('vip')) {
-	print_apply_box(gettext("The VIP configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The VIP configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 /* active tabs
@@ -374,7 +374,7 @@ endforeach;
 
 <div class="infoblock">
 	<?php print_info_box(sprintf(gettext('The virtual IP addresses defined on this page may be used in %1$sNAT%2$s mappings.'), '<a href="firewall_nat.php">', '</a>') . '<br />' .
-		sprintf(gettext('You can check the status of your CARP Virtual IPs and interfaces %1$shere%2$s.'), '<a href="status_carp.php">', '</a>'), 'info', false); ?>
+		sprintf(gettext('Check the status of CARP Virtual IPs and interfaces %1$shere%2$s.'), '<a href="status_carp.php">', '</a>'), 'info', false); ?>
 </div>
 
 <?php

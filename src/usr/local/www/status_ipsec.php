@@ -69,6 +69,10 @@ require_once("ipsec.inc");
 
 global $g;
 
+if (!is_array($config['ipsec']['phase1'])) {
+	$config['ipsec']['phase1'] = array();
+}
+
 // If this is just an AJAX call to update the table body, just generate the body and quit
 if ($_REQUEST['ajax']) {
 	print_ipsec_body();
@@ -106,10 +110,6 @@ if ($_GET['act'] == 'connect') {
 			mwexec_bg("/usr/local/sbin/ipsec down con" . escapeshellarg($_GET['ikeid']) . "{" . escapeshellarg($_GET['ikesaid']) . "}");
 		}
 	}
-}
-
-if (!is_array($config['ipsec']['phase1'])) {
-	$config['ipsec']['phase1'] = array();
 }
 
 // Table body is composed here so that it can be more easily updated via AJAX
@@ -381,7 +381,7 @@ function print_ipsec_body() {
 				print("</tbody>\n");
 				print("	</table>\n");
 				print("</td>\n");
-				print("	/tr>\n");
+				print("	</tr>\n");
 
 			}
 
@@ -391,91 +391,93 @@ function print_ipsec_body() {
 	}
 
 	$rgmap = array();
-	foreach ($a_phase1 as $ph1ent) {
-		if (isset($ph1ent['disabled'])) {
-			continue;
-		}
+	if (is_array($a_phase1)) {
+		foreach ($a_phase1 as $ph1ent) {
+			if (isset($ph1ent['disabled'])) {
+				continue;
+			}
 
-		$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
+			$rgmap[$ph1ent['remote-gateway']] = $ph1ent['remote-gateway'];
 
-		if ($ipsecconnected[$ph1ent['ikeid']]) {
-			continue;
-		}
+			if ($ipsecconnected[$ph1ent['ikeid']]) {
+				continue;
+			}
 
-		print("<tr>\n");
-		print("<td>\n");
-
-		print(htmlspecialchars($ph1ent['descr']));
-		print("</td>\n");
-		print("<td>\n");
-		list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
-
-		if (empty($myid_data)) {
-			print(gettext("Unknown"));
-		} else {
-			print(htmlspecialchars($myid_data));
-		}
-
-		print("</td>\n");
-		print("<td>\n");
-		$ph1src = ipsec_get_phase1_src($ph1ent);
-
-		if (empty($ph1src)) {
-			print(gettext("Unknown"));
-		} else {
-			print(htmlspecialchars($ph1src));
-		}
-
-		print("</td>\n");
-		print("<td>\n");
-
-		list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
-
-		if (empty($peerid_data)) {
-			print(gettext("Unknown"));
-		} else {
-			print(htmlspecialchars($peerid_data));
-		}
-		print("			</td>\n");
-		print("			<td>\n");
-		$ph1src = ipsec_get_phase1_dst($ph1ent);
-
-		if (empty($ph1src)) {
-			print(gettext("Unknown"));
-		} else {
-			print(htmlspecialchars($ph1src));
-		}
-
-		print("</td>\n");
-		print("<td>\n");
-		print("</td>\n");
-		print("<td>\n");
-		print("</td>\n");
-		print("<td>\n");
-		print("</td>\n");
-
-		if (isset($ph1ent['mobile'])) {
-
+			print("<tr>\n");
 			print("<td>\n");
-			print(gettext("Awaiting connections"));
+
+			print(htmlspecialchars($ph1ent['descr']));
+			print("</td>\n");
+			print("<td>\n");
+			list ($myid_type, $myid_data) = ipsec_find_id($ph1ent, "local");
+
+			if (empty($myid_data)) {
+				print(gettext("Unknown"));
+			} else {
+				print(htmlspecialchars($myid_data));
+			}
+
+			print("</td>\n");
+			print("<td>\n");
+			$ph1src = ipsec_get_phase1_src($ph1ent);
+
+			if (empty($ph1src)) {
+				print(gettext("Unknown"));
+			} else {
+				print(htmlspecialchars($ph1src));
+			}
+
+			print("</td>\n");
+			print("<td>\n");
+
+			list ($peerid_type, $peerid_data) = ipsec_find_id($ph1ent, "peer", $rgmap);
+
+			if (empty($peerid_data)) {
+				print(gettext("Unknown"));
+			} else {
+				print(htmlspecialchars($peerid_data));
+			}
+			print("			</td>\n");
+			print("			<td>\n");
+			$ph1src = ipsec_get_phase1_dst($ph1ent);
+
+			if (empty($ph1src)) {
+				print(gettext("Unknown"));
+			} else {
+				print(htmlspecialchars($ph1src));
+			}
+
 			print("</td>\n");
 			print("<td>\n");
 			print("</td>\n");
-			print("</td>\n");
-		} else {
-
 			print("<td>\n");
-			print(gettext("Disconnected"));
 			print("</td>\n");
 			print("<td>\n");
-			print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success">');
-			print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-			print(gettext("Connect VPN"));
-			print("</a>\n");
 			print("</td>\n");
 
+			if (isset($ph1ent['mobile'])) {
+
+				print("<td>\n");
+				print(gettext("Awaiting connections"));
+				print("</td>\n");
+				print("<td>\n");
+				print("</td>\n");
+				print("</td>\n");
+			} else {
+
+				print("<td>\n");
+				print(gettext("Disconnected"));
+				print("</td>\n");
+				print("<td>\n");
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $ph1ent['ikeid'] . '" class="btn btn-xs btn-success">');
+				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
+				print(gettext("Connect VPN"));
+				print("</a>\n");
+				print("</td>\n");
+
+			}
+			print("</tr>\n");
 		}
-		print("</tr>\n");
 	}
 
 	unset($ipsecconnected, $phase1, $rgmap);
@@ -539,7 +541,7 @@ print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a hre
 <script type="text/javascript">
 //<![CDATA[
 
-// Array in which to keep hte SA show/hide state
+// Array in which to keep the SA show/hide state
 sa_open = new Array();
 
 function show_childsa(id, buttonid) {

@@ -213,7 +213,7 @@ if ($_POST) {
 
 		clear_subsystem_dirty('filter');
 
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />You can also %s monitor %s the reload progress."),
+		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />%s Monitor %s the reload progress."),
 									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
@@ -363,7 +363,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('filter')) {
-	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The firewall rule configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 display_top_tabs($tab_array);
@@ -825,7 +825,7 @@ if ($seprows[$nrules]) {
 			<?=gettext("No floating rules are currently defined.");?>
 		<?php else: ?>
 			<?=gettext("No rules are currently defined for this interface");?><br />
-			<?=gettext("All incoming connections on this interface will be blocked until you add pass rules.");?>
+			<?=gettext("All incoming connections on this interface will be blocked until pass rules are added.");?>
 		<?php endif;?>
 			<?=gettext("Click the button to add a new rule.");?>
 		</p>
@@ -874,7 +874,7 @@ if ($seprows[$nrules]) {
 	if ("FloatingRules" != $if) {
 		print(gettext("Rules are evaluated on a first-match basis (i.e. " .
 			"the action of the first rule to match a packet will be executed). ") . '<br />' .
-			gettext("This means that if you use block rules, you'll have to pay attention " .
+			gettext("This means that if block rules are used, it is important to pay attention " .
 			"to the rule order. Everything that isn't explicitly passed is blocked " .
 			"by default. "));
 	} else {
@@ -961,7 +961,7 @@ events.push(function() {
 	// Provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if ((!saving && dirty) || newSeperator) {
-			return ("<?=gettext('You have moved one or more rules but have not yet saved')?>");
+			return ("<?=gettext('One or more rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
 		}

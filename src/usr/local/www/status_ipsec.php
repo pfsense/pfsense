@@ -381,7 +381,7 @@ function print_ipsec_body() {
 				print("</tbody>\n");
 				print("	</table>\n");
 				print("</td>\n");
-				print("	/tr>\n");
+				print("	</tr>\n");
 
 			}
 

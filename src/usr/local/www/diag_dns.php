@@ -73,7 +73,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-$aliasname = str_replace(array(".", "-"), "_", $host);
+$aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
 $alias_exists = false;
 $counter = 0;
 foreach ($a_aliases as $a) {

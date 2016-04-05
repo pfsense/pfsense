@@ -578,7 +578,7 @@ compare_pkg_version() {
 
 	if ! is_pkg_installed ${_pkg_name} ${pkg_chroot}; then
 		echo '!'
-		return -1
+		return 1
 	fi
 
 	local _lver=$(pkg ${pkg_chroot} query %v ${_pkg_name})

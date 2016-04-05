@@ -202,7 +202,7 @@ if ($_POST) {
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
 	if ($_POST['dsttype'] == "network" && is_alias($_POST['dst'])) {
-		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
 	/* For src, user can enter only ip's or networks */
@@ -510,7 +510,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Select(
 	'natreflection',

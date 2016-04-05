@@ -183,14 +183,14 @@ $section->addInput(new Form_IpAddress(
 	'dnssrcip',
 	'Source IP',
 	$pconfig['dnssrcip']
-))->setHelp('Source IP address for queries to the DNS server for the override domain. Leave blank unless your DNS server is accessed through a VPN tunnel.');
+))->setHelp('Source IP address for queries to the DNS server for the override domain. Leave blank unless the DNS server is accessed through a VPN tunnel.');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$section->addInput(new Form_Input(

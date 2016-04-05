@@ -92,10 +92,10 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		print(gettext("You are on the latest version."));
+		print(gettext("The system is on the latest version."));
 		break;
 	case '>':
-		print(gettext("You are on a later version than<br />the official release."));
+		print(gettext("The system is on a later version than<br />the official release."));
 		break;
 	default:
 		print(gettext( "<i>Error comparing installed version<br />with latest available</i>"));

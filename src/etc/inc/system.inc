@@ -1583,7 +1583,7 @@ function system_ntp_setup_pps($serialport) {
 }
 
 
-function system_ntp_configure($start_ntpd=true) {
+function system_ntp_configure() {
 	global $config, $g;
 
 	$driftfile = "/var/db/ntpd.drift";
@@ -1879,11 +1879,6 @@ function system_ntp_configure($start_ntpd=true) {
 		return;
 	}
 
-	/* At bootup we just want to write out the config. */
-	if (!$start_ntpd) {
-		return;
-	}
-
 	/* if ntpd is running, kill it */
 	while (isvalidpid("{$g['varrun_path']}/ntpd.pid")) {
 		killbypid("{$g['varrun_path']}/ntpd.pid");
@@ -1901,24 +1896,6 @@ function system_ntp_configure($start_ntpd=true) {
 	// Note that we are starting up
 	log_error("NTPD is starting up.");
 	return;
-}
-
-function sync_system_time() {
-	global $config, $g;
-
-	if (platform_booting()) {
-		echo gettext("Syncing system time before startup...");
-	}
-
-	/* foreach through servers and write out to ntpd.conf */
-	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
-		mwexec("/usr/local/sbin/ntpdate -s $ts");
-	}
-
-	if (platform_booting()) {
-		echo gettext("done.") . "\n";
-	}
-
 }
 
 function system_halt() {

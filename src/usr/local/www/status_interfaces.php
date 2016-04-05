@@ -214,7 +214,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 print_info_box(gettext("Using dial-on-demand will bring the connection up again if any packet ".
 	    "triggers it. To substantiate this point: disconnecting manually ".
 	    "will <strong>not</strong> prevent dial-on-demand from making connections ".
-	    "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
-	    "is kept disconnected."), 'warning', false);
+	    "to the outside! Don't use dial-on-demand if the line ".
+	    "is to be kept disconnected."), 'warning', false);
 include("foot.inc");
 ?>

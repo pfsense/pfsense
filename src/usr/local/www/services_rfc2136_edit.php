@@ -322,7 +322,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_rfc2136[$id]) {
 	$section->addInput(new Form_Input(
@@ -343,7 +343,7 @@ if (isset($id) && $a_rfc2136[$id]) {
 $form->add($section);
 print($form);
 
-print_info_box(sprintf(gettext('You must configure a DNS server in %1$sSystem: ' .
+print_info_box(sprintf(gettext('A DNS server must be configured in %1$sSystem: ' .
 					'General setup %2$sor allow the DNS server list to be overridden ' .
 					'by DHCP/PPP on WAN for dynamic DNS updates to work.'), '<a href="system.php">', '</a>'));
 

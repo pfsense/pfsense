@@ -127,7 +127,6 @@ $watchdogd_timeout_list = array(
 	'1' => '1');
 
 if ($_POST) {
-
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -568,8 +567,8 @@ $section->addInput(new Form_Checkbox(
 	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
 ))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
-	'cause the data in /tmp and /var to be lost at reboot, including log data. RRD '.
-	'and DHCP Leases will be retained.');
+	'cause the data in /tmp and /var to be lost, including log data. RRD '.
+	'and DHCP Leases will be retained. Changing this setting will cause the firewall to reboot after clicking "Save".');
 
 $section->addInput(new Form_Input(
 	'use_mfs_tmp_size',
@@ -641,4 +640,35 @@ $form->add($section);
 
 print $form;
 
+$ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');?>
+
+<script>
+//<![CDATA[
+events.push(function() {
+	// Record the state of the Use Ramdisk checkbox on page load
+	use_ramdisk = $('#use_mfs_tmpvar').prop('checked');
+
+	$('form').submit(function(event) {
+		// Has the Use ramdisk checkbox changed state?
+		if ($('#use_mfs_tmpvar').prop('checked') != use_ramdisk) {
+			if (confirm("<?=$ramdisk_msg?>")) {
+				$('form').append('<input type="hidden" name="doreboot" id="doreboot" value="yes"/>');
+			} else {
+				event.preventDefault();
+			}
+		}
+	});
+
+    drb = "<?=$pconfig['doreboot']?>";
+
+	if (drb == "yes") {
+		$('form').append("<input type=\"hidden\" name=\"override\" value=\"yes\" />");
+		$('form').get(0).setAttribute('action', 'diag_reboot.php');
+		$(form).submit();
+	}
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");

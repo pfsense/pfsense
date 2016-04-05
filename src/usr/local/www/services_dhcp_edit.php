@@ -214,7 +214,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 	if ($static_arp_enabled && !$_POST['ipaddr']) {
-		$input_errors[] = gettext("Static ARP is enabled.  You must specify an IP address.");
+		$input_errors[] = gettext("Static ARP is enabled.  An IP address must be specified.");
 	}
 
 	/* check for overlaps */
@@ -299,7 +299,7 @@ if ($_POST) {
 	}
 	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
-		$input_errors[] = gettext("You must specify both a valid domain key and key name.");
+		$input_errors[] = gettext("Both a valid domain key and key name must be specified.");
 	}
 	if ($_POST['domainsearchlist']) {
 		$domain_array=preg_split("/[ ;]+/", $_POST['domainsearchlist']);
@@ -489,7 +489,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Checkbox(
 	'arp_table_static_entry',
@@ -560,14 +560,14 @@ $section->addInput(new Form_Input(
 	'Gateway',
 	'text',
 	$pconfig['gateway']
-))->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network.');
+))->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here. ');
+))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',

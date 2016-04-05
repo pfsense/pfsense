@@ -119,10 +119,10 @@ BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
 EOD;
 	}
 
-	echo "\n" . gettext("Do you want to set up VLANs first?");
+	echo "\n" . gettext("Do VLANs need to be set up first?");
 	echo "\n" .
 		gettext(
-			"If you are not going to use VLANs, or only for optional interfaces, you should\n" .
+			"If VLANs will not be used, or only for optional interfaces, it is typical to\n" .
 			"say no here and use the webConfigurator to configure VLANs later, if required.") .
 		"\n";
 	echo "\n" . gettext("Do you want to set up VLANs now [y|n]?") . " ";
@@ -179,7 +179,7 @@ EOD;
 Assigned WAN to : $wanif
 Assigned LAN to : $lanif
 
-If you don't like this assignment,
+If these assignments are not suitable,
 press any key to go back to manual configuration.
 
 EOD;
@@ -213,7 +213,7 @@ EOD;
 
 		echo <<<EOD
 
-If you do not know the names of your interfaces, you may choose to use
+If you do not know the names of the interfaces, you may choose to use
 auto-detection. In that case, disconnect all interfaces now before
 hitting 'a' to initiate auto detection.
 
@@ -311,7 +311,7 @@ EOD;
 				if ($ifarr[$i] == $ifarr[$j]) {
 					echo <<<EOD
 
-Error: you cannot assign the same interface name twice!
+Error: The same interface name cannot be assigned twice!
 
 EOD;
 					fclose($fp);

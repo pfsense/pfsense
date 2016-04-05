@@ -267,7 +267,7 @@ function parse_config_bootup() {
 				if (!file_exists("{$g['conf_path']}/config.xml")) {
 					echo gettext("No XML configuration file found - using factory defaults.\n" .
 								 "Make sure that the configuration floppy disk with the conf/config.xml\n" .
-								 "file is inserted. If it isn't, your configuration changes will be lost\n" .
+								 "file is inserted. If it isn't, the configuration changes will be lost\n" .
 								 "on reboot.\n");
 				}
 			} else {
@@ -283,8 +283,8 @@ function parse_config_bootup() {
 					mwexec("/sbin/halt");
 					exit;
 				}
-				log_error("Last known config found and restored.  Please double check your configuration file for accuracy.");
-				file_notice("config.xml", gettext("Last known config found and restored.  Please double check your configuration file for accuracy."), "pfSenseConfigurator", "");
+				log_error("Last known config found and restored.  Please double check the configuration file for accuracy.");
+				file_notice("config.xml", gettext("Last known config found and restored.  Please double check the configuration file for accuracy."), "pfSenseConfigurator", "");
 			}
 		} else {
 			unlock($lockkey);

@@ -310,7 +310,7 @@ function verify_gzip_file($fname) {
 // print_info_box() has been updated so that any required button is explicitly created, rather than relying on the detection of certain
 // strings in the message (such as "apply"). print_info_box_np() has been exterminated.
 // $class = the bootstrap style class (default, info, warning, success, danger)
-// $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button. 
+// $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button.
 // Note that there is also a shortcut function print_apply_box here that creates a standard "apply" box for you.
 // In many cases just substitute that for print_info_box_np() to easily get a warning style "Apply changes" box.
 function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
@@ -384,7 +384,7 @@ function get_std_save_message($ok) {
 		}
 	}
 	if ($filter_related) {
-		$to_return .= "<br />" . gettext("You can also <a href=\"status_filter_reload.php\">monitor</a> the filter reload progress.");
+		$to_return .= "<br />" . gettext("<a href=\"status_filter_reload.php\">Monitor</a> the filter reload progress.");
 	}
 	return $to_return;
 }
@@ -1112,7 +1112,7 @@ function alias_info_popup($alias_id) {
 			$content .= 			$ap;
 			$content .=	"		</td>\n";
 			$content .= "		<td style='padding-left: 10px;'>\n";
-			$content .= 			$alias_details[$idx];
+			$content .= 			htmlspecialchars($alias_details[$idx]);
 			$content .=	"		</td>\n";
 			$content .= "	</tr>\n";
 			$idx++;

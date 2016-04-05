@@ -199,7 +199,7 @@ $pwd = new Form_Input(
 );
 
 if (isset($id) && $a_secret[$id]) {
-	$pwd->setHelp('If you want to change the users password, enter it here.');
+	$pwd->setHelp('To change the users password, enter it here.');
 }
 
 $section->addPassword($pwd);
@@ -208,7 +208,7 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'IP Address',
 	$pconfig['ip']
-))->setHelp('If you want the user to be assigned a specific IP address, enter it here.');
+))->setHelp('To assign the user a specific IP address, enter it here.');
 
 $form->add($section);
 

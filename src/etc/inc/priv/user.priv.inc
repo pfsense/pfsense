@@ -42,8 +42,8 @@ $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
 $priv_list['user-copy-files']['descr'] = gettext("Indicates whether the user is allowed to copy files ".
 										 "onto the {$g['product_name']} appliance via SCP/SFTP. ".
-										 "If you are going to use this privilege, you must install ".
-										 "scponly on the appliance (Hint: pkg_add -r scponly).");
+										 "To use this privilege, scponly must be installed ".
+										 "on the appliance (Hint: pkg_add -r scponly).");
 
 $priv_list['user-ssh-tunnel'] = array();
 $priv_list['user-ssh-tunnel']['name']  = gettext("User - System: SSH tunneling");

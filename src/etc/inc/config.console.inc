@@ -714,9 +714,9 @@ function netgate_hardware_setup() {
 		break;
 	case 'RCC':
 		$config['interfaces']['wan']['if'] = 'igb0';
-		$config['interfaces']['lan']['if'] = 'igb1';
+		$config['interfaces']['lan']['if'] = 'igb2';
 		$config['interfaces']['opt1'] = array(
-			'if' => 'igb2',
+			'if' => 'igb1',
 			'descr' => 'OPT1'
 		);
 		if ($g['platform'] == 'cdrom') {

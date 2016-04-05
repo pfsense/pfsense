@@ -271,7 +271,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('Start IPsec in Debug Mode Based on Sections Selected');
+$section = new Form_Section('IPsec Logging Controls');
 
 foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
@@ -283,12 +283,12 @@ foreach ($ipsec_log_cats as $cat => $desc) {
 }
 
 $section->addInput(new Form_StaticText('', ''))->setHelp(
-	'Launches IPsec in debug mode so that more verbose logs will be generated to aid in troubleshooting.'
+	'Changes the log verbosity for the IPsec daemon, so that more detail will be generated to aid in troubleshooting.'
 );
 
 $form->add($section);
 
-$section = new Form_Section('IPsec Advanced Settings');
+$section = new Form_Section('Advanced IPsec Settings');
 
 $section->addInput(new Form_Select(
 	'uniqueids',

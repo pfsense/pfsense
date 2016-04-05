@@ -163,7 +163,7 @@ function print_ipsec_body() {
 			 * the future
 			 */
 			if (isset($ikesa['local-nat-t']) || isset($ikesa['nat-local'])) {
-				print("NAT-T");
+				print(" NAT-T");
 			}
 
 			print("</td>\n");
@@ -243,17 +243,21 @@ function print_ipsec_body() {
 			}
 
 			print(ucfirst(htmlspecialchars($ikesa['state'])));
-			print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (" . convert_seconds_to_hms($ikesa['established']) . ") ago"));
+
+			if ($ikesa['state'] == 'ESTABLISHED') {
+				print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (") . convert_seconds_to_hms($ikesa['established']) . gettext(") ago"));
+			}
+
 			print("</span>");
 			print("</td>\n");
 			print("<td>\n");
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-			print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
-			print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-			print(gettext("Connect VPN"));
-			print("</a>\n");
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
+				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
+				print(gettext("Connect VPN"));
+				print("</a>\n");
 
 			} else {
 
@@ -271,8 +275,8 @@ function print_ipsec_body() {
 
 			if (is_array($ikesa['child-sas']) && (count($ikesa['child-sas']) > 0)) {
 
-				print('<div id="btnchildsa-' . $ikeid . '">');
-				print('<a type="button" onclick="show_childsa(\'childsa-' . $ikeid . '\',\'btnchildsa-' . $ikeid. '\');" class="btn btn-sm btn-info">');
+				print('<div>');
+				print('<a type="button" id="btnchildsa-' . $ikeid .  '" class="btn btn-sm btn-info">');
 				print('<i class="fa fa-plus-circle icon-embed-btn"></i>');
 				print(gettext('Show child SA entries'));
 				print("</a>\n");
@@ -541,21 +545,9 @@ print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a hre
 <script type="text/javascript">
 //<![CDATA[
 
-// Array in which to keep the SA show/hide state
-sa_open = new Array();
-
-function show_childsa(id, buttonid) {
-	$('#' + id).show();
-	$('#' + buttonid).hide();
-
-	// Record the ID of the SA we have revealed so that it can automatically be shown on AJAX reload
-	idnum = id.replace( /^\D+/g, '');
-	sa_open[idnum] = true;
-}
-
 events.push(function() {
-	ajax_lock = false;	// Mutex so we don't make a call until the previous call is finished
-	sa_open = [];
+	ajax_lock = false;		// Mutex so we don't make a call until the previous call is finished
+	sa_open = new Array();	// Array in which to keep the child SA show/hide state
 
 	// Fetch the tbody contents from the server
 	function update_table() {
@@ -580,18 +572,29 @@ events.push(function() {
 			$('#ipsec-body').html(response);
 			ajax_lock = false;
 
-			// Check the sa_open array for SAs we have chosen to show
+			// Update "Show child SA" handlers
+			$('[id^=btnchildsa-]').click(function () {
+				show_childsa($(this).prop("id").replace( /^\D+/g, ''));
+			});
+
+			// Check the sa_open array for child SAs that have been opened
 			$('[id^=childsa-con]').each(function(idx) {
-				sa_idx = idx + 1;
+				sa_idx = $(this).prop("id").replace( /^\D+/g, '');
 
 				if (sa_open[sa_idx]) {
-					show_childsa("childsa-con" + sa_idx, "btnchildsa-con" + sa_idx);
+					show_childsa(sa_idx);
 				}
 			});
 
 			// and do it again
 			setTimeout(update_table, 5000);
 		});
+	}
+
+	function show_childsa(said) {
+		sa_open[said] = true;
+		$('#childsa-con' + said).show();
+		$('#btnchildsa-con' + said).hide();
 	}
 
 	// Populate the tbody on page load

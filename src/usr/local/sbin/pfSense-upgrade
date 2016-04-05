@@ -292,11 +292,7 @@ pkg_upgrade() {
 			pkg_update force
 		fi
 
-		if is_pkg_installed ${product}-repo-devel; then
-			local _repo_pkg="${product}-repo-devel"
-		else
-			local _repo_pkg="${product}-repo"
-		fi
+		local _repo_pkg="${product}-repo"
 
 		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
 			cp /usr/local/etc/pkg/repos/${product}.conf \
@@ -578,7 +574,7 @@ compare_pkg_version() {
 
 	if ! is_pkg_installed ${_pkg_name} ${pkg_chroot}; then
 		echo '!'
-		return -1
+		return 1
 	fi
 
 	local _lver=$(pkg ${pkg_chroot} query %v ${_pkg_name})
@@ -720,6 +716,26 @@ if [ "${do_not_send_host_uuid}" != "true" ]; then
 	export HTTP_USER_AGENT="${product}/${product_version}:${hostuuid}"
 else
 	export HTTP_USER_AGENT="${product}/${product_version}"
+fi
+
+# Make sure to use default repo conf when it doesn't exist
+pkg_repo_conf="/usr/local/etc/pkg/repos/${product}.conf"
+default_pkg_repo_conf_path="/usr/local/share/${product}/pkg/repos/${product}-repo.conf"
+
+pkg_repo_conf_path=$(/usr/local/sbin/read_xml_tag.sh string system/pkg_repo_conf_path \
+	${default_pkg_repo_conf_path})
+
+if [ -z "${pkg_repo_conf_path}" -o ! -f "${pkg_repo_conf_path}" ]; then
+	pkg_repo_conf_path=${default_pkg_repo_conf_path}
+fi
+
+if [ -e "${pkg_repo_conf}" -a ! -L "${pkg_repo_conf}" ]; then
+	rm -f ${pkg_repo_conf}
+	ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+fi
+
+if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
+	ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
 fi
 
 # Flags used in _exit

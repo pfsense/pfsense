@@ -126,7 +126,7 @@ if ($_POST) {
 		if (!isset($a_gateways[$_POST['gateway']])) {
 			$input_errors[] = gettext("A valid gateway must be specified.");
 		} else if (isset($a_gateways[$_POST['gateway']]['disabled']) && !$_POST['disabled']) {
-			$input_errors[] = gettext("The gateway is disabled but the route is not. You must disable the route in order to choose a disabled gateway.");
+			$input_errors[] = gettext("The gateway is disabled but the route is not. The route must be disabled in order to choose a disabled gateway.");
 		} else {
 			// Note that the 3rd parameter "disabled" must be passed as explicitly true or false.
 			if (!validate_address_family($_POST['network'], $_POST['gateway'], $_POST['disabled'] ? true : false)) {
@@ -306,7 +306,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	htmlspecialchars($pconfig['descr'])
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 

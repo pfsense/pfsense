@@ -64,7 +64,10 @@
 require("guiconfig.inc");
 require("pkg-utils.inc");
 
+$repos = pkg_list_repos();
+
 if ($_POST) {
+
 	// Set the firmware branch, but only if we are not using it already
 	if ($_POST['fwbranch']) {
 		if (($_POST['fwbranch'] == "development") && !is_pkg_installed($g['product_name'] . "-repo-devel")) {
@@ -87,10 +90,21 @@ if ($_POST) {
 	} elseif (isset($config['system']['gitsync']['synconupgrade'])) {
 		unset($config['system']['gitsync']['synconupgrade']);
 	}
+
 	$config['system']['gitsync']['repositoryurl'] = $_POST['repositoryurl'];
 	$config['system']['gitsync']['branch'] = $_POST['branch'];
 
+	foreach ($repos as $repo) {
+		if ($repo['name'] == $_POST['fwbranch']) {
+			$config['system']['pkg_repo_conf_path'] = $repo['path'];
+			pkg_switch_repo($repo['path']);
+			break;
+		}
+	}
+
 	write_config();
+
+	$savemsg = gettext("Changes have been saved successfully");
 }
 
 $curcfg = $config['system']['firmware'];
@@ -101,6 +115,32 @@ $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"
 exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
 if (file_exists("{$g['tmp_path']}/manifest")) {
 	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
+}
+
+// Create an array of repo names and descriptions to populate the "Branch" selector
+function build_repo_list() {
+	global $repos;
+
+	$list = array();
+
+	foreach ($repos as $repo) {
+		$list[$repo['name']] = $repo['descr'];
+	}
+
+	return($list);
+}
+
+function get_repo_name($path) {
+	global $repos;
+
+	foreach ($repos as $repo) {
+		if ($repo['path'] == $path) {
+			return $repo['name'];
+		}
+	}
+
+	/* Default */
+	return $repos[0]['name'];
 }
 
 include("head.inc");
@@ -125,22 +165,15 @@ $section = new Form_Section('Firmware Branch');
 $section->addInput(new Form_Select(
 	fwbranch,
 	'Branch',
-	(is_pkg_installed($g['product_name'] . "-repo")) ? "stable":"development",
-	["stable" => gettext("Stable"), "development" => gettext("Development")]
+	get_repo_name($config['system']['pkg_repo_conf_path']),
+	build_repo_list()
 ))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .
 			'Use of the development version is at your own risk!');
 
 $form->add($section);
 
 $section = new Form_Section('Updates');
-/*
-$section->addInput(new Form_Checkbox(
-	'allowinvalidsig',
-	'Unsigned images',
-	'Allow auto-update firmware images with a missing or invalid digital signature to be used',
-	isset($curcfg['allowinvalidsig'])
-	));
-*/
+
 $section->addInput(new Form_Checkbox(
 	'disablecheck',
 	'Dashboard check',

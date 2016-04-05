@@ -243,17 +243,21 @@ function print_ipsec_body() {
 			}
 
 			print(ucfirst(htmlspecialchars($ikesa['state'])));
-			print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (" . convert_seconds_to_hms($ikesa['established']) . ") ago"));
+
+			if ($ikesa['state'] == 'ESTABLISHED') {
+				print("<br/>" . htmlspecialchars($ikesa['established']) . gettext(" seconds (") . convert_seconds_to_hms($ikesa['established']) . gettext(") ago"));
+			}
+
 			print("</span>");
 			print("</td>\n");
 			print("<td>\n");
 
 			if ($ikesa['state'] != 'ESTABLISHED') {
 
-			print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
-			print('<i class="fa fa-sign-in icon-embed-btn"></i>');
-			print(gettext("Connect VPN"));
-			print("</a>\n");
+				print('<a href="status_ipsec.php?act=connect&amp;ikeid=' . $con_id . '" class="btn btn-xs btn-success" data-toggle="tooltip" title="' . gettext("Connect VPN"). '" >');
+				print('<i class="fa fa-sign-in icon-embed-btn"></i>');
+				print(gettext("Connect VPN"));
+				print("</a>\n");
 
 			} else {
 

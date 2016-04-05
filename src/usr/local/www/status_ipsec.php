@@ -163,7 +163,7 @@ function print_ipsec_body() {
 			 * the future
 			 */
 			if (isset($ikesa['local-nat-t']) || isset($ikesa['nat-local'])) {
-				print("NAT-T");
+				print(" NAT-T");
 			}
 
 			print("</td>\n");

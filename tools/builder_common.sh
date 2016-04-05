@@ -1304,15 +1304,8 @@ clone_to_staging_area() {
 
 	# Include a sample pkg stable conf to base
 	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
 		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
-		${TARGET} \
-		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH} \
-		"release"
-
-	# Include a sample pkg devel conf to base
-	setup_pkg_repo \
-		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
 		${TARGET} \
 		${TARGET_ARCH} \
 		${PKG_REPO_CONF_BRANCH}
@@ -1329,20 +1322,26 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	mkdir -p $(dirname ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}) >/dev/null 2>&1
-
-	# Create repo and repo-devel packages
+	local _share_repos_path="${SCRATCHDIR}/repo-tmp/${PRODUCT_SHARE_DIR}/pkg/repos"
+	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
+	mkdir -p ${_share_repos_path} >/dev/null 2>&1
 	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
-		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+		${_share_repos_path}
+	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
 
-	core_pkg_create repo "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
+	# Add additional repos
+	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo-*.conf; do
+		_template_filename=$(basename ${_template})
+		setup_pkg_repo \
+			${_template} \
+			${_share_repos_path}/${_template_filename} \
+			${TARGET} \
+			${TARGET_ARCH} \
+			${PKG_REPO_CONF_BRANCH}
+		cp -f ${_template%%.conf}.descr ${_share_repos_path}
+	done
 
-	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo-devel.conf \
-		${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
-
-	core_pkg_create repo-devel "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
-
-	rm -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH}
+	core_pkg_create repo "" ${CORE_PKG_VERSION} ${SCRATCHDIR}/repo-tmp
 
 	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
@@ -1510,11 +1509,7 @@ customize_stagearea_for_image() {
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base
 	fi
 
-	if [ -n "${IS_RELEASE}" ]; then
-		pkg_chroot_add ${FINAL_CHROOT_DIR} repo
-	else
-		pkg_chroot_add ${FINAL_CHROOT_DIR} repo-devel
-	fi
+	pkg_chroot_add ${FINAL_CHROOT_DIR} repo
 
 	if [ "${_image_type}" = "iso" -o \
 	     "${_image_type}" = "memstick" -o \
@@ -1833,17 +1828,11 @@ setup_pkg_repo() {
 		return
 	fi
 
-	local _target="${1}"
-	local _arch="${2}"
-	local _target_arch="${3}"
-	local _branch="${4}"
-	local _release="${5}"
-
-	if [ -n "${_release}" ]; then
-		local _template="${PKG_REPO_TEMPLATE}"
-	else
-		local _template="${PKG_REPO_DEVEL_TEMPLATE}"
-	fi
+	local _template="${1}"
+	local _target="${2}"
+	local _arch="${3}"
+	local _target_arch="${4}"
+	local _branch="${5}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
@@ -1877,11 +1866,11 @@ builder_setup() {
 
 		local _arch=$(uname -m)
 		setup_pkg_repo \
+			${PKG_REPO_DEFAULT} \
 			${PKG_REPO_PATH} \
 			${_arch} \
 			${_arch} \
-			${PKG_REPO_CONF_BRANCH} \
-			${IS_RELEASE}
+			${PKG_REPO_CONF_BRANCH}
 
 		# Use fingerprint keys from repo
 		sed -i '' -e "/fingerprints:/ s,\"/,\"${BUILDER_ROOT}/src/," \
@@ -1994,11 +1983,11 @@ pkg_bootstrap() {
 	local _root=${1:-"${STAGE_CHROOT_DIR}"}
 
 	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
 		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH} \
-		${IS_RELEASE}
+		${PKG_REPO_CONF_BRANCH}
 
 	pkg_chroot ${_root} bootstrap -f
 }

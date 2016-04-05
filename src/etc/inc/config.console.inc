@@ -114,7 +114,7 @@ EOD;
 		echo <<<EOD
 
 		!!! Installation Media Detected: Auto Interface Option !!!!
-BEGIN MANUAL CONFIGURATION OR WE WILL PROCEED WITH AUTO CONFIGURATION.
+BEGIN MANUAL CONFIGURATION OR THE SYSTEM WILL PROCEED WITH AUTO CONFIGURATION.
 
 EOD;
 	}
@@ -141,13 +141,13 @@ EOD;
 
 For installation purposes, you must plug in at least one NIC
 for the LAN connection. If you plug in a second NIC it will be
-assigned to WAN. Otherwise, we'll temporarily assign WAN to the
+assigned to WAN. Otherwise, WAN will be temporarily assigned to the
 next available NIC found regardless of activity. You should
 assign and configure the WAN interface according to your requirements
 
 If you haven't plugged in any network cables yet,
 now is the time to do so.
-We'll keep trying until you do.
+The system will keep trying until you do.
 
 Searching for active interfaces...
 

@@ -7,7 +7,8 @@ EOD
 maintainer: development@pfsense.org
 prefix: /usr/local
 deps: {
-"%%PRODUCT_NAME%%-rc": {origin: "security/%%PRODUCT_NAME%%-rc", version: "%%VERSION%%"}
+"%%PRODUCT_NAME%%-rc": {origin: "security/%%PRODUCT_NAME%%-rc", version: "%%VERSION%%"},
+"%%PRODUCT_NAME%%-repo": {origin: "security/%%PRODUCT_NAME%%-repo", version: "%%VERSION%%"}
 }
 categories [ security,  ]
 licenselogic: single

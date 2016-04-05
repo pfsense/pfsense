@@ -121,7 +121,7 @@ if ($savemsg) {
 }
 
 if ($islocal == false) {
-	echo gettext("Sorry, you cannot change the password for a non-local user.");
+	echo gettext("The password cannot be changed for a non-local user.");
 	include("foot.inc");
 	exit;
 }

@@ -342,7 +342,7 @@ if ($_POST) {
 						break;
 					case "email":
 						if (empty($altname['value'])) {
-							array_push($input_errors, "You must provide an e-mail address for this type of subjectAltName");
+							array_push($input_errors, "An e-mail address must be provided for this type of subjectAltName");
 						}
 						if (preg_match("/[\!\#\$\%\^\(\)\~\?\>\<\&\/\\\,\"\']/", $altname['value'])) {
 							array_push($input_errors, "The e-mail provided in a subjectAltName contains invalid characters.");
@@ -651,9 +651,10 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	if (!$internal_ca_count) {
 		$section->addInput(new Form_StaticText(
 			'Certificate authority',
-			gettext('No internal Certificate Authorities have been defined. You must ').
-			'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext(" create") .'</a>'.
-			gettext(' an internal CA before creating an internal certificate.')
+			gettext('No internal Certificate Authorities have been defined. ').
+			gettext('An internal CA must be defined in order to create an internal certificate. ').
+			'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext("Create") .'</a>'.
+			gettext(' an internal CA.')
 		));
 	} else {
 		$allCas = array();
@@ -926,14 +927,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		$pconfig['csr']
 	))->setReadonly()
 	  ->setWidth(7)
-	  ->setHelp('Copy the certificate signing data from here and forward it to your certificate authority for signing.');
+	  ->setHelp('Copy the certificate signing data from here and forward it to a certificate authority for signing.');
 
 	$section->addInput(new Form_Textarea(
 		'cert',
 		'Final certificate data',
 		$pconfig['cert']
 	))->setWidth(7)
-	  ->setHelp('Paste the certificate received from your certificate authority here.');
+	  ->setHelp('Paste the certificate received from the certificate authority here.');
 
 	 if (isset($id) && $a_cert[$id]) {
 		 $section->addInput(new Form_Input(

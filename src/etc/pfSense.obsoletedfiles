@@ -642,6 +642,7 @@
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd
 /usr/local/sbin/mpd
+/usr/local/sbin/ntpdate_sync_once.sh
 /usr/local/sbin/olsrd
 /usr/local/sbin/pbi
 /usr/local/sbin/pbi-crashhandler

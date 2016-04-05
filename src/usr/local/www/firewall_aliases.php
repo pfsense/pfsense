@@ -208,7 +208,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('aliases')) {
-	print_apply_box(gettext("The alias list has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The alias list has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 display_top_tabs($tab_array);
@@ -318,8 +318,8 @@ display_top_tabs($tab_array);
 	<div class="infoblock">
 		<?php print_info_box(gettext('Aliases act as placeholders for real hosts, networks or ports. They can be used to minimize the number ' .
 			'of changes that have to be made if a host, network or port changes. <br />' .
-			'You can enter the name of an alias instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
-			'If an alias cannot be resolved (e.g. because you deleted it), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
+			'The name of an alias can be entered instead of the host, network or port where indicated. The alias will be resolved according to the list above.' . '<br />' .
+			'If an alias cannot be resolved (e.g. because it was deleted), the corresponding element (e.g. filter/NAT/shaper rule) will be considered invalid and skipped.'), 'info', false); ?>
 	</div>
 </div>
 

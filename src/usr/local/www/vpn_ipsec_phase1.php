@@ -273,9 +273,9 @@ if ($_POST) {
 		if (!is_ipaddr($pconfig['remotegw']) && !is_domain($pconfig['remotegw'])) {
 			$input_errors[] = gettext("A valid remote gateway address or host name must be specified.");
 		} elseif (is_ipaddrv4($pconfig['remotegw']) && ($pconfig['protocol'] != "inet")) {
-			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or you need to change protocol to IPv6");
+			$input_errors[] = gettext("A valid remote gateway IPv4 address must be specified or protocol needs to be changed to IPv6");
 		} elseif (is_ipaddrv6($pconfig['remotegw']) && ($pconfig['protocol'] != "inet6")) {
-			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or you need to change protocol to IPv4");
+			$input_errors[] = gettext("A valid remote gateway IPv6 address must be specified or protocol needs to be changed to IPv4");
 		}
 	}
 
@@ -296,11 +296,11 @@ if ($_POST) {
 		foreach ($a_phase2 as $phase2) {
 			if ($phase2['ikeid'] == $pconfig['ikeid']) {
 				if (($pconfig['protocol'] == "inet") && ($phase2['mode'] == "tunnel6")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv6, you cannot use IPv4.");
+					$input_errors[] = gettext("There is a Phase 2 using IPv6, cannot use IPv4.");
 					break;
 				}
 				if (($pconfig['protocol'] == "inet6") && ($phase2['mode'] == "tunnel")) {
-					$input_errors[] = gettext("There is a Phase 2 using IPv4, you cannot use IPv6.");
+					$input_errors[] = gettext("There is a Phase 2 using IPv4, cannot use IPv6.");
 					break;
 				}
 			}
@@ -729,7 +729,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 
@@ -795,7 +795,7 @@ $section->addInput(new Form_Input(
 	'Pre-Shared Key',
 	'text',
 	$pconfig['pskey']
-))->setHelp('Enter your Pre-Shared Key string.');
+))->setHelp('Enter the Pre-Shared Key string.');
 
 $section->addInput(new Form_Select(
 	'certref',

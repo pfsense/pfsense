@@ -114,7 +114,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	$resolve
 ))->setHelp('Enabling name resolution may cause the query to take longer.'.
-	' You can stop it at any time by clicking the Stop button in your browser.');
+	' It can be stopped at any time by clicking the Stop button in the browser.');
 
 $validLimits = array('10', '50', '100', '200', '500', '1000', 'all');
 $section->addInput(new Form_Select(

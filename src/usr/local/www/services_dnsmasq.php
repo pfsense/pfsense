@@ -138,7 +138,7 @@ if ($_POST) {
 			if (is_port($_POST['port'])) {
 				$config['dnsmasq']['port'] = $_POST['port'];
 			} else {
-				$input_errors[] = gettext("You must specify a valid port number");
+				$input_errors[] = gettext("A valid port number must be specified.");
 			}
 		} else if (isset($config['dnsmasq']['port'])) {
 			unset($config['dnsmasq']['port']);
@@ -225,7 +225,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('hosts')) {
-	print_apply_box(gettext("The DNS forwarder configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS forwarder configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $form = new Form();
@@ -247,8 +247,8 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp(sprintf("If this option is set, then machines that specify".
 			" their hostname when requesting a DHCP lease will be registered".
 			" in the DNS forwarder, so that their name can be resolved.".
-			" You should also set the domain in %sSystem:".
-			" General setup%s to the proper value.",'<a href="system.php">','</a>'))
+			" The domain in %sSystem: General setup%s should also".
+			" be set to the proper value.",'<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -258,8 +258,8 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcpstatic']
 ))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
-					"resolved. You should also set the domain in %s".
-					"System: General setup%s to the proper value.",'<a href="system.php">','</a>'))
+					"resolved. The domain in %sSystem: General setup%s should also ".
+					"be set to the proper value.",'<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -336,7 +336,7 @@ $section->addInput(new Form_Textarea(
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
-))->setHelp('Enter any additional options you would like to add to the dnsmasq configuration here, separated by a space or newline')
+))->setHelp('Enter any additional options to add to the dnsmasq configuration here, separated by a space or newline')
   ->addClass('advanced');
 
 $form->add($section);
@@ -350,8 +350,8 @@ print_callout('<p>' .
 		    ' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.') . '</p><p>' .
 	sprintf(gettext('The DNS forwarder will use the DNS servers entered in %1$sSystem > General Setup%2$s or' .
 				    ' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
-				    ' If you don\'t use that option (or if you use a static IP address on WAN),' .
-				    ' you must manually specify at least one DNS server on the %1$sSystem > General Setup%2$s page.'),
+				    ' If that option is not used (or if a static IP address is used on WAN),' .
+				    ' at least one DNS server must be manually specified on the %1$sSystem > General Setup%2$s page.'),
 			'<a href="system.php">',
 			'</a>') .
 	'</p>'

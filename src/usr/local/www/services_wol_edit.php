@@ -173,7 +173,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp(gettext('You may enter a description here for your reference (not parsed).'));
+))->setHelp(gettext('A description may be entered here for administrative reference (not parsed).'));
 
 $form->add($section);
 print $form;

@@ -148,7 +148,7 @@ function config_unlock() {
 function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock) {
-		die(gettext("WARNING: You must give a name as parameter to lock() function."));
+		die(gettext("WARNING: A name must be given as parameter to lock() function."));
 	}
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
@@ -167,7 +167,7 @@ function lock($lock, $op = LOCK_SH) {
 function try_lock($lock, $timeout = 5) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock) {
-		die(gettext("WARNING: You must give a name as parameter to try_lock() function."));
+		die(gettext("WARNING: A name must be given as parameter to try_lock() function."));
 	}
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");

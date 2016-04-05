@@ -660,7 +660,7 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), $g['product_name']);
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
-		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (you should associate this privilege only with one single user).");
+		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (this privilege should only be associated with one single user).");
 
 		$config['system']['nextuid'] = "111";
 		$config['system']['nextgid'] = "111";

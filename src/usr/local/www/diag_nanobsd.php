@@ -100,7 +100,7 @@ if ($_POST['destslice'] && $_POST['duplicateslice']) {
 	$statusmsg = gettext("Duplicating slice.  Please wait, this will take a moment...");
 
 	if (!DEBUG && nanobsd_clone_slice($_POST['destslice'])) {
-		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
+		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("To boot from this newly duplicated slice set it using the bootup information area.");
 		$class = 'alert-success';
 	} else {
 		$savemsg = gettext("There was an error while duplicating the slice. Operation aborted.");
@@ -242,7 +242,7 @@ $dupbtn->addClass('btn-success btn-sm');
 $section->addInput(new Form_StaticText(
 	'Duplicate boot slice',
 	$dupbtn
-))->setHelp('This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.');
+))->setHelp('This will duplicate the bootup slice to the alternate slice.  Use this to duplicate the known good working boot partition to the alternate.');
 
 $section->addInput(new Form_StaticText(
 	'RRD/DHCP Backup',

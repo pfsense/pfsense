@@ -261,7 +261,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 <?php else: ?>
 	<div>
 		<h5 style="padding-left:10px;"><?=gettext("There are no configured IPsec Tunnels")?></h5>
-		<p  style="padding-left:10px;"><?=gettext('You can configure your IPsec <a href="vpn_ipsec.php">here</a>.')?></p>
+		<p  style="padding-left:10px;"><?=gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')?></p>
 	</div>
 <?php endif;
 

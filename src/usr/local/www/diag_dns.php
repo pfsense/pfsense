@@ -85,9 +85,6 @@ foreach ($a_aliases as $a) {
 }
 
 if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
-	if ($_POST['override']) {
-		$override = true;
-	}
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
@@ -106,22 +103,17 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 			}
 		}
 		$newalias = array();
-		if ($override) {
-			$alias_exists = false;
+		$newalias['name'] = $aliasname;
+		$newalias['type'] = "network";
+		$newalias['address'] = $addresses;
+		$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
+		if ($alias_exists) {
+			$a_aliases[$id] = $newalias;
+		} else {
+			$a_aliases[] = $newalias;
 		}
-		if ($alias_exists == false) {
-			$newalias['name'] = $aliasname;
-			$newalias['type'] = "network";
-			$newalias['address'] = $addresses;
-			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
-			if ($override) {
-				$a_aliases[$id] = $newalias;
-			} else {
-				$a_aliases[] = $newalias;
-			}
-			write_config();
-			$createdalias = true;
-		}
+		write_config();
+		$createdalias = true;
 	}
 }
 
@@ -218,7 +210,11 @@ if ($input_errors) {
 }
 
 if ($createdalias) {
-	print_info_box(gettext("Alias was created/updated successfully."), 'success', false);
+	if ($alias_exists) {
+		print_info_box(gettext("Alias was updated successfully."), 'success');
+	} else {
+		print_info_box(gettext("Alias was created successfully."), 'success');
+	}
 }
 
 $form = new Form(false);
@@ -233,9 +229,14 @@ $section->addInput(new Form_Input(
 ));
 
 if (!empty($resolved)) {
+	if ($alias_exists) {
+		$button_text = gettext("Update alias");
+	} else {
+		$button_text = gettext("Add alias");
+	}
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		'Add alias',
+		$button_text,
 		null,
 		'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');

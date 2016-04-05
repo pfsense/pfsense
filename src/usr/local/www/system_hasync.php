@@ -170,7 +170,7 @@ $section->addInput(new Form_Select(
 	$pconfig['pfsyncinterface'],
 	$iflist
 ))->setHelp('If Synchronize States is enabled this interface will be used for communication.<br />' .
-			'We recommend setting this to an interface other than LAN! A dedicated interface works the best.<br />' .
+			'It is recommended to set this to an interface other than LAN! A dedicated interface works the best.<br />' .
 			'An IP must be defined on each machine participating in this failover group.<br />' .
 			'An IP must be assigned to the interface on any participating sync nodes.');
 

@@ -346,7 +346,7 @@ $section->addInput(new Form_StaticText(
 	'Link Priority',
 	'The priority selected here defines in what order failover and balancing of links will be done. ' .
 	'Multiple links of the same priority will balance connections until all links in the priority will be exhausted. ' .
-	'If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.'
+	'If all links in a priority level are exhausted then the next available link(s) in the next priority level will be used.'
 ));
 
 $section->addInput(new Form_StaticText(

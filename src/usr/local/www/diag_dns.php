@@ -97,7 +97,13 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 					$addresses .= " ";
 				}
 				$re = rtrim($re);
-				$sn = is_ipaddrv6($re) ? '/128' : '/32';
+				if (is_ipaddr($re)) {
+					$sn = is_ipaddrv6($re) ? '/128' : '/32';
+				} else {
+					// The name was a CNAME and resolved to another name, rather than an address.
+					// In this case the alias entry will have a FQDN, so do not put a CIDR after it.
+					$sn = "";
+				}
 				$addresses .= $re . $sn;
 				$isfirst = false;
 			}

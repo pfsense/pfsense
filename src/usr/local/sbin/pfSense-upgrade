@@ -299,6 +299,7 @@ pkg_upgrade() {
 			_exec "pkg ${pkg_chroot} set -A 1 ${product}-repo-devel" \
 				"Scheduling package ${product}-repo-devel for removal"
 			_exec "pkg install ${_repo_pkg}" "Installing ${_repo_pkg}" mute
+			pkg_update force
 		fi
 
 		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then

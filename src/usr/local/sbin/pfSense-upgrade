@@ -706,8 +706,7 @@ validate_repo_conf() {
 	pkg_repo_conf="/usr/local/etc/pkg/repos/${product}.conf"
 	default_pkg_repo_conf_path="/usr/local/share/${product}/pkg/repos/${product}-repo.conf"
 
-	pkg_repo_conf_path=$(/usr/local/sbin/read_xml_tag.sh string system/pkg_repo_conf_path \
-		${default_pkg_repo_conf_path})
+	pkg_repo_conf_path=$(/usr/local/sbin/read_xml_tag.sh string system/pkg_repo_conf_path)
 
 	if [ -z "${pkg_repo_conf_path}" -o ! -f "${pkg_repo_conf_path}" ]; then
 		pkg_repo_conf_path=${default_pkg_repo_conf_path}

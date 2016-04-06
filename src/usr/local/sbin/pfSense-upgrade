@@ -744,6 +744,7 @@ fi
 
 if [ -f "${pkg_repo_conf_path}" ]; then
 	if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
+		mkdir -p /usr/local/etc/pkg/repos
 		ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
 	fi
 fi

@@ -200,6 +200,11 @@ print_error_pfS() {
 }
 
 prestage_on_ram_setup() {
+	# Do not use memory disks for release build
+	if [ -n "${_IS_RELEASE}" ]; then
+		return
+	fi
+
 	[ -d "${STAGE_CHROOT_DIR}" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}
 	[ -d "${FINAL_CHROOT_DIR}" ] \

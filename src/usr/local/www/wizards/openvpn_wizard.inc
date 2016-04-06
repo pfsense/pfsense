@@ -430,7 +430,7 @@ function step10_submitphpaction() {
 		$input_errors[] = "The field 'Concurrent connections' must be numeric.";
 
 	if (empty($_POST['tunnelnet']))
-		$input_errors[] = "You must specify a 'Tunnel network'.";
+		$input_errors[] = "A 'Tunnel network' must be specified.";
 
 	if (count($input_errors) > 0) {
 		$savemsg = $input_errors[0];

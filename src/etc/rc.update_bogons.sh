@@ -128,7 +128,7 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		else
 			if [ $ENTRIES_MAX -gt $((2*ENTRIES_TOT+LINES_V6)) ]; then
 				egrep -iv "^fc00::/7" /tmp/bogonsv6 > /etc/bogonsv6
-				echo "Bogons V6 file downloaded but not updating IPv6 bogons table because IPv6 Allow is off" | logger
+				echo "Bogons V6 file downloaded but not updating IPv6 bogons table because it is not in use." | logger
 			else
 				echo "Not saving IPv6 bogons table (IPv6 Allow is off and table-entries limit is potentially too low)" | logger
 			fi

@@ -1,4 +1,4 @@
-f<?php
+<?php
 /*
 	services_ntpd_pps.php
 */

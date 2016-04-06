@@ -294,6 +294,13 @@ pkg_upgrade() {
 
 		local _repo_pkg="${product}-repo"
 
+		# Deprecated pa
+		if is_pkg_installed ${product}-repo-devel; then
+			_exec "pkg ${pkg_chroot} set -A 1 ${product}-repo-devel" \
+				"Scheduling package ${product}-repo-devel for removal"
+			_exec "pkg install ${_repo_pkg}" "Installing ${_repo_pkg}" mute
+		fi
+
 		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
 			cp /usr/local/etc/pkg/repos/${product}.conf \
 				/tmp/${product}.conf.copy
@@ -729,13 +736,16 @@ if [ -z "${pkg_repo_conf_path}" -o ! -f "${pkg_repo_conf_path}" ]; then
 	pkg_repo_conf_path=${default_pkg_repo_conf_path}
 fi
 
-if [ -e "${pkg_repo_conf}" -a ! -L "${pkg_repo_conf}" ]; then
+if [ -f "${pkg_repo_conf_path}" -a -e "${pkg_repo_conf}" -a \
+    ! -L "${pkg_repo_conf}" ]; then
 	rm -f ${pkg_repo_conf}
 	ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
 fi
 
-if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
-	ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+if [ -f "${pkg_repo_conf_path}" ]; then
+	if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
+		ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+	fi
 fi
 
 # Flags used in _exit

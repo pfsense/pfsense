@@ -804,7 +804,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				array(
 					512 => '512 bits',
 					1024 => '1024 bits',
-					2048 => '2049 bits',
+					2048 => '2048 bits',
 					4096 => '4096 bits',
 				)
 			));

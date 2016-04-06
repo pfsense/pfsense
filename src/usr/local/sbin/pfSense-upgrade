@@ -736,13 +736,12 @@ if [ -z "${pkg_repo_conf_path}" -o ! -f "${pkg_repo_conf_path}" ]; then
 	pkg_repo_conf_path=${default_pkg_repo_conf_path}
 fi
 
-if [ -f "${pkg_repo_conf_path}" -a -e "${pkg_repo_conf}" -a \
-    ! -L "${pkg_repo_conf}" ]; then
-	rm -f ${pkg_repo_conf}
-	ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
-fi
-
 if [ -f "${pkg_repo_conf_path}" ]; then
+	if [ -e "${pkg_repo_conf}" -a ! -L "${pkg_repo_conf}" ]; then
+		rm -f ${pkg_repo_conf}
+		ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+	fi
+
 	if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
 		mkdir -p /usr/local/etc/pkg/repos
 		ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}

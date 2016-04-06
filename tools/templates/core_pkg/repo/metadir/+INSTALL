@@ -9,7 +9,10 @@ if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/pkg/repos/%%PRODUCT_NAME%%-repo.conf
 	exit 1
 fi
 
-if [ ! -e /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf ]; then
+if [ ! -L /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf ]; then
+	if [ -f /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf ]; then
+		rm -f /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
+	fi
 	mkdir -p /usr/local/etc/pkg/repos
 	ln -sf \
 		/usr/local/share/%%PRODUCT_NAME%%/pkg/repos/%%PRODUCT_NAME%%-repo.conf \

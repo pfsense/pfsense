@@ -692,12 +692,13 @@ do_reboot() {
 	if [ -z "${dont_reboot}" ]; then
 		_echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
 		echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds." | wall
-		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
+		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds." \
+			>/dev/null 2>&1
 		(sleep ${reboot_after} && /etc/rc.reboot) &
 	else
 		_echo "Upgrade is complete."
 		echo "Upgrade is complete." | wall
-		/etc/rc.notify_message -e -g -m "Upgrade is complete."
+		/etc/rc.notify_message -e -g -m "Upgrade is complete." >/dev/null 2>&1
 	fi
 }
 

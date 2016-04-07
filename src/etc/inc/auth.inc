@@ -271,8 +271,14 @@ function index_users() {
 
 function & getUserEntry($name) {
 	global $debug, $config, $userindex;
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+
 	if (isset($userindex[$name])) {
 		return $config['system']['user'][$userindex[$name]];
+	} elseif ($authcfg['type'] != "Local Database") {
+		$user = array();
+		$user['name'] = $name;
+		return $user;
 	}
 }
 
@@ -312,13 +318,25 @@ function & getGroupEntryByGID($gid) {
 }
 
 function get_user_privileges(& $user) {
+	global $config;
+
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	$names = array();
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {
 		$privs = array();
 	}
 
-	$names = local_user_get_groups($user, true);
+	if ($authcfg['type'] == "ldap") {
+		$names = @ldap_get_groups($user['name'], $authcfg);
+	} elseif ($authcfg['type'] == "radius") {
+		$names = @radius_get_groups($_SESSION['user_radius_attributes']);
+	}
+
+	if (empty($names)) {
+		$names = local_user_get_groups($user, true);
+	}
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);

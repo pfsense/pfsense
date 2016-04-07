@@ -329,7 +329,7 @@ export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"
 # package names must be valid. Using non existent
 # package name would yield an error.
 #
-#export custom_package_list=""
+export custom_package_list=${custom_package_list:-"pfSense-pkg-AutoConfigBackup pfSense-pkg-aws-wizard pfSense-pkg-ipsec-profile-wizard"}
 
 # General builder output filenames
 export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}

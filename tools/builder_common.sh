@@ -1162,8 +1162,15 @@ clone_to_staging_area() {
 	local _share_repos_path="${SCRATCHDIR}/repo-tmp/${PRODUCT_SHARE_DIR}/pkg/repos"
 	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
 	mkdir -p ${_share_repos_path} >/dev/null 2>&1
-	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
-		${_share_repos_path}
+
+	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
+		${_share_repos_path}/${PRODUCT_NAME}-repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		${PKG_REPO_SERVER_RELEASE}
+
 	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
 
 	# Add additional repos
@@ -1174,7 +1181,8 @@ clone_to_staging_area() {
 			${_share_repos_path}/${_template_filename} \
 			${TARGET} \
 			${TARGET_ARCH} \
-			${PKG_REPO_CONF_BRANCH}
+			${PKG_REPO_CONF_BRANCH} \
+			${PKG_REPO_SERVER_RELEASE}
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
 	done
 
@@ -1515,18 +1523,22 @@ setup_pkg_repo() {
 	local _arch="${3}"
 	local _target_arch="${4}"
 	local _branch="${5}"
+	local _pkg_repo_server="${6}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
 		print_error_pfS
 	fi
 
+	if [ -z "${_repo_server}" ]; then
+		_pkg_repo_server=${PKG_REPO_SERVER}
+
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
-		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
+		-e "s,%%PKG_REPO_SERVER%%,${_pkg_repo_server},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		${_template} \
 		> ${_target}

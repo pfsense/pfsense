@@ -1304,6 +1304,18 @@ customize_stagearea_for_image() {
 	fi
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
+
+	# XXX: Workaround to avoid pkg to complain regarding release
+	#      repo on first boot since packages are installed from
+	#      staging server during build phase
+	if [ "${PKG_REPO_SERVER}" != "${PKG_REPO_SERVER_RELEASE}" ]; then
+		_read_cmd="select value from repodata where key='packagesite'"
+		for _db in ${FINAL_CHROOT_DIR}/var/db/pkg/repo-*sqlite; do
+			_cur=$(/usr/local/bin/sqlite3 ${_db} "${_read_cmd}")
+			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER},${PKG_REPO_SERVER_RELEASE},")
+			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
+		done
+	fi
 }
 
 create_distribution_tarball() {

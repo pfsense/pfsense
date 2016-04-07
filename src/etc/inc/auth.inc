@@ -1441,8 +1441,15 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 */
 function radius_get_groups($attributes) {
 	$groups = array();
-	if (!empty($attributes) && is_array($attributes) && !empty($attributes['class'])) {
-		$groups = explode(";", $attributes['class']);
+	if (!empty($attributes) && is_array($attributes) && (!empty($attributes['class']) || !empty($attributes['class_int']))) {
+		/* Some RADIUS servers return multiple class attributes, so check them all. */
+		$groups = array();
+		if (!empty($attributes['class']) && is_array($attributes['class'])) {
+			foreach ($attributes['class'] as $class) {
+				$groups = array_unique(array_merge($groups, explode(";", $class)));
+			}
+		}
+
 		foreach ($groups as & $grp) {
 			$grp = trim($grp);
 			if (strtolower(substr($grp, 0, 3)) == "ou=") {

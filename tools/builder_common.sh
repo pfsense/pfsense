@@ -1530,7 +1530,7 @@ setup_pkg_repo() {
 		print_error_pfS
 	fi
 
-	if [ -z "${_repo_server}" ]; then
+	if [ -z "${_pkg_repo_server}" ]; then
 		_pkg_repo_server=${PKG_REPO_SERVER}
 	fi
 

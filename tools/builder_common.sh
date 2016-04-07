@@ -1086,6 +1086,9 @@ clean_builder() {
 }
 
 clone_directory_contents() {
+	if [ ! -e "$2" ]; then
+		mkdir -p "$2"
+	fi
 	if [ ! -d "$1" -o ! -d "$2" ]; then
 		if [ -z "${LOGFILE}" ]; then
 			echo ">>> ERROR: Argument $1 supplied is not a directory!"

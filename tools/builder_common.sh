@@ -1532,6 +1532,7 @@ setup_pkg_repo() {
 
 	if [ -z "${_repo_server}" ]; then
 		_pkg_repo_server=${PKG_REPO_SERVER}
+	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 

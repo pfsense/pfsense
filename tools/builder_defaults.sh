@@ -308,7 +308,7 @@ esac
 if [ -z "${_IS_RELEASE}" ]; then
 	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-$PKG_REPO_SERVER}
 else
-	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org/packages"}
+	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org"}
 fi
 
 # Define base package version, based on date for snaps

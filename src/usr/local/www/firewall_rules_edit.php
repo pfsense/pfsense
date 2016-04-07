@@ -452,7 +452,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Destination");
 	}
 
-	if ($_POST['statetype'] == "modulate state" or $_POST['statetype'] == "synproxy state") {
+	if ($_POST['statetype'] == "synproxy state") {
 		if ($_POST['proto'] != "tcp") {
 			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."), $_POST['statetype']);
 		}
@@ -2026,9 +2026,9 @@ events.push(function() {
 		} else if (val == 'sloppy state') {
 			dispstr += 'Sloppy: works with all IP protocols';
 		} else if (val == 'synproxy state') {
-			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods. This option includes the functionality of keep state and modulate state combined';
+			dispstr += 'Synproxy: proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods, at the cost of performance (no SACK or window scaling)';
 		} else if (val == 'none') {
-			dispstr += 'None: Do not use state mechanisms to keep track.  This is only useful for doing advanced queueing in certain situations';
+			dispstr += 'None: Do not use state mechanisms to keep track';
 		}
 
 		dispstr += '</span>';

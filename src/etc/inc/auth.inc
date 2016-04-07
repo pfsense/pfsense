@@ -271,8 +271,14 @@ function index_users() {
 
 function & getUserEntry($name) {
 	global $debug, $config, $userindex;
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+
 	if (isset($userindex[$name])) {
 		return $config['system']['user'][$userindex[$name]];
+	} elseif ($authcfg['type'] != "Local Database") {
+		$user = array();
+		$user['name'] = $name;
+		return $user;
 	}
 }
 
@@ -312,13 +318,25 @@ function & getGroupEntryByGID($gid) {
 }
 
 function get_user_privileges(& $user) {
+	global $config;
+
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	$names = array();
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {
 		$privs = array();
 	}
 
-	$names = local_user_get_groups($user, true);
+	if ($authcfg['type'] == "ldap") {
+		$names = @ldap_get_groups($user['name'], $authcfg);
+	} elseif ($authcfg['type'] == "radius") {
+		$names = @radius_get_groups($_SESSION['user_radius_attributes']);
+	}
+
+	if (empty($names)) {
+		$names = local_user_get_groups($user, true);
+	}
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);
@@ -1433,8 +1451,15 @@ function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
 */
 function radius_get_groups($attributes) {
 	$groups = array();
-	if (!empty($attributes) && is_array($attributes) && !empty($attributes['class'])) {
-		$groups = explode(";", $attributes['class']);
+	if (!empty($attributes) && is_array($attributes) && (!empty($attributes['class']) || !empty($attributes['class_int']))) {
+		/* Some RADIUS servers return multiple class attributes, so check them all. */
+		$groups = array();
+		if (!empty($attributes['class']) && is_array($attributes['class'])) {
+			foreach ($attributes['class'] as $class) {
+				$groups = array_unique(array_merge($groups, explode(";", $class)));
+			}
+		}
+
 		foreach ($groups as & $grp) {
 			$grp = trim($grp);
 			if (strtolower(substr($grp, 0, 3)) == "ou=") {

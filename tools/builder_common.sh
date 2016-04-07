@@ -1514,7 +1514,7 @@ create_memstick_adi_image() {
 
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
-	if [ -z "${4}" ]; then
+	if [ -z "${5}" ]; then
 		return
 	fi
 

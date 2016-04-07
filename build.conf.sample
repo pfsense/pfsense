@@ -86,6 +86,3 @@ export PKG_REPO_SERVER="pkg+http://firmware.netgate.com/beta/packages"
 #export PKG_REPO_CONF_BRANCH="BRANCH"
 
 export PKG_REPO_SIGNING_COMMAND="ssh sign@smartcard.pfmechanics.com sudo ./factory/sign.sh"
-
-# Packages that will be installed during build phase
-export custom_package_list="pfSense-pkg-AutoConfigBackup pfSense-pkg-aws-wizard pfSense-pkg-ipsec-profile-wizard"

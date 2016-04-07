@@ -240,7 +240,11 @@ if ($_POST) {
 	if (!$input_errors) {
 		$csc = array();
 
-		$csc['server_list'] = implode(",", $pconfig['server_list']);
+		if (is_array($pconfig['server_list'])) {
+			$csc['server_list'] = implode(",", $pconfig['server_list']);
+		} else {
+			$csc['server_list'] = "";
+		}
 		$csc['custom_options'] = $pconfig['custom_options'];
 		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;

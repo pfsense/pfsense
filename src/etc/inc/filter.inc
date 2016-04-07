@@ -2903,11 +2903,9 @@ function filter_generate_user_rule($rule) {
 		 *	# keep state
 		 *		works with TCP, UDP, and ICMP.
 		 *	# modulate state
-		 *		works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
-		 *		for packets matching this rule.
+		 *		deprecated
 		 *	# synproxy state
 		 *		proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
-		 *		This option includes the functionality of keep state and modulate state combined.
 		 *	# none
 		 *		do not use state mechanisms to keep track. this is only useful if your doing advanced
 		 *		queueing in certain situations. please check the faq.
@@ -3360,7 +3358,6 @@ EOD;
 			case "pptp":
 				$ipfrules .= <<<EOD
 # allow PPTP client
-pass in {$log['pass']} on \${$oc['descr']} proto tcp from any to any port = 1723 flags S/SA modulate state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
 pass in {$log['pass']} on \${$oc['descr']} proto gre from any to any keep state tracker {$increment_tracker($tracker)} label "{$fix_rule_label("allow PPTP client on {$oc['descr']}")}"
 
 EOD;

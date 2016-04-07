@@ -310,6 +310,12 @@ case "${PRODUCT_VERSION##*-}" in
 		exit 1
 esac
 
+if [ -z "${_IS_RELEASE}" ]; then
+	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-$PKG_REPO_SERVER}
+else
+	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org/packages"}
+fi
+
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}

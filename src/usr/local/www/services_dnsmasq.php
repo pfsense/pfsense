@@ -403,7 +403,7 @@ foreach ($a_hosts as $i => $hostent):
 
 <?php
 	if ($hostent['aliases']['item'] && is_array($hostent['aliases']['item'])):
-		foreach ($hostent['aliases']['item'] as $i => $alias):
+		foreach ($hostent['aliases']['item'] as $alias):
 ?>
 				<tr>
 					<td>

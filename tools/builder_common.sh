@@ -200,6 +200,11 @@ print_error_pfS() {
 }
 
 prestage_on_ram_setup() {
+	# Do not use memory disks for release build
+	if [ -n "${_IS_RELEASE}" ]; then
+		return
+	fi
+
 	[ -d "${STAGE_CHROOT_DIR}" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}
 	[ -d "${FINAL_CHROOT_DIR}" ] \
@@ -1249,6 +1254,9 @@ clean_builder() {
 }
 
 clone_directory_contents() {
+	if [ ! -e "$2" ]; then
+		mkdir -p "$2"
+	fi
 	if [ ! -d "$1" -o ! -d "$2" ]; then
 		if [ -z "${LOGFILE}" ]; then
 			echo ">>> ERROR: Argument $1 supplied is not a directory!"
@@ -1325,8 +1333,15 @@ clone_to_staging_area() {
 	local _share_repos_path="${SCRATCHDIR}/repo-tmp/${PRODUCT_SHARE_DIR}/pkg/repos"
 	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
 	mkdir -p ${_share_repos_path} >/dev/null 2>&1
-	cp -f ${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
-		${_share_repos_path}
+
+	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
+		${_share_repos_path}/${PRODUCT_NAME}-repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		${PKG_REPO_CONF_BRANCH} \
+		${PKG_REPO_SERVER_RELEASE}
+
 	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
 
 	# Add additional repos
@@ -1337,7 +1352,8 @@ clone_to_staging_area() {
 			${_share_repos_path}/${_template_filename} \
 			${TARGET} \
 			${TARGET_ARCH} \
-			${PKG_REPO_CONF_BRANCH}
+			${PKG_REPO_CONF_BRANCH} \
+			${PKG_REPO_SERVER_RELEASE}
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
 	done
 
@@ -1529,6 +1545,18 @@ customize_stagearea_for_image() {
 
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
+
+	# XXX: Workaround to avoid pkg to complain regarding release
+	#      repo on first boot since packages are installed from
+	#      staging server during build phase
+	if [ "${PKG_REPO_SERVER}" != "${PKG_REPO_SERVER_RELEASE}" ]; then
+		_read_cmd="select value from repodata where key='packagesite'"
+		for _db in ${FINAL_CHROOT_DIR}/var/db/pkg/repo-*sqlite; do
+			_cur=$(/usr/local/bin/sqlite3 ${_db} "${_read_cmd}")
+			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER},${PKG_REPO_SERVER_RELEASE},")
+			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
+		done
+	fi
 }
 
 create_distribution_tarball() {
@@ -1824,7 +1852,7 @@ create_memstick_adi_image() {
 
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
-	if [ -z "${4}" ]; then
+	if [ -z "${5}" ]; then
 		return
 	fi
 
@@ -1833,10 +1861,15 @@ setup_pkg_repo() {
 	local _arch="${3}"
 	local _target_arch="${4}"
 	local _branch="${5}"
+	local _pkg_repo_server="${6}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
 		print_error_pfS
+	fi
+
+	if [ -z "${_pkg_repo_server}" ]; then
+		_pkg_repo_server=${PKG_REPO_SERVER}
 	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
@@ -1844,7 +1877,7 @@ setup_pkg_repo() {
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
 		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
-		-e "s,%%PKG_REPO_SERVER%%,${PKG_REPO_SERVER},g" \
+		-e "s,%%PKG_REPO_SERVER%%,${_pkg_repo_server},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		${_template} \
 		> ${_target}
@@ -2023,13 +2056,26 @@ install_pkg_install_ports() {
 }
 
 install_bsdinstaller() {
+	local _params=""
+
+	# Use staging repo on RELEASE
+	if [ -n "${_IS_RELEASE}" ]; then
+		mkdir -p ${FINAL_CHROOT_DIR}/tmp/pkg-repo
+		cp -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
+			${FINAL_CHROOT_DIR}/tmp/pkg-repo
+		_params="--repo-conf-dir /tmp/pkg-repo "
+	fi
+
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
-	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller
+	pkg_chroot ${FINAL_CHROOT_DIR} ${_params}install -f bsdinstaller
 	sed -i '' -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME}," \
 		  -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION}," \
 		  -e "s,%%ARCH%%,${TARGET}," \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense.lua \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense_rescue.lua
+	if [ -n "${_IS_RELEASE}" ]; then
+		rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repo
+	fi
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
 }
 

@@ -419,7 +419,9 @@ if (file_exists('/conf/needs_package_sync') &&
 }
 
 /* Detect installed binary pkgs that are not registered in the system */
-register_all_installed_packages();
+if ($g['platform'] != "cdrom") {
+	register_all_installed_packages();
+}
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */

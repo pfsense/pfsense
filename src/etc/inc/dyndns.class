@@ -1048,7 +1048,7 @@
 					} else if (preg_match('/403/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Database Error - There was a server-sided database error.");
 					} else if (preg_match('/405/i', $data)) {
-						$status = $status_intro . $error_str . sprintf(gettext("Hostname Error - The hostname (%s) doesn't belong to you."), $this->_dnsHost);
+						$status = $status_intro . $error_str . sprintf(gettext("Hostname Error - The hostname (%s) doesn't belong to user (%s)."), $this->_dnsHost, $this->_dnsUser);
 					} else if (preg_match('/200/i', $data)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;

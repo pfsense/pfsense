@@ -370,7 +370,7 @@ function add_row() {
 			delete_row(event.target.id);
 		}
 		else
-			alert('You may not delete the last row!');
+			alert('The last row may not be deleted.');
 	});
 
 }
@@ -392,7 +392,7 @@ $('[id^=delete]').click(function(event) {
 		delete_row(event.target.id);
 	}
 	else
-		alert('You may not delete the last row!');
+		alert('The last row may not be deleted.');
 });
 
 // "More information" handlers --------------------------------------------------------------------

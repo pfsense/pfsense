@@ -33,7 +33,7 @@
 <step>
 	<id>1</id>
 	<title>OpenVPN Remote Access Server Setup</title>
-	<description>This wizard will guide you through an OpenVPN Remote Access Server Setup .&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<description>This wizard will provide guidance through an OpenVPN Remote Access Server Setup .&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
 	<disableheader>true</disableheader>
 	<fields>
 		<field>
@@ -44,7 +44,7 @@
 			<type>select</type>
 			<displayname>Type of Server</displayname>
 			<name>authtype</name>
-			<description>&lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If you are unsure, leave this set to "Local User Access."</description>
+			<description>&lt;br/&gt;&lt;b&gt;NOTE:&lt;/b&gt; If unsure, leave this set to "Local User Access."</description>
 			<bindstofield>ovpnserver->step1->type</bindstofield>
 			<options>
 				<option>
@@ -121,7 +121,7 @@
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
 			<size>30</size>
-			<description>Descriptive server name, for your own reference.</description>
+			<description>Descriptive server name, for administrative reference.</description>
 		</field>
 		<field>
 			<name>ip</name>
@@ -153,7 +153,7 @@
 					<value>ssl</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The protocol used by your LDAP server. It can either be standard TCP or SSL encrypted.</description>
+			<description>&lt;br/&gt;The protocol used by the LDAP server. It can either be standard TCP or SSL encrypted.</description>
 		</field>
 		<field>
 			<name>scope</name>
@@ -184,7 +184,7 @@
 			<type>input</type>
 			<size>40</size>
 			<bindstofield>ovpnserver->step2->authscope</bindstofield>
-			<description>Semi-Colon separated. This will be prepended to the search base dn above or you can specify full container path.&lt;br/&gt;EXAMPLE: CN=Users;DC=example&lt;br/&gt;EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com </description>
+			<description>Semi-Colon separated. This will be prepended to the search base dn above or full container path can be specified.&lt;br/&gt;EXAMPLE: CN=Users;DC=example&lt;br/&gt;EXAMPLE: CN=Users,DC=example,DC=com;OU=OtherUsers,DC=example,DC=com </description>
 		</field>
 		<field>
 			<name>userdn</name>
@@ -284,7 +284,7 @@
 			<type>input</type>
 			<bindstofield>ovpnserver->step2->authtype</bindstofield>
 			<size>20</size>
-			<description>Descriptive name for the RADIUS server, for your reference.</description>
+			<description>Descriptive name for the RADIUS server, for administrative reference.</description>
 		</field>
 		<field>
 			<name>ip</name>
@@ -359,7 +359,7 @@
 		<field>
 			<name>descr</name>
 			<displayname>Descriptive name</displayname>
-			<description>A name for your reference, to identify this certificate. This is the same as common-name field for other Certificates.</description>
+			<description>A name for administrative reference, to identify this certificate. This is the same as common-name field for other Certificates.</description>
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step6->certca</bindstofield>
@@ -434,7 +434,7 @@
 		<field>
 			<name>email</name>
 			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate (i.e. You.)</description>
+			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step6->email</bindstofield>
@@ -490,7 +490,7 @@
 		<field>
 			<name>descr</name>
 			<displayname>Descriptive name</displayname>
-			<description>A name for your reference, to identify this certificate. This is also known as the certificate's "Common Name."</description>
+			<description>A name for administrative reference, to identify this certificate. This is also known as the certificate's "Common Name."</description>
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step9->certname</bindstofield>
@@ -565,7 +565,7 @@
 		<field>
 			<name>email</name>
 			<displayname>E-mail</displayname>
-			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate (i.e. You.)</description>
+			<description>E-mail address for the Certificate contact. Often the e-mail of the person generating the certificate.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step9->email</bindstofield>
@@ -610,12 +610,12 @@
 					<value>TCP</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;Protocol to use for OpenVPN connections. If you are unsure, leave this set to UDP.</description>
+			<description>&lt;br/&gt;Protocol to use for OpenVPN connections. If unsure, leave this set to UDP.</description>
 		</field>
 		<field>
 			<name>localport</name>
 			<displayname>Local Port</displayname>
-			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. This can be left at its default unless you need to use a different port.</description>
+			<description>Local port upon which OpenVPN will listen for connections. The default port is 1194. This can be left at its default unless a different port needs to be used.</description>
 			<type>input</type>
 			<size>10</size>
 			<bindstofield>ovpnserver->step10->localport</bindstofield>
@@ -623,7 +623,7 @@
 		<field>
 			<name>description</name>
 			<displayname>Description</displayname>
-			<description>A name for this OpenVPN instance, for your reference. It can be set however you like, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff"). It is also used by OpenVPN Client Export to identify this VPN on clients.</description>
+			<description>A name for this OpenVPN instance, for administrative reference. It can be set however desired, but is often used to distinguish the purpose of the service (e.g. "Remote Technical Staff"). It is also used by OpenVPN Client Export to identify this VPN on clients.</description>
 			<type>input</type>
 			<size>30</size>
 			<bindstofield>ovpnserver->step10->descr</bindstofield>
@@ -691,7 +691,7 @@
 					<value>dummy</value>
 				</option>
 			</options>
-			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints. This setting must match on the client and server side, but is otherwise set however you like. Certain algorithms will perform better on different hardware, depending on the availability of supported VPN accelerator chips.</description>
+			<description>&lt;br/&gt;The algorithm used to encrypt traffic between endpoints. This setting must match on the client and server side, but is otherwise set however desired. Certain algorithms will perform better on different hardware, depending on the availability of supported VPN accelerator chips.</description>
 		</field>
 		<field>
 			<name>digest</name>
@@ -705,7 +705,7 @@
 				</option>
 			</options>
 			<value>SHA1</value>
-			<description>&lt;br/&gt;The method used to authenticate traffic between endpoints. This setting must match on the client and server side, but is otherwise set however you like.</description>
+			<description>&lt;br/&gt;The method used to authenticate traffic between endpoints. This setting must match on the client and server side, but is otherwise set however desired.</description>
 		</field>
 		<field>
 			<name>engine</name>
@@ -745,7 +745,7 @@
 			<type>input</type>
 			<size>20</size>
 			<bindstofield>ovpnserver->step10->localnet</bindstofield>
-			<description>This is the network that will be accessible from the remote endpoint, expressed as a CIDR range. You may leave this blank if you don't want to add a route to the local network through this tunnel on the remote machine. This is generally set to your LAN network.</description>
+			<description>This is the network that will be accessible from the remote endpoint, expressed as a CIDR range. This may be left blank if not adding a route to the local network through this tunnel on the remote machine. This is generally set to the LAN network.</description>
 		</field>
 		<field>
 			<displayname>Concurrent Connections</displayname>
@@ -922,7 +922,7 @@
 			<type>textarea</type>
 			<cols>30</cols>
 			<rows>5</rows>
-			<description>Enter any additional options you would like to add to the OpenVPN server configuration here, separated by a semicolon. EXAMPLE: push "route 10.0.0.0 255.255.255.0"</description>
+			<description>Enter any additional options to add to the OpenVPN server configuration here, separated by a semicolon. EXAMPLE: push "route 10.0.0.0 255.255.255.0"</description>
 			<bindstofield>ovpnserver->step10->advanced</bindstofield>
 		</field>
 		<field>
@@ -946,7 +946,7 @@
 		</field>
 		<field>
 			<type>text</type>
-			<description>Firewall rules control what network traffic is permitted. You must add rules to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
+			<description>Firewall rules control what network traffic is permitted. Rules must be added to allow traffic to the OpenVPN server's IP and port, as well as allowing traffic from connected clients through the tunnel. These rules can be automatically added here, or configured manually after completing the wizard.</description>
 		</field>
 		<field>
 			<type>listtopic</type>
@@ -988,7 +988,7 @@
 		</field>
 		<field>
 			<type>text</type>
-			<description>Your configuration is now complete.</description>
+			<description>The configuration is now complete.</description>
 		</field>
 		<field>
 			<type>text</type>

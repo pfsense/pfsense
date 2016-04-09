@@ -125,7 +125,7 @@ EOD;
 			"If VLANs will not be used, or only for optional interfaces, it is typical to\n" .
 			"say no here and use the webConfigurator to configure VLANs later, if required.") .
 		"\n";
-	echo "\n" . gettext("Do you want to set up VLANs now [y|n]?") . " ";
+	echo "\n" . gettext("Should VLANs be set up now [y|n]?") . " ";
 
 	if ($auto_assign) {
 		$key = timeout();
@@ -139,15 +139,14 @@ EOD;
 
    !!! Auto Assigning Interfaces !!!
 
-For installation purposes, you must plug in at least one NIC
-for the LAN connection. If you plug in a second NIC it will be
-assigned to WAN. Otherwise, WAN will be temporarily assigned to the
-next available NIC found regardless of activity. You should
-assign and configure the WAN interface according to your requirements
+For setup purposes, there must be at least one NIC connected for
+the LAN. If a second NIC is connected, it will be assigned to the
+WAN. Otherwise, WAN will be temporarily assigned to the next
+available NIC found regardless of activity. The WAN interface
+should then be assigned and configured as required.
 
-If you haven't plugged in any network cables yet,
-now is the time to do so.
-The system will keep trying until you do.
+Please make the pfSense NIC connections now.
+The system will continue checking until they have been made.
 
 Searching for active interfaces...
 
@@ -213,9 +212,9 @@ EOD;
 
 		echo <<<EOD
 
-If you do not know the names of the interfaces, you may choose to use
-auto-detection. In that case, disconnect all interfaces now before
-hitting 'a' to initiate auto detection.
+If the names of the interfaces are not known, auto-detection can
+be used instead. To use auto-detection, please disconnect all
+interfaces before pressing 'a' to begin the process.
 
 EOD;
 
@@ -477,7 +476,7 @@ EOD;
 			return;
 		}
 
-		echo gettext("One moment while we reload the settings...");
+		echo gettext("One moment while the settings are reloading...");
 		echo gettext(" done!") . "\n";
 
 		touch("{$g['tmp_path']}/assign_complete");

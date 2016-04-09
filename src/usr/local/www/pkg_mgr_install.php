@@ -275,14 +275,14 @@ if ($input_errors) {
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
-			$pkgtxt = sprintf(gettext('Are you sure you want to reinstall package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to reinstall package %s.'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Are you sure you want to remove package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
 			break;
 		case 'installed':
 		default:
-			$pkgtxt = sprintf(gettext('Are you sure you want to install package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to install package %s.'), $pkgname);
 			break;
 	}
 ?>
@@ -292,15 +292,15 @@ if ($input_errors) {
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<?=gettext("Are you sure you want to reinstall all packages?");?>
+				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
 			} else if ($_GET['from'] && $_GET['to']) {
 ?>
-				<?=sprintf(gettext('Are you sure you want to upgrade package %1$s from %2$s to %3$s?'), $pkgname, $_GET['from'], $_GET['to'])?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=sprintf(gettext('Are you sure you want to update %s system?'), $g['product_name'])?>
+				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_name'])?>
 <?php
 			} else {
 ?>

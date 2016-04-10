@@ -313,6 +313,12 @@ function add_row() {
 			$(this).val('');
 	});
 
+	// Increment the suffix number for each button element in the new group
+	$(newGroup).find('button').each(function() {
+		$(this).prop("id", bumpStringInt(this.id));
+		$(this).prop("name", bumpStringInt(this.name));
+	});
+
 	// Do the same for selectors
 	$(newGroup).find('select').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));

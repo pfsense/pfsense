@@ -64,7 +64,7 @@
 ##|-PRIV
 
 define('RIGHTARROW', '&#x25ba;');
-define('LEFTARROW',  '&#x25c0;');
+define('LEFTARROW',  '&#x25c4;');
 
 require("guiconfig.inc");
 require("ipsec.inc");

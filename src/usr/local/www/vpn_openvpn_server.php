@@ -954,7 +954,7 @@ if ($act=="new" || $act=="edit"):
 		$openvpn_compression_modes
 		))->setHelp('Compress tunnel packets using the LZO algorithm. ' .
 					'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
-					'packets is not being compressed efficiently"');
+					'packets is not being compressed efficiently.');
 
 	$section->addInput(new Form_Checkbox(
 		'passtos',
@@ -1008,7 +1008,7 @@ if ($act=="new" || $act=="edit"):
 		'Topology',
 		$pconfig['topology'],
 		$openvpn_topologies
-	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.").' . '<br />' .
+	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.' . '<br />' .
 				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".');
 

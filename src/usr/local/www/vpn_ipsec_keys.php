@@ -201,9 +201,9 @@ if (is_subsystem_dirty('ipsec')) {
 		<?=gettext("Add")?>
 	</a>
 </nav>
-
+<div class="infoblock">
 <?php
 print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
 ?>
-
+</div>
 <?php include("foot.inc"); ?>

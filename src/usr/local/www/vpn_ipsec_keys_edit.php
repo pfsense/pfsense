@@ -197,7 +197,11 @@ if (isset($id) && $a_secret[$id]) {
 $form->add($section);
 
 print $form;
-
+?>
+<div class="infoblock blockopen">
+<?php
 print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
-
+?>
+</div>
+<?php
 include("foot.inc");

@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext('Are you sure you want to halt the system?')?></h2>
+		<h2 class="panel-title"><?=gettext('System Halt Confirmation')?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="content">

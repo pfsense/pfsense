@@ -577,13 +577,13 @@ events.push(function() {
 	});
 
 	$('[id^=Xdel_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P1 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});
 
 	$('[id^=Xdelp2_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P2 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});

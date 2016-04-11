@@ -301,18 +301,19 @@ case "${PRODUCT_VERSION##*-}" in
 esac
 
 # pkg repo variables
-export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://release-staging.netgate.com/ce/packages"}
+export USE_PKG_REPO_STAGING="1"
 export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+http://beta.pfsense.org/packages"}
 export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org"}
 
 if [ -n "${_IS_RELEASE}" ]; then
-	export USE_PKG_REPO_STAGING="1"
 	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-${POUDRIERE_BRANCH}}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-"v2_3"}
+	export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://release-staging.netgate.com/ce/packages"}
 else
-	export USE_PKG_REPO_STAGING=""
+	export USE_PKG_REPO_STAGING="1"
 	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_3_0"}
 	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
+	export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-${PKG_REPO_SERVER_DEVEL}}
 fi
 
 # Command used to sign pkg repo

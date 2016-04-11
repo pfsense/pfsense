@@ -1659,9 +1659,12 @@ pkg_chroot() {
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt pkg -c ${_root} $@ >/dev/null 2>&1
+	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev
 	/sbin/umount -f ${_root}/var/cache/pkg
+
+	return $result
 }
 
 
@@ -1719,16 +1722,19 @@ install_pkg_install_ports() {
 	[ -d ${SCRATCHDIR}/pkg_cache ] || \
 		mkdir -p ${SCRATCHDIR}/pkg_cache
 
-	echo ">>> Installing built ports (packages) in chroot (${STAGE_CHROOT_DIR})... (starting)"
+	echo -n ">>> Installing built ports (packages) in chroot (${STAGE_CHROOT_DIR})... "
 	# First mark all packages as automatically installed
 	pkg_chroot ${STAGE_CHROOT_DIR} set -A 1 -a
 	# Install all necessary packages
-	pkg_chroot ${STAGE_CHROOT_DIR} install ${MAIN_PKG} ${custom_package_list}
+	if ! pkg_chroot ${STAGE_CHROOT_DIR} install ${MAIN_PKG} ${custom_package_list}; then
+		echo "Failed!"
+		print_error_pfS
+	fi
 	# Make sure required packages are set as non-automatic
 	pkg_chroot ${STAGE_CHROOT_DIR} set -A 0 pkg ${MAIN_PKG} ${custom_package_list}
 	# Remove unnecessary packages
 	pkg_chroot ${STAGE_CHROOT_DIR} autoremove
-	echo ">>> Installing built ports (packages) in chroot (${STAGE_CHROOT_DIR})... (finshied)"
+	echo "Done!"
 }
 
 install_bsdinstaller() {

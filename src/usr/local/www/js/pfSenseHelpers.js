@@ -313,8 +313,8 @@ function add_row() {
 			$(this).val('');
 	});
 
-	// Increment the suffix number for each button element in the new group
-	$(newGroup).find('button').each(function() {
+	// Increment the suffix number for the deleterow button element in the new group
+	$(newGroup).find('[id^=deleterow]').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));
 	});

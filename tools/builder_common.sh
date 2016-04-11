@@ -1147,8 +1147,7 @@ clone_to_staging_area() {
 		${PKG_REPO_DEFAULT} \
 		${STAGE_CHROOT_DIR}${PRODUCT_SHARE_DIR}/${PRODUCT_NAME}-repo.conf \
 		${TARGET} \
-		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH}
+		${TARGET_ARCH}
 
 	mtree \
 		-c \
@@ -1170,9 +1169,7 @@ clone_to_staging_area() {
 		${PKG_REPO_DEFAULT} \
 		${_share_repos_path}/${PRODUCT_NAME}-repo.conf \
 		${TARGET} \
-		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH} \
-		${PKG_REPO_SERVER_RELEASE}
+		${TARGET_ARCH}
 
 	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
 
@@ -1183,9 +1180,7 @@ clone_to_staging_area() {
 			${_template} \
 			${_share_repos_path}/${_template_filename} \
 			${TARGET} \
-			${TARGET_ARCH} \
-			${PKG_REPO_CONF_BRANCH} \
-			${PKG_REPO_SERVER_RELEASE}
+			${TARGET_ARCH}
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
 	done
 
@@ -1307,11 +1302,11 @@ customize_stagearea_for_image() {
 	# XXX: Workaround to avoid pkg to complain regarding release
 	#      repo on first boot since packages are installed from
 	#      staging server during build phase
-	if [ "${PKG_REPO_SERVER}" != "${PKG_REPO_SERVER_RELEASE}" ]; then
+	if [ -n "${USE_PKG_REPO_STAGING}" ]; then
 		_read_cmd="select value from repodata where key='packagesite'"
 		for _db in ${FINAL_CHROOT_DIR}/var/db/pkg/repo-*sqlite; do
 			_cur=$(/usr/local/bin/sqlite3 ${_db} "${_read_cmd}")
-			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER},${PKG_REPO_SERVER_RELEASE},")
+			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER_STAGING},${PKG_REPO_SERVER_RELEASE},")
 			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
 		done
 	fi
@@ -1528,7 +1523,7 @@ create_memstick_adi_image() {
 
 # Create pkg conf on desired place with desired arch/branch
 setup_pkg_repo() {
-	if [ -z "${5}" ]; then
+	if [ -z "${4}" ]; then
 		return
 	fi
 
@@ -1536,24 +1531,27 @@ setup_pkg_repo() {
 	local _target="${2}"
 	local _arch="${3}"
 	local _target_arch="${4}"
-	local _branch="${5}"
-	local _pkg_repo_server="${6}"
+	local _staging="${5}"
 
 	if [ -z "${_template}" -o ! -f "${_template}" ]; then
 		echo ">>> ERROR: It was not possible to find pkg conf template ${_template}"
 		print_error_pfS
 	fi
 
-	if [ -z "${_pkg_repo_server}" ]; then
-		_pkg_repo_server=${PKG_REPO_SERVER}
+	if [ -n "${_staging}" -a -n "${USE_PKG_REPO_STAGING}" ]; then
+		_pkg_repo_server=${PKG_REPO_SERVER_STAGING}
+	else
+		_pkg_repo_server=${PKG_REPO_SERVER_RELEASE}
 	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
-		-e "s/%%GIT_REPO_BRANCH_OR_TAG%%/${_branch}/g" \
-		-e "s,%%PKG_REPO_SERVER%%,${_pkg_repo_server},g" \
+		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${PKG_REPO_BRANCH_DEVEL}/g" \
+		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${PKG_REPO_BRANCH_RELEASE}/g" \
+		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${PKG_REPO_SERVER_DEVEL},g" \
+		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		${_template} \
 		> ${_target}
@@ -1578,8 +1576,7 @@ builder_setup() {
 			${PKG_REPO_DEFAULT} \
 			${PKG_REPO_PATH} \
 			${_arch} \
-			${_arch} \
-			${PKG_REPO_CONF_BRANCH}
+			${_arch}
 
 		# Use fingerprint keys from repo
 		sed -i '' -e "/fingerprints:/ s,\"/,\"${BUILDER_ROOT}/src/," \
@@ -1699,7 +1696,7 @@ pkg_bootstrap() {
 		${_root}${PKG_REPO_PATH} \
 		${TARGET} \
 		${TARGET_ARCH} \
-		${PKG_REPO_CONF_BRANCH}
+		"staging"
 
 	pkg_chroot ${_root} bootstrap -f
 }

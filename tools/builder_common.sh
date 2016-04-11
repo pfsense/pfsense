@@ -903,7 +903,7 @@ create_ova_image() {
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
-		-o label=${PRODUCT_NAME},version=2 \
+		-o label=${PRODUCT_NAME},version=2,bsize=32768,fsize=4096,maxbpg=4096,density=8192,minfree=8 \
 		-s ${OVA_FIRST_PART_SIZE} \
 		${OVA_TMP}/${OVFUFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}

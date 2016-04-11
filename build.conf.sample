@@ -77,7 +77,7 @@ export PRODUCT_URL="https://PRODUCT_URL/"
 # pkg repo URL
 #export PKG_REPO_SERVER_DEVEL="pkg+http://beta.pfsense.org/packages"
 #export PKG_REPO_SERVER_RELEASE="pkg+http://pkg.pfsense.org/packages"
-#export PKG_REPO_SERVER_STAGING="pkg+http://release-staging.netgate.com/packages"
+#export PKG_REPO_SERVER_STAGING="pkg+http://release-staging.netgate.com/ce/packages"
 
 # Branch to replace pkg.conf template, defaults to $GIT_REPO_BRANCH_OR_TAG
 #export PKG_REPO_BRANCH_DEVEL="BRANCH"

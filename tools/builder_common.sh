@@ -1138,7 +1138,7 @@ create_virt_images() {
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	makefs \
 		-B little \
-		-o label=${PRODUCT_NAME},version=2 \
+		-o label=${PRODUCT_NAME},version=2,bsize=32768,fsize=4096,maxbpg=4096,density=8192,minfree=8 \
 		-s ${VIRT_FIRST_PART_SIZE} \
 		${VIRT_TMP}/${VIRT_UFS} \
 		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}

@@ -275,11 +275,6 @@ export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
 export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/usr/local/www/beta"}
-export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
-export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${POUDRIERE_BRANCH}"}
-
-# Command used to sign pkg repo
-export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
 
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING
@@ -305,11 +300,23 @@ case "${PRODUCT_VERSION##*-}" in
 		exit 1
 esac
 
-if [ -z "${_IS_RELEASE}" ]; then
-	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-$PKG_REPO_SERVER}
+# pkg repo variables
+export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://release-staging.netgate.com/ce/packages"}
+export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+http://beta.pfsense.org/packages"}
+export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org"}
+
+if [ -n "${_IS_RELEASE}" ]; then
+	export USE_PKG_REPO_STAGING="1"
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-${POUDRIERE_BRANCH}}
+	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-"v2_3"}
 else
-	export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org/packages"}
+	export USE_PKG_REPO_STAGING=""
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_3_0"}
+	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
 fi
+
+# Command used to sign pkg repo
+export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
 
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"

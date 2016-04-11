@@ -313,6 +313,12 @@ function add_row() {
 			$(this).val('');
 	});
 
+	// Increment the suffix number for the deleterow button element in the new group
+	$(newGroup).find('[id^=deleterow]').each(function() {
+		$(this).prop("id", bumpStringInt(this.id));
+		$(this).prop("name", bumpStringInt(this.name));
+	});
+
 	// Do the same for selectors
 	$(newGroup).find('select').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
@@ -370,7 +376,7 @@ function add_row() {
 			delete_row(event.target.id);
 		}
 		else
-			alert('You may not delete the last row!');
+			alert('The last row may not be deleted.');
 	});
 
 }
@@ -392,7 +398,7 @@ $('[id^=delete]').click(function(event) {
 		delete_row(event.target.id);
 	}
 	else
-		alert('You may not delete the last row!');
+		alert('The last row may not be deleted.');
 });
 
 // "More information" handlers --------------------------------------------------------------------

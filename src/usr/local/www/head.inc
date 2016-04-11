@@ -678,7 +678,7 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
-				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 			</div>
 		</div>
 	</div>

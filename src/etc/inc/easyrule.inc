@@ -145,7 +145,18 @@ function easyrule_block_rule_create($int = 'wan', $ipproto = "inet") {
 	/* Do not translate this, it's considered a username which cannot contain international characters */
 	$filterent['created'] = make_config_revision_entry(null, "Easy Rule");
 
-	array_splice($a_filter, 0, 0, array($filterent));
+	// Refer to firewall_rules_edit.php separators updating code.
+	// Using same code, variables, and techniques here.
+	$after = -1;	// Place rule at top and move all separators.
+	array_splice($a_filter, $after+1, 0, array($filterent));
+
+	$tmpif = $int;
+
+	// Update the separators
+	$a_separators = &$config['filter']['separator'][strtolower($tmpif)];
+	$ridx = ifridx($tmpif, $after);	// get rule index within interface
+	$mvnrows = +1;
+	move_separators($a_separators, $ridx, $mvnrows);
 
 	return true;
 }

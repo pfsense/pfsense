@@ -573,17 +573,24 @@ function show_phase2(id, buttonid) {
 
 events.push(function() {
 	$('[id^=Xmove_]').click(function (event) {
+		// ToDo: We POST shift="yes" if the user has the shift key depressed, but that is not yet used
+		// by the $_POST code. It is intended to allow the user to choose to move stuff to the row before or
+		// after the clicked anchor icon
+		if (event.shiftKey) {
+			$('form').append('<input type="hidden" id="shift" name="shift" value="yes" />');
+		}
+
 		$('#' + event.target.id.slice(1)).click();
 	});
 
 	$('[id^=Xdel_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P1 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});
 
 	$('[id^=Xdelp2_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P2 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});

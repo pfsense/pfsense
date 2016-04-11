@@ -556,8 +556,7 @@ $group->add(new Form_Checkbox(
 	$pconfig['statusmonitoringsettingspanel']
 ))->setHelp('Show the Settings panel in Status Monitoring.');
 
-$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.
-<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.');
 
 $section->add($group);
 
@@ -566,7 +565,7 @@ $section->addInput(new Form_Checkbox(
 	'Left Column Labels',
 	'Active',
 	$pconfig['webguileftcolumnhyper']
-))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 
 $form->add($section);
 

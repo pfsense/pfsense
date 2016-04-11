@@ -2357,16 +2357,12 @@ snapshots_create_latest_symlink() {
 		return
 	fi
 
-	if [ -f "${_image}.gz" ]; then
-		local _image_fixed="${_image}.gz"
-	elif [ -f "${_image}" ]; then
-		local _image_fixed=${_image}
-	else
+	elif [ ! -f "${_image}" ]; then
 		return
 	fi
 
-	local _symlink=$(echo ${_image_fixed} | sed "s,${TIMESTAMP_SUFFIX},-latest,")
-	ln -sf $(basename ${_image_fixed}) ${_symlink}
+	local _symlink=$(echo ${_image} | sed "s,${TIMESTAMP_SUFFIX},-latest,")
+	ln -sf $(basename ${_image}) ${_symlink}
 	ln -sf $(basename ${_image}).sha256 ${_symlink}.sha256
 }
 
@@ -2407,7 +2403,8 @@ snapshots_copy_to_staging_iso_updates() {
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
-		sha256 ${_img}.gz > ${_img}.sha256
+		_img="${_img}.gz"
+		sha256 ${_img} > ${_img}.sha256
 		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done

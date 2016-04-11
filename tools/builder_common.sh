@@ -2345,6 +2345,19 @@ snapshots_rotate_logfile() {
 
 }
 
+create_sha256() {
+	local _file="${1}"
+
+	if [ ! -f "${_file}" ]; then
+		return 1
+	fi
+
+	( \
+		cd $(dirname ${_file}) && \
+		sha256 $(basename ${_file}) > $(basename ${_file}).sha256 \
+	)
+}
+
 snapshots_create_latest_symlink() {
 	local _image="${1}"
 
@@ -2377,16 +2390,16 @@ snapshots_copy_to_staging_nanobsd() {
 			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
-				sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL > $STAGINGAREA/nanobsd/$FILENAMEFULL.sha256 2>/dev/null
+				create_sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL
 			fi
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE > $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE.sha256 2>/dev/null
+				create_sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE
 			fi
 
 			# Copy NanoBSD auto update:
 			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
 				cp -l $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
-				sha256 $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz > $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz.sha256 2>/dev/null
+				create_sha256 $STAGINGAREAA/latest-${NANOTYPE}-$FILESIZE.img.gz
 				# NOTE: Updates need a file with output similar to date output
 				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
 				cp $BUILTDATESTRINGFILE $STAGINGAREA/version-${NANOTYPE}-$FILESIZE
@@ -2403,20 +2416,20 @@ snapshots_copy_to_staging_iso_updates() {
 			continue
 		fi
 		_img="${_img}.gz"
-		sha256 ${_img} > ${_img}.sha256
+		create_sha256 ${_img}
 		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done
 
 	if [ -f "${UPDATES_TARBALL_FILENAME}" ]; then
-		sha256 ${UPDATES_TARBALL_FILENAME} > ${UPDATES_TARBALL_FILENAME}.sha256
+		create_sha256 ${UPDATES_TARBALL_FILENAME}
 		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
 	fi
 
 	if [ -f "${OVAPATH}" ]; then
 		mkdir -p ${STAGINGAREA}/virtualization
-		sha256 ${OVAPATH} > ${OVAPATH}.sha256
+		create_sha256 ${OVAPATH}
 		cp -l ${OVAPATH}* $STAGINGAREA/virtualization 2>/dev/null
 		snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${OVAPATH})
 	fi

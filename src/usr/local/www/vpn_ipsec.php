@@ -573,6 +573,13 @@ function show_phase2(id, buttonid) {
 
 events.push(function() {
 	$('[id^=Xmove_]').click(function (event) {
+		// ToDo: We POST shift="yes" if the user has the shift key depressed, but that is not yet used
+		// by the $_POST code. It is intended to allow the user to choose to move stuff to the row before or
+		// after the clicked anchor icon
+		if (event.shiftKey) {
+			$('form').append('<input type="hidden" id="shift" name="shift" value="yes" />');
+		}
+
 		$('#' + event.target.id.slice(1)).click();
 	});
 

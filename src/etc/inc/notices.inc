@@ -101,7 +101,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
 	if (!$queueout) {
-		log_error(printf(gettext("Could not open %s for writing"), $notice_path));
+		log_error(sprintf(gettext("Could not open %s for writing"), $notice_path));
 		return;
 	}
 	fwrite($queueout, serialize($queue));

@@ -137,7 +137,7 @@ events.push(function() {
 
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext('Are you sure you want to reboot the system?')?></h2>
+		<h2 class="panel-title"><?=gettext('System Reboot Confirmation')?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="content">

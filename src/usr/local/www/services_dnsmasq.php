@@ -343,28 +343,6 @@ $form->add($section);
 print($form);
 
 ?>
-<div class="infoblock">
-<?php
-print_callout('<p>' .
-	gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
-		    ' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.') . '</p><p>' .
-	sprintf(gettext('The DNS forwarder will use the DNS servers entered in %1$sSystem > General Setup%2$s or' .
-				    ' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
-				    ' If that option is not used (or if a static IP address is used on WAN),' .
-				    ' at least one DNS server must be manually specified on the %1$sSystem > General Setup%2$s page.'),
-			'<a href="system.php">',
-			'</a>') .
-	'</p>'
-);
-
-?>
-</div>
-<?php
-print_callout(gettext("Entries in this section override individual results from the forwarders.") . " " .
-	gettext("Use these for changing DNS results or for adding custom DNS records.")
-);
-?>
-
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
@@ -440,12 +418,6 @@ endforeach;
 	</a>
 </nav>
 
-<?php
-print_callout(gettext("Entries in this area override an entire domain, and subdomains, by specifying an".
-	" authoritative DNS server to be queried for that domain.")
-);
-?>
-
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
@@ -492,6 +464,24 @@ endforeach;
 		<?=gettext('Add')?>
 	</a>
 </nav>
+<div class="infoblock">
+<?php
+print_info_box(
+	'<p>' .
+	gettext('If the DNS forwarder is enabled, the DHCP service (if enabled) will automatically' .
+		    ' serve the LAN IP address as a DNS server to DHCP clients so they will use the forwarder.') . '</p><p>' .
+	sprintf(gettext('The DNS forwarder will use the DNS servers entered in %1$sSystem > General Setup%2$s or' .
+				    ' those obtained via DHCP or PPP on WAN if &quot;Allow DNS server list to be overridden by DHCP/PPP on WAN&quot; is checked.' .
+				    ' If that option is not used (or if a static IP address is used on WAN),' .
+				    ' at least one DNS server must be manually specified on the %1$sSystem > General Setup%2$s page.'),
+			'<a href="system.php">',
+			'</a>') .
+	'</p>',
+	'info',
+	false
+);
+?>
+</div>
 
 <?php
 include("foot.inc");

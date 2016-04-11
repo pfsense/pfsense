@@ -106,7 +106,7 @@ if ($message) {
 } else {
 	print_info_box(
 		gettext('This is the Easy Rule status page, mainly used to display errors when adding rules.') . ' ' .
-		gettext('If you are seeing this, there apparently was not an error, and you navigated to the page directly without telling it what to do.') .
+		gettext('There apparently was not an error, and this page was navigated to directly without any instructions for what it should do.') .
 		'<br /><br />' .
 		gettext('This page is meant to be called from the block/pass buttons on the Firewall Logs page') .
 		', <a href="status_logs_filter.php">' . gettext("Status") . ' &gt; ' . gettext('System Logs') . ', ' . gettext('Firewall Tab') . '</a>.<br />');

@@ -69,6 +69,9 @@ require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("shaper.inc");
 
+$XmoveTitle = gettext("Move checked rules above this one");
+$ShXmoveTitle = gettext("Move checked rules below this one");
+
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
@@ -789,7 +792,7 @@ foreach ($a_filter as $filteri => $filterent):
 						</td>
 						<td class="action-icons">
 						<!-- <?=(isset($filterent['disabled']) ? 'enable' : 'disable')?> -->
-							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=gettext("Move checked rules above this one")?>"></a>
+							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$filteri?>" title="<?=$XmoveTitle?>"></a>
 							<a href="firewall_rules_edit.php?id=<?=$filteri;?>" class="fa fa-pencil" title="<?=gettext('Edit')?>"></a>
 							<a href="firewall_rules_edit.php?dup=<?=$filteri;?>" class="fa fa-clone" title="<?=gettext('Copy')?>"></a>
 <?php if (isset($filterent['disabled'])) {
@@ -884,6 +887,9 @@ if ($seprows[$nrules]) {
 			"other rules match. Pay close attention to the rule order and options " .
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
 	}
+
+	printf(gettext("%sClick the anchor icon %s to move checked rules before the clicked row. Hold down " .
+			"the shift key and click to move the rules after the clicked row"), '<br /><br />', '<i class="fa fa-anchor"></i>')
 ?>
 	</div>
 	</div>
@@ -910,18 +916,33 @@ events.push(function() {
 		// Save the target rule position
 		var anchor_row = $(this).parents("tr:first");
 
-		$('#ruletable > tbody  > tr').each(function() {
-			ruleid = this.id.slice(2);
+		if (event.shiftKey) {
+			$($('#ruletable > tbody  > tr').get().reverse()).each(function() {
+				ruleid = this.id.slice(2);
 
-			if (ruleid && !isNaN(ruleid)) {
-				if ($('#frc' + ruleid).prop('checked')) {
-					// Move the selected rows, un-select them and add highlight class
-					$(this).insertBefore(anchor_row);
-					fr_toggle(ruleid, "fr");
-					$('#fr' + ruleid).addClass("highlight");
+				if (ruleid && !isNaN(ruleid)) {
+					if ($('#frc' + ruleid).prop('checked')) {
+						// Move the selected rows, un-select them and add highlight class
+						$(this).insertAfter(anchor_row);
+						fr_toggle(ruleid, "fr");
+						$('#fr' + ruleid).addClass("highlight");
+					}
 				}
-			}
-		});
+			});
+		} else {
+			$('#ruletable > tbody  > tr').each(function() {
+				ruleid = this.id.slice(2);
+
+				if (ruleid && !isNaN(ruleid)) {
+					if ($('#frc' + ruleid).prop('checked')) {
+						// Move the selected rows, un-select them and add highlight class
+						$(this).insertBefore(anchor_row);
+						fr_toggle(ruleid, "fr");
+						$('#fr' + ruleid).addClass("highlight");
+					}
+				}
+			});
+		}
 
 		// Temporarily set background color so user can more easily see the moved rules, then fade
 		$('.highlight').effect("highlight", {color: "#739b4b;"}, 4000);
@@ -964,6 +985,14 @@ events.push(function() {
 			return ("<?=gettext('One or more rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
+		}
+	});
+
+	$(document).on('keyup keydown', function(e){
+		if (e.shiftKey) {
+			$('[id^=Xmove_]').attr("title", "<?=$ShXmoveTitle?>");
+		} else {
+			$('[id^=Xmove_]').attr("title", "<?=$XmoveTitle?>");
 		}
 	});
 });

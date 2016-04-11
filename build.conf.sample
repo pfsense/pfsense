@@ -78,9 +78,12 @@ export PKG_RSYNC_DESTDIR="/firmware/beta/packages"
 export PKG_RSYNC_LOGS="/firmware/beta"
 
 # pkg repo URL
-export PKG_REPO_SERVER="pkg+http://firmware.netgate.com/beta/packages"
+#export PKG_REPO_SERVER_DEVEL="pkg+http://firmware.netgate.com/beta/packages"
+#export PKG_REPO_SERVER_RELEASE="pkg+http://firmware.netgate.com/pkg"
+#export PKG_REPO_SERVER_STAGING="pkg+http://release-staging.netgate.com/factory/packages"
 
 # Branch to replace pkg.conf template, defaults to $GIT_REPO_BRANCH_OR_TAG
-#export PKG_REPO_CONF_BRANCH="BRANCH"
+#export PKG_REPO_BRANCH_DEVEL="BRANCH"
+#export PKG_REPO_BRANCH_RELEASE="BRANCH"
 
 export PKG_REPO_SIGNING_COMMAND="ssh sign@smartcard.pfmechanics.com sudo ./factory/sign.sh"

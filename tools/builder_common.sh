@@ -2356,7 +2356,7 @@ snapshots_create_latest_symlink() {
 		return
 	fi
 
-	elif [ ! -f "${_image}" ]; then
+	if [ ! -f "${_image}" ]; then
 		return
 	fi
 

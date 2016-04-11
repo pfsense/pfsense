@@ -83,23 +83,24 @@ if ($_POST) {
 }
 ?>
 
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th><?=gettext("Name")?></th>
-			<th>RTT</th>
-			<th>RTTsd</th>
-			<th><?=gettext("Loss")?></th>
-			<th><?=gettext("Status")?></th>
-		</tr>
-	</thead>
-	<tbody id="gwtblbody">
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th><?=gettext("Name")?></th>
+				<th>RTT</th>
+				<th>RTTsd</th>
+				<th><?=gettext("Loss")?></th>
+				<th><?=gettext("Status")?></th>
+			</tr>
+		</thead>
+		<tbody id="gwtblbody">
 <?php
-	print(compose_table_body_contents());
+		print(compose_table_body_contents());
 ?>
-	</tbody>
-</table>
-
+		</tbody>
+	</table>
+</div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div>
 

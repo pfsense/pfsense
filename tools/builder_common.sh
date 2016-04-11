@@ -1274,6 +1274,7 @@ customize_stagearea_for_image() {
 	create_final_staging_area
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
+	pkg_chroot_add ${FINAL_CHROOT_DIR} repo
 
 	if [ "${_image_type}" = "nanobsd" -o \
 	     "${_image_type}" = "nanobsd-vga" ]; then
@@ -1291,8 +1292,6 @@ customize_stagearea_for_image() {
 	else
 		pkg_chroot_add ${FINAL_CHROOT_DIR} base
 	fi
-
-	pkg_chroot_add ${FINAL_CHROOT_DIR} repo
 
 	if [ "${_image_type}" = "iso" -o \
 	     "${_image_type}" = "memstick" -o \

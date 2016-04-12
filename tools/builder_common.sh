@@ -1539,9 +1539,11 @@ setup_pkg_repo() {
 	fi
 
 	if [ -n "${_staging}" -a -n "${USE_PKG_REPO_STAGING}" ]; then
-		_pkg_repo_server=${PKG_REPO_SERVER_STAGING}
+		local _pkg_repo_server=${PKG_REPO_SERVER_STAGING}
+		local _pkg_repo_branch=${PKG_REPO_BRANCH_STAGING}
 	else
-		_pkg_repo_server=${PKG_REPO_SERVER_RELEASE}
+		local _pkg_repo_server=${PKG_REPO_SERVER_RELEASE}
+		local _pkg_repo_branch=${PKG_REPO_BRANCH_RELEASE}
 	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
@@ -1549,7 +1551,7 @@ setup_pkg_repo() {
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
 		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${PKG_REPO_BRANCH_DEVEL}/g" \
-		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${PKG_REPO_BRANCH_RELEASE}/g" \
+		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch}/g" \
 		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${PKG_REPO_SERVER_DEVEL},g" \
 		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \

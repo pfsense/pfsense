@@ -81,11 +81,13 @@ $a_out = &$config['nat']['outbound']['rule'];
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
+
 $a_aliases = &$config['aliases']['alias'];
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -93,6 +95,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
 	$after = $_GET['after'];
 }
+
 if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
 }
@@ -454,7 +457,7 @@ $section->addInput(new Form_Checkbox(
 	'nonat',
 	'Do not NAT',
 	'Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules',
-	$pconfig['nonat']
+	isset($pconfig['nonat'])
 ))->setHelp('In most cases this option is not required');
 
 $iflist = get_configured_interface_with_descr(false, true);

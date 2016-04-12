@@ -922,7 +922,7 @@ for ($idx=1; $idx<=4; $idx++) {
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
 		$pconfig['dns' . $idx]
-	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers, use this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise use the servers configured on the General page':'');
+	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
 
 $form->add($section);

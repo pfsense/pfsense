@@ -400,11 +400,11 @@ events.push(function() {
 
 			ajax_lock = false;
 
-			// Alternate updating the status table and hte gps table (if enabled)
+			// Alternate updating the status table and the gps table (if enabled)
 			if ((do_gps == "yes") || ("<?=$showgps?>" != 1)) {
 				do_gps = "no";
 			} else {
-			   do_gps = "yes";
+				do_gps = "yes";
 			}
 
 			// and do it again

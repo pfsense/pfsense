@@ -307,7 +307,7 @@ esac
 
 # pkg repo variables
 export USE_PKG_REPO_STAGING="1"
-export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+http://beta.pfsense.org/packages"}
+export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+http://firmware.netgate.com/beta/packages"}
 export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org"}
 
 if [ -n "${_IS_RELEASE}" ]; then

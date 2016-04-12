@@ -146,8 +146,8 @@ if ($_POST) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		/* Namecheap can have a @. in hostname */
-		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.') {
+		/* Namecheap can have @. and *. in hostname */
+		if ($pconfig['type'] == "namecheap" && in_array(substr($_POST['host'], 0, 2), array('@.', '*.')) {
 			$host_to_check = substr($_POST['host'], 2);
 		} else {
 			$host_to_check = $_POST['host'];

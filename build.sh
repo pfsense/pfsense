@@ -209,6 +209,7 @@ while test "$1" != ""; do
 			shift
 			snapshot_status_message="${1}"
 			BUILDACTION="snapshot_status_message"
+			_USE_OLD_DATESTRING=YES
 			;;
 		*)
 			_USE_OLD_DATESTRING=YES

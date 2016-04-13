@@ -514,14 +514,13 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 
 		handle_colors();
 
-		// Remove the temporary separator bar and replace it with the final version containing the
+		// Replace the temporary separator bar with the final version containing the
 		// user's text and a delete icon
 		$("#btnnewsep").click(function() {
 			var septext = escapeHtml($('#newsep').val());
 			sepcols = $( "#ruletable tr th" ).length - 1;
 
-			$('#ruletable > tbody:last >tr:last').remove();
-			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
+			$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
 				'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
 				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
 				'</td></tr>');

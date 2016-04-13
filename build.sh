@@ -211,6 +211,7 @@ while test "$1" != ""; do
 			BUILDACTION="snapshot_status_message"
 			;;
 		*)
+			_USE_OLD_DATESTRING=YES
 			usage
 	esac
 	shift

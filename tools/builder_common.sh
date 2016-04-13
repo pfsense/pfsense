@@ -1622,7 +1622,7 @@ create_mfsbsd_image() {
 	MD=$(mdconfig -f $IMGPATH)
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 	bsdlabel -w -B /dev/${MD} 2>&1 | tee -a ${LOGFILE}
-	newfs /dev/${MD}a 2>&1 | tee -a ${LOGFILE}
+	newfs -L ${PRODUCT_NAME} /dev/${MD}a 2>&1 | tee -a ${LOGFILE}
 	mount /dev/${MD}a ${MNTDIR}
 	trap "umount ${MNTDIR}; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 	clone_directory_contents ${FSDIR} ${MNTDIR}

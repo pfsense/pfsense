@@ -1017,13 +1017,13 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
 		delay="U"
 	else
-		# Convert delay to millisecond
+		# Convert delay from microseconds to seconds
 		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
 	fi
 	if echo "\$stddev" | grep -Eqv '^[0-9]+\$'; then
 		stddev="U"
 	else
-		# Convert stddev to millisecond
+		# Convert stddev from microseconds to seconds
 		stddev=\$(echo "scale=7; \$stddev / 1000 / 1000" | /usr/bin/bc)
 	fi
 

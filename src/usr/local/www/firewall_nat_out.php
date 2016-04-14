@@ -384,7 +384,7 @@ print($form);
 <?php
 						endif;
 ?>
-							<?=htmlspecialchars($natent['source']['network'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['source']['network']))?>
 <?php
 						if (isset($alias['src'])):
 ?>
@@ -407,7 +407,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['sourceport'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['sourceport']))?>
 <?php
 							if (isset($alias['srcport'])):
 ?>
@@ -434,7 +434,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['destination']['address'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['destination']['address']))?>
 <?php
 							if (isset($alias['dst'])):
 ?>
@@ -458,7 +458,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['dstport'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['dstport']))?>
 <?php
 							if (isset($alias['dstport'])):
 ?>

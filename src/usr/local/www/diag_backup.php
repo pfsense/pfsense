@@ -683,7 +683,7 @@ $section->addInput(new Form_Select(
 	'restorearea',
 	'Restore area',
 	'',
-	build_area_list(false)
+	build_area_list(true)
 ));
 
 $section->addInput(new Form_Input(

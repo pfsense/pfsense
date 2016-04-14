@@ -4134,7 +4134,7 @@ function upgrade_129_to_130() {
 	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
-			if (isset($serversettings['topology_subnet'])) {
+			if (strtolower($serversettings['topology_subnet']) == "yes") {
 				unset($serversettings['topology_subnet']);
 				$serversettings['topology'] = "subnet";
 			} else {
@@ -4356,6 +4356,7 @@ function upgrade_140_to_141() {
 	global $config;
 
 	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
+	// This is for 2.3 ALPHA to a later 2.3, not 2.2.x upgrades, which had no topology setting on clients
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpnclient) {
 			if (!isset($ovpnclient['topology'])) {

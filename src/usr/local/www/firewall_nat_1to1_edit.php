@@ -284,7 +284,7 @@ include("head.inc");
 function build_srctype_list() {
 	global $pconfig, $ifdisp;
 
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host'), 'network' => gettext('Network'));
 
 	$sel = is_specialnet($pconfig['src']);
 
@@ -577,11 +577,11 @@ events.push(function() {
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
-	$('#srctype').click(function () {
+	$('#srctype').change(function () {
 		typesel_change();
 	});
 
-	$('#dsttype').click(function () {
+	$('#dsttype').change(function () {
 		typesel_change();
 	});
 

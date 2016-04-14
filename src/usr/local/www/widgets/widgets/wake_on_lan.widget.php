@@ -93,11 +93,11 @@ if (count($wolcomputers) > 0):
 			</td>
 			<td>
 		<?php if ($status == 'expires'): ?>
-				<i class="fa fa-arrow-up" data-toggle="tooltip" title="<?= gettext("Online") ?>"></i>
+				<i class="fa fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Online") ?>"></i>
 		<?php elseif ($status == 'permanent'): ?>
-				<i class="fa fa-arrow-up" data-toggle="tooltip" title="<?= gettext("Static ARP") ?>"></i>
+				<i class="fa fa-arrow-up text-success" data-toggle="tooltip" title="<?= gettext("Static ARP") ?>"></i>
 		<?php else: ?>
-				<i class="fa fa-arrow-down" data-toggle="tooltip" title="<?= gettext("Offline") ?>"></i>
+				<i class="fa fa-arrow-down text-danger" data-toggle="tooltip" title="<?= gettext("Offline") ?>"></i>
 		<?php endif; ?>
 			</td>
 			<td>

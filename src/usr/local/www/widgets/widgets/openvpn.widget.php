@@ -178,10 +178,10 @@ $clients = openvpn_get_active_clients();
 <?php
 					if ($sk_server['status'] == "up") {
 						/* tunnel is up */
-						echo '<i class="fa fa-arrow-up"></i>';
+						echo '<i class="fa fa-arrow-up text-success"></i>';
 					} else {
 						/* tunnel is down */
-						echo '<i class="fa fa-arrow-down"></i>';
+						echo '<i class="fa fa-arrow-down text-danger"></i>';
 					}
 ?>
 					</td>
@@ -228,10 +228,10 @@ $clients = openvpn_get_active_clients();
 <?php
 				if ($client['status'] == "up") {
 					/* tunnel is up */
-					echo '<i class="fa fa-arrow-up"></i>';
+					echo '<i class="fa fa-arrow-up text-success"></i>';
 				} else {
 					/* tunnel is down */
-					echo '<i class="fa fa-arrow-down"></i>';
+					echo '<i class="fa fa-arrow-down text-danger"></i>';
 				}
 
 ?>

@@ -79,25 +79,39 @@ if ($input_errors) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
-function getcpuactivity() {
-	$.ajax(
-		'/diag_system_activity.php',
-		{
-			method: 'post',
-			data: {
-				getactivity: 'yes'
-			},
-			dataType: "html",
-			success: function (data) {
-				$('#xhrOutput').html(data);
-			},
-		}
-	);
-}
-
 events.push(function() {
-	setInterval('getcpuactivity()', 2500);
+	ajaxbusy = false;
+
+	function getcpuactivity() {
+
+		if (ajaxbusy) {
+			return;
+		}
+
+		ajaxbusy = true;
+
+		ajaxRequest = $.ajax(
+			{
+				url: '/diag_system_activity.php',
+				type: 'post',
+				data: {
+					getactivity: 'yes'
+				},
+				dataType: "html",
+			}
+		);
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#xhrOutput').html(response);
+			ajaxbusy = false;
+		});
+
+		setTimeout(getcpuactivity, 2500);
+	};
+
 	getcpuactivity();
+
 });
 //]]>
 </script>

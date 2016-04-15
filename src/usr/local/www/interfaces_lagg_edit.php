@@ -281,6 +281,13 @@ $section->addInput(new Form_Select(
 ))->setHelp($protohelp);
 
 $section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp("Enter a description here for reference only. (Not parsed)");
+
+$section->addInput(new Form_Input(
 	'laggif',
 	null,
 	'hidden',

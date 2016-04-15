@@ -521,7 +521,7 @@ display_top_tabs($tab_array);
 			<tbody id="ipsec-body">
 				<tr>
 					<td colspan="9">
-						<?=print_info_box(gettext("Collecting IPSec status information"), warning, "")?>
+						<?=print_info_box(gettext("Collecting IPsec status information"), warning, "")?>
 					</td>
 				</tr>
 			</tbody>

@@ -219,10 +219,10 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'ipaddr',
 	'IP Address',
+	'text',
 	$pconfig['ipaddr']
 ))->setHelp('This is normally the WAN IP address for the server to listen on. ' .
 			'All connections to this IP and port will be forwarded to the pool cluster. ' .

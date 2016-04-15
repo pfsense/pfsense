@@ -201,6 +201,8 @@ if ($input_errors) {
 
 $form = new Form();
 
+$form->setAction("load_balancer_virtual_server_edit.php");
+
 $section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(

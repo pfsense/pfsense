@@ -213,9 +213,9 @@ print $form;
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source -> Router -> Destination")?></th>
 						<th><?=gettext("State")?></th>
-						<th><?=gettext("Packets")?></th>
-						<th><?=gettext("Bytes")?></th>
-						<th></th> <!-- For the optional "Remove" button -->
+						<th data-sortable="false"><?=gettext("Packets")?></th>
+						<th data-sortable="false"><?=gettext("Bytes")?></th>
+						<th data-sortable="false"></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
 				<tbody>

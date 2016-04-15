@@ -365,8 +365,8 @@ if ($_POST) {
 			unset($config['system']['tftpinterface']);
 		}
 
-		if ($_POST['update-frequency'] != $config['system']['bogons']['interval']) {
-			switch ($_POST['update-frequency']) {
+		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
+			switch ($_POST['bogonsinterval']) {
 				case 'daily':
 					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*");
 					break;
@@ -378,7 +378,7 @@ if ($_POST) {
 				default:
 					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*");
 			}
-			$config['system']['bogons']['interval'] = $_POST['update-frequency'];
+			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
 
 		write_config();

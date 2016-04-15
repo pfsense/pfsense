@@ -261,7 +261,6 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'Please add a pool on the "Pools" tab to use this feature. '
 	));
 } else {
-
 	$list = array();
 	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 		$list[$config['load_balancer']['lbpool'][$i]['name']] = $config['load_balancer']['lbpool'][$i]['name'];
@@ -271,7 +270,7 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'sitedown',
 		'Fall-back Pool',
 		$pconfig['sitedown'],
-		$list
+		["" => "None"] + $list
 	));
 }
 

@@ -163,7 +163,10 @@ if (isset($id) && $a_laggs[$id]) {
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
-	$pconfig['members'] = implode(',', $_POST['members']);
+
+	if (is_array($_POST['members'])) {
+		$pconfig['members'] = implode(',', $_POST['members']);
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");

@@ -178,7 +178,7 @@
 		mark_subsystem_dirty('sshdkeys');
 		echo " Generating Keys:\n";
 		foreach ($generate_keys as $key) {
-			$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
+			$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -b 4096 -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
 		}
 		clear_subsystem_dirty('sshdkeys');
 		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");

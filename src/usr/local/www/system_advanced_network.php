@@ -240,7 +240,7 @@ $section->addInput(new Form_Checkbox(
 	'network devices for new data instead of relying on interrupts. This prevents '.
 	'the webConfigurator, SSH, etc. from being inaccessible due to interrupt floods '.
 	'when under extreme load. Generally this is not recommended. Not all NICs support '.
-	'polling; see the %s homepage for a list of supported cards', [$g["product_name"]]);
+	'polling; see the %s homepage for a list of supported cards.', [$g["product_name"]]);
 
 
 $section->addInput(new Form_Checkbox(
@@ -280,7 +280,7 @@ $section->addInput(new Form_Checkbox(
 	'Suppress ARP messages',
 	isset($pconfig['sharednet'])
 ))->setHelp('This option will suppress ARP log messages when multiple interfaces '.
-	'reside on the same broadcast domain');
+	'reside on the same broadcast domain.');
 
 if (get_freebsd_version() == 8) {
 	$section->addInput(new Form_Checkbox(

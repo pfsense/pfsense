@@ -260,7 +260,7 @@ $section->addInput(new Form_Input(
 	$pconfig['notification_name'],
 	['placeholder' => $g["product_name"].' growl alert']
 
-))->setHelp('Enter a name for the Growl notifications');
+))->setHelp('Enter a name for the Growl notifications.');
 
 $section->addInput(new Form_Input(
 	'ipaddress',
@@ -310,7 +310,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['smtpport']
 ))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
-	'(submission) or 465 (smtps)');
+	'(submission) or 465 (smtps).');
 
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(

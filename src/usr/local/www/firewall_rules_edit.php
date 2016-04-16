@@ -456,7 +456,7 @@ if ($_POST) {
 		if ($_POST['proto'] != "tcp") {
 			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."), $_POST['statetype']);
 		}
-		if (($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != "")) {
+		if ($_POST['gateway'] != "") {
 			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."), $_POST['statetype']);
 		}
 	}

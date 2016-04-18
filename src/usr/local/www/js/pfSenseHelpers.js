@@ -651,8 +651,7 @@ function moveOptions(From, To)	{
 
 
 // ------------- Service start/stop/restart functions.
-// [id^=restartservice-], [id^=stopservice-], id^=startservice-]
-// If a start/stop/restart button is clicked, parse teh button name and make a POST via AJAX
+// If a start/stop/restart button is clicked, parse the button name and make a POST via AJAX
 $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(function(event) {
 	var args = this.id.split('-');
 	var action, name, mode_zone, id;

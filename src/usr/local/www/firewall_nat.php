@@ -375,7 +375,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							</i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -392,7 +392,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							</i></a>
+							</a>
 <?php
 	endif;
 ?>

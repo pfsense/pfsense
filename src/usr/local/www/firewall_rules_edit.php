@@ -194,7 +194,7 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
 		$pconfig['floating'] = $a_filter[$id]['floating'];
 		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "") {
-			$pconfig['interface'] = $a_filter[$id]['interface'];
+			$pconfig['interface'] = explode(",", $a_filter[$id]['interface']);
 		}
 	}
 
@@ -1205,7 +1205,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput($input = new Form_Select(
 		'interface',
 		'Interface',
-		explode(",", $pconfig['interface']),
+		$pconfig['interface'],
 		build_if_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');

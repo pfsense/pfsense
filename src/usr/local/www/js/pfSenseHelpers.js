@@ -672,6 +672,7 @@ $('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(functi
 	}
 
 	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
+	this.blur();
 
 	ajaxRequest = $.ajax(
 		{

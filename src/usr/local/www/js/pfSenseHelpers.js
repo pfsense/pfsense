@@ -53,7 +53,7 @@
 
 // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 function hideInput(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent('div').removeClass('hidden');
@@ -62,7 +62,7 @@ function hideInput(id, hide) {
 // Hides the <div> in which the specified group input element lives so that the input,
 // its label and help text are hidden
 function hideGroupInput(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent('div').addClass('hidden');
 	else
 		$('#' + id).parent('div').removeClass('hidden');
@@ -70,7 +70,7 @@ function hideGroupInput(id, hide) {
 
 // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 function hideCheckbox(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -83,7 +83,7 @@ function disableInput(id, disable) {
 
 // Hides all elements of the specified class. This will usually be a section
 function hideClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).hide();
 	else
 		$('.' + s_class).show();
@@ -91,21 +91,21 @@ function hideClass(s_class, hide) {
 
 // Hides all elements of the specified class assigned to a group. This will usually be a group
 function hideGroupClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).parent().parent().parent().hide();
 	else
 		$('.' + s_class).parent().parent().parent().show();
 }
 
 function hideSelect(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent('div').parent('div').addClass('hidden');
 	else
 		$('#' + id).parent('div').parent('div').removeClass('hidden');
 }
 
 function hideMultiCheckbox(id, hide) {
-	if(hide)
+	if (hide)
 		$("[name=" + id + "]").parent().addClass('hidden');
 	else
 		$("[name=" + id + "]").parent().removeClass('hidden');
@@ -113,7 +113,7 @@ function hideMultiCheckbox(id, hide) {
 
 // Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
 function hideIpAddress(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -121,7 +121,7 @@ function hideIpAddress(id, hide) {
 
 // Hides all elements of the specified class belonging to a multiselect.
 function hideMultiClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).parent().parent().hide();
 	else
 		$('.' + s_class).parent().parent().show();
@@ -132,7 +132,7 @@ function hideLabel(text, hide) {
 
 	var element = $('label:contains(' + text + ')');
 
-	if(hide)
+	if (hide)
 		element.parent('div').addClass('hidden');
 	else
 		element.parent('div').removeClass('hidden');
@@ -174,7 +174,7 @@ function fr_bgcolor(id, prefix) {
 // to add/delete rows of sequentially numbered elements, their labels and their help text
 // See firewall_aliases_edit.php for an example
 
-// NOTE: retainhelp is a global var that defined prevents any help text from being deleted as lines are inserted.
+// NOTE: retainhelp is a global var that when defined prevents any help text from being deleted as lines are inserted.
 // IOW it causes every row to have help text, not just the last row
 
 function setMasks() {
@@ -193,8 +193,7 @@ function setMasks() {
 			while (select.options.length > max)
 				select.remove(0);
 
-			if (select.options.length < max)
-			{
+			if (select.options.length < max) {
 				for (var i=select.options.length; i<=max; i++)
 					select.options.add(new Option(i, i), 0);
 			}
@@ -213,17 +212,16 @@ function moveHelpText(id) {
 		var toId = decrStringInt(fromId);
 		var helpSpan;
 
-		if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
-			if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
+			if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
 			} else {
 				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
 			}
-			if($(helpSpan).hasClass('help-block')) {
-				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+			if ($(helpSpan).hasClass('help-block')) {
+				if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
-				}
-				else {
+				} else {
 					$('#' + decrStringInt(fromId)).after(helpSpan);
 				}
 			}
@@ -235,7 +233,7 @@ function moveHelpText(id) {
 function bumpStringInt( str )	{
   var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if( data )
+  if (data)
 	newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
 
   return newStr || str;
@@ -245,7 +243,7 @@ function bumpStringInt( str )	{
 function decrStringInt( str )	{
   var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if( data )
+  if (data)
 	newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
 
   return newStr || str;
@@ -292,7 +290,7 @@ function delete_row(rowDelBtn) {
 }
 
 function checkLastRow() {
-	if($('.repeatable').length <= 1) {
+	if ($('.repeatable').length <= 1) {
 		$('#deleterow0').hide();
 	} else {
 		$('[id^=deleterow]').show();
@@ -309,7 +307,7 @@ function add_row() {
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));
-		if(!$(this).is('[id^=delete]'))
+		if (!$(this).is('[id^=delete]'))
 			$(this).val('');
 	});
 
@@ -325,9 +323,9 @@ function add_row() {
 		$(this).prop("name", bumpStringInt(this.name));
 		// If this selector lists mask bits, we need it to be reset to all 128 options
 		// and no items selected, so that automatic v4/v6 selection still works
-		if($(this).is('[id^=address_subnet]')) {
+		if ($(this).is('[id^=address_subnet]')) {
 			$(this).empty();
-			for(idx=128; idx>0; idx--) {
+			for (idx=128; idx>0; idx--) {
 				$(this).append($('<option>', {
 					value: idx,
 					text: idx
@@ -346,7 +344,7 @@ function add_row() {
 
 	// Delete any help text from the group we have cloned
 	$(lastRepeatableGroup).find('.help-block').each(function() {
-		if((typeof retainhelp) == "undefined")
+		if ((typeof retainhelp) == "undefined")
 			$(this).remove();
 	});
 
@@ -357,7 +355,7 @@ function add_row() {
 	// Autocomplete
 	if ( typeof addressarray !== 'undefined') {
 		$('[id^=address]').each(function() {
-			if(this.id.substring(0, 8) != "address_") {
+			if (this.id.substring(0, 8) != "address_") {
 				$(this).autocomplete({
 					source: addressarray
 				});
@@ -369,14 +367,14 @@ function add_row() {
 	// has been added to the table
 	$('[id^=delete]').unbind();
 	$('[id^=delete]').click(function(event) {
-		if($('.repeatable').length > 1) {
-			if((typeof retainhelp) == "undefined")
+		if ($('.repeatable').length > 1) {
+			if ((typeof retainhelp) == "undefined")
 				moveHelpText(event.target.id);
 
 			delete_row(event.target.id);
-		}
-		else
+		} else {
 			alert('The last row may not be deleted.');
+		}
 	});
 
 }
@@ -391,14 +389,14 @@ $('[id^=addrow]').click(function() {
 });
 
 $('[id^=delete]').click(function(event) {
-	if($('.repeatable').length > 1) {
-		if((typeof retainhelp) == "undefined")
+	if ($('.repeatable').length > 1) {
+		if ((typeof retainhelp) == "undefined")
 			moveHelpText(event.target.id);
 
 		delete_row(event.target.id);
-	}
-	else
+	} else {
 		alert('The last row may not be deleted.');
+	}
 });
 
 // "More information" handlers --------------------------------------------------------------------
@@ -480,7 +478,7 @@ $("#addsep").click(function() {
 	}
 
 	gColor = 'bg-info';
-	// Inset a temporary bar in which the user can enter some optional text
+	// Insert a temporary bar in which the user can enter some optional text
 	sepcols = $( "#ruletable tr th" ).length - 2;
 
 	$('#ruletable > tbody:last').append('<tr>' +
@@ -501,13 +499,13 @@ $("#addsep").click(function() {
 
 	// Watch escape and enter keys
 	$('#newsep').keyup(function(e) {
-		if(e.which == 27) {
+		if (e.which == 27) {
 			$('#btncncsep').trigger('click');
 		}
 	});
 
 	$('#newsep').keypress(function(e) {
-		if(e.which == 13) {
+		if (e.which == 13) {
 			$('#btnnewsep').trigger('click');
 		}
 	});
@@ -548,7 +546,7 @@ $(function(){
 	});
 });
 
-// Compose an inout array containing the row #, color and text for each separator
+// Compose an input array containing the row #, color and text for each separator
 function save_separators() {
 	var row = 0;
 	var sepinput;
@@ -582,7 +580,7 @@ function reindex_rules(section) {
 	var row = 0;
 
 	section.find('tr').each(function() {
-		if(this.id) {
+		if (this.id) {
 			$(this).attr("id", "fr" + row);
 			$(this).attr("onclick", "fr_toggle(" + row + ")")
 			$(this).find('input:checkbox:first').each(function() {

@@ -504,8 +504,8 @@ if ($_POST) {
 		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
-		$server['tunnel_network'] = $pconfig['tunnel_network'];
-		$server['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		$server['tunnel_network'] = trim($pconfig['tunnel_network']);
+		$server['tunnel_networkv6'] = trim($pconfig['tunnel_networkv6']);
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];

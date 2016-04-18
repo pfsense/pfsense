@@ -208,7 +208,7 @@ function print_status() {
 	elseif (count($ntpq_servers) == 0):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
-		sprintf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');
+		printf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');
 		print("</td>\n");
 		print("</tr>\n");
 	else:
@@ -239,26 +239,26 @@ function print_gps() {
 
 	print("<tr>\n");
 	print("<td>\n");
-	sprintf("%.5f", $gps_lat);
+	printf("%.5f", $gps_lat);
 	print(" (");
-	sprintf("%d%s", $gps_lat_deg, "&deg;");
-	sprintf("%.5f", $gps_lat_min*60);
+	printf("%d%s", $gps_lat_deg, "&deg;");
+	printf("%.5f", $gps_lat_min*60);
 	print($gps_vars[4]);
 	print(")");
 	print("</td>\n");
 	print("<td>\n");
-	sprintf("%.5f", $gps_lon);
+	printf("%.5f", $gps_lon);
 	print(" (");
-	sprintf("%d%s", $gps_lon_deg, "&deg;");
-	sprintf("%.5f", $gps_lon_min*60);
+	printf("%d%s", $gps_lon_deg, "&deg;");
+	printf("%.5f", $gps_lon_min*60);
 	print($gps_vars[6]);
 	print(")");
 	print("</td>\n");
 
 	if (isset($gps_alt)) {
-	print("<td>\n");
-	print($gps_alt . ' ' . $gps_alt_unit);
-	print("</td>\n");
+		print("<td>\n");
+		print($gps_alt . ' ' . $gps_alt_unit);
+		print("</td>\n");
 	}
 
 	if (isset($gps_sat) || isset($gps_satview)) {

@@ -340,7 +340,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['src'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -357,7 +357,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -375,7 +375,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</i></a>
 <?php
 	endif;
 ?>
@@ -392,7 +392,7 @@ foreach ($a_nat as $natent):
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</i></a>
 <?php
 	endif;
 ?>

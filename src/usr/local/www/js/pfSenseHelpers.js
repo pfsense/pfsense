@@ -464,187 +464,233 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 	});
 });
 
-	// Separator bar stuff ------------------------------------------------------------------------
+// Separator bar stuff ------------------------------------------------------------------------
 
-	// Globals
+// Globals
+gColor = 'bg-info';
+newSeperator = false;
+saving = false;
+dirty = false;
+
+$("#addsep").prop('type' ,'button');
+
+$("#addsep").click(function() {
+	if (newSeperator) {
+		return(false);
+	}
+
 	gColor = 'bg-info';
-	newSeperator = false;
-	saving = false;
-	dirty = false;
+	// Inset a temporary bar in which the user can enter some optional text
+	sepcols = $( "#ruletable tr th" ).length - 2;
 
-	$("#addsep").prop('type' ,'button');
+	$('#ruletable > tbody:last').append('<tr>' +
+		'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
+		'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
+		'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
+		'&nbsp;&nbsp;&nbsp;&nbsp;' +
+		'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+		'</td></tr>');
 
-	$("#addsep").click(function() {
-		if (newSeperator) {
-			return(false);
+	$('#newsep').focus();
+	newSeperator = true;
+
+	$("#btnnewsep").prop('type' ,'button');
+
+	// Watch escape and enter keys
+	$('#newsep').keyup(function(e) {
+		if(e.which == 27) {
+			$('#btncncsep').trigger('click');
 		}
+	});
 
-		gColor = 'bg-info';
-		// Inset a temporary bar in which the user can enter some optional text
-		sepcols = $( "#ruletable tr th" ).length - 2;
+	$('#newsep').keypress(function(e) {
+		if(e.which == 13) {
+			$('#btnnewsep').trigger('click');
+		}
+	});
 
-		$('#ruletable > tbody:last').append('<tr>' +
-			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
-			'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
-			'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
-			'&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+	handle_colors();
+
+	// Replace the temporary separator bar with the final version containing the
+	// user's text and a delete icon
+	$("#btnnewsep").click(function() {
+		var septext = escapeHtml($('#newsep').val());
+		sepcols = $( "#ruletable tr th" ).length - 1;
+
+		$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
+			'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
+			'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
 			'</td></tr>');
 
-		$('#newsep').focus();
-		newSeperator = true;
-
-		$("#btnnewsep").prop('type' ,'button');
-
-		// Watch escape and enter keys
-		$('#newsep').keyup(function(e) {
-			if(e.which == 27) {
-				$('#btncncsep').trigger('click');
-			}
-		});
-
-		$('#newsep').keypress(function(e) {
-			if(e.which == 13) {
-				$('#btnnewsep').trigger('click');
-			}
-		});
-
-		handle_colors();
-
-		// Replace the temporary separator bar with the final version containing the
-		// user's text and a delete icon
-		$("#btnnewsep").click(function() {
-			var septext = escapeHtml($('#newsep').val());
-			sepcols = $( "#ruletable tr th" ).length - 1;
-
-			$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
-				'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
-				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
-				'</td></tr>');
-
-			$('#order-store').removeAttr('disabled');
-			newSeperator = false;
-			dirty = true;
-		});
-
-		// Cancel button
-		$('#btncncsep').click(function(e) {
-			e.preventDefault();
-			$(this).parents('tr').remove();
-			newSeperator = false;
-		});
+		$('#order-store').removeAttr('disabled');
+		newSeperator = false;
+		dirty = true;
 	});
 
-	// Delete a separator row
-	$(function(){
-		$('table').on('click','tr a .sepdel',function(e){
-			e.preventDefault();
-			$(this).parents('tr').remove();
-			$('#order-store').removeAttr('disabled');
-			dirty = true;
-		});
+	// Cancel button
+	$('#btncncsep').click(function(e) {
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		newSeperator = false;
 	});
+});
 
-	// Compose an inout array containing the row #, color and text for each separator
-	function save_separators() {
-		var row = 0;
-		var sepinput;
-		var sepnum = 0;
+// Delete a separator row
+$(function(){
+	$('table').on('click','tr a .sepdel',function(e){
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		$('#order-store').removeAttr('disabled');
+		dirty = true;
+	});
+});
 
-		$('#ruletable > tbody > tr').each(function() {
-			if ($(this).hasClass('separator')) {
-				seprow = $(this).next('tr').attr("id");
-				if (seprow == undefined) {
-					seprow = "fr" + row;
-				}
+// Compose an inout array containing the row #, color and text for each separator
+function save_separators() {
+	var row = 0;
+	var sepinput;
+	var sepnum = 0;
 
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
-				$('form').append(sepinput);
-				sepnum++;
-			} else {
-				if ($(this).parent('tbody').hasClass('user-entries')) {
-					row++;
-				}
+	$('#ruletable > tbody > tr').each(function() {
+		if ($(this).hasClass('separator')) {
+			seprow = $(this).next('tr').attr("id");
+			if (seprow == undefined) {
+				seprow = "fr" + row;
 			}
-		});
-	}
 
-	function reindex_rules(section) {
-		var row = 0;
-
-		section.find('tr').each(function() {
-			if(this.id) {
-				$(this).attr("id", "fr" + row);
-				$(this).attr("onclick", "fr_toggle(" + row + ")")
-				$(this).find('input:checkbox:first').each(function() {
-					$(this).attr("id", "frc" + row);
-					$(this).attr("onclick", "fr_toggle(" + row + ")");
-				});
-
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
+			$('form').append(sepinput);
+			sepnum++;
+		} else {
+			if ($(this).parent('tbody').hasClass('user-entries')) {
 				row++;
 			}
-		});
-	}
+		}
+	});
+}
 
-	function handle_colors() {
-		$('[id^=sepclr]').prop("type", "button");
+function reindex_rules(section) {
+	var row = 0;
 
-		$('[id^=sepclr]').click(function () {
-			var color =	 $(this).attr('value');
-			// Clear all the color classes
-			$(this).parent('td').prop('class', '');
-			$(this).parent('td').prev('td').prop('class', '');
-			// Install our new color class
-			$(this).parent('td').addClass(color);
-			$(this).parent('td').prev('td').addClass(color);
-			// Set the global color
-			gColor = color;
-		});
-	}
+	section.find('tr').each(function() {
+		if(this.id) {
+			$(this).attr("id", "fr" + row);
+			$(this).attr("onclick", "fr_toggle(" + row + ")")
+			$(this).find('input:checkbox:first').each(function() {
+				$(this).attr("id", "frc" + row);
+				$(this).attr("onclick", "fr_toggle(" + row + ")");
+			});
 
-	//JS equivalent to PHP htmlspecialchars()
-	function escapeHtml(text) {
-		var map = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#039;'
-		};
+			row++;
+		}
+	});
+}
 
-		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-	}
-	// --------------------------------------------------------------------------------------------
+function handle_colors() {
+	$('[id^=sepclr]').prop("type", "button");
 
-	// Select every option in the specified multiselect
-	function AllServers(id, selectAll) {
-	   for (i = 0; i < id.length; i++)	   {
-		   id.eq(i).prop('selected', selectAll);
-	   }
-	}
+	$('[id^=sepclr]').click(function () {
+		var color =	 $(this).attr('value');
+		// Clear all the color classes
+		$(this).parent('td').prop('class', '');
+		$(this).parent('td').prev('td').prop('class', '');
+		// Install our new color class
+		$(this).parent('td').addClass(color);
+		$(this).parent('td').prev('td').addClass(color);
+		// Set the global color
+		gColor = color;
+	});
+}
 
-	// Move all selected options from one multiselect to another
-	function moveOptions(From, To)	{
-		var len = From.length;
-		var option;
+//JS equivalent to PHP htmlspecialchars()
+function escapeHtml(text) {
+	var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
 
-		if (len > 0) {
-			for (i=0; i<len; i++) {
-				if (From.eq(i).is(':selected')) {
-					option = From.eq(i).val();
-					value  = From.eq(i).text();
-					To.append(new Option(value, option));
-					From.eq(i).remove();
-				}
+	return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+// --------------------------------------------------------------------------------------------
+
+// Select every option in the specified multiselect
+function AllServers(id, selectAll) {
+   for (i = 0; i < id.length; i++)	   {
+	   id.eq(i).prop('selected', selectAll);
+   }
+}
+
+// Move all selected options from one multiselect to another
+function moveOptions(From, To)	{
+	var len = From.length;
+	var option;
+
+	if (len > 0) {
+		for (i=0; i<len; i++) {
+			if (From.eq(i).is(':selected')) {
+				option = From.eq(i).val();
+				value  = From.eq(i).text();
+				To.append(new Option(value, option));
+				From.eq(i).remove();
 			}
 		}
 	}
+}
+
+
+// ------------- Service start/stop/restart functions.
+// [id^=restartservice-], [id^=stopservice-], id^=startservice-]
+// If a start/stop/restart button is clicked, parse teh button name and make a POST via AJAX
+$('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(function(event) {
+	var args = this.id.split('-');
+	var action, name, mode_zone, id;
+
+	if (args[0] == "openvpn") {
+		action = args[1];
+		name = args[0];
+		mode_zone = args[2];
+		id = args[3];
+	} else if (args[0] == "cpativeportal") {
+		action = args[1];
+		name = args[0];
+		mode_zone = args[2];
+		id = args[3];
+	} else {
+		action = args[0];
+		name = args[1];
+	}
+
+	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
+
+	ajaxRequest = $.ajax(
+		{
+			url: "/status_services.php",
+			type: "post",
+			data: {
+				ajax: 		"ajax",
+				mode: 		action,
+				service: 	name,
+				vpnmode: 	mode_zone,
+				zone: 		mode_zone,
+				id: 		id
+			}
+		}
+	);
+
+	// Once the AJAX call has returned, refresh the page to show the new service
+	ajaxRequest.done(function (response, textStatus, jqXHR) {
+		location.reload(true);
+	});
+});

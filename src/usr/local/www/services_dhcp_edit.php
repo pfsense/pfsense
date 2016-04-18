@@ -126,6 +126,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
 	$pconfig['cid'] = $a_maps[$id]['cid'];
 	$pconfig['hostname'] = $a_maps[$id]['hostname'];
+	$pconfig['ddnshostname'] = $a_maps[$id]['ddnshostname'];
 	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
 	$pconfig['filename'] = $a_maps[$id]['filename'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
@@ -149,6 +150,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $_GET['mac'];
 	$pconfig['cid'] = $_GET['cid'];
 	$pconfig['hostname'] = $_GET['hostname'];
+	$pconfig['ddnshostname'] = $_GET['ddnshostname'];
 	$pconfig['filename'] = $_GET['filename'];
 	$pconfig['rootpath'] = $_GET['rootpath'];
 	$pconfig['descr'] = $_GET['descr'];
@@ -205,7 +207,18 @@ if ($_POST) {
 			}
 		}
 	}
-
+	if ($_POST['ddnshostname']) {
+		preg_match("/\-\$/", $_POST['ddnshostname'], $matches);
+		if($matches)
+			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");
+		if (!is_hostname($_POST['ddnshostname'])) {
+			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
+		} else {
+			if (!is_unqualified_hostname($_POST['ddnshostname'])) {
+				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
+			}
+		}
+	}
 	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
 		$input_errors[] = gettext("A valid IP address must be specified.");
 	}
@@ -235,7 +248,7 @@ if ($_POST) {
 			break;
 		}
 	}
-
+	
 	/* make sure it's not within the dynamic subnet */
 	if ($_POST['ipaddr']) {
 		if (is_inrange_v4($_POST['ipaddr'], $config['dhcpd'][$if]['range']['from'], $config['dhcpd'][$if]['range']['to'])) {
@@ -327,6 +340,7 @@ if ($_POST) {
 		$mapent['cid'] = $_POST['cid'];
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
+		$mapent['ddnshostname'] = $_POST['ddnshostname'];
 		$mapent['descr'] = $_POST['descr'];
 		$mapent['arp_table_static_entry'] = ($_POST['arp_table_static_entry']) ? true : false;
 		$mapent['filename'] = $_POST['filename'];
@@ -467,6 +481,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['hostname']
 ))->setHelp('Name of the host, without domain part.');
+
+$section->addInput(new Form_Input(
+	'ddnshostname',
+	'DDNS Hostname',
+	'text',
+	$pconfig['ddnshostname']
+))->setHelp('Name of the host to be register in DNS, without domain part.');
 
 if ($netboot_enabled) {
 	$section->addInput(new Form_Input(

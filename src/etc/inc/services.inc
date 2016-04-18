@@ -1016,12 +1016,19 @@ EOD;
 				if ($sm['ipaddr']) {
 					$dhcpdconf .= "	fixed-address {$sm['ipaddr']};\n";
 				}
-
+				
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
 				}
+				
+				if ($sm['ddnshostname']) {
+					$ddnsdhhostname = str_replace(" ", "_", $sm['ddnshostname']);
+					$ddnddhhostname = str_replace(".", "_", $ddnsdhhostname);
+					$dhcpdconf .= "	ddns-hostname \"{$ddnsdhhostname}\";\n";
+				}
+				
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
 				}
@@ -1505,6 +1512,13 @@ EOD;
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdv6conf .= "	option host-name {$dhhostname};\n";
 				}
+				
+				if ($sm['ddnshostname']) {
+					$ddnsdhhostname = str_replace(" ", "_", $sm['ddnshostname']);
+					$ddnddhhostname = str_replace(".", "_", $ddnsdhhostname);
+					$dhcpdv6conf .= "	ddns-hostname \"{$ddnsdhhostname}\";\n";
+				}
+				
 				if ($sm['filename']) {
 					$dhcpdv6conf .= "	filename \"{$sm['filename']}\";\n";
 				}

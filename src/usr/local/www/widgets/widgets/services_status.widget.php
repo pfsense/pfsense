@@ -78,7 +78,7 @@ for ($idx=1; $idx < $numsvcs; $idx++) {
 	for ($chk = $idx +1, $sfx=2; $chk <$numsvcs; $chk++) {
 		if ($services[$chk]['dispname'] == $name) {
 			$services[$chk]['dispname'] .= '_' . $sfx++;
-		} 
+		}
 	}
 }
 
@@ -116,20 +116,23 @@ $skipservices = explode(",", $config['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");
+
 	foreach ($services as $service) {
 		if ((!$service['dispname']) || (in_array($service['dispname'], $skipservices)) || (!is_service_enabled($service['dispname']))) {
 			continue;
 		}
+
 		if (empty($service['description'])) {
 			$service['description'] = get_pkg_descr($service['name']);
 		}
+
 		$service_desc = explode(".",$service['description']);
 ?>
 		<tr>
 			<td><i class="fa fa-<?=get_service_status($service) ? 'check-circle text-success' : 'times-circle text-warning'?>"></i></td>
 			<td><?=$service['dispname']?></td>
 			<td><?=$service_desc[0]?></td>
-			<td><?=get_service_control_GET_links($service)?></td>
+			<td><?=get_service_control_links($service)?></td>
 		</tr>
 <?php
 	}
@@ -149,7 +152,7 @@ if (count($services) > 0) {
 		<div class="col-sm-6">
 			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
 			<?php
-				foreach ($services as $service): 
+				foreach ($services as $service):
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
 			?>
 				<option <?=(in_array($service['dispname'], $skipservices)?'selected':'')?>><?=$service['dispname']?></option>

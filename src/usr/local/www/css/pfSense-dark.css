@@ -1,4 +1,5 @@
 @import url("/css/pfSense.css");
+@import url("/vendor/jquery/jquery-ui-theme-dark-hive.min.css");
 
 body {
     background-color: #212121;

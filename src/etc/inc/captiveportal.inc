@@ -2086,7 +2086,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	/* read in client database */
 	$query = "WHERE ip = '{$clientip}'";
-	$tmpusername = str_replace("'", "''", strtolower($username));
+	$tmpusername = SQLite3::escapeString(strtolower($username));
 	if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
 		$query .= " OR (username != 'unauthenticated' AND lower(username) = '{$tmpusername}')";
 	}

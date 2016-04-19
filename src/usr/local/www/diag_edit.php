@@ -129,6 +129,9 @@ if ($_POST['action']) {
 }
 
 require("head.inc");
+
+print_callout(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'danger', gettext('Advanced Users Only'));
+
 ?>
 <!-- file status box -->
 <div style="display:none; background:#eeeeee;" id="fileStatusBox">
@@ -140,38 +143,38 @@ require("head.inc");
 	<div class="panel-body">
 		<div class="content">
 			<form>
-				<input type="text" class="form-control" id="fbTarget"/>
+				<p><input type="text" class="form-control" id="fbTarget"/></p>
 				<div class="btn-group">
-					<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
-						<i class="fa fa-file-text-o"></i>
-						<?=gettext('Load')?>
-					</button>
-					<button type="button" class="btn btn-default btn-sm" id="fbOpen"		value="<?=gettext('Browse')?>">
-						<i class="fa fa-list"></i>
-						<?=gettext('Browse')?>
-					</button>
-					<button type="button" class="btn btn-default btn-sm" onclick="saveFile();"	value="<?=gettext('Save')?>">
-						<i class="fa fa-save"></i>
-						<?=gettext('Save')?>
-					</button>
+					<p>
+						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
+							<i class="fa fa-file-text-o"></i>
+							<?=gettext('Load')?>
+						</button>
+						<button type="button" class="btn btn-default btn-sm" id="fbOpen"		value="<?=gettext('Browse')?>">
+							<i class="fa fa-list"></i>
+							<?=gettext('Browse')?>
+						</button>
+						<button type="button" class="btn btn-default btn-sm" onclick="saveFile();"	value="<?=gettext('Save')?>">
+							<i class="fa fa-save"></i>
+							<?=gettext('Save')?>
+						</button>
+					</p>
 				</div>
-				<span class="pull-right">
-					<button id="btngoto" class="btn btn-default btn-sm"><i class="fa fa-forward"></i><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" />
-				</span>
+				<p class="pull-right">
+					<button id="btngoto" class="btn btn-default btn-sm"><i class="fa fa-forward"></i><?=gettext("GoTo Line #")?></button> <input type="number" id="gotoline" size="6" style="padding: 3px 0px;"/>
+				</p>
 			</form>
 
-			<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%;"></div>
+			<div id="fbBrowser" style="display:none; border:1px dashed gray; width:98%; padding:10px"></div>
 
-			<div style="background:#eeeeee;" id="fileOutput">
-				<script type="text/javascript">
-				//<![CDATA[
-				window.onload=function() {
-					document.getElementById("fileContent").wrap='off';
-				}
-				//]]>
-				</script>
-				<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols="20"></textarea>
-			</div>
+			<script type="text/javascript">
+			//<![CDATA[
+			window.onload=function() {
+				document.getElementById("fileContent").wrap='off';
+			}
+			//]]>
+			</script>
+			<textarea id="fileContent" name="fileContent" class="form-control" rows="30" cols="20"></textarea>
 		</div>
 	</div>
 </div>

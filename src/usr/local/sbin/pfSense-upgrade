@@ -732,6 +732,16 @@ pid_file="/var/run/$(basename $0).pid"
 logfile="/cf/conf/upgrade_log.txt"
 stdout='/dev/null'
 
+# Setup proxy settings
+HTTP_PROXY=$(/usr/local/sbin/read_xml_tag.sh string system/proxyurl)
+if [ "${HTTP_PROXY}" != "" ]; then
+	HTTP_PROXY_PORT=$(/usr/local/sbin/read_xml_tag.sh string system/proxyport)
+	if [ "${HTTP_PROXY_PORT}" != "" ]; then
+		HTTP_PROXY="${HTTP_PROXY}:${HTTP_PROXY_PORT}"
+	fi
+	export HTTP_PROXY
+fi
+
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
 

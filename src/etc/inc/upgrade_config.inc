@@ -4892,4 +4892,16 @@ function upgrade_150_to_151() {
 		}
 	}
 }
+
+function upgrade_151_to_152() {
+	global $g, $config;
+
+	require_once("/etc/inc/services.inc");
+
+	// Remove these cron jobs on full install if not using ramdisk.
+	if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+		install_cron_job("/etc/rc.backup_rrd.sh", false);
+		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+	}
+}
 ?>

@@ -288,6 +288,12 @@ if ($_POST) {
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 		}
 
+		// Remove these cron jobs on full install if not using ramdisk.
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+			install_cron_job("/etc/rc.backup_rrd.sh", false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+		}
+
 		write_config();
 
 		$retval = 0;

@@ -466,14 +466,14 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 
 // Globals
 gColor = 'bg-info';
-newSeperator = false;
+newSeparator = false;
 saving = false;
 dirty = false;
 
 $("#addsep").prop('type' ,'button');
 
 $("#addsep").click(function() {
-	if (newSeperator) {
+	if (newSeparator) {
 		return(false);
 	}
 
@@ -493,7 +493,7 @@ $("#addsep").click(function() {
 		'</td></tr>');
 
 	$('#newsep').focus();
-	newSeperator = true;
+	newSeparator = true;
 
 	$("#btnnewsep").prop('type' ,'button');
 
@@ -524,7 +524,7 @@ $("#addsep").click(function() {
 			'</td></tr>');
 
 		$('#order-store').removeAttr('disabled');
-		newSeperator = false;
+		newSeparator = false;
 		dirty = true;
 	});
 
@@ -532,7 +532,7 @@ $("#addsep").click(function() {
 	$('#btncncsep').click(function(e) {
 		e.preventDefault();
 		$(this).parents('tr').remove();
-		newSeperator = false;
+		newSeparator = false;
 	});
 });
 

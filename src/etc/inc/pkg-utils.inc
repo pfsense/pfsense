@@ -109,6 +109,14 @@ function pkg_env($extra_env = array()) {
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 
+	if (!empty($config['system']['proxyurl'])) {
+		$http_proxy = $config['system']['proxyurl'];
+		if (!empty($config['system']['proxyport'])) {
+			$http_proxy .= ':' . $config['system']['proxyport'];
+		}
+		$pkg_env_vars['HTTP_PROXY'] = $http_proxy;
+	}
+
 	if ($g['platform'] == "nanobsd" ||
 	    isset($config['system']['use_mfs_tmpvar'])) {
 		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';

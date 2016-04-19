@@ -448,9 +448,6 @@ if ($_POST['message'] != "") {
 $completion = ($stepid == 0) ? 0:($stepid * 100) / ($totalsteps -1);
 ?>
 
-<!-- Present the pfSense logo -->
-<div class="text-center"><p><a href="<?=$ip?>"><img src="logo-black.png" alt="logo-black" style="border:0px; vertical-align:middle" height="45" width="180" /></a></p></div><br /><br/>
-
 <!-- Draw a progress bar to show step progress -->
 <div class="progress">
 	<div class="progress-bar" role="progressbar" aria-valuenow="<?=$completion?>" aria-valuemin="0" aria-valuemax="100" style="width:<?=$completion?>%">

@@ -632,19 +632,15 @@ function dsttype_selected() {
 
 	$selected = "";
 
-	if (is_array($config['virtualip']['vip'])) {
-		$selected = $pconfig['dst'];
-	} else {
-		$sel = is_specialnet($pconfig['dst']);
-		if (!$sel) {
-			if ($pconfig['dstmask'] == 32) {
-				$selected = 'single';
-			} else {
-				$selected = 'network';
-			}
+	$sel = is_specialnet($pconfig['dst']);
+	if (!$sel) {
+		if ($pconfig['dstmask'] == 32) {
+			$selected = 'single';
 		} else {
-			$selected = $pconfig['dst'];
+			$selected = 'network';
 		}
+	} else {
+		$selected = $pconfig['dst'];
 	}
 
 	return($selected);

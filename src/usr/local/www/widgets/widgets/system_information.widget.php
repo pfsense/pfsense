@@ -63,6 +63,10 @@ include_once("includes/functions.inc.php");
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
+	if (isset($config['system']['firmware']['disablecheck'])) {
+		exit;
+	}
+
 	$system_version = get_system_pkg_version();
 
 	if ($system_version === false) {
@@ -304,6 +308,7 @@ $filesystems = get_mounted_filesystems();
 
 <script type="text/javascript">
 //<![CDATA[
+<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 function systemStatusGetUpdateStatus() {
 	$.ajax({
 		type: 'get',
@@ -319,6 +324,7 @@ function systemStatusGetUpdateStatus() {
 		}
 	});
 }
+<?php endif; ?>
 
 function updateMeters() {
 	url = '/getstats.php';
@@ -336,9 +342,11 @@ function updateMeters() {
 
 }
 
+<?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
+<?php endif; ?>
 
 /*   Most widgets update their backend data every 10 seconds.  11 seconds
  *   will ensure that we update the GUI right after the stats are updated.

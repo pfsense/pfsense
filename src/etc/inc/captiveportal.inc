@@ -1956,8 +1956,8 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	/* substitute other variables */
 	$ourhostname = portal_hostname_from_client_ip($clientip);
 	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
-	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/", $htmltext);
-	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/", $htmltext);
+	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/index.php?zone={$cpcfg['zone']}", $htmltext);
+	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/index.php?zone={$cpcfg['zone']}", $htmltext);
 
 	$htmltext = str_replace("\$PORTAL_ZONE\$", htmlspecialchars($cpzone), $htmltext);
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);
@@ -2086,7 +2086,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	/* read in client database */
 	$query = "WHERE ip = '{$clientip}'";
-	$tmpusername = strtolower($username);
+	$tmpusername = SQLite3::escapeString(strtolower($username));
 	if (isset($config['captiveportal'][$cpzone]['noconcurrentlogins'])) {
 		$query .= " OR (username != 'unauthenticated' AND lower(username) = '{$tmpusername}')";
 	}

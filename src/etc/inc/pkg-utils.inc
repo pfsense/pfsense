@@ -109,6 +109,14 @@ function pkg_env($extra_env = array()) {
 		"ASSUME_ALWAYS_YES" => "true"
 	);
 
+	if (!empty($config['system']['proxyurl'])) {
+		$http_proxy = $config['system']['proxyurl'];
+		if (!empty($config['system']['proxyport'])) {
+			$http_proxy .= ':' . $config['system']['proxyport'];
+		}
+		$pkg_env_vars['HTTP_PROXY'] = $http_proxy;
+	}
+
 	if ($g['platform'] == "nanobsd" ||
 	    isset($config['system']['use_mfs_tmpvar'])) {
 		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
@@ -1134,30 +1142,54 @@ function get_system_pkg_version() {
 	);
 }
 
-/* Switch between stable and devel repos */
-function pkg_switch_repo($devel = false) {
+/* List available repos */
+function pkg_list_repos() {
 	global $g;
 
-	$repo_stable = $g['product_name'] . '-repo';
-	$repo_devel = $g['product_name'] . '-repo-devel';
+	$path = "/usr/local/share/{$g['product_name']}/pkg/repos";
 
-	if ($devel) {
-		$repo_target = $repo_devel;
-	} else {
-		$repo_target = $repo_stable;
+	$default_descr = @file_get_contents($path . "/{$g['product_name']}-repo.descr");
+
+	$default = array(
+	    'name' => 'Default',
+	    'path' => $path . "/{$g['product_name']}-repo.conf",
+	    'descr' => $default_descr
+	);
+
+	$result = array($default);
+
+	$conf_files = glob("{$path}/{$g['product_name']}-repo-*.conf");
+	foreach ($conf_files as $conf_file) {
+		$descr_file = preg_replace('/.conf$/', '.descr', $conf_file);
+		if (file_exists($descr_file)) {
+			$descr_content = file($descr_file);
+			$descr = chop($descr_content[0]);
+		} else {
+			$descr = 'Unknown';
+		}
+		if (!preg_match('/-repo-(.*).conf/', $conf_file, $matches)) {
+			continue;
+		}
+		$entry = array(
+		    'name' => ucfirst(strtolower($matches[1])),
+		    'path' => $conf_file,
+		    'descr' => $descr
+		);
+		$result[] = $entry;
 	}
 
-	if (is_pkg_installed($repo_target)) {
-		/* It's already installed */
-		return true;
-	}
+	return $result;
+}
 
-	/*
-	 * Since both install files in the same place, just
-	 * call pkg_install for target and current one will
-	 * be replaced
-	 */
-	return pkg_install($repo_target, true);
+/* Switch between stable and devel repos */
+function pkg_switch_repo($path) {
+	global $g;
+
+	safe_mkdir("/usr/local/etc/pkg/repos");
+	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
+
+	return pkg_update(true);
 }
 
 ?>

@@ -2808,7 +2808,7 @@ EOD;
 
 				if (isset($wlcfg['wpa']['rsn_preauth'])) {
 					$wpa .= <<<EOD
-# Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP you want to roam from/to
+# Enable the next lines for preauth when roaming. Interface = wired or wireless interface talking to the AP to roam from/to
 rsn_preauth=1
 rsn_preauth_interfaces={$if}
 

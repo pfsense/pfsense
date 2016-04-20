@@ -230,6 +230,9 @@ interfaces_loopback_configure();
 /* start syslogd */
 system_syslogd_start();
 
+/* restore alias tables */
+restore_aliastables();
+
 echo "Starting Secure Shell Services...";
 send_event("service reload sshd");
 echo "done.\n";
@@ -308,11 +311,9 @@ services_dnsmasq_configure();
 /* start unbound service */
 services_unbound_configure();
 
-/* Do an initial time sync */
+/* Enable ntpd */
 echo "Starting NTP time client...";
-/* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
-system_ntp_configure(false);
-mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
+system_ntp_configure();
 echo "done.\n";
 
 /* start load balancer daemon */
@@ -421,7 +422,9 @@ if (file_exists('/conf/needs_package_sync') &&
 }
 
 /* Detect installed binary pkgs that are not registered in the system */
-register_all_installed_packages();
+if ($g['platform'] != "cdrom") {
+	register_all_installed_packages();
+}
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */

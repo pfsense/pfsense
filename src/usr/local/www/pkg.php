@@ -292,7 +292,7 @@ events.push(function() {
 function save_changes_to_xml(xml) {
 	var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
 	var strloading="<?=gettext('Saving changes...')?>";
-	if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
+	if (confirm("<?=gettext("Confirmation Required to save changes.")?>")) {
 		$.ajax({
 			type: 'get',
 			cache: false,

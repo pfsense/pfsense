@@ -763,8 +763,8 @@ function openvpn_reconfigure($mode, $settings) {
 	// server specific settings
 	if ($mode == 'server') {
 
-		list($ip, $cidr) = explode('/', $settings['tunnel_network']);
-		list($ipv6, $prefix) = explode('/', $settings['tunnel_networkv6']);
+		list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
+		list($ipv6, $prefix) = explode('/', trim($settings['tunnel_networkv6']));
 		$mask = gen_subnet_mask($cidr);
 
 		// configure tls modes
@@ -939,7 +939,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		if (!empty($settings['tunnel_network'])) {
-			list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+			list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
 			$mask = gen_subnet_mask($cidr);
 			list($ip1, $ip2) = openvpn_get_interface_ip($ip, $cidr);
 			if ($settings['dev_mode'] == 'tun') {
@@ -950,7 +950,7 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 
 		if (!empty($settings['tunnel_networkv6'])) {
-			list($ipv6, $prefix) = explode('/', $settings['tunnel_networkv6']);
+			list($ipv6, $prefix) = explode('/', trim($settings['tunnel_networkv6']));
 			list($ipv6_1, $ipv6_2) = openvpn_get_interface_ipv6($ipv6, $prefix);
 			if ($settings['dev_mode'] == 'tun') {
 				$conf .= "ifconfig-ipv6 {$ipv6_2} {$ipv6_1}\n";
@@ -1251,7 +1251,7 @@ function openvpn_resync_csc(& $settings) {
 					$csc_conf = $conf;
 
 					if (!empty($serversettings['tunnel_network']) && !empty($settings['tunnel_network'])) {
-						list($ip, $mask) = explode('/', $settings['tunnel_network']);
+						list($ip, $mask) = explode('/', trim($settings['tunnel_network']));
 						if (($serversettings['dev_mode'] == 'tap') || ($serversettings['topology'] == "subnet")) {
 							$csc_conf .= "ifconfig-push {$ip} " . gen_subnet_mask($mask) . "\n";
 						} else {
@@ -1415,7 +1415,7 @@ function openvpn_get_active_servers($type="multipoint") {
 			$server['vpnid'] = $settings['vpnid'];
 			$server['mgmt'] = "server{$server['vpnid']}";
 			$socket = "unix://{$g['varetc_path']}/openvpn/{$server['mgmt']}.sock";
-			list($tn, $sm) = explode('/', $settings['tunnel_network']);
+			list($tn, $sm) = explode('/', trim($settings['tunnel_network']));
 
 			if ((($server['mode'] == "p2p_shared_key") || ($sm >= 30)) && ($type == "p2p")) {
 				$servers[] = openvpn_get_client_status($server, $socket);
@@ -1614,7 +1614,6 @@ function openvpn_get_client_status($client, $socket) {
 		fclose($fp);
 
 	} else {
-		$DisplayNote=true;
 		$client['remote_host'] = gettext("Unable to contact daemon");
 		$client['virtual_addr'] = gettext("Service not running?");
 		$client['bytes_recv'] = 0;
@@ -1737,7 +1736,7 @@ function openvpn_clear_route($mode, $settings) {
 	if (empty($settings['tunnel_network'])) {
 		return;
 	}
-	list($ip, $cidr) = explode('/', $settings['tunnel_network']);
+	list($ip, $cidr) = explode('/', trim($settings['tunnel_network']));
 	$mask = gen_subnet_mask($cidr);
 	$clear_route = false;
 

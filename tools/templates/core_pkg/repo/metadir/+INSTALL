@@ -1,0 +1,22 @@
+#!/bin/sh
+
+if [ "${2}" != "POST-INSTALL" ]; then
+	exit 0
+fi
+
+if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/pkg/repos/%%PRODUCT_NAME%%-repo.conf ]; then
+	echo "===> ERROR: Default repo conf not found!"
+	exit 1
+fi
+
+if [ ! -L /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf ]; then
+	if [ -f /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf ]; then
+		rm -f /usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
+	fi
+	mkdir -p /usr/local/etc/pkg/repos
+	ln -sf \
+		/usr/local/share/%%PRODUCT_NAME%%/pkg/repos/%%PRODUCT_NAME%%-repo.conf \
+		/usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
+fi
+
+exit 0

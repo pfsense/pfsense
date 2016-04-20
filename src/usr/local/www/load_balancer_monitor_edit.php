@@ -68,11 +68,13 @@ $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/load_
 if (!is_array($config['load_balancer']['monitor_type'])) {
 	$config['load_balancer']['monitor_type'] = array();
 }
+
 $a_monitor = &$config['load_balancer']['monitor_type'];
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -89,7 +91,7 @@ if (isset($id) && $a_monitor[$id]) {
 	$pconfig['options']['code'] = 200;
 }
 
-if ($_GET['act'] = "dup") {
+if ($_GET['act'] == "dup") {
 	unset($id);
 }
 
@@ -127,7 +129,7 @@ if ($_POST) {
 	}
 
 	if (preg_match('/[ \/]/', $_POST['name'])) {
-		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+		$input_errors[] = gettext("Spaces or slashes cannot be used in the 'name' field.");
 	}
 
 	if (strlen($_POST['name']) > 16) {
@@ -239,8 +241,6 @@ $types = array("icmp" => gettext("ICMP"), "tcp" => gettext("TCP"), "http" => get
 
 ?>
 
-
-
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
@@ -295,6 +295,7 @@ if ($input_errors) {
 }
 
 $form = new Form();
+$form->setAction("load_balancer_monitor_edit.php");
 
 $section = new Form_Section('Edit Load Balancer - Monitor Entry');
 

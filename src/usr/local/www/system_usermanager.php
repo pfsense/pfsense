@@ -660,7 +660,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'Full name',
 		'text',
 		htmlspecialchars($pconfig['descr'])
-	))->setHelp('User\'s full name, for your own information only');
+	))->setHelp('User\'s full name, for administrative information only');
 
 	if ($ro) {
 		$input->setDisabled();
@@ -804,7 +804,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				array(
 					512 => '512 bits',
 					1024 => '1024 bits',
-					2048 => '2049 bits',
+					2048 => '2048 bits',
 					4096 => '4096 bits',
 				)
 			));

@@ -2151,7 +2151,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	return $v;
 }
 function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validateonly=false) {
-	global $config;
+	global $g, $config;
 
 	$urltable_prefix = "/var/db/aliastables/";
 	$urltable_filename = $urltable_prefix . $name . ".txt";
@@ -2186,6 +2186,13 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 				if (is_array($urltable)) {
 					file_put_contents($urltable_filename, implode("\n", $urltable));
 				}
+			}
+			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+			if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz");
+			} else {
+				/* Update the RAM disk store with the new/updated table file. */
+				mwexec("cd / && /usr/bin/tar -czf \"{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz\" -C / \"{$urltable_filename}\"");
 			}
 			unlink_if_exists($tmp_urltable_filename);
 		} else {
@@ -3083,6 +3090,38 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 		}
 	}
 	return $results;
+}
+
+function restore_aliastables() {
+	global $g, $config;
+
+	$dbpath = "{$g['vardb_path']}/aliastables/";
+
+	/* restore the alias tables, if we have them */
+	$files = glob("{$g['cf_conf_path']}/RAM_Disk_Store{$dbpath}*.tgz");
+	if (count($files)) {
+		echo "Restoring alias tables...";
+		foreach ($files as $file) {
+			if (file_exists($file)) {
+				$aliastablesrestore = "";
+				$aliastablesreturn = "";
+				exec("cd /;LANG=C /usr/bin/tar -xzf {$file} 2>&1", $aliastablesrestore, $aliastablesreturn);
+				$aliastablesrestore = implode(" ", $aliastablesrestore);
+				if ($aliastablesreturn <> 0) {
+					log_error(sprintf(gettext('Alias table restore failed exited with %1$s, the error is: %2$s %3$s%4$s'), $aliastablesreturn, $aliastablesrestore, $file, "\n"));
+				} else {
+					log_error(sprintf(gettext('Alias table restore succeeded exited with %1$s, the result is: %2$s %3$s%4$s'), $aliastablesreturn, $aliastablesrestore, $dbpath.basename($file, ".tgz"), "\n"));
+				}
+			}
+			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+			if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+				unlink_if_exists("{$file}");
+			}
+		}
+		echo "done.\n";
+		return true;
+	}
+	return false;
 }
 
 ?>

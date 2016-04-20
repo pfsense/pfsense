@@ -413,7 +413,7 @@ if (count($pools) > 0) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
@@ -449,7 +449,7 @@ if (empty($leases)) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
@@ -546,7 +546,7 @@ foreach ($leases as $data):
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>

@@ -642,6 +642,7 @@
 /usr/local/sbin/mdnsd
 /usr/local/sbin/mini_httpd
 /usr/local/sbin/mpd
+/usr/local/sbin/ntpdate_sync_once.sh
 /usr/local/sbin/olsrd
 /usr/local/sbin/pbi
 /usr/local/sbin/pbi-crashhandler
@@ -742,6 +743,7 @@
 /usr/local/share/misc
 /usr/local/share/nls
 /usr/local/share/pbi-keys
+/usr/local/share/pfSense/pfSense-repo-devel.conf
 /usr/local/share/protocols
 /usr/local/share/sgml
 /usr/local/share/skel
@@ -752,6 +754,7 @@
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
 /usr/local/www/csrf/csrf-secret.php
+/usr/local/www/css/table.css
 /usr/local/www/datetimepicker.js
 /usr/local/www/dfly-pg.gif
 /usr/local/www/dfuife.cgi

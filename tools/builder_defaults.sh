@@ -135,6 +135,8 @@ if [ "${_cur_git_repo_branch_or_tag}" = "HEAD" ]; then
 else
 	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
 fi
+# Use vX_Y instead of RELENG_X_Y for poudriere to make it shorter
+POUDRIERE_BRANCH=$(echo "${GIT_REPO_BRANCH_OR_TAG}" | sed 's,RELENG_,v,')
 
 GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e 's,/[^/]*$,,')
 
@@ -262,7 +264,7 @@ echo "$BUILTDATESTRING" > $BUILTDATESTRINGFILE
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
-export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE_BRANCH}"}
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
@@ -273,11 +275,6 @@ export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
 export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
 export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
 export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/usr/local/www/beta"}
-export PKG_REPO_SERVER=${PKG_REPO_SERVER:-"pkg+http://beta.pfsense.org/packages"}
-export PKG_REPO_CONF_BRANCH=${PKG_REPO_CONF_BRANCH:-"${GIT_REPO_BRANCH_OR_TAG}"}
-
-# Command used to sign pkg repo
-export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
 
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING
@@ -303,15 +300,34 @@ case "${PRODUCT_VERSION##*-}" in
 		exit 1
 esac
 
+# pkg repo variables
+export USE_PKG_REPO_STAGING="1"
+export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+http://beta.pfsense.org/packages"}
+export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+http://pkg.pfsense.org"}
+
+if [ -n "${_IS_RELEASE}" ]; then
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-${POUDRIERE_BRANCH}}
+	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-"v2_3"}
+	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_RELEASE}}
+	export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://release-staging.netgate.com/ce/packages"}
+else
+	export PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE:-"v2_3_0"}
+	export PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL:-${POUDRIERE_BRANCH}}
+	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_DEVEL}}
+	export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-${PKG_REPO_SERVER_DEVEL}}
+fi
+
+# Command used to sign pkg repo
+export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
+
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
-export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}_${TARGET}_${TARGET_ARCH}-core"}
+export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}
 export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${FREEBSD_SRC_DIR}/release/pkg_repos"}
-export PKG_REPO_TEMPLATE=${PKG_REPO_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}.conf.template"}
-export PKG_REPO_DEVEL_TEMPLATE=${PKG_REPO_DEVEL_TEMPLATE:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-devel.conf.template"}
+export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-repo.conf"}
 export PKG_REPO_PATH=${PKG_REPO_PATH:-"/usr/local/etc/pkg/repos/${PRODUCT_NAME}.conf"}
 
 export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"}

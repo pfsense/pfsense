@@ -109,10 +109,10 @@ if ($_POST) {
 		$input_errors[] = gettext("First level tag cannot be empty.");
 	}
 	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag']) {
-		$input_errors[] = gettext("You are editing an existing entry and modifying the first level tag is not allowed.");
+		$input_errors[] = gettext("Modifying the first level tag of an existing entry is not allowed.");
 	}
 	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if']) {
-		$input_errors[] = gettext("You are editing an existing entry and modifying the interface is not allowed.");
+		$input_errors[] = gettext("Modifying the interface of an existing entry is not allowed.");
 	}
 	if (!isset($id)) {
 		foreach ($a_qinqs as $qinqentry) {
@@ -287,11 +287,11 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_StaticText(
 	'Member(s)',
-	'You can specify ranges in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
+	'Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
 	'Click "Duplicate" as many times as needed to add new inputs'
 ));
 

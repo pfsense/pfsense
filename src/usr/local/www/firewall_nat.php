@@ -212,7 +212,7 @@ if ($savemsg) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('You must apply the changes in order for them to take effect.'));
+					gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();
@@ -336,11 +336,11 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=htmlspecialchars(pprint_address($natent['source']))?>
+							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['source'])))?>
 <?php
 	if (isset($alias['src'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -353,11 +353,11 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=htmlspecialchars(pprint_port($natent['source']['port']))?>
+							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['source']['port'])))?>
 <?php
 	if (isset($alias['srcport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -371,11 +371,11 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=htmlspecialchars(pprint_address($natent['destination']))?>
+							<?=str_replace('_', ' ', htmlspecialchars(pprint_address($natent['destination'])))?>
 <?php
 	if (isset($alias['dst'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
@@ -388,18 +388,18 @@ foreach ($a_nat as $natent):
 <?php
 	endif;
 ?>
-							<?=htmlspecialchars(pprint_port($natent['destination']['port']))?>
+							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($natent['destination']['port'])))?>
 <?php
 	if (isset($alias['dstport'])):
 ?>
-							<i class='fa fa-pencil'></i></a>
+							</a>
 <?php
 	endif;
 ?>
 						</td>
 
 						<td >
-							<?=htmlspecialchars($natent['target'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['target']))?>
 						</td>
 						<td>
 <?php
@@ -412,7 +412,7 @@ foreach ($a_nat as $natent):
 		$localport	 .= '-' . $localendport;
 	}
 ?>
-							<?=htmlspecialchars(pprint_port($localport))?>
+							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($localport)))?>
 						</td>
 
 						<td>
@@ -506,7 +506,7 @@ events.push(function() {
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (!saving && dirty) {
-			return ("<?=gettext('You have moved one or more Port Forward rules but have not yet saved')?>");
+			return ("<?=gettext('One or more Port Forward rules have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
 		}

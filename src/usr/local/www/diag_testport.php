@@ -98,10 +98,10 @@ if ($_POST || $_REQUEST['host']) {
 	}
 
 	if (is_ipaddrv4($_REQUEST['host']) && ($_REQUEST['ipprotocol'] == "ipv6")) {
-		$input_errors[] = gettext("You cannot connect to an IPv4 address using IPv6.");
+		$input_errors[] = gettext("Cannot connect to an IPv4 address using IPv6.");
 	}
 	if (is_ipaddrv6($_REQUEST['host']) && ($_REQUEST['ipprotocol'] == "ipv4")) {
-		$input_errors[] = gettext("You cannot connect to an IPv6 address using IPv4.");
+		$input_errors[] = gettext("Cannot connect to an IPv6 address using IPv4.");
 	}
 
 	if (!$input_errors) {
@@ -241,7 +241,7 @@ if ($input_errors) {
 	}
 } else {
 	// First time, new page
-	print_info_box(gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+	print_info_box(gettext('This page performs a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
 		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.'), 'warning', false);
 }
 
@@ -292,8 +292,8 @@ $section->addInput(new Form_Select(
 	'IP Protocol',
 	$ipprotocol,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp("If you force IPv4 or IPv6 and use a hostname that does not contain a result using that protocol, it will result in an error." .
-					" For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work.");
+))->setHelp("If IPv4 or IPv6 is forced and a hostname is used that does not contain a result using that protocol, it will result in an error." .
+					" For example if IPv4 is forced and a hostname is used that only returns an AAAA IPv6 IP address, it will not work.");
 
 $form->add($section);
 

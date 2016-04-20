@@ -81,11 +81,13 @@ $a_out = &$config['nat']['outbound']['rule'];
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
+
 $a_aliases = &$config['aliases']['alias'];
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
 }
+
 if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 	$id = $_POST['id'];
 }
@@ -93,6 +95,7 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 if (is_numericint($_GET['after']) || $_GET['after'] == "-1") {
 	$after = $_GET['after'];
 }
+
 if (isset($_POST['after']) && (is_numericint($_POST['after']) || $_POST['after'] == "-1")) {
 	$after = $_POST['after'];
 }
@@ -204,15 +207,15 @@ if ($_POST) {
 	}
 
 	if ($protocol_uses_ports && $_POST['sourceport'] <> "" && !(is_portoralias($_POST['sourceport']) || is_portrange($_POST['sourceport']))) {
-		$input_errors[] = gettext("You must supply either a valid port or port alias for the source port entry.");
+		$input_errors[] = gettext("A valid port or port alias must be supplied for the source port entry.");
 	}
 
 	if ($protocol_uses_ports && $_POST['dstport'] <> "" && !(is_portoralias($_POST['dstport']) || is_portrange($_POST['dstport']))) {
-		$input_errors[] = gettext("You must supply either a valid port or port alias for the destination port entry.");
+		$input_errors[] = gettext("A valid port or port alias must be supplied for the destination port entry.");
 	}
 
 	if ($protocol_uses_ports && $_POST['natport'] <> "" && !(is_portoralias($_POST['natport']) || is_portrange($_POST['natport'])) && !isset($_POST['nonat'])) {
-		$input_errors[] = gettext("You must supply a valid port for the NAT port entry.");
+		$input_errors[] = gettext("A valid port must be supplied for the NAT port entry.");
 	}
 
 	if (($_POST['source_type'] != "any") && ($_POST['source_type'] != "(self)")) {
@@ -454,8 +457,8 @@ $section->addInput(new Form_Checkbox(
 	'nonat',
 	'Do not NAT',
 	'Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules',
-	$pconfig['nonat']
-))->setHelp('In most cases this option is not required');
+	isset($pconfig['nonat'])
+))->setHelp('In most cases this option is not required.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 
@@ -554,7 +557,7 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Not',
 	$pconfig['destination_not']
-))->setHelp('Invert the sense of the destination match');
+))->setHelp('Invert the sense of the destination match.');
 
 $form->add($section);
 
@@ -574,10 +577,10 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['targetip']
 ))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
 		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
-		'If you want this rule to apply to another IP address rather than the IP address of the interface chosen above, ' .
-		'select it here (you will need to define ' .
+		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
+		'select it here (' .
 		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' .
-		'addresses on the interface first)');
+		'addresses need to be defined on the interface first)');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -607,10 +610,9 @@ $group->addClass('natportgrp');
 $group->add(new Form_Input(
 	'natport',
 	null,
-	'number',
-	$pconfig['natport'],
-	['min' => '1', 'max' => '65536']
-))->setHelp('Enter the source port for the outbound NAT mapping.');
+	'text',
+	$pconfig['natport']
+))->setHelp('Enter the source port or range for the outbound NAT mapping.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
@@ -638,7 +640,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_out[$id]) {
 	$section->addInput(new Form_Input(

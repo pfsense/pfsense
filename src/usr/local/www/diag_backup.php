@@ -226,7 +226,7 @@ if ($_POST) {
 		if ($mode == "download") {
 			if ($_POST['encrypt']) {
 				if (!$_POST['encrypt_password']) {
-					$input_errors[] = gettext("You must supply and confirm the password for encryption.");
+					$input_errors[] = gettext("A password for encryption must be supplied and confirmed.");
 				}
 			}
 
@@ -301,7 +301,7 @@ if ($_POST) {
 		if ($mode == "restore") {
 			if ($_POST['decrypt']) {
 				if (!$_POST['decrypt_password']) {
-					$input_errors[] = gettext("You must supply and confirm the password for decryption.");
+					$input_errors[] = gettext("A password for decryption must be supplied and confirmed.");
 				}
 			}
 
@@ -332,10 +332,10 @@ if ($_POST) {
 					if ($_POST['restorearea']) {
 						/* restore a specific area of the configuration */
 						if (!stristr($data, "<" . $_POST['restorearea'] . ">")) {
-							$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
+							$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 						} else {
 							if (!restore_config_section($_POST['restorearea'], $data)) {
-								$input_errors[] = gettext("You have selected to restore an area but we could not locate the correct xml tag.");
+								$input_errors[] = gettext("An area to restore was selected but the correct xml tag could not be located.");
 							} else {
 								if ($config['rrddata']) {
 									restore_rrddata();
@@ -347,12 +347,12 @@ if ($_POST) {
 									conf_mount_ro();
 								}
 								filter_configure();
-								$savemsg = gettext("The configuration area has been restored. You may need to reboot the firewall.");
+								$savemsg = gettext("The configuration area has been restored. The firewall may need to be rebooted.");
 							}
 						}
 					} else {
 						if (!stristr($data, "<" . $g['xml_rootobj'] . ">")) {
-							$input_errors[] = sprintf(gettext("You have selected to restore the full configuration but we could not locate a %s tag."), $g['xml_rootobj']);
+							$input_errors[] = sprintf(gettext("A full configuration restore was selected but a %s tag could not be located."), $g['xml_rootobj']);
 						} else {
 							/* restore the entire configuration */
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
@@ -529,7 +529,7 @@ if ($_POST) {
 			clear_subsystem_dirty('packagelock');
 			$savemsg = "Package lock cleared.";
 		} else if ($mode == "restore_ver") {
-			$input_errors[] = gettext("XXX - this feature may hose your config (do NOT backrev configs!) - billm");
+			$input_errors[] = gettext("XXX - this feature may hose the config (do NOT backrev configs!) - billm");
 			if ($ver2restore <> "") {
 				$conf_file = "{$g['cf_conf_path']}/bak/config-" . strtotime($ver2restore) . ".xml";
 				if (config_install($conf_file) == 0) {
@@ -683,7 +683,7 @@ $section->addInput(new Form_Select(
 	'restorearea',
 	'Restore area',
 	'',
-	build_area_list(false)
+	build_area_list(true)
 ));
 
 $section->addInput(new Form_Input(

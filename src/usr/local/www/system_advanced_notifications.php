@@ -260,15 +260,14 @@ $section->addInput(new Form_Input(
 	$pconfig['notification_name'],
 	['placeholder' => $g["product_name"].' growl alert']
 
-))->setHelp('Enter a name for the Growl notifications');
+))->setHelp('Enter a name for the Growl notifications.');
 
 $section->addInput(new Form_Input(
 	'ipaddress',
 	'IP Address',
 	'text',
 	$pconfig['ipaddress']
-))->setHelp('This is the IP address that you would like to send growl '.
-	'notifications to.');
+))->setHelp('This is the IP address to send growl notifications to.');
 
 $section->addPassword(new Form_Input(
 	'password',
@@ -311,7 +310,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['smtpport']
 ))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
-	'(submission) or 465 (smtps)');
+	'(submission) or 465 (smtps).');
 
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
@@ -342,8 +341,7 @@ $section->addInput(new Form_Input(
 	'Notification E-Mail address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
-))->setHelp('Enter the e-mail address that you would like email '.
-	'notifications sent to.');
+))->setHelp('Enter the e-mail address to send email notifications to.');
 
 // This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(

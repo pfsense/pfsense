@@ -93,11 +93,11 @@ if ($_POST) {
 	$input_errors = "";
 
 	if (($_POST['action'] != "clear") && !is_valid_mirror($_POST['mirror'])) {
-		$input_errors[] = gettext("You must supply a valid mirror name.");
+		$input_errors[] = gettext("A valid mirror name must be supplied.");
 	}
 
 	if (!empty($_POST['consumer']) && !is_valid_consumer($_POST['consumer'])) {
-		$input_errors[] = gettext("You must supply a valid consumer name");
+		$input_errors[] = gettext("A valid consumer name must be supplied");
 	}
 
 	/* Additional action-specific validation that hasn't already been tested */

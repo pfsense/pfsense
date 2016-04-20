@@ -11,5 +11,5 @@ deps: {
 }
 categories [ security,  ]
 licenselogic: single
-licenses: [ BSD2CLAUSE,  ]
+licenses: [ ESF,  ]
 options: {  }

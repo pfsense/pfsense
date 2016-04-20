@@ -219,7 +219,7 @@ if ($_POST) {
 	}
 
 	if (!is_array($_POST['members']) || count($_POST['members']) < 1) {
-		$input_errors[] = gettext("You must select at least one member interface for a bridge.");
+		$input_errors[] = gettext("At least one member interface must be selected for a bridge.");
 	}
 
 	if (is_array($_POST['static'])) {

@@ -336,7 +336,7 @@ if (isset($_POST['save'])) {
 		}
 		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 		    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
-			$input_errors[] = gettext("You must specify both a valid domain key and key name.");
+			$input_errors[] = gettext("Both a valid domain key and key name must be specified.");
 		}
 		if ($_POST['domainsearchlist']) {
 			$domain_array = preg_split("/[ ;]+/", $_POST['domainsearchlist']);
@@ -350,10 +350,10 @@ if (isset($_POST['save'])) {
 
 		// Validate MACs
 		if (!empty($_POST['mac_allow']) && !validate_partial_mac_list($_POST['mac_allow'])) {
-			$input_errors[] = gettext("If you specify a mac allow list, it must contain only valid partial MAC addresses.");
+			$input_errors[] = gettext("If a mac allow list is specified, it must contain only valid partial MAC addresses.");
 		}
 		if (!empty($_POST['mac_deny']) && !validate_partial_mac_list($_POST['mac_deny'])) {
-			$input_errors[] = gettext("If you specify a mac deny list, it must contain only valid partial MAC addresses.");
+			$input_errors[] = gettext("If a mac deny list is specified, it must contain only valid partial MAC addresses.");
 		}
 
 		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
@@ -370,10 +370,10 @@ if (isset($_POST['save'])) {
 		}
 
 		if (gen_subnet($ifcfgip, $ifcfgsn) == $_POST['range_from']) {
-			$input_errors[] = gettext("You cannot use the network address in the starting subnet range.");
+			$input_errors[] = gettext("The network address cannot be used in the starting subnet range.");
 		}
 		if (gen_subnet_max($ifcfgip, $ifcfgsn) == $_POST['range_to']) {
-			$input_errors[] = gettext("You cannot use the broadcast address in the ending subnet range.");
+			$input_errors[] = gettext("The broadcast address cannot be used in the ending subnet range.");
 		}
 
 		// Disallow a range that includes the virtualip
@@ -397,7 +397,7 @@ if (isset($_POST['save'])) {
 		}
 
 		if ($_POST['staticarp'] && $noip) {
-			$input_errors[] = gettext("Cannot enable static ARP when you have static map entries without IP addresses. Ensure all static maps have IP addresses and try again.");
+			$input_errors[] = gettext("Cannot enable static ARP when there are static map entries without IP addresses. Ensure all static maps have IP addresses and try again.");
 		}
 
 		if (is_array($pconfig['numberoptions']['item'])) {
@@ -465,7 +465,7 @@ if (isset($_POST['save'])) {
 
 			/* make sure that the DHCP Relay isn't enabled on this interface */
 			if (isset($config['dhcrelay']['enable']) && (stristr($config['dhcrelay']['interface'], $if) !== false)) {
-				$input_errors[] = sprintf(gettext("You must disable the DHCP relay on the %s interface before enabling the DHCP server."), $iflist[$if]);
+				$input_errors[] = sprintf(gettext("The DHCP relay on the %s interface must be disabled before enabling the DHCP server."), $iflist[$if]);
 			}
 
 			if (is_array($a_maps)) {
@@ -747,7 +747,7 @@ if (isset($config['dhcrelay']['enable'])) {
 }
 
 if (is_subsystem_dirty('staticmaps')) {
-	print_apply_box(gettext("The static mapping configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The static mapping configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 /* active tabs */
@@ -891,7 +891,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_StaticText(
 		'Add',
 		$btnaddpool
-	))->setHelp('If you need additional pools of addresses inside of this subnet outside the above Range, they may be specified here');
+	))->setHelp('If additional pools of addresses are needed inside of this subnet outside the above Range, they may be specified here');
 
 	if (is_array($a_pools)) {
 		$section->addInput(new Form_StaticText(
@@ -922,7 +922,7 @@ for ($idx=1; $idx<=4; $idx++) {
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
 		$pconfig['dns' . $idx]
-	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers, use this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise use the servers configured on the General page':'');
+	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
 
 $form->add($section);
@@ -934,14 +934,14 @@ $section->addInput(new Form_IpAddress(
 	'Gateway',
 	$pconfig['gateway']
 ))->setPattern('[.a-zA-Z0-9_]+')
-  ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for your network. Type "none" for no gateway assignment');
+  ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. You may specify an alternate domain name here');
+))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
@@ -1167,7 +1167,7 @@ $section->addClass('adnlopts');
 
 $section->addInput(new Form_StaticText(
 	null,
-	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item you would like to include in the DHCP lease information.') . ' ' .
+	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
 	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a></div>')
 ));
 
@@ -1276,8 +1276,8 @@ $section->addInput(new Form_Input(
 	'UEFI 64 bit file name',
 	'text',
 	$pconfig['filename64']
-))->setHelp('You need both a filename and a boot server configured for this to work! ' .
-			'You will need all three filenames and a boot server configured for UEFI to work! ');
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All three filenames and a configured boot server are necessary for UEFI to work! ');
 
 $section->addInput(new Form_Input(
 	'rootpath',

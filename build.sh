@@ -209,8 +209,10 @@ while test "$1" != ""; do
 			shift
 			snapshot_status_message="${1}"
 			BUILDACTION="snapshot_status_message"
+			_USE_OLD_DATESTRING=YES
 			;;
 		*)
+			_USE_OLD_DATESTRING=YES
 			usage
 	esac
 	shift
@@ -309,8 +311,11 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 		PKG_RSYNC_USERNAME \
 		PKG_RSYNC_SSH_PORT \
 		PKG_RSYNC_DESTDIR \
-		PKG_REPO_SERVER \
-		PKG_REPO_CONF_BRANCH"
+		PKG_REPO_SERVER_DEVEL \
+		PKG_REPO_SERVER_RELEASE \
+		PKG_REPO_SERVER_STAGING \
+		PKG_REPO_BRANCH_DEVEL \
+		PKG_REPO_BRANCH_RELEASE"
 
 	for _var in ${_required}; do
 		eval "_value=\${$_var}"

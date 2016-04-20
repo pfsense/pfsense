@@ -71,11 +71,12 @@ $smtp_authentication_mechanisms = array(
  * NAME
  *   file_notice
  * INPUTS
- *	 $id, $notice, $category, $url, $priority
+ *	 $id, $notice, $category, $url, $priority, $local_only
  * RESULT
  *   Files a notice and kicks off the various alerts, smtp, growl, system log, LED's, etc.
+ *   If $local_only is true then the notice is not sent to external places (smtp, growl)
  ******/
-function file_notice($id, $notice, $category = "General", $url = "", $priority = 1) {
+function file_notice($id, $notice, $category = "General", $url = "", $priority = 1, $local_only = false) {
 	/*
 	 * $category - Category that this notice should be displayed under. This can be arbitrary,
 	 * 	       but a page must be set to receive this messages for it to be displayed.
@@ -101,7 +102,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	$queue[$queuekey] = $toqueue;
 	$queueout = fopen($notice_path, "w");
 	if (!$queueout) {
-		log_error(printf(gettext("Could not open %s for writing"), $notice_path));
+		log_error(sprintf(gettext("Could not open %s for writing"), $notice_path));
 		return;
 	}
 	fwrite($queueout, serialize($queue));
@@ -114,8 +115,10 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	/* wrap & alix */
 	led_normalize();
 	led_morse(1, 'sos');
-	notify_via_growl($notice);
-	notify_via_smtp($notice);
+	if (!$local_only) {
+		notify_via_growl($notice);
+		notify_via_smtp($notice);
+	}
 	return $queuekey;
 }
 
@@ -428,9 +431,14 @@ function notify_via_growl($message, $force=false) {
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
 
-	if (!empty($growl_ip) && (is_ipaddr($growl_ip) || dns_get_record($growl_ip, DNS_A) || dns_get_record($growl_ip, DNS_AAAA))) {
-		$growl = new Growl($growl_ip, $growl_password, $growl_name);
-		$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
+	if (!empty($growl_ip)) {
+		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
+			$growl = new Growl($growl_ip, $growl_password, $growl_name);
+			$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
+		} else {
+			// file_notice to local only to prevent file_notice from calling back to growl in a loop
+			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
+		}
 	}
 
 	/* Store last message sent to avoid spamming */
@@ -455,10 +463,15 @@ function register_via_growl() {
 	$growl_name = $config['notifications']['growl']['name'];
 	$growl_notification = $config['notifications']['growl']['notification_name'];
 
-	if ($growl_ip) {
-		$growl = new Growl($growl_ip, $growl_password, $growl_name);
-		$growl->addNotification($growl_notification);
-		$growl->register();
+	if (!empty($growl_ip)) {
+		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
+			$growl = new Growl($growl_ip, $growl_password, $growl_name);
+			$growl->addNotification($growl_notification);
+			$growl->register();
+		} else {
+			// file_notice to local only to prevent file_notice from calling back to growl in a loop
+			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
+		}
 	}
 }
 

@@ -245,7 +245,7 @@ if ($savemsg) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('You must apply the changes in order for them to take effect.'));
+					gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();
@@ -384,7 +384,7 @@ print($form);
 <?php
 						endif;
 ?>
-							<?=htmlspecialchars($natent['source']['network'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['source']['network']))?>
 <?php
 						if (isset($alias['src'])):
 ?>
@@ -407,7 +407,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['sourceport'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['sourceport']))?>
 <?php
 							if (isset($alias['srcport'])):
 ?>
@@ -434,7 +434,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['destination']['address'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['destination']['address']))?>
 <?php
 							if (isset($alias['dst'])):
 ?>
@@ -458,7 +458,7 @@ print($form);
 <?php
 							endif;
 ?>
-							<?=htmlspecialchars($natent['dstport'])?>
+							<?=str_replace('_', ' ', htmlspecialchars($natent['dstport']))?>
 <?php
 							if (isset($alias['dstport'])):
 ?>
@@ -668,9 +668,9 @@ endif;
 <?php
 	print_info_box(gettext('If automatic outbound NAT is selected, a mapping is automatically generated for each interface\'s subnet (except WAN-type connections) and the rules ' .
 							'on the "Mappings" section of this page are ignored.' . '<br />' .
-							'If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings you specify on this page ' .
+							'If manual outbound NAT is selected, outbound NAT rules will not be automatically generated and only the mappings specified on this page ' .
 							'will be used.' . '<br />' .
-							'If hybrid outbound NAT is selected, mappings you specify on this page will be used, followed by the automatically generated ones.' . '<br />' .
+							'If hybrid outbound NAT is selected, mappings specified on this page will be used, followed by the automatically generated ones.' . '<br />' .
 							'If disable outbound NAT is selected, no rules will be used.' . '<br />' .
 							'If a target address other than an interface\'s IP address is used, then depending on the way the WAN connection is setup, a ') .
 							'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a>' . gettext(" may also be required."),
@@ -706,7 +706,7 @@ events.push(function() {
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (!saving && dirty) {
-			return ("<?=gettext('You have moved one or more NAT outbound mappings but have not yet saved')?>");
+			return ("<?=gettext('One or more NAT outbound mappings have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
 		}

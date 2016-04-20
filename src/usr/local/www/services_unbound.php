@@ -177,7 +177,7 @@ if ($_POST) {
 		}
 
 		if ($pconfig['port'] && !is_port($pconfig['port'])) {
-			$input_errors[] = gettext("You must specify a valid port number.");
+			$input_errors[] = gettext("A valid port number must be specified.");
 		}
 
 		if (is_array($pconfig['active_interface']) && !empty($pconfig['active_interface'])) {
@@ -283,7 +283,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -360,16 +360,15 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcp']
 ))->setHelp(sprintf('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
 					' in the DNS Resolver, so that their name can be resolved.'.
-					' You should also set the domain in %sSystem: General setup%s to the proper value.','<a href="system.php">','</a>'));
+					' The domain in %sSystem: General setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
 	'Static DHCP',
 	'Register DHCP static mappings in the DNS Resolver',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be '.
-					'resolved. You should also set the domain in %s'.
-					'System: General setup%s to the proper value.','<a href="system.php">','</a>'));
+))->setHelp(sprintf('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
+					'The domain in %sSystem: General setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $btnadv = new Form_Button(
 	'btnadvcustom',

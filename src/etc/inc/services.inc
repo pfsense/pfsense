@@ -105,6 +105,19 @@ function services_radvd_configure($blacklist = array()) {
 			$dhcpv6ifconf['rapriority'] = "medium";
 		}
 
+		$racarpif = false;
+		/* check if binding to CARP IP */
+		if (!empty($dhcpv6ifconf['rainterface'])) {
+			if (strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+				if (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
+					$dhcpv6if = $dhcpv6ifconf['rainterface'];
+					$racarpif = true;
+				} else {
+					continue;
+				}
+			}
+		}
+
 		$realif = get_real_interface($dhcpv6if, "inet6");
 
 		if (isset($radvdifs[$realif])) {
@@ -134,7 +147,6 @@ function services_radvd_configure($blacklist = array()) {
 		} else {
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		}
-		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch ($dhcpv6ifconf['rapriority']) {
 			case "low":
 				$radvdconf .= "\tAdvDefaultPreference low;\n";
@@ -158,7 +170,11 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		$radvdconf .= "\t\tDeprecatePrefix on;\n";
+		if ($racarpif == true) {
+			$radvdconf .= "\t\tDeprecatePrefix off;\n";
+		} else {
+			$radvdconf .= "\t\tDeprecatePrefix on;\n";
+		}
 		switch ($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -2589,7 +2605,7 @@ function configure_cron() {
 
 		$crontab_contents .= "\n#\n";
 		$crontab_contents .= "# " . gettext("If possible do not add items to this file manually.") . "\n";
-		$crontab_contents .= "# " . gettext("If you do so, this file must be terminated with a blank line (e.g. new line)") . "\n";
+		$crontab_contents .= "# " . gettext("If done so, this file must be terminated with a blank line (e.g. new line)") . "\n";
 		$crontab_contents .= "#\n\n";
 	}
 

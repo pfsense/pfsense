@@ -510,6 +510,8 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false)
 	return $output;
 }
 
+/* This function is no longer required since services now use the POST method via JavaScript
+   Commenting out for now. It should be removed in the next version
 
 // This version proved GET formatted links
 function get_service_control_GET_links($service, $addname = false) {
@@ -562,6 +564,7 @@ function get_service_control_GET_links($service, $addname = false) {
 
 	return $output;
 }
+*/
 
 function get_service_control_links($service, $addname = false) {
 	global $g;

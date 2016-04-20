@@ -73,7 +73,7 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-$aliasname = str_replace(array(".", "-"), "_", $host);
+$aliasname = substr(str_replace(array(".", "-"), "_", $host), 0, 31);
 $alias_exists = false;
 $counter = 0;
 foreach ($a_aliases as $a) {
@@ -85,9 +85,6 @@ foreach ($a_aliases as $a) {
 }
 
 if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
-	if ($_POST['override']) {
-		$override = true;
-	}
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
@@ -99,27 +96,30 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 				if (!$isfirst) {
 					$addresses .= " ";
 				}
-				$addresses .= rtrim($re) . "/32";
+				$re = rtrim($re);
+				if (is_ipaddr($re)) {
+					$sn = is_ipaddrv6($re) ? '/128' : '/32';
+				} else {
+					// The name was a CNAME and resolved to another name, rather than an address.
+					// In this case the alias entry will have a FQDN, so do not put a CIDR after it.
+					$sn = "";
+				}
+				$addresses .= $re . $sn;
 				$isfirst = false;
 			}
 		}
 		$newalias = array();
-		if ($override) {
-			$alias_exists = false;
+		$newalias['name'] = $aliasname;
+		$newalias['type'] = "network";
+		$newalias['address'] = $addresses;
+		$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
+		if ($alias_exists) {
+			$a_aliases[$id] = $newalias;
+		} else {
+			$a_aliases[] = $newalias;
 		}
-		if ($alias_exists == false) {
-			$newalias['name'] = $aliasname;
-			$newalias['type'] = "network";
-			$newalias['address'] = $addresses;
-			$newalias['descr'] = gettext("Created from Diagnostics-> DNS Lookup");
-			if ($override) {
-				$a_aliases[$id] = $newalias;
-			} else {
-				$a_aliases[] = $newalias;
-			}
-			write_config();
-			$createdalias = true;
-		}
+		write_config();
+		$createdalias = true;
 	}
 }
 
@@ -216,7 +216,11 @@ if ($input_errors) {
 }
 
 if ($createdalias) {
-	print_info_box(gettext("Alias was created/updated successfully."), 'success', false);
+	if ($alias_exists) {
+		print_info_box(gettext("Alias was updated successfully."), 'success');
+	} else {
+		print_info_box(gettext("Alias was created successfully."), 'success');
+	}
 }
 
 $form = new Form(false);
@@ -231,9 +235,14 @@ $section->addInput(new Form_Input(
 ));
 
 if (!empty($resolved)) {
+	if ($alias_exists) {
+		$button_text = gettext("Update alias");
+	} else {
+		$button_text = gettext("Add alias");
+	}
 	$form->addGlobal(new Form_Button(
 		'create_alias',
-		'Add alias',
+		$button_text,
 		null,
 		'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');

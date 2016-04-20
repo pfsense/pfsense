@@ -607,7 +607,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference. Description will appear in the "Interfaces Assign" select lists.');
+))->setHelp('A description may be entered here for administrative reference. Description will appear in the "Interfaces Assign" select lists.');
 
 $section->addInput(new Form_Select(
 	'country',
@@ -628,7 +628,7 @@ $section->addInput(new Form_Select(
 	'Plan',
 	$pconfig['providerplan'],
 	[]
-))->setHelp('Select to fill in data for your service provider.');
+))->setHelp('Select to fill in service provider data.');
 
 $section->addInput(new Form_Input(
 	'username',
@@ -788,7 +788,7 @@ $group->add(new Form_Input(
 	['placeholder' => 'mm/dd/yyyy']
 ))->setHelp('Specific date');
 
-$group->setHelp('Leaving the date field empty will cause the reset to be executed each day at the time you specified in the minutes and hour fields. ');
+$group->setHelp('Leaving the date field empty will cause the reset to be executed each day at the time specified in the minutes and hour fields. ');
 
 $section->add($group);
 
@@ -853,7 +853,7 @@ $section->addInput(new Form_Checkbox(
 	'Dial On Demand',
 	'Enable Dial-on-Demand mode. ',
 	$pconfig['ondemand']
-))->setHelp('Causes the interface to operate in dial-on-demand mode. Do NOT enable if you want your link to be always up. ' .
+))->setHelp('Causes the interface to operate in dial-on-demand mode. Do NOT enable if the link is to remain continuously connected. ' .
 			'The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.');
 
 $section->addInput(new Form_Input(

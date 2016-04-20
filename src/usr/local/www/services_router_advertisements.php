@@ -120,6 +120,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	/* RA specific */
 	$pconfig['ramode'] = $config['dhcpdv6'][$if]['ramode'];
 	$pconfig['rapriority'] = $config['dhcpdv6'][$if]['rapriority'];
+	$pconfig['rainterface'] = $config['dhcpdv6'][$if]['rainterface'];
 	if ($pconfig['rapriority'] == "") {
 		$pconfig['rapriority'] = "medium";
 	}
@@ -209,6 +210,7 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['ramode'] = $_POST['ramode'];
 		$config['dhcpdv6'][$if]['rapriority'] = $_POST['rapriority'];
+		$config['dhcpdv6'][$if]['rainterface'] = $_POST['rainterface'];
 
 		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
@@ -262,7 +264,7 @@ $tabscounter = 0;
 $i = 0;
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
-	// We need interfaces configured with a static IPv6 address or track6 for PD. 
+	// We need interfaces configured with a static IPv6 address or track6 for PD.
 	if (!is_ipaddrv6($oc['ipaddrv6']) && $oc['ipaddrv6'] != "track6") {
 		continue;
 	}
@@ -311,6 +313,34 @@ $section->addInput(new Form_Select(
 	$pconfig['rapriority'],
 	$priority_modes
 ))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');
+
+$carplist = get_configured_vip_list("inet6", VIP_CARP);
+
+$carplistif = array();
+
+if(count($carplist) > 0) {
+	foreach($carplist as $ifname => $vip) {
+		if (get_configured_vip_interface($ifname) == $if) {
+			$carplistif[$ifname] = $vip;
+		}
+	}
+}
+
+if (count($carplistif) > 0) {
+	$iflist = array();
+
+	$iflist['interface'] = strtoupper($if);
+	foreach($carplistif as $ifname => $vip) {
+		$iflist[$ifname] = get_vip_descr($vip) . " - " . $vip;
+	}
+
+	$section->addInput(new Form_Select(
+		'rainterface',
+		'RA Interface',
+		$pconfig['rainterface'],
+		$iflist
+	))->setHelp('Select the Interface for the Router Advertisement (RA) Daemon.');
+}
 
 $section->addInput(new Form_Input(
 	'ravalidlifetime',

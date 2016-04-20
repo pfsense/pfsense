@@ -53,7 +53,7 @@
 
 // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 function hideInput(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent('div').removeClass('hidden');
@@ -62,7 +62,7 @@ function hideInput(id, hide) {
 // Hides the <div> in which the specified group input element lives so that the input,
 // its label and help text are hidden
 function hideGroupInput(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent('div').addClass('hidden');
 	else
 		$('#' + id).parent('div').removeClass('hidden');
@@ -70,7 +70,7 @@ function hideGroupInput(id, hide) {
 
 // Hides the <div> in which the specified checkbox lives so that the checkbox, its label and help text are hidden
 function hideCheckbox(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -83,7 +83,7 @@ function disableInput(id, disable) {
 
 // Hides all elements of the specified class. This will usually be a section
 function hideClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).hide();
 	else
 		$('.' + s_class).show();
@@ -91,21 +91,21 @@ function hideClass(s_class, hide) {
 
 // Hides all elements of the specified class assigned to a group. This will usually be a group
 function hideGroupClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).parent().parent().parent().hide();
 	else
 		$('.' + s_class).parent().parent().parent().show();
 }
 
 function hideSelect(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent('div').parent('div').addClass('hidden');
 	else
 		$('#' + id).parent('div').parent('div').removeClass('hidden');
 }
 
 function hideMultiCheckbox(id, hide) {
-	if(hide)
+	if (hide)
 		$("[name=" + id + "]").parent().addClass('hidden');
 	else
 		$("[name=" + id + "]").parent().removeClass('hidden');
@@ -113,7 +113,7 @@ function hideMultiCheckbox(id, hide) {
 
 // Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
 function hideIpAddress(id, hide) {
-	if(hide)
+	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
 	else
 		$('#' + id).parent().parent().parent('div').removeClass('hidden');
@@ -121,7 +121,7 @@ function hideIpAddress(id, hide) {
 
 // Hides all elements of the specified class belonging to a multiselect.
 function hideMultiClass(s_class, hide) {
-	if(hide)
+	if (hide)
 		$('.' + s_class).parent().parent().hide();
 	else
 		$('.' + s_class).parent().parent().show();
@@ -132,7 +132,7 @@ function hideLabel(text, hide) {
 
 	var element = $('label:contains(' + text + ')');
 
-	if(hide)
+	if (hide)
 		element.parent('div').addClass('hidden');
 	else
 		element.parent('div').removeClass('hidden');
@@ -174,7 +174,7 @@ function fr_bgcolor(id, prefix) {
 // to add/delete rows of sequentially numbered elements, their labels and their help text
 // See firewall_aliases_edit.php for an example
 
-// NOTE: retainhelp is a global var that defined prevents any help text from being deleted as lines are inserted.
+// NOTE: retainhelp is a global var that when defined prevents any help text from being deleted as lines are inserted.
 // IOW it causes every row to have help text, not just the last row
 
 function setMasks() {
@@ -193,8 +193,7 @@ function setMasks() {
 			while (select.options.length > max)
 				select.remove(0);
 
-			if (select.options.length < max)
-			{
+			if (select.options.length < max) {
 				for (var i=select.options.length; i<=max; i++)
 					select.options.add(new Option(i, i), 0);
 			}
@@ -213,17 +212,16 @@ function moveHelpText(id) {
 		var toId = decrStringInt(fromId);
 		var helpSpan;
 
-		if(!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
-			if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
+			if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
 			} else {
 				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
 			}
-			if($(helpSpan).hasClass('help-block')) {
-				if($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
+			if ($(helpSpan).hasClass('help-block')) {
+				if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
-				}
-				else {
+				} else {
 					$('#' + decrStringInt(fromId)).after(helpSpan);
 				}
 			}
@@ -235,7 +233,7 @@ function moveHelpText(id) {
 function bumpStringInt( str )	{
   var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if( data )
+  if (data)
 	newStr = data[ 1 ] + ( Number( data[ 2 ] ) + 1 ) + data[ 3 ];
 
   return newStr || str;
@@ -245,7 +243,7 @@ function bumpStringInt( str )	{
 function decrStringInt( str )	{
   var data = str.match(/(\D*)(\d+)(\D*)/), newStr = "";
 
-  if( data )
+  if (data)
 	newStr = data[ 1 ] + ( Number( data[ 2 ] ) - 1 ) + data[ 3 ];
 
   return newStr || str;
@@ -292,7 +290,7 @@ function delete_row(rowDelBtn) {
 }
 
 function checkLastRow() {
-	if($('.repeatable').length <= 1) {
+	if ($('.repeatable').length <= 1) {
 		$('#deleterow0').hide();
 	} else {
 		$('[id^=deleterow]').show();
@@ -309,8 +307,14 @@ function add_row() {
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
 		$(this).prop("name", bumpStringInt(this.name));
-		if(!$(this).is('[id^=delete]'))
+		if (!$(this).is('[id^=delete]'))
 			$(this).val('');
+	});
+
+	// Increment the suffix number for the deleterow button element in the new group
+	$(newGroup).find('[id^=deleterow]').each(function() {
+		$(this).prop("id", bumpStringInt(this.id));
+		$(this).prop("name", bumpStringInt(this.name));
 	});
 
 	// Do the same for selectors
@@ -319,9 +323,9 @@ function add_row() {
 		$(this).prop("name", bumpStringInt(this.name));
 		// If this selector lists mask bits, we need it to be reset to all 128 options
 		// and no items selected, so that automatic v4/v6 selection still works
-		if($(this).is('[id^=address_subnet]')) {
+		if ($(this).is('[id^=address_subnet]')) {
 			$(this).empty();
-			for(idx=128; idx>0; idx--) {
+			for (idx=128; idx>0; idx--) {
 				$(this).append($('<option>', {
 					value: idx,
 					text: idx
@@ -340,7 +344,7 @@ function add_row() {
 
 	// Delete any help text from the group we have cloned
 	$(lastRepeatableGroup).find('.help-block').each(function() {
-		if((typeof retainhelp) == "undefined")
+		if ((typeof retainhelp) == "undefined")
 			$(this).remove();
 	});
 
@@ -351,7 +355,7 @@ function add_row() {
 	// Autocomplete
 	if ( typeof addressarray !== 'undefined') {
 		$('[id^=address]').each(function() {
-			if(this.id.substring(0, 8) != "address_") {
+			if (this.id.substring(0, 8) != "address_") {
 				$(this).autocomplete({
 					source: addressarray
 				});
@@ -363,14 +367,14 @@ function add_row() {
 	// has been added to the table
 	$('[id^=delete]').unbind();
 	$('[id^=delete]').click(function(event) {
-		if($('.repeatable').length > 1) {
-			if((typeof retainhelp) == "undefined")
+		if ($('.repeatable').length > 1) {
+			if ((typeof retainhelp) == "undefined")
 				moveHelpText(event.target.id);
 
 			delete_row(event.target.id);
+		} else {
+			alert('The last row may not be deleted.');
 		}
-		else
-			alert('You may not delete the last row!');
 	});
 
 }
@@ -385,14 +389,14 @@ $('[id^=addrow]').click(function() {
 });
 
 $('[id^=delete]').click(function(event) {
-	if($('.repeatable').length > 1) {
-		if((typeof retainhelp) == "undefined")
+	if ($('.repeatable').length > 1) {
+		if ((typeof retainhelp) == "undefined")
 			moveHelpText(event.target.id);
 
 		delete_row(event.target.id);
+	} else {
+		alert('The last row may not be deleted.');
 	}
-	else
-		alert('You may not delete the last row!');
 });
 
 // "More information" handlers --------------------------------------------------------------------
@@ -458,188 +462,233 @@ $('.container .panel-heading a[data-toggle="collapse"]').each(function (idx, el)
 	});
 });
 
-	// Separator bar stuff ------------------------------------------------------------------------
+// Separator bar stuff ------------------------------------------------------------------------
 
-	// Globals
+// Globals
+gColor = 'bg-info';
+newSeparator = false;
+saving = false;
+dirty = false;
+
+$("#addsep").prop('type' ,'button');
+
+$("#addsep").click(function() {
+	if (newSeparator) {
+		return(false);
+	}
+
 	gColor = 'bg-info';
-	newSeperator = false;
-	saving = false;
-	dirty = false;
+	// Insert a temporary bar in which the user can enter some optional text
+	sepcols = $( "#ruletable tr th" ).length - 2;
 
-	$("#addsep").prop('type' ,'button');
+	$('#ruletable > tbody:last').append('<tr>' +
+		'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
+		'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
+		'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
+		'&nbsp;&nbsp;&nbsp;&nbsp;' +
+		'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
+		'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+		'</td></tr>');
 
-	$("#addsep").click(function() {
-		if (newSeperator) {
-			return(false);
+	$('#newsep').focus();
+	newSeparator = true;
+
+	$("#btnnewsep").prop('type' ,'button');
+
+	// Watch escape and enter keys
+	$('#newsep').keyup(function(e) {
+		if (e.which == 27) {
+			$('#btncncsep').trigger('click');
 		}
+	});
 
-		gColor = 'bg-info';
-		// Inset a temporary bar in which the user can enter some optional text
-		sepcols = $( "#ruletable tr th" ).length - 2;
+	$('#newsep').keypress(function(e) {
+		if (e.which == 13) {
+			$('#btnnewsep').trigger('click');
+		}
+	});
 
-		$('#ruletable > tbody:last').append('<tr>' +
-			'<td class="' + gColor + '" colspan="' + sepcols + '"><input id="newsep" placeholder="' + svbtnplaceholder + '" class="col-md-12" type="text" /></td>' +
-			'<td class="' + gColor + '" colspan="2"><button class="btn btn-primary btn-sm" id="btnnewsep"><i class="fa fa-save icon-embed-btn"></i>' + svtxt + '</button>' +
-			'<button class="btn btn-info btn-sm" id="btncncsep"><i class="fa fa-undo icon-embed-btn"></i>' + cncltxt + '</button>' +
-			'&nbsp;&nbsp;&nbsp;&nbsp;' +
-			'&nbsp;&nbsp;<a id="sepclrblue" value="bg-info"><i class="fa fa-circle text-info icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrred" value="bg-danger"><i class="fa fa-circle text-danger icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrgreen" value="bg-success"><i class="fa fa-circle text-success icon-pointer"></i></a>' +
-			'&nbsp;&nbsp;<a id="sepclrorange" value="bg-warning"><i class="fa fa-circle text-warning icon-pointer"></i></button>' +
+	handle_colors();
+
+	// Replace the temporary separator bar with the final version containing the
+	// user's text and a delete icon
+	$("#btnnewsep").click(function() {
+		var septext = escapeHtml($('#newsep').val());
+		sepcols = $( "#ruletable tr th" ).length - 1;
+
+		$(this).parents('tr').replaceWith('<tr class="ui-sortable-handle separator">' +
+			'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
+			'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
 			'</td></tr>');
 
-		$('#newsep').focus();
-		newSeperator = true;
-
-		$("#btnnewsep").prop('type' ,'button');
-
-		// Watch escape and enter keys
-		$('#newsep').keyup(function(e) {
-			if(e.which == 27) {
-				$('#btncncsep').trigger('click');
-			}
-		});
-
-		$('#newsep').keypress(function(e) {
-			if(e.which == 13) {
-				$('#btnnewsep').trigger('click');
-			}
-		});
-
-		handle_colors();
-
-		// Remove the temporary separator bar and replace it with the final version containing the
-		// user's text and a delete icon
-		$("#btnnewsep").click(function() {
-			var septext = escapeHtml($('#newsep').val());
-			sepcols = $( "#ruletable tr th" ).length - 1;
-
-			$('#ruletable > tbody:last >tr:last').remove();
-			$('#ruletable > tbody:last').append('<tr class="ui-sortable-handle separator">' +
-				'<td class="' + gColor + '" colspan="' + sepcols + '">' + '<span class="' + gColor + '">' + septext + '</span></td>' +
-				'<td class="' + gColor + '"><a href="#"><i class="fa fa-trash sepdel"></i></a>' +
-				'</td></tr>');
-
-			$('#order-store').removeAttr('disabled');
-			newSeperator = false;
-			dirty = true;
-		});
-
-		// Cancel button
-		$('#btncncsep').click(function(e) {
-			e.preventDefault();
-			$(this).parents('tr').remove();
-			newSeperator = false;
-		});
+		$('#order-store').removeAttr('disabled');
+		newSeparator = false;
+		dirty = true;
 	});
 
-	// Delete a separator row
-	$(function(){
-		$('table').on('click','tr a .sepdel',function(e){
-			e.preventDefault();
-			$(this).parents('tr').remove();
-			$('#order-store').removeAttr('disabled');
-			dirty = true;
-		});
+	// Cancel button
+	$('#btncncsep').click(function(e) {
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		newSeparator = false;
 	});
+});
 
-	// Compose an inout array containing the row #, color and text for each separator
-	function save_separators() {
-		var row = 0;
-		var sepinput;
-		var sepnum = 0;
+// Delete a separator row
+$(function(){
+	$('table').on('click','tr a .sepdel',function(e){
+		e.preventDefault();
+		$(this).parents('tr').remove();
+		$('#order-store').removeAttr('disabled');
+		dirty = true;
+	});
+});
 
-		$('#ruletable > tbody > tr').each(function() {
-			if ($(this).hasClass('separator')) {
-				seprow = $(this).next('tr').attr("id");
-				if (seprow == undefined) {
-					seprow = "fr" + row;
-				}
+// Compose an input array containing the row #, color and text for each separator
+function save_separators() {
+	var row = 0;
+	var sepinput;
+	var sepnum = 0;
 
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
-				$('form').append(sepinput);
-				sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
-				$('form').append(sepinput);
-				sepnum++;
-			} else {
-				if ($(this).parent('tbody').hasClass('user-entries')) {
-					row++;
-				}
+	$('#ruletable > tbody > tr').each(function() {
+		if ($(this).hasClass('separator')) {
+			seprow = $(this).next('tr').attr("id");
+			if (seprow == undefined) {
+				seprow = "fr" + row;
 			}
-		});
-	}
 
-	function reindex_rules(section) {
-		var row = 0;
-
-		section.find('tr').each(function() {
-			if(this.id) {
-				$(this).attr("id", "fr" + row);
-				$(this).attr("onclick", "fr_toggle(" + row + ")")
-				$(this).find('input:checkbox:first').each(function() {
-					$(this).attr("id", "frc" + row);
-					$(this).attr("onclick", "fr_toggle(" + row + ")");
-				});
-
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][row]" value="' + seprow + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][text]" value="' + escapeHtml($(this).find('td').text()) + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][color]" value="' + $(this).find('td').prop('class') + '"></input>';
+			$('form').append(sepinput);
+			sepinput = '<input type="hidden" name="separator[' + sepnum + '][if]" value="' + iface + '"></input>';
+			$('form').append(sepinput);
+			sepnum++;
+		} else {
+			if ($(this).parent('tbody').hasClass('user-entries')) {
 				row++;
 			}
-		});
-	}
+		}
+	});
+}
 
-	function handle_colors() {
-		$('[id^=sepclr]').prop("type", "button");
+function reindex_rules(section) {
+	var row = 0;
 
-		$('[id^=sepclr]').click(function () {
-			var color =	 $(this).attr('value');
-			// Clear all the color classes
-			$(this).parent('td').prop('class', '');
-			$(this).parent('td').prev('td').prop('class', '');
-			// Install our new color class
-			$(this).parent('td').addClass(color);
-			$(this).parent('td').prev('td').addClass(color);
-			// Set the global color
-			gColor = color;
-		});
-	}
+	section.find('tr').each(function() {
+		if (this.id) {
+			$(this).attr("id", "fr" + row);
+			$(this).attr("onclick", "fr_toggle(" + row + ")")
+			$(this).find('input:checkbox:first').each(function() {
+				$(this).attr("id", "frc" + row);
+				$(this).attr("onclick", "fr_toggle(" + row + ")");
+			});
 
-	//JS equivalent to PHP htmlspecialchars()
-	function escapeHtml(text) {
-		var map = {
-			'&': '&amp;',
-			'<': '&lt;',
-			'>': '&gt;',
-			'"': '&quot;',
-			"'": '&#039;'
-		};
+			row++;
+		}
+	});
+}
 
-		return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-	}
-	// --------------------------------------------------------------------------------------------
+function handle_colors() {
+	$('[id^=sepclr]').prop("type", "button");
 
-	// Select every option in the specified multiselect
-	function AllServers(id, selectAll) {
-	   for (i = 0; i < id.length; i++)	   {
-		   id.eq(i).prop('selected', selectAll);
-	   }
-	}
+	$('[id^=sepclr]').click(function () {
+		var color =	 $(this).attr('value');
+		// Clear all the color classes
+		$(this).parent('td').prop('class', '');
+		$(this).parent('td').prev('td').prop('class', '');
+		// Install our new color class
+		$(this).parent('td').addClass(color);
+		$(this).parent('td').prev('td').addClass(color);
+		// Set the global color
+		gColor = color;
+	});
+}
 
-	// Move all selected options from one multiselect to another
-	function moveOptions(From, To)	{
-		var len = From.length;
-		var option;
+//JS equivalent to PHP htmlspecialchars()
+function escapeHtml(text) {
+	var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
 
-		if (len > 0) {
-			for (i=0; i<len; i++) {
-				if (From.eq(i).is(':selected')) {
-					option = From.eq(i).val();
-					value  = From.eq(i).text();
-					To.append(new Option(value, option));
-					From.eq(i).remove();
-				}
+	return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+// --------------------------------------------------------------------------------------------
+
+// Select every option in the specified multiselect
+function AllServers(id, selectAll) {
+   for (i = 0; i < id.length; i++)	   {
+	   id.eq(i).prop('selected', selectAll);
+   }
+}
+
+// Move all selected options from one multiselect to another
+function moveOptions(From, To)	{
+	var len = From.length;
+	var option;
+
+	if (len > 0) {
+		for (i=0; i<len; i++) {
+			if (From.eq(i).is(':selected')) {
+				option = From.eq(i).val();
+				value  = From.eq(i).text();
+				To.append(new Option(value, option));
+				From.eq(i).remove();
 			}
 		}
 	}
+}
+
+
+// ------------- Service start/stop/restart functions.
+// If a start/stop/restart button is clicked, parse the button name and make a POST via AJAX
+$('[id*=restartservice-], [id*=stopservice-], [id*=startservice-]').click(function(event) {
+	var args = this.id.split('-');
+	var action, name, mode_zone, id;
+
+	if (args[0] == "openvpn") {
+		action = args[1];
+		name = args[0];
+		mode_zone = args[2];
+		id = args[3];
+	} else if (args[0] == "cpativeportal") {
+		action = args[1];
+		name = args[0];
+		mode_zone = args[2];
+		id = args[3];
+	} else {
+		action = args[0];
+		name = args[1];
+	}
+
+	$(this).children('i').removeClass().addClass('fa fa-cog fa-spin text-success');
+	this.blur();
+
+	ajaxRequest = $.ajax(
+		{
+			url: "/status_services.php",
+			type: "post",
+			data: {
+				ajax: 		"ajax",
+				mode: 		action,
+				service: 	name,
+				vpnmode: 	mode_zone,
+				zone: 		mode_zone,
+				id: 		id
+			}
+		}
+	);
+
+	// Once the AJAX call has returned, refresh the page to show the new service
+	ajaxRequest.done(function (response, textStatus, jqXHR) {
+		location.reload(true);
+	});
+});

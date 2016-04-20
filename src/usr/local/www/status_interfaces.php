@@ -131,7 +131,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
 		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
 		showDefBtn($ifinfo['ppplink'], 'L2TP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"));
-		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime ") . $ifinfo['ppp_uptime_accumulated'] ? '(historical)':'', $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
+		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? '(historical)':''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);
 		showDef($ifinfo['cell_simstate'], gettext("Cell SIM State"), $ifinfo['cell_simstate']);
@@ -144,8 +144,8 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		if ($ifinfo['macaddr']) {
 			$mac=$ifinfo['macaddr'];
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			showDef(isset($mac_man[$mac_hi]), gettext('MAC Address'), $mac . ' - ' . $mac_man[$mac_hi]);
-			}
+			showDef( $ifinfo['macaddr'], gettext('MAC Address'), $mac . (isset($mac_man[$mac_hi]) ? ' - ' . $mac_man[$mac_hi] : ''));
+		}
 
 		if ($ifinfo['status'] != "down") {
 			if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down") {
@@ -214,7 +214,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 print_info_box(gettext("Using dial-on-demand will bring the connection up again if any packet ".
 	    "triggers it. To substantiate this point: disconnecting manually ".
 	    "will <strong>not</strong> prevent dial-on-demand from making connections ".
-	    "to the outside! Don't use dial-on-demand if you want to make sure that the line ".
-	    "is kept disconnected."), 'warning', false);
+	    "to the outside! Don't use dial-on-demand if the line ".
+	    "is to be kept disconnected."), 'warning', false);
 include("foot.inc");
 ?>

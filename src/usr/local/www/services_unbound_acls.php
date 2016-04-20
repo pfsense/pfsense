@@ -148,21 +148,21 @@ if ($_POST) {
 				$networkacl[$x]['mask'] = $pconfig["mask{$x}"];
 				$networkacl[$x]['description'] = $pconfig["description{$x}"];
 				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
-					$input_errors[] = gettext("You must enter a valid IP address for each row under Networks.");
+					$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
 				}
 
 				if (is_ipaddr($networkacl[$x]['acl_network'])) {
 					if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-						$input_errors[] = gettext("You must enter a valid IPv4 netmask for each IPv4 row under Networks.");
+						$input_errors[] = gettext("A valid IPv4 netmask must be entered for each IPv4 row under Networks.");
 					}
 				} else if (function_exists("is_ipaddrv6")) {
 					if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
-						$input_errors[] = gettext("You must enter a valid IPv6 address for {$networkacl[$x]['acl_network']}.");
+						$input_errors[] = gettext("A valid IPv6 address must be entered for {$networkacl[$x]['acl_network']}.");
 					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-						$input_errors[] = gettext("You must enter a valid IPv6 netmask for each IPv6 row under Networks.");
+						$input_errors[] = gettext("A valid IPv6 netmask must be entered for each IPv6 row under Networks.");
 					}
 				} else {
-					$input_errors[] = gettext("You must enter a valid IP address for each row under Networks.");
+					$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
 				}
 			} else if (isset($networkacl[$x])) {
 				unset($networkacl[$x]);
@@ -203,7 +203,7 @@ $actionHelp =
 					sprintf(gettext('%sDeny:%s Stops queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
 					sprintf(gettext('%sRefuse:%s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
 					sprintf(gettext('%sAllow:%s Allow queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for your administrative host.'), '<span class="text-success"><strong>', '</strong></span>'); 
+					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.'), '<span class="text-success"><strong>', '</strong></span>'); 
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 
@@ -222,7 +222,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('unbound')) {
-	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The DNS resolver configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -270,7 +270,7 @@ if ($act == "new" || $act == "edit") {
 		'Description',
 		'text',
 		$pconfig['description']
-	))->setHelp('You may enter a description here for your reference.');
+	))->setHelp('A description may be entered here for administrative reference.');
 
 	$numrows = count($networkacl) - 1;
 	$counter = 0;
@@ -286,7 +286,7 @@ if ($act == "new" || $act == "edit") {
 			'acl_network'.$counter,
 			null,
 			$network
-		))->addMask('mask' . $counter, $cidr)->setWidth(4)->setHelp(($counter == $numrows) ? 'Network/mask':null);
+		))->addMask('mask' . $counter, $cidr, 128, 0)->setWidth(4)->setHelp(($counter == $numrows) ? 'Network/mask':null);
 
 		$group->add(new Form_Input(
 			'description' . $counter,

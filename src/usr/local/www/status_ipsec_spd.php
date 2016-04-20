@@ -64,7 +64,7 @@
 ##|-PRIV
 
 define('RIGHTARROW', '&#x25ba;');
-define('LEFTARROW',  '&#x25c0;');
+define('LEFTARROW',  '&#x25c4;');
 
 require("guiconfig.inc");
 require("ipsec.inc");
@@ -142,7 +142,7 @@ if (ipsec_enabled()) {
 <div class="infoblock blockopen">
 <?php
 }
-print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 <?php

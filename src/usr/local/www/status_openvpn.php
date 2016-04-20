@@ -176,7 +176,7 @@ include("head.inc"); ?>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, true, true); ?>
-										<?= get_service_control_GET_links($ssvc, true); ?>
+										<?= get_service_control_links($ssvc); ?>
 									</td>
 								</tr>
 							</table>
@@ -282,7 +282,7 @@ include("head.inc"); ?>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($sk_server['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_GET_links($ssvc, true); ?>
+										<?= get_service_control_links($ssvc, true); ?>
 									</td>
 								</tr>
 							</table>
@@ -338,7 +338,7 @@ include("head.inc"); ?>
 									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($client['vpnid']); ?>
 										<?= get_service_status_icon($ssvc, false, true); ?>
-										<?= get_service_control_GET_links($ssvc, true); ?>
+										<?= get_service_control_links($ssvc, true); ?>
 									</td>
 								</tr>
 							</table>
@@ -356,7 +356,7 @@ include("head.inc"); ?>
 }
 
 if ($DisplayNote) {
- 	print_info_box(gettext("If you have custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
+ 	print_info_box(gettext("If there are custom options that override the management features of OpenVPN on a client or server, they will cause that OpenVPN instance to not work correctly with this status page."));
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

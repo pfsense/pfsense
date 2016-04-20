@@ -660,7 +660,7 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), $g['product_name']);
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
-		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (you should associate this privilege only with one single user).");
+		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (this privilege should only be associated with one single user).");
 
 		$config['system']['nextuid'] = "111";
 		$config['system']['nextgid'] = "111";
@@ -4134,7 +4134,7 @@ function upgrade_129_to_130() {
 	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
-			if (isset($serversettings['topology_subnet'])) {
+			if (strtolower($serversettings['topology_subnet']) == "yes") {
 				unset($serversettings['topology_subnet']);
 				$serversettings['topology'] = "subnet";
 			} else {
@@ -4146,6 +4146,12 @@ function upgrade_129_to_130() {
 
 function upgrade_130_to_131() {
 	global $config;
+
+	// Default dpinger parameters at time of this upgrade (2.3)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
 
 	if (isset($config['syslog']['apinger'])) {
 		$config['syslog']['dpinger'] = true;
@@ -4167,10 +4173,49 @@ function upgrade_130_to_131() {
 		    is_numeric($gw['interval'])) {
 			$gw['interval'] = $gw['interval'] * 1000;
 		}
+
+		if (isset($gw['interval'])) {
+			$effective_interval = $gw['interval'];
+		} else {
+			$effective_interval = $default_interval;
+		}
+
 		if (isset($gw['down']) &&
 		    is_numeric($gw['down'])) {
-			$gw['loss_interval'] = $gw['down'] * 1000;
+			$gw['time_period'] = $gw['down'] * 1000;
 			unset($gw['down']);
+		}
+
+		if (isset($gw['time_period'])) {
+			$effective_time_period = $gw['time_period'];
+		} else {
+			$effective_time_period = $default_time_period;
+		}
+
+		if (isset($gw['latencyhigh'])) {
+			// Default loss_interval is 2000, but must be set
+			// higher if latencyhigh is higher.
+			if ($gw['latencyhigh'] > $default_loss_interval) {
+				$gw['loss_interval'] = $gw['latencyhigh'];
+			}
+		}
+
+		if (isset($gw['loss_interval'])) {
+			$effective_loss_interval = $gw['loss_interval'];
+		} else {
+			$effective_loss_interval = $default_loss_interval;
+		}
+
+		if (isset($gw['interval'])) {
+			// Default alert_interval is 1000, but must be set
+			// higher if interval is higher.
+			if ($gw['interval'] > $default_alert_interval) {
+				$gw['alert_interval'] = $gw['interval'];
+			}
+		}
+
+		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
 		}
 
 		if (isset($gw['avg_delay_samples'])) {
@@ -4356,6 +4401,7 @@ function upgrade_140_to_141() {
 	global $config;
 
 	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
+	// This is for 2.3 ALPHA to a later 2.3, not 2.2.x upgrades, which had no topology setting on clients
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpnclient) {
 			if (!isset($ovpnclient['topology'])) {
@@ -4729,14 +4775,7 @@ function upgrade_147_to_148() {
 		foreach ($config['system']['group'] as $idx => $grp) {
 			if (strstr($grp['name'], " ")) {
 				$cleargroups = true;
-				$newgrpname = str_replace(" ", "_", $grp['name']);
-				// In the unlikely event that there is already a group with this name
-				// just replace the whole thing with a unique string
-				if (in_array($newgrpname, $exgrps)) {
-					$config['system']['group'][$idx]['name'] = uniqid();
-				} else {
-					$config['system']['group'][$idx]['name'] = $newgrpname;
-				}
+				$config['system']['group'][$idx]['scope'] = "remote";
 			}
 		}
 
@@ -4749,6 +4788,107 @@ function upgrade_147_to_148() {
 			foreach ($config['system']['group'] as $grp) {
 				mwexec("/usr/sbin/pw groupdel -g {$grp['gid']}");
 			}
+		}
+	}
+}
+
+function upgrade_148_to_149() {
+	global $config;
+	global $altq_list_queues;
+
+        if (!isset($config['shaper']['queue']) || !is_array($config['shaper']['queue']))
+                return;
+
+	read_altq_config();
+
+	/* Set root queue bandwidth. */
+	foreach ($altq_list_queues as $altq) {
+		$sum = $altq->GetTotalBw();
+		while ($sum > get_queue_bandwidth($altq)) {
+			if (intval(($sum / 1000) * 1.2) < (1024 * 1024)) {
+				/* 1Gb where possible. */
+				$bw = 1024 * 1024;
+			} else {
+				/* Increase by 20% until it fits. */
+				$bw = intval(($sum / 1000) * 1.2);
+			}
+			$altq->SetBandwidth($bw);
+			$altq->SetBwscale("Kb");
+			$altq->wconfig();
+			$sum = $altq->GetTotalBw();
+		}
+	}
+}
+
+function upgrade_149_to_150() {
+	global $config;
+
+	if (is_array($config['dhcpdv6'])) {
+                foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (isset($dhcpdv6['rainterface'])) {
+				if (strstr($dhcpdv6['rainterface'], "_vip")) {
+					$dhcpdv6['rainterface'] = get_vip_from_oldcarp($dhcpdv6['rainterface']);
+				}
+			}
+		}
+	}
+}
+
+function upgrade_150_to_151() {
+	global $config;
+
+	// Default dpinger parameters at time of this upgrade (2.3.1)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
+	$default_latencyhigh = 500;
+
+	// Check advanced gateway parameter relationships in case they are incorrect
+	foreach ($config['gateways']['gateway_item'] as &$gw) {
+		if (isset($gw['interval'])) {
+			$effective_interval = $gw['interval'];
+		} else {
+			$effective_interval = $default_interval;
+		}
+
+		if (isset($gw['alert_interval'])) {
+			$effective_alert_interval = $gw['alert_interval'];
+		} else {
+			$effective_alert_interval = $default_alert_interval;
+		}
+
+		if (isset($gw['loss_interval'])) {
+			$effective_loss_interval = $gw['loss_interval'];
+		} else {
+			$effective_loss_interval = $default_loss_interval;
+		}
+
+		if (isset($gw['time_period'])) {
+			$effective_time_period = $gw['time_period'];
+		} else {
+			$effective_time_period = $default_time_period;
+		}
+
+		if (isset($gw['latencyhigh'])) {
+			$effective_latencyhigh = $gw['latencyhigh'];
+		} else {
+			$effective_latencyhigh = $default_latencyhigh;
+		}
+
+		// Loss interval has to be at least as big as high latency.
+		if ($effective_latencyhigh > $effective_loss_interval) {
+			$effective_loss_interval = $gw['loss_interval'] = $effective_latencyhigh;
+		}
+
+		// Alert interval has to be at least as big as probe interval.
+		if ($effective_interval > $effective_alert_interval) {
+			$gw['alert_interval'] = $effective_interval;
+		}
+
+		// The time period for averaging has to be more than 2 probes plus the loss interval.
+		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
 		}
 	}
 }

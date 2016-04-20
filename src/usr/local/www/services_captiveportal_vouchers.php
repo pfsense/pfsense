@@ -276,7 +276,7 @@ if ($_POST) {
 			$input_errors[] = gettext("This doesn't look like an RSA Private key.");
 		}
 		if ($_POST['vouchersyncdbip'] && (is_ipaddr_configured($_POST['vouchersyncdbip']))) {
-			$input_errors[] = gettext("You cannot sync the voucher database to this host (itself).");
+			$input_errors[] = gettext("The voucher database cannot be sync'd to this host (itself).");
 		}
 		if ($_POST['vouchersyncpass'] != $_POST['vouchersyncpass_confirm']) {
 			$input_errors[] = gettext("Password and confirmed password must match.");

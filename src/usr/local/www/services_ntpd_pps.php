@@ -195,7 +195,7 @@ $section->addInput(new Form_Input(
 	'Stratum',
 	'text',
 	$pconfig['stratum']
-))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful if, for some reason, you want ntpd to prefer a different clock and just monitor this source.');
+))->setHelp('This may be used to change the PPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock and just monitor this source.');
 
 $section->addInput(new Form_Checkbox(
 	'ppsflag2',

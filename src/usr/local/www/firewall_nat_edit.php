@@ -880,7 +880,7 @@ $group->add(new Form_Select(
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .
 				'beginning port of the range (the end port will be calculated automatically).' . '<br />' .
-				'this is usually identical to "From port" above');
+				'This is usually identical to the "From port" above.');
 
 $group->add(new Form_Input(
 	'localbeginport_cust',

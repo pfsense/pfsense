@@ -1247,7 +1247,7 @@ $section->addInput(new Form_Select(
 		'inet6' => 'IPv6',
 		'inet46' => 'IPv4+IPv6',
 	)
-))->setHelp('Select the Internet Protocol version this rule applies to');
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -1537,7 +1537,7 @@ $section->addInput(new Form_Input(
 	'Max. src. conn. Rate',
 	'number',
 	$pconfig['max-src-conn-rate']
-))->setHelp('Maximum new connections per host (TCP only)');
+))->setHelp('Maximum new connections per host (TCP only).');
 
 $section->addInput(new Form_Input(
 	'max-src-conn-rates',
@@ -1577,7 +1577,7 @@ $section->addInput(new Form_Select(
 		'synproxy state' => gettext('Synproxy'),
 		'none' => gettext('None'),
 	)
-))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state' . '<br />' .
+))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.' . '<br />' .
 			'<span></span>');
 
 $section->addInput(new Form_Checkbox(
@@ -1594,14 +1594,14 @@ $section->addInput(new Form_Select(
 	'VLAN Prio',
 	$pconfig['vlanprio'],
 	$vlanprio
-))->setHelp('Choose 802.1p priority to match on');
+))->setHelp('Choose 802.1p priority to match on.');
 
 $section->addInput(new Form_Select(
 	'vlanprioset',
 	'VLAN Prio Set',
 	$pconfig['vlanprioset'],
 	$vlanprio
-))->setHelp('Choose 802.1p priority to apply');
+))->setHelp('Choose 802.1p priority to apply.');
 
 $schedules = array();
 foreach ((array)$config['schedules']['schedule'] as $schedule) {
@@ -1615,7 +1615,7 @@ $section->addInput(new Form_Select(
 	'Schedule',
 	$pconfig['sched'],
 	['' => gettext('none')] + array_combine($schedules, $schedules)
-))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
+))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
 $gateways = array("" => gettext('default'));
 foreach (return_gateways_array() as $gwname => $gw) {

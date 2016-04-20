@@ -458,7 +458,7 @@ $section->addInput(new Form_Checkbox(
 	'Do not NAT',
 	'Enabling this option will disable NAT for traffic matching this rule and stop processing Outbound NAT rules',
 	isset($pconfig['nonat'])
-))->setHelp('In most cases this option is not required');
+))->setHelp('In most cases this option is not required.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 
@@ -557,7 +557,7 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Not',
 	$pconfig['destination_not']
-))->setHelp('Invert the sense of the destination match');
+))->setHelp('Invert the sense of the destination match.');
 
 $form->add($section);
 

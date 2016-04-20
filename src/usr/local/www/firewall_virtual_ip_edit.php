@@ -429,7 +429,7 @@ $section->addInput(new Form_Select(
 	'VHID Group',
 	$pconfig['vhid'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
-))->setHelp('Enter the VHID group that the machines will share');
+))->setHelp('Enter the VHID group that the machines will share.');
 
 $group = new Form_Group('Advertising frequency');
 $group->add(new Form_Select(

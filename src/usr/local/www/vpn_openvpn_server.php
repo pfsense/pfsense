@@ -1014,7 +1014,7 @@ if ($act=="new" || $act=="edit"):
 
 	$form->add($section);
 
-	$section = new Form_Section("Advanced client settings");
+	$section = new Form_Section("Advanced Client Settings");
 	$section->addClass("clientadv");
 
 	$section->addInput(new Form_Checkbox(

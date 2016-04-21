@@ -206,8 +206,8 @@ if ($_POST) {
 				$config['system']['lb_use_sticky'] = true;
 				$need_relayd_restart = true;
 			}
-			if ($config['system']['srctrack'] != $_POST['source-tracking-timeout']) {
-				$config['system']['srctrack'] = $_POST['source-tracking-timeout'];
+			if ($config['system']['srctrack'] != $_POST['srctrack']) {
+				$config['system']['srctrack'] = $_POST['srctrack'];
 				$need_relayd_restart = true;
 			}
 		} else {
@@ -407,7 +407,7 @@ $group->add(new Form_Input(
 	'Source tracking timeout',
 	'number',
 	$pconfig['srctrack'],
-	['placeholder' => 0]
+	["placeholder" => "0"]
 ))->setHelp('Set the source tracking timeout for sticky connections. By default '.
 	'this is 0, so source tracking is removed as soon as the state expires. '.
 	'Setting this timeout higher will cause the source/destination relationship '.
@@ -666,6 +666,14 @@ events.push(function() {
 		$('form').get(0).setAttribute('action', 'diag_reboot.php');
 		$(form).submit();
 	}
+
+	// source track timeout field is disabled if sticky connections not enabled
+	$('#lb_use_sticky').click(function () {
+		disableInput('srctrack', !$(this).prop("checked"));
+	});
+
+	disableInput('srctrack', !$('#lb_use_sticky').prop("checked"));
+
 });
 //]]>
 </script>

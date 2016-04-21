@@ -163,7 +163,10 @@ if (isset($id) && $a_laggs[$id]) {
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
-	$pconfig['members'] = implode(',', $_POST['members']);
+
+	if (is_array($_POST['members'])) {
+		$pconfig['members'] = implode(',', $_POST['members']);
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");
@@ -279,6 +282,13 @@ $section->addInput(new Form_Select(
 	$pconfig['proto'],
 	array_combine($laggprotos, $laggprotosuc)
 ))->setHelp($protohelp);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp("Enter a description here for reference only. (Not parsed)");
 
 $section->addInput(new Form_Input(
 	'laggif',

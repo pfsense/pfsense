@@ -1901,7 +1901,8 @@ builder_setup() {
 			${PKG_REPO_DEFAULT} \
 			${PKG_REPO_PATH} \
 			${_arch} \
-			${_arch}
+			${_arch} \
+			"staging"
 
 		# Use fingerprint keys from repo
 		sed -i '' -e "/fingerprints:/ s,\"/,\"${BUILDER_ROOT}/src/," \
@@ -2459,6 +2460,8 @@ CHECK_CHANGED_OPTIONS=yes
 CHECK_CHANGED_DEPS=yes
 ATOMIC_PACKAGE_REPOSITORY=yes
 COMMIT_PACKAGES_ON_FAILURE=no
+KEEP_OLD_PACKAGES=yes
+KEEP_OLD_PACKAGES_COUNT=5
 EOF
 
 	# Create specific items conf

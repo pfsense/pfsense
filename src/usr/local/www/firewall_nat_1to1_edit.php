@@ -408,7 +408,7 @@ $section->addInput(new Form_Checkbox(
 	'No BINAT (NOT)',
 	'Do not perform binat for the specified address',
 	$pconfig['nobinat']
-))->setHelp('Excludes the address from a later, more general, rule');
+))->setHelp('Excludes the address from a later, more general, rule.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 

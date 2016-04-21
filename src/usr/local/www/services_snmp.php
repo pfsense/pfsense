@@ -240,7 +240,7 @@ $section->addInput(new Form_Input(
 	'Polling Port',
 	'text',
 	($pconfig['pollport'] ? $pconfig['pollport']:'161')
-))->setHelp('Enter the port to accept polling events on (default 161)');
+))->setHelp('Enter the port to accept polling events on (default 161).');
 
 $section->addInput(new Form_Input(
 	'syslocation',

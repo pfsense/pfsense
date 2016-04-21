@@ -201,6 +201,8 @@ if ($input_errors) {
 
 $form = new Form();
 
+$form->setAction("load_balancer_virtual_server_edit.php");
+
 $section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(
@@ -217,10 +219,10 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'ipaddr',
 	'IP Address',
+	'text',
 	$pconfig['ipaddr']
 ))->setHelp('This is normally the WAN IP address for the server to listen on. ' .
 			'All connections to this IP and port will be forwarded to the pool cluster. ' .
@@ -261,7 +263,6 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'Please add a pool on the "Pools" tab to use this feature. '
 	));
 } else {
-
 	$list = array();
 	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 		$list[$config['load_balancer']['lbpool'][$i]['name']] = $config['load_balancer']['lbpool'][$i]['name'];
@@ -271,7 +272,7 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'sitedown',
 		'Fall-back Pool',
 		$pconfig['sitedown'],
-		$list
+		["" => "None"] + $list
 	));
 }
 

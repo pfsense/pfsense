@@ -336,7 +336,7 @@ $section->addInput(new Form_Textarea(
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
-))->setHelp('Enter any additional options to add to the dnsmasq configuration here, separated by a space or newline')
+))->setHelp('Enter any additional options to add to the dnsmasq configuration here, separated by a space or newline.')
   ->addClass('advanced');
 
 $form->add($section);

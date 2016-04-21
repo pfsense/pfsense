@@ -311,7 +311,8 @@ function dump_xml_config_sub($arr, $indent) {
 				    (substr($ent, 0, 9) == "ldap_bind") ||
 				    (substr($ent, 0, 11) == "ldap_basedn") ||
 				    (substr($ent, 0, 18) == "ldap_authcn") ||
-				    (substr($ent, 0, 19) == "ldap_extended_query")) {
+				    (substr($ent, 0, 19) == "ldap_extended_query") ||
+				    (substr($ent, 0, 5) == "text")) {
 					$xmlconfig .= "<$ent><![CDATA[" . htmlentities($val) . "]]></$ent>\n";
 				} else {
 					$xmlconfig .= "<$ent>" . htmlentities($val) . "</$ent>\n";

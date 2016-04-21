@@ -194,7 +194,7 @@ if (isset($id) && $a_filter[$id]) {
 	if (isset($a_filter[$id]['floating']) || $if == "FloatingRules") {
 		$pconfig['floating'] = $a_filter[$id]['floating'];
 		if (isset($a_filter[$id]['interface']) && $a_filter[$id]['interface'] <> "") {
-			$pconfig['interface'] = $a_filter[$id]['interface'];
+			$pconfig['interface'] = explode(",", $a_filter[$id]['interface']);
 		}
 	}
 
@@ -456,7 +456,7 @@ if ($_POST) {
 		if ($_POST['proto'] != "tcp") {
 			$input_errors[] = sprintf(gettext("%s is only valid with protocol TCP."), $_POST['statetype']);
 		}
-		if (($_POST['statetype'] == "synproxy state") && ($_POST['gateway'] != "")) {
+		if ($_POST['gateway'] != "") {
 			$input_errors[] = sprintf(gettext("%s is only valid if the gateway is set to 'default'."), $_POST['statetype']);
 		}
 	}
@@ -563,12 +563,12 @@ if ($_POST) {
 		if (!validate_address_family($_POST['src'], $_POST['dst'])) {
 			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
 		}
-		if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
-			$input_errors[] = gettext("IPv6 addresses can not be used in IPv4 rules.");
-		}
-		if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
-			$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
-		}
+	}
+	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
+		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules.");
+	}
+	if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
+		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
@@ -1205,7 +1205,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput($input = new Form_Select(
 		'interface',
 		'Interface',
-		explode(",", $pconfig['interface']),
+		$pconfig['interface'],
 		build_if_list(),
 		true
 	))->setHelp('Choose the interface(s) for this rule.');
@@ -1247,7 +1247,7 @@ $section->addInput(new Form_Select(
 		'inet6' => 'IPv6',
 		'inet46' => 'IPv4+IPv6',
 	)
-))->setHelp('Select the Internet Protocol version this rule applies to');
+))->setHelp('Select the Internet Protocol version this rule applies to.');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -1537,7 +1537,7 @@ $section->addInput(new Form_Input(
 	'Max. src. conn. Rate',
 	'number',
 	$pconfig['max-src-conn-rate']
-))->setHelp('Maximum new connections per host (TCP only)');
+))->setHelp('Maximum new connections per host (TCP only).');
 
 $section->addInput(new Form_Input(
 	'max-src-conn-rates',
@@ -1577,7 +1577,7 @@ $section->addInput(new Form_Select(
 		'synproxy state' => gettext('Synproxy'),
 		'none' => gettext('None'),
 	)
-))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state' . '<br />' .
+))->setHelp('Select which type of state tracking mechanism to use.  If in doubt, use keep state.' . '<br />' .
 			'<span></span>');
 
 $section->addInput(new Form_Checkbox(
@@ -1594,14 +1594,14 @@ $section->addInput(new Form_Select(
 	'VLAN Prio',
 	$pconfig['vlanprio'],
 	$vlanprio
-))->setHelp('Choose 802.1p priority to match on');
+))->setHelp('Choose 802.1p priority to match on.');
 
 $section->addInput(new Form_Select(
 	'vlanprioset',
 	'VLAN Prio Set',
 	$pconfig['vlanprioset'],
 	$vlanprio
-))->setHelp('Choose 802.1p priority to apply');
+))->setHelp('Choose 802.1p priority to apply.');
 
 $schedules = array();
 foreach ((array)$config['schedules']['schedule'] as $schedule) {
@@ -1615,7 +1615,7 @@ $section->addInput(new Form_Select(
 	'Schedule',
 	$pconfig['sched'],
 	['' => gettext('none')] + array_combine($schedules, $schedules)
-))->setHelp('Leave as \'none\' to leave the rule enabled all the time');
+))->setHelp('Leave as \'none\' to leave the rule enabled all the time.');
 
 $gateways = array("" => gettext('default'));
 foreach (return_gateways_array() as $gwname => $gw) {

@@ -1765,7 +1765,7 @@ $group = new Form_Group('MAC controls');
 $group->add($macaddress);
 // $group->add($btnmymac);
 $group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .
-				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank');
+				'Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx or leave blank.');
 $section->add($group);
 
 $section->addInput(new Form_Input(
@@ -1822,8 +1822,8 @@ $group->add(new Form_Button(
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none".' .
-				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>');
+				'On local LANs the upstream gateway should be "none". ' .
+				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>.');
 
 $section->add($group);
 
@@ -2091,7 +2091,7 @@ $section->addInput(new Form_Input(
 	'Option modifiers',
 	'text',
 	$pconfig['adv_dhcp_option_modifiers']
-))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
+))->setWidth(9)->sethelp('The values in this field are DHCP option modifiers applied to the obtained DHCP lease.	 [modifier option declaration [, ...]]' . '<br />' .
 			'modifiers: (default, supersede, prepend, append)' . '<br />' .
 			'<a target="_blank" href="https://www.freebsd.org/cgi/man.cgi?query=dhclient.conf&sektion=5#LEASE_REQUIREMENTS_AND_REQUESTS">' . 'See here more information' . '</a>');
 
@@ -3139,7 +3139,7 @@ $section->addInput(new Form_Checkbox(
 	'yes'
 ))->setHelp('Blocks traffic from reserved IP addresses (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should ' .
 			'never appear in the Internet routing table, and so should not appear as the source address in any packets received.' . '<br />' .
-			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings');
+			'Note: The update frequency can be changed under System->Advanced Firewall/NAT settings.');
 
 $form->add($section);
 

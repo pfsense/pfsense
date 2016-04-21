@@ -439,6 +439,11 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 				services_dhcpd_configure();
 			}
 
+			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
+				unset($config['dhcpdv6'][$id]);
+				services_dhcpdv6_configure();
+			}
+
 			if (count($config['filter']['rule']) > 0) {
 				foreach ($config['filter']['rule'] as $x => $rule) {
 					if ($rule['interface'] == $id) {

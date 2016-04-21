@@ -165,6 +165,18 @@ if ($_POST) {
 		$input_errors[] = gettext("Invalid address family.");
 	}
 
+	if ($fam !== "" && $proto !== "") {
+		if ($fam == "ip" && $proto == "icmp6") {
+			$input_errors[] = gettext("IPv4 with ICMPv6 is not valid.");
+		}
+		if ($fam == "ip6" && $proto == "icmp") {
+			$input_errors[] = gettext("IPv6 with ICMP is not valid.");
+		}
+		if ($fam == "ip6" && $proto =="arp") {
+			$input_errors[] = gettext("IPv6 with ARP is not valid.");
+		}
+	}
+
 	if ($proto !== "" && !in_array(strip_not($proto), $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}

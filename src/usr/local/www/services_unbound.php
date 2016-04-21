@@ -388,7 +388,7 @@ $section->addInput(new Form_Textarea (
 	'custom_options',
 	'Custom options',
 	$pconfig['custom_options']
-))->setHelp('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline');
+))->setHelp('Enter any additional configuration parameters to add to the DNS Resolver configuration here, separated by a newline.');
 
 $form->add($section);
 print($form);

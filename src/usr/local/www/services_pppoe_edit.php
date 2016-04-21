@@ -361,15 +361,15 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'Server Address',
 	$pconfig['localip']
-))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway"' . '<br />' .
-			'Typically this is set to an unused IP just outside of the client range '. '<br />' .
-			'NOTE: This should NOT be set to any IP address currently in use on this firewall');
+))->setHelp('Enter the IP address the PPPoE server should give to clients for use as their "gateway".' . '<br />' .
+			'Typically this is set to an unused IP just outside of the client range.'. '<br />' .
+			'NOTE: This should NOT be set to any IP address currently in use on this firewall.');
 
 $section->addInput(new Form_IpAddress(
 	'remoteip',
 	'Remote Address Range',
 	$pconfig['remoteip']
-))->setHelp('Specify the starting address for the client IP address subnet');
+))->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(
 	'pppoe_subnet',
@@ -396,7 +396,7 @@ $section->addInput(new Form_IpAddress(
 	'pppoe_dns2',
 	null,
 	$pconfig['pppoe_dns2']
-))->setHelp('If entered these servers will be given to all PPPoE clients, otherwise LAN DNS and one WAN DNS will go to all clients');
+))->setHelp('If entered these servers will be given to all PPPoE clients, otherwise LAN DNS and one WAN DNS will go to all clients.');
 
 $section->addInput(new Form_Checkbox(
 	'radiusenable',
@@ -404,21 +404,21 @@ $section->addInput(new Form_Checkbox(
 	'Use RADIUS Authentication',
 	$pconfig['radiusenable']
 ))->setHelp('Users will be authenticated using the RADIUS server specified below. The local user database ' .
-			'will not be used');
+			'will not be used.');
 
 $section->addInput(new Form_Checkbox(
 	'radacct_enable',
 	null,
 	'Use RADIUS Accounting',
 	$pconfig['radacct_enable']
-))->setHelp('Sends accounting packets to the RADIUS server');
+))->setHelp('Sends accounting packets to the RADIUS server.');
 
 $section->addInput(new Form_Checkbox(
 	'radiussecenable',
 	null,
 	'Use a Backup RADIUS Authentication Server',
 	$pconfig['radiussecenable']
-))->setHelp('If primary server fails all requests will be sent via backup server');
+))->setHelp('If primary server fails all requests will be sent via backup server.');
 
 $section->addInput(new Form_IpAddress(
 	'radius_nasip',
@@ -462,7 +462,7 @@ $group->add(new Form_Input(
 	$pconfig['radiusserveracctport']
 ))->setHelp('Accounting port (optional)');
 
-$group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting)');
+$group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting).');
 
 $section->add($group);
 
@@ -495,7 +495,7 @@ $group->add(new Form_Input(
 	$pconfig['radiusserver2acctport']
 ))->setHelp('Accounting port (optional)');
 
-$group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting)');
+$group->setHelp('Standard ports are 1812 (authentication) and 1813 (accounting).');
 
 $section->add($group);
 

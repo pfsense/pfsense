@@ -285,10 +285,10 @@ export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/factory/packages"}
 export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/factory/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
 
 # Final packages server
-export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"beta.pfsense.org"}
+export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"firmware.netgate.com"}
 export PKG_FINAL_RSYNC_USERNAME=${PKG_FINAL_RSYNC_USERNAME:-"wwwsync"}
 export PKG_FINAL_RSYNC_SSH_PORT=${PKG_FINAL_RSYNC_SSH_PORT:-"22"}
-export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
+export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/firmware/beta/packages"}
 
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING

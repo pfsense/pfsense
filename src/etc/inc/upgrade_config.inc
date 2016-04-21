@@ -4147,6 +4147,12 @@ function upgrade_129_to_130() {
 function upgrade_130_to_131() {
 	global $config;
 
+	// Default dpinger parameters at time of this upgrade (2.3)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
+
 	if (isset($config['syslog']['apinger'])) {
 		$config['syslog']['dpinger'] = true;
 		unset($config['syslog']['apinger']);
@@ -4167,10 +4173,49 @@ function upgrade_130_to_131() {
 		    is_numeric($gw['interval'])) {
 			$gw['interval'] = $gw['interval'] * 1000;
 		}
+
+		if (isset($gw['interval'])) {
+			$effective_interval = $gw['interval'];
+		} else {
+			$effective_interval = $default_interval;
+		}
+
 		if (isset($gw['down']) &&
 		    is_numeric($gw['down'])) {
-			$gw['loss_interval'] = $gw['down'] * 1000;
+			$gw['time_period'] = $gw['down'] * 1000;
 			unset($gw['down']);
+		}
+
+		if (isset($gw['time_period'])) {
+			$effective_time_period = $gw['time_period'];
+		} else {
+			$effective_time_period = $default_time_period;
+		}
+
+		if (isset($gw['latencyhigh'])) {
+			// Default loss_interval is 2000, but must be set
+			// higher if latencyhigh is higher.
+			if ($gw['latencyhigh'] > $default_loss_interval) {
+				$gw['loss_interval'] = $gw['latencyhigh'];
+			}
+		}
+
+		if (isset($gw['loss_interval'])) {
+			$effective_loss_interval = $gw['loss_interval'];
+		} else {
+			$effective_loss_interval = $default_loss_interval;
+		}
+
+		if (isset($gw['interval'])) {
+			// Default alert_interval is 1000, but must be set
+			// higher if interval is higher.
+			if ($gw['interval'] > $default_alert_interval) {
+				$gw['alert_interval'] = $gw['interval'];
+			}
+		}
+
+		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
 		}
 
 		if (isset($gw['avg_delay_samples'])) {
@@ -4785,6 +4830,65 @@ function upgrade_149_to_150() {
 					$dhcpdv6['rainterface'] = get_vip_from_oldcarp($dhcpdv6['rainterface']);
 				}
 			}
+		}
+	}
+}
+
+function upgrade_150_to_151() {
+	global $config;
+
+	// Default dpinger parameters at time of this upgrade (2.3.1)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
+	$default_latencyhigh = 500;
+
+	// Check advanced gateway parameter relationships in case they are incorrect
+	foreach ($config['gateways']['gateway_item'] as &$gw) {
+		if (isset($gw['interval'])) {
+			$effective_interval = $gw['interval'];
+		} else {
+			$effective_interval = $default_interval;
+		}
+
+		if (isset($gw['alert_interval'])) {
+			$effective_alert_interval = $gw['alert_interval'];
+		} else {
+			$effective_alert_interval = $default_alert_interval;
+		}
+
+		if (isset($gw['loss_interval'])) {
+			$effective_loss_interval = $gw['loss_interval'];
+		} else {
+			$effective_loss_interval = $default_loss_interval;
+		}
+
+		if (isset($gw['time_period'])) {
+			$effective_time_period = $gw['time_period'];
+		} else {
+			$effective_time_period = $default_time_period;
+		}
+
+		if (isset($gw['latencyhigh'])) {
+			$effective_latencyhigh = $gw['latencyhigh'];
+		} else {
+			$effective_latencyhigh = $default_latencyhigh;
+		}
+
+		// Loss interval has to be at least as big as high latency.
+		if ($effective_latencyhigh > $effective_loss_interval) {
+			$effective_loss_interval = $gw['loss_interval'] = $effective_latencyhigh;
+		}
+
+		// Alert interval has to be at least as big as probe interval.
+		if ($effective_interval > $effective_alert_interval) {
+			$gw['alert_interval'] = $effective_interval;
+		}
+
+		// The time period for averaging has to be more than 2 probes plus the loss interval.
+		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
 		}
 	}
 }

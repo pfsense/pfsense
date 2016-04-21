@@ -286,7 +286,7 @@ if ($act == "new" || $act == "edit") {
 			'acl_network'.$counter,
 			null,
 			$network
-		))->addMask('mask' . $counter, $cidr)->setWidth(4)->setHelp(($counter == $numrows) ? 'Network/mask':null);
+		))->addMask('mask' . $counter, $cidr, 128, 0)->setWidth(4)->setHelp(($counter == $numrows) ? 'Network/mask':null);
 
 		$group->add(new Form_Input(
 			'description' . $counter,

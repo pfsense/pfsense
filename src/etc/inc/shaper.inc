@@ -881,7 +881,7 @@ class altq_root_queue {
 
 		$section->addInput(new Form_Input(
 			'tbrconfig',
-			'TRB Size',
+			'TBR Size',
 			'number',
 			$this->GetTbrConfig()
 		))->setHelp('Adjusts the size, in bytes, of the token bucket regulator. If not specified, heuristics based on the interface ' .

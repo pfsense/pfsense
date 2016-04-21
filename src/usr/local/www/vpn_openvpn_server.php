@@ -504,8 +504,8 @@ if ($_POST) {
 		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
-		$server['tunnel_network'] = $pconfig['tunnel_network'];
-		$server['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		$server['tunnel_network'] = trim($pconfig['tunnel_network']);
+		$server['tunnel_networkv6'] = trim($pconfig['tunnel_networkv6']);
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
@@ -1012,6 +1012,11 @@ if ($act=="new" || $act=="edit"):
 				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".');
 
+	$form->add($section);
+
+	$section = new Form_Section("Advanced Client Settings");
+	$section->addClass("clientadv");
+
 	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',
 		'DNS Default Domain',
@@ -1254,6 +1259,19 @@ endif;
 //<![CDATA[
 events.push(function() {
 
+	function advanced_change(hide, mode) {
+		if(!hide) {
+			hideClass('advanced', false);
+			hideClass("clientadv", false);
+		} else if (mode == "p2p_tls") {
+			hideClass('advanced', false);
+			hideClass("clientadv", true);
+		} else {
+			hideClass('advanced', true);
+			hideClass("clientadv", true);
+		}
+	}
+
 	function mode_change() {
 		value = $('#mode').val();
 
@@ -1275,7 +1293,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
-				break;
+			break;
 			case "server_tls_user":
 				hideInput('tls', false);
 				hideInput('certref', false);
@@ -1285,7 +1303,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
-				break;
+			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
 				hideInput('caref', true);
@@ -1300,12 +1318,12 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);
-				break;
+			break;
 		}
 
 		switch (value) {
 			case "p2p_shared_key":
-				hideClass('advanced', true);
+				advanced_change(true, value);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', true);
@@ -1314,9 +1332,9 @@ events.push(function() {
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
 				hideCheckbox('autokey_enable', false);
-				break;
+			break;
 			case "p2p_tls":
-				hideClass('advanced', true);
+				advanced_change(true, value);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', false);
@@ -1324,10 +1342,10 @@ events.push(function() {
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
-				break;
+			break;
 			case "server_user":
 			case "server_tls_user":
-				hideClass('advanced', false);
+				advanced_change(false, value);
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
 				hideCheckbox('gwredir', false);
@@ -1336,10 +1354,10 @@ events.push(function() {
 				hideMultiClass('authmode', false);
 				hideCheckbox('client2client', false);
 				hideCheckbox('autokey_enable', true);
-				break;
+			break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
-				hideClass('advanced', false);
+				advanced_change(false, value);
 				hideCheckbox('autokey_enable', true);
 			default:
 				hideInput('custom_options', false);
@@ -1350,7 +1368,7 @@ events.push(function() {
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
-				break;
+			break;
 		}
 
 		gwredir_change();

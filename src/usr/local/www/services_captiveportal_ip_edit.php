@@ -252,6 +252,12 @@ $section->addInput(new Form_IpAddress(
 	$pconfig['ip']
 ))->addMask(sn, $pconfig['sn'], 32);
 
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp("Enter a description here for reference only. (Not parsed)");
 
 $section->addInput(new Form_Select(
 	'dir',

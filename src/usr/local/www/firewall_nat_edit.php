@@ -631,19 +631,13 @@ function dsttype_selected() {
 	global $pconfig, $config;
 
 	$selected = "";
-
-	if (is_array($config['virtualip']['vip'])) {
+	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
 		$selected = $pconfig['dst'];
 	} else {
-		$sel = is_specialnet($pconfig['dst']);
-		if (!$sel) {
-			if ($pconfig['dstmask'] == 32) {
-				$selected = 'single';
-			} else {
-				$selected = 'network';
-			}
+		if ($pconfig['dstmask'] == 32) {
+			$selected = 'single';
 		} else {
-			$selected = $pconfig['dst'];
+			$selected = 'network';
 		}
 	}
 
@@ -880,7 +874,7 @@ $group->add(new Form_Select(
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .
 				'beginning port of the range (the end port will be calculated automatically).' . '<br />' .
-				'this is usually identical to "From port" above');
+				'This is usually identical to the "From port" above.');
 
 $group->add(new Form_Input(
 	'localbeginport_cust',

@@ -330,6 +330,8 @@ if ($input_errors) {
 
 $form = new Form();
 
+$form->setAction("load_balancer_pool_edit.php");
+
 $section = new Form_Section('Add/Edit Load Balancer - Pool Entry');
 
 $section->addInput(new Form_Input(

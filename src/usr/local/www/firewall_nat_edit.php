@@ -631,16 +631,14 @@ function dsttype_selected() {
 	global $pconfig, $config;
 
 	$selected = "";
-
-	$sel = is_specialnet($pconfig['dst']);
-	if (!$sel) {
+	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
+		$selected = $pconfig['dst'];
+	} else {
 		if ($pconfig['dstmask'] == 32) {
 			$selected = 'single';
 		} else {
 			$selected = 'network';
 		}
-	} else {
-		$selected = $pconfig['dst'];
 	}
 
 	return($selected);

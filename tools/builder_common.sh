@@ -2156,11 +2156,20 @@ finish() {
 }
 
 pkg_repo_rsync() {
-	local _repo_path="${1}"
+	local _repo_path_param="${1}"
 
-	if [ -z "${_repo_path}" -o ! -d "${_repo_path}" ]; then
+	if [ -z "${_repo_path_param}" -o ! -d "${_repo_path_param}" ]; then
 		return
 	fi
+
+	# Sanitize path
+	_repo_path=$(realpath ${_repo_path_param})
+
+	local _repo_dir=$(dirname ${_repo_path})
+	local _repo_base=$(basename ${_repo_path})
+
+	# Add ./ it's an rsync trick to make it chdir to directory before sending it
+	_repo_path="${_repo_dir}/./${_repo_base}"
 
 	if [ -z "${LOGFILE}" ]; then
 		local _logfile="/dev/null"
@@ -2213,6 +2222,11 @@ pkg_repo_rsync() {
 		return
 	fi
 
+	# Make sure destination directory exist
+	ssh -p ${PKG_RSYNC_SSH_PORT} \
+		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} \
+		"mkdir -p ${PKG_RSYNC_DESTDIR}"
+
 	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
 	if script -aq ${_logfile} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
 		--timeout=60 --delete-delay ${_repo_path} \
@@ -2223,6 +2237,26 @@ pkg_repo_rsync() {
 		echo "Failed!" | tee -a ${_logfile}
 		echo ">>> ERROR: An error occurred sending repo to remote hostname"
 		print_error_pfS
+	fi
+
+	if [ -z "${USE_PKG_REPO_STAGING}" ]; then
+		return
+	fi
+
+	if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
+		local _cmd="rsync -ave \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+			--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
+
+		echo -n ">>> Sending updated repositories to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
+		if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+			${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} ${_cmd} >/dev/null 2>&1; then
+			echo "Done!" | tee -a ${_logfile}
+		else
+			echo "Failed!" | tee -a ${_logfile}
+			echo ">>> ERROR: An error occurred sending repo to final hostname"
+			print_error_pfS
+		fi
 	fi
 }
 
@@ -2630,8 +2664,7 @@ poudriere_bulk() {
 			print_error_pfS
 		fi
 
-		# ./ is intentional, it's an rsync trick to make it chdir to directory before sending it
-		pkg_repo_rsync "/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
+		pkg_repo_rsync "/usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
 }
 
@@ -2796,8 +2829,7 @@ snapshots_scp_files() {
 	fi
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
-	# Add ./ before last directory, it's an rsync trick to make it chdir to parent directory before sending
-	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	pkg_repo_rsync "${CORE_PKG_PATH}"
 	snapshots_update_status ">>> Finished copying core pkg repo"
 
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"

@@ -69,8 +69,8 @@ require_once("filter.inc");
 require_once("ipsec.inc");
 require_once("shaper.inc");
 
-$XmoveTitle = gettext("Move checked rules above this one");
-$ShXmoveTitle = gettext("Move checked rules below this one");
+$XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
+$ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
@@ -950,7 +950,14 @@ events.push(function() {
 		$('#order-store').removeAttr('disabled');
 		reindex_rules($(anchor_row).parent('tbody'));
 		dirty = true;
-
+	}).mouseover(function(e) {
+		if (e.shiftKey) {
+			$(this).parents('tr').css('border-bottom', '4px solid green');
+		} else {
+			$(this).parents('tr').css('border-top', '4px solid green');
+		}
+	}).mouseout(function(e) {
+		$(this).parents('tr').css('border', '0px');
 	});
 
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is

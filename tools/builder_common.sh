@@ -1839,6 +1839,15 @@ pkg_repo_rsync() {
 		return
 	fi
 
+	# Sanitize path
+	_repo_path=$(realpath ${_repo_path})
+
+	local _repo_dir=$(dirname ${_repo_path})
+	local _repo_base=$(basename ${_repo_path})
+
+	# Add ./ it's an rsync trick to make it chdir to directory before sending it
+	_repo_path="${_repo_dir}/./${_repo_base}"
+
 	if [ -z "${LOGFILE}" ]; then
 		local _logfile="/dev/null"
 	else
@@ -2307,8 +2316,7 @@ poudriere_bulk() {
 			print_error_pfS
 		fi
 
-		# ./ is intentional, it's an rsync trick to make it chdir to directory before sending it
-		pkg_repo_rsync "/usr/local/poudriere/data/packages/./${jail_name}-${POUDRIERE_PORTS_NAME}"
+		pkg_repo_rsync "/usr/local/poudriere/data/packages/${jail_name}-${POUDRIERE_PORTS_NAME}"
 	done
 }
 
@@ -2455,8 +2463,7 @@ snapshots_scp_files() {
 	fi
 
 	snapshots_update_status ">>> Copying core pkg repo to ${PKG_RSYNC_HOSTNAME}"
-	# Add ./ before last directory, it's an rsync trick to make it chdir to parent directory before sending
-	pkg_repo_rsync $(echo "${CORE_PKG_PATH}" | sed -E 's,/$,,; s,/([^/]*)$,/./\1,')
+	pkg_repo_rsync "${CORE_PKG_PATH}"
 	snapshots_update_status ">>> Finished copying core pkg repo"
 
 	snapshots_update_status ">>> Copying files to ${RSYNCIP}"

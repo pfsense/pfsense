@@ -540,8 +540,6 @@ function build_srctype_list() {
 
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
-	$sel = is_specialnet($pconfig['src']);
-
 	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');
 	}
@@ -564,18 +562,15 @@ function srctype_selected() {
 	global $pconfig, $config;
 
 	$selected = "";
-
-	$sel = is_specialnet($pconfig['src']);
-	if (!$sel) {
+	if (array_key_exists($pconfig['src'], build_srctype_list())) {
+		$selected = $pconfig['src'];
+	} else {
 		if ($pconfig['srcmask'] == 32) {
 			$selected = 'single';
 		} else {
 			$selected = 'network';
 		}
-	} else {
-		$selected = $pconfig['src'];
 	}
-
 
 	return($selected);
 }
@@ -583,7 +578,6 @@ function srctype_selected() {
 function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
-	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
 	if (have_ruleint_access("pppoe")) {
@@ -594,10 +588,10 @@ function build_dsttype_list() {
 		$list['l2tp'] = gettext('L2TP clients');
 	}
 
-	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if)) {
-			$list[$if] = $ifdesc;
-			$list[$if . 'ip'] = $ifdesc . ' address';
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent] = $ifdesc . ' net';
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
 

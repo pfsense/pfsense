@@ -1578,7 +1578,8 @@ builder_setup() {
 			${PKG_REPO_DEFAULT} \
 			${PKG_REPO_PATH} \
 			${_arch} \
-			${_arch}
+			${_arch} \
+			"staging"
 
 		# Use fingerprint keys from repo
 		sed -i '' -e "/fingerprints:/ s,\"/,\"${BUILDER_ROOT}/src/," \

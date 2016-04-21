@@ -263,7 +263,7 @@ $section->addInput(new Form_Checkbox(
 	'Prefetch Support',
 	'Message cache elements are prefetched before they expire to help keep the cache up to date',
 	$pconfig['prefetch']
-))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache');
+))->setHelp('When enabled, this option can cause an increase of around 10% more DNS traffic and load on the server, but frequently requested items will not expire from the cache.');
 
 $section->addInput(new Form_Checkbox(
 	'prefetchkey',
@@ -314,7 +314,7 @@ $section->addInput(new Form_Select(
 	'Number of Queries per Thread',
 	$pconfig['num_queries_per_thread'],
 	array_combine(array("512", "1024", "2048"), array("512", "1024", "2048"))
-))->setHelp('The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped');
+))->setHelp('The number of queries that every thread will service simultaneously. If more queries arrive that need to be serviced, and no queries can be jostled, then these queries are dropped.');
 
 $section->addInput(new Form_Select(
 	'jostle_timeout',
@@ -329,7 +329,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['cache_max_ttl']
 ))->setHelp('The Maximum Time to Live for RRsets and messages in the cache. The default is 86400 seconds (1 day). ' .
-			'When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values');
+			'When the internal TTL expires the cache item is expired. This can be configured to force the resolver to query for data more often and not trust (very large) TTL values.');
 
 $section->addInput(new Form_Input(
 	'cache_min_ttl',
@@ -387,7 +387,7 @@ $section->addInput(new Form_Checkbox(
 	'Experimental Bit 0x20 Support',
 	'Use 0x-20 encoded random bits in the DNS query to foil spoofing attempts.',
 	$pconfig['use_caps']
-))->setHelp('See the implementation <a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">draft dns-0x20</a> for more information: ');
+))->setHelp('See the implementation <a href="https://tools.ietf.org/html/draft-vixie-dnsext-dns0x20-00">draft dns-0x20</a> for more information.');
 
 $form->add($section);
 print($form);

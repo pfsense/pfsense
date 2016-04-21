@@ -312,7 +312,7 @@ $section->addInput(new Form_Input(
 	'Stratum (0-16)',
 	'text',
 	$pconfig['stratum']
-))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock');
+))->setHelp('This may be used to change the GPS Clock stratum (default: 0). This may be useful to, for some reason, have ntpd prefer a different clock.');
 
 $section->addInput(new Form_Checkbox(
 	'gpsprefer',
@@ -390,7 +390,7 @@ $section->addInput(new Form_Textarea(
 	'gpsinitcmd',
 	null,
 	base64_decode($pconfig['initcmd'])
-))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here');
+))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here.');
 
 $group = new Form_Group('NMEA Checksum Calculator');
 

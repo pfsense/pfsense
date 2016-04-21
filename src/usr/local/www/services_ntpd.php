@@ -330,7 +330,7 @@ $section->addInput(new Form_Checkbox(
 	'Log system messages (default: disabled).',
 	$pconfig['logsys']
 ))->setHelp('These options enable additional messages from NTP to be written to the System Log ' .
-			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>');
+			'<a href="status_logs.php?logfile=ntpd">' . 'Status > System Logs > NTP' . '</a>.');
 
 // Statistics logging section
 $btnadv = new Form_Button(
@@ -388,7 +388,7 @@ $section->addInput(new Form_Textarea(
 	'leaptext',
 	null,
 	base64_decode(chunk_split($pconfig['leapsec']))
-))->setHelp('Enter Leap second configuration as text OR select a file to upload');
+))->setHelp('Enter Leap second configuration as text OR select a file to upload.');
 
 $section->addInput(new Form_Input(
 	'leapfile',

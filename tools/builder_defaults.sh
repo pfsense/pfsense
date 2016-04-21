@@ -317,7 +317,7 @@ esac
 # pkg repo variables
 export USE_PKG_REPO_STAGING="1"
 export PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL:-"pkg+https://firmware.netgate.com/beta/packages"}
-export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://pkg.pfsense.org"}
+export PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE:-"pkg+https://firmware.netgate.com/pkg"}
 export PKG_REPO_SERVER_STAGING=${PKG_REPO_SERVER_STAGING:-"pkg+http://${STAGING_HOSTNAME}/factory/packages"}
 
 if [ -n "${_IS_RELEASE}" ]; then

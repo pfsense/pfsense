@@ -271,13 +271,8 @@ if (file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous Upgrade Log")?></h2></div>
 			<!-- No white space between the <pre> and the first output or it will appear on the page! -->
-			<pre><?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
-				<br /><?=gettext("File list:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/file_upgrade_log.txt"))?>
-				<br /><?=gettext("Misc log:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/firmware_update_misc_log.txt"))?>
-				<br /><?=gettext("fdisk/bsdlabel log:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/fdisk_upgrade_log.txt"))?>
+			<pre>
+				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
 			</pre>
 	</div>
 <?php

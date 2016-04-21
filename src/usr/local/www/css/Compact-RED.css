@@ -110,3 +110,30 @@ body {
 {
     padding: 2px 12px;
 }
+
+.dropdown-menu {
+	font-size:12px;
+}
+
+.form-horizontal .checkbox {
+	padding: 2px 16px;
+}
+
+.chkboxlbl {
+	padding-top: 0px;
+}
+
+.form-horizontal .checkbox,.form-horizontal .radio {
+	min-height:20px;
+}
+
+@media (min-width: 768px) {
+	.form-horizontal .control-label {
+		padding-top: 4px;
+	}
+}
+	
+/* Experimental styles to correct vertical alignment in forms */
+.col-sm-10 {
+	padding-top: 0px;
+}

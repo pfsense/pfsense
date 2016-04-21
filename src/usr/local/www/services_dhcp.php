@@ -891,7 +891,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_StaticText(
 		'Add',
 		$btnaddpool
-	))->setHelp('If additional pools of addresses are needed inside of this subnet outside the above Range, they may be specified here');
+	))->setHelp('If additional pools of addresses are needed inside of this subnet outside the above Range, they may be specified here.');
 
 	if (is_array($a_pools)) {
 		$section->addInput(new Form_StaticText(
@@ -934,35 +934,35 @@ $section->addInput(new Form_IpAddress(
 	'Gateway',
 	$pconfig['gateway']
 ))->setPattern('[.a-zA-Z0-9_]+')
-  ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment');
+  ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment.');
 
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain name',
 	'text',
 	$pconfig['domain']
-))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here');
+))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here.');
 
 $section->addInput(new Form_Input(
 	'domainsearchlist',
 	'Domain search list',
 	'text',
 	$pconfig['domainsearchlist']
-))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator');
+))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator.');
 
 $section->addInput(new Form_Input(
 	'deftime',
 	'Default lease time',
 	'number',
 	$pconfig['deftime']
-))->setHelp('This is used for clients that do not ask for a specific expiration time. The default is 7200 seconds');
+))->setHelp('This is used for clients that do not ask for a specific expiration time. The default is 7200 seconds.');
 
 $section->addInput(new Form_Input(
 	'maxtime',
 	'Maximum lease time',
 	'number',
 	$pconfig['maxtime']
-))->setHelp('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds');
+))->setHelp('This is the maximum lease time for clients that ask for a specific expiration time. The default is 86400 seconds.');
 
 if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_IpAddress(
@@ -987,7 +987,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 		'Change DHCP display lease time from UTC to local time',
 		$pconfig['dhcpleaseinlocaltime']
 	))->setHelp('By default DHCP leases are displayed in UTC time.	By checking this box DHCP lease time will be displayed in local time and set to the time zone selected.' .
-				' This will be used for all DHCP interfaces lease time');
+				' This will be used for all DHCP interfaces lease time.');
 	$section->addInput(new Form_Checkbox(
 		'statsgraph',
 		'Statistics graphs',
@@ -1121,7 +1121,7 @@ $section->addInput(new Form_IpAddress(
 	'tftp',
 	'TFTP Server',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server')->setPattern('[.a-zA-Z0-9_]+');
+))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_]+');
 
 // Advanced LDAP
 $btnadv = new Form_Button(
@@ -1168,7 +1168,7 @@ $section->addClass('adnlopts');
 $section->addInput(new Form_StaticText(
 	null,
 	'<div class="alert alert-info"> ' . gettext('Enter the DHCP option number and the value for each item to include in the DHCP lease information.') . ' ' .
-	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a></div>')
+	sprintf(gettext('For a list of available options please visit this %1$s URL%2$s'), '<a href="http://www.iana.org/assignments/bootp-dhcp-parameters/" target="_blank">', '</a>.</div>')
 ));
 
 if (!$pconfig['numberoptions']) {

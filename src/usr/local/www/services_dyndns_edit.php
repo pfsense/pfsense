@@ -333,8 +333,8 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('Enter the complete fully qualified domain name. Example: myhost.dyndns.org'. '<br />' .
-			'he.net tunnelbroker: Enter the tunnel ID' . '<br />' .
-			'GleSYS: Enter the record ID' . '<br />' .
+			'he.net tunnelbroker: Enter the tunnel ID.' . '<br />' .
+			'GleSYS: Enter the record ID.' . '<br />' .
 			'DNSimple: Enter only the domain name.' . '<br />' .
 			'Namecheap: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by Namecheap.');
 

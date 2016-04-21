@@ -31,6 +31,20 @@ body {
     height: 30px;
 }
 
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #212121;
+    color: #fff;
+}
+.navbar-inverse .navbar-nav >li>a:hover{
+    color: #ccc;
+}
+.text-muted {
+    color: #BDBDBD;
+}
+.text-muted > a:hover {
+    color: #ccc;
+}
+
 .nav>li>a {
     padding: 5px 19px 0px 19px;
 }
@@ -70,7 +84,7 @@ body {
 }
 
 .header .context-links {
-    top: 2px;
+    top: 1px;
 }
 
 .breadcrumb {

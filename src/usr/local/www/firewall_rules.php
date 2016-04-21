@@ -951,12 +951,24 @@ events.push(function() {
 		reindex_rules($(anchor_row).parent('tbody'));
 		dirty = true;
 	}).mouseover(function(e) {
+		var ruleselected = false;
+
 		$(this).css("cursor", "default");
 
-		if (e.shiftKey) {
-			$(this).removeClass().addClass("fa fa-lg fa-arrow-down text-danger");
-		} else {
-			$(this).removeClass().addClass("fa fa-lg fa-arrow-up text-danger");
+		// Are any rules currently selected?
+		$('[id^=frc]').each(function () {
+			if ($(this).prop("checked")) {
+				ruleselected = true;
+			}
+		});
+
+		// If so, change the icon to show the insetion point
+		if (ruleselected) {
+			if (e.shiftKey) {
+				$(this).removeClass().addClass("fa fa-lg fa-arrow-down text-danger");
+			} else {
+				$(this).removeClass().addClass("fa fa-lg fa-arrow-up text-danger");
+			}
 		}
 	}).mouseout(function(e) {
 		$(this).removeClass().addClass("fa fa-anchor");

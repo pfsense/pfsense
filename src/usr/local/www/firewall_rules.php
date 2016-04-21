@@ -951,13 +951,15 @@ events.push(function() {
 		reindex_rules($(anchor_row).parent('tbody'));
 		dirty = true;
 	}).mouseover(function(e) {
+		$(this).css("cursor", "default");
+
 		if (e.shiftKey) {
-			$(this).parents('tr').css('border-bottom', '4px solid green');
+			$(this).removeClass().addClass("fa fa-lg fa-arrow-down text-danger");
 		} else {
-			$(this).parents('tr').css('border-top', '4px solid green');
+			$(this).removeClass().addClass("fa fa-lg fa-arrow-up text-danger");
 		}
 	}).mouseout(function(e) {
-		$(this).parents('tr').css('border', '0px');
+		$(this).removeClass().addClass("fa fa-anchor");
 	});
 
 	// Make rules sortable. Hiding the table before applying sortable, then showing it again is

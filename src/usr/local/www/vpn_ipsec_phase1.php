@@ -721,7 +721,7 @@ if (!$pconfig['mobile']) {
 		'Remote Gateway',
 		'text',
 		$pconfig['remotegw']
-	))->setHelp('Enter the public IP address or host name of the remote gateway');
+	))->setHelp('Enter the public IP address or host name of the remote gateway.');
 }
 
 $section->addInput(new Form_Input(

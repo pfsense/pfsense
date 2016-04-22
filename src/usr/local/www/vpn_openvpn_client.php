@@ -462,7 +462,7 @@ if ($act=="new" || $act=="edit"):
 		'Disabled',
 		'Disable this client',
 		$pconfig['disable']
-	))->setHelp('Set this option to disable this client without removing it from the list');
+	))->setHelp('Set this option to disable this client without removing it from the list.');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -765,7 +765,7 @@ if ($act=="new" || $act=="edit"):
 		'Don\'t add/remove routes',
 		'Don\'t add or remove routes automatically',
 		$pconfig['route_no_exec']
-	))->setHelp('Pass routes to --route-upscript using environmental variables');
+	))->setHelp('Pass routes to --route-upscript using environmental variables.');
 
 	$form->add($section);
 
@@ -776,17 +776,17 @@ if ($act=="new" || $act=="edit"):
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon');
+	))->setHelp('Enter any additional options to add to the OpenVPN client configuration here, separated by semicolon.');
 
 	$section->addInput(new Form_Select(
 		'verbosity_level',
 		'Verbosity level',
 		$pconfig['verbosity_level'],
 		$openvpn_verbosity_level
-		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended for a good summary of what\'s happening without being swamped by output' . '<br /><br />' .
+		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended for a good summary of what\'s happening without being swamped by output.' . '<br /><br />' .
 					'None: Only fatal errors' . '<br />' .
 					'Default through 4: Normal usage range' . '<br />' .
-					'5: Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets' .'<br />' .
+					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.' .'<br />' .
 					'6-11: Debug info range');
 
 	$section->addInput(new Form_Input(

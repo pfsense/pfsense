@@ -630,7 +630,7 @@ if ($act=="new" || $act=="edit"):
 		'Disabled',
 		'Disable this server',
 		$pconfig['disable']
-	))->setHelp('Set this option to disable this server without removing it from the list');
+	))->setHelp('Set this option to disable this server without removing it from the list.');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -992,14 +992,14 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'dynamic_ip',
 		'Dynamic IP',
-		'Allow connected clients to retain their connections if their IP address changes',
+		'Allow connected clients to retain their connections if their IP address changes.',
 		$pconfig['dynamic_ip']
 	));
 
 	$section->addInput(new Form_Checkbox(
 		'pool_enable',
 		'Address Pool',
-		'Provide a virtual adapter IP address to clients (see Tunnel Network)',
+		'Provide a virtual adapter IP address to clients (see Tunnel Network).',
 		$pconfig['pool_enable']
 	));
 
@@ -1162,7 +1162,7 @@ if ($act=="new" || $act=="edit"):
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon' . '<br />' .
+	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.' . '<br />' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"');
 
 	$section->addInput(new Form_Select(
@@ -1170,10 +1170,10 @@ if ($act=="new" || $act=="edit"):
 		'Verbosity level',
 		$pconfig['verbosity_level'],
 		$openvpn_verbosity_level
-		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended for a good summary of what\'s happening without being swamped by output' . '<br /><br />' .
+		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended for a good summary of what\'s happening without being swamped by output.' . '<br /><br />' .
 					'None: Only fatal errors' . '<br />' .
 					'Default through 4: Normal usage range' . '<br />' .
-					'5: Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets' .'<br />' .
+					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.' .'<br />' .
 					'6-11: Debug info range');
 
 	$section->addInput(new Form_Input(

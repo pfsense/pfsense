@@ -4921,5 +4921,59 @@ function upgrade_152_to_153() {
 			}
 		}
 	}
+
+	// upgrade GIFs using VIP to new format
+	if (is_array($config['gifs']['gif'])) {
+		foreach ($config['gifs']['gif'] as $idx => $gif) {
+			if (substr($gif['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gif['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gifs']['gif'][$idx]['if'] = get_vip_from_oldcarp($gif['if']);
+			}
+		}
+	}
+
+	// upgrade GREs using VIP to new format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => $gre) {
+			if (substr($gre['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gre['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gres']['gre'][$idx]['if'] = get_vip_from_oldcarp($gre['if']);
+			}
+		}
+	}
+
+	// upgrade gateway groups using VIPs
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach ($config['gateways']['gateway_group'] as $idx => $gw) {
+			if (is_array($gw['item'])) {
+				$newitems = array();
+				$gwvipchange = false;
+				foreach ($gw['item'] as $item) {
+					if (strstr($item, "|_vip")) {
+						// using new VIP format
+						$newitems[] = $item;
+						continue;
+					} else if (strstr($item, "_vip")) {
+						// using old VIP format, update
+						$gwitemarr = explode("|", $item);
+						$gwitemarr[2] = get_vip_from_oldcarp($gwitemarr[2]);
+						$newitems[] = implode("|", $gwitemarr);
+						$gwvipchange = true;
+					} else {
+						$newitems[] = $item;
+					}
+				}
+				if ($gwvipchange) {
+					$config['gateways']['gateway_group'][$idx]['item'] = $newitems;
+				}
+			}
+		}
+	}
 }
 ?>

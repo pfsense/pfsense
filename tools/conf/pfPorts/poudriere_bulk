@@ -6,6 +6,7 @@ databases/php56-pdo_mysql
 benchmarks/iperf
 benchmarks/iperf3
 net/py-speedtest-cli
+net/vnstat
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/bsdinstaller

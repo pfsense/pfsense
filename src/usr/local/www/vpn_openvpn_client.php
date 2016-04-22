@@ -897,6 +897,8 @@ events.push(function() {
 
 		tlsauth_change();
 		autokey_change();
+		dev_mode_change();
+
 	}
 
 	function dev_mode_change() {

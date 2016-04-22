@@ -147,7 +147,7 @@ if ($_POST) {
 		if (isset($_POST['infra_host_ttl']) && !in_array($_POST['infra_host_ttl'], array('60', '120', '300', '600', '900'), true)) {
 			$input_errors[] = gettext("A valid value must be specified for TTL for Host Cache Entries.");
 		}
-		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000', '100000'), true)) {
+		if (isset($_POST['infra_cache_numhosts']) && !in_array($_POST['infra_cache_numhosts'], array('1000', '5000', '10000', '20000', '50000', '100000', '200000'), true)) {
 			$input_errors[] = gettext("A valid value must be specified for Number of Hosts to Cache.");
 		}
 		if (isset($_POST['unwanted_reply_threshold']) && !in_array($_POST['unwanted_reply_threshold'], array('disabled', '5000000', '10000000', '20000000', '40000000', '50000000'), true)) {
@@ -352,7 +352,7 @@ $section->addInput(new Form_Select(
 	'infra_cache_numhosts',
 	'Number of Hosts to Cache',
 	$pconfig['infra_cache_numhosts'],
-	array_combine(array("1000", "5000", "10000", "20000", "50000", "100000"), array("1000", "5000", "10000", "20000", "50000", "100000"))
+	array_combine(array("1000", "5000", "10000", "20000", "50000", "100000", "200000"), array("1000", "5000", "10000", "20000", "50000", "100000", "200000"))
 ))->setHelp('Number of infrastructure hosts for which information is cached. The default is 10,000.');
 
 $mln = gettext("million");

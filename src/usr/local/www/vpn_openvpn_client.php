@@ -881,6 +881,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideLabel('Peer Certificate Revocation list', true);
+				hideInput('topology', false);
 				break;
 			case "p2p_shared_key":
 				hideCheckbox('tlsauth_enable', true);
@@ -890,6 +891,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', false);
 				hideInput('shared_key', false);
 				hideLabel('Peer Certificate Revocation list', false);
+				hideInput('topology', true);
 				break;
 		}
 
@@ -899,7 +901,7 @@ events.push(function() {
 
 	function dev_mode_change() {
 		hideCheckbox('no_tun_ipv6', ($('#dev_mode').val() == 'tap'));
-		hideInput('topology',  ($('#dev_mode').val() == 'tap'));
+		hideInput('topology',  ($('#dev_mode').val() == 'tap') || $('#mode').val() == "p2p_shared_key");
 	}
 
 	// Process "Automatically generate a shared key" checkbox

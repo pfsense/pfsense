@@ -277,7 +277,6 @@ if ($_POST) {
 			} else {
 				unset($config['system']['rrdbackup']);
 			}
-			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
 		}
 		if (isset($_POST['dhcpbackup'])) {
 			if (($_POST['dhcpbackup'] > 0) && ($_POST['dhcpbackup'] <= 24)) {
@@ -285,6 +284,16 @@ if ($_POST) {
 			} else {
 				unset($config['system']['dhcpbackup']);
 			}
+		}
+
+		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
+		// Remove the cron jobs on full install if not using RAM disk.
+		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
+		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+			install_cron_job("/etc/rc.backup_rrd.sh", false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+		} else {
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
 		}
 

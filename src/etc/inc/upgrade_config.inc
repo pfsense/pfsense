@@ -4904,4 +4904,20 @@ function upgrade_151_to_152() {
 		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
 	}
 }
+
+function upgrade_152_to_153() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if (substr($vip['interface'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($vip['interface'], "_vip")) {
+				// using old VIP format, update
+				$config['virtualip']['vip'][$idx]['interface'] = get_vip_from_oldcarp($vip['interface']);
+			}
+		}
+	}
+}
 ?>

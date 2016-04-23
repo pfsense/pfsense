@@ -62,10 +62,6 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 
-$specplatform = system_identify_specific_platform();
-if ($specplatform['name'] == "Hyper-V") {
-	exit;
-}
 ?>
 
 <table class="table table-striped table-hover">

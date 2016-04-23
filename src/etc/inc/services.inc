@@ -1444,7 +1444,7 @@ EOD;
 				$ntpservers[] = $ntpserver;
 			}
 			if (count($ntpservers) > 0) {
-				$dhcpdv6conf .= "       option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
+				$dhcpdv6conf .= "        option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
 			}
 		}
 		// tftp-server-name

@@ -2397,10 +2397,10 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 			if (!isset($config['system']['use_mfs_tmpvar'])) {
-				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz");
+				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
 			} else {
 				/* Update the RAM disk store with the new/updated table file. */
-				mwexec("cd / && /usr/bin/tar -czf \"{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz\" -C / \"{$urltable_filename}\"");
+				mwexec("/usr/bin/tar -czf " . escapeshellarg("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz") . " -C / " . escapeshellarg($urltable_filename));
 			}
 			unlink_if_exists($tmp_urltable_filename);
 		} else {
@@ -3154,36 +3154,84 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 	return $results;
 }
 
-function restore_aliastables() {
+function restore_ram_disk() {
 	global $g, $config;
 
-	$dbpath = "{$g['vardb_path']}/aliastables/";
+	$RAM_Disk_Store_path = "{$g['cf_conf_path']}/RAM_Disk_Store/";
 
-	/* restore the alias tables, if we have them */
-	$files = glob("{$g['cf_conf_path']}/RAM_Disk_Store{$dbpath}*.tgz");
-	if (count($files)) {
-		echo "Restoring alias tables...";
-		foreach ($files as $file) {
-			if (file_exists($file)) {
-				$aliastablesrestore = "";
-				$aliastablesreturn = "";
-				exec("cd /;LANG=C /usr/bin/tar -xzf {$file} 2>&1", $aliastablesrestore, $aliastablesreturn);
-				$aliastablesrestore = implode(" ", $aliastablesrestore);
-				if ($aliastablesreturn <> 0) {
-					log_error(sprintf(gettext('Alias table restore failed exited with %1$s, the error is: %2$s %3$s%4$s'), $aliastablesreturn, $aliastablesrestore, $file, "\n"));
-				} else {
-					log_error(sprintf(gettext('Alias table restore succeeded exited with %1$s, the result is: %2$s %3$s%4$s'), $aliastablesreturn, $aliastablesrestore, $dbpath.basename($file, ".tgz"), "\n"));
+	/* restore the ram disk */
+	$backup_files = glob("{$RAM_Disk_Store_path}*.tgz");
+	if (is_array($backup_files) && count($backup_files) > 0) {
+		echo "Restoring contents of RAM disk store...";
+		foreach ($backup_files as $backup_file) {
+			if (file_exists($backup_file)) {
+				$restore = "";
+				$return = "";
+				exec("cd /;LANG=C /usr/bin/tar -xzf {$backup_file} 2>&1", $restore, $return);
+				$restore = implode(" ", $restore);
+				if ($return <> 0) {
+					log_error(sprintf(gettext('RAM disk restore failed exited with %1$s, the error is: %2$s %3$s%4$s'), $return, $restore, $backup_file, "\n"));
+					$error = true;
+					continue;
+				}
+				if (basename($backup_file) == "rrd.tgz") {
+					restore_rrd();
+				}
+				/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
+				if (!isset($config['system']['use_mfs_tmpvar'])) {
+					@unlink("{$backup_file}");
 				}
 			}
-			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-			if (!isset($config['system']['use_mfs_tmpvar'])) {
-				unlink_if_exists("{$file}");
+		}
+
+		if ($error) {
+			log_error(sprintf(gettext('RAM disk restore failed.%1$s'), "\n"));
+			echo "error.\n";
+			return false;
+		} else {
+			log_error(sprintf(gettext('RAM disk restore succeeded.%1$s'), "\n"));
+			echo "done.\n";
+			if (count(glob("{$RAM_Disk_Store_path}*")) === 0) {
+				rmdir("{$RAM_Disk_Store_path}");
+			}
+			return true;
+		}
+	}
+}
+
+function restore_rrd() {
+	global $g;
+
+	$rrddbpath = "{$g['vardb_path']}/rrd/";
+	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+	/* restore the rrd */
+	$rrdrestore = glob("{$rrddbpath}*.xml");
+	if (is_array($rrdrestore) && count($rrdrestore) > 0) {
+		foreach ($rrdrestore as $xml_file) {
+			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
+			if (file_exists("{$rrd_file}")) {
+				@unlink($rrd_file);
+			}
+			unset($output);
+			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
+			if ($status) {
+				log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
+				$error = true;
+				continue;
+			} else {
+				@unlink("/{$xml_file}");
 			}
 		}
-		echo "done.\n";
-		return true;
+
+		if ($error) {
+			log_error(sprintf(gettext('RRD restore failed.%1$s'), "\n"));
+			return false;
+		} else {
+			log_error(sprintf(gettext('RRD restore succeeded.%1$s'), "\n"));
+			return true;
+		}
 	}
-	return false;
 }
 
 // Convert IPv6 addresses to lower case

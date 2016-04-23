@@ -176,8 +176,8 @@ interfaces_loopback_configure();
 /* start syslogd */
 system_syslogd_start();
 
-/* restore alias tables */
-restore_aliastables();
+/* restore RAM disk */
+restore_ram_disk();
 
 echo "Starting Secure Shell Services...";
 send_event("service reload sshd");

@@ -5,11 +5,16 @@ databases/php56-mysqli
 databases/php56-pdo_mysql
 benchmarks/iperf
 benchmarks/iperf3
+editors/vim
+editors/nano
+net/mosh
 net/py-speedtest-cli
 net/vnstat
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/bsdinstaller
+sysutils/lsof
+sysutils/tmux
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel

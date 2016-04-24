@@ -176,9 +176,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 			showDef($ifinfo['bssid'], gettext("BSSID"), $ifinfo['bssid']);
 			showDef($ifinfo['rate'], gettext("Rate"), $ifinfo['rate']);
 			showDef($ifinfo['rssi'], gettext("RSSI"), $ifinfo['rssi']);
-			showDef(true, gettext("In/out packets"), $ifinfo['inpkts'] . '/' . $ifinfo['outpkts']);
-			showDef(true, gettext("In/out packets (pass)"), $ifinfo['inpktspass'] . "/" . $ifinfo['outpktspass']);
-			showDef(true, gettext("In/out packets (block)"), $ifinfo['inpktsblock'] . "/" . $ifinfo['outpktsblock']);
+			showDef(true, gettext("In/out packets"),
+			    $ifinfo['inpkts'] . '/' . $ifinfo['outpkts'] . " (" . format_bytes($ifinfo['inbytes']) . "/" . format_bytes($ifinfo['outbytes']) . ")");
+			showDef(true, gettext("In/out packets (pass)"),
+			    $ifinfo['inpktspass'] . '/' . $ifinfo['outpktspass'] . " (" . format_bytes($ifinfo['inbytespass']) . "/" . format_bytes($ifinfo['outbytespass']) . ")");
+			showDef(true, gettext("In/out packets (block)"),
+			    $ifinfo['inpktsblock'] . '/' . $ifinfo['outpktsblock'] . " (" . format_bytes($ifinfo['inbytesblock']) . "/" . format_bytes($ifinfo['outbytesblock']) . ")");
 			showDef(isset($ifinfo['inerrs']), gettext("In/out errors"), $ifinfo['inerrs'] . "/" . $ifinfo['outerrs']);
 			showDef(isset($ifinfo['collisions']), gettext("Collisions"), $ifinfo['collisions']);
 		} // e-o-if ($ifinfo['status'] != "down")

@@ -126,6 +126,13 @@ $tab_array[0] = array(htmlspecialchars(gettext("Information & Tests")), ($action
 $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
 display_top_tabs($tab_array);
 
+$specplatform = system_identify_specific_platform();
+if ($specplatform['name'] == "Hyper-V") {
+	echo gettext("S.M.A.R.T. is not supported in Hyper-V guests.");
+	include("foot.inc");
+	exit;
+}
+
 switch ($action) {
 	// Testing devices
 	case 'test':

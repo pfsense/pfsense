@@ -1113,6 +1113,7 @@ EOD;
 					$authentication .= "\n\trightauth2 = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						$authentication .= "\n\tleftsendcert=always";
 					}
 					if (isset($casub)) {
 						$authentication .= "\n\trightca=\"$casub\"";
@@ -1129,6 +1130,7 @@ EOD;
 					$authentication = "leftauth = pubkey\n\trightauth = pubkey";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						$authentication .= "\n\tleftsendcert=always";
 					}
 					if (isset($casub)) {
 						$authentication .= "\n\trightca=\"$casub\"";
@@ -1138,6 +1140,7 @@ EOD;
 					$authentication = "leftauth = pubkey\n\trightauth = xauth-generic";
 					if (!empty($ph1ent['certref'])) {
 						$authentication .= "\n\tleftcert={$certpath}/cert-{$ph1ent['ikeid']}.crt";
+						$authentication .= "\n\tleftsendcert=always";
 					}
 					break;
 			}

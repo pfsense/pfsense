@@ -4167,74 +4167,76 @@ function upgrade_130_to_131() {
 		return;
 	}
 
-	foreach ($config['gateways']['gateway_item'] as &$gw) {
-		// dpinger uses milliseconds
-		if (isset($gw['interval']) &&
-		    is_numeric($gw['interval'])) {
-			$gw['interval'] = $gw['interval'] * 1000;
-		}
-
-		if (isset($gw['interval'])) {
-			$effective_interval = $gw['interval'];
-		} else {
-			$effective_interval = $default_interval;
-		}
-
-		if (isset($gw['down']) &&
-		    is_numeric($gw['down'])) {
-			$gw['time_period'] = $gw['down'] * 1000;
-			unset($gw['down']);
-		}
-
-		if (isset($gw['time_period'])) {
-			$effective_time_period = $gw['time_period'];
-		} else {
-			$effective_time_period = $default_time_period;
-		}
-
-		if (isset($gw['latencyhigh'])) {
-			// Default loss_interval is 2000, but must be set
-			// higher if latencyhigh is higher.
-			if ($gw['latencyhigh'] > $default_loss_interval) {
-				$gw['loss_interval'] = $gw['latencyhigh'];
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach ($config['gateways']['gateway_item'] as &$gw) {
+			// dpinger uses milliseconds
+			if (isset($gw['interval']) &&
+				is_numeric($gw['interval'])) {
+				$gw['interval'] = $gw['interval'] * 1000;
 			}
-		}
 
-		if (isset($gw['loss_interval'])) {
-			$effective_loss_interval = $gw['loss_interval'];
-		} else {
-			$effective_loss_interval = $default_loss_interval;
-		}
-
-		if (isset($gw['interval'])) {
-			// Default alert_interval is 1000, but must be set
-			// higher if interval is higher.
-			if ($gw['interval'] > $default_alert_interval) {
-				$gw['alert_interval'] = $gw['interval'];
+			if (isset($gw['interval'])) {
+				$effective_interval = $gw['interval'];
+			} else {
+				$effective_interval = $default_interval;
 			}
-		}
 
-		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
-			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
-		}
+			if (isset($gw['down']) &&
+				is_numeric($gw['down'])) {
+				$gw['time_period'] = $gw['down'] * 1000;
+				unset($gw['down']);
+			}
 
-		if (isset($gw['avg_delay_samples'])) {
-			unset($gw['avg_delay_samples']);
-		}
-		if (isset($gw['avg_delay_samples_calculated'])) {
-			unset($gw['avg_delay_samples_calculated']);
-		}
-		if (isset($gw['avg_loss_samples'])) {
-			unset($gw['avg_loss_samples']);
-		}
-		if (isset($gw['avg_loss_samples_calculated'])) {
-			unset($gw['avg_loss_samples_calculated']);
-		}
-		if (isset($gw['avg_loss_delay_samples'])) {
-			unset($gw['avg_loss_delay_samples']);
-		}
-		if (isset($gw['avg_loss_delay_samples_calculated'])) {
-			unset($gw['avg_loss_delay_samples_calculated']);
+			if (isset($gw['time_period'])) {
+				$effective_time_period = $gw['time_period'];
+			} else {
+				$effective_time_period = $default_time_period;
+			}
+
+			if (isset($gw['latencyhigh'])) {
+				// Default loss_interval is 2000, but must be set
+				// higher if latencyhigh is higher.
+				if ($gw['latencyhigh'] > $default_loss_interval) {
+					$gw['loss_interval'] = $gw['latencyhigh'];
+				}
+			}
+
+			if (isset($gw['loss_interval'])) {
+				$effective_loss_interval = $gw['loss_interval'];
+			} else {
+				$effective_loss_interval = $default_loss_interval;
+			}
+
+			if (isset($gw['interval'])) {
+				// Default alert_interval is 1000, but must be set
+				// higher if interval is higher.
+				if ($gw['interval'] > $default_alert_interval) {
+					$gw['alert_interval'] = $gw['interval'];
+				}
+			}
+
+			if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+				$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
+			}
+
+			if (isset($gw['avg_delay_samples'])) {
+				unset($gw['avg_delay_samples']);
+			}
+			if (isset($gw['avg_delay_samples_calculated'])) {
+				unset($gw['avg_delay_samples_calculated']);
+			}
+			if (isset($gw['avg_loss_samples'])) {
+				unset($gw['avg_loss_samples']);
+			}
+			if (isset($gw['avg_loss_samples_calculated'])) {
+				unset($gw['avg_loss_samples_calculated']);
+			}
+			if (isset($gw['avg_loss_delay_samples'])) {
+				unset($gw['avg_loss_delay_samples']);
+			}
+			if (isset($gw['avg_loss_delay_samples_calculated'])) {
+				unset($gw['avg_loss_delay_samples_calculated']);
+			}
 		}
 	}
 }
@@ -4845,50 +4847,134 @@ function upgrade_150_to_151() {
 	$default_latencyhigh = 500;
 
 	// Check advanced gateway parameter relationships in case they are incorrect
-	foreach ($config['gateways']['gateway_item'] as &$gw) {
-		if (isset($gw['interval'])) {
-			$effective_interval = $gw['interval'];
-		} else {
-			$effective_interval = $default_interval;
-		}
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach ($config['gateways']['gateway_item'] as &$gw) {
+			if (isset($gw['interval'])) {
+				$effective_interval = $gw['interval'];
+			} else {
+				$effective_interval = $default_interval;
+			}
 
-		if (isset($gw['alert_interval'])) {
-			$effective_alert_interval = $gw['alert_interval'];
-		} else {
-			$effective_alert_interval = $default_alert_interval;
-		}
+			if (isset($gw['alert_interval'])) {
+				$effective_alert_interval = $gw['alert_interval'];
+			} else {
+				$effective_alert_interval = $default_alert_interval;
+			}
 
-		if (isset($gw['loss_interval'])) {
-			$effective_loss_interval = $gw['loss_interval'];
-		} else {
-			$effective_loss_interval = $default_loss_interval;
-		}
+			if (isset($gw['loss_interval'])) {
+				$effective_loss_interval = $gw['loss_interval'];
+			} else {
+				$effective_loss_interval = $default_loss_interval;
+			}
 
-		if (isset($gw['time_period'])) {
-			$effective_time_period = $gw['time_period'];
-		} else {
-			$effective_time_period = $default_time_period;
-		}
+			if (isset($gw['time_period'])) {
+				$effective_time_period = $gw['time_period'];
+			} else {
+				$effective_time_period = $default_time_period;
+			}
 
-		if (isset($gw['latencyhigh'])) {
-			$effective_latencyhigh = $gw['latencyhigh'];
-		} else {
-			$effective_latencyhigh = $default_latencyhigh;
-		}
+			if (isset($gw['latencyhigh'])) {
+				$effective_latencyhigh = $gw['latencyhigh'];
+			} else {
+				$effective_latencyhigh = $default_latencyhigh;
+			}
 
-		// Loss interval has to be at least as big as high latency.
-		if ($effective_latencyhigh > $effective_loss_interval) {
-			$effective_loss_interval = $gw['loss_interval'] = $effective_latencyhigh;
-		}
+			// Loss interval has to be at least as big as high latency.
+			if ($effective_latencyhigh > $effective_loss_interval) {
+				$effective_loss_interval = $gw['loss_interval'] = $effective_latencyhigh;
+			}
 
-		// Alert interval has to be at least as big as probe interval.
-		if ($effective_interval > $effective_alert_interval) {
-			$gw['alert_interval'] = $effective_interval;
-		}
+			// Alert interval has to be at least as big as probe interval.
+			if ($effective_interval > $effective_alert_interval) {
+				$gw['alert_interval'] = $effective_interval;
+			}
 
-		// The time period for averaging has to be more than 2 probes plus the loss interval.
-		if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
-			$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
+			// The time period for averaging has to be more than 2 probes plus the loss interval.
+			if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+				$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
+			}
+		}
+	}
+}
+
+function upgrade_151_to_152() {
+	global $g, $config;
+
+	require_once("/etc/inc/services.inc");
+
+	// Remove these cron jobs on full install if not using ramdisk.
+	if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+		install_cron_job("/etc/rc.backup_rrd.sh", false);
+		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+	}
+}
+
+function upgrade_152_to_153() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if (substr($vip['interface'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($vip['interface'], "_vip")) {
+				// using old VIP format, update
+				$config['virtualip']['vip'][$idx]['interface'] = get_vip_from_oldcarp($vip['interface']);
+			}
+		}
+	}
+
+	// upgrade GIFs using VIP to new format
+	if (is_array($config['gifs']['gif'])) {
+		foreach ($config['gifs']['gif'] as $idx => $gif) {
+			if (substr($gif['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gif['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gifs']['gif'][$idx]['if'] = get_vip_from_oldcarp($gif['if']);
+			}
+		}
+	}
+
+	// upgrade GREs using VIP to new format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => $gre) {
+			if (substr($gre['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gre['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gres']['gre'][$idx]['if'] = get_vip_from_oldcarp($gre['if']);
+			}
+		}
+	}
+
+	// upgrade gateway groups using VIPs
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach ($config['gateways']['gateway_group'] as $idx => $gw) {
+			if (is_array($gw['item'])) {
+				$newitems = array();
+				$gwvipchange = false;
+				foreach ($gw['item'] as $item) {
+					if (strstr($item, "|_vip")) {
+						// using new VIP format
+						$newitems[] = $item;
+						continue;
+					} else if (strstr($item, "_vip")) {
+						// using old VIP format, update
+						$gwitemarr = explode("|", $item);
+						$gwitemarr[2] = get_vip_from_oldcarp($gwitemarr[2]);
+						$newitems[] = implode("|", $gwitemarr);
+						$gwvipchange = true;
+					} else {
+						$newitems[] = $item;
+					}
+				}
+				if ($gwvipchange) {
+					$config['gateways']['gateway_group'][$idx]['item'] = $newitems;
+				}
+			}
 		}
 	}
 }

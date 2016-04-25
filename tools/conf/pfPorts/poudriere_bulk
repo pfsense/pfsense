@@ -8,7 +8,7 @@ databases/php56-mysqli
 databases/php56-pdo_mysql
 benchmarks/iperf
 benchmarks/iperf3
-editors/vim
+editors/vim-lite
 editors/nano
 net/mosh
 net/py-speedtest-cli

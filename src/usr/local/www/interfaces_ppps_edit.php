@@ -396,8 +396,6 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 				}
 
 				$ppp['phone'] = $_POST['phone'];
-				$ppp['localip'] = implode(',', $port_data['localip']);
-				$ppp['gateway'] = implode(',', $port_data['gateway']);
 				if (!empty($_POST['connect-timeout'])) {
 					$ppp['connect-timeout'] = $_POST['connect-timeout'];
 				} else {

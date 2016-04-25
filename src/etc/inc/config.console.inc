@@ -578,6 +578,14 @@ function vlan_setup() {
 			continue;
 		}
 
+		if (is_array($config['vlans']['vlan'])) {
+			foreach ($config['vlans']['vlan'] as $existingvlan) {
+				if ($vlan['if'] == $existingvlan['if'] && $vlan['tag'] == $existingvlan['tag']) {
+					printf("\n\n" . gettext("This parent interface and VLAN already created."));
+					continue 2;
+				}
+			}
+		}
 		$config['vlans']['vlan'][] = $vlan;
 		$vlanif++;
 	}

@@ -2216,9 +2216,11 @@ function system_identify_specific_platform() {
 	$hw_model = get_single_sysctl('hw.model');
 
 	/* Try to guess from smbios strings */
-	unset($output);
-	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output);
-	switch ($output[0]) {
+	unset($product);
+	unset($maker);
+	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $product);
+	$_gb = exec('/bin/kenv smbios.system.maker 2>/dev/null', $maker);
+	switch ($product[0]) {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));
 			break;
@@ -2257,6 +2259,11 @@ function system_identify_specific_platform() {
 			break;
 		case 'SYS-5018D-FN4T':
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
+			break;
+		case 'Virtual Machine':
+			if ($maker[0] == "Microsoft Corporation") {
+				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+			}
 			break;
 	}
 

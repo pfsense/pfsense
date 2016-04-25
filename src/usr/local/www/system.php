@@ -509,7 +509,7 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/');
+))->setHelp(sprintf(gettext('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s'), '<span id="csstxt"></span>'));
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
@@ -570,8 +570,33 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
+
 ?>
 </div>
+
+<script>
+//<![CDATA[
+events.push(function() {
+
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+});
+//]]>
+</script>
+
 <?php
 include("foot.inc");
 ?>

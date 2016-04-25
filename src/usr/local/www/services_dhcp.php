@@ -356,8 +356,8 @@ if (isset($_POST['save'])) {
 			$input_errors[] = gettext("If a mac deny list is specified, it must contain only valid partial MAC addresses.");
 		}
 
-		if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-			$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
+		if (($_POST['ntp1'] && (!is_ipaddrv4($_POST['ntp1']) && !is_hostname($_POST['ntp1']))) || ($_POST['ntp2'] && (!is_ipaddrv4($_POST['ntp2']) && !is_hostname($_POST['ntp2'])))) {
+			$input_errors[] = gettext("A valid IP address or hostname must be specified for the primary/secondary NTP servers.");
 		}
 		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
@@ -1094,13 +1094,13 @@ $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
 	$pconfig['ntp1']
-));
+))->setPattern('[.a-zA-Z0-9_]+');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
 	$pconfig['ntp2']
-));
+))->setPattern('[.a-zA-Z0-9_]+');
 
 // Advanced TFTP
 $btnadv = new Form_Button(

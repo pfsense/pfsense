@@ -242,9 +242,12 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Temperature");?></th>
 			<td>
-				<?php $TempMeter = $temp = get_temp(); ?>
-				<div id="tempPB"></div>
-				<span id="tempmeter"><?= $temp."&#176;C"; ?></span>
+				<?php $temp_deg_c = get_temp(); ?>
+				<div class="progress">
+					<div id="tempPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="<?=$temp_deg_c?>" aria-valuemin="0" aria-valuemax="100" style="width: <?=$temp_deg_c?>%">
+					</div>
+				</div>
+				<span id="tempmeter"><?= $temp_deg_c . "&deg;C"; ?></span>
 			</td>
 		</tr>
 		<?php endif; ?>
@@ -429,10 +432,10 @@ function updateCPU(x) {
 
 function updateTemp(x) {
 	if ($("#tempmeter")) {
-		$("#tempmeter").html(x + '\u00B0' + 'C');
+		$("#tempmeter").html(x + '&deg;' + 'C');
 	}
 	if ($('#tempPB')) {
-		$("#tempPB").progressbar( { value: parseInt(x) } );
+		setProgress('tempPB', parseInt(x));
 	}
 }
 

@@ -131,14 +131,22 @@ if ($_POST) {
 					}
 				}
 			?>
-		<input name="display_type" class="radio" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Gateway IP')?></span>
-		<input name="display_type" class="radio" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Monitor IP')?></span>
-		<input name="display_type" class="radio" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /> <span><?=gettext('Both')?></span>
-		<br /><br />
+
+		<div class="radio">
+			<label><input name="display_type" type="radio" id="display_type_gw_ip" value="gw_ip" <?=$display_type_gw_ip;?> onchange="updateGatewayDisplays();" /> <?=gettext('Gateway IP')?></label>
+		</div>
+		<div class="radio">
+			<label><input name="display_type" type="radio" id="display_type_monitor_ip" value="monitor_ip" <?=$display_type_monitor_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Monitor IP')?></label>
+		</div>
+		<div class="radio">
+			<label><input name="display_type" type="radio" id="display_type_both_ip" value="both_ip" <?=$display_type_both_ip;?> onchange="updateGatewayDisplays();" /><?=gettext('Both')?></label>
+		</div>
+		<br />
 		<button id="submit_settings" name="submit_settings" type="submit" onclick="return updatePref();" class="btn btn-primary btn-sm" value="<?=gettext('Save Settings')?>">
 			<i class="fa fa-save icon-embed-btn"></i>
 			<?=gettext('Save Settings')?>
 		</button>
+
 	</form>
 </div>
 

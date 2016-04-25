@@ -960,8 +960,8 @@ function manage_log_section() {
 				'1' => gettext('Display as column'),
 				'2' => gettext('Display as second row')
 			)
-		))->setHelp('Show the applied rule description below or in the firewall log rows' . '<br />' .
-					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets');
+		))->setHelp('Show the applied rule description below or in the firewall log rows.' . '<br />' .
+					'Displaying rule descriptions for all lines in the log might affect performance with large rule sets.');
 	}
 
 

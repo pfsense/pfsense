@@ -169,7 +169,7 @@ $section->addInput(new Form_Input(
 	'Identifier',
 	'text',
 	$pconfig['ident']
-))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address');
+))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address.');
 
 $section->addInput(new Form_Select(
 	'type',

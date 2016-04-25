@@ -378,7 +378,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['makebeforebreak']
 ))->setHelp('instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication ' .
 			'by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps ' .
-			'during reauthentication, but requires support for overlapping SAs by the peer');
+			'during reauthentication, but requires support for overlapping SAs by the peer.');
 
 $section->addInput(new Form_Checkbox(
 	'autoexcludelanaddress',

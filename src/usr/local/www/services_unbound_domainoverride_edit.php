@@ -146,6 +146,10 @@ $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General 
 $shortcut_section = "resolver";
 include("head.inc");
 
+if ($input_errors) {
+        print_input_errors($input_errors);
+}
+
 $form = new Form();
 
 $section = new Form_Section('Domain Override');
@@ -162,7 +166,7 @@ $section->addInput(new Form_IpAddress(
 	'IP Address',
 	$pconfig['ip']
 ))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100' . '<br />' .
-			'To use a nondefault port for communication, append an \'@\' with the port number.');
+			'To use a non-default port for communication, append an \'@\' with the port number.')->setPattern('[a-zA-Z0-9\@\.\:]+');
 
 $section->addInput(new Form_Input(
 	'descr',

@@ -451,7 +451,7 @@ switch ($action) {
 			'conveyance'
 		))->displayAsRadio();
 
-		$group->setHelp('Select "Conveyance" for ATA disks only');
+		$group->setHelp('Select "Conveyance" for ATA disks only.');
 		$section->add($group);
 
 		$section->addInput(new Form_Select(

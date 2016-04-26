@@ -155,7 +155,7 @@ $section->addInput(new Form_Input(
 	'Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: testormycompany.localdomainor1.168.192.in-addr.arpa');
+))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa');
 
 $section->addInput(new Form_IpAddress(
 	'ip',

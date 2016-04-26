@@ -179,14 +179,14 @@ $section->addInput(new Form_Select(
 	'Source address',
 	$sourceip,
 	array('' => gettext('Automatically selected (default)')) + get_possible_traffic_source_addresses(true)
-))->setHelp('Select source address for the ping');
+))->setHelp('Select source address for the ping.');
 
 $section->addInput(new Form_Select(
 	'count',
 	'Maximum number of pings',
 	$count,
 	array_combine(range(1, MAX_COUNT), range(1, MAX_COUNT))
-))->setHelp('Select the maximum number of pings');
+))->setHelp('Select the maximum number of pings.');
 
 $form->add($section);
 

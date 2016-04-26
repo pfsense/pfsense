@@ -125,7 +125,7 @@ $section->addInput(new Form_Select(
 	'Authentication Server',
 	$pconfig['authmode'],
 	$serverlist
-))->setHelp('Select the authentication server to test against');
+))->setHelp('Select the authentication server to test against.');
 
 $section->addInput(new Form_Input(
 	'username',

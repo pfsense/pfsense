@@ -160,21 +160,21 @@ $section->addInput(new Form_Select(
 	'IP Protocol',
 	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp('Select the protocol to use');
+))->setHelp('Select the protocol to use.');
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
 	$sourceip,
 	array('any' => gettext('Any')) + get_possible_traffic_source_addresses(true)
-))->setHelp('Select source address for the trace');
+))->setHelp('Select source address for the trace.');
 
 $section->addInput(new Form_Select(
 	'ttl',
 	'Maximum nuber of hops',
 	$ttl,
 	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
-))->setHelp('Select the maximum number of network hops to trace');
+))->setHelp('Select the maximum number of network hops to trace.');
 
 $section->addInput(new Form_Checkbox(
 	'resolve',

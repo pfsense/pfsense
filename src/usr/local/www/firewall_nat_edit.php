@@ -289,6 +289,10 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
 
+	if ($_POST['localip'] && is_ipaddrv6($_POST['localip'])) {
+		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
+	}
+
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
@@ -316,6 +320,9 @@ if ($_POST) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
 		}
+		if ($_POST['src'] && is_ipaddrv6($_POST['src'])) {
+			$input_errors[] = sprintf(gettext("Source must be IPv4."));
+		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
 		}
@@ -324,6 +331,9 @@ if ($_POST) {
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		}
+		if ($_POST['dst'] && is_ipaddrv6($_POST['dst'])) {
+			$input_errors[] = sprintf(gettext("Destination must be IPv4."));
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
@@ -597,6 +607,9 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
+			if (is_ipaddrv6($sn['subnet'])) {
+				continue;
+			}
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				if (isset($sn['noexpand'])) {
 					continue;

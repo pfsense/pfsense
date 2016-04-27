@@ -2297,6 +2297,8 @@ poudriere_bulk() {
 		print_error_pfS
 	fi
 
+	rm -f ${LOGFILE}
+
 	poudriere_create_ports_tree
 
 	[ -d /usr/local/etc/poudriere.d ] || \

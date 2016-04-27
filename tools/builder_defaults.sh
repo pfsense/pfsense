@@ -325,8 +325,13 @@ else
 	export PKG_REPO_BRANCH_STAGING=${PKG_REPO_BRANCH_STAGING:-${PKG_REPO_BRANCH_DEVEL}}
 fi
 
+if [ -n "${_IS_RELEASE}" ]; then
+	export PKG_REPO_SIGN_KEY=${PKG_REPO_SIGN_KEY:-"release${PRODUCT_NAME_SUFFIX}"}
+else
+	export PKG_REPO_SIGN_KEY=${PKG_REPO_SIGN_KEY:-"beta${PRODUCT_NAME_SUFFIX}"}
+fi
 # Command used to sign pkg repo
-export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-""}
+export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-"ssh sign@codesigner.netgate.com sudo ./sign.sh ${PKG_REPO_SIGN_KEY}"}
 
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"

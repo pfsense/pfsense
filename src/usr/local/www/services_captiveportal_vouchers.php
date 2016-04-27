@@ -251,7 +251,7 @@ if ($_POST) {
 
 	if (!$_POST['vouchersyncusername']) {
 		// Check for form errors
-		if ($_POST['charset'] && (strlen($_POST['charset'] < 2))) {
+		if ($_POST['charset'] && (strlen($_POST['charset']) < 2)) {
 			$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
 		}
 		if ($_POST['charset'] && (strpos($_POST['charset'], "\"") > 0)) {

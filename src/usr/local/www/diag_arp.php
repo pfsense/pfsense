@@ -387,7 +387,7 @@ events.push(function() {
 
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP"), 'info', false);
+print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP."), 'info', false);
 ?>
 </div>
 

@@ -332,7 +332,7 @@ $section->addInput(new Form_Select(
 		  'ip' => gettext('IPv4 Only'),
 		  'ip6' => gettext('IPv6 Only')
 	)
-))->setHelp('Select the type of traffic to be captured');
+))->setHelp('Select the type of traffic to be captured.');
 
 $section->addInput(new Form_Select(
 	'proto',

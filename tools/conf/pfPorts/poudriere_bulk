@@ -9,10 +9,14 @@ databases/php56-mysqli
 databases/php56-pdo_mysql
 benchmarks/iperf
 benchmarks/iperf3
+dns/dnstop
 editors/vim-lite
 editors/nano
+irc/znc
 net/mosh
 net/py-speedtest-cli
+net/trafshow
+net/trafshow3
 net/vnstat
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder

@@ -27,6 +27,7 @@
 
 # Set our operating platform
 PLATFORM=`/bin/cat /etc/platform`
+VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
 EXTENSIONSDIR="/usr/local/lib/php/20131226/"
@@ -173,6 +174,12 @@ if [ -z "${TIMEZONE}" ]; then
 	TIMEZONE=$(/usr/local/sbin/read_global_var default_timezone "Etc/UTC")
 fi
 
+if echo "${VERSION}" | grep -q RELEASE; then
+	error_reporting="error_reporting = E_ERROR | E_PARSE"
+else
+	error_reporting=""
+fi
+
 # Get a loaded module list in the stock php
 # Populate a dummy php.ini to avoid
 # the file being clobbered and the firewall
@@ -205,6 +212,7 @@ extension_dir=${EXTENSIONSDIR}
 date.timezone="${TIMEZONE}"
 session.hash_bits_per_character = 5
 session.hash_function = 1
+${error_reporting}
 
 ; Extensions
 

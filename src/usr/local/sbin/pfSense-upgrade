@@ -744,6 +744,8 @@ fi
 
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
+export FETCH_TIMEOUT=5
+export FETCH_RETRY=2
 
 export product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 export pkg_prefix=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var pkg_prefix pfSense-pkg-)

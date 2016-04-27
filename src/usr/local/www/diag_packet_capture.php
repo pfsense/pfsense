@@ -318,9 +318,10 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'promiscuous',
 	'Promiscuous',
-	'Packet capture will be performed using promiscuous mode',
+	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
+))->setHelp('The packet capture will be performed using promiscuous mode.<br />' .
+			'Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
 			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
 			'Packet capture' . '</a>');
 
@@ -392,7 +393,7 @@ $section->addInput(new Form_Checkbox(
 	'Reverse DNS Lookup',
 	'Do reverse DNS lookup',
 	$_POST['dnsquery']
-))->setHelp('This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
+))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
 			'This option can cause delays for large packet captures.');
 
 $form->add($section);

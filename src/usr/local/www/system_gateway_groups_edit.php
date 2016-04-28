@@ -115,7 +115,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid gateway group name must be specified.");
 	}
 	if (!is_validaliasname($_POST['name'])) {
-		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
+		$input_errors[] = invalidaliasnamemsg($_POST['name'], gettext("gateway group"));
 	}
 
 	if (isset($_POST['name'])) {

@@ -402,7 +402,7 @@ function updateMemory(x) {
 
 function updateMbuf(x) {
 	if ($('#mbuf')) {
-		$("#mbuf").html(x);
+		$("#mbuf").html('(' + x + ')');
 	}
 }
 

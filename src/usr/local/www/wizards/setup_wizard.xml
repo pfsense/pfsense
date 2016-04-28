@@ -789,10 +789,10 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		Congratulations!  pfSense is now configured.<p/>
-		Please consider contributing back to the project!<p/>
-		Click <a target='_new' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.<p/>
-		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
+		Congratulations!  pfSense is now configured.<p>
+		Please consider contributing back to the project!</p><p>
+		Click <a target='_blank' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.</p><p>
+		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
 	]]>
 	</description>
 </step>

@@ -94,8 +94,8 @@ if ($_POST['aliasimport'] != "") {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (is_validaliasname($_POST['name']) == false) {
-		$input_errors[] = sprintf(gettext("The alias name may only consist of the characters %s"), "a-z, A-Z, 0-9, _.");
+	if (!is_validaliasname($_POST['name'])) {
+		$input_errors[] = invalidaliasnamemsg($_POST['name']);
 	}
 
 	/* check for name duplicates */

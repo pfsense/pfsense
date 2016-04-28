@@ -125,13 +125,8 @@ if ($_POST) {
 		$input_errors[] = gettext("Schedule name cannot be blank.");
 	}
 
-	$x = is_validaliasname($_POST['name']);
-	if (!isset($x)) {
-		$input_errors[] = gettext("Reserved word used for schedule name.");
-	} else {
-		if (is_validaliasname($_POST['name']) == false) {
-			$input_errors[] = sprintf(gettext("The schedule name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %s"), 'a-z, A-Z, 0-9, _');
-		}
+	if (!is_validaliasname($_POST['name'])) {
+		$input_errors[] = invalidaliasnamemsg($_POST['name'], gettext("schedule"));
 	}
 
 	/* check for name conflicts */

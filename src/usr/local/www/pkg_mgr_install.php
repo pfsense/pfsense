@@ -98,7 +98,7 @@ if ($_REQUEST['ajax']) {
 	$code = 0;
 
 	// If this is an ajax call to get the installed and newst versions, call that function,
-	// JSON encode thre result, print it and exit
+	// JSON encode the result, print it and exit
 	if ($_REQUEST['getversion']) {
 		$firmwareversions = get_system_pkg_version();
 		print(json_encode($firmwareversions));
@@ -401,7 +401,7 @@ if ($_POST['mode'] == 'delete') {
 }
 
 if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
-	// What if the user navigates away from this page and then come back via his/her "Back" button?
+	// What if the user navigates away from this page and then comes back via his/her "Back" button?
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 	if (isvalidpid($pidfile)) {
@@ -586,7 +586,7 @@ function get_firmware_versions()
 			if (json.installed_version == json.version) {
 				$('#confirmlabel').text("<?=$sysmessage?>");
 				$('#uptodate').html('<span class="text-success">' + '<?=$uptodatemsg?>' + "</span>");
-			} else { // If htey differ display the "Confirm" button
+			} else { // If they differ display the "Confirm" button
 				$('#uptodate').hide();
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
@@ -713,7 +713,7 @@ events.push(function() {
 	}
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,
-	// we only meed to re-populate the progress indicator and the status banner
+	// we only need to re-populate the progress indicator and the status banner
 	if ("<?=$_POST['completed']?>" == "true") {
 		setProgress('progressbar', 100, false);
 		$('#progressbar').addClass("progress-bar-success");

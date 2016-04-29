@@ -189,7 +189,7 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 	$section->addInput(new Form_Checkbox(
 		'synconupgrade',
 		'Auto sync on update',
-		'After updating, sync with the following repository/branch before reboot',
+		'Enable repository/branch sync before reboot',
 		isset($gitcfg['synconupgrade'])
 		))->setHelp('After updating, sync with the following repository/branch before reboot.');
 

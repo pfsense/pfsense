@@ -717,6 +717,9 @@ events.push(function() {
 		if ($('#destination_type').find(":selected").val() == "network") {
 			disableInput('destination', false);
 			disableInput('destination_subnet', false);
+			$('#destination, #source').autocomplete({
+				source: addressarray
+			});
 		} else {
 			$('#destination').val("");
 			disableInput('destination', true);

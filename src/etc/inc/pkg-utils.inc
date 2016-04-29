@@ -1107,7 +1107,6 @@ function get_base_pkg_name() {
 
 	/* XXX: Use pkg annotation */
 	if (is_pkg_installed($g['product_name'] . '-base-' . $g['platform'])) {
-		return $g['product_name'];
 		return $g['product_name'] . '-base-' . $g['platform'];
 	} else if (is_pkg_installed($g['product_name'] . '-base')) {
 		return $g['product_name'] . '-base';

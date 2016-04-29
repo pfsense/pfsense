@@ -175,16 +175,10 @@ if ($_POST) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	$x = is_validaliasname($_POST['name']);
-	if (!isset($x)) {
-		$input_errors[] = gettext("Reserved word used for alias name.");
-	} else if ($_POST['type'] == "port" && (getservbyname($_POST['name'], "tcp") || getservbyname($_POST['name'], "udp"))) {
-		$input_errors[] = gettext("Reserved word used for alias name.");
-	} else {
-		if (is_validaliasname($_POST['name']) == false) {
-			$input_errors[] = sprintf(gettext("The alias name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %s"), 'a-z, A-Z, 0-9, _');
-		}
+	if (!is_validaliasname($_POST['name'])) {
+		$input_errors[] = invalidaliasnamemsg($_POST['name']);
 	}
+
 	/* check for name conflicts */
 	foreach ($a_aliases as $key => $alias) {
 		if (($alias['name'] == $_POST['name']) && (empty($a_aliases[$id]) || ($key != $id))) {

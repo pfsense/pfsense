@@ -1058,25 +1058,61 @@ function is_macaddr($macaddr, $partial=false) {
 	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
 }
 
-/* returns true if $name is a valid name for an alias
-   returns NULL if a reserved word is used
-   returns FALSE for bad chars in the name - this allows calling code to determine what the problem was.
-   aliases cannot be:
-	bad chars: anything except a-z 0-9 and underscore
-	bad names: empty string, pure numeric, pure underscore
-	reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+/*
+	If $return_message is true then
+		returns a text message about the reason that the name is invalid.
+		the text includes the type of "thing" that is being checked, passed in $object. (e.g. "alias", "gateway group", "schedule")
+	else
+		returns true if $name is a valid name for an alias
+		returns false if $name is not a valid name for an alias
 
-function is_validaliasname($name) {
+	Aliases cannot be:
+		bad chars: anything except a-z 0-9 and underscore
+		bad names: empty string, pure numeric, pure underscore
+		reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+
+function is_validaliasname($name, $return_message = false, $object = "alias") {
 	/* Array of reserved words */
 	$reserved = array("port", "pass");
 
 	if (!is_string($name) || strlen($name) >= 32 || preg_match('/(^_*$|^\d*$|[^a-z0-9_])/i', $name)) {
-		return false;
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %2$s'), $object, 'a-z, A-Z, 0-9, _');
+		} else {
+			return false;
+		}
 	}
-	if (in_array($name, $reserved, true) || getservbyname($name, "tcp") || getservbyname($name, "udp") || getprotobyname($name)) {
-		return; /* return NULL */
+	if (in_array($name, $reserved, true)) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be either of the reserved words %2$s or %3$s.'), $object, "'port'", "'pass'");
+		} else {
+			return false;
+		}
 	}
-	return true;
+	if (getprotobyname($name)) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be a well-known IP protocol name such as TCP, UDP, ICMP etc.'), $object);
+		} else {
+			return false;
+		}
+	}
+	if (getservbyname($name, "tcp") || getservbyname($name, "udp")) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be a well-known TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
+		} else {
+			return false;
+		}
+	}
+	if ($return_message) {
+		return sprintf(gettext("The %1$s name is valid."), $object);
+	} else {
+		return true;
+	}
+}
+
+/* returns a text message indicating if the alias name is valid, or the reason it is not valid. */
+function invalidaliasnamemsg($name, $object = "alias") {
+	return is_validaliasname($name, true, $object);
 }
 
 /* returns true if $port is a valid TCP/UDP port */

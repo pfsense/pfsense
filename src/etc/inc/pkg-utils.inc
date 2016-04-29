@@ -980,14 +980,22 @@ function package_reinstall_all() {
 	/* During boot after upgrade, wait for internet connection */
 	if ($upgrade) {
 		update_status(gettext("Waiting for internet connection to update pkg metadata and finish package reinstallation"));
-		while (true) {
+		$ntries = 3;
+		while ($ntries > 0) {
 			if (pkg_update(true)) {
 				break;
 			}
 			update_status('.');
 			sleep(1);
+			$ntries--;
 		}
 		update_status("\n");
+
+		if ($ntries == 0) {
+			file_notice(gettext("Package reinstall"),
+			    gettext("Package reinstall process was ABORTED due to lack of internet connectivity"));
+			return false;
+		}
 	}
 
 	$pkg_info = get_pkg_info();

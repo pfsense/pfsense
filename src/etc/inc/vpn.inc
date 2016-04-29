@@ -809,7 +809,7 @@ EOD;
 			if (empty($key['type'])) {
 				$key['type'] = 'PSK';
 			}
-			$pskconf .= "{$myid} {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
+			$pskconf .= " {$key['ident']} : {$key['type']} 0s" . base64_encode($key['pre-shared-key']) . "\n";
 		}
 		unset($key);
 	}

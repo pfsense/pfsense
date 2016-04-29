@@ -620,6 +620,14 @@ $section->addInput(new Form_Input(
 			'the client can only log in with valid credentials until the waiting period specified below has expired. Recommended to set ' .
 			'a hard timeout and/or idle timeout when using this for it to be effective.');
 
+$section->addInput(new Form_Input(
+	'freelogins_resettimeout',
+	'Waiting period to restore pass-through credits. (Hours)',
+	'number',
+	$pconfig['freelogins_resettimeout']
+))->setHelp('Clients will have their available pass-through credits restored to the original count after this amount of time since using the first one. ' .
+			'This must be above 0 hours if pass-through credits are enabled.');
+
 $section->addInput(new Form_Checkbox(
 	'freelogins_updatetimeouts',
 	'Reset waiting period',

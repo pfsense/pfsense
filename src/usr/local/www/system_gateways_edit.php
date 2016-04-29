@@ -147,7 +147,7 @@ if ($_POST) {
 		$input_errors[] = "A valid gateway name must be specified.";
 	}
 	if (!is_validaliasname($_POST['name'])) {
-		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
+		$input_errors[] = invalidaliasnamemsg($_POST['name'], gettext("gateway"));
 	} else if (isset($_POST['disabled'])) {
 		// We have a valid gateway name that the user wants to mark as disabled.
 		// Check if the gateway name is used in any gateway group.

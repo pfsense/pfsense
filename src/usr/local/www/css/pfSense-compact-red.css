@@ -68,6 +68,10 @@ body {
     padding: 2px 15px 1px 15px;
 }
 
+.navbar-toggle {
+    margin-top:0px;
+    margin-bottom:0px;
+}
 .panel-default>.panel-heading {
     background-color: #900;
 }

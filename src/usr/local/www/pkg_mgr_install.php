@@ -258,7 +258,7 @@ include("head.inc");
 
 if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
 	?>
-	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+	<div id="final" class="alert" role="alert" style="display: none;"></div>
 <?php
 }
 display_top_tabs($tab_array);

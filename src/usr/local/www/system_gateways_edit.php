@@ -829,7 +829,7 @@ $section->addInput(new Form_StaticText(
 		'ratio between these values control the accuracy of the numbers reported and ' .
 		'the timeliness of alerts.') .
 	'<br/><br/>' .
-	gettext('A longer time period will will provide smoother results for round trip time ' .
+	gettext('A longer time period will provide smoother results for round trip time ' .
 		'and loss, but will increase the time before a latency or loss alert is triggered.') .
 	'<br/><br/>' .
 	gettext('A shorter probe interval will decrease the time required before a latency ' .

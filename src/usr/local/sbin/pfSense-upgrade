@@ -332,6 +332,7 @@ pkg_upgrade() {
 			_exit 0
 		fi
 
+		local _meta_pkg=$(get_meta_pkg_name)
 		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
 			if [ "${platform}" = "nanobsd" ]; then
 				_echo "**** WARNING ****"
@@ -354,6 +355,8 @@ pkg_upgrade() {
 				fi
 				setup_nanobsd_env
 			fi
+			need_reboot=1
+		elif pkg upgrade -r ${product} -nq ${_meta_pkg} >/dev/null 2>&1; then
 			need_reboot=1
 		fi
 
@@ -469,16 +472,20 @@ pkg_upgrade() {
 	fi
 }
 
-check_upgrade() {
+get_meta_pkg_name() {
 	# figure out main meta package name
 	if is_pkg_installed ${product}-vmware; then
-		local _meta_pkg="${product}-vmware"
+		echo "${product}-vmware"
 	elif is_pkg_installed ${product}; then
-		local _meta_pkg="${product}"
+		echo "${product}"
 	else
 		_echo "ERROR: It was not possible to identify which ${product} meta package is installed"
 		_exit 1
 	fi
+}
+
+check_upgrade() {
+	local _meta_pkg=$(get_meta_pkg_name)
 
 	pkg_update
 

@@ -1257,6 +1257,7 @@ events.push(function() {
 		hideInput('idletimeout', hide);
 		hideInput('timeout', hide);
 		hideInput('freelogins_count', hide);
+		hideInput('freelogins_resettimeout', hide);
 		hideCheckbox('freelogins_updatetimeouts', hide);
 		hideCheckbox('logoutwin_enable', hide);
 		hideInput('preauthurl', hide);

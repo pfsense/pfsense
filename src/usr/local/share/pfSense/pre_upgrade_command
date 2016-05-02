@@ -54,7 +54,6 @@ foreach (\$config['installedpackages']['package'] as \$package) {
 EOD
 
 /usr/local/bin/php /tmp/remove_all_packages.php
-exit
 rm -f /tmp/remove_all_packages.php
 
 # Cleanup PBIs

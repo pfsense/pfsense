@@ -171,7 +171,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'ttl',
-	'Maximum nuber of hops',
+	'Maximum number of hops',
 	$ttl,
 	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
 ))->setHelp('Select the maximum number of network hops to trace.');

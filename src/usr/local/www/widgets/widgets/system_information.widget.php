@@ -120,7 +120,7 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
-				<strong><?=$g['product_version']?></strong>
+				<strong><?=$g['product_version_string']?></strong>
 				(<?php echo php_uname("m"); ?>)
 				<br />
 				<?=gettext('built on')?> <?php readfile("/etc/version.buildtime"); ?>

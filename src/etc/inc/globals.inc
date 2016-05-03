@@ -121,6 +121,17 @@ $iptos = array("lowdelay", "throughput", "reliability");
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
+if (file_exists("/etc/version.patch")) {
+	$g["product_version_patch"] = trim(file_get_contents("/etc/version.patch"), " \n");
+} else {
+	$g["product_version_patch"] = "0";
+}
+
+$g['product_version_string'] = $g['product_version'];
+if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0") {
+	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
+}
+
 if (file_exists("/etc/platform")) {
 	$arch = php_uname("m");
 

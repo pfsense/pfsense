@@ -1304,9 +1304,14 @@ customize_stagearea_for_image() {
 	#      staging server during build phase
 	if [ -n "${USE_PKG_REPO_STAGING}" ]; then
 		_read_cmd="select value from repodata where key='packagesite'"
+		if [ -n "${_IS_RELEASE}" ]; then
+			local _tgt_server="${PKG_REPO_SERVER_RELEASE}"
+		else
+			local _tgt_server="${PKG_REPO_SERVER_DEVEL}"
+		fi
 		for _db in ${FINAL_CHROOT_DIR}/var/db/pkg/repo-*sqlite; do
 			_cur=$(/usr/local/bin/sqlite3 ${_db} "${_read_cmd}")
-			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER_STAGING},${PKG_REPO_SERVER_RELEASE},")
+			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER_STAGING},${_tgt_server},")
 			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
 		done
 	fi

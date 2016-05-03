@@ -1907,6 +1907,7 @@ function filter_nat_rules_generate() {
 			}
 
 			$natif = $FilterIflist[$natif]['if'];
+			$nat_if_list = array();
 
 			if (isset($rule['nobinat'])) {
 				$natrules .= "no binat on {$natif} from {$srcaddr} to {$dstaddr}\n";
@@ -1918,8 +1919,6 @@ function filter_nat_rules_generate() {
 				if ((isset($config['system']['enablebinatreflection']) || $rule['natreflection'] == "enable") &&
 				    ($rule['natreflection'] != "disable")) {
 					$nat_if_list = filter_get_reflection_interfaces($natif);
-				} else {
-					$nat_if_list = array();
 				}
 
 				$natrules .= "binat on {$natif} from {$srcaddr} to {$dstaddr} -> {$target}{$sn1}\n";

@@ -34,17 +34,21 @@
 	require_once("gwlb.inc");
 	require_once("interfaces.inc");
 
-	$platform = trim(file_get_contents("{$g['etc_path']}/platform"));
 	$hostname = $config['system']['hostname'];
 	$product = $g['product_name'];
 	$machine = trim(`uname -m`);
 	$hideplatform = $g['hideplatform'];
 
 	if (!$hideplatform) {
-		$platformbanner = "-{$platform}";
+		if ($g['platform'] == $g['product_name']) {
+			$platform = "full-install";
+		} else {
+			$platform = $g['platform'];
+		}
+		$platformbanner = " {$platform}";
 	}
 
-	print "*** Welcome to {$product} {$g['product_version']}{$platformbanner} ({$machine}) on {$hostname} ***\n";
+	print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}{$platformbanner}) on {$hostname} ***\n";
 
 	$iflist = get_configured_interface_with_descr(false, true);
 	foreach ($iflist as $ifname => $friendly) {

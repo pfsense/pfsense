@@ -573,7 +573,7 @@ $section->addInput(new Form_Input(
 	$pconfig['aliasesresolveinterval'],
 	['placeholder' => '300']
 ))->setHelp('Interval, in seconds, that will be used to resolve hostnames '.
-	'configured on aliases.. <br/>Note:	 Leave this blank for the default '.
+	'configured on aliases. <br/>Note:	 Leave this blank for the default '.
 	'(300s).');
 
 $section->addInput(new Form_Checkbox(

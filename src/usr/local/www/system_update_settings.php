@@ -189,9 +189,9 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 	$section->addInput(new Form_Checkbox(
 		'synconupgrade',
 		'Auto sync on update',
-		'After updating, sync with the following repository/branch before reboot',
+		'Enable repository/branch sync before reboot',
 		isset($gitcfg['synconupgrade'])
-		))->setHelp('After updating, sync with the following repository/branch before reboot');
+		))->setHelp('After updating, sync with the following repository/branch before reboot.');
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url", $output_str);
@@ -227,8 +227,8 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		'Branch name',
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%s". (Usually the branch name is master)' .
-					'<br />Note: Sync will not be performed if a branch is not specified', [$lastbranch]);
+		))->setHelp('The most recently used branch was "%s". (Usually the branch name is RELENG_2_3)' .
+					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
 
 	$form->add($section);
 } // e-o-if(file_exista()

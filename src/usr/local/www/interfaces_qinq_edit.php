@@ -280,7 +280,7 @@ $section->addInput(new Form_Checkbox(
 	'Option(s)',
 	'Adds interface to QinQ interface groups',
 	$pconfig['autogroup']
-))->setHelp('Allows rules to be written more easily');
+))->setHelp('Allows rules to be written more easily.');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -292,7 +292,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_StaticText(
 	'Member(s)',
 	'Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
-	'Click "Duplicate" as many times as needed to add new inputs'
+	'Click "Duplicate" as many times as needed to add new inputs.'
 ));
 
 if (isset($id) && $a_qinqs[$id]) {

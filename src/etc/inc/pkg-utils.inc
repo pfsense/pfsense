@@ -980,24 +980,44 @@ function package_reinstall_all() {
 	/* During boot after upgrade, wait for internet connection */
 	if ($upgrade) {
 		update_status(gettext("Waiting for internet connection to update pkg metadata and finish package reinstallation"));
-		while (true) {
+		$ntries = 3;
+		while ($ntries > 0) {
 			if (pkg_update(true)) {
 				break;
 			}
 			update_status('.');
 			sleep(1);
+			$ntries--;
 		}
 		update_status("\n");
+
+		if ($ntries == 0) {
+			file_notice(gettext("Package reinstall"),
+			    gettext("Package reinstall process was ABORTED due to lack of internet connectivity"));
+			return false;
+		}
 	}
 
 	$pkg_info = get_pkg_info();
 
-	foreach ($config['installedpackages']['package'] as $package) {
+	if ($upgrade &&
+	    file_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt")) {
+		$package_list = file("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt",
+		    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+		unlink_if_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt");
+	} else {
+		$package_list = array();
+		foreach ($config['installedpackages']['package'] as $package) {
+			$package_list[] = get_package_internal_name($package);
+		}
+	}
+
+	foreach ($package_list as $package) {
 		$found = false;
-		$internal_name = get_package_internal_name($package);
 		foreach ($pkg_info as $pkg) {
 			pkg_remove_prefix($pkg['name']);
-			if ($pkg['name'] == $internal_name) {
+			if ($pkg['name'] == $package) {
+				pkg_install($g['pkg_prefix'] . $package, true);
 				$found = true;
 				break;
 			}
@@ -1009,15 +1029,10 @@ function package_reinstall_all() {
 			}
 
 			file_notice(gettext("Package reinstall"),
-			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."), $package['name'], $g['product_name']));
-			uninstall_package($package['name']);
+			    sprintf(gettext("Package %s does not exist in current %s version and it has been removed."),
+			    $package, $g['product_name']));
+			uninstall_package($package);
 		}
-	}
-
-	/* Obsoleted packages were removed, lets reinstall all remaining */
-	foreach ($config['installedpackages']['package'] as $package) {
-		$internal_name = get_package_internal_name($package);
-		pkg_install($g['pkg_prefix'] . $internal_name, true);
 	}
 
 	return true;
@@ -1092,7 +1107,6 @@ function get_base_pkg_name() {
 
 	/* XXX: Use pkg annotation */
 	if (is_pkg_installed($g['product_name'] . '-base-' . $g['platform'])) {
-		return $g['product_name'];
 		return $g['product_name'] . '-base-' . $g['platform'];
 	} else if (is_pkg_installed($g['product_name'] . '-base')) {
 		return $g['product_name'] . '-base';

@@ -22,6 +22,7 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
+sysutils/xe-guest-utilities
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel

@@ -174,7 +174,8 @@ $section->addInput(new Form_IpAddress(
 	'ip',
 	'IP Address',
 	$pconfig['ip']
-))->setHelp('IP address of the authoritative DNS server for this domain' . '<br />' .
+))->setPattern('[a-f0-9:.#!]*')
+  ->setHelp('IP address of the authoritative DNS server for this domain' . '<br />' .
 			'e.g.: 192.168.100.100' . '<br />' .
 			'Or enter # for an exclusion to pass through this host/subdomain to standard nameservers instead of a previous override.' . '<br />' .
 			'Or enter ! for lookups for this host/subdomain to NOT be forwarded anywhere.');

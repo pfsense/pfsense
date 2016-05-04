@@ -850,9 +850,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
-				'hosts expressed using CIDR (eg. 10.0.8.0/24). The first network address will be assigned to ' .
+				'hosts expressed using CIDR (e.g. 10.0.8.0/24). The first network address will be assigned to ' .
 				'the server virtual interface. The remaining network addresses can optionally be assigned ' .
-				'to connecting clients. (see Address Pool)');
+				'to connecting clients (see Address Pool).');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -860,9 +860,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this server and client hosts expressed using CIDR (eg. fe80::/64). ' .
+				'communications between this server and client hosts expressed using CIDR (e.g. fe80::/64). ' .
 				'The first network address will be assigned to the server virtual interface. The remaining ' .
-				'network addresses can optionally be assigned to connecting clients. (see Address Pool)');
+				'network addresses can optionally be assigned to connecting clients (see Address Pool).');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -876,7 +876,7 @@ if ($act=="new" || $act=="edit"):
 		'Bridge Interface',
 		$pconfig['serverbridge_interface'],
 		openvpn_build_bridge_list()
-		))->setHelp('The interface to which this tap instance will be bridged. This is not done automatically. This interface must be assigned ' .
+		))->setHelp('The interface to which this TAP instance will be bridged. This is not done automatically. This interface must be assigned ' .
 						'and the bridge created separately. This setting controls which existing IP address and subnet ' .
 						'mask are used by OpenVPN for the bridge. Setting this to "none" will cause the Server Bridge DHCP settings below to be ignored.');
 
@@ -885,8 +885,8 @@ if ($act=="new" || $act=="edit"):
 		'Server Bridge DHCP Start',
 		'text',
 		$pconfig['serverbridge_dhcp_start']
-	))->setHelp('When using tap mode as a multi-point server, a DHCP range may optionally be supplied to use on the ' .
-				'interface to which this tap instance is bridged. If these settings are left blank, DHCP will be passed ' .
+	))->setHelp('When using TAP mode as a multi-point server, a DHCP range may optionally be supplied to use on the ' .
+				'interface to which this TAP instance is bridged. If these settings are left blank, DHCP will be passed ' .
 				'through to the LAN, and the interface setting above will be ignored.');
 
 	$section->addInput(new Form_Input(
@@ -1008,7 +1008,7 @@ if ($act=="new" || $act=="edit"):
 		'Topology',
 		$pconfig['topology'],
 		$openvpn_topologies
-	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.' . '<br />' .
+	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using TUN mode on IPv4.' . '<br />' .
 				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".');
 

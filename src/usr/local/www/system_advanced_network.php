@@ -261,7 +261,7 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['disablesegmentationoffloading'])
 ))->setHelp('Checking this option will disable hardware TCP segmentation '.
 	'offloading (TSO, TSO4, TSO6). This offloading is broken in some hardware '.
-	'drivers, and may impact performance with some specific NICs.This will take '.
+	'drivers, and may impact performance with some specific NICs. This will take '.
 	'effect after a machine reboot or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(

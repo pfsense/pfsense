@@ -77,7 +77,7 @@ $protohelp =
 	'<li>' .
 		'<strong>' . $laggprotosuc[0] . '</strong><br />' .
 		gettext('This protocol is intended to do nothing: it disables any ' .
-				'traffic without disabling the lagg interface itself') .
+				'traffic without disabling the lagg interface itself.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[1] . '</strong><br />' .
@@ -113,13 +113,13 @@ $protohelp =
 				'does not negotiate aggregation with the peer or exchange ' .
 				'frames to monitor the link.  The hash includes the Ethernet ' .
 				'source and destination address, and, if available, the VLAN ' .
-				'tag, and the IP source and destination address') .
+				'tag, and the IP source and destination address.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[5] . '</strong><br />' .
 		gettext('Distributes outgoing traffic using a round-robin scheduler ' .
 				'through all active ports and accepts incoming traffic from ' .
-				'any active port') .
+				'any active port.') .
 	'</li>' .
 '</ul>';
 
@@ -288,7 +288,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp("Enter a description here for reference only. (Not parsed)");
+))->setHelp("Enter a description here for reference only (Not parsed).");
 
 $section->addInput(new Form_Input(
 	'laggif',

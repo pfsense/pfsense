@@ -444,7 +444,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" /></a>
+			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$config['system']['hostname'] . '.' . $config['system']['domain']?>"/></a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">

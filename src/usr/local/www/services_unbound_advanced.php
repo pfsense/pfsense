@@ -377,7 +377,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'disable_auto_added_access_control',
 	'Disable Auto-added Access Control',
-	'disable the automatically-added access control entries',
+	'Disable the automatically-added access control entries',
 	$pconfig['disable_auto_added_access_control']
 ))->setHelp('By default, IPv4 and IPv6 networks residing on internal interfaces of this system are permitted. ' .
 			'Allowed networks must be manually configured on the Access Lists tab if the auto-added entries are disabled.');

@@ -121,6 +121,17 @@ $iptos = array("lowdelay", "throughput", "reliability");
 /* TCP flags */
 $tcpflags = array("syn", "ack", "fin", "rst", "psh", "urg", "ece", "cwr");
 
+if (file_exists("/etc/version.patch")) {
+	$g["product_version_patch"] = trim(file_get_contents("/etc/version.patch"), " \n");
+} else {
+	$g["product_version_patch"] = "0";
+}
+
+$g['product_version_string'] = $g['product_version'];
+if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0") {
+	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
+}
+
 if (file_exists("/etc/platform")) {
 	$arch = php_uname("m");
 
@@ -194,7 +205,9 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.enc.in.ipsec_filter_mask" => "0x0002",
 	"net.key.preferred_oldsa" => "0",
 	"net.inet.carp.senderr_demotion_factor" => 0, /* Do not demote CARP for interface send errors */
-	"net.pfsync.carp_demotion_factor" => 0 /* Do not demote CARP for pfsync errors */
+	"net.pfsync.carp_demotion_factor" => 0, /* Do not demote CARP for pfsync errors */
+	"net.raw.recvspace" => 65536,
+	"net.raw.sendspace" => 65536
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

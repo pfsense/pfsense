@@ -306,14 +306,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'l2tp_dns1',
-	'Primary L2TM DNS server',
+	'Primary L2TP DNS server',
 	'text',
 	$pconfig['l2tp_dns1']
 ));
 
 $section->addInput(new Form_Input(
 	'l2tp_dns2',
-	'Secondary L2TM DNS server',
+	'Secondary L2TP DNS server',
 	'text',
 	$pconfig['l2tp_dns2']
 ));

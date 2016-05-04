@@ -394,7 +394,7 @@ if ($act == "new" || $act == "edit"):
 		'Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (eg. 10.0.8.0/24). ' .
+	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.0/24). ' .
 				'The first network address is assumed to be the server address and the second network address will be assigned to the client virtual interface. ');
 
 	$section->addInput(new Form_Input(

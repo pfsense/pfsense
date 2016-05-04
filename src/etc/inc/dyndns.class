@@ -594,7 +594,7 @@
 
 					/* Setting Variables */
 					$hostname = "{$this->_dnsHost}.";
-					$ZoneID = $this->_dnsZoneID;
+					$ZoneID = trim($this->_dnsZoneID);
 					$AccessKeyId = $this->_dnsUser;
 					$SecretAccessKey = $this->_dnsPass;
 					$NewIP = $this->_dnsIP;
@@ -630,7 +630,7 @@
 					}
 
 					/* Check if we need to update DNS Record */
-					if ($OldIP !== $NewIP) {
+					if ($OldIP !== $NewIP || $OldTTL !== $NewTTL) {
 						if (!empty($OldIP)) {
 							/* Your Hostname already exists, deleting and creating it again */
 							$changes = array();

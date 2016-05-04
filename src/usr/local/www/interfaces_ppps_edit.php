@@ -859,7 +859,7 @@ $section->addInput(new Form_Input(
 	'Idle Timeout',
 	'text',
 	$pconfig['idletimeout']
-))->setHelp('If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.' .
+))->setHelp('If no incoming or outgoing packets are transmitted for the entered number of seconds the connection is brought down.' . " " .
 			'When the idle timeout occurs, if the dial-on-demand option is enabled, mpd goes back into dial-on-demand mode. ' .
 			'Otherwise, the interface is brought down and all associated routes removed.');
 
@@ -869,7 +869,7 @@ $section->addInput(new Form_Checkbox(
 	'Disable vjcomp (compression, auto-negotiated by default).',
 	$pconfig['vjcomp']
 ))->setHelp('Disable vjcomp(compression) (auto-negotiated by default).' . '<br />' .
-				'This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet.' .
+				'This option enables Van Jacobson TCP header compression, which saves several bytes per TCP data packet.' . " " .
 				'This option is almost always required. Compression is not effective for TCP connections with enabled modern extensions like time ' .
 				'stamping or SACK, which modify TCP options between sequential packets.');
 

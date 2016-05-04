@@ -2454,7 +2454,7 @@ $section->addInput(new Form_Select(
 	'IPv6 Interface',
 	$pconfig['track6-interface'],
 	build_ipv6interface_list()
-))->setHelp('selects the dynamic IPv6 WAN interface to track for configuration');
+))->setHelp('Selects the dynamic IPv6 WAN interface to track for configuration.');
 
 if ($pconfig['track6-prefix-id'] == "") {
 	$pconfig['track6-prefix-id'] = 0;
@@ -2521,7 +2521,7 @@ $section->addInput(new Form_Input(
 	'Phone number',
 	'text',
 	$pconfig['phone']
-))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks');
+))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks.');
 
 $section->addInput(new Form_Input(
 	'apn',
@@ -2561,7 +2561,7 @@ $section->addInput(new Form_Button(
 	'Advanced PPP',
 	isset($pconfig['pppid']) ? 'interfaces_ppps_edit.php?id=' . htmlspecialchars($pconfig['pppid']) : 'interfaces_ppps_edit.php',
 	'fa-cog'
-))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration');
+))->setAttribute('type','button')->addClass('btn-info')->setAttribute('id')->setHelp('Create a new PPP configuration.');
 
 $form->add($section);
 
@@ -2588,7 +2588,7 @@ $section->addInput(new Form_Input(
 	'Service name',
 	'text',
 	$pconfig['provider']
-))->setHelp('This field can usually be left empty');
+))->setHelp('This field can usually be left empty.');
 
 $section->addInput(new Form_Checkbox(
 	'pppoe_dialondemand',
@@ -2612,7 +2612,7 @@ $section->addInput(new Form_Select(
 	'Periodic reset',
 	$pconfig['pppoe-reset-type'],
 	['' => gettext('Disabled'), 'custom' => gettext('Custom'), 'preset' => gettext('Pre-set')]
-))->setHelp('Select a reset timing type');
+))->setHelp('Select a reset timing type.');
 
 $group = new Form_Group('Custom reset');
 $group->addClass('pppoecustom');

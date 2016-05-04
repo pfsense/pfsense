@@ -435,7 +435,7 @@ $section->addInput(new Form_Select(
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples
-))->setHelp('Interfaces participating in the bridge');
+))->setHelp('Interfaces participating in the bridge.');
 
 $section->addInput(new Form_Input(
 	'descr',

@@ -2321,7 +2321,9 @@ poudriere_bulk() {
 	# Change version of pfSense meta ports for snapshots
 	if [ -z "${_IS_RELEASE}" ]; then
 		local _meta_pkg_version="$(echo "${PRODUCT_VERSION}" | sed 's,DEVELOPMENT,ALPHA,')-${DATESTRING}"
-		sed -i '' -e "/^DISTVERSION/ s,^.*,DISTVERSION=	${_meta_pkg_version}," \
+		sed -i '' \
+			-e "/^DISTVERSION/ s,^.*,DISTVERSION=	${_meta_pkg_version}," \
+			-e "/^PORTREVISION=/d" \
 			/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/security/${PRODUCT_NAME}/Makefile
 	fi
 

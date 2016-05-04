@@ -316,16 +316,17 @@ build_all_kernels() {
 
 		ensure_kernel_exists $KERNEL_DESTDIR
 
-		echo -n ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
+		echo -n ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area... "  | tee -a ${LOGFILE}
 		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \*.symbols
 		find ${KERNEL_DESTDIR} -name '*.symbols' -type f -delete
+		echo " Done" | tee -a ${LOGFILE}
 
-		echo -n ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}
+		echo -n ">>> Creating pkg of $KERNEL_NAME kernel to staging area... "  | tee -a ${LOGFILE}
 		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR}
 
 		rm -rf $KERNEL_DESTDIR 2>&1 1>/dev/null
 
-		echo ".Done" | tee -a ${LOGFILE}
+		echo " Done" | tee -a ${LOGFILE}
 	done
 }
 
@@ -1867,21 +1868,25 @@ setup_pkg_repo() {
 	fi
 
 	if [ -n "${_staging}" -a -n "${USE_PKG_REPO_STAGING}" ]; then
-		local _pkg_repo_server=${PKG_REPO_SERVER_STAGING}
-		local _pkg_repo_branch=${PKG_REPO_BRANCH_STAGING}
+		local _pkg_repo_server_devel=${PKG_REPO_SERVER_STAGING}
+		local _pkg_repo_branch_devel=${PKG_REPO_BRANCH_STAGING}
+		local _pkg_repo_server_release=${PKG_REPO_SERVER_STAGING}
+		local _pkg_repo_branch_release=${PKG_REPO_BRANCH_STAGING}
 	else
-		local _pkg_repo_server=${PKG_REPO_SERVER_RELEASE}
-		local _pkg_repo_branch=${PKG_REPO_BRANCH_RELEASE}
+		local _pkg_repo_server_devel=${PKG_REPO_SERVER_DEVEL}
+		local _pkg_repo_branch_devel=${PKG_REPO_BRANCH_DEVEL}
+		local _pkg_repo_server_release=${PKG_REPO_SERVER_RELEASE}
+		local _pkg_repo_branch_release=${PKG_REPO_BRANCH_RELEASE}
 	fi
 
 	mkdir -p $(dirname ${_target}) >/dev/null 2>&1
 
 	sed \
 		-e "s/%%ARCH%%/${_target_arch}/" \
-		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${PKG_REPO_BRANCH_DEVEL}/g" \
-		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch}/g" \
-		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${PKG_REPO_SERVER_DEVEL},g" \
-		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server},g" \
+		-e "s/%%PKG_REPO_BRANCH_DEVEL%%/${_pkg_repo_branch_devel}/g" \
+		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
+		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${_pkg_repo_server_devel},g" \
+		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server_release},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		${_template} \
 		> ${_target}

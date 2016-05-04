@@ -71,7 +71,7 @@ $allowautocomplete = true;
 
 require("guiconfig.inc");
 
-if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
+if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');
 	$fd = fopen($_POST['dlPath'], "rb");
 	header("Content-Type: application/octet-stream");
@@ -88,10 +88,9 @@ if (($_POST['submit'] == "DOWNLOAD") && file_exists($_POST['dlPath'])) {
 
 	fpassthru($fd);
 	exit;
-} else if (($_POST['submit'] == "UPLOAD") && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
+} else if ($_POST['submit'] == "UPLOAD" && is_uploaded_file($_FILES['ulfile']['tmp_name'])) {
 	move_uploaded_file($_FILES['ulfile']['tmp_name'], "/tmp/" . $_FILES['ulfile']['name']);
 	$ulmsg = sprintf(gettext('Uploaded file to /tmp/%s.'), htmlentities($_FILES['ulfile']['name']));
-	unset($_POST['txtCommand']);
 }
 
 if ($_POST) {
@@ -221,7 +220,7 @@ if (isBlank($_POST['txtCommand']) && isBlank($_POST['txtPHPCommand']) && isBlank
 	print_callout(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'danger', gettext('Advanced Users Only'));
 }
 
-if (!isBlank($_POST['txtCommand'])):?>
+if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 	<div class="panel panel-success responsive">
 		<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext('Shell Output - %s'), htmlspecialchars($_POST['txtCommand']))?></h2></div>
 		<div class="panel-body">
@@ -253,7 +252,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 					<button type="button" class="btn btn-success btn-sm" name="btnRecallPrev" onclick="btnRecall_onClick( this.form, -1 );" title="<?=gettext("Recall Previous Command")?>">
 						<i class="fa fa-angle-double-left"></i>
 					</button>
-					<button type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
+					<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXEC" title="<?=gettext("Execute the entered command")?>">
 						<i class="fa fa-bolt"></i>
 						<?=gettext("Execute"); ?>
 					</button>
@@ -304,7 +303,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 <?php
 	// Experimental version. Writes the user's php code to a file and executes it via a new instance of PHP
 	// This is intended to prevent bad code from breaking the GUI
-	if (!isBlank($_POST['txtPHPCommand'])) {
+	if ($_POST['submit'] == "EXECPHP" && !isBlank($_POST['txtPHPCommand'])) {
 		puts("<div class=\"panel panel-success responsive\"><div class=\"panel-heading\"><h2 class=\"panel-title\">PHP Response</h2></div>");
 
 		$tmpname = tempnam("/tmp", "");
@@ -344,7 +343,7 @@ if (!isBlank($_POST['txtCommand'])):?>
 			<div class="content">
 				<textarea id="txtPHPCommand" placeholder="Command" name="txtPHPCommand" rows="9" cols="80"><?=htmlspecialchars($_POST['txtPHPCommand'])?></textarea>
 				<br />
-				<button type="submit" class="btn btn-warning btn-sm" value="<?=gettext("Execute")?>" title="<?=gettext("Execute this PHP Code")?>">
+				<button name="submit" type="submit" class="btn btn-warning btn-sm" value="EXECPHP" title="<?=gettext("Execute this PHP Code")?>">
 					<i class="fa fa-bolt"></i>
 					<?=gettext("Execute")?>
 				</button>

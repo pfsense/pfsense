@@ -216,7 +216,7 @@ $section->addInput(new Form_Textarea(
 	$_POST["aliasimport"]
 ))->setHelp('Paste in the aliases to '.
 	'import separated by a carriage return. Common examples are lists of IPs, '.
-	'networks, blacklists, etc.The list may contain IP addresses, with or without '.
+	'networks, blacklists, etc. The list may contain IP addresses, with or without '.
 	'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after '.
 	'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-'.
 	'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office '.

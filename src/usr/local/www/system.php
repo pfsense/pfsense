@@ -97,7 +97,6 @@ $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
-$pconfig['webguihostnamemenu'] = isset($config['system']['webgui']['webguihostnamemenu']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -156,12 +155,6 @@ if ($_POST) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
 	} else {
 		unset($config['system']['webgui']['webguifixedmenu']);
-	}
-
-	if ($_POST['webguihostnamemenu']) {
-		$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
-	} else {
-		unset($config['system']['webgui']['webguihostnamemenu']);
 	}
 
 	if ($_POST['dashboardcolumns']) {
@@ -524,13 +517,6 @@ $section->addInput(new Form_Select(
 	$pconfig['webguifixedmenu'],
 	["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
 ))->setHelp("The fixed option is intended for large screens only.");
-
-$section->addInput(new Form_Select(
-	'webguihostnamemenu',
-	'Hostname in Menu',
-	$pconfig['webguihostnamemenu'],
-	["" => gettext("Default (No hostname)"), "hostonly" => gettext("Hostname only"), "fqdn" => gettext("Fully Qualified Domain Name")]
-))->setHelp("Replaces the Help menu title in the Navbar with the system hostname or FQDN.");
 
 $section->addInput(new Form_Input(
 	'dashboardcolumns',

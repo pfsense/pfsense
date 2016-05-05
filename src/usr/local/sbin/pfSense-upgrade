@@ -328,7 +328,9 @@ pkg_upgrade() {
 		fi
 
 		if [ -n "${dry_run}" ]; then
+			pkg_unlock ${kernel_pkg}
 			pkg ${pkg_chroot} upgrade -nq 2>&1 | tee -a ${logfile}
+			pkg_lock ${kernel_pkg}
 			_exit 0
 		fi
 

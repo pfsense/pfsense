@@ -90,7 +90,7 @@ if ($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
 	$x = 0;
 	if (file_exists("/tmp/PHP_errors.log")) {
-		$total = `/usr/bin/grep -vi warning /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
+		$total = `/bin/cat /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
 		if ($total > 0) {
 			$x++;
 		}

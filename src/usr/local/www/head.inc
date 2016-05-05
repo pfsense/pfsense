@@ -449,16 +449,26 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
-			<?php foreach ([
-					['name' => 'System',	  'menu' => $system_menu,	   'href' => null],
-					['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
-					['name' => 'Firewall',	  'menu' => $firewall_menu,	   'href' => null],
-					['name' => 'Services',	  'menu' => $services_menu,	   'href' => null],
-					['name' => 'VPN',		  'menu' => $vpn_menu,		   'href' => null],
-					['name' => 'Status',	  'menu' => $status_menu,	   'href' => null],
-					['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
-					['name' => 'Gold',		  'menu' => $gold_menu,		   'href' => '_blank'],
-					['name' => 'Help',		  'menu' => $help_menu,		   'href' => '_blank']
+			<?php
+                if ($config['system']['webgui']['webguihostnamemenu'] == 'hostonly') {
+                    $help_menu_title = htmlspecialchars($config['system']['hostname']);
+                }
+                elseif ($config['system']['webgui']['webguihostnamemenu'] == 'fqdn') {
+                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+                }
+                else {
+                    $help_menu_title = 'Help';
+                }
+                foreach ([
+					['name' => 'System',	     'menu' => $system_menu,	  'href' => null],
+					['name' => 'Interfaces',     'menu' => $interfaces_menu,  'href' => null],
+					['name' => 'Firewall',	     'menu' => $firewall_menu,	  'href' => null],
+					['name' => 'Services',	     'menu' => $services_menu,	  'href' => null],
+					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
+					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
+					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
+					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
+                    ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;

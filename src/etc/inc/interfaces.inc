@@ -3510,8 +3510,8 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 
 	/* always configure a link-local of fe80::1:1 on the track6 interfaces */
 	$realif = get_real_interface($interface);
-	$linklocal = find_interface_ipv6_ll($realif);
-	if (!empty($linklocal)) {
+	$linklocal = find_interface_ipv6_ll($realif, true);
+	if (!empty($linklocal) && $linklocal != "fe80::1:1%{$realif}") {
 		mwexec("/sbin/ifconfig {$realif} inet6 {$linklocal} delete");
 	}
 	/* XXX: This might break for good on a carp installation using link-local as network ips */

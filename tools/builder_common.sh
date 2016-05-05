@@ -621,6 +621,18 @@ create_nanobsd_diskimage () {
 	fi
 	echo 'autoboot_delay="5"' >> ${LOADERCONF}
 
+	# Old systems will run (pre|post)_upgrade_command from /tmp
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command ]; then
+		cp -p \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command \
+			${FINAL_CHROOT_DIR}/tmp
+	fi
+	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command ]; then
+		cp -p \
+			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command \
+			${FINAL_CHROOT_DIR}/tmp
+	fi
+
 	for _NANO_MEDIASIZE in ${2}; do
 		if [ -z "${_NANO_MEDIASIZE}" ]; then
 			continue;

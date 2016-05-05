@@ -1009,7 +1009,7 @@ function is_unqualified_hostname($hostname) {
 		return false;
 	}
 
-	if (preg_match('/^(?:[a-z0-9_]|[a-z0-9_][a-z0-9_\-]*[a-z0-9_])$/i', $hostname)) {
+	if (preg_match('/^(?:[a-zA-Z0-9_]|[a-zA-Z0-9_][a-zA-Z0-9_\-]*[a-zA-Z0-9_])$/i', $hostname)) {
 		return true;
 	} else {
 		return false;

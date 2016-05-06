@@ -515,18 +515,23 @@ if ($savemsg) {
 					} else if ($column['type'] == "interface") {
 						echo $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
 					} else {
+						$display_text = "";
 						#Check if columnitem has an encoding field declared
 						if ($column['encoding'] == "base64") {
-							echo $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
+							$display_text = $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
 						#Check if there is a custom info to show when $fieldname is not empty
 						} else if ($column['listmodeon'] && $fieldname != "") {
-							echo $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
+							$display_text = $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
 						#Check if there is a custom info to show when $fieldname is empty
 						} else if ($column['listmodeoff'] && $fieldname == "") {
-							echo $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
+							$display_text = $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
 						} else {
-							echo $column['prefix'] . $fieldname ." ". $column['suffix'];
+							$display_text = $column['prefix'] . $fieldname ." ". $column['suffix'];
 						}
+						if (!isset($column['allow_html'])) {
+							$display_text = htmlspecialchars($display_text);
+						}
+						echo $display_text;
 					}
 ?>
 					</td>

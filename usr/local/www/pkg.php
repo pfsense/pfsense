@@ -425,29 +425,35 @@ if ($pkg['tabs'] <> "") {
 ?>
 						<td class="<?=$class;?>" ondblclick="document.location='pkg_edit.php?xml=<?=$xml?>&amp;act=edit&amp;id=<?=$i;?>';">
 							<?php
-								$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
-								#Check if columnitem has a type field declared
-							    if($column['type'] == "checkbox") {
-									if($fieldname == "") {
-								    	echo gettext("No");
-									} else {
-								    	echo gettext("Yes");
-									}
-							    } else if ($column['type'] == "interface") {
-									echo  $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
-							    } else {
-							    	#Check if columnitem has an encoding field declared
-							    	if ($column['encoding'] == "base64")
-										echo  $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
-									#Check if there is a custom info to show when $fieldname is not empty
-									else if($column['listmodeon'] && $fieldname != "")
-								   		echo $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
-								   	#Check if there is a custom info to show when $fieldname is empty	
-								   	else if($column['listmodeoff'] && $fieldname == "")
-								    	echo $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
-									else
-										echo $column['prefix'] . $fieldname ." ". $column['suffix'];
-							    }
+							$fieldname = $ip[xml_safe_fieldname($column['fieldname'])];
+							#Check if columnitem has a type field declared
+							if($column['type'] == "checkbox") {
+								if($fieldname == "") {
+									echo gettext("No");
+								} else {
+									echo gettext("Yes");
+								}
+							} else if ($column['type'] == "interface") {
+								echo  $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
+							} else {
+								$display_text = "";
+								#Check if columnitem has an encoding field declared
+								if ($column['encoding'] == "base64") {
+									$display_text = $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
+								#Check if there is a custom info to show when $fieldname is not empty
+								} else if ($column['listmodeon'] && $fieldname != "") {
+									$display_text = $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
+								#Check if there is a custom info to show when $fieldname is empty
+								} else if ($column['listmodeoff'] && $fieldname == "") {
+									$display_text = $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
+								} else {
+									$display_text = $column['prefix'] . $fieldname ." ". $column['suffix'];
+								}
+								if (!isset($column['allow_html'])) {
+									$display_text = htmlspecialchars($display_text);
+								}
+								echo $display_text;
+							}
 							?>
 						</td>
 <?php

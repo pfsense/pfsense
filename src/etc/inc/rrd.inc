@@ -1070,7 +1070,9 @@ EOD;
 
 	$databases = glob("{$rrddbpath}/*.rrd");
 	foreach ($databases as $database) {
-		chown($database, "nobody");
+		if (file_exists($database)) {
+			chown($database, "nobody");
+		}
 	}
 
 	if (platform_booting()) {

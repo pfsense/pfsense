@@ -174,11 +174,13 @@ if ($mounted_rw) {
 	/* refcount_read returns -1 when shared memory section does not exist */
 	/* refcount can be zero here when the user has set nanobsd_force_rw */
 	/* refcount 1 is normal, so only display the count for abnormal values */
+	/*
 	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
 		$refdisplay = " ". sprintf(gettext("(Reference count %s)"), $refcount);
 	}
+	*/
 	$lbl = gettext("Read/Write") . $refdisplay;
 	$btnlbl = gettext("Switch to Read-Only");
 } else {
@@ -188,6 +190,7 @@ if ($mounted_rw) {
 
 // Only show the changero button if force read/write is off, or the file system is not in writable state, or there is an unusual refcount.
 // If force read/write is on, and the file system is in writable state, and refcount is normal then the user has no reason to mess about.
+/*
 if (!isset($config['system']['nanobsd_force_rw']) || !$mounted_rw || ($refcount > 1)) {
 	$robtn = new Form_Button(
 		'changero',
@@ -198,12 +201,14 @@ if (!isset($config['system']['nanobsd_force_rw']) || !$mounted_rw || ($refcount 
 	$robtn->addClass(($mounted_rw) ? 'btn-success' : 'btn-warning' . ' btn-sm');
 	$lbl .= ' ' . $robtn;
 }
-
+*/
 $section->addInput(new Form_StaticText(
 	'Read/Write status',
 	$lbl
-))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
+))->setHelp('NanoBSD is now always read-write to avoid read-write to read-only mount problems.');
+//))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
 
+/*
 $section->addInput(new Form_Checkbox(
 	'nanobsd_force_rw',
 	'Permanent Read/Write',
@@ -223,6 +228,7 @@ $section->addInput(new Form_StaticText(
 	null,
 	$permbtn
 ));
+*/
 
 $section->addInput(new Form_Input(
 	'destslice',

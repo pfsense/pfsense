@@ -45,7 +45,7 @@ foreach (\$config['installedpackages']['package'] as \$package) {
 	} else {
 		\$removed_packages[] = \$package['name'];
 	}
-	//${UNINSTALL}(\$package['name']);
+	${UNINSTALL}(\$package['name']);
 }
 
 @file_put_contents("{\$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt", implode("\\n",\$removed_packages));

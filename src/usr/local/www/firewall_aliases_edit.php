@@ -601,10 +601,13 @@ $help = array(
 
 // Tab type specific patterns.
 // Intentionally loose (valid character check only, no pattern recognition).
-// Can be tightend up with pattern recognition as desired for each tab type.
+// Can be tightened up with pattern recognition as desired for each tab type.
+// Network and host types allow an optional CIDR following the address or an address range using dash separator,
+// and there may be multiple items separated by spaces - "192.168.1.0/24 192.168.2.4-192.168.2.19"
+// On submit, strings like that are parsed and expanded into the appropriate individual entries and then validated.
 $pattern_str = array(
-	'network'			=> '[a-zA-Z0-9_:.-]+',	// Alias Name, Host Name, IP Address, FQDN, Network or IP Address Range
-	'host'				=> '[a-zA-Z0-9_:.-]+',	// Alias Name, Host Name, IP Address, FQDN
+	'network'			=> '[a-zA-Z0-9_:.-]+(/[0-9]+)?( [a-zA-Z0-9_:.-]+(/[0-9]+)?)*',	// Alias Name, Host Name, IP Address, FQDN, Network or IP Address Range
+	'host'				=> '[a-zA-Z0-9_:.-]+(/[0-9]+)?( [a-zA-Z0-9_:.-]+(/[0-9]+)?)*',	// Alias Name, Host Name, IP Address, FQDN
 	'port'				=> '[a-zA-Z0-9_:]+',	// Alias Name, Port Number, or Port Number Range
 	'url'				=> '.*',				// Alias Name or URL
 	'url_ports'			=> '.*',				// Alias Name or URL
@@ -724,7 +727,7 @@ while ($counter < count($addresses)) {
 
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
-		'Address',
+		$tab == 'port' ? 'Port':'Address',
 		$address
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 

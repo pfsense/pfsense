@@ -1115,7 +1115,7 @@ function get_base_pkg_name() {
 }
 
 /* Verify if system needs upgrade (meta package or base) */
-function get_system_pkg_version() {
+function get_system_pkg_version($baseonly = false) {
 	global $g;
 
 	$base_pkg = get_base_pkg_name();
@@ -1135,8 +1135,7 @@ function get_system_pkg_version() {
 		}
 	}
 
-	if (empty($pkg_info) ||
-	    $pkg_info['version'] == $pkg_info['installed_version']) {
+	if (empty($pkg_info) || (!$baseonly && ($pkg_info['version'] == $pkg_info['installed_version']))) {
 		$info = get_pkg_info($meta_pkg);
 		$pkg_name = $meta_pkg;
 

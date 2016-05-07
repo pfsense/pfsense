@@ -125,8 +125,7 @@ if ($_REQUEST['getactivity']) {
 			$packet_s = round(100 * ($q->pps / $bigger_stat), 0);
 		} else if ($bigger_stat != "0") {
 			$packet_s = round(100 * ($q->bandwidth / $bigger_stat), 0);
-		}
-		if ($packet_s < 0) {
+		} else {
 			$packet_s = 0;
 		}
 		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";

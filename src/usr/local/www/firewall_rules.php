@@ -889,7 +889,7 @@ if ($seprows[$nrules]) {
 	}
 
 	printf(gettext("%sClick the anchor icon %s to move checked rules before the clicked row. Hold down " .
-			"the shift key and click to move the rules after the clicked row"), '<br /><br />', '<i class="fa fa-anchor"></i>')
+			"the shift key and click to move the rules after the clicked row."), '<br /><br />', '<i class="fa fa-anchor"></i>')
 ?>
 	</div>
 	</div>

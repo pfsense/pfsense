@@ -3433,7 +3433,7 @@ class dnpipe_class extends dummynet_class {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
+			log_error(sprintf(gettext('SHAPER: Could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 		$number = dnqueue_find_nextnumber();
@@ -3500,13 +3500,13 @@ class dnpipe_class extends dummynet_class {
 			}
 		}
 		if ($schedule == 0 && $entries > 1) {
-			$input_errors[] = gettext("A schedule needs to be specified for every additional entry");
+			$input_errors[] = gettext("A schedule needs to be specified for every additional entry.");
 		}
 		if ($schedulenone > 0 && $entries > 1) {
-			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected");
+			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected.");
 		}
 		if ($entries == 0) {
-			$input_errors[] = gettext("At least one bw specification is necessary");
+			$input_errors[] = gettext("At least one bw specification is necessary.");
 		}
 		if ($data['delay'] && (!is_numeric($data['delay']))) {
 			$input_errors[] = gettext("Delay must be an integer.");
@@ -3940,7 +3940,7 @@ EOD;
 			'Delay (ms)',
 			'text',
 			$this->GetDelay() > 0 ? $this->GetDelay():null
-		))->setHelp('In most cases, zero (0) should specified here (or leave the field empty)');
+		))->setHelp('In most cases, zero (0) should specified here (or leave the field empty).');
 
 		$section->addInput(new Form_Input(
 			'plr',
@@ -3949,7 +3949,7 @@ EOD;
 			$this->GetPlr(),
 			['step' => '0.001', 'min' => '0.000']
 		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
-					'A value of 0.001 means one packet in 1000 gets dropped');
+					'A value of 0.001 means one packet in 1000 gets dropped.');
 
 		$section->addInput(new Form_Input(
 			'qlimit',
@@ -3964,7 +3964,7 @@ EOD;
 			'Bucket size (slots)',
 			'number',
 			$this->GetBuckets()
-		))->setHelp('In most cases, this field should be left empty. It increases the hash size set');
+		))->setHelp('In most cases, this field should be left empty. It increases the hash size set.');
 
 		$sform->add($section);
 

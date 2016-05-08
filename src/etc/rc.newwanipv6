@@ -74,6 +74,7 @@ if (empty($argument)) {
 $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 if (empty($interface)) {
+	log_error("rc.newwanipv6 called with empty interface");
 	filter_configure();
 	return;
 }

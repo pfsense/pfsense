@@ -190,6 +190,15 @@ if (!empty($gre)) {
 	}
 }
 
+if (platform_booting) {
+	// avoid race conditions in many of the below functions that occur during boot
+	// setting up gateways monitor doesn't seem to have issues here, and fixes the
+	// most commonly encountered bugs from earlier versions when everything below
+	// was skipped during boot
+	setup_gateways_monitor();
+	exit;
+}
+
 /*
  * We need to force sync VPNs on such even when the IP is the same for dynamic interfaces.
  * Even with the same IP the VPN software is unhappy with the IP disappearing, and we

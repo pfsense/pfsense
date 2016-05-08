@@ -106,6 +106,7 @@ if (empty($interface)) {
 	if (platform_booting()) {
 		return;
 	}
+	log_error("rc.newwanip called with empty interface.");
 	filter_configure();
 	restart_packages();
 	return;

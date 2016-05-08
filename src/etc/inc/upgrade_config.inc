@@ -4978,4 +4978,17 @@ function upgrade_152_to_153() {
 		}
 	}
 }
+function upgrade_153_to_154() {
+	global $config;
+
+	// rename packages from 2.1.x
+	$rename_arr = array("Quagga OSPF" => "Quagga_OSPF", "System Patches" => "System_Patches");
+	if (is_array($config['installedpackages']['package'])) {
+		foreach ($config['installedpackages']['package'] as $idx => $pkg) {
+			if (key_exists($pkg['name'], $rename_arr)) {
+				$config['installedpackages']['package'][$idx]['name'] == $rename_arr[$pkg['name']];
+			}
+		}
+	}
+}
 ?>

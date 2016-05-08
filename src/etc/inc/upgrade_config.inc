@@ -4320,15 +4320,19 @@ function upgrade_134_to_135() {
 function upgrade_135_to_136() {
 	global $config;
 
+	$l7_active = false;
 	if (isset($config['l7shaper'])) {
-		file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		unset($config['l7shaper']);
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {
 				if (isset($rule['l7container'])) {
 					unset($config['filter']['rule'][$idx]['l7container']);
+					$l7_active = true;
 				}
 			}
+		}
+		if ($l7_active) {
+			file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		}
 	}
 }

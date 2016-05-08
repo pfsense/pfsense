@@ -521,7 +521,8 @@ function ip_to_hex($ip) {
 */
 function ip_compare($data1, $comparison, $data2, $requiretype='any') {
 
-	// unpack data1/2 into d1/2, converting subnet to range, and validate data type + array sizes
+	// unpack data1/2 into d1/2, convert any subnets to ranges, and validate data types + array sizes
+	// other kinds of invalid input lead to empty strings in data now, and picked up as an error later
 	if (is_array($data1)) {
 		//array data
 		if ($data1[0] == 'subnet'  && count($data1) == 3) {
@@ -534,7 +535,6 @@ function ip_compare($data1, $comparison, $data2, $requiretype='any') {
 	} elseif (is_string($data1)) {
 		// string data
 		if (count($d = explode('/', $data1)) == 2) {
-			// invalid subnet is picked up as error later
 			$d1 = array('range', gen_subnet($d[0], $d[1]), gen_subnet_max($d[0], $d[1]));
 		} elseif (count($d = explode('-', $data1)) == 2) {
 			$d1 = array('range', $d[0], $d[1]);
@@ -557,7 +557,6 @@ function ip_compare($data1, $comparison, $data2, $requiretype='any') {
 	} elseif (is_string($data2)) {
 		// string data
 		if (count($d = explode('/', $data2)) == 2) {
-			// invalid subnet is picked up as error later
 			$d2 = array('range', gen_subnet($d[0], $d[1]), gen_subnet_max($d[0], $d[1]));
 		} elseif (count($d = explode('-', $data2)) == 2) {
 			$d2 = array('range', $d[0], $d[1]);

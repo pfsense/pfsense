@@ -69,8 +69,8 @@ $ca_methods = array(
 	"internal" => gettext("Create an internal Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array("512", "1024", "2048", "4096");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+$ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];

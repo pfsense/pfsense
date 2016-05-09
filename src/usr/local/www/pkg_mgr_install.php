@@ -327,7 +327,8 @@ if ($input_errors) {
 			<label class="col-sm-2 control-label">
 				<?=gettext("Current Base System")?>
 			</label>
-			<div class="col-sm-10" id="installed_version">
+			<div class="col-sm-10">
+				<p id="installed_version" class="form-control-static"></p>
 			</div>
 		</div>
 
@@ -335,7 +336,8 @@ if ($input_errors) {
 			<label class="col-sm-2 control-label">
 				<?=gettext("Latest Base System")?>
 			</label>
-			<div class="col-sm-10" id="version">
+			<div class="col-sm-10">
+				<p id="version" class="form-control-static"></p>
 			</div>
 		</div>
 
@@ -349,7 +351,7 @@ if ($input_errors) {
 					<i class="fa fa-check icon-embed-btn"></i>
 					<?=gettext("Confirm")?>
 				</button>
-				<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
+				<p id="uptodate" class="form-control-static"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></p>
 			</div>
 		</div>
 <?php

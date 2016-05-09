@@ -22,6 +22,7 @@
 ./etc/rc.conf
 ./etc/spwd.db
 ./etc/syslog.conf
+./etc/ttys
 ./media
 ./mnt
 ./proc

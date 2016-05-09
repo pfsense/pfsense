@@ -373,6 +373,9 @@ echo "done."
 # Second upgrade stage
 /usr/local/sbin/${product}-upgrade -y -b 2
 
+# Reconfigure console
+/etc/rc.console_setup
+
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt

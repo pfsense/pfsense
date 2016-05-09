@@ -247,7 +247,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp(sprintf("If this option is set, then machines that specify".
 			" their hostname when requesting a DHCP lease will be registered".
 			" in the DNS forwarder, so that their name can be resolved.".
-			" The domain in %sSystem: General setup%s should also".
+			" The domain in %sSystem: General Setup%s should also".
 			" be set to the proper value.",'<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 
@@ -258,7 +258,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcpstatic']
 ))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
 					"be registered in the DNS forwarder, so that their name can be ".
-					"resolved. The domain in %sSystem: General setup%s should also ".
+					"resolved. The domain in %sSystem: General Setup%s should also ".
 					"be set to the proper value.",'<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 

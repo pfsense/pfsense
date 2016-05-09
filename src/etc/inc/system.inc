@@ -1956,20 +1956,6 @@ function system_do_shell_commands($early = 0) {
 	}
 }
 
-function system_console_configure() {
-	global $config, $g;
-	if (isset($config['system']['developerspew'])) {
-		$mt = microtime();
-		echo "system_console_configure() being called $mt\n";
-	}
-
-	if (isset($config['system']['disableconsolemenu'])) {
-		touch("{$g['varetc_path']}/disableconsole");
-	} else {
-		unlink_if_exists("{$g['varetc_path']}/disableconsole");
-	}
-}
-
 function system_dmesg_save() {
 	global $g;
 	if (isset($config['system']['developerspew'])) {

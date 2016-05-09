@@ -257,7 +257,7 @@ if ($_POST) {
 
 	if ($addnewpipe) {
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else {
 			$dnpipe =& new dnpipe_class();
 
@@ -283,7 +283,7 @@ if ($_POST) {
 		}
 	} else if ($parentqueue) { /* Add a new queue */
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else if ($dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);

@@ -74,6 +74,7 @@ if (empty($argument)) {
 $interface_descr = convert_friendly_interface_to_friendly_descr($interface);
 
 if (empty($interface)) {
+	log_error("rc.newwanipv6 called with empty interface");
 	filter_configure();
 	return;
 }
@@ -143,6 +144,15 @@ system_routing_configure($interface);
 
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
+
+if (platform_booting) {
+	// avoid race conditions in many of the below functions that occur during boot
+	// setting up gateways monitor doesn't seem to have issues here, and fixes the
+	// most commonly encountered bugs from earlier versions when everything below
+	// was skipped during boot
+	setup_gateways_monitor();
+	exit;
+}
 
 /* signal filter reload */
 filter_configure();

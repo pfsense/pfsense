@@ -66,6 +66,6 @@ class Form_Checkbox extends Form_Input
 		if (!isset($this->_description))
 			return $input;
 
-		return '<label>'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';
+		return '<label class="chkboxlbl">'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';
 	}
 }

@@ -276,7 +276,7 @@ tr.disabled th {
     margin: 10px 0 20px 0;
     box-shadow: 0px 1px 10px rgba(0,0,0,.3);
     margin-bottom: 10px;
-    background-color: #E0E0E0;   
+    background-color: #E0E0E0;
 }
 
 .header .context-links {
@@ -792,8 +792,8 @@ ul.tree li .over{
         width: 50%;
     }
 
-    .breadcrumb li:not(:last-child), .breadcrumb>li+li:before { 
-        display: none; 
+    .breadcrumb li:not(:last-child), .breadcrumb>li+li:before {
+        display: none;
     }
 }
 
@@ -905,4 +905,13 @@ svg {
 
 #chart .nvtooltip > h3 {
     font-size: 14px;
+}
+
+/* Experimental styles to correct vertical alignment in forms */
+.col-sm-10 {
+    padding-top: 7px;
+}
+
+.chkboxlbl {
+    padding-top: 4px;
 }

@@ -456,7 +456,7 @@ if ($_POST['apply']) {
 						/* call interface_track6_configure with linkup true so
 						   IPv6 IPs are added back. dhcp6c needs a HUP. Can't
 						   just call interface_configure with linkup true as
-						   that skips bridge membership addition. 
+						   that skips bridge membership addition.
 						*/
 						$wancfg = $config['interfaces'][$ifapply];
 						interface_track6_configure($ifapply, $wancfg, true);
@@ -1788,7 +1788,7 @@ if (count($mediaopts_list) > 0) {
 	$section->addInput(new Form_Select(
 		'mediaopt',
 		'Speed and Duplex',
-		rtrim($mediaopt_from_config),
+		rtrim($config['interfaces'][$if]['media'] . ' ' . $config['interfaces'][$if]['mediaopt']),
 		build_mediaopts_list()
 	))->setHelp('Explicitly set speed and duplex mode for this interface.' . '<br />' .
 				'WARNING: MUST be set to autoselect (automatically negotiate speed) unless the port this interface connects to has its speed and duplex forced.');

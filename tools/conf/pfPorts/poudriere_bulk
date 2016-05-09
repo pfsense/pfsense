@@ -18,6 +18,7 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
+sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/bsdinstaller
@@ -48,6 +49,7 @@ www/%%PRODUCT_NAME%%-pkg-squidGuard
 security/%%PRODUCT_NAME%%-pkg-openvpn-client-export
 sysutils/%%PRODUCT_NAME%%-pkg-blinkled
 sysutils/%%PRODUCT_NAME%%-pkg-gwled
+sysutils/%%PRODUCT_NAME%%-pkg-nut
 mail/%%PRODUCT_NAME%%-pkg-mailreport
 sysutils/%%PRODUCT_NAME%%-pkg-RRD_Summary
 net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF

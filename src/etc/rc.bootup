@@ -319,8 +319,8 @@ echo "done.\n";
 /* start load balancer daemon */
 relayd_configure();
 
-/* configure console menu */
-system_console_configure();
+/* configure console menu and serial port*/
+setup_serial_port();
 
 /* start DHCP service */
 services_dhcpd_configure();

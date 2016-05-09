@@ -129,12 +129,12 @@ body {
 }
 
 @media (min-width: 768px) {
-	form-horizontal .control-label {
+	.form-horizontal .control-label {
 		padding-top: 4px;
 	}
 }
-
+	
 /* Experimental styles to correct vertical alignment in forms */
-	col-sm-10 {
+.col-sm-10 {
 	padding-top: 0px;
 }

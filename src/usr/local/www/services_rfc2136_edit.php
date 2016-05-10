@@ -217,7 +217,7 @@ $section->addInput(new Form_Input(
 	'Hostname',
 	'text',
 	$pconfig['host']
-))->setHelp('Fully qualified hostname of the host to be updated');
+))->setHelp('Fully qualified hostname of the host to be updated.');
 
 $section->addInput(new Form_Input(
 	'ttl',
@@ -344,7 +344,7 @@ $form->add($section);
 print($form);
 
 print_info_box(sprintf(gettext('A DNS server must be configured in %1$sSystem: ' .
-					'General setup %2$sor allow the DNS server list to be overridden ' .
+					'General Setup %2$sor allow the DNS server list to be overridden ' .
 					'by DHCP/PPP on WAN for dynamic DNS updates to work.'), '<a href="system.php">', '</a>'));
 
 include("foot.inc");

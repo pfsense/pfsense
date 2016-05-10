@@ -487,7 +487,7 @@ $section->addInput(new Form_Select(
 	$spanlist['selected'],
 	$spanlist['list'],
 	true
-))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge.' .
+))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
 			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
 			'%sThe span interface cannot be part of the bridge member interfaces.%s', ['<strong>', '</strong>']);
 
@@ -584,7 +584,7 @@ $section->addInput(new Form_Select(
 	$edgelist['selected'],
 	$edgelist['list'],
 	true
-))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP).' .
+))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP). ' .
 			'STP is used to detect and remove loops in a network topology.');
 
 $section->addInput(new Form_Input(
@@ -609,7 +609,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['hellotime'],
 	['placeholder' => 2, 'min' => 1, 'max' => 2, 'step' => '0.1']
-))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode.' .
+))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode. ' .
 			'The default is 2 seconds. The minimum is 1 second and the maximum is 2 seconds.');
 
 $section->addInput(new Form_Input(

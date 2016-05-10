@@ -304,7 +304,7 @@ $section->addInput(new Form_Select(
 			'&nbsp;<strong>Router Only</strong> to only advertise this router' . '<br />' .
 			'&nbsp;<strong>Unmanaged</strong> for Router Advertising with Stateless Autoconfig' . '<br />' .
 			'&nbsp;<strong>Managed</strong> for assignment through a DHCPv6 Server' . '<br />' .
-			'&nbsp;<strong>Assisted</strong> for DHCPv6 Server assignment combined with Stateless Autoconfig.' .
+			'&nbsp;<strong>Assisted</strong> for DHCPv6 Server assignment combined with Stateless Autoconfig. ' .
 			'It is not required to activate this DHCPv6 server when set to "Managed", this can be another host on the network');
 
 $section->addInput(new Form_Select(

@@ -325,9 +325,9 @@ $section->addInput(new Form_Checkbox(
 	'Accept unencrypted ID and HASH payloads in IKEv1 Main Mode',
 	$pconfig['acceptunencryptedmainmode']
 ))->setHelp(
-	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication.' .
+	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication. ' .
 	'This is very similar to Aggressive Mode, and has the same security implications: ' .
-	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload.' .
+	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload. ' .
 	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
 );
 

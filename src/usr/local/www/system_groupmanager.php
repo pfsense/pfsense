@@ -482,7 +482,7 @@ if ($pconfig['gid'] != 1998) { // all users group
 		'fa-angle-double-left'
 	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
-	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
+	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 	$section->add($group);
 
 }

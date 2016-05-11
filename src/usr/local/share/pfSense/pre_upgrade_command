@@ -43,7 +43,12 @@ foreach (\$config['installedpackages']['package'] as \$package) {
 	if (isset(\$package['internal_name'])) {
 		\$removed_packages[] = \$package['internal_name'];
 	} else {
-		\$removed_packages[] = \$package['name'];
+		\$rename_arr = array("Quagga OSPF" => "Quagga_OSPF", "System Patches" => "System_Patches");
+		if (key_exists(\$package['name'], \$rename_arr)) {
+			\$removed_packages[] = \$rename_arr[\$package['name']];
+		} else {
+			\$removed_packages[] = \$package['name'];
+		}
 	}
 	${UNINSTALL}(\$package['name']);
 }

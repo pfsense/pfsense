@@ -72,10 +72,8 @@ if ($_POST) {
 	if ($_POST['fwbranch']) {
 		if (($_POST['fwbranch'] == "development") && !is_pkg_installed($g['product_name'] . "-repo-devel")) {
 			pkg_switch_repo(true);
-			pkg_update(true);
 		} else if (($_POST['fwbranch'] == "stable") && !is_pkg_installed($g['product_name'] . "-repo")) {
 			pkg_switch_repo(false);
-			pkg_update(true);
 		}
 	}
 

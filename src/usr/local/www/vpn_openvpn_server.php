@@ -1099,7 +1099,7 @@ if ($act=="new" || $act=="edit"):
 		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
 		$pconfig['netbios_enable']
-	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled');
+	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled.');
 
 	$section->addInput(new Form_Select(
 		'netbios_ntype',

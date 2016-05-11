@@ -655,7 +655,7 @@ $section->addInput(new Form_Input(
 	'After authentication Redirection URL',
 	'text',
 	$pconfig['redirurl']
-))->setHelp('Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated');
+))->setHelp('Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated.');
 
 $section->addInput(new Form_Input(
 	'blockedmacsurl',

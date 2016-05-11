@@ -774,7 +774,17 @@ events.push(function() {
 
 		disable_subnets = (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports');
 
+		// Enable/disable address_subnet so its value gets POSTed or not, as appropriate.
 		$("[id^='address_subnet']").prop("disabled", disable_subnets);
+
+		// Show or hide the actual address_subnet field and put in the slash, or not.
+		if (disable_subnets) {
+			$("[id^='address_subnet']").hide();
+			$('.pfIpMask').html('');
+		} else {
+			$("[id^='address_subnet']").show();
+			$('.pfIpMask').html('/');
+		}
 
 		// Set the help text to match the tab
 		var helparray = <?=json_encode($help);?>;

@@ -774,7 +774,11 @@ events.push(function() {
 
 		disable_subnets = (tab == 'host') || (tab == 'port') || (tab == 'url') || (tab == 'url_ports');
 
+		// Enable/disable address_subnet so its value gets POSTed or not, as appropriate.
 		$("[id^='address_subnet']").prop("disabled", disable_subnets);
+
+		// Show or hide the slash plus address_subnet field so the user does not even see it if it is not relevant.
+		hideMask('address_subnet', disable_subnets);
 
 		// Set the help text to match the tab
 		var helparray = <?=json_encode($help);?>;

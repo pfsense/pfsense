@@ -138,6 +138,19 @@ function hideLabel(text, hide) {
 		element.parent('div').removeClass('hidden');
 }
 
+// Hides the '/' and the subnet mask of an Ip_Address/subnet_mask group
+function hideMask(name, hide) {
+	if(hide) {
+		$('[id^=' + name + ']').hide();
+		$('[id^=' + name + ']').prev('span').hide();
+		$('[id^=' + name + ']').parent('div').removeClass('input-group');
+	} else {
+		$('[id^=' + name + ']').show();
+		$('[id^=' + name + ']').prev('span').show();
+		$('[id^=' + name + ']').parent('div').addClass('input-group');
+	}
+}
+
 // Toggle table row checkboxes and background colors on the pages that use sortable tables:
 //	/usr/local/www/firewall_nat.php
 //	/usr/local/www/firewall_nat_1to1.php

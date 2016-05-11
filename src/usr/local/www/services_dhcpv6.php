@@ -728,7 +728,7 @@ $section->addInput(new Form_Input(
 	'Domain search list',
 	'text',
 	$pconfig['domainsearchlist']
-))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator');
+))->setHelp('The DHCP server can optionally provide a domain search list. Use the semicolon character as separator.');
 
 $section->addInput(new Form_Input(
 	'deftime',
@@ -994,7 +994,7 @@ print($form);
 <?php
 print_info_box(
 	sprintf(
-		gettext('The DNS servers entered in %1$sSystem: General setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
+		gettext('The DNS servers entered in %1$sSystem: General Setup%3$s (or the %2$sDNS forwarder%3$s if enabled) will be assigned to clients by the DHCP server.'),
 		'<a href="system.php">',
 		'<a href="services_dnsmasq.php"/>',
 		'</a>') .

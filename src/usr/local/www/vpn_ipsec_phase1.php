@@ -662,10 +662,8 @@ function build_eal_list() {
 
 if ($pconfig['mobile']) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 1"));
-	$editing_mobile = true;
 } else {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 1"));
-	$editing_mobile = false;
 }
 
 $shortcut_section = "ipsec";
@@ -677,8 +675,8 @@ if ($input_errors) {
 }
 
 $tab_array = array();
-$tab_array[] = array(gettext("Tunnels"), !$editing_mobile, "vpn_ipsec.php");
-$tab_array[] = array(gettext("Mobile Clients"), $editing_mobile, "vpn_ipsec_mobile.php");
+$tab_array[] = array(gettext("Tunnels"), true, "vpn_ipsec.php");
+$tab_array[] = array(gettext("Mobile Clients"), false, "vpn_ipsec_mobile.php");
 $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);

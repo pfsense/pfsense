@@ -655,7 +655,7 @@ $section->addInput(new Form_Input(
 	'After authentication Redirection URL',
 	'text',
 	$pconfig['redirurl']
-))->setHelp('Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated');
+))->setHelp('Clients will be redirected to this URL instead of the one they initially tried to access after they\'ve authenticated.');
 
 $section->addInput(new Form_Input(
 	'blockedmacsurl',
@@ -688,7 +688,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['passthrumacadd']
 ))->setHelp(sprintf('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
-			'%s or send a POST from another system.'  .
+			'%s or send a POST from another system. '  .
 			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>'));
 
 $section->addInput(new Form_Checkbox(

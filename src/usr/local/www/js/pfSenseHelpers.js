@@ -143,11 +143,11 @@ function hideMask(name, hide) {
 	if(hide) {
 		$('[id^=' + name + ']').hide();
 		$('[id^=' + name + ']').prev('span').hide();
-		$('[id^=' + name + ']').parents('div').removeClass('input-group');
+		$('[id^=' + name + ']').parent('div').removeClass('input-group');
 	} else {
 		$('[id^=' + name + ']').show();
 		$('[id^=' + name + ']').prev('span').show();
-		$('[id^=' + name + ']').parents('div').addClass('input-group');
+		$('[id^=' + name + ']').parent('div').addClass('input-group');
 	}
 }
 

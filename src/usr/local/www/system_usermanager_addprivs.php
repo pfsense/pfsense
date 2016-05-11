@@ -186,7 +186,7 @@ $section->addInput(new Form_Select(
 	build_priv_list(),
 	true
 ))->addClass('multiselect')
-  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
+  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 
 $section->addInput(new Form_Select(
 	'shadow',
@@ -195,7 +195,7 @@ $section->addInput(new Form_Select(
 	build_priv_list(),
 	true
 ))->addClass('shadowselect')
-  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items');
+  ->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 
 $section->addInput(new Form_Input(
 	'filtertxt',

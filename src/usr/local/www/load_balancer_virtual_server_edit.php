@@ -234,7 +234,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['port']
 ))->setHelp('Port that the clients will connect to. All connections to this port will be forwarded to the pool cluster. ' .
-			'If left blank listening ports from the pool will be used.' .
+			'If left blank listening ports from the pool will be used.' . " " .
 			'A port alias listed in Firewall -&gt; Aliases may also be specified here.');
 
 if (count($config['load_balancer']['lbpool']) == 0) {

@@ -138,7 +138,7 @@ function parse_config($parse = false) {
 	if (!$parse) {
 		if (file_exists($g['tmp_path'] . '/config.cache')) {
 			$config = unserialize(file_get_contents($g['tmp_path'] . '/config.cache'));
-			if (is_null($config)) {
+			if (!is_array($config)) {
 				$parse = true;
 			}
 		} else {

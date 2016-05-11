@@ -145,12 +145,8 @@ system_routing_configure($interface);
 /* reconfigure our gateway monitor */
 setup_gateways_monitor();
 
-if (platform_booting) {
+if (platform_booting()) {
 	// avoid race conditions in many of the below functions that occur during boot
-	// setting up gateways monitor doesn't seem to have issues here, and fixes the
-	// most commonly encountered bugs from earlier versions when everything below
-	// was skipped during boot
-	setup_gateways_monitor();
 	exit;
 }
 

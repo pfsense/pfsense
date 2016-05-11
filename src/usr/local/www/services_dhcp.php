@@ -1030,21 +1030,21 @@ $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'Primary DDNS address',
 	$pconfig['ddnsdomainprimary']
-))->setHelp('Primary domain name server IP address for the dynamic domain name');
+))->setHelp('Primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',
 	'DNS Domain key',
 	'text',
 	$pconfig['ddnsdomainkeyname']
-))->setHelp('Dynamic DNS domain key name which will be used to register client names in the DNS server');
+))->setHelp('Dynamic DNS domain key name which will be used to register client names in the DNS server.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkey',
 	'DNS Domain key secret',
 	'text',
 	$pconfig['ddnsdomainkey']
-))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server');
+))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
 
 // Advanced MAC
 $btnadv = new Form_Button(

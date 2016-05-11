@@ -382,12 +382,30 @@ function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 		$pkgs = $g['pkg_prefix'];
 	}
 
+	if (!function_exists('is_subsystem_dirty')) {
+		require_once("util.inc");
+	}
+
+	/* Do not run remote operations if pkg has a lock */
+	if (is_subsystem_dirty('pkg')) {
+		$only_local = true;
+		$lock = false;
+	} else {
+		$lock = true;
+	}
+
 	$extra_param = "";
 	if ($only_local) {
 		$extra_param = "-U ";
 	}
 
+	if ($lock) {
+		mark_subsystem_dirty('pkg');
+	}
 	$rc = pkg_exec("search {$extra_param}--raw-format json-compact " . $pkgs, $out, $err);
+	if ($lock) {
+		clear_subsystem_dirty('pkg');
+	}
 
 	if ($rc != 0) {
 		update_status("\n" . gettext(

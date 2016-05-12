@@ -1129,7 +1129,7 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
-function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
+function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target, $targetport) {
 	global $config;
 
 	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias'])) {
@@ -1149,6 +1149,12 @@ function rule_columns_with_alias($src, $srcport, $dst, $dstport) {
 		}
 		if ($alias_name['name'] == $dstport) {
 			$columns['dstport'] = $alias_id;
+		}
+		if ($alias_name['name'] == $target) {
+			$columns['target'] = $alias_id;
+		}
+		if ($alias_name['name'] == $targetport) {
+			$columns['targetport'] = $alias_id;
 		}
 	}
 

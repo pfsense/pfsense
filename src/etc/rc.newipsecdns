@@ -46,7 +46,7 @@ if (file_exists("{$g['varrun_path']}/booting")) {
 	return;
 }
 
-if (isset($config['ipsec']['enable'])) {
+if (ipsec_enabled()) {
 	sleep(15);
 	log_error("IPSEC: One or more IPsec tunnel endpoints has changed its IP. Refreshing.");
 } else {

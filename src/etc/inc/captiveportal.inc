@@ -1489,7 +1489,7 @@ function captiveportal_opendb() {
 			if (!is_numericint($cpzoneid)) {
 				if (is_array($config['captiveportal'])) {
 					foreach ($config['captiveportal'] as $cpkey => $cp) {
-						if ($cpzone == $cp['zone']) {
+						if ($cpzone == $cpkey) {
 							$cpzoneid = $cp['zoneid'];
 						}
 					}
@@ -1956,8 +1956,8 @@ function portal_reply_page($redirurl, $type = null, $message = null, $clientmac 
 	/* substitute other variables */
 	$ourhostname = portal_hostname_from_client_ip($clientip);
 	$protocol = (isset($cpcfg['httpslogin'])) ? 'https://' : 'http://';
-	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/index.php?zone={$cpcfg['zone']}", $htmltext);
-	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/index.php?zone={$cpcfg['zone']}", $htmltext);
+	$htmltext = str_replace("\$PORTAL_ACTION\$", "{$protocol}{$ourhostname}/index.php?zone={$cpzone}", $htmltext);
+	$htmltext = str_replace("#PORTAL_ACTION#", "{$protocol}{$ourhostname}/index.php?zone={$cpzone}", $htmltext);
 
 	$htmltext = str_replace("\$PORTAL_ZONE\$", htmlspecialchars($cpzone), $htmltext);
 	$htmltext = str_replace("\$PORTAL_REDIRURL\$", htmlspecialchars($redirurl), $htmltext);

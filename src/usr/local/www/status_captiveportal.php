@@ -73,7 +73,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-
+$cpzone = strtolower($cpzone);
 
 if (!is_array($config['captiveportal'])) {
 	$config['captiveportal'] = array();

@@ -81,6 +81,8 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
+
 $cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {

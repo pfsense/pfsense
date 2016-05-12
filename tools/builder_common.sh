@@ -423,7 +423,6 @@ print_flags() {
 	printf "                  Source DIR: %s\n" $FREEBSD_SRC_DIR
 	printf "          FreeBSD repository: %s\n" $FREEBSD_REPO_BASE
 	printf "          FreeBSD-src branch: %s\n" $FREEBSD_BRANCH
-	printf "     FreeBSD original branch: %s\n" $FREEBSD_PARENT_BRANCH
 	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
 	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
 	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
@@ -1959,34 +1958,6 @@ pkg_repo_rsync() {
 	fi
 }
 
-poudriere_create_patch() {
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
-
-	if [ -z "${FREEBSD_PARENT_BRANCH}" ]; then
-		echo ">>> ERROR: FREEBSD_PARENT_BRANCH is not set"
-	fi
-
-	LOGFILE=${BUILDER_LOGS}/poudriere.log
-
-	# Get FreeBSD source and apply patches
-	update_freebsd_sources full
-
-	[ -f "${_jail_patch}" ] && \
-		rm -f "${_jail_patch}"
-
-	# Create a big patch with all our changes to use on jail
-	( \
-		cd ${FREEBSD_SRC_DIR} && \
-		git diff $(git merge-base origin/${FREEBSD_PARENT_BRANCH} ${FREEBSD_BRANCH}) > ${_jail_patch}
-	) >/dev/null 2>&1
-
-	# Check if patch was created
-	if [ ! -s "${_jail_patch}" ]; then
-		echo ">>> ERROR: Patch does not exist or is empty, aborting..." | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-}
-
 poudriere_possible_archs() {
 	local _arch=$(uname -m)
 	local _archs="i386.i386"
@@ -2110,7 +2081,7 @@ poudriere_create_ports_tree() {
 			_branch="-B ${POUDRIERE_PORTS_GIT_BRANCH}"
 		fi
 		echo -n ">>> Creating poudriere ports tree, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git ${_branch} >/dev/null 2>&1; then
+		if ! script -aq ${LOGFILE} poudriere ports -c -p "${POUDRIERE_PORTS_NAME}" -m git -U ${POUDRIERE_PORTS_GIT_URL} ${_branch} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}
 			echo ">>> ERROR: Error creating poudriere ports tree, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
@@ -2123,7 +2094,6 @@ poudriere_create_ports_tree() {
 poudriere_init() {
 	local _error=0
 	local _archs=$(poudriere_possible_archs)
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
 
@@ -2166,10 +2136,10 @@ poudriere_init() {
 	fi
 
 	# Make sure poudriere is installed
-	if ! pkg info --quiet poudriere; then
-		echo ">>> Installing poudriere..." | tee -a ${LOGFILE}
-		if ! pkg install poudriere >/dev/null 2>&1; then
-			echo ">>> ERROR: poudriere was not installed, aborting..." | tee -a ${LOGFILE}
+	if ! pkg info --quiet poudriere-devel; then
+		echo ">>> Installing poudriere-devel..." | tee -a ${LOGFILE}
+		if ! pkg install poudriere-devel >/dev/null 2>&1; then
+			echo ">>> ERROR: poudriere-devel was not installed, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 	fi
@@ -2201,10 +2171,6 @@ EOF
 	[ ! -d /usr/local/etc/poudriere.d ] \
 		&& mkdir -p /usr/local/etc/poudriere.d
 
-	cat <<EOF >/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-poudriere.conf
-GIT_URL="${POUDRIERE_PORTS_GIT_URL}"
-EOF
-
 	# Create DISTFILES_CACHE if it doesn't exist
 	if [ ! -d /usr/ports/distfiles ]; then
 		mkdir -p /usr/ports/distfiles
@@ -2226,8 +2192,6 @@ EOF
 		poudriere ports -d -p "${POUDRIERE_PORTS_NAME}"
 	fi
 
-	poudriere_create_patch
-
 	local native_xtools=""
 	# Now we are ready to create jails
 	for jail_arch in ${_archs}; do
@@ -2241,8 +2205,8 @@ EOF
 
 		echo -n ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
 		# XXX: Change -m to git when it's available in poudriere
-		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_PARENT_BRANCH} \
-				-a ${jail_arch} -m svn -P ${_jail_patch} ${native_xtools} >/dev/null 2>&1; then
+		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
+				-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}
 			echo ">>> ERROR: Error creating jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS
@@ -2257,11 +2221,8 @@ EOF
 
 poudriere_update_jails() {
 	local _archs=$(poudriere_possible_archs)
-	local _jail_patch="${SCRATCHDIR}/poudriere_jail.${POUDRIERE_BRANCH}.patch"
 
 	LOGFILE=${BUILDER_LOGS}/poudriere.log
-
-	poudriere_create_patch
 
 	local native_xtools=""
 	for jail_arch in ${_archs}; do
@@ -2271,7 +2232,7 @@ poudriere_update_jails() {
 		local _create_or_update_text="Updating"
 		if ! poudriere jail -i -j "${jail_name}" >/dev/null 2>&1; then
 			echo ">>> Poudriere jail ${jail_name} not found, creating..." | tee -a ${LOGFILE}
-			_create_or_update="-c -v ${FREEBSD_PARENT_BRANCH} -a ${jail_arch} -m svn"
+			_create_or_update="-c -v ${FREEBSD_BRANCH} -a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE}"
 			_create_or_update_text="Creating"
 		fi
 
@@ -2282,7 +2243,7 @@ poudriere_update_jails() {
 		fi
 
 		echo -n ">>> ${_create_or_update_text} jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		if ! script -aq ${LOGFILE} poudriere jail ${_create_or_update} -j "${jail_name}" -P ${_jail_patch} ${native_xtools} >/dev/null 2>&1; then
+		if ! script -aq ${LOGFILE} poudriere jail ${_create_or_update} -j "${jail_name}" ${native_xtools} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}
 			echo ">>> ERROR: Error ${_create_or_update_text} jail ${jail_name}, aborting..." | tee -a ${LOGFILE}
 			print_error_pfS

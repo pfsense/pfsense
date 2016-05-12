@@ -143,7 +143,6 @@ GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e '
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
-export FREEBSD_PARENT_BRANCH=${FREEBSD_PARENT_BRANCH:-"stable/10"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
 if [ "${TARGET}" = "i386" ]; then
@@ -151,6 +150,16 @@ if [ "${TARGET}" = "i386" ]; then
 else
 	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
 fi
+
+# XXX: Poudriere doesn't like ssh short form
+case "${FREEBSD_REPO_BASE}" in
+	git@*)
+		export FREEBSD_REPO_BASE_POUDRIERE="ssh://$(echo ${FREEBSD_REPO_BASE} | sed 's,:,/,')"
+		;;
+	*)
+		export FREEBSD_REPO_BASE_POUDRIERE="${FREEBSD_REPO_BASE}"
+		;;
+esac
 
 # Leave this alone.
 export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
@@ -271,6 +280,13 @@ export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
+
+# XXX: Poudriere doesn't like ssh short form
+case "${POUDRIERE_PORTS_GIT_URL}" in
+	git@*)
+		POUDRIERE_PORTS_GIT_URL="ssh://$(echo ${POUDRIERE_PORTS_GIT_URL} | sed 's,:,/,')"
+		;;
+esac
 
 # Host to rsync pkg repos from poudriere
 export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}

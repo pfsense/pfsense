@@ -1204,10 +1204,11 @@ function interfaces_configure() {
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
 
-		/* restart dnsmasq or unbound */
 		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();
-		} elseif (isset($config['unbound']['enable'])) {
+		}
+
+		if (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
 		}
 	}
@@ -3469,10 +3470,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			send_event("service reload ipsecdns");
 
-			/* restart dnsmasq or unbound */
 			if (isset($config['dnsmasq']['enable'])) {
 				services_dnsmasq_configure();
-			} elseif (isset($config['unbound']['enable'])) {
+			}
+
+			if (isset($config['unbound']['enable'])) {
 				services_unbound_configure();
 			}
 

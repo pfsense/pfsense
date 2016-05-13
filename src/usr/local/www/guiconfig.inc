@@ -1129,7 +1129,7 @@ function alias_info_popup($alias_id) {
 	return $content;
 }
 
-function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target, $targetport) {
+function rule_columns_with_alias($src, $srcport, $dst, $dstport, $target="", $targetport="") {
 	global $config;
 
 	if ($config['aliases']['alias'] == "" || !is_array($config['aliases']['alias'])) {

@@ -441,7 +441,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}

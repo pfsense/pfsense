@@ -761,7 +761,7 @@ function local_group_set($group, $reset = false) {
 	}
 
 	/* determine add or mod */
-	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1") == 0) {
+	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
 		$group_op = "groupmod -l";
 	} else {
 		$group_op = "groupadd -n";

@@ -261,7 +261,7 @@ function setup_gateways_monitor() {
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
 			    get_ll_scope($gateway['gateway']) == '') {
-				$gateways_arr[$gwname]['gateway'] .= '%' . $gateway['interface'];
+				$gateway['gateway'] .= '%' . $gateway['interface'];
 			}
 
 			if (is_linklocal($gateway['monitor'])) {

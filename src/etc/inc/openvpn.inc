@@ -1007,8 +1007,9 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			$ca = lookup_ca($settings['caref']);
-			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
+			$ca = ca_chain(array('caref' => $settings['caref']));
+			$ca = base64_encode($ca);
+			openvpn_add_keyfile($ca, $conf, $mode_id, "ca");
 
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);

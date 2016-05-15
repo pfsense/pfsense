@@ -1007,9 +1007,16 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			$ca = ca_chain(array('caref' => $settings['caref']));
+			// ca_chain() expects parameter to be passed  by reference. 
+			// avoid passing the whole settinsg array, as param names or 
+			// types might change in future releases. 
+			$param = array('caref' => $settings['caref']);	
+			$ca = ca_chain($param);
 			$ca = base64_encode($ca);
+			
 			openvpn_add_keyfile($ca, $conf, $mode_id, "ca");
+			
+			unset($ca, $param);
 
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);

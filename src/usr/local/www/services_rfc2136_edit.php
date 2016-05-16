@@ -146,7 +146,7 @@ if ($_POST) {
 
 		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
 
-		if ($_POST['Submit'] == gettext("Save & Force Update")) {
+		if ($_POST['force']) {
 			$retval = services_dnsupdate_process("", $rfc2136['host'], true);
 		} else {
 			$retval = services_dnsupdate_process();

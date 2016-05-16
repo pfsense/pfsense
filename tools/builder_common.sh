@@ -2261,7 +2261,7 @@ pkg_repo_rsync() {
 		print_error_pfS
 	fi
 
-	if [ -z "${USE_PKG_REPO_STAGING}" ]; then
+	if [ -z "${USE_PKG_REPO_STAGING}" -o -z "${PKG_FINAL_RSYNC_HOSTNAME}" ]; then
 		return
 	fi
 

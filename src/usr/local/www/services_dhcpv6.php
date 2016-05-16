@@ -718,7 +718,7 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain Name',
+	'Domain name',
 	'text',
 	$pconfig['domain']
 ))->setHelp('The default is to use the domain name of this system as the default domain name provided by DHCP. An alternate domain name may be specified here. ');

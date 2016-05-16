@@ -132,7 +132,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Username");
 		if ($pconfig['type'] == "namecheap") {
 			$reqdfields[] = "domainname";
-			$reqdfieldsn[] = gettext("Domain Name");
+			$reqdfieldsn[] = gettext("Domain name");
 		}
 	} else {
 		$reqdfields[] = "updateurl";
@@ -327,7 +327,7 @@ $group->add(new Form_Input(
 ));
 $group->add(new Form_Input(
 	'domainname',
-	'Domain Name',
+	'Domain name',
 	'text',
 	$pconfig['domainname']
 ));

@@ -271,7 +271,7 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['disablelargereceiveoffloading'])
 ))->setHelp('Checking this option will disable hardware large receive offloading '.
 	'(LRO). This offloading is broken in some hardware drivers, and may impact '.
-	'performance with some specific NICs.This will take effect after a machine reboot '.
+	'performance with some specific NICs. This will take effect after a machine reboot '.
 	'or re-configure of each interface.');
 
 $section->addInput(new Form_Checkbox(

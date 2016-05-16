@@ -2260,7 +2260,7 @@ pkg_repo_rsync() {
 		print_error_pfS
 	fi
 
-	if [ -z "${USE_PKG_REPO_STAGING}" ]; then
+	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
 		return
 	fi
 

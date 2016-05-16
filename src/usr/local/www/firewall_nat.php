@@ -264,11 +264,22 @@ foreach ($a_nat as $natent):
 		display_separator($separators, $nnats, $columns_in_table);
 	}
 
+	$localport = $natent['local-port'];
+
+	list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
+
+	if ($dstendport) {
+		$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
+		$localport	 .= '-' . $localendport;
+	}
+
 	$alias = rule_columns_with_alias(
 		$natent['source']['address'],
 		pprint_port($natent['source']['port']),
 		$natent['destination']['address'],
-		pprint_port($natent['destination']['port'])
+		pprint_port($natent['destination']['port']),
+		$natent['target'],
+		$localport
 	);
 
 	/* if user does not have access to edit an interface skip on to the next record */
@@ -397,22 +408,40 @@ foreach ($a_nat as $natent):
 	endif;
 ?>
 						</td>
+						<td>
+<?php
+	if (isset($alias['target'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['target']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['target'])?>" data-html="true">
+<?php
+	endif;
+?>
 
-						<td >
 							<?=str_replace('_', ' ', htmlspecialchars($natent['target']))?>
+<?php
+	if (isset($alias['target'])):
+?>
+							</a>
+<?php
+	endif;
+?>
 						</td>
 						<td>
 <?php
-	$localport = $natent['local-port'];
-
-	list($dstbeginport, $dstendport) = explode("-", $natent['destination']['port']);
-
-	if ($dstendport) {
-		$localendport = $natent['local-port'] + $dstendport - $dstbeginport;
-		$localport	 .= '-' . $localendport;
-	}
+	if (isset($alias['targetport'])):
+?>
+							<a href="/firewall_aliases_edit.php?id=<?=$alias['targetport']?>" data-toggle="popover" data-trigger="hover focus" title="<?=gettext('Alias details')?>" data-content="<?=alias_info_popup($alias['targetport'])?>" data-html="true">
+<?php
+	endif;
 ?>
 							<?=str_replace('_', ' ', htmlspecialchars(pprint_port($localport)))?>
+<?php
+	if (isset($alias['targetport'])):
+?>
+							</a>
+<?php
+	endif;
+?>
 						</td>
 
 						<td>

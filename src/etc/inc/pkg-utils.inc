@@ -988,16 +988,16 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 function package_reinstall_all() {
 	global $g, $config, $pkg_interface;
 
-	if (!isset($config['installedpackages']['package']) ||
-	    !is_array($config['installedpackages']['package'])) {
+	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
+
+	if ((!isset($config['installedpackages']['package']) ||
+	    !is_array($config['installedpackages']['package'])) && !$upgrade) {
 		return true;
 	}
 
-	$upgrade = (file_exists('/conf/needs_package_sync') && platform_booting());
-
 	/* During boot after upgrade, wait for internet connection */
 	if ($upgrade) {
-		update_status(gettext("Waiting for internet connection to update pkg metadata and finish package reinstallation"));
+		update_status(gettext("Waiting for Internet connection to update pkg metadata and finish package reinstallation"));
 		$ntries = 3;
 		while ($ntries > 0) {
 			if (pkg_update(true)) {

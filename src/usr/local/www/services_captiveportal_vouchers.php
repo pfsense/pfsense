@@ -77,6 +77,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
 
 if ($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");

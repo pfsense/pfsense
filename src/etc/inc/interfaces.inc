@@ -1204,10 +1204,11 @@ function interfaces_configure() {
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
 
-		/* restart dnsmasq or unbound */
 		if (isset($config['dnsmasq']['enable'])) {
 			services_dnsmasq_configure();
-		} elseif (isset($config['unbound']['enable'])) {
+		}
+
+		if (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
 		}
 	}
@@ -3469,10 +3470,11 @@ function interface_configure($interface = "wan", $reloadall = false, $linkupeven
 			/* reload ipsec tunnels */
 			send_event("service reload ipsecdns");
 
-			/* restart dnsmasq or unbound */
 			if (isset($config['dnsmasq']['enable'])) {
 				services_dnsmasq_configure();
-			} elseif (isset($config['unbound']['enable'])) {
+			}
+
+			if (isset($config['unbound']['enable'])) {
 				services_unbound_configure();
 			}
 
@@ -3519,7 +3521,7 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 
 	$trackcfg = $config['interfaces'][$wancfg['track6-interface']];
 	if (!isset($trackcfg['enable'])) {
-		log_error(sprintf(gettext('Interface %1$s tracking non-existant interface %2$s'), $interface, $wancfg['track6-interface']));
+		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $wancfg['track6-interface']));
 		return;
 	}
 
@@ -3553,13 +3555,17 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			break;
 	}
 
-	if ($linkupevent == false) {
+	if ($linkupevent == false && !platform_booting()) {
 		if (!function_exists('services_dhcpd_configure')) {
 			require_once("services.inc");
 		}
 
 		if (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
+		}
+
+		if (isset($config['dnsmasq']['enable'])) {
+			services_dnsmasq_configure();
 		}
 
 		services_dhcpd_configure("inet6");
@@ -3584,7 +3590,7 @@ function interface_track6_6rd_configure($interface = "lan", $lancfg) {
 
 	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
 	if (empty($wancfg)) {
-		log_error(sprintf(gettext('Interface %1$s tracking non-existant interface %2$s'), $interface, $lancfg['track6-interface']));
+		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $lancfg['track6-interface']));
 		return;
 	}
 
@@ -3648,7 +3654,7 @@ function interface_track6_6to4_configure($interface = "lan", $lancfg) {
 
 	$wancfg = $config['interfaces'][$lancfg['track6-interface']];
 	if (empty($wancfg)) {
-		log_error(sprintf(gettext('Interface %1$s tracking non-existant interface %2$s'), $interface, $lancfg['track6-interface']));
+		log_error(sprintf(gettext('Interface %1$s tracking non-existent interface %2$s'), $interface, $lancfg['track6-interface']));
 		return;
 	}
 
@@ -4001,7 +4007,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", $rtsoldscript)) {
-		printf("Error: cannot open rtsold_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
+		printf("Error: cannot open rtsold_{$wanif}_script.sh in interface_dhcpv6_configure() for writing.\n");
 		unset($rtsoldscript);
 		return 1;
 	}

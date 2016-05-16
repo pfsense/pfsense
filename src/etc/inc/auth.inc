@@ -441,7 +441,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -771,7 +771,7 @@ function local_group_set($group, $reset = false) {
 	}
 
 	/* determine add or mod */
-	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1") == 0) {
+	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
 		$group_op = "groupmod -l";
 	} else {
 		$group_op = "groupadd -n";

@@ -345,6 +345,7 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
+	unset($pconfig['doreboot']);
 }
 
 if ($savemsg) {

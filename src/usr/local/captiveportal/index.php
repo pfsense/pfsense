@@ -42,7 +42,7 @@ header("Connection: close");
 
 global $cpzone, $cpzoneid;
 
-$cpzone = $_REQUEST['zone'];
+$cpzone = strtolower($_REQUEST['zone']);
 $cpcfg = $config['captiveportal'][$cpzone];
 if (empty($cpcfg)) {
 	log_error("Submission to captiveportal with unknown parameter zone: " . htmlspecialchars($cpzone));

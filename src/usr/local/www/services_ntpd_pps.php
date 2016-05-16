@@ -188,7 +188,7 @@ $section->addInput(new Form_Input(
 	'Fudge Time',
 	'text',
 	$pconfig['fudge1']
-))->setHelp('Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver. (default: 0.0).');
+))->setHelp('Fudge time is used to specify the PPS signal offset from the actual second such as the transmission delay between the transmitter and the receiver (default: 0.0).');
 
 $section->addInput(new Form_Input(
 	'ppsstratum',

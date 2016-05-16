@@ -1365,10 +1365,11 @@ EOD;
 
 EOD;
 
+			/* Disable ipcomp for now. redmine #6167
 			if (isset($config['ipsec']['compression'])) {
 				$ipsecconnect .= "\tcompress = yes\n";
 				$enablecompression = true;
-			}
+			} */
 			if (!empty($ikelifeline)) {
 				$ipsecconnect .= "\t{$ikelifeline}\n";
 			}

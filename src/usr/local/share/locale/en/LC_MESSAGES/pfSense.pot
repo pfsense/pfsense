@@ -2249,7 +2249,7 @@ msgstr ""
 #: src/etc/inc/interfaces.inc:3514 src/etc/inc/interfaces.inc:3579
 #: src/etc/inc/interfaces.inc:3643
 #, php-format
-msgid "Interface %1$s tracking non-existant interface %2$s"
+msgid "Interface %1$s tracking non-existent interface %2$s"
 msgstr ""
 
 #: src/etc/inc/interfaces.inc:3521 src/etc/inc/interfaces.inc:3527

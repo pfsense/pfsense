@@ -432,9 +432,7 @@ display_top_tabs($tab_array);
 				<td>
 <?php
 
-if ($dfltmsg) {
-	print_info_box($dn_default_shaper_msg, 'info');
-} else {
+if (!$dfltmsg) {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add && ($action != "add")) {
@@ -481,7 +479,17 @@ if ($dfltmsg) {
 		</tbody>
 	</table>
 </div>
-
+<?php
+if ($dfltmsg) {
+?>
+<div>
+	<div class="infoblock">
+		<?php print_info_box($dn_default_shaper_msg, 'info', false); ?>
+	</div>
+</div>
+<?php
+}
+?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {

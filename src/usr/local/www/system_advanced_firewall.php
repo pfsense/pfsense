@@ -678,7 +678,7 @@ if (count($config['interfaces']) > 1) {
 	$form->add($section);
 }
 
-$section = new Form_Section('State Timeouts in Seconds. (Leave blank for default)');
+$section = new Form_Section('State Timeouts (seconds - blank for default)');
 
 $tcpTimeouts = array('First', 'Opening', 'Established', 'Closing', 'FIN Wait', 'Closed');
 foreach ($tcpTimeouts as $name) {

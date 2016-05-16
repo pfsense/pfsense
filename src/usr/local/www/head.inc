@@ -665,10 +665,10 @@ if (are_notices_pending()):?>
 					<li>
 						<b>
 <?php if (!empty($notice['url'])):?>
-							<a href="<?=$notice['url']?>"><?=$notice['id']?></a> -
+							<a href="<?=htmlspecialchars($notice['url'])?>"><?=htmlspecialchars($notice['id'])?></a> -
 <?php endif;?>
 						</b>
-						<?=$notice['notice']?>
+						<?=htmlspecialchars($notice['notice'])?>
 						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
 					</li>
 <?php	endforeach;?>

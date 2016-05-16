@@ -1372,7 +1372,7 @@ EOD;
 	$nginx_config .= <<<EOD
 		root "{$document_root}";
 		location / {
-			index  index.html index.htm index.php;
+			index  index.php index.html index.htm;
 		}
 
 		location ~ \.php$ {

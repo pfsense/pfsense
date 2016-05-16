@@ -3487,8 +3487,8 @@ function upgrade_104_to_105() {
 }
 
 function upgrade_105_to_106() {
-
-	/* NOTE: This entry can be reused for something else since the upgrade code was reverted */
+	/* NOTE: This upgrade code was reverted. See redmine ticket #3967 and
+	   https://github.com/pfsense/pfsense/commit/6f55af1c25f5232ffe905a90f5f97aad4c87bdfa */
 }
 
 function upgrade_106_to_107() {
@@ -4770,13 +4770,6 @@ function upgrade_147_to_148() {
 	// Ensure there are no spaces in group names by
 	// replacing spaces with underscores
 	if (is_array($config['system']['group'])) {
-		$exgrps = array();
-
-		// Make a list of the existing group names so we can check for dups
-		foreach ($config['system']['group'] as $grp) {
-			$exgrps[] = $grp['name'];
-		}
-
 		$cleargroups = false;
 		foreach ($config['system']['group'] as $idx => $grp) {
 			if (strstr($grp['name'], " ")) {
@@ -4981,5 +4974,10 @@ function upgrade_152_to_153() {
 			}
 		}
 	}
+}
+
+function upgrade_153_to_154() {
+	/* NOTE: This upgrade code was reverted. See redmine ticket #6118 and
+	   https://github.com/pfsense/pfsense/commit/538a3c04a6b6671151e913b06b2f340b6f8ee222 */
 }
 ?>

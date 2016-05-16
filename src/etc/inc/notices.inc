@@ -90,11 +90,11 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	}
 	$queuekey = time();
 	$toqueue = array(
-				'id'		=> $id,
-				'notice'	=> $notice,
-				'url'		=> $url,
-				'category'	=> $category,
-				'priority'	=> $priority,
+				'id'		=> htmlentities($id),
+				'notice'	=> htmlentities($notice),
+				'url'		=> htmlentities($url),
+				'category'	=> htmlentities($category),
+				'priority'	=> htmlentities($priority),
 			);
 	while (isset($queue[$queuekey])) {
 		$queuekey++;

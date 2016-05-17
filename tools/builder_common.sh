@@ -1106,7 +1106,8 @@ create_virt_images() {
 	[ -d "${VIRT_TMP}" ] \
 		&& rm -rf ${VIRT_TMP}
 
-	mkdir -p ${VIRT_TMP}
+	local _mntdir=${VIRT_TMP}/mnt
+	mkdir -p ${_mntdir}
 
 	if [ -z "${VIRT_SWAP_PART_SIZE_IN_GB}" -o "${VIRT_SWAP_PART_SIZE_IN_GB}" = "0" ]; then
 		# first partition size (freebsd-ufs)
@@ -1149,30 +1150,27 @@ create_virt_images() {
 
 	# Create / partition
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
-	makefs \
-		-B little \
-		-o label=${PRODUCT_NAME},version=2,bsize=32768,fsize=4096,maxbpg=4096,density=8192,minfree=8 \
-		-s ${VIRT_FIRST_PART_SIZE} \
-		${VIRT_TMP}/${VIRT_UFS} \
-		${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
+	truncate -s ${VIRT_FIRST_PART_SIZE} ${VIRT_TMP}/${VIRT_UFS}
+	local _md=$(mdconfig -a -f ${VIRT_TMP}/${VIRT_UFS})
+	trap "mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
-	if [ $? -ne 0 -o ! -f ${VIRT_TMP}/${VIRT_UFS} ]; then
-		if [ -f ${VIRT_TMP}/${VIRT_UFS} ]; then
-			rm -f ${VIRT_TMP}/${VIRT_UFS}
-		fi
+	newfs -L ${PRODUCT_NAME} -j /dev/${_md} 2>&1 >>${LOGFILE}
+
+	if ! mount /dev/${_md} ${_mntdir} 2>&1 >>${LOGFILE}; then
 		echo "Failed!" | tee -a ${LOGFILE}
-		echo ">>> ERROR: Error creating virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
+		echo ">>> ERROR: Error mounting virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
+	trap "umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
+
 	echo "Done!" | tee -a ${LOGFILE}
 
-	echo -n ">>> Enabling SUJ on recently created disk... " | tee -a ${LOGFILE}
-	if ! tunefs -j enable ${OVA_TMP}/${OVFUFS} 2>&1 >>${LOGFILE}; then
-		echo "Failed!" | tee -a ${LOGFILE}
-		echo ">>> ERROR: Error enabling SUJ on disk. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	echo "Done!" | tee -a ${LOGFILE}
+	clone_directory_contents ${FINAL_CHROOT_DIR} ${_mntdir}
+
+	sync
+	umount ${_mntdir} 2>&1 >>${LOGFILE}
+	mdconfig -d -u ${_md}
+	trap "-" 1 2 15 EXIT
 
 	# Create image
 	echo -n ">>> Creating virt image (${_image_type})... " | tee -a ${LOGFILE}

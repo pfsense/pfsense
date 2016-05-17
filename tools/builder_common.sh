@@ -1179,7 +1179,7 @@ create_virt_images() {
 		-s gpt \
 		-f ${_format} \
 		-b ${FINAL_CHROOT_DIR}/boot/pmbr \
-		-p freebsd-boot:=/boot/gptboot \
+		-p freebsd-boot:=${FINAL_CHROOT_DIR}/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${VIRT_TMP}/${VIRT_UFS} \
 		${VIRT_SWAP_PART_PARAM} \
 		-o ${_image_path} 2>&1 >> ${LOGFILE}

@@ -91,6 +91,7 @@ foreach ($qlist as $queue => $qkey) {
 	}
 }
 $tree .= "</ul>";
+$output = "";
 
 if ($_GET) {
 	if ($_GET['queue']) {

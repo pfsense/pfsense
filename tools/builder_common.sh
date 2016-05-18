@@ -943,8 +943,8 @@ create_ova_image() {
 	mkimg \
 		-s gpt \
 		-f raw \
-		-b /boot/pmbr \
-		-p freebsd-boot:=/boot/gptboot \
+		-b ${FINAL_CHROOT_DIR}/boot/pmbr \
+		-p freebsd-boot:=${FINAL_CHROOT_DIR}/boot/gptboot \
 		-p freebsd-ufs/${PRODUCT_NAME}:=${OVA_TMP}/${OVFUFS} \
 		${OVA_SWAP_PART_PARAM} \
 		-o ${OVA_TMP}/${OVFRAW} 2>&1 >> ${LOGFILE}

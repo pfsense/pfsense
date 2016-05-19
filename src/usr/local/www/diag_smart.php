@@ -100,13 +100,21 @@ function add_colors($string) {
 
 // Edits smartd.conf file, adds or removes email for failed disk reporting
 function update_email($email) {
+	/* Bail if an e-mail address is invalid */
+	if (!empty($email) && (filter_var($email, FILTER_VALIDATE_EMAIL) === false)) {
+		return;
+	}
+
+	if (!file_exists("/usr/local/etc/smartd.conf") && file_exists("/usr/local/etc/smartd.conf.sample")) {
+		copy("/usr/local/etc/smartd.conf.sample", "/usr/local/etc/smartd.conf");
+	}
 	// Did they pass an email?
 	if (!empty($email)) {
 		// Put it in the smartd.conf file
-		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . escapeshellarg($email) . "/' /usr/local/etc/smartd.conf");
+		shell_exec("/usr/bin/sed -i .old 's/^DEVICESCAN.*/DEVICESCAN -H -m " . escapeshellarg(str_replace('`', '', $email)) . "/' /usr/local/etc/smartd.conf");
 	} else {
 		// Remove email flags in smartd.conf
-		shell_exec("/usr/bin/sed -i old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
+		shell_exec("/usr/bin/sed -i .old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
 	}
 }
 
@@ -254,27 +262,27 @@ switch ($action) {
 			smartmonctl("start");
 			$style = 'warning';
 		} else if (isset($_POST['save'])) {
-			$config['system']['smartmonemail'] = $_POST['smartmonemail'];
-			write_config();
-
-			// Don't know what all this means, but it adds the config changed header when config is saved
-			$retval = 0;
-			config_lock();
-			if (stristr($retval, "error") != true) {
-				$savemsg = get_std_save_message($retval);
-				$style = 'success';
+			if (!empty($_POST['smartmonemail']) && (filter_var($_POST['smartmonemail'], FILTER_VALIDATE_EMAIL) === false)) {
+				$savemsg = "The supplied e-mail address is invalid.";
+				$style = 'danger';
 			} else {
-				$savemsg = $retval;
-				$style='danger';
+				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
+				write_config();
+				$retval = 0;
+				config_lock();
+				if (stristr($retval, "error") != true) {
+					$savemsg = get_std_save_message($retval);
+					$style = 'success';
+				} else {
+					$savemsg = $retval;
+					$style='danger';
+				}
+				config_unlock();
+				// Write the changes to the smartd.conf file
+				update_email($_POST['smartmonemail']);
+				// Send sig HUP to smartd, rereads the config file
+				shell_exec("/usr/bin/killall -HUP smartd");
 			}
-
-			config_unlock();
-
-			// Write the changes to the smartd.conf file
-			update_email($_POST['smartmonemail']);
-
-			// Send sig HUP to smartd, rereads the config file
-			shell_exec("/usr/bin/killall -HUP smartd");
 		}
 
 	// Was the config changed? if so, print the message

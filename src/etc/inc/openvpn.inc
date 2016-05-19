@@ -1007,8 +1007,8 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			// ca_chain() expects parameter to be passed  by reference. 
-			// avoid passing the whole settinsg array, as param names or 
+			// ca_chain() expects parameter to be passed by reference. 
+			// avoid passing the whole settings array, as param names or 
 			// types might change in future releases. 
 			$param = array('caref' => $settings['caref']);	
 			$ca = ca_chain($param);

@@ -275,11 +275,15 @@ STAGING_HOSTNAME=${STAGING_HOSTNAME:-"release-staging.netgate.com"}
 # Poudriere
 export ZFS_TANK=${ZFS_TANK:-"zroot"}
 export ZFS_ROOT=${ZFS_ROOT:-"/poudriere"}
-export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE_BRANCH}"}
 
 export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere_bulk"}
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/freebsd-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"devel"}
+
+# Use vX_Y instead of RELENG_X_Y for poudriere to make it shorter
+POUDRIERE_PORTS_BRANCH=$(echo "${POUDRIERE_PORTS_GIT_BRANCH}" | sed 's,RELENG_,v,')
+
+export POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME:-"${PRODUCT_NAME}_${POUDRIERE_PORTS_BRANCH}"}
 
 # XXX: Poudriere doesn't like ssh short form
 case "${POUDRIERE_PORTS_GIT_URL}" in

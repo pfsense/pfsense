@@ -9,6 +9,8 @@
 if [ -d "${DBPATH}" ]; then
 	echo -n "Saving DHCP Leases to RAM disk store...";
 
+	[ -f "${RAM_Disk_Store}/dhcpleases.tgz" ] && /bin/rm -f "${RAM_Disk_Store}/dhcpleases.tgz"
+
 	if [ ! -d "${RAM_Disk_Store}" ]; then
 		mkdir -p "${RAM_Disk_Store}"
 	fi

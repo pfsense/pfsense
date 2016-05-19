@@ -2395,13 +2395,12 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 				touch($urltable_filename);
 			}
 
-			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-			if (!isset($config['system']['use_mfs_tmpvar'])) {
-				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
-			} else {
-				/* Update the RAM disk store with the new/updated table file. */
+			/* Remove existing archive and create an up to date archive if RAM disk is enabled. */
+			unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz");
+			if (isset($config['system']['use_mfs_tmpvar'])) {
 				mwexec("/usr/bin/tar -czf " . escapeshellarg("{$g['cf_conf_path']}/RAM_Disk_Store/{$name}.txt.tgz") . " -C / " . escapeshellarg($urltable_filename));
 			}
+
 			unlink_if_exists($tmp_urltable_filename);
 		} else {
 			if (!$validateonly) {
@@ -3174,9 +3173,6 @@ function restore_ram_disk() {
 					$error = true;
 					continue;
 				}
-				if (basename($backup_file) == "rrd.tgz") {
-					restore_rrd();
-				}
 				/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 				if (!isset($config['system']['use_mfs_tmpvar'])) {
 					@unlink("{$backup_file}");
@@ -3194,41 +3190,6 @@ function restore_ram_disk() {
 			if (count(glob("{$RAM_Disk_Store_path}*")) === 0) {
 				rmdir("{$RAM_Disk_Store_path}");
 			}
-			return true;
-		}
-	}
-}
-
-function restore_rrd() {
-	global $g;
-
-	$rrddbpath = "{$g['vardb_path']}/rrd/";
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	/* restore the rrd */
-	$rrdrestore = glob("{$rrddbpath}*.xml");
-	if (is_array($rrdrestore) && count($rrdrestore) > 0) {
-		foreach ($rrdrestore as $xml_file) {
-			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
-			if (file_exists("{$rrd_file}")) {
-				@unlink($rrd_file);
-			}
-			unset($output);
-			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
-			if ($status) {
-				log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
-				$error = true;
-				continue;
-			} else {
-				@unlink("/{$xml_file}");
-			}
-		}
-
-		if ($error) {
-			log_error(sprintf(gettext('RRD restore failed.%1$s'), "\n"));
-			return false;
-		} else {
-			log_error(sprintf(gettext('RRD restore succeeded.%1$s'), "\n"));
 			return true;
 		}
 	}

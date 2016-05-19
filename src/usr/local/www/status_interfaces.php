@@ -161,7 +161,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 					$dns_servers = get_dns_servers();
 					$dnscnt = 0;
 					foreach ($dns_servers as $dns) {
-						showDef(true, $dnscnt == 0 ? gettext('ISP DNS servers'):'', $dns);
+						showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
 						$dnscnt++;
 					}
 				}

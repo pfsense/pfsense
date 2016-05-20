@@ -68,9 +68,9 @@ $carp_enabled = get_carp_status();
 <table class="table table-striped table-hover">
 	<thead>
 		<tr>
-			<th>CARP Interface</th>
-			<th>IP Address</th>
-			<th>Status</th>
+			<th><?=gettext("CARP Interface")?></th>
+			<th><?=gettext("IP Address")?></th>
+			<th><?=gettext("Status")?></th>
 		</tr>
 	</thead>
 	<tbody>

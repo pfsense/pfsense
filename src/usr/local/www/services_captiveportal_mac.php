@@ -237,7 +237,7 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 <?php
 $i++;
 endforeach; ?>
-		<tbody>
+		</tbody>
 	</table>
 <?php
 else:

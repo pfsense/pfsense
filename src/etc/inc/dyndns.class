@@ -12,6 +12,7 @@
 	 *    - DynS (dyns.org)
 	 *    - ZoneEdit (zoneedit.com)
 	 *    - FreeDNS (freedns.afraid.org)
+	 *    - FreeDNS IPv6 (freedns.afraid.org)
 	 *    - Loopia (loopia.se)
 	 *    - StaticCling (staticcling.org)
 	 *    - DNSexit (dnsexit.com)
@@ -60,7 +61,8 @@
 	 *  ZoneEdit        - Last Tested: NEVER
 	 *  Dyns            - Last Tested: NEVER
 	 *  ODS             - Last Tested: 02 August 2005
-	 *  FreeDNS         - Last Tested: 23 Feb 2011
+	 *  FreeDNS         - Last Tested: 01 May 2016
+	 *  FreeDNS IPv6    - Last Tested: 01 May 2016
 	 *  Loopia          - Last Tested: NEVER
 	 *  StaticCling     - Last Tested: 27 April 2006
 	 *  DNSexit         - Last Tested: 20 July 2008
@@ -169,6 +171,7 @@
 			if (!$dnsService) $this->_error(2);
 			switch ($dnsService) {
 			case 'freedns':
+			case 'freedns-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
 			case 'namecheap':
@@ -193,6 +196,7 @@
 				case 'he-net-v6':
 				case 'custom-v6':
 				case 'spdns-v6':
+				case 'freedns-v6':
 					$this->_useIPv6 = true;
 					break;
 				default:
@@ -249,6 +253,7 @@
 					case 'dyns':
 					case 'ods':
 					case 'freedns':
+					case 'freedns-v6':
 					case 'loopia':
 					case 'staticcling':
 					case 'dnsexit':
@@ -494,6 +499,7 @@
 					$this->_checkStatus(0, $code);
 					break;
 				case 'freedns':
+				case 'freedns-v6':
 					$needIP = FALSE;
 					curl_setopt($ch, CURLOPT_URL, 'https://freedns.afraid.org/dynamic/update.php?' . $this->_dnsPass);
 					break;
@@ -1069,6 +1075,7 @@
 					}
 					break;
 				case 'freedns':
+				case 'freedns-v6':
 					if (preg_match("/has not changed./i", $data)) {
 						$status = $status_intro . $success_str . gettext("No Change In IP Address");
 						$successful_update = true;

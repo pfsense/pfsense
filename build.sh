@@ -401,6 +401,12 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	install_pkg_install_ports
 fi
 
+# Create core repo
+core_pkg_create_repo
+
+# Send core repo to staging area
+pkg_repo_rsync "${CORE_PKG_PATH}" ignore_final_rsync
+
 export DEFAULT_KERNEL=${DEFAULT_KERNEL_ISO:-"${PRODUCT_NAME}"}
 
 # XXX: Figure out why wait is failing and proper fix
@@ -448,8 +454,6 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 	esac
 done
-
-core_pkg_create_repo
 
 if [ -n "${_bg_pids}" ]; then
 	if [ -n "${SNAPSHOTS}" ]; then

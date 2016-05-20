@@ -1854,9 +1854,14 @@ finish() {
 
 pkg_repo_rsync() {
 	local _repo_path_param="${1}"
+	local _ignore_final_rsync="${2}"
 
 	if [ -z "${_repo_path_param}" -o ! -d "${_repo_path_param}" ]; then
 		return
+	fi
+
+	if [ -n "${SKIP_FINAL_RSYNC}" ]; then
+		_ignore_final_rsync="1"
 	fi
 
 	# Sanitize path
@@ -1936,7 +1941,7 @@ pkg_repo_rsync() {
 		print_error_pfS
 	fi
 
-	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
+	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${_ignore_final_rsync}" ]; then
 		return
 	fi
 

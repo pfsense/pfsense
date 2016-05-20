@@ -155,7 +155,7 @@ if (count($services) > 0) {
 		}
 ?>
 						<td>
-							<?=$running ? '<span class="text-success">' . gettext("Running") . '</span>':'<span class="text-danger">' . gettext("Stopped") . '</span>'?>
+							<?=$running ? '<span class="text-success fa fa-circle-o-notch fa-spin fa-lg fa-fw"></span><span class="text-success fa fa-thumbs-o-up fa-lg fa-fw"></span>':'<span class="text-danger fa fa-circle-o-notch fa-lg fa-fw"></span><span class="text-danger fa fa-thumbs-o-down fa-lg fa-fw"></span>'?>
 						</td>
 						<td>
 							<?=get_service_control_links($service)?>

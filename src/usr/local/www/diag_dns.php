@@ -64,7 +64,6 @@ $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require("guiconfig.inc");
 
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
-$host_esc = escapeshellarg($host);
 
 /* If this section of config.xml has not been populated yet we need to set it up
 */
@@ -84,12 +83,20 @@ foreach ($a_aliases as $a) {
 	$counter++;
 }
 
+function resolve_host_adresses($host) {	
+	$host_esc = escapeshellarg($host);
+	$resolved = array();
+	exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | grep '\tA\t\|\tCNAME\t' | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
+	$resolved_v6 = array();
+	exec("/usr/bin/drill {$host_esc} AAAA | /usr/bin/grep {$host_esc} | grep '\tAAAA\t\|\tCNAME\t' | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved_v6);
+	return array_unique(array_merge($resolved, $resolved_v6));
+}
+
 if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
-		$resolved = array();
-		exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
+		$resolved = resolve_host_adresses($host);
 		$isfirst = true;
 		foreach ($resolved as $re) {
 			if ($re != "") {
@@ -167,8 +174,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if ($resolved) {
-				$resolved = array();
-				exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
+				$resolved = resolve_host_adresses($host);
 			}
 			$hostname = $host;
 			if ($host != $resolved) {

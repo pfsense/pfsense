@@ -31,8 +31,9 @@
 #
 
 usage() {
-	echo "Usage: $(basename $0) [-l] [-r] [-u] [-p]"
+	echo "Usage: $(basename $0) [-l] [-n] [-r] [-u] [-p]"
 	echo "	-l: Build looped operations"
+	echo "	-n: Do not build images, only core pkg repo"
 	echo "	-p: Update poudriere repo"
 	echo "	-r: Do not reset local changes"
 	echo "	-u: Do not upload snapshots"
@@ -41,14 +42,18 @@ usage() {
 export BUILDER_TOOLS=$(realpath $(dirname ${0}))
 export BUILDER_ROOT=$(realpath "${BUILDER_TOOLS}/..")
 
+NO_IMAGES=""
 NO_RESET=""
 NO_UPLOAD=""
 LOOPED_SNAPSHOTS=""
 POUDRIERE_SNAPSHOTS=""
 
 # Handle command line arguments
-while getopts lpru opt; do
+while getopts lnpru opt; do
 	case ${opt} in
+		n)
+			NO_IMAGES="none"
+			;;
 		l)
 			LOOPED_SNAPSHOTS=1
 			;;
@@ -186,7 +191,7 @@ while [ /bin/true ]; do
 		done
 
 		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '2g 4g' \
-		    --snapshots 2>&1) | while read -r LINE; do
+		    --snapshots ${NO_IMAGES} 2>&1) | while read -r LINE; do
 			snapshot_update_status "${LINE}"
 		done
 	fi

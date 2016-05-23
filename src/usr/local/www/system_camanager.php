@@ -418,9 +418,6 @@ foreach ($a_ca as $i => $ca):
 		$issuer_name = $issuer_ca['descr'];
 	}
 
-	// TODO : Need gray certificate icon
-	$internal = (!!$ca['prv']);
-
 	foreach ($a_cert as $cert) {
 		if ($cert['caref'] == $ca['refid']) {
 			$certcount++;
@@ -435,7 +432,7 @@ foreach ($a_ca as $i => $ca):
 ?>
 				<tr>
 					<td><?=$name?></td>
-					<td><?=$internal?></td>
+					<td><i class="fa fa-<?= (!empty($ca['prv'])) ? "check" : "times" ; ?>"></i></td>
 					<td><i><?=$issuer_name?></i></td>
 					<td><?=$certcount?></td>
 					<td>
@@ -447,7 +444,7 @@ foreach ($a_ca as $i => $ca):
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
-						<a class="fa fa-sign-in"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
+						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
@@ -526,7 +523,7 @@ $section->addInput(new Form_Textarea(
 	'Certificate Private Key (optional)',
 	$pconfig['key']
 ))->setHelp('Paste the private key for the above certificate here. This is '.
-	'optional in most cases, but required if you need to generate a '.
+	'optional in most cases, but is required when generating a '.
 	'Certificate Revocation List (CRL).');
 
 $section->addInput(new Form_Input(

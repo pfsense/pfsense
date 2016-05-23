@@ -25,6 +25,18 @@ PLATFORM=`/bin/cat /etc/platform`
 # Set our current version
 version=`/bin/cat /etc/version`
 
+# Version patch
+version_patch="0"
+if [ -f /etc/version.patch ]; then
+	version_patch=`/bin/cat /etc/version.patch`
+fi
+
+if [ "${version_patch}" = "0" ]; then
+	version_patch=""
+else
+	version_patch=" (Patch ${version_patch})"
+fi
+
 # Read product_name from $g, defaults to pfSense
 # Use php -n here because we are not ready to load extensions yet
 product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
@@ -46,8 +58,8 @@ if [ -e /root/force_fsck ]; then
 fi
 
 if [ "${PLATFORM}" != "cdrom" ]; then
-	/sbin/fsck -p -F
 	FSCK_ACTION_NEEDED=0
+	/sbin/fsck -p -F
 	case $? in
 	0)
 		echo "Filesystems are clean, continuing..."
@@ -185,7 +197,7 @@ echo
 cat /etc/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version}${platformbanner}..."
+echo "Welcome to ${product} ${version}${version_patch}${platformbanner}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null
@@ -439,7 +451,7 @@ fi
 # Log product version to syslog
 BUILDTIME=`cat /etc/version.buildtime`
 ARCH=`uname -m`
-echo "$product ($PLATFORM) $version $ARCH $BUILDTIME"
+echo "$product ($PLATFORM) ${version}${version_patch} $ARCH $BUILDTIME"
 
 echo "Bootup complete"
 

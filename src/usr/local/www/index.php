@@ -90,7 +90,7 @@ if ($g['disablecrashreporter'] != true) {
 	// Check to see if we have a crash report
 	$x = 0;
 	if (file_exists("/tmp/PHP_errors.log")) {
-		$total = `/usr/bin/grep -vi warning /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
+		$total = `/bin/cat /tmp/PHP_errors.log | /usr/bin/wc -l | /usr/bin/awk '{ print $1 }'`;
 		if ($total > 0) {
 			$x++;
 		}
@@ -205,7 +205,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="/css/pfSense.css" />
 	<title><?=$g['product_name']?>.localdomain - <?=$g['product_name']?> first time setup</title>
 	<meta http-equiv="refresh" content="1;url=wizard.php?xml=setup_wizard.xml" />
 </head>
@@ -215,7 +215,7 @@ if (file_exists('/conf/trigger_initial_wizard')) {
 			<div class="col-sm-offset-3 col-sm-6 col-xs-12">
 				<font color="white">
 				<p><h3><?=sprintf(gettext("Welcome to %s!\n"), $g['product_name'])?></h3></p>
-				<p><?=gettext("One moment while we start the initial setup wizard.")?></p>
+				<p><?=gettext("One moment while the initial setup wizard starts.")?></p>
 				<p><?=gettext("Embedded platform users: Please be patient, the wizard takes a little longer to run than the normal GUI.")?></p>
 				<p><?=sprintf(gettext("To bypass the wizard, click on the %s logo on the initial page."), $g['product_name'])?></p>
 				</font>
@@ -252,6 +252,7 @@ if ($fd) {
 
 ##build widget saved list information
 if ($config['widgets'] && $config['widgets']['sequence'] != "") {
+	$dashboardcolumns = isset($config['system']['webgui']['dashboardcolumns']) ? $config['system']['webgui']['dashboardcolumns'] : 2;
 	$pconfig['sequence'] = $config['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
@@ -267,6 +268,11 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 			} else {
 				$col = "col2";
 			}
+		}
+
+		// Limit the column to the current dashboard columns.
+		if (substr($col, 3) > $dashboardcolumns) {
+			$col = "col" . $dashboardcolumns;
 		}
 
 		$offset = strpos($file, '-container');
@@ -383,10 +389,11 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 	$columnWidth = 12 / $numColumns;
 
 	for ($currentColumnNumber = 1; $currentColumnNumber <= $numColumns; $currentColumnNumber++) {
-		echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
+
 
 		//if col$currentColumnNumber exists
 		if (isset($widgetColumns['col'.$currentColumnNumber])) {
+			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '">';
 			$columnWidgets = $widgetColumns['col'.$currentColumnNumber];
 
 			foreach ($columnWidgets as $widgetname => $widgetconfig) {
@@ -423,10 +430,11 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 				</div>
 				<?php
 			}
+			echo "</div>";
 		} else {
 			echo '<div class="col-md-' . $columnWidth . '" id="widgets-col' . $currentColumnNumber . '"></div>';
 		}
-		echo "</div>";
+
 	}
 ?>
 
@@ -476,7 +484,10 @@ events.push(function() {
 		handle: '.panel-heading',
 		cursor: 'grabbing',
 		connectWith: '.container .col-md-<?=$columnWidth?>',
-		update: function(){dirty = true;}
+		update: function(){
+			dirty = true;
+			$('#btnstore').removeClass('invisible');
+		}
 	});
 
 	// On clicking a widget to install . .
@@ -492,15 +503,24 @@ events.push(function() {
 	$('#btnstore').click(function() {
 		updateWidgets();
 		dirty = false;
+		$(this).addClass('invisible');
 		$('[name=widgetForm]').submit();
 	});
 
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (dirty) {
-			return ("<?=gettext('You have moved one or more widgets but have not yet saved')?>");
+			return ("<?=gettext('One or more widgets have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
+		}
+	});
+
+	// Show the fa-save icon in the breadcrumb bar if the user opens or closes a panel (In case he/she wants to save the new state)
+	// (Sometimes this will cause us to see the icon when we don't need it, but better that than the other way round)
+	$('.panel').on('hidden.bs.collapse shown.bs.collapse', function (e) {
+	    if (e.currentTarget.id != 'widget-available') {
+			$('#btnstore').removeClass("invisible");
 		}
 	});
 });

@@ -257,7 +257,7 @@ if ($_POST) {
 
 	if ($addnewpipe) {
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else {
 			$dnpipe =& new dnpipe_class();
 
@@ -283,7 +283,7 @@ if ($_POST) {
 		}
 	} else if ($parentqueue) { /* Add a new queue */
 		if (!empty($dummynet_pipe_list[$qname])) {
-			$input_errors[] = gettext("You cannot name a child queue with the same name as a parent limiter");
+			$input_errors[] = gettext("A child queue cannot be named the same as a parent limiter.");
 		} else if ($dnpipe) {
 			$tmppath =& $dnpipe->GetLink();
 			array_push($tmppath, $qname);
@@ -377,7 +377,7 @@ $output = "<table summary=\"output form\">";
 $output .= $output_form;
 include("head.inc");
 ?>
-<script type="text/javascript" src="./tree/tree.js"></script>
+<script type="text/javascript" src="./vendor/tree/tree.js"></script>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -408,7 +408,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('shaper')) {
-	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The traffic shaper configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -425,15 +425,14 @@ display_top_tabs($tab_array);
 				<td class="col-md-1">
 					<?=$tree?>
 					<a href="firewall_shaper_vinterface.php?pipe=new&amp;action=add" class="btn btn-sm btn-success">
+						<i class="fa fa-plus icon-embed-btn"></i>
 						<?=gettext('New Limiter')?>
 					</a>
 				</td>
 				<td>
 <?php
 
-if ($dfltmsg) {
-	print_info_box($dn_default_shaper_msg, 'info');
-} else {
+if (!$dfltmsg) {
 	// Add global buttons
 	if (!$dontshow || $newqueue) {
 		if ($can_add && ($action != "add")) {
@@ -446,8 +445,9 @@ if ($dfltmsg) {
 			$sform->addGlobal(new Form_Button(
 				'add',
 				'Add new Queue',
-				$url
-			))->removeClass('btn-default')->addClass('btn-success');
+				$url,
+				'fa-plus'
+			))->addClass('btn-success');
 		}
 
 		if ($action != "add") {
@@ -460,8 +460,9 @@ if ($dfltmsg) {
 			$sform->addGlobal(new Form_Button(
 				'delete',
 				($queue && ($qname != $pipe)) ? 'Delete this queue':'Delete Limiter',
-				$url
-			))->removeClass('btn-default')->addClass('btn-danger');
+				$url,
+				'fa-trash'
+			))->addClass('btn-danger');
 		}
 	}
 
@@ -478,7 +479,17 @@ if ($dfltmsg) {
 		</tbody>
 	</table>
 </div>
-
+<?php
+if ($dfltmsg) {
+?>
+<div>
+	<div class="infoblock">
+		<?php print_info_box($dn_default_shaper_msg, 'info', false); ?>
+	</div>
+</div>
+<?php
+}
+?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {

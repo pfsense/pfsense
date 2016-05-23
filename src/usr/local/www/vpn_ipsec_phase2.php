@@ -187,9 +187,9 @@ if ($_POST) {
 				if (!$pconfig['localid_address'] || !is_ipaddr($pconfig['localid_address'])) {
 					$input_errors[] = gettext("A valid local network IP address must be specified.");
 				} elseif (is_ipaddrv4($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel")) {
-					$input_errors[] = gettext("A valid local network IPv4 address must be specified or you need to change Mode to IPv6");
+					$input_errors[] = gettext("A valid local network IPv4 address must be specified or Mode needs to be changed to IPv6");
 				} elseif (is_ipaddrv6($pconfig['localid_address']) && ($pconfig['mode'] != "tunnel6")) {
-					$input_errors[] = gettext("A valid local network IPv6 address must be specified or you need to change Mode to IPv4");
+					$input_errors[] = gettext("A valid local network IPv6 address must be specified or Mode needs to be changed to IPv4");
 				}
 				break;
 		}
@@ -211,15 +211,15 @@ if ($_POST) {
 						$input_errors[] = gettext("A valid NAT local network bit count must be specified.");
 					}
 					if ($pconfig['localid_type'] == "address") {
-						$input_errors[] = gettext("You cannot configure a network type address for NAT while only an address type is selected for local source.");
+						$input_errors[] = gettext("A network type address cannot be configured for NAT while only an address type is selected for local source.");
 					}
 				case "address":
 					if (!empty($pconfig['natlocalid_address']) && !is_ipaddr($pconfig['natlocalid_address'])) {
 						$input_errors[] = gettext("A valid NAT local network IP address must be specified.");
 					} elseif (is_ipaddrv4($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel")) {
-						$input_errors[] = gettext("A valid NAT local network IPv4 address must be specified or you need to change Mode to IPv6");
+						$input_errors[] = gettext("A valid NAT local network IPv4 address must be specified or Mode needs to be changed to IPv6");
 					} elseif (is_ipaddrv6($pconfig['natlocalid_address']) && ($pconfig['mode'] != "tunnel6")) {
-						$input_errors[] = gettext("A valid NAT local network IPv6 address must be specified or you need to change Mode to IPv4");
+						$input_errors[] = gettext("A valid NAT local network IPv6 address must be specified or Mode needs to be changed to IPv4");
 					}
 					break;
 			}
@@ -244,9 +244,9 @@ if ($_POST) {
 				if (!$pconfig['remoteid_address'] || !is_ipaddr($pconfig['remoteid_address'])) {
 					$input_errors[] = gettext("A valid remote network IP address must be specified.");
 				} elseif (is_ipaddrv4($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel")) {
-					$input_errors[] = gettext("A valid remote network IPv4 address must be specified or you need to change Mode to IPv6");
+					$input_errors[] = gettext("A valid remote network IPv4 address must be specified or Mode needs to be changed to IPv6");
 				} elseif (is_ipaddrv6($pconfig['remoteid_address']) && ($pconfig['mode'] != "tunnel6")) {
-					$input_errors[] = gettext("A valid remote network IPv6 address must be specified or you need to change Mode to IPv4");
+					$input_errors[] = gettext("A valid remote network IPv6 address must be specified or Mode needs to be changed to IPv4");
 				}
 				break;
 		}
@@ -619,7 +619,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $form->add($section);
 
@@ -667,7 +667,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 
 
 	if ($i == $rows) {
-		$group->setHelp('Use 3DES for best compatibility or if you have a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
+		$group->setHelp('Use 3DES for best compatibility or for a hardware crypto accelerator card. Blowfish is usually the fastest in software encryption.');
 	}
 
 	$i++;
@@ -944,27 +944,27 @@ events.push(function() {
 	// ---------- Monitor elements for change and call the appropriate display functions ----------
 
 	 // Protocol
-	$('#proto').click(function () {
+	$('#proto').change(function () {
 		change_protocol();
 	});
 
 	 // Localid
-	$('#localid_type').click(function () {
+	$('#localid_type').change(function () {
 		typesel_change_local(<?=htmlspecialchars($pconfig['localid_netbits'])?>);
 	});
 
 	 // Remoteid
-	$('#remoteid_type').click(function () {
+	$('#remoteid_type').change(function () {
 		typesel_change_remote(<?=htmlspecialchars($pconfig['remoteid_netbits'])?>);
 	});
 
 	 // NATLocalid
-	$('#natlocalid_type').click(function () {
+	$('#natlocalid_type').change(function () {
 		typesel_change_natlocal(<?=htmlspecialchars($pconfig['natlocalid_netbits'])?>);
 	});
 
 	 // Mode
-	$('#mode').click(function () {
+	$('#mode').change(function () {
 		change_mode();
 	});
 

@@ -286,9 +286,9 @@ if ($_POST) {
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
 	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
-		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv6 protocol and an IPv4 IP address.");
+		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv6 protocol and an IPv4 IP address cannot be selected.");
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
-		$input_errors[] = gettext("Protocol and IP address families do not match. You cannot select an IPv4 protocol and an IPv6 IP address.");
+		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv4 protocol and an IPv6 IP address cannot be selected.");
 	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
 		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
 	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
@@ -302,7 +302,7 @@ if ($_POST) {
 	}
 
 	if (empty($pconfig['authmode']) && (($pconfig['mode'] == "server_user") || ($pconfig['mode'] == "server_tls_user"))) {
-		$input_errors[] = gettext("You must select a Backend for Authentication if the server mode requires User Auth.");
+		$input_errors[] = gettext("A Backend for Authentication must be selected if the server mode requires User Auth.");
 	}
 
 	/* input validation */
@@ -504,8 +504,8 @@ if ($_POST) {
 		$server['digest'] = $pconfig['digest'];
 		$server['engine'] = $pconfig['engine'];
 
-		$server['tunnel_network'] = $pconfig['tunnel_network'];
-		$server['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
+		$server['tunnel_network'] = trim($pconfig['tunnel_network']);
+		$server['tunnel_networkv6'] = trim($pconfig['tunnel_networkv6']);
 		$server['remote_network'] = $pconfig['remote_network'];
 		$server['remote_networkv6'] = $pconfig['remote_networkv6'];
 		$server['gwredir'] = $pconfig['gwredir'];
@@ -630,7 +630,7 @@ if ($act=="new" || $act=="edit"):
 		'Disabled',
 		'Disable this server',
 		$pconfig['disable']
-	))->setHelp('Set this option to disable this server without removing it from the list');
+	))->setHelp('Set this option to disable this server without removing it from the list.');
 
 	$section->addInput(new Form_Select(
 		'mode',
@@ -695,7 +695,7 @@ if ($act=="new" || $act=="edit"):
 		'Description',
 		'text',
 		$pconfig['description']
-	))->setHelp('You may enter a description here for your reference (not parsed).');
+	))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 	$form->add($section);
 
@@ -721,7 +721,7 @@ if ($act=="new" || $act=="edit"):
 		'tls',
 		'Key',
 		$pconfig['tls']
-	))->setHelp('Paste your shared key here');
+	))->setHelp('Paste the shared key here');
 
 	if (count($a_ca)) {
 
@@ -739,7 +739,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Authority',
-			sprintf('No Certificate Authorities defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
+			sprintf('No Certificate Authorities defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -753,7 +753,7 @@ if ($act=="new" || $act=="edit"):
 	} else {
 		$section->addInput(new Form_StaticText(
 			'Peer Certificate Revocation list',
-			sprintf('No Certificate Revocation Lists defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
+			sprintf('No Certificate Revocation Lists defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
 
@@ -767,7 +767,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. You may create one here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
+		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. One may be created here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);
@@ -787,7 +787,7 @@ if ($act=="new" || $act=="edit"):
 		'DH Parameter length (bits)',
 		$pconfig['dh_length'],
 		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. You may create one here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
+		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(
@@ -802,7 +802,7 @@ if ($act=="new" || $act=="edit"):
 		'shared_key',
 		'Shared Key',
 		$pconfig['shared_key']
-	))->setHelp('Paste your shared key here');
+	))->setHelp('Paste the shared key here');
 
 	$section->addInput(new Form_Select(
 		'crypto',
@@ -850,9 +850,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_network']
 	))->setHelp('This is the IPv4 virtual network used for private communications between this server and client ' .
-				'hosts expressed using CIDR (eg. 10.0.8.0/24). The first network address will be assigned to ' .
+				'hosts expressed using CIDR (e.g. 10.0.8.0/24). The first network address will be assigned to ' .
 				'the server virtual interface. The remaining network addresses can optionally be assigned ' .
-				'to connecting clients. (see Address Pool)');
+				'to connecting clients (see Address Pool).');
 
 	$section->addInput(new Form_Input(
 		'tunnel_networkv6',
@@ -860,9 +860,9 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['tunnel_networkv6']
 	))->setHelp('This is the IPv6 virtual network used for private ' .
-				'communications between this server and client hosts expressed using CIDR (eg. fe80::/64). ' .
+				'communications between this server and client hosts expressed using CIDR (e.g. fe80::/64). ' .
 				'The first network address will be assigned to the server virtual interface. The remaining ' .
-				'network addresses can optionally be assigned to connecting clients. (see Address Pool)');
+				'network addresses can optionally be assigned to connecting clients (see Address Pool).');
 
 	$section->addInput(new Form_Checkbox(
 		'serverbridge_dhcp',
@@ -876,8 +876,8 @@ if ($act=="new" || $act=="edit"):
 		'Bridge Interface',
 		$pconfig['serverbridge_interface'],
 		openvpn_build_bridge_list()
-		))->setHelp('The interface to which this tap instance will be bridged. This is not done automatically. You must assign this ' .
-						'interface and create the bridge separately. This setting controls which existing IP address and subnet ' .
+		))->setHelp('The interface to which this TAP instance will be bridged. This is not done automatically. This interface must be assigned ' .
+						'and the bridge created separately. This setting controls which existing IP address and subnet ' .
 						'mask are used by OpenVPN for the bridge. Setting this to "none" will cause the Server Bridge DHCP settings below to be ignored.');
 
 	$section->addInput(new Form_Input(
@@ -885,8 +885,8 @@ if ($act=="new" || $act=="edit"):
 		'Server Bridge DHCP Start',
 		'text',
 		$pconfig['serverbridge_dhcp_start']
-	))->setHelp('When using tap mode as a multi-point server, you may optionally supply a DHCP range to use on the ' .
-				'interface to which this tap instance is bridged. If these settings are left blank, DHCP will be passed ' .
+	))->setHelp('When using TAP mode as a multi-point server, a DHCP range may optionally be supplied to use on the ' .
+				'interface to which this TAP instance is bridged. If these settings are left blank, DHCP will be passed ' .
 				'through to the LAN, and the interface setting above will be ignored.');
 
 	$section->addInput(new Form_Input(
@@ -910,8 +910,8 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['local_network']
 	))->setHelp('IPv4 networks that will be accessible from the remote endpoint. ' .
 				'Expressed as a comma-separated list of one or more CIDR ranges. ' .
-				'You may leave this blank if you don\'t want to add a route to the local network through this tunnel on the remote machine. ' .
-				'This is generally set to your LAN network.');
+				'This may be left blank if not adding a route to the local network through this tunnel on the remote machine. ' .
+				'This is generally set to the LAN network.');
 
 	$section->addInput(new Form_Input(
 		'local_networkv6',
@@ -919,8 +919,8 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['local_networkv6']
 	))->setHelp('IPv6 networks that will be accessible from the remote endpoint. ' .
-				'Expressed as a comma-separated list of one or more IP/PREFIX. You may leave this blank if you don\'t want to add a ' .
-				'route to the local network through this tunnel on the remote machine. This is generally set to your LAN network.');
+				'Expressed as a comma-separated list of one or more IP/PREFIX. This may be left blank if not adding a ' .
+				'route to the local network through this tunnel on the remote machine. This is generally set to the LAN network.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -929,7 +929,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['remote_network']
 	))->setHelp('IPv4 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
 				'changing the routing tables. Expressed as a comma-separated list of one or more CIDR ranges. ' .
-				'If this is a site-to-site VPN, enter the remote LAN/s here. You may leave this blank if you don\'t want a site-to-site VPN.');
+				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(
 		'remote_networkv6',
@@ -938,7 +938,7 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv6 networks that will be routed through the tunnel, so that a site-to-site VPN can be established without manually ' .
 				'changing the routing tables. Expressed as a comma-separated list of one or more IP/PREFIX. ' .
-				'If this is a site-to-site VPN, enter the remote LAN/s here. You may leave this blank if you don\'t want a site-to-site VPN.');
+				'If this is a site-to-site VPN, enter the remote LAN/s here. May be left blank for non site-to-site VPN.');
 
 	$section->addInput(new Form_Input(
 		'maxclients',
@@ -954,7 +954,7 @@ if ($act=="new" || $act=="edit"):
 		$openvpn_compression_modes
 		))->setHelp('Compress tunnel packets using the LZO algorithm. ' .
 					'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
-					'packets is not being compressed efficiently"');
+					'packets is not being compressed efficiently.');
 
 	$section->addInput(new Form_Checkbox(
 		'passtos',
@@ -992,14 +992,14 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Checkbox(
 		'dynamic_ip',
 		'Dynamic IP',
-		'Allow connected clients to retain their connections if their IP address changes',
+		'Allow connected clients to retain their connections if their IP address changes.',
 		$pconfig['dynamic_ip']
 	));
 
 	$section->addInput(new Form_Checkbox(
 		'pool_enable',
 		'Address Pool',
-		'Provide a virtual adapter IP address to clients (see Tunnel Network)',
+		'Provide a virtual adapter IP address to clients (see Tunnel Network).',
 		$pconfig['pool_enable']
 	));
 
@@ -1008,9 +1008,14 @@ if ($act=="new" || $act=="edit"):
 		'Topology',
 		$pconfig['topology'],
 		$openvpn_topologies
-	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using tun mode on IPv4.").' . '<br />' .
+	))->setHelp('Specifies the method used to supply a virtual adapter IP address to clients when using TUN mode on IPv4.' . '<br />' .
 				'Some clients may require this be set to "subnet" even for IPv6, such as OpenVPN Connect (iOS/Android). ' .
 				'Older versions of OpenVPN (before 2.0.9) or clients such as Yealink phones may require "net30".');
+
+	$form->add($section);
+
+	$section = new Form_Section("Advanced Client Settings");
+	$section->addClass("clientadv");
 
 	$section->addInput(new Form_Checkbox(
 		'dns_domain_enable',
@@ -1094,7 +1099,7 @@ if ($act=="new" || $act=="edit"):
 		'NetBIOS enable',
 		'Enable NetBIOS over TCP/IP',
 		$pconfig['netbios_enable']
-	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled');
+	))->setHelp('If this option is not set, all NetBIOS-over-TCP/IP options (including WINS) will be disabled.');
 
 	$section->addInput(new Form_Select(
 		'netbios_ntype',
@@ -1157,7 +1162,7 @@ if ($act=="new" || $act=="edit"):
 		'custom_options',
 		'Custom options',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options you would like to add to the OpenVPN server configuration here, separated by semicolon' . '<br />' .
+	))->setHelp('Enter any additional options to add to the OpenVPN server configuration here, separated by semicolon.' . '<br />' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"');
 
 	$section->addInput(new Form_Select(
@@ -1165,11 +1170,11 @@ if ($act=="new" || $act=="edit"):
 		'Verbosity level',
 		$pconfig['verbosity_level'],
 		$openvpn_verbosity_level
-		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended if you want a good summary of what\'s happening without being swamped by output' . '<br /><br />' .
+		))->setHelp('Each level shows all info from the previous levels. Level 3 is recommended for a good summary of what\'s happening without being swamped by output.' . '<br /><br />' .
 					'None: Only fatal errors' . '<br />' .
-					'Default: Normal usage range' . '<br />' .
-					'5: Output R and W characters to the console for each packet read and write, uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets' .'<br />' .
-					'6: Debug info range');
+					'Default through 4: Normal usage range' . '<br />' .
+					'5: Output R and W characters to the console for each packet read and write. Uppercase is used for TCP/UDP packets and lowercase is used for TUN/TAP packets.' .'<br />' .
+					'6-11: Debug info range');
 
 	$section->addInput(new Form_Input(
 		'act',
@@ -1254,6 +1259,19 @@ endif;
 //<![CDATA[
 events.push(function() {
 
+	function advanced_change(hide, mode) {
+		if(!hide) {
+			hideClass('advanced', false);
+			hideClass("clientadv", false);
+		} else if (mode == "p2p_tls") {
+			hideClass('advanced', false);
+			hideClass("clientadv", true);
+		} else {
+			hideClass('advanced', true);
+			hideClass("clientadv", true);
+		}
+	}
+
 	function mode_change() {
 		value = $('#mode').val();
 
@@ -1275,7 +1293,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
-				break;
+			break;
 			case "server_tls_user":
 				hideInput('tls', false);
 				hideInput('certref', false);
@@ -1285,7 +1303,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
-				break;
+			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
 				hideInput('caref', true);
@@ -1300,12 +1318,12 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);
-				break;
+			break;
 		}
 
 		switch (value) {
 			case "p2p_shared_key":
-				hideClass('advanced', true);
+				advanced_change(true, value);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', true);
@@ -1314,9 +1332,9 @@ events.push(function() {
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
 				hideCheckbox('autokey_enable', false);
-				break;
+			break;
 			case "p2p_tls":
-				hideClass('advanced', true);
+				advanced_change(true, value);
 				hideInput('remote_network', false);
 				hideInput('remote_networkv6', false);
 				hideCheckbox('gwredir', false);
@@ -1324,10 +1342,10 @@ events.push(function() {
 				hideInput('local_networkv6', false);
 				hideMultiClass('authmode', true);
 				hideCheckbox('client2client', true);
-				break;
+			break;
 			case "server_user":
 			case "server_tls_user":
-				hideClass('advanced', false);
+				advanced_change(false, value);
 				hideInput('remote_network', true);
 				hideInput('remote_networkv6', true);
 				hideCheckbox('gwredir', false);
@@ -1336,10 +1354,10 @@ events.push(function() {
 				hideMultiClass('authmode', false);
 				hideCheckbox('client2client', false);
 				hideCheckbox('autokey_enable', true);
-				break;
+			break;
 			case "server_tls":
 				hideMultiClass('authmode', true);
-				hideClass('advanced', false);
+				advanced_change(false, value);
 				hideCheckbox('autokey_enable', true);
 			default:
 				hideInput('custom_options', false);
@@ -1350,7 +1368,7 @@ events.push(function() {
 				hideInput('local_network', false);
 				hideInput('local_networkv6', false);
 				hideCheckbox('client2client', false);
-				break;
+			break;
 		}
 
 		gwredir_change();

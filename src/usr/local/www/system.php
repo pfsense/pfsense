@@ -96,6 +96,7 @@ $pconfig['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguilef
 $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
+$pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -189,10 +190,10 @@ if ($_POST) {
 				// A real gateway has been selected.
 				if (is_ipaddr($_POST[$dnsname])) {
 					if ((is_ipaddrv4($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = sprintf(gettext('You can not specify IPv6 gateway "%1$s" for IPv4 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
+						$input_errors[] = sprintf(gettext('The IPv6 gateway "%1$s" can not be specified for IPv4 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 					if ((is_ipaddrv6($_POST[$dnsname])) && (validate_address_family($_POST[$dnsname], $_POST[$dnsgwname]) === false)) {
-						$input_errors[] = sprintf(gettext('You can not specify IPv4 gateway "%1$s" for IPv6 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
+						$input_errors[] = sprintf(gettext('The IPv4 gateway "%1$s" can not be specified for IPv6 DNS server "%2$s".'), $_POST[$dnsgwname], $_POST[$dnsname]);
 					}
 				} else {
 					// The user selected a gateway but did not provide a DNS address. Be nice and set the gateway back to "none".
@@ -214,7 +215,7 @@ if ($_POST) {
 			if (interface_has_gateway($_POST[$dnsgwitem])) {
 				foreach ($direct_networks_list as $direct_network) {
 					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("You can not assign a gateway to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
+						$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 					}
 				}
 			}
@@ -252,6 +253,9 @@ if ($_POST) {
 
 		unset($config['system']['webgui']['systemlogsmanagelogpanel']);
 		$config['system']['webgui']['systemlogsmanagelogpanel'] = $_POST['systemlogsmanagelogpanel'] ? true : false;
+
+		unset($config['system']['webgui']['statusmonitoringsettingspanel']);
+		$config['system']['webgui']['statusmonitoringsettingspanel'] = $_POST['statusmonitoringsettingspanel'] ? true : false;
 
 		/* XXX - billm: these still need updating after figuring out how to check if they actually changed */
 		$olddnsservers = $config['system']['dnsserver'];
@@ -468,14 +472,14 @@ $section->addInput(new Form_Select(
 	'Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonelist)
-))->setHelp('Select the location closest to you');
+))->setHelp('Select the timezone or location within the timezone to be used by this system.');
 $section->addInput(new Form_Input(
 	'timeservers',
 	'Timeservers',
 	'text',
 	$pconfig['timeservers']
 ))->setHelp('Use a space to separate multiple hosts (only one required). '.
-	'Remember to set up at least one DNS server if you enter a host name here!');
+	'Remember to set up at least one DNS server if a host name is entered here!');
 $section->addInput(new Form_Select(
 	'language',
 	'Language',
@@ -486,15 +490,31 @@ $section->addInput(new Form_Select(
 $form->add($section);
 
 $csslist = array();
-$css = glob("/usr/local/www/bootstrap/css/*.css");
-foreach ($css as $file) {
-	$file = basename($file);
-	if (substr($file, 0, 9) !== 'bootstrap') {
+
+// List pfSense files, then any BETA files followed by any user-contributed files
+$cssfiles = glob("/usr/local/www/css/*.css");
+
+if(is_array($cssfiles)) {
+	arsort($cssfiles);
+	$usrcss = $pfscss = $betacss = array();
+
+	foreach ($cssfiles as $css) {
+	    if (strpos($css, "BETA") != 0) {
+	        array_push($betacss, $css);
+	    } else if (strpos($css, "pfSense") != 0) {
+	        array_push($pfscss, $css);
+	    } else {
+	        array_push($usrcss, $css);
+	    }
+	}
+
+	$css = array_merge($pfscss, $betacss, $usrcss);
+
+	foreach ($css as $file) {
+		$file = basename($file);
 		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
 	}
 }
-
-asort($csslist);
 
 if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
 	$pconfig['webguicss'] = "pfSense.css";
@@ -507,7 +527,7 @@ $section->addInput(new Form_Select(
 	'Theme',
 	$pconfig['webguicss'],
 	$csslist
-))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/bootstrap/css');
+))->setHelp(sprintf(gettext('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s'), '<span id="csstxt"></span>'));
 
 $section->addInput(new Form_Select(
 	'webguifixedmenu',
@@ -522,7 +542,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['dashboardcolumns'],
 	[min => 1, max => 4]
-))->setHelp('<span class="badge" title="This feature is in BETA">BETA</span>');
+));
 
 $group = new Form_Group('Associated Panels Show/Hide');
 
@@ -547,8 +567,14 @@ $group->add(new Form_Checkbox(
 	$pconfig['systemlogsmanagelogpanel']
 ))->setHelp('Show the Manage Log panel in System Logs.');
 
-$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.
-<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+$group->add(new Form_Checkbox(
+	'statusmonitoringsettingspanel',
+	null,
+	'Monitoring Settings',
+	$pconfig['statusmonitoringsettingspanel']
+))->setHelp('Show the Settings panel in Status Monitoring.');
+
+$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.');
 
 $section->add($group);
 
@@ -557,13 +583,38 @@ $section->addInput(new Form_Checkbox(
 	'Left Column Labels',
 	'Active',
 	$pconfig['webguileftcolumnhyper']
-))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.<br /><span class="badge" title="This feature is in BETA">BETA</span>');
+))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
+
 ?>
 </div>
+
+<script>
+//<![CDATA[
+events.push(function() {
+
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+});
+//]]>
+</script>
+
 <?php
 include("foot.inc");
 ?>

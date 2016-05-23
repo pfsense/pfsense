@@ -161,7 +161,7 @@ if (is_array($config['virtualip']['vip'])) {
 if ($carpcount == 0) {
 	print_info_box(gettext('No CARP interfaces have been defined.') . '<br />' .
 				   '<a href="system_hasync.php" class="alert-link">' .
-				   gettext("You can configure high availability sync settings here.") .
+				   gettext("High availability sync settings can be configured here.") .
 				   '</a>');
 } else {
 ?>
@@ -182,16 +182,18 @@ if ($carpcount == 0) {
 			"<br/>" .
 			sprintf(gettext('Search the %1$sSystem Log%2$s for CARP demotion-related events.'), "<a href=\"/status_logs.php?filtertext=carp%3A+demoted+by\">", "</a>") .
 			"<br/><br/>" .
-			'<input type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
+			'<button type="submit" class="btn btn-warning" name="resetdemotion" id="resetdemotion" value="' .
 			gettext("Reset CARP Demotion Status.") .
-			'" />',
+			'"><i class="fa fa-undo icon-embed-btn"></i>' .
+			gettext("Reset CARP Demotion Status.") .
+			'</button>',
 			'danger'
 		);
 	}
 
 ?>
-	<input type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" />
-	<input type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" />
+	<button type="submit" class="btn btn-warning" name="disablecarp" value="<?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?>" ><i class="fa fa-<?=($carp_enabled) ? 'ban' : 'check' ; ?> icon-embed-btn"></i><?=($carp_enabled ? gettext("Temporarily Disable CARP") : gettext("Enable CARP"))?></button>
+	<button type="submit" class="btn btn-info" name="carp_maintenancemode" id="carp_maintenancemode" value="<?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?>" ><i class="fa fa-wrench icon-embed-btn"></i><?=(isset($config["virtualip_carp_maintenancemode"]) ? gettext("Leave Persistent CARP Maintenance Mode") : gettext("Enter Persistent CARP Maintenance Mode"))?></button>
 
 	<br /><br />
 
@@ -222,11 +224,11 @@ if ($carpcount == 0) {
 			$status = "DISABLED";
 		} else {
 			if ($status == "MASTER") {
-				$icon = 'check-circle';
+				$icon = 'play-circle text-success';
 			} else if ($status == "BACKUP") {
-				$icon = 'check-circle-o';
+				$icon = 'pause-circle text-warning';
 			} else if ($status == "INIT") {
-				$icon = 'question-circle';
+				$icon = 'question-circle text-danger';
 			}
 		}
 ?>

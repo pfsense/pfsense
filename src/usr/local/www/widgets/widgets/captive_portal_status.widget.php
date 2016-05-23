@@ -74,6 +74,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
 
 if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 	$cpzoneid = $a_cp[$cpzone]['zoneid'];
@@ -146,8 +147,8 @@ if ($_GET['order']) {
 		<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
 <?php endif; ?>
 		<td>
-			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>" class="btn btn-xs btn-danger">
-				<?=gettext("delete");?>
+			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
+				<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
 			</a>
 		</td>
 	</tr>

@@ -187,7 +187,7 @@ if ($config['widgets']['rssfeed']) {
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-default"><?=gettext('Save')?></button>
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
 		</div>
 	</div>
 </form>

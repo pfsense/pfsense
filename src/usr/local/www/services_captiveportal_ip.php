@@ -76,6 +76,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -141,9 +142,9 @@ display_top_tabs($tab_array, true);
 	<table class="table table-hover table-striped table-condensed">
 		<thead>
 			<tr>
-			  <th><?=gettext("IP Addresses"); ?></th>
-			  <th><?=gettext("Description"); ?></th>
-			  <th><!-- Buttons --></th>
+				<th><?=gettext("IP Addresses"); ?></th>
+				<th><?=gettext("Description"); ?></th>
+				<th><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 

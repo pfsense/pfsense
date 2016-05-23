@@ -54,23 +54,6 @@
 
 /* include all configuration functions */
 
-global $rrd_graph_list;
-$rrd_graph_list = array("eighthour", "day", "week", "month", "quarter", "year", "fouryear");
-global $rrd_period_list;
-$rrd_period_list = array("absolute" => gettext("Absolute Timespans"), "current" => gettext("Current Period"), "previous" => gettext("Previous Period"));
-global $rrd_graph_length_list;
-$rrd_graph_length_list = array(
-	"eighthour" => 28800,
-	"day" => 86400,
-	"week" => 604800,
-	"month" => 2678400,
-	"quarter" => 7948800,
-	"year" => 31622400,
-	"fouryear" => 126230400);
-global $rrd_style_list;
-$rrd_style_list = array('inverse' => gettext('Inverse'),
-		'absolute' => gettext('Absolute'));
-
 function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 	unlink_if_exists($xmldumpfile);
@@ -979,7 +962,7 @@ function enable_rrd_graphing() {
 
 					/* enter UNKNOWN values in the RRD so it knows we rebooted. */
 					if (platform_booting()) {
-						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U:U:U:U:U:U");
+						mwexec("$rrdtool update $rrddbpath$dhcpif$dhcpd N:U:U:U");
 					}
 
 					$rrdupdatesh .= "\n";
@@ -1017,13 +1000,13 @@ for sock in {$g['varrun_path']}/dpinger_*.sock; do
 	if echo "\$delay" | grep -Eqv '^[0-9]+\$'; then
 		delay="U"
 	else
-		# Convert delay to millisecond
+		# Convert delay from microseconds to seconds
 		delay=\$(echo "scale=7; \$delay / 1000 / 1000" | /usr/bin/bc)
 	fi
 	if echo "\$stddev" | grep -Eqv '^[0-9]+\$'; then
 		stddev="U"
 	else
-		# Convert stddev to millisecond
+		# Convert stddev from microseconds to seconds
 		stddev=\$(echo "scale=7; \$stddev / 1000 / 1000" | /usr/bin/bc)
 	fi
 
@@ -1070,7 +1053,9 @@ EOD;
 
 	$databases = glob("{$rrddbpath}/*.rrd");
 	foreach ($databases as $database) {
-		chown($database, "nobody");
+		if (file_exists($database)) {
+			chown($database, "nobody");
+		}
 	}
 
 	if (platform_booting()) {

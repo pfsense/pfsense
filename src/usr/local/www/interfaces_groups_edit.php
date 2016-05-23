@@ -229,7 +229,7 @@ $section->addInput(new Form_Input(
 	$pconfig['ifname'],
 	['placeholder' => 'Group Name']
 ))->setWidth(6)->setHelp('No numbers or spaces are allowed. '.
-	'Only characters in a-zA-Z');
+	'Only characters: a-zA-Z');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -237,8 +237,8 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['descr'],
 	['placeholder' => 'Group Description']
-))->setWidth(6)->setHelp('You may enter a group decsription '.
-	'here for your reference (not parsed)');
+))->setWidth(6)->setHelp('A group description may be entered '.
+	'here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Select(
 	'members',

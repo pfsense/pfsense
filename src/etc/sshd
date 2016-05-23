@@ -105,6 +105,9 @@
 	$sshconf .= "ClientAliveInterval 30\n";
 	$sshconf .= "UseDNS no\n";
 	$sshconf .= "X11Forwarding no\n";
+	foreach ($keys as $key) {
+		$sshconf .= "HostKey {$sshConfigDir}/ssh_host_{$key['suffix']}key\n";
+	}
 	if (isset($config['system']['ssh']['sshdkeyonly'])) {
 		$sshconf .= "# Login via Key only\n";
 		$sshconf .= "PasswordAuthentication no\n";

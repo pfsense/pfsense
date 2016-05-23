@@ -162,9 +162,13 @@ function parse_duid($duid_string) {
 			$n = substr($duid_string, $i+1, 1);
 			if (($n == '\\') || ($n == '"')) {
 				$parsed_duid[] = sprintf("%02x", ord($n));
-			} elseif (is_numeric($n)) {
-				$parsed_duid[] = sprintf("%02x", octdec(substr($duid_string, $i+1, 3)));
-				$i += 3;
+				$i += 1;
+			} else {
+				$n = substr($duid_string, $i+1, 3);
+				if (preg_match('/[0-3][0-7]{2}/', $n)) {
+					$parsed_duid[] = sprintf("%02x", octdec($n));
+					$i += 3;
+				}
 			}
 		} else {
 			$parsed_duid[] = sprintf("%02x", ord($s));
@@ -357,7 +361,7 @@ while ($i < $leases_count) {
 		$prefixes[] = $entry;
 	} else {
 		$leases[] = $entry;
-		$mappings[$entry['iaid'] . $entry['duid']] = $entry['ip'];
+		$mappings[$entry['duid']] = $entry['ip'];
 	}
 	$l++;
 	$i++;
@@ -409,7 +413,7 @@ if (count($pools) > 0) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pool Status')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
@@ -445,7 +449,7 @@ if (empty($leases)) {
 ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Leases')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
@@ -470,11 +474,14 @@ foreach ($leases as $data):
 	}
 
 	if ($data['act'] == $active_string) {
+		/* Active DHCP Lease */
 		$icon = 'fa-check-circle-o';
 	} elseif ($data['act'] == $expired_string) {
+		/* Expired DHCP Lease */
 		$icon = 'fa-ban';
 	} else {
-		$icon = 'fa-times-circle-o';
+		/* Static Mapping */
+		$icon = 'fa-user';
 	}
 
 	if ($data['act'] == $static_string) {
@@ -539,10 +546,11 @@ foreach ($leases as $data):
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Delegated Prefixes')?></h2></div>
-	<div class="panel-body">
+	<div class="panel-body table-responsive">
 		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
+				<th><!-- icon --></th>
 				<th><?=gettext("IPv6 Prefix")?></th>
 				<th><?=gettext("IAID")?></th>
 				<th><?=gettext("DUID")?></th>
@@ -593,9 +601,9 @@ foreach ($prefixes as $data):
 				<td><i class="fa <?=$icon?>"></i></td>
 				<td>
 					<?=$data['prefix']?>
-<?php if ($mappings[$data['iaid'] . $data['duid']]): ?>
+<?php if ($mappings[$data['duid']]): ?>
 					<br />
-					<?=gettext('Routed To')?>: <?=$mappings[$data['iaid'] . $data['duid']]?>
+					<?=gettext('Routed To')?>: <?=$mappings[$data['duid']]?>
 <?php endif; ?>
 				</td>
 				<td><?=$data['iaid']?></td>
@@ -616,9 +624,9 @@ foreach ($prefixes as $data):
 </div>
 
 <?php if ($_GET['all']): ?>
-	<a class="btn btn-default" href="status_dhcpv6_leases.php?all=0"><?=gettext("Show active and static leases only")?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>
-	<a class="btn btn-default" href="status_dhcpv6_leases.php?all=1"><?=gettext("Show all configured leases")?></a>
+	<a class="btn btn-info" href="status_dhcpv6_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>
 <?php endif;
 
 include("foot.inc");

@@ -1,0 +1,139 @@
+
+/* Compact-RED theme for pfSense by PiBa-NL */
+
+@import url("/css/pfSense.css");
+
+body {
+    font-size: 12px;
+}
+
+.form-control {
+    font-size: 12px;
+}
+
+.container.fixed {
+    padding-top: 40px;
+}
+
+/* navigation */
+.navbar {
+    margin-bottom: 2px;
+    min-height:30px;
+}
+
+.navbar-inverse {
+    background-color: #600;
+}
+
+.navbar-brand > img {
+    max-height: 26px;
+}
+
+.navbar-brand {
+    padding: 2px 0 0 5px;
+    height: 30px;
+}
+
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #212121;
+    color: #fff;
+}
+.navbar-inverse .navbar-nav >li>a:hover{
+    color: #ccc;
+}
+.text-muted {
+    color: #BDBDBD;
+}
+.text-muted > a:hover {
+    color: #ccc;
+}
+
+.nav>li>a {
+    padding: 5px 19px 0px 19px;
+}
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #600;
+}
+
+.navbar-inverse .navbar-nav>.open>a,.navbar-inverse .navbar-nav>.open>a:focus,.navbar-inverse .navbar-nav>.open>a:hover {
+    color: #fff;
+    background-color: #600;
+}
+.nav-pills {
+    margin-bottom: 0px;
+}
+
+.dropdown-menu>li>a {
+    padding: 0px 20px;
+}
+
+.navbar-right>li>a {
+    padding: 2px 15px 1px 15px;
+}
+
+.navbar-toggle {
+    margin-top:0px;
+    margin-bottom:0px;
+}
+.panel-default>.panel-heading {
+    background-color: #900;
+}
+
+.form-control {
+    margin-bottom: 2px;
+}
+
+.form-group {
+    padding: 2px 5px 2px 5px;
+}
+.table>tbody>tr>td,.table>tbody>tr>th,.table>tfoot>tr>td,.table>tfoot>tr>th,.table>thead>tr>td,.table>thead>tr>th {
+     padding:2px;
+}
+
+.header .context-links {
+    top: 1px;
+}
+
+.breadcrumb {
+    margin-bottom: 2px;
+    padding: 0px 15px;
+    font-size: 14px;
+}
+
+/** Page footer */
+.footer {
+    height: 40px;
+    background-color: #600;
+}
+
+.btn
+{
+    padding: 2px 12px;
+}
+
+.dropdown-menu {
+	font-size:12px;
+}
+
+.form-horizontal .checkbox {
+	padding: 2px 16px;
+}
+
+.chkboxlbl {
+	padding-top: 0px;
+}
+
+.form-horizontal .checkbox,.form-horizontal .radio {
+	min-height:20px;
+}
+
+@media (min-width: 768px) {
+	.form-horizontal .control-label {
+		padding-top: 4px;
+	}
+}
+	
+/* Experimental styles to correct vertical alignment in forms */
+.col-sm-10 {
+	padding-top: 0px;
+}

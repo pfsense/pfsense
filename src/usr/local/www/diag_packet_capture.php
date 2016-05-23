@@ -165,6 +165,18 @@ if ($_POST) {
 		$input_errors[] = gettext("Invalid address family.");
 	}
 
+	if ($fam !== "" && $proto !== "") {
+		if ($fam == "ip" && $proto == "icmp6") {
+			$input_errors[] = gettext("IPv4 with ICMPv6 is not valid.");
+		}
+		if ($fam == "ip6" && $proto == "icmp") {
+			$input_errors[] = gettext("IPv6 with ICMP is not valid.");
+		}
+		if ($fam == "ip6" && $proto =="arp") {
+			$input_errors[] = gettext("IPv6 with ARP is not valid.");
+		}
+	}
+
 	if ($proto !== "" && !in_array(strip_not($proto), $protos)) {
 		$input_errors[] = gettext("Invalid protocol.");
 	}
@@ -306,9 +318,10 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'promiscuous',
 	'Promiscuous',
-	'Packet capture will be performed using promiscuous mode',
+	'Enable promiscuous mode',
 	$promiscuous
-))->setHelp('Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
+))->setHelp('The packet capture will be performed using promiscuous mode.<br />' .
+			'Note: Some network adapters do not support or work well in promiscuous mode.'. '<br />' .
 			'More: ' . '<a target="_blank" href="http://www.freebsd.org/cgi/man.cgi?query=tcpdump&amp;apropos=0&amp;sektion=0&amp;manpath=FreeBSD+8.3-stable&amp;arch=default&amp;format=html">' .
 			'Packet capture' . '</a>');
 
@@ -320,7 +333,7 @@ $section->addInput(new Form_Select(
 		  'ip' => gettext('IPv4 Only'),
 		  'ip6' => gettext('IPv6 Only')
 	)
-))->setHelp('Select the type of traffic to be captured');
+))->setHelp('Select the type of traffic to be captured.');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -337,7 +350,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('This value is either the Source or Destination IP address or subnet in CIDR notation. The packet capture will look for this address in either field.' . '<br />' .
 			'Matching can be negated by preceding the value with "!". Multiple IP addresses or CIDR subnets may be specified. Comma (",") separated values perform a boolean "AND". ' .
 			'Separating with a pipe ("|") performs a boolean "OR".' . '<br />' .
-			'If you leave this field blank, all packets on the specified interface will be captured.');
+			'If this field is left blank, all packets on the specified interface will be captured.');
 
 $section->addInput(new Form_Input(
 	'port',
@@ -345,7 +358,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$port
 ))->setHelp('The port can be either the source or destination port. The packet capture will look for this port in either field. ' .
-			'Leave blank if you do not want to filter by port.');
+			'Leave blank if not filtering by port.');
 
 $section->addInput(new Form_Input(
 	'snaplen',
@@ -380,7 +393,7 @@ $section->addInput(new Form_Checkbox(
 	'Reverse DNS Lookup',
 	'Do reverse DNS lookup',
 	$_POST['dnsquery']
-))->setHelp('This check box will cause the packet capture to perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
+))->setHelp('The packet capture will perform a reverse DNS lookup associated with all IP addresses.' . '<br />' .
 			'This option can cause delays for large packet captures.');
 
 $form->add($section);
@@ -393,25 +406,33 @@ $processisrunning = ($processcheck != "");
 if (($action == gettext("Stop") or $action == "") and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'startbtn',
-		'Start'
-	))->removeClass('btn-primary')->addClass('btn-success');
+		'Start',
+		null,
+		'fa-play-circle'
+	))->addClass('btn-success');
 } else {
 	$form->addGlobal(new Form_Button(
 		'stopbtn',
-		'Stop'
-	))->removeClass('btn-primary')->addClass('btn-warning');
+		'Stop',
+		null,
+		'fa-stop-circle'
+	))->addClass('btn-warning');
 }
 
 if (file_exists($fp.$fn) and $processisrunning != true) {
 	$form->addGlobal(new Form_Button(
 		'viewbtn',
-		'View Capture'
-	))->removeClass('btn-primary');
+		'View Capture',
+		null,
+		'fa-file-text-o'
+	))->addClass('btn-primary');
 
 	$form->addGlobal(new Form_Button(
 		'downloadbtn',
-		'Download Capture'
-	))->removeClass('btn-primary');
+		'Download Capture',
+		null,
+		'fa-download'
+	))->addClass('btn-primary');
 
 	$section->addInput(new Form_StaticText(
 		'Last capture',

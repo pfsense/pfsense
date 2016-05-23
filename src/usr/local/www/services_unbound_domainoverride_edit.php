@@ -146,6 +146,10 @@ $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General 
 $shortcut_section = "resolver";
 include("head.inc");
 
+if ($input_errors) {
+        print_input_errors($input_errors);
+}
+
 $form = new Form();
 
 $section = new Form_Section('Domain Override');
@@ -155,21 +159,21 @@ $section->addInput(new Form_Input(
 	'Domain',
 	'text',
 	$pconfig['domain']
-))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: testormycompany.localdomainor1.168.192.in-addr.arpa');
+))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!) e.g.: test or mycompany.localdomain or 1.168.192.in-addr.arpa');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
 	'IP Address',
 	$pconfig['ip']
 ))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100' . '<br />' .
-			'To use a nondefault port for communication, append an \'@\' with the port number.');
+			'To use a non-default port for communication, append an \'@\' with the port number.')->setPattern('[a-zA-Z0-9\@\.\:]+');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_domainOverrides[$id]) {
 	$section->addInput(new Form_Input(

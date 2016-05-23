@@ -378,6 +378,7 @@ function build_priv_table() {
 	$privhtml .=				'<th>' . gettext('Inherited from') . '</th>';
 	$privhtml .=				'<th>' . gettext('Name') . '</th>';
 	$privhtml .=				'<th>' . gettext('Description') . '</th>';
+	$privhtml .=				'<th>' . gettext('Action') . '</th>';
 	$privhtml .=			'</tr>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
@@ -396,7 +397,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
-			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a></td>';
+			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
 		}
 
 		$privhtml .=			'</td>';
@@ -412,7 +413,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_usermanager_addprivs.php?userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -458,7 +459,7 @@ function build_cert_table() {
 	$certhtml .= '</div>';
 
 	$certhtml .= '<nav class="action-buttons">';
-	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$certhtml .=	'<a href="system_certmanager.php?act=new&amp;userid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$certhtml .= '</nav>';
 
 	return($certhtml);
@@ -659,7 +660,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'Full name',
 		'text',
 		htmlspecialchars($pconfig['descr'])
-	))->setHelp('User\'s full name, for your own information only');
+	))->setHelp('User\'s full name, for administrative information only');
 
 	if ($ro) {
 		$input->setDisabled();
@@ -715,15 +716,19 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Member of" list >'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Member of" list',
+		null,
+		'fa-angle-double-right'
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'< Move to "Not member of" list'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Not member of" list',
+		null,
+		'fa-angle-double-left'
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
-	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
+	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 	$section->add($group);
 
 	// ==== Button for adding user certificate ================================
@@ -799,7 +804,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 				array(
 					512 => '512 bits',
 					1024 => '1024 bits',
-					2048 => '2049 bits',
+					2048 => '2048 bits',
 					4096 => '4096 bits',
 				)
 			));
@@ -846,10 +851,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Make buttons plain buttons, not submit
-	$("#movetodisabled").prop('type','button');
-	$("#movetoenabled").prop('type','button');
 
 	// On click . .
 	$("#movetodisabled").click(function() {

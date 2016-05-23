@@ -77,6 +77,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -91,8 +92,8 @@ $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
 $shortcut_section = "captiveportal";
 
-$actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;' . gettext("Pass"),
-				 'block' => '<font color="red" size="4">&#x2718;</font>&nbsp;' . gettext("Block"));
+$actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
+	'block' => '<i class="fa fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -189,7 +190,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('passthrumac')) {
-	print_apply_box(gettext("The Captive Portal MAC address configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The Captive Portal MAC address configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -208,7 +209,7 @@ display_top_tabs($tab_array, true);
 				<th><?=gettext('Action')?></th>
 				<th><?=gettext("MAC address")?></th>
 				<th><?=gettext("Description")?></th>
-				<th><!-- Buttons --></th>
+				<th><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 
@@ -236,7 +237,7 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 <?php
 $i++;
 endforeach; ?>
-		<tbody>
+		</tbody>
 	</table>
 <?php
 else:

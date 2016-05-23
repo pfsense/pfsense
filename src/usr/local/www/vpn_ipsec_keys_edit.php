@@ -169,7 +169,7 @@ $section->addInput(new Form_Input(
 	'Identifier',
 	'text',
 	$pconfig['ident']
-))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address');
+))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address.');
 
 $section->addInput(new Form_Select(
 	'type',
@@ -197,7 +197,11 @@ if (isset($id) && $a_secret[$id]) {
 $form->add($section);
 
 print $form;
-
+?>
+<div class="infoblock blockopen">
+<?php
 print_info_box(gettext("PSK for any user can be set by using an identifier of any."), 'info', false);
-
+?>
+</div>
+<?php
 include("foot.inc");

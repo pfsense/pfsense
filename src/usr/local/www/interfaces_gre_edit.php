@@ -147,9 +147,15 @@ if ($_POST) {
 		$gre['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gre['remote-addr'] = $_POST['remote-addr'];
 		$gre['descr'] = $_POST['descr'];
-		$gre['link1'] = isset($_POST['link1']);
-		$gre['link2'] = isset($_POST['link2']);
-		$gre['link0'] = isset($_POST['link0']);
+		if (isset($_POST['link0'])) {
+			$gre['link0'] = '';
+		}
+		if (isset($_POST['link1'])) {
+			$gre['link1'] = '';
+		}
+		if (isset($_POST['link2'])) {
+			$gre['link2'] = '';
+		}
 		$gre['greif'] = $_POST['greif'];
 
 		$gre['greif'] = interface_gre_configure($gre);
@@ -228,7 +234,7 @@ $section->addInput(new Form_Select(
 	'GRE tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
-))->setHelp('The subnet is used for determining the network that is tunnelled');
+))->setHelp('The subnet is used for determining the network that is tunnelled.');
 
 $section->addInput(new Form_Checkbox(
 	'link0',
@@ -256,7 +262,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Input(
 	'greif',

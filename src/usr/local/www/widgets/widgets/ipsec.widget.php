@@ -171,9 +171,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 				print(		"<td>" . htmlspecialchars($ipsec['descr']) . "</td>\n");
 
 				if ($ipsec['status'] == "true") {
-					print('<td><i class="fa fa-chevron-up"></i></td>' . "\n");
+					print('<td><i class="fa fa-arrow-up text-success"></i></td>' . "\n");
 				} else {
-					print('<td><i class="fa fa-chevron-down"></i></td>' . "\n");
+					print('<td><i class="fa fa-arrow-down text-danger"></i></td>' . "\n");
 				}
 
 				print(	"</tr>\n");
@@ -261,7 +261,7 @@ if (isset($config['ipsec']['phase2'])): ?>
 <?php else: ?>
 	<div>
 		<h5 style="padding-left:10px;"><?=gettext("There are no configured IPsec Tunnels")?></h5>
-		<p  style="padding-left:10px;"><?=gettext('You can configure your IPsec <a href="vpn_ipsec.php">here</a>.')?></p>
+		<p  style="padding-left:10px;"><?=gettext('IPsec can be configured <a href="vpn_ipsec.php">here</a>.')?></p>
 	</div>
 <?php endif;
 

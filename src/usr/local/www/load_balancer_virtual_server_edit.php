@@ -120,7 +120,7 @@ if ($_POST) {
 	}
 
 	if (preg_match('/[ \/]/', $_POST['name'])) {
-		$input_errors[] = gettext("You cannot use spaces or slashes in the 'name' field.");
+		$input_errors[] = gettext("Spaces or slashes cannot be used in the 'name' field.");
 	}
 
 	if (strlen($_POST['name']) > 32) {
@@ -142,7 +142,7 @@ if ($_POST) {
 	}
 
 	if ((strtolower($_POST['relay_protocol']) == "dns") && !empty($_POST['sitedown'])) {
-		$input_errors[] = gettext("You cannot select a Fall Back Pool when using the DNS relay protocol.");
+		$input_errors[] = gettext("A Fall Back Pool cannot be selected when using the DNS relay protocol.");
 	}
 
 	if (!$input_errors) {
@@ -201,6 +201,8 @@ if ($input_errors) {
 
 $form = new Form();
 
+$form->setAction("load_balancer_virtual_server_edit.php");
+
 $section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(
@@ -217,14 +219,14 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'ipaddr',
 	'IP Address',
+	'text',
 	$pconfig['ipaddr']
-))->setHelp('This is normally the WAN IP address that you would like the server to listen on. ' .
+))->setHelp('This is normally the WAN IP address for the server to listen on. ' .
 			'All connections to this IP and port will be forwarded to the pool cluster. ' .
-			'You may also specify a host alias listed in Firewall -&gt; Aliases here.');
+			'A host alias listed in Firewall -&gt; Aliases may also be specified here.');
 
 $section->addInput(new Form_Input(
 	'port',
@@ -232,8 +234,8 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['port']
 ))->setHelp('Port that the clients will connect to. All connections to this port will be forwarded to the pool cluster. ' .
-			'If left blank listening ports from the pool will be used.' .
-			'You may also specify a port alias listed in Firewall -&gt; Aliases here.');
+			'If left blank listening ports from the pool will be used.' . " " .
+			'A port alias listed in Firewall -&gt; Aliases may also be specified here.');
 
 if (count($config['load_balancer']['lbpool']) == 0) {
 	$section->addInput(new Form_StaticText(
@@ -261,7 +263,6 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'Please add a pool on the "Pools" tab to use this feature. '
 	));
 } else {
-
 	$list = array();
 	for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 		$list[$config['load_balancer']['lbpool'][$i]['name']] = $config['load_balancer']['lbpool'][$i]['name'];
@@ -271,7 +272,7 @@ if (count($config['load_balancer']['lbpool']) == 0) {
 		'sitedown',
 		'Fall-back Pool',
 		$pconfig['sitedown'],
-		$list
+		["" => "None"] + $list
 	));
 }
 
@@ -301,7 +302,7 @@ if (isset($id) && $a_vs[$id] && $_GET['act'] != 'dup') {
 $form->add($section);
 print($form);
 
-print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after you have finished setting it up.'));
+print_info_box(gettext('Don\'t forget to add a firewall rule for the virtual server/pool after finished setting it up.'));
 ?>
 <script type="text/javascript">
 //<![CDATA[

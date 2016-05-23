@@ -146,7 +146,7 @@ if ($_POST) {
 
 		write_config(gettext("New/Edited RFC2136 dnsupdate entry was posted."));
 
-		if ($_POST['Submit'] == gettext("Save & Force Update")) {
+		if ($_POST['force']) {
 			$retval = services_dnsupdate_process("", $rfc2136['host'], true);
 		} else {
 			$retval = services_dnsupdate_process();
@@ -217,7 +217,7 @@ $section->addInput(new Form_Input(
 	'Hostname',
 	'text',
 	$pconfig['host']
-))->setHelp('Fully qualified hostname of the host to be updated');
+))->setHelp('Fully qualified hostname of the host to be updated.');
 
 $section->addInput(new Form_Input(
 	'ttl',
@@ -322,7 +322,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_rfc2136[$id]) {
 	$section->addInput(new Form_Input(
@@ -334,15 +334,17 @@ if (isset($id) && $a_rfc2136[$id]) {
 
 	$form->addGlobal(new Form_Button(
 		'force',
-		'Save & Force Update'
-	))->removeClass('btn-primary')->addClass('btn-info');
+		'Save & Force Update',
+		null,
+		'fa-refresh'
+	))->addClass('btn-info');
 }
 
 $form->add($section);
 print($form);
 
-print_info_box(sprintf(gettext('You must configure a DNS server in %1$sSystem: ' .
-					'General setup %2$sor allow the DNS server list to be overridden ' .
+print_info_box(sprintf(gettext('A DNS server must be configured in %1$sSystem: ' .
+					'General Setup %2$sor allow the DNS server list to be overridden ' .
 					'by DHCP/PPP on WAN for dynamic DNS updates to work.'), '<a href="system.php">', '</a>'));
 
 include("foot.inc");

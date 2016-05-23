@@ -55,8 +55,8 @@
 	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdns spdns-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDNS,SPDNS (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdns spdns-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDNS,SPDNS (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -105,6 +105,19 @@ function services_radvd_configure($blacklist = array()) {
 			$dhcpv6ifconf['rapriority'] = "medium";
 		}
 
+		$racarpif = false;
+		/* check if binding to CARP IP */
+		if (!empty($dhcpv6ifconf['rainterface'])) {
+			if (strstr($dhcpv6ifconf['rainterface'], "_vip")) {
+				if (get_carp_interface_status($dhcpv6ifconf['rainterface']) == "MASTER") {
+					$dhcpv6if = $dhcpv6ifconf['rainterface'];
+					$racarpif = true;
+				} else {
+					continue;
+				}
+			}
+		}
+
 		$realif = get_real_interface($dhcpv6if, "inet6");
 
 		if (isset($radvdifs[$realif])) {
@@ -134,7 +147,6 @@ function services_radvd_configure($blacklist = array()) {
 		} else {
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		}
-		// $radvdconf .= "\tDeprecatePrefix on;\n";
 		switch ($dhcpv6ifconf['rapriority']) {
 			case "low":
 				$radvdconf .= "\tAdvDefaultPreference low;\n";
@@ -158,7 +170,11 @@ function services_radvd_configure($blacklist = array()) {
 				break;
 		}
 		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
-		$radvdconf .= "\t\tDeprecatePrefix on;\n";
+		if ($racarpif == true) {
+			$radvdconf .= "\t\tDeprecatePrefix off;\n";
+		} else {
+			$radvdconf .= "\t\tDeprecatePrefix on;\n";
+		}
 		switch ($dhcpv6ifconf['ramode']) {
 			case "managed":
 				$radvdconf .= "\t\tAdvOnLink on;\n";
@@ -1240,57 +1256,6 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		sleep(1);
 	}
 
-	/*
-	 * We add a fake entry for interfaces that are set to track6
-	 * another WAN unless DHCP has been configured
-	 */
-	foreach ($Iflist as $ifname) {
-		/* Do not put in the config an interface which is down */
-		if (isset($blacklist[$ifname])) {
-			continue;
-		}
-		if (!empty($config['interfaces'][$ifname]['track6-interface']) && isset($dhcpdv6cfg[$ifname]['enable'])) {
-			$realif = get_real_interface($ifname, "inet6");
-			$ifcfgipv6 = get_interface_ipv6($ifname);
-			if (!is_ipaddrv6($ifcfgipv6)) {
-				continue;
-			}
-			$ifcfgipv6 = Net_IPv6::getNetmask($ifcfgipv6, 64);
-			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			$pdlen = calculate_ipv6_delegation_length($trackifname);
-			$ifcfgipv6arr =explode(":", $ifcfgipv6);
-			$dhcpdv6cfg[$ifname] = array();
-			$dhcpdv6cfg[$ifname]['enable'] = true;
-			/* range */
-			$ifcfgipv6arr[7] = "1000";
-			$dhcpdv6cfg[$ifname]['range'] = array();
-			$dhcpdv6cfg[$ifname]['range']['from'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
-			$ifcfgipv6arr[7] = "2000";
-			$dhcpdv6cfg[$ifname]['range']['to'] = Net_IPv6::compress(implode(":", $ifcfgipv6arr));
-			/* prefix length > 0? We can add dhcp6 prefix delegation server */
-			if ($pdlen > 2) {
-				$pdlenmax = $pdlen;
-				$pdlenhalf = $pdlenmax -1;
-				$pdlenmin = (64 - ceil($pdlenhalf / 4));
-				$dhcpdv6cfg[$ifname]['prefixrange'] = array();
-				$dhcpdv6cfg[$ifname]['prefixrange']['prefixlength'] = $pdlenmin;
-
-				/* set the delegation start to half the current address block */
-				$range = Net_IPv6::parseAddress($ifcfgipv6, (64 - $pdlenmax));
-				$range['start'] = Net_IPv6::getNetmask($range['end'], (64 - $pdlenhalf));
-
-				/* set the end range to a multiple of the prefix delegation size, required by dhcpd */
-				$range = Net_IPv6::parseAddress($range['end'], (64 - $pdlenhalf));
-				$range['end'] = Net_IPv6::getNetmask($range['end'], (64 - round($pdlen / 2)));
-
-				$dhcpdv6cfg[$ifname]['prefixrange']['from'] = Net_IPv6::compress($range['start']);
-				$dhcpdv6cfg[$ifname]['prefixrange']['to'] = Net_IPv6::compress($range['end']);
-			}
-			$dhcpdv6cfg[$ifname]['dns6ip'] = get_interface_ipv6($ifname);
-		}
-	}
-
 	$custoptionsv6 = "";
 	foreach ($dhcpdv6cfg as $dhcpv6if => $dhcpv6ifconf) {
 		if (is_array($dhcpv6ifconf['numberoptions']) && is_array($dhcpv6ifconf['numberoptions']['item'])) {
@@ -1479,7 +1444,7 @@ EOD;
 				$ntpservers[] = $ntpserver;
 			}
 			if (count($ntpservers) > 0) {
-				$dhcpdv6conf .= "       option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
+				$dhcpdv6conf .= "        option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
 			}
 		}
 		// tftp-server-name
@@ -2640,7 +2605,7 @@ function configure_cron() {
 
 		$crontab_contents .= "\n#\n";
 		$crontab_contents .= "# " . gettext("If possible do not add items to this file manually.") . "\n";
-		$crontab_contents .= "# " . gettext("If you do so, this file must be terminated with a blank line (e.g. new line)") . "\n";
+		$crontab_contents .= "# " . gettext("If done so, this file must be terminated with a blank line (e.g. new line)") . "\n";
 		$crontab_contents .= "#\n\n";
 	}
 

@@ -80,18 +80,6 @@ $ttl = DEFAULT_TTL;
 $ipproto = 'ipv4';
 $sourceip = 'any';
 
-function create_sourceaddresslist() {
-	$list = array('any' => gettext('Any'));
-
-	$sourceips = get_possible_traffic_source_addresses(true);
-
-	foreach ($sourceips as $sipvalue => $sipname) {
-		$list[$sipvalue] = $sipname;
-	}
-
-	return($list);
-}
-
 if ($_POST || $_REQUEST['host']) {
 	unset($input_errors);
 
@@ -155,7 +143,7 @@ if ($do_traceroute) {
 	}
 }
 
-$form = new Form('Traceroute');
+$form = new Form(false);
 
 $section = new Form_Section('Traceroute');
 
@@ -172,21 +160,21 @@ $section->addInput(new Form_Select(
 	'IP Protocol',
 	$ipproto,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp('Select the protocol to use');
+))->setHelp('Select the protocol to use.');
 
 $section->addInput(new Form_Select(
 	'sourceip',
 	'Source Address',
 	$sourceip,
-	create_sourceaddresslist()
-))->setHelp('Select source address for the trace');
+	array('any' => gettext('Any')) + get_possible_traffic_source_addresses(true)
+))->setHelp('Select source address for the trace.');
 
 $section->addInput(new Form_Select(
 	'ttl',
-	'Maximum nuber of hops',
+	'Maximum number of hops',
 	$ttl,
 	array_combine(range(1, MAX_TTL), range(1, MAX_TTL))
-))->setHelp('Select the maximum number of network hops to trace');
+))->setHelp('Select the maximum number of network hops to trace.');
 
 $section->addInput(new Form_Checkbox(
 	'resolve',
@@ -203,6 +191,14 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, traceroute uses UDP but that may be blocked by some routers. Check this box to use ICMP instead, which may succeed. ');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Traceroute',
+	null,
+	'fa-rss'
+))->addClass('btn-primary');
+
 print $form;
 
 /* Show the traceroute results */

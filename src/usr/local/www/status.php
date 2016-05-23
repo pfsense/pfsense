@@ -106,6 +106,8 @@ function doCmdT($title, $command) {
 			while (!feof($fd)) {
 				$line = fgets($fd);
 				/* remove sensitive contents */
+				$line = preg_replace("/<authorizedkeys>.*?<\\/authorizedkeys>/", "<authorizedkeys>xxxxx</authorizedkeys>", $line);
+				$line = preg_replace("/<bcrypt-hash>.*?<\\/bcrypt-hash>/", "<bcrypt-hash>xxxxx</bcrypt-hash>", $line);
 				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
 				$line = preg_replace("/<pre-shared-key>.*?<\\/pre-shared-key>/", "<pre-shared-key>xxxxx</pre-shared-key>", $line);
 				$line = preg_replace("/<rocommunity>.*?<\\/rocommunity>/", "<rocommunity>xxxxx</rocommunity>", $line);
@@ -276,6 +278,8 @@ defCmdT("System Message Buffer (Boot)", "/bin/cat /var/log/dmesg.boot");
 defCmdT("sysctl values", "/sbin/sysctl -a");
 defCmdT("Kernel Environment", "/bin/kenv");
 defCmdT("Installed OS Packages", "/usr/sbin/pkg info");
+defCmdT("System Devices-PCI", "/usr/sbin/pciconf -lvb");
+defCmdT("System Devices-USB", "/usr/sbin/usbconfig dump_device_desc");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

@@ -57,7 +57,7 @@
 		<id>1</id>
 		<title>pfSense Traffic Shaper</title>
 		<disableheader>true</disableheader>
-		<description>This wizard will guide you through setting up the pfSense traffic shaper. &lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.
+		<description>This wizard will provide guidance through setting up the pfSense traffic shaper. &lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.
 			&lt;br/&gt;&lt;br/&gt; Please be aware that Custom Bandwidths should not exceed 30% of the interface/link bandwidth. Keep this in mind during the wizard.
 		</description>
 		<fields>
@@ -70,7 +70,7 @@
 				<name>numberofconnections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
-				<description>Number of connections you have</description>
+				<description>Number of connections the system has</description>
 				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
 			</field>
 			<field>
@@ -78,7 +78,7 @@
 				<name>numberoflocalinterfaces</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
-				<description>Number of local interfaces you have</description>
+				<description>Number of local interfaces the system has</description>
 				<bindstofield>ezshaper->step1->numberoflocalinterfaces</bindstofield>
 			</field>
 			<field>
@@ -128,7 +128,7 @@
 			<field>
 				<name>Provider</name>
 				<type>select</type>
-				<description>Choose Generic if your provider isn't listed.</description>
+				<description>Choose Generic if the provider isn't listed.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;provider</bindstofield>
 				<options>
 					<option>
@@ -153,7 +153,7 @@
 				<displayname>Upstream SIP Server</displayname>
 				<name>upstream_sip_server</name>
 				<type>inputalias</type>
-				<description>(Optional) If this is chosen, the provider field will be overridden.  This allows you to provide the IP address of the &lt;strong&gt;remote&lt;/strong&gt; PBX or SIP Trunk to prioritize.  &lt;br /&gt;NOTE: You can also use a Firewall Alias in this location.</description>
+				<description>(Optional) If this is chosen, the provider field will be overridden.  This allows providing the IP address of the &lt;strong&gt;remote&lt;/strong&gt; PBX or SIP Trunk to prioritize.  &lt;br /&gt;NOTE: A Firewall Alias can also be used in this location.</description>
 				<bindstofield>ezshaper-&gt;step3-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>
@@ -191,7 +191,7 @@
 			<field>
 				<name>Address</name>
 				<type>inputalias</type>
-				<description>This allows you to just provide the IP address of the computer(s) to penalize. NOTE: You can also use a Firewall Alias in this location.</description>
+				<description>This allows just providing the IP address of the computer(s) to penalize. NOTE: A Firewall Alias can also be used in this location.</description>
 				<bindstofield>ezshaper-&gt;step4-&gt;address</bindstofield>
 				<message>IP Address field is non-blank and doesn't look like an IP address.</message>
 			</field>
@@ -209,7 +209,7 @@
 				<dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
                                 <name>BandwidthSpeed</name>
-				<description>The limit you want to apply.</description>
+				<description>The desired limit to apply.</description>
                                 <type>select</type>
 				<options>
 				<option>
@@ -254,7 +254,7 @@
 				<name>Enable</name>
 				<type>checkbox</type>
 				<typehint>Lower priority of Peer-to-Peer traffic</typehint>
-				<description>This will lower the priority of P2P traffic below all other traffic.  Please check the items that you would like to prioritize lower than normal traffic.</description>
+				<description>This will lower the priority of P2P traffic below all other traffic.  Please check the items to prioritize lower than normal traffic.</description>
 				<enablefields>p2pCatchAll,Bandwidth,BandwidthSpeed,Aimster,BitTorrent,BuddyShare,CuteMX,DCplusplus,dcc,DirectConnect,DirectFileExpress,EDonkey2000,FastTrack,Gnutella,grouper,hotComm,HotlineConnect,iMesh,Napster,OpenNap,Scour,Shareaza,SongSpy,WinMX</enablefields>
 				<bindstofield>ezshaper-&gt;step5-&gt;enable</bindstofield>
 			</field>
@@ -282,7 +282,7 @@
                                 <dontcombinecells>true</dontcombinecells>
 				<donotdisable>true</donotdisable>
                                 <name>BandwidthSpeed</name>
-                                <description>The limit you want to apply.</description>
+                                <description>The desired limit to apply.</description>
                                 <type>select</type>
                                 <options>
 				<option>
@@ -526,13 +526,13 @@
 			<field>
 				<name>Battlefield2</name>
 				<type>checkbox</type>
-				<typehint>Battlefield 2 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>Battlefield 2 - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;battlefield2</bindstofield>
 			</field>
 			<field>
 				<name>Battlefield3</name>
 				<type>checkbox</type>
-				<typehint>Battlefield 3 and 4 - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>Battlefield 3 and 4 - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;battlefield3</bindstofield>
 			</field>
 			<field>
@@ -574,7 +574,7 @@
 			<field>
 				<name>DeadSpace2</name>
 				<type>checkbox</type>
-				<typehint>Dead Space2 - this game uses a HUGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>Dead Space2 - this game uses a HUGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;deadspace2</bindstofield>
 			</field>
 			<field>
@@ -622,7 +622,7 @@
 			<field>
 				<name>Everquest</name>
 				<type>checkbox</type>
-				<typehint>Everquest - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>Everquest - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;everquest</bindstofield>
 			</field>
 			<field>
@@ -664,7 +664,7 @@
 			<field>
 				<name>LeagueofLegends</name>
 				<type>checkbox</type>
-				<typehint>League of Legends - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>League of Legends - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;leagueoflegends</bindstofield>
 			</field>
 			<field>
@@ -682,7 +682,7 @@
 			<field>
 				<name>MechwarriorOnline</name>
 				<type>checkbox</type>
-				<typehint>MechWarrior: Online - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>MechWarrior: Online - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;mechwarrioronline</bindstofield>
 			</field>
 			<field>
@@ -724,7 +724,7 @@
 			<field>
 				<name>StarWarsTOR</name>
 				<type>checkbox</type>
-				<typehint>StarWars: The Old Republic - this game uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>StarWars: The Old Republic - this game uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 				<bindstofield>ezshaper-&gt;step6-&gt;starwarstor</bindstofield>
 			</field>
 			<field>
@@ -1133,7 +1133,7 @@
 						<value>L</value>
 					</option>
 				</options>
-				<typehint>iTunes Radio - this rule uses a LARGE port range, be aware that you may need to manually rearrange the resulting rules to correctly prioritize other traffic.</typehint>
+				<typehint>iTunes Radio - this rule uses a LARGE port range, be aware that the resulting rules may need to be manually rearranged to correctly prioritize other traffic.</typehint>
 			</field>
 			<field>
 				<name>StreamingMP3</name>

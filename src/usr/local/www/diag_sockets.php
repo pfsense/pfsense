@@ -71,7 +71,10 @@ $showAllText = $showAll ? gettext("Show only listening sockets") : gettext("Show
 $showAllOption = $showAll ? "" : "?showAll";
 
 ?>
-<input class="btn btn-info btn-sm" type="button" value="<?=$showAllText?>" onclick="window.location.href='diag_sockets.php<?=$showAllOption?>'"/>
+<button class="btn btn-info btn-sm" type="button" value="<?=$showAllText?>" onclick="window.location.href='diag_sockets.php<?=$showAllOption?>'">
+	<i class="fa fa-<?= ($showAll) ? 'minus-circle' : 'plus-circle' ; ?> icon-embed-btn"></i>
+	<?=$showAllText?>
+</button>
 <br />
 <br />
 

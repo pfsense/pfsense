@@ -268,12 +268,15 @@ function getBoolValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 		</tr>
 		<tr>
 			<td class="text-right" colspan="3">
-				<input type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="formbtn" value="Save" />
+				<button type="submit" id="thermal_sensors_widget_submit" name="thermal_sensors_widget_submit" class="btn btn-primary btn-sm" value="Save">
+					<i class="fa fa-save icon-embed-btn"></i>
+					<?=gettext("Save")?>
+				</button>
 			</td>
 		</tr>
 		<tr>
 			<td class="text-left" colspan="3">
-				<span><?=gettext('* You can configure a proper Thermal Sensor / Module under')?> <br />
+				<span><?=gettext('* A proper Thermal Sensor / Module can be configured under')?> <br />
 				&nbsp;&nbsp;&nbsp;<a href="system_advanced_misc.php"><?=gettext('System')?> &gt; <?=gettext('Advanced')?> &gt; <?=gettext('Miscellaneous')?> : <?=gettext('Thermal Sensors')?> <?=gettext('section')?></a>.</span>
 			</td>
 		</tr>

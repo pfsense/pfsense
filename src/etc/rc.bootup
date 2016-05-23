@@ -31,6 +31,8 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
+require_once("pkg-utils.inc");
+
 function rescue_detect_keypress() {
 	// How long do you want the script to wait before moving on (in seconds)
 	$timeout=9;
@@ -59,7 +61,7 @@ function rescue_detect_keypress() {
 	if (in_array($key, array("r", "R"))) {
 		putenv("TERM=cons25");
 		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer rescue");
+		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
 	} else {
 		putenv("TERM=cons25");
 		echo "\n\nInstaller mode selected...\n";
@@ -228,6 +230,9 @@ interfaces_loopback_configure();
 /* start syslogd */
 system_syslogd_start();
 
+/* restore alias tables */
+restore_aliastables();
+
 echo "Starting Secure Shell Services...";
 send_event("service reload sshd");
 echo "done.\n";
@@ -306,18 +311,16 @@ services_dnsmasq_configure();
 /* start unbound service */
 services_unbound_configure();
 
-/* Do an initial time sync */
+/* Enable ntpd */
 echo "Starting NTP time client...";
-/* At bootup this will just write the config, ntpd will launch from ntpdate_sync_once.sh */
-system_ntp_configure(false);
-mwexec_bg("/usr/local/sbin/ntpdate_sync_once.sh", true);
+system_ntp_configure();
 echo "done.\n";
 
 /* start load balancer daemon */
 relayd_configure();
 
-/* configure console menu */
-system_console_configure();
+/* configure console menu and serial port*/
+setup_serial_port();
 
 /* start DHCP service */
 services_dhcpd_configure();
@@ -411,12 +414,16 @@ if (file_exists("/sbin/shutdown.old")) {
 /* Resync / Reinstall packages if need be */
 if (file_exists('/conf/needs_package_sync') &&
     ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
-	require_once("pkg-utils.inc");
 	mark_subsystem_dirty('packagelock');
 	if (package_reinstall_all()) {
 		@unlink('/conf/needs_package_sync');
 	}
 	clear_subsystem_dirty('packagelock');
+}
+
+/* Detect installed binary pkgs that are not registered in the system */
+if ($g['platform'] != "cdrom") {
+	register_all_installed_packages();
 }
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally

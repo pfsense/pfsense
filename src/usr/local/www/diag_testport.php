@@ -71,6 +71,8 @@ $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Test Port"));
 require("guiconfig.inc");
 
+include("head.inc");
+
 define('NC_TIMEOUT', 10);
 $do_testport = false;
 $retval = 1;
@@ -96,10 +98,10 @@ if ($_POST || $_REQUEST['host']) {
 	}
 
 	if (is_ipaddrv4($_REQUEST['host']) && ($_REQUEST['ipprotocol'] == "ipv6")) {
-		$input_errors[] = gettext("You cannot connect to an IPv4 address using IPv6.");
+		$input_errors[] = gettext("Cannot connect to an IPv4 address using IPv6.");
 	}
 	if (is_ipaddrv6($_REQUEST['host']) && ($_REQUEST['ipprotocol'] == "ipv4")) {
-		$input_errors[] = gettext("You cannot connect to an IPv6 address using IPv4.");
+		$input_errors[] = gettext("Cannot connect to an IPv6 address using IPv4.");
 	}
 
 	if (!$input_errors) {
@@ -216,8 +218,6 @@ if ($_POST || $_REQUEST['host']) {
 	}
 }
 
-include("head.inc");
-
 // Handle the display of all messages here where the user can readily see them
 if ($input_errors) {
 	print_input_errors($input_errors);
@@ -241,11 +241,11 @@ if ($input_errors) {
 	}
 } else {
 	// First time, new page
-	print_info_box(gettext('This page allows you to perform a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
+	print_info_box(gettext('This page performs a simple TCP connection test to determine if a host is up and accepting connections on a given port.') . " " .
 		gettext('This test does not function for UDP since there is no way to reliably determine if a UDP port accepts connections in this manner.'), 'warning', false);
 }
 
-$form = new Form('Test');
+$form = new Form(false);
 
 $section = new Form_Section('Test Port');
 
@@ -285,17 +285,25 @@ $section->addInput(new Form_Select(
 	'Source Address',
 	$sourceip,
 	['' => 'Any'] + get_possible_traffic_source_addresses(true)
-))->setHelp('Select source address for the trace');
+))->setHelp('Select source address for the trace.');
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
 	'IP Protocol',
 	$ipprotocol,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
-))->setHelp("If you force IPv4 or IPv6 and use a hostname that does not contain a result using that protocol, it will result in an error." .
-					" For example if you force IPv4 and use a hostname that only returns an AAAA IPv6 IP address, it will not work.");
+))->setHelp("If IPv4 or IPv6 is forced and a hostname is used that does not contain a result using that protocol, it will result in an error." .
+					" For example if IPv4 is forced and a hostname is used that only returns an AAAA IPv6 IP address, it will not work.");
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Test',
+	null,
+	'fa-wrench'
+))->addClass('btn-primary');
+
 print $form;
 
 // If the command succeeded, the user asked to see the output and there is output, then show it.

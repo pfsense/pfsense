@@ -233,7 +233,7 @@ $section->addInput(new Form_Select(
 	$pconfig['interface'],
 	build_if_list()
 ))->setHelp('Choose which interface this rule applies to.' . '<br />' .
-			'Hint: in most cases, you\'ll want to use "WAN" here.');
+			'Hint: Typically the "WAN" is used here.');
 
 $section->addInput(new Form_Checkbox(
 	'srcnot',
@@ -267,7 +267,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_npt[$id]) {
 	$section->addInput(new Form_Input(

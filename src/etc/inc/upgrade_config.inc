@@ -660,7 +660,7 @@ function upgrade_039_to_040() {
 		$config['system']['user'][0]['priv'][3]['descr'] = sprintf(gettext("Indicates whether this user is allowed to copy files onto the %s appliance via SCP/SFTP."), $g['product_name']);
 		$config['system']['user'][0]['priv'][4]['id'] = "isroot";
 		$config['system']['user'][0]['priv'][4]['name'] = "Is root user";
-		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (you should associate this privilege only with one single user).");
+		$config['system']['user'][0]['priv'][4]['descr'] = gettext("This user is associated with the UNIX root user (this privilege should only be associated with one single user).");
 
 		$config['system']['nextuid'] = "111";
 		$config['system']['nextgid'] = "111";
@@ -3487,8 +3487,8 @@ function upgrade_104_to_105() {
 }
 
 function upgrade_105_to_106() {
-
-	/* NOTE: This entry can be reused for something else since the upgrade code was reverted */
+	/* NOTE: This upgrade code was reverted. See redmine ticket #3967 and
+	   https://github.com/pfsense/pfsense/commit/6f55af1c25f5232ffe905a90f5f97aad4c87bdfa */
 }
 
 function upgrade_106_to_107() {
@@ -4134,7 +4134,7 @@ function upgrade_129_to_130() {
 	/* Change OpenVPN topology_subnet checkbox into topology multi-select #5526 */
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
 		foreach ($config['openvpn']['openvpn-server'] as & $serversettings) {
-			if (isset($serversettings['topology_subnet'])) {
+			if (strtolower($serversettings['topology_subnet']) == "yes") {
 				unset($serversettings['topology_subnet']);
 				$serversettings['topology'] = "subnet";
 			} else {
@@ -4146,6 +4146,12 @@ function upgrade_129_to_130() {
 
 function upgrade_130_to_131() {
 	global $config;
+
+	// Default dpinger parameters at time of this upgrade (2.3)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
 
 	if (isset($config['syslog']['apinger'])) {
 		$config['syslog']['dpinger'] = true;
@@ -4161,35 +4167,76 @@ function upgrade_130_to_131() {
 		return;
 	}
 
-	foreach ($config['gateways']['gateway_item'] as &$gw) {
-		// dpinger uses milliseconds
-		if (isset($gw['interval']) &&
-		    is_numeric($gw['interval'])) {
-			$gw['interval'] = $gw['interval'] * 1000;
-		}
-		if (isset($gw['down']) &&
-		    is_numeric($gw['down'])) {
-			$gw['loss_interval'] = $gw['down'] * 1000;
-			unset($gw['down']);
-		}
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach ($config['gateways']['gateway_item'] as &$gw) {
+			// dpinger uses milliseconds
+			if (isset($gw['interval']) &&
+				is_numeric($gw['interval'])) {
+				$gw['interval'] = $gw['interval'] * 1000;
+			}
 
-		if (isset($gw['avg_delay_samples'])) {
-			unset($gw['avg_delay_samples']);
-		}
-		if (isset($gw['avg_delay_samples_calculated'])) {
-			unset($gw['avg_delay_samples_calculated']);
-		}
-		if (isset($gw['avg_loss_samples'])) {
-			unset($gw['avg_loss_samples']);
-		}
-		if (isset($gw['avg_loss_samples_calculated'])) {
-			unset($gw['avg_loss_samples_calculated']);
-		}
-		if (isset($gw['avg_loss_delay_samples'])) {
-			unset($gw['avg_loss_delay_samples']);
-		}
-		if (isset($gw['avg_loss_delay_samples_calculated'])) {
-			unset($gw['avg_loss_delay_samples_calculated']);
+			if (isset($gw['interval'])) {
+				$effective_interval = $gw['interval'];
+			} else {
+				$effective_interval = $default_interval;
+			}
+
+			if (isset($gw['down']) &&
+				is_numeric($gw['down'])) {
+				$gw['time_period'] = $gw['down'] * 1000;
+				unset($gw['down']);
+			}
+
+			if (isset($gw['time_period'])) {
+				$effective_time_period = $gw['time_period'];
+			} else {
+				$effective_time_period = $default_time_period;
+			}
+
+			if (isset($gw['latencyhigh'])) {
+				// Default loss_interval is 2000, but must be set
+				// higher if latencyhigh is higher.
+				if ($gw['latencyhigh'] > $default_loss_interval) {
+					$gw['loss_interval'] = $gw['latencyhigh'];
+				}
+			}
+
+			if (isset($gw['loss_interval'])) {
+				$effective_loss_interval = $gw['loss_interval'];
+			} else {
+				$effective_loss_interval = $default_loss_interval;
+			}
+
+			if (isset($gw['interval'])) {
+				// Default alert_interval is 1000, but must be set
+				// higher if interval is higher.
+				if ($gw['interval'] > $default_alert_interval) {
+					$gw['alert_interval'] = $gw['interval'];
+				}
+			}
+
+			if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+				$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
+			}
+
+			if (isset($gw['avg_delay_samples'])) {
+				unset($gw['avg_delay_samples']);
+			}
+			if (isset($gw['avg_delay_samples_calculated'])) {
+				unset($gw['avg_delay_samples_calculated']);
+			}
+			if (isset($gw['avg_loss_samples'])) {
+				unset($gw['avg_loss_samples']);
+			}
+			if (isset($gw['avg_loss_samples_calculated'])) {
+				unset($gw['avg_loss_samples_calculated']);
+			}
+			if (isset($gw['avg_loss_delay_samples'])) {
+				unset($gw['avg_loss_delay_samples']);
+			}
+			if (isset($gw['avg_loss_delay_samples_calculated'])) {
+				unset($gw['avg_loss_delay_samples_calculated']);
+			}
 		}
 	}
 }
@@ -4273,15 +4320,19 @@ function upgrade_134_to_135() {
 function upgrade_135_to_136() {
 	global $config;
 
+	$l7_active = false;
 	if (isset($config['l7shaper'])) {
-		file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		unset($config['l7shaper']);
 		if (is_array($config['filter']['rule'])) {
 			foreach ($config['filter']['rule'] as $idx => $rule) {
 				if (isset($rule['l7container'])) {
 					unset($config['filter']['rule'][$idx]['l7container']);
+					$l7_active = true;
 				}
 			}
+		}
+		if ($l7_active) {
+			file_notice("L7shaper", gettext("Layer 7 shaping is no longer supported. Its configuration has been removed."));
 		}
 	}
 }
@@ -4318,7 +4369,7 @@ function upgrade_137_to_138() {
 	global $config;
 
 	// the presence of unityplugin tag used to disable loading of unity plugin
-	// it's now disabled by default, and config tag is to enable. Unset accordingly. 
+	// it's now disabled by default, and config tag is to enable. Unset accordingly.
 	if (is_array($config['ipsec'])) {
 		if (isset($config['ipsec']['unityplugin'])) {
 			unset($config['ipsec']['unityplugin']);
@@ -4330,7 +4381,7 @@ function upgrade_138_to_139() {
 	global $config;
 
 	// clean up state killing on gateway failure. having kill_states set used to mean it was disabled
-	// now set gw_down_kill_states if enabled. 
+	// now set gw_down_kill_states if enabled.
 	if (!isset($config['system']['kill_states'])) {
 		$config['system']['gw_down_kill_states'] = true;
 	} else {
@@ -4353,9 +4404,10 @@ function upgrade_139_to_140() {
 }
 
 function upgrade_140_to_141() {
-	global $config; 
+	global $config;
 
 	// retain OpenVPN's net30 default topology for upgraded client configs so they still work
+	// This is for 2.3 ALPHA to a later 2.3, not 2.2.x upgrades, which had no topology setting on clients
 	if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'])) {
 		foreach ($config['openvpn']['openvpn-client'] as $idx => $ovpnclient) {
 			if (!isset($ovpnclient['topology'])) {
@@ -4573,9 +4625,9 @@ function upgrade_143_to_144() {
 function upgrade_144_to_145() {
 	global $config;
 
-	// Enable DHCPv6 server and radvd config for track6 interfaces, 
-	// matching what used to be automatically enabled with no user 
-	// configurability. 
+	// Enable DHCPv6 server and radvd config for track6 interfaces,
+	// matching what used to be automatically enabled with no user
+	// configurability.
 	if (is_array($config['interfaces'])) {
 		foreach ($config['interfaces'] as $ifname => $ifcfg) {
 			if (isset($ifcfg['enable'])) {
@@ -4715,6 +4767,223 @@ function upgrade_146_to_147() {
 function upgrade_147_to_148() {
 	global $config;
 
+	// Ensure there are no spaces in group names by
+	// replacing spaces with underscores
+	if (is_array($config['system']['group'])) {
+		$cleargroups = false;
+		foreach ($config['system']['group'] as $idx => $grp) {
+			if (strstr($grp['name'], " ")) {
+				$cleargroups = true;
+				$config['system']['group'][$idx]['scope'] = "remote";
+			}
+		}
+
+		// if there was a space in a group name, there may be multiple
+		// groups with the same name in the group file. To prevent pw 
+		// from getting into a neverending loop, delete all user-defined
+		// groups here. local_sync_accounts will run shortly after this
+		// and add them back. redmine #6012
+		if ($cleargroups) {
+			foreach ($config['system']['group'] as $grp) {
+				mwexec("/usr/sbin/pw groupdel -g {$grp['gid']}");
+			}
+		}
+	}
+}
+
+function upgrade_148_to_149() {
+	global $config;
+	global $altq_list_queues;
+
+        if (!isset($config['shaper']['queue']) || !is_array($config['shaper']['queue']))
+                return;
+
+	read_altq_config();
+
+	/* Set root queue bandwidth. */
+	foreach ($altq_list_queues as $altq) {
+		$sum = $altq->GetTotalBw();
+		while ($sum > get_queue_bandwidth($altq)) {
+			if (intval(($sum / 1000) * 1.2) < (1024 * 1024)) {
+				/* 1Gb where possible. */
+				$bw = 1024 * 1024;
+			} else {
+				/* Increase by 20% until it fits. */
+				$bw = intval(($sum / 1000) * 1.2);
+			}
+			$altq->SetBandwidth($bw);
+			$altq->SetBwscale("Kb");
+			$altq->wconfig();
+			$sum = $altq->GetTotalBw();
+		}
+	}
+}
+
+function upgrade_149_to_150() {
+	global $config;
+
+	if (is_array($config['dhcpdv6'])) {
+                foreach ($config['dhcpdv6'] as &$dhcpdv6) {
+			if (isset($dhcpdv6['rainterface'])) {
+				if (strstr($dhcpdv6['rainterface'], "_vip")) {
+					$dhcpdv6['rainterface'] = get_vip_from_oldcarp($dhcpdv6['rainterface']);
+				}
+			}
+		}
+	}
+}
+
+function upgrade_150_to_151() {
+	global $config;
+
+	// Default dpinger parameters at time of this upgrade (2.3.1)
+	$default_interval = 500;
+	$default_alert_interval = 1000;
+	$default_loss_interval = 2000;
+	$default_time_period = 60000;
+	$default_latencyhigh = 500;
+
+	// Check advanced gateway parameter relationships in case they are incorrect
+	if (is_array($config['gateways']['gateway_item'])) {
+		foreach ($config['gateways']['gateway_item'] as &$gw) {
+			if (isset($gw['interval'])) {
+				$effective_interval = $gw['interval'];
+			} else {
+				$effective_interval = $default_interval;
+			}
+
+			if (isset($gw['alert_interval'])) {
+				$effective_alert_interval = $gw['alert_interval'];
+			} else {
+				$effective_alert_interval = $default_alert_interval;
+			}
+
+			if (isset($gw['loss_interval'])) {
+				$effective_loss_interval = $gw['loss_interval'];
+			} else {
+				$effective_loss_interval = $default_loss_interval;
+			}
+
+			if (isset($gw['time_period'])) {
+				$effective_time_period = $gw['time_period'];
+			} else {
+				$effective_time_period = $default_time_period;
+			}
+
+			if (isset($gw['latencyhigh'])) {
+				$effective_latencyhigh = $gw['latencyhigh'];
+			} else {
+				$effective_latencyhigh = $default_latencyhigh;
+			}
+
+			// Loss interval has to be at least as big as high latency.
+			if ($effective_latencyhigh > $effective_loss_interval) {
+				$effective_loss_interval = $gw['loss_interval'] = $effective_latencyhigh;
+			}
+
+			// Alert interval has to be at least as big as probe interval.
+			if ($effective_interval > $effective_alert_interval) {
+				$gw['alert_interval'] = $effective_interval;
+			}
+
+			// The time period for averaging has to be more than 2 probes plus the loss interval.
+			if ((($effective_interval * 2) + $effective_loss_interval) >= $effective_time_period) {
+				$gw['time_period'] = ($effective_interval * 2) + $effective_loss_interval + 1;
+			}
+		}
+	}
+}
+
+function upgrade_151_to_152() {
+	global $g, $config;
+
+	require_once("/etc/inc/services.inc");
+
+	// Remove these cron jobs on full install if not using ramdisk.
+	if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+		install_cron_job("/etc/rc.backup_rrd.sh", false);
+		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+	}
+}
+
+function upgrade_152_to_153() {
+	global $config;
+
+	if (is_array($config['virtualip']['vip'])) {
+		foreach ($config['virtualip']['vip'] as $idx => $vip) {
+			if (substr($vip['interface'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($vip['interface'], "_vip")) {
+				// using old VIP format, update
+				$config['virtualip']['vip'][$idx]['interface'] = get_vip_from_oldcarp($vip['interface']);
+			}
+		}
+	}
+
+	// upgrade GIFs using VIP to new format
+	if (is_array($config['gifs']['gif'])) {
+		foreach ($config['gifs']['gif'] as $idx => $gif) {
+			if (substr($gif['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gif['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gifs']['gif'][$idx]['if'] = get_vip_from_oldcarp($gif['if']);
+			}
+		}
+	}
+
+	// upgrade GREs using VIP to new format
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => $gre) {
+			if (substr($gre['if'], 0, 4) == "_vip") {
+				// using new VIP format
+				continue;
+			} else if (strstr($gre['if'], "_vip")) {
+				// using old VIP format, update
+				$config['gres']['gre'][$idx]['if'] = get_vip_from_oldcarp($gre['if']);
+			}
+		}
+	}
+
+	// upgrade gateway groups using VIPs
+	if (is_array($config['gateways']['gateway_group'])) {
+		foreach ($config['gateways']['gateway_group'] as $idx => $gw) {
+			if (is_array($gw['item'])) {
+				$newitems = array();
+				$gwvipchange = false;
+				foreach ($gw['item'] as $item) {
+					if (strstr($item, "|_vip")) {
+						// using new VIP format
+						$newitems[] = $item;
+						continue;
+					} else if (strstr($item, "_vip")) {
+						// using old VIP format, update
+						$gwitemarr = explode("|", $item);
+						$gwitemarr[2] = get_vip_from_oldcarp($gwitemarr[2]);
+						$newitems[] = implode("|", $gwitemarr);
+						$gwvipchange = true;
+					} else {
+						$newitems[] = $item;
+					}
+				}
+				if ($gwvipchange) {
+					$config['gateways']['gateway_group'][$idx]['item'] = $newitems;
+				}
+			}
+		}
+	}
+}
+
+function upgrade_153_to_154() {
+	/* NOTE: This upgrade code was reverted. See redmine ticket #6118 and
+	   https://github.com/pfsense/pfsense/commit/538a3c04a6b6671151e913b06b2f340b6f8ee222 */
+}
+
+function upgrade_154_to_155() {
+	global $config;
+
 	if (is_array($config['system']['authserver'])) {
 		foreach ($config['system']['authserver'] as & $authserver) {
 			if (isset($authserver['type']) && $authserver['type'] == 'radius') {
@@ -4723,5 +4992,4 @@ function upgrade_147_to_148() {
 		}
 	}
 }
-
 ?>

@@ -437,7 +437,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('ipsec')) {
-	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 foreach ($a_phase1 as $ph1ent) {
 	if (isset($ph1ent['mobile'])) {
@@ -445,7 +445,7 @@ foreach ($a_phase1 as $ph1ent) {
 	}
 }
 if ($pconfig['enable'] && !$ph1found) {
-	print_info_box(gettext("Support for IPsec Mobile Clients is enabled but a Phase 1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), "warning", "create", gettext("Create Phase 1"));
+	print_info_box(gettext("Support for IPsec Mobile Clients is enabled but a Phase 1 definition was not found") . ".<br />" . gettext("Please click Create to define one."), "warning", "create", gettext("Create Phase 1"), 'fa-plus', 'success');
 }
 
 if ($input_errors) {

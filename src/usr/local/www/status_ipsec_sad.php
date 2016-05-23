@@ -135,7 +135,7 @@ if (count($sad)) {
 						$args .= "&amp;proto=" . rawurlencode($sa['proto']);
 						$args .= "&amp;spi=" . rawurlencode("0x" . $sa['spi']);
 					?>
-					<a class="btn btn-xs btn-danger" href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><?=gettext('Delete')?></a>
+					<a href="status_ipsec_sad.php?act=del&amp;<?=$args?>"><i class="fa fa-trash" title="<?=gettext("Remove this SPD Entry")?>"></i></a>
 				</td>
 			</tr>
 
@@ -158,7 +158,7 @@ if (ipsec_enabled()) {
 <div class="infoblock blockopen">
 <?php
 }
-print_info_box(sprintf(gettext('You can configure IPsec %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
+print_info_box(sprintf(gettext('IPsec can be configured %1$shere%2$s.'), '<a href="vpn_ipsec.php">', '</a>'), 'info', false);
 ?>
 </div>
 <?php

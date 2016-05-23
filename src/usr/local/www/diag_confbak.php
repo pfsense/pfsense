@@ -184,10 +184,7 @@ if ($diff) {
 <?php
 }
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form(false);
 
 $section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
 
@@ -204,6 +201,13 @@ $section->addInput(new Form_StaticText(
 	'Current space used by backups',
 	$space
 ));
+
+$section->addInput(new Form_Button(
+	'Submit',
+	gettext("Save"),
+	null,
+	'fa-save'
+))->addClass('btn-primary');
 
 $form->add($section);
 
@@ -234,7 +238,10 @@ if (is_array($confvers)):
 			<thead>
 				<tr>
 					<th colspan="2">
-						<input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" />
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+							<i class="fa fa-exchange icon-embed-btn"></i>
+							<?=gettext("Diff"); ?>
+						</button>
 					</th>
 					<th><?=gettext("Date")?></th>
 					<th><?=gettext("Version")?></th>
@@ -285,7 +292,7 @@ if (is_array($confvers)):
 					<td><?= format_bytes($version['filesize']) ?></td>
 					<td><?= htmlspecialchars($version['description']) ?></td>
 					<td>
-						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Are you sure you want to replace the current configuration with this backup?")?>')"></a>
+						<a class="fa fa-undo"		title="<?=gettext('Revert config')?>"	href="diag_confbak.php?newver=<?=$version['time']?>"	onclick="return confirm('<?=gettext("Confirmation Required to replace the current configuration with this backup.")?>')"></a>
 						<a class="fa fa-download"	title="<?=gettext('Download config')?>"	href="diag_confbak.php?getcfg=<?=$version['time']?>"></a>
 						<a class="fa fa-trash"		title="<?=gettext('Delete config')?>"	href="diag_confbak.php?rmver=<?=$version['time']?>"></a>
 					</td>
@@ -294,7 +301,12 @@ if (is_array($confvers)):
 	endforeach;
 ?>
 				<tr>
-					<td colspan="2"><input type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>" /></td>
+					<td colspan="2">
+						<button type="submit" name="diff" class="btn btn-info btn-xs" value="<?=gettext("Diff"); ?>">
+							<i class="fa fa-exchange icon-embed-btn"></i>
+							<?=gettext("Diff"); ?>
+						</button>
+					</td>
 					<td colspan="5"></td>
 				</tr>
 <?php

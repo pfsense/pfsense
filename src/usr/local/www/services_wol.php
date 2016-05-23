@@ -164,7 +164,7 @@ if ($savemsg) {
 	print_info_box($savemsg, $class);
 }
 
-$form = new Form('Send');
+$form = new Form(false);
 
 $section = new Form_Section('Wake-on-LAN');
 
@@ -183,6 +183,14 @@ $section->addInput(new Form_Input(
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Send',
+	null,
+	'fa-power-off'
+))->addClass('btn-primary');
+
 print $form;
 ?>
 
@@ -216,8 +224,9 @@ print $form;
 								<?=htmlspecialchars($wolent['descr']);?>
 							</td>
 							<td>
-								<a class="fa fa-pencil"	title="<?=gettext('Edit device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
-								<a class="fa fa-trash"	title="<?=gettext('Delete device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-pencil"	title="<?=gettext('Edit Device')?>"	href="services_wol_edit.php?id=<?=$i?>"></a>
+								<a class="fa fa-trash"	title="<?=gettext('Delete Device')?>" href="services_wol.php?act=del&amp;id=<?=$i?>"></a>
+								<a class="fa fa-power-off" title="<?=gettext('Wake Device')?>" href="?mac=<?=$wolent['mac'];?>&amp;if=<?=$wolent['interface'];?>"></a>
 							</td>
 						</tr>
 					<?php endforeach?>
@@ -227,11 +236,13 @@ print $form;
 	</div>
 	<div class="panel-footer">
 		<a class="btn btn-success" href="services_wol_edit.php">
+			<i class="fa fa-plus icon-embed-btn"></i>
 			<?=gettext("Add");?>
 		</a>
 
 		<a href="services_wol.php?wakeall=true" role="button" class="btn btn-primary">
-			<?=gettext("Wake all devices")?>
+			<i class="fa fa-power-off icon-embed-btn"></i>
+			<?=gettext("Wake All Devices")?>
 		</a>
 	</div>
 </div>

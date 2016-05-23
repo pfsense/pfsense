@@ -148,7 +148,7 @@ function config_unlock() {
 function lock($lock, $op = LOCK_SH) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock) {
-		die(gettext("WARNING: You must give a name as parameter to lock() function."));
+		die(gettext("WARNING: A name must be given as parameter to lock() function."));
 	}
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
@@ -167,7 +167,7 @@ function lock($lock, $op = LOCK_SH) {
 function try_lock($lock, $timeout = 5) {
 	global $g, $cfglckkeyconsumers;
 	if (!$lock) {
-		die(gettext("WARNING: You must give a name as parameter to try_lock() function."));
+		die(gettext("WARNING: A name must be given as parameter to try_lock() function."));
 	}
 	if (!file_exists("{$g['tmp_path']}/{$lock}.lock")) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
@@ -423,6 +423,16 @@ function gen_subnet_mask_long($bits) {
 /* same as above but returns a string */
 function gen_subnet_mask($bits) {
 	return long2ip(gen_subnet_mask_long($bits));
+}
+
+/* Convert a prefix length to an IPv6 address-like mask notation. Very rare but at least ntp needs it. See #4463 */
+function gen_subnet_mask_v6($bits) {
+	/* Binary representation of the prefix length */
+	$bin = str_repeat('1', $bits);
+	/* Pad right with zeroes to reach the full address length */
+	$bin = str_pad($bin, 128, '0', STR_PAD_RIGHT);
+	/* Convert back to an IPv6 address style notation */
+	return Net_IPv6::_bin2Ip($bin);
 }
 
 /* Convert long int to IPv4 address
@@ -1048,25 +1058,61 @@ function is_macaddr($macaddr, $partial=false) {
 	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
 }
 
-/* returns true if $name is a valid name for an alias
-   returns NULL if a reserved word is used
-   returns FALSE for bad chars in the name - this allows calling code to determine what the problem was.
-   aliases cannot be:
-	bad chars: anything except a-z 0-9 and underscore
-	bad names: empty string, pure numeric, pure underscore
-	reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+/*
+	If $return_message is true then
+		returns a text message about the reason that the name is invalid.
+		the text includes the type of "thing" that is being checked, passed in $object. (e.g. "alias", "gateway group", "schedule")
+	else
+		returns true if $name is a valid name for an alias
+		returns false if $name is not a valid name for an alias
 
-function is_validaliasname($name) {
+	Aliases cannot be:
+		bad chars: anything except a-z 0-9 and underscore
+		bad names: empty string, pure numeric, pure underscore
+		reserved words: pre-defined service/protocol/port names which should not be ambiguous, and the words "port" and  "pass" */
+
+function is_validaliasname($name, $return_message = false, $object = "alias") {
 	/* Array of reserved words */
 	$reserved = array("port", "pass");
 
 	if (!is_string($name) || strlen($name) >= 32 || preg_match('/(^_*$|^\d*$|[^a-z0-9_])/i', $name)) {
-		return false;
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must be less than 32 characters long, may not consist of only numbers, may not consist of only underscores, and may only contain the following characters: %2$s'), $object, 'a-z, A-Z, 0-9, _');
+		} else {
+			return false;
+		}
 	}
-	if (in_array($name, $reserved, true) || getservbyname($name, "tcp") || getservbyname($name, "udp") || getprotobyname($name)) {
-		return; /* return NULL */
+	if (in_array($name, $reserved, true)) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be either of the reserved words %2$s or %3$s.'), $object, "'port'", "'pass'");
+		} else {
+			return false;
+		}
 	}
-	return true;
+	if (getprotobyname($name)) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be a well-known IP protocol name such as TCP, UDP, ICMP etc.'), $object);
+		} else {
+			return false;
+		}
+	}
+	if (getservbyname($name, "tcp") || getservbyname($name, "udp")) {
+		if ($return_message) {
+			return sprintf(gettext('The %1$s name must not be a well-known TCP or UDP port name such as ssh, smtp, pop3, tftp, http, openvpn etc.'), $object);
+		} else {
+			return false;
+		}
+	}
+	if ($return_message) {
+		return sprintf(gettext("The %1$s name is valid."), $object);
+	} else {
+		return true;
+	}
+}
+
+/* returns a text message indicating if the alias name is valid, or the reason it is not valid. */
+function invalidaliasnamemsg($name, $object = "alias") {
+	return is_validaliasname($name, true, $object);
 }
 
 /* returns true if $port is a valid TCP/UDP port */
@@ -1106,14 +1152,17 @@ function is_portoralias($port) {
 }
 
 /* create ranges of sequential port numbers (200:215) and remove duplicates */
-function group_ports($ports) {
+function group_ports($ports, $kflc = false) {
 	if (!is_array($ports) || empty($ports)) {
 		return;
 	}
 
 	$uniq = array();
+	$comments = array();
 	foreach ($ports as $port) {
-		if (is_portrange($port)) {
+		if (($kflc) && (strpos($port, '#') === 0)) {	// Keep Full Line Comments (lines beginning with #).
+			$comments[] = $port;
+		} else if (is_portrange($port)) {
 			list($begin, $end) = explode(":", $port);
 			if ($begin > $end) {
 				$aux = $begin;
@@ -1155,7 +1204,7 @@ function group_ports($ports) {
 		}
 	}
 
-	return $result;
+	return array_merge($comments, $result);
 }
 
 /* returns true if $val is a valid shaper bandwidth value */
@@ -1471,7 +1520,6 @@ function get_interface_list($mode = "active", $keyby = "physical", $vfaces = "")
 				'pfsync',
 				'enc',
 				'tun',
-				'carp',
 				'lagg',
 				'vip',
 				'ipfw'

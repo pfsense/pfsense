@@ -57,7 +57,7 @@
 	<id>1</id>
 	<title>pfSense Setup</title>
 	<disableheader>true</disableheader>
-	<description>This wizard will guide you through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
+	<description>This wizard will provide guidance through the initial configuration of pfSense.&lt;br/&gt;&lt;br/&gt; The wizard may be stopped at any time by clicking the logo image at the top of the screen.</description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -74,7 +74,7 @@
 	<id>2</id>
 	<title>Bling your pfSense with pfSense Gold</title>
 	<disableheader>true</disableheader>
-	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now &lt;br/&gt; &lt;br/&gt; </description>
+	<description>Feel the power of a pfSense Gold subscription. Receive special benefits while supporting ongoing development of the Open Source pfSense project.&lt;br/&gt; &lt;br/&gt; Benefits include access to our AutoConfigBackup secure cloud based backup service for up to 10 hosts, pre-publication access to the updated pfSense: The Definitive Guide book in PDF, fully updated for the pfSense 2.1 release, and a monthly online MeetUp! Video conference to discuss and demonstrate advanced features and architectures using pfSense. &lt;br/&gt; &lt;br/&gt; Go to &lt;a href="https://www.pfsense.org/gold" target="_blank"&gt; pfSense Gold Subscriptions&lt;/a&gt; to sign up now. &lt;br/&gt; &lt;br/&gt; </description>
 	<fields>
 		<field>
 			<name>Next</name>
@@ -85,7 +85,7 @@
 <step>
 	<id>3</id>
 	<title>General Information</title>
-	<description>On this screen you will set the general pfSense parameters.</description>
+	<description>On this screen the general pfSense parameters will be set.</description>
 	<fields>
 		<field>
 			<name>Hostname</name>
@@ -149,28 +149,28 @@
 		<![CDATA[
 		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			include("head.inc");
-			$input_errors[] = "Hostname is invalid. Please press back in your browser window and correct.";
+			$input_errors[] = "Hostname is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
 			include("head.inc");
-			$input_errors[] = "Domain is invalid. Please press back in your browser window and correct.";
+			$input_errors[] = "Domain is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
 			include("head.inc");
-			$input_errors[] = "Primary DNS server is invalid. Please press back in your browser window and correct.";
+			$input_errors[] = "Primary DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
 			include("head.inc");
-			$input_errors[] = "Second DNS server is invalid. Please press back in your browser window and correct.";
+			$input_errors[] = "Second DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
@@ -203,7 +203,7 @@
 		<![CDATA[
 		foreach (explode(' ', $_POST['timeserverhostname']) as $ts) {
 			if (!is_domain($ts)) {
-				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in your browser window and correct.");
+				$input_errors[] = gettext("NTP Time Server names may only contain the characters a-z, 0-9, '-' and '.'. Entries may be separated by spaces. Please press back in the browser window and correct.");
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
@@ -216,7 +216,7 @@
 	<id>5</id>
 	<disableallfieldsbydefault>true</disableallfieldsbydefault>
 	<title>Configure WAN Interface</title>
-	<description>On this screen we will configure the Wide Area Network information.</description>
+	<description>On this screen the Wide Area Network information will be configured.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
 		if(document.forms[0].ipaddress.value == 'dhcp') {
@@ -302,14 +302,14 @@
 			<name>MTU</name>
 			<type>input</type>
 			<bindstofield>interfaces->wan->mtu</bindstofield>
-			<description> Set the MTU of the WAN interface. If you leave this field blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
+			<description> Set the MTU of the WAN interface. If this field is left blank, an MTU of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed.</description>
 		</field>
 		<field>
 			<donotdisable>true</donotdisable>
 			<name>MSS</name>
 			<type>input</type>
 			<bindstofield>interfaces->wan->mss</bindstofield>
-			<description> If you enter a value in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If you leave this field blank, an MSS of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed. This should match the above MTU value in most all cases.</description>
+			<description> If a value is entered in this field, then MSS clamping for TCP connections to the value entered above minus 40 (TCP/IP header size) will be in effect. If this field is left blank, an MSS of 1492 bytes for PPPoE and 1500 bytes for all other connection types will be assumed. This should match the above MTU value in most all cases.</description>
 		</field>
 		<field>
 			<name>Static IP Configuration</name>
@@ -378,7 +378,7 @@
 			<name>PPPoE Dial on demand</name>
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
-			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
+			<description>This option causes the interface to operate in dial-on-demand mode, allowing a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 			<bindstofield>wizardtemp->wan->ondemand</bindstofield>
 		</field>
 		<field>
@@ -435,7 +435,7 @@
 			<typehint>Enable Dial-On-Demand mode</typehint>
 			<type>checkbox</type>
 			<bindstofield>wizardtemp->wan->pptpondemand</bindstofield>
-			<description>This option causes the interface to operate in dial-on-demand mode, allowing you to have a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
+			<description>This option causes the interface to operate in dial-on-demand mode, allowing a virtual full time connection. The interface is configured, but the actual connection of the link is delayed until qualifying outgoing traffic is detected.</description>
 		</field>
 		<field>
 			<name>PPTP Idle timeout</name>
@@ -450,7 +450,7 @@
 		<field>
 			<donotdisable>true</donotdisable>
 			<name>Block RFC1918 Private Networks</name>
-			<description> When set, this option blocks traffic from IP addresses that are reserved for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as well as loopback addresses (127/8). You should generally leave this option turned on, unless your WAN network lies in such a private address space, too.</description>
+			<description> When set, this option blocks traffic from IP addresses that are reserved for private networks as per RFC 1918 (10/8, 172.16/12, 192.168/16) as well as loopback addresses (127/8). This option should generally be left turned on, unless the WAN network lies in such a private address space, too.</description>
 			<type>checkbox</type>
 			<bindstofield>interfaces->wan->blockpriv</bindstofield>
 			<typehint>Block private networks from entering via WAN</typehint>
@@ -462,7 +462,7 @@
 		<field>
 			<donotdisable>true</donotdisable>
 			<name>Block bogon networks</name>
-			<description>When set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets you receive.</description>
+			<description>When set, this option blocks traffic from IP addresses that are reserved (but not RFC 1918) or not yet assigned by IANA. Bogons are prefixes that should never appear in the Internet routing table, and obviously should not appear as the source address in any packets received.</description>
 			<type>checkbox</type>
 			<bindstofield>interfaces->wan->blockbogons</bindstofield>
 			<typehint>Block non-Internet routed networks from entering via WAN</typehint>
@@ -489,14 +489,14 @@
 		<![CDATA[
 		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
 			include("head.inc");
-			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in your browser window and correct.";
+			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
 			include("head.inc");
-			$input_errors[] = "Invalid MAC Address. Please press back in your browser window and correct.";
+			$input_errors[] = "Invalid MAC Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
@@ -504,7 +504,7 @@
 		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
 				include("head.inc");
-				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
+				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
@@ -513,7 +513,7 @@
 			    ($_POST['ipaddress'] == gen_subnet($_POST['ipaddress'], $_POST['subnetmask']) ||
 			     $_POST['ipaddress'] == gen_subnet_max($_POST['ipaddress'], $_POST['subnetmask']))) {
 			    include("head.inc");
-				$input_errors[] = "Invalid WAN IP Address. Please press back in your browser window and correct.";
+				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
@@ -521,21 +521,21 @@
 		}
 		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
 			include("head.inc");
-			$input_errors[] = "Invalid DHCP Hostname. Please press back in your browser window and correct.";
+			$input_errors[] = "Invalid DHCP Hostname. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
 		    include("head.inc");
-			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in your browser window and correct.";
+			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
 		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
 			include("head.inc");
-			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in your browser window and correct.";
+			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
@@ -589,8 +589,9 @@
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
-				if(!$config['interfaces']['lan'])
-					header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
+			}
+			if(!$config['interfaces']['lan']) {
+				header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
 	</stepsubmitbeforesave>
@@ -598,7 +599,7 @@
 <step>
 	<id>6</id>
 	<title>Configure LAN Interface</title>
-	<description>On this screen we will configure the Local Area Network information.</description>
+	<description>On this screen the Local Area Network information will be configured.</description>
 	<fields>
 		<field>
 			<name>LAN IP Address</name>
@@ -621,7 +622,7 @@
 	<stepsubmitphpaction>
 		<![CDATA[
 		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
-			print_info_box("Invalid LAN IP address. Please press back in your browser window and correct.");
+			print_info_box("Invalid LAN IP address. Please press back in the browser window and correct.");
 			die;
 		}
 
@@ -631,21 +632,21 @@
 		if ($_POST['subnetmask'] < 31) {
 			if ($_POST['lanipaddress'] == $lowestip) {
 				include("head.inc");
-				$input_errors[] = "LAN IP Address equals subnet network address. This is not allowed. Please press back in your browser window and correct.";
+				$input_errors[] = "LAN IP Address equals subnet network address. This is not allowed. Please press back in the browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
 			if ($_POST['lanipaddress'] == $highestip) {
 				include("head.inc");
-				$input_errors[] = "LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in your browser window and correct.";
+				$input_errors[] = "LAN IP Address equals subnet broadcast address. This is not allowed. Please press back in the browser window and correct.";
 				print_input_errors($input_errors);
 				include("foot.inc");
 				die;
 			}
 		} else {
 			include("head.inc");
-			$input_errors[] = "Invalid subnet mask, choose a mask less than 31. Please press back in your browser window and correct.";
+			$input_errors[] = "Invalid subnet mask, choose a mask less than 31. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
@@ -685,7 +686,7 @@
 <step>
 	<id>7</id>
 	<title>Set Admin WebGUI Password</title>
-	<description>On this screen we will set the admin password, which is used to access the WebGUI and also SSH services if you wish to enable them.</description>
+	<description>On this screen the admin password will be set, which is used to access the WebGUI and also SSH services if enabled.</description>
 	<fields>
 		<field>
 			<name>Admin Password</name>
@@ -709,7 +710,7 @@
 			local_user_set($admin_user);
 			write_config();
 		} else {
-			print_info_box("Passwords do not match! Please press back in your browser window and correct.");
+			print_info_box("Passwords do not match! Please press back in the browser window and correct.");
 			die;
 		}
 	}
@@ -789,10 +790,10 @@
 	</stepbeforeformdisplay>
 	<description>
 	<![CDATA[
-		Congratulations!  pfSense is now configured.<p/>
-		Please consider contributing back to the project!<p/>
-		Click <a target='_new' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.<p/>
-		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.
+		Congratulations!  pfSense is now configured.<p>
+		Please consider contributing back to the project!</p><p>
+		Click <a target='_blank' href='https://www.pfsense.org/get-involved/index.html'>here</a> to purchase services offered by the pfSense team and find other ways to contribute.</p><p>
+		Click <a href='$myurl'>here</a> to continue on to pfSense webConfigurator.</p>
 	]]>
 	</description>
 </step>

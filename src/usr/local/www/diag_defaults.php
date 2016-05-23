@@ -75,7 +75,7 @@ include("head.inc");
 ?>
 
 <?php if ($_POST['Submit'] == " " . gettext("Yes") . " "):
-	print_info_box(gettext("The system has been reset to factory defaults and is now rebooting. This may take a few minutes, depending on your hardware."))?>
+	print_info_box(gettext("The system has been reset to factory defaults and is now rebooting. This may take a few minutes, depending on the hardware."))?>
 <pre>
 <?php
 	reset_factory_defaults();
@@ -85,12 +85,12 @@ include("head.inc");
 <?php else:?>
 <div class="panel panel-default">
 	<div class="panel-heading">
-		<h2 class="panel-title"><?=gettext("Are you sure you want to reset the system to the factory defaults?")?></h2>
+		<h2 class="panel-title"><?=gettext("Factory Defaults Reset")?></h2>
 	</div>
 	<div class="panel-body">
 		<div class="content">
 			<form action="diag_defaults.php" method="post">
-				<p><strong><?=sprintf(gettext('If you click %1$sYes%1$s the firewall will:'), "&quot;")?></strong></p>
+				<p><strong><?=gettext('Resetting the system to factory defaults will remove all user configuration and apply the following settings:')?></strong></p>
 				<ul>
 					<li><?=gettext("Reset to factory defaults")?></li>
 					<li><?=gettext("LAN IP address will be reset to 192.168.1.1")?></li>
@@ -102,8 +102,14 @@ include("head.inc");
 				</ul>
 				<p><strong><?=gettext("Are you sure you want to proceed?")?></strong></p>
 				<p>
-					<input name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("Yes")?> " />
-					<input name="Submit" type="submit" class="btn btn-sm btn-default" value=" <?=gettext("No")?> " />
+					<button name="Submit" type="submit" class="btn btn-sm btn-danger" value=" <?=gettext("Yes")?> " title="<?=gettext("Perform a factory reset")?>">
+						<i class="fa fa-undo"></i>
+						<?=gettext("Factory Reset")?>
+					</button>
+					<button name="Submit" type="submit" class="btn btn-sm btn-success" value=" <?=gettext("No")?> " title="<?=gettext("Return to the dashboard")?>">
+						<i class="fa fa-save"></i>
+						<?=gettext("Keep Configuration")?>
+					</button>
 				</p>
 			</form>
 		</div>

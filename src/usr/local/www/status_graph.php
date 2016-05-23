@@ -97,6 +97,21 @@ foreach (array('server', 'client') as $mode) {
 	}
 }
 
+// Compatiblity to restore GET parameters used pre-2.3
+// Useful to save a URL for a given graph configuration
+if (isset($_GET['if']) && !isset($_POST['if'])) {
+	$_POST['if'] = $_GET['if'];
+}
+if (isset($_GET['sort']) && !isset($_POST['sort'])) {
+	$_POST['sort'] = $_GET['sort'];
+}
+if (isset($_GET['filter']) && !isset($_POST['filter'])) {
+	$_POST['filter'] = $_GET['filter'];
+}
+if (isset($_GET['hostipformat']) && !isset($_POST['hostipformat'])) {
+	$_POST['hostipformat'] = $_GET['hostipformat'];
+}
+
 if ($_POST['if']) {
 	$curif = $_POST['if'];
 	$found = false;

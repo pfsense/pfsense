@@ -205,6 +205,27 @@ function get_bandwidthtype_scale($type) {
 	return intval($factor);
 }
 
+function get_bandwidth($bw, $scale, $obj) {
+
+	$pattern= "/(b|Kb|Mb|Gb|%)/";
+	if (!preg_match($pattern, $scale, $match))
+		return 0;
+
+	switch ($match[1]) {
+		case '%':
+			$objbw = ($bw / 100) * get_queue_bandwidth($obj);
+			break;
+		default:
+			$objbw = $bw * get_bandwidthtype_scale($scale);
+			break;
+	}
+
+	return floatval($objbw);
+}
+
+/*
+ * XXX - unused
+ *
 function get_hfsc_bandwidth($object, $bw) {
 	$pattern= "/[0-9]+/";
 	if (preg_match($pattern, $bw, $match)) {
@@ -216,7 +237,7 @@ function get_hfsc_bandwidth($object, $bw) {
 	if (preg_match($pattern, $bw, $match)) {
 		switch ($match[1]) {
 			case '%':
-				$bw_1 = $bw_1 / 100 * get_interface_bandwidth($object);
+				$bw_1 = ($bw_1 / 100) * get_interface_bandwidth($object);
 				break;
 			default:
 				$bw_1 = $bw_1 * get_bandwidthtype_scale($match[0]);
@@ -226,6 +247,27 @@ function get_hfsc_bandwidth($object, $bw) {
 	} else {
 		return 0;
 	}
+}
+*/
+
+function get_queue_bandwidth($obj) {
+	$bw = $obj->GetBandwidth();
+	$scale = $obj->GetBwscale();
+
+	$pattern= "/(b|Kb|Mb|Gb|%)/";
+	if (!preg_match($pattern, $scale, $match))
+		return 0;
+
+	switch ($match[1]) {
+		case '%':
+			$objbw = ($bw / 100) * get_queue_bandwidth($obj->GetParent());
+			break;
+		default:
+			$objbw = $bw * get_bandwidthtype_scale($scale);
+			break;
+	}
+
+	return floatval($objbw);
 }
 
 function get_interface_bandwidth($object) {
@@ -298,15 +340,8 @@ class altq_root_queue {
 	var $queues = array();
 	var $qenabled = false;
 	var $link;
-	var $available_bw; /* in b/s */
 
 	/* Accessor functions */
-	function GetAvailableBandwidth() {
-		return $this->available_bw;
-	}
-	function SetAvailableBandwidth($bw) {
-		$this->available_bw = $bw;
-	}
 	function GetDefaultQueuePresent() {
 		if (!empty($this->queues)) {
 			foreach ($this->queues as $q) {
@@ -405,6 +440,29 @@ class altq_root_queue {
 		return $bwscaletext;
 	}
 
+	function CheckBandwidth($bw, $bwtype) {
+		$sum = $this->GetTotalBw();
+		if ($sum > $bw * get_bandwidthtype_scale($bwtype))
+			return 1;
+		foreach ($this->queues as $q) {
+			if ($q->CheckBandwidth(0, ''))
+				return 1;
+		}
+
+		return 0;
+	}
+
+	function GetTotalBw($qignore = NULL) {
+		$sum = 0;
+		foreach ($this->queues as $q) {
+			if ($qignore != NULL && $qignore == $q)
+				continue;
+			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $this);
+		}
+
+		return $sum;
+	}
+
 	function validate_input($data, &$input_errors) {
 
 		$reqdfields[] = "bandwidth";
@@ -414,12 +472,23 @@ class altq_root_queue {
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
 
+		if (!isset($data['bandwidth']) || strlen($data['bandwidth']) == 0) {
+			$input_errors[] = gettext("Bandwidth must be set.  This is usually the interface speed.");
+		}
 		if ($data['bandwidth'] && (!is_numeric($data['bandwidth']))) {
 			$input_errors[] = gettext("Bandwidth must be an integer.");
 		}
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
+		if ($data['bandwidthtype'] == "%") {
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
+			}
+		}
+		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
+
 		if ($data['qlimit'] && (!is_numeric($data['qlimit']))) {
 			$input_errors[] = gettext("Qlimit must be an integer.");
 		}
@@ -529,23 +598,7 @@ class altq_root_queue {
 		$q->SetParent($this);
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
 
-		if (isset($queue['bandwidth'])) {
-			switch ($queue['bandwidthtype']) {
-				case "%":
-					$myBw = $this->GetAvailableBandwidth() * $queue['bandwidth'] / 100;
-					break;
-				default:
-					$myBw = $queue['bandwidth'] * get_bandwidthtype_scale($queue['bandwidthtype']);
-					break;
-			}
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 		$this->queues[$q->GetQname()] = &$q;
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
 		if (is_array($queue['queue'])) {
@@ -604,10 +657,8 @@ class altq_root_queue {
 	}
 
 	function delete_queue() {
-		foreach ($this->queues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
+		foreach ($this->queues as $q)
 			$q->delete_queue();
-		}
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -749,10 +800,11 @@ class altq_root_queue {
 		$form .= '	<dt>';
 		$form .= '	<dd>';
 
-		$form .= '<a class="btn btn-default btn-xs" href="firewall_shaper_queues.php?interface=';
+		$form .= '<a class="btn btn-danger btn-xs" href="firewall_shaper_queues.php?interface=';
 		$form .= $this->GetInterface() . '&amp;queue=';
 		$form .= $this->GetQname() . '&amp;action=delete">';
-		$form .= gettext("Disable shaper on interface") . '</a>';
+		$form .= '<i class="fa fa-trash icon-embed-btn"></i>';
+		$form .= gettext("Remove shaper from this interface") . '</a>';
 
 		$form .= '	</dd>';
 
@@ -768,10 +820,7 @@ class altq_root_queue {
 	 */
 	function build_form() {
 
-		$sform = new Form(new Form_Button(
-			'Submit',
-			'Save'
-		));
+		$sform = new Form();
 
 		$sform->setAction("firewall_shaper.php");
 
@@ -799,7 +848,7 @@ class altq_root_queue {
 				  'FAIRQ' => 'FAIRQ',
 				  'CODELQ' => 'CODELQ',
 				  'PRIQ' => 'PRIQ')
-		))->setHelp('Changing this changes all child queues! Beware you can lose information.');
+		))->setHelp('Changing this changes all child queues! Beware information can be lost.');
 
 		$group = new Form_group('Bandwidth');
 
@@ -832,7 +881,7 @@ class altq_root_queue {
 
 		$section->addInput(new Form_Input(
 			'tbrconfig',
-			'TRB Size',
+			'TBR Size',
 			'number',
 			$this->GetTbrConfig()
 		))->setHelp('Adjusts the size, in bytes, of the token bucket regulator. If not specified, heuristics based on the interface ' .
@@ -909,18 +958,11 @@ class priq_queue {
 	var $qenabled = "";
 	var $qparent;
 	var $link;
-	var $available_bw; /* in b/s */
 
 	/* This is here to help with form building and building rules/lists */
 	var $subqueues = array();
 
 	/* Accessor functions */
-	function GetAvailableBandwidth() {
-		return $this->available_bw;
-	}
-	function SetAvailableBandwidth($bw) {
-		$this->available_bw = $bw;
-	}
 	function SetLink($link) {
 		$this->link = $link;
 	}
@@ -986,6 +1028,31 @@ class priq_queue {
 	}
 	function SetFirsttime($number) {
 		$this->firsttime = $number;
+	}
+	function CheckBandwidth($bw, $bwtype) {
+		$parent = $this->GetParent();
+		$sum = $parent->GetTotalBw(($bw > 0) ? $this : NULL);
+		if ($bw > 0)
+			$sum += get_bandwidth($bw, $bwtype, $parent);
+		if ($sum > get_queue_bandwidth($parent))
+			return 1;
+
+		foreach ($this->subqueues as $q) {
+			if ($q->CheckBandwidth(0, ''))
+				return 1;
+		}
+
+		return 0;
+	}
+	function GetTotalBw($qignore = NULL) {
+		$sum = 0;
+		foreach ($this->subqueues as $q) {
+			if ($qignore != NULL && $qignore == $q)
+				continue;
+			$sum += get_bandwidth($q->GetBandwidth(), $q->GetBwscale(), $q->GetParent());
+		}
+
+		return $sum;
 	}
 	function GetBwscale() {
 		return $this->qbandwidthtype;
@@ -1173,6 +1240,13 @@ class priq_queue {
 		if ($data['bandwidth'] < 0) {
 			$input_errors[] = gettext("Bandwidth cannot be negative.");
 		}
+		if ($data['bandwidthtype'] == "%") {
+			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
+				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
+			}
+		}
+		if ($this->CheckBandwidth($data['bandwidth'], $data['bandwidthtype']))
+			$input_errors[] = "The sum of child bandwidth is higher than parent.";
 		if ($data['priority'] && (!is_numeric($data['priority']) ||
 		    ($data['priority'] < 1) || ($data['priority'] > 15))) {
 			$input_errors[] = gettext("The priority must be an integer between 1 and 15.");
@@ -1354,10 +1428,7 @@ class priq_queue {
 
 	function build_form() {
 
-		$sform = new Form(new Form_Button(
-			'Submit',
-			'Save'
-		));
+		$sform = new Form();
 
 		$sform->setAction("firewall_shaper.php");
 
@@ -1524,7 +1595,8 @@ class priq_queue {
 			$form .= '<a class="btn btn-danger btn-xs" href="firewall_shaper_queues.php?interface=';
 			$form .= $this->GetInterface() . '&amp;queue=';
 			$form .= $this->GetQname() . '&amp;action=delete">';
-			$form .= gettext("Delete queue from interface") . '</a>';
+			$form .= '<i class="fa fa-trash icon-embed-btn"></i>';
+			$form .= gettext("Delete Queue from this Interface") . '</a>';
 
 			$form .= '	</dd>';
 
@@ -1699,23 +1771,9 @@ class hfsc_queue extends priq_queue {
 		$q->SetParent($this);
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
 
 		$q->SetEnabled("on");
 		$q->SetLink($path);
-		switch ($q->GetBwscale()) {
-			case "%":
-				$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-				break;
-			default:
-				$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-				break;
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 		$this->subqueues[$q->GetQname()] =& $q; //new hfsc_queue()
 		ref_on_altq_queue_list($this->GetQname(), $q->GetQname());
@@ -1836,10 +1894,8 @@ class hfsc_queue extends priq_queue {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
 		$parent =& $this->GetParent();
-		foreach ($this->subqueues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-				$q->delete_queue();
-		}
+		foreach ($this->subqueues as $q)
+			$q->delete_queue();
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -1892,22 +1948,9 @@ class hfsc_queue extends priq_queue {
 
 			if ($data['bandwidthtype'] == "%") {
 				if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
+					$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100.");
 				}
 			}
-		/*
-			$parent =& $this->GetParent();
-			switch ($data['bandwidthtype']) {
-			case "%":
-				$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-			default:
-				$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-				break;
-			}
-			if ($parent->GetAvailableBandwidth() < $myBw) {
-				$input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
-			}
-		*/
 		}
 
 		if ($data['upperlimit1'] <> "" && $data['upperlimit2'] == "") {
@@ -2526,20 +2569,6 @@ class cbq_queue extends priq_queue {
 		$q->SetParent($this);
 		$q->ReadConfig($qname);
 		$q->validate_input($qname, $input_errors);
-		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
-			return $q;
-		}
-		switch ($q->GetBwscale()) {
-			case "%":
-				$myBw = $this->GetAvailableBandwidth() * $qname['bandwidth'] / 100;
-				break;
-			default:
-				$myBw = $qname['bandwidth'] * get_bandwidthtype_scale($q->GetBwscale());
-				break;
-		}
-		$q->SetAvailableBandwidth($myBw);
-		$this->SetAvailableBandwidth($this->GetAvailableBandwidth() - $myBw);
 
 		$q->SetEnabled("on");
 		$q->SetLink($path);
@@ -2637,10 +2666,8 @@ class cbq_queue extends priq_queue {
 	function delete_queue() {
 		unref_on_altq_queue_list($this->GetQname());
 		cleanup_queue_from_rules($this->GetQname());
-		foreach ($this->subqueues as $q) {
-			$this->SetAvailableBandwidth($this->GetAvailableBandwidth() + $q->GetAvailableBandwidth());
-				$q->delete_queue();
-		}
+		foreach ($this->subqueues as $q)
+			$q->delete_queue();
 		unset_object_by_reference($this->GetLink());
 	}
 
@@ -2656,36 +2683,6 @@ class cbq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-
-
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
-		}
-
-		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
-			}
-		}
-
-/*
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-		case "%":
-			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-			break;
-		default:
-			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-			break;
-		}
-		if ($parent->GetAvailableBandwidth() < floatval($myBw)) {
-			$input_errors[] = "The sum of the children bandwidth exceeds that of the parent.";
-		}
- */
 	}
 
 	function ReadConfig(&$q) {
@@ -2966,36 +2963,6 @@ class fairq_queue extends priq_queue {
 		$reqdfieldsn[] = gettext("Bandwidthtype");
 
 		shaper_do_input_validation($data, $reqdfields, $reqdfieldsn, $input_errors);
-
-		if ($data['bandwidth'] && !is_numeric($data['bandwidth'])) {
-			$input_errors[] = gettext("Bandwidth must be an integer.");
-		}
-
-
-		if ($data['bandwidth'] < 0) {
-			$input_errors[] = gettext("Bandwidth cannot be negative.");
-		}
-
-
-		if ($data['bandwidthtype'] == "%") {
-			if ($data['bandwidth'] > 100 || $data['bandwidth'] < 0) {
-				$input_errors[] = gettext("Bandwidth in percentage should be between 1 and 100 bounds.");
-			}
-		}
-
-/*
-		$parent =& $this->GetParent();
-		switch ($data['bandwidthtype']) {
-		case "%":
-			$myBw = $parent->GetAvailableBandwidth() * floatval($data['bandwidth']) / 100;
-		default:
-			$mybw = floatval($data['bandwidth']) * get_bandwidthtype_scale($data['bandwidthtype']);
-			break;
-		}
-		if ($parent->GetAvailableBandwidth() < floatval($myBw)) {
-			$input_errors[] = "The sum of children bandwidth exceeds that of the parent.";
-		}
-*/
 	}
 
 	function ReadConfig(&$q) {
@@ -3466,7 +3433,7 @@ class dnpipe_class extends dummynet_class {
 		$q->ReadConfig($queue);
 		$q->validate_input($queue, $input_errors);
 		if (count($input_errors)) {
-			log_error(sprintf(gettext('SHAPER: could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
+			log_error(sprintf(gettext('SHAPER: Could not create queue %1$s on interface %2$s because: %3$s'), $q->GetQname(), $interface, print_r($input_errors, true)));
 			return $q;
 		}
 		$number = dnqueue_find_nextnumber();
@@ -3533,13 +3500,13 @@ class dnpipe_class extends dummynet_class {
 			}
 		}
 		if ($schedule == 0 && $entries > 1) {
-			$input_errors[] = gettext("You need to specify a schedule for every additional entry");
+			$input_errors[] = gettext("A schedule needs to be specified for every additional entry.");
 		}
 		if ($schedulenone > 0 && $entries > 1) {
-			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected");
+			$input_errors[] = gettext("If more than one bandwidth configured all schedules need to be selected.");
 		}
 		if ($entries == 0) {
-			$input_errors[] = gettext("At least one bw specification is necessary");
+			$input_errors[] = gettext("At least one bw specification is necessary.");
 		}
 		if ($data['delay'] && (!is_numeric($data['delay']))) {
 			$input_errors[] = gettext("Delay must be an integer.");
@@ -3757,7 +3724,7 @@ var addBwRowTo = (function() {
 	cell1.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bandwidth_row-" + totalrows + "' /><input type='text' class='form-control' name='bandwidth" + totalrows + "' id='bandwidth" + totalrows + "' />";
 	cell2.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bwtype_row-" + totalrows + "' /><select class='form-control' name='bwtype" + totalrows + "'>{$bwopt}</select>";
 	cell3.innerHTML = "<input type='hidden' value='" + totalrows +"' name='bwsched_row-" + totalrows + "' /><select class='form-control' name='bwsched" + totalrows + "'>{$schedules}</select>";
-	cell4.innerHTML = '<a class="btn btn-default" onclick="removeBwRow(this); return false;" href="#">Remove</a>';
+	cell4.innerHTML = '<a class="btn btn-warning" onclick="removeBwRow(this); return false;" href="#"><i class="fa fa-trash icon-embed-btn"></i>Delete</a>';
 
 	});
 })();
@@ -3846,14 +3813,15 @@ EOD;
 				$form .= "</select>";
 				$form .= "</td>";
 				$form .= '<td>';
-				$form .= '<a class="btn btn-default" onclick="removeBwRow(this); return false;">' . gettext('Remove') . '</a>';
+				$form .= '<a class="btn btn-warning" onclick="removeBwRow(this); return false;"><i class="fa fa-trash icon-embed-btn"></i>' . gettext('Delete') . '</a>';
 				$form .= "</td></tr>";
 			}
 		}
 		$form .= "</tbody></table></div><br />";
 
 		$form .= '<a class="btn btn-sm btn-success" onclick="javascript:addBwRowTo(\'maintable\'); return false;" >';
-		$form .= gettext("Add another schedule") . "</a>";
+		$form .= '<i class="fa fa-plus icon-embed-btn"></i>';
+		$form .= gettext("Add Schedule") . "</a>";
 
 		return($form);
 	}
@@ -3961,7 +3929,7 @@ EOD;
 			'Description',
 			'text',
 			$this->GetDescription()
-		))->setHelp('You may enter a description here for your reference (not parsed).');
+		))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 		$sform->add($section);
 
@@ -3972,7 +3940,7 @@ EOD;
 			'Delay (ms)',
 			'text',
 			$this->GetDelay() > 0 ? $this->GetDelay():null
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty)');
+		))->setHelp('In most cases, zero (0) should specified here (or leave the field empty).');
 
 		$section->addInput(new Form_Input(
 			'plr',
@@ -3980,15 +3948,15 @@ EOD;
 			'number',
 			$this->GetPlr(),
 			['step' => '0.001', 'min' => '0.000']
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty). ' .
-					'A value of 0.001 means one packet in 1000 gets dropped');
+		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
+					'A value of 0.001 means one packet in 1000 gets dropped.');
 
 		$section->addInput(new Form_Input(
 			'qlimit',
 			'Queue size (slots)',
 			'number',
 			$this->GetQlimit()
-		))->setHelp('In most cases, you should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ' .
+		))->setHelp('In most cases, the field should be left empty. All packets in this pipe are placed into a fixed-size queue first, ' .
 					'then they are delayed by value specified in the Delay field, and then they are delivered to their destination.');
 
 		$section->addInput(new Form_Input(
@@ -3996,7 +3964,7 @@ EOD;
 			'Bucket size (slots)',
 			'number',
 			$this->GetBuckets()
-		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
+		))->setHelp('In most cases, this field should be left empty. It increases the hash size set.');
 
 		$sform->add($section);
 
@@ -4265,7 +4233,7 @@ class dnqueue_class extends dummynet_class {
 			'Description',
 			'text',
 			$this->GetDescription()
-		))->setHelp('You may enter a description here for your reference (not parsed).');
+		))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 		$sform->add($section);
 
@@ -4278,7 +4246,7 @@ class dnqueue_class extends dummynet_class {
 			$this->GetWeight(),
 			['min' => '1', 'max' => '100']
 		))->setHelp('For queues under the same parent this specifies the share that a queue gets(values range from 1 to 100),' .
-					' you can leave it blank otherwise');
+					' it can be left blank otherwise.');
 
 		$section->addInput(new Form_Input(
 			'plr',
@@ -4286,7 +4254,7 @@ class dnqueue_class extends dummynet_class {
 			'number',
 			$this->GetPlr(),
 			['step' => '0.001', 'min' => '0.000']
-		))->setHelp('In most cases, you should specify 0 here (or leave the field empty). ' .
+		))->setHelp('In most cases, zero (0) should be specified here (or leave the field empty). ' .
 					'A value of 0.001 means one packet in 1000 gets dropped');
 
 		$section->addInput(new Form_Input(
@@ -4294,7 +4262,7 @@ class dnqueue_class extends dummynet_class {
 			'Queue size (slots)',
 			'number',
 			$this->GetQlimit()
-		))->setHelp('In most cases, you should leave the field empty. All packets in this pipe are placed into a fixed-size queue first, ' .
+		))->setHelp('In most cases, the field should be left empty. All packets in this pipe are placed into a fixed-size queue first, ' .
 					'then they are delayed by value specified in the Delay field, and then they are delivered to their destination.');
 
 		$section->addInput(new Form_Input(
@@ -4302,7 +4270,7 @@ class dnqueue_class extends dummynet_class {
 			'Bucket size (slots)',
 			'number',
 			$this->GetBuckets()
-		))->setHelp('In most cases, you should leave this field empty. It increases the hash size set');
+		))->setHelp('In most cases, this field should be left empty. It increases the hash size set');
 
 		$section->addInput(new Form_Input(
 			'pipe',
@@ -4688,7 +4656,8 @@ function build_iface_without_this_queue($iface, $qname) {
 	$form .= '<a class="btn btn-info btn-xs" href="firewall_shaper_queues.php?interface=';
 	$form .= $iface . '&amp;queue=';
 	$form .= $qname . '&amp;action=add">';
-	$form .= gettext("Clone shaper on the I/F") . '</a>';
+	$form .= '<i class="fa fa-clone icon-embed-btn"></i>';
+	$form .= gettext("Clone Shaper to this Interface") . '</a>';
 	$form .= '	</dd>';
 
 	$form .= '</dl>';
@@ -4698,9 +4667,14 @@ function build_iface_without_this_queue($iface, $qname) {
 }
 
 $default_shaper_msg = sprintf(gettext("Welcome to the %s Traffic Shaper."), $g['product_name']) . "<br />";
-$default_shaper_msg .= gettext("The tree on the left helps you navigate through the queues.<br />"
-	. "Buttons at the bottom represent queue actions and are activated accordingly.");
-
 $dn_default_shaper_msg = $default_shaper_msg;
+
+$shaper_msg = gettext("The tree on the left navigates through the %s.");
+$default_shaper_msg .= sprintf($shaper_msg, gettext("queues")) . "<br />";
+$dn_default_shaper_msg .= sprintf($shaper_msg, gettext("limiters")) . "<br />";
+
+$shaper_msg = gettext("Buttons at the bottom represent %s actions and are activated accordingly.");
+$default_shaper_msg .= sprintf($shaper_msg, gettext("queue"));
+$dn_default_shaper_msg .= sprintf($shaper_msg, gettext("limiter"));
 
 ?>

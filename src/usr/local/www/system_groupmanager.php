@@ -88,6 +88,7 @@ $act = (isset($_GET['act']) ? $_GET['act'] : '');
 function cpusercmp($a, $b) {
 	return strcasecmp($a['name'], $b['name']);
 }
+
 function admin_groups_sort() {
 	global $a_group;
 
@@ -142,7 +143,7 @@ if ($act == "edit") {
 	if (isset($id) && isset($a_group[$id])) {
 		$pconfig['name'] = $a_group[$id]['name'];
 		$pconfig['gid'] = $a_group[$id]['gid'];
-		$pconfig['gtype'] = $a_group[$id]['scope'];
+		$pconfig['gtype'] = empty($a_group[$id]['scope']) ? "local" : $a_group[$id]['scope'];
 		$pconfig['description'] = $a_group[$id]['description'];
 		$pconfig['members'] = $a_group[$id]['member'];
 		$pconfig['priv'] = $a_group[$id]['priv'];
@@ -177,9 +178,16 @@ if (isset($_POST['save'])) {
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (preg_match("/[^a-zA-Z0-9\.\-_ ]/", $_POST['groupname'])) {
-		$input_errors[] = gettext("The group name contains invalid characters.");
+	if ($_POST['gtype'] != "remote") {
+		if (preg_match("/[^a-zA-Z0-9\.\-_]/", $_POST['groupname'])) {
+			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
+		}
+	} else {
+		if (preg_match("/[^a-zA-Z0-9\.\- _]/", $_POST['groupname'])) {
+			$input_errors[] = sprintf(gettext("The (%s) group name contains invalid characters."), $_POST['gtype']);
+		}
 	}
+
 
 	if (strlen($_POST['groupname']) > 16) {
 		$input_errors[] = gettext("The group name is longer than 16 characters.");
@@ -203,6 +211,7 @@ if (isset($_POST['save'])) {
 
 		$group['name'] = $_POST['groupname'];
 		$group['description'] = $_POST['description'];
+		$group['scope'] = $_POST['gtype'];
 
 		if (empty($_POST['members'])) {
 			unset($group['member']);
@@ -238,6 +247,8 @@ if (isset($_POST['save'])) {
 		header("Location: system_groupmanager.php");
 		exit;
 	}
+
+	$pconfig['name'] = $_POST['groupname'];
 }
 
 function build_priv_table() {
@@ -246,8 +257,11 @@ function build_priv_table() {
 	$privhtml = '<div class="table-responsive">';
 	$privhtml .=	'<table class="table table-striped table-hover table-condensed">';
 	$privhtml .=		'<thead>';
-	$privhtml .=			'<th>' . gettext('Name') . '</th>';
-	$privhtml .=			'<th>' . gettext('Description') . '</th>';
+	$privhtml .=			'<tr>';
+	$privhtml .=				'<th>' . gettext('Name') . '</th>';
+	$privhtml .=				'<th>' . gettext('Description') . '</th>';
+	$privhtml .=				'<th>' . gettext('Action') . '</th>';
+	$privhtml .=			'</tr>';
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
@@ -265,7 +279,7 @@ function build_priv_table() {
 	$privhtml .= '</div>';
 
 	$privhtml .= '<nav class="action-buttons">';
-	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success">' . gettext("Add") . '</a>';
+	$privhtml .=	'<a href="system_groupmanager_addprivs.php?groupid=' . $id . '" class="btn btn-success"><i class="fa fa-plus icon-embed-btn"></i>' . gettext("Add") . '</a>';
 	$privhtml .= '</nav>';
 
 	return($privhtml);
@@ -276,11 +290,13 @@ $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
 }
+
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
+
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
@@ -380,13 +396,6 @@ if (isset($id) && $a_group[$id]){
 
 $section = new Form_Section('Group Properties');
 
-if ($_GET['act'] != "new") {
-	$section->addInput(new Form_StaticText(
-		'Defined by',
-		strtoupper($pconfig['gtype'])
-	));
-}
-
 $section->addInput($input = new Form_Input(
 	'groupname',
 	'Group name',
@@ -396,6 +405,20 @@ $section->addInput($input = new Form_Input(
 
 if ($pconfig['gtype'] == "system") {
 	$input->setReadonly();
+
+	$section->addInput(new Form_Input(
+		'gtype',
+		'Scope',
+		'text',
+		$pconfig['gtype']
+	))->setReadonly();
+} else {
+	$section->addInput(new Form_Select(
+		'gtype',
+		'Scope',
+		$pconfig['gtype'],
+		["local" => gettext("Local"), "remote" => gettext("Remote")]
+	));
 }
 
 $section->addInput(new Form_Input(
@@ -403,7 +426,8 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['description']
-))->setHelp('Group description, for your own information only');
+))->setHelp('Group description, for administrative information only');
+
 
 $form->add($section);
 if ($pconfig['gid'] != 1998) { // all users group
@@ -446,15 +470,19 @@ if ($pconfig['gid'] != 1998) { // all users group
 
 	$group->add(new Form_Button(
 		'movetoenabled',
-		'Move to "Members" >'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Members"',
+		null,
+		'fa-angle-double-right'
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
 	$group->add(new Form_Button(
 		'movetodisabled',
-		'< Move to "Not members'
-	))->removeClass('btn-primary')->addClass('btn-default btn-sm');
+		'Move to "Not members',
+		null,
+		'fa-angle-double-left'
+	))->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-info btn-sm');
 
-	$group->setHelp('Hold down CTRL (pc)/COMMAND (mac) key to select multiple items');
+	$group->setHelp('Hold down CTRL (PC)/COMMAND (Mac) key to select multiple items.');
 	$section->add($group);
 
 }
@@ -476,11 +504,6 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-
-	// Make buttons plain buttons, not submit
-	$("#movetodisabled").prop('type','button');
-	$("#movetoenabled").prop('type','button');
-
 
 	// On click . .
 	$("#movetodisabled").click(function() {

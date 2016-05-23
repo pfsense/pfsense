@@ -160,7 +160,7 @@ if (!$nentries) {
 					<td><?=$server['ip']['addr']?>:<?=$pool['port']?></td>
 					<td>
 						<?php if ($server['ip']['avail']): ?>
-						({$server['ip']['avail']})
+						&nbsp;(<?= $server['ip']['avail'] ?>)
 						<?php endif; ?>
 					</td>
 				</tr>

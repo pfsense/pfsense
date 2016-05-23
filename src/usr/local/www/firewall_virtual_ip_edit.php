@@ -180,9 +180,9 @@ if ($_POST) {
 		}
 
 		if (isset($network_addr) && $_POST['subnet'] == $network_addr) {
-			$input_errors[] = gettext("You cannot use the network address for this VIP");
+			$input_errors[] = gettext("The network address cannot be used for this VIP");
 		} else if (isset($broadcast_addr) && $_POST['subnet'] == $broadcast_addr) {
-			$input_errors[] = gettext("You cannot use the broadcast address for this VIP");
+			$input_errors[] = gettext("The broadcast address cannot be used for this VIP");
 		}
 	}
 
@@ -201,7 +201,7 @@ if ($_POST) {
 			}
 
 			if (empty($_POST['password'])) {
-				$input_errors[] = gettext("You must specify a CARP password that is shared between the two VHID members.");
+				$input_errors[] = gettext("A CARP password that is shared between the two VHID members must be specified.");
 			}
 
 			if ($_POST['password'] != $_POST['password_confirm']) {
@@ -216,7 +216,16 @@ if ($_POST) {
 
 			break;
 		case 'ipalias':
-			/* ipalias works fine with localhost and CARP. */
+			/* verify IP alias on CARP has proper address family */
+			if (strstr($_POST['interface'], '_vip')) {
+				$vipif = get_configured_vip($_POST['interface']);
+				if (is_ipaddrv4($_POST['subnet']) && is_ipaddrv6($vipif['subnet'])) {
+					$input_errors[] = gettext("An IPv4 Virtual IP cannot have an IPv6 CARP parent.");
+				}
+				if (is_ipaddrv6($_POST['subnet']) && is_ipaddrv4($vipif['subnet'])) {
+					$input_errors[] = gettext("An IPv6 Virtual IP cannot have an IPv4 CARP parent.");
+				}
+			}
 			break;
 		default:
 			if ($_POST['interface'] == 'lo0') {
@@ -429,7 +438,7 @@ $section->addInput(new Form_Select(
 	'VHID Group',
 	$pconfig['vhid'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
-))->setHelp('Enter the VHID group that the machines will share');
+))->setHelp('Enter the VHID group that the machines will share.');
 
 $group = new Form_Group('Advertising frequency');
 $group->add(new Form_Select(
@@ -455,7 +464,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_vip[$id]){
 	$section->addInput(new Form_Input(

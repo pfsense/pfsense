@@ -179,7 +179,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {
-	print_apply_box(gettext("The firewall tunables have changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The firewall tunables have changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 $tab_array = array();
@@ -205,7 +205,7 @@ if ($act != "edit"): ?>
 						<th class="col-sm-3"><?=gettext("Tunable Name"); ?></th>
 						<th><?=gettext("Description"); ?></th>
 						<th class="col-sm-1"><?=gettext("Value"); ?></th>
-						<th><a class="btn btn-xs btn-primary" href="system_advanced_sysctl.php?act=edit"><?=gettext('New'); ?></a></th>
+						<th><a class="btn btn-xs btn-success" href="system_advanced_sysctl.php?act=edit"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('New'); ?></a></th>
 					</tr>
 				</thead>
 				<?php

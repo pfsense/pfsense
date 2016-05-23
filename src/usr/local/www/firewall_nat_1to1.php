@@ -161,7 +161,7 @@ if ($savemsg) {
 
 if (is_subsystem_dirty('natconf')) {
 	print_apply_box(gettext('The NAT configuration has been changed.') . '<br />' .
-					gettext('You must apply the changes in order for them to take effect.'));
+					gettext('The changes must be applied for them to take effect.'));
 }
 
 $tab_array = array();
@@ -210,7 +210,7 @@ display_top_tabs($tab_array);
 							<a href="?act=toggle&amp;id=<?=$i?>">
 								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 				if (isset($natent['nobinat'])) { ?>
-								&nbsp;<i class="fa fa-hand-paper-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 				} ?>
 							</a>
 						</td>
@@ -285,11 +285,11 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-<?php print_info_box(gettext('Depending on the way your WAN connection is setup, you may also need a ') . '<a href="firewall_virtual_ip.php">' .
-			   gettext("Virtual IP.") . '</a>' . '<br />' .
-			   gettext('If you add a 1:1 NAT entry for any of the interface IPs on this system, ' .
+<?php print_info_box(gettext('Depending on the way the WAN connection is setup, this may also need a ') . '<a href="firewall_virtual_ip.php">' .
+			   gettext("Virtual IP") . '</a>.' . '<br />' .
+			   gettext('If a 1:1 NAT entry is added for any of the interface IPs on this system, ' .
 					   'it will make this system inaccessible on that IP address. i.e. if ' .
-					   'you use your WAN IP address, any services on this system (IPsec, OpenVPN server, etc.) ' .
+					   'the WAN IP address is used, any services on this system (IPsec, OpenVPN server, etc.) ' .
 					   'using the WAN IP address will no longer function.'), 'info', false); ?>
 
 </div>
@@ -322,7 +322,7 @@ events.push(function() {
 	// provide a warning message if the user tries to change page before saving
 	$(window).bind('beforeunload', function(){
 		if (!saving && dirty) {
-			return ("<?=gettext('You have moved one or more NAT 1:1 mappings but have not yet saved')?>");
+			return ("<?=gettext('One or more NAT 1:1 mappings have been moved but have not yet been saved')?>");
 		} else {
 			return undefined;
 		}

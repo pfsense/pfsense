@@ -77,11 +77,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-
-if (empty($cpzone)) {
-	header("Location: services_captiveportal_zones.php");
-	exit;
-}
+$cpzone = strtolower($cpzone);
 
 if ($_REQUEST['generatekey']) {
 	exec("/usr/bin/openssl genrsa 64 > /tmp/key64.private");
@@ -90,6 +86,11 @@ if ($_REQUEST['generatekey']) {
 	$publickey = str_replace("\n", "\\n", file_get_contents("/tmp/key64.public"));
 	exec("rm /tmp/key64.private /tmp/key64.public");
 	print json_encode(['public' => $publickey, 'private' => $privatekey]);
+	exit;
+}
+
+if (empty($cpzone)) {
+	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
@@ -251,7 +252,7 @@ if ($_POST) {
 
 	if (!$_POST['vouchersyncusername']) {
 		// Check for form errors
-		if ($_POST['charset'] && (strlen($_POST['charset'] < 2))) {
+		if ($_POST['charset'] && (strlen($_POST['charset']) < 2)) {
 			$input_errors[] = gettext("Need at least 2 characters to create vouchers.");
 		}
 		if ($_POST['charset'] && (strpos($_POST['charset'], "\"") > 0)) {
@@ -276,7 +277,7 @@ if ($_POST) {
 			$input_errors[] = gettext("This doesn't look like an RSA Private key.");
 		}
 		if ($_POST['vouchersyncdbip'] && (is_ipaddr_configured($_POST['vouchersyncdbip']))) {
-			$input_errors[] = gettext("You cannot sync the voucher database to this host (itself).");
+			$input_errors[] = gettext("The voucher database cannot be sync'd to this host (itself).");
 		}
 		if ($_POST['vouchersyncpass'] != $_POST['vouchersyncpass_confirm']) {
 			$input_errors[] = gettext("Password and confirmed password must match.");
@@ -456,7 +457,7 @@ display_top_tabs($tab_array, true);
 						<th><?=gettext("Minutes/Ticket")?></th>
 						<th><?=gettext("# of Tickets")?></th>
 						<th><?=gettext("Comment")?></th>
-						<th><?=gettext("Action")?></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -674,7 +675,7 @@ events.push(function() {
 	// Set initial state
 	setShowHide($('#enable').is(":checked"));
 
-	var generateButton = $('<a class="btn btn-xs btn-default"><?=gettext("Generate new keys");?></a>');
+	var generateButton = $('<a class="btn btn-xs btn-warning"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Generate new keys");?></a>');
 	generateButton.on('click', function() {
 		$.ajax({
 			type: 'get',

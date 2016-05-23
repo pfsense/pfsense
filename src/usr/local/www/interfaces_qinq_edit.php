@@ -109,10 +109,10 @@ if ($_POST) {
 		$input_errors[] = gettext("First level tag cannot be empty.");
 	}
 	if (isset($id) && $a_qinqs[$id]['tag'] != $_POST['tag']) {
-		$input_errors[] = gettext("You are editing an existing entry and modifying the first level tag is not allowed.");
+		$input_errors[] = gettext("Modifying the first level tag of an existing entry is not allowed.");
 	}
 	if (isset($id) && $a_qinqs[$id]['if'] != $_POST['if']) {
-		$input_errors[] = gettext("You are editing an existing entry and modifying the interface is not allowed.");
+		$input_errors[] = gettext("Modifying the interface of an existing entry is not allowed.");
 	}
 	if (!isset($id)) {
 		foreach ($a_qinqs as $qinqentry) {
@@ -256,10 +256,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('QinQ Configuration');
 
@@ -283,19 +280,19 @@ $section->addInput(new Form_Checkbox(
 	'Option(s)',
 	'Adds interface to QinQ interface groups',
 	$pconfig['autogroup']
-))->setHelp('Allows rules to be written more easily');
+))->setHelp('Allows rules to be written more easily.');
 
 $section->addInput(new Form_Input(
 	'descr',
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_StaticText(
 	'Member(s)',
-	'You can specify ranges in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
-	'Click "Duplicate" as many times as needed to add new inputs'
+	'Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
+	'Click "Duplicate" as many times as needed to add new inputs.'
 ));
 
 if (isset($id) && $a_qinqs[$id]) {
@@ -321,19 +318,33 @@ foreach ($item as $ww) {
 	$member = $item[$counter];
 
 	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
+	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
-		'members',
+		'members[]',
 		null,
 		'text',
 		$ww
 	))->setWidth(6); // Width must be <= 8 to make room for the duplication buttons
 
-$counter++;
+	$group->add(new Form_Button(
+		'deleterow' . $counter,
+		'Delete',
+		null,
+		'fa-trash'
+	))->addClass('btn-warning');
 
-$group->enableDuplication(null, true); // Buttons are in-line with the input
-$section->add($group);
+	$counter++;
+
+	$section->add($group);
 }
+
+$form->addGlobal(new Form_Button(
+	'addrow',
+	'Add Tag',
+	null,
+	'fa-plus'
+))->addClass('btn-success addbtn');
 
 $form->add($section);
 

@@ -97,6 +97,14 @@ if ($_REQUEST['ajax']) {
 	$response = "";
 	$code = 0;
 
+	// If this is an ajax call to get the installed and newst versions, call that function,
+	// JSON encode the result, print it and exit
+	if ($_REQUEST['getversion']) {
+		$firmwareversions = get_system_pkg_version(true);
+		print(json_encode($firmwareversions));
+		exit;
+	}
+
 	// Check to see if our process is still running
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 	$running = "running";
@@ -231,7 +239,6 @@ if ($_POST) {
 
 if ($_GET && $_GET['id'] == "firmware") {
 	$firmwareupdate = true;
-	$firmwareversion = get_system_pkg_version();
 }
 
 $tab_array = array();
@@ -251,7 +258,7 @@ include("head.inc");
 
 if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
 	?>
-	<div id="final" class="alert" role="alert" style=":display: none;"></div>
+	<div id="final" class="alert" role="alert" style="display: none;"></div>
 <?php
 }
 display_top_tabs($tab_array);
@@ -275,14 +282,14 @@ if ($input_errors) {
 
 	switch ($pkgmode) {
 		case 'reinstallpkg':
-			$pkgtxt = sprintf(gettext('Are you sure you want to reinstall package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to reinstall package %s.'), $pkgname);
 			break;
 		case 'delete':
-			$pkgtxt = sprintf(gettext('Are you sure you want to remove package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to remove package %s.'), $pkgname);
 			break;
 		case 'installed':
 		default:
-			$pkgtxt = sprintf(gettext('Are you sure you want to install package %s?'), $pkgname);
+			$pkgtxt = sprintf(gettext('Confirmation Required to install package %s.'), $pkgname);
 			break;
 	}
 ?>
@@ -292,15 +299,15 @@ if ($input_errors) {
 <?php
 			if ($pkgmode == 'reinstallall') {
 ?>
-				<?=gettext("Are you sure you want to reinstall all packages?");?>
+				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
 			} else if ($_GET['from'] && $_GET['to']) {
 ?>
-				<?=sprintf(gettext('Are you sure you want to upgrade package %1$s from %2$s to %3$s?'), $pkgname, $_GET['from'], $_GET['to'])?>
+				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
 			} else if ($firmwareupdate) {
 ?>
-				<?=sprintf(gettext('Are you sure you want to update %s system?'), $g['product_name'])?>
+				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_name'])?>
 <?php
 			} else {
 ?>
@@ -320,8 +327,7 @@ if ($input_errors) {
 			<label class="col-sm-2 control-label">
 				<?=gettext("Current Base System")?>
 			</label>
-			<div class="col-sm-10">
-				<?=$firmwareversion['installed_version']?>
+			<div class="col-sm-10" id="installed_version">
 			</div>
 		</div>
 
@@ -329,38 +335,31 @@ if ($input_errors) {
 			<label class="col-sm-2 control-label">
 				<?=gettext("Latest Base System")?>
 			</label>
-			<div class="col-sm-10">
-				<?=$firmwareversion['version']?>
+			<div class="col-sm-10" id="version">
 			</div>
 		</div>
-<?php
-		if ($firmwareversion['version'] != $firmwareversion['installed_version']) {
-?>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-				<?=gettext("Confirm Update")?>
+
+		<div class="form-group" id="confirm">
+			<label class="col-sm-2 control-label" id="confirmlabel">
+				<?=gettext("Retrieving")?>
 			</label>
 			<div class="col-sm-10">
 				<input type="hidden" name="id" value="firmware" />
-				<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
+					<i class="fa fa-check icon-embed-btn"></i>
+					<?=gettext("Confirm")?>
+				</button>
+				<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
 			</div>
 		</div>
 <?php
-		} else {
-?>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-			</label>
-			<div class="col-sm-10">
-				<?=($firmwareversion) ? gettext("System is up to date") : ""?>
-			</div>
-		</div>
-<?php
-		}
 	} else {
 ?>
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
-			<input type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="Confirm"/>
+			<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
+				<i class="fa fa-check icon-embed-btn"></i>
+				<?=gettext("Confirm")?>
+			</button>
 <?php
 	}
 	?>
@@ -369,9 +368,11 @@ if ($input_errors) {
 	</div>
 <?php endif;
 
-if ($firmwareupdate && !$firmwareversion) {
-	print_info_box(gettext("Unable to retrieve system versions."), 'danger');
-}
+?>
+	<div id="unable" style="display: none">
+		<?=print_info_box(gettext("Unable to retrieve system versions."), 'danger')?>
+	</div>
+<?php
 
 if ($_POST) {
 	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
@@ -400,7 +401,7 @@ if ($_POST['mode'] == 'delete') {
 }
 
 if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
-	// What if the user navigates away from this page and then come back via his/her "Back" button?
+	// What if the user navigates away from this page and then comes back via his/her "Back" button?
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 	if (isvalidpid($pidfile)) {
@@ -478,11 +479,16 @@ if ($_POST && ($_POST['completed'] != "true")) {
 	}
 }
 
+$uptodatemsg = gettext("Up to date.");
+$confirmlabel = gettext("Confirm Update");
+$sysmessage = gettext("Status");
+
 // $_POST['completed'] just means that we are refreshing the page to update any new menu items
 // that were installed
 if ($_POST && $_POST['completed'] == "true"):
 	unlink_if_exists($logfilename . ".json");
 	if (($pkgid == 'firmware') && ($_POST['reboot_needed'] == "yes")):
+
 ?>
 <script>
 //<![CDATA[
@@ -550,6 +556,43 @@ function show_info() {
 			"<?=gettext("This may take several minutes!")?>" + "</p>");
 	}
 	$('#final').show();
+}
+
+function get_firmware_versions()
+{
+	var ajaxVersionRequest;
+
+	// Retrieve the version information
+	ajaxVersionRequest = $.ajax({
+			url: "pkg_mgr_install.php",
+			type: "post",
+			data: {
+					ajax: "ajax",
+					getversion: "yes"
+				  }
+		});
+
+	// Deal with the results of the above ajax call
+	ajaxVersionRequest.done(function (response, textStatus, jqXHR) {
+		var json = new Object;
+
+		json = jQuery.parseJSON(response);
+
+		if(json) {
+			$('#installed_version').text(json.installed_version);
+			$('#version').text(json.version);
+
+			// If the installed and latest versions are the same, print an "Up to date" message
+			if (json.installed_version == json.version) {
+				$('#confirmlabel').text("<?=$sysmessage?>");
+				$('#uptodate').html('<span class="text-success">' + '<?=$uptodatemsg?>' + "</span>");
+			} else { // If they differ display the "Confirm" button
+				$('#uptodate').hide();
+				$('#confirmlabel').text( "<?=$confirmlabel?>");
+				$('#pkgconfirm').show();
+			}
+		}
+	});
 }
 
 function getLogsStatus() {
@@ -670,12 +713,16 @@ events.push(function() {
 	}
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,
-	// we only meed to re-populate the progress indicator and the status banner
+	// we only need to re-populate the progress indicator and the status banner
 	if ("<?=$_POST['completed']?>" == "true") {
 		setProgress('progressbar', 100, false);
 		$('#progressbar').addClass("progress-bar-success");
 		show_success();
 		setTimeout(scrollToBottom, 200);
+	}
+
+	if ("<?=$firmwareupdate?>") {
+		get_firmware_versions();
 	}
 
 });

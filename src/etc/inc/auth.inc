@@ -143,7 +143,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="stylesheet" href="/bootstrap/css/pfSense.css" />
+	<link rel="stylesheet" href="/css/pfSense.css" />
 	<title><?=gettext("Redirecting..."); ?></title>
 </head>
 <body id="error" class="no-menu">
@@ -220,7 +220,7 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 		}
 		if ($found_host == false) {
 			if (!security_checks_disabled()) {
-				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  You can disable this check if needed in System -> Advanced -> Admin.");
+				display_error_form("501", "An HTTP_REFERER was detected other than what is defined in System -> Advanced (" . htmlspecialchars($_SERVER['HTTP_REFERER']) . ").  If not needed, this check can be disabled in System -> Advanced -> Admin.");
 				exit;
 			}
 			$security_passed = false;
@@ -271,8 +271,14 @@ function index_users() {
 
 function & getUserEntry($name) {
 	global $debug, $config, $userindex;
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+
 	if (isset($userindex[$name])) {
 		return $config['system']['user'][$userindex[$name]];
+	} elseif ($authcfg['type'] != "Local Database") {
+		$user = array();
+		$user['name'] = $name;
+		return $user;
 	}
 }
 
@@ -312,13 +318,25 @@ function & getGroupEntryByGID($gid) {
 }
 
 function get_user_privileges(& $user) {
+	global $config;
+
+	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+	$names = array();
 
 	$privs = $user['priv'];
 	if (!is_array($privs)) {
 		$privs = array();
 	}
 
-	$names = local_user_get_groups($user, true);
+	if ($authcfg['type'] == "ldap") {
+		$names = @ldap_get_groups($user['name'], $authcfg);
+	} elseif ($authcfg['type'] == "radius") {
+		$names = @radius_get_groups($_SESSION['user_radius_attributes']);
+	}
+
+	if (empty($names)) {
+		$names = local_user_get_groups($user, true);
+	}
 
 	foreach ($names as $name) {
 		$group = getGroupEntry($name);
@@ -423,7 +441,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -458,7 +476,7 @@ function local_user_set(& $user) {
 	global $g, $debug;
 
 	if (empty($user['password']) && empty($user['bcrypt-hash'])) {
-		log_error("There is something wrong in your config because user {$user['name']} password is missing!");
+		log_error("There is something wrong in the config because user {$user['name']} password is missing!");
 		return;
 	}
 
@@ -738,20 +756,15 @@ function local_group_set($group, $reset = false) {
 		$group_members = implode(",", $group['member']);
 	}
 
-	if (empty($group_name)) {
+	if (empty($group_name) || $group['scope'] == "remote") {
 		return;
 	}
 
-	/* read from group db */
-	$fd = popen("/usr/sbin/pw groupshow {$group_name} 2>&1", "r");
-	$pwread = fgets($fd);
-	pclose($fd);
-
 	/* determine add or mod */
-	if (!strncmp($pwread, "pw:", 3)) {
-		$group_op = "groupadd";
+	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
+		$group_op = "groupmod -l";
 	} else {
-		$group_op = "groupmod";
+		$group_op = "groupadd -n";
 	}
 
 	/* add or mod group db */
@@ -1464,8 +1477,15 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 */
 function radius_get_groups($attributes) {
 	$groups = array();
-	if (!empty($attributes) && is_array($attributes) && !empty($attributes['class'])) {
-		$groups = explode(";", $attributes['class']);
+	if (!empty($attributes) && is_array($attributes) && (!empty($attributes['class']) || !empty($attributes['class_int']))) {
+		/* Some RADIUS servers return multiple class attributes, so check them all. */
+		$groups = array();
+		if (!empty($attributes['class']) && is_array($attributes['class'])) {
+			foreach ($attributes['class'] as $class) {
+				$groups = array_unique(array_merge($groups, explode(";", $class)));
+			}
+		}
+
 		foreach ($groups as & $grp) {
 			$grp = trim($grp);
 			if (strtolower(substr($grp, 0, 3)) == "ou=") {

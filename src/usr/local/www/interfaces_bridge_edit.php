@@ -67,11 +67,26 @@ if (!is_array($config['bridges']['bridged'])) {
 }
 
 function is_aoadv_used($pconfig) {
-        if (isset($pconfig['static']) || isset($pconfig['private']) || isset($pconfig['stp']) || isset($pconfig['span']) || isset($pconfig['edge']) || isset($pconfig['autoedge']) || isset($pconfig['ptp']) || isset($pconfig['autoptp']) || isset($pconfig['maxaddr']) || isset($pconfig['timeout']) || isset($pconfig['maxage']) || isset($pconfig['fwdelay']) || isset($pconfig['hellotime']) || isset($pconfig['priority']) || isset($pconfig['proto']) || isset($pconfig['holdcnt'])) {
-                return true;
-        }
+	if (($pconfig['static'] !="") ||
+	    ($pconfig['private'] != "") ||
+	    ($pconfig['stp'] != "") ||
+	    ($pconfig['span'] != "") ||
+	    ($pconfig['edge'] != "") ||
+	    ($pconfig['autoedge'] != "") ||
+	    ($pconfig['ptp'] != "") ||
+	    ($pconfig['autoptp'] != "") ||
+	    ($pconfig['maxaddr'] != "") ||
+	    ($pconfig['timeout'] != "") ||
+	    ($pconfig['maxage'] != "") ||
+	    ($pconfig['fwdelay'] != "") ||
+	    ($pconfig['hellotime'] != "") ||
+	    ($pconfig['priority'] != "") ||
+	    (($pconfig['proto'] != "") && ($pconfig['proto'] != "rstp")) ||
+	    ($pconfig['holdcnt'] != "")) {
+		return true;
+	}
 
-        return false;
+	return false;
 }
 
 $a_bridges = &$config['bridges']['bridged'];
@@ -204,7 +219,7 @@ if ($_POST) {
 	}
 
 	if (!is_array($_POST['members']) || count($_POST['members']) < 1) {
-		$input_errors[] = gettext("You must select at least one member interface for a bridge.");
+		$input_errors[] = gettext("At least one member interface must be selected for a bridge.");
 	}
 
 	if (is_array($_POST['static'])) {
@@ -420,7 +435,7 @@ $section->addInput(new Form_Select(
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples
-))->setHelp('Interfaces participating in the bridge');
+))->setHelp('Interfaces participating in the bridge.');
 
 $section->addInput(new Form_Input(
 	'descr',
@@ -429,39 +444,40 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ));
 
-$showadvanced = is_aoadv_used($pconfig);
+// Advanced Additional options
+$btnadv = new Form_Button(
+	'btnadvopts',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
 
-$section->addInput(new Form_Checkbox(
-	'showadvanced',
-	'Advanced',
-	'Show advanced options',
-	$showadvanced
-))->toggles('.toggle-advanced');
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Advanced Options',
+	$btnadv
+));
 
 $form->add($section);
 
 $section = new Form_Section('Advanced Configuration');
 
-// Set initial toggle state manually for now
-if ($showadvanced) {
-	$section->addClass('toggle-advanced in');
-} else {
-	$section->addClass('toggle-advanced collapse');
-}
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Input(
 	'maxaddr',
 	'Cache Size',
 	'text',
 	$pconfig['maxaddr']
-))->setHelp('Set the size of the bridge address cache. The default is 2000 entries');
+))->setHelp('Set the size of the bridge address cache. The default is 2000 entries.');
 
 $section->addInput(new Form_Input(
 	'timeout',
 	'Cache expire time',
 	'text',
 	$pconfig['timeout']
-))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 1200 seconds');
+))->setHelp('Set the timeout of address cache entries to this number of seconds. If seconds is zero, then address cache entries will not be expired. The default is 1200 seconds.');
 
 $spanlist = build_port_list($pconfig['span']);
 
@@ -471,7 +487,7 @@ $section->addInput(new Form_Select(
 	$spanlist['selected'],
 	$spanlist['list'],
 	true
-))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge.' .
+))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
 			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
 			'%sThe span interface cannot be part of the bridge member interfaces.%s', ['<strong>', '</strong>']);
 
@@ -550,11 +566,7 @@ $section->addInput(new Form_Checkbox(
 // Show the spanning tree section
 $form->add($section);
 $section = new Form_Section('RSTP/STP');
-if ($showadvanced) {
-	$section->addClass('toggle-advanced in');
-} else {
-	$section->addClass('toggle-advanced collapse');
-}
+$section->addClass('adnlopts');
 
 $section->addInput(new Form_Select(
 	'proto',
@@ -572,7 +584,7 @@ $section->addInput(new Form_Select(
 	$edgelist['selected'],
 	$edgelist['list'],
 	true
-))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP).' .
+))->setHelp('Enable Spanning Tree Protocol on interface. The if_bridge(4) driver has support for the IEEE 802.1D Spanning Tree Protocol (STP). ' .
 			'STP is used to detect and remove loops in a network topology.');
 
 $section->addInput(new Form_Input(
@@ -597,13 +609,13 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['hellotime'],
 	['placeholder' => 2, 'min' => 1, 'max' => 2, 'step' => '0.1']
-))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode.' .
+))->setHelp('Set the time in seconds between broadcasting of Spanning Tree Protocol configuration messages. The hello time may only be changed when operating in legacy STP mode. ' .
 			'The default is 2 seconds. The minimum is 1 second and the maximum is 2 seconds.');
 
 $section->addInput(new Form_Input(
 	'priority',
 	'Priority',
-	'text',
+	'number',
 	$pconfig['priority'],
 	['placeholder' => 32768, 'min' => 0, 'max' => 61440]
 ))->setHelp('Set the bridge priority for Spanning Tree. The default is 32768. The minimum is 0 and the maximum is 61440. ');
@@ -657,5 +669,43 @@ if (isset($id) && $a_bridges[$id]) {
 
 $form->add($section);
 print($form);
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
 
-include("foot.inc");
+	// Show advanced additional opts options ======================================================
+	var showadvopts = false;
+
+	function show_advopts(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+			showadvopts = <?php if (is_aoadv_used($pconfig)) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvopts = !showadvopts;
+		}
+
+		hideClass('adnlopts', !showadvopts);
+
+		if (showadvopts) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvopts').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvopts').click(function(event) {
+		show_advopts();
+	});
+
+	// ---------- On initial page load ------------------------------------------------------------
+
+	show_advopts(true);
+});
+//]]>
+</script>
+
+<?php include("foot.inc");

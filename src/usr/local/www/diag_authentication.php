@@ -112,7 +112,7 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success', false);
 }
 
-$form = new Form('Test');
+$form = new Form(false);
 
 $section = new Form_Section('Authentication Test');
 
@@ -125,7 +125,7 @@ $section->addInput(new Form_Select(
 	'Authentication Server',
 	$pconfig['authmode'],
 	$serverlist
-))->setHelp('Select the authentication server to test against');
+))->setHelp('Select the authentication server to test against.');
 
 $section->addInput(new Form_Input(
 	'username',
@@ -144,6 +144,14 @@ $section->addInput(new Form_Input(
 ));
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Test',
+	null,
+	'fa-wrench'
+))->addClass('btn-primary');
+
 print $form;
 
 include("foot.inc");

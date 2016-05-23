@@ -266,7 +266,7 @@ display_top_tabs($tab_array);
 	}
 
 	if (is_subsystem_dirty('ipsec')) {
-		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 	}
 ?>
 
@@ -302,10 +302,10 @@ display_top_tabs($tab_array);
 					<tr id="fr<?=$i?>" onclick="fr_toggle(<?=$i?>)" id="frd<?=$i?>" ondblclick="document.location='vpn_ipsec_phase1.php?p1index=<?=$i?>'" class="<?= $entryStatus ?>">
 						<td>
 							<input type="checkbox" id="frc<?=$i?>" onclick="fr_toggle(<?=$i?>)" name="p1entry[]" value="<?=$i?>"  />
-							<a	class="fa fa-anchor" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
+							<a	class="fa fa-anchor icon-pointer" id="Xmove_<?=$i?>" title="<?=gettext("Move checked entries to here")?>"></a>
 						</td>
 						<td>
-							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled' ? 'enable' : 'disable') ?></button>
+							<button value="toggle_<?=$i?>" name="toggle_<?=$i?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled' ? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled' ? 'Enable' : 'Disable') ?></button>
 						</td>
 						<td id="frd<?=$i?>">
 <?php
@@ -415,7 +415,7 @@ display_top_tabs($tab_array);
 				$fr_prefix = "frp2{$i}";
 				$fr_header = $fr_prefix . "header";
 ?>
-								<input type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+" /> - <?php printf(gettext("Show %s Phase-2 entries"), $phase2count); ?>
+								<button class="btn btn-info" type="button" onclick="show_phase2('tdph2-<?=$i?>','shph2but-<?=$i?>')" value="+"><i class="fa fa-plus-circle"></i> <?php printf(gettext("Show Phase 2 Entries (%s)"), $phase2count); ?></button>
 							</div>
 							<div id="tdph2-<?=$i?>" <?=($tdph2_visible != '1' ? 'style="display:none"' : '')?>>
 								<table class="table table-striped table-hover">
@@ -455,7 +455,7 @@ display_top_tabs($tab_array);
 												<button class="fa fa-anchor button-icon" type="submit" name="movep2_<?=$j?>" value="movep2_<?=$j?>" title="<?=gettext("Move checked P2s here")?>"></button>
 											</td>
 											<td>
-												<button value="togglep2_<?=$ph2index?>" name="togglep2_<?=$ph2index?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-default" type="submit"><?= ($entryStatus == 'disabled'? 'enable' : 'disable') ?></button>
+												<button value="togglep2_<?=$ph2index?>" name="togglep2_<?=$ph2index?>" title="<?=gettext("click to toggle enabled/disabled status")?>" class="btn btn-xs btn-<?= ($entryStatus == 'disabled'? 'success' : 'warning') ?>" type="submit"><?= ($entryStatus == 'disabled'? 'Enable' : 'Disable') ?></button>
 											</td>
 											<td id="<?=$fr_d?>" onclick="fr_toggle('<?=$j?>', '<?=$fr_prefix?>')">
 												<?=$ph2ent['mode']?>
@@ -557,7 +557,7 @@ display_top_tabs($tab_array);
 </form>
 
 <div class="infoblock">
-	<?php print_info_box(sprintf(gettext("You can check your IPsec status at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
+	<?php print_info_box(sprintf(gettext("The IPsec status can be checked at %s%s%s."), '<a href="status_ipsec.php">', gettext("Status:IPsec"), '</a>') . '<br />' .
 	sprintf(gettext("IPsec debug mode can be enabled at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>') . '<br />' .
 	sprintf(gettext("IPsec can be set to prefer older SAs at %s%s%s."), '<a href="vpn_ipsec_settings.php">', gettext("VPN:IPsec:Advanced Settings"), '</a>'), 'info', false); ?>
 </div>
@@ -573,17 +573,24 @@ function show_phase2(id, buttonid) {
 
 events.push(function() {
 	$('[id^=Xmove_]').click(function (event) {
+		// ToDo: We POST shift="yes" if the user has the shift key depressed, but that is not yet used
+		// by the $_POST code. It is intended to allow the user to choose to move stuff to the row before or
+		// after the clicked anchor icon
+		if (event.shiftKey) {
+			$('form').append('<input type="hidden" id="shift" name="shift" value="yes" />');
+		}
+
 		$('#' + event.target.id.slice(1)).click();
 	});
 
 	$('[id^=Xdel_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P1 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P1 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});
 
 	$('[id^=Xdelp2_]').click(function (event) {
-		if (confirm("<?=gettext('Are you sure you wish to delete this P2 entry?')?>")) {
+		if (confirm("<?=gettext('Confirmation required to delete this P2 entry.')?>")) {
 			$('#' + event.target.id.slice(1)).click();
 		}
 	});

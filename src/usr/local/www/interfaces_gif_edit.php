@@ -154,8 +154,12 @@ if ($_POST) {
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gif['remote-addr'] = $_POST['remote-addr'];
 		$gif['descr'] = $_POST['descr'];
-		$gif['link1'] = isset($_POST['link1']);
-		$gif['link0'] = isset($_POST['link0']);
+		if (isset($_POST['link0'])) {
+			$gif['link0'] = '';
+		}
+		if (isset($_POST['link1'])) {
+			$gif['link1'] = '';
+		}
 		$gif['gifif'] = $_POST['gifif'];
 		$gif['gifif'] = interface_gif_configure($gif);
 
@@ -234,7 +238,7 @@ $section->addInput(new Form_Select(
 	'GIF tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
-))->setHelp('The subnet is used for determining the network that is tunnelled');
+))->setHelp('The subnet is used for determining the network that is tunnelled.');
 
 $section->addInput(new Form_Checkbox(
 	'link0',
@@ -255,7 +259,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Input(
 	'gifif',

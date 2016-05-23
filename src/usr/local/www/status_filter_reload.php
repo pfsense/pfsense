@@ -94,10 +94,10 @@ include("head.inc");
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Filter Reload");?></h2></div>
 	<div class="panel-body">
 		<form action="status_filter_reload.php" method="post" name="filter">
-			<input type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter" />
+			<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
 <?php
 if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-		<input type="submit" class="btn btn-default" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter" />
+			<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
 <?php
 endif;
 ?>

@@ -292,16 +292,49 @@ pkg_upgrade() {
 			pkg_update force
 		fi
 
+		local _repo_pkg="${product}-repo"
+
+		# Deprecated pa
+		if is_pkg_installed ${product}-repo-devel; then
+			_exec "pkg ${pkg_chroot} set -A 1 ${product}-repo-devel" \
+				"Scheduling package ${product}-repo-devel for removal"
+			_exec "pkg install ${_repo_pkg}" "Installing ${_repo_pkg}" mute
+			_exec "pkg delete ${product}-repo-devel" "Removing ${product}-repo-devel" \
+				mute ignore_result
+			validate_repo_conf
+			pkg_update force
+		fi
+
+		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
+			cp /usr/local/etc/pkg/repos/${product}.conf \
+				/tmp/${product}.conf.copy
+			_exec "pkg upgrade ${_repo_pkg}" "Upgrading ${_repo_pkg}" mute
+			# If conf differs, for an update
+			if ! cmp -s /usr/local/etc/pkg/repos/${product}.conf /tmp/${product}.conf.copy; then
+				pkg_update force
+
+				# New repo may contain newer pkg
+				if [ "$(compare_pkg_version pkg)" = "<" ]; then
+					_exec "pkg upgrade pkg" "Upgrading pkg" mute
+					pkg_update force
+				fi
+			fi
+			rm -f /tmp/${product}.conf.copy
+		fi
+
 		if [ $(pkg upgrade -nq | wc -l) -le 1 ]; then
 			_echo "Your packages are up to date"
 			_exit 0
 		fi
 
 		if [ -n "${dry_run}" ]; then
+			pkg_unlock ${kernel_pkg}
 			pkg ${pkg_chroot} upgrade -nq 2>&1 | tee -a ${logfile}
+			pkg_lock ${kernel_pkg}
 			_exit 0
 		fi
 
+		local _meta_pkg=$(get_meta_pkg_name)
 		if [ $(pkg upgrade -r ${product}-core -nq | wc -l) -gt 1 ]; then
 			if [ "${platform}" = "nanobsd" ]; then
 				_echo "**** WARNING ****"
@@ -324,6 +357,8 @@ pkg_upgrade() {
 				fi
 				setup_nanobsd_env
 			fi
+			need_reboot=1
+		elif pkg upgrade -r ${product} -nq ${_meta_pkg} >/dev/null 2>&1; then
 			need_reboot=1
 		fi
 
@@ -439,16 +474,20 @@ pkg_upgrade() {
 	fi
 }
 
-check_upgrade() {
+get_meta_pkg_name() {
 	# figure out main meta package name
 	if is_pkg_installed ${product}-vmware; then
-		local _meta_pkg="${product}-vmware"
+		echo "${product}-vmware"
 	elif is_pkg_installed ${product}; then
-		local _meta_pkg="${product}"
+		echo "${product}"
 	else
 		_echo "ERROR: It was not possible to identify which ${product} meta package is installed"
 		_exit 1
 	fi
+}
+
+check_upgrade() {
+	local _meta_pkg=$(get_meta_pkg_name)
 
 	pkg_update
 
@@ -555,7 +594,7 @@ compare_pkg_version() {
 
 	if ! is_pkg_installed ${_pkg_name} ${pkg_chroot}; then
 		echo '!'
-		return -1
+		return 1
 	fi
 
 	local _lver=$(pkg ${pkg_chroot} query %v ${_pkg_name})
@@ -662,12 +701,37 @@ do_reboot() {
 	if [ -z "${dont_reboot}" ]; then
 		_echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
 		echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds." | wall
-		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
+		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds." \
+			>/dev/null 2>&1
 		(sleep ${reboot_after} && /etc/rc.reboot) &
 	else
 		_echo "Upgrade is complete."
 		echo "Upgrade is complete." | wall
-		/etc/rc.notify_message -e -g -m "Upgrade is complete."
+		/etc/rc.notify_message -e -g -m "Upgrade is complete." >/dev/null 2>&1
+	fi
+}
+
+validate_repo_conf() {
+	# Make sure to use default repo conf when it doesn't exist
+	pkg_repo_conf="/usr/local/etc/pkg/repos/${product}.conf"
+	default_pkg_repo_conf_path="/usr/local/share/${product}/pkg/repos/${product}-repo.conf"
+
+	pkg_repo_conf_path=$(/usr/local/sbin/read_xml_tag.sh string system/pkg_repo_conf_path)
+
+	if [ -z "${pkg_repo_conf_path}" -o ! -f "${pkg_repo_conf_path}" ]; then
+		pkg_repo_conf_path=${default_pkg_repo_conf_path}
+	fi
+
+	if [ -f "${pkg_repo_conf_path}" ]; then
+		if [ -e "${pkg_repo_conf}" -a ! -L "${pkg_repo_conf}" ]; then
+			rm -f ${pkg_repo_conf}
+			ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+		fi
+
+		if [ "$(readlink ${pkg_repo_conf})" != "${pkg_repo_conf_path}" ]; then
+			mkdir -p /usr/local/etc/pkg/repos
+			ln -sf ${pkg_repo_conf_path} ${pkg_repo_conf}
+		fi
 	fi
 }
 
@@ -677,8 +741,20 @@ pid_file="/var/run/$(basename $0).pid"
 logfile="/cf/conf/upgrade_log.txt"
 stdout='/dev/null'
 
+# Setup proxy settings
+HTTP_PROXY=$(/usr/local/sbin/read_xml_tag.sh string system/proxyurl)
+if [ "${HTTP_PROXY}" != "" ]; then
+	HTTP_PROXY_PORT=$(/usr/local/sbin/read_xml_tag.sh string system/proxyport)
+	if [ "${HTTP_PROXY_PORT}" != "" ]; then
+		HTTP_PROXY="${HTTP_PROXY}:${HTTP_PROXY_PORT}"
+	fi
+	export HTTP_PROXY
+fi
+
 # pkg should not ask for confirmations
 export ASSUME_ALWAYS_YES=true
+export FETCH_TIMEOUT=5
+export FETCH_RETRY=2
 
 export product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 export pkg_prefix=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var pkg_prefix pfSense-pkg-)
@@ -698,6 +774,8 @@ if [ "${do_not_send_host_uuid}" != "true" ]; then
 else
 	export HTTP_USER_AGENT="${product}/${product_version}"
 fi
+
+validate_repo_conf
 
 # Flags used in _exit
 export delete_annotation=""

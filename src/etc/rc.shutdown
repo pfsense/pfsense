@@ -33,6 +33,7 @@ DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
 DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
 # If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
 if [ "${PLATFORM}" != "${product}" ] || [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
+	/etc/rc.backup_aliastables.sh
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh
 fi

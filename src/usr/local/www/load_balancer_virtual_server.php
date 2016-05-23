@@ -118,6 +118,26 @@ for ($i = 0; isset($config['load_balancer']['virtual_server'][$i]); $i++) {
 	}
 }
 
+// Return the index of any alias matching the specified name and type
+function alias_idx($name, $type) {
+	global $config;
+
+	if (empty($config['aliases']['alias'])) {
+		return(-1);
+	}
+
+	$idx = 0;
+	foreach ($config['aliases']['alias'] as $alias) {
+		if (($alias['name'] == $name) && ($alias['type'] == $type)) {
+			return($idx);
+		}
+
+		$idx++;
+	}
+
+	return(-1);
+}
+
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"));
 $shortcut_section = "relayd-virtualservers";
 
@@ -132,7 +152,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_apply_box(gettext("The virtual server configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The virtual server configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 /* active tabs */
@@ -166,11 +186,24 @@ display_top_tabs($tab_array);
 if (!empty($a_vs)) {
 	$i = 0;
 	foreach ($a_vs as $a_v) {
+
 ?>
 					<tr>
 						<td><?=htmlspecialchars($a_v['name'])?></td>
 						<td><?=htmlspecialchars($a_v['relay_protocol'])?></td>
-						<td><?=htmlspecialchars($a_v['ipaddr'])?></td>
+<?php
+
+		$aidx = alias_idx($a_v['ipaddr'], "host");
+
+		if ($aidx >= 0) {
+			print("<td>\n");
+			print('<a href="/firewall_aliases_edit.php?id=' . $aidx . '" data-toggle="popover" data-trigger="hover focus" title="Alias details" data-content="' . alias_info_popup($aidx) . '" data-html="true">');
+			print(htmlspecialchars($a_v['ipaddr']) . '</a></td>');
+		} else {
+			print('<td>' . htmlspecialchars($a_v['ipaddr']) . '</td>');
+		}
+
+?>
 						<td><?=htmlspecialchars($a_v['port'])?></td>
 						<td><?=$a_v['poolname']?></td>
 						<td><?=$a_v['sitedown']?></td>

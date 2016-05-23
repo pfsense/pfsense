@@ -61,9 +61,9 @@ function return_dpinger_defaults() {
 		"latencyhigh" => "500",
 		"losslow" => "10",
 		"losshigh" => "20",
-		"interval" => "250",
-		"loss_interval" => "1250",
-		"time_period" => "30000",
+		"interval" => "500",
+		"loss_interval" => "2000",
+		"time_period" => "60000",
 		"alert_interval" => "1000",
 		"data_payload" => "0");
 }
@@ -261,7 +261,7 @@ function setup_gateways_monitor() {
 		} else if ($gateway['ipprotocol'] == "inet6") { // This is an IPv6 gateway...
 			if (is_linklocal($gateway['gateway']) &&
 			    get_ll_scope($gateway['gateway']) == '') {
-				$gateways_arr[$gwname]['gateway'] .= '%' . $gateway['interface'];
+				$gateway['gateway'] .= '%' . $gateway['interface'];
 			}
 
 			if (is_linklocal($gateway['monitor'])) {
@@ -861,6 +861,9 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			log_error("Default gateway down setting {$upgw} as default!");
 			if (is_ipaddrv6($gateways_arr[$upgw]['gateway'])) {
 				$inetfamily = "-inet6";
+				if (is_linklocal($gateways_arr[$upgw]['gateway']) && get_ll_scope($gateways_arr[$upgw]['gateway']) == '') {
+					$gateways_arr[$upgw]['gateway'] .= "%" . $gateways_arr[$upgw]['interface'];
+				}
 			} else {
 				$inetfamily = "-inet";
 			}
@@ -873,6 +876,14 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		}
 		if ($ipprotocol == 'inet' && !is_ipaddrv4($gateways_arr[$dfltgwname]['gateway'])) {
 			return;
+		}
+		if ($ipprotocol == 'inet6') {
+			if (is_linklocal($gateways_arr[$upgw]['gateway']) && get_ll_scope($gateways_arr[$upgw]['gateway']) == '') {
+				$gateways_arr[$upgw]['gateway'] .= "%" . $gateways_arr[$upgw]['interface'];
+			}
+			if (is_linklocal($gateways_arr[$dfltgwname]['gateway']) && get_ll_scope($gateways_arr[$dfltgwname]['gateway']) == '') {
+				$gateways_arr[$dfltgwname]['gateway'] .= "%" . $gateways_arr[$dfltgwname]['interface'];
+			}
 		}
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway']) {
 			mwexec("/sbin/route change -{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
@@ -899,6 +910,7 @@ function return_gateway_groups_array() {
 	if (is_array($config['gateways']['gateway_group'])) {
 		$viplist = get_configured_vip_list();
 		foreach ($config['gateways']['gateway_group'] as $group) {
+			$gateway_groups_array[$group['name']]['descr'] = $group['descr'];
 			/* create array with group gateways members separated by tier */
 			$tiers = array();
 			$backupplan = array();
@@ -924,15 +936,15 @@ function return_gateway_groups_array() {
 					$status = $gateways_status[$gwname];
 					$gwdown = false;
 					if (stristr($status['status'], "down")) {
-						$msg = sprintf(gettext('MONITOR: %1$s is down, omitting from routing group %2$s'), $group['name'], $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s is down, omitting from routing group %2$s'), $gwname, $group['name']);
 						$gwdown = true;
 					} else if (stristr($status['status'], "loss") && strstr($group['trigger'], "loss")) {
 						/* packet loss */
-						$msg = sprintf(gettext('MONITOR: %1$s has packet loss, omitting from routing group %2$s'), $group['name'], $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s has packet loss, omitting from routing group %2$s'), $gwname, $group['name']);
 						$gwdown = true;
 					} else if (stristr($status['status'], "delay") && strstr($group['trigger'] , "latency")) {
 						/* high latency */
-						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $group['name'], $gwname);
+						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $gwname, $group['name']);
 						$gwdown = true;
 					}
 					if ($gwdown == true) {

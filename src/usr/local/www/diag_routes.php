@@ -80,7 +80,7 @@ if (isset($_REQUEST['isAjax'])) {
 	}
 
 	if (!empty($_REQUEST['filter'])) {
-		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
+		$netstat .= " | /usr/bin/sed -e " . escapeshellarg("1,3d; 5,\$ { /" . htmlspecialchars($_REQUEST['filter']) . "/!d; };");
 	} else {
 		$netstat .= " | /usr/bin/sed -e '1,3d'";
 	}
@@ -99,7 +99,7 @@ $shortcut_section = "routing";
 
 include('head.inc');
 
-$form = new Form('Update');
+$form = new Form(false);
 $form->addGlobal(new Form_Input(
 	'isAjax',
 	null,
@@ -114,7 +114,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	$resolve
 ))->setHelp('Enabling name resolution may cause the query to take longer.'.
-	' You can stop it at any time by clicking the Stop button in your browser.');
+	' It can be stopped at any time by clicking the Stop button in the browser.');
 
 $validLimits = array('10', '50', '100', '200', '500', '1000', 'all');
 $section->addInput(new Form_Select(
@@ -129,9 +129,17 @@ $section->addInput(new Form_Input(
 	'Filter',
 	'text',
 	$host
-))->setHelp('Use a regular expression to filter IP address or hostnames');
+))->setHelp('Use a regular expression to filter IP address or hostnames.');
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Update',
+	null,
+	'fa-refresh'
+))->addClass('btn-primary');
+
 print $form;
 ?>
 <script type="text/javascript">

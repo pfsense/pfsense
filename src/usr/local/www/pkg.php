@@ -292,7 +292,7 @@ events.push(function() {
 function save_changes_to_xml(xml) {
 	var ids = $('#mainarea table tbody').sortable('serialize', {key:"ids[]"});
 	var strloading="<?=gettext('Saving changes...')?>";
-	if (confirm("<?=gettext("Do you really want to save changes?")?>")) {
+	if (confirm("<?=gettext("Confirmation Required to save changes.")?>")) {
 		$.ajax({
 			type: 'get',
 			cache: false,
@@ -375,7 +375,11 @@ if ($savemsg) {
 					echo "</select>";
 				}
 				if ($include_filtering_inputbox) {
-					echo "&nbsp;&nbsp;" . gettext("Filter text: ") . "<input id='pkg_filter' name='pkg_filter' value='" . $_REQUEST['pkg_filter'] . "' /><input type='submit' value='Filter' />";
+					echo '&nbsp;&nbsp;' . gettext("Filter text: ") . '<input id="pkg_filter" name="pkg_filter" value="' . $_REQUEST['pkg_filter'] . '" />';
+					echo '&nbsp;<button type="submit" value="Filter" class="btn btn-primary btn-xs">';
+					echo '<i class="fa fa-filter icon-embed-btn"></i>';
+					echo gettext("Filter");
+					echo "</button>";
 				}
 				echo "</td></tr><tr><td><font size='-3'>&nbsp;</font></td></tr>";
 			}
@@ -486,9 +490,9 @@ if ($savemsg) {
 				}
 			}
 			if ($pkg['adddeleteeditpagefields']['movable']) {
-				echo "<tr valign=\"top\" class=\"sortable\" id=\"id_{$i}\">\n";
+				echo "<tr style=\"vertical-align: top\" class=\"sortable\" id=\"id_{$i}\">\n";
 			} else {
-				echo "<tr valign=\"top\">\n";
+				echo "<tr style=\"vertical-align: top\">\n";
 			}
 			if ($pkg['adddeleteeditpagefields']['columnitem'] != "") {
 				foreach ($pkg['adddeleteeditpagefields']['columnitem'] as $column) {
@@ -511,18 +515,23 @@ if ($savemsg) {
 					} else if ($column['type'] == "interface") {
 						echo $column['prefix'] . $iflist[$fieldname] . $column['suffix'];
 					} else {
+						$display_text = "";
 						#Check if columnitem has an encoding field declared
 						if ($column['encoding'] == "base64") {
-							echo $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
+							$display_text = $column['prefix'] . base64_decode($fieldname) . $column['suffix'];
 						#Check if there is a custom info to show when $fieldname is not empty
 						} else if ($column['listmodeon'] && $fieldname != "") {
-							echo $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
+							$display_text = $column['prefix'] . gettext($column['listmodeon']). $column['suffix'];
 						#Check if there is a custom info to show when $fieldname is empty
 						} else if ($column['listmodeoff'] && $fieldname == "") {
-							echo $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
+							$display_text = $column['prefix'] .gettext($column['listmodeoff']). $column['suffix'];
 						} else {
-							echo $column['prefix'] . $fieldname ." ". $column['suffix'];
+							$display_text = $column['prefix'] . $fieldname ." ". $column['suffix'];
 						}
+						if (!isset($column['allow_html'])) {
+							$display_text = htmlspecialchars($display_text);
+						}
+						echo $display_text;
 					}
 ?>
 					</td>
@@ -530,7 +539,7 @@ if ($savemsg) {
 				} // foreach columnitem
 			} // if columnitem
 ?>
-					<td valign="middle" class="list text-nowrap">
+					<td style="vertical-align: middle" class="list text-nowrap">
 						<table border="0" cellspacing="0" cellpadding="1" summary="icons">
 							<tr>
 <?php
@@ -597,7 +606,7 @@ if ($savemsg) {
 	#Show custom description to add button if defined
 	$add_msg=($pkg['adddeleteeditpagefields']['addtext']?$pkg['adddeleteeditpagefields']['addtext']:gettext("Add a new item"));
 ?>
-								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><?=gettext('Add')?></a></td>
+								<td><a href="pkg_edit.php?xml=<?=$xml?>&amp;id=<?=$i?>" class="btn btn-sm btn-success" title="<?=$add_msg?>"><i class="fa fa-plus icon-embed-btn"></i><?=gettext('Add')?></a></td>
 <?php
 	#Show description button and info if defined
 	if ($pkg['adddeleteeditpagefields']['description']) {
@@ -615,7 +624,7 @@ if ($savemsg) {
 				<?=$final_footer?>
 			</table>
 			</div>
-		<input class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')" />
+		<button class="btn btn-primary" type="button" value="Save" name="Submit" onclick="save_changes_to_xml('<?=$xml?>')"><i class="fa fa-save icon-embed-btn"></i><?=gettext("Save")?></button>
 
 </form>
 <?php

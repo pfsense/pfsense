@@ -182,11 +182,11 @@ function build_parent_list() {
 	global $g;
 
 	$parentlist = array();
-	$portlist = get_possible_listen_ips();
+	$portlist = get_interface_list();
 	$count = 0;
 	foreach ($portlist as $ifn => $ifinfo) {
 		if (preg_match($g['wireless_regex'], $ifn)) {
-			$parentlist[$ifn] = htmlspecialchars($ifn . '(' . $ifinfo['mac'] . ')');
+			$parentlist[$ifn] = htmlspecialchars($ifn . ' (' . $ifinfo['mac'] . ')');
 			$count++;
 		}
 	}
@@ -232,7 +232,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 $section->addInput(new Form_Input(
 	'cloneif',

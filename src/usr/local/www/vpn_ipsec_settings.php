@@ -271,7 +271,7 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('Start IPsec in Debug Mode Based on Sections Selected');
+$section = new Form_Section('IPsec Logging Controls');
 
 foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
@@ -283,12 +283,12 @@ foreach ($ipsec_log_cats as $cat => $desc) {
 }
 
 $section->addInput(new Form_StaticText('', ''))->setHelp(
-	'Launches IPsec in debug mode so that more verbose logs will be generated to aid in troubleshooting.'
+	'Changes the log verbosity for the IPsec daemon, so that more detail will be generated to aid in troubleshooting.'
 );
 
 $form->add($section);
 
-$section = new Form_Section('IPsec Advanced Settings');
+$section = new Form_Section('Advanced IPsec Settings');
 
 $section->addInput(new Form_Select(
 	'uniqueids',
@@ -325,10 +325,10 @@ $section->addInput(new Form_Checkbox(
 	'Accept unencrypted ID and HASH payloads in IKEv1 Main Mode',
 	$pconfig['acceptunencryptedmainmode']
 ))->setHelp(
-	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication.' .
+	'Some implementations send the third Main Mode message unencrypted, probably to find the PSKs for the specified ID for authentication. ' .
 	'This is very similar to Aggressive Mode, and has the same security implications: ' .
-	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload.' .
-	'It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).'
+	'A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload. ' .
+	'It is recommended to keep this option to no, unless the exact implications are known and compatibility is required for such devices (for example, some SonicWall boxes).'
 );
 
 $section->addInput(new Form_Checkbox(
@@ -376,9 +376,9 @@ $section->addInput(new Form_Checkbox(
 	'Make before Break',
 	'Initiate IKEv2 reauthentication with a make-before-break',
 	$pconfig['makebeforebreak']
-))->setHelp('instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication ' .
+))->setHelp('Instead of a break-before-make scheme. Make-before-break uses overlapping IKE and CHILD_SA during reauthentication ' .
 			'by first recreating all new SAs before deleting the old ones. This behavior can be beneficial to avoid connectivity gaps ' .
-			'during reauthentication, but requires support for overlapping SAs by the peer');
+			'during reauthentication, but requires support for overlapping SAs by the peer.');
 
 $section->addInput(new Form_Checkbox(
 	'autoexcludelanaddress',

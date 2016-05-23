@@ -1,0 +1,917 @@
+@import url("/vendor/bootstrap/css/bootstrap.min.css");
+@import url("/css/fonts/roboto.css");
+@import url("/vendor/jquery/jquery-ui/themes/smoothness/theme.css");
+
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 80px;
+    background-color: #F5F5F5;
+    font-family: 'Roboto', sans-serif;
+}
+
+body.no-menu #jumbotron {
+    padding: 100px 0;
+    background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%)
+}
+
+body.no-menu {
+    background: url("/logo-black.png") no-repeat center 30px;
+    padding-top: 70px;
+}
+
+body.no-menu #jumbotron {
+    margin-top: 75px;
+}
+
+body#index .icons {
+    float: right;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
+a.fa, i.fa {
+    font-size: 18px;
+}
+
+h1 a:link, h1 a:visited {
+    color: #000000;
+    text-decoration: none !important;
+}
+
+h1 a:hover, h1 a:active {
+    color: #000000;
+    text-decoration: none !important;
+}
+
+.container.fixed {
+    padding-top: 60px;
+}
+
+.ui-sortable-handle {
+    cursor: move;
+}
+
+tr.disabled td,
+tr.disabled th {
+    opacity: .5;
+}
+
+.contains-table table {
+    border: 1px solid #ddd;
+}
+
+/** Content structure */
+.table-responsive {
+    clear: both;
+    margin-bottom: 0px;
+}
+
+/* navigation */
+.navbar {
+    margin-bottom: 10px;
+}
+
+.navbar-inverse {
+    background-color: #212121;
+}
+
+.navbar-brand > img {
+    /* reduce logo size */
+    max-width: 127px;
+    max-height: 36px;
+    width: auto;
+    height: auto;
+}
+
+.navbar-brand {
+    padding: 7px 0 0 5px;
+}
+
+.nav>li>a {
+    padding: 14px 19px 10px 19px;
+    border-bottom: 5px solid #F5F5F5;
+    border-radius: 0;
+    color: #B71C1C;
+}
+
+.nav>li>a:focus, .nav>li>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    background-color: #f5f5f5;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav li.open>a, .nav li.open>a:focus, .nav-pills>li.active>a:hover {
+    border-bottom: 5px solid #B71C1C;
+    color: #B71C1C;
+    background-color: #F5F5F5;
+}
+
+.navbar-inverse .navbar-nav >li>a {
+    border-bottom: 5px solid #212121;
+    color: #BDBDBD;
+}
+
+.nav-tabs>li>a {
+    border-bottom: 5px solid #F5F5F5;
+    margin-bottom: 1px;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover, .nav-tabs>li>a:hover {
+    border-left: 1px solid #F5F5F5;
+    border-right: 1px solid #F5F5F5;
+    border-top: 1px solid #F5F5F5;
+    background-color: #F5F5F5;
+    border-bottom: 5px solid #B71C1C;
+    margin-bottom: 0;
+    color: #B71C1C;
+    box-shadow: none;
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #B71C1C;
+    margin-bottom: 15px;
+}
+
+.nav-pills {
+    margin-bottom: 20px;
+}
+
+.dropdown-menu>li>a {
+    padding: 5px 20px;
+}
+
+.navbar-right>li>a {
+    padding: 14px 15px 10px 15px;
+}
+/* end navigation */
+
+.alert {
+    border-radius: 0;
+    box-shadow: 0px 1px 10px rgba(0,0,0,0.1);
+}
+
+.panel {
+    margin-bottom: 10px;
+    border-radius: 0;
+    box-shadow: 0px 3px 7px rgba(0,0,0,.1);
+}
+
+.panel-default>.panel-heading {
+    color: #fff;
+    background-color: #424242;
+    letter-spacing: 1px;
+}
+
+.panel-heading {
+    padding: 5px 15px;
+    border-radius: 0;
+}
+
+.panel-heading a:link, .panel-heading a:visited {
+    color: white;
+}
+
+.panel-title {
+    font-size: 16px;
+}
+
+.panel-body {
+    padding: 0px;
+}
+
+#login .panel-heading {
+    padding: 10px 15px
+}
+
+.content {
+    padding: 10px;
+}
+
+.form-horizontal {
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.form-horizontal .checkbox {
+    padding: 3px 16px;
+}
+
+.form-control {
+    height: 24px;
+    padding: 0 6px;
+    margin-bottom: 5px;
+}
+
+.form-control option {
+    padding: inherit;
+}
+
+#login .form-control {
+    height: 34px;
+}
+
+#login .form-group {
+    border: none;
+}
+
+.form-group {
+    margin: 0;
+    padding: 7px 5px 5px 5px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.form-group:last-child {
+    border-bottom: none;
+}
+
+.input-group-addon {
+    padding: 0 12px;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table>tbody>tr>td {
+    padding: 6px 4px 6px 10px;
+}
+
+/* active table row */
+.table>tbody>tr.active>td, .table>tbody>tr.active>th, .table>tbody>tr>td.active, .table>tbody>tr>th.active, .table>tfoot>tr.active>td, .table>tfoot>tr.active>th, .table>tfoot>tr>td.active, .table>tfoot>tr>th.active, .table>thead>tr.active>td, .table>thead>tr.active>th, .table>thead>tr>td.active, .table>thead>tr>th.active {
+    background-color: #BDBDBD;
+}
+
+/* active table row on hover */
+.table-hover>tbody>tr.active:hover>td, .table-hover>tbody>tr.active:hover>th, .table-hover>tbody>tr:hover>.active, .table-hover>tbody>tr>td.active:hover, .table-hover>tbody>tr>th.active:hover {
+    background-color: #BDBDBD;
+}
+
+.popover {
+    max-width: none;
+}
+
+.help-block {
+    margin-bottom: 0;
+}
+
+.action-buttons {
+    text-align: right;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/** Form validation */
+.input-errors ul {
+    margin-top: 20px;
+}
+
+/** Page header with title and breadcrumb */
+.header {
+    position: relative;
+    margin: 10px 0 20px 0;
+    box-shadow: 0px 1px 10px rgba(0,0,0,.3);
+    margin-bottom: 10px;
+    background-color: #E0E0E0;
+}
+
+.header .context-links {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.header .context-links li {
+    float: left;
+    display: inline;
+    margin-left: 10px;
+}
+
+.breadcrumb {
+    background-color: #E0E0E0;
+    font-size: 22px;
+}
+
+.breadcrumb>li+li:before {
+    color: #B71C1C;
+}
+
+ul.context-links li a {
+    color: #B71C1C;
+}
+
+/** Form tweaks */
+form .btn + .btn {
+    margin-left: 5px;
+}
+
+.input-group-inbetween {
+    border-left: 0;
+}
+
+.user-duplication .controls {
+    margin-top: 10px;
+}
+
+.checkbox.multi label {
+    display: block;
+}
+
+.checkbox.multi .btn {
+    margin-top: 5px;
+}
+
+.col-sm-10 .form-control {
+    width: calc(50% - 15px);
+}
+
+@media (max-width: 991px) {
+    .col-sm-10 .form-control {
+        width: 100%;
+    }
+}
+
+/** Page footer */
+.footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background-color: #212121;
+    padding-top: 10px;
+    text-align: center;
+}
+
+footer a {
+    color: #ffffff;
+}
+
+
+/** Homepage / dashboard */
+[id^="widgets-col"] {
+    min-height: 300px;
+}
+
+.widget .panel-heading {
+    background-color: #757575;
+}
+
+#widgetSequence {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    padding: 20px 0;
+    width: 100%;
+    z-index: 100;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.6);
+    border-top: 1px solid #ddd;
+}
+
+/** Styling for jQuery autocomplete widget */
+.ui-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    display: none;
+    min-width: 160px;
+    padding: 4px 0;
+    margin: 0 0 10px 25px;
+    list-style: none;
+    background-color: #ffffff;
+    border-color: #ccc;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-style: solid;
+    border-width: 1px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+}
+
+/** Disable the autocomplete helper text */
+.ui-helper-hidden-accessible {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/** Override the bootstrap progress bar margins */
+.progress {
+    margin-bottom: 0px;
+    height: 14px;
+}
+
+#wizard .progress {
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    background-color: #B71C1C;
+}
+
+.progress-bar.progress-bar-success {
+    background-color: #4CAF50;
+}
+
+.progress-bar.progress-bar-warning {
+    background-color: #FBC02D;
+}
+
+.progress-bar.progress-bar-danger {
+    background-color: #B71C1C;
+}
+
+.panel-body.collapse.in {
+    overflow-x: auto;
+}
+
+/** start common colors */
+.alert-warning {
+    color: #FF6F00;
+    background-color: #FFFDE7;
+    border-color: #FFECB3;
+    border-top: 5px solid #FFD600;
+}
+
+.alert-success {
+    color: #1B5E20;
+    background-color: #E8F5E9;
+    border-color: #DCEDC8;
+    border-top: 5px solid #1B5E20;
+}
+
+.alert-info {
+    color: #01579B;
+    background-color: #E1F5FE;
+    border-color: #B2EBF2;
+    border-top: 5px solid #01579B;
+}
+
+.bg-primary {
+    color: #000;
+    background-color: #009688;
+}
+
+.bg-info {
+    color: #01579B;
+    background-color: #B3E5FC;
+}
+
+.bg-danger {
+    color: #000;
+    background-color: #EF9A9A;
+}
+
+.bg-warning {
+    color: #000;
+    background-color: #FFF9C4;
+}
+
+.bg-success {
+    color: #1B5E20;
+    background-color: #C8E6C9;
+}
+
+.btn-success {
+    background-color: #43A047;
+}
+
+.btn-danger {
+    background-color: #B71C1C;
+}
+
+.btn-primary {
+    background-color: #1976D2;
+}
+
+.text-warning {
+    color: #F57F17;
+}
+
+.text-success {
+    color: #4CAF50;
+}
+
+.text-danger {
+    color: #B71C1C;
+}
+/** end common colors */
+
+.table-hover>tbody>tr.hover-success:hover {
+    color: #000;
+    background-color: #A5D6A7;
+}
+
+.table-hover>tbody>tr.hover-danger:hover {
+    color: #000;
+    background-color: #EF9A9A;
+}
+
+.table-hover>tbody>tr.hover-warning:hover {
+    color: #000;
+    background-color: #FFF9C4;
+}
+
+/** icons are often used with onclick actions, so we need the cursor to change to a pointer */
+.icon-pointer
+{
+    cursor: pointer;
+}
+
+.icon-embed-btn
+{
+    font-size: 15px;
+    vertical-align: middle;
+    color: white;
+    padding-right: 22px;
+    padding-bottom: 17px;
+    margin-top: -0.125em;
+    width: 14px;
+    height: 14px
+}
+
+/* Used when you need an icon to act as a submit button **/
+.button-icon
+{
+    color: #337AB7;
+    background: none;
+    border: 0px;
+}
+
+.btn
+{
+    padding-right: 4px;
+    padding-left: 4px;
+}
+
+.btn-group .btn {
+    margin-right: 5px;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0px;
+}
+
+.list-group {
+    margin-bottom: 0;
+}
+
+/* icons in the dashboard panel headings should pull-right **/
+.widget-heading-icon
+{
+    display: block;
+    float:  right;
+}
+
+.widget-heading-icon .fa {
+    color: #fff;
+}
+
+.widget-heading-icon .fa:hover {
+    color: #e0e0e0;
+}
+
+/* All pfSense textareas benefit from using a fixed width font **/
+textarea
+{
+    font-family: monospace;
+    font-size: 12px;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+}
+
+/*
+ * CSS for Standard tree layout
+ * Copyright (C) 2005 SilverStripe Limited
+ * Feel free to use this on your websites, but please leave this message in the fies
+ * http://www.silverstripe.com/blog
+ */
+
+ul.tree{
+    width: auto;
+    padding-left : 0px;
+    margin-left : 0px;
+}
+
+ul.tree img{
+    border : none;
+}
+
+ul.tree, ul.tree ul {
+    padding-left: 0;
+}
+
+ul.tree ul {
+    margin-left: 16px;
+
+}
+
+ul.tree li.closed ul {
+    display: none;
+}
+
+ul.tree li {
+    list-style: none;
+    background: url(../../vendor/tree/i-repeater.gif) 0 0 repeat-y;
+    display: block;
+    width: auto;
+}
+
+ul.tree li.last {
+    list-style: none;
+    background-image: none;
+}
+
+/* Span-A: I/L/I glpyhs */
+ul.tree span.a {
+    background: url(../../vendor/tree/t.gif) 0 50% no-repeat;
+    display: block;
+}
+
+ul.tree span.a.last {
+    background: url(../../vendor/tree/l.gif) 0 50% no-repeat;
+}
+
+/* Span-B: Plus/Minus icon */
+ul.tree span.b {
+
+}
+
+ul.tree span.a.children span.b {
+    background: url(../../vendor/tree/minus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+ul.tree li.closed span.a.children span.b {
+    background: url(../../vendor/tree/plus.gif) 0 50% no-repeat;
+    cursor: pointer;
+}
+
+/* Span-C: Spacing and extending tree line below the icon */
+ul.tree span.c {
+    margin-left: 16px;
+}
+
+ul.tree span.a.children span.c {
+    background: url(../../vendor/tree/i-bottom.gif) 0 50% no-repeat;
+}
+
+ul.tree span.a.spanClosed span.c {
+    background-image: none;
+}
+
+/* Anchor tag: Page icon */
+ul.tree a  {
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 3px 0px 3px 18px;
+    line-height: 16px;
+    background: url(../../vendor/tree/page-file.png) 0 0 no-repeat;
+}
+
+ul.tree span.a.children a {
+    background-image: url(../../vendor/tree/page-openfoldericon.png);
+}
+
+ul.tree span.a.children.spanClosed a {
+    background-image: url(../../vendor/tree/page-foldericon.png);
+}
+
+/* Unformatted tree */
+ul.tree.unformatted li {
+    background-image: none;
+    padding-left: 16px;
+}
+
+ul.tree.unformatted li li {
+    background-image: none;
+    padding-left: 0px;
+}
+
+/* Divs, by default store vertically aligned data */
+
+ul.tree li div {
+    float: right;
+    clear: right;
+    height: 1em;
+    margin-top: -26px;
+}
+
+/* As inside DIVs should be treated normally */
+ul.tree div a  {
+    padding: 0;
+    background-image: none;
+    min-height: auto;
+    height: auto;
+}
+
+ul.tree li .over{
+    background-color : pink;
+}
+
+/*
+ * End of CSS for Standard tree layout
+ */
+
+@media (max-width: 1199px) {
+    .nav>li>a {
+        padding: 14px 9px 10px 9px;
+    }
+ }
+
+ @media (max-width: 991px) {
+    /* change top navbar from horizontal to vertical */
+    .navbar-header {
+        float: none;
+    }
+    .navbar-toggle {
+        display: block;
+    }
+    .navbar-collapse {
+        border-top: 1px solid transparent;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    .navbar-collapse.collapse {
+        display: none!important;
+    }
+    .navbar-nav {
+        float: none!important;
+        margin: 7.5px -15px;
+    }
+    .navbar-nav>li {
+        float: none;
+    }
+    .navbar-nav>li>a {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .navbar-text {
+        float: none;
+        margin: 15px 0;
+    }
+    /* since 3.1.0 */
+    .navbar-collapse.collapse.in {
+        display: block!important;
+    }
+    .collapsing {
+        overflow: hidden!important;
+    }
+    .navbar-fixed-bottom .navbar-collapse, .navbar-fixed-top .navbar-collapse {
+        max-height: none !important;
+    }
+}
+
+ @media (max-width: 767px) {
+    .header {
+        margin-bottom: 5px;
+    }
+
+    .breadcrumb {
+        font-size: 14px;
+        padding: 15px;
+        width: 50%;
+    }
+
+    .breadcrumb li:not(:last-child), .breadcrumb>li+li:before {
+        display: none;
+    }
+}
+
+/** Override text-warning with something less red. */
+.text-warning {
+	color: #ffcc00;
+}
+
+/**Suppress href links when printing */
+a[href]:after {
+    content:normal
+}
+
+/** Text color for diff display when comapring configs */
+.diff-text {
+    color: #000000;
+}
+
+/** Eliminate overflow in available widgets, log filter, and manage log panels. (cause of scroll bar) */
+#widget-available_panel-body>.content>.row,
+#filter-panel_panel-body>.form-group,
+#manage-log-panel_panel-body>.form-group,
+#monitoring-settings-panel_panel-body>.form-group,
+/** optionally prevent more globally by using the class hierarchy */
+.panel-body.collapse.in>.content>.row,
+.panel-body.collapse.in>.form-group
+{
+	margin-right:0px;
+}
+
+/* Callouts */
+.bs-callout {
+    padding: 10px 15px;
+    margin: 20px 0;
+    border: 2px solid #eee;
+    border-left-width: 5px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+.bs-callout h4 {
+    margin-top: 0;
+    margin-bottom: 5px;
+}
+
+.bs-callout p:last-child {
+    margin-bottom: 0;
+}
+
+.bs-callout code {
+    border-radius: 3px;
+}
+
+.bs-callout+.bs-callout {
+    margin-top: -5px;
+}
+
+/* Callout contextual classes */
+.bs-callout-default {
+    border-left-color: #777;
+}
+
+.bs-callout-default h4 {
+    color: #777;
+}
+
+.bs-callout-danger {
+    border-left-color: #d9534f;
+}
+
+.bs-callout-danger h4 {
+    color: #d9534f;
+}
+
+.bs-callout-warning {
+    border-left-color: #f0ad4e;
+}
+
+.bs-callout-warning h4 {
+    color: #f0ad4e;
+}
+
+.bs-callout-info {
+    border-left-color: #01579B;
+}
+
+.bs-callout-info h4 {
+    color: #01579B;
+}
+
+/* Disable 300 ms click delay so event handlers are effective. */
+/* Makes posible for non-touch compatible features to work; e.g. double tap rule to edit. */
+body{
+	touch-action: manipulation;
+}
+
+/* D3 Styles */
+
+svg {
+    display: block;
+}
+
+#chart, #chart svg {
+    margin: 0px;
+    padding: 10px 0;
+    height: 445px;
+    width: 100%;
+}
+
+#chart .nvtooltip > h3 {
+    font-size: 14px;
+}
+
+/* Experimental styles to correct vertical alignment in forms */
+.col-sm-10 {
+    padding-top: 7px;
+}
+
+.chkboxlbl {
+    padding-top: 4px;
+}

@@ -77,7 +77,7 @@ $protohelp =
 	'<li>' .
 		'<strong>' . $laggprotosuc[0] . '</strong><br />' .
 		gettext('This protocol is intended to do nothing: it disables any ' .
-				'traffic without disabling the lagg interface itself') .
+				'traffic without disabling the lagg interface itself.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[1] . '</strong><br />' .
@@ -113,13 +113,13 @@ $protohelp =
 				'does not negotiate aggregation with the peer or exchange ' .
 				'frames to monitor the link.  The hash includes the Ethernet ' .
 				'source and destination address, and, if available, the VLAN ' .
-				'tag, and the IP source and destination address') .
+				'tag, and the IP source and destination address.') .
 	'</li>' .
 	'<li>' .
 		'<strong>' . $laggprotosuc[5] . '</strong><br />' .
 		gettext('Distributes outgoing traffic using a round-robin scheduler ' .
 				'through all active ports and accepts incoming traffic from ' .
-				'any active port') .
+				'any active port.') .
 	'</li>' .
 '</ul>';
 
@@ -163,7 +163,10 @@ if (isset($id) && $a_laggs[$id]) {
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
-	$pconfig['members'] = implode(',', $_POST['members']);
+
+	if (is_array($_POST['members'])) {
+		$pconfig['members'] = implode(',', $_POST['members']);
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "members proto");
@@ -210,6 +213,19 @@ if ($_POST) {
 			$confif = convert_real_interface_to_friendly_interface_name($lagg['laggif']);
 			if ($confif != "") {
 				interface_configure($confif);
+			}
+
+			// reconfigure any VLANs with this lagg as their parent
+			if (is_array($config['vlans']['vlan'])) {
+				foreach ($config['vlans']['vlan'] as $vlan) {
+					if ($vlan['if'] == $lagg['laggif']) {
+						interface_vlan_configure($vlan);
+						$confif = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+						if ($confif != "") {
+							interface_configure($confif);
+						}
+					}
+				}
 			}
 
 			header("Location: interfaces_lagg.php");
@@ -266,6 +282,13 @@ $section->addInput(new Form_Select(
 	$pconfig['proto'],
 	array_combine($laggprotos, $laggprotosuc)
 ))->setHelp($protohelp);
+
+$section->addInput(new Form_Input(
+	'descr',
+	'Description',
+	'text',
+	$pconfig['descr']
+))->setHelp("Enter a description here for reference only (Not parsed).");
 
 $section->addInput(new Form_Input(
 	'laggif',

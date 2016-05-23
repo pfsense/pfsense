@@ -526,8 +526,8 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 							<?=date("D M j G:i:s T Y", $cert["revoke_time"]); ?>
 						</td>
 						<td class="list">
-							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>" onclick="return confirm('<?=gettext("Do you really want to delete this Certificate from the CRL?")?>')">
-								<i class="fa fa-times-circle" title="<?=gettext("Delete this certificate from the CRL ")?>" alt="<?=gettext("Delete this certificate from the CRL ")?>"></i>
+							<a href="system_crlmanager.php?act=delcert&amp;id=<?=$crl['refid']; ?>&amp;certref=<?=$cert['refid']; ?>">
+								<i class="fa fa-trash" title="<?=gettext("Delete this certificate from the CRL")?>" alt="<?=gettext("Delete this certificate from the CRL")?>"></i>
 							</a>
 						</td>
 					</tr>
@@ -572,8 +572,10 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$group->add(new Form_Button(
 			'submit',
-			'Add'
-			))->removeClass('btn-primary')->addClass('btn-success btn-sm');
+			'Add',
+			null,
+			'fa-plus'
+			))->addClass('btn-success btn-sm');
 
 		$section->add($group);
 
@@ -615,7 +617,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 						<th><?=gettext("Internal")?></th>
 						<th><?=gettext("Certificates")?></th>
 						<th><?=gettext("In Use")?></th>
-						<th></th>
+						<th><?=gettext("Actions")?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -645,12 +647,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		if ($cainternal == "YES"):
 ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>" class="btn btn-xs btn-success">
+								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
 		else:
 ?>
 							<a href="system_crlmanager.php?act=new&amp;caref=<?=$ca['refid']; ?>&amp;importonly=yes" class="btn btn-xs btn-success">
+								<i class="fa fa-plus icon-embed-btn"></i>
 								<?=gettext("Add or Import CRL")?>
 							</a>
 <?php
@@ -667,30 +671,22 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 ?>
 					<tr>
 						<td><?=$tmpcrl['descr']; ?></td>
-						<td><?=($internal) ? "YES" : "NO"; ?></td>
+						<td><i class="fa fa-<?=($internal) ? "check" : "times"; ?>"></i></td>
 						<td><?=($internal) ? count($tmpcrl['cert']) : "Unknown (imported)"; ?></td>
-						<td><?=($inuse) ? "YES" : "NO"; ?></td>
+						<td><i class="fa fa-<?=($inuse) ? "check" : "times"; ?>"></i></td>
 						<td>
-							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-success">
-								<?=gettext("Export CRL")?>
-							</a>
+							<a href="system_crlmanager.php?act=exp&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-download" title="<?=gettext("Export CRL")?>"></a>
 <?php
 				if ($internal): ?>
-							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
-								<?=gettext("Edit CRL")?>
-							</a>
+							<a href="system_crlmanager.php?act=edit&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php
 				else:
 ?>
-							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-info">
-								<?=gettext("Edit CRL")?>
-							</a>
+							<a href="system_crlmanager.php?act=editimported&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-pencil" title="<?=gettext("Edit CRL")?>"></a>
 <?php			endif;
 				if (!$inuse):
 ?>
-							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="btn btn-xs btn-danger">
-								<?=gettext("Delete CRL")?>
-							</a>
+							<a href="system_crlmanager.php?act=del&amp;id=<?=$tmpcrl['refid']?>" class="fa fa-trash" title="<?=gettext("Delete CRL")?>"></a>
 <?php
 				endif;
 ?>

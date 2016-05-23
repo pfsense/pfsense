@@ -85,9 +85,7 @@ if (empty($argument)) {
 	}
 }
 
-if (!platform_booting()) {
-	log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
-}
+log_error("rc.newwanip: on (IP address: {$curwanip}) (interface: {$interface_descr}[{$interface}]) (real interface: {$interface_real}).");
 
 /*
  * NOTE: Take care of openvpn, no-ip or similar interfaces if you generate the event to reconfigure an interface.
@@ -108,6 +106,7 @@ if (empty($interface)) {
 	if (platform_booting()) {
 		return;
 	}
+	log_error("rc.newwanip called with empty interface.");
 	filter_configure();
 	restart_packages();
 	return;
@@ -118,10 +117,8 @@ if (file_exists("{$g['vardb_path']}/{$interface}_cacheip")) {
 	$oldip = file_get_contents("{$g['vardb_path']}/{$interface}_cacheip");
 }
 
-/* regenerate resolv.conf if DNS overrides are allowed */
-if (!platform_booting()) {
-	system_resolvconf_generate(true);
-}
+/* regenerate resolv.conf */
+system_resolvconf_generate(true);
 
 /* write the current interface IP to file */
 if (is_ipaddr($curwanip)) {
@@ -151,11 +148,6 @@ unset($bridgetmp);
 $bridgetmp = link_interface_to_bridge($interface);
 if (!empty($bridgetmp)) {
 	interface_bridge_add_member($bridgetmp, $interface_real);
-}
-
-// Do not process while booting
-if (platform_booting()) {
-	return;
 }
 
 /* make new hosts file */
@@ -196,6 +188,15 @@ if (!empty($gre)) {
 			system_routing_configure($confif);
 		}
 	}
+}
+
+if (platform_booting()) {
+	// avoid race conditions in many of the below functions that occur during boot
+	// setting up gateways monitor doesn't seem to have issues here, and fixes the
+	// most commonly encountered bugs from earlier versions when everything below
+	// was skipped during boot
+	setup_gateways_monitor();
+	exit;
 }
 
 /*

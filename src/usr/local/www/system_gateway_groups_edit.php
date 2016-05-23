@@ -101,6 +101,7 @@ if (isset($_GET['dup']) && is_numericint($_GET['dup'])) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -114,7 +115,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid gateway group name must be specified.");
 	}
 	if (!is_validaliasname($_POST['name'])) {
-		$input_errors[] = gettext("The gateway name must not contain invalid characters.");
+		$input_errors[] = invalidaliasnamemsg($_POST['name'], gettext("gateway group"));
 	}
 
 	if (isset($_POST['name'])) {
@@ -218,6 +219,20 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
+function get_gw_family($gwname) {
+	$gateways = return_gateways_array();
+
+	if (is_array($gateways)) {
+		foreach ($gateways as $gw) {
+			if ($gw['name'] == $gwname) {
+				return($gw['ipprotocol']);
+			}
+		}
+	}
+
+	return("none");
+}
+
 $form = new Form();
 
 $section = new Form_Section('Edit Gateway Group Entry');
@@ -239,10 +254,24 @@ $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setWidth(3)->setReadonly();
 $section->add($group);
 
+// Determine the protocol familily this group pertains to. We loop through every item
+// just in case any have been removed and so have no family (orphans?)
+
+if (is_array($pconfig['item'])) {
+	foreach ($pconfig['item'] as $idx => $item) {
+		$itemsplit = explode("|", $item);
+
+		$family = get_gw_family($itemsplit[0]);
+
+		if (($family == "inet") || ($family == "inet6")) {
+			break;
+		}
+	}
+}
+
 foreach ($a_gateways as $gwname => $gateway) {
 	if (!empty($pconfig['item'])) {
 		$af = explode("|", $pconfig['item'][0]);
-		$family = $a_gateways[$af[0]]['ipprotocol'];
 		if ($gateway['ipprotocol'] != $family) {
 			$rows++;
 			continue;
@@ -317,7 +346,7 @@ $section->addInput(new Form_StaticText(
 	'Link Priority',
 	'The priority selected here defines in what order failover and balancing of links will be done. ' .
 	'Multiple links of the same priority will balance connections until all links in the priority will be exhausted. ' .
-	'If all links in a priority level are exhausted we will use the next available link(s) in the next priority level.'
+	'If all links in a priority level are exhausted then the next available link(s) in the next priority level will be used.'
 ));
 
 $section->addInput(new Form_StaticText(
@@ -342,7 +371,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 if (isset($id) && $a_gateway_groups[$id]){
 	$section->addInput(new Form_Input(

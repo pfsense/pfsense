@@ -85,6 +85,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
+$cpzone = strtolower($cpzone);
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
@@ -115,7 +116,7 @@ if ($_POST) {
 
 	if (is_uploaded_file($_FILES['new']['tmp_name'])) {
 
-		if (!stristr($_FILES['new']['name'], "captiveportal-")) {
+		if ((!stristr($_FILES['new']['name'], "captiveportal-")) && ($_FILES['new']['name'] != 'favicon.ico')) {
 			$name = "captiveportal-" . $_FILES['new']['name'];
 		} else {
 			$name = $_FILES['new']['name'];
@@ -179,10 +180,7 @@ display_top_tabs($tab_array, true);
 
 if ($_GET['act'] == 'add') {
 
-	$form = new Form(new Form_Button(
-		'Submit',
-		'Upload'
-	));
+	$form = new Form(false);
 
 	$form->setMultipartEncoding();
 
@@ -201,8 +199,15 @@ if ($_GET['act'] == 'add') {
 		'file'
 	));
 
-
 	$form->add($section);
+
+	$form->addGlobal(new Form_Button(
+		'Submit',
+		'Upload',
+		null,
+		'fa-upload'
+	))->addClass('btn-primary');
+
 	print($form);
 }
 
@@ -217,9 +222,7 @@ if (is_array($a_cp[$cpzone]['element'])):
 						<tr>
 							<th><?=gettext("Name"); ?></th>
 							<th><?=gettext("Size"); ?></th>
-							<th>
-								<!-- Buttons -->
-							</th>
+							<th><?=gettext("Actions"); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -274,14 +277,15 @@ endif;
 <div class="infoblock panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Notes");?></h2></div>
 	<div class="panel-body">
-	<?=gettext("Any files that you upload here with the filename prefix of captiveportal- will " .
+	<?=gettext("Any files that are uploaded here with the filename prefix of captiveportal- will " .
 	"be made available in the root directory of the captive portal HTTP(S) server. " .
-	"You may reference them directly from your portal page HTML code using relative paths. " .
-	"Example: you've uploaded an image with the name 'captiveportal-test.jpg' using the " .
-	"file manager. Then you can include it in your portal page like this:")?><br /><br />
+	"An icon file named favicon.ico may also be uploaded and will remain without prefix. " .
+	"They may be referenced directly from the portal page HTML code using relative paths. " .
+	"Example: An image uploaded with the name 'captiveportal-test.jpg' using the " .
+	"file manager can then be included in the portal page like this:")?><br /><br />
 	<pre>&lt;img src=&quot;captiveportal-test.jpg&quot; width=... height=...&gt;</pre><br />
-	<?=gettext("In addition, you can also upload .php files for execution.	You can pass the filename " .
-	"to your custom page from the initial page by using text similar to:")?><br /><br />
+	<?=gettext("In addition, .php files can also be uploaded for execution.	The filename can be passed " .
+	"to the custom page from the initial page by using text similar to:")?><br /><br />
 	<pre>&lt;a href="/captiveportal-aup.php?zone=$PORTAL_ZONE$&amp;redirurl=$PORTAL_REDIRURL$"&gt;<?=gettext("Acceptable usage policy"); ?>&lt;/a&gt;</pre><br />
 	<?=sprintf(gettext("The total size limit for all files is %s."), format_bytes($g['captiveportal_element_sizelimit']))?>
 	</div>

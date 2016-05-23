@@ -121,12 +121,11 @@ if ($_REQUEST['getactivity']) {
 	}
 	$finscript = "";
 	foreach ($statistics as $q) {
-		if ($stat_type == "0") {
+		if ($stat_type == "0" && $bigger_stat != "0") {
 			$packet_s = round(100 * ($q->pps / $bigger_stat), 0);
-		} else {
+		} else if ($bigger_stat != "0") {
 			$packet_s = round(100 * ($q->bandwidth / $bigger_stat), 0);
-		}
-		if ($packet_s < 0) {
+		} else {
 			$packet_s = 0;
 		}
 		$finscript .= "$('#queue{$q->queuename}width').css('width','{$packet_s}%');";

@@ -86,11 +86,11 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 	// Choose an icon by interface status
 	if ($ifinfo['status'] == "up" || $ifinfo['status'] == "associated") {
-		$icon = 'arrow-up';
+		$icon = 'arrow-up text-success';
 	} elseif ($ifinfo['status'] == "no carrier") {
-		$icon = 'times-circle';
+		$icon = 'times-circle text-danger';
 	} elseif ($ifinfo['status'] == "down") {
-		$icon = 'arrow-up';
+		$icon = 'arrow-down text-danger';
 	} else {
 		$known_status = false;
 	}

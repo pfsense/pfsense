@@ -178,10 +178,10 @@ $clients = openvpn_get_active_clients();
 <?php
 					if ($sk_server['status'] == "up") {
 						/* tunnel is up */
-						echo '<i class="fa fa-arrow-up"></i>';
+						echo '<i class="fa fa-arrow-up text-success"></i>';
 					} else {
 						/* tunnel is down */
-						echo '<i class="fa fa-arrow-down"></i>';
+						echo '<i class="fa fa-arrow-down text-danger"></i>';
 					}
 ?>
 					</td>
@@ -228,10 +228,10 @@ $clients = openvpn_get_active_clients();
 <?php
 				if ($client['status'] == "up") {
 					/* tunnel is up */
-					echo '<i class="fa fa-arrow-up"></i>';
+					echo '<i class="fa fa-arrow-up text-success"></i>';
 				} else {
 					/* tunnel is down */
-					echo '<i class="fa fa-arrow-down"></i>';
+					echo '<i class="fa fa-arrow-down text-danger"></i>';
 				}
 
 ?>
@@ -253,10 +253,6 @@ $clients = openvpn_get_active_clients();
 </div>
 
 <?php
-}
-
-if ($DisplayNote) {
-	echo "<br /><b>". gettext("NOTE") . ":</b> ". gettext("You need to bind each OpenVPN client to enable its management daemon: use 'Local port' setting in the OpenVPN client screen");
 }
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {

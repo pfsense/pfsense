@@ -398,29 +398,47 @@ foreach ($leases as $data):
 	}
 
 	if ($data['act'] == $active_string) {
+		/* Active DHCP Lease */
 		$icon = 'fa-check-circle-o';
 	} elseif ($data['act'] == $expired_string) {
+		/* Expired DHCP Lease */
 		$icon = 'fa-ban';
 	} else {
-		$icon = 'fa-times-circle-o';
+		/* Static Mapping */
+		$icon = 'fa-user';
 	}
 
 	if ($data['act'] != $static_string) {
-		$dlsc=0;
 		foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 			if (!is_array($dhcpifconf['range'])) {
 				continue;
 			}
 			if (is_inrange_v4($data['ip'], $dhcpifconf['range']['from'], $dhcpifconf['range']['to'])) {
 				$data['if'] = $dhcpif;
-				$dhcp_leases_subnet_counter[$dlsc]['dhcpif'] = $dhcpif;
-				$dhcp_leases_subnet_counter[$dlsc]['from'] = $dhcpifconf['range']['from'];
-				$dhcp_leases_subnet_counter[$dlsc]['to'] = $dhcpifconf['range']['to'];
-				$dhcp_leases_subnet_counter[$dlsc]['count'] = $dhcp_leases_subnet_counter[$dlsc]['count']+1;
+				$dlskey = $dhcpif . "-" . $dhcpifconf['range']['from'];
+				$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $dhcpif;
+				$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcpifconf['range']['from'];
+				$dhcp_leases_subnet_counter[$dlskey]['to'] = $dhcpifconf['range']['to'];
+				$dhcp_leases_subnet_counter[$dlskey]['count'] += 1;
 				break;
 			}
 
-			$dlsc++;
+			// Check if the IP is in the range of any DHCP pools
+			if (is_array($dhcpifconf['pool'])) {
+				foreach ($dhcpifconf['pool'] as $dhcppool) {
+					if (is_array($dhcppool['range'])) {
+						if (is_inrange_v4($data['ip'], $dhcppool['range']['from'], $dhcppool['range']['to'])) {
+							$data['if'] = $dhcpif;
+							$dlskey = $dhcpif . "-" . $dhcppool['range']['from'];
+							$dhcp_leases_subnet_counter[$dlskey]['dhcpif'] = $dhcpif;
+							$dhcp_leases_subnet_counter[$dlskey]['from'] = $dhcppool['range']['from'];
+							$dhcp_leases_subnet_counter[$dlskey]['to'] = $dhcppool['range']['to'];
+							$dhcp_leases_subnet_counter[$dlskey]['count'] += 1;
+							break 2;
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -437,10 +455,15 @@ foreach ($leases as $data):
 							(<?=$mac_man[$mac_hi]?>)
 						<?php endif; ?>
 					</td>
-					<td><?=htmlentities($data['hostname'])?></td>
-					<td><?=htmlentities($data['descr'])?></td>
-					<td><?=adjust_gmt($data['start'])?></td>
-					<td><?=adjust_gmt($data['end'])?></td>
+					<td><?=$data['hostname']?></td>
+					<td><?=$data['descr']?></td>
+					<? if ($data['type'] != "static"): ?>
+						<td><?=adjust_gmt($data['start'])?></td>
+						<td><?=adjust_gmt($data['end'])?></td>
+					<? else: ?>
+						<td><?=gettext("n/a")?></td>
+						<td><?=gettext("n/a")?></td>
+					<? endif; ?>
 					<td><?=$data['online']?></td>
 					<td><?=$data['act']?></td>
 					<td>
@@ -449,7 +472,7 @@ foreach ($leases as $data):
 <?php else: ?>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit static mapping')?>"	href="services_dhcp_edit.php?if=<?=$data['if']?>&amp;id=<?=$data['staticmap_array_index']?>"></a>
 <?php endif; ?>
-						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=htmlentities($data['hostname'])?>"></a>
+						<a class="fa fa-plus-square" title="<?=gettext("Add WOL mapping")?>" href="services_wol_edit.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>&amp;descr=<?=$data['hostname']?>"></a>
 <?php if ($data['online'] != $online_string):?>
 						<a class="fa fa-power-off" title="<?=gettext("Send WOL packet")?>" href="services_wol.php?if=<?=$data['if']?>&amp;mac=<?=$data['mac']?>"></a>
 <?php endif; ?>
@@ -478,7 +501,10 @@ foreach ($leases as $data):
 				</tr>
 			</thead>
 			<tbody>
-<?php foreach ($dhcp_leases_subnet_counter as $listcounters):?>
+<?php
+	ksort($dhcp_leases_subnet_counter);
+	foreach ($dhcp_leases_subnet_counter as $listcounters):
+?>
 				<tr>
 					<td><?=$iflist[$listcounters['dhcpif']]?></td>
 					<td><?=$listcounters['from']?></td>
@@ -492,9 +518,9 @@ foreach ($leases as $data):
 </div>
 
 <?php if ($_GET['all']): ?>
-	<a class="btn btn-default" href="status_dhcp_leases.php?all=0"><?=gettext("Show active and static leases only")?></a>
+	<a class="btn btn-info" href="status_dhcp_leases.php?all=0"><i class="fa fa-minus-circle icon-embed-btn"></i><?=gettext("Show active and static leases only")?></a>
 <?php else: ?>
-	<a class="btn btn-default" href="status_dhcp_leases.php?all=1"><?=gettext("Show all configured leases")?></a>
+	<a class="btn btn-info" href="status_dhcp_leases.php?all=1"><i class="fa fa-plus-circle icon-embed-btn"></i><?=gettext("Show all configured leases")?></a>
 <?php endif;
 
 include("foot.inc");

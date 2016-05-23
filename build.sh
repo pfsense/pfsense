@@ -157,6 +157,7 @@ while test "$1" != ""; do
 			;;
 		--print-flags)
 			BUILDACTION="printflags"
+			_USE_OLD_DATESTRING=YES
 			;;
 		--clean-builder)
 			BUILDACTION="cleanbuilder"
@@ -199,6 +200,7 @@ while test "$1" != ""; do
 			IMAGETYPE="${1}"
 			;;
 		-V)
+			_USE_OLD_DATESTRING=YES
 			shift
 			[ -n "${1}" ] \
 				&& var_to_print="${1}"
@@ -207,8 +209,10 @@ while test "$1" != ""; do
 			shift
 			snapshot_status_message="${1}"
 			BUILDACTION="snapshot_status_message"
+			_USE_OLD_DATESTRING=YES
 			;;
 		*)
+			_USE_OLD_DATESTRING=YES
 			usage
 	esac
 	shift
@@ -307,8 +311,11 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 		PKG_RSYNC_USERNAME \
 		PKG_RSYNC_SSH_PORT \
 		PKG_RSYNC_DESTDIR \
-		PKG_REPO_SERVER \
-		PKG_REPO_CONF_BRANCH"
+		PKG_REPO_SERVER_DEVEL \
+		PKG_REPO_SERVER_RELEASE \
+		PKG_REPO_SERVER_STAGING \
+		PKG_REPO_BRANCH_DEVEL \
+		PKG_REPO_BRANCH_RELEASE"
 
 	for _var in ${_required}; do
 		eval "_value=\${$_var}"
@@ -394,6 +401,12 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	install_pkg_install_ports
 fi
 
+# Create core repo
+core_pkg_create_repo
+
+# Send core repo to staging area
+pkg_repo_rsync "${CORE_PKG_PATH}" ignore_final_rsync
+
 export DEFAULT_KERNEL=${DEFAULT_KERNEL_ISO:-"${PRODUCT_NAME}"}
 
 # XXX: Figure out why wait is failing and proper fix
@@ -404,34 +417,43 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 	# Clean up items that should be cleaned each run
 	staginareas_clean_each_run
 
-	if [ "${_IMGTOBUILD}" = "iso" ]; then
-		create_iso_image
-	elif [ "${_IMGTOBUILD}" = "memstick" ]; then
-		create_memstick_image
-	elif [ "${_IMGTOBUILD}" = "memstickserial" ]; then
-		create_memstick_serial_image
-	elif [ "${_IMGTOBUILD}" = "memstickadi" ]; then
-		create_memstick_adi_image
-	elif [ "${_IMGTOBUILD}" = "fullupdate" ]; then
-		create_Full_update_tarball
-	elif [ "${_IMGTOBUILD}" = "nanobsd" -o "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-		if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
-		elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
-		elif [ "${TARGET}" = "amd64" ]; then
-			export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
-		fi
-		# Create the NanoBSD disk image
-		create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
-	elif [ "${_IMGTOBUILD}" = "ova" ]; then
-		install_pkg_install_ports ${PRODUCT_NAME}-vmware
-		create_ova_image
-		install_pkg_install_ports
-	fi
+	case "${_IMGTOBUILD}" in
+		iso)
+			create_iso_image
+			;;
+		memstick)
+			create_memstick_image
+			;;
+		memstickserial)
+			create_memstick_serial_image
+			;;
+		memstickadi)
+			create_memstick_adi_image
+			;;
+		fullupdate)
+			create_Full_update_tarball
+			;;
+		nanobsd|nanobsd-vga)
+			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
+			elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
+			elif [ "${TARGET}" = "amd64" ]; then
+				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
+			fi
+			# Create the NanoBSD disk image
+			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
+			;;
+		ova)
+			old_custom_package_list="${custom_package_list}"
+			export custom_package_list="${custom_package_list} ${PRODUCT_NAME}-pkg-Open-VM-Tools"
+			install_pkg_install_ports
+			create_ova_image
+			export custom_package_list="${old_custom_package_list}"
+			install_pkg_install_ports
+			;;
+	esac
 done
-
-core_pkg_create_repo
 
 if [ -n "${_bg_pids}" ]; then
 	if [ -n "${SNAPSHOTS}" ]; then

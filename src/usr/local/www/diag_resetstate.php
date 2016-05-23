@@ -101,7 +101,7 @@ $statetablehelp = sprintf(gettext('Resetting the state tables will remove all en
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
 					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.%s' .
 					'The firewall will normally leave the state tables intact when changing rules.%s' .
-					'%sNOTE:%s If you reset the firewall state table, the browser session may appear to be hung after clicking &quot;Reset&quot;. ' .
+					'%sNOTE:%s Resetting the firewall state table may cause the browser session to appear hung after clicking &quot;Reset&quot;. ' .
 					'Simply refresh the page to continue.'), "<br /><br />", "<br /><br />", "<strong>", "</strong>");
 
 $sourcetablehelp = sprintf(gettext('Resetting the source tracking table will remove all source/destination associations. ' .
@@ -119,14 +119,7 @@ if (isset($config['system']['lb_use_sticky'])) {
 $tab_array[] = array(gettext("Reset States"), true, "diag_resetstate.php");
 display_top_tabs($tab_array);
 
-$resetbtn = new Form_Button(
-	'Submit',
-	'Reset'
-);
-
-$resetbtn->removeClass('btn-primary')->addClass('btn-danger');
-
-$form = new Form($resetbtn);
+$form = new Form(false);
 
 $section = new Form_Section('Select States to Reset');
 
@@ -147,6 +140,14 @@ if (isset($config['system']['lb_use_sticky'])) {
 }
 
 $form->add($section);
+
+$form->addGlobal(new Form_Button(
+	'Submit',
+	'Reset',
+	null,
+	'fa-trash'
+))->addClass('btn-danger');
+
 print $form;
 ?>
 

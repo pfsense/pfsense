@@ -100,7 +100,7 @@ if ($_POST['destslice'] && $_POST['duplicateslice']) {
 	$statusmsg = gettext("Duplicating slice.  Please wait, this will take a moment...");
 
 	if (!DEBUG && nanobsd_clone_slice($_POST['destslice'])) {
-		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("If you would like to boot from this newly duplicated slice please set it using the bootup information area.");
+		$savemsg = gettext("The slice has been duplicated.") . "<p/>" . gettext("To boot from this newly duplicated slice set it using the bootup information area.");
 		$class = 'alert-success';
 	} else {
 		$savemsg = gettext("There was an error while duplicating the slice. Operation aborted.");
@@ -154,8 +154,13 @@ $section->addInput(new Form_StaticText(
 	$NANOBSD_SIZE
 ));
 
-$slicebtn = new Form_Button('bootslice', 'Switch Slice');
-$slicebtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$slicebtn = new Form_Button(
+	'bootslice',
+	'Switch Slice',
+	null,
+	'fa-retweet'
+);
+$slicebtn->addClass('btn-warning btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Bootup slice',
@@ -163,16 +168,19 @@ $section->addInput(new Form_StaticText(
 ));
 
 $refcount = refcount_read(1000);
+$mounted_rw = is_writable("/");
 
-if (is_writable("/")) {
+if ($mounted_rw) {
 	/* refcount_read returns -1 when shared memory section does not exist */
 	/* refcount can be zero here when the user has set nanobsd_force_rw */
 	/* refcount 1 is normal, so only display the count for abnormal values */
+	/*
 	if ($refcount == 1 || $refcount == 0 || $refcount == -1) {
 		$refdisplay = "";
 	} else {
 		$refdisplay = " ". sprintf(gettext("(Reference count %s)"), $refcount);
 	}
+	*/
 	$lbl = gettext("Read/Write") . $refdisplay;
 	$btnlbl = gettext("Switch to Read-Only");
 } else {
@@ -182,17 +190,25 @@ if (is_writable("/")) {
 
 // Only show the changero button if force read/write is off, or the file system is not in writable state, or there is an unusual refcount.
 // If force read/write is on, and the file system is in writable state, and refcount is normal then the user has no reason to mess about.
-if (!isset($config['system']['nanobsd_force_rw']) || !is_writable("/") || ($refcount > 1)) {
-	$robtn = new Form_Button('changero', $btnlbl);
-	$robtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+/*
+if (!isset($config['system']['nanobsd_force_rw']) || !$mounted_rw || ($refcount > 1)) {
+	$robtn = new Form_Button(
+		'changero',
+		$btnlbl,
+		null,
+		($mounted_rw) ? 'fa-lock' : 'fa-unlock'
+	);
+	$robtn->addClass(($mounted_rw) ? 'btn-success' : 'btn-warning' . ' btn-sm');
 	$lbl .= ' ' . $robtn;
 }
-
+*/
 $section->addInput(new Form_StaticText(
 	'Read/Write status',
 	$lbl
-))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
+))->setHelp('NanoBSD is now always read-write to avoid read-write to read-only mount problems.');
+//))->setHelp('This setting is only temporary, and can be switched dynamically in the background.');
 
+/*
 $section->addInput(new Form_Checkbox(
 	'nanobsd_force_rw',
 	'Permanent Read/Write',
@@ -200,13 +216,19 @@ $section->addInput(new Form_Checkbox(
 	isset($config['system']['nanobsd_force_rw'])
 ));
 
-$permbtn = new Form_Button('setrw', 'Save');
-$permbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$permbtn = new Form_Button(
+	'setrw',
+	'Save',
+	null,
+	'fa-save'
+);
+$permbtn->addClass('btn-primary btn-sm');
 
 $section->addInput(new Form_StaticText(
 	null,
 	$permbtn
 ));
+*/
 
 $section->addInput(new Form_Input(
 	'destslice',
@@ -215,13 +237,18 @@ $section->addInput(new Form_Input(
 	$COMPLETE_PATH
 ));
 
-$dupbtn = new Form_Button('duplicateslice', 'Duplicate ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH);
-$dupbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$dupbtn = new Form_Button(
+	'duplicateslice',
+	'Duplicate ' . $COMPLETE_BOOT_PATH . ' -> ' . $TOFLASH,
+	null,
+	'fa-clone'
+);
+$dupbtn->addClass('btn-success btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Duplicate boot slice',
 	$dupbtn
-))->setHelp('This will duplicate the bootup slice to the alternate slice.  Use this if you would like to duplicate the known good working boot partition to the alternate.');
+))->setHelp('This will duplicate the bootup slice to the alternate slice.  Use this to duplicate the known good working boot partition to the alternate.');
 
 $section->addInput(new Form_StaticText(
 	'RRD/DHCP Backup',
@@ -229,8 +256,13 @@ $section->addInput(new Form_StaticText(
 ));
 
 if (file_exists("/conf/upgrade_log.txt")) {
-	$viewbtn = new Form_Button('viewupgradelog', 'View log');
-	$viewbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+	$viewbtn = new Form_Button(
+		'viewupgradelog',
+		'View log',
+		null,
+		'fa-file-text-o'
+	);
+	$viewbtn->addClass('btn-primary btn-sm');
 
 	$section->addInput(new Form_StaticText(
 		'View previous upgrade log',
@@ -245,13 +277,8 @@ if (file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Previous Upgrade Log")?></h2></div>
 			<!-- No white space between the <pre> and the first output or it will appear on the page! -->
-			<pre><?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
-				<br /><?=gettext("File list:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/file_upgrade_log.txt"))?>
-				<br /><?=gettext("Misc log:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/firmware_update_misc_log.txt"))?>
-				<br /><?=gettext("fdisk/bsdlabel log:")?>
-				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/fdisk_upgrade_log.txt"))?>
+			<pre>
+				<?=str_ireplace("pfsense", $g['product_name'], file_get_contents("/conf/upgrade_log.txt"))?>
 			</pre>
 	</div>
 <?php

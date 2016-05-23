@@ -131,7 +131,7 @@ if ($savemsg) {
 }
 
 if (is_subsystem_dirty('loadbalancer')) {
-	print_apply_box(gettext("The load balancer configuration has been changed.") . "<br />" . gettext("You must apply the changes in order for them to take effect."));
+	print_apply_box(gettext("The load balancer configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
 
 /* active tabs */
@@ -151,21 +151,21 @@ $section->addInput(new Form_Input(
 	'Timeout',
 	'text',
 	$pconfig['timeout']
-))->setHelp('Set the global timeout in milliseconds for checks. Leave blank to use the default value of 1000 ms');
+))->setHelp('Set the global timeout in milliseconds for checks. Leave blank to use the default value of 1000 ms.');
 
 $section->addInput(new Form_Input(
 	'interval',
 	'Interval',
 	'text',
 	$pconfig['interval']
-))->setHelp('Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds');
+))->setHelp('Set the interval in seconds at which the member of a pool will be checked. Leave blank to use the default interval of 10 seconds.');
 
 $section->addInput(new Form_Input(
 	'prefork',
 	'Prefork',
 	'text',
 	$pconfig['prefork']
-))->setHelp('Number of processes forked in advance by relayd. Leave blank to use the default value of 5 processes');
+))->setHelp('Number of processes forked in advance by relayd. Leave blank to use the default value of 5 processes.');
 
 $form->add($section);
 print($form);

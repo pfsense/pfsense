@@ -173,16 +173,26 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Simple filter such as 192.168, v6, icmp or ESTABLISHED']
 ));
 
-$filterbtn = new Form_Button('filterbtn', 'Filter', null);
-$filterbtn->removeClass('btn-primary')->addClass('btn-default btn-sm');
+$filterbtn = new Form_Button(
+	'filterbtn',
+	'Filter',
+	null,
+	'fa-filter'
+);
+$filterbtn->addClass('btn-primary btn-sm');
 $section->addInput(new Form_StaticText(
 	'',
 	$filterbtn
 ));
 
 if (isset($_POST['filter']) && (is_ipaddr($_POST['filter']) || is_subnet($_POST['filter']))) {
-	$killbtn = new Form_Button('killfilter', 'Kill States');
-	$killbtn->removeClass('btn-primary')->addClass('btn-danger btn-sm');
+	$killbtn = new Form_Button(
+		'killfilter',
+		'Kill States',
+		null,
+		'fa-trash'
+	);
+	$killbtn->addClass('btn-danger btn-sm');
 	$section->addInput(new Form_StaticText(
 		'Kill filtered states',
 		$killbtn
@@ -203,9 +213,9 @@ print $form;
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source -> Router -> Destination")?></th>
 						<th><?=gettext("State")?></th>
-						<th><?=gettext("Packets")?></th>
-						<th><?=gettext("Bytes")?></th>
-						<th></th> <!-- For the optional "Remove" button -->
+						<th data-sortable="false"><?=gettext("Packets")?></th>
+						<th data-sortable="false"><?=gettext("Bytes")?></th>
+						<th data-sortable="false"></th> <!-- For the optional "Remove" button -->
 					</tr>
 				</thead>
 				<tbody>
@@ -253,7 +263,7 @@ print $form;
 			$info = $res[$i]['dst'];
 			if ($res[$i]['dst-orig'])
 				$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$info .= " -> ";
+			$info .= " &lt;- ";
 			$info .= $res[$i]['src'];
 			if ($res[$i]['src-orig'])
 				$info .= " (" . $res[$i]['src-orig'] . ")";

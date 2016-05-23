@@ -196,8 +196,7 @@ if ($_POST) {
 
 	if (isset($_POST['test-growl'])) {
 		// Send test message via growl
-		if ($config['notifications']['growl']['ipaddress'] &&
-		    $config['notifications']['growl']['password'] = $_POST['password']) {
+		if (isset($config['notifications']['growl']['ipaddress'])) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
 			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
@@ -260,15 +259,14 @@ $section->addInput(new Form_Input(
 	$pconfig['notification_name'],
 	['placeholder' => $g["product_name"].' growl alert']
 
-))->setHelp('Enter a name for the Growl notifications');
+))->setHelp('Enter a name for the Growl notifications.');
 
 $section->addInput(new Form_Input(
 	'ipaddress',
 	'IP Address',
 	'text',
 	$pconfig['ipaddress']
-))->setHelp('This is the IP address that you would like to send growl '.
-	'notifications to.');
+))->setHelp('This is the IP address to send growl notifications to.');
 
 $section->addPassword(new Form_Input(
 	'password',
@@ -277,11 +275,11 @@ $section->addPassword(new Form_Input(
 	$pconfig['password']
 ))->setHelp('Enter the password of the remote growl notification device.');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Button(
 	'test-growl',
-	'Test Growl',
-	'submit',
-	'Test Growl settings'
+	'Test Growl Settings',
+	null,
+	'fa-rss'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.');
 
@@ -311,7 +309,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['smtpport']
 ))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
-	'(submission) or 465 (smtps)');
+	'(submission) or 465 (smtps).');
 
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
@@ -342,8 +340,7 @@ $section->addInput(new Form_Input(
 	'Notification E-Mail address',
 	'text',
 	$pconfig['smtpnotifyemailaddress']
-))->setHelp('Enter the e-mail address that you would like email '.
-	'notifications sent to.');
+))->setHelp('Enter the e-mail address to send email notifications to.');
 
 // This name prevents the browser from auto-filling the field. We change it on submit
 $section->addInput(new Form_Input(
@@ -368,11 +365,11 @@ $section->addInput(new Form_Select(
 	$smtp_authentication_mechanisms
 ))->setHelp('Select the authentication mechanism used by the SMTP server. Most work with PLAIN, some servers like Exchange or Office365 might require LOGIN. ');
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_Button(
 	'test-smtp',
-	'Test SMTP',
-	'submit',
-	'Test SMTP settings'
+	'Test SMTP Settings',
+	null,
+	'fa-send'
 ))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
 	'marked as disabled.  The last SAVED values will be used, not necessarily the values entered here.');
 

@@ -289,6 +289,10 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("\"%s\" is not a valid redirect target IP address or host alias."), $_POST['localip']);
 	}
 
+	if ($_POST['localip'] && is_ipaddrv6($_POST['localip'])) {
+		$input_errors[] = sprintf(gettext("Redirect target IP must be IPv4."));
+	}
+
 	if ($_POST['srcbeginport'] && !is_portoralias($_POST['srcbeginport'])) {
 		$input_errors[] = sprintf(gettext("%s is not a valid start source port. It must be a port alias or integer between 1 and 65535."), $_POST['srcbeginport']);
 	}
@@ -309,12 +313,15 @@ if ($_POST) {
 	/* if user enters an alias and selects "network" then disallow. */
 	if (($_POST['srctype'] == "network" && is_alias($_POST['src'])) ||
 	    ($_POST['dsttype'] == "network" && is_alias($_POST['dst']))) {
-		$input_errors[] = gettext("You must specify single host or alias for alias entries.");
+		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
 	if (!is_specialnet($_POST['srctype'])) {
 		if (($_POST['src'] && !is_ipaddroralias($_POST['src']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid source IP address or alias."), $_POST['src']);
+		}
+		if ($_POST['src'] && is_ipaddrv6($_POST['src'])) {
+			$input_errors[] = sprintf(gettext("Source must be IPv4."));
 		}
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
 			$input_errors[] = gettext("A valid source bit count must be specified.");
@@ -324,6 +331,9 @@ if ($_POST) {
 	if (!is_specialnet($_POST['dsttype'])) {
 		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
 			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		}
+		if ($_POST['dst'] && is_ipaddrv6($_POST['dst'])) {
+			$input_errors[] = sprintf(gettext("Destination must be IPv4."));
 		}
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {
 			$input_errors[] = gettext("A valid destination bit count must be specified.");
@@ -540,8 +550,6 @@ function build_srctype_list() {
 
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
-	$sel = is_specialnet($pconfig['src']);
-
 	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');
 	}
@@ -564,18 +572,15 @@ function srctype_selected() {
 	global $pconfig, $config;
 
 	$selected = "";
-
-	$sel = is_specialnet($pconfig['src']);
-	if (!$sel) {
+	if (array_key_exists($pconfig['src'], build_srctype_list())) {
+		$selected = $pconfig['src'];
+	} else {
 		if ($pconfig['srcmask'] == 32) {
 			$selected = 'single';
 		} else {
 			$selected = 'network';
 		}
-	} else {
-		$selected = $pconfig['src'];
 	}
-
 
 	return($selected);
 }
@@ -583,7 +588,6 @@ function srctype_selected() {
 function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
-	$sel = is_specialnet($pconfig['dst']);
 	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
 
 	if (have_ruleint_access("pppoe")) {
@@ -594,15 +598,18 @@ function build_dsttype_list() {
 		$list['l2tp'] = gettext('L2TP clients');
 	}
 
-	foreach ($ifdisp as $if => $ifdesc) {
-		if (have_ruleint_access($if)) {
-			$list[$if] = $ifdesc;
-			$list[$if . 'ip'] = $ifdesc . ' address';
+	foreach ($ifdisp as $ifent => $ifdesc) {
+		if (have_ruleint_access($ifent)) {
+			$list[$ifent] = $ifdesc . ' net';
+			$list[$ifent . 'ip'] = $ifdesc . ' address';
 		}
 	}
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
+			if (is_ipaddrv6($sn['subnet'])) {
+				continue;
+			}
 			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
 				if (isset($sn['noexpand'])) {
 					continue;
@@ -631,19 +638,13 @@ function dsttype_selected() {
 	global $pconfig, $config;
 
 	$selected = "";
-
-	if (is_array($config['virtualip']['vip'])) {
+	if (array_key_exists($pconfig['dst'], build_dsttype_list())) {
 		$selected = $pconfig['dst'];
 	} else {
-		$sel = is_specialnet($pconfig['dst']);
-		if (!$sel) {
-			if ($pconfig['dstmask'] == 32) {
-				$selected = 'single';
-			} else {
-				$selected = 'network';
-			}
+		if ($pconfig['dstmask'] == 32) {
+			$selected = 'single';
 		} else {
-			$selected = $pconfig['dst'];
+			$selected = 'network';
 		}
 	}
 
@@ -657,10 +658,7 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section('Edit Redirect Entry');
 
@@ -676,7 +674,7 @@ $section->addInput(new Form_Checkbox(
 	'No RDR (NOT)',
 	'Disable redirection for traffic matching this rule',
 	$pconfig['nordr']
-))->setHelp('This option is rarely needed, don\'t use this unless you know what you\'re doing.');
+))->setHelp('This option is rarely needed. Don\'t use this without thorough knowledge of the implications.');
 
 $iflist = get_configured_interface_with_descr(false, true);
 
@@ -723,11 +721,13 @@ $section->addInput(new Form_Select(
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');
 
 $btnsrcadv = new Form_Button(
-	'srcadv',
-	'Advanced'
+	'btnsrcadv',
+	'Display Advanced',
+	null,
+	'fa-cog'
 );
 
-$btnsrcadv->removeClass('btn-primary')->addClass('btn-default');
+$btnsrcadv->setAttribute('type','button')->addClass('btn-info btn-sm');
 
 $section->addInput(new Form_StaticText(
 	'Source',
@@ -755,7 +755,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->setPattern('[.a-zA-Z0-9_]+')->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
+))->setPattern('[.a-zA-Z0-9_:]+')->addMask('srcmask', $pconfig['srcmask'])->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -797,8 +797,8 @@ $group->add(new Form_Input(
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the source port or port range for this rule. This is usually random and almost never ' .
-				'equal to the destination port range (and should usually be \'any\'). You can leave the \'to\' field ' .
-				'empty if you only want to filter a single port.');
+				'equal to the destination port range (and should usually be \'any\'). The \'to\' field ' .
+				'may be left empty if only filtering a single port.');
 
 $section->add($group);
 
@@ -822,7 +822,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->setPattern('[.a-zA-Z0-9_]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
+))->setPattern('[.a-zA-Z0-9_:]+')->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask');
 
 $section->add($group);
 
@@ -858,7 +858,7 @@ $group->add(new Form_Input(
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('Custom');
 
 $group->setHelp('Specify the port or port range for the destination of the packet for this mapping. ' .
-				'You can leave the \'to\' field empty if you only want to map a single port ');
+				'The \'to\' field may be left empty if only mapping a single port. ');
 
 $section->add($group);
 
@@ -866,7 +866,7 @@ $section->addInput(new Form_IpAddress(
 	'localip',
 	'Redirect target IP',
 	$pconfig['localip']
-))->setPattern('[.a-zA-Z0-9_]+')->setHelp('Enter the internal IP address of the server on which you want to map the ports.' . '<br />' .
+))->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Enter the internal IP address of the server on which to map the ports.' . '<br />' .
 			'e.g.: 192.168.1.12');
 
 $group = new Form_Group('Redirect target port');
@@ -881,7 +881,7 @@ $group->add(new Form_Select(
 
 $group->setHelp('Specify the port on the machine with the IP address entered above. In case of a port range, specify the ' .
 				'beginning port of the range (the end port will be calculated automatically).' . '<br />' .
-				'this is usually identical to "From port" above');
+				'This is usually identical to the "From port" above.');
 
 $group->add(new Form_Input(
 	'localbeginport_cust',
@@ -897,7 +897,7 @@ $section->addInput(new Form_Input(
 	'Description',
 	'text',
 	$pconfig['descr']
-))->setHelp('You may enter a description here for your reference (not parsed).');
+))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
 
 $section->addInput(new Form_Checkbox(
@@ -1010,9 +1010,8 @@ print($form);
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
-	var portsenabled = 1;
-	var dstenabled = 1;
-	var showsource = 0;
+	var portsenabled = true;
+	var srcenabled = <?= ($pconfig['srcnot'] || ($pconfig['src'] != "any") || ($pconfig['srcbeginport'] != "any") || ($pconfig['srcendport'] != "any"))? 1:0 ?>;
 	var iface_old = '';
 
 	// ---------- jQuery functions, lovingly converted from the original javascript------------------------------------------
@@ -1032,14 +1031,14 @@ events.push(function() {
 			disableInput('srcendport_cust', true);
 		}
 
-		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+		if (($('#dstbeginport').find(":selected").index() == 0) && portsenabled) {
 			disableInput('dstbeginport_cust', false);
 		} else {
 			$('#dstbeginport_cust').val('');
 			disableInput('dstbeginport_cust', true);
 		}
 
-		if (($('#dstendport').find(":selected").index() == 0) && portsenabled && dstenabled) {
+		if (($('#dstendport').find(":selected").index() == 0) && portsenabled) {
 			disableInput('dstendport_cust', false);
 		} else {
 			$('#dstendport_cust').val('');
@@ -1063,10 +1062,8 @@ events.push(function() {
 			disableInput('srcbeginport', false);
 			disableInput('srcendport', false);
 //			disableInput('localbeginport_cust', false);
-			if (dstenabled) {
-				disableInput('dstbeginport', false);
-				disableInput('dstendport', false);
-			}
+			disableInput('dstbeginport', false);
+			disableInput('dstendport', false);
 		}
 	}
 
@@ -1135,24 +1132,21 @@ events.push(function() {
 
 	function proto_change() {
 		if ($('#proto').find(":selected").index() >= 0 && $('#proto').find(":selected").index() <= 2) {
-			portsenabled = 1;
+			portsenabled = true;
 		} else {
-			portsenabled = 0;
+			portsenabled = false;
 		}
 
 		if (portsenabled) {
-			hideClass('srcportrange', showsource == 1);
+			hideClass('srcportrange', !srcenabled);
 			hideClass('dstportrange', false);
 			hideClass('lclportrange', false);
 		} else {
 			hideClass('srcportrange', true);
 			hideClass('dstportrange', true);
 			hideClass('lclportrange', true);
-			$('#dstbeginport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#dstbeginport_cust').val('');
-			$('#dstendport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#dstendport_cust').val('');
-			$('#localbeginport').prop("selectedIndex", 0).selectmenu('refresh');
 			$('#localbeginport_cust').val('');
 		}
 	}
@@ -1176,24 +1170,22 @@ events.push(function() {
 				break;
 		}
 
-		if (dstenabled) {
-			switch ($('#dsttype').find(":selected").index()) {
-				case 1: // single
-					disableInput('dst', false);
-					$('#dstmask').val('');
-					disableInput('dstmask', true);;
-					break;
-				case 2: // network /
-					disableInput('dst', false);
-					disableInput('dstmask', false);
-					break;
-				default:
-					$('#dst').val('');
-					disableInput('dst', true);
-					$('#dstmask').val('');
-					disableInput('dstmask', true);
-					break;
-			}
+		switch ($('#dsttype').find(":selected").index()) {
+			case 1: // single
+				disableInput('dst', false);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);;
+				break;
+			case 2: // network /
+				disableInput('dst', false);
+				disableInput('dstmask', false);
+				break;
+			default:
+				$('#dst').val('');
+				disableInput('dst', true);
+				$('#dstmask').val('');
+				disableInput('dstmask', true);
+				break;
 		}
 	}
 
@@ -1212,9 +1204,15 @@ events.push(function() {
 	}
 
 	function hideSource(hide) {
+		var text;
 		hideClass('srcadv', hide);
 		hideClass('srcportrange', hide || !portsenabled);
-		hideInput('srcadv', !hide);
+		if (hide) {
+			text = "<?=gettext('Display Advanced');?>";
+		} else {
+			text = "<?=gettext('Hide Advanced');?>";
+		}
+		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	// ---------- "onclick" functions ---------------------------------------------------------------------------------
@@ -1264,19 +1262,19 @@ events.push(function() {
 		typesel_change();
 	});
 
-    $("#srcadv").click(function() {
-        hideSource(false);
-    });
+	$("#btnsrcadv").click(function() {
+		srcenabled = !srcenabled;
+		hideSource(!srcenabled);
+	});
 	// ---------- On initial page load --------------------------------------------------------------------------------
 
-	$("#srcadv").prop('type', 'button');
+	hideSource(!srcenabled);
 	ext_change();
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
 	iface_old = $('#interface').val();
 	typesel_change();
 	proto_change();
 	nordr_change();
-	hideSource(true);
 
 	// --------- Autocomplete -----------------------------------------------------------------------------------------
 	var addressarray = <?= json_encode(get_alias_list(array("host", "network", "openvpn", "urltable"))) ?>;

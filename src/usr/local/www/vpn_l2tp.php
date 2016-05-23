@@ -233,10 +233,7 @@ $tab_array[] = array(gettext("Configuration"), true, "vpn_l2tp.php");
 $tab_array[] = array(gettext("Users"), false, "vpn_l2tp_users.php");
 display_top_tabs($tab_array);
 
-$form = new Form(new Form_Button(
-	'Submit',
-	gettext("Save")
-));
+$form = new Form();
 
 $section = new Form_Section("Enable L2TP");
 
@@ -309,14 +306,14 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'l2tp_dns1',
-	'Primary L2TM DNS server',
+	'Primary L2TP DNS server',
 	'text',
 	$pconfig['l2tp_dns1']
 ));
 
 $section->addInput(new Form_Input(
 	'l2tp_dns2',
-	'Secondary L2TM DNS server',
+	'Secondary L2TP DNS server',
 	'text',
 	$pconfig['l2tp_dns2']
 ));

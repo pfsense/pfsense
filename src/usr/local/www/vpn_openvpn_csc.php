@@ -240,7 +240,11 @@ if ($_POST) {
 	if (!$input_errors) {
 		$csc = array();
 
-		$csc['server_list'] = implode(",", $pconfig['server_list']);
+		if (is_array($pconfig['server_list'])) {
+			$csc['server_list'] = implode(",", $pconfig['server_list']);
+		} else {
+			$csc['server_list'] = "";
+		}
 		$csc['custom_options'] = $pconfig['custom_options'];
 		if ($_POST['disable'] == "yes") {
 			$csc['disable'] = true;
@@ -372,7 +376,7 @@ if ($act == "new" || $act == "edit"):
 		'Description',
 		'text',
 		$pconfig['description']
-	))->setHelp('You may enter a description here for your reference (not parsed). ');
+	))->setHelp('A description may be entered here for administrative reference (not parsed). ');
 
 	$section->addInput(new Form_Checkbox(
 		'block',
@@ -390,7 +394,7 @@ if ($act == "new" || $act == "edit"):
 		'Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (eg. 10.0.8.0/24). ' .
+	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.0/24). ' .
 				'The first network address is assumed to be the server address and the second network address will be assigned to the client virtual interface. ');
 
 	$section->addInput(new Form_Input(
@@ -399,7 +403,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['local_network']
 	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges. ' . '<br />' .
-				'NOTE: You do not need to specify networks here if they have already been defined on the main server configuration.');
+				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
 
 	$section->addInput(new Form_Input(
 		'local_networkv6',
@@ -407,7 +411,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['local_networkv6']
 	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.' . '<br />' .
-				'NOTE: You do not need to specify networks here if they have already been defined on the main server configuration.');
+				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
@@ -415,7 +419,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_network']
 	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-				'Expressed as a comma-separated list of one or more CIDR ranges. You may leave this blank if there are no client-side networks to be routed.' . '<br />' .
+				'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.' . '<br />' .
 				'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.');
 
 	$section->addInput(new Form_Input(
@@ -424,7 +428,7 @@ if ($act == "new" || $act == "edit"):
 		'text',
 		$pconfig['remote_networkv6']
 	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-				'Expressed as a comma-separated list of one or more IP/PREFIX networks. You may leave this blank if there are no client-side networks to be routed.' . '<br />' .
+				'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
 				'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
 
 	$section->addInput(new Form_Checkbox(
@@ -589,7 +593,7 @@ if ($act == "new" || $act == "edit"):
 		'custom_options',
 		'Advanced',
 		$pconfig['custom_options']
-	))->setHelp('Enter any additional options you would like to add for this client specific override, separated by a semicolon. ' . '<br />' .
+	))->setHelp('Enter any additional options to add for this client specific override, separated by a semicolon. ' . '<br />' .
 				'EXAMPLE: push "route 10.0.0.0 255.255.255.0"; ');
 
 	// The hidden fields

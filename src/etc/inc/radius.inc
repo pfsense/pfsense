@@ -480,7 +480,10 @@ class Auth_RADIUS extends PEAR {
                 break;
 
             case RADIUS_CLASS:
-                $this->attributes['class'] = radius_cvt_string($data);
+                if (!array($this->attributes['class'])) {
+                        $this->attributes['class'] = array();
+                }
+                $this->attributes['class'][] = radius_cvt_string($data);
                 break;
 
             case RADIUS_FRAMED_PROTOCOL:

@@ -12,6 +12,55 @@ echo $PRIOR_VERSION > /tmp/pre_upgrade_version
 # De-activate sync on the root slice only. This will not match NanoBSD since it already has sync,noatime
 /usr/bin/sed -i '' 's/^\(\/.*[[:space:]]*\/[[:space:]]*ufs[[:space:]]*\)rw,sync\([[:space:]]*[[:digit:]][[:space:]]*[[:digit:]]\)$/\1rw\2/' /etc/fstab
 
+# Uninstall all packages before upgrade to 2.3
+PFSENSE_VERSION=$(cat /etc/version)
+
+if echo "$PFSENSE_VERSION" | grep -q '^1.2'; then
+	UNINSTALL="uninstall_package_from_name"
+else
+	UNINSTALL="uninstall_package"
+fi
+
+cat >/tmp/remove_all_packages.php <<EOD
+#!/usr/local/bin/php
+<?php
+
+require_once("pkg-utils.inc");
+
+global \$pkg_interface;
+\$pkg_interface = "console";
+
+if (!isset(\$config['installedpackages']['package'])) {
+	exit(0);
+}
+
+if (!is_array(\$config['installedpackages']['package'])) {
+	exit(0);
+}
+
+\$removed_packages = array();
+foreach (\$config['installedpackages']['package'] as \$package) {
+	if (isset(\$package['internal_name'])) {
+		\$removed_packages[] = \$package['internal_name'];
+	} else {
+		\$rename_arr = array("Quagga OSPF" => "Quagga_OSPF", "System Patches" => "System_Patches");
+		if (key_exists(\$package['name'], \$rename_arr)) {
+			\$removed_packages[] = \$rename_arr[\$package['name']];
+		} else {
+			\$removed_packages[] = \$package['name'];
+		}
+	}
+	${UNINSTALL}(\$package['name']);
+}
+
+@file_put_contents("{\$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt", implode("\\n",\$removed_packages));
+
+?>
+EOD
+
+/usr/local/bin/php /tmp/remove_all_packages.php
+rm -f /tmp/remove_all_packages.php
+
 # Cleanup PBIs
 if which pbi_info >/dev/null 2>&1; then
 	for pbi in $(pbi_info); do

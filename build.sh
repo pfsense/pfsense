@@ -260,7 +260,7 @@ case $BUILDACTION in
 	printflags)
 		print_flags
 	;;
-	images|snapshots)
+	images)
 		# It will be handled below
 	;;
 	updatesources)

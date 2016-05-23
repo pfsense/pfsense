@@ -51,8 +51,9 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all ]"
+	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all | none ]"
 	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi fullupdate"
+	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
@@ -137,7 +138,7 @@ while test "$1" != ""; do
 			;;
 		--snapshots)
 			export SNAPSHOTS=1
-			IMAGETYPE="all"
+			IMAGETYPE=${1:-"all"}
 			;;
 		--poudriere-snapshots)
 			export POUDRIERE_SNAPSHOTS=1
@@ -195,7 +196,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -342,7 +343,9 @@ if [ -z "${IMAGETYPE}" ]; then
 	usage
 fi
 
-if [ "$IMAGETYPE" = "all" ]; then
+if [ "$IMAGETYPE" = "none" ]; then
+	_IMAGESTOBUILD=""
+elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="iso fullupdate nanobsd nanobsd-vga memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
@@ -480,11 +483,15 @@ if [ -n "${_bg_pids}" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_copy_to_staging_iso_updates
-	snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
-	# SCP files to snapshot web hosting area
-	if [ -z "${DO_NOT_UPLOAD}" ]; then
-		snapshots_scp_files
+	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
+		pkg_repo_rsync "${CORE_PKG_PATH}"
+	elif [ "${IMAGETYPE}" != "none" ]; then
+		snapshots_copy_to_staging_iso_updates
+		snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+		# SCP files to snapshot web hosting area
+		if [ -z "${DO_NOT_UPLOAD}" ]; then
+			snapshots_scp_files
+		fi
 	fi
 	# Alert the world that we have some snapshots ready.
 	snapshots_update_status ">>> Builder run is complete."

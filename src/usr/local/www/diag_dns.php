@@ -83,7 +83,7 @@ foreach ($a_aliases as $a) {
 	$counter++;
 }
 
-function resolve_host_adresses($host) {	
+function resolve_host_addresses($host) {	
 	$host_esc = escapeshellarg($host);
 	$resolved = array();
 	exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | grep '\tA\t\|\tCNAME\t' | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
@@ -96,7 +96,7 @@ if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
-		$resolved = resolve_host_adresses($host);
+		$resolved = resolve_host_addresses($host);
 		$isfirst = true;
 		foreach ($resolved as $re) {
 			if ($re != "") {
@@ -174,7 +174,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if ($resolved) {
-				$resolved = resolve_host_adresses($host);
+				$resolved = resolve_host_addresses($host);
 			}
 			$hostname = $host;
 			if ($host != $resolved) {

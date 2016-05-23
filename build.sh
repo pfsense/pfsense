@@ -138,7 +138,6 @@ while test "$1" != ""; do
 			;;
 		--snapshots)
 			export SNAPSHOTS=1
-			IMAGETYPE=${1:-"all"}
 			;;
 		--poudriere-snapshots)
 			export POUDRIERE_SNAPSHOTS=1
@@ -337,6 +336,11 @@ if [ $# -gt 1 ]; then
 	echo
 	usage
 fi
+
+if [ -n "${SNAPSHOTS}" -a -z "${IMAGETYPE}" ]; then
+	IMAGETYPE="all"
+fi
+
 if [ -z "${IMAGETYPE}" ]; then
 	echo "ERROR: Need to specify image type to build."
 	echo

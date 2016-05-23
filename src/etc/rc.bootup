@@ -461,6 +461,11 @@ if ($run_installer) {
 	putenv("TERM=cons25");
 	echo "\n\nInstaller mode selected...\n";
 	passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+
+	// If installer fails, call a recovery shell
+	if (!file_exists("/tmp/install_complete")) {
+		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
+	}
 	passthru("/etc/rc.reboot");
 	exit;
 }

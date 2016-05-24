@@ -80,7 +80,7 @@ if (isset($_REQUEST['isAjax'])) {
 	}
 
 	if (!empty($_REQUEST['filter'])) {
-		$netstat .= " | /usr/bin/sed -e '1,3d; 5,\$ { /" . escapeshellarg(htmlspecialchars($_REQUEST['filter'])) . "/!d; };'";
+		$netstat .= " | /usr/bin/sed -e " . escapeshellarg("1,3d; 5,\$ { /" . htmlspecialchars($_REQUEST['filter']) . "/!d; };");
 	} else {
 		$netstat .= " | /usr/bin/sed -e '1,3d'";
 	}

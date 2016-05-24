@@ -126,6 +126,7 @@ if [ -z "${PRODUCT_VERSION}" ]; then
 
 	export PRODUCT_VERSION=$(head -n 1 ${PRODUCT_SRC}/etc/version)
 fi
+export PRODUCT_REVISION=${PRODUCT_REVISION:-""}
 
 # Product repository tag to build
 _cur_git_repo_branch_or_tag=$(git -C ${BUILDER_ROOT} rev-parse --abbrev-ref HEAD)
@@ -277,20 +278,6 @@ export POUDRIERE_BULK=${POUDRIERE_BULK:-"${BUILDER_TOOLS}/conf/pfPorts/poudriere
 export POUDRIERE_PORTS_GIT_URL=${POUDRIERE_PORTS_GIT_URL:-"${GIT_REPO_BASE}/factory-ports.git"}
 export POUDRIERE_PORTS_GIT_BRANCH=${POUDRIERE_PORTS_GIT_BRANCH:-"factory-RELENG_2_3_1"}
 
-# Host to rsync pkg repos from poudriere
-export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}
-export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
-export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
-export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/factory/packages"}
-export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/factory/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
-
-# Final packages server
-export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"firmware.netgate.com"}
-export PKG_FINAL_RSYNC_USERNAME=${PKG_FINAL_RSYNC_USERNAME:-"wwwsync"}
-export PKG_FINAL_RSYNC_SSH_PORT=${PKG_FINAL_RSYNC_SSH_PORT:-"22"}
-export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/firmware/beta/packages"}
-export SKIP_FINAL_RSYNC=${SKIP_FINAL_RSYNC:-}
-
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING
 export TIMESTAMP_SUFFIX="-${DATESTRING}"
@@ -314,6 +301,25 @@ case "${PRODUCT_VERSION##*-}" in
 		echo ">>> ERROR: Invalid PRODUCT_VERSION format ${PRODUCT_VERSION}"
 		exit 1
 esac
+
+# Host to rsync pkg repos from poudriere
+export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}
+export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
+export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
+export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/factory/packages"}
+export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/factory/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
+
+# Final packages server
+if [ -n "${_IS_RELEASE}" ]; then
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"firmware.netgate.com"}
+	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/firmware/pkg"}
+else
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"firmware.netgate.com"}
+	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/firmware/beta/packages"}
+fi
+export PKG_FINAL_RSYNC_USERNAME=${PKG_FINAL_RSYNC_USERNAME:-"wwwsync"}
+export PKG_FINAL_RSYNC_SSH_PORT=${PKG_FINAL_RSYNC_SSH_PORT:-"22"}
+export SKIP_FINAL_RSYNC=${SKIP_FINAL_RSYNC:-}
 
 # pkg repo variables
 export USE_PKG_REPO_STAGING="1"
@@ -340,7 +346,7 @@ fi
 export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-"ssh sign@codesigner.netgate.com sudo ./sign.sh ${PKG_REPO_SIGN_KEY}"}
 
 # Define base package version, based on date for snaps
-export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}"
+export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}${PRODUCT_REVISION:+_}${PRODUCT_REVISION}"
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}
 export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}

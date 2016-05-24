@@ -51,8 +51,9 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all ]"
+	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all | none ]"
 	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi fullupdate"
+	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
@@ -137,7 +138,6 @@ while test "$1" != ""; do
 			;;
 		--snapshots)
 			export SNAPSHOTS=1
-			IMAGETYPE="all"
 			;;
 		--poudriere-snapshots)
 			export POUDRIERE_SNAPSHOTS=1
@@ -195,7 +195,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -260,7 +260,7 @@ case $BUILDACTION in
 	printflags)
 		print_flags
 	;;
-	images|snapshots)
+	images)
 		# It will be handled below
 	;;
 	updatesources)
@@ -336,13 +336,20 @@ if [ $# -gt 1 ]; then
 	echo
 	usage
 fi
+
+if [ -n "${SNAPSHOTS}" -a -z "${IMAGETYPE}" ]; then
+	IMAGETYPE="all"
+fi
+
 if [ -z "${IMAGETYPE}" ]; then
 	echo "ERROR: Need to specify image type to build."
 	echo
 	usage
 fi
 
-if [ "$IMAGETYPE" = "all" ]; then
+if [ "$IMAGETYPE" = "none" ]; then
+	_IMAGESTOBUILD=""
+elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="nanobsd"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick \
@@ -506,11 +513,15 @@ if [ -n "${_bg_pids}" ]; then
 fi
 
 if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_copy_to_staging_iso_updates
-	snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
-	# SCP files to snapshot web hosting area
-	if [ -z "${DO_NOT_UPLOAD}" ]; then
-		snapshots_scp_files
+	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
+		pkg_repo_rsync "${CORE_PKG_PATH}"
+	elif [ "${IMAGETYPE}" != "none" ]; then
+		snapshots_copy_to_staging_iso_updates
+		snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+		# SCP files to snapshot web hosting area
+		if [ -z "${DO_NOT_UPLOAD}" ]; then
+			snapshots_scp_files
+		fi
 	fi
 	# Alert the world that we have some snapshots ready.
 	snapshots_update_status ">>> Builder run is complete."

@@ -64,7 +64,7 @@
 require("guiconfig.inc");
 
 if (isset($_POST['backupcount'])) {
-	if (is_numeric($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {
+	if (is_numericint($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {
 		$config['system']['backupcount'] = $_POST['backupcount'];
 		$changedescr = $config['system']['backupcount'];
 	} else {
@@ -193,7 +193,7 @@ $section->addInput(new Form_Input(
 	'Backup Count',
 	'number',
 	$config['system']['backupcount']
-))->setHelp('Maximum number of old configurations to keep in the cache. By default this is 30 for a full install or 5 on NanoBSD. ');
+))->setHelp('Maximum number of old configurations to keep in the cache, 0 for no backups, or leave blank for the default value (' . $g['default_config_backup_count'] . ' for the current platform).');
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 

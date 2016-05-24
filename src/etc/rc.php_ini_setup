@@ -191,6 +191,7 @@ expose_php = Off
 implicit_flush = true
 magic_quotes_gpc = Off
 max_execution_time = 900
+request_terminate_timeout = 900
 max_input_time = 1800
 max_input_vars = 5000
 register_argc_argv = On

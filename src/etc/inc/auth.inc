@@ -881,7 +881,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
 		$ldapver = $authcfg['ldap_protver'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 		if (empty($ldapbndun) || empty($ldapbindpw)) {
 			$ldapanon = true;
 		} else {
@@ -965,7 +965,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}
@@ -1098,7 +1098,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}
@@ -1241,7 +1241,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		$ldapver = $authcfg['ldap_protver'];
 		$ldapname = $authcfg['name'];
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}

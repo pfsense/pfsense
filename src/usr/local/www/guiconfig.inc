@@ -68,8 +68,11 @@ if (!$nocsrf) {
 			csrf_conf('expires', $g['default_gui_timeout_mins'] * 60);
 		} elseif ($config['system']['webgui']['session_timeout'] > 0) {
 			csrf_conf('expires', $config['system']['webgui']['session_timeout'] * 60);
+		} else {
+			// else it's set but zero, i.e. no gui timeout, so set a very long csrf expiry of 50 years
+			// nsures no untoward side effects from alternatives of completely avoiding csrf_startup() or modifying csrf_magic.php
+			csrf_conf('expires', 50 * 31e6);
 		}
-		// else it's set but zero, i.e. no gui timeout, so don't set csrf expiry
 	}
 	require_once("csrf/csrf-magic.php");
 }

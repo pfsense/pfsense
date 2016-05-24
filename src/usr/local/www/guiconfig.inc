@@ -64,7 +64,7 @@
 if (!$nocsrf && $config['system']['webgui']['session_timeout'] !== "0") {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : $g['default_gui_timeout_mins'];
+		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? max($config['system']['webgui']['session_timeout'], 1) : $g['default_gui_timeout_mins'];
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");

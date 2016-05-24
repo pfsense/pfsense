@@ -2150,7 +2150,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	}
 	return $v;
 }
-function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validateonly=false) {
+function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $g, $config;
 
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2177,7 +2177,8 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
 			// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
 			mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
-			if (alias_get_type($name) == "urltable_ports") {
+			$type = ($type) ? $type : alias_get_type($name);	// If empty type passed, try to get it from config.
+			if ($type == "urltable_ports") {
 				$ports = parse_aliases_file($tmp_urltable_filename, "url_ports", "-1", true);
 				$ports = group_ports($ports, true);
 				file_put_contents($urltable_filename, implode("\n", $ports));

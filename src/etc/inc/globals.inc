@@ -151,11 +151,17 @@ if (file_exists("/etc/platform")) {
 	if ($g['platform'] == "nanobsd") {
 		$g['firmware_update_text']="pfSense-*.img.gz";
 		$g['hidebackupbeforeupgrade'] = true;
-
+		$g['default_config_backup_count'] = 5;
 	} else {
 		$g['firmware_update_text']="pfSense-*.tgz";
+		$g['default_config_backup_count'] = 30;
 	}
-}
+} else { 
+	// shouldn't happen but "just in case" no platform were detected 
+	$g['platform'] = 'undetected'; 
+	$g['default_config_backup_count'] = 30; 
+} 
+
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");

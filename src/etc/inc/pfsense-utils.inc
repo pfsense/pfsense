@@ -2175,13 +2175,15 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 		unlink_if_exists($tmp_urltable_filename);
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
-			// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
-			mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
 			if (alias_get_type($name) == "urltable_ports") {
+				// For port tables, delete anything that looks like comments
+				mwexec("/usr/bin/sed -i \"\" -E 's/\;.*//g; /^[[:space:]]*($|#)/d' ". escapeshellarg($tmp_urltable_filename));
 				$ports = parse_aliases_file($tmp_urltable_filename, "url_ports", "-1", true);
 				$ports = group_ports($ports, true);
 				file_put_contents($urltable_filename, implode("\n", $ports));
 			} else {
+				// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
+				mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
 				$urltable = parse_aliases_file($tmp_urltable_filename, "url", "-1", true);
 				if (is_array($urltable)) {
 					file_put_contents($urltable_filename, implode("\n", $urltable));

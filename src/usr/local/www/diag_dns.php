@@ -84,12 +84,33 @@ foreach ($a_aliases as $a) {
 }
 
 function resolve_host_addresses($host) {	
-	$host_esc = escapeshellarg($host);
 	$resolved = array();
-	exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | grep '\tA\t\|\tCNAME\t' | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
-	$resolved_v6 = array();
-	exec("/usr/bin/drill {$host_esc} AAAA | /usr/bin/grep {$host_esc} | grep '\tAAAA\t\|\tCNAME\t' | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved_v6);
-	return array_unique(array_merge($resolved, $resolved_v6));
+
+	$errreporting = error_reporting();
+	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
+
+	$dnsresult_cname = dns_get_record($host, DNS_CNAME);
+	$dnsresult_v4 = dns_get_record($host, DNS_A);
+	$dnsresult_v6 = dns_get_record($host, DNS_AAAA);	
+
+	error_reporting($errreporting);// restore original php warning/error settings.
+	
+	if (is_array($dnsresult_cname)) {
+		foreach($dnsresult_cname as $item) {
+			$resolved[] = $item['target'];
+		}
+	}
+	if (is_array($dnsresult_v4)) {
+		foreach($dnsresult_v4 as $item) {
+			$resolved[] = $item['ip'];
+		}
+	}
+	if (is_array($dnsresult_v6)) {
+		foreach($dnsresult_v6 as $item) {
+			$resolved[] = $item['ipv6'];
+		}
+	}
+	return $resolved;
 }
 
 if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {

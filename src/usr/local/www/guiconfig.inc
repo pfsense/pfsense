@@ -56,9 +56,12 @@
  *
  */
 
-/* Include authentication routines */
-/* THIS MUST BE ABOVE ALL OTHER CODE */
-if (!$nocsrf) {
+/* Include authentication routines
+   THIS MUST BE ABOVE ALL OTHER CODE
+   $config currently uses: 
+   UNSET = default, 0 = no expiry, value > 0 for timeout in minutes 
+*/
+if (!$nocsrf && $config['system']['webgui']['session_timeout'] !== "0") {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : $g['default_gui_timeout_mins'];

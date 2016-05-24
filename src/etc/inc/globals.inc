@@ -113,7 +113,7 @@ $g = array(
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
 	"language" => "en_US",
-	"default_gui_timeout" => 240
+	"default_gui_timeout_mins" => 240
 );
 
 /* IP TOS flags */

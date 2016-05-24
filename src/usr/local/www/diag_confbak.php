@@ -64,7 +64,7 @@
 require("guiconfig.inc");
 
 if (isset($_POST['backupcount'])) {
-	if (is_numericint($_POST['backupcount']) && ($_POST['backupcount'] >= 0)) {
+	if (is_numericint($_POST['backupcount'])) {
 		$config['system']['backupcount'] = $_POST['backupcount'];
 		$changedescr = $config['system']['backupcount'];
 	} else {

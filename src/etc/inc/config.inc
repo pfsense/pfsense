@@ -69,9 +69,9 @@ if (!$ARCH) {
 	$ARCH = php_uname("m");
 }
 
-// Set memory limit to 256M on amd64.
+// Set memory limit to 512M on amd64.
 if ($ARCH == "amd64") {
-	ini_set("memory_limit", "256M");
+	ini_set("memory_limit", "512M");
 } else {
 	ini_set("memory_limit", "128M");
 }

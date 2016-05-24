@@ -1894,6 +1894,7 @@ setup_pkg_repo() {
 		-e "s/%%PKG_REPO_BRANCH_RELEASE%%/${_pkg_repo_branch_release}/g" \
 		-e "s,%%PKG_REPO_SERVER_DEVEL%%,${_pkg_repo_server_devel},g" \
 		-e "s,%%PKG_REPO_SERVER_RELEASE%%,${_pkg_repo_server_release},g" \
+		-e "s,%%POUDRIERE_PORTS_NAME%%,${POUDRIERE_PORTS_NAME},g" \
 		-e "s/%%PRODUCT_NAME%%/${PRODUCT_NAME}/g" \
 		${_template} \
 		> ${_target}
@@ -2174,9 +2175,14 @@ finish() {
 
 pkg_repo_rsync() {
 	local _repo_path_param="${1}"
+	local _ignore_final_rsync="${2}"
 
 	if [ -z "${_repo_path_param}" -o ! -d "${_repo_path_param}" ]; then
 		return
+	fi
+
+	if [ -n "${SKIP_FINAL_RSYNC}" ]; then
+		_ignore_final_rsync="1"
 	fi
 
 	# Sanitize path
@@ -2245,7 +2251,7 @@ pkg_repo_rsync() {
 		"mkdir -p ${PKG_RSYNC_DESTDIR}"
 
 	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
-	if script -aq ${_logfile} rsync -ave "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+	if script -aq ${_logfile} rsync -Have "ssh -p ${PKG_RSYNC_SSH_PORT}" \
 		--timeout=60 --delete-delay ${_repo_path} \
 		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
 	then
@@ -2256,12 +2262,12 @@ pkg_repo_rsync() {
 		print_error_pfS
 	fi
 
-	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${SKIP_FINAL_RSYNC}" ]; then
+	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${_ignore_final_rsync}" ]; then
 		return
 	fi
 
 	if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
-		local _cmd="rsync -ave \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+		local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 			--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
 

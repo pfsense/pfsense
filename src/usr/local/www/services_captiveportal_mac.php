@@ -92,8 +92,8 @@ $a_cp =& $config['captiveportal'];
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
 $shortcut_section = "captiveportal";
 
-$actsmbl = array('pass' => '<font color="green" size="4">&#x2714;</font>&nbsp;' . gettext("Pass"),
-				 'block' => '<font color="red" size="4">&#x2718;</font>&nbsp;' . gettext("Block"));
+$actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
+	'block' => '<i class="fa fa-times text-danger"></i>&nbsp;' . gettext("Block"));
 
 if ($_POST) {
 	$pconfig = $_POST;
@@ -237,7 +237,7 @@ foreach ($a_cp[$cpzone]['passthrumac'] as $mac): ?>
 <?php
 $i++;
 endforeach; ?>
-		<tbody>
+		</tbody>
 	</table>
 <?php
 else:

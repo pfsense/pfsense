@@ -521,6 +521,13 @@ if ($act=="new" || $act=="edit"):
 		$pconfig['proxy_addr']
 	));
 
+	$section->addInput(new Form_Input(
+		'proxy_port',
+		'Proxy port',
+		number,
+		$pconfig['proxy_port']
+	));
+
 	$section->addInput(new Form_Select(
 		'proxy_authtype',
 		'Proxy Auth. - Extra options',

@@ -95,7 +95,7 @@ if ($_POST) {
 
 		if ($_POST['ipv6nat_enable'] == "yes") {
 			$config['diag']['ipv6nat']['enable'] = true;
-			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ip-address'];
+			$config['diag']['ipv6nat']['ipaddr'] = $_POST['ipv6nat_ipaddr'];
 		} else {
 			if ($config['diag']) {
 				if ($config['diag']['ipv6nat']) {
@@ -215,7 +215,7 @@ $group->add(new Form_Input(
 	$pconfig['ipv6nat_ipaddr']
 ))->setHelp('Enable IPv4 NAT encapsulation of IPv6 packets. <br/>This provides an '.
 	'RFC 2893 compatibility mechanism that can be used to tunneling IPv6 packets over '.
-	'IPv4 routing infrastructures. If enabled, don"t forget to add a firewall rule to '.
+	'IPv4 routing infrastructures. If enabled, don\'t forget to add a firewall rule to '.
 	'permit IPv6 packets.');
 
 $section->add($group);

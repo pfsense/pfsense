@@ -293,20 +293,6 @@ case "${POUDRIERE_PORTS_GIT_URL}" in
 		;;
 esac
 
-# Host to rsync pkg repos from poudriere
-export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}
-export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
-export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
-export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/ce/packages"}
-export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/ce/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
-
-# Final packages server
-export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"beta.pfsense.org"}
-export PKG_FINAL_RSYNC_USERNAME=${PKG_FINAL_RSYNC_USERNAME:-"wwwsync"}
-export PKG_FINAL_RSYNC_SSH_PORT=${PKG_FINAL_RSYNC_SSH_PORT:-"22"}
-export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
-export SKIP_FINAL_RSYNC=${SKIP_FINAL_RSYNC:-}
-
 unset _IS_RELEASE
 unset CORE_PKG_DATESTRING
 export TIMESTAMP_SUFFIX="-${DATESTRING}"
@@ -330,6 +316,25 @@ case "${PRODUCT_VERSION##*-}" in
 		echo ">>> ERROR: Invalid PRODUCT_VERSION format ${PRODUCT_VERSION}"
 		exit 1
 esac
+
+# Host to rsync pkg repos from poudriere
+export PKG_RSYNC_HOSTNAME=${PKG_RSYNC_HOSTNAME:-${STAGING_HOSTNAME}}
+export PKG_RSYNC_USERNAME=${PKG_RSYNC_USERNAME:-"wwwsync"}
+export PKG_RSYNC_SSH_PORT=${PKG_RSYNC_SSH_PORT:-"22"}
+export PKG_RSYNC_DESTDIR=${PKG_RSYNC_DESTDIR:-"/staging/ce/packages"}
+export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/ce/packages/logs/${POUDRIERE_BRANCH}/${TARGET}"}
+
+# Final packages server
+if [ -n "${_IS_RELEASE}" ]; then
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"pkg.pfsense.org"}
+	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/pkg"}
+else
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"beta.pfsense.org"}
+	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/beta/packages"}
+fi
+export PKG_FINAL_RSYNC_USERNAME=${PKG_FINAL_RSYNC_USERNAME:-"wwwsync"}
+export PKG_FINAL_RSYNC_SSH_PORT=${PKG_FINAL_RSYNC_SSH_PORT:-"22"}
+export SKIP_FINAL_RSYNC=${SKIP_FINAL_RSYNC:-}
 
 # pkg repo variables
 export USE_PKG_REPO_STAGING="1"

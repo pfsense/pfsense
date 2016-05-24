@@ -49,7 +49,7 @@ if (count($todo) > 0) {
 			continue;
 		}
 
-		$r = process_alias_urltable($t['name'], $t['url'], $t['freq'], $forceupdate);
+		$r = process_alias_urltable($t['name'], $t['type'], $t['url'], $t['freq'], $forceupdate);
 		if ($r == 1) {
 			$result = "";
 			// TODO: Change it when pf supports tables with ports

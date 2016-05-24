@@ -61,11 +61,15 @@
    $config currently uses: 
    UNSET = default, 0 = no expiry, value > 0 for timeout in minutes 
 */
-if (!$nocsrf && $config['system']['webgui']['session_timeout'] !== "0") {
+if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? max($config['system']['webgui']['session_timeout'], 1) : $g['default_gui_timeout_mins'];
-		csrf_conf('expires', $timeout_minutes * 60);
+		if (!isset($config['system']['webgui']['session_timeout'])) {
+			csrf_conf('expires', $g['default_gui_timeout_mins'] * 60);
+		} elseif ($config['system']['webgui']['session_timeout'] > 0) {
+			csrf_conf('expires', $config['system']['webgui']['session_timeout'] * 60);
+		}
+		// else it's set but zero, i.e. no gui timeout, so don't set csrf expiry
 	}
 	require_once("csrf/csrf-magic.php");
 }

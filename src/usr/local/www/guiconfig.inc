@@ -56,13 +56,23 @@
  *
  */
 
-/* Include authentication routines */
-/* THIS MUST BE ABOVE ALL OTHER CODE */
+/* Include authentication routines
+   THIS MUST BE ABOVE ALL OTHER CODE
+   $config currently uses: 
+   UNSET = default, 0 = no expiry, value > 0 for timeout in minutes 
+*/
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
-		csrf_conf('expires', $timeout_minutes * 60);
+		if (!isset($config['system']['webgui']['session_timeout'])) {
+			csrf_conf('expires', $g['default_gui_timeout_mins'] * 60);
+		} elseif ($config['system']['webgui']['session_timeout'] > 0) {
+			csrf_conf('expires', $config['system']['webgui']['session_timeout'] * 60);
+		} else {
+			// else it's set but zero, i.e. no gui timeout, so set a very long csrf expiry of 50 years
+			// nsures no untoward side effects from alternatives of completely avoiding csrf_startup() or modifying csrf_magic.php
+			csrf_conf('expires', 50 * 31e6);
+		}
 	}
 	require_once("csrf/csrf-magic.php");
 }

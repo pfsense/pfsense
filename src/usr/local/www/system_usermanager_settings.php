@@ -211,15 +211,22 @@ $form = new Form;
 
 $section = new Form_Section('Settings');
 
+// cope with non-exact hour timouts (for niceness!)
+$t  = $g['default_gui_timeout_mins'];
+if ($t >= 60) {
+	$t2 = intdiv($t, 60) . ' hours' . ($t % 60 <> 0 ? ' ' . ($t % 60) . ' minutes' : '') . ' (' . $t . ' minutes)';
+} else
+	$t2 = $t . ' minutes';
+}
+
 $section->addInput(new Form_Input(
 	'session_timeout',
 	'Session timeout',
 	'number',
 	$pconfig['session_timeout'],
 	[min => 0]
-))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
-	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
-	'risk!');
+))->setHelp('Time in minutes to expire idle management sessions. Leave empty for the default timeout of ' . $t2 .
+	'. Enter 0 to never expire sessions. NOTE: Long and never-expiring sessions are a security risk!');
 
 $auth_servers = array();
 foreach (auth_get_authserver_list() as $auth_server) {

@@ -669,7 +669,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$section->addInput(new Form_Input(
 		'expires',
 		'Expiration date',
-		'date',
+		'text',
 		$pconfig['expires']
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
 		'the expiration date');

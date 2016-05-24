@@ -186,14 +186,14 @@ if ($diff) {
 
 $form = new Form(false);
 
-$section = new Form_Section('Saved Configurations', 'savedconfig', COLLAPSIBLE|SEC_CLOSED);
+$section = new Form_Section('Configuration Backup Cache Settings', 'configsettings', COLLAPSIBLE|SEC_CLOSED);
 
 $section->addInput(new Form_Input(
 	'backupcount',
 	'Backup Count',
 	'number',
 	$config['system']['backupcount']
-))->setHelp('Maximum number of old configurations to keep. By default this is 30 for a full install or 5 on NanoBSD. ');
+))->setHelp('Maximum number of old configurations to keep in the cache. By default this is 30 for a full install or 5 on NanoBSD. ');
 
 $space = exec("/usr/bin/du -sh /conf/backup | /usr/bin/awk '{print $1;}'");
 

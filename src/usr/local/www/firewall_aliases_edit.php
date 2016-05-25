@@ -206,6 +206,7 @@ if ($_POST) {
 	$address = array();
 	$final_address_details = array();
 	$alias['name'] = $_POST['name'];
+	$alias['type'] = $_POST['type'];
 
 	if (preg_match("/urltable/i", $_POST['type'])) {
 		$address = "";
@@ -219,7 +220,7 @@ if ($_POST) {
 			$alias['updatefreq'] = $_POST['address_subnet0'] ? $_POST['address_subnet0'] : 7;
 			if (!is_URL($alias['url']) || empty($alias['url'])) {
 				$input_errors[] = gettext("A valid URL must be provided.");
-			} elseif (!process_alias_urltable($alias['name'], $alias['url'], 0, true, true)) {
+			} elseif (!process_alias_urltable($alias['name'], $alias['type'], $alias['url'], 0, true, true)) {
 				$input_errors[] = gettext("Unable to fetch usable data from URL") . " " . htmlspecialchars($alias['url']);
 			}
 			if ($_POST["detail0"] <> "") {

@@ -1957,8 +1957,8 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 			if (!empty($tmp_str)) {
 				$tmp = $tmp_str;
 			}
-			$valid = ($type == "url" && (is_ipaddr($tmp) || is_subnet($tmp))) ||
-				($type == "url_ports" && (is_port($tmp) || is_portrange($tmp)));
+			$valid = (($type == "url" || $type == "urltable") && (is_ipaddr($tmp) || is_subnet($tmp))) ||
+				(($type == "url_ports" || $type == "urltable_ports") && (is_port($tmp) || is_portrange($tmp)));
 			if ($valid) {
 				$items[] = $tmp;
 				if (count($items) == $max_items) {
@@ -2150,7 +2150,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	}
 	return $v;
 }
-function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validateonly=false) {
+function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
 	global $g, $config;
 
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2177,16 +2177,17 @@ function process_alias_urltable($name, $url, $freq, $forceupdate=false, $validat
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
 			// Convert lines that begin with '$' or ';' to comments '#' instead of deleting them.
 			mwexec("/usr/bin/sed -i \"\" -E 's/^[[:space:]]*($|#|;)/#/g; /^#/!s/\;.*//g;' ". escapeshellarg($tmp_urltable_filename));
-			if (alias_get_type($name) == "urltable_ports") {
-				$ports = parse_aliases_file($tmp_urltable_filename, "url_ports", "-1", true);
-				$ports = group_ports($ports, true);
-				file_put_contents($urltable_filename, implode("\n", $ports));
-			} else {
-				$urltable = parse_aliases_file($tmp_urltable_filename, "url", "-1", true);
-				if (is_array($urltable)) {
-					file_put_contents($urltable_filename, implode("\n", $urltable));
-				}
+
+			$type = ($type) ? $type : alias_get_type($name);	// If empty type passed, try to get it from config.
+
+			$parsed_contents = parse_aliases_file($tmp_urltable_filename, $type, "-1", true);
+			if ($type == "url_ports") {
+				$parsed_contents = group_ports($parsed_contents, true);
 			}
+			if (is_array($parsed_contents)) {
+				file_put_contents($urltable_filename, implode("\n", $parsed_contents));
+			}
+
 			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
 			if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
 				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz");

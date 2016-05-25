@@ -2181,7 +2181,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 			$type = ($type) ? $type : alias_get_type($name);	// If empty type passed, try to get it from config.
 
 			$parsed_contents = parse_aliases_file($tmp_urltable_filename, $type, "-1", true);
-			if ($type == "url_ports") {
+			if ($type == "urltable_ports") {
 				$parsed_contents = group_ports($parsed_contents, true);
 			}
 			if (is_array($parsed_contents)) {

@@ -455,7 +455,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
-		if ($pconfig['iketype'] != 'ikev1') {
+		if ($pconfig['iketype'] == 'ikev2') {
 			unset($ph1ent['mode']);
 		} else {
 			$ph1ent['mode'] = $pconfig['mode'];

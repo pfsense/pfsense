@@ -1134,17 +1134,17 @@ events.push(function() {
 	//});
 
 	 // Peer identifier
-	$('#peerid_type').click(function () {
+	$('#peerid_type').change(function () {
 		peeridsel_change();
 	});
 
 	 // My identifier
-	$('#myid_type').click(function () {
+	$('#myid_type').change(function () {
 		myidsel_change();
 	});
 
 	 // ike type
-	$('#iketype').click(function () {
+	$('#iketype').change(function () {
 		iketype_change();
 	});
 
@@ -1154,7 +1154,7 @@ events.push(function() {
 	});
 
 	 // authentication method
-	$('#ealgo').click(function () {
+	$('#ealgo').change(function () {
 		ealgosel_change(<?=$keyset?>);
 	});
 

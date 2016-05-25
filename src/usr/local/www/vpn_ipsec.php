@@ -355,7 +355,7 @@ display_top_tabs($tab_array);
 						<td id="frd<?=$i?>">
 					<?=$spans?>
 					<?php
-					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1") {
+					if (empty($ph1ent['iketype']) || $ph1ent['iketype'] == "ikev1" || $ph1ent['iketype'] == "auto") {
 						echo "{$ph1ent['mode']}";
 					}
 					?>

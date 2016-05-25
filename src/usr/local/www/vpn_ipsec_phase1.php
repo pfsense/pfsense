@@ -455,7 +455,7 @@ if ($_POST) {
 	if (!$input_errors) {
 		$ph1ent['ikeid'] = $pconfig['ikeid'];
 		$ph1ent['iketype'] = $pconfig['iketype'];
-		if ($pconfig['iketype'] != 'ikev1') {
+		if ($pconfig['iketype'] == 'ikev2') {
 			unset($ph1ent['mode']);
 		} else {
 			$ph1ent['mode'] = $pconfig['mode'];
@@ -1134,17 +1134,17 @@ events.push(function() {
 	//});
 
 	 // Peer identifier
-	$('#peerid_type').click(function () {
+	$('#peerid_type').change(function () {
 		peeridsel_change();
 	});
 
 	 // My identifier
-	$('#myid_type').click(function () {
+	$('#myid_type').change(function () {
 		myidsel_change();
 	});
 
 	 // ike type
-	$('#iketype').click(function () {
+	$('#iketype').change(function () {
 		iketype_change();
 	});
 
@@ -1154,7 +1154,7 @@ events.push(function() {
 	});
 
 	 // authentication method
-	$('#ealgo').click(function () {
+	$('#ealgo').change(function () {
 		ealgosel_change(<?=$keyset?>);
 	});
 

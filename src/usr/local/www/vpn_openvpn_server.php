@@ -1589,7 +1589,7 @@ events.push(function() {
 	});
 
 	 // Mode
-	$('#mode').click(function () {
+	$('#mode').change(function () {
 		mode_change();
 		tuntap_change();
 	});

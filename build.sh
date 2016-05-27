@@ -61,6 +61,7 @@ usage() {
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
+	echo "		--rsync-repos - rsync pkg repos"
 	echo "		--print-flags - Show current builder configuration"
 	echo "		--clean-builder - clean all builder used data/resources"
 	echo "		--build-kernels - build all configured kernels"
@@ -123,6 +124,9 @@ while test "$1" != ""; do
 			;;
 		--setup)
 			BUILDACTION="builder_setup"
+			;;
+		--rsync-repos)
+			BUILDACTION="rsync_repos"
 			;;
 		--build-kernels)
 			BUILDACTION="buildkernels"
@@ -283,6 +287,10 @@ case $BUILDACTION in
 	;;
 	update_poudriere_ports)
 		poudriere_update_ports
+	;;
+	rsync_repos)
+		unset SKIP_FINAL_RSYNC
+		pkg_repo_rsync "${CORE_PKG_PATH}"
 	;;
 	update_pkg_repo)
 		if [ -z "${DO_NOT_UPLOAD}" -a ! -f /usr/local/bin/rsync ]; then

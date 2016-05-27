@@ -146,11 +146,7 @@ export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
-if [ "${TARGET}" = "i386" ]; then
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME} ${PRODUCT_NAME}_wrap ${PRODUCT_NAME}_wrap_vga"}
-else
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
-fi
+export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
 
 # XXX: Poudriere doesn't like ssh short form
 case "${FREEBSD_REPO_BASE}" in
@@ -187,11 +183,7 @@ fi
 export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
 export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 
-if [ "${TARGET}" = "i386" ]; then
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
-else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
-fi
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
 
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}

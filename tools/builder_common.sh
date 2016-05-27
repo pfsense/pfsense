@@ -920,10 +920,6 @@ ova_setup_ovf_template() {
 		local _os_id="78"
 		local _os_type="freebsd64Guest"
 		local _os_descr="FreeBSD 64-Bit"
-	elif [ "${TARGET}" = "i386" ]; then
-		local _os_id="42"
-		local _os_type="freebsdGuest"
-		local _os_descr="FreeBSD"
 	else
 		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
 		print_error_pfS

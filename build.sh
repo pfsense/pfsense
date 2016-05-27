@@ -435,14 +435,6 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_memstick_adi_image
 			;;
 		nanobsd|nanobsd-vga)
-			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
-			elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
-			elif [ "${TARGET}" = "amd64" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
-			fi
-			# Create the NanoBSD disk image
 			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 			;;
 		ova)

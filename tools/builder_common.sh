@@ -374,44 +374,6 @@ install_default_kernel() {
 	unset KERNEL_NAME
 }
 
-# Creates a full update file
-create_Full_update_tarball() {
-	mkdir -p $UPDATESDIR
-
-	customize_stagearea_for_image "fullupdate"
-	install_default_kernel ${DEFAULT_KERNEL}
-
-	rm -rf ${FINAL_CHROOT_DIR}/cf
-	rm -rf ${FINAL_CHROOT_DIR}/conf
-	rm -f ${FINAL_CHROOT_DIR}/etc/dh-parameters.*
-	rm -f ${FINAL_CHROOT_DIR}/etc/rc.conf
-	rm -f ${FINAL_CHROOT_DIR}/etc/pwd.db 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/group 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/spwd.db 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/passwd 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/master.passwd 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/fstab 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/bogons 2>/dev/null
-	# Remove loader.conf and friends.  Ticket #560
-	rm ${FINAL_CHROOT_DIR}/boot/loader.conf 2>/dev/null
-	rm ${FINAL_CHROOT_DIR}/boot/loader.conf.local 2>/dev/null
-
-	# Old systems will run (pre|post)_upgrade_command from /tmp
-	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command ]; then
-		cp -p \
-			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command \
-			${FINAL_CHROOT_DIR}/tmp
-	fi
-	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command ]; then
-		cp -p \
-			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command \
-			${FINAL_CHROOT_DIR}/tmp
-	fi
-
-	echo ">>> Creating ${UPDATES_TARBALL_FILENAME} ..." | tee -a ${LOGFILE}
-	tar --exclude=./dev -czPf ${UPDATES_TARBALL_FILENAME} -C ${FINAL_CHROOT_DIR} .
-}
-
 # Outputs various set variables aka env
 print_flags() {
 
@@ -432,7 +394,6 @@ print_flags() {
 	printf "                    SRC_CONF: %s\n" $SRC_CONF
 	printf "                     ISOPATH: %s\n" $ISOPATH
 	printf "                MEMSTICKPATH: %s\n" $MEMSTICKPATH
-	printf "    UPDATES_TARBALL_FILENAME: %s\n" $UPDATES_TARBALL_FILENAME
 if [ -n "$SHOW_ENV" ]; then
 	for LINE in $(env | egrep -v '(terminal|PASS|NAME|USER|SSH|GROUP|HOST)'); do
 		echo "SHOW_ENV: $LINE"
@@ -2470,12 +2431,6 @@ snapshots_copy_to_staging_iso_updates() {
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done
 
-	if [ -f "${UPDATES_TARBALL_FILENAME}" ]; then
-		create_sha256 ${UPDATES_TARBALL_FILENAME}
-		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
-	fi
-
 	if [ -f "${OVAPATH}" ]; then
 		mkdir -p ${STAGINGAREA}/virtualization
 		create_sha256 ${OVAPATH}
@@ -2530,12 +2485,6 @@ snapshots_scp_files() {
 
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
 	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
-
-	LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
-		${RSYNCPATH}/.updaters/latest.tgz"
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
-		${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
 	for i in ${FLASH_SIZE}
 	do

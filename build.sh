@@ -51,8 +51,8 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all | none ]"
-	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi fullupdate"
+	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | all | none ]"
+	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
@@ -199,7 +199,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -358,7 +358,7 @@ fi
 if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="iso fullupdate nanobsd nanobsd-vga memstick memstickserial"
+	_IMAGESTOBUILD="iso nanobsd nanobsd-vga memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
 	fi
@@ -444,9 +444,6 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 		memstickadi)
 			create_memstick_adi_image
-			;;
-		fullupdate)
-			create_Full_update_tarball
 			;;
 		nanobsd|nanobsd-vga)
 			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then

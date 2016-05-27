@@ -436,15 +436,8 @@ make_world() {
 nanobsd_image_filename() {
 	local _size="$1"
 	local _type="$2"
-	local _upgrade="$3"
 
-	if [ -z "$_upgrade" ]; then
-		local _template=${NANOBSD_IMG_TEMPLATE}
-	else
-		local _template=${NANOBSD_UPGRADE_TEMPLATE}
-	fi
-
-	echo "$_template" | sed \
+	echo "$NANOBSD_IMG_TEMPLATE" | sed \
 		-e "s,%%SIZE%%,${_size},g" \
 		-e "s,%%TYPE%%,${_type},g"
 
@@ -574,7 +567,6 @@ create_nanobsd_diskimage () {
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
 		IMG="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1})"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} 1)"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -751,9 +743,6 @@ awk '
 			">>> [nanoo] NANO_CONFSIZE is not set. Not adding a /conf partition.. You sure about this??" | tee -a ${LOGFILE}
 		fi
 
-		echo ">>> [nanoo] Creating NanoBSD upgrade file from first slice..." | tee -a ${LOGFILE}
-		dd if=/dev/${MD}s1 of=$IMGUPDATE conv=sparse bs=64k 2>&1 >> ${LOGFILE}
-
 		mdconfig -d -u $MD
 		# Restore default action
 		trap "-" 1 2 15 EXIT
@@ -762,14 +751,9 @@ awk '
 		# 3 megabytes.  If either image is under 20 megabytes
 		# in size then error out.
 		IMGSIZE=$(stat -f "%z" ${IMG})
-		IMGUPDATESIZE=$(stat -f "%z" ${IMGUPDATE})
 		CHECKSIZE="20040710"
 		if [ "$IMGSIZE" -lt "$CHECKSIZE" ]; then
 			echo ">>> ERROR: Something went wrong when building NanoBSD.  The image size is under 20 megabytes!" | tee -a ${LOGFILE}
-			print_error_pfS
-		fi
-		if [ "$IMGUPDATESIZE" -lt "$CHECKSIZE" ]; then
-			echo ">>> ERROR: Something went wrong when building NanoBSD upgrade image.  The image size is under 20 megabytes!" | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 
@@ -778,13 +762,9 @@ awk '
 
 		gzip -qf $IMG &
 		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
-		gzip -qf $IMGUPDATE &
-		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 	done
 
 	unset IMG
-	unset IMGUPDATE
-	unset IMGUPDATESIZE
 	unset IMGSIZE
 
 	ls -lah $IMAGES_FINAL_DIR
@@ -2364,27 +2344,12 @@ snapshots_copy_to_staging_nanobsd() {
 	for NANOTYPE in nanobsd nanobsd-vga; do
 		for FILESIZE in ${1}; do
 			FILENAMEFULL="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE}).gz"
-			FILENAMEUPGRADE="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} 1).gz"
 			mkdir -p $STAGINGAREA/nanobsd
-			mkdir -p $STAGINGAREA/nanobsdupdates
 
 			cp -l $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
-			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
 
 			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
 				create_sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL
-			fi
-			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				create_sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE
-			fi
-
-			# Copy NanoBSD auto update:
-			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				cp -l $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
-				create_sha256 $STAGINGAREAA/latest-${NANOTYPE}-$FILESIZE.img.gz
-				# NOTE: Updates need a file with output similar to date output
-				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
-				cp $BUILTDATESTRINGFILE $STAGINGAREA/version-${NANOTYPE}-$FILESIZE
 			fi
 		done
 	done
@@ -2430,7 +2395,6 @@ snapshots_scp_files() {
 
 	# Ensure directory(s) are available
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/installer"
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
 	if [ -d $STAGINGAREA/virtualization ]; then
 		ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/virtualization"
@@ -2442,12 +2406,8 @@ snapshots_scp_files() {
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/nanobsd/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
 	if [ -d $STAGINGAREA/virtualization ]; then
 		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
 			${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/virtualization/
@@ -2464,18 +2424,6 @@ snapshots_scp_files() {
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
 		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
-
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
-
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd-vga 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 	done
 
 	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \

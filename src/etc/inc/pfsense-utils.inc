@@ -974,14 +974,14 @@ function setup_serial_port($when = "save", $path = "") {
 		$serial_type = 'std.' . $serialspeed;
 	} else {
 		$console_type = 'al.Pc';
-		$serial_type = 'al.' . $serialspeed;
+		$serial_type = '3wire';
 	}
 	foreach ($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0")) {
 			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
 		} else if (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
-			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	vt100	{$on_off}	secure\n");
 		} else {
 			fwrite($fd, $tty . "\n");
 		}

@@ -2267,11 +2267,28 @@ pkg_repo_rsync() {
 	fi
 
 	if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
+		# Send .real* directories first to prevent having a broken repo while transfer happens
 		local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+			--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/*\" \
+			--exclude=\"*\" \
+			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
+
+		echo -n ">>> Sending updated packages to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
+		if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+			${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} ${_cmd} >/dev/null 2>&1; then
+			echo "Done!" | tee -a ${_logfile}
+		else
+			echo "Failed!" | tee -a ${_logfile}
+			echo ">>> ERROR: An error occurred sending repo to final hostname"
+			print_error_pfS
+		fi
+
+		_cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 			--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
 			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
 
-		echo -n ">>> Sending updated repositories to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
+		echo -n ">>> Sending updated repositories metadata to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
 		if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
 			${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} ${_cmd} >/dev/null 2>&1; then
 			echo "Done!" | tee -a ${_logfile}

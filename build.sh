@@ -62,7 +62,6 @@ usage() {
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
 	echo "		--rsync-repos - rsync pkg repos"
-	echo "		--print-flags - Show current builder configuration"
 	echo "		--clean-builder - clean all builder used data/resources"
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
@@ -158,10 +157,6 @@ while test "$1" != ""; do
 			;;
 		--update-sources)
 			BUILDACTION="updatesources"
-			;;
-		--print-flags)
-			BUILDACTION="printflags"
-			_USE_OLD_DATESTRING=YES
 			;;
 		--clean-builder)
 			BUILDACTION="cleanbuilder"
@@ -260,9 +255,6 @@ case $BUILDACTION in
 	;;
 	cleanbuilder)
 		clean_builder
-	;;
-	printflags)
-		print_flags
 	;;
 	images)
 		# It will be handled below
@@ -394,9 +386,6 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 
 	# Ensure binaries are present that builder system requires
 	builder_setup
-
-	# Output build flags
-	print_flags
 
 	# Check to see if pre-staging will be hosted on ram
 	prestage_on_ram_setup

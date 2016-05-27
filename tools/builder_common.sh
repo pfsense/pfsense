@@ -374,34 +374,6 @@ install_default_kernel() {
 	unset KERNEL_NAME
 }
 
-# Outputs various set variables aka env
-print_flags() {
-
-	echo
-	printf "             Product version: %s\n" $PRODUCT_VERSION
-	printf "                   Stage DIR: %s\n" $STAGE_CHROOT_DIR
-	printf "                 Updates dir: %s\n" $UPDATESDIR
-	printf " Image Preparation Stage DIR: %s\n" $FINAL_CHROOT_DIR
-	printf "                  Source DIR: %s\n" $FREEBSD_SRC_DIR
-	printf "          FreeBSD repository: %s\n" $FREEBSD_REPO_BASE
-	printf "          FreeBSD-src branch: %s\n" $FREEBSD_BRANCH
-	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
-	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
-	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
-	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
-	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
-	printf "                     OVFVMDK: %s\n" $OVFVMDK
-	printf "                    SRC_CONF: %s\n" $SRC_CONF
-	printf "                     ISOPATH: %s\n" $ISOPATH
-	printf "                MEMSTICKPATH: %s\n" $MEMSTICKPATH
-if [ -n "$SHOW_ENV" ]; then
-	for LINE in $(env | egrep -v '(terminal|PASS|NAME|USER|SSH|GROUP|HOST)'); do
-		echo "SHOW_ENV: $LINE"
-	done
-fi
-	echo
-}
-
 # This builds FreeBSD (make buildworld)
 # Imported from FreeSBIE
 make_world() {

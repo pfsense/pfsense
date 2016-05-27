@@ -484,8 +484,7 @@ if [ -n "${SNAPSHOTS}" ]; then
 	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	elif [ "${IMAGETYPE}" != "none" ]; then
-		snapshots_copy_to_staging_iso_updates
-		snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+		snapshots_create_sha256
 		# SCP files to snapshot web hosting area
 		if [ -z "${DO_NOT_UPLOAD}" ]; then
 			snapshots_scp_files

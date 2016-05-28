@@ -705,7 +705,7 @@ EOPP;
 				if ($octet < $start_octet) {
 					continue;
 				}
-				$ptr_domain .= (empty($ptr_domain) ? '' : '.');
+				$ptr_domain .= ((empty($ptr_domain) && $ptr_domain !== "0") ? '' : '.');
 				$ptr_domain .= $revsubnet[$octet];
 			}
 			$ptr_domain .= ".in-addr.arpa";

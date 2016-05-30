@@ -179,7 +179,7 @@ if (!empty($serialports)) {
 		'ppsport',
 		'Serial Port',
 		$pconfig['port'],
-			$splist
+		['' => gettext('None')] + $splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the PPS source attached. ');
 }
 

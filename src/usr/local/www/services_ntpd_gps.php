@@ -271,7 +271,7 @@ if (!empty($serialports)) {
 		'gpsport',
 		'Serial Port',
 		$pconfig['port'],
-		$splist
+		['' => gettext('None')] + $splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(

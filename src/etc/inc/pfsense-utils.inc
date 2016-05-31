@@ -1144,27 +1144,17 @@ function is_pppoe_server_enabled() {
 	return $pppoeenable;
 }
 
-function convert_seconds_to_hms($sec) {
-	$min = $hrs = 0;
-	if ($sec != 0) {
-		$min = floor($sec/60);
-		$sec %= 60;
+function convert_seconds_to_dhms($sec) {
+	if (!is_numericint($sec)) {
+		return '-';
 	}
-	if ($min != 0) {
-		$hrs = floor($min/60);
-		$min %= 60;
-	}
-	if ($sec < 10) {
-		$sec = "0".$sec;
-	}
-	if ($min < 10) {
-		$min = "0".$min;
-	}
-	if ($hrs < 10) {
-		$hrs = "0".$hrs;
-	}
-	$result = $hrs.":".$min.":".$sec;
-	return $result;
+	// FIXME: When we move to PHP 7 we can use "intdiv($sec % X, Y)" etc
+	list($d, $h, $m, $s) = array(	(int)($sec/86400),
+					(int)(($sec % 86400)/3600),
+					(int)(($sec % 3600)/60),
+					$sec % 60
+				);
+	return ($d > 0 ? $d . 'd ' : '') . sprintf('%02d:%02d:%02d', $h, $m, $s);
 }
 
 /* Compute the total uptime from the ppp uptime log file in the conf directory */
@@ -1177,7 +1167,7 @@ function get_ppp_uptime($port) {
 		foreach ($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
 		}
-		return convert_seconds_to_hms($sec);
+		return convert_seconds_to_dhms($sec);
 	} else {
 		$total_time = gettext("No history data found!");
 		return $total_time;
@@ -1351,7 +1341,7 @@ function get_interface_info($ifdescr) {
 
 	if (file_exists("{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid")) {
 		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
-		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
+		$ifinfo['ppp_uptime'] = convert_seconds_to_dhms($sec);
 	}
 
 	if ($ifinfo['status'] == "up") {

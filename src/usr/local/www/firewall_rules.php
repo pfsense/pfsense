@@ -660,8 +660,8 @@ foreach ($a_filter as $filteri => $filterent):
 						$sched_caption_escaped . '" data-html="true">';
 					$schedule_span_end = "</a>";
 				}
+				$idx++;
 			}
-			$idx++;
 		}
 		$printicon = false;
 		$alttext = "";

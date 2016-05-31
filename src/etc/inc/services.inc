@@ -2581,7 +2581,7 @@ function configure_cron() {
 
 	if (is_array($config['cron']['item'])) {
 		$crontab_contents .= "#\n";
-		$crontab_contents .= "# " . gettext("pfSense specific crontab entries") . "\n";
+		$crontab_contents .= "# pfSense specific crontab entries\n";
 		$crontab_contents .= "# " .gettext("Created:") . " " . date("F j, Y, g:i a") . "\n";
 		$crontab_contents .= "#\n";
 

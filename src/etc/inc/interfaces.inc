@@ -4238,7 +4238,7 @@ retry 15;
 select-timeout 0;
 initial-interval 1;
 	{$dhclientconf_hostname}
-	script "/sbin/dhclient-script";
+	script "/usr/local/sbin/pfSense-dhclient-script";
 EOD;
 
 	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {

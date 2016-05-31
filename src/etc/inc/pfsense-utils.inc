@@ -1151,7 +1151,7 @@ function convert_seconds_to_dhms($sec, $showhoursonly = false) {
 	}
 	// FIXME: When we move to PHP 7 we can use "intdiv($sec % X, Y)" etc
 	list($d, $h, $m, $s) = array(	(int)($showhoursonly ? 0 : $sec/86400),
-					(int)($showhoursonly ? $sec : $sec % 86400)/3600),
+					(int)(($showhoursonly ? $sec : $sec % 86400)/3600),
 					(int)(($sec % 3600)/60),
 					$sec % 60
 				);

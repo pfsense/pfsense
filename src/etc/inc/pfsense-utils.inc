@@ -1929,6 +1929,11 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
 	 */
 
+	if (!file_exists($filename)) {
+		log_error(sprintf(gettext("Could not process non-existent file from alias: %s"), $filename));
+		return null;
+	}
+
 	if (filesize($filename) == 0) {
 		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));
 		return null;

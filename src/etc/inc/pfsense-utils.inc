@@ -978,7 +978,7 @@ function setup_serial_port($when = "save", $path = "") {
 	}
 	foreach ($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0")) {
-			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	xterm	on	secure\n");
 		} else if (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
 			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	vt100	{$on_off}	secure\n");

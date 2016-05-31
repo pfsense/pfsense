@@ -59,13 +59,13 @@ function rescue_detect_keypress() {
 	}
 	// If R or I was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
-		putenv("TERM=cons25");
+		putenv("TERM=xterm");
 		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
+		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
 	} else {
-		putenv("TERM=cons25");
+		putenv("TERM=xterm");
 		echo "\n\nInstaller mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+		passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer");
 	}
 
 	passthru("/etc/rc.reboot");

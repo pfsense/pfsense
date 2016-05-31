@@ -68,6 +68,23 @@
 
 require("guiconfig.inc");
 
+// delete arp entry
+if (isset($_GET['deleteentry'])) {
+	$ip = $_GET['deleteentry'];
+	if (is_ipaddrv4($ip)) {
+		$ret = mwexec("arp -d " . $_GET['deleteentry'], true);
+	} else {
+		$ret = 1;
+	}
+	if ($ret) {
+		$savemsg = sprintf(gettext("%s is not a valid IPv4 address or could not be deleted."), $ip);
+		$savemsgtype = 'alert-warning';
+	} else {
+		$savemsg = sprintf(gettext("The ARP cache entry for %s has been deleted."), $ip);
+		$savemsgtype = 'success';
+	}
+}
+
 function leasecmp($a, $b) {
 	return strcmp($a[$_GET['order']], $b[$_GET['order']]);
 }
@@ -286,6 +303,10 @@ function _getHostName($mac, $ip) {
 $pgtitle = array(gettext("Diagnostics"), gettext("ARP Table"));
 include("head.inc");
 
+// Handle save msg if defined
+if ($savemsg) {
+	print_info_box(htmlentities($savemsg), $savemsgtype);
+}
 ?>
 
 <!-- On modern hardware the table will load so fast you may never see this! -->
@@ -346,6 +367,7 @@ $mac_man = load_mac_manufacturer_table();
 				<th><?= gettext("IP address")?></th>
 				<th><?= gettext("MAC address")?></th>
 				<th><?= gettext("Hostname")?></th>
+				<th data-sortable="false"><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -367,6 +389,9 @@ $mac_man = load_mac_manufacturer_table();
 	?>
 				</td>
 				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
+				<td>
+					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>"></a>
+				</td>
 			</tr>
 		<?php endforeach?>
 		</tbody>

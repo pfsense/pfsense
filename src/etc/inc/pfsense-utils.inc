@@ -1144,13 +1144,14 @@ function is_pppoe_server_enabled() {
 	return $pppoeenable;
 }
 
-function convert_seconds_to_dhms($sec) {
+/* Optional arg forces hh:mm:ss without days */
+function convert_seconds_to_dhms($sec, $showhoursonly = false) {
 	if (!is_numericint($sec)) {
 		return '-';
 	}
 	// FIXME: When we move to PHP 7 we can use "intdiv($sec % X, Y)" etc
-	list($d, $h, $m, $s) = array(	(int)($sec/86400),
-					(int)(($sec % 86400)/3600),
+	list($d, $h, $m, $s) = array(	(int)($showhoursonly ? 0 : $sec/86400),
+					(int)($showhoursonly ? $sec : $sec % 86400)/3600),
 					(int)(($sec % 3600)/60),
 					$sec % 60
 				);

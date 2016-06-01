@@ -1487,6 +1487,58 @@ function is_account_disabled($username) {
 	return false;
 }
 
+function get_user_profile($username) {
+	global $config;
+	$user_profile = array();
+	$user_profile['widgets']['sequence'] = $config['widgets']['sequence'];
+	$user_profile['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+	$user_profile['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
+	$user_profile['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+	$user_profile['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
+	$user_profile['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+	$user_profile['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
+	$user_profile['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
+	$user_profile['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
+	$user_profile['webgui']['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
+	$user = getUserEntry($username);
+	if (isset($user['customprofile'])) {
+		if (isset($config['profiles'][$username]['widgets'])) {
+			// This includes the 'sequence', and any widgetname-config per-widget settings.
+			$user_profile['widgets'] = $config['profiles'][$username]['widgets'];
+		}
+		if (isset($user['dashboardcolumns'])) {
+			$user_profile['webgui']['dashboardcolumns'] = $user['dashboardcolumns'];
+		}
+		if (isset($user['webguicss'])) {
+			$user_profile['webgui']['webguicss'] = $user['webguicss'];
+		}
+		$user_profile['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
+		$user_profile['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
+		$user_profile['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);
+		$user_profile['webgui']['systemlogsfilterpanel'] = isset($user['systemlogsfilterpanel']);
+		$user_profile['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
+		$user_profile['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);
+		$user_profile['webgui']['pagenamefirst'] = isset($user['pagenamefirst']);
+	}
+
+	if ($user_profile['webgui']['dashboardcolumns'] < 1) {
+		$user_profile['webgui']['dashboardcolumns'] = 2;
+	}
+
+	return $user_profile;
+}
+
+function set_widget_profile($username, $widget_profile) {
+	global $config;
+	$user = getUserEntry($username);
+	if (isset($user['customprofile'])) {
+		$config['profiles'][$username]['widgets'] = $widget_profile;
+	} else {
+		$config['widgets'] = $widget_profile;
+	}
+	write_config(gettext("Widget configuration has been changed."));
+}
+
 function auth_get_authserver($name) {
 	global $config;
 

@@ -60,7 +60,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
 
-if (isset($config['system']['webgui']['pagenamefirst'])) {
+if ($user_profile['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 } else {
 	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
@@ -68,9 +68,9 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 
 $cssfile = "/css/pfSense.css";
 
-if (isset($config['system']['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $config['system']['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $config['system']['webgui']['webguicss'];
+if (isset($user_profile['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/css/" . $user_profile['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $user_profile['webgui']['webguicss'];
 	}
 }
 
@@ -424,11 +424,11 @@ if (!$g['disablehelpmenu']) {
 
 $menuclass = "static";
 
-if (isset($config['system']['webgui']['webguifixedmenu'])) {
+if ($user_profile['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
 }
 
-$numColumns = $config['system']['webgui']['dashboardcolumns'];
+$numColumns = $user_profile['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';

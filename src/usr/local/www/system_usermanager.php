@@ -94,6 +94,16 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
 	$pconfig['expires'] = $a_user[$id]['expires'];
+	$pconfig['customprofile'] = isset($a_user[$id]['customprofile']);
+	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
+	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
+	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
 	$pconfig['uid'] = $a_user[$id]['uid'];
@@ -298,6 +308,7 @@ if ($_POST['save']) {
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['expires'] = $_POST['expires'];
+		$userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
@@ -305,6 +316,60 @@ if ($_POST['save']) {
 			$userent['disabled'] = true;
 		} else {
 			unset($userent['disabled']);
+		}
+
+		if ($_POST['customprofile']) {
+			$userent['customprofile'] = true;
+		} else {
+			unset($userent['customprofile']);
+		}
+
+		if ($_POST['webguicss']) {
+			$userent['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($userent['webguicss']);
+		}
+
+		if ($_POST['webguifixedmenu']) {
+			$userent['webguifixedmenu'] = $_POST['webguifixedmenu'];
+		} else {
+			unset($userent['webguifixedmenu']);
+		}
+
+		if ($_POST['dashboardavailablewidgetspanel']) {
+			$userent['dashboardavailablewidgetspanel'] = true;
+		} else {
+			unset($userent['dashboardavailablewidgetspanel']);
+		}
+
+		if ($_POST['systemlogsfilterpanel']) {
+			$userent['systemlogsfilterpanel'] = true;
+		} else {
+			unset($userent['systemlogsfilterpanel']);
+		}
+
+		if ($_POST['systemlogsmanagelogpanel']) {
+			$userent['systemlogsmanagelogpanel'] = true;
+		} else {
+			unset($userent['systemlogsmanagelogpanel']);
+		}
+
+		if ($_POST['statusmonitoringsettingspanel']) {
+			$userent['statusmonitoringsettingspanel'] = true;
+		} else {
+			unset($userent['statusmonitoringsettingspanel']);
+		}
+
+		if ($_POST['webguileftcolumnhyper']) {
+			$userent['webguileftcolumnhyper'] = true;
+		} else {
+			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['pagenamefirst']) {
+			$userent['pagenamefirst'] = true;
+		} else {
+			unset($userent['pagenamefirst']);
 		}
 
 		if (isset($id) && $a_user[$id]) {
@@ -674,6 +739,95 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
 		'the expiration date');
 
+	$section->addInput(new Form_Checkbox(
+		'customprofile',
+		'Custom profile',
+		'Use individual customized GUI options and dashboard layout for this user.',
+		$pconfig['customprofile']
+	));
+
+	$csslist = get_css_files();
+
+	if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
+		$pconfig['webguicss'] = "pfSense.css";
+	}
+
+	$section->addInput(new Form_Select(
+		'webguicss',
+		'Theme',
+		$pconfig['webguicss'],
+		$csslist
+	))->setHelp(sprintf(gettext('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s'), '<span id="csstxt"></span>'));
+
+	$section->addInput(new Form_Select(
+		'webguifixedmenu',
+		'Top Navigation',
+		$pconfig['webguifixedmenu'],
+		["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
+	))->setHelp("The fixed option is intended for large screens only.");
+
+	if (($pconfig['dashboardcolumns'] < 1) || ($pconfig['dashboardcolumns'] > 4)) {
+		$pconfig['dashboardcolumns'] = 2;
+	}
+
+	$section->addInput(new Form_Input(
+		'dashboardcolumns',
+		'Dashboard Columns',
+		'number',
+		$pconfig['dashboardcolumns'],
+		[min => 1, max => 4]
+	));
+
+	$group = new Form_Group('Associated Panels Show/Hide');
+
+	$group->add(new Form_Checkbox(
+		'dashboardavailablewidgetspanel',
+		null,
+		'Available Widgets',
+		$pconfig['dashboardavailablewidgetspanel']
+		))->setHelp('Show the Available Widgets panel on the Dashboard.');
+
+	$group->add(new Form_Checkbox(
+		'systemlogsfilterpanel',
+		null,
+		'Log Filter',
+		$pconfig['systemlogsfilterpanel']
+	))->setHelp('Show the Log Filter panel in System Logs.');
+
+	$group->add(new Form_Checkbox(
+		'systemlogsmanagelogpanel',
+		null,
+		'Manage Log',
+		$pconfig['systemlogsmanagelogpanel']
+	))->setHelp('Show the Manage Log panel in System Logs.');
+
+	$group->add(new Form_Checkbox(
+		'statusmonitoringsettingspanel',
+		null,
+		'Monitoring Settings',
+		$pconfig['statusmonitoringsettingspanel']
+	))->setHelp('Show the Settings panel in Status Monitoring.');
+
+	$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.');
+
+	$section->add($group);
+
+	$section->addInput(new Form_Checkbox(
+		'webguileftcolumnhyper',
+		'Left Column Labels',
+		'Active',
+		$pconfig['webguileftcolumnhyper']
+	))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
+
+	$section->addInput(new Form_Checkbox(
+		'pagenamefirst',
+		'Browser tab text',
+		'Display page name first in browser tab',
+		$pconfig['pagenamefirst']
+	))->setHelp('When this is unchecked, the browser tab shows the host name followed '.
+		'by the current page. Check this box to display the current page followed by the '.
+		'host name.');
+
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
@@ -847,12 +1001,47 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
+	function setcustomoptions() {
+		var adv = $('#customprofile').prop('checked');
+
+		hideInput('webguicss', !adv);
+		hideInput('webguifixedmenu', !adv);
+		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('dashboardavailablewidgetspanel', !adv);
+		hideCheckbox('systemlogsfilterpanel', !adv);
+		hideCheckbox('systemlogsmanagelogpanel', !adv);
+		hideCheckbox('statusmonitoringsettingspanel', !adv);
+		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('pagenamefirst', !adv);
+	}
+
+	// Handle displaying a warning message if a user-created theme is selected.
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+
 	// On click . .
+	$('#customprofile').click(function () {
+		setcustomoptions();
+	});
+
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
 	});
@@ -894,6 +1083,7 @@ events.push(function() {
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
+	setcustomoptions();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

@@ -162,6 +162,44 @@ function get_dns_servers() {
 	return array_unique($dns_servers);
 }
 
+/****f* pfsense-utils/get_css_files
+ * NAME
+ *   get_css_files - get a list of the available CSS files (themes)
+ * INPUTS
+ *   none
+ * RESULT
+ *   $csslist - an array of the CSS files
+ ******/
+function get_css_files() {
+	$csslist = array();
+
+	// List pfSense files, then any BETA files followed by any user-contributed files
+	$cssfiles = glob("/usr/local/www/css/*.css");
+
+	if (is_array($cssfiles)) {
+		arsort($cssfiles);
+		$usrcss = $pfscss = $betacss = array();
+
+		foreach ($cssfiles as $css) {
+			if (strpos($css, "BETA") != 0) {
+				array_push($betacss, $css);
+			} else if (strpos($css, "pfSense") != 0) {
+				array_push($pfscss, $css);
+			} else {
+				array_push($usrcss, $css);
+			}
+		}
+
+		$css = array_merge($pfscss, $betacss, $usrcss);
+
+		foreach ($css as $file) {
+			$file = basename($file);
+			$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
+		}
+	}
+	return $csslist;
+}
+
 function hardware_offloading_applyflags($iface) {
 	global $config;
 

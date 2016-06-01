@@ -74,7 +74,7 @@ if (isset($config['system']['webgui']['webguicss'])) {
 	}
 }
 
-// set default colmns to two if unset
+// set default columns to two if unset
 if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }

@@ -971,14 +971,14 @@ function setup_serial_port($when = "save", $path = "") {
 
 	if (isset($config['system']['disableconsolemenu'])) {
 		$console_type = 'Pc';
-		$serial_type = 'std.' . $serialspeed;
+		$serial_type = '3wire';
 	} else {
 		$console_type = 'al.Pc';
-		$serial_type = '3wire';
+		$serial_type = 'al.3wire';
 	}
 	foreach ($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0")) {
-			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	xterm	on	secure\n");
 		} else if (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
 			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	vt100	{$on_off}	secure\n");
@@ -1928,6 +1928,11 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	 *
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
 	 */
+
+	if (!file_exists($filename)) {
+		log_error(sprintf(gettext("Could not process non-existent file from alias: %s"), $filename));
+		return null;
+	}
 
 	if (filesize($filename) == 0) {
 		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));

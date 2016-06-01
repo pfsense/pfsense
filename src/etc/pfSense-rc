@@ -1,8 +1,6 @@
 #!/bin/sh
 
-# $Id$
-
-# /etc/rc - master bootup script, invokes php setup
+# /etc/pfSense-rc - master bootup script, invokes php setup
 # part of pfSense by Scott Ullrich
 # Copyright (C) 2004-2010 Scott Ullrich, All rights reserved.
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -372,6 +370,12 @@ echo "done."
 
 # Second upgrade stage
 /usr/local/sbin/${product}-upgrade -y -b 2
+
+# Copy default openssl config file
+[ -d /etc/ssl ] \
+	|| mkdir -p /etc/ssl
+[ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
+	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini

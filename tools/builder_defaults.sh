@@ -146,11 +146,7 @@ export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/f
 export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
-if [ "${TARGET}" = "i386" ]; then
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME} ${PRODUCT_NAME}_wrap ${PRODUCT_NAME}_wrap_vga"}
-else
-	export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
-fi
+export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
 
 # XXX: Poudriere doesn't like ssh short form
 case "${FREEBSD_REPO_BASE}" in
@@ -187,11 +183,7 @@ fi
 export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
 export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 
-if [ "${TARGET}" = "i386" ]; then
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp hwpmc"}
-else
-	export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
-fi
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
 
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
@@ -387,32 +379,22 @@ export PRODUCT_SHARE_DIR=${PRODUCT_SHARE_DIR:-"/usr/local/share/${PRODUCT_NAME}"
 export custom_package_list=${custom_package_list:-"pfSense-pkg-AutoConfigBackup pfSense-pkg-aws-wizard pfSense-pkg-ipsec-profile-wizard"}
 
 # General builder output filenames
-export UPDATESDIR=${UPDATESDIR:-"${IMAGES_FINAL_DIR}/updates"}
 export ISOPATH=${ISOPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.iso"}
 export MEMSTICKPATH=${MEMSTICKPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
 export MEMSTICKSERIALPATH=${MEMSTICKSERIALPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick-serial-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
 export MEMSTICKADIPATH=${MEMSTICKADIPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick-ADI-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.img"}
-export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.ova"}
-export VIRTPATH_TMPL=${VIRTPATH_TMPL:-"${IMAGES_FINAL_DIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-%%TYPE%%-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.%%EXT%%"}
+export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/virtualization/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.ova"}
+export VIRTPATH_TMPL=${VIRTPATH_TMPL:-"${IMAGES_FINAL_DIR}/virtualization/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-%%TYPE%%-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.%%EXT%%"}
 export EXTRA_IMAGES=""
-
-# set full-update update filename
-export UPDATES_TARBALL_FILENAME=${UPDATES_TARBALL_FILENAME:-"${UPDATESDIR}/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-Full-Update-${PRODUCT_VERSION}-${TARGET}${TIMESTAMP_SUFFIX}.tgz"}
 
 # nanobsd templates
 export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-%%SIZE%%-${TARGET}-%%TYPE%%${TIMESTAMP_SUFFIX}.img"}
-export NANOBSD_FW_TEMPLATE=${NANOBSD_FW_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-%%SIZE%%-${TARGET}-%%TYPE%%-FW-75xx${TIMESTAMP_SUFFIX}.img"}
-export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}-%%SIZE%%-${TARGET}-%%TYPE%%-upgrade${TIMESTAMP_SUFFIX}.img"}
 
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}
 export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
 export RSYNCLOGS=${RSYNCLOGS:-"/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}"}
 export RSYNCKBYTELIMIT=${RSYNCKBYTELIMIT:-"248000"}
-
-# staging area used on snapshots build
-STAGINGAREA=${STAGINGAREA:-"${SCRATCHDIR}/staging"}
-mkdir -p ${STAGINGAREA}
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}

@@ -15,7 +15,6 @@
 ./etc/group
 ./etc/hosts
 ./etc/master.passwd
-./etc/master.passwd.db
 ./etc/passwd
 ./etc/platform
 ./etc/pwd.db

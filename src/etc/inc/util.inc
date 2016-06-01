@@ -2103,8 +2103,10 @@ function unmute_kernel_msgs() {
 }
 
 function start_devd() {
+	global $g;
+
 	/* Use the undocumented -q options of devd to quiet its log spamming */
-	$_gb = exec("/sbin/devd -q");
+	$_gb = exec("/sbin/devd -q -f /etc/{$g['product_name']}-devd.conf");
 	sleep(1);
 	unset($_gb);
 }

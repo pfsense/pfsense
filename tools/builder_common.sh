@@ -43,9 +43,7 @@
 # modification, are permitted provided that the following conditions are met:
 #
 
-if [ -n "${IMAGES_FINAL_DIR}" -a "${IMAGES_FINAL_DIR}" != "/" ]; then
-	mkdir -p ${IMAGES_FINAL_DIR}
-else
+if [ -z "${IMAGES_FINAL_DIR}" -o "${IMAGES_FINAL_DIR}" = "/" ]; then
 	echo "IMAGES_FINAL_DIR is not defined"
 	print_error_pfS
 fi
@@ -374,73 +372,6 @@ install_default_kernel() {
 	unset KERNEL_NAME
 }
 
-# Creates a full update file
-create_Full_update_tarball() {
-	mkdir -p $UPDATESDIR
-
-	customize_stagearea_for_image "fullupdate"
-	install_default_kernel ${DEFAULT_KERNEL}
-
-	rm -rf ${FINAL_CHROOT_DIR}/cf
-	rm -rf ${FINAL_CHROOT_DIR}/conf
-	rm -f ${FINAL_CHROOT_DIR}/etc/dh-parameters.*
-	rm -f ${FINAL_CHROOT_DIR}/etc/rc.conf
-	rm -f ${FINAL_CHROOT_DIR}/etc/pwd.db 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/group 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/spwd.db 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/passwd 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/master.passwd 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/fstab 2>/dev/null
-	rm -f ${FINAL_CHROOT_DIR}/etc/bogons 2>/dev/null
-	# Remove loader.conf and friends.  Ticket #560
-	rm ${FINAL_CHROOT_DIR}/boot/loader.conf 2>/dev/null
-	rm ${FINAL_CHROOT_DIR}/boot/loader.conf.local 2>/dev/null
-
-	# Old systems will run (pre|post)_upgrade_command from /tmp
-	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command ]; then
-		cp -p \
-			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/pre_upgrade_command \
-			${FINAL_CHROOT_DIR}/tmp
-	fi
-	if [ -f ${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command ]; then
-		cp -p \
-			${FINAL_CHROOT_DIR}${PRODUCT_SHARE_DIR}/post_upgrade_command \
-			${FINAL_CHROOT_DIR}/tmp
-	fi
-
-	echo ">>> Creating ${UPDATES_TARBALL_FILENAME} ..." | tee -a ${LOGFILE}
-	tar --exclude=./dev -czPf ${UPDATES_TARBALL_FILENAME} -C ${FINAL_CHROOT_DIR} .
-}
-
-# Outputs various set variables aka env
-print_flags() {
-
-	echo
-	printf "             Product version: %s\n" $PRODUCT_VERSION
-	printf "                   Stage DIR: %s\n" $STAGE_CHROOT_DIR
-	printf "                 Updates dir: %s\n" $UPDATESDIR
-	printf " Image Preparation Stage DIR: %s\n" $FINAL_CHROOT_DIR
-	printf "                  Source DIR: %s\n" $FREEBSD_SRC_DIR
-	printf "          FreeBSD repository: %s\n" $FREEBSD_REPO_BASE
-	printf "          FreeBSD-src branch: %s\n" $FREEBSD_BRANCH
-	printf "               BUILD_KERNELS: %s\n" $BUILD_KERNELS
-	printf "           Git Branch or Tag: %s\n" $GIT_REPO_BRANCH_OR_TAG
-	printf "            MODULES_OVERRIDE: %s\n" $MODULES_OVERRIDE
-	printf "    VMDK_DISK_CAPACITY_IN_GB: %s\n" $VMDK_DISK_CAPACITY_IN_GB
-	printf "                 OVFTEMPLATE: %s\n" $OVFTEMPLATE
-	printf "                     OVFVMDK: %s\n" $OVFVMDK
-	printf "                    SRC_CONF: %s\n" $SRC_CONF
-	printf "                     ISOPATH: %s\n" $ISOPATH
-	printf "                MEMSTICKPATH: %s\n" $MEMSTICKPATH
-	printf "    UPDATES_TARBALL_FILENAME: %s\n" $UPDATES_TARBALL_FILENAME
-if [ -n "$SHOW_ENV" ]; then
-	for LINE in $(env | egrep -v '(terminal|PASS|NAME|USER|SSH|GROUP|HOST)'); do
-		echo "SHOW_ENV: $LINE"
-	done
-fi
-	echo
-}
-
 # This builds FreeBSD (make buildworld)
 # Imported from FreeSBIE
 make_world() {
@@ -503,17 +434,8 @@ make_world() {
 nanobsd_image_filename() {
 	local _size="$1"
 	local _type="$2"
-	local _upgrade="$3"
 
-	if [ "$_upgrade" = "FW" ]; then
-		local _template=${NANOBSD_FW_TEMPLATE}
-	elif [ -z "$_upgrade" ]; then
-		local _template=${NANOBSD_IMG_TEMPLATE}
-	else
-		local _template=${NANOBSD_UPGRADE_TEMPLATE}
-	fi
-
-	echo "$_template" | sed \
+	echo "$NANOBSD_IMG_TEMPLATE" | sed \
 		-e "s,%%SIZE%%,${_size},g" \
 		-e "s,%%TYPE%%,${_type},g"
 
@@ -640,6 +562,8 @@ create_nanobsd_diskimage () {
 			${FINAL_CHROOT_DIR}/tmp
 	fi
 
+	mkdir -p ${IMAGES_FINAL_DIR}/nanobsd
+
 	for _NANO_MEDIASIZE in ${2}; do
 		if [ -z "${_NANO_MEDIASIZE}" ]; then
 			continue;
@@ -648,9 +572,7 @@ create_nanobsd_diskimage () {
 		echo ">>> building NanoBSD(${1}) disk image with size ${_NANO_MEDIASIZE} for platform (${TARGET})..." | tee -a ${LOGFILE}
 		echo "" > $BUILDER_LOGS/nanobsd_cmds.sh
 
-		IMG="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1})"
-		IMG_FW="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} FW)"
-		IMGUPDATE="${IMAGES_FINAL_DIR}/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1} 1)"
+		IMG="${IMAGES_FINAL_DIR}/nanobsd/$(nanobsd_image_filename ${_NANO_MEDIASIZE} ${1})"
 
 		nanobsd_set_flash_details ${_NANO_MEDIASIZE}
 
@@ -725,9 +647,9 @@ awk '
 	# for booting the image from a USB device to work.
 	print "a 1"
 }
-	' > ${IMAGES_FINAL_DIR}/_.fdisk
+	' > ${SCRATCHDIR}/_.fdisk
 
-		MNT=${IMAGES_FINAL_DIR}/_.mnt
+		MNT=${SCRATCHDIR}/_.mnt
 		mkdir -p ${MNT}
 
 		dd if=/dev/zero of=${IMG} bs=${NANO_SECTS}b \
@@ -736,7 +658,7 @@ awk '
 		MD=$(mdconfig -a -t vnode -f ${IMG} -x ${NANO_SECTS} -y ${NANO_HEADS})
 		trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
-		fdisk -i -f ${IMAGES_FINAL_DIR}/_.fdisk ${MD} 2>&1 >> ${LOGFILE}
+		fdisk -i -f ${SCRATCHDIR}/_.fdisk ${MD} 2>&1 >> ${LOGFILE}
 		fdisk ${MD} 2>&1 >> ${LOGFILE}
 
 		echo ">>> boot0cfg:  -v -t 100 -B -b ${FINAL_CHROOT_DIR}/${NANO_BOOTLOADER} ${NANO_BOOT0CFG} ${MD}" >> ${LOGFILE}
@@ -828,58 +750,29 @@ awk '
 			">>> [nanoo] NANO_CONFSIZE is not set. Not adding a /conf partition.. You sure about this??" | tee -a ${LOGFILE}
 		fi
 
-		echo ">>> [nanoo] Creating NanoBSD upgrade file from first slice..." | tee -a ${LOGFILE}
-		dd if=/dev/${MD}s1 of=$IMGUPDATE conv=sparse bs=64k 2>&1 >> ${LOGFILE}
-
 		mdconfig -d -u $MD
 		# Restore default action
 		trap "-" 1 2 15 EXIT
-
-		if [ "${TARGET}" = "amd64" ]; then
-			echo ">>> [nanoo] Creating FW-75xx variant"
-			cp -f ${IMG} ${IMG_FW}
-			MD=$(mdconfig -a -t vnode -f ${IMG_FW} -x ${NANO_SECTS} -y ${NANO_HEADS})
-			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
-			boot0cfg -v -B ${MD} 2>&1 >> ${LOGFILE}
-			mdconfig -d -u $MD
-			trap "-" 1 2 15 EXIT
-		fi
 
 		# Check each image and ensure that they are over
 		# 3 megabytes.  If either image is under 20 megabytes
 		# in size then error out.
 		IMGSIZE=$(stat -f "%z" ${IMG})
-		IMGUPDATESIZE=$(stat -f "%z" ${IMGUPDATE})
 		CHECKSIZE="20040710"
 		if [ "$IMGSIZE" -lt "$CHECKSIZE" ]; then
 			echo ">>> ERROR: Something went wrong when building NanoBSD.  The image size is under 20 megabytes!" | tee -a ${LOGFILE}
-			print_error_pfS
-		fi
-		if [ "$IMGUPDATESIZE" -lt "$CHECKSIZE" ]; then
-			echo ">>> ERROR: Something went wrong when building NanoBSD upgrade image.  The image size is under 20 megabytes!" | tee -a ${LOGFILE}
 			print_error_pfS
 		fi
 
 		# Wrap up the show, Johnny
 		echo ">>> NanoBSD Image completed for size: $_NANO_MEDIASIZE." | tee -a ${LOGFILE}
 
-		if [ -f "${IMG_FW}" ]; then
-			gzip -qf $IMG_FW &
-			_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
-		fi
 		gzip -qf $IMG &
-		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
-		gzip -qf $IMGUPDATE &
 		_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 	done
 
-	unset IMG_FW
 	unset IMG
-	unset IMGUPDATE
-	unset IMGUPDATESIZE
 	unset IMGSIZE
-
-	ls -lah $IMAGES_FINAL_DIR
 }
 
 # This routine creates a ova image that contains
@@ -902,6 +795,8 @@ create_ova_image() {
 
 	[ -d "${OVA_TMP}" ] \
 		&& rm -rf ${OVA_TMP}
+
+	mkdir -p $(dirname ${OVAPATH})
 
 	local _mntdir=${OVA_TMP}/mnt
 	mkdir -p ${_mntdir}
@@ -1040,10 +935,6 @@ ova_setup_ovf_template() {
 		local _os_id="78"
 		local _os_type="freebsd64Guest"
 		local _os_descr="FreeBSD 64-Bit"
-	elif [ "${TARGET}" = "i386" ]; then
-		local _os_id="42"
-		local _os_type="freebsdGuest"
-		local _os_descr="FreeBSD"
 	else
 		echo ">>> ERROR: Platform not supported for OVA (${TARGET})"
 		print_error_pfS
@@ -1097,6 +988,8 @@ create_virt_images() {
 	esac
 	local _image_path=$(echo "${VIRTPATH_TMPL}" | \
 		sed -e "s,%%TYPE%%,${_image_type},g; s,%%EXT%%,${_ext},")
+
+	mkdir -p $(dirname ${_image_path})
 
 	LOGFILE=${BUILDER_LOGS}/virt.${TARGET}.log
 
@@ -1239,7 +1132,6 @@ clean_builder() {
 
 	echo -n ">>> Cleaning previously built images..."
 	rm -rf $IMAGES_FINAL_DIR/*
-	rm -rf $STAGINGAREA/*
 	echo "Done!"
 
 	if [ -z "${NO_CLEAN_FREEBSD_SRC}" ]; then
@@ -1291,9 +1183,6 @@ clone_to_staging_area() {
 			${STAGE_CHROOT_DIR}/usr/local/sbin/${PRODUCT_NAME}-upgrade
 	fi
 
-	if [ -f ${STAGE_CHROOT_DIR}/etc/master.passwd ]; then
-		chroot ${STAGE_CHROOT_DIR} pwd_mkdb /etc/master.passwd
-	fi
 	mkdir -p ${STAGE_CHROOT_DIR}/etc/mtree
 	mtree -Pcp ${STAGE_CHROOT_DIR}/var > ${STAGE_CHROOT_DIR}/etc/mtree/var.dist
 	mtree -Pcp ${STAGE_CHROOT_DIR}/etc > ${STAGE_CHROOT_DIR}/etc/mtree/etc.dist
@@ -1657,6 +1546,8 @@ create_iso_image() {
 		print_error_pfS
 	fi
 
+	mkdir -p $(dirname ${ISOPATH})
+
 	customize_stagearea_for_image "iso"
 	install_default_kernel ${DEFAULT_KERNEL}
 
@@ -1695,6 +1586,8 @@ create_memstick_image() {
 		echo ">>> MEMSTICKPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return
 	fi
+
+	mkdir -p $(dirname ${MEMSTICKPATH})
 
 	customize_stagearea_for_image "memstick"
 	install_default_kernel ${DEFAULT_KERNEL}
@@ -1737,6 +1630,8 @@ create_memstick_serial_image() {
 		echo ">>> MEMSTICKSERIALPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return
 	fi
+
+	mkdir -p $(dirname ${MEMSTICKSERIALPATH})
 
 	customize_stagearea_for_image "memstickserial"
 	install_default_kernel ${DEFAULT_KERNEL}
@@ -1799,6 +1694,8 @@ create_memstick_adi_image() {
 		echo ">>> MEMSTICKADIPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
 		return
 	fi
+
+	mkdir -p $(dirname ${MEMSTICKADIPATH})
 
 	customize_stagearea_for_image "memstickadi"
 	install_default_kernel ${DEFAULT_KERNEL}
@@ -2748,85 +2645,39 @@ snapshots_create_latest_symlink() {
 	ln -sf $(basename ${_image}).sha256 ${_symlink}.sha256
 }
 
-snapshots_copy_to_staging_nanobsd() {
+snapshots_create_sha256() {
+	local _img=""
+
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH}; do
+		if [ -f "${_img}.gz" ]; then
+			_img="${_img}.gz"
+		fi
+		if [ ! -f "${_img}" ]; then
+			continue
+		fi
+		create_sha256 ${_img}
+		snapshots_create_latest_symlink ${_img}
+	done
+
 	for NANOTYPE in nanobsd nanobsd-vga; do
-		for FILESIZE in ${1}; do
+		for FILESIZE in ${FLASH_SIZE}; do
 			FILENAMEFULL="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE}).gz"
-			FILENAMEFW="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} FW).gz"
-			FILENAMEUPGRADE="$(nanobsd_image_filename ${FILESIZE} ${NANOTYPE} 1).gz"
-
-			mkdir -p $STAGINGAREA/nanobsd
-			mkdir -p $STAGINGAREA/nanobsdupdates
-
-			cp -l $IMAGES_FINAL_DIR/$FILENAMEFULL $STAGINGAREA/nanobsd/ 2>/dev/null
-			cp -l $IMAGES_FINAL_DIR/$FILENAMEFW $STAGINGAREA/nanobsd/ 2>/dev/null
-			cp -l $IMAGES_FINAL_DIR/$FILENAMEUPGRADE $STAGINGAREA/nanobsdupdates 2>/dev/null
-
-			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFW ]; then
-				sha256 $STAGINGAREA/nanobsd/$FILENAMEFW > $STAGINGAREA/nanobsd/$FILENAMEFW.sha256 2>/dev/null
-			fi
-			if [ -f $STAGINGAREA/nanobsd/$FILENAMEFULL ]; then
-				create_sha256 $STAGINGAREA/nanobsd/$FILENAMEFULL
-			fi
-			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				create_sha256 $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE
-			fi
-
-			# Copy NanoBSD auto update:
-			if [ -f $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE ]; then
-				cp -l $STAGINGAREA/nanobsdupdates/$FILENAMEUPGRADE $STAGINGAREA/latest-${NANOTYPE}-$FILESIZE.img.gz 2>/dev/null
-				create_sha256 $STAGINGAREAA/latest-${NANOTYPE}-$FILESIZE.img.gz
-				# NOTE: Updates need a file with output similar to date output
-				# Use the file generated at start of snapshots_dobuilds() to be consistent on times
-				cp $BUILTDATESTRINGFILE $STAGINGAREA/version-${NANOTYPE}-$FILESIZE
+			if [ -f $IMAGES_FINAL_DIR/nanobsd/$FILENAMEFULL ]; then
+				create_sha256 $IMAGES_FINAL_DIR/nanobsd/$FILENAMEFULL
 			fi
 		done
 	done
-}
-
-snapshots_copy_to_staging_iso_updates() {
-	local _img=""
-
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH}; do
-		if [ ! -f "${_img}.gz" ]; then
-			continue
-		fi
-		_img="${_img}.gz"
-		create_sha256 ${_img}
-		cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
-	done
-
-	if [ -f "${UPDATES_TARBALL_FILENAME}" ]; then
-		create_sha256 ${UPDATES_TARBALL_FILENAME}
-		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
-	fi
-
-	if [ -f "${OVAPATH}" ]; then
-		mkdir -p ${STAGINGAREA}/virtualization
-		create_sha256 ${OVAPATH}
-		cp -l ${OVAPATH}* $STAGINGAREA/virtualization 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${OVAPATH})
-	fi
 
 	if [ -n "${EXTRA_IMAGES}" ]; then
-		mkdir -p ${STAGINGAREA}/virtualization
 		for IMG in ${EXTRA_IMAGES}; do
 			if [ -f "${IMG}.gz" ]; then
 				IMG="${IMG}.gz"
 			fi
-			sha256 ${IMG} > ${IMG}.sha256
-			cp -l ${IMG}* $STAGINGAREA/virtualization 2>/dev/null
-			snapshots_create_latest_symlink ${STAGINGAREA}/virtualization/$(basename ${IMG})
+			create_sha256 ${IMG}
+			snapshots_create_latest_symlink ${IMG}
 		done
 	fi
 
-	# NOTE: Updates need a file with output similar to date output
-	# Use the file generated at start of snapshots_dobuilds() to be consistent on times
-	if [ -z "${_IS_RELEASE}" ]; then
-		cp $BUILTDATESTRINGFILE $STAGINGAREA/version 2>/dev/null
-	fi
 }
 
 snapshots_scp_files() {
@@ -2842,61 +2693,20 @@ snapshots_scp_files() {
 
 	# Ensure directory(s) are available
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/installer"
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
 	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
-	if [ -d $STAGINGAREA/virtualization ]; then
+	if [ -d $IMAGES_FINAL_DIR/virtualization ]; then
 		ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/virtualization"
 	fi
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/.updaters"
 	# ensure permissions are correct for r+w
 	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/."
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*iso* \
+	rsync $RSYNC_COPY_ARGUMENTS $IMAGES_FINAL_DIR/installer/* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
+	rsync $RSYNC_COPY_ARGUMENTS $IMAGES_FINAL_DIR/nanobsd/* \
 		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/nanobsd/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
-	if [ -d $STAGINGAREA/virtualization ]; then
-		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
+	if [ -d $IMAGES_FINAL_DIR/virtualization ]; then
+		rsync $RSYNC_COPY_ARGUMENTS $IMAGES_FINAL_DIR/virtualization/* \
 			${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/virtualization/
 	fi
 
-	# Rather than copy these twice, use ln to link to the latest one.
-
-	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
-	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
-
-	LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
-		${RSYNCPATH}/.updaters/latest.tgz"
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
-		${RSYNCPATH}/.updaters/latest.tgz.sha256"
-
-	for i in ${FLASH_SIZE}
-	do
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
-
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
-
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd-vga 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
-	done
-
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/.updaters
 	snapshots_update_status ">>> Finished copying files."
 }

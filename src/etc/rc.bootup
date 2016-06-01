@@ -63,9 +63,9 @@ function rescue_detect_keypress() {
 	}
 	// If R or I was pressed do our logic here
 	if (in_array($key, array("r", "R"))) {
-		putenv("TERM=cons25");
+		putenv("TERM=xterm");
 		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
+		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
 	} else {
 		$run_installer = true;
 		/* Make sure / is read-write */
@@ -458,13 +458,13 @@ if ($run_installer) {
 	$config['system']['webgui']['nodnsrebindcheck'] = true;
 	services_unbound_configure();
 
-	putenv("TERM=cons25");
+	putenv("TERM=xterm");
 	echo "\n\nInstaller mode selected...\n";
-	passthru("/usr/bin/env TERM=cons25 /bin/tcsh -c /scripts/lua_installer");
+	passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer");
 
 	// If installer fails, call a recovery shell
 	if (!file_exists("/tmp/install_complete")) {
-		passthru("/usr/bin/env TERM=cons25 /bin/tcsh");
+		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
 	}
 	passthru("/etc/rc.reboot");
 	exit;

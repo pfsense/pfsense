@@ -409,8 +409,16 @@ function local_sync_accounts() {
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":", fgets($fd));
-			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin")) {
-				continue;
+			if ($line[0] != "admin") {
+				if (!strncmp($line[0], "_", 1)) {
+					continue;
+				}
+				if ($line[2] < 2000) {
+					continue;
+				}
+				if ($line[2] > 65000) {
+					continue;
+				}
 			}
 			/*
 			 * If a crontab was created to user, pw userdel will be interactive and
@@ -550,9 +558,11 @@ function local_user_set(& $user) {
 	pclose($fd);
 	$userattrs = explode(":", trim($pwread));
 
+	$skel_dir = '/etc/skel';
+
 	/* determine add or mod */
 	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
-		$user_op = "useradd -m -k /etc/skel -o";
+		$user_op = "useradd -m -k {$skel_dir} -o";
 	} else {
 		$user_op = "usermod";
 	}
@@ -580,6 +590,14 @@ function local_user_set(& $user) {
 	}
 	@chown($user_home, $user_name);
 	@chgrp($user_home, $user_group);
+
+	/* Make sure all users have last version of config files */
+	foreach (glob("{$skel_dir}/dot.*") as $dot_file) {
+		$target = $user_home . '/' . substr(basename($dot_file), 3);
+		@copy($dot_file, $target);
+		@chown($target, $user_name);
+		@chgrp($target, $user_group);
+	}
 
 	/* write out ssh authorized key file */
 	if ($user['authorizedkeys']) {

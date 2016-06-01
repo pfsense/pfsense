@@ -51,8 +51,8 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | fullupdate | all | none ]"
-	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi fullupdate"
+	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | all | none ]"
+	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
@@ -62,7 +62,6 @@ usage() {
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
 	echo "		--rsync-repos - rsync pkg repos"
-	echo "		--print-flags - Show current builder configuration"
 	echo "		--clean-builder - clean all builder used data/resources"
 	echo "		--build-kernels - build all configured kernels"
 	echo "		--build-kernel argument - build specified kernel. Example --build-kernel KERNEL_NAME"
@@ -159,10 +158,6 @@ while test "$1" != ""; do
 		--update-sources)
 			BUILDACTION="updatesources"
 			;;
-		--print-flags)
-			BUILDACTION="printflags"
-			_USE_OLD_DATESTRING=YES
-			;;
 		--clean-builder)
 			BUILDACTION="cleanbuilder"
 			;;
@@ -199,7 +194,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|*fullupdate*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -260,9 +255,6 @@ case $BUILDACTION in
 	;;
 	cleanbuilder)
 		clean_builder
-	;;
-	printflags)
-		print_flags
 	;;
 	images)
 		# It will be handled below
@@ -360,7 +352,7 @@ if [ "$IMAGETYPE" = "none" ]; then
 elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="nanobsd"
 	if [ "${TARGET}" = "amd64" ]; then
-		_IMAGESTOBUILD="${_IMAGESTOBUILD} fullupdate memstick \
+		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
 			memstickserial memstickadi ova ec2 azure \
 			kvm bhyve"
 	fi
@@ -396,9 +388,6 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 
 	# Ensure binaries are present that builder system requires
 	builder_setup
-
-	# Output build flags
-	print_flags
 
 	# Check to see if pre-staging will be hosted on ram
 	prestage_on_ram_setup
@@ -447,18 +436,7 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 		memstickadi)
 			create_memstick_adi_image
 			;;
-		fullupdate)
-			create_Full_update_tarball
-			;;
 		nanobsd|nanobsd-vga)
-			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}_wrap"}
-			elif [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd-vga" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSDVGA:-"${PRODUCT_NAME}_wrap_vga"}
-			elif [ "${TARGET}" = "amd64" ]; then
-				export DEFAULT_KERNEL=${DEFAULT_KERNEL_NANOBSD:-"${PRODUCT_NAME}"}
-			fi
-			# Create the NanoBSD disk image
 			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 			;;
 		ova)
@@ -528,8 +506,7 @@ if [ -n "${SNAPSHOTS}" ]; then
 	if [ "${IMAGETYPE}" = "none" -a -z "${DO_NOT_UPLOAD}" ]; then
 		pkg_repo_rsync "${CORE_PKG_PATH}"
 	elif [ "${IMAGETYPE}" != "none" ]; then
-		snapshots_copy_to_staging_iso_updates
-		snapshots_copy_to_staging_nanobsd "${FLASH_SIZE}"
+		snapshots_create_sha256
 		# SCP files to snapshot web hosting area
 		if [ -z "${DO_NOT_UPLOAD}" ]; then
 			snapshots_scp_files

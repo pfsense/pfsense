@@ -705,7 +705,7 @@ EOPP;
 				if ($octet < $start_octet) {
 					continue;
 				}
-				$ptr_domain .= (empty($ptr_domain) ? '' : '.');
+				$ptr_domain .= ((empty($ptr_domain) && $ptr_domain !== "0") ? '' : '.');
 				$ptr_domain .= $revsubnet[$octet];
 			}
 			$ptr_domain .= ".in-addr.arpa";
@@ -2581,7 +2581,7 @@ function configure_cron() {
 
 	if (is_array($config['cron']['item'])) {
 		$crontab_contents .= "#\n";
-		$crontab_contents .= "# " . gettext("pfSense specific crontab entries") . "\n";
+		$crontab_contents .= "# pfSense specific crontab entries\n";
 		$crontab_contents .= "# " .gettext("Created:") . " " . date("F j, Y, g:i a") . "\n";
 		$crontab_contents .= "#\n";
 

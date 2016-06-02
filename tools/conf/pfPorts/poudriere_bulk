@@ -15,6 +15,7 @@ net/trafshow
 net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
+sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder

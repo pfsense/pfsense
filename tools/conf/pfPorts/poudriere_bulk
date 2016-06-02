@@ -21,6 +21,7 @@ sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+dns/%%PRODUCT_NAME%%-pkg-bind9
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel

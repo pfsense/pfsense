@@ -18,7 +18,7 @@ net-mgmt/dhcp_probe
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
-sysutils/bsdinstaller
+#sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities

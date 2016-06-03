@@ -456,6 +456,7 @@ if ($run_installer) {
 	//  critical disable dns rebind protection to allow installer
 	//  to work on RFC-1918 address space
 	$config['system']['webgui']['nodnsrebindcheck'] = true;
+	write_config();
 	services_unbound_configure();
 
 	putenv("TERM=xterm");

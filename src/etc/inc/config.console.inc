@@ -745,6 +745,25 @@ function netgate_hardware_setup() {
 			'if' => 'ix1',
 			'descr' => 'OPT4'
 		);
+		if (does_interface_exist('igb4') && does_interface_exist('igb5') && does_interface_exist('igb6') && does_interface_exist('igb7')) {
+			// has quad port expansion card
+			$config['interfaces']['opt5'] = array(
+				'if' => 'igb4',
+				'descr' => 'OPT5'
+			);
+			$config['interfaces']['opt6'] = array(
+				'if' => 'igb5',
+				'descr' => 'OPT6'
+			);
+			$config['interfaces']['opt7'] = array(
+				'if' => 'igb6',
+				'descr' => 'OPT7'
+			);
+			$config['interfaces']['opt8'] = array(
+				'if' => 'igb7',
+				'descr' => 'OPT8'
+			);
+		}
 		break;
 	}
 

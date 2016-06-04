@@ -287,6 +287,13 @@ defCmdT("Installed OS Packages", "/usr/sbin/pkg info");
 defCmdT("System Devices-PCI", "/usr/sbin/pciconf -lvb");
 defCmdT("System Devices-USB", "/usr/sbin/usbconfig dump_device_desc");
 
+/* Basic PHP config + modules */
+defCmdT("PHP general config", "/usr/local/bin/php -r 'phpinfo(INFO_GENERAL | INFO-CONFIGURATION);'");
+defCmdT("PHP modules", "/usr/local/bin/php -r 'phpinfo(INFO_MODULES);'");
+
+
+/* generate page */
+
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];
 

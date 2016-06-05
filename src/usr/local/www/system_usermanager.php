@@ -110,13 +110,17 @@ if ($_GET['act'] == "deluser") {
 		exit;
 	}
 
-	conf_mount_rw();
-	local_user_del($a_user[$id]);
-	conf_mount_ro();
-	$userdeleted = $a_user[$id]['name'];
-	unset($a_user[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	if ($_GET['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	} else {
+		conf_mount_rw();
+		local_user_del($a_user[$id]);
+		conf_mount_ro();
+		$userdeleted = $a_user[$id]['name'];
+		unset($a_user[$id]);
+		write_config();
+		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	}
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -130,18 +134,37 @@ if ($_GET['act'] == "deluser") {
 if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
+	$deleted_users = "";
+	$deleted_count = 0;
+	$comma = "";
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
-				conf_mount_rw();
-				local_user_del($a_user[$userid]);
- 			    conf_mount_ro();
-				unset($a_user[$userid]);
+				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
+					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
+				} else {
+					conf_mount_rw();
+					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
+					$comma = ", ";
+					$deleted_count++;
+					local_user_del($a_user[$userid]);
+					conf_mount_ro();
+					unset($a_user[$userid]);
+				}
+			} else {
+				$delete_errors[] = sprintf(gettext("Cannot delete user %s because it is a system user."), $a_user[$userid]['name']);
 			}
 		}
-		$savemsg = gettext("Selected users removed successfully.");
-		write_config($savemsg);
+
+		if ($deleted_count > 0) {
+			if ($deleted_count == 1) {
+				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
+			} else {
+				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
+			}
+			write_config($savemsg);
+		}
 	}
 }
 
@@ -479,6 +502,10 @@ if ($act == "new" || $act == "edit" || $input_errors) {
 }
 include("head.inc");
 
+if ($delete_errors) {
+	print_input_errors($delete_errors);
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -518,7 +545,7 @@ foreach ($a_user as $i => $userent):
 	?>
 					<tr>
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
+							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=((($userent['scope'] == "system") || ($userent['name'] == $_SESSION['Username'])) ? 'disabled' : '')?>/>
 						</td>
 						<td>
 <?php
@@ -536,7 +563,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if ($userent['scope'] != "system"): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 						</td>

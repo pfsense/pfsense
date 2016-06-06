@@ -1539,6 +1539,23 @@ function set_widget_profile($username, $widget_profile) {
 	write_config(gettext("Widget configuration has been changed."));
 }
 
+function del_user_profile($username) {
+	global $config;
+	// The caller needs to call write_config() at some point after doing all user changes.
+	if (($username != "") && isset($config['profiles'][$username])) {
+		unset($config['profiles'][$username]);
+	}
+}
+
+function rename_user_profile($old_username, $new_username) {
+	global $config;
+	// The caller needs to call write_config() at some point after doing all user changes.
+	if (($old_username != "") && ($new_username != "") && isset($config['profiles'][$old_username])) {
+		$config['profiles'][$new_username] = $config['profiles'][$old_username];
+		unset($config['profiles'][$old_username]);
+	}
+}
+
 function auth_get_authserver($name) {
 	global $config;
 

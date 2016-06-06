@@ -1502,6 +1502,7 @@ function get_user_profile($username) {
 	$user_profile['webgui']['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
 	$user = getUserEntry($username);
 	if (isset($user['customprofile'])) {
+		$user_profile['customprofile'] = true;
 		if (isset($config['profiles'][$username]['widgets'])) {
 			// This includes the 'sequence', and any widgetname-config per-widget settings.
 			$user_profile['widgets'] = $config['profiles'][$username]['widgets'];
@@ -1519,6 +1520,8 @@ function get_user_profile($username) {
 		$user_profile['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
 		$user_profile['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);
 		$user_profile['webgui']['pagenamefirst'] = isset($user['pagenamefirst']);
+	} else {
+		$user_profile['customprofile'] = false;
 	}
 
 	if ($user_profile['webgui']['dashboardcolumns'] < 1) {

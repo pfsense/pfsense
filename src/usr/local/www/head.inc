@@ -255,6 +255,10 @@ if (!isAllowedPage("system_usermanager.php*")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
 
+if ($user_profile['customprofile'] && isAllowedPage("system_user_profile.php*")) {
+	$system_menu[] = array(gettext("User Profile"), "/system_user_profile.php");
+}
+
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces

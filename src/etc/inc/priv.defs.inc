@@ -1159,6 +1159,12 @@ $priv_list['page-system-update-settings']['descr'] = gettext("Allow access to th
 $priv_list['page-system-update-settings']['match'] = array();
 $priv_list['page-system-update-settings']['match'][] = "system_update_settings.php*";
 
+$priv_list['page-system-user-profile'] = array();
+$priv_list['page-system-user-profile']['name'] = gettext("WebCfg - System: User Profile");
+$priv_list['page-system-user-profile']['descr'] = gettext("Allow access to the 'System: Profile' page.");
+$priv_list['page-system-user-profile']['match'] = array();
+$priv_list['page-system-user-profile']['match'][] = "system_user_profile.php*";
+
 $priv_list['page-system-usermanager'] = array();
 $priv_list['page-system-usermanager']['name'] = gettext("WebCfg - System: User Manager");
 $priv_list['page-system-usermanager']['descr'] = gettext("Allow access to the 'System: User Manager' page.");

@@ -183,7 +183,7 @@ fi
 export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
 export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
 
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ixgbe"}
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
@@ -199,9 +199,6 @@ export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
 # Directory that will clone to in order to create
 # iso staging area.
 export FINAL_CHROOT_DIR=${FINAL_CHROOT_DIR:-"${SCRATCHDIR}/final-dir"}
-
-# 400M is not enough for amd64
-export MEMORYDISK_SIZE=${MEMORYDISK_SIZE:-"1024M"}
 
 # OVF/vmdk parms
 # Name of ovf file included inside OVA archive

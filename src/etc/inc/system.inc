@@ -1308,7 +1308,6 @@ http {
 	server_tokens off;
 
 	sendfile        on;
-	keepalive_timeout  65;
 
 	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 
@@ -1316,6 +1315,9 @@ EOD;
 
 	if ($captive_portal !== false) {
 		$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
+		$nginx_config .= "\tkeepalive_timeout 0;\n";
+	} else {
+		$nginx_config .= "\tkeepalive_timeout 75;\n";
 	}
 
 	if ($cert <> "" and $key <> "") {

@@ -17,6 +17,8 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
+net-mgmt/dhcp_probe
+sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
@@ -24,6 +26,7 @@ sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+dns/%%PRODUCT_NAME%%-pkg-bind9
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel

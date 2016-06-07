@@ -659,30 +659,30 @@ function netgate_hardware_setup() {
 	case 'XG-1540':
 		if (does_interface_exist('igb2')) {
 			/* It has 4 port Intel 1Gb expansion card */
-			$config['interfaces']['wan']['if'] = 'igb0';
-			$config['interfaces']['lan']['if'] = 'igb1';
+			$config['interfaces']['wan']['if'] = 'igb4';
+			$config['interfaces']['lan']['if'] = 'igb5';
 			$config['interfaces']['opt1'] = array(
-				'if' => 'igb2',
+				'if' => 'ix0',
 				'descr' => 'OPT1'
 			);
 			$config['interfaces']['opt2'] = array(
-				'if' => 'igb3',
+				'if' => 'ix1',
 				'descr' => 'OPT2'
 			);
 			$config['interfaces']['opt3'] = array(
-				'if' => 'igb4',
+				'if' => 'igb3',
 				'descr' => 'OPT3'
 			);
-			$config['interfaces']['opt4'] = array(
-				'if' => 'ix0',
+			$config['interfaces']['optj'] = array(
+				'if' => 'igb2',
 				'descr' => 'OPT4'
 			);
 			$config['interfaces']['opt5'] = array(
-				'if' => 'igb5',
+				'if' => 'igb1',
 				'descr' => 'OPT5'
 			);
 			$config['interfaces']['opt6'] = array(
-				'if' => 'ix1',
+				'if' => 'igb0',
 				'descr' => 'OPT6'
 			);
 		} elseif (does_interface_exist('cxl0')) {

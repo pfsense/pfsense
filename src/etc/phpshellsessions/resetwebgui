@@ -1,0 +1,26 @@
+global $config;
+
+$config = parse_config(true);
+$default_theme = "pfSense.css";
+$default_columns = 2;
+$default_widgets = "system_information:col1:show,interfaces:col2:show";
+
+echo "Resetting webGUI:\n";
+echo "  Theme to " . $default_theme . "\n";
+echo "  Dashboard columns to " . $default_columns . "\n";
+echo "  Top navigation to scroll\n";
+echo "  Widgets to System Information and Interfaces\n";
+echo "...";
+
+$config['system']['webgui']['webguicss'] = $default_theme;
+$config['system']['webgui']['dashboardcolumns'] = $default_columns;
+
+if (isset($config['system']['webgui']['webguifixedmenu'])) {
+	unset($config['system']['webgui']['webguifixedmenu']);
+}
+
+$config['widgets']['sequence'] = $default_widgets;
+
+write_config("pfSsh.php reset webGUI");
+
+echo "done.\n";

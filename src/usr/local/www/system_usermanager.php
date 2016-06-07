@@ -124,7 +124,6 @@ if ($_GET['act'] == "deluser") {
 		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
 	} else {
 		conf_mount_rw();
-		del_user_profile($_GET['username']);
 		local_user_del($a_user[$id]);
 		conf_mount_ro();
 		$userdeleted = $a_user[$id]['name'];
@@ -159,7 +158,6 @@ if (isset($_POST['dellall'])) {
 					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
 					$comma = ", ";
 					$deleted_count++;
-					del_user_profile($a_user[$userid]['name']);
 					local_user_del($a_user[$userid]);
 					conf_mount_ro();
 					unset($a_user[$userid]);
@@ -318,7 +316,6 @@ if ($_POST['save']) {
 		/* the user name was modified */
 		if (!empty($_POST['oldusername']) && ($_POST['usernamefld'] <> $_POST['oldusername'])) {
 			$_SERVER['REMOTE_USER'] = $_POST['usernamefld'];
-			rename_user_profile($_POST['oldusername'], $_POST['usernamefld']);
 			local_user_del($userent);
 		}
 

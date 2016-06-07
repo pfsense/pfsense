@@ -1490,7 +1490,7 @@ function is_account_disabled($username) {
 function get_user_profile($username) {
 	global $config;
 	$user_profile = array();
-	$user_profile['widgets']['sequence'] = $config['widgets']['sequence'];
+	$user_profile['widgets'] = $config['widgets'];
 	$user_profile['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
 	$user_profile['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
 	$user_profile['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
@@ -1503,9 +1503,9 @@ function get_user_profile($username) {
 	$user = getUserEntry($username);
 	if (isset($user['customprofile'])) {
 		$user_profile['customprofile'] = true;
-		if (isset($config['profiles'][$username]['widgets'])) {
+		if (isset($user['widgets'])) {
 			// This includes the 'sequence', and any widgetname-config per-widget settings.
-			$user_profile['widgets'] = $config['profiles'][$username]['widgets'];
+			$user_profile['widgets'] = $user['widgets'];
 		}
 		if (isset($user['dashboardcolumns'])) {
 			$user_profile['webgui']['dashboardcolumns'] = $user['dashboardcolumns'];
@@ -1532,30 +1532,14 @@ function get_user_profile($username) {
 }
 
 function set_widget_profile($username, $widget_profile) {
-	global $config;
+	global $config, $userindex;
 	$user = getUserEntry($username);
 	if (isset($user['customprofile'])) {
-		$config['profiles'][$username]['widgets'] = $widget_profile;
+		$config['system']['user'][$userindex[$username]]['widgets'] = $widget_profile;
+		write_config(sprintf(gettext("Widget configuration has been changed for user %s."), $username));
 	} else {
 		$config['widgets'] = $widget_profile;
-	}
-	write_config(gettext("Widget configuration has been changed."));
-}
-
-function del_user_profile($username) {
-	global $config;
-	// The caller needs to call write_config() at some point after doing all user changes.
-	if (($username != "") && isset($config['profiles'][$username])) {
-		unset($config['profiles'][$username]);
-	}
-}
-
-function rename_user_profile($old_username, $new_username) {
-	global $config;
-	// The caller needs to call write_config() at some point after doing all user changes.
-	if (($old_username != "") && ($new_username != "") && isset($config['profiles'][$old_username])) {
-		$config['profiles'][$new_username] = $config['profiles'][$old_username];
-		unset($config['profiles'][$old_username]);
+		write_config(gettext("Widget configuration has been changed."));
 	}
 }
 

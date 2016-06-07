@@ -1102,7 +1102,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapnameattribute = strtolower($authcfg['ldap_attr_user']);
 		$ldapgroupattribute = strtolower($authcfg['ldap_attr_member']);
 		if (isset($authcfg['ldap_rfc2307'])) {
-			$ldapfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})({$ldapgroupattribute}={$username}))";
+			$ldapfilter         = "(&(objectClass={$authcfg['ldap_attr_groupobj']})(|({$ldapgroupattribute}={$username})({$ldapgroupattribute}={$ldapnameattribute}={$username},{$ldapauthcont})))";
 		} else {
 			$ldapfilter         = "({$ldapnameattribute}={$username})";
 		}

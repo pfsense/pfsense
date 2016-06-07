@@ -500,11 +500,11 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 			$savemsg = gettext("The system is now rebooting. Please wait.");
 			$class = "success";
 		} else {
-			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+			$applymsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 			$class = "warning";
 		}
 	} else {
-		$savemsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
+		$applymsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
 		$class = "warning";
 	}
 }
@@ -513,6 +513,8 @@ if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
 	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 	echo "<br /></p>\n";
+} elseif ($applymsg) {
+	print_apply_box($applymsg);
 } elseif ($savemsg) {
 	print_info_box($savemsg, $class);
 }

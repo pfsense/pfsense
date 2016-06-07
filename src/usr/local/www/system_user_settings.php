@@ -1,6 +1,6 @@
 <?php
 /*
-	system_user_profile.php
+	system_user_settings.php
 */
 /* ====================================================================
  *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
@@ -54,16 +54,16 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-system-user-profile
-##|*NAME=System: User Profile
-##|*DESCR=Allow access to the 'System: User Profile' page.
-##|*MATCH=system_user_profile.php*
+##|*IDENT=page-system-user-settings
+##|*NAME=System: User Settings
+##|*DESCR=Allow access to the 'System: User Settings' page.
+##|*MATCH=system_user_settings.php*
 ##|-PRIV
 
  require_once("auth.inc");
  require_once("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Profile"));
+$pgtitle = array(gettext("System"), gettext("User Settings"));
 
 $a_user = &$config['system']['user'];
 
@@ -82,7 +82,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
 	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 } else {
-	echo gettext("The profile cannot be managed for a non-local user.");
+	echo gettext("The settings cannot be managed for a non-local user.");
 	include("foot.inc");
 	exit;
 }
@@ -152,7 +152,7 @@ if (isset($_POST['save'])) {
 		}
 
 		$a_user[$id] = $userent;
-		$savemsg = sprintf(gettext("User Profile successfully changed for user %s."), $_SESSION['Username']);
+		$savemsg = sprintf(gettext("User settings successfully changed for user %s."), $_SESSION['Username']);
 		write_config($savemsg);
 	}
 }
@@ -169,7 +169,7 @@ if ($savemsg) {
 
 $form = new Form();
 
-$section = new Form_Section('User Profile Settings for ' . $_SESSION['Username']);
+$section = new Form_Section('User Settings for ' . $_SESSION['Username']);
 
 $csslist = get_css_files();
 

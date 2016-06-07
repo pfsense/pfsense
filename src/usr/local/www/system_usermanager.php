@@ -771,7 +771,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$section->addInput(new Form_Checkbox(
 		'customprofile',
-		'Custom profile',
+		'Custom Settings',
 		'Use individual customized GUI options and dashboard layout for this user.',
 		$pconfig['customprofile']
 	));

@@ -108,7 +108,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config, $user_profile;
+		global $config, $user_settings;
 
 		$element = parent::__toString();
 
@@ -142,7 +142,7 @@ EOT;
 		$inputs = implode('', $this->_inputs);
 		$help = $this->_getHelp();
 
-		if (!$user_profile['webgui']['webguileftcolumnhyper'])
+		if (!$user_settings['webgui']['webguileftcolumnhyper'])
 			$target = null;
 
 		$label = new Form_Element('label', false, ['for' => $target]);

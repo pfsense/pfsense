@@ -74,7 +74,7 @@ $allowedpages = getAllowedPages($_SESSION['Username'], $_SESSION['user_radius_at
 /*
  * Get user-based preference settings so they can be easily referenced.
  */
-$user_profile = get_user_profile($_SESSION['Username']);
+$user_settings = get_user_settings($_SESSION['Username']);
 
 /*
  * redirect to first allowed page if requesting a wrong url
@@ -128,7 +128,7 @@ session_commit();
  * determine if the user is allowed access to the requested page
  */
 function display_error_form($http_code, $desc) {
-	global $config, $user_profile, $g;
+	global $config, $user_settings, $g;
 
 	if (isAjax()) {
 		printf(gettext('Error: %1$s Description: %2$s'), $http_code, $desc);
@@ -137,9 +137,9 @@ function display_error_form($http_code, $desc) {
 
 	$cssfile = "/css/pfSense.css";
 
-	if (isset($user_profile['webgui']['webguicss'])) {
-		if (file_exists("/usr/local/www/css/" . $user_profile['webgui']['webguicss'])) {
-			$cssfile = "/css/" . $user_profile['webgui']['webguicss'];
+	if (isset($user_settings['webgui']['webguicss'])) {
+		if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+			$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
 		}
 	}
 
@@ -239,14 +239,14 @@ if ($local_ip == false) {
 	}
 }
 
-// For the login form, get the profile of no particular user.
+// For the login form, get the settings of no particular user.
 // That ensures we will use the system default theme for the login form.
-$user_profile = get_user_profile("");
+$user_settings = get_user_settings("");
 $cssfile = "/css/pfSense.css";
 
-if (isset($user_profile['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $user_profile['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $user_profile['webgui']['webguicss'];
+if (isset($user_settings['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
 	}
 }
 

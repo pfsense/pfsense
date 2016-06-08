@@ -1487,7 +1487,7 @@ function is_account_disabled($username) {
 	return false;
 }
 
-function get_user_profile($username) {
+function get_user_settings($username) {
 	global $config;
 	$user_profile = array();
 	$user_profile['widgets'] = $config['widgets'];
@@ -1531,7 +1531,7 @@ function get_user_profile($username) {
 	return $user_profile;
 }
 
-function set_widget_profile($username, $widget_profile) {
+function save_widget_settings($username, $widget_profile) {
 	global $config, $userindex;
 	$user = getUserEntry($username);
 	if (isset($user['customprofile'])) {

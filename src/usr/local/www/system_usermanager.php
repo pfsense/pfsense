@@ -94,7 +94,7 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
 	$pconfig['expires'] = $a_user[$id]['expires'];
-	$pconfig['customprofile'] = isset($a_user[$id]['customprofile']);
+	$pconfig['customsettings'] = isset($a_user[$id]['customsettings']);
 	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
 	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
 	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
@@ -341,10 +341,10 @@ if ($_POST['save']) {
 			unset($userent['disabled']);
 		}
 
-		if ($_POST['customprofile']) {
-			$userent['customprofile'] = true;
+		if ($_POST['customsettings']) {
+			$userent['customsettings'] = true;
 		} else {
-			unset($userent['customprofile']);
+			unset($userent['customsettings']);
 		}
 
 		if ($_POST['webguicss']) {
@@ -767,10 +767,10 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'the expiration date');
 
 	$section->addInput(new Form_Checkbox(
-		'customprofile',
+		'customsettings',
 		'Custom Settings',
 		'Use individual customized GUI options and dashboard layout for this user.',
-		$pconfig['customprofile']
+		$pconfig['customsettings']
 	));
 
 	gen_user_settings_fields($section, $pconfig);
@@ -956,7 +956,7 @@ $csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at you
 events.push(function() {
 
 	function setcustomoptions() {
-		var adv = $('#customprofile').prop('checked');
+		var adv = $('#customsettings').prop('checked');
 
 		hideInput('webguicss', !adv);
 		hideInput('webguifixedmenu', !adv);
@@ -985,7 +985,7 @@ events.push(function() {
 	setThemeWarning();
 
 	// On click . .
-	$('#customprofile').click(function () {
+	$('#customsettings').click(function () {
 		setcustomoptions();
 	});
 

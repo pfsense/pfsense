@@ -60,7 +60,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
 
-if ($user_profile['webgui']['pagenamefirst']) {
+if ($user_settings['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 } else {
 	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
@@ -68,9 +68,9 @@ if ($user_profile['webgui']['pagenamefirst']) {
 
 $cssfile = "/css/pfSense.css";
 
-if (isset($user_profile['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $user_profile['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $user_profile['webgui']['webguicss'];
+if (isset($user_settings['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
 	}
 }
 
@@ -255,7 +255,7 @@ if (!isAllowedPage("system_usermanager.php*")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
 
-if ($user_profile['customprofile'] && isAllowedPage("system_user_settings.php*")) {
+if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*")) {
 	$system_menu[] = array(gettext("User Settings"), "/system_user_settings.php");
 }
 
@@ -428,11 +428,11 @@ if (!$g['disablehelpmenu']) {
 
 $menuclass = "static";
 
-if ($user_profile['webgui']['webguifixedmenu'] == "fixed") {
+if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
 }
 
-$numColumns = $user_profile['webgui']['dashboardcolumns'];
+$numColumns = $user_settings['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';

@@ -164,7 +164,7 @@ if ($_POST && $_POST['sequence']) {
 		}
 	}
 
-	set_widget_profile($_SESSION['Username'], $widget_profile);
+	save_widget_settings($_SESSION['Username'], $widget_profile);
 	header("Location: /");
 	exit;
 }
@@ -252,9 +252,9 @@ if ($fd) {
 }
 
 ##build widget saved list information
-if ($user_profile['widgets']['sequence'] != "") {
-	$dashboardcolumns = isset($user_profile['webgui']['dashboardcolumns']) ? $user_profile['webgui']['dashboardcolumns'] : 2;
-	$pconfig['sequence'] = $user_profile['widgets']['sequence'];
+if ($user_settings['widgets']['sequence'] != "") {
+	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? $user_settings['webgui']['dashboardcolumns'] : 2;
+	$pconfig['sequence'] = $user_settings['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
 	foreach (explode(',', $pconfig['sequence']) as $line) {
@@ -308,7 +308,7 @@ if ($user_profile['widgets']['sequence'] != "") {
 }
 
 ## Get the configured options for Show/Hide available widgets panel.
-$dashboard_available_widgets_hidden = !$user_profile['webgui']['dashboardavailablewidgetspanel'];
+$dashboard_available_widgets_hidden = !$user_settings['webgui']['dashboardavailablewidgetspanel'];
 
 if ($dashboard_available_widgets_hidden) {
 	$panel_state = 'out';

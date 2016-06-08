@@ -83,6 +83,14 @@ if (!function_exists("pkg_debug")) {
 	}
 }
 
+/* Validate if pkg name is valid */
+function pkg_valid_name($pkgname) {
+	global $g;
+
+	$pattern = "/^{$g['pkg_prefix']}[a-zA-Z0-9\.\-_]+$/";
+	return preg_match($pattern, $pkgname);
+}
+
 /* Remove pkg_prefix from package name if it's present */
 function pkg_remove_prefix(&$pkg_name) {
 	global $g;

@@ -220,18 +220,38 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 	return(false);
 }
 
+$pkgmode = '';
+if (!empty($_POST['mode'])) {
+	$pkgmode = $_POST['mode'];
+} elseif (!empty($_GET['mode'])) {
+	$pkgmode = $_GET['mode'];
+}
+
+$valid_modes = array(
+	'',
+	'reinstallall',
+	'reinstallpkg',
+	'delete',
+	'installed'
+);
+
+if (!in_array($pkgmode, $valid_modes)) {
+	header("Location: pkg_mgr_installed.php");
+	return;
+}
+
 if ($_POST) {
-	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
+	if (empty($_POST['id']) && $pkgmode != 'reinstallall') {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
 
-	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
+	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $pkgmode != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
 } else if ($_GET && !$_GET['id']) {
-	if (empty($_GET['pkg']) && ($_GET['mode'] != 'reinstallall')) {
+	if (empty($_GET['pkg']) && ($pkgmode != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
@@ -256,7 +276,7 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 
 include("head.inc");
 
-if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
+if (!empty($_POST['id']) || $pkgmode == "reinstallall") {
 	?>
 	<div id="final" class="alert" role="alert" style="display: none;"></div>
 <?php
@@ -269,15 +289,11 @@ if ($input_errors) {
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall'))):
-	if (empty($_GET['mode']) && $_GET['id']) {
+<?php if (($POST['complete'] != "true") && (empty($pkgmode) && $_GET['id']) || (!empty($pkgmode) && (!empty($_GET['pkg']) || $pkgmode == 'reinstallall'))):
+	if (empty($pkgmode) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
-		$pkgmode = 'installed';
-	} else if (!empty($_GET['mode']) && !empty($_GET['pkg'])) {
+	} else if (!empty($pkgmode) && !empty($_GET['pkg'])) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
-		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
-	} else if ($_GET['mode'] == 'reinstallall') {
-		$pkgmode = 'reinstallall';
 	}
 
 	switch ($pkgmode) {
@@ -383,12 +399,12 @@ if ($_POST) {
 	}
 }
 
-if ($_POST['mode'] == 'delete') {
+if ($pkgmode == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgid);
 	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgid);
-} else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
+} else if (($pkgmode == 'reinstallpkg') || ($pkgmode == 'reinstallall')) {
 	$panel_heading_txt = gettext("Package Reinstallation");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgid);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgid);
@@ -400,7 +416,7 @@ if ($_POST['mode'] == 'delete') {
 	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgid);
 }
 
-if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
+if (!empty($_POST['id']) || $pkgmode == "reinstallall"):
 	// What if the user navigates away from this page and then comes back via his/her "Back" button?
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
@@ -409,7 +425,7 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	}
 ?>
 	<input type="hidden" name="id" value="<?=htmlspecialchars($_POST['id'])?>" />
-	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
+	<input type="hidden" name="mode" value="<?=$pkgmode?>" />
 	<input type="hidden" name="completed" value="true" />
 	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />
 
@@ -448,7 +464,7 @@ if ($_POST && ($_POST['completed'] != "true")) {
 	$progbar = true;
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 
-	switch ($_POST['mode']) {
+	switch ($pkgmode) {
 		case 'delete':
 			mwexec_bg("{$upgrade_script} -r {$pkgid}");
 			$start_polling = true;
@@ -520,7 +536,7 @@ function setProgress(barName, percent, transition) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
+	if ("<?=$pkgmode?>" != "reinstallall") {
 		if ("<?=$pkgid?>" == "firmware") {
 			$('#final').html("<?=gettext('System update successfully completed.')?>");
 		} else {
@@ -537,7 +553,7 @@ function show_success() {
 function show_failure() {
 	$('#final').removeClass("alert-info");
 	$('#final').addClass("alert-danger");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
+	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_fail_txt?>");
 	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages failed.')?>");
@@ -548,7 +564,7 @@ function show_failure() {
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
+	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
 			"<?=gettext("This may take several minutes!")?>" + "</p>");
 	} else {

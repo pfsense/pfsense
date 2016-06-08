@@ -268,11 +268,12 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 
 include("head.inc");
 
-if (!empty($_POST['id']) || $pkgmode == "reinstallall") {
-	?>
+if (!empty($_POST['id']) || $pkgmode == "reinstallall"):
+?>
 	<div id="final" class="alert" role="alert" style="display: none;"></div>
 <?php
-}
+endif;
+
 display_top_tabs($tab_array);
 
 if ($input_errors) {

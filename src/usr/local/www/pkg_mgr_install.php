@@ -221,23 +221,20 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 }
 
 $pkgmode = '';
-if (!empty($_POST['mode'])) {
-	$pkgmode = $_POST['mode'];
-} elseif (!empty($_GET['mode'])) {
-	$pkgmode = $_GET['mode'];
-}
+if (!empty($_REQUEST['mode'])) {
+	$valid_modes = array(
+		'reinstallall',
+		'reinstallpkg',
+		'delete',
+		'installed'
+	);
 
-$valid_modes = array(
-	'',
-	'reinstallall',
-	'reinstallpkg',
-	'delete',
-	'installed'
-);
+	if (!in_array($_REQUEST['mode'], $valid_modes)) {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
 
-if (!in_array($pkgmode, $valid_modes)) {
-	header("Location: pkg_mgr_installed.php");
-	return;
+	$pkgmode = $_REQUEST['mode'];
 }
 
 if ($_POST) {

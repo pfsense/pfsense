@@ -284,7 +284,7 @@ if ($input_errors) {
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
 <?php
 
-if (($POST['complete'] != "true") &&(empty($pkgmode) && $_GET['id']) || (!empty($pkgmode) && (!empty($_GET['pkg']) || $pkgmode == 'reinstallall'))):
+if (($_POST['completed'] != "true") && (empty($pkgmode) && $_GET['id']) || (!empty($pkgmode) && (!empty($_GET['pkg']) || $pkgmode == 'reinstallall'))):
 	if (empty($pkgmode) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 	} else if (!empty($pkgmode) && !empty($_GET['pkg'])) {

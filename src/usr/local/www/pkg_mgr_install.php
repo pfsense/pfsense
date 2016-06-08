@@ -245,11 +245,6 @@ if ($_POST) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
-
-	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $pkgmode != 'reinstallall')) {
-		header("Location: pkg_mgr_installed.php");
-		return;
-	}
 } else if ($_GET && !$_GET['id']) {
 	if (empty($_GET['pkg']) && ($pkgmode != 'reinstallall')) {
 		header("Location: pkg_mgr_installed.php");

@@ -155,16 +155,16 @@ if (!is_array($config['widgets'])) {
 
 if ($_POST && $_POST['sequence']) {
 
-	$widget_profile = array();
-	$widget_profile['sequence'] = rtrim($_POST['sequence'], ',');
+	$widget_settings = array();
+	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$widget_profile[$widgetname . '-config'] = $_POST[$widgetname . '-config'];
+			$widget_settings[$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
-	save_widget_settings($_SESSION['Username'], $widget_profile);
+	save_widget_settings($_SESSION['Username'], $widget_settings);
 	header("Location: /");
 	exit;
 }

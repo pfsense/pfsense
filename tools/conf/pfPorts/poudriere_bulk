@@ -3,6 +3,7 @@ sysutils/pfSense-ec2_setup
 sysutils/pfSense-openvpn_connect_profile
 sysutils/vm-bhyve
 sysutils/flashrom
+databases/php56-pgsql
 databases/php56-mysql
 databases/php56-mysqli
 databases/php56-pdo_mysql

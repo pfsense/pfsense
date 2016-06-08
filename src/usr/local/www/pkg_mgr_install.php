@@ -330,47 +330,47 @@ if (($POST['complete'] != "true") &&(empty($pkgmode) && $_GET['id']) || (!empty(
 		</div>
 		<div class="panel-body">
 			<div class="content">
-			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
 	if ($firmwareupdate):
 ?>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-				<?=gettext("Current Base System")?>
-			</label>
-			<div class="col-sm-10" id="installed_version">
-			</div>
-		</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">
+						<?=gettext("Current Base System")?>
+					</label>
+					<div class="col-sm-10" id="installed_version">
+					</div>
+				</div>
 
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-				<?=gettext("Latest Base System")?>
-			</label>
-			<div class="col-sm-10" id="version">
-			</div>
-		</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">
+						<?=gettext("Latest Base System")?>
+					</label>
+					<div class="col-sm-10" id="version">
+					</div>
+				</div>
 
-		<div class="form-group" id="confirm">
-			<label class="col-sm-2 control-label" id="confirmlabel">
-				<?=gettext("Retrieving")?>
-			</label>
-			<div class="col-sm-10">
-				<input type="hidden" name="id" value="firmware" />
-				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
-					<i class="fa fa-check icon-embed-btn"></i>
-					<?=gettext("Confirm")?>
-				</button>
-				<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
-			</div>
-		</div>
+				<div class="form-group" id="confirm">
+					<label class="col-sm-2 control-label" id="confirmlabel">
+						<?=gettext("Retrieving")?>
+					</label>
+					<div class="col-sm-10">
+						<input type="hidden" name="id" value="firmware" />
+						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
+							<i class="fa fa-check icon-embed-btn"></i>
+							<?=gettext("Confirm")?>
+						</button>
+						<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
+					</div>
+				</div>
 <?php
 	else:
 ?>
-			<input type="hidden" name="id" value="<?=$pkgname;?>" />
-			<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
-				<i class="fa fa-check icon-embed-btn"></i>
-				<?=gettext("Confirm")?>
-			</button>
+				<input type="hidden" name="id" value="<?=$pkgname;?>" />
+				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
+					<i class="fa fa-check icon-embed-btn"></i>
+					<?=gettext("Confirm")?>
+				</button>
 <?php
 	endif;
 ?>

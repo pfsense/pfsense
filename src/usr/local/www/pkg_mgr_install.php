@@ -10,29 +10,29 @@
  *	are permitted provided that the following conditions are met:
  *
  *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ *	   this list of conditions and the following disclaimer.
  *
  *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ *	   notice, this list of conditions and the following disclaimer in
+ *	   the documentation and/or other materials provided with the
+ *	   distribution.
  *
  *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
+ *	   must display the following acknowledgment:
+ *	   "This product includes software developed by the pfSense Project
+ *	   for use in the pfSense software distribution. (http://www.pfsense.org/).
  *
  *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
+ *	   endorse or promote products derived from this software without
+ *	   prior written permission. For written permission, please contact
+ *	   coreteam@pfsense.org.
  *
  *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
+ *	   nor may "pfSense" appear in their names without prior written
+ *	   permission of the Electric Sheep Fencing, LLC.
  *
  *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
+ *	   acknowledgment:
  *
  *	"This product includes software developed by the pfSense Project
  *	for use in the pfSense software distribution (http://www.pfsense.org/).
@@ -177,7 +177,7 @@ if ($_REQUEST['ajax']) {
 
 	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
-			if (!feof($JSONfile)	 && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
+			if (!feof($JSONfile) && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
 				if (strpos($logline, '}}') !== false) {
 					$progress = $logline;
 				}
@@ -282,7 +282,9 @@ if ($input_errors) {
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-<?php if (($POST['complete'] != "true") && (empty($pkgmode) && $_GET['id']) || (!empty($pkgmode) && (!empty($_GET['pkg']) || $pkgmode == 'reinstallall'))):
+<?php
+
+if (($POST['complete'] != "true") &&(empty($pkgmode) && $_GET['id']) || (!empty($pkgmode) && (!empty($_GET['pkg']) || $pkgmode == 'reinstallall'))):
 	if (empty($pkgmode) && $_GET['id']) {
 		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
 	} else if (!empty($pkgmode) && !empty($_GET['pkg'])) {
@@ -306,23 +308,23 @@ if ($input_errors) {
 		<div class="panel-heading">
 			<h2 class="panel-title">
 <?php
-			if ($pkgmode == 'reinstallall') {
+			if ($pkgmode == 'reinstallall'):
 ?>
 				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
-			} else if ($_GET['from'] && $_GET['to']) {
+			elseif ($_GET['from'] && $_GET['to']):
 ?>
 				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
-			} else if ($firmwareupdate) {
+			elseif ($firmwareupdate):
 ?>
 				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_name'])?>
 <?php
-			} else {
+			else:
 ?>
 				<?=$pkgtxt;?>
 <?php
-			}
+			endif;
 ?>
 			</h2>
 		</div>
@@ -330,7 +332,7 @@ if ($input_errors) {
 			<div class="content">
 			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
-	if ($firmwareupdate) {
+	if ($firmwareupdate):
 ?>
 		<div class="form-group">
 			<label class="col-sm-2 control-label">
@@ -362,7 +364,7 @@ if ($input_errors) {
 			</div>
 		</div>
 <?php
-	} else {
+	else:
 ?>
 			<input type="hidden" name="id" value="<?=$pkgname;?>" />
 			<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
@@ -370,8 +372,8 @@ if ($input_errors) {
 				<?=gettext("Confirm")?>
 			</button>
 <?php
-	}
-	?>
+	endif;
+?>
 			</div>
 		</div>
 	</div>
@@ -430,20 +432,26 @@ if (!empty($_POST['id']) || $pkgmode == "reinstallall"):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-<?php if ($firmwareupdate) {
+<?php
+		if ($firmwareupdate):
 ?>
 			<h2 class="panel-title" id="status"><?=gettext("Updating System")?></h2>
-<?php } else {
+<?php
+		else:
 ?>
 			<h2 class="panel-title" id="status"><?=$panel_heading_txt?></h2>
- <?php } ?>
+<?php
+		endif;
+?>
 		</div>
 
 		<div class="panel-body">
 			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
-<?php endif?>
+<?php
+endif;
+?>
 </form>
 
 <?php
@@ -578,7 +586,7 @@ function get_firmware_versions()
 			data: {
 					ajax: "ajax",
 					getversion: "yes"
-				  }
+			}
 		});
 
 	// Deal with the results of the above ajax call
@@ -617,7 +625,7 @@ function getLogsStatus() {
 			data: { ajax: "ajax",
 					logfilename: "<?=$logfilename?>",
 					next_log_line: "0"
-				  }
+			}
 		});
 
 	// Deal with the results of the above ajax call
@@ -688,7 +696,7 @@ var time = 0;
 
 function checkonline() {
 	$.ajax({
-		url	 : "/index.php", // or other resource
+		url : "/index.php", // or other resource
 		type : "HEAD"
 	})
 	.done(function() {

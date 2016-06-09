@@ -417,7 +417,7 @@ function local_sync_accounts() {
 			 * can cause issues. Just remove crontab before run it when necessary
 			 */
 			unlink_if_exists("/var/cron/tabs/{$line[0]}");
-			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
+			$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($line[0]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -441,7 +441,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g " . escapeshellarg($line[2]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -559,9 +559,14 @@ function local_user_set(& $user) {
 
 	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']);
 	/* add or mod pw db */
-	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
-			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($comment)." -H 0 2>&1";
+	$cmd = "/usr/sbin/pw {$user_op} -q " .
+			" -u " . escapeshellarg($user_uid) .
+			" -n " . escapeshellarg($user_name) .
+			" -g " . escapeshellarg($user_group) .
+			" -s " . escapeshellarg($user_shell) .
+			" -d " . escapeshellarg($user_home) .
+			" -c " . escapeshellarg($comment) .
+			" -H 0 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -595,7 +600,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name} -q 2>/dev/null");
+	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 
 	conf_mount_ro();
 }
@@ -623,7 +628,7 @@ function local_user_del($user) {
 	}
 
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel -n {$user['name']} {$rmhome}";
+	$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . escapeshellarg($rmhome);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -771,14 +776,17 @@ function local_group_set($group, $reset = false) {
 	}
 
 	/* determine add or mod */
-	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
+	if (mwexec("/usr/sbin/pw groupshow -g " . escapeshellarg($group_gid) . " 2>&1", true) == 0) {
 		$group_op = "groupmod -l";
 	} else {
 		$group_op = "groupadd -n";
 	}
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M '{$group_members}' 2>&1";
+	$cmd = "/usr/sbin/pw {$group_op} " .
+		escapeshellarg($group_name) .
+		" -g " . escapeshellarg($group_gid) .
+		" -M " . escapeshellarg($group_members) . " 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -791,7 +799,7 @@ function local_group_del($group) {
 	global $debug;
 
 	/* delete from group db */
-	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
+	$cmd = "/usr/sbin/pw groupdel " . escapeshellarg($group['name']);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));

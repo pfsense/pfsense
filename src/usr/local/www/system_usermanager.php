@@ -213,6 +213,13 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
 	}
 
+	/* Check the POSTed groups to ensure they are valid and exist */
+	foreach ($_POST['groups'] as $newgroup) {
+		if (empty(getGroupEntry($newgroup))) {
+			$input_errors[] = gettext("One or more invalid groups was submitted.");
+		}
+	}
+
 	if (isset($id) && $a_user[$id]) {
 		$oldusername = $a_user[$id]['name'];
 	} else {

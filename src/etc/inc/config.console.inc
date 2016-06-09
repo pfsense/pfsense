@@ -673,7 +673,7 @@ function netgate_hardware_setup() {
 				'if' => 'igb3',
 				'descr' => 'OPT3'
 			);
-			$config['interfaces']['optj'] = array(
+			$config['interfaces']['opt4'] = array(
 				'if' => 'igb2',
 				'descr' => 'OPT4'
 			);

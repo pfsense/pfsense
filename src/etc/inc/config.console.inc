@@ -751,7 +751,7 @@ function netgate_hardware_setup() {
 				'if' => 'igb7',
 				'descr' => 'OPT2'
 			);
-		}else{
+		} else {
 			$config['interfaces']['wan']['if'] = 'igb0';
 			$config['interfaces']['lan']['if'] = 'igb2';
 			$config['interfaces']['opt1'] = array(
@@ -774,7 +774,7 @@ function netgate_hardware_setup() {
 		$config['interfaces']['opt4'] = array(
 			'if' => 'ix1',
 			'descr' => 'OPT4'
-		); 
+		);
 		break;
 	}
 

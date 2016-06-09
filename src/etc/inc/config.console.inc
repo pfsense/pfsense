@@ -723,12 +723,42 @@ function netgate_hardware_setup() {
 		}
 		break;
 	case 'RCC':
-		$config['interfaces']['wan']['if'] = 'igb0';
-		$config['interfaces']['lan']['if'] = 'igb2';
-		$config['interfaces']['opt1'] = array(
-			'if' => 'igb1',
-			'descr' => 'OPT1'
-		);
+		if (does_interface_exist('igb4') && does_interface_exist('igb5') && does_interface_exist('igb6') && does_interface_exist('igb7')) {
+			// has quad port expansion card
+			$config['interfaces']['opt5'] = array(
+				'if' => 'igb0',
+				'descr' => 'OPT5'
+			);
+			$config['interfaces']['opt6'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT6'
+			);
+			$config['interfaces']['opt7'] = array(
+				'if' => 'igb2',
+				'descr' => 'OPT7'
+			);
+			$config['interfaces']['opt8'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT8'
+			);
+			$config['interfaces']['wan']['if'] = 'igb4;
+			$config['interfaces']['lan']['if'] = 'igb6';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb5',
+				'descr' => 'OPT1'
+			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'igb7',
+				'descr' => 'OPT2'
+			);
+		}else{
+			$config['interfaces']['wan']['if'] = 'igb0';
+			$config['interfaces']['lan']['if'] = 'igb2';
+			$config['interfaces']['opt1'] = array(
+				'if' => 'igb1',
+				'descr' => 'OPT1'
+			);
+		}
 		if ($g['platform'] == 'cdrom') {
 			$config['interfaces']['opt1']['enable'] = true;
 			$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
@@ -744,26 +774,7 @@ function netgate_hardware_setup() {
 		$config['interfaces']['opt4'] = array(
 			'if' => 'ix1',
 			'descr' => 'OPT4'
-		);
-		if (does_interface_exist('igb4') && does_interface_exist('igb5') && does_interface_exist('igb6') && does_interface_exist('igb7')) {
-			// has quad port expansion card
-			$config['interfaces']['opt5'] = array(
-				'if' => 'igb4',
-				'descr' => 'OPT5'
-			);
-			$config['interfaces']['opt6'] = array(
-				'if' => 'igb5',
-				'descr' => 'OPT6'
-			);
-			$config['interfaces']['opt7'] = array(
-				'if' => 'igb6',
-				'descr' => 'OPT7'
-			);
-			$config['interfaces']['opt8'] = array(
-				'if' => 'igb7',
-				'descr' => 'OPT8'
-			);
-		}
+		); 
 		break;
 	}
 

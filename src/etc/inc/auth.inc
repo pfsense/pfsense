@@ -552,7 +552,7 @@ function local_user_set(& $user) {
 
 	/* determine add or mod */
 	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
-		$user_op = "useradd -m -k {$skel_dir} -o";
+		$user_op = "useradd -m -k " . escapeshellarg($skel_dir) . " -o";
 	} else {
 		$user_op = "usermod";
 	}

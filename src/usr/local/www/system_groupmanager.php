@@ -188,9 +188,15 @@ if (isset($_POST['save'])) {
 		}
 	}
 
-
 	if (strlen($_POST['groupname']) > 16) {
 		$input_errors[] = gettext("The group name is longer than 16 characters.");
+	}
+
+	/* Check the POSTed members to ensure they are valid and exist */
+	foreach ($_POST['members'] as $newmember) {
+		if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
+			$input_errors[] = gettext("One or more invalid group members was submitted.");
+		}
 	}
 
 	if (!$input_errors && !(isset($id) && $a_group[$id])) {

@@ -723,7 +723,7 @@ function netgate_hardware_setup() {
 		}
 		break;
 	case 'RCC':
-		if (does_interface_exist('igb4') && does_interface_exist('igb5') && does_interface_exist('igb6') && does_interface_exist('igb7')) {
+		if (does_interface_exist('igb7')) {
 			// has quad port expansion card
 			$config['interfaces']['opt5'] = array(
 				'if' => 'igb0',

@@ -214,9 +214,11 @@ if ($_POST['save']) {
 	}
 
 	/* Check the POSTed groups to ensure they are valid and exist */
-	foreach ($_POST['groups'] as $newgroup) {
-		if (empty(getGroupEntry($newgroup))) {
-			$input_errors[] = gettext("One or more invalid groups was submitted.");
+	if(is_array($_POST['groups'])) {
+		foreach ($_POST['groups'] as $newgroup) {
+			if (empty(getGroupEntry($newgroup))) {
+				$input_errors[] = gettext("One or more invalid groups was submitted.");
+			}
 		}
 	}
 

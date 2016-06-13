@@ -193,9 +193,11 @@ if (isset($_POST['save'])) {
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
-	foreach ($_POST['members'] as $newmember) {
-		if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
-			$input_errors[] = gettext("One or more invalid group members was submitted.");
+	if(is_array($_POST['members'])) {
+		foreach ($_POST['members'] as $newmember) {
+			if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
+				$input_errors[] = gettext("One or more invalid group members was submitted.");
+			}
 		}
 	}
 

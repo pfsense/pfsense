@@ -93,29 +93,31 @@ include("head.inc");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Filter Reload");?></h2></div>
 	<div class="panel-body">
-		<form action="status_filter_reload.php" method="post" name="filter">
-			<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
+		<div class="content">
+			<form action="status_filter_reload.php" method="post" name="filter">
+				<button type="submit" class="btn btn-success" value="<?=gettext("Reload Filter")?>" name="reloadfilter" id="reloadfilter"><i class="fa fa-refresh icon-embed-btn"></i><?=gettext("Reload Filter")?></button>
 <?php
 if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
-			<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
+				<button type="submit" class="btn btn-info" value="<?=gettext("Force Config Sync")?>" name="syncfilter" id="syncfilter"><i class="fa fa-clone icon-embed-btn"></i><?=gettext("Force Config Sync")?></button>
 <?php
 endif;
 ?>
-		</form>
+			</form>
 
-		<br />
+			<br />
 
-		<div id="status" class="panel panel-default">
-			<?=$status; ?>
+			<div id="status" class="panel panel-default">
+				<?=$status; ?>
+			</div>
+
+			<div id="doneurl">
+			</div>
+
+			<br/>
+
+			<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading."); ?></div>
+
 		</div>
-
-		<div id="doneurl">
-		</div>
-
-		<br/>
-
-		<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading."); ?></div>
-
 	</div>
 </div>
 

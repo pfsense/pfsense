@@ -857,7 +857,9 @@ function netgate_hardware_setup() {
 			$config['interfaces']['wan']['if'] = 'xn0';
 		}
 
+		// there is no LAN, remove its config and dhcpdv6 as well
 		unset($config['interfaces']['lan']);
+		unset($config['dhcpdv6']);
 
 		$rules = array();
 

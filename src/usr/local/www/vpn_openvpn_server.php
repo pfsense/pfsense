@@ -1497,8 +1497,10 @@ events.push(function() {
 					hideInput('local_networkv6', true);
 					hideInput('topology', true);
 				} else {
-					hideInput('local_network', false);
-					hideInput('local_networkv6', false);
+					// For tunnel mode that is not shared key,
+					// the display status of local network fields depends on
+					// the state of the gwredir checkbox.
+					gwredir_change();
 					hideInput('topology', false);
 				}
 				break;

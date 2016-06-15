@@ -2078,8 +2078,9 @@ EOD;
 	}
 
 	/* fire up mpd */
-	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p {$g['varrun_path']}/" .
-		escapeshellarg($ppp['type']) . "_{$interface}.pid -s ppp " . escapeshellarg($ppp['type']) . "client");
+	mwexec("/usr/local/sbin/mpd5 -b -k -d {$g['varetc_path']} -f mpd_{$interface}.conf -p " .
+		escapeshellarg("{$g['varrun_path']}/{$ppp['type']}_{$interface}.pid") . " -s ppp " .
+		escapeshellarg("{$ppp['type']}client"));
 
 	// Check for PPPoE periodic reset request
 	if ($type == "pppoe") {

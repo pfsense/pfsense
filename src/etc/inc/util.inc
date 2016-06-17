@@ -877,30 +877,6 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 	}
 }
 
-
-function subnet_expand($subnet) {
-	if (is_subnetv4($subnet)) {
-		return subnetv4_expand($subnet);
-	} else if (is_subnetv6($subnet)) {
-		return subnetv6_expand($subnet);
-	} else {
-		return $subnet;
-	}
-}
-
-function subnetv4_expand($subnet) {
-	$result = array();
-	list ($ip, $bits) = explode("/", $subnet);
-	$net = ip2long($ip);
-	$mask = (0xffffffff << (32 - $bits));
-	$net &= $mask;
-	$size = round(exp(log(2) * (32 - $bits)));
-	for ($i = 0; $i < $size; $i += 1) {
-		$result[] = long2ip($net | $i);
-	}
-	return $result;
-}
-
 /* find out whether two IPv4/IPv6 CIDR subnets overlap.
    Note: CIDR overlap implies one is identical or included so largest sn will be the same */
 function check_subnets_overlap($subnet1, $bits1, $subnet2, $bits2) {

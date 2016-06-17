@@ -4980,4 +4980,21 @@ function upgrade_153_to_154() {
 	/* NOTE: This upgrade code was reverted. See redmine ticket #6118 and
 	   https://github.com/pfsense/pfsense/commit/538a3c04a6b6671151e913b06b2f340b6f8ee222 */
 }
+
+function upgrade_154_to_155() {
+	global $config;
+
+	if (!isset($config['checkipservices'])) {
+
+		$pconfig['enable'] = true;
+		$pconfig['name'] = 'DynDNS';
+		$pconfig['url'] = 'http://checkip.dyndns.org';
+		$pconfig['username'] = '';
+		$pconfig['password'] = '';
+		$pconfig['verifysslpeer'] = false;
+		$pconfig['descr'] = 'DynDNS Check IP Service';
+
+		$config['checkipservices']['checkipservice'][] = $pconfig;
+	}
+}
 ?>

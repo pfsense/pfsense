@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <pfsense>
-	<version>15.4</version>
+	<version>15.5</version>
 	<lastchange/>
 	<system>
 		<optimization>normal</optimization>
@@ -276,4 +276,13 @@
 		<hideversion/>
 		<dnssecstripped/>
 	</unbound>
+	<checkipservices>
+		<checkipservice>
+			<name>DynDNS</name>
+			<url>http://checkip.dyndns.org</url>
+			<username/>
+			<password/>
+			<descr><![CDATA[DynDNS Check IP Service]]></descr>
+		</checkipservice>
+	</checkipservices>
 </pfsense>

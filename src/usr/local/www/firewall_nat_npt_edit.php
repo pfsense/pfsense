@@ -101,23 +101,31 @@ if (isset($_GET['dup'])) {
 if (isset($id) && $a_npt[$id]) {
 	$pconfig['disabled'] = isset($a_npt[$id]['disabled']);
 
-	address_to_pconfig($a_npt[$id]['source'], $pconfig['src'],
-		$pconfig['srcmask'], $pconfig['srcnot'],
-		$pconfig['srcbeginport'], $pconfig['srcendport']);
-
-	address_to_pconfig($a_npt[$id]['destination'], $pconfig['dst'],
-		$pconfig['dstmask'], $pconfig['dstnot'],
-		$pconfig['dstbeginport'], $pconfig['dstendport']);
-
-	$pconfig['interface'] = $a_npt[$id]['interface'];
-	if (!$pconfig['interface']) {
+	if((filter_var('src', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) && 
+	(filter_var('dst', FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false))
+	{
+		$input_errors[] = gettext("A valid IPv6 address must be specified.");
+	}
+	else
+	{
+		address_to_pconfig($a_npt[$id]['source'], $pconfig['src'],
+			$pconfig['srcmask'], $pconfig['srcnot'],
+			$pconfig['srcbeginport'], $pconfig['srcendport']);
+	
+		address_to_pconfig($a_npt[$id]['destination'], $pconfig['dst'],
+			$pconfig['dstmask'], $pconfig['dstnot'],
+			$pconfig['dstbeginport'], $pconfig['dstendport']);
+	
+		$pconfig['interface'] = $a_npt[$id]['interface'];
+		if (!$pconfig['interface']) {
+			$pconfig['interface'] = "wan";
+		}
+	
+		$pconfig['descr'] = $a_npt[$id]['descr'];
+	} else {
 		$pconfig['interface'] = "wan";
 	}
 
-	$pconfig['descr'] = $a_npt[$id]['descr'];
-} else {
-	$pconfig['interface'] = "wan";
-}
 
 if (isset($_GET['dup'])) {
 	unset($id);

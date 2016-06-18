@@ -126,7 +126,7 @@ if (isset($id) && $a_npt[$id]) {
 		$pconfig['interface'] = "wan";
 	}
 
-
+}
 if (isset($_GET['dup'])) {
 	unset($id);
 }

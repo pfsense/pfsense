@@ -70,7 +70,7 @@ function listtags() {
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',
 		'gateway_item', 'gateway_group', 'gif', 'gre', 'group',
-		'hash-algorithm-option', 'hosts', 'member', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
+		'hash-algorithm-option', 'hosts', 'ifgroupentry', 'igmpentry', 'interface_array', 'item', 'key',
 		'lagg', 'lbaction', 'lbpool', 'l7rules', 'lbprotocol',
 		'member', 'menu', 'tab', 'mobilekey', 'monitor_type', 'mount',
 		'npt', 'ntpserver',

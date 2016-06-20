@@ -967,7 +967,7 @@ $section->addClass('Radius');
 
 $section->addInput(new Form_Checkbox(
 	'reauthenticate',
-	'Reathentication',
+	'Reauthentication',
 	'Reauthenticate connected users every minute',
 	$pconfig['reauthenticate']
 ))->setHelp('If reauthentication is enabled, Access-Requests will be sent to the RADIUS server for each user that is logged in every minute. ' .

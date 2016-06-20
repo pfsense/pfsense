@@ -1110,7 +1110,8 @@ create_final_staging_area() {
 
 customize_stagearea_for_image() {
 	local _image_type="$1"
-	local _default_config=""
+	local _default_config="" # filled with $2 below
+	local _image_variant="$3"
 
 	if [ -n "$2" ]; then
 		_default_config="$2"
@@ -1174,6 +1175,14 @@ customize_stagearea_for_image() {
 			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
 		done
 	fi
+
+	if [ -n "$_image_variant" -a \
+	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
+		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+	fi
 }
 
 create_distribution_tarball() {
@@ -1225,6 +1234,8 @@ create_iso_image() {
 }
 
 create_memstick_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/memstick.${TARGET}
 	if [ "${MEMSTICKPATH}" = "" ]; then
 		echo ">>> MEMSTICKPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
@@ -1233,26 +1244,33 @@ create_memstick_image() {
 
 	mkdir -p $(dirname ${MEMSTICKPATH})
 
-	customize_stagearea_for_image "memstick"
+	local _image_path=${MEMSTICKPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-memstick-/-memstick-${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "memstick" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
-	echo ">>> Creating memstick to ${MEMSTICKPATH}." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${_image_path} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKPATH} ]; then
-			rm -f $MEMSTICKPATH
+		if [ -f ${_image_path} ]; then
+			rm -f $_image_path
 		fi
 		echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
+	MD=$(mdconfig -a -t vnode -f $_image_path)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
@@ -1260,7 +1278,7 @@ create_memstick_image() {
 	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
-	gzip -qf $MEMSTICKPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
@@ -2286,7 +2304,7 @@ snapshots_create_latest_symlink() {
 snapshots_create_sha256() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH} ${VARIANTIMAGES}; do
 		if [ -f "${_img}.gz" ]; then
 			_img="${_img}.gz"
 		fi

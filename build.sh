@@ -409,7 +409,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_iso_image
 			;;
 		memstick)
-			create_memstick_image
+			if [ -n "${MEMSTICK_VARIANTS}" ]; then
+				for _variant in ${MEMSTICK_VARIANTS}; do
+					create_memstick_image ${_variant}
+				done
+			else
+				create_memstick_image
+			fi
 			;;
 		memstickserial)
 			create_memstick_serial_image

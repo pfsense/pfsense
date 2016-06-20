@@ -437,7 +437,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_iso_image
 			;;
 		memstick)
-			create_memstick_image
+			if [ -n "${MEMSTICK_VARIANTS}" ]; then
+				for _variant in ${MEMSTICK_VARIANTS}; do
+					create_memstick_image ${_variant}
+				done
+			else
+				create_memstick_image
+			fi
 			;;
 		memstickserial)
 			create_memstick_serial_image
@@ -446,7 +452,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_memstick_adi_image
 			;;
 		fullupdate)
-			create_Full_update_tarball
+			if [ -n "${MEMSTICK_VARIANTS}" ]; then
+				for _variant in ${MEMSTICK_VARIANTS}; do
+					create_Full_update_tarball ${_variant}
+				done
+			else
+				create_Full_update_tarball
+			fi
 			;;
 		nanobsd|nanobsd-vga)
 			if [ "${TARGET}" = "i386" -a "${_IMGTOBUILD}" = "nanobsd" ]; then

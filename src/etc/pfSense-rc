@@ -413,6 +413,12 @@ if [ "${PLATFORM}" = "nanobsd" ]; then
 	/sbin/mount -u -f -r -o sync,noatime /cf
 fi
 
+# Copy custom logo over if it's present
+if [ -d /usr/local/share/${product}/custom_logos ]; then
+	cp -f /usr/local/share/${product}/custom_logos/*png \
+		/usr/local/www
+fi
+
 /etc/rc.bootup
 
 # /etc/rc.bootup unset $g['booting'], and removes file

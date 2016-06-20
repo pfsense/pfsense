@@ -53,6 +53,7 @@
  */
 
 require_once("globals.inc");
+require_once("functions.inc");
 require_once("led.inc");
 
 $notice_path = $g['tmp_path'] . '/notices';

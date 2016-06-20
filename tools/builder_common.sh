@@ -376,9 +376,24 @@ install_default_kernel() {
 
 # Creates a full update file
 create_Full_update_tarball() {
+	local _variant="$1"
+
+	LOGFILE=${BUILDER_LOGS}/full_update.${TARGET}
+	if [ "${UPDATES_TARBALL_FILENAME}" = "" ]; then
+		echo ">>> UPDATES_TARBALL_FILENAME is empty skipping generation of full update image!" | tee -a ${LOGFILE}
+		return
+	fi
+
+	local _image_path=${UPDATES_TARBALL_FILENAME}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-Full-Update-/-Full-Update-${_variant}-/")
+		VARIANTUPDATES="${VARIANTUPDATES}${VARIANTUPDATES:+ }${_image_path}"
+	fi
+
 	mkdir -p $UPDATESDIR
 
-	customize_stagearea_for_image "fullupdate"
+	customize_stagearea_for_image "fullupdate" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	rm -rf ${FINAL_CHROOT_DIR}/cf
@@ -408,8 +423,10 @@ create_Full_update_tarball() {
 			${FINAL_CHROOT_DIR}/tmp
 	fi
 
-	echo ">>> Creating ${UPDATES_TARBALL_FILENAME} ..." | tee -a ${LOGFILE}
-	tar --exclude=./dev -czPf ${UPDATES_TARBALL_FILENAME} -C ${FINAL_CHROOT_DIR} .
+	echo ">>> Creating ${_image_path} ..." | tee -a ${LOGFILE}
+	tar --exclude=./dev -czPf ${_image_path} -C ${FINAL_CHROOT_DIR} .
+
+	echo ">>> Full Update created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
 
 # Outputs various set variables aka env
@@ -1264,7 +1281,8 @@ create_final_staging_area() {
 
 customize_stagearea_for_image() {
 	local _image_type="$1"
-	local _default_config=""
+	local _default_config="" # filled with $2 below
+	local _image_variant="$3"
 
 	if [ -n "$2" ]; then
 		_default_config="$2"
@@ -1328,6 +1346,14 @@ customize_stagearea_for_image() {
 			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
 		done
 	fi
+
+	if [ -n "$_image_variant" -a \
+	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
+		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+	fi
 }
 
 create_distribution_tarball() {
@@ -1377,6 +1403,7 @@ create_iso_image() {
 }
 
 create_memstick_image() {
+	local _variant="$1"
 
 	LOGFILE=${BUILDER_LOGS}/memstick.${TARGET}
 	if [ "${MEMSTICKPATH}" = "" ]; then
@@ -1384,26 +1411,33 @@ create_memstick_image() {
 		return
 	fi
 
-	customize_stagearea_for_image "memstick"
+	local _image_path=${MEMSTICKPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-memstick-/-memstick-${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "memstick" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
-	echo ">>> Creating memstick to ${MEMSTICKPATH}." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${_image_path} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKPATH} ]; then
-			rm -f $MEMSTICKPATH
+		if [ -f ${_image_path} ]; then
+			rm -f $_image_path
 		fi
 		echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
+	MD=$(mdconfig -a -t vnode -f $_image_path)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
@@ -1411,7 +1445,7 @@ create_memstick_image() {
 	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
-	gzip -qf $MEMSTICKPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
@@ -2495,7 +2529,7 @@ snapshots_copy_to_staging_nanobsd() {
 snapshots_copy_to_staging_iso_updates() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${VARIANTIMAGES}; do
 		if [ ! -f "${_img}.gz" ]; then
 			continue
 		fi
@@ -2505,11 +2539,13 @@ snapshots_copy_to_staging_iso_updates() {
 		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
 	done
 
-	if [ -f "${UPDATES_TARBALL_FILENAME}" ]; then
-		create_sha256 ${UPDATES_TARBALL_FILENAME}
-		cp -l ${UPDATES_TARBALL_FILENAME}* $STAGINGAREA/ 2>/dev/null
-		snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${UPDATES_TARBALL_FILENAME})
-	fi
+	for _img in ${UPDATES_TARBALL_FILENAME} ${VARIANTUPDATES}; do
+		if [ -f "${_img}" ]; then
+			create_sha256 ${_img}
+			cp -l ${_img}* $STAGINGAREA/ 2>/dev/null
+			snapshots_create_latest_symlink ${STAGINGAREA}/$(basename ${_img})
+		fi
+	done
 
 	if [ -f "${OVAPATH}" ]; then
 		mkdir -p ${STAGINGAREA}/virtualization

@@ -1979,7 +1979,7 @@ function dyndnsCheckIP($int) {
 					$url = $checkipservice['url'];
 					$username = $checkipservice['username'];
 					$password = $checkipservice['password'];
-					$verifysslpeer = isset($checkipservice['verifysslpear']) ? true : false;
+					$verifysslpeer = isset($checkipservice['verifysslpeer']) ? true : false;
 					break;
 				}
 			}

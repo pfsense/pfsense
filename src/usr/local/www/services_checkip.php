@@ -54,7 +54,7 @@
  */
 
 ##|+PRIV
-##|*IDENT=page-services-checkipserviceclients
+##|*IDENT=page-services-checkipservices
 ##|*NAME=Services: Check IP Service
 ##|*DESCR=Allow access to the 'Services: Check IP Service' page.
 ##|*MATCH=services_checkip.php*

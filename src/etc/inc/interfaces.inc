@@ -5067,12 +5067,14 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 	if (is_array($config['virtualip']['vip'])) {
 		$result = array();
 		foreach ($config['virtualip']['vip'] as $vip) {
-			if (substr($vip['interface'], 0, 4) == "_vip")
+			if (substr($vip['interface'], 0, 4) == "_vip") {
 				$iface = get_configured_vip_interface($vip['interface']);
-			else
+			} else {
 				$iface = $vip['interface'];
-			if ($int != $iface)
+			}
+			if ($int != $iface) {
 				continue;
+			}
 			if ($action == "update") {
 				interfaces_vips_configure($int);
 			} else {

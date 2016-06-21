@@ -209,7 +209,8 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.raw.recvspace" => 65536,
 	"net.raw.sendspace" => 65536,
 	"net.inet.raw.recvspace" => 131072,
-	"net.inet.raw.maxdgram" => 131072
+	"net.inet.raw.maxdgram" => 131072,
+	"kern.corefile" => "/root/%N.core" /* Write all core files to /root/ so they do not consume space on other slices */
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */

@@ -1394,7 +1394,7 @@ EOD;
 			if (!empty($peerid_spec)) {
 				$ipsecconnect .= "\trightid = {$peerid_spec}\n";
 			}
-			if ($keyexchange == 'ikev1') {
+			if ($keyexchange != 'ikev2') {
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 

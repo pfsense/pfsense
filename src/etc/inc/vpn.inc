@@ -58,6 +58,7 @@
 
 require_once("ipsec.inc");
 require_once("filter.inc");
+require_once("auth.inc");
 
 function vpn_update_daemon_loglevel($category, $level) {
 	global $ipsec_log_cats, $ipsec_log_sevs;

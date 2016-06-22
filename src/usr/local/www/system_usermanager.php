@@ -895,6 +895,7 @@ events.push(function() {
 		}
 	});
 
+	$('#expires').datepicker();
 
 	// ---------- On initial page load ------------------------------------------------------------
 

@@ -4036,7 +4036,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_send_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_send_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp6_interface_statement_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -4044,7 +4044,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$request_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_request_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_request_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp6_interface_statement_request_options']);
 		foreach ($options as $option) {
 			$request_options .= "\trequest " . trim($option) . ";\n";
 		}
@@ -4314,7 +4314,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp_send_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp_send_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -4332,7 +4332,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$option_modifiers = "";
 	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
-		$modifiers = explode(',', $wancfg['adv_dhcp_option_modifiers']);
+		$modifiers = DHCP_Config_Option_Split($wancfg['adv_dhcp_option_modifiers']);
 		foreach ($modifiers as $modifier) {
 			$option_modifiers .= "\t" . trim($modifier) . ";\n";
 		}
@@ -4363,6 +4363,14 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	return $dhclientconf;
 }
 
+function DHCP_Config_Option_Split($option_string) {
+	$options = [];
+	preg_match_all('/[^",]*(?:"[^"]*"[^",]*)+(?:"[^",]*)?|[^,]+/m', $option_string, $result, PREG_PATTERN_ORDER);
+	for ($i = 0; $i < count($result[0]); $i++) {
+		$options[] = $result[0][$i];
+	}
+	return $options;
+}
 
 function DHCP_Config_File_Override($wancfg, $wanif) {
 

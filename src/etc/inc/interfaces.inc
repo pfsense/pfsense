@@ -5064,6 +5064,7 @@ function link_interface_to_vlans($int, $action = "") {
 function link_interface_to_vips($int, $action = "", $vhid = '') {
 	global $config;
 
+	$updatevips = false;
 	if (is_array($config['virtualip']['vip'])) {
 		$result = array();
 		foreach ($config['virtualip']['vip'] as $vip) {
@@ -5076,13 +5077,16 @@ function link_interface_to_vips($int, $action = "", $vhid = '') {
 				continue;
 			}
 			if ($action == "update") {
-				interfaces_vips_configure($int);
+				$updatevips = true;
 			} else {
 				if (empty($vhid) || ($vhid == $vip['vhid']) ||
 				    substr($vip['interface'], 0, 4) == "_vip") {
 					$result[] = $vip;
 				}
 			}
+		}
+		if ($updatevips === true) {
+			interfaces_vips_configure($int);
 		}
 		return $result;
 	}

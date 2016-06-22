@@ -63,7 +63,7 @@ class Form_Checkbox extends Form_Input
 	{
 		$input = parent::_getInput();
 
-		if (!isset($this->_description))
+		if (!isset($this->_description) || strlen($this->_description) == 0)
 			return $input;
 
 		return '<label class="chkboxlbl">'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';

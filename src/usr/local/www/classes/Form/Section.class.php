@@ -92,7 +92,7 @@ class Form_Section extends Form_Element
 	public function __toString()
 	{
 		$element = parent::__toString();
-		$title = htmlspecialchars(gettext($this->_title));
+		$title = (strlen($this->_title) > 0) ? htmlspecialchars(gettext($this->_title)) : $this->_title;
 		$body = implode('', $this->_groups);
 		$hdricon = "";
 		$bodyclass = '<div class="panel-body">';

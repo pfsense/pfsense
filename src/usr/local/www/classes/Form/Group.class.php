@@ -92,7 +92,7 @@ class Form_Group extends Form_Element
 		$group = new Form_Element;
 		$group->addClass('col-sm-'. Form::MAX_INPUT_WIDTH, 'col-sm-offset-'. Form::LABEL_WIDTH);
 
-		$help = gettext($this->_help);
+		$help = (strlen($this->_help) > 0) ? gettext($this->_help) : $this->_help;
 
 		if (!empty($this->_helpParams))
 			$help = call_user_func_array('sprintf', array_merge([$help], $this->_helpParams));

@@ -2633,7 +2633,6 @@ $group->add(new Form_Input(
 	[min => 0, max => 59]
 ))->setHelp('Minutes (0-59)');
 
-// ToDo: Need a date-picker here
 $group->add(new Form_Input(
 	'pppoe_resetdate',
 	null,
@@ -3670,6 +3669,8 @@ events.push(function() {
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
+
+	$('#pppoe_resetdate').datepicker();
 
 });
 //]]>

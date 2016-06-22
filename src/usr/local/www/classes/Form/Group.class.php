@@ -86,7 +86,7 @@ class Form_Group extends Form_Element
 
 	protected function _getHelp()
 	{
-		if (!isset($this->_help))
+		if (empty($this->_help))
 			return null;
 
 		$group = new Form_Element;

@@ -103,7 +103,8 @@ $openvpn_verbosity_level = array(
 
 global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
-	1024, 2048, 4096);
+	1024, 2048, 3072, 4096, 7680, 8192, 15360, 16384
+);
 
 global $openvpn_cert_depths;
 $openvpn_cert_depths = array(

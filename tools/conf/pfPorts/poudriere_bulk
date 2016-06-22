@@ -69,3 +69,4 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
+net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals

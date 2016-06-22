@@ -1202,6 +1202,8 @@ events.push(function() {
 	if ($('providerplan').size() == 0) {
 		hideInput('providerplan', true);
 	}
+
+	$('#pppoe_resetdate').datepicker();
 });
 //]]>
 

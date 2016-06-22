@@ -792,7 +792,7 @@ function cleanup_backupcache($lock = false) {
 	global $g;
 	$i = false;
 
-	$revisions = get_config_backup_count();
+	$revisions = intval(is_numericint($config['system']['backupcount']) ? $config['system']['backupcount'] : $g['default_config_backup_count']);
 
 	if (!$lock) {
 		$lockkey = lock('config');
@@ -995,17 +995,6 @@ function make_config_revision_entry($desc = null, $override_user = null) {
 	}
 	$revision['username'] = $username;
 	return $revision;
-}
-
-function get_config_backup_count() {
-	global $config, $g;
-	if (isset($config['system']['backupcount']) && is_numeric($config['system']['backupcount']) && ($config['system']['backupcount'] >= 0)) {
-		return intval($config['system']['backupcount']);
-	} elseif ($g['platform'] == "nanobsd") {
-		return 5;
-	} else {
-		return 30;
-	}
 }
 
 function pfSense_clear_globals() {

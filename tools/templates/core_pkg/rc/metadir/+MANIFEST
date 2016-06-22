@@ -2,7 +2,7 @@ name: "%%PRODUCT_NAME%%-rc"
 version: "%%VERSION%%"
 origin: "security/%%PRODUCT_NAME%%-rc"
 comment: <<EOD
-%%PRODUCT_NAME%% rc script
+%%PRODUCT_NAME%% rc script and rc.initial shell
 EOD
 maintainer: development@pfsense.org
 prefix: /

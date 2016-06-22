@@ -191,13 +191,13 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 /* add QinQ interfaces */
 if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
 	foreach ($config['qinqs']['qinqentry'] as $qinq) {
-		$portlist["vlan{$qinq['tag']}"]['descr'] = "VLAN {$qinq['tag']}";
-		$portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
+		$portlist["{$qinq['vlanif']}"]['descr'] = "VLAN {$qinq['tag']} on {$qinq['if']}";
+		$portlist["{$qinq['vlanif']}"]['isqinq'] = true;
 		/* QinQ members */
 		$qinqifs = explode(' ', $qinq['members']);
 		foreach ($qinqifs as $qinqif) {
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
+			$portlist["{$qinq['vlanif']}_{$qinqif}"]['descr'] = "QinQ {$qinqif} on VLAN {$qinq['tag']} on {$qinq['if']}";
+			$portlist["{$qinq['vlanif']}_{$qinqif}"]['isqinq'] = true;
 		}
 	}
 }
@@ -500,11 +500,11 @@ if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 			$savemsg = gettext("The system is now rebooting. Please wait.");
 			$class = "success";
 		} else {
-			$savemsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
+			$applymsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 			$class = "warning";
 		}
 	} else {
-		$savemsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
+		$applymsg = gettext("Interface mismatch detected. Please resolve the mismatch and click 'Apply Changes'. The firewall will reboot afterwards.");
 		$class = "warning";
 	}
 }
@@ -513,6 +513,8 @@ if (file_exists("/tmp/reload_interfaces")) {
 	echo "<p>\n";
 	print_apply_box(gettext("The interface configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 	echo "<br /></p>\n";
+} elseif ($applymsg) {
+	print_apply_box($applymsg);
 } elseif ($savemsg) {
 	print_info_box($savemsg, $class);
 }

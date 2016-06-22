@@ -142,8 +142,8 @@ if ($_POST) {
 
 		if (!$_POST['tunable'] || !isset($_POST['value'])) {
 			$input_errors[] = gettext("Both a name and a value must be specified.");
-		} else if (!ctype_alnum($_POST['value'])) {
-			$input_errors[] = gettext("The value may contain alphanumeric characters only.");
+		} else if (preg_match("/[^a-zA-Z0-9.\-_%\/]/", $_POST['value'])) {
+			$input_errors[] = gettext("The value may only contain alphanumeric characters, -, _, %, and /.");
 		} else {
 			$tunableent['tunable'] = htmlspecialchars($_POST['tunable']);
 			$tunableent['value'] = htmlspecialchars($_POST['value']);

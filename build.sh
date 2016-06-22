@@ -68,8 +68,6 @@ usage() {
 	echo "		--install-extra-kernels argument - Put extra kernel(s) under /kernel image directory. Example --install-extra-kernels KERNEL_NAME_WRAP"
 	echo "		--snapshots - Build snapshots and upload them to RSYNCIP"
 	echo "		--poudriere-snapshots - Update poudriere packages and send them to PKG_RSYNC_HOSTNAME"
-	echo "		--enable-memorydisks - This will put stage_dir and iso_dir as MFS filesystems"
-	echo "		--disable-memorydisks - Will just teardown these filesystems created by --enable-memorydisks"
 	echo "		--setup-poudriere - Install poudriere and create necessary jails and ports tree"
 	echo "		--create-unified-patch - Create a big patch with all changes done on FreeBSD"
 	echo "		--update-poudriere-jails [-a ARCH_LIST] - Update poudriere jails using current patch versions"
@@ -160,12 +158,6 @@ while test "$1" != ""; do
 			;;
 		--clean-builder)
 			BUILDACTION="cleanbuilder"
-			;;
-		--enable-memorydisks)
-			BUILDACTION="enablememorydisk"
-			;;
-		--disable-memorydisks)
-			BUILDACTION="disablememorydisk"
 			;;
 		--setup-poudriere)
 			BUILDACTION="setup_poudriere"
@@ -261,12 +253,6 @@ case $BUILDACTION in
 	;;
 	updatesources)
 		update_freebsd_sources
-	;;
-	enablememorydisk)
-		prestage_on_ram_setup
-	;;
-	disablememorydisk)
-		prestage_on_ram_cleanup
 	;;
 	setup_poudriere)
 		poudriere_init
@@ -387,9 +373,6 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	# Ensure binaries are present that builder system requires
 	builder_setup
 
-	# Check to see if pre-staging will be hosted on ram
-	prestage_on_ram_setup
-
 	# Build world, kernel and install
 	echo ">>> Building world for ISO... $FREEBSD_BRANCH ..."
 	make_world
@@ -426,7 +409,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			create_iso_image
 			;;
 		memstick)
-			create_memstick_image
+			if [ -n "${MEMSTICK_VARIANTS}" ]; then
+				for _variant in ${MEMSTICK_VARIANTS}; do
+					create_memstick_image ${_variant}
+				done
+			else
+				create_memstick_image
+			fi
 			;;
 		memstickserial)
 			create_memstick_serial_image

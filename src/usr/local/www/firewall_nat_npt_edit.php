@@ -245,7 +245,8 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_IpAddress(
 	'src',
 	'Address',
-	$pconfig['src']
+	$pconfig['src'],
+	'V6'
 ))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. ' .
 													 'The prefix size specified for the internal IPv6 prefix will be applied to the external prefix.');
 
@@ -259,7 +260,8 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_IpAddress(
 	'dst',
 	'Address',
-	$pconfig['dst']
+	$pconfig['dst'],
+	'V6'
 ))->addMask('dstmask', $pconfig['dstmask'])->setHelp('Global Unicast routable IPv6 prefix');
 
 $section->addInput(new Form_Input(

@@ -301,7 +301,7 @@ function bootstrapTable($text) {
  * the specified element to $group
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
-	global $text, $group;
+	global $text, $group, $config;
 
 	switch ($type) {
 		case "input":

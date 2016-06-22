@@ -97,7 +97,9 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 
 if (isset($id) && $a_ppps[$id]) {
 	$pconfig['ptpid'] = $a_ppps[$id]['ptpid'];
-	$pconfig['type'] = $a_ppps[$id]['type'];
+	if (!isset($_REQUEST['type'])) {
+		$pconfig['type'] = $a_ppps[$id]['type'];
+	}
 	$pconfig['interfaces'] = explode(",", $a_ppps[$id]['ports']);
 	$pconfig['username'] = $a_ppps[$id]['username'];
 	$pconfig['password'] = base64_decode($a_ppps[$id]['password']);
@@ -1200,6 +1202,8 @@ events.push(function() {
 	if ($('providerplan').size() == 0) {
 		hideInput('providerplan', true);
 	}
+
+	$('#pppoe_resetdate').datepicker();
 });
 //]]>
 

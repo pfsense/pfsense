@@ -83,7 +83,7 @@ core_pkg_create_repo() {
 	# Use the same directory structure as poudriere does to avoid
 	# breaking snapshot repositories during rsync
 	ln -sf $(basename ${CORE_PKG_REAL_PATH}) ${CORE_PKG_PATH}/.latest
-	ln -sf .latest/All ${CORE_PKG_PATH}/All
+	ln -sf .latest/All ${CORE_PKG_ALL_PATH}
 	ln -sf .latest/digests.txz ${CORE_PKG_PATH}/digests.txz
 	ln -sf .latest/meta.txz ${CORE_PKG_PATH}/meta.txz
 	ln -sf .latest/packagesite.txz ${CORE_PKG_PATH}/packagesite.txz
@@ -197,62 +197,6 @@ print_error_pfS() {
 	exit 1
 }
 
-prestage_on_ram_setup() {
-	# Do not use memory disks for release build
-	if [ -n "${_IS_RELEASE}" ]; then
-		return
-	fi
-
-	[ -d "${STAGE_CHROOT_DIR}" ] \
-		|| mkdir -p ${STAGE_CHROOT_DIR}
-	[ -d "${FINAL_CHROOT_DIR}" ] \
-		|| mkdir -p ${FINAL_CHROOT_DIR}
-
-	_AVAIL_MEM=$(($(sysctl -n hw.usermem) / 1024 / 1024))
-	if [ $_AVAIL_MEM -lt 2000 ]; then
-		echo ">>> Builder has less than 2GiB RAM skipping memory disks"
-		return
-	else
-		echo "######################################################################################"
-		echo
-		echo ">>> Builder has more than 2GiB RAM enabling memory disks"
-		echo ">>> WARNING: Remember to remove these memory disks by running $0 --disable-memorydisks"
-		echo
-		echo "######################################################################################"
-	fi
-
-	if df /dev/ufs/prestagebacking >/dev/null 2>&1; then
-		echo ">>> Detected preexisting memory disk enabled for ${STAGE_CHROOT_DIR}."
-	else
-		mdconfig -a -t swap -u 10001 -s ${MEMORYDISK_SIZE}
-		newfs -L prestagebacking -U /dev/md10001
-		mount /dev/ufs/prestagebacking ${STAGE_CHROOT_DIR}
-	fi
-
-	if df /dev/ufs/finalstagebacking >/dev/null 2>&1; then
-		echo ">>> Detected preexisting memory disk enabled for ${FINAL_CHROOT_DIR}."
-	else
-		mdconfig -a -t swap -u 10002 -s ${MEMORYDISK_SIZE}
-		newfs -L finalstagebacking -U /dev/md10002
-		mount /dev/ufs/finalstagebacking ${FINAL_CHROOT_DIR}
-	fi
-}
-
-prestage_on_ram_cleanup() {
-	if [ -c /dev/md10001 ]; then
-		if [ -d ${STAGE_CHROOT_DIR} ]; then
-			umount ${STAGE_CHROOT_DIR}
-		fi
-		mdconfig -d -u 10001
-	fi
-	if [ -c /dev/md10002 ]; then
-		if [ -d ${FINAL_CHROOT_DIR} ]; then
-			umount ${FINAL_CHROOT_DIR}
-		fi
-		mdconfig -d -u 10002
-	fi
-}
-
 # This routine will verify that the kernel has been
 # installed OK to the staging area.
 ensure_kernel_exists() {
@@ -301,7 +245,7 @@ build_all_kernels() {
 			print_error_pfS
 		fi
 
-		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
+		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 			continue
 		fi
@@ -353,10 +297,10 @@ install_default_kernel() {
 	fi
 	mkdir -p $FINAL_CHROOT_DIR/pkgs
 	if [ -z "${2}" -o -n "${INSTALL_EXTRA_KERNELS}" ]; then
-		cp ${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
+		cp ${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz $FINAL_CHROOT_DIR/pkgs
 		if [ -n "${INSTALL_EXTRA_KERNELS}" ]; then
 			for _EXTRA_KERNEL in $INSTALL_EXTRA_KERNELS; do
-				_EXTRA_KERNEL_PATH=${CORE_PKG_REAL_PATH}/All/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
+				_EXTRA_KERNEL_PATH=${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${_EXTRA_KERNEL}).txz
 				if [ -f "${_EXTRA_KERNEL_PATH}" ]; then
 					echo -n ". adding ${_EXTRA_KERNEL_PATH} on image /pkgs folder"
 					cp ${_EXTRA_KERNEL_PATH} $FINAL_CHROOT_DIR/pkgs
@@ -1166,7 +1110,8 @@ create_final_staging_area() {
 
 customize_stagearea_for_image() {
 	local _image_type="$1"
-	local _default_config=""
+	local _default_config="" # filled with $2 below
+	local _image_variant="$3"
 
 	if [ -n "$2" ]; then
 		_default_config="$2"
@@ -1209,7 +1154,7 @@ customize_stagearea_for_image() {
 	     "${_image_type}" = "memstickadi" ]; then
 		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
-		cp ${CORE_PKG_REAL_PATH}/All/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
+		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
@@ -1229,6 +1174,14 @@ customize_stagearea_for_image() {
 			_new=$(echo "${_cur}" | sed -e "s,^${PKG_REPO_SERVER_STAGING},${_tgt_server},")
 			/usr/local/bin/sqlite3 ${_db} "update repodata set value='${_new}' where key='packagesite'"
 		done
+	fi
+
+	if [ -n "$_image_variant" -a \
+	    -d ${BUILDER_TOOLS}/templates/custom_logos/${_image_variant} ]; then
+		mkdir -p ${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
+		cp -f \
+			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
+			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
 }
 
@@ -1281,6 +1234,8 @@ create_iso_image() {
 }
 
 create_memstick_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/memstick.${TARGET}
 	if [ "${MEMSTICKPATH}" = "" ]; then
 		echo ">>> MEMSTICKPATH is empty skipping generation of memstick image!" | tee -a ${LOGFILE}
@@ -1289,26 +1244,33 @@ create_memstick_image() {
 
 	mkdir -p $(dirname ${MEMSTICKPATH})
 
-	customize_stagearea_for_image "memstick"
+	local _image_path=${MEMSTICKPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/-memstick-/-memstick-${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "memstick" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
 
-	echo ">>> Creating memstick to ${MEMSTICKPATH}." 2>&1 | tee -a ${LOGFILE}
+	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKPATH} ${FINAL_CHROOT_DIR}
+	makefs -B little -o label=${PRODUCT_NAME},version=2 ${_image_path} ${FINAL_CHROOT_DIR}
 	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKPATH} ]; then
-			rm -f $MEMSTICKPATH
+		if [ -f ${_image_path} ]; then
+			rm -f $_image_path
 		fi
 		echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKPATH)
+	MD=$(mdconfig -a -t vnode -f $_image_path)
 	# Just in case
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
 	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
@@ -1316,7 +1278,7 @@ create_memstick_image() {
 	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
-	gzip -qf $MEMSTICKPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
@@ -1613,12 +1575,12 @@ pkg_chroot_add() {
 		print_error_pfS
 	fi
 
-	if [ ! -f ${CORE_PKG_REAL_PATH}/All/${_pkg} ]; then
+	if [ ! -f ${CORE_PKG_ALL_PATH}/${_pkg} ]; then
 		echo ">>> ERROR: Package ${_pkg} not found"
 		print_error_pfS
 	fi
 
-	cp ${CORE_PKG_REAL_PATH}/All/${_pkg} ${_target}
+	cp ${CORE_PKG_ALL_PATH}/${_pkg} ${_target}
 	pkg_chroot ${_target} add /${_pkg}
 	rm -f ${_target}/${_pkg}
 }
@@ -2342,7 +2304,7 @@ snapshots_create_latest_symlink() {
 snapshots_create_sha256() {
 	local _img=""
 
-	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH}; do
+	for _img in ${ISOPATH} ${MEMSTICKPATH} ${MEMSTICKSERIALPATH} ${MEMSTICKADIPATH} ${OVAPATH} ${VARIANTIMAGES}; do
 		if [ -f "${_img}.gz" ]; then
 			_img="${_img}.gz"
 		fi

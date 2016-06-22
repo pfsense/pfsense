@@ -58,6 +58,7 @@
 
 require_once("ipsec.inc");
 require_once("filter.inc");
+require_once("auth.inc");
 
 function vpn_update_daemon_loglevel($category, $level) {
 	global $ipsec_log_cats, $ipsec_log_sevs;
@@ -1394,7 +1395,7 @@ EOD;
 			if (!empty($peerid_spec)) {
 				$ipsecconnect .= "\trightid = {$peerid_spec}\n";
 			}
-			if ($keyexchange == 'ikev1') {
+			if ($keyexchange != 'ikev2') {
 				$ipsecconnect .= "\taggressive = {$aggressive}\n";
 			}
 

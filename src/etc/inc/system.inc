@@ -1297,7 +1297,6 @@ http {
 	server_tokens off;
 
 	sendfile        on;
-	keepalive_timeout  65;
 
 	access_log      syslog:server=unix:/var/run/log,facility=local5 combined;
 
@@ -1305,6 +1304,9 @@ EOD;
 
 	if ($captive_portal !== false) {
 		$nginx_config .= "\tlimit_conn_zone \$binary_remote_addr zone=addr:10m;\n";
+		$nginx_config .= "\tkeepalive_timeout 0;\n";
+	} else {
+		$nginx_config .= "\tkeepalive_timeout 75;\n";
 	}
 
 	if ($cert <> "" and $key <> "") {
@@ -1543,7 +1545,7 @@ function system_ntp_setup_gps($serialport) {
 
 	/* Add /etc/remote entry in case we need to read from the GPS with tip */
 	if (intval(`grep -c '^gps0' /etc/remote`) == 0) {
-		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:", FILE_APPEND);
+		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
 	}
 
 	conf_mount_ro();

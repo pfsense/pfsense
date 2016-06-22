@@ -271,14 +271,14 @@ if (!empty($serialports)) {
 		'gpsport',
 		'Serial Port',
 		$pconfig['port'],
-		$splist
+		['' => gettext('None')] + $splist
 	))->setHelp('All serial ports are listed, be sure to pick the port with the GPS attached. ');
 
 	$section->addInput(new Form_Select(
 		'gpsspeed',
 		null,
 		$pconfig['speed'],
-		[0 => '4800', 15 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
+		[0 => '4800', 16 => '9600', 32 => '19200', 48 => '38400', 64 => '57600', 80 => '115200']
 
 	))->setHelp('A higher baud rate is generally only helpful if the GPS is sending too many sentences. ' .
 				'It is recommended to configure the GPS to send only one sentence at a baud rate of 4800 or 9600.');

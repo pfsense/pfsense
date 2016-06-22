@@ -1121,7 +1121,7 @@ $section->addInput(new Form_IpAddress(
 	'tftp',
 	'TFTP Server',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_]+');
+))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_-]+');
 
 // Advanced LDAP
 $btnadv = new Form_Button(
@@ -1323,7 +1323,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this Interface")?></h2></div>
 	<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Static ARP")?></th>

@@ -246,6 +246,15 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
 	}
 
+	/* Check the POSTed groups to ensure they are valid and exist */
+	if(is_array($_POST['groups'])) {
+		foreach ($_POST['groups'] as $newgroup) {
+			if (empty(getGroupEntry($newgroup))) {
+				$input_errors[] = gettext("One or more invalid groups was submitted.");
+			}
+		}
+	}
+
 	if (isset($id) && $a_user[$id]) {
 		$oldusername = $a_user[$id]['name'];
 	} else {
@@ -603,7 +612,7 @@ foreach ($a_user as $i => $userent):
 	?>
 					<tr>
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
+							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=((($userent['scope'] == "system") || ($userent['name'] == $_SESSION['Username'])) ? 'disabled' : '')?>/>
 						</td>
 						<td>
 <?php
@@ -621,7 +630,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if ($userent['scope'] != "system"): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 						</td>
@@ -1024,6 +1033,7 @@ events.push(function() {
 		}
 	});
 
+	$('#expires').datepicker();
 
 	// ---------- On initial page load ------------------------------------------------------------
 

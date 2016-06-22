@@ -86,6 +86,8 @@ if (isset($id) && $a_domainOverrides[$id]) {
 	$pconfig['descr'] = $a_domainOverrides[$id]['descr'];
 }
 
+$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
+
 if ($_POST) {
 
 	unset($input_errors);
@@ -120,6 +122,10 @@ if ($_POST) {
 			$input_errors[] = gettext("A valid IP address must be specified, for example 192.168.100.10.");
 		}
 	}
+	
+	if ($_POST['referer']) {
+		$referer = $_POST['referer'];
+	}
 
 	if (!$input_errors) {
 		$doment = array();
@@ -136,8 +142,12 @@ if ($_POST) {
 		mark_subsystem_dirty('unbound');
 
 		write_config();
-
-		header("Location: services_unbound.php");
+		
+		if ($referer == '/services_unbound_overrides.php') {
+			header("Location: services_unbound_overrides.php");	
+		} else {
+			header("Location: services_unbound.php");
+		}
 		exit;
 	}
 }
@@ -183,6 +193,13 @@ if (isset($id) && $a_domainOverrides[$id]) {
 		$id
 	));
 }
+
+$section->addInput(new Form_Input(
+	'referer',
+	null,
+	'hidden',
+	$referer
+));
 
 $form->add($section);
 

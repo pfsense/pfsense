@@ -1194,10 +1194,10 @@ function setup_serial_port($when = "save", $path = "") {
 	}
 	foreach ($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0")) {
-			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
+			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	xterm	on	secure\n");
 		} else if (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
-			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	vt100	{$on_off}	secure\n");
 		} else {
 			fwrite($fd, $tty . "\n");
 		}
@@ -1360,27 +1360,18 @@ function is_pppoe_server_enabled() {
 	return $pppoeenable;
 }
 
-function convert_seconds_to_hms($sec) {
-	$min = $hrs = 0;
-	if ($sec != 0) {
-		$min = floor($sec/60);
-		$sec %= 60;
+/* Optional arg forces hh:mm:ss without days */
+function convert_seconds_to_dhms($sec, $showhoursonly = false) {
+	if (!is_numericint($sec)) {
+		return '-';
 	}
-	if ($min != 0) {
-		$hrs = floor($min/60);
-		$min %= 60;
-	}
-	if ($sec < 10) {
-		$sec = "0".$sec;
-	}
-	if ($min < 10) {
-		$min = "0".$min;
-	}
-	if ($hrs < 10) {
-		$hrs = "0".$hrs;
-	}
-	$result = $hrs.":".$min.":".$sec;
-	return $result;
+	// FIXME: When we move to PHP 7 we can use "intdiv($sec % X, Y)" etc
+	list($d, $h, $m, $s) = array(	(int)($showhoursonly ? 0 : $sec/86400),
+					(int)(($showhoursonly ? $sec : $sec % 86400)/3600),
+					(int)(($sec % 3600)/60),
+					$sec % 60
+				);
+	return ($d > 0 ? $d . 'd ' : '') . sprintf('%02d:%02d:%02d', $h, $m, $s);
 }
 
 /* Compute the total uptime from the ppp uptime log file in the conf directory */
@@ -1393,7 +1384,7 @@ function get_ppp_uptime($port) {
 		foreach ($uptime_data as $upt) {
 			$sec += substr($upt, 1 + strpos($upt, " "));
 		}
-		return convert_seconds_to_hms($sec);
+		return convert_seconds_to_dhms($sec);
 	} else {
 		$total_time = gettext("No history data found!");
 		return $total_time;
@@ -1567,7 +1558,7 @@ function get_interface_info($ifdescr) {
 
 	if (file_exists("{$g['varrun_path']}/{$link_type}_{$ifdescr}.pid")) {
 		$sec = trim(`/usr/local/sbin/ppp-uptime.sh {$ifinfo['if']}`);
-		$ifinfo['ppp_uptime'] = convert_seconds_to_hms($sec);
+		$ifinfo['ppp_uptime'] = convert_seconds_to_dhms($sec);
 	}
 
 	if ($ifinfo['status'] == "up") {
@@ -2144,6 +2135,11 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 	 *
 	 * RETURNS an array of ip subnets and ip's or ports and port-ranges, returns NULL upon a error conditions (file not found)
 	 */
+
+	if (!file_exists($filename)) {
+		log_error(sprintf(gettext("Could not process non-existent file from alias: %s"), $filename));
+		return null;
+	}
 
 	if (filesize($filename) == 0) {
 		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));

@@ -158,7 +158,7 @@ case ${opmode} in
 	;;
 99)
 	if [ -e /dev/ukbd0 ]; then
-		env TERM=cons25 /scripts/lua_installer
+		env TERM=xterm /scripts/lua_installer
 	else
 		/scripts/lua_installer
 	fi

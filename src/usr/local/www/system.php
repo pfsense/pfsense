@@ -75,7 +75,7 @@ list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $
 
 $arr_gateways = return_gateways_array();
 
-// set default colmns to two if unset
+// set default columns to two if unset
 if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 	$config['system']['webgui']['dashboardcolumns'] = 2;
 }

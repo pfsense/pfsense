@@ -409,15 +409,23 @@ function local_sync_accounts() {
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":", fgets($fd));
-			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin")) {
-				continue;
+			if ($line[0] != "admin") {
+				if (!strncmp($line[0], "_", 1)) {
+					continue;
+				}
+				if ($line[2] < 2000) {
+					continue;
+				}
+				if ($line[2] > 65000) {
+					continue;
+				}
 			}
 			/*
 			 * If a crontab was created to user, pw userdel will be interactive and
 			 * can cause issues. Just remove crontab before run it when necessary
 			 */
 			unlink_if_exists("/var/cron/tabs/{$line[0]}");
-			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
+			$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($line[0]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -441,7 +449,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g " . escapeshellarg($line[2]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -540,18 +548,25 @@ function local_user_set(& $user) {
 	pclose($fd);
 	$userattrs = explode(":", trim($pwread));
 
+	$skel_dir = '/etc/skel';
+
 	/* determine add or mod */
 	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
-		$user_op = "useradd -m -k /etc/skel -o";
+		$user_op = "useradd -m -k " . escapeshellarg($skel_dir) . " -o";
 	} else {
 		$user_op = "usermod";
 	}
 
 	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']);
 	/* add or mod pw db */
-	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
-			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($comment)." -H 0 2>&1";
+	$cmd = "/usr/sbin/pw {$user_op} -q " .
+			" -u " . escapeshellarg($user_uid) .
+			" -n " . escapeshellarg($user_name) .
+			" -g " . escapeshellarg($user_group) .
+			" -s " . escapeshellarg($user_shell) .
+			" -d " . escapeshellarg($user_home) .
+			" -c " . escapeshellarg($comment) .
+			" -H 0 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -571,6 +586,14 @@ function local_user_set(& $user) {
 	@chown($user_home, $user_name);
 	@chgrp($user_home, $user_group);
 
+	/* Make sure all users have last version of config files */
+	foreach (glob("{$skel_dir}/dot.*") as $dot_file) {
+		$target = $user_home . '/' . substr(basename($dot_file), 3);
+		@copy($dot_file, $target);
+		@chown($target, $user_name);
+		@chgrp($target, $user_group);
+	}
+
 	/* write out ssh authorized key file */
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
@@ -585,7 +608,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name} -q 2>/dev/null");
+	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 
 	conf_mount_ro();
 }
@@ -613,7 +636,7 @@ function local_user_del($user) {
 	}
 
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel -n {$user['name']} {$rmhome}";
+	$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . escapeshellarg($rmhome);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -761,14 +784,17 @@ function local_group_set($group, $reset = false) {
 	}
 
 	/* determine add or mod */
-	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
+	if (mwexec("/usr/sbin/pw groupshow -g " . escapeshellarg($group_gid) . " 2>&1", true) == 0) {
 		$group_op = "groupmod -l";
 	} else {
 		$group_op = "groupadd -n";
 	}
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M '{$group_members}' 2>&1";
+	$cmd = "/usr/sbin/pw {$group_op} " .
+		escapeshellarg($group_name) .
+		" -g " . escapeshellarg($group_gid) .
+		" -M " . escapeshellarg($group_members) . " 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -781,7 +807,7 @@ function local_group_del($group) {
 	global $debug;
 
 	/* delete from group db */
-	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
+	$cmd = "/usr/sbin/pw groupdel " . escapeshellarg($group['name']);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));

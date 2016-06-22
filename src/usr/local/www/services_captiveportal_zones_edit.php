@@ -121,7 +121,7 @@ $section = new Form_Section('Add Captive Portal Zone');
 $section->addInput(new Form_Input(
 	'zone',
 	'Zone name'
-))->setPattern('[0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
+))->setPattern('^[A-Za-z_][0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_) and may not start with a digit.');
 
 $section->addInput(new Form_Input(
 	'descr',

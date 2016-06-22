@@ -624,21 +624,21 @@ if ($getSchedule) {
 				null,
 				'text',
 				$tempFriendlyTime
-			))->setWidth(2)->setHelp($counter == $maxrows ? 'Day(s)':'');
+			))->setWidth(2)->setReadonly()->setHelp($counter == $maxrows ? 'Day(s)':'');
 
 			$group->add(new Form_Input(
 				'starttime' . $counter,
 				null,
 				'text',
 				$starttime
-			))->setWidth(2)->setHelp($counter == $maxrows ? 'Start time':'');
+			))->setWidth(2)->setReadonly()->setHelp($counter == $maxrows ? 'Start time':'');
 
 			$group->add(new Form_Input(
 				'stoptime' . $counter,
 				null,
 				'text',
 				$stoptime
-			))->setWidth(2)->setHelp($counter == $maxrows ? 'Stop time':'');
+			))->setWidth(2)->setReadonly()->setHelp($counter == $maxrows ? 'Stop time':'');
 
 			$group->add(new Form_Input(
 				'timedescr' . $counter,
@@ -1127,15 +1127,15 @@ function insertElements(tempFriendlyTime, starttimehour, starttimemin, stoptimeh
 	'<div class="form-group schedulegrp' + counter + '">' +
 		'<label for="tempFriendlyTime@" class="col-sm-2 control-label"></label>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="tempFriendlyTime@" id="tempFriendlyTime@" type="text" value="' + tempFriendlyTime + '"/>' +
+			'<input class="form-control" name="tempFriendlyTime@" id="tempFriendlyTime@" type="text" readonly="readonly" value="' + tempFriendlyTime + '"/>' +
 			'<span class="help-block">Day(s)</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="starttime@" id="starttime@" type="text" value="' + starttimehour + ':' + starttimemin + '"/>' +
+			'<input class="form-control" name="starttime@" id="starttime@" type="text" readonly="readonly" value="' + starttimehour + ':' + starttimemin + '"/>' +
 			'<span class="help-block">Start time</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +
-			'<input class="form-control" name="stoptime@" id="stoptime@" type="text" value="' + stoptimehour + ':' + stoptimemin + '"/>' +
+			'<input class="form-control" name="stoptime@" id="stoptime@" type="text" readonly="readonly" value="' + stoptimehour + ':' + stoptimemin + '"/>' +
 			'<span class="help-block">Stop time</span>' +
 		'</div>' +
 		'<div class="col-sm-2">' +

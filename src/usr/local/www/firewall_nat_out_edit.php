@@ -804,7 +804,7 @@ events.push(function() {
         source: addressarray
     });
 
-    $('#dstbeginport_cust, #sourceport, #destination, #dstport').autocomplete({
+    $('#sourceport, #dstport').autocomplete({
         source: customarray
     });
 });

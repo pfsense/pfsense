@@ -1822,7 +1822,7 @@ $group->add(new Form_Button(
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none". ' .
+				'On local area network interfaces the upstream gateway should be "none". ' .
 				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>.');
 
 $section->add($group);
@@ -2633,7 +2633,6 @@ $group->add(new Form_Input(
 	[min => 0, max => 59]
 ))->setHelp('Minutes (0-59)');
 
-// ToDo: Need a date-picker here
 $group->add(new Form_Input(
 	'pppoe_resetdate',
 	null,
@@ -3670,6 +3669,8 @@ events.push(function() {
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
+
+	$('#pppoe_resetdate').datepicker();
 
 });
 //]]>

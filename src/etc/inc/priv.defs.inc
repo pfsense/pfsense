@@ -814,14 +814,6 @@ $priv_list['page-services-dnsresolver-edithost']['descr'] = gettext("Allow acces
 $priv_list['page-services-dnsresolver-edithost']['match'] = array();
 $priv_list['page-services-dnsresolver-edithost']['match'][] = "services_unbound_host_edit.php*";
 
-$priv_list['page-services-dnsresolver-overrides'] = array();
-$priv_list['page-services-dnsresolver-overrides']['name'] = gettext("WebCfg - Services: DNS Resolver: Override");
-$priv_list['page-services-dnsresolver-overrides']['descr'] = gettext("Allow access to the 'Services: DNS Resolver: Overrides' page.");
-$priv_list['page-services-dnsresolver-overrides']['match'] = array();
-$priv_list['page-services-dnsresolver-overrides']['match'][] = "services_unbound_overrides.php*";
-$priv_list['page-services-dnsresolver-overrides']['match'][] = "services_unbound_host_edit.php*";
-$priv_list['page-services-dnsresolver-overrides']['match'][] = "services_unbound_domainoverride_edit.php*";
-
 $priv_list['page-services-wakeonlan'] = array();
 $priv_list['page-services-wakeonlan']['name'] = gettext("WebCfg - Services: Wake-on-LAN");
 $priv_list['page-services-wakeonlan']['descr'] = gettext("Allow access to the 'Services: Wake-on-LAN' page.");

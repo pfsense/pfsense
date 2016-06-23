@@ -5,6 +5,7 @@
 /boot/device.hints_wrap
 /boot/loader.conf_wrap
 /dist
+/etc/ascii-art/pfsense-logo-small.txt
 /etc/auth.conf
 /etc/current-supfile
 /etc/defaults/pccard.conf

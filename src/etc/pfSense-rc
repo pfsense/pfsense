@@ -196,7 +196,7 @@ else
 fi
 
 echo
-cat /etc/ascii-art/pfsense-logo-small.txt
+cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
 echo
 echo
 echo "Welcome to ${product} ${version}${version_patch}${platformbanner}..."

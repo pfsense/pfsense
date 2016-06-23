@@ -97,6 +97,7 @@ $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
+$pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {
@@ -155,6 +156,12 @@ if ($_POST) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
 	} else {
 		unset($config['system']['webgui']['webguifixedmenu']);
+	}
+
+	if ($_POST['webguihostnamemenu']) {
+		$config['system']['webgui']['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+	} else {
+		unset($config['system']['webgui']['webguihostnamemenu']);
 	}
 
 	if ($_POST['dashboardcolumns']) {
@@ -493,6 +500,7 @@ $section = new Form_Section('webConfigurator');
 
 gen_webguicss_field($section, $pconfig['webguicss']);
 gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
+gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
 gen_associatedpanels_fields(
 	$section,

@@ -1518,6 +1518,7 @@ function get_user_settings($username) {
 	$settings = array();
 	$settings['widgets'] = $config['widgets'];
 	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
 	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
 	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
@@ -1538,6 +1539,9 @@ function get_user_settings($username) {
 		}
 		if (isset($user['webguicss'])) {
 			$settings['webgui']['webguicss'] = $user['webguicss'];
+		}
+		if (isset($user['webguihostnamemenu'])) {
+			$settings['webgui']['webguihostnamemenu'] = $user['webguihostnamemenu'];
 		}
 		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
 		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);

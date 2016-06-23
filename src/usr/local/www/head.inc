@@ -454,10 +454,10 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
 			<?php
-                if ($config['system']['webgui']['webguihostnamemenu'] == 'hostonly') {
+                if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
                     $help_menu_title = htmlspecialchars($config['system']['hostname']);
                 }
-                elseif ($config['system']['webgui']['webguihostnamemenu'] == 'fqdn') {
+                elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
                     $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
                 }
                 else {

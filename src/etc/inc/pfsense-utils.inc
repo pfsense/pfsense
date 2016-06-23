@@ -244,6 +244,25 @@ function gen_webguifixedmenu_field(&$section, $value) {
 	))->setHelp("The fixed option is intended for large screens only.");
 }
 
+/****f* pfsense-utils/gen_webguihostnamemenu_field
+ * NAME
+ *   gen_webguihostnamemenu_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_webguihostnamemenu_field(&$section, $value) {
+
+	$section->addInput(new Form_Select(
+		'webguihostnamemenu',
+		'Hostname in Menu',
+		$value,
+		["" => gettext("Default (No hostname)"), "hostonly" => gettext("Hostname only"), "fqdn" => gettext("Fully Qualified Domain Name")]
+	))->setHelp("Replaces the Help menu title in the Navbar with the system hostname or FQDN.");
+}
+
 /****f* pfsense-utils/gen_dashboardcolumns_field
  * NAME
  *   gen_dashboardcolumns_field
@@ -367,6 +386,7 @@ function gen_user_settings_fields(&$section, $pconfig) {
 
 	gen_webguicss_field($section, $pconfig['webguicss']);
 	gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
+	gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
 	gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
 	gen_associatedpanels_fields(
 		$section,

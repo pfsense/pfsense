@@ -102,8 +102,6 @@ if (isset($id) && $a_hosts[$id]) {
 	$pconfig['aliases'] = $a_hosts[$id]['aliases'];
 }
 
-$referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/services_unbound.php');
-
 if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -189,10 +187,6 @@ if ($_POST) {
 			break;
 		}
 	}
-	
-	if ($_POST['referer']) {
-		$referer = $_POST['referer'];
-	}	
 
 	if (!$input_errors) {
 		$hostent = array();
@@ -213,11 +207,7 @@ if ($_POST) {
 
 		write_config();
 
-		if ($referer == '/services_unbound_overrides.php') {
-			header("Location: services_unbound_overrides.php");	
-		} else {
-			header("Location: services_unbound.php");
-		}
+		header("Location: services_unbound.php");
 		exit;
 	}
 }
@@ -346,13 +336,6 @@ $form->addGlobal(new Form_Button(
 	null,
 	'fa-plus'
 ))->removeClass('btn-primary')->addClass('btn-success addbtn');
-
-$section->addInput(new Form_Input(
-	'referer',
-	null,
-	'hidden',
-	$referer
-));
 
 $form->add($section);
 print($form);

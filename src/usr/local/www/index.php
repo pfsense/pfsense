@@ -155,15 +155,16 @@ if (!is_array($config['widgets'])) {
 
 if ($_POST && $_POST['sequence']) {
 
-	$config['widgets']['sequence'] = rtrim($_POST['sequence'], ',');
+	$widget_settings = array();
+	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
 		if ($_POST[$widgetname . '-config']) {
-			$config['widgets'][$widgetname . '-config'] = $_POST[$widgetname . '-config'];
+			$widget_settings[$widgetname . '-config'] = $_POST[$widgetname . '-config'];
 		}
 	}
 
-	write_config(gettext("Widget configuration has been changed."));
+	save_widget_settings($_SESSION['Username'], $widget_settings);
 	header("Location: /");
 	exit;
 }
@@ -251,9 +252,9 @@ if ($fd) {
 }
 
 ##build widget saved list information
-if ($config['widgets'] && $config['widgets']['sequence'] != "") {
-	$dashboardcolumns = isset($config['system']['webgui']['dashboardcolumns']) ? $config['system']['webgui']['dashboardcolumns'] : 2;
-	$pconfig['sequence'] = $config['widgets']['sequence'];
+if ($user_settings['widgets']['sequence'] != "") {
+	$dashboardcolumns = isset($user_settings['webgui']['dashboardcolumns']) ? $user_settings['webgui']['dashboardcolumns'] : 2;
+	$pconfig['sequence'] = $user_settings['widgets']['sequence'];
 	$widgetsfromconfig = array();
 
 	foreach (explode(',', $pconfig['sequence']) as $line) {
@@ -307,7 +308,7 @@ if ($config['widgets'] && $config['widgets']['sequence'] != "") {
 }
 
 ## Get the configured options for Show/Hide available widgets panel.
-$dashboard_available_widgets_hidden = isset($config['system']['webgui']['dashboardavailablewidgetspanel']) ? false : true;
+$dashboard_available_widgets_hidden = !$user_settings['webgui']['dashboardavailablewidgetspanel'];
 
 if ($dashboard_available_widgets_hidden) {
 	$panel_state = 'out';

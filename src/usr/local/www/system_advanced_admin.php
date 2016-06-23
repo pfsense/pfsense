@@ -472,14 +472,7 @@ $section->addInput(new Form_Checkbox(
 	'information on HTTP_REFERER is available from <a target="_blank" '.
 	'href="http://en.wikipedia.org/wiki/HTTP_referrer">Wikipedia</a>.');
 
-$section->addInput(new Form_Checkbox(
-	'pagenamefirst',
-	'Browser tab text',
-	'Display page name first in browser tab',
-	$pconfig['pagenamefirst']
-))->setHelp('When this is unchecked, the browser tab shows the host name followed '.
-	'by the current page. Check this box to display the current page followed by the '.
-	'host name.');
+gen_pagenamefirst_field($section, $pconfig['pagenamefirst']);
 
 $form->add($section);
 $section = new Form_Section('Secure Shell');

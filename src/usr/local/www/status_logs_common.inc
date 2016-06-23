@@ -62,7 +62,7 @@ require_once("filter_log.inc");
 
 // Status Logs Common - Code
 function status_logs_common_code() {
-	global $g, $config, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
+	global $g, $config, $user_settings, $specific_log, $nentries, $rawfilter, $filterlogentries_qty, $logfile_path, $shortcut_section, $allowed_logs, $logfile;
 	global $system_logs_filter_form_hidden, $system_logs_manage_log_form_hidden, $view;
 
 	$logfile_path = "{$g['varlog_path']}/" . basename($logfile) . ".log";
@@ -91,8 +91,8 @@ function status_logs_common_code() {
 	}
 
 	// Get the configured options for Show/Hide Log Filter and Manage Log panels.
-	$system_logs_filter_form_hidden = isset($config['system']['webgui']['systemlogsfilterpanel']) ? false : true;
-	$system_logs_manage_log_form_hidden = isset($config['system']['webgui']['systemlogsmanagelogpanel']) ? false : true;
+	$system_logs_filter_form_hidden = !$user_settings['webgui']['systemlogsfilterpanel'];
+	$system_logs_manage_log_form_hidden = !$user_settings['webgui']['systemlogsmanagelogpanel'];
 
 	if ($logfile == 'filter' && $view == 'summary') {
 		$system_logs_filter_form_hidden = false;

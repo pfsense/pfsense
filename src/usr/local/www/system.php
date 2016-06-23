@@ -496,108 +496,19 @@ $section->addInput(new Form_Select(
 
 $form->add($section);
 
-$csslist = array();
-
-// List pfSense files, then any BETA files followed by any user-contributed files
-$cssfiles = glob("/usr/local/www/css/*.css");
-
-if(is_array($cssfiles)) {
-	arsort($cssfiles);
-	$usrcss = $pfscss = $betacss = array();
-
-	foreach ($cssfiles as $css) {
-	    if (strpos($css, "BETA") != 0) {
-	        array_push($betacss, $css);
-	    } else if (strpos($css, "pfSense") != 0) {
-	        array_push($pfscss, $css);
-	    } else {
-	        array_push($usrcss, $css);
-	    }
-	}
-
-	$css = array_merge($pfscss, $betacss, $usrcss);
-
-	foreach ($css as $file) {
-		$file = basename($file);
-		$csslist[$file] = pathinfo($file, PATHINFO_FILENAME);
-	}
-}
-
-if (!isset($pconfig['webguicss']) || !isset($csslist[$pconfig['webguicss']])) {
-	$pconfig['webguicss'] = "pfSense.css";
-}
-
 $section = new Form_Section('webConfigurator');
 
-$section->addInput(new Form_Select(
-	'webguicss',
-	'Theme',
-	$pconfig['webguicss'],
-	$csslist
-))->setHelp(sprintf(gettext('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s'), '<span id="csstxt"></span>'));
-
-$section->addInput(new Form_Select(
-	'webguifixedmenu',
-	'Top Navigation',
-	$pconfig['webguifixedmenu'],
-	["" => gettext("Scrolls with page"), "fixed" => gettext("Fixed (Remains visible at top of page)")]
-))->setHelp("The fixed option is intended for large screens only.");
-
-$section->addInput(new Form_Select(
-	'webguihostnamemenu',
-	'Hostname in Menu',
-	$pconfig['webguihostnamemenu'],
-	["" => gettext("Default (No hostname)"), "hostonly" => gettext("Hostname only"), "fqdn" => gettext("Fully Qualified Domain Name")]
-))->setHelp("Replaces the Help menu title in the Navbar with the system hostname or FQDN.");
-
-$section->addInput(new Form_Input(
-	'dashboardcolumns',
-	'Dashboard Columns',
-	'number',
-	$pconfig['dashboardcolumns'],
-	[min => 1, max => 4]
-));
-
-$group = new Form_Group('Associated Panels Show/Hide');
-
-$group->add(new Form_Checkbox(
-	'dashboardavailablewidgetspanel',
-	null,
-	'Available Widgets',
-	$pconfig['dashboardavailablewidgetspanel']
-	))->setHelp('Show the Available Widgets panel on the Dashboard.');
-
-$group->add(new Form_Checkbox(
-	'systemlogsfilterpanel',
-	null,
-	'Log Filter',
-	$pconfig['systemlogsfilterpanel']
-))->setHelp('Show the Log Filter panel in System Logs.');
-
-$group->add(new Form_Checkbox(
-	'systemlogsmanagelogpanel',
-	null,
-	'Manage Log',
-	$pconfig['systemlogsmanagelogpanel']
-))->setHelp('Show the Manage Log panel in System Logs.');
-
-$group->add(new Form_Checkbox(
-	'statusmonitoringsettingspanel',
-	null,
-	'Monitoring Settings',
-	$pconfig['statusmonitoringsettingspanel']
-))->setHelp('Show the Settings panel in Status Monitoring.');
-
-$group->setHelp('These options allow certain panels to be automatically hidden on page load. A control is provided in the title bar to un-hide the panel.');
-
-$section->add($group);
-
-$section->addInput(new Form_Checkbox(
-	'webguileftcolumnhyper',
-	'Left Column Labels',
-	'Active',
-	$pconfig['webguileftcolumnhyper']
-))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
+gen_webguicss_field($section, $pconfig['webguicss']);
+gen_webguifixedmenu_field($section, $pconfig['webguifixedmenu']);
+gen_webguihostnamemenu_field($section, $pconfig['webguihostnamemenu']);
+gen_dashboardcolumns_field($section, $pconfig['dashboardcolumns']);
+gen_associatedpanels_fields(
+	$section,
+	$pconfig['dashboardavailablewidgetspanel'],
+	$pconfig['systemlogsfilterpanel'],
+	$pconfig['systemlogsmanagelogpanel'],
+	$pconfig['statusmonitoringsettingspanel']);
+gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 
 $form->add($section);
 

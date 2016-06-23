@@ -57,7 +57,7 @@
 ##|*IDENT=page-services-rfc2136edit
 ##|*NAME=Services: RFC 2136 Client: Edit
 ##|*DESCR=Allow access to the 'Services: RFC 2136 Client: Edit' page.
-##|*MATCH=services_rfc2136.php*
+##|*MATCH=services_rfc2136_edit.php*
 ##|-PRIV
 
 require("guiconfig.inc");

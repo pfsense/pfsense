@@ -97,7 +97,7 @@ $pconfig['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['
 $pconfig['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
 $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
-$pconfig['webguihostnamemenu'] = isset($config['system']['webgui']['webguihostnamemenu']);
+$pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 
 if (!$pconfig['timezone']) {

@@ -742,6 +742,7 @@
 /usr/local/share/locale/zh_CN.GB2312
 /usr/local/share/locale/zh_TW.Big5
 /usr/local/share/misc
+/usr/local/share/mobile-broadband-provider-info/iso_3166-1_list_en.xml
 /usr/local/share/nls
 /usr/local/share/pbi-keys
 /usr/local/share/pfSense/pfSense-repo-devel.conf

@@ -2870,7 +2870,7 @@ EOD;
 	/* set ack timers according to users preference (if he/she has any) */
 	if ($distance) {
 		fwrite($fd_set, "# Enable ATH distance settings\n");
-		fwrite($fd_set, "/sbin/athctrl.sh -i {$baseif} -d {$distance}\n");
+		fwrite($fd_set, "/usr/local/sbin/athctrl.sh -i {$baseif} -d {$distance}\n");
 	}
 
 	if (isset($wlcfg['wpa']['enable'])) {

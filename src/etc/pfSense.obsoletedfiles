@@ -166,6 +166,7 @@
 /lib/libz.so.5
 /root/latest.tgz.sha256
 /sbin/atacontrol
+/sbin/athctrl.sh
 /sbin/idmapd
 /sbin/ip6fw
 /sbin/mount_devfs

@@ -137,6 +137,10 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 	fi
 fi
 
+# Make sure /home exists
+[ -d /home ] \
+	|| mkdir /home
+
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset

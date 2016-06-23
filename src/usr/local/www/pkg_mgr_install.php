@@ -221,6 +221,7 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 }
 
 $pkgmode = '';
+
 if (!empty($_REQUEST['mode'])) {
 	$valid_modes = array(
 		'reinstallall',
@@ -237,14 +238,18 @@ if (!empty($_REQUEST['mode'])) {
 	$pkgmode = $_REQUEST['mode'];
 }
 
+// After a successful installation/removal/update the page is reloaded so that any menu changes show up
+// immediately. These values passed as POST arguments tell the page the state it was in before the reload.
 $confirmed = isset($_POST['confirmed']) && $_POST['confirmed'] == 'true';
 $completed = isset($_POST['completed']) && $_POST['completed'] == 'true';
+$reboot_needed = isset($_POST['reboot_needed']) && $_POST['reboot_needed'] == "yes";
 
 if (!empty($_REQUEST['id'])) {
 	if ($_REQUEST['id'] != "firmware") {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
+
 	$firmwareupdate = true;
 } elseif (!$completed && empty($_REQUEST['pkg']) && $pkgmode != 'reinstallall') {
 	header("Location: pkg_mgr_installed.php");
@@ -512,7 +517,10 @@ $sysmessage = gettext("Status");
 // that were installed
 if ($completed):
 	unlink_if_exists($logfilename . ".json");
-	if (($firmwareupdate) && ($_POST['reboot_needed'] == "yes")):
+
+	// If this was a firmware update and a reboot was initiated, display the "Rebooting" message
+	// and start hte countdown timer
+	if ($firmwareupdate && $reboot_needed):
 
 ?>
 <script>
@@ -676,14 +684,15 @@ function getLogsStatus() {
 				show_success();
 				repeat = false;
 
+				// The package has been installed/removed successfully but any menu changes that result will not be visible
+				// Reloading the page will cause the menu items to be visible and setting reboot_needed will tell the page
+				// that the firewall needs to be rebooted if required.
+
 				if (json.reboot_needed == "yes") {
 					$('#reboot_needed').val("yes");
 				}
 
-				setProgress('progressbar', 100, false);
-				$('#progressbar').addClass("progress-bar-success");
-				show_success();
-				setTimeout(scrollToBottom, 200);
+				$('form').submit();
 			}
 
 			if ((json.pid == "stopped") && ((progress != 0) || (json.exitstatus != 0))) {
@@ -738,6 +747,15 @@ events.push(function() {
 	if ("<?=$start_polling?>") {
 		setTimeout(getLogsStatus, 1000);
 		show_info();
+	}
+
+	// If we are just re-drawing the page after a successful install/remove/reinstall,
+	// we only need to re-populate the progress indicator and the status banner
+	if ("<?=$completed?>") {
+		setProgress('progressbar', 100, false);
+		$('#progressbar').addClass("progress-bar-success");
+		show_success();
+		setTimeout(scrollToBottom, 200);
 	}
 
 	if ("<?=$firmwareupdate?>") {

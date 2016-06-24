@@ -373,15 +373,6 @@ echo "done."
 # Second upgrade stage
 /usr/local/sbin/${product}-upgrade -y -b 2
 
-# Copy default openssl config file
-[ -d /etc/ssl ] \
-	|| mkdir -p /etc/ssl
-[ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
-	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
-mkdir -p /usr/local/openssl >/dev/null 2>&1
-ln -sf /etc/ssl/openssl.cnf \
-	/usr/local/openssl/openssl.cnf
-
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini
 /etc/rc.php_ini_setup 2>/tmp/php_errors.txt

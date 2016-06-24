@@ -745,6 +745,10 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 				if (is_subnet($ip)) {
 					if (is_ipaddr($gatewayip)) {
+						if (is_linklocal($gatewayip) == "6" && !strpos($gatewayip, '%')) {
+							// add interface scope for link local v6 routes
+							$gatewayip .= "%$interfacegw";
+						}
 						mwexec($cmd . escapeshellarg($gatewayip));
 						if (isset($config['system']['route-debug'])) {
 							$mt = microtime();

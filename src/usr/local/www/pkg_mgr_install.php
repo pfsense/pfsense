@@ -519,7 +519,7 @@ if ($completed):
 	unlink_if_exists($logfilename . ".json");
 
 	// If this was a firmware update and a reboot was initiated, display the "Rebooting" message
-	// and start hte countdown timer
+	// and start the countdown timer
 	if ($firmwareupdate && $reboot_needed):
 
 ?>

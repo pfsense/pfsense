@@ -257,6 +257,8 @@ print $form;
 
 	for ($i = 0; $i < $states; $i++) {
 		$info = $res[$i]['src'];
+		$srcip = get_ip($res[$i]['src']);
+		$dstip = get_ip($res[$i]['dst']);
 		if ($res[$i]['src-orig']) {
 			$info .= " (" . $res[$i]['src-orig'] . ")";
 		}
@@ -264,9 +266,10 @@ print $form;
 		$info .= $res[$i]['dst'];
 		if ($res[$i]['dst-orig']) {
 			$info .= " (" . $res[$i]['dst-orig'] . ")";
+			$killdstip = get_ip($res[$i]['dst-orig']);
+		} else {
+			$killdstip = $dstip;
 		}
-		$srcip = get_ip($res[$i]['src']);
-		$dstip = get_ip($res[$i]['dst']);
 
 ?>
 					<tr>
@@ -280,8 +283,8 @@ print $form;
 						    <?= format_bytes($res[$i]['bytes out']) ?></td>
 
 						<td>
-							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$dstip?>"
-								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $dstip);?>"></a>
+							<a class="btn fa fa-trash" data-entry="<?=$srcip?>|<?=$killdstip?>"
+								title="<?=sprintf(gettext('Remove all state entries from %1$s to %2$s'), $srcip, $killdstip);?>"></a>
 						</td>
 					</tr>
 <?

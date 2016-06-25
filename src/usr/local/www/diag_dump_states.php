@@ -255,27 +255,17 @@ print $form;
 	}
 
 	for ($i = 0; $i < $states; $i++) {
-		if ($res[$i]['direction'] === "out") {
-			$info = $res[$i]['src'];
-			if ($res[$i]['src-orig'])
-				$info .= " (" . $res[$i]['src-orig'] . ")";
-			$info .= " -> ";
-			$info .= $res[$i]['dst'];
-			if ($res[$i]['dst-orig'])
-				$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$srcip = get_ip($res[$i]['src']);
-			$dstip = get_ip($res[$i]['dst']);
-		} else {
-			$info = $res[$i]['dst'];
-			if ($res[$i]['dst-orig'])
-				$info .= " (" . $res[$i]['dst-orig'] . ")";
-			$info .= " &lt;- ";
-			$info .= $res[$i]['src'];
-			if ($res[$i]['src-orig'])
-				$info .= " (" . $res[$i]['src-orig'] . ")";
-			$srcip = get_ip($res[$i]['dst']);
-			$dstip = get_ip($res[$i]['src']);
+		$info = $res[$i]['src'];
+		if ($res[$i]['src-orig']) {
+			$info .= " (" . $res[$i]['src-orig'] . ")";
 		}
+		$info .= " -> ";
+		$info .= $res[$i]['dst'];
+		if ($res[$i]['dst-orig']) {
+			$info .= " (" . $res[$i]['dst-orig'] . ")";
+		}
+		$srcip = get_ip($res[$i]['src']);
+		$dstip = get_ip($res[$i]['dst']);
 
 ?>
 					<tr>

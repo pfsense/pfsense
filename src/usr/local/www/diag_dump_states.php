@@ -67,13 +67,14 @@ require_once("interfaces.inc");
 function get_ip($addr) {
 
 	$parts = explode(":", $addr);
-	if (count($parts) == 2)
+	if (count($parts) == 2) {
 		return (trim($parts[0]));
-	else {
+	} else {
 		/* IPv6 */
 		$parts = explode("[", $addr);
-		if (count($parts) == 2)
+		if (count($parts) == 2) {
 			return (trim($parts[0]));
+		}
 	}
 
 	return ("");

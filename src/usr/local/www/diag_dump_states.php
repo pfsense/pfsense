@@ -212,7 +212,7 @@ print $form;
 					<tr>
 						<th><?=gettext("Interface")?></th>
 						<th><?=gettext("Protocol")?></th>
-						<th><?=gettext("Source -> Router -> Destination")?></th>
+						<th><?=gettext("Source (Original Source) -> Destination (Original Destination)")?></th>
 						<th><?=gettext("State")?></th>
 						<th data-sortable="false"><?=gettext("Packets")?></th>
 						<th data-sortable="false"><?=gettext("Bytes")?></th>

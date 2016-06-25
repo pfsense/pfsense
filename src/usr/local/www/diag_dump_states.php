@@ -224,29 +224,35 @@ print $form;
 	/* RuleId filter. */
 	if (isset($_REQUEST['ruleid'])) {
 		$ids = explode(",", $_REQUEST['ruleid']);
-		for ($i = 0; $i < count($ids); $i++)
+		for ($i = 0; $i < count($ids); $i++) {
 			$arr[] = array("ruleid" => intval($ids[$i]));
+		}
 	}
 
 	/* Interface filter. */
-	if (isset($_POST['interface']) && $_POST['interface'] != "all")
+	if (isset($_POST['interface']) && $_POST['interface'] != "all") {
 		$arr[] = array("interface" => get_real_interface($_POST['interface']));
+	}
 
-	if (isset($_POST['filter']) && strlen($_POST['filter']) > 0)
+	if (isset($_POST['filter']) && strlen($_POST['filter']) > 0) {
 		$arr[] = array("filter" => $_POST['filter']);
+	}
 
-	if (count($arr) > 0)
+	if (count($arr) > 0) {
 		$res = pfSense_get_pf_states($arr);
-	else
+	} else {
 		$res = pfSense_get_pf_states();
+	}
 
 	$states = 0;
-	if ($res != NULL && is_array($res))
+	if ($res != NULL && is_array($res)) {
 		$states = count($res);
+	}
 
 	/* XXX - limit to 10.000 states. */
-	if ($states > 10000)
+	if ($states > 10000) {
 		$states = 10000;
+	}
 
 	for ($i = 0; $i < $states; $i++) {
 		if ($res[$i]['direction'] === "out") {

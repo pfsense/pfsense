@@ -4364,12 +4364,8 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 }
 
 function DHCP_Config_Option_Split($option_string) {
-	$options = [];
-	preg_match_all('/[^",]*(?:"[^"]*"[^",]*)+(?:"[^",]*)?|[^,]+/m', $option_string, $result, PREG_PATTERN_ORDER);
-	for ($i = 0; $i < count($result[0]); $i++) {
-		$options[] = $result[0][$i];
-	}
-	return $options;
+	preg_match_all('/[^",]*(?:"[^"]*"[^",]*)+(?:"[^",]*)?|[^,]+/m', $option_string, $matches, PREG_PATTERN_ORDER);
+	return $matches ? $matches[0] : [];
 }
 
 function DHCP_Config_File_Override($wancfg, $wanif) {

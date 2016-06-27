@@ -334,7 +334,7 @@ make_world() {
 	fi
 
 	# Set default parameters
-	export MAKE_ARGS="${MAKEJ_WORLD} __MAKE_CONF=${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
+	export MAKE_ARGS="${MAKEJ_WORLD} SRCCONF=${SRC_CONF} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
 
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	makeargs="${MAKE_ARGS}"
@@ -1688,7 +1688,7 @@ buildkernel() {
 	echo ">>> ARCH:        ${TARGET}"
 	echo ">>> SRC_CONF:    ${SRCCONFBASENAME}"
 
-	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
+	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
 	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 }
@@ -1706,7 +1706,7 @@ installkernel() {
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
+	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 	gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel

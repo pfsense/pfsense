@@ -325,11 +325,8 @@ make_world() {
 		return
 	fi
 
-	# Set default parameters
-	export MAKE_ARGS="${MAKEJ} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
-
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
-	makeargs="${MAKE_ARGS}"
+	makeargs="${MAKEJ}"
 	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
@@ -338,13 +335,13 @@ make_world() {
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	# Create if cleaned up
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
+	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
@@ -352,7 +349,7 @@ make_world() {
 
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
@@ -899,7 +896,7 @@ clean_builder() {
 	fi
 
 	if [ -z "${NO_CLEAN_FREEBSD_OBJ}" -a -d "${FREEBSD_SRC_DIR}" ]; then
-		OBJTREE=$(env TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
+		OBJTREE=$(make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
 		if [ -d "${OBJTREE}" ]; then
 			echo -n ">>> Cleaning FreeBSD objects dir staging..."
 			echo -n "."
@@ -1678,7 +1675,7 @@ buildkernel() {
 	echo ">>> KERNCONFDIR: ${KERNCONFDIR}"
 	echo ">>> ARCH:        ${TARGET_ARCH}"
 
-	makeargs="${MAKEJ} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
+	makeargs="${MAKEJ}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
 	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 }
@@ -1696,7 +1693,7 @@ installkernel() {
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
+	makeargs="${MAKEJ} DESTDIR=${KERNEL_DESTDIR}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 	gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel

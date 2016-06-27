@@ -1319,7 +1319,7 @@ create_memstick_serial_image() {
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
-		${_image_path}
+		${MEMSTICKSERIALPATH}
 
 	gzip -qf $MEMSTICKSERIALPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
@@ -1363,7 +1363,7 @@ create_memstick_adi_image() {
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
-		${_image_path}
+		${MEMSTICKADIPATH}
 
 	gzip -qf $MEMSTICKADIPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"

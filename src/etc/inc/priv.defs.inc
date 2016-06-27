@@ -770,7 +770,7 @@ $priv_list['page-services-rfc2136edit'] = array();
 $priv_list['page-services-rfc2136edit']['name'] = gettext("WebCfg - Services: RFC 2136 Client: Edit");
 $priv_list['page-services-rfc2136edit']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Client: Edit' page.");
 $priv_list['page-services-rfc2136edit']['match'] = array();
-$priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136.php*";
+$priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136_edit.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
 $priv_list['page-services-router-advertisements']['name'] = gettext("WebCfg - Services: Router Advertisements");

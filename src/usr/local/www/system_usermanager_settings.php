@@ -61,7 +61,7 @@
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("auth.inc");
 
 // Test LDAP settings in response to an AJAX request from this page.

@@ -64,7 +64,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Status"), gettext("CPU Load Graph"));
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 include("head.inc");
 
 ?>

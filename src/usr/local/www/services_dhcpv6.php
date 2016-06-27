@@ -64,7 +64,7 @@
 ##|*MATCH=services_dhcpv6.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 
 function dhcpv6_apply_changes($dhcpdv6_enable_changed) {

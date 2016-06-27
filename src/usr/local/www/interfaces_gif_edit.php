@@ -60,7 +60,7 @@
 ##|*MATCH=interfaces_gif_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['gifs']['gif'])) {
 	$config['gifs']['gif'] = array();

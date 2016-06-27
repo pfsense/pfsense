@@ -60,8 +60,8 @@
 ##|*MATCH=system_gateways_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require_once("guiconfig.inc");
+require_once("pkg-utils.inc");
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];

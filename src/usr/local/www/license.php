@@ -60,7 +60,7 @@
 ##|*MATCH=license.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 include("head.inc");
 ?>
 <div class="panel panel-default">

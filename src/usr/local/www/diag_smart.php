@@ -61,7 +61,7 @@
 ##|*MATCH=diag_smart.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 // What page, aka. action is being wanted
 // If they "get" a page but don't pass all arguments, smartctl will throw an error

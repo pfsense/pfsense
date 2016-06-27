@@ -54,10 +54,10 @@
  */
 
 if (!function_exists("dump_rrd_to_xml")) {
-	require("rrd.inc");
+	require_once("rrd.inc");
 }
 if (!function_exists("read_altq_config")) {
-	require("shaper.inc");
+	require_once("shaper.inc");
 }
 
 /* Upgrade functions must be named:

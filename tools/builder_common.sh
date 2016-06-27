@@ -1659,6 +1659,8 @@ buildkernel() {
 
 # Imported from FreeSBIE
 installkernel() {
+	local _destdir=${1:-${KERNEL_DESTDIR}}
+
 	if [ -z "${KERNCONF}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
@@ -1670,10 +1672,10 @@ installkernel() {
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ} DESTDIR=${KERNEL_DESTDIR}"
+	makeargs="${MAKEJ} DESTDIR=${_destdir}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
-	gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel
+	gzip -f9 ${_destdir}/boot/kernel/kernel
 }
 
 # Launch is ran first to setup a few variables that we need

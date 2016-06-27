@@ -381,6 +381,9 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	echo ">>> Building kernel configs: $BUILD_KERNELS for FreeBSD: $FREEBSD_BRANCH ..."
 	build_all_kernels
 
+	# Install kernel on installer
+	installkernel ${INSTALLER_CHROOT_DIR}
+
 	# Prepare pre-final staging area
 	clone_to_staging_area
 

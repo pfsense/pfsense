@@ -61,8 +61,8 @@
 ##|*MATCH=system_update_settings.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require_once("guiconfig.inc");
+require_once("pkg-utils.inc");
 
 $repos = pkg_list_repos();
 

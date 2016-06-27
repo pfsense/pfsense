@@ -61,7 +61,7 @@
 ##|*MATCH=system_certmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("certs.inc");
 
 $cert_methods = array(

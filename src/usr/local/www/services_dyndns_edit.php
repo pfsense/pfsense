@@ -73,7 +73,7 @@ function is_dyndns_username($uname) {
 	}
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();

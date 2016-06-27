@@ -66,9 +66,9 @@
 // Set DEBUG to true to prevent the system_halt() function from being called
 define("DEBUG", false);
 
-require("guiconfig.inc");
-require("functions.inc");
-require("captiveportal.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
+require_once("captiveportal.inc");
 
 if ($_POST['save'] == 'No') {
 	header("Location: index.php");

@@ -60,7 +60,7 @@
 ##|*MATCH=diag_system_activity.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("System Activity"));
 

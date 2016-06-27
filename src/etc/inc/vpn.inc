@@ -1272,7 +1272,7 @@ EOD;
 
 								if (!empty($ealg_kl) && $ealg_kl == "auto") {
 									if (empty($p2_ealgos) || !is_array($p2_ealgos)) {
-										require("ipsec.inc");
+										require_once("ipsec.inc");
 									}
 									$key_hi = $p2_ealgos[$ealg_id]['keysel']['hi'];
 									$key_lo = $p2_ealgos[$ealg_id]['keysel']['lo'];

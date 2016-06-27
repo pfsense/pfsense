@@ -61,8 +61,8 @@
 ##|*MATCH=services_unbound_acls.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("unbound.inc");
+require_once("guiconfig.inc");
+require_once("unbound.inc");
 
 if (!is_array($config['unbound']['acls'])) {
 	$config['unbound']['acls'] = array();

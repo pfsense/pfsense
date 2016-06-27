@@ -283,4 +283,4 @@ if (file_exists("/conf/upgrade_log.txt") && $_POST['viewupgradelog']) {
 	</div>
 <?php
 }
-require("foot.inc");
+require_once("foot.inc");

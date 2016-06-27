@@ -78,7 +78,7 @@ function hosts_sort() {
 	usort($config['dnsmasq']['hosts'], "hostcmp");
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['dnsmasq']['hosts'])) {
 	$config['dnsmasq']['hosts'] = array();

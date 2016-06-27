@@ -63,7 +63,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Edit File"));
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if ($_POST['action']) {
 	switch ($_POST['action']) {
@@ -128,7 +128,7 @@ if ($_POST['action']) {
 	exit;
 }
 
-require("head.inc");
+require_once("head.inc");
 
 print_callout(gettext("The capabilities offered here can be dangerous. No support is available. Use them at your own risk!"), 'danger', gettext('Advanced Users Only'));
 

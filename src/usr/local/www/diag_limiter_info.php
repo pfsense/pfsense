@@ -60,7 +60,7 @@
 ##|*MATCH=diag_limiter_info.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Limiter Info"));
 $shortcut_section = "trafficshaper-limiters";

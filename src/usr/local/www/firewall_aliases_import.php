@@ -64,10 +64,10 @@
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("util.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 

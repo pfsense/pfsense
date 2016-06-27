@@ -65,8 +65,8 @@
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
-require("certs.inc");
-require("guiconfig.inc");
+require_once("certs.inc");
+require_once("guiconfig.inc");
 
 // start admin user code
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {

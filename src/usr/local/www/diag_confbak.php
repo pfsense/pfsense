@@ -61,7 +61,7 @@
 ##|*MATCH=diag_confbak.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (isset($_POST['backupcount'])) {
 	if (is_numericint($_POST['backupcount'])) {

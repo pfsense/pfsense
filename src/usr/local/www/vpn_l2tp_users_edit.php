@@ -77,7 +77,7 @@ function l2tp_users_sort() {
 	usort($config['l2tp']['user'], "l2tpusercmp");
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['user'])) {

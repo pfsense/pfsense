@@ -25,7 +25,7 @@
 */
 
 require_once("config.inc");
-require("interfaces.inc");
+require_once("interfaces.inc");
 /* echo the rrd required syntax */
 echo "N:";
 $result = array();

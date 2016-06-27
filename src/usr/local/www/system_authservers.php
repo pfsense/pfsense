@@ -61,7 +61,7 @@
 ##|*MATCH=system_authservers.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("auth.inc");
 
 // Have we been called to populate the "Select a container" modal?

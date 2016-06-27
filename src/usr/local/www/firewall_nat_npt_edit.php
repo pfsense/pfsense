@@ -63,10 +63,10 @@
 
 require_once("ipsec.inc");
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("interfaces.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 $ifdisp = get_configured_interface_with_descr();
 

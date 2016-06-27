@@ -61,7 +61,7 @@
 ##|*MATCH=services_dhcp_relay.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 $pconfig['enable'] = isset($config['dhcrelay']['enable']);
 

@@ -2289,7 +2289,7 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 			$message = 0;
 		}
 
-		include("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
+		include_once("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
 	} else {
 		portal_reply_page($my_redirurl, "redir", "Just redirect the user.");

@@ -320,12 +320,12 @@ install_default_kernel() {
 make_world() {
 
 	LOGFILE=${BUILDER_LOGS}/buildworld.${TARGET}
+	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	if [ -n "${NO_BUILDWORLD}" ]; then
 		echo ">>> NO_BUILDWORLD set, skipping build" | tee -a ${LOGFILE}
 		return
 	fi
 
-	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	makeargs="${MAKEJ}"
 	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}

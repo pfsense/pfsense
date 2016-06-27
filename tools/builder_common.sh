@@ -48,6 +48,8 @@ if [ -z "${IMAGES_FINAL_DIR}" -o "${IMAGES_FINAL_DIR}" = "/" ]; then
 	print_error_pfS
 fi
 
+kldload filemon >/dev/null 2>&1
+
 lc() {
 	echo "${1}" | tr '[[:upper:]]' '[[:lower:]]'
 }

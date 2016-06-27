@@ -66,7 +66,7 @@
 ##|*MATCH=ifstats.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
 if ($_POST['width']) {

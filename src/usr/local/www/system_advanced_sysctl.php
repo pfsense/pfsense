@@ -64,7 +64,7 @@
 ##|*MATCH=system_advanced_sysctl.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['sysctl'])) {
 	$config['sysctl'] = array();

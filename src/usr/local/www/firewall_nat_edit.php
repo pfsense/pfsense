@@ -63,11 +63,11 @@
 ##|*MATCH=firewall_nat_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("itemid.inc");
 require_once("ipsec.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat.php');
 

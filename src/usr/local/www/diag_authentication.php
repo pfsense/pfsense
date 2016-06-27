@@ -60,7 +60,7 @@
 ##|*MATCH=diag_authentication.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("radius.inc");
 
 if ($_POST) {

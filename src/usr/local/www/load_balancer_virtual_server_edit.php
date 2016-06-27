@@ -61,7 +61,7 @@
 ##|*MATCH=load_balancer_virtual_server_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];

@@ -71,8 +71,8 @@
 ##|*MATCH=status_pkglogs.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("pkg-utils.inc");
+require_once("guiconfig.inc");
+require_once("pkg-utils.inc");
 
 if (!($nentries = $config['syslog']['nentries'])) {
 	$nentries = 50;

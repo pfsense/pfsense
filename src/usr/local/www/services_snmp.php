@@ -63,7 +63,7 @@
 ##|*MATCH=services_snmp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 
 if (!is_array($config['snmpd'])) {

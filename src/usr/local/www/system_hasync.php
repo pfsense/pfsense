@@ -61,7 +61,7 @@
 ##|*MATCH=system_hasync.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['hasync'])) {
 	$config['hasync'] = array();

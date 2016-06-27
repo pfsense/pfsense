@@ -65,7 +65,7 @@
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();

@@ -323,6 +323,6 @@ if (isset($config['system']['webgui']['webguicss'])) {
 		//]]>
 		</script>
 <?php
-require('foot.inc');
+require_once('foot.inc');
 
 } // end function

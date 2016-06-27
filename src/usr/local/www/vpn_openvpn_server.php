@@ -61,7 +61,7 @@
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 

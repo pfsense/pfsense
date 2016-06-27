@@ -79,7 +79,7 @@ function hosts_sort() {
 	usort($config['unbound']['hosts'], "hostcmp");
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['unbound']['hosts'])) {
 	$config['unbound']['hosts'] = array();

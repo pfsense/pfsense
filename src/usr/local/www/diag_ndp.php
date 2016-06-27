@@ -67,7 +67,7 @@
 @ini_set('zlib.output_compression', 0);
 @ini_set('implicit_flush', 1);
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 exec("/usr/sbin/ndp -na", $rawdata);
 

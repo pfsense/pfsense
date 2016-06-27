@@ -68,9 +68,9 @@ define('CLOCK', '<i class="fa fa-clock-o icon-black"></i>');
 $dayArray = array (gettext('Mon'), gettext('Tues'), gettext('Wed'), gettext('Thur'), gettext('Fri'), gettext('Sat'), gettext('Sun'));
 $monthArray = array (gettext('January'), gettext('February'), gettext('March'), gettext('April'), gettext('May'), gettext('June'), gettext('July'), gettext('August'), gettext('September'), gettext('October'), gettext('November'), gettext('December'));
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"));
 

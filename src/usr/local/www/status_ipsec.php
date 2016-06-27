@@ -64,7 +64,7 @@
 ##|*MATCH=status_ipsec.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
 global $g;

@@ -63,8 +63,8 @@
 ##|*MATCH=status_ipsec_sad.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("ipsec.inc");
+require_once("guiconfig.inc");
+require_once("ipsec.inc");
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SADs"));
 $shortcut_section = "ipsec";

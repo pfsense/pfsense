@@ -60,7 +60,7 @@
 ##|*MATCH=vpn_l2tp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("vpn.inc");
 
 if (!is_array($config['l2tp']['radius'])) {

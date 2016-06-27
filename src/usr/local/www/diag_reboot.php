@@ -66,9 +66,9 @@
 // Set DEBUG to true to prevent the system_reboot() function from being called
 define("DEBUG", false);
 
-require("guiconfig.inc");
-require("functions.inc");
-require("captiveportal.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
+require_once("captiveportal.inc");
 
 $guitimeout = 90;	// Seconds to wait before reloading the page after reboot
 $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough

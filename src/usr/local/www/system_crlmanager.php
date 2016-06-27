@@ -60,7 +60,7 @@
 ##|*MATCH=system_crlmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("openvpn.inc");
 require_once("vpn.inc");

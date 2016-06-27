@@ -335,7 +335,7 @@ make_world() {
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	# Create if cleaned up
-	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
+	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}

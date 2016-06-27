@@ -1262,6 +1262,13 @@ create_memstick_image() {
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
+
+	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
+
+	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+
 	create_distribution_tarball
 
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
@@ -1286,50 +1293,30 @@ create_memstick_serial_image() {
 	customize_stagearea_for_image "memstickserial"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
-
-	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
-	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-
-	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
-	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
-	# Activate serial console in boot.config
-	if [ -f ${BOOTCONF} ]; then
-		sed -i "" '/-D$/d' ${BOOTCONF}
-	fi
-	echo "-S115200 -D" >> ${BOOTCONF}
+	echo "-S115200 -D" > ${BOOTCONF}
 
-	# Remove old console options if present.
-	[ -f "${LOADERCONF}" ] \
-		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial)/d" ${LOADERCONF}
 	# Activate serial console+video console in loader.conf
-	echo 'boot_multicons="YES"' >>  ${LOADERCONF}
+	echo 'boot_multicons="YES"' >  ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 
+	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
-	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKSERIALPATH} ]; then
-			rm -f $MEMSTICKSERIALPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during MEMSTICKSERIAL image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKSERIALPATH)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	trap "-" 1 2 15 EXIT
-	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_path}
+
 	gzip -qf $MEMSTICKSERIALPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
@@ -1348,52 +1335,32 @@ create_memstick_adi_image() {
 	customize_stagearea_for_image "memstickadi"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
-
-	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
-	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-
-	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
-	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
-	# Activate serial console in boot.config
-	if [ -f ${BOOTCONF} ]; then
-		sed -i "" '/-[Dh]$/d' ${BOOTCONF}
-	fi
-	echo "-S115200 -h" >> ${BOOTCONF}
+	echo "-S115200 -h" > ${BOOTCONF}
 
-	# Remove old console options if present.
-	[ -f "${LOADERCONF}" ] \
-		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial|hint.uart)/d" ${LOADERCONF}
 	# Activate serial console+video console in loader.conf
-	echo 'boot_serial="YES"' >> ${LOADERCONF}
+	echo 'boot_serial="YES"' > ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	echo 'comconsole_port="0x2F8"' >> ${LOADERCONF}
 	echo 'hint.uart.0.flags="0x00"' >> ${LOADERCONF}
 	echo 'hint.uart.1.flags="0x10"' >> ${LOADERCONF}
 
+	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+
 	create_distribution_tarball
 
-	makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
-	if [ $? -ne 0 ]; then
-		if [ -f ${MEMSTICKADIPATH} ]; then
-			rm -f $MEMSTICKADIPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during MEMSTICKADI image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
-	MD=$(mdconfig -a -t vnode -f $MEMSTICKADIPATH)
-	# Just in case
-	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	trap "-" 1 2 15 EXIT
-	mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_path}
+
 	gzip -qf $MEMSTICKADIPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 

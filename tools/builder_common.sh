@@ -331,8 +331,8 @@ make_world() {
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	makeargs="${MAKE_ARGS}"
 	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld" | tee -a ${LOGFILE}
-	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}
+	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
@@ -1679,8 +1679,8 @@ buildkernel() {
 	echo ">>> ARCH:        ${TARGET_ARCH}"
 
 	makeargs="${MAKEJ_KERNEL} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
-	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
+	echo ">>> Builder is running the command: script -aq $LOGFILE make $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
+	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 }
 
 # Imported from FreeSBIE

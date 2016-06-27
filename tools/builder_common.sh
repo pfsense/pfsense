@@ -346,13 +346,17 @@ make_world() {
 	cp ${FREEBSD_SRC_DIR}/release/rc.local ${INSTALLER_CHROOT_DIR}/etc
 	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
+	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Distribution world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+
 	makeargs="${MAKEJ} WITHOUT_BSDINSTALL=1 DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
-	makeargs="${MAKEJ} WITHOUT_BSDINSTALL=1 DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}

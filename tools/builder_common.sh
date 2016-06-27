@@ -455,8 +455,6 @@ create_nanobsd_diskimage () {
 
 	echo ">>> Fixing up NanoBSD Specific items..." | tee -a ${LOGFILE}
 
-	echo "nanobsd" > $FINAL_CHROOT_DIR/etc/platform
-
 	local BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
 	local LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
 

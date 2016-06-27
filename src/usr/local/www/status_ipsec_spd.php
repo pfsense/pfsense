@@ -66,8 +66,8 @@
 define('RIGHTARROW', '&#x25ba;');
 define('LEFTARROW',  '&#x25c4;');
 
-require("guiconfig.inc");
-require("ipsec.inc");
+require_once("guiconfig.inc");
+require_once("ipsec.inc");
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SPDs"));
 $shortcut_section = "ipsec";

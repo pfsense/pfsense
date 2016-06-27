@@ -60,7 +60,7 @@
 ##|*MATCH=diag_pf_info.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 $pgtitle = array(gettext("Diagnostics"), gettext("pfInfo"));
 

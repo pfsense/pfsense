@@ -60,11 +60,11 @@
 ##|*MATCH=wizard.php*
 ##|-PRIV
 
-require("globals.inc");
-require("guiconfig.inc");
-require("functions.inc");
+require_once("globals.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("system.inc");
 

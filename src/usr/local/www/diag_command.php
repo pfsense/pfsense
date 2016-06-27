@@ -69,7 +69,7 @@
 
 $allowautocomplete = true;
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 	session_cache_limiter('public');

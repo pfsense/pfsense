@@ -60,8 +60,8 @@
 ##|*MATCH=status_ipsec_leases.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("ipsec.inc");
+require_once("guiconfig.inc");
+require_once("ipsec.inc");
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Leases"));
 $shortcut_section = "ipsec";

@@ -66,7 +66,7 @@
 
 define('COLOR', true);
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['gateways']['gateway_group'])) {
 	$config['gateways']['gateway_group'] = array();

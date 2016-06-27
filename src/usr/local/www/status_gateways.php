@@ -61,7 +61,7 @@
 ##|*MATCH=status_gateways.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 define('COLOR', true);
 

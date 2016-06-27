@@ -194,6 +194,9 @@ if [ ! -d ${BUILDER_LOGS} ]; then
 fi
 
 # This is where files will be staged
+export INSTALLER_CHROOT_DIR=${INSTALLER_CHROOT_DIR:-"${SCRATCHDIR}/installer-dir"}
+
+# This is where files will be staged
 export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}
 
 # Directory that will clone to in order to create

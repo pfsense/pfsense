@@ -221,7 +221,7 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
 if (file_exists("/etc/inc/globals_override.inc")) {
-	@include("globals_override.inc");
+	@include_once("globals_override.inc");
 }
 
 /* Read all XML files in following dir and load menu entries */

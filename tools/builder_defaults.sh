@@ -160,6 +160,7 @@ esac
 
 # Leave this alone.
 export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src-env.conf"}
 export MAKE_CONF=${MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
 # Extra tools to be added to ITOOLS

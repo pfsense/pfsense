@@ -164,7 +164,7 @@ export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}
 export __MAKE_CONF=${__MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
 # Extra tools to be added to ITOOLS
-export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
+export LOCAL_ITOOLS=${LOCAL_ITOOLS:-"uuencode uudecode ex"}
 
 # Path to kernel files being built
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}

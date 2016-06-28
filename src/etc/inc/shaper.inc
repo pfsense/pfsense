@@ -4604,18 +4604,26 @@ function filter_generate_dummynet_rules() {
 	read_dummynet_config();
 
 	$dn_rules = "";
+	$max_qlimit = "100"; // OS default
 	foreach ($dummynet_pipe_list as $dn) {
 		$dn_rules .= $dn->build_rules();
+		$this_qlimit = $dn->GetQlimit();
+		if ($this_qlimit > $max_qlimit) {
+			$max_qlimit = $this_qlimit;
+		}
 	}
-
+	if (!is_numericint($max_qlimit)) {
+		$max_qlimit = "100";
+	}
 	if (!empty($dn_rules)) {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
-			set_sysctl(array(
-				"net.inet.ip.dummynet.io_fast" => "1",
-				"net.inet.ip.dummynet.hash_size" => "256"
-			));
 		}
+		set_sysctl(array(
+				"net.inet.ip.dummynet.io_fast" => "1",
+				"net.inet.ip.dummynet.hash_size" => "256",
+				"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
+		));
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

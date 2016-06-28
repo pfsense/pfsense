@@ -41,7 +41,7 @@ class Form_IpAddress extends Form_Input
 				break;
 
 			case "V4":
-				$this->_attributes['pattern'] = '[a-f0-9.]*';
+				$this->_attributes['pattern'] = '[0-9.]*';
 				break;
 
 			case "V6":

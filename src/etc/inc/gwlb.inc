@@ -128,10 +128,16 @@ function start_dpinger($gateway) {
 
 	$dpinger_defaults = return_dpinger_defaults();
 
-	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
-	    "{$gateway['gwifip']}~{$gateway['monitor']}.pid";
-	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
-	    "{$gateway['gwifip']}~{$gateway['monitor']}.sock";
+	$prefix = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
+	    "{$gateway['gwifip']}~{$gateway['monitor']}";
+	# dpinger socket path should not be longer then uaddr.sun_path
+	if (strlen($pidfile) > 95) {
+		$prefix = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
+		    substr(md5($gateway['gwifip']),0,8) . "~" .
+		    $gateway['monitor'];
+	}
+	$pidfile = $prefix . ".pid";
+	$socket = $prefix . ".sock";
 	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm";
 
 	$params  = "-S ";			/* Log warnings via syslog */

@@ -894,7 +894,7 @@ class Net_IPv6
             $ipv6 = explode(':', $ipPart[0]);
 
             foreach($ipv6 as $element) { // made a validate precheck
-                if(!preg_match('/[0-9a-fA-F]*/', $element)) {
+                if(!preg_match('/^[0-9a-fA-F]*$/', $element)) {
                     return false;
                 }
             }

@@ -3315,7 +3315,7 @@ class dummynet_class {
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
 		    ($data['plr'] < 0) || ($data['plr'] > 1))) {
-			$input_errors[] = gettext("Plr must be a value between 0 and 1.");
+			$input_errors[] = gettext("Packet Loss Rate must be a value between 0 and 1.");
 		}
 		if ($data['buckets'] && (!is_numeric($data['buckets']) ||
 		    ($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
@@ -3332,12 +3332,12 @@ class dummynet_class {
 		}
 		if (isset($data['maskbits']) && ($data['maskbits'] <> "")) {
 			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32)) {
-				$input_errors[] = gettext("IPV4 bit mask must be blank or numeric value between 1 and 32.");
+				$input_errors[] = gettext("IPv4 bit mask must be blank or numeric value between 1 and 32.");
 			}
 		}
 		if (isset($data['maskbitsv6']) && ($data['maskbitsv6'] <> "")) {
 			if ((!is_numeric($data['maskbitsv6'])) || ($data['maskbitsv6'] <= 0) || ($data['maskbitsv6'] > 128)) {
-				$input_errors[] = gettext("IPV6 bit mask must be blank or numeric value between 1 and 128.");
+				$input_errors[] = gettext("IPv6 bit mask must be blank or numeric value between 1 and 128.");
 			}
 		}
 	}
@@ -3879,15 +3879,6 @@ EOD;
 
 		$bandwidth = $this->GetBandwidth();
 
-		// Delete a row
-//		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
-//			unset($bandwidth[$_GET['delbwrow']]);
-
-		// Add a row
-//		if($_GET['newbwrow']) {
-//			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
-//		}
-
 		if (is_array($bandwidth)) {
 				$section->addInput(new Form_StaticText(
 				'Bandwidth',
@@ -3913,14 +3904,14 @@ EOD;
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPV4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4217,14 +4208,14 @@ class dnqueue_class extends dummynet_class {
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPV4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 

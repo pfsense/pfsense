@@ -79,7 +79,7 @@ function running_dpinger_processes() {
 	}
 
 	foreach ($pidfiles as $pidfile) {
-		if (preg_match('/^dpinger_(.+)_([^_]+)_([^_]+)\.pid$/',
+		if (preg_match('/^dpinger_(.+)~([^~]+)~([^~]+)\.pid$/',
 		    basename($pidfile), $matches)) {
 			$socket_file = preg_replace('/\.pid$/', '.sock',
 			    $pidfile);
@@ -128,10 +128,10 @@ function start_dpinger($gateway) {
 
 	$dpinger_defaults = return_dpinger_defaults();
 
-	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
-	    "{$gateway['gwifip']}_{$gateway['monitor']}.pid";
-	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}_" .
-	    "{$gateway['gwifip']}_{$gateway['monitor']}.sock";
+	$pidfile = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
+	    "{$gateway['gwifip']}~{$gateway['monitor']}.pid";
+	$socket = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
+	    "{$gateway['gwifip']}~{$gateway['monitor']}.sock";
 	$alarm_cmd = "{$g['etc_path']}/rc.gateway_alarm";
 
 	$params  = "-S ";			/* Log warnings via syslog */

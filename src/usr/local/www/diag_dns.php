@@ -64,7 +64,6 @@ $pgtitle = array(gettext("Diagnostics"), gettext("DNS Lookup"));
 require_once("guiconfig.inc");
 
 $host = trim($_REQUEST['host'], " \t\n\r\0\x0B[];\"'");
-$host_esc = escapeshellarg($host);
 
 /* If this section of config.xml has not been populated yet we need to set it up
 */
@@ -84,12 +83,41 @@ foreach ($a_aliases as $a) {
 	$counter++;
 }
 
+function resolve_host_addresses($host) {	
+	$resolved = array();
+
+	$errreporting = error_reporting();
+	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
+
+	$dnsresult_cname = dns_get_record($host, DNS_CNAME);
+	$dnsresult_v4 = dns_get_record($host, DNS_A);
+	$dnsresult_v6 = dns_get_record($host, DNS_AAAA);	
+
+	error_reporting($errreporting);// restore original php warning/error settings.
+	
+	if (is_array($dnsresult_cname)) {
+		foreach($dnsresult_cname as $item) {
+			$resolved[] = $item['target'];
+		}
+	}
+	if (is_array($dnsresult_v4)) {
+		foreach($dnsresult_v4 as $item) {
+			$resolved[] = $item['ip'];
+		}
+	}
+	if (is_array($dnsresult_v6)) {
+		foreach($dnsresult_v6 as $item) {
+			$resolved[] = $item['ipv6'];
+		}
+	}
+	return $resolved;
+}
+
 if (isset($_POST['create_alias']) && (is_hostname($host) || is_ipaddr($host))) {
 	$resolved = gethostbyname($host);
 	$type = "hostname";
 	if ($resolved) {
-		$resolved = array();
-		exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
+		$resolved = resolve_host_addresses($host);
 		$isfirst = true;
 		foreach ($resolved as $re) {
 			if ($re != "") {
@@ -167,8 +195,7 @@ if ($_POST) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
 			if ($resolved) {
-				$resolved = array();
-				exec("/usr/bin/drill {$host_esc} A | /usr/bin/grep {$host_esc} | /usr/bin/grep -v ';' | /usr/bin/awk '{ print $5 }'", $resolved);
+				$resolved = resolve_host_addresses($host);
 			}
 			$hostname = $host;
 			if ($host != $resolved) {

@@ -60,7 +60,7 @@
 ##|*MATCH=diag_sockets.php*
 ##|-PRIV
 
-include('guiconfig.inc');
+require_once('guiconfig.inc');
 
 $pgtitle = array(gettext("Diagnostics"), gettext("Sockets"));
 

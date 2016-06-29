@@ -130,7 +130,7 @@ while (false !== ($filename = readdir($dirhandle))) {
 ## These define vars that specify the widget title and title link.
 foreach ($phpincludefiles as $includename) {
 	if (file_exists($directory . $includename)) {
-		include($directory . $includename);
+		include_once($directory . $includename);
 	}
 }
 
@@ -425,7 +425,7 @@ foreach ($widgets as $widgetname => $widgetconfig) {
 						</h2>
 					</div>
 					<div id="widget-<?=$widgetname?>_panel-body" class="panel-body collapse<?=($widgetconfig['display'] == 'close' ? '' : ' in')?>">
-						<?php include('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
+						<?php include_once('/usr/local/www/widgets/widgets/'. $widgetname.'.widget.php'); ?>
 					</div>
 				</div>
 				<?php

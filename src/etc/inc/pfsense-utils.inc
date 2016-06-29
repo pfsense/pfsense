@@ -2733,7 +2733,7 @@ function pfSense_handle_custom_code($src_dir) {
 				continue;
 			}
 			// Include the extra handler
-			include("$nf");
+			include_once("$nf");
 		}
 	}
 }

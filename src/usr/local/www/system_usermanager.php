@@ -94,6 +94,17 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
 	$pconfig['expires'] = $a_user[$id]['expires'];
+	$pconfig['customsettings'] = isset($a_user[$id]['customsettings']);
+	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
+	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
+	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
+	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
 	$pconfig['uid'] = $a_user[$id]['uid'];
@@ -330,6 +341,7 @@ if ($_POST['save']) {
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['expires'] = $_POST['expires'];
+		$userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
@@ -337,6 +349,66 @@ if ($_POST['save']) {
 			$userent['disabled'] = true;
 		} else {
 			unset($userent['disabled']);
+		}
+
+		if ($_POST['customsettings']) {
+			$userent['customsettings'] = true;
+		} else {
+			unset($userent['customsettings']);
+		}
+
+		if ($_POST['webguicss']) {
+			$userent['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($userent['webguicss']);
+		}
+
+		if ($_POST['webguifixedmenu']) {
+			$userent['webguifixedmenu'] = $_POST['webguifixedmenu'];
+		} else {
+			unset($userent['webguifixedmenu']);
+		}
+
+		if ($_POST['webguihostnamemenu']) {
+			$userent['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+		} else {
+			unset($userent['webguihostnamemenu']);
+		}
+
+		if ($_POST['dashboardavailablewidgetspanel']) {
+			$userent['dashboardavailablewidgetspanel'] = true;
+		} else {
+			unset($userent['dashboardavailablewidgetspanel']);
+		}
+
+		if ($_POST['systemlogsfilterpanel']) {
+			$userent['systemlogsfilterpanel'] = true;
+		} else {
+			unset($userent['systemlogsfilterpanel']);
+		}
+
+		if ($_POST['systemlogsmanagelogpanel']) {
+			$userent['systemlogsmanagelogpanel'] = true;
+		} else {
+			unset($userent['systemlogsmanagelogpanel']);
+		}
+
+		if ($_POST['statusmonitoringsettingspanel']) {
+			$userent['statusmonitoringsettingspanel'] = true;
+		} else {
+			unset($userent['statusmonitoringsettingspanel']);
+		}
+
+		if ($_POST['webguileftcolumnhyper']) {
+			$userent['webguileftcolumnhyper'] = true;
+		} else {
+			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['pagenamefirst']) {
+			$userent['pagenamefirst'] = true;
+		} else {
+			unset($userent['pagenamefirst']);
 		}
 
 		if (isset($id) && $a_user[$id]) {
@@ -710,6 +782,15 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
 		'the expiration date');
 
+	$section->addInput(new Form_Checkbox(
+		'customsettings',
+		'Custom Settings',
+		'Use individual customized GUI options and dashboard layout for this user.',
+		$pconfig['customsettings']
+	));
+
+	gen_user_settings_fields($section, $pconfig);
+
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
@@ -888,12 +969,48 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
+	function setcustomoptions() {
+		var adv = $('#customsettings').prop('checked');
+
+		hideInput('webguicss', !adv);
+		hideInput('webguifixedmenu', !adv);
+		hideInput('webguihostnamemenu', !adv);
+		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('dashboardavailablewidgetspanel', !adv);
+		hideCheckbox('systemlogsfilterpanel', !adv);
+		hideCheckbox('systemlogsmanagelogpanel', !adv);
+		hideCheckbox('statusmonitoringsettingspanel', !adv);
+		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('pagenamefirst', !adv);
+	}
+
+	// Handle displaying a warning message if a user-created theme is selected.
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+
 	// On click . .
+	$('#customsettings').click(function () {
+		setcustomoptions();
+	});
+
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
 	});
@@ -936,6 +1053,7 @@ events.push(function() {
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
+	setcustomoptions();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

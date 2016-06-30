@@ -2570,6 +2570,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 						$src = "(self)";
 						break;
 					case 'pppoe':
+						/* XXX: This needs to be fixed somehow! */
 						if (is_array($FilterIflist['pppoe'])) {
 							$pppoesav6 = gen_subnetv6($FilterIflist['pppoe'][0]['ipv6'], $FilterIflist['pppoe'][0]['snv6']);
 							$pppoesnv6 = $FilterIflist['pppoe'][0]['snv6'];
@@ -2609,7 +2610,7 @@ function filter_generate_address(& $rule, $target = "source", $isnat = false) {
 					case 'pppoe':
 						/* XXX: This needs to be fixed somehow! */
 						if (is_array($FilterIflist['pppoe'])) {
-							$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['ip'], $FilterIflist['pppoe'][0]['sn']);
+							$pppoesa = gen_subnet($FilterIflist['pppoe'][0]['sa'], $FilterIflist['pppoe'][0]['sn']);
 							$pppoesn = $FilterIflist['pppoe'][0]['sn'];
 							$src = "{$pppoesa}/{$pppoesn}";
 						}
@@ -2667,7 +2668,11 @@ function filter_generate_user_rule($rule) {
 			$ifliste = "";
 			foreach ($interfaces as $iface) {
 				if (array_key_exists($iface, $FilterIflist)) {
-					$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
+					if (isset($FilterIflist[$iface]['if'])) {
+						$ifliste .= " " . $FilterIflist[$iface]['if'] . " ";
+					} else if (isset($FilterIflist[$iface][0]['if'])) {
+						$ifliste .= " " . $FilterIflist[$iface][0]['if'] . " ";
+					}
 				}
 			}
 			if ($ifliste <> "") {
@@ -4252,7 +4257,7 @@ function ifridx($if, $ridx) {
 	if ($ridx < 0) {
 		return $ridx;
 	}
-	
+
 	$i = $ifridx = 0;
 	if (is_array($config['filter']['rule'])) {
 		foreach ($config['filter']['rule'] as $rulen => $filterent) {

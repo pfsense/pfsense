@@ -256,16 +256,12 @@ if ($carpcount == 0) {
 	<div class="panel-body">
 		<ul>
 <?php
-
-	$nodes = array();
-	$states = pfSense_get_pf_states();
-	for ($i = 0; $states != NULL && $i < count($states); $i++) {
-		$nodes[$states[$i]['creatorid']] = 1;
-	}
-	foreach ($nodes as $node => $nenabled) {
-		echo "<li>$node</li>";
-	}
+        echo "<br />" . gettext("pfSync nodes") . ":<br />";
+        echo "<pre>";
+        system("/sbin/pfctl -vvss | /usr/bin/grep creator | /usr/bin/cut -d\" \" -f7 | /usr/bin/sort -u");
+        echo "</pre>";
 ?>
+
 		</ul>
 	</div>
 </div>

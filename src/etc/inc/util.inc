@@ -1459,13 +1459,13 @@ function get_configured_ip_addresses() {
  *   IPv6 addresses.
  *
  */
-function get_configured_ipv6_addresses() {
+function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	require_once("interfaces.inc");
 	$ipv6_array = array();
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int);
+			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}

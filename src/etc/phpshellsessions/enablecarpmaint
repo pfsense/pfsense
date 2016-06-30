@@ -1,0 +1,5 @@
+! echo "Enabling CARP maintenance mode..."
+require_once("interfaces.inc");
+
+interfaces_carp_set_maintenancemode(true);
+

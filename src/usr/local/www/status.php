@@ -107,6 +107,7 @@ function doCmdT($title, $command) {
 				$line = fgets($fd);
 				/* remove sensitive contents */
 				$line = preg_replace("/<authorizedkeys>.*?<\\/authorizedkeys>/", "<authorizedkeys>xxxxx</authorizedkeys>", $line);
+				$line = preg_replace("/<secret>.*?<\\/secret>/", "<secret>xxxxx</secret>", $line);
 				$line = preg_replace("/<bcrypt-hash>.*?<\\/bcrypt-hash>/", "<bcrypt-hash>xxxxx</bcrypt-hash>", $line);
 				$line = preg_replace("/<password>.*?<\\/password>/", "<password>xxxxx</password>", $line);
 				$line = preg_replace("/<auth_user>.*?<\\/auth_user>/", "<auth_user>xxxxx</auth_user>", $line);

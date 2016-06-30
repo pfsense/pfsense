@@ -401,7 +401,12 @@ if ($_POST) {
 	}
 }
 
-if ($pkgmode == 'delete') {
+if ($firmwareupdate) {
+	$panel_heading_txt = gettext("Updating System");
+	$pkg_success_txt = gettext('System update successfully completed.');
+	$pkg_fail_txt = gettext('System update failed!');
+	$pkg_wait_txt = gettext('Please wait while the system update completes.');
+} else if ($pkgmode == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
 	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgname);
 	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgname);
@@ -445,17 +450,7 @@ if ($confirmed):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-<?php
-		if ($firmwareupdate):
-?>
-			<h2 class="panel-title" id="status"><?=gettext("Updating System")?></h2>
-<?php
-		else:
-?>
 			<h2 class="panel-title" id="status"><?=$panel_heading_txt?></h2>
-<?php
-		endif;
-?>
 		</div>
 
 		<div class="panel-body">
@@ -554,11 +549,7 @@ function setProgress(barName, percent, transition) {
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
 	if ("<?=$pkgmode?>" != "reinstallall") {
-		if ("<?=$firmwareupdate?>") {
-			$('#final').html("<?=gettext('System update successfully completed.')?>");
-		} else {
-			$('#final').html("<?=$pkg_success_txt?>");
-		}
+		$('#final').html("<?=$pkg_success_txt?>");
 	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed.')?>");
 	}

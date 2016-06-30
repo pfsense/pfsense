@@ -582,6 +582,14 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
 	}
 	return $modulus;
 }
+
+/* Same but returns modulus keysize not modulus itself */
+function cert_get_modulus_keysize($str_crt, $decode = true, $type = "crt") {
+	// modulus usually returned as "modulus=.....". Remove anything before an "=" and return 4 x (hex string length)
+	$raw_modulus = explode('=', cert_get_modulus($str_crt, $decode, $type));
+	return strlen(array_pop($raw_modulus))*4;
+}
+
 function csr_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "csr");
 }

@@ -208,7 +208,7 @@ if ($bogons || $urltable || !empty($entries)) {
 		$table_file = '';
 	}
 
-	$datestrregex = '(Mon|Tue|Wed|Thr|Fri|Sat|Sun).* GMT';
+	$datestrregex = '(Mon|Tue|Wed|Thu|Fri|Sat|Sun).* GMT';
 	$datelineregex = 'last.*' . $datestrregex;
 
 	$last_updated = exec('/usr/bin/grep -i -m 1 -E "^# ' . $datelineregex . '" ' . $table_file . '|/usr/bin/grep -i -m 1 -E -o "' . $datestrregex . '"');

@@ -2603,7 +2603,7 @@ $section->addInput(new Form_Input(
 	'Idle timeout',
 	'number',
 	$pconfig['pppoe_idletimeout'],
-	[min => 0]
+	['min' => 0]
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
 
@@ -2622,7 +2622,7 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['pppoe_resethour'],
-	[min => 0, max => 23]
+	['min' => 0, 'max' => 23]
 ))->setHelp('Hour (0-23)');
 
 $group->add(new Form_Input(
@@ -2630,7 +2630,7 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['pppoe_resetminute'],
-	[min => 0, max => 59]
+	['min' => 0, 'max' => 59]
 ))->setHelp('Minutes (0-59)');
 
 $group->add(new Form_Input(
@@ -2734,7 +2734,7 @@ $section->addInput(new Form_Input(
 	'Idle timeout (seconds)',
 	'number',
 	$pconfig['pptp_idletimeout'],
-	[min => 0]
+	['min' => 0]
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
 

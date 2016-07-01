@@ -434,7 +434,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Serial',
 		'number',
 		$pconfig['serial'],
-		[min => '0', max => '9999']
+		['min' => '0', 'max' => '9999']
 	));
 
 	$form->add($section);

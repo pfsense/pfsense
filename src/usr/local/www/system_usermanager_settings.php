@@ -216,7 +216,7 @@ $section->addInput(new Form_Input(
 	'Session timeout',
 	'number',
 	$pconfig['session_timeout'],
-	[min => 0]
+	['min' => 0]
 ))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
 	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
 	'risk!');

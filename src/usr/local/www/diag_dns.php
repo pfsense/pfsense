@@ -267,6 +267,15 @@ $section->addInput(new Form_Input(
 	['placeholder' => 'Hostname to look up.']
 ));
 
+$form->add($section);
+
+$form->addGlobal(new Form_Button(
+        'Submit',
+        'Lookup',
+        null,
+        'fa-search'
+))->addClass('btn-primary');
+
 if (!empty($resolved)) {
 	if ($alias_exists) {
 		$button_text = gettext("Update alias");
@@ -280,15 +289,6 @@ if (!empty($resolved)) {
 		'fa-plus'
 	))->removeClass('btn-primary')->addClass('btn-success');
 }
-
-$form->add($section);
-
-$form->addGlobal(new Form_Button(
-	'Submit',
-	'Lookup',
-	null,
-	'fa-search'
-))->addClass('btn-primary');
 
 print $form;
 

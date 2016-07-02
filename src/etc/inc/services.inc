@@ -55,8 +55,8 @@
 	OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdns spdns-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDNS,SPDNS (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {

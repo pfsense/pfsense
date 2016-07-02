@@ -365,7 +365,7 @@ print($form);
 				endif;
 ?>
 <?php 				if (isset($natent['nonat'])): ?>
-							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
 <?php 				endif; ?>
 
 						</td>

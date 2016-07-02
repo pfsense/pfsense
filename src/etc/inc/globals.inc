@@ -238,4 +238,15 @@ if (file_exists("{$g['cf_conf_path']}/enableserial_force")) {
 
 $config_parsed = false;
 
+/* Factory default check IP service. */
+$factory_default_checkipservice = array(
+	"enable" => true,
+	"name" => 'Default',
+	"url" => 'http://checkip.dyndns.org',
+//	"username" => '',
+//	"password" => '',
+//	"verifysslpeer" => true,
+	"descr" => 'Default Check IP Service'
+);
+
 ?>

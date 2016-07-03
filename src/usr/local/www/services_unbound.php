@@ -461,7 +461,7 @@ events.push(function() {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Host Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Host")?></th>
@@ -514,7 +514,7 @@ foreach ($a_hosts as $hostent):
 						<?=htmlspecialchars($alias['description'])?>
 					</td>
 					<td>
-						<a a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_unbound_host_edit.php?id=<?=$i?>"></a>
 					</td>
 				</tr>
 <?php
@@ -538,7 +538,7 @@ endforeach;
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Domain Overrides")?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Domain")?></th>

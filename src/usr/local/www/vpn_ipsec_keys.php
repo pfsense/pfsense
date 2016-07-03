@@ -127,7 +127,7 @@ if (is_subsystem_dirty('ipsec')) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Pre-Shared Keys')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Identifier"); ?></th>

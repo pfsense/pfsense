@@ -139,7 +139,7 @@ display_top_tabs($tab_array, true);
 
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
 		<thead>
 			<tr>
 				<th><?=gettext("IP Addresses"); ?></th>

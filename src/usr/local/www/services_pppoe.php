@@ -131,7 +131,7 @@ if (is_subsystem_dirty('vpnpppoe')) {
 	<div class="panel-body">
 	
 	<div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
+	<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 		<thead>
 			<tr>
 				<th><?=gettext("Interface")?></th>

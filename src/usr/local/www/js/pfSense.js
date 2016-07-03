@@ -207,6 +207,10 @@ $(function() {
 		$( $(this).data('target') ).prop('disabled', true);
 	});
 
+	$('.table-rowdblclickedit>tbody>tr').dblclick(function () {
+		$(this).find(".fa-pencil")[0].click();
+	});
+	
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 

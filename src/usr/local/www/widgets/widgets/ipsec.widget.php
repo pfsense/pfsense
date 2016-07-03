@@ -181,6 +181,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		break;
 
 		case "mobile" :
+			if (!is_array($mobile['pool'])) {
+				break;
+			}
 			foreach ($mobile['pool'] as $pool) {
 				if (!is_array($pool['lease'])) {
 					continue;

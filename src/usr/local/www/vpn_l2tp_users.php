@@ -123,7 +123,7 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('L2TP Users')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Username")?></th>

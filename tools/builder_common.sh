@@ -1760,7 +1760,7 @@ pkg_repo_rsync() {
 		# Send .real* directories first to prevent having a broken repo while transfer happens
 		local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 			--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/*\" \
+			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
 			--exclude=\"*\" \
 			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
 

@@ -63,7 +63,7 @@
 ##|*MATCH=services_wol.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 if (!is_array($config['wol']['wolentry'])) {
 	$config['wol']['wolentry'] = array();
 }
@@ -202,7 +202,7 @@ print $form;
 	<div class="panel-body">
 		<p><?=gettext("Click the MAC address to wake up an individual device.")?></p>
 		<div class="table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Interface")?></th>

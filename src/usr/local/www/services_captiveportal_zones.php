@@ -60,11 +60,11 @@
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("captiveportal.inc");
 
 global $cpzone;
 global $cpzoneid;
@@ -106,7 +106,7 @@ if (is_subsystem_dirty('captiveportal')) {
 	<div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive Portal Zones')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover">
+			<table class="table table-striped table-hover table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext('Zone')?></th>

@@ -63,7 +63,7 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
@@ -1323,7 +1323,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this Interface")?></h2></div>
 	<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Static ARP")?></th>

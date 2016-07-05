@@ -61,7 +61,7 @@
 ##|*MATCH=interfaces_wireless.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['wireless'])) {
 	$config['wireless'] = array();
@@ -127,7 +127,7 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Wireless Interfaces')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Interface"); ?></th>

@@ -137,6 +137,10 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 	fi
 fi
 
+# Make sure /home exists
+[ -d /home ] \
+	|| mkdir /home
+
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
@@ -192,7 +196,7 @@ else
 fi
 
 echo
-cat /etc/ascii-art/pfsense-logo-small.txt
+cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
 echo
 echo
 echo "Welcome to ${product} ${version}${version_patch}${platformbanner}..."
@@ -376,6 +380,9 @@ echo "done."
 	|| mkdir -p /etc/ssl
 [ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
 	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
+mkdir -p /usr/local/openssl >/dev/null 2>&1
+ln -sf /etc/ssl/openssl.cnf \
+	/usr/local/openssl/openssl.cnf
 
 # Run the php.ini setup file and populate
 # /usr/local/etc/php.ini

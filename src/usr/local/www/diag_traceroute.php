@@ -64,7 +64,7 @@
 ##|*MATCH=diag_traceroute.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Traceroute"));

@@ -60,7 +60,7 @@
 ##|*MATCH=system_crlmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("certs.inc");
 require_once("openvpn.inc");
 require_once("vpn.inc");
@@ -434,7 +434,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		'Serial',
 		'number',
 		$pconfig['serial'],
-		[min => '0', max => '9999']
+		['min' => '0', 'max' => '9999']
 	));
 
 	$form->add($section);
@@ -610,7 +610,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Additional Certificate Revocation Lists")?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Name")?></th>

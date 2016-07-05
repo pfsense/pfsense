@@ -48,6 +48,8 @@ if [ -z "${IMAGES_FINAL_DIR}" -o "${IMAGES_FINAL_DIR}" = "/" ]; then
 	print_error_pfS
 fi
 
+kldload filemon >/dev/null 2>&1
+
 lc() {
 	echo "${1}" | tr '[[:upper:]]' '[[:lower:]]'
 }
@@ -250,7 +252,6 @@ build_all_kernels() {
 			continue
 		fi
 
-		export SRC_CONF=${SRC_CONF}
 		buildkernel
 
 		echo ">>> Staging $BUILD_KERNEL kernel..." | tee -a ${LOGFILE}
@@ -319,40 +320,43 @@ install_default_kernel() {
 # This builds FreeBSD (make buildworld)
 # Imported from FreeSBIE
 make_world() {
-
 	LOGFILE=${BUILDER_LOGS}/buildworld.${TARGET}
+	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
 	if [ -n "${NO_BUILDWORLD}" ]; then
 		echo ">>> NO_BUILDWORLD set, skipping build" | tee -a ${LOGFILE}
 		return
 	fi
 
-	# Set SRC_CONF variable if it's not already set.
-	if [ -z "${SRC_CONF}" ]; then
-		echo ">>> SRC_CONF is unset make sure this is what you want!" | tee -a ${LOGFILE}
-	else
-		echo ">>> Setting SRC_CONF to $SRC_CONF" | tee -a ${LOGFILE}
-	fi
-
-	# Set default parameters
-	export MAKE_ARGS="${MAKEJ_WORLD} __MAKE_CONF=${MAKE_CONF} SRCCONF=${SRC_CONF} TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH}"
-
-	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
-	makeargs="${MAKE_ARGS}"
+	makeargs="${MAKEJ}"
 	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld" | tee -a ${LOGFILE}
-	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_CLEAN ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
-	# Create if cleaned up
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR} WITHOUT_TOOLCHAIN=1"
+
+	[ -d "${INSTALLER_CHROOT_DIR}" ] \
+		|| mkdir -p ${INSTALLER_CHROOT_DIR}
+
+	makeargs="${MAKEJ} DESTDIR=${INSTALLER_CHROOT_DIR}"
 	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: env LOCAL_ITOOLS=\"${EXTRA_TOOLS}\" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
-	(env LOCAL_ITOOLS="${EXTRA_TOOLS}" script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	cp ${FREEBSD_SRC_DIR}/release/rc.local ${INSTALLER_CHROOT_DIR}/etc
 	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
+	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Distribution world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+
+	makeargs="${MAKEJ} WITHOUT_BSDINSTALL=1 DESTDIR=${STAGE_CHROOT_DIR}"
+	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
+	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+
 	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
@@ -360,16 +364,13 @@ make_world() {
 
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
-	makeargs="${MAKE_ARGS} DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} all" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} all || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} install" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
+	# XXX FIX IT
+#	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean all install" | tee -a ${LOGFILE}
+#	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
 	unset makeargs
@@ -472,8 +473,6 @@ create_nanobsd_diskimage () {
 	install_default_kernel ${DEFAULT_KERNEL} "no"
 
 	echo ">>> Fixing up NanoBSD Specific items..." | tee -a ${LOGFILE}
-
-	echo "nanobsd" > $FINAL_CHROOT_DIR/etc/platform
 
 	local BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
 	local LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
@@ -1049,15 +1048,21 @@ clean_builder() {
 	staginareas_clean_each_run
 
 	if [ -d "${STAGE_CHROOT_DIR}" ]; then
-		BASENAME=$(basename ${STAGE_CHROOT_DIR})
-		echo -n ">>> Cleaning ${STAGE_CHROOT_DIR} ..."
+		echo -n ">>> Cleaning ${STAGE_CHROOT_DIR}... "
 		chflags -R noschg ${STAGE_CHROOT_DIR} 2>&1 >/dev/null
 		rm -rf ${STAGE_CHROOT_DIR}/* 2>/dev/null
 		echo "Done."
 	fi
 
+	if [ -d "${INSTALLER_CHROOT_DIR}" ]; then
+		echo -n ">>> Cleaning ${INSTALLER_CHROOT_DIR}... "
+		chflags -R noschg ${INSTALLER_CHROOT_DIR} 2>&1 >/dev/null
+		rm -rf ${INSTALLER_CHROOT_DIR}/* 2>/dev/null
+		echo "Done."
+	fi
+
 	if [ -z "${NO_CLEAN_FREEBSD_OBJ}" -a -d "${FREEBSD_SRC_DIR}" ]; then
-		OBJTREE=$(env TARGET=${TARGET} TARGET_ARCH=${TARGET_ARCH} make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
+		OBJTREE=$(make -C ${FREEBSD_SRC_DIR} -V OBJTREE)
 		if [ -d "${OBJTREE}" ]; then
 			echo -n ">>> Cleaning FreeBSD objects dir staging..."
 			echo -n "."
@@ -1367,7 +1372,6 @@ customize_stagearea_for_image() {
 	     "${_image_type}" = "memstick" -o \
 	     "${_image_type}" = "memstickserial" -o \
 	     "${_image_type}" = "memstickadi" ]; then
-		install_bsdinstaller
 		mkdir -p ${FINAL_CHROOT_DIR}/pkgs
 		cp ${CORE_PKG_ALL_PATH}/*default-config*.txz ${FINAL_CHROOT_DIR}/pkgs
 	fi
@@ -1409,9 +1413,14 @@ customize_stagearea_for_image() {
 }
 
 create_distribution_tarball() {
-	mkdir -p ${FINAL_CHROOT_DIR}/install
+	mkdir -p ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist
 
-	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs -cJf ${FINAL_CHROOT_DIR}/install/${PRODUCT_NAME}.txz .
+	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs \
+		-cJf ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/base.txz .
+
+	(cd ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist && \
+		sh ${FREEBSD_SRC_DIR}/release/scripts/make-manifest.sh base.txz) \
+		> ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/MANIFEST
 }
 
 create_mfsbsd_image() {
@@ -1554,34 +1563,24 @@ create_memstick_image() {
 	customize_stagearea_for_image "memstick" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
-
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
+
+	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
+
+	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
-	create_mfsbsd_image ${_image_path}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${_image_path}
 
-	#makefs -B little -o label=${PRODUCT_NAME},version=2 ${_image_path} ${FINAL_CHROOT_DIR}
-	#if [ $? -ne 0 ]; then
-	#	if [ -f ${_image_path} ]; then
-	#		rm -f $_image_path
-	#	fi
-	#	echo ">>> ERROR: Something wrong happened during MEMSTICK image creation. STOPPING!" | tee -a ${LOGFILE}
-	#	print_error_pfS
-	#fi
-	#MD=$(mdconfig -a -t vnode -f $_image_path)
-	## Just in case
-	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	#trap "-" 1 2 15 EXIT
-	#mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
-	#gzip -qf $_image_path &
-	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	gzip -qf $_image_path &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICK created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1598,54 +1597,32 @@ create_memstick_serial_image() {
 	customize_stagearea_for_image "memstickserial"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
-
-	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
-	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-
-	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
-	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
-	# Activate serial console in boot.config
-	if [ -f ${BOOTCONF} ]; then
-		sed -i "" '/-D$/d' ${BOOTCONF}
-	fi
-	echo "-S115200 -D" >> ${BOOTCONF}
+	echo "-S115200 -D" > ${BOOTCONF}
 
-	# Remove old console options if present.
-	[ -f "${LOADERCONF}" ] \
-		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial)/d" ${LOADERCONF}
 	# Activate serial console+video console in loader.conf
-	echo 'boot_multicons="YES"' >>  ${LOADERCONF}
+	echo 'boot_multicons="YES"' >  ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 
+	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+
 	create_distribution_tarball
 
-	create_mfsbsd_image ${MEMSTICKSERIALPATH}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${MEMSTICKSERIALPATH}
 
-	#makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKSERIALPATH} ${FINAL_CHROOT_DIR}
-	#if [ $? -ne 0 ]; then
-	#	if [ -f ${MEMSTICKSERIALPATH} ]; then
-	#		rm -f $MEMSTICKSERIALPATH
-	#	fi
-	#	echo ">>> ERROR: Something wrong happened during MEMSTICKSERIAL image creation. STOPPING!" | tee -a ${LOGFILE}
-	#	print_error_pfS
-	#fi
-	#MD=$(mdconfig -a -t vnode -f $MEMSTICKSERIALPATH)
-	## Just in case
-	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	#trap "-" 1 2 15 EXIT
-	#mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
-	#gzip -qf $MEMSTICKSERIALPATH &
-	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	gzip -qf $MEMSTICKSERIALPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKSERIAL created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1662,56 +1639,34 @@ create_memstick_adi_image() {
 	customize_stagearea_for_image "memstickadi"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
-
-	echo "/dev/ufs/${PRODUCT_NAME} / ufs ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
 	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 
-	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-
-	BOOTCONF=${FINAL_CHROOT_DIR}/boot.config
-	LOADERCONF=${FINAL_CHROOT_DIR}/boot/loader.conf
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	echo ">>> Activating serial console..." 2>&1 | tee -a ${LOGFILE}
-	# Activate serial console in boot.config
-	if [ -f ${BOOTCONF} ]; then
-		sed -i "" '/-[Dh]$/d' ${BOOTCONF}
-	fi
-	echo "-S115200 -h" >> ${BOOTCONF}
+	echo "-S115200 -h" > ${BOOTCONF}
 
-	# Remove old console options if present.
-	[ -f "${LOADERCONF}" ] \
-		&& sed -i "" -Ee "/(console|boot_multicons|boot_serial|hint.uart)/d" ${LOADERCONF}
 	# Activate serial console+video console in loader.conf
-	echo 'boot_serial="YES"' >> ${LOADERCONF}
+	echo 'boot_serial="YES"' > ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	echo 'comconsole_port="0x2F8"' >> ${LOADERCONF}
 	echo 'hint.uart.0.flags="0x00"' >> ${LOADERCONF}
 	echo 'hint.uart.1.flags="0x10"' >> ${LOADERCONF}
 
+	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+
 	create_distribution_tarball
 
-	create_mfsbsd_image ${MEMSTICKADIPATH}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+		${INSTALLER_CHROOT_DIR} \
+		${MEMSTICKADIPATH}
 
-	#makefs -B little -o label=${PRODUCT_NAME},version=2 ${MEMSTICKADIPATH} ${FINAL_CHROOT_DIR}
-	#if [ $? -ne 0 ]; then
-	#	if [ -f ${MEMSTICKADIPATH} ]; then
-	#		rm -f $MEMSTICKADIPATH
-	#	fi
-	#	echo ">>> ERROR: Something wrong happened during MEMSTICKADI image creation. STOPPING!" | tee -a ${LOGFILE}
-	#	print_error_pfS
-	#fi
-	#MD=$(mdconfig -a -t vnode -f $MEMSTICKADIPATH)
-	## Just in case
-	#trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	#gpart create -s BSD ${MD} 2>&1 >> ${LOGFILE}
-	#gpart bootcode -b ${FINAL_CHROOT_DIR}/boot/boot ${MD} 2>&1 >> ${LOGFILE}
-	#gpart add -t freebsd-ufs ${MD} 2>&1 >> ${LOGFILE}
-	#trap "-" 1 2 15 EXIT
-	#mdconfig -d -u ${MD} 2>&1 >> ${LOGFILE}
-	#gzip -qf $MEMSTICKADIPATH &
-	#_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
+	gzip -qf $MEMSTICKADIPATH &
+	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> MEMSTICKADI created: $(LC_ALL=C date)" | tee -a ${LOGFILE}
 }
@@ -1937,30 +1892,6 @@ install_pkg_install_ports() {
 	echo "Done!"
 }
 
-install_bsdinstaller() {
-	local _params=""
-
-	# Use staging repo on RELEASE
-	if [ -n "${_IS_RELEASE}" ]; then
-		mkdir -p ${FINAL_CHROOT_DIR}/tmp/pkg-repo
-		cp -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
-			${FINAL_CHROOT_DIR}/tmp/pkg-repo
-		_params="--repo-conf-dir /tmp/pkg-repo "
-	fi
-
-	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
-	pkg_chroot ${FINAL_CHROOT_DIR} ${_params}install -f bsdinstaller
-	sed -i '' -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME}," \
-		  -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION}," \
-		  -e "s,%%ARCH%%,${TARGET}," \
-		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense.lua \
-		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense_rescue.lua
-	if [ -n "${_IS_RELEASE}" ]; then
-		rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repo
-	fi
-	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
-}
-
 staginareas_clean_each_run() {
 	echo -n ">>> Cleaning build directories: "
 	if [ -d "${FINAL_CHROOT_DIR}" ]; then
@@ -1989,18 +1920,18 @@ buildkernel() {
 		export KERNCONF=$(basename ${KERNELCONF})
 	fi
 
-	SRCCONFBASENAME=$(basename ${SRC_CONF})
 	echo ">>> KERNCONFDIR: ${KERNCONFDIR}"
-	echo ">>> ARCH:        ${TARGET}"
-	echo ">>> SRC_CONF:    ${SRCCONFBASENAME}"
+	echo ">>> ARCH:        ${TARGET_ARCH}"
 
-	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
-	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} -DNO_KERNELCLEAN $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
+	makeargs="${MAKEJ}"
+	echo ">>> Builder is running the command: script -aq $LOGFILE make $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
+	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
 }
 
 # Imported from FreeSBIE
 installkernel() {
+	local _destdir=${1:-${KERNEL_DESTDIR}}
+
 	if [ -z "${KERNCONF}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
@@ -2012,10 +1943,10 @@ installkernel() {
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ_KERNEL} SRCCONF=${SRC_CONF} __MAKE_CONF=${MAKE_CONF} TARGET_ARCH=${TARGET_ARCH} TARGET=${TARGET} DESTDIR=${KERNEL_DESTDIR}"
+	makeargs="${MAKEJ} DESTDIR=${_destdir}"
 	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
-	gzip -f9 $KERNEL_DESTDIR/boot/kernel/kernel
+	gzip -f9 ${_destdir}/boot/kernel/kernel
 }
 
 # Launch is ran first to setup a few variables that we need
@@ -2129,7 +2060,7 @@ pkg_repo_rsync() {
 		# Send .real* directories first to prevent having a broken repo while transfer happens
 		local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
 			--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/*\" \
+			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
 			--exclude=\"*\" \
 			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
 

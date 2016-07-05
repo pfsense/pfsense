@@ -62,7 +62,7 @@
 ##|-PRIV
 
 define('NUMTIMESERVERS', 10);		// The maximum number of configurable time servers
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 

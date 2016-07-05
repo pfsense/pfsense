@@ -60,7 +60,7 @@
 ##|*MATCH=services_pppoe_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("vpn.inc");
 
 function vpn_pppoe_get_id() {

@@ -877,17 +877,7 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 	}
 }
 
-
-function subnet_expand($subnet) {
-	if (is_subnetv4($subnet)) {
-		return subnetv4_expand($subnet);
-	} else if (is_subnetv6($subnet)) {
-		return subnetv6_expand($subnet);
-	} else {
-		return $subnet;
-	}
-}
-
+/* function used by pfblockerng */
 function subnetv4_expand($subnet) {
 	$result = array();
 	list ($ip, $bits) = explode("/", $subnet);
@@ -1469,13 +1459,13 @@ function get_configured_ip_addresses() {
  *   IPv6 addresses.
  *
  */
-function get_configured_ipv6_addresses() {
+function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	require_once("interfaces.inc");
 	$ipv6_array = array();
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int);
+			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}

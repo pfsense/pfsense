@@ -20,6 +20,7 @@ net/trafshow
 net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
+sysutils/htop
 sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
@@ -72,5 +73,6 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
+net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 net/%%PRODUCT_NAME%%-pkg-aws-wizard
 net/%%PRODUCT_NAME%%-pkg-ipsec-profile-wizard

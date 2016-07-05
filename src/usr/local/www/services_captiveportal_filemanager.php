@@ -75,11 +75,11 @@ function cpelements_sort() {
 	usort($config['captiveportal'][$cpzone]['element'], "cpelementscmp");
 }
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {

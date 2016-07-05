@@ -61,14 +61,14 @@
 ##|*MATCH=xmlrpc.php*
 ##|-PRIV
 
-require("config.inc");
-require("functions.inc");
+require_once("config.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("ipsec.inc");
-require("vpn.inc");
-require("shaper.inc");
-require("xmlrpc_server.inc");
-require("xmlrpc.inc");
+require_once("ipsec.inc");
+require_once("vpn.inc");
+require_once("shaper.inc");
+require_once("xmlrpc_server.inc");
+require_once("xmlrpc.inc");
 
 function xmlrpc_loop_detect() {
 	global $config;
@@ -532,7 +532,7 @@ function get_notices_xmlrpc($raw_params) {
 		return $xmlrpc_g['return']['authfail'];
 	}
 	if (!function_exists("get_notices")) {
-		require("notices.inc");
+		require_once("notices.inc");
 	}
 	if (!$params) {
 		$toreturn = get_notices();

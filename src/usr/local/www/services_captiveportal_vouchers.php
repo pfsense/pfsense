@@ -65,11 +65,11 @@ if ($_POST['postafterlogin']) {
 	$nocsrf= true;
 }
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("captiveportal.inc");
 require_once("voucher.inc");
 
 $cpzone = $_GET['zone'];
@@ -450,7 +450,7 @@ display_top_tabs($tab_array, true);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Voucher Rolls");?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th><?=gettext("Roll #")?></th>

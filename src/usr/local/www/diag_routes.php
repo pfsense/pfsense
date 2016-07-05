@@ -60,7 +60,7 @@
 ##|*MATCH=diag_routes.php*
 ##|-PRIV
 
-include('guiconfig.inc');
+require_once('guiconfig.inc');
 
 $limit = '100';
 $filter = '';

@@ -73,7 +73,7 @@ function is_dyndns_username($uname) {
 	}
 }
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['dyndnses']['dyndns'])) {
 	$config['dyndnses']['dyndns'] = array();
@@ -146,8 +146,8 @@ if ($_POST) {
 	}
 
 	if (isset($_POST['host']) && in_array("host", $reqdfields)) {
-		/* Namecheap can have a @. in hostname */
-		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '@.' || $_POST['host'] == '@')) {
+		/* Namecheap can have a @. and *. in hostname */
+		if ($pconfig['type'] == "namecheap" && ($_POST['host'] == '*.' || $_POST['host'] == '*' || $_POST['host'] == '@.' || $_POST['host'] == '@')) {
 			$host_to_check = $_POST['domainname'];
 		} else {
 			$host_to_check = $_POST['host'];

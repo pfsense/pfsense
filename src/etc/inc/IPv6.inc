@@ -557,7 +557,7 @@ class Net_IPv6
 
         if (false !== strpos($uip, '::') ) {
 
-            list($ip1, $ip2) = explode('::', $uip);
+            list($ip1, $ip2, $ip3) = explode('::', $uip);
 
             if ("" == $ip1) {
 
@@ -606,21 +606,27 @@ class Net_IPv6
 
                 $uip = "0:0:0:0:0:0:0:0";
 
+                if (isset($ip3)) { // ::::xxx - not good
+                    if ("" == $ip3) { // ::::
+                        $ip3 = 0; // Give back a 9th "0"
+                    }
+                    $uip .= ":" . $ip3;
+                }
+
             } else if (-1 == $c1) {              // ::xxx
 
-                $fill = str_repeat('0:', 7-$c2);
+                $fill = str_repeat('0:', max(1, 7-$c2));
                 $uip  = str_replace('::', $fill, $uip);
 
             } else if (-1 == $c2) {              // xxx::
 
-                $fill = str_repeat(':0', 7-$c1);
+                $fill = str_repeat(':0', max(1, 7-$c1));
                 $uip  = str_replace('::', $fill, $uip);
 
             } else {                          // xxx::xxx
 
-                $fill = str_repeat(':0:', max(1, 6-$c2-$c1));
+                $fill = ':' . str_repeat('0:', max(1, 6-$c2-$c1));
                 $uip  = str_replace('::', $fill, $uip);
-                $uip  = str_replace('::', ':', $uip);
 
             }
         }
@@ -894,7 +900,7 @@ class Net_IPv6
             $ipv6 = explode(':', $ipPart[0]);
 
             foreach($ipv6 as $element) { // made a validate precheck
-                if(!preg_match('/[0-9a-fA-F]*/', $element)) {
+                if(!preg_match('/^[0-9a-fA-F]*$/', $element)) {
                     return false;
                 }
             }
@@ -921,7 +927,7 @@ class Net_IPv6
 
             }
 
-            if (8 == $count) {
+            if (8 == $count and empty($ipPart[1])) {
 
                 return true;
 

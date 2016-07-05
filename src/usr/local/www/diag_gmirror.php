@@ -403,4 +403,4 @@ endif; ?>
 </form>
 
 <?php
-require("foot.inc");
+require_once("foot.inc");

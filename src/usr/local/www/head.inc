@@ -60,7 +60,7 @@ header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
 
-if (isset($config['system']['webgui']['pagenamefirst'])) {
+if ($user_settings['webgui']['pagenamefirst']) {
 	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 } else {
 	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
@@ -68,9 +68,9 @@ if (isset($config['system']['webgui']['pagenamefirst'])) {
 
 $cssfile = "/css/pfSense.css";
 
-if (isset($config['system']['webgui']['webguicss'])) {
-	if (file_exists("/usr/local/www/css/" . $config['system']['webgui']['webguicss'])) {
-		$cssfile = "/css/" . $config['system']['webgui']['webguicss'];
+if (isset($user_settings['webgui']['webguicss'])) {
+	if (file_exists("/usr/local/www/css/" . $user_settings['webgui']['webguicss'])) {
+		$cssfile = "/css/" . $user_settings['webgui']['webguicss'];
 	}
 }
 
@@ -255,6 +255,10 @@ if (!isAllowedPage("system_usermanager.php*")) {
 	$system_menu[] = array(gettext("User Manager"), "/system_usermanager.php");
 }
 
+if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*")) {
+	$system_menu[] = array(gettext("User Settings"), "/system_user_settings.php");
+}
+
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
 // Interfaces
@@ -424,11 +428,11 @@ if (!$g['disablehelpmenu']) {
 
 $menuclass = "static";
 
-if (isset($config['system']['webgui']['webguifixedmenu'])) {
+if ($user_settings['webgui']['webguifixedmenu'] == "fixed") {
 	$menuclass = "fixed";
 }
 
-$numColumns = $config['system']['webgui']['dashboardcolumns'];
+$numColumns = $user_settings['webgui']['dashboardcolumns'];
 
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
@@ -448,16 +452,26 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
-			<?php foreach ([
-					['name' => 'System',	  'menu' => $system_menu,	   'href' => null],
-					['name' => 'Interfaces',  'menu' => $interfaces_menu,  'href' => null],
-					['name' => 'Firewall',	  'menu' => $firewall_menu,	   'href' => null],
-					['name' => 'Services',	  'menu' => $services_menu,	   'href' => null],
-					['name' => 'VPN',		  'menu' => $vpn_menu,		   'href' => null],
-					['name' => 'Status',	  'menu' => $status_menu,	   'href' => null],
-					['name' => 'Diagnostics', 'menu' => $diagnostics_menu, 'href' => null],
-					['name' => 'Gold',		  'menu' => $gold_menu,		   'href' => '_blank'],
-					['name' => 'Help',		  'menu' => $help_menu,		   'href' => '_blank']
+			<?php
+                if ($user_settings['webgui']['webguihostnamemenu'] == 'hostonly') {
+                    $help_menu_title = htmlspecialchars($config['system']['hostname']);
+                }
+                elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
+                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+                }
+                else {
+                    $help_menu_title = 'Help';
+                }
+                foreach ([
+					['name' => 'System',	     'menu' => $system_menu,	  'href' => null],
+					['name' => 'Interfaces',     'menu' => $interfaces_menu,  'href' => null],
+					['name' => 'Firewall',	     'menu' => $firewall_menu,	  'href' => null],
+					['name' => 'Services',	     'menu' => $services_menu,	  'href' => null],
+					['name' => 'VPN',		     'menu' => $vpn_menu,		  'href' => null],
+					['name' => 'Status',	     'menu' => $status_menu,	  'href' => null],
+					['name' => 'Diagnostics',    'menu' => $diagnostics_menu, 'href' => null],
+					['name' => 'Gold',		     'menu' => $gold_menu,		  'href' => '_blank'],
+                    ['name' => $help_menu_title, 'menu' => $help_menu,		  'href' => '_blank']
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;

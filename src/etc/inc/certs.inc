@@ -56,7 +56,7 @@ define("OPEN_SSL_CONF_PATH", "/etc/ssl/openssl.cnf");
 require_once("functions.inc");
 
 global $openssl_digest_algs;
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
 global $openssl_crl_status;
 $openssl_crl_status = array(
@@ -582,6 +582,14 @@ function cert_get_modulus($str_crt, $decode = true, $type = "crt") {
 	}
 	return $modulus;
 }
+
+/* Same but returns modulus keysize not modulus itself */
+function cert_get_modulus_keysize($str_crt, $decode = true, $type = "crt") {
+	// modulus usually returned as "modulus=.....". Remove anything before an "=" and return 4 x (hex string length)
+	$raw_modulus = explode('=', cert_get_modulus($str_crt, $decode, $type));
+	return strlen(array_pop($raw_modulus))*4;
+}
+
 function csr_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "csr");
 }

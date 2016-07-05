@@ -67,13 +67,13 @@
 $pgtitle = array(gettext("Interfaces"), gettext("Interface Assignments"));
 $shortcut_section = "interfaces";
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("ipsec.inc");
-require("vpn.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("ipsec.inc");
+require_once("vpn.inc");
+require_once("captiveportal.inc");
 require_once("rrd.inc");
 
 function interface_assign_description($portinfo, $portname) {
@@ -191,13 +191,13 @@ if (is_array($config['laggs']['lagg']) && count($config['laggs']['lagg'])) {
 /* add QinQ interfaces */
 if (is_array($config['qinqs']['qinqentry']) && count($config['qinqs']['qinqentry'])) {
 	foreach ($config['qinqs']['qinqentry'] as $qinq) {
-		$portlist["vlan{$qinq['tag']}"]['descr'] = "VLAN {$qinq['tag']}";
-		$portlist["vlan{$qinq['tag']}"]['isqinq'] = true;
+		$portlist["{$qinq['vlanif']}"]['descr'] = "VLAN {$qinq['tag']} on {$qinq['if']}";
+		$portlist["{$qinq['vlanif']}"]['isqinq'] = true;
 		/* QinQ members */
 		$qinqifs = explode(' ', $qinq['members']);
 		foreach ($qinqifs as $qinqif) {
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['descr'] = "QinQ {$qinqif}";
-			$portlist["vlan{$qinq['tag']}_{$qinqif}"]['isqinq'] = true;
+			$portlist["{$qinq['vlanif']}_{$qinqif}"]['descr'] = "QinQ {$qinqif} on VLAN {$qinq['tag']} on {$qinq['if']}";
+			$portlist["{$qinq['vlanif']}_{$qinqif}"]['isqinq'] = true;
 		}
 	}
 }

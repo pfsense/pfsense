@@ -62,7 +62,7 @@
 ##|-PRIV
 
 define('NUMACLS', 50); // The maximum number of configurable ACLs
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
 

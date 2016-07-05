@@ -63,7 +63,7 @@
 ##|*MATCH=firewall_rules.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("ipsec.inc");

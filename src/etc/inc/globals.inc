@@ -151,11 +151,17 @@ if (file_exists("/etc/platform")) {
 	if ($g['platform'] == "nanobsd") {
 		$g['firmware_update_text']="pfSense-*.img.gz";
 		$g['hidebackupbeforeupgrade'] = true;
-
+		$g['default_config_backup_count'] = 5;
 	} else {
 		$g['firmware_update_text']="pfSense-*.tgz";
+		$g['default_config_backup_count'] = 30;
 	}
-}
+} else { 
+	// shouldn't happen but "just in case" no platform were detected 
+	$g['platform'] = 'undetected'; 
+	$g['default_config_backup_count'] = 30; 
+} 
+
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");
@@ -209,12 +215,13 @@ $sysctls = array("net.inet.ip.portrange.first" => "1024",
 	"net.raw.recvspace" => 65536,
 	"net.raw.sendspace" => 65536,
 	"net.inet.raw.recvspace" => 131072,
-	"net.inet.raw.maxdgram" => 131072
+	"net.inet.raw.maxdgram" => 131072,
+	"kern.corefile" => "/root/%N.core" /* Write all core files to /root/ so they do not consume space on other slices */
 );
 
 /* Include override values for the above if needed. If the file doesn't exist, don't try to load it. */
 if (file_exists("/etc/inc/globals_override.inc")) {
-	@include("globals_override.inc");
+	@include_once("globals_override.inc");
 }
 
 /* Read all XML files in following dir and load menu entries */

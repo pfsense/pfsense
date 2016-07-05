@@ -143,7 +143,7 @@ GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e '
 
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"git@git.pfmechanics.com:pfsense/freebsd-src.git"}
-export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
+export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel-11"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
 export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
@@ -159,11 +159,12 @@ case "${FREEBSD_REPO_BASE}" in
 esac
 
 # Leave this alone.
-export SRC_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
-export MAKE_CONF=${MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
+export SRCCONF=${SRCCONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src.conf"}
+export SRC_ENV_CONF=${SRC_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_src-env.conf"}
+export __MAKE_CONF=${__MAKE_CONF:-"${FREEBSD_SRC_DIR}/release/conf/${PRODUCT_NAME}_make.conf"}
 
 # Extra tools to be added to ITOOLS
-export EXTRA_TOOLS=${EXTRA_TOOLS:-"uuencode uudecode ex"}
+export LOCAL_ITOOLS=${LOCAL_ITOOLS:-"uuencode uudecode ex"}
 
 # Path to kernel files being built
 export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
@@ -180,8 +181,7 @@ if [ -z "${NO_MAKEJ}" ]; then
 	fi
 fi
 
-export MAKEJ_WORLD=${MAKEJ_WORLD:-"${_CPUS}"}
-export MAKEJ_KERNEL=${MAKEJ_KERNEL:-"${_CPUS}"}
+export MAKEJ=${MAKEJ:-"${_CPUS}"}
 
 export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
@@ -192,6 +192,9 @@ export BUILDER_LOGS=${BUILDER_LOGS:-"${BUILDER_ROOT}/logs"}
 if [ ! -d ${BUILDER_LOGS} ]; then
 	mkdir -p ${BUILDER_LOGS}
 fi
+
+# This is where files will be staged
+export INSTALLER_CHROOT_DIR=${INSTALLER_CHROOT_DIR:-"${SCRATCHDIR}/installer-dir"}
 
 # This is where files will be staged
 export STAGE_CHROOT_DIR=${STAGE_CHROOT_DIR:-"${SCRATCHDIR}/stage-dir"}

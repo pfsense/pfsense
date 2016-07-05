@@ -60,11 +60,11 @@
 ##|*MATCH=services_captiveportal_zones_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
 $shortcut_section = "captiveportal";
@@ -121,7 +121,7 @@ $section = new Form_Section('Add Captive Portal Zone');
 $section->addInput(new Form_Input(
 	'zone',
 	'Zone name'
-))->setPattern('[0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_).');
+))->setPattern('^[A-Za-z_][0-9A-Za-z_]+')->setHelp('Zone name. Can only contain letters, digits, and underscores (_) and may not start with a digit.');
 
 $section->addInput(new Form_Input(
 	'descr',

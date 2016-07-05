@@ -65,8 +65,8 @@
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
-require("certs.inc");
-require("guiconfig.inc");
+require_once("certs.inc");
+require_once("guiconfig.inc");
 
 // start admin user code
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
@@ -94,6 +94,17 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
 	$pconfig['expires'] = $a_user[$id]['expires'];
+	$pconfig['customsettings'] = isset($a_user[$id]['customsettings']);
+	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
+	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
+	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
+	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
 	$pconfig['uid'] = $a_user[$id]['uid'];
@@ -110,13 +121,17 @@ if ($_GET['act'] == "deluser") {
 		exit;
 	}
 
-	conf_mount_rw();
-	local_user_del($a_user[$id]);
-	conf_mount_ro();
-	$userdeleted = $a_user[$id]['name'];
-	unset($a_user[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	if ($_GET['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	} else {
+		conf_mount_rw();
+		local_user_del($a_user[$id]);
+		conf_mount_ro();
+		$userdeleted = $a_user[$id]['name'];
+		unset($a_user[$id]);
+		write_config();
+		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	}
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -130,18 +145,37 @@ if ($_GET['act'] == "deluser") {
 if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
+	$deleted_users = "";
+	$deleted_count = 0;
+	$comma = "";
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
-				conf_mount_rw();
-				local_user_del($a_user[$userid]);
- 			    conf_mount_ro();
-				unset($a_user[$userid]);
+				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
+					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
+				} else {
+					conf_mount_rw();
+					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
+					$comma = ", ";
+					$deleted_count++;
+					local_user_del($a_user[$userid]);
+					conf_mount_ro();
+					unset($a_user[$userid]);
+				}
+			} else {
+				$delete_errors[] = sprintf(gettext("Cannot delete user %s because it is a system user."), $a_user[$userid]['name']);
 			}
 		}
-		$savemsg = gettext("Selected users removed successfully.");
-		write_config($savemsg);
+
+		if ($deleted_count > 0) {
+			if ($deleted_count == 1) {
+				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
+			} else {
+				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
+			}
+			write_config($savemsg);
+		}
 	}
 }
 
@@ -214,9 +248,11 @@ if ($_POST['save']) {
 	}
 
 	/* Check the POSTed groups to ensure they are valid and exist */
-	foreach ($_POST['groups'] as $newgroup) {
-		if (empty(getGroupEntry($newgroup))) {
-			$input_errors[] = gettext("One or more invalid groups was submitted.");
+	if(is_array($_POST['groups'])) {
+		foreach ($_POST['groups'] as $newgroup) {
+			if (empty(getGroupEntry($newgroup))) {
+				$input_errors[] = gettext("One or more invalid groups was submitted.");
+			}
 		}
 	}
 
@@ -305,6 +341,7 @@ if ($_POST['save']) {
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['expires'] = $_POST['expires'];
+		$userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
@@ -312,6 +349,66 @@ if ($_POST['save']) {
 			$userent['disabled'] = true;
 		} else {
 			unset($userent['disabled']);
+		}
+
+		if ($_POST['customsettings']) {
+			$userent['customsettings'] = true;
+		} else {
+			unset($userent['customsettings']);
+		}
+
+		if ($_POST['webguicss']) {
+			$userent['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($userent['webguicss']);
+		}
+
+		if ($_POST['webguifixedmenu']) {
+			$userent['webguifixedmenu'] = $_POST['webguifixedmenu'];
+		} else {
+			unset($userent['webguifixedmenu']);
+		}
+
+		if ($_POST['webguihostnamemenu']) {
+			$userent['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+		} else {
+			unset($userent['webguihostnamemenu']);
+		}
+
+		if ($_POST['dashboardavailablewidgetspanel']) {
+			$userent['dashboardavailablewidgetspanel'] = true;
+		} else {
+			unset($userent['dashboardavailablewidgetspanel']);
+		}
+
+		if ($_POST['systemlogsfilterpanel']) {
+			$userent['systemlogsfilterpanel'] = true;
+		} else {
+			unset($userent['systemlogsfilterpanel']);
+		}
+
+		if ($_POST['systemlogsmanagelogpanel']) {
+			$userent['systemlogsmanagelogpanel'] = true;
+		} else {
+			unset($userent['systemlogsmanagelogpanel']);
+		}
+
+		if ($_POST['statusmonitoringsettingspanel']) {
+			$userent['statusmonitoringsettingspanel'] = true;
+		} else {
+			unset($userent['statusmonitoringsettingspanel']);
+		}
+
+		if ($_POST['webguileftcolumnhyper']) {
+			$userent['webguileftcolumnhyper'] = true;
+		} else {
+			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['pagenamefirst']) {
+			$userent['pagenamefirst'] = true;
+		} else {
+			unset($userent['pagenamefirst']);
 		}
 
 		if (isset($id) && $a_user[$id]) {
@@ -479,6 +576,10 @@ if ($act == "new" || $act == "edit" || $input_errors) {
 }
 include("head.inc");
 
+if ($delete_errors) {
+	print_input_errors($delete_errors);
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -501,7 +602,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Users')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 				<thead>
 					<tr>
 						<th>&nbsp;</th>
@@ -518,7 +619,7 @@ foreach ($a_user as $i => $userent):
 	?>
 					<tr>
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
+							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=((($userent['scope'] == "system") || ($userent['name'] == $_SESSION['Username'])) ? 'disabled' : '')?>/>
 						</td>
 						<td>
 <?php
@@ -536,7 +637,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if ($userent['scope'] != "system"): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 						</td>
@@ -681,6 +782,15 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
 		'the expiration date');
 
+	$section->addInput(new Form_Checkbox(
+		'customsettings',
+		'Custom Settings',
+		'Use individual customized GUI options and dashboard layout for this user.',
+		$pconfig['customsettings']
+	));
+
+	gen_user_settings_fields($section, $pconfig);
+
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
 
@@ -812,9 +922,14 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					512 => '512 bits',
 					1024 => '1024 bits',
 					2048 => '2048 bits',
+					3072 => '3072 bits',
 					4096 => '4096 bits',
+					7680 => '7680 bits',
+					8192 => '8192 bits',
+					15360 => '15360 bits',
+					16384 => '16384 bits'
 				)
-			));
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -854,12 +969,48 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
+	function setcustomoptions() {
+		var adv = $('#customsettings').prop('checked');
+
+		hideInput('webguicss', !adv);
+		hideInput('webguifixedmenu', !adv);
+		hideInput('webguihostnamemenu', !adv);
+		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('dashboardavailablewidgetspanel', !adv);
+		hideCheckbox('systemlogsfilterpanel', !adv);
+		hideCheckbox('systemlogsmanagelogpanel', !adv);
+		hideCheckbox('statusmonitoringsettingspanel', !adv);
+		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('pagenamefirst', !adv);
+	}
+
+	// Handle displaying a warning message if a user-created theme is selected.
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+
 	// On click . .
+	$('#customsettings').click(function () {
+		setcustomoptions();
+	});
+
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
 	});
@@ -895,12 +1046,14 @@ events.push(function() {
 		}
 	});
 
+	$('#expires').datepicker();
 
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
+	setcustomoptions();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

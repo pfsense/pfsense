@@ -62,7 +62,7 @@
 
 ini_set('max_execution_time', '0');
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -301,7 +301,7 @@ function bootstrapTable($text) {
  * the specified element to $group
  */
 function display_row($trc, $value, $fieldname, $type, $rowhelper, $description, $ewidth = null) {
-	global $text, $group;
+	global $text, $group, $config;
 
 	switch ($type) {
 		case "input":

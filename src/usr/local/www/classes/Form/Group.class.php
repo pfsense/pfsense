@@ -86,7 +86,7 @@ class Form_Group extends Form_Element
 
 	protected function _getHelp()
 	{
-		if (!isset($this->_help))
+		if (empty($this->_help))
 			return null;
 
 		$group = new Form_Element;
@@ -108,7 +108,7 @@ EOT;
 
 	public function __toString()
 	{
-		global $config;
+		global $config, $user_settings;
 
 		$element = parent::__toString();
 
@@ -142,7 +142,7 @@ EOT;
 		$inputs = implode('', $this->_inputs);
 		$help = $this->_getHelp();
 
-		if (!isset($config['system']['webgui']['webguileftcolumnhyper']))
+		if (!$user_settings['webgui']['webguileftcolumnhyper'])
 			$target = null;
 
 		$label = new Form_Element('label', false, ['for' => $target]);

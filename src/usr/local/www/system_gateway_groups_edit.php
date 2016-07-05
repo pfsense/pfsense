@@ -61,7 +61,7 @@
 ##|*MATCH=system_gateway_groups_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 

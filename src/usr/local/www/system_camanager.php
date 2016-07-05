@@ -61,7 +61,7 @@
 ##|*MATCH=system_camanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("certs.inc");
 
 $ca_methods = array(
@@ -69,8 +69,8 @@ $ca_methods = array(
 	"internal" => gettext("Create an internal Certificate Authority"),
 	"intermediate" => gettext("Create an intermediate Certificate Authority"));
 
-$ca_keylens = array("512", "1024", "2048", "4096");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+$ca_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
 if (is_numericint($_GET['id'])) {
 	$id = $_GET['id'];
@@ -386,7 +386,7 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Certificate Authorities')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover table-rowdblclickedit">
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>

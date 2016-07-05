@@ -67,11 +67,11 @@ $notestr =
 	'This can be used for a web server serving images for the portal page, or a DNS server on another network, for example. ' .
 	'By specifying <em>from</em> addresses, it may be used to always allow pass-through access from a client behind the captive portal.');
 
-require("guiconfig.inc");
-require("functions.inc");
+require_once("guiconfig.inc");
+require_once("functions.inc");
 require_once("filter.inc");
-require("shaper.inc");
-require("captiveportal.inc");
+require_once("shaper.inc");
+require_once("captiveportal.inc");
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
@@ -145,7 +145,7 @@ $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_fil
 display_top_tabs($tab_array, true);
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
 		<thead>
 			<tr>
 				<th><?=gettext("Hostname"); ?></th>

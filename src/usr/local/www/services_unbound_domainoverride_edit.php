@@ -65,7 +65,7 @@
 ##|*MATCH=services_unbound_domainoverride_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['unbound']['domainoverrides'])) {
 	$config['unbound']['domainoverrides'] = array();

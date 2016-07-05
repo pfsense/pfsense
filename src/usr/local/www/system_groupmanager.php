@@ -65,7 +65,7 @@
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['system']['group'])) {
 	$config['system']['group'] = array();
@@ -193,9 +193,11 @@ if (isset($_POST['save'])) {
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
-	foreach ($_POST['members'] as $newmember) {
-		if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
-			$input_errors[] = gettext("One or more invalid group members was submitted.");
+	if(is_array($_POST['members'])) {
+		foreach ($_POST['members'] as $newmember) {
+			if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
+				$input_errors[] = gettext("One or more invalid group members was submitted.");
+			}
 		}
 	}
 
@@ -320,7 +322,7 @@ if (!($_GET['act'] == "new" || $_GET['act'] == "edit")) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Groups')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Group name")?></th>

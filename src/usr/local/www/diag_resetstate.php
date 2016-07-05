@@ -63,7 +63,7 @@
 ##|*MATCH=diag_resetstate.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 
 if ($_POST) {

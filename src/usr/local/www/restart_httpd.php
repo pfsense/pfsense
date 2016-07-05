@@ -68,7 +68,7 @@ include("head.inc");
 ?>
 
 <form>
-<?php include("fbegin.inc"); ?>
+<?php include_once("fbegin.inc"); ?>
 
 <?=gettext("Mounting file systems read/write");?>...
 <?php flush(); sleep(1); conf_mount_rw(); ?>

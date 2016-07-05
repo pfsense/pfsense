@@ -64,7 +64,7 @@
 ##|*MATCH=services_dnsmasq_domainoverride_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['dnsmasq']['domainoverrides'])) {
 	   $config['dnsmasq']['domainoverrides'] = array();

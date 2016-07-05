@@ -31,11 +31,23 @@ class Form_IpAddress extends Form_Input
 {
 	protected $_mask;
 
-	public function __construct($name, $title, $value)
+	public function __construct($name, $title, $value, $type = "BOTH")
 	{
 		parent::__construct($name, $title, 'text', $value);
 
-		$this->_attributes['pattern'] = '[a-f0-9:.]*';
+		switch ($type) {
+			case "BOTH":
+				$this->_attributes['pattern'] = '[a-f0-9:.]*';
+				break;
+
+			case "V4":
+				$this->_attributes['pattern'] = '[0-9.]*';
+				break;
+
+			case "V6":
+				$this->_attributes['pattern'] = '[a-f0-9:]*';
+				break;
+		}
 	}
 
 	// $min is provided to allow for VPN masks in which '0' is valid
@@ -58,7 +70,7 @@ class Form_IpAddress extends Form_Input
 
 		return parent::setIsRepeated();
 	}
-	
+
 	protected function _getInput()
 	{
 		$input = parent::_getInput();

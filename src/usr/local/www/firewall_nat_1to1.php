@@ -63,7 +63,7 @@
 ##|*MATCH=firewall_nat_1to1.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");

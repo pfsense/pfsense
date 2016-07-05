@@ -64,9 +64,9 @@
 ##|*MATCH=firewall_virtual_ip_edit.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 if (!is_array($config['virtualip']['vip'])) {
 		$config['virtualip']['vip'] = array();

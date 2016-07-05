@@ -61,7 +61,7 @@
 ##|*MATCH=vpn_openvpn_server.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
@@ -1200,7 +1200,7 @@ else:
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('OpenVPN Servers')?></h2></div>
 		<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 			<thead>
 				<tr>
 					<th><?=gettext("Protocol / Port")?></th>
@@ -1497,8 +1497,10 @@ events.push(function() {
 					hideInput('local_networkv6', true);
 					hideInput('topology', true);
 				} else {
-					hideInput('local_network', false);
-					hideInput('local_networkv6', false);
+					// For tunnel mode that is not shared key,
+					// the display status of local network fields depends on
+					// the state of the gwredir checkbox.
+					gwredir_change();
 					hideInput('topology', false);
 				}
 				break;

@@ -205,8 +205,9 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 						break;
 					}
 				}
-				$interface_list_ipv6s = get_configured_ipv6_addresses();
+				$interface_list_ipv6s = get_configured_ipv6_addresses(true);
 				foreach ($interface_list_ipv6s as $ilipv6s) {
+					$ilipv6s = explode('%', $ilipv6s)[0];
 					if (strcasecmp($referrer_host, $ilipv6s) == 0) {
 						$found_host = true;
 						break;
@@ -1521,6 +1522,66 @@ function is_account_disabled($username) {
 	}
 
 	return false;
+}
+
+function get_user_settings($username) {
+	global $config;
+	$settings = array();
+	$settings['widgets'] = $config['widgets'];
+	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
+	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
+	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
+	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+	$settings['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
+	$settings['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
+	$settings['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
+	$settings['webgui']['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
+	$user = getUserEntry($username);
+	if (isset($user['customsettings'])) {
+		$settings['customsettings'] = true;
+		if (isset($user['widgets'])) {
+			// This includes the 'sequence', and any widgetname-config per-widget settings.
+			$settings['widgets'] = $user['widgets'];
+		}
+		if (isset($user['dashboardcolumns'])) {
+			$settings['webgui']['dashboardcolumns'] = $user['dashboardcolumns'];
+		}
+		if (isset($user['webguicss'])) {
+			$settings['webgui']['webguicss'] = $user['webguicss'];
+		}
+		if (isset($user['webguihostnamemenu'])) {
+			$settings['webgui']['webguihostnamemenu'] = $user['webguihostnamemenu'];
+		}
+		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
+		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
+		$settings['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);
+		$settings['webgui']['systemlogsfilterpanel'] = isset($user['systemlogsfilterpanel']);
+		$settings['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
+		$settings['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);
+		$settings['webgui']['pagenamefirst'] = isset($user['pagenamefirst']);
+	} else {
+		$settings['customsettings'] = false;
+	}
+
+	if ($settings['webgui']['dashboardcolumns'] < 1) {
+		$settings['webgui']['dashboardcolumns'] = 2;
+	}
+
+	return $settings;
+}
+
+function save_widget_settings($username, $settings) {
+	global $config, $userindex;
+	$user = getUserEntry($username);
+	if (isset($user['customsettings'])) {
+		$config['system']['user'][$userindex[$username]]['widgets'] = $settings;
+		write_config(sprintf(gettext("Widget configuration has been changed for user %s."), $username));
+	} else {
+		$config['widgets'] = $settings;
+		write_config(gettext("Widget configuration has been changed."));
+	}
 }
 
 function auth_get_authserver($name) {

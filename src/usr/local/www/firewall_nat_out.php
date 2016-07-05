@@ -63,7 +63,7 @@
 ##|*MATCH=firewall_nat_out.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -365,7 +365,7 @@ print($form);
 				endif;
 ?>
 <?php 				if (isset($natent['nonat'])): ?>
-							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
+							&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: Traffic matching this rule is not translated.")?>"></i>
 <?php 				endif; ?>
 
 						</td>

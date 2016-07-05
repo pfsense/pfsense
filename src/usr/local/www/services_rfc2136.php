@@ -60,7 +60,7 @@
 ##|*MATCH=services_rfc2136.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!is_array($config['dnsupdates']['dnsupdate'])) {
 	$config['dnsupdates']['dnsupdate'] = array();
@@ -107,7 +107,7 @@ if ($input_errors) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('RFC2136 Clients')?></h2></div>
 		<div class="panel-body">
 			<div class="table-responsive">
-				<table class="table table-striped table-hover table-condensed">
+				<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 					<thead>
 						<tr>
 							<th><?=gettext("Interface")?></th>

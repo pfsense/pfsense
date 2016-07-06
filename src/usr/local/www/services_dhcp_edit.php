@@ -441,7 +441,7 @@ $btnmymac = new Form_Button(
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC controls');
+$group = new Form_Group('MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
 $group->setHelp('MAC address (6 hex octets separated by colons)');

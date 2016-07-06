@@ -410,7 +410,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 	if ($lock) {
 		mark_subsystem_dirty('pkg');
 	}
-	$rc = pkg_exec("search {$extra_param}--raw-format json-compact " . $pkgs, $out, $err);
+	$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}

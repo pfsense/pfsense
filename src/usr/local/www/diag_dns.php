@@ -192,10 +192,13 @@ if ($_POST) {
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
-			$resolved = gethostbyaddr($host);
+			$resolvedptr = gethostbyaddr($host);
 			$ipaddr = $host;
-			if ($host != $resolved) {
-				$hostname = $resolved;
+			if ($host != $resolvedptr) {
+				$tmpresolved = array();
+				$tmpresolved['type'] = "PTR";
+				$tmpresolved['data'] = $resolvedptr;
+				$resolved[] = $tmpresolved;
 			}
 		} elseif (is_hostname($host)) {
 			$type = "hostname";

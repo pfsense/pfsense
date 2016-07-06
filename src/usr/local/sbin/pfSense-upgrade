@@ -549,6 +549,9 @@ setup_nanobsd_env() {
 	_exec "/sbin/fsck -y -t ufs /dev/${_update_partition}" "Testing duplicated partition integrity" mute
 	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
 
+	# Make sure resolv.conf is present, otherwise upgrade may fail (bug #6557)
+	_exec "cp -f /etc/resolv.conf ${chroot_dir}/etc" "Copying resolv.conf to upgrade partition" mute
+
 	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \
 		${chroot_dir}/etc/fstab
 

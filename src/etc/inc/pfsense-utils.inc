@@ -739,6 +739,9 @@ function get_filename_from_url($url) {
 function get_dir($dir) {
 	$dir_array = array();
 	$d = dir($dir);
+	if(!is_object($d)) {
+		return array();
+	}
 	while (false !== ($entry = $d->read())) {
 		array_push($dir_array, $entry);
 	}
@@ -2418,6 +2421,8 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 			}
 			if (is_array($parsed_contents)) {
 				file_put_contents($urltable_filename, implode("\n", $parsed_contents));
+			} else {
+				touch($urltable_filename);
 			}
 
 			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */

@@ -1428,7 +1428,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 							$value = $_POST[$fieldname.$rowcounter];
 						} elseif (isset($id) && $a_pkg[$id]) {
 							$value = $row[$fieldname];
-						}elseif ($rowhelper['value'] != "") {
+						} elseif ($rowhelper['value'] != "") {
 							$value = $rowhelper['value'];
 						}
 

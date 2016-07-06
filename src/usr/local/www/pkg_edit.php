@@ -1420,15 +1420,19 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						unset($value);
 						$width = null;
 
-						if ($rowhelper['value'] != "") {
-							$value = $rowhelper['value'];
-						}
 						$fieldname = $rowhelper['fieldname'];
 						$fielddescr = $rowhelper['fielddescr'];
 
-						// if user is editing a record, load in the data.
-						if (isset($id) && $a_pkg[$id]) {
+print($fieldname); print("<br />");
+print($_POST[$fieldname.$rowcounter]); print("<br />"); print("<br />");
+
+						// If input validation failed, read the value from the POST data so that hte user's input is not lost
+						if ($get_from_post && isset($_POST[$fieldname.$rowcounter])) {
+							$value = $_POST[$fieldname.$rowcounter];
+						} elseif (isset($id) && $a_pkg[$id]) {
 							$value = $row[$fieldname];
+						}elseif ($rowhelper['value'] != "") {
+							$value = $rowhelper['value'];
 						}
 
 						$type = $rowhelper['type'];
@@ -1437,7 +1441,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 								$value = base64_decode($value);
 							}
 						}
-						$fieldname = $rowhelper['fieldname'];
+
 
 						if ($rowhelper['size']) {
 							$size = $rowhelper['size'];

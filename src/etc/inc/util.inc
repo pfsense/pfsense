@@ -1776,7 +1776,11 @@ function alias_expand_urltable($name) {
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
 			if (preg_match("/urltable/i", $alias['type']) && ($alias['name'] == $name)) {
-				if (is_URL($alias["url"]) && file_exists($urltable_filename) && filesize($urltable_filename)) {
+				if (is_URL($alias["url"]) && file_exists($urltable_filename)) {
+					if (!filesize($urltable_filename)) {
+						// file exists, but is empty, try to sync
+						send_event("service sync alias {$name}");
+					}
 					return $urltable_filename;
 				} else {
 					send_event("service sync alias {$name}");

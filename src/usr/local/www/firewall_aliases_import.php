@@ -83,6 +83,11 @@ if (is_array($config['load_balancer']['lbpool'])) {
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
 
+$tab = $_REQUEST['tab'];
+if (empty($tab)) {
+	$tab = 'ip';
+}
+
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
 }
@@ -125,26 +130,51 @@ if ($_POST['aliasimport'] != "") {
 		$imported_descs = array();
 		$desc_len_err_found = false;
 		$desc_fmt_err_found = false;
+		if ($tab == "port") {
+			$alias_type = $tab;
+		} else {
+			$alias_type = "host";
+		}
+
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ", trim($impline), 2);
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
-					$iprange_type = is_iprange($impip);
-					if ($iprange_type == 4) {
-						list($startip, $endip) = explode('-', $impip);
-						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-						$imported_ips = array_merge($imported_ips, $rangesubnets);
-						$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
-						$imported_descs = array_merge($imported_descs, $rangedescs);
-					} else if ($iprange_type == 6) {
-						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
-					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
-						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
-					} elseif (!empty($impip)) {
-						$imported_ips[] = $impip;
-						$imported_descs[] = $impdesc;
+					if ($tab == "port") {
+						// Port alias
+						if (!empty($impip)) {
+							if (is_port($impip) || is_portrange($impip)) {
+								$imported_ips[] = $impip;
+								$imported_descs[] = $impdesc;
+							} else {
+								$input_errors[] = sprintf(gettext("%s is not a valid port or port range."), $impip);
+							}
+						}
+					} else {
+						// IP alias - host or network
+						$iprange_type = is_iprange($impip);
+						if ($iprange_type == 4) {
+							list($startip, $endip) = explode('-', $impip);
+							$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+							$imported_ips = array_merge($imported_ips, $rangesubnets);
+							$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
+							$imported_descs = array_merge($imported_descs, $rangedescs);
+						} else if ($iprange_type == 6) {
+							$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
+						} else {
+							$is_subnet = is_subnet($impip);
+							if (!is_ipaddr($impip) && !$is_subnet && !is_hostname($impip) && !empty($impip)) {
+								$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
+							} elseif (!empty($impip)) {
+								if ($is_subnet) {
+									$alias_type = "network";
+								}
+								$imported_ips[] = $impip;
+								$imported_descs[] = $impdesc;
+							}
+						}
 					}
 				} else {
 					if (!$desc_fmt_err_found) {
@@ -169,7 +199,7 @@ if ($_POST['aliasimport'] != "") {
 		$alias['address'] = implode(" ", $imported_ips);
 		$alias['detail'] = implode("||", $imported_descs);
 		$alias['name'] = $_POST['name'];
-		$alias['type'] = "network";
+		$alias['type'] = $alias_type;
 		$alias['descr'] = $_POST['descr'];
 		unset($imported_ips, $imported_descs);
 		$a_aliases[] = $alias;
@@ -180,7 +210,12 @@ if ($_POST['aliasimport'] != "") {
 		if (write_config()) {
 			mark_subsystem_dirty('aliases');
 		}
-		pfSenseHeader("firewall_aliases.php");
+
+		if (!empty($tab)) {
+			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($tab));
+		} else {
+			header("Location: firewall_aliases.php");
+		}
 
 		exit;
 	}
@@ -193,7 +228,32 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Alias Details');
+$form->addGlobal(new Form_Input(
+	'tab',
+	null,
+	'hidden',
+	$tab
+));
+
+if ($tab == "port") {
+	$sectiontext = gettext('Port Alias Details');
+	$helptext = gettext('Paste in the ports to import separated by a carriage return. ' .
+		'The list may contain port numbers, port ranges, blank lines (ignored) and ' .
+		'an optional description after each port. e.g.:</span>' .
+		'<ul><li>22</li><li>1234:1250</li><li>443 HTTPS port</li><li>4000:4099 Description of a port range</li>' .
+		'</ul><span class="help-block">');
+} else {
+	$sectiontext = gettext('IP Alias Details');
+	$helptext = gettext('Paste in the aliases to ' .
+		'import separated by a carriage return. Common examples are lists of IPs, ' .
+		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
+		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
+		'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-' .
+		'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office ' .
+		'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+}
+
+$section = new Form_Section($sectiontext);
 
 $section->addInput(new Form_Input(
 	'name',
@@ -214,13 +274,7 @@ $section->addInput(new Form_Textarea(
 	'aliasimport',
 	'Aliases to import',
 	$_POST["aliasimport"]
-))->setHelp('Paste in the aliases to '.
-	'import separated by a carriage return. Common examples are lists of IPs, '.
-	'networks, blacklists, etc. The list may contain IP addresses, with or without '.
-	'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after '.
-	'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-'.
-	'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office '.
-	'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+))->setHelp($helptext);
 
 $form->add($section);
 print $form;

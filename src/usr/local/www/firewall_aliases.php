@@ -306,10 +306,16 @@ display_top_tabs($tab_array);
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
-	<a href="firewall_aliases_import.php" role="button" class="btn btn-primary btn-sm">
+<?php
+if (($tab == "ip") || ($tab == "port") || ($tab == "all")):
+?>
+	<a href="firewall_aliases_import.php?tab=<?=$tab?>" role="button" class="btn btn-primary btn-sm">
 		<i class="fa fa-upload icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>
+<?php
+endif
+?>
 </nav>
 
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".

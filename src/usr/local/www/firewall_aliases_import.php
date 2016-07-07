@@ -125,6 +125,7 @@ if ($_POST['aliasimport'] != "") {
 		$imported_descs = array();
 		$desc_len_err_found = false;
 		$desc_fmt_err_found = false;
+		$alias_type = "host";
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ", trim($impline), 2);
 			$impip = $implinea[0];
@@ -140,11 +141,17 @@ if ($_POST['aliasimport'] != "") {
 						$imported_descs = array_merge($imported_descs, $rangedescs);
 					} else if ($iprange_type == 6) {
 						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
-					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
-						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
-					} elseif (!empty($impip)) {
-						$imported_ips[] = $impip;
-						$imported_descs[] = $impdesc;
+					} else {
+						$is_subnet = is_subnet($impip);
+						if (!is_ipaddr($impip) && !$is_subnet && !is_hostname($impip) && !empty($impip)) {
+							$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
+						} elseif (!empty($impip)) {
+							if ($is_subnet) {
+								$alias_type = "network";
+							}
+							$imported_ips[] = $impip;
+							$imported_descs[] = $impdesc;
+						}
 					}
 				} else {
 					if (!$desc_fmt_err_found) {
@@ -169,7 +176,7 @@ if ($_POST['aliasimport'] != "") {
 		$alias['address'] = implode(" ", $imported_ips);
 		$alias['detail'] = implode("||", $imported_descs);
 		$alias['name'] = $_POST['name'];
-		$alias['type'] = "network";
+		$alias['type'] = $alias_type;
 		$alias['descr'] = $_POST['descr'];
 		unset($imported_ips, $imported_descs);
 		$a_aliases[] = $alias;

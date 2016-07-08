@@ -1993,6 +1993,9 @@ function system_dmesg_save() {
 
 	fclose($fd);
 	unset($dmesg);
+	
+	// vm-bhyve expects dmesg.boot at the standard location
+	@symlink("{$g['varlog_path']}/dmesg.boot", "{$g['varrun_path']}/dmesg.boot);
 
 	return 0;
 }

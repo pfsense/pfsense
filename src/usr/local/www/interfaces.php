@@ -1766,7 +1766,7 @@ $btnmymac = new Form_Button(
 
 $btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC controls');
+$group = new Form_Group('MAC Address');
 $group->add($macaddress);
 // $group->add($btnmymac);
 $group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .

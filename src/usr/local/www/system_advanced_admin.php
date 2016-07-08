@@ -505,7 +505,7 @@ $section->addInput(new Form_Input(
 $form->add($section);
 $section = new Form_Section('Serial Communications');
 
-if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
+if (!$g['enableserial_force']) {
 	$section->addInput(new Form_Checkbox(
 		'enableserial',
 		'Serial Terminal',
@@ -524,7 +524,7 @@ $section->addInput(new Form_Select(
 	array_combine(array(115200, 57600, 38400, 19200, 14400, 9600), array(115200, 57600, 38400, 19200, 14400, 9600))
 ))->setHelp('Allows selection of different speeds for the serial console port.');
 
-if (!$g['enableserial_force'] && ($g['platform'] == $g['product_name'] || $g['platform'] == "cdrom")) {
+if (!$g['enableserial_force'] && !$g['primaryconsole_force']) {
 	$section->addInput(new Form_Select(
 		'primaryconsole',
 		'Primary Console',

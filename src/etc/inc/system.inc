@@ -352,11 +352,11 @@ function system_hosts_generate() {
 	if ($config['interfaces']['lan']) {
 		$cfgip = get_interface_ip("lan");
 		if (is_ipaddr($cfgip)) {
-			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 		}
 		$cfgipv6 = get_interface_ipv6("lan");
 		if (is_ipaddrv6($cfgipv6)) {
-			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 		}
 	} else {
 		$sysiflist = get_configured_interface_list();
@@ -365,12 +365,12 @@ function system_hosts_generate() {
 			if (!interface_has_gateway($sysif)) {
 				$cfgip = get_interface_ip($sysif);
 				if (is_ipaddr($cfgip)) {
-					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 					$hosts_if_found = true;
 				}
 				$cfgipv6 = get_interface_ipv6($sysif);
 				if (is_ipaddrv6($cfgipv6)) {
-					$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']} {$syscfg['hostname']}\n";
+					$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 					$hosts_if_found = true;
 				}
 				if ($hosts_if_found == true) {
@@ -387,7 +387,7 @@ function system_hosts_generate() {
 
 		foreach ($dnsmasqcfg['hosts'] as $host) {
 			if ($host['host'] || $host['host'] == "0") {
-				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']} {$host['host']}\n";
+				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']}\n";
 			} else {
 				$lhosts .= "{$host['ip']}	{$host['domain']}\n";
 			}
@@ -396,7 +396,7 @@ function system_hosts_generate() {
 			}
 			foreach ($host['aliases']['item'] as $alias) {
 				if ($alias['host'] || $alias['host'] == "0") {
-					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']} {$alias['host']}\n";
+					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']}\n";
 				} else {
 					$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
 				}
@@ -407,11 +407,11 @@ function system_hosts_generate() {
 				if (is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable'])) {
 					foreach ($dhcpifconf['staticmap'] as $host) {
 						if ($host['ipaddr'] && $host['hostname'] && $host['domain']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$host['domain']} {$host['hostname']}\n";
+							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$host['domain']}\n";
 						} else if ($host['ipaddr'] && $host['hostname'] && $dhcpifconf['domain']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$dhcpifconf['domain']} {$host['hostname']}\n";
+							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$dhcpifconf['domain']}\n";
 						} else if ($host['ipaddr'] && $host['hostname']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']}\n";
 						}
 					}
 				}
@@ -431,11 +431,11 @@ function system_hosts_generate() {
 								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $pdlen);
 							}
 							if ($host['domain']) {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']} {$host['hostname']}\n";
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']}\n";
 							} else if ($dhcpifconf['domain']) {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$dhcpifconf['domain']} {$host['hostname']}\n";
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$dhcpifconf['domain']}\n";
 							} else {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$syscfg['domain']} {$host['hostname']}\n";
+								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$syscfg['domain']}\n";
 							}
 						}
 					}

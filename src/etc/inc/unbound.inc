@@ -625,6 +625,9 @@ function unbound_add_host_entries($cfgsubdir = "") {
 			$added_ptr[$host['ipaddr']] = true;
 		}
 		$unbound_entries .= "local-data: \"{$host['fqdn']} {$type} {$host['ipaddr']}\"\n";
+		if (isset($host['name'])) {
+			$unbound_entries .= "local-data: \"{$host['name']} {$type} {$host['ipaddr']}\"\n";
+		}
 	}
 
 	// Write out entries

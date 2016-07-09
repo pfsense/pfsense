@@ -1145,6 +1145,63 @@ $section->addInput(new Form_Input(
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
 
+// Advanced Network Booting options
+$btnadv = new Form_Button(
+	'btnadvnwkboot',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Network Booting',
+	$btnadv
+));
+
+$section->addInput(new Form_Checkbox(
+	'netboot',
+	'Enable',
+	'Enables network booting',
+	$pconfig['netboot']
+));
+
+$section->addInput(new Form_IpAddress(
+	'nextserver',
+	'Next Server',
+	$pconfig['nextserver']
+))->setHelp('Enter the IP address of the next server');
+
+$section->addInput(new Form_Input(
+	'filename',
+	'Default BIOS file name',
+	'text',
+	$pconfig['filename']
+));
+
+$section->addInput(new Form_Input(
+	'filename32',
+	'UEFI 32 bit file name',
+	'text',
+	$pconfig['filename32']
+));
+
+$section->addInput(new Form_Input(
+	'filename64',
+	'UEFI 64 bit file name',
+	'text',
+	$pconfig['filename64']
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+
+$section->addInput(new Form_Input(
+	'rootpath',
+	'Root path',
+	'text',
+	$pconfig['rootpath']
+))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
+
 // Advanced Additional options
 $btnadv = new Form_Button(
 	'btnadvopts',
@@ -1234,57 +1291,6 @@ $section->addInput(new Form_Button(
 	null,
 	'fa-plus'
 ))->addClass('btn-success');
-
-$form->add($section);
-
-if ($pconfig['netboot']) {
-	$sectate = COLLAPSIBLE|SEC_OPEN;
-} else {
-	$sectate = COLLAPSIBLE|SEC_CLOSED;
-}
-$section = new Form_Section("Network Booting", nwkbootsec, $sectate);
-
-$section->addInput(new Form_Checkbox(
-	'netboot',
-	'Enable',
-	'Enables network booting',
-	$pconfig['netboot']
-));
-
-$section->addInput(new Form_IpAddress(
-	'nextserver',
-	'Next Server',
-	$pconfig['nextserver']
-))->setHelp('Enter the IP address of the next server');
-
-$section->addInput(new Form_Input(
-	'filename',
-	'Default BIOS file name',
-	'text',
-	$pconfig['filename']
-));
-
-$section->addInput(new Form_Input(
-	'filename32',
-	'UEFI 32 bit file name',
-	'text',
-	$pconfig['filename32']
-));
-
-$section->addInput(new Form_Input(
-	'filename64',
-	'UEFI 64 bit file name',
-	'text',
-	$pconfig['filename64']
-))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All three filenames and a configured boot server are necessary for UEFI to work! ');
-
-$section->addInput(new Form_Input(
-	'rootpath',
-	'Root path',
-	'text',
-	$pconfig['rootpath']
-))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
 
 $form->add($section);
 
@@ -1603,6 +1609,45 @@ events.push(function() {
 		show_advopts();
 	});
 
+	// Show advanced Network Booting options ===========================================================================
+	var showadvnwkboot = false;
+
+	function show_advnwkboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['netboot'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnwkboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnwkboot = !showadvnwkboot;
+		}
+
+		hideCheckbox('netboot', !showadvnwkboot);
+		hideInput('nextserver', !showadvnwkboot);
+		hideInput('filename', !showadvnwkboot);
+		hideInput('filename32', !showadvnwkboot);
+		hideInput('filename64', !showadvnwkboot);
+		hideInput('rootpath', !showadvnwkboot);
+
+		if (showadvnwkboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnwkboot').click(function(event) {
+		show_advnwkboot();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	show_advdns(true);
@@ -1611,6 +1656,7 @@ events.push(function() {
 	show_advtftp(true);
 	show_advldap(true);
 	show_advopts(true);
+	show_advnwkboot(true);
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

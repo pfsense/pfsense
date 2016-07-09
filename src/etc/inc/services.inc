@@ -131,6 +131,10 @@ function services_radvd_configure($blacklist = array()) {
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		if (!is_subnetv6($subnetv6 . "/" . $ifcfgsnv6)) {
+			log_error("radvd: skipping configuration for interface $dhcpv6if because its subnet or prefix length is invalid.");
+			continue;
+		}
 		$radvdifs[$realif] = $realif;
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
@@ -342,7 +346,7 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		}
 		$radvdconf .= "\tAdvOtherConfigFlag on;\n";
-		$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t\tAdvRouterAddr on;\n";

@@ -127,6 +127,8 @@ if (is_array($config['dhcpdv6'][$if])) {
 
 	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
 	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
+	$pconfig['raminrtradvinterval'] = $config['dhcpdv6'][$if]['raminrtradvinterval'];
+	$pconfig['ramaxrtradvinterval'] = $config['dhcpdv6'][$if]['ramaxrtradvinterval'];
 
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
@@ -199,8 +201,30 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['ravalidlifetime'] && (!is_numeric($_POST['ravalidlifetime']) || ($_POST['ravalidlifetime'] < 7200))) {
-		$input_errors[] = gettext("A valid lifetime below 2 hrs will be ignored by clients (RFC 4862 Section 5.5.3 point e)");
+	if ($_POST['ravalidlifetime'] && ($_POST['ravalidlifetime'] < 7200)) {
+		$input_errors[] = gettext("A valid lifetime below 2 hours will be ignored by clients (RFC 4862 Section 5.5.3 point e)");
+	}
+	if ($_POST['ravalidlifetime'] && !is_numericint($_POST['ravalidlifetime'])) {
+		$input_errors[] = gettext("Valid lifetime must be an integer.");
+	}
+	if ($_POST['raminrtradvinterval']) {
+		if (!is_numericint($_POST['raminrtradvinterval'])) {
+			$input_errors[] = gettext("Minimum advertisement interval must be an integer.");
+		}
+		if ($_POST['raminrtradvinterval'] < "3") {
+			$input_errors[] = gettext("Minimum advertisement interval must be no less than 3.");
+		}
+		if ($_POST['ramaxrtradvinterval'] && $_POST['raminrtradvinterval'] > (0.75 * $_POST['ramaxrtradvinterval'])) {
+			$input_errors[] = gettext("Minimum advertisement interval must be no greater than 0.75 * Maximum advertisement interval");
+		}
+	}
+	if ($_POST['ramaxrtradvinterval']) {
+		if (!is_numericint($_POST['ramaxrtradvinterval'])) {
+			$input_errors[] = gettext("Maximum advertisement interval must be an integer.");
+		}
+		if ($_POST['ramaxrtradvinterval'] < "4" || $_POST['ramaxrtradvinterval'] > "1800") {
+			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
+		}
 	}
 
 	if (!$input_errors) {
@@ -214,6 +238,8 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
+		$config['dhcpdv6'][$if]['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
+		$config['dhcpdv6'][$if]['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		unset($config['dhcpdv6'][$if]['radnsserver']);
@@ -345,9 +371,10 @@ if (count($carplistif) > 0) {
 $section->addInput(new Form_Input(
 	'ravalidlifetime',
 	'Default valid lifetime',
-	'text',
-	$pconfig['ravalidlifetime']
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
+	'number',
+	$pconfig['ravalidlifetime'],
+	['min' => 1, 'max' => 655350]
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
 'The default is 86400 seconds.');
 
 $section->addInput(new Form_Input(
@@ -357,6 +384,23 @@ $section->addInput(new Form_Input(
 	$pconfig['rapreferredlifetime']
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
 			'The default is 14400 seconds.');
+
+$section->addInput(new Form_Input(
+	'raminrtradvinterval',
+	'Minimum RA interval',
+	'number',
+	$pconfig['raminrtradvinterval'],
+	['min' => 3, 'max' => 1350]
+))->setHelp('Length in seconds');
+
+$section->addInput(new Form_Input(
+	'ramaxrtradvinterval',
+	'Maximum RA interval',
+	'number',
+	$pconfig['ramaxrtradvinterval'],
+	['min' => 4, 'max' => 1800]
+))->setHelp('The length of time in seconds');
+
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',

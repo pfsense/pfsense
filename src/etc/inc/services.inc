@@ -143,8 +143,19 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tUnicastOnly on;\n";
 		}
 		$radvdconf .= "\tAdvSendAdvert on;\n";
-		$radvdconf .= "\tMinRtrAdvInterval 5;\n";
-		$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+
+		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
+			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+		}
+
+		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
+			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+		}
+
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
@@ -337,8 +348,16 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
-		$radvdconf .= "\tMinRtrAdvInterval 3;\n";
-		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
+			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+                }
+		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
+			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		}
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";

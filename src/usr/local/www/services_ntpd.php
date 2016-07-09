@@ -234,6 +234,7 @@ $tab_array[] = array(gettext("PPS"), false, "services_ntpd_pps.php");
 display_top_tabs($tab_array);
 
 $form = new Form;
+$form->setMultipartEncoding();	// Allow file uploads
 
 $section = new Form_Section('NTP Server Configuration');
 

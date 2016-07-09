@@ -1238,7 +1238,6 @@ $section->addInput(new Form_Button(
 $form->add($section);
 
 $section = new Form_Section("Network Booting");
-$section->addClass('nwkbootopts');
 
 // Advanced Network Booting options
 $btnadv = new Form_Button(
@@ -1614,7 +1613,7 @@ events.push(function() {
 		show_advopts();
 	});
 
-	// Show advanced LDAP options ======================================================================================
+	// Show advanced Network Booting options ===========================================================================
 	var showadvnwkboot = false;
 
 	function show_advnwkboot(ispageload) {

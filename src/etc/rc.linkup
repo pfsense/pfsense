@@ -156,6 +156,7 @@ if (!empty($realiface)) {
 			}
 		}
 	}
+	filter_configure();
 	unlock($rclinkuplock);
 }
 ?>

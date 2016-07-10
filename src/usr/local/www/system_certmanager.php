@@ -394,12 +394,6 @@ if ($_POST) {
 			}
 		}
 
-		/* if this is an AJAX caller then handle via JSON */
-		if (isAjax() && is_array($input_errors)) {
-			input_errors2Ajax($input_errors);
-			exit;
-		}
-
 		/* save modifications */
 		if (!$input_errors) {
 
@@ -530,12 +524,6 @@ if ($_POST) {
 			// simply: if the moduli don't match, then the private key and public key won't match
 			$input_errors[] = sprintf(gettext("The certificate modulus does not match the signing request modulus."), $subj_cert);
 			$subject_mismatch = true;
-		}
-
-		/* if this is an AJAX caller then handle via JSON */
-		if (isAjax() && is_array($input_errors)) {
-			input_errors2Ajax($input_errors);
-			exit;
 		}
 
 		/* save modifications */

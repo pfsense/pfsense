@@ -129,6 +129,7 @@ if (is_array($config['dhcpdv6'][$if])) {
 	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
 	$pconfig['raminrtradvinterval'] = $config['dhcpdv6'][$if]['raminrtradvinterval'];
 	$pconfig['ramaxrtradvinterval'] = $config['dhcpdv6'][$if]['ramaxrtradvinterval'];
+	$pconfig['raadvdefaultlifetime'] = $config['dhcpdv6'][$if]['raadvdefaultlifetime'];
 
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
@@ -226,6 +227,9 @@ if ($_POST) {
 			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
 		}
 	}
+	if ($_POST['raadvdefaultlifetime'] && !is_numericint($_POST['raadvdefaultlifetime'])) {
+		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
+	}
 
 	if (!$input_errors) {
 		if (!is_array($config['dhcpdv6'][$if])) {
@@ -240,6 +244,7 @@ if ($_POST) {
 		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
 		$config['dhcpdv6'][$if]['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
 		$config['dhcpdv6'][$if]['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
+		$config['dhcpdv6'][$if]['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		unset($config['dhcpdv6'][$if]['radnsserver']);
@@ -391,7 +396,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['raminrtradvinterval'],
 	['min' => 3, 'max' => 1350]
-))->setHelp('Length in seconds');
+))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.');
 
 $section->addInput(new Form_Input(
 	'ramaxrtradvinterval',
@@ -399,8 +404,15 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ramaxrtradvinterval'],
 	['min' => 4, 'max' => 1800]
-))->setHelp('The length of time in seconds');
+))->setHelp('The maximum time allowed between sending unsolicted multicast router advertisements in seconds.');
 
+$section->addInput(new Form_Input(
+	'raadvdefaultlifetime',
+	'Router lifetime',
+	'number',
+	$pconfig['raadvdefaultlifetime'],
+	['min' => 1, 'max' => 9000]
+))->setHelp('The lifetime associated with the default router in seconds.');
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',

@@ -4355,7 +4355,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	$dhclientconf .= "{$required_options}";
 	$dhclientconf .= "{$option_modifiers}";
 	$dhclientconf .= "\n";
-	if(is_ipaddrv4($wancfg['dhcprejectfrom'])){
+	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
 		$dhclientconf .= "reject {$wancfg['dhcprejectfrom']};\n";
 	}
 	$dhclientconf .= "\tscript \"/sbin/dhclient-script\";\n";

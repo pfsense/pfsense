@@ -404,7 +404,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['ramaxrtradvinterval'],
 	['min' => 4, 'max' => 1800]
-))->setHelp('The maximum time allowed between sending unsolicted multicast router advertisements in seconds.');
+))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.');
 
 $section->addInput(new Form_Input(
 	'raadvdefaultlifetime',

@@ -4017,24 +4017,22 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 	/* non ipoe Process */
- 	if (!isset($wancfg['dhcp6withoutra'])){	
+ 	if (!isset($wancfg['dhcp6withoutra'])) {	
 		$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
 		$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
 		$rtsoldscript .= "\t/bin/sleep 1\n";
 		$rtsoldscript .= "fi\n";
-	}
-	else
-	{
+	} else {
 		$rtsoldscript .= "\t/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
-	if (!isset($wancfg['dhcp6withoutra'])){
+	if (!isset($wancfg['dhcp6withoutra'])) {
 		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
         }
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", $rtsoldscript)) {
-		printf("Error: cannot open rtsold_{$interface}_script.sh in interface_dhcpv6_configure() for writing.\n");
+		printf("Error: cannot open rtsold_{$wanif}_script.sh in interface_dhcpv6_configure() for writing.\n");
 		unset($rtsoldscript);
 		return 1;
 	}
@@ -4050,13 +4048,12 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
 		sleep(2);
 	}
-	if (isset($wancfg['dhcp6withoutra'])){
+	if (isset($wancfg['dhcp6withoutra'])) {
 		kill_dhcp6client_process($wanif);	
-		sleep(3);
 		
 		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -x -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
  		mwexec("/usr/bin/logger -t mwtag 'Starting dhcp6 client for interface wan({$wanif} in IPoE mode)'"); 
-    } 	
+        } 	
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 
 	/* NOTE: will be called from rtsold invoked script

@@ -155,6 +155,9 @@ function services_radvd_configure($blacklist = array()) {
 		} else {
 			$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
 		}
+		if (is_numericint($dhcpv6ifconf['raadvdefaultlifetime'])) {
+			$radvdconf .= "\tAdvDefaultLifetime {$dhcpv6ifconf['raadvdefaultlifetime']};\n";
+		}
 
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {

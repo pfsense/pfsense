@@ -4980,4 +4980,28 @@ function upgrade_153_to_154() {
 	/* NOTE: This upgrade code was reverted. See redmine ticket #6118 and
 	   https://github.com/pfsense/pfsense/commit/538a3c04a6b6671151e913b06b2f340b6f8ee222 */
 }
+
+/* Clean up old GRE/GIF options. See Redmine tickets #6586 and #6587 */
+function upgrade_154_to_155() {
+	global $config;
+
+	if (is_array($config['gifs']['gif'])) {
+		foreach ($config['gifs']['gif'] as $idx => $gif) {
+			if (isset($gif['link0'])) {
+				unset($config['gifs']['gif'][$idx]['link0']);
+			}
+		}
+	}
+
+	if (is_array($config['gres']['gre'])) {
+		foreach ($config['gres']['gre'] as $idx => $gre) {
+			if (isset($gre['link0'])) {
+				unset($config['gres']['gre'][$idx]['link0']);
+			}
+			if (isset($gre['link2'])) {
+				unset($config['gres']['gre'][$idx]['link2']);
+			}
+		}
+	}
+}
 ?>

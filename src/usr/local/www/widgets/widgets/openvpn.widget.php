@@ -118,11 +118,12 @@ $clients = openvpn_get_active_clients();
 				</tr>
 			</thead>
 			<tbody>
-			<?php $rowIndex = 0;
+<?php
+			$rowIndex = 0;
 			foreach ($server['conns'] as $conn):
-			$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-			$rowIndex++;
-			?>
+				$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+				$rowIndex++;
+?>
 				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
 					<td>
 						<?=$conn['common_name'];?>
@@ -131,9 +132,11 @@ $clients = openvpn_get_active_clients();
 						<?=$conn['remote_host'];?>
 					</td>
 					<td>
-						<i class="fa fa-times-circle" onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');" style="cursor:pointer;"
+						<i class="fa fa-times-circle"
+							onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');"
+							style="cursor:pointer;"
 							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							title=<?=sprintf(gettext('Kill client connection from %s'), $conn['remote_host']);?>'>
+							title=<?=sprintf(gettext('Kill client connection from %s'), $conn['remote_host']);?>>
 						</i>
 					</td>
 				</tr>
@@ -146,14 +149,19 @@ $clients = openvpn_get_active_clients();
 					</td>
 					<td></td>
 				</tr>
-		<?php endforeach; ?>
+<?php
+			endforeach;
+?>
 			</tbody>
 		</table>
 	</div>
 </div>
 
-<?php endforeach; ?>
-<?php if (!empty($sk_servers)) { ?>
+<?php
+endforeach;
+
+if (!empty($sk_servers)):
+?>
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics");?></h2></div>
 	<div class="table-responsive">
@@ -166,7 +174,9 @@ $clients = openvpn_get_active_clients();
 				</tr>
 			</thead>
 			<tbody>
-<?php foreach ($sk_servers as $sk_server): ?>
+<?php
+			foreach ($sk_servers as $sk_server):
+?>
 				<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
 					<td>
 						<?=$sk_server['name'];?>
@@ -176,13 +186,13 @@ $clients = openvpn_get_active_clients();
 					</td>
 					<td>
 <?php
-					if ($sk_server['status'] == "up") {
-						/* tunnel is up */
-						echo '<i class="fa fa-arrow-up text-success"></i>';
-					} else {
-						/* tunnel is down */
-						echo '<i class="fa fa-arrow-down text-danger"></i>';
-					}
+				if ($sk_server['status'] == "up") {
+					/* tunnel is up */
+					echo '<i class="fa fa-arrow-up text-success"></i>';
+				} else {
+					/* tunnel is down */
+					echo '<i class="fa fa-arrow-down text-danger"></i>';
+				}
 ?>
 					</td>
 				</tr>
@@ -195,15 +205,19 @@ $clients = openvpn_get_active_clients();
 					</td>
 					<td></td>
 				</tr>
-<?php endforeach; ?>
+<?php
+			endforeach;
+?>
 			</tbody>
 		</table>
 	</div>
 </div>
 
 <?php
-} ?>
-<?php if (!empty($clients)) { ?>
+endif;
+
+if (!empty($clients)):
+?>
 <div class="widget panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics");?></h2></div>
 	<div class="table-responsive">
@@ -216,7 +230,9 @@ $clients = openvpn_get_active_clients();
 				</tr>
 			</thead>
 			<tbody>
-	<?php foreach ($clients as $client): ?>
+<?php
+			foreach ($clients as $client):
+?>
 				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
 					<td>
 						<?=$client['name'];?>
@@ -233,7 +249,6 @@ $clients = openvpn_get_active_clients();
 					/* tunnel is down */
 					echo '<i class="fa fa-arrow-down text-danger"></i>';
 				}
-
 ?>
 					</td>
 				</tr>
@@ -246,14 +261,16 @@ $clients = openvpn_get_active_clients();
 					</td>
 					<td></td>
 				</tr>
-	<?php endforeach; ?>
+<?php
+			endforeach;
+?>
 			</tbody>
 		</table>
 	</div>
 </div>
 
 <?php
-}
+endif;
 
 if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 	echo gettext("No OpenVPN instances defined");

@@ -131,6 +131,10 @@ function services_radvd_configure($blacklist = array()) {
 
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
+		if (!is_subnetv6($subnetv6 . "/" . $ifcfgsnv6)) {
+			log_error("radvd: skipping configuration for interface $dhcpv6if because its subnet or prefix length is invalid.");
+			continue;
+		}
 		$radvdifs[$realif] = $realif;
 
 		$radvdconf .= "# Generated for DHCPv6 Server $dhcpv6if\n";
@@ -139,8 +143,22 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tUnicastOnly on;\n";
 		}
 		$radvdconf .= "\tAdvSendAdvert on;\n";
-		$radvdconf .= "\tMinRtrAdvInterval 5;\n";
-		$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+
+		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
+			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+		}
+
+		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
+			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMaxRtrAdvInterval 20;\n";
+		}
+		if (is_numericint($dhcpv6ifconf['raadvdefaultlifetime'])) {
+			$radvdconf .= "\tAdvDefaultLifetime {$dhcpv6ifconf['raadvdefaultlifetime']};\n";
+		}
+
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
@@ -333,8 +351,16 @@ function services_radvd_configure($blacklist = array()) {
 		$radvdconf .= "# Generated config for {$autotype} delegation from {$trackif} on {$if}\n";
 		$radvdconf .= "interface {$realif} {\n";
 		$radvdconf .= "\tAdvSendAdvert on;\n";
-		$radvdconf .= "\tMinRtrAdvInterval 3;\n";
-		$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		if (is_numericint($dhcpv6ifconf['raminrtradvinterval'])) {
+			$radvdconf .= "\tMinRtrAdvInterval {$dhcpv6ifconf['raminrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMinRtrAdvInterval 5;\n";
+                }
+		if (is_numericint($dhcpv6ifconf['ramaxrtradvinterval'])) {
+			$radvdconf .= "\tMaxRtrAdvInterval {$dhcpv6ifconf['ramaxrtradvinterval']};\n";
+		} else {
+			$radvdconf .= "\tMaxRtrAdvInterval 10;\n";
+		}
 		$mtu = get_interface_mtu($realif);
 		if (is_numeric($mtu)) {
 			$radvdconf .= "\tAdvLinkMTU {$mtu};\n";
@@ -342,7 +368,7 @@ function services_radvd_configure($blacklist = array()) {
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		}
 		$radvdconf .= "\tAdvOtherConfigFlag on;\n";
-		$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t\tAdvRouterAddr on;\n";
@@ -1968,7 +1994,7 @@ function services_dyndns_configure($int = "") {
 }
 
 function dyndnsCheckIP($int) {
-	global $config;
+	global $config, $factory_default_checkipservice;
 	$ip_address = get_interface_ip($int);
 	if (is_private_ip($ip_address)) {
 		$gateways_status = return_gateways_status(true);
@@ -1977,14 +2003,35 @@ function dyndnsCheckIP($int) {
 		if (stristr($gateways_status[$config['interfaces'][$int]['gateway']]['status'], "down")) {
 			return "down";
 		}
-		$hosttocheck = "http://checkip.dyndns.org";
+
+		// Append the factory default check IP service to the list (if not disabled).
+		if (!isset($config['checkipservices']['disable_factory_default'])) {
+			$config['checkipservices']['checkipservice'][] = $factory_default_checkipservice;
+		}
+
+		// Use the first enabled check IP service as the default.
+		if (is_array($config['checkipservices']['checkipservice'])) {
+			foreach ($config['checkipservices']['checkipservice'] as $i => $checkipservice) {
+				if (isset($checkipservice['enable'])) {
+					$url = $checkipservice['url'];
+					$username = $checkipservice['username'];
+					$password = $checkipservice['password'];
+					$verifysslpeer = isset($checkipservice['verifysslpeer']);
+					break;
+				}
+			}
+		}
+
+		$hosttocheck = $url;
 		$ip_ch = curl_init($hosttocheck);
 		curl_setopt($ip_ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+		curl_setopt($ip_ch, CURLOPT_SSL_VERIFYPEER, $verifysslpeer);
 		curl_setopt($ip_ch, CURLOPT_INTERFACE, 'host!' . $ip_address);
 		curl_setopt($ip_ch, CURLOPT_CONNECTTIMEOUT, '30');
 		curl_setopt($ip_ch, CURLOPT_TIMEOUT, 120);
 		curl_setopt($ip_ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+		curl_setopt($ip_ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
+		curl_setopt($ip_ch, CURLOPT_USERPWD, "{$username}:{$password}");
 		$ip_result_page = curl_exec($ip_ch);
 		curl_close($ip_ch);
 		$ip_result_decoded = urldecode($ip_result_page);

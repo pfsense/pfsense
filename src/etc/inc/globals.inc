@@ -99,7 +99,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "15.4",
+	"latest_config" => "15.5",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -244,5 +244,16 @@ if (file_exists("{$g['cf_conf_path']}/enableserial_force")) {
 }
 
 $config_parsed = false;
+
+/* Factory default check IP service. */
+$factory_default_checkipservice = array(
+	"enable" => true,
+	"name" => 'Default',
+	"url" => 'http://checkip.dyndns.org',
+//	"username" => '',
+//	"password" => '',
+//	"verifysslpeer" => true,
+	"descr" => 'Default Check IP Service'
+);
 
 ?>

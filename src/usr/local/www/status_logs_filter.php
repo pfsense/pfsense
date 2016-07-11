@@ -248,6 +248,8 @@ if (!$rawfilter) {
 
 		$int = strtolower($filterent['interface']);
 		$proto = strtolower($filterent['proto']);
+		$rawsrcip = $filterent['srcip'];
+		$rawdstip = $filterent['dstip'];
 
 		if ($filterent['version'] == '6') {
 			$ipproto = "inet6";
@@ -258,12 +260,12 @@ if (!$rawfilter) {
 		}
 
 		$srcstr = $filterent['srcip'] . get_port_with_service($filterent['srcport'], $proto);
-		$src_htmlclass = str_replace(array('.', ':'), '-', $filterent['srcip']);
+		$src_htmlclass = str_replace(array('.', ':'), '-', $rawsrcip);
 		$dststr = $filterent['dstip'] . get_port_with_service($filterent['dstport'], $proto);
-		$dst_htmlclass = str_replace(array('.', ':'), '-', $filterent['dstip']);
+		$dst_htmlclass = str_replace(array('.', ':'), '-', $rawdstip);
 ?>
 					<td class="text-nowrap">
-						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$filterent['srcip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa fa-info icon-pointer icon-primary" onclick="javascript:resolve_with_ajax('<?="{$rawsrcip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
 						<a class="fa fa-minus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=block&amp;int={$int}&amp;src={$filterent['srcip']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Add to Block List")?>" onclick="return confirm('<?=gettext("Confirmation required to add this BLOCK rule.")?>')">
@@ -272,7 +274,7 @@ if (!$rawfilter) {
 						<?=$srcstr . '<span class="RESOLVE-' . $src_htmlclass . '"></span>'?>
 					</td>
 					<td class="text-nowrap">
-						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$filterent['dstip']}"; ?>');" title="<?=gettext("Click to resolve")?>">
+						<i class="fa fa-info icon-pointer icon-primary; ICON-<?= $dst_htmlclass; ?>" onclick="javascript:resolve_with_ajax('<?="{$rawdstip}"; ?>');" title="<?=gettext("Click to resolve")?>">
 						</i>
 
 						<a class="fa fa-plus-square-o icon-pointer icon-primary" href="easyrule.php?<?="action=pass&amp;int={$int}&amp;proto={$proto}&amp;src={$filterent['srcip']}&amp;dst={$filterent['dstip']}&amp;dstport={$filterent['dstport']}&amp;ipproto={$ipproto}"; ?>" title="<?=gettext("Easy Rule: Pass this traffic")?>" onclick="return confirm('<?=gettext("Confirmation required to add this PASS rule.")?>')">

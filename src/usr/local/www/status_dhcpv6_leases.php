@@ -180,14 +180,23 @@ function parse_duid($duid_string) {
 }
 
 $awk = "/usr/bin/awk";
+$sed = "/usr/bin/sed";
 
-/* this pattern sticks comments into a single array item */
-$cleanpattern = "'{ gsub(\"^#.*\", \"\");} { gsub(\"^server-duid.*\", \"\");} { gsub(\";$\", \"\"); print;}'";
-/* We then split the leases file by } */
-$splitpattern = "'BEGIN { RS=\"}\";} {for (i=1; i<=NF; i++) printf \"%s \", \$i; printf \"}\\n\";}'";
+/* Remove all lines except ia-.. blocks */
+$cleanpattern = "'/^ia-.. /, /^}/ !d; s,;$,,; s,  *, ,g'";
+/*                       |               |        |
+ *                       |               |        |
+ *                       |               |        -> Remove extra spaces
+ *                       |               -> Remove ; from EOL
+ *                       -> Delete all lines except blocks that start with ia-..
+ *                          and end with }
+ */
+
+/* Join each block in single line */
+$splitpattern = "'{printf $0}; $0 ~ /^\}/ {printf \"\\n\"}'";
 
 /* stuff the leases file in a proper format into a array by line */
-exec("/bin/cat {$leasesfile} | {$awk} {$cleanpattern} | {$awk} {$splitpattern} | /usr/bin/grep '^ia-.. '", $leases_content);
+exec("{$sed} {$cleanpattern} {$leasesfile} | {$awk} {$splitpattern}", $leases_content);
 $leases_count = count($leases_content);
 exec("/usr/sbin/ndp -an", $rawdata);
 $ndpdata = array();

@@ -85,8 +85,10 @@ if ($_POST) {
 
 		if (stristr($retval, "error") <> true) {
 			$savemsg = get_std_save_message($retval);
+			$class = "success";
 		} else {
 			$savemsg = $retval;
+			$class = "danger";
 		}
 		if ($retval == 0) {
 			clear_subsystem_dirty('aliases');
@@ -131,6 +133,7 @@ if ($_GET['act'] == "del") {
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 		if ($is_alias_referenced == true) {
 			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
+			$class = "danger";
 		} else {
 			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
 				// this is a URL table type alias, delete its file as well
@@ -204,7 +207,7 @@ $shortcut_section = "aliases";
 include("head.inc");
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('aliases')) {
@@ -306,10 +309,16 @@ display_top_tabs($tab_array);
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>
-	<a href="firewall_aliases_import.php" role="button" class="btn btn-primary btn-sm">
+<?php
+if (($tab == "ip") || ($tab == "port") || ($tab == "all")):
+?>
+	<a href="firewall_aliases_import.php?tab=<?=$tab?>" role="button" class="btn btn-primary btn-sm">
 		<i class="fa fa-upload icon-embed-btn"></i>
 		<?=gettext("Import");?>
 	</a>
+<?php
+endif
+?>
 </nav>
 
 <!-- Information section. Icon ID must be "showinfo" and the information <div> ID must be "infoblock".

@@ -987,11 +987,11 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	} else {
 		mwexec("/sbin/ifconfig {$gifif} " . escapeshellarg($gif['tunnel-local-addr']) . " " . escapeshellarg($gif['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gif['tunnel-remote-net']));
 	}
-	if (isset($gif['link0'])) {
-		pfSense_interface_flags($gifif, IFF_LINK0);
-	}
 	if (isset($gif['link1'])) {
 		pfSense_interface_flags($gifif, IFF_LINK1);
+	}
+	if (isset($gif['link2'])) {
+		pfSense_interface_flags($gifif, IFF_LINK2);
 	}
 	if ($gifif) {
 		interfaces_bring_up($gifif);

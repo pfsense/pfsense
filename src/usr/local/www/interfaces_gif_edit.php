@@ -86,7 +86,7 @@ if (isset($id) && $a_gifs[$id]) {
 	$pconfig['tunnel-local-addr'] = $a_gifs[$id]['tunnel-local-addr'];
 	$pconfig['tunnel-remote-addr'] = $a_gifs[$id]['tunnel-remote-addr'];
 	$pconfig['link1'] = isset($a_gifs[$id]['link1']);
-	$pconfig['link0'] = isset($a_gifs[$id]['link0']);
+	$pconfig['link2'] = isset($a_gifs[$id]['link2']);
 	$pconfig['descr'] = $a_gifs[$id]['descr'];
 }
 
@@ -154,11 +154,11 @@ if ($_POST) {
 		$gif['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gif['remote-addr'] = $_POST['remote-addr'];
 		$gif['descr'] = $_POST['descr'];
-		if (isset($_POST['link0'])) {
-			$gif['link0'] = '';
-		}
 		if (isset($_POST['link1'])) {
 			$gif['link1'] = '';
+		}
+		if (isset($_POST['link2'])) {
+			$gif['link2'] = '';
 		}
 		$gif['gifif'] = $_POST['gifif'];
 		$gif['gifif'] = interface_gif_configure($gif);
@@ -241,17 +241,17 @@ $section->addInput(new Form_Select(
 ))->setHelp('The subnet is used for determining the network that is tunnelled.');
 
 $section->addInput(new Form_Checkbox(
-	'link0',
-	'Route Caching',
-	'Specify if route caching can be enabled. (Be careful with these settings on dynamic networks.)',
-	$pconfig['link0']
-));
-
-$section->addInput(new Form_Checkbox(
 	'link1',
 	'ECN friendly behavior',
 	'ECN friendly behavior violates RFC2893. This should be used in mutual agreement with the peer. ',
 	$pconfig['link1']
+));
+
+$section->addInput(new Form_Checkbox(
+	'link2',
+	'Outer Source Filtering',
+	'Disable automatic filtering of the outer GIF source which ensures a match with the configured remote peer. When disabled, martian and inbound filtering is not performed which allows asymmetric routing of the outer traffic.',
+	$pconfig['link2']
 ));
 
 $section->addInput(new Form_Input(

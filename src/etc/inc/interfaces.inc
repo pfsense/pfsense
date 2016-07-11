@@ -876,15 +876,6 @@ function interface_gre_configure(&$gre, $grekey = "") {
 	} else {
 		mwexec("/sbin/ifconfig {$greif} " . escapeshellarg($gre['tunnel-local-addr']) . " " . escapeshellarg($gre['tunnel-remote-addr']) . " netmask " . gen_subnet_mask($gre['tunnel-remote-net']));
 	}
-	if (isset($gre['link0'])) {
-		pfSense_interface_flags($greif, IFF_LINK0);
-	}
-	if (isset($gre['link1'])) {
-		pfSense_interface_flags($greif, IFF_LINK1);
-	}
-	if (isset($gre['link2'])) {
-		pfSense_interface_flags($greif, IFF_LINK2);
-	}
 
 	if ($greif) {
 		interfaces_bring_up($greif);

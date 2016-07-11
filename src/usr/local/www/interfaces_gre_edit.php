@@ -147,14 +147,8 @@ if ($_POST) {
 		$gre['tunnel-remote-net'] = $_POST['tunnel-remote-net'];
 		$gre['remote-addr'] = $_POST['remote-addr'];
 		$gre['descr'] = $_POST['descr'];
-		if (isset($_POST['link0'])) {
-			$gre['link0'] = '';
-		}
 		if (isset($_POST['link1'])) {
 			$gre['link1'] = '';
-		}
-		if (isset($_POST['link2'])) {
-			$gre['link2'] = '';
 		}
 		$gre['greif'] = $_POST['greif'];
 
@@ -237,24 +231,10 @@ $section->addInput(new Form_Select(
 ))->setHelp('The subnet is used for determining the network that is tunnelled.');
 
 $section->addInput(new Form_Checkbox(
-	'link0',
-	'Route Caching',
-	'Specify if route caching can be enabled. (Be careful with these settings on dynamic networks.)',
-	$pconfig['link0']
-));
-
-$section->addInput(new Form_Checkbox(
 	'link1',
-	'ECN friendly behavior',
-	'ECN friendly behavior violates RFC2893. This should be used in mutual agreement with the peer. ',
+	'Add Static Route',
+	'Add an explicit static route for the remote inner tunnel address/subnet via the local tunnel address',
 	$pconfig['link1']
-));
-
-$section->addInput(new Form_Checkbox(
-	'link2',
-	'WCCP Version',
-	'Check this box for WCCP encapsulation version 2, or leave unchecked for version 1.',
-	$pconfig['link2']
 ));
 
 $section->addInput(new Form_Input(

@@ -578,8 +578,8 @@ if ($_POST) {
 			$a_server[] = $server;
 		}
 
-		openvpn_resync('server', $server);
 		write_config();
+		openvpn_resync('server', $server);
 
 		header("Location: vpn_openvpn_server.php");
 		exit;

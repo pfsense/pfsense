@@ -733,6 +733,10 @@ ul.tree li .over{
  * End of CSS for Standard tree layout
  */
 
+ table[data-sortable].sortable-theme-bootstrap thead th {
+    white-space: nowrap;
+ }
+
 @media (max-width: 1199px) {
     .nav>li>a {
         padding: 14px 9px 10px 9px;

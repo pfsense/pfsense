@@ -415,8 +415,8 @@ if ($_POST) {
 			$a_client[] = $client;
 		}
 
-		openvpn_resync('client', $client);
 		write_config();
+		openvpn_resync('client', $client);
 
 		header("Location: vpn_openvpn_client.php");
 		exit;

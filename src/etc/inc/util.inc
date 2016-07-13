@@ -839,12 +839,9 @@ function is_subnetoralias($subnet) {
    Returns 0 for bad data or if cannot represent size as an INT when $exact is set. */
 function subnet_size($subnet, $exact=false) {
 	$parts = explode("/", $subnet);
-	if (count($parts) == 2) {
-		if (is_ipaddrv4($parts[0])) {
-			return subnet_size_by_netmask(4, $parts[1], $exact);
-		} elseif (is_ipaddrv6($parts[0])) {
-			return subnet_size_by_netmask(6, $parts[1], $exact);
-		}
+	$iptype = is_ipaddr($parts[0]);
+	if (count($parts) == 2 && $iptype) {
+		return subnet_size_by_netmask($iptype, $parts[1], $exact);
 	}
 	return 0;
 }

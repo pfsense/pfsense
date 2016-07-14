@@ -445,6 +445,7 @@
 /usr/local/bin/ntptime
 /usr/local/bin/ntptrace
 /usr/local/bin/openssl
+/usr/local/bin/slowdownpipe.sh
 /usr/local/bin/sntp
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj

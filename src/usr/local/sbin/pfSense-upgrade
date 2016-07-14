@@ -550,7 +550,9 @@ setup_nanobsd_env() {
 	_exec "mount /dev/${_update_partition} ${chroot_dir}" "Mounting second partition to run upgrade" mute
 
 	# Make sure resolv.conf is present, otherwise upgrade may fail (bug #6557)
-	_exec "cp -f /etc/resolv.conf ${chroot_dir}/etc" "Copying resolv.conf to upgrade partition" mute
+	local _resolv_conf=$(readlink -f /etc/resolv.conf)
+	_exec "cp -f ${_resolv_conf} ${chroot_dir}/etc/resolv.conf" \
+		"Copying resolv.conf to upgrade partition" mute ignore_result
 
 	sed -i '' -e "s,^${_cur_partition},/dev/${_update_partition}," \
 		${chroot_dir}/etc/fstab

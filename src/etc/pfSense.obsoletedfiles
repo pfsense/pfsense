@@ -934,6 +934,7 @@
 /usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
+/usr/local/www/widgets/widgets/deactivated
 /usr/local/www/wizards/traffic_shaper_wizard.inc
 /usr/local/www/wizards/traffic_shaper_wizard.xml
 /usr/local/www/wizards/traffic_shaper_wizard_multi_lan.inc

@@ -754,6 +754,7 @@
 /usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
+/usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css
 /usr/local/www/datetimepicker.js

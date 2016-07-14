@@ -107,53 +107,35 @@ foreach ($a_cp as $cpzone => $cp) {
 	}
 }
 
-if ($_GET['order']) {
-	if ($_GET['order'] == "ip") {
-		$order = 2;
-	} else if ($_GET['order'] == "mac") {
-		$order = 3;
-	} else if ($_GET['order'] == "user") {
-		$order = 4;
-	} else if ($_GET['order'] == "lastact") {
-		$order = 5;
-	} else if ($_GET['order'] == "zone") {
-		$order = 10;
-	} else {
-		$order = 0;
-	}
-	usort($cpdb_all, "clientcmp");
-}
 ?>
-<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
-	<thead>
-	<tr>
-		<th><a href="?order=ip&amp;showact=<?=$showact;?>"><?=gettext("IP address");?></a></th>
-		<th><a href="?order=mac&amp;showact=<?=$showact;?>"><?=gettext("MAC address");?></a></th>
-		<th><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></th>
-<?php if ($showact == 1): ?>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></th>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></th>
-<?php endif; ?>
-	</tr>
-	</thead>
-	<tbody>
-<?php foreach ($cpdb_all as $cpent): ?>
-	<tr>
-		<td><?=$cpent[2];?></td>
-		<td><?=$cpent[3];?></td>
-		<td><?=$cpent[4];?></td>
-<?php if ($showact == 1): ?>
-		<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
-		<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
-<?php endif; ?>
-		<td>
-			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
-				<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
-			</a>
-		</td>
-	</tr>
-<?php
-endforeach;
-?>
-	</tbody>
-</table>
+<div class="table-responsive">
+	<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
+		<thead>
+		<tr>
+			<th><?=gettext("IP address");?></th>
+			<th><?=gettext("MAC address");?></th>
+			<th><?=gettext("Username");?></th>
+			<th><?=gettext("Session start");?></th>
+			<th><?=gettext("Last activity");?></th>
+		</tr>
+		</thead>
+		<tbody>
+	<?php foreach ($cpdb_all as $cpent): ?>
+		<tr>
+			<td><?=$cpent[2];?></td>
+			<td><?=$cpent[3];?></td>
+			<td><?=$cpent[4];?></td>
+			<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
+			<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
+			<td>
+				<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
+					<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
+				</a>
+			</td>
+		</tr>
+	<?php
+	endforeach;
+	?>
+		</tbody>
+	</table>
+</div>

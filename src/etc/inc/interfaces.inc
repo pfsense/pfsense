@@ -4027,7 +4027,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_send_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_send_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp6_interface_statement_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -4035,7 +4035,7 @@ function DHCP6_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$request_options = "";
 	if ($wancfg['adv_dhcp6_interface_statement_request_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp6_interface_statement_request_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp6_interface_statement_request_options']);
 		foreach ($options as $option) {
 			$request_options .= "\trequest " . trim($option) . ";\n";
 		}
@@ -4305,7 +4305,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$send_options = "";
 	if ($wancfg['adv_dhcp_send_options'] != '') {
-		$options = explode(',', $wancfg['adv_dhcp_send_options']);
+		$options = DHCP_Config_Option_Split($wancfg['adv_dhcp_send_options']);
 		foreach ($options as $option) {
 			$send_options .= "\tsend " . trim($option) . ";\n";
 		}
@@ -4323,7 +4323,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 
 	$option_modifiers = "";
 	if ($wancfg['adv_dhcp_option_modifiers'] != '') {
-		$modifiers = explode(',', $wancfg['adv_dhcp_option_modifiers']);
+		$modifiers = DHCP_Config_Option_Split($wancfg['adv_dhcp_option_modifiers']);
 		foreach ($modifiers as $modifier) {
 			$option_modifiers .= "\t" . trim($modifier) . ";\n";
 		}
@@ -4357,6 +4357,10 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	return $dhclientconf;
 }
 
+function DHCP_Config_Option_Split($option_string) {
+	preg_match_all('/[^",]*(?:"[^"]*"[^",]*)+(?:"[^",]*)?|[^,]+/m', $option_string, $matches, PREG_PATTERN_ORDER);
+	return $matches ? $matches[0] : [];
+}
 
 function DHCP_Config_File_Override($wancfg, $wanif) {
 
@@ -4970,6 +4974,7 @@ function interface_find_child_cfgmtu($realiface) {
 
 	$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	$vlans = link_interface_to_vlans($realiface);
+	$qinqs = link_interface_to_qinqs($realiface);
 	$bridge = link_interface_to_bridge($realiface);
 	if (!empty($interface)) {
 		$gifs = link_interface_to_gif($interface);
@@ -4983,6 +4988,19 @@ function interface_find_child_cfgmtu($realiface) {
 	if (is_array($vlans)) {
 		foreach ($vlans as $vlan) {
 			$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (empty($ifass)) {
+				continue;
+			}
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+				}
+			}
+		}
+	}
+	if (is_array($qinqs)) {
+		foreach ($qinqs as $qinq) {
+			$ifass = convert_real_interface_to_friendly_interface_name($qinq['vlanif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5045,6 +5063,30 @@ function link_interface_to_vlans($int, $action = "") {
 					interfaces_bring_up($int);
 				} else {
 					$ifaces[$vlan['tag']] = $vlan;
+				}
+			}
+		}
+		if (!empty($ifaces)) {
+			return $ifaces;
+		}
+	}
+}
+
+function link_interface_to_qinqs($int, $action = "") {
+	global $config;
+
+	if (empty($int)) {
+		return;
+	}
+
+	if (is_array($config['qinqs']['qinqentry'])) {
+		$ifaces = array();
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			if ($int == $qinq['if']) {
+				if ($action == "update") {
+					interfaces_bring_up($int);
+				} else {
+					$ifaces[$qinq['tag']] = $qinq;
 				}
 			}
 		}

@@ -851,7 +851,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['strictusercn']) {
 						$strictusercn = "true";
 					}
-					$conf .= "auth-user-pass-verify \"/usr/local/sbin/ovpn_auth_verify user '{$settings['authmode']}' {$strictusercn} {$mode_id}\" via-env\n";
+					$conf .= "auth-user-pass-verify \"/usr/local/sbin/ovpn_auth_verify user '{$settings['authmode']}' {$strictusercn} {$mode_id} {$settings['local_port']}\" via-env\n";
 				}
 				break;
 		}
@@ -1008,8 +1008,16 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'server_tls':
 		case 'server_tls_user':
 		case 'server_user':
-			$ca = lookup_ca($settings['caref']);
-			openvpn_add_keyfile($ca['crt'], $conf, $mode_id, "ca");
+			// ca_chain() expects parameter to be passed by reference. 
+			// avoid passing the whole settings array, as param names or 
+			// types might change in future releases. 
+			$param = array('caref' => $settings['caref']);	
+			$ca = ca_chain($param);
+			$ca = base64_encode($ca);
+			
+			openvpn_add_keyfile($ca, $conf, $mode_id, "ca");
+			
+			unset($ca, $param);
 
 			if (!empty($settings['certref'])) {
 				$cert = lookup_cert($settings['certref']);

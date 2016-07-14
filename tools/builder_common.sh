@@ -2,8 +2,8 @@
 #
 # builder_common.sh
 #
-# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC
-# Copyright (C) 2014 Ermal Luçi
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
 # All rights reserved.
 #
 # NanoBSD portions of the code
@@ -17,15 +17,35 @@
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
+# modification, are permitted provided that the following conditions are met:
 #
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+# 1. Redistributions of source code must retain the above copyright notice,
+#    this list of conditions and the following disclaimer.
 #
 # 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
+#    notice, this list of conditions and the following disclaimer in
+#    the documentation and/or other materials provided with the
+#    distribution.
+#
+# 3. All advertising materials mentioning features or use of this software
+#    must display the following acknowledgment:
+#    "This product includes software developed by the pfSense Project
+#    for use in the pfSense® software distribution. (http://www.pfsense.org/).
+#
+# 4. The names "pfSense" and "pfSense Project" must not be used to
+#    endorse or promote products derived from this software without
+#    prior written permission. For written permission, please contact
+#    coreteam@pfsense.org.
+#
+# 5. Products derived from this software may not be called "pfSense"
+#    nor may "pfSense" appear in their names without prior written
+#    permission of the Electric Sheep Fencing, LLC.
+#
+# 6. Redistributions of any form whatsoever must retain the following
+#    acknowledgment:
+#
+# "This product includes software developed by the pfSense Project
+# for use in the pfSense software distribution (http://www.pfsense.org/).
 #
 # THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
 # EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
@@ -39,9 +59,6 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
 
 if [ -z "${IMAGES_FINAL_DIR}" -o "${IMAGES_FINAL_DIR}" = "/" ]; then
 	echo "IMAGES_FINAL_DIR is not defined"

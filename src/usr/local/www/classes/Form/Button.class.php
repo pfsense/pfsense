@@ -3,7 +3,7 @@
  * Button.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2015 Sjon Hortensius
+ * Copyright (c) 2015 Sjon Hortensius
  * Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

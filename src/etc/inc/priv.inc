@@ -4,10 +4,10 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
- * Copyright (C) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
- * Copyright (C) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
- * Copyright (C) 2008 Shrew Soft Inc
- * Copyright (C) 2003-2006 Manuel Kasper <mk@neon1.net>.
+ * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
+ * Copyright (c) 2008 Shrew Soft Inc
+ * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

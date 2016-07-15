@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
- * Copyright (C) 2006 Bill Marquette - bill.marquette@gmail.com.
+ * Copyright (c) 2006 Bill Marquette - bill.marquette@gmail.com.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

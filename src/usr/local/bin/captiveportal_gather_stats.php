@@ -4,7 +4,7 @@
  * captiveportal_gather_stats.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2011 Warren Baker
+ * Copyright (c) 2011 Warren Baker
  * Copyright (c) 2013-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

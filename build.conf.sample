@@ -1,5 +1,9 @@
 #
-# Copyright (c) 2015 Electric Sheep Fencing, LLC. All rights reserved.
+# build.conf.sample
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -44,7 +48,6 @@
 # STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
-#
 
 # Name of the product you are building, only ESF can build and distribute
 # pfSense® software

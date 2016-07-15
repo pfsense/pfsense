@@ -3,7 +3,7 @@
  * notices.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2005 Colin Smith (ethethlay@gmail.com)
+ * Copyright (c) 2005 Colin Smith (ethethlay@gmail.com)
  * Copyright (c) 2005-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

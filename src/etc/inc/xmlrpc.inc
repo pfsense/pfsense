@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2016 Electric Sheep Fencing, LLC
- * Copyright (C) 2005-2006 Colin Smith
+ * Copyright (c) 2005-2006 Colin Smith
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

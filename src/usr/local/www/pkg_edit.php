@@ -1389,7 +1389,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 						$fieldname = $rowhelper['fieldname'];
 						$fielddescr = $rowhelper['fielddescr'];
 
-						// If input validation failed, read the value from the POST data so that hte user's input is not lost
+						// If input validation failed, read the value from the POST data so that the user's input is not lost
 						if ($get_from_post && isset($_POST[$fieldname.$rowcounter])) {
 							$value = $_POST[$fieldname.$rowcounter];
 						} elseif (isset($id) && $a_pkg[$id]) {

@@ -4,7 +4,7 @@
  * openvpn.auth-user.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2008 Shrew Soft Inc
+ * Copyright (c) 2008 Shrew Soft Inc
  * Copyright (c) 2008-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

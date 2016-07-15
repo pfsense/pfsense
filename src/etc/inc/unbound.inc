@@ -3,12 +3,12 @@
  * unbound.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2015 Warren Baker <warren@percol8.co.za>
+ * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
  * Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
- * Copyright (C) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

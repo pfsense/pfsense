@@ -3,15 +3,15 @@
  * openvpn.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2006 Fernando Lemos
+ * Copyright (c) 2006 Fernando Lemos
  * Copyright (c) 2006-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
  * *MIGHT* contain code previously written by:
  *
- * Copyright (C) 2005 Peter Allgeyer <allgeyer_AT_web.de>
- * Copyright (C) 2004 Peter Curran (peter@closeconsultants.com).
+ * Copyright (c) 2005 Peter Allgeyer <allgeyer_AT_web.de>
+ * Copyright (c) 2004 Peter Curran (peter@closeconsultants.com).
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without

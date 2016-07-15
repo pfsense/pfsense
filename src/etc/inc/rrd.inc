@@ -3,7 +3,7 @@
  * rrd.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2010 Seth Mos <seth.mos@dds.nl>
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * Copyright (c) 2010-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

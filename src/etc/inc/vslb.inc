@@ -3,7 +3,7 @@
  * vslb.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (C) 2005-2008 Bill Marquette
+ * Copyright (c) 2005-2008 Bill Marquette
  * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
  * All rights reserved.
  *

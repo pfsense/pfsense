@@ -1795,7 +1795,10 @@ EOD;
 	}
 
 /* Omit this, we maintain the default route by other means, and it causes problems with
- * default gateway switching. See redmine #1837
+ * default gateway switching. See redmine #1837 for original issue
+ * re-enabling this for now to fix issue with missing default gateway with PPPoE in some 
+ * edge case. redmine #6495 open to address. 
+ */
 	if (($interface == "wan" && $founddefaultgw == false) || $setdefaultgw == true) {
 		$setdefaultgw = true;
 		$mpdconf .= <<<EOD
@@ -1803,7 +1806,6 @@ EOD;
 
 EOD;
 	}
-*/
 	$mpdconf .= <<<EOD
 	set iface {$ondemand} on-demand
 	set iface idle {$ppp['idletimeout']}

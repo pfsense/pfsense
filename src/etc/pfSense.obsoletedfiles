@@ -445,6 +445,7 @@
 /usr/local/bin/ntptime
 /usr/local/bin/ntptrace
 /usr/local/bin/openssl
+/usr/local/bin/slowdownpipe.sh
 /usr/local/bin/sntp
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
@@ -756,6 +757,7 @@
 /usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
+/usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css
 /usr/local/www/datetimepicker.js
@@ -932,6 +934,7 @@
 /usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
+/usr/local/www/widgets/widgets/deactivated
 /usr/local/www/wizards/traffic_shaper_wizard.inc
 /usr/local/www/wizards/traffic_shaper_wizard.xml
 /usr/local/www/wizards/traffic_shaper_wizard_multi_lan.inc

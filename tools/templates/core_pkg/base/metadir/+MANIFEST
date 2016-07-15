@@ -12,5 +12,5 @@ deps: {
 }
 categories [ security,  ]
 licenselogic: single
-licenses: [ ESF,  ]
+licenses: [ APACHE20,  ]
 options: {  }

@@ -2,8 +2,8 @@
 #
 # builder_common.sh
 #
-# Copyright (c) 2004-2015 Electric Sheep Fencing, LLC
-# Copyright (C) 2014 Ermal Luçi
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
 # All rights reserved.
 #
 # NanoBSD portions of the code
@@ -16,32 +16,17 @@
 # and copied from FreeSBIE project
 # All rights reserved.
 #
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
-# EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
-# ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-# HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-# STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
-# OF THE POSSIBILITY OF SUCH DAMAGE.
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 if [ -z "${IMAGES_FINAL_DIR}" -o "${IMAGES_FINAL_DIR}" = "/" ]; then
 	echo "IMAGES_FINAL_DIR is not defined"
@@ -156,20 +141,20 @@ core_pkg_create() {
 	local _portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${_metadir}/+MANIFEST)
 	local _licenses_dir="/usr/local/share/licenses/${_portname}-${_version}"
 	mkdir -p ${_root}${_licenses_dir}
-	cp ${BUILDER_ROOT}/license.txt ${_root}${_licenses_dir}/ESF
-	echo "This package has a single license: ESF (Electric Sheep Fencing License)." \
+	cp ${BUILDER_ROOT}/LICENSE ${_root}${_licenses_dir}/APACHE20
+	echo "This package has a single license: APACHE20 (Apache License 2.0)." \
 		> ${_root}${_licenses_dir}/LICENSE
 	cat <<EOF >${_root}${_licenses_dir}/catalog.mk
-_LICENSE=ESF
-_LICENSE_NAME=Electric Sheep Fencing License
+_LICENSE=APACHE20
+_LICENSE_NAME=Apache License 2.0
 _LICENSE_PERMS=dist-mirror dist-sell pkg-mirror pkg-sell auto-accept
-_LICENSE_GROUPS=
+_LICENSE_GROUPS=FSF OSI
 _LICENSE_DISTFILES=
 EOF
 	cat <<EOF >>${_plist}
 ${_licenses_dir}/catalog.mk
 ${_licenses_dir}/LICENSE
-${_licenses_dir}/ESF
+${_licenses_dir}/APACHE20
 EOF
 
 	mkdir -p ${CORE_PKG_REAL_PATH}/All
@@ -900,7 +885,7 @@ ova_setup_ovf_template() {
 		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
 		-e "s#%%VENDOR_NAME%%#${VENDOR_NAME}#g" \
 		-e "s#%%OVF_INFO%%#${OVF_INFO}#g" \
-		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/license.txt" \
+		-e "/^%%PRODUCT_LICENSE%%/r ${BUILDER_ROOT}/LICENSE" \
 		-e "/^%%PRODUCT_LICENSE%%/d" \
 		${OVFTEMPLATE} > ${OVA_TMP}/${PRODUCT_NAME}.ovf
 }

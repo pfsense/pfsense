@@ -578,6 +578,7 @@ if ($_POST) {
 
 		write_config();
 		openvpn_resync('server', $server);
+		openvpn_resync_csc_all();
 
 		header("Location: vpn_openvpn_server.php");
 		exit;

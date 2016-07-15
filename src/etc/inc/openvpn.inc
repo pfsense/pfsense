@@ -1278,6 +1278,15 @@ function openvpn_resync_csc(& $settings) {
 	}
 }
 
+function openvpn_resync_csc_all() {
+	global $config;
+	if (is_array($config['openvpn']['openvpn-csc'])) {
+		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
+			openvpn_resync_csc($settings);
+		}
+	}
+}
+
 function openvpn_delete_csc(& $settings) {
 	global $g, $config, $openvpn_tls_server_modes;
 	$csc_base_path = "{$g['varetc_path']}/openvpn-csc";
@@ -1359,11 +1368,7 @@ function openvpn_resync_all($interface = "") {
 		}
 	}
 
-	if (is_array($config['openvpn']['openvpn-csc'])) {
-		foreach ($config['openvpn']['openvpn-csc'] as & $settings) {
-			openvpn_resync_csc($settings);
-		}
-	}
+	openvpn_resync_csc_all();
 
 }
 

@@ -284,6 +284,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
+		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -978,6 +979,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
+		unset($wancfg['dhcp6withoutra']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1225,6 +1227,9 @@ if ($_POST['apply']) {
 					$wancfg['dhcp6debug'] = true;
 				}
 
+				if ($_POST['dhcp6withoutra'] == "yes") {
+					$wancfg['dhcp6withoutra'] = true;
+				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
 				}
@@ -2121,7 +2126,12 @@ $section->addInput(new Form_Checkbox(
 	'Start DHCP6 client in debug mode',
 	$pconfig['dhcp6debug']
 ));
-
+$section->addInput(new Form_Checkbox(
+	'dhcp6withoutra',
+	'Do not wait for a RA',
+	'Required by some ISPs, especially those not using PPPoE',
+	$pconfig['dhcp6withoutra']
+));
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',

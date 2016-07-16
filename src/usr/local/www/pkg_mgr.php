@@ -110,12 +110,12 @@ function get_pkg_table() {
 		$pkgtbl .= 	'<tr>' . "\n";
 		$pkgtbl .= 	'<td>' . "\n";
 
-		if ($index['www']) {
+		if (($index['www']) && ($index['www'] != "UNKNOWN")) {
 			$pkgtbl .= 	'<a title="' . gettext("Visit official website") . '" target="_blank" href="' . htmlspecialchars($index['www']) . '">' . "\n";
+			$pkgtbl .= htmlspecialchars($index['shortname']) . '</a>' . "\n";
+		} else {
+			$pkgtbl .= htmlspecialchars($index['shortname']);
 		}
-
-		$pkgtbl .= htmlspecialchars($index['shortname']);
-		$pkgtbl .= 		'</a>' . "\n";
 		$pkgtbl .= 	'</td>' . "\n";
 		$pkgtbl .= 	'<td>' . "\n";
 

@@ -2804,6 +2804,8 @@ class cbq_queue extends priq_queue {
 			($this->GetBorrow() == "on")
 		));
 
+		$sform->add($section);
+
 		return $sform;
 	}
 

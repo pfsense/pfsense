@@ -1,59 +1,26 @@
 <?php
 /*
-	shaper.inc
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * shaper.inc
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 /* XXX: needs some reducing on include. */
@@ -3315,7 +3282,7 @@ class dummynet_class {
 
 		if ($data['plr'] && (!is_numeric($data['plr']) ||
 		    ($data['plr'] < 0) || ($data['plr'] > 1))) {
-			$input_errors[] = gettext("Plr must be a value between 0 and 1.");
+			$input_errors[] = gettext("Packet Loss Rate must be a value between 0 and 1.");
 		}
 		if ($data['buckets'] && (!is_numeric($data['buckets']) ||
 		    ($data['buckets'] < 16) || ($data['buckets'] > 65535))) {
@@ -3332,12 +3299,12 @@ class dummynet_class {
 		}
 		if (isset($data['maskbits']) && ($data['maskbits'] <> "")) {
 			if ((!is_numeric($data['maskbits'])) || ($data['maskbits'] <= 0) || ($data['maskbits'] > 32)) {
-				$input_errors[] = gettext("IPV4 bit mask must be blank or numeric value between 1 and 32.");
+				$input_errors[] = gettext("IPv4 bit mask must be blank or numeric value between 1 and 32.");
 			}
 		}
 		if (isset($data['maskbitsv6']) && ($data['maskbitsv6'] <> "")) {
 			if ((!is_numeric($data['maskbitsv6'])) || ($data['maskbitsv6'] <= 0) || ($data['maskbitsv6'] > 128)) {
-				$input_errors[] = gettext("IPV6 bit mask must be blank or numeric value between 1 and 128.");
+				$input_errors[] = gettext("IPv6 bit mask must be blank or numeric value between 1 and 128.");
 			}
 		}
 	}
@@ -3879,15 +3846,6 @@ EOD;
 
 		$bandwidth = $this->GetBandwidth();
 
-		// Delete a row
-//		if(isset($_GET['delbwrow']) && (count($bandwidth) > 0))
-//			unset($bandwidth[$_GET['delbwrow']]);
-
-		// Add a row
-//		if($_GET['newbwrow']) {
-//			array_push($bandwidth, array(count($bandwidth) => array('bw' => '', 'burst' => '', 'bwscale' => 'Kb', 'bwsched' => 'none') ));
-//		}
-
 		if (is_array($bandwidth)) {
 				$section->addInput(new Form_StaticText(
 				'Bandwidth',
@@ -3913,14 +3871,14 @@ EOD;
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPV4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4217,14 +4175,14 @@ class dnqueue_class extends dummynet_class {
 			null,
 			$mask['bits'],
 			array_combine(range(32, 1, -1), range(32, 1, -1))
-		))->setHelp('IPV4 mask bits' . '<br />' . '255.255.255.255/?');
+		))->setHelp('IPv4 mask bits' . '<br />' . '255.255.255.255/?');
 
 		$group->add(new Form_Select(
 			'maskbitsv6',
 			null,
 			$mask['bitsv6'],
 			array_combine(range(128, 1, -1), range(128, 1, -1))
-		))->setHelp('IPV6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
+		))->setHelp('IPv6 mask bits' . '<br />' . '<span style="font-family:consolas">ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff/?</span>');
 
 		$section->add($group);
 
@@ -4613,18 +4571,26 @@ function filter_generate_dummynet_rules() {
 	read_dummynet_config();
 
 	$dn_rules = "";
+	$max_qlimit = "100"; // OS default
 	foreach ($dummynet_pipe_list as $dn) {
 		$dn_rules .= $dn->build_rules();
+		$this_qlimit = $dn->GetQlimit();
+		if ($this_qlimit > $max_qlimit) {
+			$max_qlimit = $this_qlimit;
+		}
 	}
-
+	if (!is_numericint($max_qlimit)) {
+		$max_qlimit = "100";
+	}
 	if (!empty($dn_rules)) {
 		if (!is_module_loaded("dummynet.ko")) {
 			mwexec("/sbin/kldload dummynet");
-			set_sysctl(array(
-				"net.inet.ip.dummynet.io_fast" => "1",
-				"net.inet.ip.dummynet.hash_size" => "256"
-			));
 		}
+		set_sysctl(array(
+				"net.inet.ip.dummynet.io_fast" => "1",
+				"net.inet.ip.dummynet.hash_size" => "256",
+				"net.inet.ip.dummynet.pipe_slot_limit" => $max_qlimit
+		));
 		file_put_contents("{$g['tmp_path']}/rules.limiter", $dn_rules);
 		mwexec("/sbin/ipfw {$g['tmp_path']}/rules.limiter");
 	}

@@ -1,61 +1,28 @@
 <?php
 /*
-	system_usermanager.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2008 Shrew Soft Inc.
- *	Copyright (c)  2005 Paul Taylor <paultaylor@winn-dixie.com>
+ * system_usermanager.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2008 Shrew Soft Inc.
+ * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -65,8 +32,8 @@
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
-require("certs.inc");
-require("guiconfig.inc");
+require_once("certs.inc");
+require_once("guiconfig.inc");
 
 // start admin user code
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
@@ -94,6 +61,17 @@ if (isset($id) && $a_user[$id]) {
 	$pconfig['usernamefld'] = $a_user[$id]['name'];
 	$pconfig['descr'] = $a_user[$id]['descr'];
 	$pconfig['expires'] = $a_user[$id]['expires'];
+	$pconfig['customsettings'] = isset($a_user[$id]['customsettings']);
+	$pconfig['webguicss'] = $a_user[$id]['webguicss'];
+	$pconfig['webguifixedmenu'] = $a_user[$id]['webguifixedmenu'];
+	$pconfig['webguihostnamemenu'] = $a_user[$id]['webguihostnamemenu'];
+	$pconfig['dashboardcolumns'] = $a_user[$id]['dashboardcolumns'];
+	$pconfig['dashboardavailablewidgetspanel'] = isset($a_user[$id]['dashboardavailablewidgetspanel']);
+	$pconfig['systemlogsfilterpanel'] = isset($a_user[$id]['systemlogsfilterpanel']);
+	$pconfig['systemlogsmanagelogpanel'] = isset($a_user[$id]['systemlogsmanagelogpanel']);
+	$pconfig['statusmonitoringsettingspanel'] = isset($a_user[$id]['statusmonitoringsettingspanel']);
+	$pconfig['webguileftcolumnhyper'] = isset($a_user[$id]['webguileftcolumnhyper']);
+	$pconfig['pagenamefirst'] = isset($a_user[$id]['pagenamefirst']);
 	$pconfig['groups'] = local_user_get_groups($a_user[$id]);
 	$pconfig['utype'] = $a_user[$id]['scope'];
 	$pconfig['uid'] = $a_user[$id]['uid'];
@@ -110,13 +88,17 @@ if ($_GET['act'] == "deluser") {
 		exit;
 	}
 
-	conf_mount_rw();
-	local_user_del($a_user[$id]);
-	conf_mount_ro();
-	$userdeleted = $a_user[$id]['name'];
-	unset($a_user[$id]);
-	write_config();
-	$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	if ($_GET['username'] == $_SESSION['Username']) {
+		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
+	} else {
+		conf_mount_rw();
+		local_user_del($a_user[$id]);
+		conf_mount_ro();
+		$userdeleted = $a_user[$id]['name'];
+		unset($a_user[$id]);
+		write_config();
+		$savemsg = sprintf(gettext("User %s successfully deleted."), $userdeleted);
+	}
 } else if ($act == "new") {
 	/*
 	 * set this value cause the text field is read only
@@ -130,18 +112,37 @@ if ($_GET['act'] == "deluser") {
 if (isset($_POST['dellall'])) {
 
 	$del_users = $_POST['delete_check'];
+	$deleted_users = "";
+	$deleted_count = 0;
+	$comma = "";
 
 	if (!empty($del_users)) {
 		foreach ($del_users as $userid) {
 			if (isset($a_user[$userid]) && $a_user[$userid]['scope'] != "system") {
-				conf_mount_rw();
-				local_user_del($a_user[$userid]);
- 			    conf_mount_ro();
-				unset($a_user[$userid]);
+				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
+					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
+				} else {
+					conf_mount_rw();
+					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
+					$comma = ", ";
+					$deleted_count++;
+					local_user_del($a_user[$userid]);
+					conf_mount_ro();
+					unset($a_user[$userid]);
+				}
+			} else {
+				$delete_errors[] = sprintf(gettext("Cannot delete user %s because it is a system user."), $a_user[$userid]['name']);
 			}
 		}
-		$savemsg = gettext("Selected users removed successfully.");
-		write_config($savemsg);
+
+		if ($deleted_count > 0) {
+			if ($deleted_count == 1) {
+				$savemsg = sprintf(gettext("User %s successfully deleted."), $deleted_users);
+			} else {
+				$savemsg = sprintf(gettext("Users %s successfully deleted."), $deleted_users);
+			}
+			write_config($savemsg);
+		}
 	}
 }
 
@@ -213,6 +214,15 @@ if ($_POST['save']) {
 		$input_errors[] = gettext("IPsec Pre-Shared Key contains invalid characters.");
 	}
 
+	/* Check the POSTed groups to ensure they are valid and exist */
+	if(is_array($_POST['groups'])) {
+		foreach ($_POST['groups'] as $newgroup) {
+			if (empty(getGroupEntry($newgroup))) {
+				$input_errors[] = gettext("One or more invalid groups was submitted.");
+			}
+		}
+	}
+
 	if (isset($id) && $a_user[$id]) {
 		$oldusername = $a_user[$id]['name'];
 	} else {
@@ -264,12 +274,6 @@ if ($_POST['save']) {
 		}
 	}
 
-	/* if this is an AJAX caller then handle via JSON */
-	if (isAjax() && is_array($input_errors)) {
-		input_errors2Ajax($input_errors);
-		exit;
-	}
-
 	if (!$input_errors) {
 
 		conf_mount_rw();
@@ -298,6 +302,7 @@ if ($_POST['save']) {
 
 		$userent['name'] = $_POST['usernamefld'];
 		$userent['expires'] = $_POST['expires'];
+		$userent['dashboardcolumns'] = $_POST['dashboardcolumns'];
 		$userent['authorizedkeys'] = base64_encode($_POST['authorizedkeys']);
 		$userent['ipsecpsk'] = $_POST['ipsecpsk'];
 
@@ -305,6 +310,66 @@ if ($_POST['save']) {
 			$userent['disabled'] = true;
 		} else {
 			unset($userent['disabled']);
+		}
+
+		if ($_POST['customsettings']) {
+			$userent['customsettings'] = true;
+		} else {
+			unset($userent['customsettings']);
+		}
+
+		if ($_POST['webguicss']) {
+			$userent['webguicss'] = $_POST['webguicss'];
+		} else {
+			unset($userent['webguicss']);
+		}
+
+		if ($_POST['webguifixedmenu']) {
+			$userent['webguifixedmenu'] = $_POST['webguifixedmenu'];
+		} else {
+			unset($userent['webguifixedmenu']);
+		}
+
+		if ($_POST['webguihostnamemenu']) {
+			$userent['webguihostnamemenu'] = $_POST['webguihostnamemenu'];
+		} else {
+			unset($userent['webguihostnamemenu']);
+		}
+
+		if ($_POST['dashboardavailablewidgetspanel']) {
+			$userent['dashboardavailablewidgetspanel'] = true;
+		} else {
+			unset($userent['dashboardavailablewidgetspanel']);
+		}
+
+		if ($_POST['systemlogsfilterpanel']) {
+			$userent['systemlogsfilterpanel'] = true;
+		} else {
+			unset($userent['systemlogsfilterpanel']);
+		}
+
+		if ($_POST['systemlogsmanagelogpanel']) {
+			$userent['systemlogsmanagelogpanel'] = true;
+		} else {
+			unset($userent['systemlogsmanagelogpanel']);
+		}
+
+		if ($_POST['statusmonitoringsettingspanel']) {
+			$userent['statusmonitoringsettingspanel'] = true;
+		} else {
+			unset($userent['statusmonitoringsettingspanel']);
+		}
+
+		if ($_POST['webguileftcolumnhyper']) {
+			$userent['webguileftcolumnhyper'] = true;
+		} else {
+			unset($userent['webguileftcolumnhyper']);
+		}
+
+		if ($_POST['pagenamefirst']) {
+			$userent['pagenamefirst'] = true;
+		} else {
+			unset($userent['pagenamefirst']);
 		}
 
 		if (isset($id) && $a_user[$id]) {
@@ -472,6 +537,10 @@ if ($act == "new" || $act == "edit" || $input_errors) {
 }
 include("head.inc");
 
+if ($delete_errors) {
+	print_input_errors($delete_errors);
+}
+
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
@@ -494,7 +563,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Users')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 				<thead>
 					<tr>
 						<th>&nbsp;</th>
@@ -511,7 +580,7 @@ foreach ($a_user as $i => $userent):
 	?>
 					<tr>
 						<td>
-							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=($userent['scope'] == "system" ? 'disabled' : '')?>/>
+							<input type="checkbox" id="frc<?=$i?>" name="delete_check[]" value="<?=$i?>" <?=((($userent['scope'] == "system") || ($userent['name'] == $_SESSION['Username'])) ? 'disabled' : '')?>/>
 						</td>
 						<td>
 <?php
@@ -529,7 +598,7 @@ foreach ($a_user as $i => $userent):
 						<td><?=implode(",", local_user_get_groups($userent))?></td>
 						<td>
 							<a class="fa fa-pencil" title="<?=gettext("Edit user"); ?>" href="?act=edit&amp;userid=<?=$i?>"></a>
-<?php if ($userent['scope'] != "system"): ?>
+<?php if (($userent['scope'] != "system") && ($userent['name'] != $_SESSION['Username'])): ?>
 							<a class="fa fa-trash"	title="<?=gettext("Delete user")?>" href="?act=deluser&amp;userid=<?=$i?>&amp;username=<?=$userent['name']?>"></a>
 <?php endif; ?>
 						</td>
@@ -669,10 +738,19 @@ if ($act == "new" || $act == "edit" || $input_errors):
 	$section->addInput(new Form_Input(
 		'expires',
 		'Expiration date',
-		'date',
+		'text',
 		$pconfig['expires']
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
 		'the expiration date');
+
+	$section->addInput(new Form_Checkbox(
+		'customsettings',
+		'Custom Settings',
+		'Use individual customized GUI options and dashboard layout for this user.',
+		$pconfig['customsettings']
+	));
+
+	gen_user_settings_fields($section, $pconfig);
 
 	// ==== Group membership ==================================================
 	$group = new Form_Group('Group membership');
@@ -805,9 +883,14 @@ if ($act == "new" || $act == "edit" || $input_errors):
 					512 => '512 bits',
 					1024 => '1024 bits',
 					2048 => '2048 bits',
+					3072 => '3072 bits',
 					4096 => '4096 bits',
+					7680 => '7680 bits',
+					8192 => '8192 bits',
+					15360 => '15360 bits',
+					16384 => '16384 bits'
 				)
-			));
+			))->setHelp('The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;.');
 
 			$section->addInput(new Form_Input(
 				'lifetime',
@@ -847,12 +930,48 @@ $section->addInput(new Form_Input(
 $form->add($section);
 
 print $form;
+
+$csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at your own risk."), "<br />");
 ?>
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 
+	function setcustomoptions() {
+		var adv = $('#customsettings').prop('checked');
+
+		hideInput('webguicss', !adv);
+		hideInput('webguifixedmenu', !adv);
+		hideInput('webguihostnamemenu', !adv);
+		hideInput('dashboardcolumns', !adv);
+		hideCheckbox('dashboardavailablewidgetspanel', !adv);
+		hideCheckbox('systemlogsfilterpanel', !adv);
+		hideCheckbox('systemlogsmanagelogpanel', !adv);
+		hideCheckbox('statusmonitoringsettingspanel', !adv);
+		hideCheckbox('webguileftcolumnhyper', !adv);
+		hideCheckbox('pagenamefirst', !adv);
+	}
+
+	// Handle displaying a warning message if a user-created theme is selected.
+	function setThemeWarning() {
+		if ($('#webguicss').val().startsWith("pfSense")) {
+			$('#csstxt').html("").addClass("text-default");
+		} else {
+			$('#csstxt').html("<?=$csswarning?>").addClass("text-danger");
+		}
+	}
+
+	$('#webguicss').change(function() {
+		setThemeWarning();
+	});
+
+	setThemeWarning();
+
 	// On click . .
+	$('#customsettings').click(function () {
+		setcustomoptions();
+	});
+
 	$("#movetodisabled").click(function() {
 		moveOptions($('[name="groups[]"] option'), $('[name="sysgroups[]"]'));
 	});
@@ -888,12 +1007,14 @@ events.push(function() {
 		}
 	});
 
+	$('#expires').datepicker();
 
 	// ---------- On initial page load ------------------------------------------------------------
 
 	hideClass('cert-options', true);
 	//hideInput('authorizedkeys', true);
 	hideCheckbox('showkey', true);
+	setcustomoptions();
 
 	// On submit mark all the user's groups as "selected"
 	$('form').submit(function() {

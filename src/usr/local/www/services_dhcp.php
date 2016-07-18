@@ -1,59 +1,26 @@
 <?php
 /*
-	services_dhcp.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * services_dhcp.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,7 +30,7 @@
 ##|*MATCH=services_dhcp.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter.inc");
 require_once('rrd.inc');
 require_once("shaper.inc");
@@ -1044,7 +1011,7 @@ $section->addInput(new Form_Input(
 	'DNS Domain key secret',
 	'text',
 	$pconfig['ddnsdomainkey']
-))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
+))->setHelp('Dynamic DNS domain key secret (HMAC-MD5) which will be used to register client names in the DNS server.');
 
 // Advanced MAC
 $btnadv = new Form_Button(
@@ -1121,7 +1088,7 @@ $section->addInput(new Form_IpAddress(
 	'tftp',
 	'TFTP Server',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_]+');
+))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_-]+');
 
 // Advanced LDAP
 $btnadv = new Form_Button(
@@ -1144,6 +1111,63 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ldap']
 ))->setHelp('Leave blank to disable. Enter a full URI for the LDAP server in the form ldap://ldap.example.com/dc=example,dc=com ');
+
+// Advanced Network Booting options
+$btnadv = new Form_Button(
+	'btnadvnwkboot',
+	'Display Advanced',
+	null,
+	'fa-cog'
+);
+
+$btnadv->setAttribute('type','button')->addClass('btn-info btn-sm');
+
+$section->addInput(new Form_StaticText(
+	'Network Booting',
+	$btnadv
+));
+
+$section->addInput(new Form_Checkbox(
+	'netboot',
+	'Enable',
+	'Enables network booting',
+	$pconfig['netboot']
+));
+
+$section->addInput(new Form_IpAddress(
+	'nextserver',
+	'Next Server',
+	$pconfig['nextserver']
+))->setHelp('Enter the IP address of the next server');
+
+$section->addInput(new Form_Input(
+	'filename',
+	'Default BIOS file name',
+	'text',
+	$pconfig['filename']
+));
+
+$section->addInput(new Form_Input(
+	'filename32',
+	'UEFI 32 bit file name',
+	'text',
+	$pconfig['filename32']
+));
+
+$section->addInput(new Form_Input(
+	'filename64',
+	'UEFI 64 bit file name',
+	'text',
+	$pconfig['filename64']
+))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
+			'All three filenames and a configured boot server are necessary for UEFI to work! ');
+
+$section->addInput(new Form_Input(
+	'rootpath',
+	'Root path',
+	'text',
+	$pconfig['rootpath']
+))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
 
 // Advanced Additional options
 $btnadv = new Form_Button(
@@ -1237,57 +1261,6 @@ $section->addInput(new Form_Button(
 
 $form->add($section);
 
-if ($pconfig['netboot']) {
-	$sectate = COLLAPSIBLE|SEC_OPEN;
-} else {
-	$sectate = COLLAPSIBLE|SEC_CLOSED;
-}
-$section = new Form_Section("Network Booting", nwkbootsec, $sectate);
-
-$section->addInput(new Form_Checkbox(
-	'netboot',
-	'Enable',
-	'Enables network booting',
-	$pconfig['netboot']
-));
-
-$section->addInput(new Form_IpAddress(
-	'nextserver',
-	'Next Server',
-	$pconfig['nextserver']
-))->setHelp('Enter the IP address of the next server');
-
-$section->addInput(new Form_Input(
-	'filename',
-	'Default BIOS file name',
-	'text',
-	$pconfig['filename']
-));
-
-$section->addInput(new Form_Input(
-	'filename32',
-	'UEFI 32 bit file name',
-	'text',
-	$pconfig['filename32']
-));
-
-$section->addInput(new Form_Input(
-	'filename64',
-	'UEFI 64 bit file name',
-	'text',
-	$pconfig['filename64']
-))->setHelp('Both a filename and a boot server must be configured for this to work! ' .
-			'All three filenames and a configured boot server are necessary for UEFI to work! ');
-
-$section->addInput(new Form_Input(
-	'rootpath',
-	'Root path',
-	'text',
-	$pconfig['rootpath']
-))->setHelp('string-format: iscsi:(servername):(protocol):(port):(LUN):targetname ');
-
-$form->add($section);
-
 if ($act == "newpool") {
 	$form->addGlobal(new Form_Input(
 		'act',
@@ -1323,7 +1296,7 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("DHCP Static Mappings for this Interface")?></h2></div>
 	<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed">
+			<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Static ARP")?></th>
@@ -1603,6 +1576,45 @@ events.push(function() {
 		show_advopts();
 	});
 
+	// Show advanced Network Booting options ===========================================================================
+	var showadvnwkboot = false;
+
+	function show_advnwkboot(ispageload) {
+		var text;
+		// On page load decide the initial state based on the data.
+		if (ispageload) {
+<?php
+			if (empty($pconfig['netboot'])) {
+				$showadv = false;
+			} else {
+				$showadv = true;
+			}
+?>
+			showadvnwkboot = <?php if ($showadv) {echo 'true';} else {echo 'false';} ?>;
+		} else {
+			// It was a click, swap the state.
+			showadvnwkboot = !showadvnwkboot;
+		}
+
+		hideCheckbox('netboot', !showadvnwkboot);
+		hideInput('nextserver', !showadvnwkboot);
+		hideInput('filename', !showadvnwkboot);
+		hideInput('filename32', !showadvnwkboot);
+		hideInput('filename64', !showadvnwkboot);
+		hideInput('rootpath', !showadvnwkboot);
+
+		if (showadvnwkboot) {
+			text = "<?=gettext('Hide Advanced');?>";
+		} else {
+			text = "<?=gettext('Display Advanced');?>";
+		}
+		$('#btnadvnwkboot').html('<i class="fa fa-cog"></i> ' + text);
+	}
+
+	$('#btnadvnwkboot').click(function(event) {
+		show_advnwkboot();
+	});
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	show_advdns(true);
@@ -1611,6 +1623,7 @@ events.push(function() {
 	show_advtftp(true);
 	show_advldap(true);
 	show_advopts(true);
+	show_advnwkboot(true);
 
 	// Suppress "Delete row" button if there are fewer than two rows
 	checkLastRow();

@@ -1,0 +1,495 @@
+#!/bin/sh
+#
+# pfSense-rc
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# All rights reserved.
+#
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
+# Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+#/bin/stty status '^T'
+#/bin/stty susp '^-' intr '^-' quit '^-'
+
+#trap : 2
+#trap : 3
+
+HOME=/
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/bin:/usr/local/sbin
+export HOME PATH
+
+# Set our operating platform
+PLATFORM=`/bin/cat /etc/platform`
+
+# Set our current version
+version=`/bin/cat /etc/version`
+
+# Version patch
+version_patch="0"
+if [ -f /etc/version.patch ]; then
+	version_patch=`/bin/cat /etc/version.patch`
+fi
+
+if [ "${version_patch}" = "0" ]; then
+	version_patch=""
+else
+	version_patch=" (Patch ${version_patch})"
+fi
+
+# Read product_name from $g, defaults to pfSense
+# Use php -n here because we are not ready to load extensions yet
+product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
+
+# Setup dumpdev/ddb/savecore"
+echo "Configuring crash dumps..."
+if [ "$PLATFORM" = "${product}" ]; then
+	/etc/rc.dumpon
+fi
+
+# Setup ddb on all platforms. On full install it will save the dump, on NanoBSD it will print to console and auto-reboot.
+if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
+	/sbin/ddb /etc/ddb.conf
+fi
+
+if [ -e /root/force_fsck ]; then
+	echo "Forcing filesystem(s) check..."
+	/sbin/fsck -y -F -t ufs
+fi
+
+if [ "${PLATFORM}" != "cdrom" ]; then
+	FSCK_ACTION_NEEDED=0
+	/sbin/fsck -p -F
+	case $? in
+	0)
+		echo "Filesystems are clean, continuing..."
+		echo "Mounting filesystems..."
+		;;
+	8)
+		echo "Preen mode recommended running a check that will be performed now."
+		FSCK_ACTION_NEEDED=1
+		;;
+	*)
+		echo "Stopping boot is recommended because filesystem manual action is needed, nevertheless automated repair of the filesystem will be attempted."
+		FSCK_ACTION_NEEDED=1
+		;;
+	esac
+
+	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
+		echo "WARNING: Trying to recover filesystem from inconsistency..."
+		/sbin/fsck -yF
+	fi
+
+	/sbin/mount -a 2>/dev/null
+	mount_rc=$?
+	attempts=0
+	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
+		/sbin/fsck -yF
+		/sbin/mount -a 2>/dev/null
+		mount_rc=$?
+		attempts=$((attempts+1))
+	done
+
+	if [ "${PLATFORM}" = "nanobsd" ]; then
+		# XXX This script does need all filesystems rw!!!!
+		# Put this workaround for now until better ways are found.
+		/sbin/mount -u -w -o sync,noatime /
+		/sbin/mount -u -w -o sync,noatime /cf
+	fi
+
+	# If /conf is a directory, convert it to a symlink to /cf/conf
+	if [ -d "/conf" ]; then
+		# If item is not a symlink then rm and recreate
+		CONFPOINTSTO=`readlink /conf`
+		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
+			/bin/rm -rf /conf
+			/bin/ln -s /cf/conf /conf
+		fi
+	fi
+
+	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+	unset MOVE_PKG_DATA
+	if [ "$PLATFORM" = "${product}" ]; then
+		# If use MFS var is disabled, move files back to place
+		if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
+			MOVE_PKG_DATA=1
+			rm -rf /var/db/pkg 2>/dev/null
+			rm -rf /var/cache/pkg 2>/dev/null
+			mv /root/var/db/pkg /var/db
+			mv /root/var/cache/pkg /var/cache
+		# If use MFS var is enabled, move files to a safe place
+		elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
+			MOVE_PKG_DATA=1
+			/bin/mkdir -p /root/var/db /root/var/cache
+			mv /var/db/pkg /root/var/db
+			mv /var/cache/pkg /root/var/cache
+		fi
+	elif [ "${PLATFORM}" = "nanobsd" ]; then
+		MOVE_PKG_DATA=1
+	fi
+
+	if [ "${PLATFORM}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
+		/etc/rc.embedded
+	fi
+
+	if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
+		/bin/mkdir -p /var/db /var/cache
+		ln -sf ../../root/var/db/pkg /var/db/pkg
+		ln -sf ../../root/var/cache/pkg /var/cache/pkg
+	fi
+fi
+
+# Make sure /home exists
+[ -d /home ] \
+	|| mkdir /home
+
+/bin/rm -f /root/force_fsck
+/bin/rm -f /root/TRIM_set
+/bin/rm -f /root/TRIM_unset
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		/sbin/kldunload zfs
+	fi
+elif [ "$PLATFORM" = "${product}" ]; then
+	# Handle ZFS read-only case
+	/sbin/kldstat -qm zfs
+	if [ $? -eq 0 ]; then
+		ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+		if [ $ZFSFSAVAILABLE -eq 0 ]; then
+			/sbin/kldunload zfs
+		elif [ -f /usr/bin/grep ]; then
+			ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+			if [ "$ZFSROOT" != "" ]; then
+				/sbin/zfs set readonly=off $ZFSROOT
+			fi
+		fi
+	fi
+elif [ "${PLATFORM}" = "cdrom" ]; then
+	/etc/rc.cdrom
+fi
+
+# Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
+if [ -f /etc/rc.disable_hdd_apm ]; then
+	/etc/rc.disable_hdd_apm
+fi
+
+# Eject CD devices on 3G modems
+MANUFACTURER="huawei|zte"
+CDDEVICE=`dmesg |egrep -ie "($MANUFACTURER)" | awk -F: '/cd/ {print $1}'`
+if [ "$CDDEVICE" != "" ]; then
+	cdcontrol -f /dev/"$CDDEVICE" eject
+fi
+
+# Use php -n here because we are not ready to load extensions yet
+varrunpath=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var varrun_path "/var/run")
+
+if [ "$PLATFORM" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
+	/sbin/mdmfs -S -M -s 4m md $varrunpath
+fi
+
+# Use php -n here because we are not ready to load extensions yet
+hideplatform=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var hideplatform)
+if [ "$hideplatform" = "true" ]; then
+	platformbanner="" # hide the platform
+else
+	platformbanner=" on the '${PLATFORM}' platform"
+fi
+
+echo
+cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
+echo
+echo
+echo "Welcome to ${product} ${version}${version_patch}${platformbanner}..."
+echo
+
+/sbin/conscontrol mute off >/dev/null
+
+if [ "$PLATFORM" = "${product}" ]; then
+	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
+	/sbin/swapon -a 2>/dev/null >/dev/null
+	/etc/rc.savecore
+fi
+
+if [ "$PLATFORM" = "cdrom" ] ; then
+	echo -n "Mounting unionfs directories..."
+	/bin/mkdir /tmp/unionfs
+	/bin/mkdir /tmp/unionfs/usr
+	/bin/mkdir /tmp/unionfs/root
+	/bin/mkdir /tmp/unionfs/sbin
+	/bin/mkdir /tmp/unionfs/bin
+	/bin/mkdir /tmp/unionfs/boot
+	/bin/mkdir /tmp/unionfs/confdefault
+	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
+	/sbin/mount_unionfs /tmp/unionfs/root /root/
+	/sbin/mount_unionfs /tmp/unionfs/bin /bin/
+	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/
+	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
+	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
+	echo "done."
+fi
+
+# make some directories in /var
+/bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty 2>/dev/null
+/bin/rm -rf $varrunpath/*
+if [ "$PLATFORM" != "${product}" ]; then
+	/bin/rm /var/log/* 2>/dev/null
+fi
+
+# Cleanup configuration files from previous instance
+/bin/rm -rf /var/etc/*
+
+# Workaround for ipsec symlinks, otherwise it's going to break
+# strongswan pkg upgrade
+
+if [ -L /usr/local/etc/ipsec.d ]; then
+	rm -f /usr/local/etc/ipsec.d
+fi
+if [ -L /usr/local/etc/ipsec.conf ]; then
+	rm -f /usr/local/etc/ipsec.conf
+fi
+if [ -L /usr/local/etc/strongswan.d ]; then
+	rm -f /usr/local/etc/strongswan.d
+fi
+if [ -L /usr/local/etc/strongswan.conf ]; then
+	rm -f /usr/local/etc/strongswan.conf
+fi
+
+echo -n "Creating symlinks..."
+# Repair symlinks if they are broken
+if [ -f /etc/newsyslog.conf ]; then
+	/bin/rm -f /etc/newsyslog.conf
+fi
+if [ ! -L /etc/syslog.conf ]; then
+	/bin/rm -rf /etc/syslog.conf
+	if [ ! -f /var/etc/syslog.conf ]; then
+		touch /var/etc/syslog.conf
+	fi
+	/bin/ln -s /var/etc/syslog.conf /etc/syslog.conf
+fi
+
+# Repair symlinks if they are broken
+if [ ! -L /etc/hosts ]; then
+	/bin/rm -rf /etc/hosts
+	/bin/ln -s /var/etc/hosts /etc/hosts
+fi
+
+if [ ! -L /etc/resolv.conf ]; then
+	/bin/rm -rf /etc/resolv.conf
+	/bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
+fi
+
+if [ ! -L /etc/resolvconf.conf ]; then
+	/bin/rm -rf /etc/resolvconf.conf
+	/bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
+fi
+
+# Setup compatibility link for packages that
+# have trouble overriding the PREFIX configure
+# argument since we build our packages in a
+# separated PREFIX area
+# Only create if symlink does not exist.
+if [ ! -h /tmp/tmp ]; then
+	/bin/ln -hfs / /tmp/tmp
+fi
+
+# Make sure our /tmp is 777 + Sticky
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	/bin/rm -rf /tmp/*
+fi
+/bin/chmod 1777 /tmp
+
+if [ ! "$PLATFORM" = "cdrom" ] ; then
+	# Malloc debugging check
+	if [ -L /etc/malloc.conf ]; then
+		#ln -s aj /etc/malloc.conf
+		/bin/rm /etc/malloc.conf
+	fi
+fi
+
+if [ ! -L /etc/dhclient.conf ]; then
+	/bin/rm -rf /etc/dhclient.conf
+fi
+
+if [ ! -d /var/tmp ]; then
+	/bin/mkdir -p /var/tmp
+fi
+
+set -T
+trap "echo 'Reboot interrupted'; exit 1" 3
+
+# Remove old nameserver resolution files
+/bin/rm -f /var/etc/nameserver*
+
+echo -n "."
+DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
+LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
+
+DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
+DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}
+
+for logfile in $LOG_FILES; do
+	if [ "$DISABLESYSLOGCLOG" = "true" ]; then
+		/usr/bin/touch /var/log/$logfile.log
+	else
+		if [ ! -f /var/log/$logfile.log ]; then
+			/usr/local/sbin/clog -i -s ${DEFAULT_LOG_FILE_SIZE} /var/log/$logfile.log
+		fi
+	fi
+done
+
+# change permissions on newly created log files.
+/bin/chmod 0600 /var/log/*.log
+
+echo -n "."
+DEVFS=`/sbin/mount | /usr/bin/grep devfs | /usr/bin/wc -l | /usr/bin/cut -d" " -f8`
+if [ "$DEVFS" = "0" ]; then
+	mount_devfs devfs /dev
+fi
+
+# Create an initial utmp file
+cd $varrunpath && /bin/cp /dev/null utmp && /bin/chmod 644 utmp
+
+echo -n "."
+/sbin/ldconfig -elf /usr/lib /usr/local/lib /lib
+/etc/rc.d/ldconfig start 2>/dev/null
+
+# Launching kbdmux(4)
+if [ -f "/dev/kbdmux0" ]; then
+	echo -n "."
+	/usr/sbin/kbdcontrol -k /dev/kbdmux0 < /dev/console
+	[ -c "/dev/atkbd0" ] && kbdcontrol -a atkbd0 < /dev/console
+	[ -c "/dev/ukbd0" ] && kbdcontrol -a ukbd0 < /dev/console
+fi
+
+# Fire up unionfs if mount points exist.
+if [ -f /dist/uniondirs ]; then
+	echo -n "."
+	/etc/rc.d/unionfs start
+fi
+
+echo "done."
+
+# Recreate capabilities DB
+/usr/bin/cap_mkdb /etc/login.conf
+
+# Second upgrade stage
+/usr/local/sbin/${product}-upgrade -y -b 2
+
+# Copy default openssl config file
+[ -d /etc/ssl ] \
+	|| mkdir -p /etc/ssl
+[ -f /usr/local/share/${product}/ssl/openssl.cnf ] \
+	&& cp -f /usr/local/share/${product}/ssl/openssl.cnf /etc/ssl
+mkdir -p /usr/local/openssl >/dev/null 2>&1
+ln -sf /etc/ssl/openssl.cnf \
+	/usr/local/openssl/openssl.cnf
+
+# Run the php.ini setup file and populate
+# /usr/local/etc/php.ini
+/etc/rc.php_ini_setup 2>/tmp/php_errors.txt
+/usr/local/sbin/php-fpm -c /usr/local/etc/php.ini -y /usr/local/lib/php-fpm.conf -RD 2>&1 >/dev/null
+
+# Launch external configuration loader for supported platforms
+if [ "$PLATFORM" = "nanobsd" ]; then
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
+fi
+
+# Launch external configuration loader for supported platforms
+if [ "$PLATFORM" = "${product}" ]; then
+	/usr/local/sbin/fcgicli -f /etc/ecl.php
+fi
+
+if [ -f /etc/rc.custom_boot_early ]; then
+	/bin/echo -n "Launching /etc/rc.custom_boot_early...";
+	/etc/rc.custom_boot_early
+	echo "Done"
+fi
+
+export fcgipath=/var/run/php-fpm.socket
+/usr/bin/nice -n20 /usr/local/sbin/check_reload_status
+
+# let the PHP-based configuration subsystem set up the system now
+echo -n "Launching the init system..."
+/bin/rm -f /cf/conf/backup/backup.cache
+/usr/bin/touch $varrunpath/booting
+
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	# XXX This script does need all filesystems rw!!!!
+	# Put this workaround for now until better ways are found.
+	/sbin/mount -u -f -r -o sync,noatime /
+	/sbin/mount -u -f -r -o sync,noatime /cf
+fi
+
+# Copy custom logo over if it's present
+if [ -d /usr/local/share/${product}/custom_logos ]; then
+	cp -f /usr/local/share/${product}/custom_logos/*png \
+		/usr/local/www
+fi
+
+/etc/rc.bootup
+
+# /etc/rc.bootup unset $g['booting'], and removes file
+# Be sure the file is removed to not create troubles after
+if [ -f $varrunpath/booting ]; then
+	/bin/rm $varrunpath/booting
+fi
+
+echo -n "Starting CRON... "
+cd /tmp && /usr/sbin/cron -s 2>/dev/null
+echo "done."
+
+# Start packages
+/usr/local/sbin/fcgicli -f /etc/rc.start_packages
+
+/bin/rm -rf /usr/local/pkg/pf/CVS
+
+# Start ping handler every 240 seconds
+/usr/local/bin/minicron 240 $varrunpath/ping_hosts.pid /usr/local/bin/ping_hosts.sh
+
+# Start account expire handler every hour
+/usr/local/bin/minicron 3600 $varrunpath/expire_accounts.pid '/usr/local/sbin/fcgicli -f /etc/rc.expireaccounts'
+
+# Start alias url updater every 24 hours
+/usr/local/bin/minicron 86400 $varrunpath/update_alias_url_data.pid '/usr/local/sbin/fcgicli -f /etc/rc.update_alias_url_data'
+
+/bin/chmod a+rw /tmp/.
+
+# Check for GEOM mirrors
+GMIRROR_STATUS=`/sbin/gmirror status`
+if [ "${GMIRROR_STATUS}" != "" ]; then
+	# Using a flag file at bootup saves an expensive exec/check on each page load.
+	/usr/bin/touch /var/run/gmirror_active
+	# Setup monitoring/notifications
+	/usr/local/bin/minicron 60 /var/run/gmirror_status_check.pid /usr/local/sbin/gmirror_status_check.php
+fi
+
+/usr/local/sbin/${product}-upgrade -y -b 3
+
+# Log product version to syslog
+BUILDTIME=`cat /etc/version.buildtime`
+ARCH=`uname -m`
+echo "$product ($PLATFORM) ${version}${version_patch} $ARCH $BUILDTIME"
+
+echo "Bootup complete"
+
+/usr/local/bin/beep.sh start 2>&1 >/dev/null
+
+# Reset the cache.  read-only requires this.
+/bin/rm -f /tmp/config.cache
+
+exit 0

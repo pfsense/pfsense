@@ -1,208 +1,203 @@
 #!/usr/local/bin/php-cgi -f
 <?php
 /*
-	sshd - Modified to work on disk based system
-	Copyright 2004 Scott K Ullrich
+ * sshd
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004 Fred Mol <fredmol@xs4all.nl>.
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-	Original Copyright (C) 2004 Fred Mol <fredmol@xs4all.nl>.
-	All rights reserved.
+require_once("globals.inc");
+require_once("config.inc");
+require_once("functions.inc");
+require_once("shaper.inc");
 
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
+if (!isset($config['system']['enablesshd'])) {
+	return;
+}
 
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
+/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */
+if (!is_subsystem_dirty('sshdkeys')) {
+	conf_mount_rw();
+}
 
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
+$sshConfigDir = "/etc/ssh";
 
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+$keys = array(
+	array('type' => 'rsa',     'suffix' => 'rsa_'),
+	array('type' => 'ed25519', 'suffix' => 'ed25519_')
+);
 
-	require_once("globals.inc");
-	require_once("config.inc");
-	require_once("functions.inc");
-	require_once("shaper.inc");
+$keyfiles = array();
+foreach ($keys as $key) {
+	$keyfiles[] = "ssh_host_{$key['suffix']}key";
+	$keyfiles[] = "ssh_host_{$key['suffix']}key.pub";
+}
 
-	if (!isset($config['system']['enablesshd'])) {
-		return;
-	}
+/* restore ssh data for nanobsd platform */
+if ($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key") and !file_exists("{$sshConfigDir}/ssh_host_key.pub")) {
+	echo "Restoring SSH from /conf/sshd/";
+	exec("/bin/cp -p /conf/sshd/* {$sshConfigDir}/");
 
-	/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */
-	if (!is_subsystem_dirty('sshdkeys')) {
-		conf_mount_rw();
-	}
-
-	$sshConfigDir = "/etc/ssh";
-
-	$keys = array(
-		array('type' => 'rsa',     'suffix' => 'rsa_'),
-		array('type' => 'ecdsa',   'suffix' => 'ecdsa_'),
-		array('type' => 'ed25519', 'suffix' => 'ed25519_')
-	);
-
-	$keyfiles = array();
-	foreach ($keys as $key) {
-		$keyfiles[] = "ssh_host_{$key['suffix']}key";
-		$keyfiles[] = "ssh_host_{$key['suffix']}key.pub";
-	}
-
-	/* restore ssh data for nanobsd platform */
-	if ($g['platform'] == "nanobsd" and file_exists("/conf/sshd/ssh_host_key") and !file_exists("{$sshConfigDir}/ssh_host_key.pub")) {
-		echo "Restoring SSH from /conf/sshd/";
-		exec("/bin/cp -p /conf/sshd/* {$sshConfigDir}/");
-
-		/* make sure host private key permissions aren't too open so sshd won't complain */
-		foreach ($keyfiles as $f2c) {
-			if (file_exists("{$sshConfigDir}/{$f2c}")) {
-				chmod("{$sshConfigDir}/{$f2c}", 0600);
-			}
-		}
-	}
-
-	/*    if any of these files are 0 bytes then they are corrupted.
-	 *    remove them
-	 */
+	/* make sure host private key permissions aren't too open so sshd won't complain */
 	foreach ($keyfiles as $f2c) {
-		if (!file_exists("{$sshConfigDir}/{$f2c}") || filesize("{$sshConfigDir}/{$f2c}") == 0) {
-			/* Make sure we remove both files */
-			unlink_if_exists($sshConfigDir . '/' . basename($f2c, ".pub"));
-			unlink_if_exists($sshConfigDir . '/' . $f2c);
+		if (file_exists("{$sshConfigDir}/{$f2c}")) {
+			chmod("{$sshConfigDir}/{$f2c}", 0600);
 		}
 	}
+}
 
-	if (!is_dir("/var/empty")) {
-		/* make ssh home directory */
-		mkdir("/var/empty", 0555);
+/*    if any of these files are 0 bytes then they are corrupted.
+ *    remove them
+ */
+foreach ($keyfiles as $f2c) {
+	if (!file_exists("{$sshConfigDir}/{$f2c}") || filesize("{$sshConfigDir}/{$f2c}") == 0) {
+		/* Make sure we remove both files */
+		unlink_if_exists($sshConfigDir . '/' . basename($f2c, ".pub"));
+		unlink_if_exists($sshConfigDir . '/' . $f2c);
 	}
+}
 
-	if (!file_exists("/var/log/lastlog")) {
-		/* Login related files. */
-		@touch("/var/log/lastlog");
-	}
+if (!is_dir("/var/empty")) {
+	/* make ssh home directory */
+	mkdir("/var/empty", 0555);
+}
 
-	if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
-		$sshport = $config['system']['ssh']['port'];
-	} else {
-		$sshport = 22;
-	}
+if (!file_exists("/var/log/lastlog")) {
+	/* Login related files. */
+	@touch("/var/log/lastlog");
+}
 
-	/* Include default configuration for pfSense */
-	$sshconf = "# This file is automatically generated at startup\n";
-	$sshconf .= "Ciphers aes128-ctr,aes256-ctr,arcfour256,arcfour,aes128-cbc,aes256-cbc\n";
-	$sshconf .= "PermitRootLogin yes\n";
-	$sshconf .= "Compression yes\n";
-	$sshconf .= "ClientAliveInterval 30\n";
-	$sshconf .= "UseDNS no\n";
-	$sshconf .= "X11Forwarding no\n";
-	foreach ($keys as $key) {
-		$sshconf .= "HostKey {$sshConfigDir}/ssh_host_{$key['suffix']}key\n";
-	}
-	if (isset($config['system']['ssh']['sshdkeyonly'])) {
-		$sshconf .= "# Login via Key only\n";
-		$sshconf .= "PasswordAuthentication no\n";
-		$sshconf .= "ChallengeResponseAuthentication no\n";
-		$sshconf .= "PubkeyAuthentication yes\n";
-	} else {
-		$sshconf .= "# Login via Key and Password\n";
-		$sshconf .= "PasswordAuthentication yes\n";
-		$sshconf .= "ChallengeResponseAuthentication yes\n";
-		$sshconf .= "PubkeyAuthentication yes\n";
-	}
-	$sshconf .= "# override default of no subsystems\n";
-	$sshconf .= "Subsystem       sftp    /usr/libexec/sftp-server\n";
-	/* Only allow protocol 2, because we say so */
-	$sshconf .= "Protocol 2\n";
-	/* Run the server on another port if we have one defined */
-	$sshconf .= "Port $sshport\n";
-	/* Hide FreeBSD version */
-	$sshconf .= "VersionAddendum none\n";
-	$sshconf .= "LoginGraceTime 30s\n";
+if (is_array($config['system']['ssh']) && !empty($config['system']['ssh']['port'])) {
+	$sshport = $config['system']['ssh']['port'];
+} else {
+	$sshport = 22;
+}
 
-	/* Apply package SSHDCond settings if config file exists */
-	if (file_exists("/etc/sshd_extra")) {
-		$fdExtra = fopen("/etc/sshd_extra", 'r');
-		$szExtra = fread($fdExtra, 1048576); // Read up to 1MB from extra file
-		$sshconf .= $szExtra;
-		fclose($fdExtra);
-	}
+/* Include default configuration for pfSense */
+/* Taken from https://stribika.github.io/2015/01/04/secure-secure-shell.html */
+$sshconf = "# This file is automatically generated at startup\n";
+$sshconf .= "KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256\n";
+/* Run the server on another port if we have one defined */
+$sshconf .= "Port $sshport\n";
+/* Only allow protocol 2, because we say so */
+$sshconf .= "Protocol 2\n";
+foreach ($keys as $key) {
+	$sshconf .= "HostKey {$sshConfigDir}/ssh_host_{$key['suffix']}key\n";
+}
+$sshconf .= "Compression yes\n";
+$sshconf .= "ClientAliveInterval 30\n";
+$sshconf .= "PermitRootLogin yes\n";
+if (isset($config['system']['ssh']['sshdkeyonly'])) {
+	$sshconf .= "# Login via Key only\n";
+	$sshconf .= "ChallengeResponseAuthentication no\n";
+	$sshconf .= "PasswordAuthentication no\n";
+	$sshconf .= "PubkeyAuthentication yes\n";
+} else {
+	$sshconf .= "# Login via Key and Password\n";
+	$sshconf .= "ChallengeResponseAuthentication yes\n";
+	$sshconf .= "PasswordAuthentication yes\n";
+	$sshconf .= "PubkeyAuthentication yes\n";
+}
+$sshconf .= "UseDNS no\n";
+$sshconf .= "UsePAM no\n";
+$sshconf .= "LoginGraceTime 30s\n";
+/* Hide FreeBSD version */
+$sshconf .= "VersionAddendum none\n";
+$sshconf .= "X11Forwarding no\n";
+$sshconf .= "Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr\n";
+$sshconf .= "MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,hmac-ripemd160-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160,umac-128@openssh.com\n";
+$sshconf .= "# override default of no subsystems\n";
+$sshconf .= "Subsystem\tsftp\t/usr/libexec/sftp-server\n";
 
-	/* Write the new sshd config file */
-	@file_put_contents("{$sshConfigDir}/sshd_config", $sshconf);
+/* Apply package SSHDCond settings if config file exists */
+if (file_exists("/etc/sshd_extra")) {
+	$fdExtra = fopen("/etc/sshd_extra", 'r');
+	$szExtra = fread($fdExtra, 1048576); // Read up to 1MB from extra file
+	$sshconf .= $szExtra;
+	fclose($fdExtra);
+}
 
-	/* mop up from a badly implemented ssh keys -> cf backup */
-	if ($config['ssh']['dsa_key'] <> "") {
-		unset($config['ssh']['dsa_key']);
-		unset($config['ssh']['ecdsa_key']);
-		unset($config['ssh']['ed25519_key']);
-		unset($config['ssh']['rsa_key']);
-		unset($config['ssh']['rsa1_key']);
-		unset($config['ssh']['dsa']);
-		unset($config['ssh']['rsa']);
-		unset($config['ssh']['rsa1']);
-		unset($config['ssh']['ak']);
-		write_config("Clearing SSH keys from config.xml");
-	}
+/* Write the new sshd config file */
+@file_put_contents("{$sshConfigDir}/sshd_config", $sshconf);
 
-	/* are we already running?  if so exit */
-	if (is_subsystem_dirty('sshdkeys')) {
-		unset($keys, $keyfiles);
-		return;
-	}
+/* mop up from a badly implemented ssh keys -> cf backup */
+if ($config['ssh']['dsa_key'] <> "") {
+	unset($config['ssh']['dsa_key']);
+	unset($config['ssh']['ecdsa_key']);
+	unset($config['ssh']['ed25519_key']);
+	unset($config['ssh']['rsa_key']);
+	unset($config['ssh']['rsa1_key']);
+	unset($config['ssh']['dsa']);
+	unset($config['ssh']['rsa']);
+	unset($config['ssh']['rsa1']);
+	unset($config['ssh']['ak']);
+	write_config("Clearing SSH keys from config.xml");
+}
 
-	// Check for all needed key files. If any are missing, the keys need to be regenerated.
-	$generate_keys = array();
-	foreach ($keys as $key) {
-		if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
-		    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
-			$generate_keys[] = $key;
-		}
-	}
-
-	if (!empty($generate_keys)) {
-		/* remove previous keys and regen later */
-		file_notice("SSH", "{$g['product_name']} has started creating missing SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
-		mark_subsystem_dirty('sshdkeys');
-		echo " Generating Keys:\n";
-		foreach ($generate_keys as $key) {
-			$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
-		}
-		clear_subsystem_dirty('sshdkeys');
-		file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
-	}
-
-	/* kill existing sshd process, server only, not the childs */
-	$sshd_pid = exec("ps ax | egrep '/usr/sbin/[s]shd' | awk '{print $1}'");
-	if ($sshd_pid <> "") {
-		echo "stopping ssh process $sshd_pid \n";
-		@posix_kill($sshd_pid, SIGTERM);
-	}
-	/* Launch new server process */
-	$status = mwexec("/usr/sbin/sshd");
-	if ($status <> 0) {
-		file_notice("sshd_startup", "SSHD failed to start.", "SSHD Daemon", "");
-		echo "error!\n";
-	} else {
-		echo "done.\n";
-	}
-
-	// NanoBSD
-	if ($g['platform'] == "nanobsd") {
-		if (!is_dir("/conf/sshd")) {
-			mkdir("/conf/sshd", 0750);
-		}
-		$_gb = exec("/bin/cp -p {$sshConfigDir}/ssh_host* /conf/sshd");
-	}
-	conf_mount_ro();
+/* are we already running?  if so exit */
+if (is_subsystem_dirty('sshdkeys')) {
 	unset($keys, $keyfiles);
+	return;
+}
+
+// Check for all needed key files. If any are missing, the keys need to be regenerated.
+$generate_keys = array();
+foreach ($keys as $key) {
+	if (!file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key") ||
+	    !file_exists("{$sshConfigDir}/ssh_host_{$key['suffix']}key.pub")) {
+		$generate_keys[] = $key;
+	}
+}
+
+if (!empty($generate_keys)) {
+	/* remove previous keys and regen later */
+	file_notice("SSH", "{$g['product_name']} has started creating missing SSH keys.  SSH Startup will be delayed.  Please note that reloading the filter rules and changes will be delayed until this operation is completed.", "SSH KeyGen", "");
+	mark_subsystem_dirty('sshdkeys');
+	echo " Generating Keys:\n";
+	foreach ($generate_keys as $key) {
+		$_gb = exec("/usr/bin/nice -n20 /usr/bin/ssh-keygen -t {$key['type']} -b 4096 -N '' -f {$sshConfigDir}/ssh_host_{$key['suffix']}key");
+	}
+	clear_subsystem_dirty('sshdkeys');
+	file_notice("SSH", "{$g['product_name']} has completed creating your SSH keys.  SSH is now started.", "SSH Startup", "");
+}
+
+/* kill existing sshd process, server only, not the childs */
+$sshd_pid = exec("ps ax | egrep '/usr/sbin/[s]shd' | awk '{print $1}'");
+if ($sshd_pid <> "") {
+	echo "stopping ssh process $sshd_pid \n";
+	@posix_kill($sshd_pid, SIGTERM);
+}
+/* Launch new server process */
+$status = mwexec("/usr/sbin/sshd");
+if ($status <> 0) {
+	file_notice("sshd_startup", "SSHD failed to start.", "SSHD Daemon", "");
+	echo "error!\n";
+} else {
+	echo "done.\n";
+}
+
+// NanoBSD
+if ($g['platform'] == "nanobsd") {
+	if (!is_dir("/conf/sshd")) {
+		mkdir("/conf/sshd", 0750);
+	}
+	$_gb = exec("/bin/cp -p {$sshConfigDir}/ssh_host* /conf/sshd");
+}
+conf_mount_ro();
+unset($keys, $keyfiles);
 ?>

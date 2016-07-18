@@ -1,56 +1,22 @@
 <?php
 /*
-	firewall_aliases_import.php
-*/
-/* ====================================================================
- *  Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
+ * firewall_aliases_import.php
  *
- *  Redistribution and use in source and binary forms, with or without modification,
- *  are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
  *
- *  1. Redistributions of source code must retain the above copyright notice,
- *      this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *  2. Redistributions in binary form must reproduce the above copyright
- *      notice, this list of conditions and the following disclaimer in
- *      the documentation and/or other materials provided with the
- *      distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *  3. All advertising materials mentioning features or use of this software
- *      must display the following acknowledgment:
- *      "This product includes software developed by the pfSense Project
- *       for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *  4. The names "pfSense" and "pfSense Project" must not be used to
- *       endorse or promote products derived from this software without
- *       prior written permission. For written permission, please contact
- *       coreteam@pfsense.org.
- *
- *  5. Products derived from this software may not be called "pfSense"
- *      nor may "pfSense" appear in their names without prior written
- *      permission of the Electric Sheep Fencing, LLC.
- *
- *  6. Redistributions of any form whatsoever must retain the following
- *      acknowledgment:
- *
- *  "This product includes software developed by the pfSense Project
- *  for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *  THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *  EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *  PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *  ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *  HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *  STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *  OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *  ====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -64,10 +30,10 @@
 // Keywords not allowed in names
 $reserved_keywords = array("all", "pass", "block", "out", "queue", "max", "min", "pptp", "pppoe", "L2TP", "OpenVPN", "IPsec");
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("util.inc");
 require_once("filter.inc");
-require("shaper.inc");
+require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
 
@@ -82,6 +48,11 @@ if (is_array($config['load_balancer']['lbpool'])) {
 
 $reserved_ifs = get_configured_interface_list(false, true);
 $reserved_keywords = array_merge($reserved_keywords, $reserved_ifs, $reserved_table_names);
+
+$tab = $_REQUEST['tab'];
+if (empty($tab)) {
+	$tab = 'ip';
+}
 
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();
@@ -125,26 +96,51 @@ if ($_POST['aliasimport'] != "") {
 		$imported_descs = array();
 		$desc_len_err_found = false;
 		$desc_fmt_err_found = false;
+		if ($tab == "port") {
+			$alias_type = $tab;
+		} else {
+			$alias_type = "host";
+		}
+
 		foreach ($tocheck as $impline) {
 			$implinea = explode(" ", trim($impline), 2);
 			$impip = $implinea[0];
 			$impdesc = trim($implinea[1]);
 			if (strlen($impdesc) < 200) {
 				if ((strpos($impdesc, "||") === false) && (substr($impdesc, 0, 1) != "|") && (substr($impdesc, -1, 1) != "|")) {
-					$iprange_type = is_iprange($impip);
-					if ($iprange_type == 4) {
-						list($startip, $endip) = explode('-', $impip);
-						$rangesubnets = ip_range_to_subnet_array($startip, $endip);
-						$imported_ips = array_merge($imported_ips, $rangesubnets);
-						$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
-						$imported_descs = array_merge($imported_descs, $rangedescs);
-					} else if ($iprange_type == 6) {
-						$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
-					} else if (!is_ipaddr($impip) && !is_subnet($impip) && !is_hostname($impip) && !empty($impip)) {
-						$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
-					} elseif (!empty($impip)) {
-						$imported_ips[] = $impip;
-						$imported_descs[] = $impdesc;
+					if ($tab == "port") {
+						// Port alias
+						if (!empty($impip)) {
+							if (is_port($impip) || is_portrange($impip)) {
+								$imported_ips[] = $impip;
+								$imported_descs[] = $impdesc;
+							} else {
+								$input_errors[] = sprintf(gettext("%s is not a valid port or port range."), $impip);
+							}
+						}
+					} else {
+						// IP alias - host or network
+						$iprange_type = is_iprange($impip);
+						if ($iprange_type == 4) {
+							list($startip, $endip) = explode('-', $impip);
+							$rangesubnets = ip_range_to_subnet_array($startip, $endip);
+							$imported_ips = array_merge($imported_ips, $rangesubnets);
+							$rangedescs = array_fill(0, count($rangesubnets), $impdesc);
+							$imported_descs = array_merge($imported_descs, $rangedescs);
+						} else if ($iprange_type == 6) {
+							$input_errors[] = sprintf(gettext('IPv6 address ranges are not supported (%s)'), $impip);
+						} else {
+							$is_subnet = is_subnet($impip);
+							if (!is_ipaddr($impip) && !$is_subnet && !is_hostname($impip) && !empty($impip)) {
+								$input_errors[] = sprintf(gettext("%s is not an IP address. Please correct the error to continue"), $impip);
+							} elseif (!empty($impip)) {
+								if ($is_subnet) {
+									$alias_type = "network";
+								}
+								$imported_ips[] = $impip;
+								$imported_descs[] = $impdesc;
+							}
+						}
 					}
 				} else {
 					if (!$desc_fmt_err_found) {
@@ -169,7 +165,7 @@ if ($_POST['aliasimport'] != "") {
 		$alias['address'] = implode(" ", $imported_ips);
 		$alias['detail'] = implode("||", $imported_descs);
 		$alias['name'] = $_POST['name'];
-		$alias['type'] = "network";
+		$alias['type'] = $alias_type;
 		$alias['descr'] = $_POST['descr'];
 		unset($imported_ips, $imported_descs);
 		$a_aliases[] = $alias;
@@ -180,7 +176,12 @@ if ($_POST['aliasimport'] != "") {
 		if (write_config()) {
 			mark_subsystem_dirty('aliases');
 		}
-		pfSenseHeader("firewall_aliases.php");
+
+		if (!empty($tab)) {
+			header("Location: firewall_aliases.php?tab=" . htmlspecialchars ($tab));
+		} else {
+			header("Location: firewall_aliases.php");
+		}
 
 		exit;
 	}
@@ -193,7 +194,32 @@ if ($input_errors) {
 }
 
 $form = new Form;
-$section = new Form_Section('Alias Details');
+$form->addGlobal(new Form_Input(
+	'tab',
+	null,
+	'hidden',
+	$tab
+));
+
+if ($tab == "port") {
+	$sectiontext = gettext('Port Alias Details');
+	$helptext = gettext('Paste in the ports to import separated by a carriage return. ' .
+		'The list may contain port numbers, port ranges, blank lines (ignored) and ' .
+		'an optional description after each port. e.g.:</span>' .
+		'<ul><li>22</li><li>1234:1250</li><li>443 HTTPS port</li><li>4000:4099 Description of a port range</li>' .
+		'</ul><span class="help-block">');
+} else {
+	$sectiontext = gettext('IP Alias Details');
+	$helptext = gettext('Paste in the aliases to ' .
+		'import separated by a carriage return. Common examples are lists of IPs, ' .
+		'networks, blacklists, etc. The list may contain IP addresses, with or without ' .
+		'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after ' .
+		'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-' .
+		'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office ' .
+		'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+}
+
+$section = new Form_Section($sectiontext);
 
 $section->addInput(new Form_Input(
 	'name',
@@ -214,13 +240,7 @@ $section->addInput(new Form_Textarea(
 	'aliasimport',
 	'Aliases to import',
 	$_POST["aliasimport"]
-))->setHelp('Paste in the aliases to '.
-	'import separated by a carriage return. Common examples are lists of IPs, '.
-	'networks, blacklists, etc. The list may contain IP addresses, with or without '.
-	'CIDR prefix, IP ranges, blank lines (ignored) and an optional description after '.
-	'each IP. e.g.:</span><ul><li>172.16.1.2</li><li>172.16.0.0/24</li><li>10.11.12.100-'.
-	'10.11.12.200</li><li>192.168.1.254 Home router</li><li>10.20.0.0/16 Office '.
-	'network</li><li>10.40.1.10-10.40.1.19 Managed switches</li></ul><span class="help-block">');
+))->setHelp($helptext);
 
 $form->add($section);
 print $form;

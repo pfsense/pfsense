@@ -2,32 +2,24 @@
 <pfsensewizard>
 <copyright>
 /*
-	part of pfSense (https://www.pfsense.org/)
-
-	Copyright (C) 2010 Ermal Luçi
-	All rights reserved.
-
-	Redistribution and use in source and binary forms, with or without
-	modification, are permitted provided that the following conditions are met:
-
-	1. Redistributions of source code must retain the above copyright notice,
-	   this list of conditions and the following disclaimer.
-
-	2. Redistributions in binary form must reproduce the above copyright
-	   notice, this list of conditions and the following disclaimer in the
-	   documentation and/or other materials provided with the distribution.
-
-	THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES,
-	INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
-	AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-	AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-	OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-	SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-	INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-	CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-	POSSIBILITY OF SUCH DAMAGE.
-*/
+ * openvpn_wizard.xml
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 </copyright>
 <totalsteps>12</totalsteps>
 <step>
@@ -367,7 +359,7 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys are generally slower to use.</description>
+			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step6->keylength</bindstofield>
@@ -385,8 +377,28 @@
 					<value>2048</value>
 				</option>
 				<option>
+					<name>3072 bit</name>
+					<value>3072</value>
+				</option>
+				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>7680 bit</name>
+					<value>7680</value>
+				</option>
+				<option>
+					<name>8192 bit</name>
+					<value>8192</value>
+				</option>
+				<option>
+					<name>15360 bit</name>
+					<value>15360</value>
+				</option>
+				<option>
+					<name>16384 bit</name>
+					<value>16384</value>
 				</option>
 			</options>
 		</field>

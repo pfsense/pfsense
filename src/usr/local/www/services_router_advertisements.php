@@ -1,60 +1,27 @@
 <?php
 /*
-	services_router_advertisements.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2010 Seth Mos <seth.mos@dds.nl>
+ * services_router_advertisements.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -64,7 +31,7 @@
 ##|*MATCH=services_router_advertisements.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 
 if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
@@ -127,6 +94,9 @@ if (is_array($config['dhcpdv6'][$if])) {
 
 	$pconfig['ravalidlifetime'] = $config['dhcpdv6'][$if]['ravalidlifetime'];
 	$pconfig['rapreferredlifetime'] = $config['dhcpdv6'][$if]['rapreferredlifetime'];
+	$pconfig['raminrtradvinterval'] = $config['dhcpdv6'][$if]['raminrtradvinterval'];
+	$pconfig['ramaxrtradvinterval'] = $config['dhcpdv6'][$if]['ramaxrtradvinterval'];
+	$pconfig['raadvdefaultlifetime'] = $config['dhcpdv6'][$if]['raadvdefaultlifetime'];
 
 	$pconfig['radomainsearchlist'] = $config['dhcpdv6'][$if]['radomainsearchlist'];
 	list($pconfig['radns1'], $pconfig['radns2'], $pconfig['radns3']) = $config['dhcpdv6'][$if]['radnsserver'];
@@ -199,8 +169,33 @@ if ($_POST) {
 		}
 	}
 
-	if ($_POST['ravalidlifetime'] && (!is_numeric($_POST['ravalidlifetime']) || ($_POST['ravalidlifetime'] < 7200))) {
-		$input_errors[] = gettext("A valid lifetime below 2 hrs will be ignored by clients (RFC 4862 Section 5.5.3 point e)");
+	if ($_POST['ravalidlifetime'] && ($_POST['ravalidlifetime'] < 7200)) {
+		$input_errors[] = gettext("A valid lifetime below 2 hours will be ignored by clients (RFC 4862 Section 5.5.3 point e)");
+	}
+	if ($_POST['ravalidlifetime'] && !is_numericint($_POST['ravalidlifetime'])) {
+		$input_errors[] = gettext("Valid lifetime must be an integer.");
+	}
+	if ($_POST['raminrtradvinterval']) {
+		if (!is_numericint($_POST['raminrtradvinterval'])) {
+			$input_errors[] = gettext("Minimum advertisement interval must be an integer.");
+		}
+		if ($_POST['raminrtradvinterval'] < "3") {
+			$input_errors[] = gettext("Minimum advertisement interval must be no less than 3.");
+		}
+		if ($_POST['ramaxrtradvinterval'] && $_POST['raminrtradvinterval'] > (0.75 * $_POST['ramaxrtradvinterval'])) {
+			$input_errors[] = gettext("Minimum advertisement interval must be no greater than 0.75 * Maximum advertisement interval");
+		}
+	}
+	if ($_POST['ramaxrtradvinterval']) {
+		if (!is_numericint($_POST['ramaxrtradvinterval'])) {
+			$input_errors[] = gettext("Maximum advertisement interval must be an integer.");
+		}
+		if ($_POST['ramaxrtradvinterval'] < "4" || $_POST['ramaxrtradvinterval'] > "1800") {
+			$input_errors[] = gettext("Maximum advertisement interval must be no less than 4 and no greater than 1800.");
+		}
+	}
+	if ($_POST['raadvdefaultlifetime'] && !is_numericint($_POST['raadvdefaultlifetime'])) {
+		$input_errors[] = gettext("Router lifetime must be an integer between 1 and 9000.");
 	}
 
 	if (!$input_errors) {
@@ -214,6 +209,9 @@ if ($_POST) {
 
 		$config['dhcpdv6'][$if]['ravalidlifetime'] = $_POST['ravalidlifetime'];
 		$config['dhcpdv6'][$if]['rapreferredlifetime'] = $_POST['rapreferredlifetime'];
+		$config['dhcpdv6'][$if]['raminrtradvinterval'] = $_POST['raminrtradvinterval'];
+		$config['dhcpdv6'][$if]['ramaxrtradvinterval'] = $_POST['ramaxrtradvinterval'];
+		$config['dhcpdv6'][$if]['raadvdefaultlifetime'] = $_POST['raadvdefaultlifetime'];
 
 		$config['dhcpdv6'][$if]['radomainsearchlist'] = $_POST['radomainsearchlist'];
 		unset($config['dhcpdv6'][$if]['radnsserver']);
@@ -345,9 +343,10 @@ if (count($carplistif) > 0) {
 $section->addInput(new Form_Input(
 	'ravalidlifetime',
 	'Default valid lifetime',
-	'text',
-	$pconfig['ravalidlifetime']
-))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
+	'number',
+	$pconfig['ravalidlifetime'],
+	['min' => 1, 'max' => 655350]
+))->setHelp('The length of time in seconds (relative to the time the packet is sent) that the prefix is valid for the purpose of on-link determination.' . ' <br />' .
 'The default is 86400 seconds.');
 
 $section->addInput(new Form_Input(
@@ -357,6 +356,30 @@ $section->addInput(new Form_Input(
 	$pconfig['rapreferredlifetime']
 ))->setHelp('Seconds. The length of time in seconds (relative to the time the packet is sent) that addresses generated from the prefix via stateless address autoconfiguration remain preferred.' . ' <br />' .
 			'The default is 14400 seconds.');
+
+$section->addInput(new Form_Input(
+	'raminrtradvinterval',
+	'Minimum RA interval',
+	'number',
+	$pconfig['raminrtradvinterval'],
+	['min' => 3, 'max' => 1350]
+))->setHelp('The minimum time allowed between sending unsolicited multicast router advertisements in seconds.');
+
+$section->addInput(new Form_Input(
+	'ramaxrtradvinterval',
+	'Maximum RA interval',
+	'number',
+	$pconfig['ramaxrtradvinterval'],
+	['min' => 4, 'max' => 1800]
+))->setHelp('The maximum time allowed between sending unsolicited multicast router advertisements in seconds.');
+
+$section->addInput(new Form_Input(
+	'raadvdefaultlifetime',
+	'Router lifetime',
+	'number',
+	$pconfig['raadvdefaultlifetime'],
+	['min' => 1, 'max' => 9000]
+))->setHelp('The lifetime associated with the default router in seconds.');
 
 $section->addInput(new Form_StaticText(
 	'RA Subnets',

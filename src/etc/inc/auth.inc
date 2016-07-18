@@ -1,60 +1,27 @@
 <?php
 /*
-	auth.inc
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005-2006 Bill Marquette <bill.marquette@gmail.com>
- *	Copyright (c)  2006 Paul Taylor <paultaylor@winn-dixie.com>
- *	Copyright (c)  2003-2006 Manuel Kasper <mk@neon1.net>
+ * auth.inc
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
+ * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
+ * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
 /*
  * NOTE : Portions of the mschapv2 support was based on the BSD licensed CHAP.php
  * file courtesy of Michael Retterklieber.
@@ -205,8 +172,9 @@ if (function_exists("display_error_form") && !isset($config['system']['webgui'][
 						break;
 					}
 				}
-				$interface_list_ipv6s = get_configured_ipv6_addresses();
+				$interface_list_ipv6s = get_configured_ipv6_addresses(true);
 				foreach ($interface_list_ipv6s as $ilipv6s) {
+					$ilipv6s = explode('%', $ilipv6s)[0];
 					if (strcasecmp($referrer_host, $ilipv6s) == 0) {
 						$found_host = true;
 						break;
@@ -409,15 +377,23 @@ function local_sync_accounts() {
 	if ($fd) {
 		while (!feof($fd)) {
 			$line = explode(":", fgets($fd));
-			if (((!strncmp($line[0], "_", 1)) || ($line[2] < 2000) || ($line[2] > 65000)) && ($line[0] != "admin")) {
-				continue;
+			if ($line[0] != "admin") {
+				if (!strncmp($line[0], "_", 1)) {
+					continue;
+				}
+				if ($line[2] < 2000) {
+					continue;
+				}
+				if ($line[2] > 65000) {
+					continue;
+				}
 			}
 			/*
 			 * If a crontab was created to user, pw userdel will be interactive and
 			 * can cause issues. Just remove crontab before run it when necessary
 			 */
 			unlink_if_exists("/var/cron/tabs/{$line[0]}");
-			$cmd = "/usr/sbin/pw userdel -n '{$line[0]}'";
+			$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($line[0]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -441,7 +417,7 @@ function local_sync_accounts() {
 			if ($line[2] > 65000) {
 				continue;
 			}
-			$cmd = "/usr/sbin/pw groupdel -g {$line[2]}";
+			$cmd = "/usr/sbin/pw groupdel -g " . escapeshellarg($line[2]);
 			if ($debug) {
 				log_error(sprintf(gettext("Running: %s"), $cmd));
 			}
@@ -540,18 +516,25 @@ function local_user_set(& $user) {
 	pclose($fd);
 	$userattrs = explode(":", trim($pwread));
 
+	$skel_dir = '/etc/skel';
+
 	/* determine add or mod */
 	if (($userattrs[0] != $user['name']) || (!strncmp($pwread, "pw:", 3))) {
-		$user_op = "useradd -m -k /etc/skel -o";
+		$user_op = "useradd -m -k " . escapeshellarg($skel_dir) . " -o";
 	} else {
 		$user_op = "usermod";
 	}
 
 	$comment = str_replace(array(":", "!", "@"), " ", $user['descr']);
 	/* add or mod pw db */
-	$cmd = "/usr/sbin/pw {$user_op} -q -u {$user_uid} -n {$user_name}".
-			" -g {$user_group} -s {$user_shell} -d {$user_home}".
-			" -c ".escapeshellarg($comment)." -H 0 2>&1";
+	$cmd = "/usr/sbin/pw {$user_op} -q " .
+			" -u " . escapeshellarg($user_uid) .
+			" -n " . escapeshellarg($user_name) .
+			" -g " . escapeshellarg($user_group) .
+			" -s " . escapeshellarg($user_shell) .
+			" -d " . escapeshellarg($user_home) .
+			" -c " . escapeshellarg($comment) .
+			" -H 0 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -571,6 +554,14 @@ function local_user_set(& $user) {
 	@chown($user_home, $user_name);
 	@chgrp($user_home, $user_group);
 
+	/* Make sure all users have last version of config files */
+	foreach (glob("{$skel_dir}/dot.*") as $dot_file) {
+		$target = $user_home . '/' . substr(basename($dot_file), 3);
+		@copy($dot_file, $target);
+		@chown($target, $user_name);
+		@chgrp($target, $user_group);
+	}
+
 	/* write out ssh authorized key file */
 	if ($user['authorizedkeys']) {
 		if (!is_dir("{$user_home}/.ssh")) {
@@ -585,7 +576,7 @@ function local_user_set(& $user) {
 	}
 
 	$un = $lock_account ? "" : "un";
-	exec("/usr/sbin/pw {$un}lock {$user_name} -q 2>/dev/null");
+	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 
 	conf_mount_ro();
 }
@@ -613,7 +604,7 @@ function local_user_del($user) {
 	}
 
 	/* delete from pw db */
-	$cmd = "/usr/sbin/pw userdel -n {$user['name']} {$rmhome}";
+	$cmd = "/usr/sbin/pw userdel -n " . escapeshellarg($user['name']) . " " . escapeshellarg($rmhome);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -761,14 +752,17 @@ function local_group_set($group, $reset = false) {
 	}
 
 	/* determine add or mod */
-	if (mwexec("/usr/sbin/pw groupshow -g {$group_gid} 2>&1", true) == 0) {
+	if (mwexec("/usr/sbin/pw groupshow -g " . escapeshellarg($group_gid) . " 2>&1", true) == 0) {
 		$group_op = "groupmod -l";
 	} else {
 		$group_op = "groupadd -n";
 	}
 
 	/* add or mod group db */
-	$cmd = "/usr/sbin/pw {$group_op} {$group_name} -g {$group_gid} -M '{$group_members}' 2>&1";
+	$cmd = "/usr/sbin/pw {$group_op} " .
+		escapeshellarg($group_name) .
+		" -g " . escapeshellarg($group_gid) .
+		" -M " . escapeshellarg($group_members) . " 2>&1";
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -781,7 +775,7 @@ function local_group_del($group) {
 	global $debug;
 
 	/* delete from group db */
-	$cmd = "/usr/sbin/pw groupdel {$group['name']}";
+	$cmd = "/usr/sbin/pw groupdel " . escapeshellarg($group['name']);
 
 	if ($debug) {
 		log_error(sprintf(gettext("Running: %s"), $cmd));
@@ -881,7 +875,7 @@ function ldap_test_bind($authcfg) {
 		$ldapbindun = $authcfg['ldap_binddn'];
 		$ldapbindpw = $authcfg['ldap_bindpw'];
 		$ldapver = $authcfg['ldap_protver'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 		if (empty($ldapbndun) || empty($ldapbindpw)) {
 			$ldapanon = true;
 		} else {
@@ -965,7 +959,7 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}
@@ -1098,7 +1092,7 @@ function ldap_get_groups($username, $authcfg) {
 		$ldapname = $authcfg['name'];
 		$ldapfallback = false;
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}
@@ -1241,7 +1235,7 @@ function ldap_backed($username, $passwd, $authcfg) {
 		$ldapver = $authcfg['ldap_protver'];
 		$ldapname = $authcfg['name'];
 		$ldapscope = $authcfg['ldap_scope'];
-		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 25;
+		$ldaptimeout = is_numeric($authcfg['ldap_timeout']) ? $authcfg['ldap_timeout'] : 5;
 	} else {
 		return false;
 	}
@@ -1521,6 +1515,66 @@ function is_account_disabled($username) {
 	}
 
 	return false;
+}
+
+function get_user_settings($username) {
+	global $config;
+	$settings = array();
+	$settings['widgets'] = $config['widgets'];
+	$settings['webgui']['dashboardcolumns'] = $config['system']['webgui']['dashboardcolumns'];
+	$settings['webgui']['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
+	$settings['webgui']['webguicss'] = $config['system']['webgui']['webguicss'];
+	$settings['webgui']['dashboardavailablewidgetspanel'] = isset($config['system']['webgui']['dashboardavailablewidgetspanel']);
+	$settings['webgui']['webguifixedmenu'] = isset($config['system']['webgui']['webguifixedmenu']);
+	$settings['webgui']['webguileftcolumnhyper'] = isset($config['system']['webgui']['webguileftcolumnhyper']);
+	$settings['webgui']['systemlogsfilterpanel'] = isset($config['system']['webgui']['systemlogsfilterpanel']);
+	$settings['webgui']['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['systemlogsmanagelogpanel']);
+	$settings['webgui']['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
+	$settings['webgui']['pagenamefirst'] = isset($config['system']['webgui']['pagenamefirst']);
+	$user = getUserEntry($username);
+	if (isset($user['customsettings'])) {
+		$settings['customsettings'] = true;
+		if (isset($user['widgets'])) {
+			// This includes the 'sequence', and any widgetname-config per-widget settings.
+			$settings['widgets'] = $user['widgets'];
+		}
+		if (isset($user['dashboardcolumns'])) {
+			$settings['webgui']['dashboardcolumns'] = $user['dashboardcolumns'];
+		}
+		if (isset($user['webguicss'])) {
+			$settings['webgui']['webguicss'] = $user['webguicss'];
+		}
+		if (isset($user['webguihostnamemenu'])) {
+			$settings['webgui']['webguihostnamemenu'] = $user['webguihostnamemenu'];
+		}
+		$settings['webgui']['dashboardavailablewidgetspanel'] = isset($user['dashboardavailablewidgetspanel']);
+		$settings['webgui']['webguifixedmenu'] = isset($user['webguifixedmenu']);
+		$settings['webgui']['webguileftcolumnhyper'] = isset($user['webguileftcolumnhyper']);
+		$settings['webgui']['systemlogsfilterpanel'] = isset($user['systemlogsfilterpanel']);
+		$settings['webgui']['systemlogsmanagelogpanel'] = isset($user['systemlogsmanagelogpanel']);
+		$settings['webgui']['statusmonitoringsettingspanel'] = isset($user['statusmonitoringsettingspanel']);
+		$settings['webgui']['pagenamefirst'] = isset($user['pagenamefirst']);
+	} else {
+		$settings['customsettings'] = false;
+	}
+
+	if ($settings['webgui']['dashboardcolumns'] < 1) {
+		$settings['webgui']['dashboardcolumns'] = 2;
+	}
+
+	return $settings;
+}
+
+function save_widget_settings($username, $settings) {
+	global $config, $userindex;
+	$user = getUserEntry($username);
+	if (isset($user['customsettings'])) {
+		$config['system']['user'][$userindex[$username]]['widgets'] = $settings;
+		write_config(sprintf(gettext("Widget configuration has been changed for user %s."), $username));
+	} else {
+		$config['widgets'] = $settings;
+		write_config(gettext("Widget configuration has been changed."));
+	}
 }
 
 function auth_get_authserver($name) {

@@ -1,5 +1,6 @@
 sysutils/vm-bhyve
 sysutils/flashrom
+databases/php56-pgsql
 databases/php56-mysql
 databases/php56-mysqli
 databases/php56-pdo_mysql
@@ -14,13 +15,17 @@ net/py-speedtest-cli
 net/trafshow
 net/trafshow3
 net/vnstat
+net-mgmt/dhcp_probe
+sysutils/htop
+sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
-sysutils/bsdinstaller
+#sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+dns/%%PRODUCT_NAME%%-pkg-bind9
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
@@ -50,6 +55,7 @@ mail/%%PRODUCT_NAME%%-pkg-mailreport
 sysutils/%%PRODUCT_NAME%%-pkg-RRD_Summary
 net/%%PRODUCT_NAME%%-pkg-Quagga_OSPF
 net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
+net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 security/%%PRODUCT_NAME%%-pkg-sudo
@@ -57,9 +63,10 @@ sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
-#net/%%PRODUCT_NAME%%-pkg-ntopng
+net/%%PRODUCT_NAME%%-pkg-ntopng
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-agent
 net-mgmt/%%PRODUCT_NAME%%-pkg-zabbix-proxy
 net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
+net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals

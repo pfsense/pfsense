@@ -646,6 +646,18 @@ $priv_list['page-services-captiveportal-editzones']['descr'] = gettext("Allow ac
 $priv_list['page-services-captiveportal-editzones']['match'] = array();
 $priv_list['page-services-captiveportal-editzones']['match'][] = "services_captiveportal_zones_edit.php*";
 
+$priv_list['page-services-checkipservices'] = array();
+$priv_list['page-services-checkipservices']['name'] = gettext("WebCfg - Services: Check IP Service");
+$priv_list['page-services-checkipservices']['descr'] = gettext("Allow access to the 'Services: Check IP Service' page.");
+$priv_list['page-services-checkipservices']['match'] = array();
+$priv_list['page-services-checkipservices']['match'][] = "services_checkip.php*";
+
+$priv_list['page-services-checkipedit'] = array();
+$priv_list['page-services-checkipedit']['name'] = gettext("WebCfg - Services: Check IP Service: Edit");
+$priv_list['page-services-checkipedit']['descr'] = gettext("Allow access to the 'Services: Check IP Service: Edit' page.");
+$priv_list['page-services-checkipedit']['match'] = array();
+$priv_list['page-services-checkipedit']['match'][] = "services_checkip_edit.php*";
+
 $priv_list['page-services-dhcpserver'] = array();
 $priv_list['page-services-dhcpserver']['name'] = gettext("WebCfg - Services: DHCP Server");
 $priv_list['page-services-dhcpserver']['descr'] = gettext("Allow access to the 'Services: DHCP Server' page.");
@@ -770,7 +782,7 @@ $priv_list['page-services-rfc2136edit'] = array();
 $priv_list['page-services-rfc2136edit']['name'] = gettext("WebCfg - Services: RFC 2136 Client: Edit");
 $priv_list['page-services-rfc2136edit']['descr'] = gettext("Allow access to the 'Services: RFC 2136 Client: Edit' page.");
 $priv_list['page-services-rfc2136edit']['match'] = array();
-$priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136.php*";
+$priv_list['page-services-rfc2136edit']['match'][] = "services_rfc2136_edit.php*";
 
 $priv_list['page-services-router-advertisements'] = array();
 $priv_list['page-services-router-advertisements']['name'] = gettext("WebCfg - Services: Router Advertisements");
@@ -1158,6 +1170,12 @@ $priv_list['page-system-update-settings']['name'] = gettext("WebCfg - System: Up
 $priv_list['page-system-update-settings']['descr'] = gettext("Allow access to the 'System: Update: Settings' page.");
 $priv_list['page-system-update-settings']['match'] = array();
 $priv_list['page-system-update-settings']['match'][] = "system_update_settings.php*";
+
+$priv_list['page-system-user-settings'] = array();
+$priv_list['page-system-user-settings']['name'] = gettext("WebCfg - System: User Settings");
+$priv_list['page-system-user-settings']['descr'] = gettext("Allow access to the 'System: User Settings' page.");
+$priv_list['page-system-user-settings']['match'] = array();
+$priv_list['page-system-user-settings']['match'][] = "system_user_settings.php*";
 
 $priv_list['page-system-usermanager'] = array();
 $priv_list['page-system-usermanager']['name'] = gettext("WebCfg - System: User Manager");

@@ -5,6 +5,7 @@
 /boot/device.hints_wrap
 /boot/loader.conf_wrap
 /dist
+/etc/ascii-art/pfsense-logo-small.txt
 /etc/auth.conf
 /etc/current-supfile
 /etc/defaults/pccard.conf
@@ -166,6 +167,7 @@
 /lib/libz.so.5
 /root/latest.tgz.sha256
 /sbin/atacontrol
+/sbin/athctrl.sh
 /sbin/idmapd
 /sbin/ip6fw
 /sbin/mount_devfs
@@ -443,6 +445,7 @@
 /usr/local/bin/ntptime
 /usr/local/bin/ntptrace
 /usr/local/bin/openssl
+/usr/local/bin/slowdownpipe.sh
 /usr/local/bin/sntp
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
@@ -741,6 +744,7 @@
 /usr/local/share/locale/zh_CN.GB2312
 /usr/local/share/locale/zh_TW.Big5
 /usr/local/share/misc
+/usr/local/share/mobile-broadband-provider-info/iso_3166-1_list_en.xml
 /usr/local/share/nls
 /usr/local/share/pbi-keys
 /usr/local/share/pfSense/pfSense-repo-devel.conf
@@ -753,6 +757,7 @@
 /usr/local/www/carp_status.php
 /usr/local/www/classes/maintable.inc
 /usr/local/www/code-syntax-highlighter
+/usr/local/www/copyright-master.txt
 /usr/local/www/csrf/csrf-secret.php
 /usr/local/www/css/table.css
 /usr/local/www/datetimepicker.js
@@ -929,6 +934,7 @@
 /usr/local/www/vpn_pppoe_edit.php
 /usr/local/www/vpn_pppoe_users.php
 /usr/local/www/vpn_pppoe_users_edit.php
+/usr/local/www/widgets/widgets/deactivated
 /usr/local/www/wizards/traffic_shaper_wizard.inc
 /usr/local/www/wizards/traffic_shaper_wizard.xml
 /usr/local/www/wizards/traffic_shaper_wizard_multi_lan.inc

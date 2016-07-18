@@ -1,0 +1,46 @@
+/*
+ * resetwebgui
+ *
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+global $config;
+
+$config = parse_config(true);
+$default_theme = "pfSense.css";
+$default_columns = 2;
+$default_widgets = "system_information:col1:show,interfaces:col2:show";
+
+echo "Resetting webGUI:\n";
+echo "  Theme to " . $default_theme . "\n";
+echo "  Dashboard columns to " . $default_columns . "\n";
+echo "  Top navigation to scroll\n";
+echo "  Widgets to System Information and Interfaces\n";
+echo "...";
+
+$config['system']['webgui']['webguicss'] = $default_theme;
+$config['system']['webgui']['dashboardcolumns'] = $default_columns;
+
+if (isset($config['system']['webgui']['webguifixedmenu'])) {
+	unset($config['system']['webgui']['webguifixedmenu']);
+}
+
+$config['widgets']['sequence'] = $default_widgets;
+
+write_config("pfSsh.php reset webGUI");
+
+echo "done.\n";

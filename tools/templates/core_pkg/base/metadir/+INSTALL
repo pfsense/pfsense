@@ -9,6 +9,8 @@ if [ ! -f /usr/local/share/%%PRODUCT_NAME%%/base.txz ]; then
 	exit 1
 fi
 
+echo %%PRODUCT_NAME%% > /etc/platform
+
 echo "===> Removing schg flag from base files"
 
 # Cleanup schg flags

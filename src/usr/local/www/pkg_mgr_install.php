@@ -1,57 +1,23 @@
 <?php
 /*
-	pkg_mgr_install.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c)  2005 Colin Smith
+ * pkg_mgr_install.php
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2005 Colin Smith
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -63,7 +29,7 @@
 
 ini_set('max_execution_time', '0');
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
@@ -177,7 +143,7 @@ if ($_REQUEST['ajax']) {
 
 	if ($JSONfile != FALSE) {
 		while (($logline = fgets($JSONfile)) !== false) {
-			if (!feof($JSONfile)	 && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
+			if (!feof($JSONfile) && (strpos($logline, 'INFO_PROGRESS_TICK') !== false)) {
 				if (strpos($logline, '}}') !== false) {
 					$progress = $logline;
 				}
@@ -220,30 +186,55 @@ function waitfor_string_in_file($filename, $string, $timeout) {
 	return(false);
 }
 
-if ($_POST) {
-	if (empty($_POST['id']) && $_POST['mode'] != 'reinstallall') {
+$pkgmode = '';
+
+if (!empty($_REQUEST['mode'])) {
+	$valid_modes = array(
+		'reinstallall',
+		'reinstallpkg',
+		'delete',
+		'installed'
+	);
+
+	if (!in_array($_REQUEST['mode'], $valid_modes)) {
 		header("Location: pkg_mgr_installed.php");
 		return;
 	}
 
-	if (isset($_POST['pkgcancel']) || (empty($_POST['id']) && $_POST['mode'] != 'reinstallall')) {
-		header("Location: pkg_mgr_installed.php");
-		return;
-	}
-} else if ($_GET && !$_GET['id']) {
-	if (empty($_GET['pkg']) && ($_GET['mode'] != 'reinstallall')) {
-		header("Location: pkg_mgr_installed.php");
-		return;
-	}
+	$pkgmode = $_REQUEST['mode'];
 }
 
-if ($_GET && $_GET['id'] == "firmware") {
+// After a successful installation/removal/update the page is reloaded so that any menu changes show up
+// immediately. These values passed as POST arguments tell the page the state it was in before the reload.
+$confirmed = isset($_POST['confirmed']) && $_POST['confirmed'] == 'true';
+$completed = isset($_POST['completed']) && $_POST['completed'] == 'true';
+$reboot_needed = isset($_POST['reboot_needed']) && $_POST['reboot_needed'] == "yes";
+
+if (!empty($_REQUEST['id'])) {
+	if ($_REQUEST['id'] != "firmware") {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
+
 	$firmwareupdate = true;
+} elseif (!$completed && empty($_REQUEST['pkg']) && $pkgmode != 'reinstallall') {
+	header("Location: pkg_mgr_installed.php");
+	return;
+}
+
+$pkgname = '';
+if (!empty($_REQUEST['pkg'])) {
+	$pkgname = $_REQUEST['pkg'];
+
+	if (!pkg_valid_name($pkgname)) {
+		header("Location: pkg_mgr_installed.php");
+		return;
+	}
 }
 
 $tab_array = array();
 
-if ($firmwareupdate || ($_POST['id'] == "firmware")) {
+if ($firmwareupdate) {
 	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
 	$tab_array[] = array(gettext("System Update"), true, "");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
@@ -255,12 +246,11 @@ if ($firmwareupdate || ($_POST['id'] == "firmware")) {
 }
 
 include("head.inc");
+?>
 
-if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall") {
-	?>
-	<div id="final" class="alert" role="alert" style="display: none;"></div>
+<div id="final" class="alert" role="alert" style="display: none;"></div>
+
 <?php
-}
 display_top_tabs($tab_array);
 
 if ($input_errors) {
@@ -269,17 +259,10 @@ if ($input_errors) {
 
 ?>
 <form action="pkg_mgr_install.php" method="post" class="form-horizontal">
-<?php if (($POST['complete'] != "true")	 && (empty($_GET['mode']) && $_GET['id']) || (!empty($_GET['mode']) && (!empty($_GET['pkg']) || $_GET['mode'] == 'reinstallall'))):
-	if (empty($_GET['mode']) && $_GET['id']) {
-		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['id'], ENT_QUOTES | ENT_HTML401));
-		$pkgmode = 'installed';
-	} else if (!empty($_GET['mode']) && !empty($_GET['pkg'])) {
-		$pkgname = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['pkg'], ENT_QUOTES | ENT_HTML401));
-		$pkgmode = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_GET['mode'], ENT_QUOTES | ENT_HTML401));
-	} else if ($_GET['mode'] == 'reinstallall') {
-		$pkgmode = 'reinstallall';
-	}
+<?php
 
+if (!$confirmed && !$completed &&
+    ($firmwareupdate || $pkgmode == 'reinstallall' || !empty($pkgname))):
 	switch ($pkgmode) {
 		case 'reinstallpkg':
 			$pkgtxt = sprintf(gettext('Confirmation Required to reinstall package %s.'), $pkgname);
@@ -297,77 +280,79 @@ if ($input_errors) {
 		<div class="panel-heading">
 			<h2 class="panel-title">
 <?php
-			if ($pkgmode == 'reinstallall') {
+			if ($pkgmode == 'reinstallall'):
 ?>
 				<?=gettext("Confirmation Required to reinstall all packages.");?>
 <?php
-			} else if ($_GET['from'] && $_GET['to']) {
+			elseif ($_GET['from'] && $_GET['to']):
 ?>
 				<?=sprintf(gettext('Confirmation Required to upgrade package %1$s from %2$s to %3$s.'), $pkgname, $_GET['from'], $_GET['to'])?>
 <?php
-			} else if ($firmwareupdate) {
+			elseif ($firmwareupdate):
 ?>
 				<?=sprintf(gettext('Confirmation Required to update %s system.'), $g['product_name'])?>
 <?php
-			} else {
+			else:
 ?>
 				<?=$pkgtxt;?>
 <?php
-			}
+			endif;
 ?>
 			</h2>
 		</div>
 		<div class="panel-body">
 			<div class="content">
-			<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
+				<input type="hidden" name="mode" value="<?=$pkgmode;?>" />
 <?php
-	if ($firmwareupdate) {
+	if ($firmwareupdate):
 ?>
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-				<?=gettext("Current Base System")?>
-			</label>
-			<div class="col-sm-10" id="installed_version">
-			</div>
-		</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">
+						<?=gettext("Current Base System")?>
+					</label>
+					<div class="col-sm-10" id="installed_version">
+					</div>
+				</div>
 
-		<div class="form-group">
-			<label class="col-sm-2 control-label">
-				<?=gettext("Latest Base System")?>
-			</label>
-			<div class="col-sm-10" id="version">
-			</div>
-		</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label">
+						<?=gettext("Latest Base System")?>
+					</label>
+					<div class="col-sm-10" id="version">
+					</div>
+				</div>
 
-		<div class="form-group" id="confirm">
-			<label class="col-sm-2 control-label" id="confirmlabel">
-				<?=gettext("Retrieving")?>
-			</label>
-			<div class="col-sm-10">
-				<input type="hidden" name="id" value="firmware" />
-				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
+				<div class="form-group" id="confirm">
+					<label class="col-sm-2 control-label" id="confirmlabel">
+						<?=gettext("Retrieving")?>
+					</label>
+					<div class="col-sm-10">
+						<input type="hidden" name="id" value="firmware" />
+						<input type="hidden" name="confirmed" value="true" />
+						<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>" style="display: none">
+							<i class="fa fa-check icon-embed-btn"></i>
+							<?=gettext("Confirm")?>
+						</button>
+						<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
+					</div>
+				</div>
+<?php
+	else:
+?>
+				<input type="hidden" name="pkg" value="<?=$pkgname;?>" />
+				<input type="hidden" name="confirmed" value="true" />
+				<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
 					<i class="fa fa-check icon-embed-btn"></i>
 					<?=gettext("Confirm")?>
 				</button>
-				<span id="uptodate"><i class="fa fa-cog fa-spin fa-lg text-warning"></i></span>
-			</div>
-		</div>
 <?php
-	} else {
+	endif;
 ?>
-			<input type="hidden" name="id" value="<?=$pkgname;?>" />
-			<button type="submit" class="btn btn-success" name="pkgconfirm" id="pkgconfirm" value="<?=gettext("Confirm")?>">
-				<i class="fa fa-check icon-embed-btn"></i>
-				<?=gettext("Confirm")?>
-			</button>
-<?php
-	}
-	?>
 			</div>
 		</div>
 	</div>
-<?php endif;
-
+<?php
+endif;
 ?>
 	<div id="unable" style="display: none">
 		<?=print_info_box(gettext("Unable to retrieve system versions."), 'danger')?>
@@ -375,42 +360,52 @@ if ($input_errors) {
 <?php
 
 if ($_POST) {
-	$pkgid = str_replace(array("<", ">", ";", "&", "'", '"', '.', '/'), "", htmlspecialchars_decode($_POST['id'], ENT_QUOTES | ENT_HTML401));
-	if ($pkgid == "firmware") {
+	if ($firmwareupdate) {
 		$logfilename = $g['cf_conf_path'] . '/upgrade_log';
 	} else {
-		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgid;
+		$logfilename = $g['cf_conf_path'] . '/pkg_log_' . $pkgname;
 	}
 }
 
-if ($_POST['mode'] == 'delete') {
+if ($firmwareupdate) {
+	$panel_heading_txt = gettext("Updating System");
+	$pkg_success_txt = gettext('System update successfully completed.');
+	$pkg_fail_txt = gettext('System update failed!');
+	$pkg_wait_txt = gettext('Please wait while the system update completes.');
+} else if ($pkgmode == 'delete') {
 	$panel_heading_txt = gettext("Package Removal");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgid);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgid);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgid);
-} else if (($_POST['mode'] == 'reinstallpkg') || ($_POST['mode'] == 'reinstallall')) {
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> removal successfully completed.'), $pkgname);
+	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> removal failed!'), $pkgname);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the removal of <b>%1$s</b> completes.'), $pkgname);
+} else if ($pkgmode == 'reinstallall') {
+	$panel_heading_txt = gettext("Packages Reinstallation");
+	$pkg_success_txt = gettext('All packages reinstallation successfully completed.');
+	$pkg_fail_txt = gettext('All packages reinstallation failed!');
+	$pkg_wait_txt = gettext('Please wait while the reinstallation of all packages completes.');
+} else if ($pkgmode == 'reinstallpkg') {
 	$panel_heading_txt = gettext("Package Reinstallation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgid);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgid);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> reinstallation successfully completed.'), $pkgname);
+	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> reinstallation failed!'), $pkgname);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the reinstallation of <b>%1$s</b> completes.'), $pkgname);
 } else {
 	$panel_heading_txt = gettext("Package Installation");
-	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgid);
-	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgid);
-	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgid);
+	$pkg_success_txt = sprintf(gettext('<b>%1$s</b> installation successfully completed.'), $pkgname);
+	$pkg_fail_txt = sprintf(gettext('<b>%1$s</b> installation failed!'), $pkgname);
+	$pkg_wait_txt = sprintf(gettext('Please wait while the installation of <b>%1$s</b> completes.'), $pkgname);
 }
 
-if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
-	// What if the user navigates away from this page and then comes back via his/her "Back" button?
+if ($confirmed):
+	// XXX: What if the user navigates away from this page and then comes back via his/her "Back" button?
 	$pidfile = $g['varrun_path'] . '/' . $g['product_name'] . '-upgrade.pid';
 
 	if (isvalidpid($pidfile)) {
 		$start_polling = true;
 	}
 ?>
-	<input type="hidden" name="id" value="<?=htmlspecialchars($_POST['id'])?>" />
-	<input type="hidden" name="mode" value="<?=htmlspecialchars($_POST['mode'])?>" />
+	<input type="hidden" name="id" value="<?=$_REQUEST['id']?>" />
+	<input type="hidden" name="mode" value="<?=$pkgmode?>" />
 	<input type="hidden" name="completed" value="true" />
+	<input type="hidden" name="confirmed" value="true" />
 	<input type="hidden" id="reboot_needed" name="reboot_needed" value="no" />
 
 	<div id="countdown" class="text-center"></div>
@@ -421,36 +416,32 @@ if (!empty($_POST['id']) || $_POST['mode'] == "reinstallall"):
 	<br />
 	<div class="panel panel-default">
 		<div class="panel-heading">
-<?php if ($firmwareupdate) {
-?>
-			<h2 class="panel-title" id="status"><?=gettext("Updating System")?></h2>
-<?php } else {
-?>
 			<h2 class="panel-title" id="status"><?=$panel_heading_txt?></h2>
- <?php } ?>
 		</div>
 
 		<div class="panel-body">
 			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
 		</div>
 	</div>
-<?php endif?>
+<?php
+endif;
+?>
 </form>
 
 <?php
 
 ob_flush();
 
-if ($_POST && ($_POST['completed'] != "true")) {
+if ($confirmed && !$completed) {
 	/* Write out configuration to create a backup prior to pkg install. */
 	write_config(gettext("Creating restore point before package installation."));
 
 	$progbar = true;
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 
-	switch ($_POST['mode']) {
+	switch ($pkgmode) {
 		case 'delete':
-			mwexec_bg("{$upgrade_script} -r {$pkgid}");
+			mwexec_bg("{$upgrade_script} -r {$pkgname}");
 			$start_polling = true;
 			break;
 
@@ -463,16 +454,16 @@ if ($_POST && ($_POST['completed'] != "true")) {
 
 			break;
 		case 'reinstallpkg':
-			mwexec_bg("{$upgrade_script} -i {$pkgid} -f");
+			mwexec_bg("{$upgrade_script} -i {$pkgname} -f");
 			$start_polling = true;
 			break;
 
 		case 'installed':
 		default:
-			if ($pkgid == 'firmware') {
+			if ($firmwareupdate) {
 				mwexec_bg("{$upgrade_script}");
 			} else {
-				mwexec_bg("{$upgrade_script} -i {$pkgid}");
+				mwexec_bg("{$upgrade_script} -i {$pkgname}");
 			}
 			$start_polling = true;
 			break;
@@ -483,11 +474,14 @@ $uptodatemsg = gettext("Up to date.");
 $confirmlabel = gettext("Confirm Update");
 $sysmessage = gettext("Status");
 
-// $_POST['completed'] just means that we are refreshing the page to update any new menu items
+// $completed just means that we are refreshing the page to update any new menu items
 // that were installed
-if ($_POST && $_POST['completed'] == "true"):
+if ($completed):
 	unlink_if_exists($logfilename . ".json");
-	if (($pkgid == 'firmware') && ($_POST['reboot_needed'] == "yes")):
+
+	// If this was a firmware update and a reboot was initiated, display the "Rebooting" message
+	// and start the countdown timer
+	if ($firmwareupdate && $reboot_needed):
 
 ?>
 <script>
@@ -520,12 +514,8 @@ function setProgress(barName, percent, transition) {
 // Display a success banner
 function show_success() {
 	$('#final').removeClass("alert-info").addClass("alert-success");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
-		if ("<?=$pkgid?>" == "firmware") {
-			$('#final').html("<?=gettext('System update successfully completed.')?>");
-		} else {
-			$('#final').html("<?=$pkg_success_txt?>");
-		}
+	if ("<?=$pkgmode?>" != "reinstallall") {
+		$('#final').html("<?=$pkg_success_txt?>");
 	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages successfully completed.')?>");
 	}
@@ -537,7 +527,7 @@ function show_success() {
 function show_failure() {
 	$('#final').removeClass("alert-info");
 	$('#final').addClass("alert-danger");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
+	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<?=$pkg_fail_txt?>");
 	} else {
 		$('#final').html("<?=gettext('Reinstallation of all packages failed.')?>");
@@ -548,7 +538,7 @@ function show_failure() {
 // Ask the user to wait a bit
 function show_info() {
 	$('#final').addClass("alert-info");
-	if ("<?=$_POST['mode']?>" != "reinstallall") {
+	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
 			"<?=gettext("This may take several minutes!")?>" + "</p>");
 	} else {
@@ -569,7 +559,7 @@ function get_firmware_versions()
 			data: {
 					ajax: "ajax",
 					getversion: "yes"
-				  }
+			}
 		});
 
 	// Deal with the results of the above ajax call
@@ -608,7 +598,7 @@ function getLogsStatus() {
 			data: { ajax: "ajax",
 					logfilename: "<?=$logfilename?>",
 					next_log_line: "0"
-				  }
+			}
 		});
 
 	// Deal with the results of the above ajax call
@@ -651,6 +641,10 @@ function getLogsStatus() {
 				show_success();
 				repeat = false;
 
+				// The package has been installed/removed successfully but any menu changes that result will not be visible
+				// Reloading the page will cause the menu items to be visible and setting reboot_needed will tell the page
+				// that the firewall needs to be rebooted if required.
+
 				if (json.reboot_needed == "yes") {
 					$('#reboot_needed').val("yes");
 				}
@@ -679,7 +673,7 @@ var time = 0;
 
 function checkonline() {
 	$.ajax({
-		url	 : "/index.php", // or other resource
+		url : "/index.php", // or other resource
 		type : "HEAD"
 	})
 	.done(function() {
@@ -714,7 +708,7 @@ events.push(function() {
 
 	// If we are just re-drawing the page after a successful install/remove/reinstall,
 	// we only need to re-populate the progress indicator and the status banner
-	if ("<?=$_POST['completed']?>" == "true") {
+	if ("<?=$completed?>") {
 		setProgress('progressbar', 100, false);
 		$('#progressbar').addClass("progress-bar-success");
 		show_success();

@@ -1,0 +1,57 @@
+#!/bin/sh
+#
+# pfSense-rc.shutdown
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
+	echo "Cannot shutdown at this moment, a config write operation is in progress and 30 seconds have passed."
+	exit -1
+fi
+
+# Read product_name from $g, defaults to pfSense
+product=$(/usr/local/sbin/read_global_var product_name pfSense)
+
+echo
+echo "${product} is now shutting down ..."
+echo
+
+stty status '^T'
+
+# Set shell to ignore SIGINT (2), but not children;
+trap : 2
+
+HOME=/; export HOME
+PATH=/sbin:/bin:/usr/sbin:/usr/bin
+export PATH
+
+# If PLATFORM is $product then remove
+# temporary files on shutdown from /tmp/
+PLATFORM=`cat /etc/platform`
+if [ "$PLATFORM" = "${product}" ]; then
+	find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
+fi
+
+USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
+DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
+# If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
+if [ "${PLATFORM}" != "${product}" ] || [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
+	/etc/rc.backup_aliastables.sh
+	/etc/rc.backup_rrd.sh
+	/etc/rc.backup_dhcpleases.sh
+fi

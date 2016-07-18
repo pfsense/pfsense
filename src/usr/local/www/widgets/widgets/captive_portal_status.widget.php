@@ -1,60 +1,27 @@
 <?php
 /*
-	captive_portal_status.widget.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *  Copyright (c)  2007 Sam Wenham
+ * captive_portal_status.widget.php
  *
- *  Some or all of this file is based on the m0n0wall project which is
- *  Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2007 Sam Wenham
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally part of m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *		this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *		notice, this list of conditions and the following disclaimer in
- *		the documentation and/or other materials provided with the
- *		distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *		must display the following acknowledgment:
- *		"This product includes software developed by the pfSense Project
- *		 for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *		 endorse or promote products derived from this software without
- *		 prior written permission. For written permission, please contact
- *		 coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *		nor may "pfSense" appear in their names without prior written
- *		permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *		acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 $nocsrf = true;
@@ -107,53 +74,35 @@ foreach ($a_cp as $cpzone => $cp) {
 	}
 }
 
-if ($_GET['order']) {
-	if ($_GET['order'] == "ip") {
-		$order = 2;
-	} else if ($_GET['order'] == "mac") {
-		$order = 3;
-	} else if ($_GET['order'] == "user") {
-		$order = 4;
-	} else if ($_GET['order'] == "lastact") {
-		$order = 5;
-	} else if ($_GET['order'] == "zone") {
-		$order = 10;
-	} else {
-		$order = 0;
-	}
-	usort($cpdb_all, "clientcmp");
-}
 ?>
-<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
-	<thead>
-	<tr>
-		<th><a href="?order=ip&amp;showact=<?=$showact;?>"><?=gettext("IP address");?></a></th>
-		<th><a href="?order=mac&amp;showact=<?=$showact;?>"><?=gettext("MAC address");?></a></th>
-		<th><a href="?order=user&amp;showact=<?=$showact;?>"><?=gettext("Username");?></a></th>
-<?php if ($showact == 1): ?>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Session start");?></a></th>
-		<th><a href="?order=start&amp;showact=<?=$showact;?>"><?=gettext("Last activity");?></a></th>
-<?php endif; ?>
-	</tr>
-	</thead>
-	<tbody>
-<?php foreach ($cpdb_all as $cpent): ?>
-	<tr>
-		<td><?=$cpent[2];?></td>
-		<td><?=$cpent[3];?></td>
-		<td><?=$cpent[4];?></td>
-<?php if ($showact == 1): ?>
-		<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
-		<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
-<?php endif; ?>
-		<td>
-			<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
-				<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
-			</a>
-		</td>
-	</tr>
-<?php
-endforeach;
-?>
-	</tbody>
-</table>
+<div class="table-responsive">
+	<table class="table table-condensed sortable-theme-bootstrap" data-sortable>
+		<thead>
+		<tr>
+			<th><?=gettext("IP address");?></th>
+			<th><?=gettext("MAC address");?></th>
+			<th><?=gettext("Username");?></th>
+			<th><?=gettext("Session start");?></th>
+			<th><?=gettext("Last activity");?></th>
+		</tr>
+		</thead>
+		<tbody>
+	<?php foreach ($cpdb_all as $cpent): ?>
+		<tr>
+			<td><?=$cpent[2];?></td>
+			<td><?=$cpent[3];?></td>
+			<td><?=$cpent[4];?></td>
+			<td><?=date("m/d/Y H:i:s", $cpent[0]);?></td>
+			<td><?php if ($cpent[11] && ($cpent[11] > 0)) echo date("m/d/Y H:i:s", $cpent[11]);?></td>
+			<td>
+				<a href="?order=<?=htmlspecialchars($_GET['order']);?>&amp;showact=<?=$showact;?>&amp;act=del&amp;zone=<?=$cpent[10];?>&amp;id=<?=$cpent[5];?>">
+					<i class="fa fa-trash" title="<?=gettext("delete");?>"></i>
+				</a>
+			</td>
+		</tr>
+	<?php
+	endforeach;
+	?>
+		</tbody>
+	</table>
+</div>

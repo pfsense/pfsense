@@ -1,60 +1,27 @@
 <?php
 /*
-	interfaces.php
-*/
-/* ====================================================================
- *	Copyright (c)  2004-2015  Electric Sheep Fencing, LLC. All rights reserved.
- *	Copyright (c) 2006 Daniel S. Haischt
+ * interfaces.php
  *
- *	Some or all of this file is based on the m0n0wall project which is
- *	Copyright (c)  2004 Manuel Kasper (BSD 2 clause)
+ * part of pfSense (https://www.pfsense.org)
+ * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2006 Daniel S. Haischt
+ * All rights reserved.
  *
- *	Redistribution and use in source and binary forms, with or without modification,
- *	are permitted provided that the following conditions are met:
+ * originally based on m0n0wall (http://m0n0.ch/wall)
+ * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+ * All rights reserved.
  *
- *	1. Redistributions of source code must retain the above copyright notice,
- *	  this list of conditions and the following disclaimer.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- *	2. Redistributions in binary form must reproduce the above copyright
- *	  notice, this list of conditions and the following disclaimer in
- *	  the documentation and/or other materials provided with the
- *	  distribution.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- *	3. All advertising materials mentioning features or use of this software
- *	  must display the following acknowledgment:
- *	  "This product includes software developed by the pfSense Project
- *	   for use in the pfSense software distribution. (http://www.pfsense.org/).
- *
- *	4. The names "pfSense" and "pfSense Project" must not be used to
- *	   endorse or promote products derived from this software without
- *	   prior written permission. For written permission, please contact
- *	   coreteam@pfsense.org.
- *
- *	5. Products derived from this software may not be called "pfSense"
- *	  nor may "pfSense" appear in their names without prior written
- *	  permission of the Electric Sheep Fencing, LLC.
- *
- *	6. Redistributions of any form whatsoever must retain the following
- *	  acknowledgment:
- *
- *	"This product includes software developed by the pfSense Project
- *	for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- *	THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- *	EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- *	IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- *	PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- *	ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- *	SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *	NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- *	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- *	HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- *	STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- *	ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *	OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *	====================================================================
- *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -317,6 +284,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
+		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -1011,6 +979,7 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
+		unset($wancfg['dhcp6withoutra']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1258,6 +1227,9 @@ if ($_POST['apply']) {
 					$wancfg['dhcp6debug'] = true;
 				}
 
+				if ($_POST['dhcp6withoutra'] == "yes") {
+					$wancfg['dhcp6withoutra'] = true;
+				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
 				}
@@ -1761,7 +1733,7 @@ $btnmymac = new Form_Button(
 
 $btnmymac->setAttribute('type','button')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC controls');
+$group = new Form_Group('MAC Address');
 $group->add($macaddress);
 // $group->add($btnmymac);
 $group->setHelp('This field can be used to modify ("spoof") the MAC address of this interface.' . '<br />' .
@@ -1822,7 +1794,7 @@ $group->add(new Form_Button(
 ))->setAttribute('type','button')->addClass('btn-success')->setAttribute('data-target', '#newgateway')->setAttribute('data-toggle', 'modal');
 
 $group->setHelp('If this interface is an Internet connection, select an existing Gateway from the list or add a new one using the "Add" button.' . '<br />' .
-				'On local LANs the upstream gateway should be "none". ' .
+				'On local area network interfaces the upstream gateway should be "none". ' .
 				gettext('Gateways can be managed by ') . '<a target="_blank" href="system_gateways.php">' . gettext(" clicking here") . '</a>.');
 
 $section->add($group);
@@ -2154,7 +2126,12 @@ $section->addInput(new Form_Checkbox(
 	'Start DHCP6 client in debug mode',
 	$pconfig['dhcp6debug']
 ));
-
+$section->addInput(new Form_Checkbox(
+	'dhcp6withoutra',
+	'Do not wait for a RA',
+	'Required by some ISPs, especially those not using PPPoE',
+	$pconfig['dhcp6withoutra']
+));
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',
@@ -2603,7 +2580,7 @@ $section->addInput(new Form_Input(
 	'Idle timeout',
 	'number',
 	$pconfig['pppoe_idletimeout'],
-	[min => 0]
+	['min' => 0]
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
 
@@ -2622,7 +2599,7 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['pppoe_resethour'],
-	[min => 0, max => 23]
+	['min' => 0, 'max' => 23]
 ))->setHelp('Hour (0-23)');
 
 $group->add(new Form_Input(
@@ -2630,10 +2607,9 @@ $group->add(new Form_Input(
 	null,
 	'number',
 	$pconfig['pppoe_resetminute'],
-	[min => 0, max => 59]
+	['min' => 0, 'max' => 59]
 ))->setHelp('Minutes (0-59)');
 
-// ToDo: Need a date-picker here
 $group->add(new Form_Input(
 	'pppoe_resetdate',
 	null,
@@ -2735,7 +2711,7 @@ $section->addInput(new Form_Input(
 	'Idle timeout (seconds)',
 	'number',
 	$pconfig['pptp_idletimeout'],
-	[min => 0]
+	['min' => 0]
 ))->setHelp('If no qualifying outgoing packets are transmitted for the specified number of seconds, the connection is brought down. ' .
 			'An idle timeout of zero disables this feature.');
 
@@ -3670,6 +3646,8 @@ events.push(function() {
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});
+
+	$('#pppoe_resetdate').datepicker();
 
 });
 //]]>

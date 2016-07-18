@@ -194,6 +194,9 @@ EOF
 		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
 		print_error_pfS
 	fi
+
+	# Cleanup _licenses_dir
+	rm -rf ${_root}${_licenses_dir}
 }
 
 # This routine will output that something went wrong

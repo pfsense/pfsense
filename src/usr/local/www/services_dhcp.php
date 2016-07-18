@@ -1011,7 +1011,7 @@ $section->addInput(new Form_Input(
 	'DNS Domain key secret',
 	'text',
 	$pconfig['ddnsdomainkey']
-))->setHelp('Dynamic DNS domain key secret which will be used to register client names in the DNS server.');
+))->setHelp('Dynamic DNS domain key secret (HMAC-MD5) which will be used to register client names in the DNS server.');
 
 // Advanced MAC
 $btnadv = new Form_Button(

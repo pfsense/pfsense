@@ -109,7 +109,16 @@ class Form_Section extends Form_Element
 			}
 		}
 
-		return <<<EOT
+		if ($title == "NOTITLE") {
+			return <<<EOT
+	{$element}
+		{$bodyclass}
+			{$body}
+		</div>
+	</div>
+EOT;
+		} else {
+			return <<<EOT2
 	{$element}
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}{$hdricon}</h2>
@@ -118,6 +127,7 @@ class Form_Section extends Form_Element
 			{$body}
 		</div>
 	</div>
-EOT;
+EOT2;
+	}
 	}
 }

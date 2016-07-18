@@ -391,6 +391,10 @@ if ($_POST) {
 		$input_errors[] = gettext("Valid arguments for IKE type are v1, v2 or auto");
 	}
 
+	if (preg_match("/aes\d+gcm/", $_POST['ealgo']) && $_POST['iketype'] != "ikev2") {
+		$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
+	}
+
 	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
 		if ($config['system']['crypto_hardware'] == "glxsb") {
 			if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128") {

@@ -60,7 +60,7 @@ require_once("pfsense-utils.inc");
 $GIT_PKG = "git"; // Either "git" or the full package URL
 $GIT_BIN= "/usr/local/bin/git";
 $GIT_REPO = "git://github.com/pfsense/pfsense.git";
-$DEFAULT_BRANCH = "RELENG_2_3";
+$DEFAULT_BRANCH = "RELENG_2_3_2";
 $CODIR =  "/root/pfsense";
 $GITSYNC_MERGE = "/root/.gitsync_merge";
 
@@ -68,6 +68,7 @@ $GITSYNC_MERGE = "/root/.gitsync_merge";
 $branches = array(
 	"master" => "2.4 development branch",
 	"RELENG_2_3" => "2.3 development branch",
+	"RELENG_2_3_2" => "2.3.2 stable branch",
 	"build_commit" => "The commit originally used to build the image"
 );
 

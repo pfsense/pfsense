@@ -223,7 +223,7 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		'Branch name',
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
-		))->setHelp('The most recently used branch was "%s". (Usually the branch name is RELENG_2_3)' .
+		))->setHelp('The most recently used branch was "%s". (Usually the branch name is RELENG_2_3_2)' .
 					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
 
 	$form->add($section);

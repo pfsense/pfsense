@@ -717,8 +717,10 @@ create_ova_image() {
 
 	LOGFILE=${BUILDER_LOGS}/ova.${TARGET}.log
 
-	[ -d "${OVA_TMP}" ] \
-		&& rm -rf ${OVA_TMP}
+	if [ -d "${OVA_TMP}" ]; then
+		chflags -R noschg ${OVA_TMP}
+		rm -rf ${OVA_TMP}
+	fi
 
 	mkdir -p $(dirname ${OVAPATH})
 

@@ -761,7 +761,7 @@ create_ova_image() {
 	# Create / partition
 	echo -n ">>> Creating / partition... " | tee -a ${LOGFILE}
 	truncate -s ${OVA_FIRST_PART_SIZE} ${OVA_TMP}/${OVFUFS}
-	local _md=$(mdconfig -a -f ${OVA_TMP}/${OVAUFS})
+	local _md=$(mdconfig -a -f ${OVA_TMP}/${OVFUFS})
 	trap "mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
 	newfs -L ${PRODUCT_NAME} -j /dev/${_md} 2>&1 >>${LOGFILE}

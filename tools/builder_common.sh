@@ -926,8 +926,10 @@ create_virt_images() {
 
 	LOGFILE=${BUILDER_LOGS}/virt.${TARGET}.log
 
-	[ -d "${VIRT_TMP}" ] \
-		&& rm -rf ${VIRT_TMP}
+	if [ -d "${VIRT_TMP}" ]; then
+		chflags -R noschg ${VIRT_TMP}
+		rm -rf ${VIRT_TMP}
+	fi
 
 	local _mntdir=${VIRT_TMP}/mnt
 	mkdir -p ${_mntdir}

@@ -1273,6 +1273,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 			}
 			break;
 		case "dhcp":
+			mwexec("/usr/local/sbin/dhclient -v -r -lf /var/db/dhclient.leases.{$realif} -i {$realif}");
 			kill_dhclient_process($realif);
 			unlink_if_exists("{$g['varetc_path']}/dhclient_{$interface}.conf");
 			if (does_interface_exist("$realif")) {

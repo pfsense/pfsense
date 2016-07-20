@@ -4976,6 +4976,7 @@ function interface_find_child_cfgmtu($realiface) {
 
 	$interface = convert_real_interface_to_friendly_interface_name($realiface);
 	$vlans = link_interface_to_vlans($realiface);
+	$qinqs = link_interface_to_qinqs($realiface);
 	$bridge = link_interface_to_bridge($realiface);
 	if (!empty($interface)) {
 		$gifs = link_interface_to_gif($interface);
@@ -4989,6 +4990,19 @@ function interface_find_child_cfgmtu($realiface) {
 	if (is_array($vlans)) {
 		foreach ($vlans as $vlan) {
 			$ifass = convert_real_interface_to_friendly_interface_name($vlan['vlanif']);
+			if (empty($ifass)) {
+				continue;
+			}
+			if (!empty($config['interfaces'][$ifass]['mtu'])) {
+				if (intval($config['interfaces'][$ifass]['mtu']) > $mtu) {
+					$mtu = intval($config['interfaces'][$ifass]['mtu']);
+				}
+			}
+		}
+	}
+	if (is_array($qinqs)) {
+		foreach ($qinqs as $qinq) {
+			$ifass = convert_real_interface_to_friendly_interface_name($qinq['vlanif']);
 			if (empty($ifass)) {
 				continue;
 			}
@@ -5051,6 +5065,30 @@ function link_interface_to_vlans($int, $action = "") {
 					interfaces_bring_up($int);
 				} else {
 					$ifaces[$vlan['tag']] = $vlan;
+				}
+			}
+		}
+		if (!empty($ifaces)) {
+			return $ifaces;
+		}
+	}
+}
+
+function link_interface_to_qinqs($int, $action = "") {
+	global $config;
+
+	if (empty($int)) {
+		return;
+	}
+
+	if (is_array($config['qinqs']['qinqentry'])) {
+		$ifaces = array();
+		foreach ($config['qinqs']['qinqentry'] as $qinq) {
+			if ($int == $qinq['if']) {
+				if ($action == "update") {
+					interfaces_bring_up($int);
+				} else {
+					$ifaces[$qinq['tag']] = $qinq;
 				}
 			}
 		}

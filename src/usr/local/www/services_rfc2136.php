@@ -93,6 +93,7 @@ include("head.inc");
 $tab_array = array();
 $tab_array[] = array(gettext("Dynamic DNS Clients"), false, "services_dyndns.php");
 $tab_array[] = array(gettext("RFC 2136 Clients"), true, "services_rfc2136.php");
+$tab_array[] = array(gettext("Check IP Services"), false, "services_checkip.php");
 display_top_tabs($tab_array);
 
 if ($input_errors) {

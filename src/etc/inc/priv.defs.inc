@@ -646,6 +646,18 @@ $priv_list['page-services-captiveportal-editzones']['descr'] = gettext("Allow ac
 $priv_list['page-services-captiveportal-editzones']['match'] = array();
 $priv_list['page-services-captiveportal-editzones']['match'][] = "services_captiveportal_zones_edit.php*";
 
+$priv_list['page-services-checkipservices'] = array();
+$priv_list['page-services-checkipservices']['name'] = gettext("WebCfg - Services: Check IP Service");
+$priv_list['page-services-checkipservices']['descr'] = gettext("Allow access to the 'Services: Check IP Service' page.");
+$priv_list['page-services-checkipservices']['match'] = array();
+$priv_list['page-services-checkipservices']['match'][] = "services_checkip.php*";
+
+$priv_list['page-services-checkipedit'] = array();
+$priv_list['page-services-checkipedit']['name'] = gettext("WebCfg - Services: Check IP Service: Edit");
+$priv_list['page-services-checkipedit']['descr'] = gettext("Allow access to the 'Services: Check IP Service: Edit' page.");
+$priv_list['page-services-checkipedit']['match'] = array();
+$priv_list['page-services-checkipedit']['match'][] = "services_checkip_edit.php*";
+
 $priv_list['page-services-dhcpserver'] = array();
 $priv_list['page-services-dhcpserver']['name'] = gettext("WebCfg - Services: DHCP Server");
 $priv_list['page-services-dhcpserver']['descr'] = gettext("Allow access to the 'Services: DHCP Server' page.");

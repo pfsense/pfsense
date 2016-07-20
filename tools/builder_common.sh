@@ -769,8 +769,8 @@ create_ova_image() {
 	echo 'autoboot_delay="3"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 	echo 'console="vidconsole"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 	echo 'kern.ipc.nmbclusters="1000000"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
-	echo 'kern.ipc.nmbclusters="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
-	echo 'kern.ipc.nmbclusters="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo 'kern.ipc.nmbjumbop="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo 'kern.ipc.nmbjumbo9="524288"' >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
 	echo "Done!" | tee -a ${LOGFILE}
 
 	# Create / partition

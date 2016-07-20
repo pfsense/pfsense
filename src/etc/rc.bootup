@@ -164,9 +164,8 @@ system_do_shell_commands(1);
 
 if (isset($config['system']['trigger_virt_setup'])) {
 	netgate_hardware_setup();
-}
-
-if (file_exists("/conf/trigger_initial_wizard")) {
+} elseif (file_exists("/conf/trigger_initial_wizard")) {
+	netgate_hardware_setup();
 	check_for_alternate_interfaces();
 }
 

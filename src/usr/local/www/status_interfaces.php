@@ -91,7 +91,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	<div class="panel-body">
 		<dl class="dl-horizontal">
 <?php
-		showDef(true, gettext("Status"), $ifinfo['status']);
+		showDef(true, gettext("Interface Status"), $ifinfo['status']);
 		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"));
 		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"));
 		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
@@ -116,7 +116,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 
 		if ($ifinfo['status'] != "down") {
 			if ($ifinfo['dhcplink'] != "down" && $ifinfo['pppoelink'] != "down" && $ifinfo['pptplink'] != "down") {
-				showDef($ifinfo['ipaddr'], gettext('IPv4 Address'), $ifinfo['ipaddr']);
+				showDef($ifinfo['ipaddr'], gettext('IPv4 Address'), "${ifinfo['ipaddr']} (${ifinfo['linktype']})");
 				showDef($ifinfo['subnet'], gettext('Subnet mask IPv4'), $ifinfo['subnet']);
 				showDef($ifinfo['gateway'], gettext('Gateway IPv4'), $ifinfo['gateway']);
 				showDef($ifinfo['linklocal'], gettext('IPv6 Link Local'), $ifinfo['linklocal']);
@@ -128,13 +128,14 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 					$dns_servers = get_dns_servers();
 					$dnscnt = 0;
 					foreach ($dns_servers as $dns) {
-						showDef(true, $dnscnt == 0 ? gettext('DNS servers'):'', $dns);
+						showDef(true, $dnscnt == 0 ? gettext('DNS server(s)'):'', $dns);
 						$dnscnt++;
 					}
 				}
 			}
 
 			showDef($ifinfo['mtu'], gettext("MTU"), $ifinfo['mtu']);
+			showDef($ifinfo['NIC'], gettext("NIC"), $ifinfo['NIC']);
 			showDef($ifinfo['media'], gettext("Media"), $ifinfo['media']);
 			showDef($ifinfo['laggproto'], gettext("LAGG Protocol"), $ifinfo['laggproto']);
 			showDef($ifinfo['laggport'], gettext("LAGG Ports"), $laggport);

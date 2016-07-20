@@ -727,15 +727,15 @@ function netgate_hardware_setup() {
 				'if' => 'igb1',
 				'descr' => 'OPT1'
 			);
+			$config['interfaces']['opt2'] = array(
+				'if' => 'igb3',
+				'descr' => 'OPT2'
+			);
 		}
 		if ($g['platform'] == 'cdrom') {
 			$config['interfaces']['opt1']['enable'] = true;
 			$config['interfaces']['opt1']['ipaddr'] = 'dhcp';
 		}
-		$config['interfaces']['opt2'] = array(
-			'if' => 'igb3',
-			'descr' => 'OPT2'
-		);
 		$config['interfaces']['opt3'] = array(
 			'if' => 'ix0',
 			'descr' => 'OPT3'

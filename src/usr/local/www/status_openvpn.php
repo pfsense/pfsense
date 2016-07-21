@@ -114,7 +114,7 @@ include("head.inc"); ?>
 			return;
 		}
 
-		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+		$('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
 			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}

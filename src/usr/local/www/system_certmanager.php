@@ -68,13 +68,13 @@ $cert_methods = array(
 	"external" => gettext("Create a Certificate Signing Request"),
 );
 
-$cert_keylens = array("512", "1024", "2048", "4096");
+$cert_keylens = array("512", "1024", "2048", "3072", "4096", "7680", "8192", "15360", "16384");
 $cert_types = array(
 	"server" => "Server Certificate",
 	"user" => "User Certificate");
 
 $altname_types = array("DNS", "IP", "email", "URI");
-$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512");
+$openssl_digest_algs = array("sha1", "sha224", "sha256", "sha384", "sha512", "whirlpool");
 
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];

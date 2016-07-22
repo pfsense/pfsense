@@ -256,7 +256,7 @@ display_top_tabs($tab_array);
 
 $form = new Form();
 
-$section = new Form_Section('General Logging Options');
+$section = new Form_Section('Outbound NAT Mode');
 
 $group = new Form_Group('Mode');
 

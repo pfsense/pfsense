@@ -378,7 +378,8 @@ $section->addInput(new Form_Input(
 	'Update URL',
 	'text',
 	$pconfig['updateurl']
-))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.');
+))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.' . '<br />' .
+			'OnAppV4: Enter the base URL of the site using OnAppV4 API. Example http://onapp.test ');
 
 $section->addInput(new Form_Textarea(
 	'resultmatch',

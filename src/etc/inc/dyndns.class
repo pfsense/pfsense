@@ -300,6 +300,7 @@
 					case 'dnsmadeeasy':
 					case 'spdyn':
 					case 'spdyn-v6':
+					case 'onapp-v4':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -800,6 +801,21 @@
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
+					break;
+				case 'onapp-v4':
+					/* Uses OnAppV4's REST API
+					   Requires username and Account API token passed in basic authentication
+					   https://docs.onapp.com/display/40API/Edit+DNS+Records
+					   Data sent as JSON */
+					$needsIP = TRUE;
+					$server_url = "{$this->_dnsUpdateURL}/dns_zones/{$this->_dnsZoneID}/records/{$this->_dnsMX}.json";
+					$jsondata = '{"dns_record":{"name":"' . $this->_dnsDomain . '","ip":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_HEADER, 1);
+					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
+					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json'));
+					curl_setopt($ch, CURLOPT_URL, $server_url);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $jsondata);
 					break;
 				case 'googledomains':
@@ -1353,6 +1369,31 @@
 					$header = substr($data, 0, $header_size);
 					$body = substr($data, $header_size);
 					if (preg_match("/Status: 200\s/i", $header)) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {
+						$arrbody = json_decode($body, true);
+						$message = $arrbody['message'] . ".";
+						if (isset($arrbody['errors']['content'])) {
+							foreach ($arrbody['errors']['content'] as $key => $content) {
+								$message .= " " . $content . ".";
+							}
+						}
+						$status = $status_intro . $error_str . $message;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $body);
+						$this->_debug($body);
+					}
+					break;
+				case 'onapp-v4':
+					/* Responds with HTTP 20x on success.
+					   Responds with HTTP 4xx on error.
+					   Returns JSON data as body */
+					$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+					$header = substr($data, 0, $header_size);
+					$body = substr($data, $header_size);
+					if (preg_match("/Status: 20[0-9]\s/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
 					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {

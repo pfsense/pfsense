@@ -1377,9 +1377,9 @@ customize_stagearea_for_image() {
 }
 
 create_distribution_tarball() {
-	mkdir -p ${FINAL_CHROOT_DIR}/install
+	mkdir -p ${FINAL_CHROOT_DIR}/distrib
 
-	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs -cJf ${FINAL_CHROOT_DIR}/install/${PRODUCT_NAME}.txz .
+	tar -C ${FINAL_CHROOT_DIR} --exclude ./distrib --exclude ./pkgs -cJf ${FINAL_CHROOT_DIR}/distrib/${PRODUCT_NAME}.txz .
 }
 
 create_iso_image() {

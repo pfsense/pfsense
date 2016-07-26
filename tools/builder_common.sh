@@ -1020,7 +1020,7 @@ create_ova_image() {
 	fi
 	echo "Done!" | tee -a ${LOGFILE}
 
-	rm -f ${OVA_TMP}/i${OVFRAW}
+	rm -f ${OVA_TMP}/${OVFRAW}
 
 	ova_setup_ovf_template
 

@@ -97,17 +97,14 @@ function adjust_gmt($dt) {
 		}
 	}
 
-	$timezone = $config['system']['timezone'];
-	$ts = strtotime($dt . " GMT");
 	if ($dhcpv6leaseinlocaltime == "yes") {
-		$this_tz = new DateTimeZone($timezone);
-		$dhcp_lt = new DateTime(strftime("%I:%M:%S%p", $ts), $this_tz);
-		$offset = $this_tz->getOffset($dhcp_lt);
-		$ts = $ts + $offset;
-		return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
-	} else {
-		return strftime("%Y/%m/%d %H:%M:%S", $ts);
+		$ts = strtotime($dt . " GMT");
+		if ($ts !== false) {
+			return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
+		}
 	}
+	/* If we did not need to convert to local time or the conversion failed, just return the input. */
+	return $dt;
 }
 
 function remove_duplicate($array, $field) {

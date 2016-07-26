@@ -4048,7 +4048,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (isset($wancfg['dhcp6withoutra'])) {
 		kill_dhcp6client_process($wanif);
 
-		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -x -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
+		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
  		mwexec("/usr/bin/logger -t mwtag 'Starting dhcp6 client for interface wan({$wanif} in IPoE mode)'");
 	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");

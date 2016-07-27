@@ -308,6 +308,9 @@ elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="iso nanobsd nanobsd-vga memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
+		if [ -n "${_IS_RELEASE}"  ]; then
+			_IMAGESTOBUILD="${_IMAGESTOBUILD} ova"
+		fi
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"

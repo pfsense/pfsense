@@ -114,29 +114,29 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Construct RegEx for specific log file type.
-	     if ($logfile_type == 'firewall')	{
+	if ($logfile_type == 'firewall') {
 		$pattern = "filterlog:";
 	}
-	else if ($logfile_type == 'system')		{
+	else if ($logfile_type == 'system') {
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
 
-	else if ($logfile_type == 'vpn_login')	{
+	else if ($logfile_type == 'vpn_login') {
 		$action_pattern = "\(.*?\)";
 		$type_pattern = "\(.*?\)";
 		$ip_address_pattern = "\(.*?\)";
 		$user_pattern = "\(.*?\)";
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
 	}
-	else if ($logfile_type == 'vpn_service')	{
+	else if ($logfile_type == 'vpn_service') {
 		$type_pattern = "\(.*?\):";
 		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $type_pattern . "\ +" . $pid_pattern . "\ *" . $log_message_pattern . "$";
 	}
-	else if ($logfile_type == 'unknown')	{
+	else if ($logfile_type == 'unknown') {
 		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
 	}
-	else									{
+	else {
 		$pattern = "^\(.*\)$";
 	}
 

@@ -66,8 +66,9 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		return;
 	}
 
+	/* Safety belt to ensure we get enough lines for filtering without overloading the parsing code */
 	if ($filtertext) {
-		$tail = 5000;
+		$tail = 10000;
 	}
 
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */

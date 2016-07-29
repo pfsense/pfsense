@@ -80,7 +80,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name")     . "</th>\n");
-	print(		"<th>" . gettext("Category") . "</th>\n");
 	print(		"<th>" . gettext("Version")  . "</th>\n");
 	print(		"<th>" . gettext("Actions")  . "</th>\n");
 	print(	"</tr>\n");
@@ -132,7 +131,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
-		print(		"<td>" . implode(' ', $pkg['categories']) . "</td>\n");
 		print(		"<td>\n");
 		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
 

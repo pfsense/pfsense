@@ -54,14 +54,61 @@
 
 /*** Experimental Changes Go Here ***/
 
-.panel-heading a:link, .panel-heading a:visited {
-    color: #404040;
-    text-decoration: underline;
+body {
+	font-size: 12px;
 }
 
-.panel-default>.panel-heading {
-    color: #404040;
-    background-color: #cccccc;
-    letter-spacing: 1px;
+.navbar-nav {
+    padding: 5px 5px 0px 5px;
 }
 
+table[data-sortable].sortable-theme-bootstrap {
+	font-size: 12px;
+}
+
+.table>tbody>tr>td {
+    padding: 4px 4px 4px 10px;
+}
+
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+    padding: 4px 5px;
+}
+
+a.fa, i.fa {
+    font-size: 14px;
+}
+
+.breadcrumb {
+    padding: 8px 15px;
+    margin-bottom: 16px;
+    font-size: 18px;
+}
+
+.nav>li>a {
+    padding: 10px 15px 10px 15px;
+}
+
+.nav-pills {
+    margin-bottom: 16px;
+}
+
+.dropdown-menu>li>a {
+    padding: 3px 20px;
+}
+
+.panel-title {
+    font-size: 14px;
+}
+
+.form-group {
+    padding: 5px 5px 5px 5px;
+}
+
+.icon-embed-btn {
+    padding-right: 16px;
+    padding-bottom: 13px;
+}
+
+.panel-heading {
+    padding: 5px 10px;
+}

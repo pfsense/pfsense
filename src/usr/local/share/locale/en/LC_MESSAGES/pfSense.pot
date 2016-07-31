@@ -19356,7 +19356,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:366
 #: src/usr/local/www/services_dhcp_edit.php:318
-msgid "A valid IP address or hostname must be specified for the TFTP server."
+msgid "A valid IP address, hostname or URL must be specified for the TFTP server."
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:369

@@ -1125,11 +1125,11 @@ $section->addInput(new Form_StaticText(
 	$btnadv
 ));
 
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'tftp',
 	'TFTP Server',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_-]+');
+))->setHelp('Leave blank to disable. Enter a valid IP address, hostname or URL for the TFTP server.');
 
 // Advanced LDAP
 $btnadv = new Form_Button(

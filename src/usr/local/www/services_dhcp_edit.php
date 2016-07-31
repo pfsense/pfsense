@@ -313,8 +313,8 @@ if ($_POST) {
 	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
 	}
-	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
-		$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
+	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
+		$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
 	}
 	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
 		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");

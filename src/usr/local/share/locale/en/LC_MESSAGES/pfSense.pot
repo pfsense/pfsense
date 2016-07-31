@@ -19963,7 +19963,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1091
 msgid ""
-"Leave blank to disable.  Enter a full hostname or IP for the TFTP server."
+"Leave blank to disable. Enter a valid IP address, hostname or URL for the TFTP server."
 msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1104

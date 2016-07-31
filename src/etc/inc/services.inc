@@ -898,6 +898,11 @@ EOPP;
 				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
 			}
 
+			// ignore bootp
+			if (isset($poolconf['ignorebootp'])) {
+				$dhcpdconf .= "		ignore bootp;\n";
+			}
+
 			// netbios-name*
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";

@@ -199,6 +199,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['domainsearchlist'] = $dhcpdconf['domainsearchlist'];
 	list($pconfig['wins1'], $pconfig['wins2']) = $dhcpdconf['winsserver'];
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
+	$pconfig['ignorebootp'] = isset($dhcpdconf['ignorebootp']);
 	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
 	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
@@ -564,6 +565,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['gateway'] = $_POST['gateway'];
 		$dhcpdconf['domain'] = $_POST['domain'];
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
+		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
 		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
@@ -793,6 +795,13 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 } else {
 	print_info_box(gettext('Editing pool-specific options. To return to the Interface, click its tab above.'), 'info', false);
 }
+
+$section->addInput(new Form_Checkbox(
+	'ignorebootp',
+	'BOOTP',
+	'Ignore BOOTP queries',
+	$pconfig['ignorebootp']
+));
 
 $section->addInput(new Form_Checkbox(
 	'denyunknown',

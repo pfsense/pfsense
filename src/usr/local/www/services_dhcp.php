@@ -329,7 +329,7 @@ if (isset($_POST['save'])) {
 		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
 		}
-		f ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
+		if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
 			$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
 		}
 		if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {

@@ -86,7 +86,7 @@ core_pkg_create() {
 
 	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
-	${SCRIPTS_DIR}/create_core_pkg.sh \
+	${BUILDER_SCRIPTS}/create_core_pkg.sh \
 		-t "${_template_path}" \
 		-f "${_flavor}" \
 		-v "${_version}" \
@@ -245,7 +245,7 @@ make_world() {
 	fi
 
 	echo ">>> $(LC_ALL=C date) - Starting build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${SCRIPTS_DIR}/build_freebsd.sh -K -s ${FREEBSD_SRC_DIR} \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/build_freebsd.sh -K -s ${FREEBSD_SRC_DIR} \
 		|| print_error_pfS
 	echo ">>> $(LC_ALL=C date) - Finished build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
 
@@ -256,13 +256,13 @@ make_world() {
 		|| mkdir -p ${INSTALLER_CHROOT_DIR}
 
 	echo ">>> Installing world with bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${SCRIPTS_DIR}/install_freebsd.sh -i -K \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -i -K \
 		-s ${FREEBSD_SRC_DIR} \
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${SCRIPTS_DIR}/install_freebsd.sh -K \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \
 		-d ${STAGE_CHROOT_DIR} \
 		|| print_error_pfS
@@ -1366,7 +1366,7 @@ update_freebsd_sources() {
 	fi
 
 	echo ">>> Obtaining FreeBSD sources (${FREEBSD_BRANCH})..."
-	${SCRIPTS_DIR}/git_checkout.sh \
+	${BUILDER_SCRIPTS}/git_checkout.sh \
 		-r ${FREEBSD_REPO_BASE} \
 		-d ${FREEBSD_SRC_DIR} \
 		-b ${FREEBSD_BRANCH}
@@ -1513,7 +1513,7 @@ buildkernel() {
 	fi
 
 	echo ">>> $(LC_ALL=C date) - Starting build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${SCRIPTS_DIR}/build_freebsd.sh -W -s ${FREEBSD_SRC_DIR} \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/build_freebsd.sh -W -s ${FREEBSD_SRC_DIR} \
 		|| print_error_pfS
 	echo ">>> $(LC_ALL=C date) - Finished build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
 }
@@ -1534,7 +1534,7 @@ installkernel() {
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
 	echo ">>> Installing kernel (${KERNCONF}) for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${SCRIPTS_DIR}/install_freebsd.sh -W -D -z \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -W -D -z \
 		-s ${FREEBSD_SRC_DIR} \
 		-d ${_destdir} \
 		|| print_error_pfS

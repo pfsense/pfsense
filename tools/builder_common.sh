@@ -2012,7 +2012,6 @@ EOF
 		fi
 
 		echo -n ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		# XXX: Change -m to git when it's available in poudriere
 		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
 				-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}

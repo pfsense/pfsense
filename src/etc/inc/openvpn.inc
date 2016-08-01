@@ -1124,8 +1124,8 @@ function openvpn_restart($mode, $settings) {
 		return;
 	}
 
-	/* Do not start a client if we are a CARP backup on this vip! */
-	if (($mode == "client") && (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER")) {
+	/* Do not start an instance if we are not CARP master on this vip! */
+	if (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER") {
 		return;
 	}
 

@@ -315,11 +315,10 @@ make_world() {
 		return
 	fi
 
-	makeargs="${MAKEJ}"
-	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Building world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> $(LC_ALL=C date) - Starting build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${SCRIPTS_DIR}/build_freebsd.sh -K -s ${FREEBSD_SRC_DIR} \
+		|| print_error_pfS
+	echo ">>> $(LC_ALL=C date) - Finished build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
 
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
@@ -1596,12 +1595,10 @@ buildkernel() {
 		export KERNCONF=$(basename ${KERNELCONF})
 	fi
 
-	echo ">>> KERNCONFDIR: ${KERNCONFDIR}"
-	echo ">>> ARCH:        ${TARGET_ARCH}"
-
-	makeargs="${MAKEJ}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
-	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
+	echo ">>> $(LC_ALL=C date) - Starting build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${SCRIPTS_DIR}/build_freebsd.sh -W -s ${FREEBSD_SRC_DIR} \
+		|| print_error_pfS
+	echo ">>> $(LC_ALL=C date) - Finished build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
 }
 
 # Imported from FreeSBIE

@@ -95,16 +95,6 @@ done
 [ ! -f ${srcdir}/sys/sys/param.h ] \
 	&& err "Source directory is missing sys/sys/param.h"
 
-host_osversion=$(sysctl -n kern.osreldate)
-src_osversion=$(awk '/^\#define[[:blank:]]__FreeBSD_version/ {print $3}' \
-	${srcdir}/sys/sys/param.h)
-
-[ -z "${src_osversion}" -o -z "${host_osversion}" ] \
-	&& err "error obtaining host or src osversion"
-
-[ $src_osversion -gt $host_osversion ] \
-	&& err "src osversion (${src_osversion}) is bigger than host osversion (${host_osversion})"
-
 ncpu=$(sysctl -n hw.ncpu)
 njobs=$((ncpu*2))
 j="-j${njobs}"

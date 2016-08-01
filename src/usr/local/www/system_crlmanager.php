@@ -243,12 +243,6 @@ if ($_POST) {
 		array_push($input_errors, "The field 'Descriptive Name' contains invalid characters.");
 	}
 
-	/* if this is an AJAX caller then handle via JSON */
-	if (isAjax() && is_array($input_errors)) {
-		input_errors2Ajax($input_errors);
-		exit;
-	}
-
 	/* save modifications */
 	if (!$input_errors) {
 		$result = false;

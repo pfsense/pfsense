@@ -125,12 +125,6 @@ if ($_POST) {
 			$input_errors[] = gettext("Number of L2TP users must be between 1 and 255");
 		}
 
-		/* if this is an AJAX caller then handle via JSON */
-		if (isAjax() && is_array($input_errors)) {
-			input_errors2Ajax($input_errors);
-			exit;
-		}
-
 		if (!$input_errors) {
 			$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['l2tp_subnet']);
 			if (is_inrange_v4($_POST['localip'], $_POST['remoteip'], ip_after($_POST['remoteip'], $_POST['n_l2tp_units'] - 1))) {
@@ -140,12 +134,6 @@ if ($_POST) {
 				$input_errors[] = gettext("The specified server address is equal to the LAN interface address.");
 			}
 		}
-	}
-
-	/* if this is an AJAX caller then handle via JSON */
-	if (isAjax() && is_array($input_errors)) {
-		input_errors2Ajax($input_errors);
-		exit;
 	}
 
 	if (!$input_errors) {

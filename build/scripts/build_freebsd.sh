@@ -103,8 +103,7 @@ src_osversion=$(awk '/^\#define[[:blank:]]__FreeBSD_version/ {print $3}' \
 	&& err "error obtaining host or src osversion"
 
 [ $src_osversion -gt $host_osversion ] \
-	&& err "src osversion (${src_osversion}) is bigger than host " \
-	" osversion (${host_osversion})"
+	&& err "src osversion (${src_osversion}) is bigger than host osversion (${host_osversion})"
 
 ncpu=$(sysctl -n hw.ncpu)
 njobs=$((ncpu*2))

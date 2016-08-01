@@ -346,11 +346,9 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	builder_setup
 
 	# Build world, kernel and install
-	echo ">>> Building world for ISO... $FREEBSD_BRANCH ..."
 	make_world
 
 	# Build kernels
-	echo ">>> Building kernel configs: $BUILD_KERNELS for FreeBSD: $FREEBSD_BRANCH ..."
 	build_all_kernels
 
 	# Install kernel on installer

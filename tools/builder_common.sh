@@ -105,12 +105,8 @@ print_error_pfS() {
 	echo
 	echo "NOTE: a lot of times you can run './build.sh --clean-builder' to resolve."
 	echo
-	if [ "$1" != "" ]; then
-		echo $1
-	fi
 	[ -n "${LOGFILE}" -a -f "${LOGFILE}" ] && \
 		echo "Log saved on ${LOGFILE}" && \
-		tail -n20 ${LOGFILE} >&2
 	echo
 	kill $$
 	exit 1

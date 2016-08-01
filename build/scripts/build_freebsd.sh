@@ -75,7 +75,7 @@ while getopts s:o:WKh opt; do
 done
 
 # Default obj dir to src/../obj
-: ${objdir=$(realpath ${srcdir}../obj)}
+: ${objdir=$(realpath ${srcdir}/../obj)}
 
 [ -z "$srcdir" ] \
 	&& err "source directory is not defined"

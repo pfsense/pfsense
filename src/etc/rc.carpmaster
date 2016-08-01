@@ -80,9 +80,20 @@ if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-client'
 }
 if (is_array($config['openvpn']) && is_array($config['openvpn']['openvpn-server'])) {
 	foreach ($config['openvpn']['openvpn-server'] as $settings) {
+		if (substr($settings['interface'], 0, 4) == '_vip') {
+			$openvpn_vip = $settings['interface'];
+		} else if (is_array($a_groups[$settings['interface']])) {
+			// interface is a gateway group, check CARP VIP
+			if (substr($a_groups[$settings['interface']][0]['vip'], 0, 4) == '_vip') {
+				$openvpn_vip = $a_groups[$settings['interface']][0]['vip'];
+			}
+		} else {
+			// this OpenVPN instance not on a CARP IP
+			continue;
+		}
 		foreach ($vips as $vip) {
-			if ($settings['interface'] == "_vip{$vip['uniqid']}") {
-				log_error("Starting OpenVPN instance on {$friendly_descr} because of transition to CARP master.");
+			if ($openvpn_vip == "_vip{$vip['uniqid']}") {
+				log_error("Starting OpenVPN server instance on {$friendly_descr} because of transition to CARP master.");
 				openvpn_restart('server', $settings);
 			}
 		}

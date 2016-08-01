@@ -1241,10 +1241,6 @@ function openvpn_resync_csc(& $settings) {
 
 	openvpn_add_dhcpopts($settings, $conf);
 
-	if ($settings['gwredir']) {
-		$conf .= "push \"redirect-gateway def1\"\n";
-	}
-
 	openvpn_add_custom($settings, $conf);
 	/* Loop through servers, find which ones can use this CSC */
 	if (is_array($config['openvpn']['openvpn-server'])) {

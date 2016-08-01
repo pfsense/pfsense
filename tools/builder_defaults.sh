@@ -143,17 +143,6 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-# Controls how many concurrent make processes are run for each stage
-_CPUS=""
-if [ -z "${NO_MAKEJ}" ]; then
-	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
-	if [ -n "${_CPUS}" ]; then
-		_CPUS="-j${_CPUS}"
-	fi
-fi
-
-export MAKEJ=${MAKEJ:-"${_CPUS}"}
-
 export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
 # Area that the final image will appear in

@@ -84,87 +84,16 @@ core_pkg_create() {
 	local _root="${4}"
 	local _filter="${5}"
 
-	[ -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
+	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
-	local _templates_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
-	local _template_metadir=${_templates_path}/metadir
-	local _metadir=${CORE_PKG_TMP}/${_template}_metadir
-
-	if [ ! -d ${_template_metadir} ]; then
-		echo "ERROR: Template dir not found for pkg ${_template}"
-		exit
-	fi
-
-	mkdir -p ${CORE_PKG_TMP}
-
-	cp -r ${_template_metadir} ${_metadir}
-
-	local _manifest=${_metadir}/+MANIFEST
-	local _plist=${CORE_PKG_TMP}/${_template}_plist
-	local _exclude_plist=${CORE_PKG_TMP}/${_template}_exclude_plist
-
-	if [ -f "${_templates_path}/pkg-plist" ]; then
-		cp ${_templates_path}/pkg-plist ${_plist}
-	else
-		if [ -n "${_filter}" ]; then
-			_filter="-name ${_filter}"
-		fi
-		(cd ${_root} && find . ${_filter} -type f -or -type l | sed 's,^.,,' | sort -u) > ${_plist}
-	fi
-
-	if [ -f "${_templates_path}/exclude_plist" ]; then
-		cp ${_templates_path}/exclude_plist ${_exclude_plist}
-	else
-		touch ${_exclude_plist}
-	fi
-
-	sed \
-		-i '' \
-		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
-		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
-		-e "s,%%FLAVOR%%,${_flavor:+-}${_flavor},g" \
-		-e "s,%%FLAVOR_DESC%%,${_flavor:+ (${_flavor})},g" \
-		-e "s,%%VERSION%%,${_version},g" \
-		${_metadir}/* \
-		${_plist} \
-		${exclude_plist}
-
-	if [ -f "${_exclude_plist}" ]; then
-		sort -u ${_exclude_plist} > ${_plist}.exclude
-		mv ${_plist} ${_plist}.tmp
-		comm -23 ${_plist}.tmp ${_plist}.exclude > ${_plist}
-		rm -f ${_plist}.tmp ${plist}.exclude
-	fi
-
-	# Add license information
-	local _portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${_metadir}/+MANIFEST)
-	local _licenses_dir="/usr/local/share/licenses/${_portname}-${_version}"
-	mkdir -p ${_root}${_licenses_dir}
-	cp ${BUILDER_ROOT}/LICENSE ${_root}${_licenses_dir}/APACHE20
-	echo "This package has a single license: APACHE20 (Apache License 2.0)." \
-		> ${_root}${_licenses_dir}/LICENSE
-	cat <<EOF >${_root}${_licenses_dir}/catalog.mk
-_LICENSE=APACHE20
-_LICENSE_NAME=Apache License 2.0
-_LICENSE_PERMS=dist-mirror dist-sell pkg-mirror pkg-sell auto-accept
-_LICENSE_GROUPS=FSF OSI
-_LICENSE_DISTFILES=
-EOF
-	cat <<EOF >>${_plist}
-${_licenses_dir}/catalog.mk
-${_licenses_dir}/LICENSE
-${_licenses_dir}/APACHE20
-EOF
-
-	mkdir -p ${CORE_PKG_REAL_PATH}/All
-	if ! pkg create -o ${CORE_PKG_REAL_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
-		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
-		print_error_pfS
-	fi
-
-	# Cleanup _licenses_dir
-	rm -rf ${_root}${_licenses_dir}
+	${SCRIPTS_DIR}/create_core_pkg.sh \
+		-t "${_template_path}" \
+		-f "${_flavor}" \
+		-v "${_version}" \
+		-r "${_root}" \
+		-F "${_filter}" \
+		-d "${CORE_PKG_REAL_PATH}/All" \
+		|| print_error_pfS
 }
 
 # This routine will output that something went wrong

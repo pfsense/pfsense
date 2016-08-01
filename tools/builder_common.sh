@@ -1444,42 +1444,28 @@ update_freebsd_sources() {
 		local _clone_params="--depth 1 --single-branch"
 	fi
 
-	if [ ! -d "${FREEBSD_SRC_DIR}" ]; then
-		mkdir -p ${FREEBSD_SRC_DIR}
-	fi
-
 	if [ -n "${NO_BUILDWORLD}" -a -n "${NO_BUILDKERNEL}" ]; then
 		echo ">>> NO_BUILDWORLD and NO_BUILDKERNEL set, skipping update of freebsd sources" | tee -a ${LOGFILE}
 		return
 	fi
 
-	echo -n ">>> Obtaining FreeBSD sources ${FREEBSD_BRANCH}..."
-	local _FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
-	local _CLONE=1
+	echo ">>> Obtaining FreeBSD sources (${FREEBSD_BRANCH})..."
+	${SCRIPTS_DIR}/git_checkout.sh \
+		-r ${FREEBSD_REPO_BASE} \
+		-d ${FREEBSD_SRC_DIR} \
+		-b ${FREEBSD_BRANCH}
 
-	if [ -d "${FREEBSD_SRC_DIR}/.git" ]; then
-		CUR_BRANCH=$(cd ${FREEBSD_SRC_DIR} && git branch | grep '^\*' | cut -d' ' -f2)
-		if [ ${_full} -eq 0 -a "${CUR_BRANCH}" = "${_FREEBSD_BRANCH}" ]; then
-			_CLONE=0
-			( cd ${FREEBSD_SRC_DIR} && git clean -fd; git fetch origin; git reset --hard origin/${_FREEBSD_BRANCH} ) 2>&1 | grep -C3 -i -E 'error|fatal'
-		else
-			rm -rf ${FREEBSD_SRC_DIR}
-		fi
-	fi
-
-	if [ ${_CLONE} -eq 1 ]; then
-		( git clone --branch ${_FREEBSD_BRANCH} ${_clone_params} ${FREEBSD_REPO_BASE} ${FREEBSD_SRC_DIR} ) 2>&1 | grep -C3 -i -E 'error|fatal'
-	fi
-
-	if [ ! -d "${FREEBSD_SRC_DIR}/.git" ]; then
+	if [ $? -ne 0 -o ! -d "${FREEBSD_SRC_DIR}/.git" ]; then
 		echo ">>> ERROR: It was not possible to clone FreeBSD src repo"
 		print_error_pfS
 	fi
 
 	if [ -n "${GIT_FREEBSD_COSHA1}" ]; then
-		( cd ${FREEBSD_SRC_DIR} && git checkout ${GIT_FREEBSD_COSHA1} ) 2>&1 | grep -C3 -i -E 'error|fatal'
+		echo -n ">>> Checking out desired commit (${GIT_FREEBSD_COSHA1})... "
+		( git -C  ${FREEBSD_SRC_DIR} checkout ${GIT_FREEBSD_COSHA1} ) 2>&1 | \
+			grep -C3 -i -E 'error|fatal'
+		echo "Done!"
 	fi
-	echo "Done!"
 }
 
 pkg_chroot() {

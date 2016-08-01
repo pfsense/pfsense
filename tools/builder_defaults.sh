@@ -37,6 +37,7 @@ if [ ! -d "${BUILDER_ROOT}" ]; then
 fi
 
 export BUILDER_TOOLS=${BUILDER_TOOLS:-"${BUILDER_ROOT}/tools"}
+export BUILDER_SCRIPTS=${BUILDER_SCRIPTS:-"${BUILDER_ROOT}/build/scripts"}
 
 if [ ! -d "${BUILDER_TOOLS}" ]; then
 	echo ">>> ERROR: BUILDER_TOOLS is invalid"

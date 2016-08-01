@@ -54,7 +54,7 @@ END
 
 unset skip_world
 unset skip_kernel
-while getopts s:o:h opt; do
+while getopts s:o:WKh opt; do
 	case "$opt" in
 		s)
 			srcdir=$OPTARG

@@ -23,7 +23,8 @@
 /*** Experimental Changes Go Here ***/
 
 body {
-	font-size: 12px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .navbar-nav {
@@ -31,7 +32,8 @@ body {
 }
 
 table[data-sortable].sortable-theme-bootstrap {
-	font-size: 12px;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 .table>tbody>tr>td {

@@ -26,12 +26,12 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if ($_GET['getpic']=="true") {
-	$pic_type_s = explode(".", $config['widgets']['picturewidget_filename']);
+	$pic_type_s = explode(".", $user_settings['widgets']['picturewidget_filename']);
 	$pic_type = $pic_type_s[1];
-	if ($config['widgets']['picturewidget']) {
-		$data = base64_decode($config['widgets']['picturewidget']);
+	if ($user_settings['widgets']['picturewidget']) {
+		$data = base64_decode($user_settings['widgets']['picturewidget']);
 	}
-	header("Content-Disposition: inline; filename=\"{$config['widgets']['picturewidget_filename']}\"");
+	header("Content-Disposition: inline; filename=\"{$user_settings['widgets']['picturewidget_filename']}\"");
 	header("Content-Type: image/{$pic_type}");
 	header("Content-Length: " . strlen($data));
 	echo $data;
@@ -52,9 +52,9 @@ if ($_POST) {
 			die("Could not read temporary file");
 		} else {
 			$picname = basename($_FILES['uploadedfile']['name']);
-			$config['widgets']['picturewidget'] = base64_encode($data);
-			$config['widgets']['picturewidget_filename'] = $_FILES['pictfile']['name'];
-			write_config("Picture widget saved via Dashboard.");
+			$user_settings['widgets']['picturewidget'] = base64_encode($data);
+			$user_settings['widgets']['picturewidget_filename'] = $_FILES['pictfile']['name'];
+			save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Picture widget saved via Dashboard."));
 			header("Location: /index.php");
 			exit;
 		}

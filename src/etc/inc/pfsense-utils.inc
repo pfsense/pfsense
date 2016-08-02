@@ -2810,7 +2810,7 @@ function load_mac_manufacturer_table() {
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
- *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
  *     If check_subnets is true and cidrprefix is specified,
@@ -2831,7 +2831,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
- *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
  *     If check_subnets is true and cidrprefix is specified,

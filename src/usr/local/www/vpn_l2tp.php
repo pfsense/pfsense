@@ -226,7 +226,7 @@ $section = new Form_Section("Enable L2TP");
 $section->addInput(new Form_Checkbox(
 	'mode',
 	'Enable',
-	'Enable LT2P server',
+	'Enable L2TP server',
 	($pconfig['mode'] == "server"),
 	'server'
 ));

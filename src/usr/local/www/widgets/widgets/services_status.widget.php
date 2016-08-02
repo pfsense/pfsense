@@ -89,12 +89,12 @@ if ($_POST) {
 	}
 
 	if (isset($_POST['servicestatusfilter'])) {
-		$config['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
 	} else {
-		$config['widgets']['servicestatusfilter'] = "";
+		$user_settings['widgets']['servicestatusfilter'] = "";
 	}
 
-	write_config(gettext("Saved Service Status Filter via Dashboard"));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Service Status Filter via Dashboard."));
 	header("Location: /index.php");
 }
 
@@ -110,7 +110,7 @@ if ($_POST) {
 </thead>
 <tbody>
 <?php
-$skipservices = explode(",", $config['widgets']['servicestatusfilter']);
+$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
 
 if (count($services) > 0) {
 	uasort($services, "service_dispname_compare");

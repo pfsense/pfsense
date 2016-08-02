@@ -67,12 +67,12 @@ require_once("functions.inc");
 
 $first_time = false;
 
-if (!is_array($config["widgets"]["trafficgraphs"])) {
+if (!is_array($user_settings["widgets"]["trafficgraphs"])) {
 	$first_time = true;
-	$config["widgets"]["trafficgraphs"] = array();
+	$user_settings["widgets"]["trafficgraphs"] = array();
 }
 
-$a_config = &$config["widgets"]["trafficgraphs"];
+$a_config = &$user_settings["widgets"]["trafficgraphs"];
 
 if (!is_array($a_config["shown"])) {
 	$a_config["shown"] = array();
@@ -105,7 +105,7 @@ if ($_POST) {
 		}
 	}
 
-	write_config(gettext("Updated traffic graph settings via dashboard."));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated traffic graph settings via dashboard."));
 	header("Location: /");
 	exit(0);
 }

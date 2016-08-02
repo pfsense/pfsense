@@ -130,9 +130,6 @@ j="-j${njobs}"
 [ -z "${with_bsdinstall}" ] \
 	&& export WITHOUT_BSDINSTALL=yes
 
-[ -d $destdir ] \
-	&& force_rm ${destdir}
-
 export DESTDIR=${destdir}
 
 make_cmd="make -C ${srcdir} -s ${j}"

@@ -447,7 +447,7 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-ls -lah ${IMAGES_FINAL_DIR}
+(cd ${IMAGES_FINAL_DIR} && find ${IMAGES_FINAL_DIR} -type f)
 
 set -e
 # Run final finish routines

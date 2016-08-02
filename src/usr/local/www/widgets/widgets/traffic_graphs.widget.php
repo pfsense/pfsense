@@ -66,20 +66,24 @@ require_once("ipsec.inc");
 require_once("functions.inc");
 
 $first_time = false;
+
 if (!is_array($config["widgets"]["trafficgraphs"])) {
 	$first_time = true;
 	$config["widgets"]["trafficgraphs"] = array();
 }
+
 $a_config = &$config["widgets"]["trafficgraphs"];
 
 if (!is_array($a_config["shown"])) {
 	$a_config["shown"] = array();
 }
+
 if (!is_array($a_config["shown"]["item"])) {
 	$a_config["shown"]["item"] = array();
 }
 
 $ifdescrs = get_configured_interface_with_descr();
+
 if (ipsec_enabled()) {
 	$ifdescrs['enc0'] = "IPsec";
 }
@@ -107,6 +111,7 @@ if ($_POST) {
 }
 
 $shown = array();
+
 foreach ($a_config["shown"]["item"] as $if) {
 	$shown[$if] = true;
 }

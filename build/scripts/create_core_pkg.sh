@@ -103,7 +103,7 @@ template_licensedir=${template_path}/_license
 [ -d ${template_metadir} ] \
 	|| err "template directory not found for package ${template_name}"
 
-scratchdir=$(mktemp -d -q ${TMPDIR:-/tmp}/${template_name}.XXXXXXX)
+scratchdir=$(mktemp -d -q ${TMPDIR}/${template_name}.XXXXXXX)
 
 [ -n "${scratchdir}" -a -d ${scratchdir} ] \
 	|| err "error creating temporary directory"

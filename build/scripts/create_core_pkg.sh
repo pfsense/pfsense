@@ -108,7 +108,7 @@ scratchdir=$(mktemp -d -q ${TMPDIR}/${template_name}.XXXXXXX)
 [ -n "${scratchdir}" -a -d ${scratchdir} ] \
 	|| err "error creating temporary directory"
 
-trap "rm -rf ${scratchdir}" 1 2 15 EXIT
+trap "force_rm ${scratchdir}" 1 2 15 EXIT
 
 metadir=${scratchdir}/${template_name}_metadir
 
@@ -170,3 +170,6 @@ fi
 
 run "Creating core package ${template_name}" \
 	"pkg create -o ${destdir} -p ${plist} -r ${root} -m ${metadir}"
+
+force_rm ${scratchdir}
+trap "-" 1 2 15 EXIT

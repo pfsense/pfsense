@@ -899,7 +899,7 @@ clone_to_staging_area() {
 		cp $SCRATCHDIR/build_commit_info.txt $STAGE_CHROOT_DIR/etc/version.lastcommit
 	fi
 
-	local _exclude_files="${CORE_PKG_TMP}/base_exclude_files"
+	local _exclude_files="${SCRATCHDIR}/base_exclude_files"
 	sed \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%VERSION%%,${_version},g" \

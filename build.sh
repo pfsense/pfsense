@@ -330,8 +330,6 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
-	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
 	[ -n "${CORE_PKG_PATH}" -a -d "${CORE_PKG_PATH}" ] \
 		&& rm -rf ${CORE_PKG_PATH}
 

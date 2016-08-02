@@ -1101,40 +1101,34 @@ create_distribution_tarball() {
 
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
-	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
-	if [ -z "${DEFAULT_KERNEL}" ]; then
-		echo ">>> ERROR: Could not identify DEFAULT_KERNEL to install on image!" | tee -a ${LOGFILE}
-		print_error_pfS
+	if [ "${ISOPATH}" = "" ]; then
+		echo ">>> ISOPATH is empty skipping generation of ISO image!" | tee -a ${LOGFILE}
+		return
 	fi
+
+	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
 
 	mkdir -p $(dirname ${ISOPATH})
 
 	customize_stagearea_for_image "iso"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
-	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
-	echo "/dev/iso9660/${FSLABEL} / cd9660 ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
-	# This check is for supporting create memstick/ova images
-	echo -n ">>> Running command: script -aq $LOGFILE makefs -t cd9660 -o bootimage=\"i386;${FINAL_CHROOT_DIR}/boot/cdboot \"-o no-emul-boot -o rockridge " | tee -a ${LOGFILE}
-	echo "-o label=${FSLABEL} -o publisher=\"${PRODUCT_NAME} project.\" $ISOPATH ${FINAL_CHROOT_DIR}" | tee -a ${LOGFILE}
+	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
-	# Remove /rescue from iso since cd9660 cannot deal with hardlinks
-	rm -rf ${FINAL_CHROOT_DIR}/rescue
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
-	makefs -t cd9660 -o bootimage="i386;${FINAL_CHROOT_DIR}/boot/cdboot" -o no-emul-boot -o rockridge \
-		-o label=${FSLABEL} -o publisher="${PRODUCT_NAME} project." $ISOPATH ${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
-	if [ $? -ne 0 -o ! -f $ISOPATH ]; then
-		if [ -f ${ISOPATH} ]; then
-			rm -f $ISOPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during ISO image creation. STOPPING!" | tee -a ${LOGFILE}
-		print_error_pfS
-	fi
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh \
+		${FSLABEL} \
+		${ISOPATH} \
+		${INSTALLER_CHROOT_DIR}
+
 	gzip -qf $ISOPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 

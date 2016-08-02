@@ -2474,20 +2474,6 @@ snapshots_update_status() {
 	fi
 }
 
-# Copy the current log file to $filename.old on
-# the snapshot www server (real time logs)
-snapshots_rotate_logfile() {
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
-		scp -q $SNAPSHOTSLOGFILE \
-			${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log.old
-	fi
-
-	# Cleanup log file
-	rm -f $SNAPSHOTSLOGFILE;    touch $SNAPSHOTSLOGFILE
-	rm -f $SNAPSHOTSLASTUPDATE; touch $SNAPSHOTSLASTUPDATE
-
-}
-
 create_sha256() {
 	local _file="${1}"
 

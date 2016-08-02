@@ -95,7 +95,7 @@ done
 [ -d $destdir ] \
 	|| mkdir -p ${destdir}
 
-template_path=$(realpath $(dirname ${template}))
+template_path=$(realpath ${template})
 template_name=$(basename ${template})
 template_metadir=${template_path}/metadir
 template_licensedir=${template_path}/_license

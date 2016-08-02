@@ -69,7 +69,6 @@ export PRODUCT_URL="https://PRODUCT_URL/"
 #export RSYNCIP="your.snapshot.server"
 #export RSYNCUSER="username"
 #export RSYNCPATH="/usr/local/www/snapshots"
-#export RSYNCLOGS="/usr/local/www/snapshots/logs"
 
 # rsync data to upload pkg repo
 #export PKG_RSYNC_HOSTNAME="pkg_repo_hostname"

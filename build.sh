@@ -373,8 +373,6 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_rotate_logfile
-
 	snapshots_update_status ">>> Starting snapshot build operations"
 
 	if pkg update -r ${PRODUCT_NAME} >/dev/null 2>&1; then

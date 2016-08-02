@@ -32618,7 +32618,7 @@ msgid "Enable bypass for LAN interface IP"
 msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:243
-msgid "Enable LT2P server"
+msgid "Enable L2TP server"
 msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:329

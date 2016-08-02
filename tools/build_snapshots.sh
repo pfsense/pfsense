@@ -194,6 +194,9 @@ while [ /bin/true ]; do
 
 	git_last_commit
 
+	OIFS=${IFS}
+	IFS="
+"
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 		(${BUILDER_ROOT}/build.sh --update-poudriere-ports 2>&1) \
 		    | while read -r LINE; do
@@ -215,6 +218,7 @@ while [ /bin/true ]; do
 			snapshot_update_status "${LINE}"
 		done
 	fi
+	IFS=${OIFS}
 
 	if [ -z "${LOOPED_SNAPSHOTS}" ]; then
 		# only one build required, exiting

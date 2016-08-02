@@ -2063,8 +2063,6 @@ poudriere_bulk() {
 
 # This routine is called to write out to stdout
 # a string. The string is appended to $SNAPSHOTSLOGFILE
-# and we scp the log file to the builder host if
-# needed for the real time logging functions.
 snapshots_update_status() {
 	if [ -z "$1" ]; then
 		return
@@ -2074,18 +2072,6 @@ snapshots_update_status() {
 	fi
 	echo "$*"
 	echo "`date` -|- $*" >> $SNAPSHOTSLOGFILE
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
-		LU=$(cat $SNAPSHOTSLASTUPDATE 2>/dev/null)
-		CT=$(date "+%H%M%S")
-		# Only update every minute
-		if [ "$LU" != "$CT" ]; then
-			ssh ${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP} \
-				"mkdir -p ${SNAPSHOTS_RSYNCLOGS}"
-			scp -q $SNAPSHOTSLOGFILE \
-				${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log
-			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
-		fi
-	fi
 }
 
 create_sha256() {

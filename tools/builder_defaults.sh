@@ -37,6 +37,7 @@ if [ ! -d "${BUILDER_ROOT}" ]; then
 fi
 
 export BUILDER_TOOLS=${BUILDER_TOOLS:-"${BUILDER_ROOT}/tools"}
+export BUILDER_SCRIPTS=${BUILDER_SCRIPTS:-"${BUILDER_ROOT}/build/scripts"}
 
 if [ ! -d "${BUILDER_TOOLS}" ]; then
 	echo ">>> ERROR: BUILDER_TOOLS is invalid"
@@ -141,17 +142,6 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
-
-# Controls how many concurrent make processes are run for each stage
-_CPUS=""
-if [ -z "${NO_MAKEJ}" ]; then
-	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
-	if [ -n "${_CPUS}" ]; then
-		_CPUS="-j${_CPUS}"
-	fi
-fi
-
-export MAKEJ=${MAKEJ:-"${_CPUS}"}
 
 export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ichwd ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
@@ -332,7 +322,6 @@ export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}${PRODUCT_R
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}
 export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_ALL_PATH="${CORE_PKG_PATH}/All"
-export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${FREEBSD_SRC_DIR}/release/pkg_repos"}
 export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-repo.conf"}
@@ -367,7 +356,6 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}
 export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
-export RSYNCLOGS=${RSYNCLOGS:-"/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}"}
 export RSYNCKBYTELIMIT=${RSYNCKBYTELIMIT:-"248000"}
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
@@ -376,11 +364,9 @@ export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastu
 if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 	export SNAPSHOTS_RSYNCIP=${PKG_RSYNC_HOSTNAME}
 	export SNAPSHOTS_RSYNCUSER=${PKG_RSYNC_USERNAME}
-	export SNAPSHOTS_RSYNCLOGS=${PKG_RSYNC_LOGS}
 else
 	export SNAPSHOTS_RSYNCIP=${RSYNCIP}
 	export SNAPSHOTS_RSYNCUSER=${RSYNCUSER}
-	export SNAPSHOTS_RSYNCLOGS=${RSYNCLOGS}
 fi
 
 if [ "${PRODUCT_NAME}" = "pfSense" ]; then

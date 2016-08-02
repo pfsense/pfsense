@@ -122,7 +122,9 @@ if (!is_array($config['widgets'])) {
 
 if ($_POST && $_POST['sequence']) {
 
-	$widget_settings = array();
+	// Read in the existing widget settings
+	$widget_settings = $config['widgets'];
+
 	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {

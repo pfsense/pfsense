@@ -84,87 +84,16 @@ core_pkg_create() {
 	local _root="${4}"
 	local _filter="${5}"
 
-	[ -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
+	local _template_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
 
-	local _templates_path=${BUILDER_TOOLS}/templates/core_pkg/${_template}
-	local _template_metadir=${_templates_path}/metadir
-	local _metadir=${CORE_PKG_TMP}/${_template}_metadir
-
-	if [ ! -d ${_template_metadir} ]; then
-		echo "ERROR: Template dir not found for pkg ${_template}"
-		exit
-	fi
-
-	mkdir -p ${CORE_PKG_TMP}
-
-	cp -r ${_template_metadir} ${_metadir}
-
-	local _manifest=${_metadir}/+MANIFEST
-	local _plist=${CORE_PKG_TMP}/${_template}_plist
-	local _exclude_plist=${CORE_PKG_TMP}/${_template}_exclude_plist
-
-	if [ -f "${_templates_path}/pkg-plist" ]; then
-		cp ${_templates_path}/pkg-plist ${_plist}
-	else
-		if [ -n "${_filter}" ]; then
-			_filter="-name ${_filter}"
-		fi
-		(cd ${_root} && find . ${_filter} -type f -or -type l | sed 's,^.,,' | sort -u) > ${_plist}
-	fi
-
-	if [ -f "${_templates_path}/exclude_plist" ]; then
-		cp ${_templates_path}/exclude_plist ${_exclude_plist}
-	else
-		touch ${_exclude_plist}
-	fi
-
-	sed \
-		-i '' \
-		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
-		-e "s,%%PRODUCT_URL%%,${PRODUCT_URL},g" \
-		-e "s,%%FLAVOR%%,${_flavor:+-}${_flavor},g" \
-		-e "s,%%FLAVOR_DESC%%,${_flavor:+ (${_flavor})},g" \
-		-e "s,%%VERSION%%,${_version},g" \
-		${_metadir}/* \
-		${_plist} \
-		${exclude_plist}
-
-	if [ -f "${_exclude_plist}" ]; then
-		sort -u ${_exclude_plist} > ${_plist}.exclude
-		mv ${_plist} ${_plist}.tmp
-		comm -23 ${_plist}.tmp ${_plist}.exclude > ${_plist}
-		rm -f ${_plist}.tmp ${plist}.exclude
-	fi
-
-	# Add license information
-	local _portname=$(sed '/^name: /!d; s,^[^"]*",,; s,",,' ${_metadir}/+MANIFEST)
-	local _licenses_dir="/usr/local/share/licenses/${_portname}-${_version}"
-	mkdir -p ${_root}${_licenses_dir}
-	cp ${BUILDER_ROOT}/LICENSE ${_root}${_licenses_dir}/APACHE20
-	echo "This package has a single license: APACHE20 (Apache License 2.0)." \
-		> ${_root}${_licenses_dir}/LICENSE
-	cat <<EOF >${_root}${_licenses_dir}/catalog.mk
-_LICENSE=APACHE20
-_LICENSE_NAME=Apache License 2.0
-_LICENSE_PERMS=dist-mirror dist-sell pkg-mirror pkg-sell auto-accept
-_LICENSE_GROUPS=FSF OSI
-_LICENSE_DISTFILES=
-EOF
-	cat <<EOF >>${_plist}
-${_licenses_dir}/catalog.mk
-${_licenses_dir}/LICENSE
-${_licenses_dir}/APACHE20
-EOF
-
-	mkdir -p ${CORE_PKG_REAL_PATH}/All
-	if ! pkg create -o ${CORE_PKG_REAL_PATH}/All -p ${_plist} -r ${_root} -m ${_metadir}; then
-		echo ">>> ERROR: Error building package ${_template} ${_flavor}"
-		print_error_pfS
-	fi
-
-	# Cleanup _licenses_dir
-	rm -rf ${_root}${_licenses_dir}
+	${BUILDER_SCRIPTS}/create_core_pkg.sh \
+		-t "${_template_path}" \
+		-f "${_flavor}" \
+		-v "${_version}" \
+		-r "${_root}" \
+		-F "${_filter}" \
+		-d "${CORE_PKG_REAL_PATH}/All" \
+		|| print_error_pfS
 }
 
 # This routine will output that something went wrong
@@ -176,12 +105,8 @@ print_error_pfS() {
 	echo
 	echo "NOTE: a lot of times you can run './build.sh --clean-builder' to resolve."
 	echo
-	if [ "$1" != "" ]; then
-		echo $1
-	fi
 	[ -n "${LOGFILE}" -a -f "${LOGFILE}" ] && \
 		echo "Log saved on ${LOGFILE}" && \
-		tail -n20 ${LOGFILE} >&2
 	echo
 	kill $$
 	exit 1
@@ -247,17 +172,14 @@ build_all_kernels() {
 
 		ensure_kernel_exists $KERNEL_DESTDIR
 
-		echo -n ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area... "  | tee -a ${LOGFILE}
+		echo ">>> Creating pkg of $KERNEL_NAME-debug kernel to staging area..."  | tee -a ${LOGFILE}
 		core_pkg_create kernel-debug ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR} \*.symbols
 		find ${KERNEL_DESTDIR} -name '*.symbols' -type f -delete
-		echo " Done" | tee -a ${LOGFILE}
 
-		echo -n ">>> Creating pkg of $KERNEL_NAME kernel to staging area... "  | tee -a ${LOGFILE}
+		echo ">>> Creating pkg of $KERNEL_NAME kernel to staging area..."  | tee -a ${LOGFILE}
 		core_pkg_create kernel ${KERNEL_NAME} ${CORE_PKG_VERSION} ${KERNEL_DESTDIR}
 
 		rm -rf $KERNEL_DESTDIR 2>&1 1>/dev/null
-
-		echo " Done" | tee -a ${LOGFILE}
 	done
 }
 
@@ -315,11 +237,10 @@ make_world() {
 		return
 	fi
 
-	makeargs="${MAKEJ}"
-	echo ">>> Building world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} buildworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Building world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> $(LC_ALL=C date) - Starting build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/build_freebsd.sh -K -s ${FREEBSD_SRC_DIR} \
+		|| print_error_pfS
+	echo ">>> $(LC_ALL=C date) - Finished build world for ${TARGET} architecture..." | tee -a ${LOGFILE}
 
 	LOGFILE=${BUILDER_LOGS}/installworld.${TARGET}
 	echo ">>> LOGFILE set to $LOGFILE." | tee -a ${LOGFILE}
@@ -327,37 +248,25 @@ make_world() {
 	[ -d "${INSTALLER_CHROOT_DIR}" ] \
 		|| mkdir -p ${INSTALLER_CHROOT_DIR}
 
-	makeargs="${MAKEJ} DESTDIR=${INSTALLER_CHROOT_DIR}"
-	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	cp ${FREEBSD_SRC_DIR}/release/rc.local ${INSTALLER_CHROOT_DIR}/etc
-	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> Installing world with bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -i -K \
+		-s ${FREEBSD_SRC_DIR} \
+		-d ${INSTALLER_CHROOT_DIR} \
+		|| print_error_pfS
 
-	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Distribution world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
+	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
+		-s ${FREEBSD_SRC_DIR} \
+		-d ${STAGE_CHROOT_DIR} \
+		|| print_error_pfS
 
-	makeargs="${MAKEJ} WITHOUT_BSDINSTALL=1 DESTDIR=${STAGE_CHROOT_DIR}"
-	echo ">>> Installing world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld" | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installworld || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Installing world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-
-	echo ">>> Distribution world for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution " | tee -a ${LOGFILE}
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} distribution  || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
-	echo ">>> Distribution world for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-
+	# XXX It must go to the scripts
 	[ -d "${STAGE_CHROOT_DIR}/usr/local/bin" ] \
 		|| mkdir -p ${STAGE_CHROOT_DIR}/usr/local/bin
-	makeargs="${MAKEJ} DESTDIR=${STAGE_CHROOT_DIR}"
+	makeargs="DESTDIR=${STAGE_CHROOT_DIR}"
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Starting - $(LC_ALL=C date))" | tee -a ${LOGFILE}
-	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install " | tee -a ${LOGFILE}
 	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/crypto ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	# XXX FIX IT
-#	echo ">>> Builder is running the command: script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean all install" | tee -a ${LOGFILE}
 #	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR}/tools/tools/ath/athstats ${makeargs} clean all install || print_error_pfS;) | egrep '^>>>' | tee -a ${LOGFILE}
 	echo ">>> Building and installing crypto tools and athstats for ${TARGET} architecture... (Finished - $(LC_ALL=C date))" | tee -a ${LOGFILE}
 
@@ -1139,7 +1048,7 @@ clone_to_staging_area() {
 		cp $SCRATCHDIR/build_commit_info.txt $STAGE_CHROOT_DIR/etc/version.lastcommit
 	fi
 
-	local _exclude_files="${CORE_PKG_TMP}/base_exclude_files"
+	local _exclude_files="${SCRATCHDIR}/base_exclude_files"
 	sed \
 		-e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" \
 		-e "s,%%VERSION%%,${_version},g" \
@@ -1494,40 +1403,39 @@ create_mfsbsd_image() {
 
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
-	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
-	if [ -z "${DEFAULT_KERNEL}" ]; then
-		echo ">>> ERROR: Could not identify DEFAULT_KERNEL to install on image!" | tee -a ${LOGFILE}
-		print_error_pfS
+	if [ "${ISOPATH}" = "" ]; then
+		echo ">>> ISOPATH is empty skipping generation of ISO image!" | tee -a ${LOGFILE}
+		return
 	fi
+
+	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
 
 	mkdir -p $(dirname ${ISOPATH})
 
 	customize_stagearea_for_image "iso"
 	install_default_kernel ${DEFAULT_KERNEL}
 
-	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
+	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
+	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
-	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
-	echo "/dev/iso9660/${FSLABEL} / cd9660 ro 0 0" > ${FINAL_CHROOT_DIR}/etc/fstab
+	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
-	# This check is for supporting create memstick/ova images
-	echo -n ">>> Running command: script -aq $LOGFILE makefs -t cd9660 -o bootimage=\"i386;${FINAL_CHROOT_DIR}/boot/cdboot \"-o no-emul-boot -o rockridge " | tee -a ${LOGFILE}
-	echo "-o label=${FSLABEL} -o publisher=\"${PRODUCT_NAME} project.\" $ISOPATH ${FINAL_CHROOT_DIR}" | tee -a ${LOGFILE}
+	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
-	# Remove /rescue from iso since cd9660 cannot deal with hardlinks
-	rm -rf ${FINAL_CHROOT_DIR}/rescue
+	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
-	makefs -t cd9660 -o bootimage="i386;${FINAL_CHROOT_DIR}/boot/cdboot" -o no-emul-boot -o rockridge \
-		-o label=${FSLABEL} -o publisher="${PRODUCT_NAME} project." $ISOPATH ${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
-	if [ $? -ne 0 -o ! -f $ISOPATH ]; then
-		if [ -f ${ISOPATH} ]; then
-			rm -f $ISOPATH
-		fi
-		echo ">>> ERROR: Something wrong happened during ISO image creation. STOPPING!" | tee -a ${LOGFILE}
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh \
+		${FSLABEL} \
+		${ISOPATH} \
+		${INSTALLER_CHROOT_DIR}
+
+	if [ ! -f "${ISOPATH}" ]; then
+		echo "ERROR! ISO image was not built"
 		print_error_pfS
 	fi
+
 	gzip -qf $ISOPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
@@ -1571,6 +1479,11 @@ create_memstick_image() {
 		${INSTALLER_CHROOT_DIR} \
 		${_image_path}
 
+	if [ ! -f "${_image_path}" ]; then
+		echo "ERROR! memstick image was not built"
+		print_error_pfS
+	fi
+
 	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
@@ -1612,6 +1525,11 @@ create_memstick_serial_image() {
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKSERIALPATH}
+
+	if [ ! -f "${MEMSTICKSERIALPATH}" ]; then
+		echo "ERROR! memstick serial image was not built"
+		print_error_pfS
+	fi
 
 	gzip -qf $MEMSTICKSERIALPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
@@ -1656,6 +1574,11 @@ create_memstick_adi_image() {
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKADIPATH}
+
+	if [ ! -f "${MEMSTICKADIPATH}" ]; then
+		echo "ERROR! memstick ADI image was not built"
+		print_error_pfS
+	fi
 
 	gzip -qf $MEMSTICKADIPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
@@ -1746,42 +1669,28 @@ update_freebsd_sources() {
 		local _clone_params="--depth 1 --single-branch"
 	fi
 
-	if [ ! -d "${FREEBSD_SRC_DIR}" ]; then
-		mkdir -p ${FREEBSD_SRC_DIR}
-	fi
-
 	if [ -n "${NO_BUILDWORLD}" -a -n "${NO_BUILDKERNEL}" ]; then
 		echo ">>> NO_BUILDWORLD and NO_BUILDKERNEL set, skipping update of freebsd sources" | tee -a ${LOGFILE}
 		return
 	fi
 
-	echo -n ">>> Obtaining FreeBSD sources ${FREEBSD_BRANCH}..."
-	local _FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel"}
-	local _CLONE=1
+	echo ">>> Obtaining FreeBSD sources (${FREEBSD_BRANCH})..."
+	${BUILDER_SCRIPTS}/git_checkout.sh \
+		-r ${FREEBSD_REPO_BASE} \
+		-d ${FREEBSD_SRC_DIR} \
+		-b ${FREEBSD_BRANCH}
 
-	if [ -d "${FREEBSD_SRC_DIR}/.git" ]; then
-		CUR_BRANCH=$(cd ${FREEBSD_SRC_DIR} && git branch | grep '^\*' | cut -d' ' -f2)
-		if [ ${_full} -eq 0 -a "${CUR_BRANCH}" = "${_FREEBSD_BRANCH}" ]; then
-			_CLONE=0
-			( cd ${FREEBSD_SRC_DIR} && git clean -fd; git fetch origin; git reset --hard origin/${_FREEBSD_BRANCH} ) 2>&1 | grep -C3 -i -E 'error|fatal'
-		else
-			rm -rf ${FREEBSD_SRC_DIR}
-		fi
-	fi
-
-	if [ ${_CLONE} -eq 1 ]; then
-		( git clone --branch ${_FREEBSD_BRANCH} ${_clone_params} ${FREEBSD_REPO_BASE} ${FREEBSD_SRC_DIR} ) 2>&1 | grep -C3 -i -E 'error|fatal'
-	fi
-
-	if [ ! -d "${FREEBSD_SRC_DIR}/.git" ]; then
+	if [ $? -ne 0 -o ! -d "${FREEBSD_SRC_DIR}/.git" ]; then
 		echo ">>> ERROR: It was not possible to clone FreeBSD src repo"
 		print_error_pfS
 	fi
 
 	if [ -n "${GIT_FREEBSD_COSHA1}" ]; then
-		( cd ${FREEBSD_SRC_DIR} && git checkout ${GIT_FREEBSD_COSHA1} ) 2>&1 | grep -C3 -i -E 'error|fatal'
+		echo -n ">>> Checking out desired commit (${GIT_FREEBSD_COSHA1})... "
+		( git -C  ${FREEBSD_SRC_DIR} checkout ${GIT_FREEBSD_COSHA1} ) 2>&1 | \
+			grep -C3 -i -E 'error|fatal'
+		echo "Done!"
 	fi
-	echo "Done!"
 }
 
 pkg_chroot() {
@@ -1912,12 +1821,10 @@ buildkernel() {
 		export KERNCONF=$(basename ${KERNELCONF})
 	fi
 
-	echo ">>> KERNCONFDIR: ${KERNCONFDIR}"
-	echo ">>> ARCH:        ${TARGET_ARCH}"
-
-	makeargs="${MAKEJ}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make $makeargs buildkernel KERNCONF=${KERNCONF}" | tee -a $LOGFILE
-	(script -q $LOGFILE make -C ${FREEBSD_SRC_DIR} $makeargs buildkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
+	echo ">>> $(LC_ALL=C date) - Starting build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/build_freebsd.sh -W -s ${FREEBSD_SRC_DIR} \
+		|| print_error_pfS
+	echo ">>> $(LC_ALL=C date) - Finished build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
 }
 
 # Imported from FreeSBIE
@@ -1935,10 +1842,11 @@ installkernel() {
 	fi
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	makeargs="${MAKEJ} DESTDIR=${_destdir}"
-	echo ">>> Builder is running the command: script -aq $LOGFILE make ${makeargs} installkernel KERNCONF=${KERNCONF}"  | tee -a $LOGFILE
-	(script -aq $LOGFILE make -C ${FREEBSD_SRC_DIR} ${makeargs} installkernel KERNCONF=${KERNCONF} || print_error_pfS;) | egrep '^>>>'
-	gzip -f9 ${_destdir}/boot/kernel/kernel
+	echo ">>> Installing kernel (${KERNCONF}) for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -W -D -z \
+		-s ${FREEBSD_SRC_DIR} \
+		-d ${_destdir} \
+		|| print_error_pfS
 }
 
 # Launch is ran first to setup a few variables that we need
@@ -2328,7 +2236,6 @@ EOF
 		fi
 
 		echo -n ">>> Creating jail ${jail_name}, it may take some time... " | tee -a ${LOGFILE}
-		# XXX: Change -m to git when it's available in poudriere
 		if ! script -aq ${LOGFILE} poudriere jail -c -j "${jail_name}" -v ${FREEBSD_BRANCH} \
 				-a ${jail_arch} -m git -U ${FREEBSD_REPO_BASE_POUDRIERE} ${native_xtools} >/dev/null 2>&1; then
 			echo "" | tee -a ${LOGFILE}
@@ -2458,8 +2365,6 @@ poudriere_bulk() {
 
 # This routine is called to write out to stdout
 # a string. The string is appended to $SNAPSHOTSLOGFILE
-# and we scp the log file to the builder host if
-# needed for the real time logging functions.
 snapshots_update_status() {
 	if [ -z "$1" ]; then
 		return
@@ -2469,32 +2374,6 @@ snapshots_update_status() {
 	fi
 	echo "$*"
 	echo "`date` -|- $*" >> $SNAPSHOTSLOGFILE
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
-		LU=$(cat $SNAPSHOTSLASTUPDATE 2>/dev/null)
-		CT=$(date "+%H%M%S")
-		# Only update every minute
-		if [ "$LU" != "$CT" ]; then
-			ssh ${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP} \
-				"mkdir -p ${SNAPSHOTS_RSYNCLOGS}"
-			scp -q $SNAPSHOTSLOGFILE \
-				${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log
-			date "+%H%M%S" > $SNAPSHOTSLASTUPDATE
-		fi
-	fi
-}
-
-# Copy the current log file to $filename.old on
-# the snapshot www server (real time logs)
-snapshots_rotate_logfile() {
-	if [ -z "${DO_NOT_UPLOAD}" -a -n "${SNAPSHOTS_RSYNCIP}" ]; then
-		scp -q $SNAPSHOTSLOGFILE \
-			${SNAPSHOTS_RSYNCUSER}@${SNAPSHOTS_RSYNCIP}:${SNAPSHOTS_RSYNCLOGS}/build.log.old
-	fi
-
-	# Cleanup log file
-	rm -f $SNAPSHOTSLOGFILE;    touch $SNAPSHOTSLOGFILE
-	rm -f $SNAPSHOTSLASTUPDATE; touch $SNAPSHOTSLASTUPDATE
-
 }
 
 create_sha256() {

@@ -1129,6 +1129,11 @@ create_iso_image() {
 		${ISOPATH} \
 		${INSTALLER_CHROOT_DIR}
 
+	if [ ! -f "${ISOPATH}" ]; then
+		echo "ERROR! ISO image was not built"
+		print_error_pfS
+	fi
+
 	gzip -qf $ISOPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
@@ -1172,6 +1177,11 @@ create_memstick_image() {
 		${INSTALLER_CHROOT_DIR} \
 		${_image_path}
 
+	if [ ! -f "${_image_path}" ]; then
+		echo "ERROR! memstick image was not built"
+		print_error_pfS
+	fi
+
 	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
@@ -1213,6 +1223,11 @@ create_memstick_serial_image() {
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKSERIALPATH}
+
+	if [ ! -f "${MEMSTICKSERIALPATH}" ]; then
+		echo "ERROR! memstick serial image was not built"
+		print_error_pfS
+	fi
 
 	gzip -qf $MEMSTICKSERIALPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
@@ -1257,6 +1272,11 @@ create_memstick_adi_image() {
 	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKADIPATH}
+
+	if [ ! -f "${MEMSTICKADIPATH}" ]; then
+		echo "ERROR! memstick ADI image was not built"
+		print_error_pfS
+	fi
 
 	gzip -qf $MEMSTICKADIPATH &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"

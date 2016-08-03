@@ -155,7 +155,7 @@ build_all_kernels() {
 		LOGFILE="${BUILDER_LOGS}/kernel.${KERNCONF}.${TARGET}.log"
 		echo ">>> Building $BUILD_KERNEL kernel."  | tee -a ${LOGFILE}
 
-		if [ ! -e "${FREEBSD_SRC_DIR}/sys/${TARGET}/conf/${BUILD_KERNEL}" ]; then
+		if [ ! -e "${KERNELCONF}" ]; then
 			echo ">>> ERROR: Could not find $KERNELCONF"
 			print_error_pfS
 		fi

@@ -26,7 +26,7 @@
 			<fieldname>enable</fieldname>
 			<type>checkbox</type>
 			<enablefields>enable_upnp,enable_natpmp,ext_iface,iface_array,download,upload,overridewanip,upnpqueue,logpackets,sysuptime,permdefault</enablefields>
-			<sethelp>Enable UPnP &amp; NAT-PMP</sethelp>
+			<description>Enable UPnP &amp; NAT-PMP</description>
 		</field>
 		<field>
 			<fielddescr>UPnP Port Mapping</fielddescr>

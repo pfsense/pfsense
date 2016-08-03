@@ -1101,7 +1101,8 @@ create_distribution_tarball() {
 
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
-	if [ "${ISOPATH}" = "" ]; then
+
+	if [ -n "${ISOPATH}" ]; then
 		echo ">>> ISOPATH is empty skipping generation of ISO image!" | tee -a ${LOGFILE}
 		return
 	fi
@@ -1124,7 +1125,7 @@ create_iso_image() {
 
 	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \
 		${ISOPATH} \
 		${INSTALLER_CHROOT_DIR}

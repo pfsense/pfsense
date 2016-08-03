@@ -1095,7 +1095,7 @@ create_distribution_tarball() {
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
 
-	if [ -n "${ISOPATH}" ]; then
+	if [ -z "${ISOPATH}" ]; then
 		echo ">>> ISOPATH is empty skipping generation of ISO image!" | tee -a ${LOGFILE}
 		return
 	fi

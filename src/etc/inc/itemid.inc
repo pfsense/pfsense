@@ -62,6 +62,8 @@
  *   boolean   - true if item was found and deleted
  ******/
 function delete_id($id, &$array) {
+	global $config;
+
 	// Index to delete
 	$delete_index = NULL;
 
@@ -74,6 +76,7 @@ function delete_id($id, &$array) {
 		// If this item is the one we want to delete
 		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
 			$delete_index = $key;
+			$if = $item['interface'];
 			break;
 		}
 	}
@@ -81,6 +84,13 @@ function delete_id($id, &$array) {
 	// If we found the item, unset it
 	if ($delete_index !== NULL) {
 		unset($array[$delete_index]);
+
+		// Update the separators
+		$a_separators = &$config['filter']['separator'][strtolower($if)];
+		$ridx = ifridx($if, $delete_index);	// get rule index within interface
+		$mvnrows = -1;
+		move_separators($a_separators, $ridx, $mvnrows);
+
 		return true;
 	} else {
 		return false;

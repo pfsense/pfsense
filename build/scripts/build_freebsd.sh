@@ -74,16 +74,16 @@ while getopts s:o:WKh opt; do
 	esac
 done
 
-# Default obj dir to src/../obj
-: ${objdir=${srcdir}/../obj}
-
 [ -z "$srcdir" ] \
 	&& err "source directory is not defined"
 
 [ -e $srcdir -a ! -d $srcdir ] \
 	&& err "source path already exists and is not a directory"
 
-[ -n "$objdir" -a -e $objdir -a ! -d $objdir ] \
+# Default obj dir to src/../obj
+: ${objdir=${srcdir}/../obj}
+
+[ -n "$objdir" -a -e "$objdir" -a ! -d "$objdir" ] \
 	&& err "obj path already exists and is not a directory"
 
 for env_var in __MAKE_CONF SRCCONF SRC_ENV_CONF; do

@@ -93,8 +93,17 @@ while getopts s:d:o:iWKDhz opt; do
 	esac
 done
 
+[ -z "$srcdir" ] \
+	&& err "source directory is not defined"
+
+[ -e $srcdir -a ! -d $srcdir ] \
+	&& err "source path already exists and is not a directory"
+
 # Default obj dir to src/../obj
 : ${objdir=${srcdir}/../obj}
+
+[ -n "$objdir" -a -e "$objdir" -a ! -d "$objdir" ] \
+	&& err "obj path already exists and is not a directory"
 
 [ -z "$srcdir" ] \
 	&& err "source directory is not defined"
@@ -107,9 +116,6 @@ done
 
 [ -e $destdir -a ! -d $destdir ] \
 	&& err "destination path already exists and is not a directory"
-
-[ -n "$objdir" -a -e $objdir -a ! -d $objdir ] \
-	&& err "obj path already exists and is not a directory"
 
 for env_var in __MAKE_CONF SRCCONF SRC_ENV_CONF; do
 	eval "value=\${$env_var}"

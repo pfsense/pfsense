@@ -423,7 +423,9 @@ if ($_POST) {
 						'organizationName' => $pconfig['dn_organization'],
 						'emailAddress' => $pconfig['dn_email'],
 						'commonName' => $pconfig['dn_commonname']);
-
+					if (!empty($pconfig['dn_organizationalunit'])) {
+						$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+					}
 					if (count($altnames)) {
 						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
@@ -449,6 +451,9 @@ if ($_POST) {
 						'organizationName' => $pconfig['csr_dn_organization'],
 						'emailAddress' => $pconfig['csr_dn_email'],
 						'commonName' => $pconfig['csr_dn_commonname']);
+					if (!empty($pconfig['csr_dn_organizationalunit'])) {
+						$dn['organizationalUnitName'] = $pconfig['csr_dn_organizationalunit'];
+					}
 					if (count($altnames)) {
 						$altnames_tmp = "";
 						foreach ($altnames as $altname) {
@@ -718,7 +723,15 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'Organization',
 		'text',
 		$pconfig['dn_organization'],
-		['placeholder' => 'e.g. My Company Inc.']
+		['placeholder' => 'e.g. My Company Inc']
+	));
+
+	$section->addInput(new Form_Input(
+		'dn_organizationalunit',
+		'Organizational Unit',
+		'text',
+		$pconfig['dn_organizationalunit'],
+		['placeholder' => 'e.g. My Department Name (optional)']
 	));
 
 	$section->addInput(new Form_Input(
@@ -837,7 +850,15 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 		'Organization',
 		'text',
 		$pconfig['csr_dn_organization'],
-		['placeholder' => 'e.g. My Company Inc.']
+		['placeholder' => 'e.g. My Company Inc']
+	));
+
+	$section->addInput(new Form_Input(
+		'csr_dn_organizationalunit',
+		'Organizational Unit',
+		'text',
+		$pconfig['csr_dn_organizationalunit'],
+		['placeholder' => 'e.g. My Department Name (optional)']
 	));
 
 	$section->addInput(new Form_Input(
@@ -1125,6 +1146,7 @@ events.push(function() {
 					$('#dn_city').val("<?=$subject[2]['v'];?>");
 					$('#dn_organization').val("<?=$subject[3]['v'];?>");
 					$('#dn_email').val("<?=$subject[4]['v'];?>");
+					$('#dn_organizationalunit').val("<?=$subject[6]['v'];?>");
 					break;
 <?php
 			endforeach;

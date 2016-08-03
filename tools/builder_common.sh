@@ -825,14 +825,6 @@ clean_builder() {
 	rm -rf $IMAGES_FINAL_DIR/*
 	echo "Done!"
 
-	if [ -z "${NO_CLEAN_FREEBSD_SRC}" ]; then
-		if [ -d "$FREEBSD_SRC_DIR" ]; then
-			echo -n ">>> Ensuring $FREEBSD_SRC_DIR is clean..."
-			rm -rf ${FREEBSD_SRC_DIR}
-			echo "Done!"
-		fi
-	fi
-
 	echo -n ">>> Cleaning previous builder logs..."
 	if [ -d "$BUILDER_LOGS" ]; then
 		rm -rf ${BUILDER_LOGS}

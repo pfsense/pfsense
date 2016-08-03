@@ -26,7 +26,7 @@ usage() {
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
-	echo "		--no-cleanobjdir|--no-cleanrepos|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
+	echo "		--no-cleanobjdir|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
@@ -67,9 +67,8 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			;;
-		--no-cleanobjdir|--no-cleanrepos|-d)
+		--no-cleanobjdir|-d)
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
 			;;
 		--flash-size|-f)
 			shift
@@ -84,7 +83,6 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
 			_SKIP_REBUILD_PRESTAGE=YES
 			_USE_OLD_DATESTRING=YES
 			;;

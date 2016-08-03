@@ -249,7 +249,7 @@ make_world() {
 		|| mkdir -p ${INSTALLER_CHROOT_DIR}
 
 	echo ">>> Installing world with bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
-	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -i -K \
+	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -i \
 		-s ${FREEBSD_SRC_DIR} \
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS

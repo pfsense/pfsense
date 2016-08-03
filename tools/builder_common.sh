@@ -1935,8 +1935,7 @@ pkg_repo_rsync() {
 		local _logfile="${LOGFILE}"
 	fi
 
-	if [ -n "${PKG_REPO_SIGNING_COMMAND}" ]; then
-
+	if [ -n "${PKG_REPO_SIGNING_COMMAND}" -a -z "${DO_NOT_SIGN_PKG_REPO}" ]; then
 		# Detect poudriere directory structure
 		if [ -L "${_repo_path}/.latest" ]; then
 			local _real_repo_path=$(readlink -f ${_repo_path}/.latest)

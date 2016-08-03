@@ -347,7 +347,7 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	build_all_kernels
 
 	# Install kernel on installer
-	installkernel ${INSTALLER_CHROOT_DIR}
+	installkernel ${INSTALLER_CHROOT_DIR} ${PRODUCT_NAME}
 
 	# Prepare pre-final staging area
 	clone_to_staging_area

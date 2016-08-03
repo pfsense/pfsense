@@ -37,7 +37,7 @@ Options:
 	-s srcdir  -- Path to src directory
 	-d destdir -- Destination directory to install
 	-o objdir  -- Obj directory used to build
-	-i         -- Include BSDInstall
+	-i         -- Install system for installation media
 	-W         -- Skip installworld
 	-K         -- Skip installkernel
 	-D         -- Skip distribution
@@ -56,7 +56,7 @@ END
 	exit 1
 }
 
-unset with_bsdinstall
+unset installation_media
 unset skip_world
 unset skip_kernel
 unset skip_distribution
@@ -73,7 +73,7 @@ while getopts s:d:o:iWKDhz opt; do
 			objdir=$OPTARG
 			;;
 		i)
-			with_bsdinstall=1
+			installation_media=1
 			;;
 		W)
 			skip_world=1
@@ -133,8 +133,8 @@ j="-j${njobs}"
 [ -n "${objdir}" ] \
 	&& export MAKEOBJDIRPREFIX=${objdir}
 
-[ -z "${with_bsdinstall}" ] \
-	&& export WITHOUT_BSDINSTALL=yes
+[ -z "${installation_media}" ] \
+	&& export WITHOUT_BSDINSTALL=yes WITHOUT_RESCUE=yes
 
 export DESTDIR=${destdir}
 
@@ -157,7 +157,7 @@ fi
 	&& run "Installing distribution" \
 		"${make_cmd} distribution"
 
-[ -n "${with_bsdinstall}" ] \
+[ -n "${installation_media}" ] \
 	&& run "Copying /etc/rc.local to start bsdinstall" \
 		"cp ${srcdir}/release/rc.local ${destdir}/etc"
 

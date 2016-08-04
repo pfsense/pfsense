@@ -330,8 +330,8 @@ if (isset($_POST['save'])) {
 		if (($_POST['domain'] && !is_domain($_POST['domain']))) {
 			$input_errors[] = gettext("A valid domain name must be specified for the DNS domain.");
 		}
-		if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !is_URL($_POST['tftp'])) {
-			$input_errors[] = gettext("A valid IP address or hostname must be specified for the TFTP server.");
+		if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
+			$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
 		}
 		if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
 			$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
@@ -1093,11 +1093,11 @@ $section->addInput(new Form_StaticText(
 	$btnadv
 ));
 
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'tftp',
 	'TFTP Server',
 	$pconfig['tftp']
-))->setHelp('Leave blank to disable.  Enter a full hostname or IP for the TFTP server.')->setPattern('[.a-zA-Z0-9_-]+');
+))->setHelp('Leave blank to disable. Enter a valid IP address, hostname or URL for the TFTP server.');
 
 // Advanced LDAP
 $btnadv = new Form_Button(

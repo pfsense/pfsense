@@ -1,2 +1,4 @@
 /etc/pfSense-rc
+/etc/pfSense-rc.shutdown
+/etc/rc
 @shell /etc/rc.initial

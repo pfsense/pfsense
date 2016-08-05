@@ -477,6 +477,12 @@ pfSenseupgrade)
 	# Remove saved commit ID for gitsync
 	rm -f /etc/version.gitsync
 
+	PFSENSETYPE=`cat /etc/platform`
+
+	if [ "${PFSENSETYPE}" = "pfSense" ]; then
+		/etc/rc.php_ini_setup
+	fi
+
 	# If /tmp/post_upgrade_command exists after update
 	# then execute the command.
 	if [ -f /tmp/post_upgrade_command ]; then

@@ -228,6 +228,7 @@ $pconfig['adv_dhcp6_id_assoc_statement_prefix_vltime'] = $wancfg['adv_dhcp6_id_a
 
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_id'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_id'];
 $pconfig['adv_dhcp6_prefix_interface_statement_sla_len'] = $wancfg['adv_dhcp6_prefix_interface_statement_sla_len'];
+$pconfig['adv_dhcp6_prefix_interface_statement_if'] = $wancfg['adv_dhcp6_prefix_interface_statement_if'];
 
 $pconfig['adv_dhcp6_authentication_statement_authname'] = $wancfg['adv_dhcp6_authentication_statement_authname'];
 $pconfig['adv_dhcp6_authentication_statement_protocol'] = $wancfg['adv_dhcp6_authentication_statement_protocol'];
@@ -982,6 +983,7 @@ if ($_POST['apply']) {
 
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_id']);
 		unset($wancfg['adv_dhcp6_prefix_interface_statement_sla_len']);
+		unset($wancfg['adv_dhcp6_prefix_interface_statement_if']);
 
 		unset($wancfg['adv_dhcp6_authentication_statement_authname']);
 		unset($wancfg['adv_dhcp6_authentication_statement_protocol']);
@@ -1203,6 +1205,8 @@ if ($_POST['apply']) {
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_id'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_id'];
 				if (is_numericint($_POST['adv_dhcp6_prefix_interface_statement_sla_len']))
 					$wancfg['adv_dhcp6_prefix_interface_statement_sla_len'] = $_POST['adv_dhcp6_prefix_interface_statement_sla_len'];
+				if (!empty($_POST['adv_dhcp6_prefix_interface_statement_if']))
+					$wancfg['adv_dhcp6_prefix_interface_statement_if'] = $_POST['adv_dhcp6_prefix_interface_statement_if'];
 
 				if (!empty($_POST['adv_dhcp6_authentication_statement_authname']))
 					$wancfg['adv_dhcp6_authentication_statement_authname'] = $_POST['adv_dhcp6_authentication_statement_authname'];
@@ -2425,6 +2429,8 @@ $types6 = array("none" => gettext("None"), "staticv6" => gettext("Static IPv6"),
 											<input name="adv_dhcp6_prefix_interface_statement_sla_id" type="text" class="formfld unknown" id="adv_dhcp6_prefix_interface_statement_sla_id" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_prefix_interface_statement_sla_id']);?>" />
 											<?=gettext("<i>sla-len</i>"); ?>
 											<input name="adv_dhcp6_prefix_interface_statement_sla_len" type="text" class="formfld unknown" id="adv_dhcp6_prefix_interface_statement_sla_len" size="3" value="<?=htmlspecialchars($pconfig['adv_dhcp6_prefix_interface_statement_sla_len']);?>" />
+											<?=gettext("<i>interface</i>"); ?>
+											<input name="adv_dhcp6_prefix_interface_statement_if" type="text" class="formfld unknown" id="adv_dhcp6_prefix_interface_statement_if" size="4" value="<?=htmlspecialchars($pconfig['adv_dhcp6_prefix_interface_statement_if']);?>" />
 										</td>
 									</tr>
 

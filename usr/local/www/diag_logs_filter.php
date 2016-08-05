@@ -4,6 +4,7 @@
 	diag_logs_filter.php
 	part of pfSense 
 	Copyright (C) 2004-2009 Scott Ullrich
+
 	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
 	originally based on m0n0wall (http://m0n0.ch/wall)
 
@@ -33,7 +34,7 @@
 	POSSIBILITY OF SUCH DAMAGE.
 */
 
-/*		
+/*
 	pfSense_MODULE:	filter
 */
 
@@ -44,7 +45,7 @@
 ##|*MATCH=diag_logs_filter.php*
 ##|-PRIV
 
-require("guiconfig.inc");
+require_once("guiconfig.inc");
 require_once("filter_log.inc");
 
 # --- AJAX RESOLVE ---
@@ -228,74 +229,12 @@ include("head.inc");
 					</tr>
 					</table>
 					</form>
-				</div>
-				<div id="filterform_show" class="widgetconfigdiv" style="<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>">
-					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
-					<table width="0%" border="0" cellpadding="0" cellspacing="0" summary="firewall log">
-					<tr>
-						<td>
-							<div align="center" style="vertical-align:top;"><?=gettext("Interface");?></div>
-							<div align="center" style="vertical-align:top;">
-							<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
-							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
-							<?php						
-							$iflist = get_configured_interface_with_descr(false, true);
-							//$iflist = get_interface_list();
-							// Allow extending of the firewall edit interfaces 
-							pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
-							foreach ($iflist as $if => $ifdesc)
-								$interfaces[$if] = $ifdesc;
-
-							if ($config['l2tp']['mode'] == "server")
-								$interfaces['l2tp'] = "L2TP VPN";
-
-							if ($config['pptpd']['mode'] == "server")
-								$interfaces['pptp'] = "PPTP VPN";
-
-							if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
-								$interfaces['pppoe'] = "PPPoE Server";
-
-							/* add ipsec interfaces */
-							if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
-								$interfaces["enc0"] = "IPsec";
-
-							/* add openvpn/tun interfaces */
-							if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
-								$interfaces["openvpn"] = "OpenVPN";
-
-							foreach ($interfaces as $iface => $ifacename): ?>
-							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected=\"selected\"":"";?>><?=htmlspecialchars($ifacename);?></option>
-							<?php endforeach; ?>
-							</select>
-							</div>
-						</td>
-						<td>
-							<div align="center" style="vertical-align:top;"><?=gettext("Filter expression");?></div>
-							<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?= htmlspecialchars($filtertext) ?>" /></div>
-						</td>
-						<td>
-							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
-							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
-						</td>
-						<td>
-							<div align="center" style="vertical-align:top;">&nbsp;</div>
-							<div align="center" style="vertical-align:top;"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="2">
-							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
-						</td>
-					</tr>
-					</table>
-					</form>
-				</div>
 				<div style="float: right; vertical-align:middle">
 					<br />
 					<?php if (!isset($config['syslog']['rawfilter']) && (isset($config['syslog']['filterdescriptions']) && $config['syslog']['filterdescriptions'] === "2")):?>
 					<a href="#" onclick="toggleListDescriptions()">Show/hide rule descriptions</a>
 					<?php endif;?>
+				</div>
 				</div>
 				</td>	
 			</tr>
@@ -311,10 +250,10 @@ include("head.inc");
 			<tr>
 			  <td colspan="<?=$config['syslog']['filterdescriptions']==="1"?7:6?>" class="listtopic">
 				<?php if ( (!$filtertext) && (!$filterfieldsarray) )
-					printf(gettext("Last %s firewall log entries."),count($filterlog));
+					printf(gettext("Last %s firewall log entries.") . ' ',count($filterlog));
 				else
 					echo count($filterlog). ' ' . gettext("matched log entries.") . ' ';
-			    printf(gettext("Max(%s)"),$nentries);?>
+				printf(gettext("Max(%s)"),$nentries);?>
 			  </td>
 			</tr>
 			<tr class="sortableHeaderRowIdentifier">
@@ -404,12 +343,78 @@ include("head.inc");
 				dump_clog($filter_logfile, $nentries);
 		  ?>
 <?php endif; ?>
+			</table>
+			<table class="tabcont" width="100%" border="0" cellspacing="0" cellpadding="0" summary="admin area">
 		<tr>
 			<td align="left" valign="top" colspan="3">
-				<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post" style="margin-top: 14px;">
+				<form id="clearform" name="clearform" action="diag_logs_filter.php" method="post">
 					<input id="submit" name="clear" type="submit" class="formbtn" value="<?=gettext("Clear log");?>" />
 				</form>
 			</td>
+				<td align="right">
+				<div id="filterform_show" style="<?=(!isset($config['syslog']['rawfilter']))?"display:none":""?>">
+					<form id="filterform" name="filterform" action="diag_logs_filter.php" method="post">
+					<table width="0%" border="0" cellpadding="0" cellspacing="0" summary="firewall log">
+					<tr>
+						<td>
+							<div align="center" style="vertical-align:top;"><?=gettext("Interface");?></div>
+							<div align="center" style="vertical-align:top;">
+							<select name="interface" onchange="dst_change(this.value,iface_old,document.iform.dsttype.value);iface_old = document.iform.interface.value;typesel_change();">
+							<option value="" <?=$interfacefilter?"":"selected=\"selected\""?>>*Any interface</option>
+							<?php						
+							$iflist = get_configured_interface_with_descr(false, true);
+							//$iflist = get_interface_list();
+							// Allow extending of the firewall edit interfaces 
+							pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/pre_interfaces_edit");
+							foreach ($iflist as $if => $ifdesc)
+								$interfaces[$if] = $ifdesc;
+
+							if ($config['l2tp']['mode'] == "server")
+								$interfaces['l2tp'] = "L2TP VPN";
+
+							if ($config['pptpd']['mode'] == "server")
+								$interfaces['pptp'] = "PPTP VPN";
+
+							if (is_pppoe_server_enabled() && have_ruleint_access("pppoe"))
+								$interfaces['pppoe'] = "PPPoE Server";
+
+							/* add ipsec interfaces */
+							if (isset($config['ipsec']['enable']) || isset($config['ipsec']['client']['enable']))
+								$interfaces["enc0"] = "IPsec";
+
+							/* add openvpn/tun interfaces */
+							if  ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"])
+								$interfaces["openvpn"] = "OpenVPN";
+
+							foreach ($interfaces as $iface => $ifacename): ?>
+							<option value="<?=$iface;?>" <?=($iface==$interfacefilter)?"selected=\"selected\"":"";?>><?=htmlspecialchars($ifacename);?></option>
+							<?php endforeach; ?>
+							</select>
+							</div>
+						</td>
+						<td>
+							<div align="center" style="vertical-align:top;"><?=gettext("Filter expression");?></div>
+							<div align="center" style="vertical-align:top;"><input id="filtertext" name="filtertext" class="formfld search" style="vertical-align:top;" type="text" size="35" value="<?= htmlspecialchars($filtertext) ?>" /></div>
+						</td>
+						<td>
+							<div align="center" style="vertical-align:top;"><?=gettext("Quantity");?></div>
+							<div align="center" style="vertical-align:top;"><input id="filterlogentries_qty" name="filterlogentries_qty" class="" style="vertical-align:top;" type="text" size="6" value="<?= htmlspecialchars($filterlogentries_qty) ?>" /></div>
+						</td>
+						<td>
+							<div align="center" style="vertical-align:top;">&nbsp;</div>
+							<div align="center" style="vertical-align:top;"><input id="filtersubmit" name="filtersubmit" type="submit" class="formbtn" style="vertical-align:top;" value="<?=gettext("Filter");?>" /></div>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td colspan="2">
+							<?printf(gettext('Matches %1$s regular expression%2$s.'), '<a target="_blank" href="http://www.php.net/manual/en/book.pcre.php">', '</a>');?>&nbsp;&nbsp;
+						</td>
+					</tr>
+					</table>
+					</form>
+				</div>
+				</td>
 		</tr>
 		</table>
 		</div>

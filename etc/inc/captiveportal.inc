@@ -1964,7 +1964,13 @@ function portal_allow($clientip,$clientmac,$username,$password = null, $attribut
 		}
 		/* on the same ip */
 		if ($cpentry[2] == $clientip) {
-			if (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)
+			if(isset($config['captiveportal'][$cpzone]['newloginwins']) && strcasecmp($cpentry[4], $username) != 0) {
+				//delete the previous user because we have a new user trying to login on the same ip address
+				captiveportal_disconnect($cpentry, $radiusservers[$cpentry[11]], 13);
+				captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], "NEW LOGIN ON SAME IP ADDRESS - TERMINATING OLD SESSION");
+				$unsetindexes[] = $cpentry[5];
+				break;
+			} elseif (isset($config['captiveportal'][$cpzone]['nomacfilter']) || $cpentry[3] == $clientmac)
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING OLD SESSION");
 			else
 				captiveportal_logportalauth($cpentry[4],$cpentry[3],$cpentry[2],"CONCURRENT LOGIN - REUSING IP {$cpentry[2]} WITH DIFFERENT MAC ADDRESS {$cpentry[3]}");

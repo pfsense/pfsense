@@ -67,6 +67,8 @@ function services_radvd_configure($blacklist = array()) {
 
 	/* handle manually configured DHCP6 server settings first */
 	foreach ($config['dhcpdv6'] as $dhcpv6if => $dhcpv6ifconf) {
+		if (!isset($dhcpv6ifconf['enable']))
+			continue;
 		if (!is_array($config['interfaces'][$dhcpv6if]))
 			continue;
 		if (!isset($config['interfaces'][$dhcpv6if]['enable']))
@@ -310,7 +312,7 @@ function services_radvd_configure($blacklist = array()) {
 		else
 			$radvdconf .= "\tAdvLinkMTU 1280;\n";
 		$radvdconf .= "\tAdvOtherConfigFlag on;\n";
-		$radvdconf .= "\t\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
+		$radvdconf .= "\tprefix {$subnetv6}/{$ifcfgsnv6} {\n";
 		$radvdconf .= "\t\tAdvOnLink on;\n";
 		$radvdconf .= "\t\tAdvAutonomous on;\n";
 		$radvdconf .= "\t\tAdvRouterAddr on;\n";
@@ -1126,12 +1128,12 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	else
 		sleep(1);
 
-	/* we add a fake entry for interfaces that are set to track6 another WAN */
+	/* we add a fake entry for interfaces that are set to track6 another WAN unless DHCP has been configured */
 	foreach ($Iflist as $ifname) {
 		/* Do not put in the config an interface which is down */
 		if (isset($blacklist[$ifname]))
 			continue;
-		if (!empty($config['interfaces'][$ifname]['track6-interface'])) {
+		if (!empty($config['interfaces'][$ifname]['track6-interface']) && (empty($dhcpdv6cfg[$ifname]) || !isset($dhcpdv6cfg[$ifname]['enable']))) {
 			$realif = get_real_interface($ifname, "inet6");
 			$ifcfgipv6 = get_interface_ipv6($ifname);
 			if(!is_ipaddrv6($ifcfgipv6))
@@ -1234,16 +1236,18 @@ EOD;
 			$dnscfgv6 .= "	option domain-name \"{$dhcpv6ifconf['domain']}\";\n";
 		}
 
-    	if ($dhcpv6ifconf['domainsearchlist'] <> "") {
+		if ($dhcpv6ifconf['domainsearchlist'] <> "") {
 			$dnscfgv6 .= "	option domain-search \"" . join("\",\"", preg_split("/[ ;]+/", $dhcpv6ifconf['domainsearchlist'])) . "\";\n";
-    	}
+		}
 
 		if (isset($dhcpv6ifconf['ddnsupdate'])) {
 			if($dhcpv6ifconf['ddnsdomain'] <> "") {
 				$dnscfgv6 .= "	ddns-domainname \"{$dhcpv6ifconf['ddnsdomain']}\";\n";
 			}
-			$dnscfgv6 .= "	ddns-update-style interim;\n";
+			$dnscfgv6 .= "	{$dhcpv6ifconf['ddnsclientupdates']} client-updates;\n";
 			$nsupdate = true;
+		} else {
+			$dnscfgv6 .= "	do-forward-updates false;\n";
 		}
 
 		if (is_array($dhcpv6ifconf['dnsserver']) && ($dhcpv6ifconf['dnsserver'][0])) {
@@ -1261,32 +1265,49 @@ EOD;
 				$dnscfgv6 .= "	option dhcp6.name-servers " . join(",", $dns_arrv6) . ";";
 		}
 
-		if ($dhcpv6ifconf['domain']) {
+		if (!is_ipaddrv6($ifcfgipv6)) {
+			$ifcfgsnv6 = "64";
+			$subnetv6 = gen_subnetv6($dhcpv6ifconf['range']['from'], $ifcfgsnv6);
+		}
+
+		$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
+
+		if (isset($dhcpv6ifconf['ddnsupdate']) && $dhcpv6ifconf['ddnsdomain']) {
 			$newzone = array();
-			$newzone['domain-name'] = $dhcpv6ifconf['domain']; 
+			$newzone['domain-name'] = $dhcpv6ifconf['ddnsdomain'];
 			$newzone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
 			$ddns_zones[] = $newzone;
+			if (isset($dhcpv6ifconf['ddnsreverse'])) {
+				$reversezone = array();
+				$unpacked = unpack('H*hex', inet_pton($subnetv6));
+				$reversezone['domain-name'] = implode('.', array_reverse(str_split(substr($unpacked['hex'], 0, 16)))).'.ip6.arpa';
+				$reversezone['dns-servers'][] = $dhcpv6ifconf['ddnsdomainprimary'];
+				$ddns_zones[] = $reversezone;
+			}
 		}
 
-		if (is_ipaddrv6($ifcfgipv6)) {
-			$dhcpdv6conf .= "subnet6 {$subnetv6}/{$ifcfgsnv6}";
-		} else {
-			$subnet6 = gen_subnetv6($dhcpv6ifconf['range']['from'], "64");
-			$dhcpdv6conf .= "subnet6 {$subnet6}/64";
-		}
 		$dhcpdv6conf .= " {\n";
 
+		$range_from = $dhcpv6ifconf['range']['from'];
+		$range_to = $dhcpv6ifconf['range']['to'];
+		if ($ifcfgv6['ipaddrv6'] == 'track6') {
+			$range_from = merge_ipv6_delegated_prefix($ifcfgipv6, $range_from);
+			$range_to = merge_ipv6_delegated_prefix($ifcfgipv6, $range_to);
+		}
 		$dhcpdv6conf .= <<<EOD
-	range6 {$dhcpv6ifconf['range']['from']} {$dhcpv6ifconf['range']['to']};
+	range6 {$range_from} {$range_to};
 $dnscfgv6
-
 EOD;
 
 		if (is_ipaddrv6($dhcpv6ifconf['prefixrange']['from']) && is_ipaddrv6($dhcpv6ifconf['prefixrange']['to'])) {
 			$dhcpdv6conf .= "	prefix6 {$dhcpv6ifconf['prefixrange']['from']} {$dhcpv6ifconf['prefixrange']['to']} /{$dhcpv6ifconf['prefixrange']['prefixlength']};\n";
 		}
 		if (is_ipaddrv6($dhcpv6ifconf['dns6ip'])) {
-			$dhcpdv6conf .= "	option dhcp6.name-servers {$dhcpv6ifconf['dns6ip']};\n";
+			$dns6ip = $dhcpv6ifconf['dns6ip'];
+			if ($ifcfgv6['ipaddrv6'] == 'track6' && Net_IPv6::isInNetmask($dns6ip, '::', 64)) {
+				$dns6ip = merge_ipv6_delegated_prefix($ifcfgipv6, $dns6ip);
+			}
+			$dhcpdv6conf .= "	option dhcp6.name-servers {$dns6ip};\n";
 		}
     		// default-lease-time
 		if ($dhcpv6ifconf['defaultleasetime'])
@@ -1300,8 +1321,12 @@ EOD;
 		if (is_array($dhcpv6ifconf['ntpserver']) && $dhcpv6ifconf['ntpserver'][0]) {
 			$ntpservers = array();
 			foreach($dhcpv6ifconf['ntpserver'] as $ntpserver) {
-				if(is_ipaddrv6($ntpserver))
+				if (is_ipaddrv6($ntpserver)) {
+					if ($ifcfgv6['ipaddrv6'] == 'track6' && Net_IPv6::isInNetmask($ntpserver, '::', 64)) {
+						$ntpserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ntpserver);
+					}
 					$ntpservers[] = $ntpserver;
+				}
 			}
 			if(count($ntpservers) > 0 )
 				$dhcpdv6conf .= "       option dhcp6.sntp-servers " . join(",", $dhcpv6ifconf['ntpserver']) . ";\n";
@@ -1321,8 +1346,13 @@ EOD;
 		}
 
 		// ldap-server
-		if ($dhcpv6ifconf['ldap'] <> "")
-			$dhcpdv6conf .= "	option ldap-server \"{$dhcpv6ifconf['ldap']}\";\n";
+		if ($dhcpv6ifconf['ldap'] <> "") {
+			$ldapserver = $dhcpv6ifconf['ldap'];
+			if ($ifcfgv6['ipaddrv6'] == 'track6' && Net_IPv6::isInNetmask($ldapserver, '::', 64)) {
+				$ldapserver = merge_ipv6_delegated_prefix($ifcfgipv6, $ldapserver);
+			}
+			$dhcpdv6conf .= "	option ldap-server \"{$ldapserver}\";\n";
+		}
 
 		// net boot information
 		if(isset($dhcpv6ifconf['netboot'])) {
@@ -1343,8 +1373,13 @@ host s_{$dhcpv6if}_{$i} {
 	host-identifier option dhcp6.client-id {$sm['duid']};
 
 EOD;
-				if ($sm['ipaddrv6'])
-					$dhcpdv6conf .= "	fixed-address6 {$sm['ipaddrv6']};\n";
+				if ($sm['ipaddrv6']) {
+					$ipaddrv6 = $sm['ipaddrv6'];
+					if ($ifcfgv6['ipaddrv6'] == 'track6') {
+						$ipaddrv6 = merge_ipv6_delegated_prefix($ifcfgipv6, $ipaddrv6);
+					}
+					$dhcpdv6conf .= "	fixed-address6 {$ipaddrv6};\n";
+				}
 
 				if ($sm['hostname']) {
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
@@ -1362,7 +1397,7 @@ EOD;
 			}
 		}
 
-		if ($dhcpv6ifconf['domain'])
+		if (isset($dhcpv6ifconf['ddnsupdate']) && $dhcpv6ifconf['ddnsdomain'])
 		{
 			$dhcpdv6conf .= dhcpdkey($dhcpv6ifconf);
 			$dhcpdv6conf .= dhcpdzones($ddns_zones, $dhcpv6ifconf);

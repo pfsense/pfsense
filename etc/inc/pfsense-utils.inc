@@ -2851,6 +2851,12 @@ function calculate_ipv6_delegation_length($if) {
 	return($pdlen);
 }
 
+function merge_ipv6_delegated_prefix($prefix, $suffix) {
+	$prefix_array = explode(':', Net_IPv6::uncompress($prefix));
+	$suffix_array = explode(':', Net_IPv6::uncompress($suffix));
+	return Net_IPv6::compress(implode(':', array_merge(array_slice($prefix_array, 0, 4), array_slice($suffix_array, 4))));
+}
+
 function huawei_rssi_to_string($rssi) {
 	$dbm = array();
 	$i = 0;

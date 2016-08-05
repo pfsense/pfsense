@@ -115,8 +115,14 @@ if ($_POST) {
 		/* Namecheap can have a @. in hostname */
 		if ($pconfig['type'] == "namecheap" && substr($_POST['host'], 0, 2) == '@.')
 			$host_to_check = substr($_POST['host'], 2);
-		else
+		else {
 			$host_to_check = $_POST['host'];
+
+			/* No-ip (and maybe others) can have a @ in hostname */
+			$last = strrpos($host_to_check, '@');
+			if ($last !== false)
+				$host_to_check = substr_replace($host_to_check, '.', $last, 1);
+		}
 
 		if ($pconfig['type'] != "custom" && $pconfig['type'] != "custom-v6")
 			if (!is_domain($host_to_check))

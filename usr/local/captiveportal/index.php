@@ -69,6 +69,9 @@ if (!$clientip) {
 	return;
 }
 
+/* storing the original redirurl in the cookie */
+setcookie('redirurl', $orig_request);
+
 $ourhostname = portal_hostname_from_client_ip($clientip);
 if ($orig_host != $ourhostname) {
 	/* the client thinks it's connected to the desired web server, but instead
@@ -225,6 +228,13 @@ EOD;
 	captiveportal_logportalauth("unauthenticated",$clientmac,$clientip,"ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");
 
+} else if ($cpcfg['auth_method'] == "oauth2") {
+        require_once('OAuth/backends/google.php');
+        $result = authenticate($cpcfg['oauth2']['client_id'], $cpcfg['oauth2']['client_secret']);
+        if ($result) {
+          $redirurl = $_COOKIE['redirurl'];
+          portal_allow($clientip, $clientmac, $result);
+        }
 } else {
 	/* display captive portal page */
 	portal_reply_page($redirurl, "login",null,$clientmac,$clientip);

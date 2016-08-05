@@ -96,6 +96,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['freelogins_updatetimeouts'] = isset($a_cp[$cpzone]['freelogins_updatetimeouts']);
 	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
+        $pconfig['oauth2'] = $a_cp[$cpzone]['oauth2'];
 	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
@@ -267,6 +268,10 @@ if ($_POST) {
 		else
 			unset($newcp['enable']);
 		$newcp['auth_method'] = $_POST['auth_method'];
+                if ($newcp['auth_method'] == 'oauth2') {
+                  $newcp['oauth2'] = array('client_secret' => $_POST['oauth2_secret'],
+                                           'client_id' => $_POST['oauth2_id']);
+                }
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
@@ -595,6 +600,34 @@ function enable_change(enable_change) {
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="none" onClick="enable_change(false)" <?php if($pconfig['auth_method']!="local" && $pconfig['auth_method']!="radius") echo "checked"; ?>>
   <?=gettext("No Authentication"); ?></td>
 		</tr>
+                <tr>
+                  <td colspan="2">
+                    <input name="auth_method" type="radio" id="auth_method" value="oauth2" <?php if($pconfig['auth_method']=="oauth2") echo "checked"; ?>/>OAuth2(via Google)
+                  </td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>&nbsp;</td>
+                </tr>
+                <tr>
+                  <td>&nbsp;</td>
+                  <td>
+                    <table>
+                      <tr>
+                        <td>ID</td>
+                        <td>
+                          <input type='text' name='oauth2_id' class='formfld unknown' size=30 value='<?php if($pconfig['auth_method']=="oauth2") echo $pconfig['oauth2']['client_id'] ?>' />
+                      </td>
+                      </tr>
+                      <tr>
+                        <td>Secret</td>
+                        <td>
+                          <input type='text' name='oauth2_secret' class='formfld unknown' size=30 value='<?php if($pconfig['auth_method']=="oauth2") echo $pconfig['oauth2']['client_secret'] ?>' />
+                      </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
 		<tr>
 		  <td colspan="2"><input name="auth_method" type="radio" id="auth_method" value="local" onClick="enable_change(false)" <?php if($pconfig['auth_method']=="local") echo "checked"; ?>>
   <?=gettext("Local"); ?> <a href="system_usermanager.php"><?=gettext("User Manager"); ?></a> / <?=gettext("Vouchers"); ?></td>

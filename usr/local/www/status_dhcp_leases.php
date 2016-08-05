@@ -351,6 +351,7 @@ foreach ($pools as $data) {
     <td class="listhdrr"><a href="#"><?=gettext("Lease Type"); ?></a></td>
 	</tr>
 <?php
+$dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 // Load MAC-Manufacturer table
 $mac_man = load_mac_manufacturer_table();
 foreach ($leases as $data) {
@@ -364,11 +365,15 @@ foreach ($leases as $data) {
 		}
 		$lip = ip2ulong($data['ip']);
 		if ($data['act'] != "static") {
+			$dlsc=0;
 			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
 				if (!is_array($dhcpifconf['range']))
 					continue;
 				if (($lip >= ip2ulong($dhcpifconf['range']['from'])) && ($lip <= ip2ulong($dhcpifconf['range']['to']))) {
 					$data['if'] = $dhcpif;
+					$dhcp_leases_subnet_counter[$dlsc][0] = $dhcpifconf['range']['from'];
+					$dhcp_leases_subnet_counter[$dlsc][1] = $dhcpifconf['range']['to'];
+					$dhcp_leases_subnet_counter[$dlsc][2] = $dhcp_leases_subnet_counter[$dlsc][2]+1;
 					break;
 				}
 				// Check if the IP is in the range of any DHCP pools
@@ -382,6 +387,7 @@ foreach ($leases as $data) {
 						}
 					}
 				}
+				$dlsc++;
 			}
 		}
 		echo "<tr>\n";
@@ -432,6 +438,20 @@ foreach ($leases as $data) {
 	}
 }
 
+?>
+</table>
+<br/>
+<table class="tabcont sortable" width="100%" border="0" cellpadding="0" cellspacing="0" summary="# of leases">
+	<tr>
+		<td class="listhdrr"><a href="#"><?=gettext("Pool Start"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("Pool End"); ?></a></td>
+		<td class="listhdrr"><a href="#"><?=gettext("# of leases in use"); ?></a></td>
+	</tr>
+<?php
+foreach($dhcp_leases_subnet_counter as $listcounters)
+{
+	echo "<tr><td class=\"listr\">".$listcounters[0]."</td><td class=\"listr\">".$listcounters[1]."</td><td class=\"listr\">".$listcounters[2]."</td></tr>";
+}
 ?>
 </table>
 <br/>

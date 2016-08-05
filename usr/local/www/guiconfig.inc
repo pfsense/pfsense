@@ -636,7 +636,7 @@ function dump_clog($logfile, $tail, $withorig = true, $grepfor = "", $grepinvert
 						$entry_text .= htmlspecialchars($logent[4] . " " . $logent[5]);
 					}
 					echo "<td class=\"listlr nowrap\">{$entry_date_time}</td>\n";
-					echo "<td class=\"listr\">{$entry_text}</td>\n";
+					echo "<td class=\"listr\" style=\"word-wrap:break-word; max-width:590px\">{$entry_text}</td>\n";
 
 			} else {
 					echo "<td class=\"listlr\" colspan=\"2\">" . htmlspecialchars($logent[5]) . "</td>\n";

@@ -5,11 +5,7 @@
  *   Part of the pfSense project pfSsh.php subsystem
  */
 
-require_once("globals.inc");
-require_once("filter.inc");
-require_once("shaper.inc");
-require_once("rrd.inc");
-require_once("pfsense-utils.inc");
+require_once("gitsync.inc");
 	
 $GIT_PKG = "git"; // Either "git" or the full package URL
 $GIT_BIN= "/usr/pbi/bin/git";
@@ -41,6 +37,11 @@ $valid_args = array(
 	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
 	               "\tNot recommended if the system has files modified by any method other\n" .
 	               "\tthan gitsync.\n",
+	"--diff"    => "\tPerform a copy of only the files that are different or missing.\n" .
+	               "\tRecommended for SSD if system has files modified by any method other\n" .
+	               "\tthan gitsync.\n",
+	"--verbose" => "\tDisplay constructed command.  In combination with the --diff\n" .
+	               "\toption, display the array of different and missing files.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
 $args = array();
@@ -309,8 +310,10 @@ if(isset($args["--minimal"])) {
 	else if(file_exists("/etc/version.lastcommit"))
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
 	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only " . escapeshellarg($old_revision)), "\n", " ");
+	$tar_options = '';
 } else
-	$files_to_copy = '--exclude .git .';
+	$files_to_copy = '.';
+	$tar_options = '--exclude .git';
 
 // Save new commit ID for later minimal file copies
 exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
@@ -340,13 +343,69 @@ exec("rm -rf ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/root/.tcshrc");
 exec("rm -f ${CODIR}/pfSenseGITREPO/pfSenseGITREPO/etc/syslog.conf 2>/dev/null");
 @chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/tmp", 01777);
 
+if(isset($args["--diff"])) {
+	# Find different and missing files.
+	$different_missing_files = shell_exec("/usr/bin/diff -qr / $CODIR/pfSenseGITREPO/pfSenseGITREPO/ | /usr/bin/grep -E '^(Files .*? and $CODIR/pfSenseGITREPO/pfSenseGITREPO/.*? differ)|(Only in $CODIR/pfSenseGITREPO/pfSenseGITREPO/)'");
+
+	# Get the path of each different or missing file.
+	preg_match_all('@(?:^Files .*? and '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/(.*?) differ.*?$)@sim', $different_missing_files, $different_files_array, PREG_PATTERN_ORDER);
+	preg_match_all('@(?:^Only in '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/(.*?)$)@sim', $different_missing_files, $missing_files_array, PREG_PATTERN_ORDER);
+
+	# Deal with diff's output format of missing files (path: missing_file).
+	foreach ($missing_files_array[1] as $key => $file) {
+
+		# Most of the time there will be only the one ': ' injected by diff output.  So global replace with dir delimiter (/) is fine.
+		$tmp = str_replace(": ", "/", $file, $count);
+		if ($count == 1)
+			$file = ltrim($tmp, "/");
+
+		# For the very rare case a path component (dir or file) contains ': ' as well, then need to find and replace only the ': ' injected by diff output.
+		else {
+			$tmp = $file;
+			do {
+				$pos = strrpos($tmp, ": ");
+				if ($pos) {
+					$tmp = substr($tmp, 0, $pos);
+					$res = is_dir("$CODIR/pfSenseGITREPO/pfSenseGITREPO/$tmp/");
+				}
+			} while (!$res && $pos);
+
+			if ($res)
+				$file = ltrim($tmp . "/" . substr($file, $pos+2), "/");
+		}
+
+		$missing_files_array[1][$key] = $file;
+	}
+
+	# Convert the list from array to space separated quoted strings.  Quoted for white space file name support.
+	$different_files = $missing_files = '';
+	if (count($different_files_array[1]) > 0) 
+		$different_files .= '"' . implode('" "', $different_files_array[1]) . '"';
+	if (count($missing_files_array[1]) > 0)
+		$missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
+
+	# Files to be copied.
+	$files_to_copy = trim($different_files . " " . $missing_files);
+	$tar_options = '--exclude .git';
+
+	if(isset($args["--verbose"])) {
+		echo "===> Different Files: \n";
+		print_r($different_files_array[1]);
+		echo "===> Missing Files: \n";
+		print_r($missing_files_array[1]);
+	}
+}
+
 echo "===> Installing new files...\n";
 
 if($g['platform'] == "pfSense") 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -Uxpf -)";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";
 else 
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
+	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
 if(!empty($files_to_copy))
+	if(isset($args["--verbose"])) {
+		echo "===> Command: \n$command\n";
+	}
 	exec($command);
 else {
 	echo "Already up-to-date.\n";
@@ -371,61 +430,5 @@ if(!$upgrading)
 	echo "Your system is now sync'd and PHP and Lighty will be restarted in 5 seconds.\n\n";
 else
 	echo "Your system is now sync'd.\n\n";
-
-function post_cvssync_commands() {
-	echo "===> Removing FAST-CGI temporary files...\n";
-	exec("find /tmp -name \"php-fastcgi.socket*\" -exec rm -rf {} \;");
-	exec("find /tmp -name \"*.tmp\" -exec rm -rf {} \;");
-
-	exec("rm -rf /tmp/xcache/* 2>/dev/null");
-
-	echo "===> Upgrading configuration (if needed)...\n";
-	convert_config();
-
-	echo "===> Configuring filter...";
-	exec("/etc/rc.filter_configure_sync");
-	exec("pfctl -f /tmp/rules.debug");
-	echo "\n";
-
-	if(file_exists("/etc/rc.php_ini_setup")) {
-		echo "===> Running /etc/rc.php_ini_setup...";
-		exec("/etc/rc.php_ini_setup");
-		echo "\n";
-	}
-
-	/* lock down console if necessary */
-	echo "===> Locking down the console if needed...\n";
-	reload_ttys();
-	
-	echo "===> Signaling PHP and Lighty restart...";
-	$fd = fopen("/tmp/restart_lighty", "w");
-	fwrite($fd, "#!/bin/sh\n");
-	fwrite($fd, "sleep 5\n");
-	fwrite($fd, "/usr/local/sbin/pfSctl -c 'service restart webgui'\n");
-	if(file_exists("/var/etc/lighty-CaptivePortal.conf"))
-		fwrite($fd, "/usr/local/sbin/lighttpd -f /var/etc/lighty-CaptivePortal.conf\n");
-	fclose($fd);
-	mwexec_bg("sh /tmp/restart_lighty");
-	echo "\n";
-
-}
-
-function isUrl($url = "") {
-	if($url) 
-		if(strstr($url, "rcs.pfsense.org") or 
-			strstr($url, "mainline") or 
-				strstr($url, ".git") or strstr($url, "git://"))
-					return true;
-	return false;
-}
-
-function run_cmds($cmds) {
-	global $debug;
-	foreach($cmds as $cmd) {
-		if($debug)
-			echo "Running $cmd";
-		exec($cmd);
-	}
-}
 
 conf_mount_ro();

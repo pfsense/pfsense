@@ -199,7 +199,7 @@ function interfaces_vlan_configure($realif = "") {
 	if (is_array($config['vlans']['vlan']) && count($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (empty($vlan['vlanif']))
-				$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
+				$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['vid']}";
 			if (!empty($realif) && $realif != $vlan['vlanif'])
 				continue;
 
@@ -219,13 +219,14 @@ function interface_vlan_configure(&$vlan) {
 		return;
 	}
 	$if = $vlan['if'];
-	$vlanif  = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['tag']}" : $vlan['vlanif'];
-	$tag = $vlan['tag'];
-
 	if (empty($if)) {
 		log_error(gettext("interface_vlan_configure called with if undefined."));
 		return;
 	}
+
+	$vlanif  = empty($vlan['vlanif']) ? "{$if}_vlan{$vlan['vid']}" : $vlan['vlanif'];
+	$vid  = $vlan['vid'];
+	$pcp  = empty($vlan['pcp']) ? 0 : $vlan['pcp'];	/* Apply "Best Effort" if not set */
 
 	/* make sure the parent interface is up */
 	interfaces_bring_up($if);
@@ -240,7 +241,7 @@ function interface_vlan_configure(&$vlan) {
 		pfSense_ngctl_name("{$tmpvlanif}:", $vlanif);
 	}
 
-	pfSense_vlan_create($vlanif, $if, $tag);
+	pfSense_vlan_create($vlanif, $if, $vid, $pcp);
 
 	interfaces_bring_up($vlanif);
 
@@ -262,7 +263,7 @@ function interface_qinq_configure(&$vlan, $fd = NULL) {
 	}
 
 	$qinqif = $vlan['if'];
-	$tag = $vlan['tag'];
+	$tag = $vlan['vid'];
 	if(empty($qinqif)) {
 		log_error(sprintf(gettext("interface_qinq_configure called with if undefined.%s"), "\n"));
 		return;
@@ -4641,7 +4642,7 @@ function link_interface_to_vlans($int, $action = "") {
 				if ($action == "update") {
 					interfaces_bring_up($int);
 				} else
-					$ifaces[$vlan['tag']] = $vlan;
+					$ifaces[$vlan['vid']] = $vlan;
 			}
 		}
 		if (!empty($ifaces))

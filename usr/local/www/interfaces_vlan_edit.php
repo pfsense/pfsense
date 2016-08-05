@@ -69,7 +69,8 @@ if (isset($_POST['id']) && is_numericint($_POST['id']))
 if (isset($id) && $a_vlans[$id]) {
 	$pconfig['if'] = $a_vlans[$id]['if'];
 	$pconfig['vlanif'] = $a_vlans[$id]['vlanif'];
-	$pconfig['tag'] = $a_vlans[$id]['tag'];
+	$pconfig['vid'] = $a_vlans[$id]['vid'];
+	$pconfig['pcp'] = $a_vlans[$id]['pcp'];
 	$pconfig['descr'] = $a_vlans[$id]['descr'];
 }
 
@@ -79,59 +80,64 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	$reqdfields = explode(" ", "if tag");
-	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN tag"));
+	$reqdfields = explode(" ", "if vid");
+	$reqdfieldsn = array(gettext("Parent interface"),gettext("VLAN"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
-	if (isset($_POST['tag']) && (!is_numericint($_POST['tag']) || ($_POST['tag'] < '1') || ($_POST['tag'] > '4094'))) {
-		$input_errors[] = gettext("The VLAN tag must be an integer between 1 and 4094.");
+	if (isset($_POST['vid']) && (!is_numericint($_POST['vid']) || ($_POST['vid'] < '1') || ($_POST['vid'] > '4094'))) {
+		$input_errors[] = gettext("The VLAN ID must be an integer between 1 and 4094.");
+	}
+	if (isset($_POST['pcp']) && (!is_numericint($_POST['pcp']) || ($_POST['pcp'] < '0') || ($_POST['pcp'] > '7'))) {
+		$input_errors[] = gettext("The VLAN Priority must be an integer between 0 and 7.");
 	}
 
 	if (!does_interface_exist($_POST['if']))
 		$input_errors[] = gettext("Interface supplied as parent is invalid");
 
 	if (isset($id)) {
-		if ($_POST['tag'] && $_POST['tag'] != $a_vlans[$id]['tag']) {
+		if ($_POST['vid'] && $_POST['vid'] != $a_vlans[$id]['vid']) {
 			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL)
-				$input_errors[] = gettext("Interface is assigned and you cannot change the VLAN tag while assigned.");
+				$input_errors[] = gettext("Interface is assigned and you cannot change the VLAN id while assigned.");
 		}
 	}
 	foreach ($a_vlans as $vlan) {
 		if (isset($id) && ($a_vlans[$id]) && ($a_vlans[$id] === $vlan))
 			continue;
 
-		if (($vlan['if'] == $_POST['if']) && ($vlan['tag'] == $_POST['tag'])) {
-			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is already defined on this interface."),$vlan['tag']);
+		if (($vlan['if'] == $_POST['if']) && ($vlan['vid'] == $_POST['vid'])) {
+			$input_errors[] = sprintf(gettext("A VLAN with id %s is already defined on this interface."),$vlan['vid']);
 			break;
 		}
 	}
 	if (is_array($config['qinqs']['qinqentry'])) {
 		foreach ($config['qinqs']['qinqentry'] as $qinq)
-			if ($qinq['tag'] == $_POST['tag'] && $qinq['if'] == $_POST['if'])
-				$input_errors[] = gettext("A QinQ VLAN exists with this tag please remove it to use this tag with.");
+			if ($qinq['tag'] == $_POST['vid'] && $qinq['if'] == $_POST['if'])
+				$input_errors[] = gettext("A QinQ VLAN exists with this id please remove it to use this id with.");
 	}
 
 	if (!$input_errors) {
 		if (isset($id) && $a_vlans[$id]) {
-			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
+			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['vid'] != $_POST['vid'])) {
 				if (!empty($a_vlans[$id]['vlanif'])) {
 					$confif = convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']);
 					// Destroy previous vlan
 					pfSense_interface_destroy($a_vlans[$id]['vlanif']);
 				} else {
-					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
-					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['tag']}");
+					pfSense_interface_destroy("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['vid']}");
+					$confif = convert_real_interface_to_friendly_interface_name("{$a_vlans[$id]['if']}_vlan{$a_vlans[$id]['vid']}");
 				}
 				if ($confif <> "")
-					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+					$config['interfaces'][$confif]['if'] = "{$_POST['if']}_vlan{$_POST['vid']}";
 			}
 		}
 		$vlan = array();
 		$vlan['if'] = $_POST['if'];
-		$vlan['tag'] = $_POST['tag'];
+		$vlan['vid'] = $_POST['vid'];
+		if ($_POST['pcp'] != '')
+			$vlan['pcp'] = $_POST['pcp']; /* Leave PCP unset if not required */
 		$vlan['descr'] = $_POST['descr'];
-		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['tag']}";
+		$vlan['vlanif'] = "{$_POST['if']}_vlan{$_POST['vid']}";
 
 		$vlan['vlanif'] = interface_vlan_configure($vlan);
                 if ($vlan['vlanif'] == "" || !stristr($vlan['vlanif'], "vlan"))
@@ -187,11 +193,18 @@ include("head.inc");
 			<span class="vexpl"><?=gettext("Only VLAN capable interfaces will be shown.");?></span></td>
                 </tr>
 				<tr>
-                  <td valign="top" class="vncellreq"><?=gettext("VLAN tag ");?></td>
+                  <td valign="top" class="vncellreq"><?=gettext("VLAN id ");?></td>
                   <td class="vtable">
-                    <input name="tag" type="text" class="formfld unknown" id="tag" size="6" value="<?=htmlspecialchars($pconfig['tag']);?>" />
+                    <input name="vid" type="text" class="formfld unknown" id="vid" size="6" value="<?=htmlspecialchars($pconfig['vid']);?>" />
                     <br />
-                    <span class="vexpl"><?=gettext("802.1Q VLAN tag (between 1 and 4094) ");?></span></td>
+                    <span class="vexpl"><?=gettext("802.1Q VLAN vid (between 1 and 4094) ");?></span></td>
+			    </tr>
+				<tr>
+                  <td valign="top" class="vncell"><?=gettext("VLAN Priority ");?></td>
+                  <td class="vtable">
+                    <input name="pcp" type="text" class="formfld unknown" id="pcp" size="4" value="<?=htmlspecialchars($pconfig['pcp']);?>" />
+                    <br/>
+                    <span class="vexpl"><?=gettext("802.1Q VLAN pcp (between 0 and 7, default 0) ");?></span></td>
 			    </tr>
 				<tr>
                   <td width="22%" valign="top" class="vncell"><?=gettext("Description");?></td>

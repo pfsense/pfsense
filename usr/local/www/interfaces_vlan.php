@@ -112,8 +112,9 @@ include("head.inc");
 	<div id="mainarea">
 	<table class="tabcont" width="100%" border="0" cellpadding="0" cellspacing="0" summary="main area">
                 <tr>
-                  <td width="20%" class="listhdrr"><?=gettext("Interface");?></td>
-                  <td width="20%" class="listhdrr"><?=gettext("VLAN tag");?></td>
+                  <td width="16%" class="listhdrr"><?=gettext("Interface");?></td>
+                  <td width="12%" class="listhdrr"><?=gettext("VLAN");?></td>
+                  <td width="12%" class="listhdrr"><?=gettext("Priority");?></td>
                   <td width="50%" class="listhdr"><?=gettext("Description");?></td>
                   <td width="10%" class="list"></td>
 				</tr>
@@ -123,7 +124,10 @@ include("head.inc");
 					<?=htmlspecialchars($vlan['if']);?>
                   </td>
                   <td class="listr">
-					<?=htmlspecialchars($vlan['tag']);?>
+					<?=htmlspecialchars($vlan['vid']);?>
+                  </td>
+                  <td class="listr">
+					<?=htmlspecialchars($vlan['pcp']);?>
                   </td>
                   <td class="listbg">
                     <?=htmlspecialchars($vlan['descr']);?>&nbsp;

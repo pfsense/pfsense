@@ -56,7 +56,7 @@ require_once("rrd.inc");
 function interface_assign_description($portinfo, $portname) {
 	global $ovpn_descrs;
 	if ($portinfo['isvlan']) {
-		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['tag'],$portinfo['if']);
+		$descr = sprintf(gettext('VLAN %1$s on %2$s'),$portinfo['vid'],$portinfo['if']);
 		if ($portinfo['descr'])
 			$descr .= " (" . $portinfo['descr'] . ")";
 	} elseif ($portinfo['iswlclone']) {
@@ -306,7 +306,7 @@ if (isset($_POST['add_x']) && isset($_POST['if_add'])) {
 	if (is_array($config['vlans']['vlan'])) {
 		foreach ($config['vlans']['vlan'] as $vlan) {
 			if (does_interface_exist($vlan['if']) == false)
-				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['tag']} cannot be created please fix the issue before continuing.";
+				$input_errors[] = "Vlan parent interface {$vlan['if']} does not exist anymore so vlan id {$vlan['vid']} cannot be created please fix the issue before continuing.";
 		}
 	}
 

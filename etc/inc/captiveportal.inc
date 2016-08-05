@@ -658,6 +658,7 @@ function captiveportal_prune_old() {
 	foreach ($cpdb as $cpentry) {
 		$stop_time = $pruning_time;
 
+        $stop_time = $pruning_time;
 		$timedout = false;
 		$term_cause = 1;
 		if (empty($cpentry[11]))

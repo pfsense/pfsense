@@ -32,7 +32,21 @@ require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
+
+if (isset($_POST['smartstatusfilter'])) {
+	$config['widgets']['smartstatusfilter'] = htmlspecialchars($_POST['smartstatusfilter'], ENT_QUOTES | ENT_HTML401);
+	write_config("Saved SMART Status Filter via Dashboard");
+	header("Location: ../../index.php");
+}
 ?>
+<input type="hidden" id="smart_status-config" name="smart_status-config" value="" />
+<div id="smart_status-settings" class="widgetconfigdiv" style="display:none;">
+	<form action="/widgets/widgets/smart_status.widget.php" method="post" name="iformd">
+		Comma separated list of drives to NOT display in the widget<br />
+		<input type="text" size="30" name="smartstatusfilter" class="formfld unknown" id="smartstatusfilter" value="<?= $config['widgets']['smartstatusfilter'] ?>" />
+		<input id="submitd" name="submitd" type="submit" class="formbtn" value="Save" />
+	</form>
+</div>
 
 <table width="100%" border="0" cellpadding="0" cellspacing="0" summary="smart status">
 	<tr>
@@ -42,35 +56,50 @@ require_once("/usr/local/www/widgets/include/smart_status.inc");
 	</tr>
 
 <?php
-$devs = array();
-## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
+/* Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed */
 $devs = get_smart_drive_list();
+/* Get list of drives to hide from the widget */
+$skipdrives = array();
+$skipdrives = explode(",", $config['widgets']['smartstatusfilter']);
 
-if(count($devs) > 0)  {
-	foreach($devs as $dev)  {	## for each found drive do
-		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
-		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
-/^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
-		switch ($dev_state) {
-		case "PASSED":
-		case "OK":
-			$color = "#90EE90";
-			break;
-		case "":
-			$dev_state = "Unknown";
-			$color = "#C0B788";
-			break;
-		default:
-			$color = "#F08080";
-			break;
-		}
+if (count($devs) > 0)  {
+	// For each found drive ...
+	foreach($devs as $dev)  {
+		// unless configured to be hidden ...
+		if ((!in_array($dev, $skipdrives))) {
+			$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); // get identifier from drive
+			$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
+/^SMART Health Status/ {print $2;exit}'")); // get SMART state from drive
+			switch ($dev_state) {
+				case "PASSED":
+				case "OK":
+					$color = "#90EE90";
+					break;
+				case "":
+					$dev_state = "Unknown";
+					$color = "#C0B788";
+					break;
+				default:
+					$color = "#F08080";
+					break;
+			}
 ?>
-		<tr>
-			<td class="listlr"><?php echo $dev; ?></td>
-			<td class="listr" align="center"><?php echo $dev_ident; ?></td>
-			<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>">&nbsp;<?php echo $dev_state; ?>&nbsp;</span></td>
-		</tr>
-<?php	}
+			<tr>
+				<td class="listlr"><?php echo $dev; ?></td>
+				<td class="listr" align="center"><?php echo $dev_ident; ?></td>
+				<td class="listr" align="center"><span style="background-color:<?php echo $color; ?>">&nbsp;<?php echo $dev_state; ?>&nbsp;</span></td>
+			</tr>
+<?php		}
+	}
 }
 ?>
 </table>
+
+<!-- needed to display the widget settings menu -->
+<script type="text/javascript">
+//<![CDATA[
+        selectIntLink = "smart_status-configure";
+        textlink = document.getElementById(selectIntLink);
+        textlink.style.display = "inline";
+//]]>
+</script>

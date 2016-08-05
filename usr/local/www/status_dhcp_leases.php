@@ -294,6 +294,7 @@ foreach($config['interfaces'] as $ifname => $ifarr) {
 			$slease['start'] = "";
 			$slease['end'] = "";
 			$slease['hostname'] = htmlentities($static['hostname']);
+			$slease['descr'] = htmlentities($static['descr']);
 			$slease['act'] = "static";
 			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? 'online' : 'offline';
 			$slease['staticmap_array_index'] = $staticmap_array_index;
@@ -406,8 +407,7 @@ foreach ($leases as $data) {
 			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['start']) . "{$fspane}</td>\n";
 			echo "<td class=\"listr\">{$fspans}" . adjust_gmt($data['end']) . "{$fspane}</td>\n";
 		} else {
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
-			echo "<td class=\"listr\">{$fspans} n/a {$fspane}</td>\n";
+			echo "<td class=\"listr\" colspan=\"2\">{$fspans}" . htmlentities($data['descr']) . "{$fspane}</td>\n";
 		}
 		echo "<td class=\"listr\">{$fspans}{$data['online']}{$fspane}</td>\n";
 		echo "<td class=\"listr\">{$fspans}{$data['act']}{$fspane}</td>\n";

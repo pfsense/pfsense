@@ -102,6 +102,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $a_maps[$id]['mac'];
 	$pconfig['cid'] = $a_maps[$id]['cid'];
 	$pconfig['hostname'] = $a_maps[$id]['hostname'];
+	$pconfig['ddnshostname'] = $a_maps[$id]['ddnshostname'];
 	$pconfig['ipaddr'] = $a_maps[$id]['ipaddr'];
 	$pconfig['filename'] = $a_maps[$id]['filename'];
 	$pconfig['rootpath'] = $a_maps[$id]['rootpath'];
@@ -125,6 +126,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['mac'] = $_GET['mac'];
 	$pconfig['cid'] = $_GET['cid'];
 	$pconfig['hostname'] = $_GET['hostname'];
+	$pconfig['ddnshostname'] = $_GET['ddnshostname'];
 	$pconfig['filename'] = $_GET['filename'];
 	$pconfig['rootpath'] = $_GET['rootpath'];
 	$pconfig['descr'] = $_GET['descr'];
@@ -176,6 +178,18 @@ if ($_POST) {
 			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
 		} else {
 			if (!is_unqualified_hostname($_POST['hostname'])) {
+				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
+			}
+		}
+	}
+	if ($_POST['ddnshostname']) {
+		preg_match("/\-\$/", $_POST['ddnshostname'], $matches);
+		if($matches)
+			$input_errors[] = gettext("The hostname cannot end with a hyphen according to RFC952");
+		if (!is_hostname($_POST['ddnshostname'])) {
+			$input_errors[] = gettext("The hostname can only contain the characters A-Z, 0-9 and '-'.");
+		} else {
+			if (!is_unqualified_hostname($_POST['ddnshostname'])) {
 				$input_errors[] = gettext("A valid hostname is specified, but the domain name part should be omitted");
 			}
 		}
@@ -277,6 +291,7 @@ if ($_POST) {
 		$mapent['cid'] = $_POST['cid'];
 		$mapent['ipaddr'] = $_POST['ipaddr'];
 		$mapent['hostname'] = $_POST['hostname'];
+		$mapent['ddnshostname'] = $_POST['ddnshostname'];
 		$mapent['descr'] = $_POST['descr'];
 		$mapent['arp_table_static_entry'] = ($_POST['arp_table_static_entry']) ? true : false;
 		$mapent['filename'] = $_POST['filename'];
@@ -413,6 +428,12 @@ include("head.inc");
                   <td width="78%" class="vtable">
                     <input name="hostname" type="text" class="formfld unknown" id="hostname" size="20" value="<?=htmlspecialchars($pconfig['hostname']);?>" />
                     <br /> <span class="vexpl"><?=gettext("Name of the host, without domain part.");?></span></td>
+                </tr>
+                <tr>
+                  <td width="22%" valign="top" class="vncell"><?=gettext("DDNS Hostname");?></td>
+                  <td width="78%" class="vtable">
+                    <input name="ddnshostname" type="text" class="formfld unknown" id="ddnshostname" size="20" value="<?=htmlspecialchars($pconfig['ddnshostname']);?>" />
+                    <br /> <span class="vexpl"><?=gettext("Name of the host to be register in DNS, without domain part.");?></span></td>
                 </tr>
                 <?php if($netboot_enabled) { ?>
 		<tr>

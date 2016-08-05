@@ -2333,7 +2333,7 @@ EOD;
 
 				conf_mount_rw();
 				/* Update IPv4 if we have it. */
-				if (is_ipaddrv4($wanip)) {
+				if (is_ipaddrv4($wanip) && !isset($dnsupdate['ignoreipv4'])) {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
@@ -2348,7 +2348,7 @@ EOD;
 					@unlink($cacheFile);
 
 				/* Update IPv6 if we have it. */
-				if (is_ipaddrv6($wanipv6)) {
+				if (is_ipaddrv6($wanipv6) && !isset($dnsupdate['ignoreipv6'])) {
 					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";

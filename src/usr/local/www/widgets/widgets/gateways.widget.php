@@ -38,13 +38,13 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 if ($_POST) {
-	if (!is_array($config["widgets"]["gateways_widget"])) {
-		$config["widgets"]["gateways_widget"] = array();
+	if (!is_array($user_settings["widgets"]["gateways_widget"])) {
+		$user_settings["widgets"]["gateways_widget"] = array();
 	}
 	if (isset($_POST["display_type"])) {
-		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
+		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
-	write_config(gettext("Updated gateways widget settings via dashboard."));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated gateways widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
 }
@@ -81,8 +81,8 @@ if ($_POST) {
 				$display_type_gw_ip = "checked";
 				$display_type_monitor_ip = "";
 				$display_type_both_ip = "";
-				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
+				if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
+					$selected_radio = $user_settings["widgets"]["gateways_widget"]["display_type"];
 					if ($selected_radio == "gw_ip") {
 						$display_type_gw_ip = "checked";
 						$display_type_monitor_ip = "";
@@ -145,7 +145,7 @@ if ($_POST) {
 
 <?php
 function compose_table_body_contents() {
-	global $config;
+	global $user_settings;
 
 	$rtnstr = '';
 
@@ -153,8 +153,8 @@ function compose_table_body_contents() {
 	$gateways_status = array();
 	$gateways_status = return_gateways_status(true);
 
-	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+	if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
+		$display_type = $user_settings["widgets"]["gateways_widget"]["display_type"];
 	} else {
 		$display_type = "gw_ip";
 	}

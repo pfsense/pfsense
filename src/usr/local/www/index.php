@@ -122,8 +122,8 @@ if (!is_array($config['widgets'])) {
 
 if ($_POST && $_POST['sequence']) {
 
-	// Read in the existing widget settings
-	$widget_settings = $config['widgets'];
+	// Start with the user's widget settings.
+	$widget_settings = $user_settings['widgets'];
 
 	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
 

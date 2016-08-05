@@ -866,6 +866,11 @@ EOPP;
 				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
 			}
 
+			// ignore bootp
+			if (isset($poolconf['ignorebootp'])) {
+				$dhcpdconf .= "		ignore bootp;\n";
+			}
+
 			// netbios-name*
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
@@ -1945,7 +1950,19 @@ function services_dyndns_configure($int = "") {
 		}
 
 		foreach ($dyndnscfg as $dyndns) {
-			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
+			/*
+			 * If it's using a gateway group, check if interface is
+			 * the active gateway for that group
+			 */
+			$group_int = '';
+			if (is_array($gwgroups[$dyndns['interface']])) {
+				if (!empty($gwgroups[$dyndns['interface']][0]['vip'])) {
+					$group_int = $gwgroups[$dyndns['interface']][0]['vip'];
+				} else {
+					$group_int = $gwgroups[$dyndns['interface']][0]['int'];
+				}
+			}
+			if ((empty($int)) || ($int == $dyndns['interface']) || ($int == $group_int)) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
@@ -2445,7 +2462,19 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			if (!isset($dnsupdate['enable'])) {
 				continue;
 			}
-			if (!empty($int) && ($int != $dnsupdate['interface']) && (!is_array($gwgroups[$dnsupdate['interface']]))) {
+			/*
+			 * If it's using a gateway group, check if interface is
+			 * the active gateway for that group
+			 */
+			$group_int = '';
+			if (is_array($gwgroups[$dnsupdate['interface']])) {
+				if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
+					$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
+				} else {
+					$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
+				}
+			}
+			if (!empty($int) && ($int != $dnsupdate['interface']) && ($int != $group_int)) {
 				continue;
 			}
 			if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {

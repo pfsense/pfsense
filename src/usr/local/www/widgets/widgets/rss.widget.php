@@ -26,35 +26,35 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 
 if ($_POST['rssfeed']) {
-	$config['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
-	$config['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
-	$config['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
-	$config['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
-	write_config(gettext("Saved RSS Widget feed via Dashboard"));
+	$user_settings['widgets']['rssfeed'] = str_replace("\n", ",", htmlspecialchars($_POST['rssfeed'], ENT_QUOTES | ENT_HTML401));
+	$user_settings['widgets']['rssmaxitems'] = str_replace("\n", ",", htmlspecialchars($_POST['rssmaxitems'], ENT_QUOTES | ENT_HTML401));
+	$user_settings['widgets']['rsswidgetheight'] = htmlspecialchars($_POST['rsswidgetheight'], ENT_QUOTES | ENT_HTML401);
+	$user_settings['widgets']['rsswidgettextlength'] = htmlspecialchars($_POST['rsswidgettextlength'], ENT_QUOTES | ENT_HTML401);
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved RSS Widget feed via Dashboard."));
 	header("Location: /");
 }
 
 // Use saved feed and max items
-if ($config['widgets']['rssfeed']) {
-	$rss_feed_s = explode(",", $config['widgets']['rssfeed']);
+if ($user_settings['widgets']['rssfeed']) {
+	$rss_feed_s = explode(",", $user_settings['widgets']['rssfeed']);
 }
 
-if ($config['widgets']['rssmaxitems']) {
-	$max_items =  $config['widgets']['rssmaxitems'];
+if ($user_settings['widgets']['rssmaxitems']) {
+	$max_items =  $user_settings['widgets']['rssmaxitems'];
 }
 
-if (is_numeric($config['widgets']['rsswidgetheight'])) {
-	$rsswidgetheight =	$config['widgets']['rsswidgetheight'];
+if (is_numeric($user_settings['widgets']['rsswidgetheight'])) {
+	$rsswidgetheight =	$user_settings['widgets']['rsswidgetheight'];
 }
 
-if (is_numeric($config['widgets']['rsswidgettextlength'])) {
-	$rsswidgettextlength =	$config['widgets']['rsswidgettextlength'];
+if (is_numeric($user_settings['widgets']['rsswidgettextlength'])) {
+	$rsswidgettextlength =	$user_settings['widgets']['rsswidgettextlength'];
 }
 
 // Set a default feed if none exists
 if (!$rss_feed_s) {
 	$rss_feed_s = "https://blog.pfsense.org";
-	$config['widgets']['rssfeed'] = "https://blog.pfsense.org";
+	$user_settings['widgets']['rssfeed'] = "https://blog.pfsense.org";
 }
 
 if (!$max_items || !is_numeric($max_items)) {
@@ -69,8 +69,8 @@ if (!$rsswidgettextlength || !is_numeric($rsswidgettextlength)) {
 	$rsswidgettextlength = 140; // oh twitter, how do we love thee?
 }
 
-if ($config['widgets']['rssfeed']) {
-	$textarea_txt =	 str_replace(",", "\n", $config['widgets']['rssfeed']);
+if ($user_settings['widgets']['rssfeed']) {
+	$textarea_txt =	 str_replace(",", "\n", $user_settings['widgets']['rssfeed']);
 } else {
 	$textarea_txt = "";
 }

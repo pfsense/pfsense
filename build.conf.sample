@@ -32,9 +32,6 @@ export PRODUCT_URL="https://www.pfsense.org/"
 # Do not clean FreeBSD obj dirs
 #export NO_CLEAN_FREEBSD_OBJ=YES
 
-# Do not clean FreeBSD src dir
-#export NO_CLEAN_FREEBSD_SRC=YES
-
 # rsync data to upload snapshots
 export RSYNCIP="firmware.netgate.com"
 export RSYNCUSER="wwwsync"

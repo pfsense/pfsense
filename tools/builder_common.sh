@@ -145,20 +145,13 @@ build_all_kernels() {
 	for BUILD_KERNEL in $BUILD_KERNELS; do
 		unset KERNCONF
 		unset KERNEL_DESTDIR
-		unset KERNELCONF
 		unset KERNEL_NAME
 		export KERNCONF=$BUILD_KERNEL
 		export KERNEL_DESTDIR="$KERNEL_BUILD_PATH/$BUILD_KERNEL"
-		export KERNELCONF="${FREEBSD_SRC_DIR}/sys/${TARGET}/conf/$BUILD_KERNEL"
 		export KERNEL_NAME=${BUILD_KERNEL}
 
 		LOGFILE="${BUILDER_LOGS}/kernel.${KERNCONF}.${TARGET}.log"
 		echo ">>> Building $BUILD_KERNEL kernel."  | tee -a ${LOGFILE}
-
-		if [ ! -e "${FREEBSD_SRC_DIR}/sys/${TARGET}/conf/${BUILD_KERNEL}" ]; then
-			echo ">>> ERROR: Could not find $KERNELCONF"
-			print_error_pfS
-		fi
 
 		if [ -n "${NO_BUILDKERNEL}" -a -f "${CORE_PKG_ALL_PATH}/$(get_pkg_name kernel-${KERNEL_NAME}).txz" ]; then
 			echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
@@ -984,14 +977,6 @@ clean_builder() {
 	rm -rf $IMAGES_FINAL_DIR/*
 	echo "Done!"
 
-	if [ -z "${NO_CLEAN_FREEBSD_SRC}" ]; then
-		if [ -d "$FREEBSD_SRC_DIR" ]; then
-			echo -n ">>> Ensuring $FREEBSD_SRC_DIR is clean..."
-			rm -rf ${FREEBSD_SRC_DIR}
-			echo "Done!"
-		fi
-	fi
-
 	echo -n ">>> Cleaning previous builder logs..."
 	if [ -d "$BUILDER_LOGS" ]; then
 		rm -rf ${BUILDER_LOGS}
@@ -1403,7 +1388,8 @@ create_mfsbsd_image() {
 
 create_iso_image() {
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
-	if [ "${ISOPATH}" = "" ]; then
+
+	if [ -z "${ISOPATH}" ]; then
 		echo ">>> ISOPATH is empty skipping generation of ISO image!" | tee -a ${LOGFILE}
 		return
 	fi
@@ -1426,7 +1412,7 @@ create_iso_image() {
 
 	FSLABEL=$(echo ${PRODUCT_NAME} | tr '[:lower:]' '[:upper:]')
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/mkisoimages.sh -b \
 		${FSLABEL} \
 		${ISOPATH} \
 		${INSTALLER_CHROOT_DIR}
@@ -1806,47 +1792,50 @@ staginareas_clean_each_run() {
 
 # Imported from FreeSBIE
 buildkernel() {
+	local _kernconf=${1:-${KERNCONF}}
+
 	if [ -n "${NO_BUILDKERNEL}" ]; then
 		echo ">>> NO_BUILDKERNEL set, skipping build" | tee -a ${LOGFILE}
 		return
 	fi
 
-	if [ -z "${KERNCONF}" ]; then
+	if [ -z "${_kernconf}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 
-	if [ -n "${KERNELCONF}" ]; then
-		export KERNCONFDIR=$(dirname ${KERNELCONF})
-		export KERNCONF=$(basename ${KERNELCONF})
-	fi
+	local _old_kernconf=${KERNCONF}
+	export KERNCONF=${_kernconf}
 
 	echo ">>> $(LC_ALL=C date) - Starting build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/build_freebsd.sh -W -s ${FREEBSD_SRC_DIR} \
 		|| print_error_pfS
 	echo ">>> $(LC_ALL=C date) - Finished build kernel for ${TARGET} architecture..." | tee -a ${LOGFILE}
+
+	export KERNCONF=${_old_kernconf}
 }
 
 # Imported from FreeSBIE
 installkernel() {
 	local _destdir=${1:-${KERNEL_DESTDIR}}
+	local _kernconf=${2:-${KERNCONF}}
 
-	if [ -z "${KERNCONF}" ]; then
+	if [ -z "${_kernconf}" ]; then
 		echo ">>> ERROR: No kernel configuration defined probably this is not what you want! STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
 
-	if [ -n "${KERNELCONF}" ]; then
-		export KERNCONFDIR=$(dirname ${KERNELCONF})
-		export KERNCONF=$(basename ${KERNELCONF})
-	fi
+	local _old_kernconf=${KERNCONF}
+	export KERNCONF=${_kernconf}
 
 	mkdir -p ${STAGE_CHROOT_DIR}/boot
-	echo ">>> Installing kernel (${KERNCONF}) for ${TARGET} architecture..." | tee -a ${LOGFILE}
+	echo ">>> Installing kernel (${_kernconf}) for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -W -D -z \
 		-s ${FREEBSD_SRC_DIR} \
 		-d ${_destdir} \
 		|| print_error_pfS
+
+	export KERNCONF=${_old_kernconf}
 }
 
 # Launch is ran first to setup a few variables that we need
@@ -1890,8 +1879,7 @@ pkg_repo_rsync() {
 		local _logfile="${LOGFILE}"
 	fi
 
-	if [ -n "${PKG_REPO_SIGNING_COMMAND}" ]; then
-
+	if [ -n "${PKG_REPO_SIGNING_COMMAND}" -a -z "${DO_NOT_SIGN_PKG_REPO}" ]; then
 		# Detect poudriere directory structure
 		if [ -L "${_repo_path}/.latest" ]; then
 			local _real_repo_path=$(readlink -f ${_repo_path}/.latest)

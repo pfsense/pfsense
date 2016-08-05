@@ -669,8 +669,9 @@
 					break;
 				case 'gratisdns':
 					$needsIP = TRUE;
-					if ($this->_dnsVerboseLog)
+					if ($this->_dnsVerboseLog) {
 						log_error("GratisDNS.dk ({$this->_dnsHost}): DNS update() starting.");
+					}
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
 					$host = trim($this->_dnsHost);
 					$hostnames = explode(".", $host);

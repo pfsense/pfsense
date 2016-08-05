@@ -3038,21 +3038,23 @@ function kill_dhcp6client_process($interface) {
  	
  	$pid = find_dhcp6c_process($interface);
 	
-	if($pid > 0){
-		mwexec("/usr/bin/logger -t mwtag 'found dhcp6 process {$pid}'"); // debug info only
-	}
-	else {
-		mwexec("/usr/bin/logger -t mwtag 'no dhcp6c process to kill'"); // debug info only
+	if($pid > 0  && isset($config['system']['developerspew'])) {
+		echo "function kill_dhcp6client_process found dhcp6 process {$pid}\n";
+	} else {
+		if (isset($config['system']['developerspew'])) {
+			echo "function kill_dhcp6client_process no dhcp6c process to kill\n";
+		}
 		unset ($i);
 		return;
 	}
 	
  	while ((($pid = find_dhcp6c_process($interface)) != 0) && ($i < 3)) {
- 		mwexec("kill -9 $pid");
- 		sleep(2);
+ 		$sig = ($i == 2 ? SIGKILL : SIGTERM);
+ 		posix_kill($pid, $sig);
+ 		sleep(1);
  		$i++;
- 	}
- 	unset($i);
+	}
+	unset($i);
 }
 
 function interface_virtual_create($interface) {
@@ -3996,10 +3998,12 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$rtsoldscript .= "\t/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+	
+	/* add the start of dhcp6c to the rtsold script if we are going to wait for ra */
 	if (!isset($wancfg['dhcp6withoutra'])){
 		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
-        }
+	}
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
 	if (!@file_put_contents("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", $rtsoldscript)) {
 		printf("Error: cannot open rtsold_{$wanif}_script.sh in interface_dhcpv6_configure() for writing.\n");
@@ -4008,20 +4012,22 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	}
 	unset($rtsoldscript);
 	@chmod("{$g['varetc_path']}/rtsold_{$wanif}_script.sh", 0755);
+	
 	/* accept router advertisements for this interface */
 	log_error("Accept router advertisements on interface {$wanif} ");
 	mwexec("/sbin/ifconfig {$wanif} inet6 accept_rtadv");
+	
 	/* fire up rtsold for IPv6 RAs first, this backgrounds immediately. It will call dhcp6c */
 	if (isvalidpid("{$g['varrun_path']}/rtsold_{$wanif}.pid")) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
 		sleep(2);
 	}
+	/* start dhcp6c here if we don't want to wait for ra */
 	if (isset($wancfg['dhcp6withoutra'])) {
-		kill_dhcp6client_process($wanif);	
-		
+		kill_dhcp6client_process($wanif);
 		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
- 		mwexec("/usr/bin/logger -t mwtag 'Starting dhcp6 client for interface wan({$wanif} in IPoE mode)'"); 
-    } 	
+ 		mwexec("/usr/bin/logger -t mwtag 'Starting dhcp6 client for interface wan({$wanif} in IPoE mode)'");
+	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 	/* NOTE: will be called from rtsold invoked script
 	 * link_interface_to_track6($interface, "update");

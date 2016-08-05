@@ -2131,10 +2131,6 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$config['snmpd']['bindip'] = 'lan';
-			unset($config['snmpd']['bindlan']);
-		}
 		$bind_to_ip = "0.0.0.0";
 		if(isset($config['snmpd']['bindip'])) {
 			if (is_ipaddr($config['snmpd']['bindip'])) {
@@ -2230,13 +2226,9 @@ EOD;
 		fclose($fd);
 		unset($snmpdconf);
 
-		if (isset($config['snmpd']['bindlan'])) {
-			$bindlan = "";
-		}
-
 		/* run bsnmpd */
 		mwexec("/usr/sbin/bsnmpd -c {$g['varetc_path']}/snmpd.conf" .
-			"{$bindlan} -p {$g['varrun_path']}/snmpd.pid");
+			" -p {$g['varrun_path']}/snmpd.pid");
 
 		if (platform_booting())
 			echo gettext("done.") . "\n";

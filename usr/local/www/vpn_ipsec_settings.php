@@ -52,8 +52,6 @@ $pconfig['noshuntlaninterfaces'] = isset($config['ipsec']['noshuntlaninterfaces'
 $pconfig['compression'] = isset($config['ipsec']['compression']);
 $pconfig['enableinterfacesuse'] = isset($config['ipsec']['enableinterfacesuse']);
 $pconfig['acceptunencryptedmainmode'] = isset($config['ipsec']['acceptunencryptedmainmode']);
-$pconfig['maxmss_enable'] = isset($config['system']['maxmss_enable']);
-$pconfig['maxmss'] = $config['system']['maxmss'];
 $pconfig['uniqueids'] = $config['ipsec']['uniqueids'];
 
 if ($_POST) {
@@ -109,14 +107,7 @@ if ($_POST) {
 	if (!in_array($pconfig['ipsec_lib'], array('1', '2', '3', '4', '5', '6'), true)) {
 		$input_errors[] = "A valid value must be specified for StrongSwan Lib debug.";
 	}
-	if (isset($pconfig['maxmss'])) {
-		if (!is_numericint($pconfig['maxmss']) && $pconfig['maxmss'] <> '') {
-			$input_errors[] = "An integer must be specified for Maximum MSS.";
-		}
-		if ($pconfig['maxmss'] <> '' && $pconfig['maxmss'] < 576 || $pconfig['maxmss'] > 65535)
-			$input_errors[] = "An integer between 576 and 65535 must be specified for Maximum MSS";	
-	}
-	
+
 	if (!$input_errors) {
 
 		foreach ($ipsec_loglevels as $lkey => $ldescr) {
@@ -194,18 +185,6 @@ if ($_POST) {
 			unset($config['ipsec']['uniqueids']);
 		}
 
-		if($_POST['maxmss_enable'] == "yes") {
-			$config['system']['maxmss_enable'] = true;
-			$config['system']['maxmss'] = $_POST['maxmss'];
-		} else {
-			if (isset($config['system']['maxmss_enable'])) {
-				unset($config['system']['maxmss_enable']);
-			}
-			if (isset($config['system']['maxmss'])) {
-				unset($config['system']['maxmss']);
-			}
-		}
-
 		write_config();
 
 		$retval = 0;
@@ -239,19 +218,6 @@ include("head.inc");
 
 <body link="#0000CC" vlink="#0000CC" alink="#0000CC">
 <?php include("fbegin.inc"); ?>
-
-<script type="text/javascript">
-//<![CDATA[
-
-function maxmss_checked(obj) {
-	if (obj.checked)
-		jQuery('#maxmss').attr('disabled',false);
-	else
-		jQuery('#maxmss').attr('disabled','true');
-}
-
-//]]>
-</script>
 
 <form action="vpn_ipsec_settings.php" method="post" name="iform" id="iform">
 
@@ -368,18 +334,6 @@ function maxmss_checked(obj) {
 							"This is very similar to Aggressive Mode, and has the same security implications: " .
 							"A passive attacker can sniff the negotiated Identity, and start brute forcing the PSK using the HASH payload." .
 							" It is recommended to keep this option to no, unless you know exactly what the implications are and require compatibility to such devices (for example, some SonicWall boxes).");?>
-						</td>
-					</tr>
-					<tr>
-						<td width="22%" valign="top" class="vncell"><?=gettext("Maximum MSS"); ?></td>
-						<td width="78%" class="vtable">
-							<input name="maxmss_enable" type="checkbox" id="maxmss_enable" value="yes" <?php if ($pconfig['maxmss_enable'] == true) echo "checked=\"checked\""; ?> onclick="maxmss_checked(this)" />
-							<strong><?=gettext("Enable MSS clamping on VPN traffic"); ?></strong>
-							<br />
-							<input name="maxmss" id="maxmss" value="<?php if ($pconfig['maxmss'] <> "") echo htmlspecialchars($pconfig['maxmss']); else "1400"; ?>" class="formfld unknown" <?php if ($pconfig['maxmss_enable'] == false) echo "disabled=\"disabled\""; ?> />
-							<br />
-							<?=gettext("Enable MSS clamping on TCP flows over VPN. " .
-							"This helps overcome problems with PMTUD on IPsec VPN links. If left blank, the default value is 1400 bytes. "); ?>
 						</td>
 					</tr>
 					<tr>

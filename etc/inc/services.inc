@@ -625,10 +625,15 @@ EOPP;
 			}
 			$revsubnet = explode(".", $subnet);
 			$revsubnet = array_reverse($revsubnet);
-			foreach ($revsubnet as $octet) {
-				if ($octet != "0")
-					break;
+			// Always drop the end number, leaving at most 3 octets of the IP address
+			array_shift($revsubnet);
+			if (($ifcfgsn < 24) && ($revsubnet[0] == "0")) {
+				// We have x.y.0 and a subnet bit count that makes a bigger subnet than a /24
 				array_shift($revsubnet);
+				if (($ifcfgsn < 16) && ($revsubnet[0] == "0")) {
+					// We have x.0 and a subnet bit count that makes a bigger subnet than a /16
+					array_shift($revsubnet);
+				}
 			}
 			$newzone['ptr-domain'] = implode(".", $revsubnet) . ".in-addr.arpa";
 		}

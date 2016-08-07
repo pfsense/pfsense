@@ -3030,30 +3030,20 @@ function find_dhcp6c_process($interface) {
 }
 
 function kill_dhcp6client_process($interface) {
- 	if (empty($interface) || !does_interface_exist($interface)) {
- 		return;
- 	}
-
- 	$i = 0;
- 	
- 	$pid = find_dhcp6c_process($interface);
+	if (empty($interface) || !does_interface_exist($interface)) {
+		return;
+	}
+	$i = 0;
 	
-	if($pid > 0  && isset($config['system']['developerspew'])) {
-		echo "function kill_dhcp6client_process found dhcp6 process {$pid}\n";
-	} else {
-		if (isset($config['system']['developerspew'])) {
-			echo "function kill_dhcp6client_process no dhcp6c process to kill\n";
-		}
+	$pid = find_dhcp6c_process($interface);
+	
+	if($pid == 0) {
 		unset ($i);
 		return;
 	}
+	mwexec("kill -9 $pid");
+	sleep(1);
 	
- 	while ((($pid = find_dhcp6c_process($interface)) != 0) && ($i < 3)) {
- 		$sig = ($i == 2 ? SIGKILL : SIGTERM);
- 		posix_kill($pid, $sig);
- 		sleep(1);
- 		$i++;
-	}
 	unset($i);
 }
 

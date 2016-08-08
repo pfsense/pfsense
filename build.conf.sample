@@ -19,8 +19,8 @@
 
 export BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING="yes"
 
-# Name of the product you are building, only ESF can build and distribute
-# pfSense® software
+# Name of the product you are building, beware that only ESF is legally
+# authorized to build and distribute pfSense® software
 export PRODUCT_NAME="pfSense"
 export PRODUCT_URL="https://www.pfsense.org/"
 

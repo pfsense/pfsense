@@ -1,7 +1,9 @@
 #!/bin/sh
 
-gwname="$1"
-status="$2"
+# This script gets executed whenever a gateway status changes
+
+gwname="$1" # Contains the gateway name
+status="$2" # Contains the gateway status ("up"/"down")
 
 if [ "$status" = "down" ]; then
 	# Insert code here, gets executed when gateway goes down

@@ -60,6 +60,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 security/%%PRODUCT_NAME%%-pkg-sudo
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
+sysutils/%%PRODUCT_NAME%%-pkg-apcupsd
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid

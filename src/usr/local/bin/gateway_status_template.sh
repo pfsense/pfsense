@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# This script gets executed whenever a gateway status changes
+# Copy this script template to /usr/local/bin/gateway_status.sh
+# Script gets executed whenever a gateway status changes
 
 gwname="$1" # Contains the gateway name
 status="$2" # Contains the gateway status ("up"/"down")

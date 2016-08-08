@@ -9,8 +9,8 @@ benchmarks/iperf3
 dns/dnstop
 editors/vim-lite
 editors/nano
-irc/znc
-net/mosh
+#irc/znc
+#net/mosh
 net/py-speedtest-cli
 net/trafshow
 net/trafshow3

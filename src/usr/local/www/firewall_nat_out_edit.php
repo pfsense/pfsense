@@ -96,7 +96,13 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['target'] = $a_out[$id]['target'];
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
-	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
+	if (substr($a_out[$id]['poolopts'],0,11) == 'source-hash'){
+		list($opts, $key) = split(" ",$a_out[$id]['poolopts']);
+		$pconfig['source-hash-key']=$key;
+		$pconfig['poolopts']=$opts;
+	}else{
+		$pconfig['poolopts']=$a_out[$id]['poolopts'];
+	}
 	$pconfig['interface'] = $a_out[$id]['interface'];
 
 	if (!$pconfig['interface']) {
@@ -237,6 +243,9 @@ if ($_POST) {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
 			}
 		}
+		if ($_POST['source-hash-key']){
+			$source_hash_key = $_POST['source-hash-key'];
+		}
 	}
 
 	/* if user has selected any as source, set it here */
@@ -278,7 +287,11 @@ if ($_POST) {
 		$natent['targetip'] = (!isset($_POST['nonat'])) ? $_POST['targetip'] : "";
 		$natent['targetip_subnet'] = (!isset($_POST['nonat'])) ? $_POST['targetip_subnet'] : "";
 		$natent['interface'] = $_POST['interface'];
-		$natent['poolopts'] = $poolopts;
+		if($poolopts == 'source-hash' && isset($source_hash_key)){
+			$natent['poolopts'] = $poolopts." ".$source_hash_key;
+		}else{
+			$natent['poolopts'] = $poolopts;
+		}
 
 		/* static-port */
 		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
@@ -571,6 +584,13 @@ $section->addInput(new Form_Select(
 				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
 			'</ul><span class="help-block">');
 
+$section->addInput(new Form_Input(
+	'source-hash-key',
+	'Source Hash Key',
+	'text',
+	$pconfig['source-hash-key']
+))->setHelp('The key that is fed to the hashing algorithm in hex format or as a string, defaults to a randomly generated value.')->setWidth(10)->addClass('othersubnet');
+
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');
 
@@ -721,10 +741,16 @@ events.push(function() {
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
 			hideGroupClass('othersubnet', false);
+			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
+				hideInput('source-hash-key', false);
+			}else {
+				hideInput('source-hash-key', true);
+			}
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
 			hideGroupClass('othersubnet', true);
+			hideInput('source-hash-key', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}
@@ -752,6 +778,10 @@ events.push(function() {
 	});
 
 	$('#target').on('change', function() {
+		poolopts_change();
+	});
+
+	$('#poolopts').on('change', function() {
 		poolopts_change();
 	});
 

@@ -101,6 +101,7 @@ else
 	fi
 fi
 
+/bin/chmod 0644 /usr/local/etc/php/extensions.ini
 /usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
 
 # Set upload directory

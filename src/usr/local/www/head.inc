@@ -466,6 +466,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					endif;
 				?>
 					<li class="dropdown">
+                                                <a href="/index.php">
+                                                        <b class="dropdown"><?=$config['system']['hostname'] . "." . $config['system']['domain']?></b>
+                                                </a>
+                                        </li>
+					<li class="dropdown">
 						<a href="/index.php?logout">
 							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
 						</a>

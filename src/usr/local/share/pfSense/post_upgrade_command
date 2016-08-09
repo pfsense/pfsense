@@ -22,6 +22,10 @@
 
 PFSENSETYPE=`cat /etc/platform`
 
+if [ "${PFSENSETYPE}" = "pfSense" ]; then
+	/etc/rc.php_ini_setup
+fi
+
 if [ "${PFSENSETYPE}" = "pfSense" -o "${PFSENSETYPE}" = "nanobsd" ]; then
 	touch /conf/needs_package_sync_after_reboot
 fi

@@ -3536,7 +3536,10 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			require_once("services.inc");
 		}
 
-		if (isset($config['unbound']['enable'])) {
+		/* restart dnsmasq or unbound */
+		if (isset($config['dnsmasq']['enable'])) {
+			services_dnsmasq_configure();
+		} elseif (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
 		}
 

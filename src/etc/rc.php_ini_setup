@@ -69,8 +69,6 @@ else
 	fi
 fi
 
-/usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
-
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
 	UPLOADTMPDIR=$(/usr/local/sbin/read_global_var upload_path "/root")

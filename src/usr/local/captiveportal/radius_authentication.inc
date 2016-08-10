@@ -40,7 +40,7 @@ RADIUS AUTHENTICATION
 ---------------------
 */
 
-require_once("CHAP.inc");
+require_once("Crypt/CHAP.php");
 
 function RADIUS_AUTHENTICATION($username,$password,$radiusservers,$clientip,$clientmac,$ruleno) {
 

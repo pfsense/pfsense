@@ -15,6 +15,7 @@
 /etc/hostid
 /etc/hosts.lpd
 /etc/inc/CHAP.inc
+/etc/inc/IPv6.inc
 /etc/inc/array_intersect_key.inc
 /etc/inc/cmd_chain.inc
 /etc/inc/dot.hushlogin

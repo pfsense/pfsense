@@ -33,7 +33,7 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
-require_once("IPv6.inc");
+require_once("Net/IPv6.php");
 require_once("services.inc");
 require_once("rrd.inc");
 

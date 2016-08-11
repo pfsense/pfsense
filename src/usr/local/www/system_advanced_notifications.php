@@ -62,8 +62,8 @@ if ($config['notifications']['smtp']['port']) {
 if (isset($config['notifications']['smtp']['ssl'])) {
 	$pconfig['smtpssl'] = true;
 }
-if (isset($config['notifications']['smtp']['tls'])) {
-	$pconfig['smtptls'] = true;
+if (!empty($config['notifications']['smtp']['timeout'])) {
+	$pconfig['smtptimeout'] = $config['notifications']['smtp']['timeout'];
 }
 if ($config['notifications']['smtp']['notifyemailaddress']) {
 	$pconfig['smtpnotifyemailaddress'] = $config['notifications']['smtp']['notifyemailaddress'];
@@ -118,12 +118,7 @@ if ($_POST) {
 			unset($config['notifications']['smtp']['ssl']);
 		}
 
-		if (isset($_POST['smtptls'])) {
-			$config['notifications']['smtp']['tls'] = true;
-		} else {
-			unset($config['notifications']['smtp']['tls']);
-		}
-
+		$config['notifications']['smtp']['timeout'] = $_POST['smtptimeout'];
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
@@ -277,19 +272,19 @@ $section->addInput(new Form_Input(
 ))->setHelp('This is the port of the SMTP E-Mail server, typically 25, 587 '.
 	'(submission) or 465 (smtps).');
 
+$section->addInput(new Form_Input(
+	'smtptimeout',
+	'Connection timeout to E-Mail server',
+	'number',
+	$pconfig['smtptimeout']
+))->setHelp('This is how many seconds it will wait for the SMTP server to connect. Default is 20s.');
+
 $group = new Form_Group('Secure SMTP Connection');
 $group->add(new Form_Checkbox(
 	'smtpssl',
 	'Enable SSL/TLS',
 	'Enable SMTP over SSL/TLS',
 	isset($pconfig['smtpssl'])
-));
-
-$group->add(new Form_Checkbox(
-	'smtptls',
-	'Secure STARTTLS',
-	'Enable STARTTLS',
-	isset($pconfig['smtptls'])
 ));
 
 $section->add($group);

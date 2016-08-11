@@ -350,14 +350,12 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		'password' => $password,
 		'localhost' => $config['system']['hostname'] . "." .
 		    $config['system']['domain'],
-		'timeout' => 30, // XXX: Add a parameter
+		'timeout' => !empty($config['notifications']['smtp']['timeout'])
+		    ? $config['notifications']['smtp']['timeout']
+		    : 20,
 		'debug' => false,
 		'persist' => false
 	);
-
-
-	// XXX: Remove TLS param from config
-	// $smtp->start_tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
 
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];

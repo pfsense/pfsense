@@ -24,7 +24,7 @@
 
 
 if (!function_exists('xml_parser_create')) {
-    include_once 'PEAR.inc';
+    include_once 'PEAR.php';
     PEAR::loadExtension('xml');
 }
 
@@ -557,7 +557,7 @@ class XML_RPC_Base {
      */
     function raiseError($msg, $code)
     {
-        include_once 'PEAR.inc';
+        include_once 'PEAR.php';
         if (is_object(@$this)) {
 	    log_error(get_class($this) . ': ' . $msg . " {$code}");
             return PEAR::raiseError(get_class($this) . ': ' . $msg, $code);

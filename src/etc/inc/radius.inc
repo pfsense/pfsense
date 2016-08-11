@@ -47,7 +47,7 @@
 
 */
 
-require_once("PEAR.inc");
+require_once("PEAR.php");
 require_once("radius_authentication.inc");
 require_once("radius_accounting.inc");
 

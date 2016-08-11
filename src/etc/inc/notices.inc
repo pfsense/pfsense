@@ -308,8 +308,7 @@ function notify_via_smtp($message, $force = false) {
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {
 	global $config, $g;
-	require_once("sasl.inc");
-	require_once("smtp.inc");
+	require_once("Mail.php");
 
 	if (isset($config['notifications']['smtp']['disable']) && !$force) {
 		return;
@@ -323,51 +322,69 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
 		return;
 	}
 
-	$smtp = new smtp_class;
-
-	$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	$to = $config['notifications']['smtp']['notifyemailaddress'];
 
-	$smtp->host_name = $config['notifications']['smtp']['ipaddress'];
-	$smtp->host_port = empty($config['notifications']['smtp']['port']) ? 25 : $config['notifications']['smtp']['port'];
+	if (empty($config['notifications']['smtp']['username']) ||
+	    empty($config['notifications']['smtp']['password'])) {
+		$auth = false;
+		$username = '';
+		$password = '';
+	} else {
+		$auth = isset($config['notifications']['smtp']['authentication_mechanism'])
+		    ? $config['notifications']['smtp']['authentication_mechanism']
+		    : 'PLAIN';
+		$username = $config['notifications']['smtp']['username'];
+		$password = $config['notifications']['smtp']['password'];
+	}
 
-	$smtp->direct_delivery = 0;
-	$smtp->ssl = (isset($config['notifications']['smtp']['ssl'])) ? 1 : 0;
-	$smtp->start_tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
-	$smtp->debug = 0;
-	$smtp->html_debug = 0;
-	$smtp->localhost = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$params = array(
+		'host' => (isset($config['notifications']['smtp']['ssl'])
+		    ? 'ssl://'
+		    : '')
+		    . $config['notifications']['smtp']['ipaddress'],
+		'port' => empty($config['notifications']['smtp']['port'])
+		    ? 25
+		    : $config['notifications']['smtp']['port'],
+		'auth' => $auth,
+		'username' => $username,
+		'password' => $password,
+		'localhost' => $config['system']['hostname'] . "." .
+		    $config['system']['domain'],
+		'timeout' => 30, // XXX: Add a parameter
+		'debug' => false,
+		'persist' => false
+	);
+
+
+	// XXX: Remove TLS param from config
+	// $smtp->start_tls = (isset($config['notifications']['smtp']['tls'])) ? 1 : 0;
 
 	if ($config['notifications']['smtp']['fromaddress']) {
 		$from = $config['notifications']['smtp']['fromaddress'];
-	}
-
-	// Use SMTP Auth if fields are filled out
-	if ($config['notifications']['smtp']['username'] &&
-	    $config['notifications']['smtp']['password']) {
-		if (isset($config['notifications']['smtp']['authentication_mechanism'])) {
-			$smtp->authentication_mechanism = $config['notifications']['smtp']['authentication_mechanism'];
-		} else {
-			$smtp->authentication_mechanism = "PLAIN";
-		}
-		$smtp->user = $config['notifications']['smtp']['username'];
-		$smtp->password = $config['notifications']['smtp']['password'];
+	} else {
+		$from = "pfsense@{$config['system']['hostname']}.{$config['system']['domain']}";
 	}
 
 	$headers = array(
-		"From: {$from}",
-		"To: {$to}",
-		"Subject: {$subject}",
-		"Date: " . date("r")
+		"From"    => $from,
+		"To"      => $to,
+		"Subject" => $subject,
+		"Date"    => date("r")
 	);
 
-	if ($smtp->SendMessage($from, preg_split('/\s*,\s*/', trim($to)), $headers, $message)) {
-		log_error(sprintf(gettext("Message sent to %s OK"), $to));
-		return;
-	} else {
-		log_error(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
-		return(sprintf(gettext('Could not send the message to %1$s -- Error: %2$s'), $to, $smtp->error));
+	$smtp =& Mail::factory('smtp', $params);
+	$mail = $smtp->send($to, $headers, $message);
+
+	if (PEAR::isError($mail)) {
+		$err_msg = sprintf(gettext(
+		    'Could not send the message to %1$s -- Error: %2$s'),
+		    $to, $mail->getMessage());
+		log_error($err_msg);
+		return($err_msg);
 	}
+
+	log_error(sprintf(gettext("Message sent to %s OK"), $to));
+	return;
 }
 
 /****f* notices/notify_via_growl

@@ -302,8 +302,7 @@ function notify_via_smtp($message, $force = false) {
 	fwrite($fd, $message);
 	fclose($fd);
 
-	send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
-	return;
+	return send_smtp_message($message, "{$config['system']['hostname']}.{$config['system']['domain']} - Notification", $force);
 }
 
 function send_smtp_message($message, $subject = "(no subject)", $force = false) {

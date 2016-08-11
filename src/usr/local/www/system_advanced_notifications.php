@@ -169,7 +169,13 @@ if ($_POST) {
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
-		$savemsg = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		$smtp_test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		if (empty($smtp_test_result)) {
+			$smtp_test_result = gettext("SMTP testing e-mail successfully sent");
+			$smtp_test_class = 'success';
+		} else {
+			$smtp_test_class = 'danger';
+		}
 	}
 }
 
@@ -180,8 +186,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($smtp_test_result) {
+	print_info_box($smtp_test_result, $smtp_test_class);
 }
 
 $tab_array = array();

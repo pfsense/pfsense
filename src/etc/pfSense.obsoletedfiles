@@ -23,6 +23,7 @@
 /etc/inc/cram_md5_sasl_client.inc
 /etc/inc/digest_sasl_client.inc
 /etc/inc/dot.hushlogin
+/etc/inc/growl.class
 /etc/inc/lb.inc
 /etc/inc/login_sasl_client.inc
 /etc/inc/m0n0

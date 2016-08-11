@@ -47,7 +47,7 @@ if ($config['notifications']['growl']['notification_name']) {
 if ($config['notifications']['growl']['name']) {
 	$pconfig['name'] = $config['notifications']['growl']['name'];
 } else {
-  $pconfig['name'] = 'PHP-Growl';
+  $pconfig['name'] = 'pfSense-Growl';
 }
 
 
@@ -160,7 +160,13 @@ if ($_POST) {
 		if (isset($config['notifications']['growl']['ipaddress'])) {
 			unlink_if_exists($g['vardb_path'] . "/growlnotices_lastmsg.txt");
 			register_via_growl();
-			notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+			$test_result = notify_via_growl(sprintf(gettext("This is a test message from %s.  It is safe to ignore this message."), $g['product_name']), true);
+			if (empty($test_result)) {
+				$test_result = gettext("Growl testing notification successfully sent");
+				$test_class = 'success';
+			} else {
+				$test_class = 'danger';
+			}
 		}
 	}
 
@@ -169,12 +175,12 @@ if ($_POST) {
 		if (file_exists("/var/db/notices_lastmsg.txt")) {
 			unlink("/var/db/notices_lastmsg.txt");
 		}
-		$smtp_test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
-		if (empty($smtp_test_result)) {
-			$smtp_test_result = gettext("SMTP testing e-mail successfully sent");
-			$smtp_test_class = 'success';
+		$test_result = notify_via_smtp(sprintf(gettext("This is a test message from %s. It is safe to ignore this message."), $g['product_name']), true);
+		if (empty($test_result)) {
+			$test_result = gettext("SMTP testing e-mail successfully sent");
+			$test_class = 'success';
 		} else {
-			$smtp_test_class = 'danger';
+			$test_class = 'danger';
 		}
 	}
 }
@@ -186,8 +192,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($smtp_test_result) {
-	print_info_box($smtp_test_result, $smtp_test_class);
+if ($test_result) {
+	print_info_box($test_result, $test_class);
 }
 
 $tab_array = array();
@@ -216,7 +222,7 @@ $section->addInput(new Form_Input(
 	'Registration Name',
 	'text',
 	$pconfig['name'],
-	['placeholder' => 'PHP-Growl']
+	['placeholder' => 'pfSense-Growl']
 ))->setHelp('Enter the name to register with the Growl server.');
 
 $section->addInput(new Form_Input(

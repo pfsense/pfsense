@@ -393,10 +393,15 @@ function send_smtp_message($message, $subject = "(no subject)", $force = false) 
  *   returns true if message was sent
  ******/
 function notify_via_growl($message, $force=false) {
-	require_once("growl.class");
+	require_once("Net/Growl/Autoload.php");
+
 	global $config, $g;
 
 	if (isset($config['notifications']['growl']['disable']) && !$force) {
+		return;
+	}
+
+	if (empty($config['notifications']['growl']['ipaddress'])) {
 		return;
 	}
 
@@ -408,26 +413,43 @@ function notify_via_growl($message, $force=false) {
 		}
 	}
 
-	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
-	$growl_ip = $config['notifications']['growl']['ipaddress'];
-	$growl_password = $config['notifications']['growl']['password'];
-	$growl_name = $config['notifications']['growl']['name'];
-	$growl_notification = $config['notifications']['growl']['notification_name'];
+	$ip = $config['notifications']['growl']['ipaddress'];
 
-	if (!empty($growl_ip)) {
-		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
-			$growl = new Growl($growl_ip, $growl_password, $growl_name);
-			$growl->notify("{$growl_notification}", gettext(sprintf("%s (%s) - Notification", $g['product_name'], $hostname)), "{$message}");
-		} else {
-			// file_notice to local only to prevent file_notice from calling back to growl in a loop
-			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
-		}
+	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
+		$err_msg = gettext(
+		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	$hostname = $config['system']['hostname'] . "." . $config['system']['domain'];
+	$password = $config['notifications']['growl']['password'];
+	$name = $config['notifications']['growl']['name'];
+	$notification = $config['notifications']['growl']['notification_name'];
+
+	$options  = array(
+		'host' => $ip,
+		'protocol' => 'gntp',
+		'timeout' => 20
+	);
+
+	try {
+		$growl = Net_Growl::singleton($name, null, $password, $options);
+		//$name = 'GROWL_NOTIFY_STATUS';
+		$title = sprintf(gettext("%s (%s) - Notification"), $g['product_name'], $hostname);
+		$growl->publish($name, $title, $message);
+	} catch (Net_Growl_Exception $e) {
+		$err_msg = sprintf(gettext(
+		    'Could not send Growl notification to %1$s -- Error: %2$s'),
+		    $ip, $e->getMessage());
+		log_error($err_msg);
+		return($err_msg);
 	}
 
 	/* Store last message sent to avoid spamming */
-	$fd = fopen("/var/db/growlnotices_lastmsg.txt", "w");
-	fwrite($fd, $message);
-	fclose($fd);
+	@file_put_contents("/var/db/growlnotices_lastmsg.txt", $message);
+
+	return;
 }
 
 /****f* notices/register_via_growl
@@ -439,23 +461,50 @@ function notify_via_growl($message, $force=false) {
  *   none
  ******/
 function register_via_growl() {
-	require_once("growl.class");
-	global $config;
-	$growl_ip = $config['notifications']['growl']['ipaddress'];
-	$growl_password = $config['notifications']['growl']['password'];
-	$growl_name = $config['notifications']['growl']['name'];
-	$growl_notification = $config['notifications']['growl']['notification_name'];
+	require_once("Net/Growl/Autoload.php");
 
-	if (!empty($growl_ip)) {
-		if (is_ipaddr($growl_ip) || dns_check_record($growl_ip, A) || dns_check_record($growl_ip, AAAA)) {
-			$growl = new Growl($growl_ip, $growl_password, $growl_name);
-			$growl->addNotification($growl_notification);
-			$growl->register();
-		} else {
-			// file_notice to local only to prevent file_notice from calling back to growl in a loop
-			file_notice("growl", gettext("Growl IP Address is invalid. Check the setting in System Advanced Notifications."), "General", "", 1, true);
-		}
+	global $config;
+
+	if (empty($config['notifications']['growl']['ipaddress'])) {
+		return;
 	}
+
+	$ip = $config['notifications']['growl']['ipaddress'];
+
+	if (!is_ipaddr($ip) && !(dns_check_record($ip, A) || dns_check_record($ip, AAAA))) {
+		$err_msg = gettext(
+		    "Growl IP Address is invalid. Check the setting in System Advanced Notifications.");
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	$name = $config['notifications']['growl']['name'];
+	$password = $config['notifications']['growl']['password'];
+
+	$app = new Net_Growl_Application(
+		$name,
+		null,
+		$password
+	);
+
+	$options = array(
+		'host' => $ip,
+		'protocol' => 'gntp',
+		'timeout' = 20
+	);
+
+	try {
+		$growl = Net_Growl::singleton($app, null, null, $options);
+		$growl->register();
+	} catch (Net_Growl_Exception $e) {
+		$err_msg = sprintf(gettext(
+		    'Could not send register Growl on %1$s -- Error: %2$s'),
+		    $ip, $e->getMessage());
+		log_error($err_msg);
+		return($err_msg);
+	}
+
+	return;
 }
 
 /* Notify via remote methods only - not via GUI. */

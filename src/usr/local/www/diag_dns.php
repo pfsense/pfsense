@@ -173,8 +173,13 @@ if ($_POST) {
 				$resolved = resolve_host_addresses($host);
 			}
 			$hostname = $host;
-			if ($host != $resolved) {
-				$ipaddr = $resolved[0];
+			if ($host != $resolved && is_array($resolved)) {
+				foreach ($resolved as $item) {
+					if ($item['type'] == 'A') {
+						$ipaddr = $item['data'];
+						break;
+					}
+				}
 			}
 		}
 

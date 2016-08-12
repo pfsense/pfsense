@@ -115,6 +115,9 @@ if (isset($id) && $a_ppps[$id]) {
 			$pconfig['connect-timeout'] = $a_ppps[$id]['connect-timeout'];
 			$pconfig['localip'] = explode(",", $a_ppps[$id]['localip']);
 			$pconfig['gateway'] = explode(",", $a_ppps[$id]['gateway']);
+			$pconfig['country'] = $a_ppps[$id]['country'];
+			$pconfig['provider'] = $a_ppps[$id]['provider'];
+			$pconfig['providerplan'] = $a_ppps[$id]['providerplan'];
 			break;
 		case "l2tp":
 		case "pptp":
@@ -322,6 +325,7 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 		$ppp['if'] = $ppp['type'].$ppp['ptpid'];
 		$ppp['ports'] = implode(',', $_POST['interfaces']);
 		$ppp['username'] = $_POST['username'];
+
 		if ($_POST['passwordfld'] != DMYPWD) {
 			$ppp['password'] = base64_encode($_POST['passwordfld']);
 		} else {
@@ -342,6 +346,9 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 
 		switch ($_POST['type']) {
 			case "ppp":
+				$ppp['country'] = $_POST['country'];
+				$ppp['provider'] = $_POST['provider'];
+				$ppp['providerplan'] = $_POST['providerplan'];
 				if (!empty($_POST['initstr'])) {
 					$ppp['initstr'] = base64_encode($_POST['initstr']);
 				} else {
@@ -369,6 +376,7 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 				} else {
 					unset($ppp['connect-timeout']);
 				}
+
 				break;
 			case "pppoe":
 				if (!empty($_POST['provider'])) {
@@ -696,27 +704,29 @@ $section->addInput(new Form_Checkbox(
 	isset($pconfig['uptime'])
 ))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %sStatus->Interfaces%s page.', '<a href="status_interfaces.php">', '</a>'));
 
-$group = new Form_Group('Service name');
-$group->addClass('pppoe');
+if ($pconfig['type'] == 'pppoe') {
+	$group = new Form_Group('Service name');
+	$group->addClass('pppoe');
 
-$group->add(new Form_Input(
-	'provider',
-	null,
-	'text',
-	$pconfig['provider']
-));
+	$group->add(new Form_Input(
+		'provider',
+		null,
+		'text',
+		$pconfig['provider']
+	));
 
-$group->add(new Form_Checkbox(
-	'null_service',
-	null,
-	'Configure NULL service name',
-	$pconfig['null_service']
-));
+	$group->add(new Form_Checkbox(
+		'null_service',
+		null,
+		'Configure NULL service name',
+		$pconfig['null_service']
+	));
 
-$group->setHelp('This field can usually be left empty. Service name will not be configured if this field is empty. ' .
-				'Check the "Configure NULL" box to configure a blank Service name.');
+	$group->setHelp('This field can usually be left empty. Service name will not be configured if this field is empty. ' .
+					'Check the "Configure NULL" box to configure a blank Service name.');
 
-$section->add($group);
+	$section->add($group);
+}
 
 $section->addInput(new Form_Select(
 	'pppoe-reset-type',
@@ -1043,6 +1053,7 @@ events.push(function() {
 		hideClass('linkparam', true);
 		hideInput('linkparamhelp', true);
 
+		<?php if ($pconfig['type'] != 'ppp') : ?>
 		var selected = $(".interfaces").val();
 		var length = $(".interfaces :selected").length;
 		for (var i=0; i<length; i++) {
@@ -1053,6 +1064,7 @@ events.push(function() {
 				hideInput('linkparamhelp', false);
 			}
 		}
+		<?php endif; ?>
 	}
 
 	function hideProviders(hide) {
@@ -1078,6 +1090,9 @@ events.push(function() {
 						$('#provider').append(new Option(value, value));
 					}
 				}
+				$("#provider").val("<?=$pconfig['provider'];?>");
+				// select option simulates the provider to populate the Plan
+				$("#provider").trigger("change");
 			}
 		});
 	}
@@ -1100,6 +1115,7 @@ events.push(function() {
 											  providerplan[1]));
 					}
 				}
+				$("#providerplan").val("<?=$pconfig['providerplan'];?>");
 			}
 		});
 	}
@@ -1170,6 +1186,11 @@ events.push(function() {
 	}
 
 	$('#pppoe_resetdate').datepicker();
+
+	if ($("#type").val() == "ppp") {
+		providers_list();
+		hideInput('provider', false);
+	}
 });
 //]]>
 

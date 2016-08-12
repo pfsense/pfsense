@@ -119,6 +119,9 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
+if (!is_array($user_settings['widgets'])) {
+	$user_settings['widgets'] = array();
+}
 
 if ($_POST && $_POST['sequence']) {
 

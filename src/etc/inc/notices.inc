@@ -490,7 +490,7 @@ function register_via_growl() {
 	$options = array(
 		'host' => $ip,
 		'protocol' => 'gntp',
-		'timeout' = 20
+		'timeout' => 20
 	);
 
 	try {

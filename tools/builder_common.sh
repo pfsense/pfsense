@@ -1980,59 +1980,63 @@ pkg_repo_rsync() {
 		return
 	fi
 
-	# Make sure destination directory exist
-	ssh -p ${PKG_RSYNC_SSH_PORT} \
-		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} \
-		"mkdir -p ${PKG_RSYNC_DESTDIR}"
+	for _pkg_rsync_hostname in ${PKG_RSYNC_HOSTNAME}; do
+		# Make sure destination directory exist
+		ssh -p ${PKG_RSYNC_SSH_PORT} \
+			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} \
+			"mkdir -p ${PKG_RSYNC_DESTDIR}"
 
-	echo -n ">>> Sending updated repository to ${PKG_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
-	if script -aq ${_logfile} rsync -Have "ssh -p ${PKG_RSYNC_SSH_PORT}" \
-		--timeout=60 --delete-delay ${_repo_path} \
-		${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
-	then
-		echo "Done!" | tee -a ${_logfile}
-	else
-		echo "Failed!" | tee -a ${_logfile}
-		echo ">>> ERROR: An error occurred sending repo to remote hostname"
-		print_error_pfS
-	fi
-
-	if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${_ignore_final_rsync}" ]; then
-		return
-	fi
-
-	if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
-		# Send .real* directories first to prevent having a broken repo while transfer happens
-		local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
-			--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-			--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
-			--exclude=\"*\" \
-			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
-
-		echo -n ">>> Sending updated packages to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
-		if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
-			${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} ${_cmd} >/dev/null 2>&1; then
+		echo -n ">>> Sending updated repository to ${_pkg_rsync_hostname}... " | tee -a ${_logfile}
+		if script -aq ${_logfile} rsync -Have "ssh -p ${PKG_RSYNC_SSH_PORT}" \
+			--timeout=60 --delete-delay ${_repo_path} \
+			${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname}:${PKG_RSYNC_DESTDIR} >/dev/null 2>&1
+		then
 			echo "Done!" | tee -a ${_logfile}
 		else
 			echo "Failed!" | tee -a ${_logfile}
-			echo ">>> ERROR: An error occurred sending repo to final hostname"
+			echo ">>> ERROR: An error occurred sending repo to remote hostname"
 			print_error_pfS
 		fi
 
-		_cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
-			--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
-			${PKG_FINAL_RSYNC_USERNAME}@${PKG_FINAL_RSYNC_HOSTNAME}:${PKG_FINAL_RSYNC_DESTDIR}"
-
-		echo -n ">>> Sending updated repositories metadata to ${PKG_FINAL_RSYNC_HOSTNAME}... " | tee -a ${_logfile}
-		if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
-			${PKG_RSYNC_USERNAME}@${PKG_RSYNC_HOSTNAME} ${_cmd} >/dev/null 2>&1; then
-			echo "Done!" | tee -a ${_logfile}
-		else
-			echo "Failed!" | tee -a ${_logfile}
-			echo ">>> ERROR: An error occurred sending repo to final hostname"
-			print_error_pfS
+		if [ -z "${USE_PKG_REPO_STAGING}" -o -n "${_ignore_final_rsync}" ]; then
+			return
 		fi
-	fi
+
+		if [ -n "${_IS_RELEASE}" -o "${_repo_path_param}" = "${CORE_PKG_PATH}" ]; then
+			for _pkg_final_rsync_hostname in ${PKG_FINAL_RSYNC_HOSTNAME}; do
+				# Send .real* directories first to prevent having a broken repo while transfer happens
+				local _cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+					--timeout=60 ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+					--include=\"/*\" --include=\"*/.real*\" --include=\"*/.real*/***\" \
+					--exclude=\"*\" \
+					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
+
+				echo -n ">>> Sending updated packages to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
+				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					echo "Done!" | tee -a ${_logfile}
+				else
+					echo "Failed!" | tee -a ${_logfile}
+					echo ">>> ERROR: An error occurred sending repo to final hostname"
+					print_error_pfS
+				fi
+
+				_cmd="rsync -Have \"ssh -p ${PKG_FINAL_RSYNC_SSH_PORT}\" \
+					--timeout=60 --delete-delay ${PKG_RSYNC_DESTDIR}/./${_repo_base%%-core}* \
+					${PKG_FINAL_RSYNC_USERNAME}@${_pkg_final_rsync_hostname}:${PKG_FINAL_RSYNC_DESTDIR}"
+
+				echo -n ">>> Sending updated repositories metadata to ${_pkg_final_rsync_hostname}... " | tee -a ${_logfile}
+				if script -aq ${_logfile} ssh -p ${PKG_RSYNC_SSH_PORT} \
+					${PKG_RSYNC_USERNAME}@${_pkg_rsync_hostname} ${_cmd} >/dev/null 2>&1; then
+					echo "Done!" | tee -a ${_logfile}
+				else
+					echo "Failed!" | tee -a ${_logfile}
+					echo ">>> ERROR: An error occurred sending repo to final hostname"
+					print_error_pfS
+				fi
+			done
+		fi
+	done
 }
 
 poudriere_create_patch() {
@@ -2567,65 +2571,67 @@ snapshots_scp_files() {
 	pkg_repo_rsync "${CORE_PKG_PATH}"
 	snapshots_update_status ">>> Finished copying core pkg repo"
 
-	snapshots_update_status ">>> Copying files to ${RSYNCIP}"
+	for _rsyncip in ${RSYNCIP}; do
+		snapshots_update_status ">>> Copying files to ${_rsyncip}"
 
-	# Ensure directory(s) are available
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/installer"
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/updates"
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/nanobsd"
-	if [ -d $STAGINGAREA/virtualization ]; then
-		ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/virtualization"
-	fi
-	ssh ${RSYNCUSER}@${RSYNCIP} "mkdir -p ${RSYNCPATH}/.updaters"
-	# ensure permissions are correct for r+w
-	ssh ${RSYNCUSER}@${RSYNCIP} "chmod -R ug+rw ${RSYNCPATH}/."
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*iso* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/installer/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/nanobsd/
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/updates/
-	if [ -d $STAGINGAREA/virtualization ]; then
-		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
-			${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/virtualization/
-	fi
+		# Ensure directory(s) are available
+		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/installer"
+		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/updates"
+		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/nanobsd"
+		if [ -d $STAGINGAREA/virtualization ]; then
+			ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/virtualization"
+		fi
+		ssh ${RSYNCUSER}@${_rsyncip} "mkdir -p ${RSYNCPATH}/.updaters"
+		# ensure permissions are correct for r+w
+		ssh ${RSYNCUSER}@${_rsyncip} "chmod -R ug+rw ${RSYNCPATH}/."
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*iso* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/installer/
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-memstick* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/installer/
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-*Update* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/updates/
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsd/* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/nanobsd/
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/nanobsdupdates/* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/updates/
+		if [ -d $STAGINGAREA/virtualization ]; then
+			rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/virtualization/* \
+				${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/virtualization/
+		fi
 
-	# Rather than copy these twice, use ln to link to the latest one.
+		# Rather than copy these twice, use ln to link to the latest one.
 
-	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
-	ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
+		ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest.tgz"
+		ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
-		${RSYNCPATH}/.updaters/latest.tgz"
-	ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
-		${RSYNCPATH}/.updaters/latest.tgz.sha256"
+		LATESTFILENAME=$(basename ${UPDATES_TARBALL_FILENAME})
+		ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME} \
+			${RSYNCPATH}/.updaters/latest.tgz"
+		ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${LATESTFILENAME}.sha256 \
+			${RSYNCPATH}/.updaters/latest.tgz.sha256"
 
-	for i in ${FLASH_SIZE}
-	do
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+		for i in ${FLASH_SIZE}
+		do
+			ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+			ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "rm -f ${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
+			FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd 1).gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+				${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+				${RSYNCPATH}/.updaters/latest-nanobsd-${i}.img.gz.sha256"
 
-		FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd-vga 1).gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
-		ssh ${RSYNCUSER}@${RSYNCIP} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
-			${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+			FILENAMEUPGRADE="$(nanobsd_image_filename ${i} nanobsd-vga 1).gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE} \
+				${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz"
+			ssh ${RSYNCUSER}@${_rsyncip} "ln -s ${RSYNCPATH}/updates/${FILENAMEUPGRADE}.sha256 \
+				${RSYNCPATH}/.updaters/latest-nanobsd-vga-${i}.img.gz.sha256"
+		done
+
+		rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \
+			${RSYNCUSER}@${_rsyncip}:${RSYNCPATH}/.updaters
+		snapshots_update_status ">>> Finished copying files."
 	done
-
-	rsync $RSYNC_COPY_ARGUMENTS $STAGINGAREA/version* \
-		${RSYNCUSER}@${RSYNCIP}:${RSYNCPATH}/.updaters
-	snapshots_update_status ">>> Finished copying files."
 }

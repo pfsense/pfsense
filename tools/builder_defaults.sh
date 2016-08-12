@@ -386,7 +386,6 @@ export NANOBSD_UPGRADE_TEMPLATE=${NANOBSD_UPGRADE_TEMPLATE:-"${PRODUCT_NAME}${PR
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}
 export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
-export RSYNCKBYTELIMIT=${RSYNCKBYTELIMIT:-"248000"}
 
 # staging area used on snapshots build
 STAGINGAREA=${STAGINGAREA:-"${SCRATCHDIR}/staging"}

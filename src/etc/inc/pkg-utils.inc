@@ -1030,6 +1030,9 @@ function package_reinstall_all() {
 		    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		unlink_if_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt");
 	} else {
+		if (!isset($config['installedpackages']['package']) || !is_array($config['installedpackages']['package'])) {
+			return true;
+		}
 		$package_list = array();
 		foreach ($config['installedpackages']['package'] as $package) {
 			$package_list[] = get_package_internal_name($package);

@@ -395,6 +395,8 @@ function services_radvd_configure($blacklist = array()) {
 function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
+	$dhcpdconfigurelck = lock("dhcpdconfigure", LOCK_EX);
+
 	/* configure DHCPD chroot once */
 	$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
@@ -425,6 +427,8 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 		services_dhcpdv6_configure($blacklist);
 		services_radvd_configure($blacklist);
 	}
+
+	unlock($dhcpdconfigurelck);
 }
 
 function services_dhcpdv4_configure() {

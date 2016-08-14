@@ -4006,7 +4006,8 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$rtsoldscript .= "\t/bin/sleep 1\n";
 		$rtsoldscript .= "fi\n";
 	} else {
-		$rtsoldscript .= "\t/bin/sleep 1\n";
+		$rtsoldscript .= "{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\n";
+		$rtsoldscript .= "/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
 

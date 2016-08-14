@@ -231,6 +231,12 @@ tr.disabled th {
     padding: inherit;
 }
 
+/* location of bottom right drag icon on resizable elements */
+.ui-resizable-se {
+	bottom: 2px;
+	right: 46px;
+}
+
 #login .form-control {
     height: 34px;
 }

@@ -196,7 +196,7 @@ function moveHelpText(id) {
 		var helpSpan;
 
 
-		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn') && ! fromId.startsWith("mask")) {
+		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
 			if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 				helpSpan = $('#' + fromId).parent('div').parent('div').find('span:last').clone();
 			} else {

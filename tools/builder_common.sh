@@ -2426,6 +2426,14 @@ EOF
 		_bulk=${SCRATCHDIR}/poudriere_bulk.${POUDRIERE_BRANCH}
 		sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_ref_bulk} > ${_bulk}
 
+		local _exclude_bulk="${POUDRIERE_BULK}.exclude.${jail_arch}"
+		if [ -f "${_exclude_bulk}" ]; then
+			mv ${_bulk} ${_bulk}.tmp
+			sed -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME},g" ${_exclude_bulk} > ${_bulk}.exclude
+			cat ${_bulk}.tmp ${_exclude_bulk} | sort | uniq -u > ${_bulk}
+			rm -f ${_bulk}.tmp ${_exclude_bulk}
+		fi
+
 		if ! poudriere bulk -f ${_bulk} -j ${jail_name} -p ${POUDRIERE_PORTS_NAME}; then
 			echo ">>> ERROR: Something went wrong..."
 			print_error_pfS

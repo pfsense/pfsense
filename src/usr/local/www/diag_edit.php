@@ -109,7 +109,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 	<div class="panel-body">
 		<div class="content">
 			<form>
-				<p><input type="text" class="form-control" id="fbTarget"/></p>
+				<p><input type="text" class="form-control" id="fbTarget" placeholder="<?=gettext('Path to file to be edited')?>"/></p>
 				<div class="btn-group">
 					<p>
 						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">

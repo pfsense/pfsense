@@ -1,6 +1,10 @@
+sysutils/htop
+sysutils/lsof
 sysutils/vm-bhyve
 sysutils/flashrom
 sysutils/grub2-bhyve
 sysutils/%%PRODUCT_NAME%%-builder
 sysutils/xe-guest-utilities
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
+sysutils/%%PRODUCT_NAME%%-pkg-blinkled
+sysutils/%%PRODUCT_NAME%%-pkg-gwled

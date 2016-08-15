@@ -88,7 +88,7 @@ display_top_tabs($tab_array);
 
 $form = new Form(false);
 
-$section = new Form_Section('Select States to Reset');
+$section = new Form_Section('State reset options');
 
 $section->addInput(new Form_Checkbox(
 	'statetable',

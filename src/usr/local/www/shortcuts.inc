@@ -177,7 +177,7 @@ $shortcuts['dhcp']['service'] = "dhcpd";
 
 $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
-$shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcp";
+$shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 
 

@@ -85,6 +85,7 @@ if (isset($_REQUEST['isAjax'])) {
 	}
 
 	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0) {
+		$_REQUEST['limit']++;  // Account for the header line
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
 	}
 

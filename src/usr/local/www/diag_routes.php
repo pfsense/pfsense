@@ -129,7 +129,7 @@ $section->addInput(new Form_Input(
 	'Filter',
 	'text',
 	$host
-))->setHelp('Use a regular expression to filter IP address or hostnames.');
+))->setHelp('Use a regular expression to filter the tables.');
 
 $form->add($section);
 

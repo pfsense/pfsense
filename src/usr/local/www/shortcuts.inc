@@ -269,7 +269,7 @@ $shortcuts['snmp']['service'] = "bsnmpd";
 
 $shortcuts['authentication'] = array();
 $shortcuts['authentication']['main'] = "system_authservers.php";
-$shortcuts['authentication']['status'] = "diag_authentication.php";
+// $shortcuts['authentication']['status'] = "diag_authentication.php";
 
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";

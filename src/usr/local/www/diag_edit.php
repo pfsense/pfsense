@@ -193,9 +193,22 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 		$("#btngoto").prop('type','button');
 
+		//On clicking the GoTo button, validate the entered value
+		// and highlight the required line
 		$('#btngoto').click(function() {
 			var tarea = document.getElementById("fileContent");
-			showLine(tarea, $('#gotoline').val());
+			var gtl = $('#gotoline').val();
+			var lines = $("#fileContent").val().split(/\r|\r\n|\n/).length;
+
+			if (gtl < 1) {
+				gtl = 1;
+			}
+
+			if (gtl > lines) {
+				gtl = lines;
+			}
+
+			showLine(tarea, gtl);
 		});
 	});
 

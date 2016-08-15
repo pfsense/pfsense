@@ -145,9 +145,28 @@ $form->addGlobal(new Form_Button(
 	'Reset',
 	null,
 	'fa-trash'
-))->addClass('btn-danger');
+))->addClass('btn-warning');
 
 print $form;
+
+$nonechecked = gettext("Please select at least one reset option");
+$cfmmsg = gettext("Do you really want to reset the selected states?");
 ?>
+
+<script type="text/javascript">
+//<![CDATA[
+	events.push(function(){
+
+		$('form').submit(function(event){
+			if ( !($('#statetable').prop("checked") == true) && !($('#sourcetracking').prop("checked") == true)) {
+				alert("<?=$nonechecked?>");
+				event.preventDefault();
+			} else if (!confirm("<?=$cfmmsg?>")) {
+				event.preventDefault();
+			}
+		});
+	});
+//]]>
+</script>
 
 <?php include("foot.inc"); ?>

@@ -35,7 +35,7 @@ function killbypid($pidfile) {
 function isvalidpid($pidfile) {
 	$output = "";
 	if (file_exists($pidfile)) {
-		exec("/bin/pgrep -nF {$pidfile}", $output, $retval);
+		exec("/bin/pgrep -qnF {$pidfile} 2>/dev/null", $output, $retval);
 		return (intval($retval) == 0);
 	}
 	return false;

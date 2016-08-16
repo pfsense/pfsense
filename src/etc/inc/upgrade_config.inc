@@ -4437,7 +4437,7 @@ function upgrade_142_to_143() {
 	if (is_array($config['filter']['separator'])) {
 		foreach ($config['filter']['separator'] as $interface => $separators) {
 
-			if(is_array($separators)) {
+			if (is_array($separators)) {
 				foreach ($separators as $sepn => $separator) {
 
 					$seprow = substr($separator['row']['0'], 2);

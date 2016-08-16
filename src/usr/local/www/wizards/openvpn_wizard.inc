@@ -184,7 +184,7 @@ function step7_submitphpaction() {
 	$canames = array();
 	$cacns = array();
 	if (is_array($config['ca'])) {
-		foreach($config['ca'] as $ca) {
+		foreach ($config['ca'] as $ca) {
 			$canames[] = $ca['descr'];
 			$cainfo = cert_get_subject_hash($ca['crt']);
 			$cacns[] = $cainfo["CN"];
@@ -287,7 +287,7 @@ function step9_submitphpaction() {
 	$certnames = array();
 	$certcns = array();
 	if (is_array($config['cert'])) {
-		foreach($config['cert'] as $cert) {
+		foreach ($config['cert'] as $cert) {
 			$certnames[] = $cert['descr'];
 			$certinfo = cert_get_subject_hash($cert['crt']);
 			$certcns[] = $certinfo["CN"];

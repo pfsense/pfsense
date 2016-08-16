@@ -55,7 +55,7 @@ function resolve_host_addresses($host) {
 	$resolved = array();
 	$errreporting = error_reporting();
 	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
-	foreach($recordtypes as $recordtype) {
+	foreach ($recordtypes as $recordtype) {
 		$tmp = dns_get_record($host, $recordtype);
 		if (is_array($tmp)) {
 			$dnsresult = array_merge($dnsresult, $tmp);
@@ -63,7 +63,7 @@ function resolve_host_addresses($host) {
 	}
 	error_reporting($errreporting);// restore original php warning/error settings.
 	
-	foreach($dnsresult as $item) {
+	foreach ($dnsresult as $item) {
 		$newitem = array();
 		$newitem['type'] = $item['type'];
 		switch ($item['type']) {

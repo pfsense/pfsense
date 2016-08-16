@@ -186,7 +186,6 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 		'synconupgrade',
 		'Auto sync on update',
 		'Enable repository/branch sync before reboot',
-		'Enable repository/branch sync before reboot',
 		isset($gitcfg['synconupgrade'])
 		))->setHelp('After updating, sync with the following repository/branch before reboot.');
 

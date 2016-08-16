@@ -191,7 +191,7 @@ if ($_REQUEST['updateme']) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
-function ntpWidgetUpdateFromServer(){
+function ntpWidgetUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/ntp_status.widget.php',
@@ -207,7 +207,7 @@ function ntpWidgetUpdateFromServer(){
 	});
 }
 
-function ntpWidgetUpdateDisplay(){
+function ntpWidgetUpdateDisplay() {
 	// Javascript handles overflowing
 	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
 

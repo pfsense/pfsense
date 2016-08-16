@@ -433,7 +433,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if (isset($id) && $a_vip[$id]){
+if (isset($id) && $a_vip[$id]) {
 	$section->addInput(new Form_Input(
 		'id',
 		null,

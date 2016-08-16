@@ -1227,7 +1227,7 @@ endif;
 events.push(function() {
 
 	function advanced_change(hide, mode) {
-		if(!hide) {
+		if (!hide) {
 			hideClass('advanced', false);
 			hideClass("clientadv", false);
 		} else if (mode == "p2p_tls") {

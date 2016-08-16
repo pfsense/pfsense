@@ -47,15 +47,15 @@ class Form_Select extends Form_Input
 		$options = '';
 		foreach ($this->_values as $value => $name)
 		{
-			// Things can get wierd if we have mixed types
+			// Things can get weird if we have mixed types
 			$sval = $this->_value;
 
-			if( (gettype($value) == "integer") && (gettype($sval) == "string") )
+			if ((gettype($value) == "integer") && (gettype($sval) == "string"))
 				$value = strval($value);
 
-			if (isset($this->_attributes['multiple']))
+			if (isset($this->_attributes['multiple'])) {
 				$selected = in_array($value, (array)$sval);
-			else {
+			} else {
 				$selected = ($sval == $value);
 			}
 

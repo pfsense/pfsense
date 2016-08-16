@@ -39,11 +39,11 @@ class Form_Button extends Form_Input
 			$this->_tagName = 'a';
 			$this->addClass('btn-default');
 			unset($this->_attributes['type']);
-			if(isset($icon)) {
+			if (isset($icon)) {
 				$this->_attributes['icon'] = $icon;
 			}
 		}
-		else if(isset($icon))
+		else if (isset($icon))
 		{
 			$this->_tagSelfClosing = false;
 			$this->_tagName = 'button';

@@ -109,7 +109,7 @@ function hideLabel(text, hide) {
 
 // Hides the '/' and the subnet mask of an Ip_Address/subnet_mask group
 function hideMask(name, hide) {
-	if(hide) {
+	if (hide) {
 		$('[id^=' + name + ']').hide();
 		$('[id^=' + name + ']').prev('span').hide();
 		$('[id^=' + name + ']').parent('div').removeClass('input-group');

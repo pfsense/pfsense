@@ -301,7 +301,7 @@ suhosin.post.max_value_length = 500000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
 suhosin.request.max_value_length = 500000
-suhosin.memory_limit = 536870912
+suhosin.memory_limit = 805306368
 
 EOF
 

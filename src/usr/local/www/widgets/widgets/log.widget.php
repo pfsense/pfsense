@@ -207,7 +207,7 @@ if (isset($_GET['lastsawtime'])) {
 
 <script type="text/javascript">
 //<![CDATA[
-function logWidgetUpdateFromServer(){
+function logWidgetUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/log.widget.php',

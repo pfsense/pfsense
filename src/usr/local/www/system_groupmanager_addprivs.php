@@ -306,7 +306,7 @@ events.push(function() {
 	});
 
 	$('#filtertxt').keypress(function(e) {
-		if(e.which == 13) {
+		if (e.which == 13) {
 			e.preventDefault();
 			$('#btnfilter').trigger('click');
 		}

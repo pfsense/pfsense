@@ -600,7 +600,7 @@ function get_firmware_versions()
 
 		json = jQuery.parseJSON(response);
 
-		if(json) {
+		if (json) {
 			$('#installed_version').text(json.installed_version);
 			$('#version').text(json.version);
 

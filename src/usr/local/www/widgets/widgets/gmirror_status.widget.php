@@ -67,7 +67,7 @@ require_once("gmirror.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-function gmirrorStatusUpdateFromServer(){
+function gmirrorStatusUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/gmirror_status.widget.php',

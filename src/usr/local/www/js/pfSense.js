@@ -175,10 +175,10 @@ $(function() {
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
-		if(!($(this).hasClass('no-confirm'))) {
+		if (!($(this).hasClass('no-confirm'))) {
 			var msg = $.trim(this.textContent);
 
-			if(!msg)
+			if (!msg)
 				var msg = $.trim(this.value).toLowerCase();
 
 			var q = 'Are you sure you wish to '+ msg +'?';
@@ -233,7 +233,7 @@ $(function() {
 
 	  originalLeave.call(this, obj);
 
-	  if(self.$tip && self.$tip.length) {
+	  if (self.$tip && self.$tip.length) {
 	    container = self.$tip;
 	    timeout = self.timeout;
 	    container.one('mouseenter', function(){

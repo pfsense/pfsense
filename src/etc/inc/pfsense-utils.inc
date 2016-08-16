@@ -739,7 +739,7 @@ function get_filename_from_url($url) {
 function get_dir($dir) {
 	$dir_array = array();
 	$d = dir($dir);
-	if(!is_object($d)) {
+	if (!is_object($d)) {
 		return array();
 	}
 	while (false !== ($entry = $d->read())) {

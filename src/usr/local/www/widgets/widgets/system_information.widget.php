@@ -198,7 +198,7 @@ $filesystems = get_mounted_filesystems();
 				<ul style="margin-bottom:0px">
 				<?php
 					$dns_servers = get_dns_servers();
-					foreach($dns_servers as $dns) {
+					foreach ($dns_servers as $dns) {
 						echo "<li>{$dns}</li>";
 					}
 				?>
@@ -370,7 +370,7 @@ function setTimer() {
 
 function stats(x) {
 	var values = x.split("|");
-	if ($.each(values,function(key,value){
+	if ($.each(values,function(key,value) {
 		if (value == 'undefined' || value == null)
 			return true;
 		else
@@ -502,7 +502,7 @@ function updateInterfaces(x) {
 			} else {
 				ipv4_details = details[2] + '<br />';
 			}
-			switch(details[1]) {
+			switch (details[1]) {
 				case "up":
 					$('#' + details[0] + '-up').css("display","inline");
 					$('#' + details[0] + '-down').css("display","none");

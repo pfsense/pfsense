@@ -188,8 +188,8 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 			// calculate start/end
 			var startPos = 0, endPos = tarea.value.length;
-			for(var x = 0; x < lines.length; x++) {
-				if(x == lineNum) {
+			for (var x = 0; x < lines.length; x++) {
+				if (x == lineNum) {
 					break;
 				}
 				startPos += (lines[x].length+1);
@@ -201,7 +201,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 			// do selection
 			// Chrome / Firefox
 
-			if(typeof(tarea.selectionStart) != "undefined") {
+			if (typeof(tarea.selectionStart) != "undefined") {
 				tarea.focus();
 				tarea.selectionStart = startPos;
 				tarea.selectionEnd = endPos;

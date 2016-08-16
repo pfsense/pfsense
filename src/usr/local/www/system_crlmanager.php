@@ -353,7 +353,7 @@ function build_cacert_list() {
 
 	$list = array();
 
-	foreach($ca_certs as $cert) {
+	foreach ($ca_certs as $cert) {
 		$list[$cert['refid']] = $cert['descr'];
 	}
 

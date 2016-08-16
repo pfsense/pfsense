@@ -561,8 +561,8 @@ function step3_stepsubmitphpaction() {
 	if (!$_POST['enable'])
 		return;
 
-	if($_POST['upstream_sip_server']) {
-		if(!is_ipaddroralias($_POST['upstream_sip_server'])) {
+	if ($_POST['upstream_sip_server']) {
+		if (!is_ipaddroralias($_POST['upstream_sip_server'])) {
 			/* item is not an ip or alias.  error out */
 			$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
 			$stepid--;
@@ -658,13 +658,13 @@ function step4_stepsubmitphpaction() {
 	global $stepid, $savemsg;
 
 	if ( $_POST['enable'] ) {
-		if(!$_POST['bandwidth']) {
+		if (!$_POST['bandwidth']) {
 			$savemsg="A value for bandwidth must be specified.";
 
 			$stepid--;
 			return;
 		}
-		if(!is_numeric($_POST['bandwidth'])) {
+		if (!is_numeric($_POST['bandwidth'])) {
 			$savemsg="The posted value is not a valid bandwidth.";
 			$stepid--;
 			return;
@@ -675,12 +675,12 @@ function step4_stepsubmitphpaction() {
 			return;
 		}
 		$bw = $_POST['bandwidth'];
-		if($bw > 15 || $bw < 2) {
+		if ($bw > 15 || $bw < 2) {
 			$savemsg="Values should be between 2% and 15%!";
 			$stepid--;
 			return;
 		}
-		if($_POST['address'] <> "" && !is_ipaddroralias($_POST['address'])) {
+		if ($_POST['address'] <> "" && !is_ipaddroralias($_POST['address'])) {
 			/* item is not an ip or alias.  error out */
 			$savemsg=gettext("Address must be a valid IP address or Firewall Alias.  Please correct this value to continue.");
 			$stepid--;
@@ -692,7 +692,7 @@ function step5_stepsubmitphpaction() {
 	global $stepid, $savemsg;
 	if ( $_POST['enable'] ) {
 		if ($_POST['p2pcatchall']) {
-			if(!is_numeric($_POST['bandwidth'])) {
+			if (!is_numeric($_POST['bandwidth'])) {
 				$savemsg="Posted value is not a valid bandwidth.";
 				$stepid--;
 			}
@@ -702,7 +702,7 @@ function step5_stepsubmitphpaction() {
 				return;
 			}
 			$bw = $_POST['bandwidth'];
-			if($bw > 15 || $bw < 2) {
+			if ($bw > 15 || $bw < 2) {
 				$savemsg="Values should be between 2% and 15%!";
 				$stepid--;
 				return;
@@ -743,10 +743,10 @@ function apply_all_chosen_items() {
 	 * Doing it here makes sense since we can wipe the previous config only after
 	 * the user decides to do so, finishing the wizard.
 	 */
-	if(isset($config['shaper']['queue']))
+	if (isset($config['shaper']['queue']))
 		unset($config['shaper']['queue']);
 	/* XXX: This is redundant, because this should be handled by converter at startup. */
-	if(isset($config['shaper']['rule']))
+	if (isset($config['shaper']['rule']))
 		unset($config['shaper']['rule']);
 	foreach ($config['filter']['rule'] as $key => $rule)
 		if ($rule['wizard'] == "yes")
@@ -1558,7 +1558,7 @@ function apply_all_chosen_items() {
 
 	/* Rules */
 	if ($penalty) {
-		if( is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
+		if (is_ipaddr($config['ezshaper']['step4']['address']) || is_alias($config['ezshaper']['step4']['address'])) {
 			$rule = array();
 			$rule['type'] = "match";
 			$rule['interface'] = $interfacelist;
@@ -1577,7 +1577,7 @@ function apply_all_chosen_items() {
 
 			/* If user specifies an IP, we don't bother with providers */
 			if ($voip) {
-				if( is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
+				if (is_ipaddr($config['ezshaper']['step3']['address']) || is_alias($config['ezshaper']['step3']['address'])) {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['type'] = "match";
@@ -1607,7 +1607,7 @@ function apply_all_chosen_items() {
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 					$config['filter']['rule'][] = $rule;
 
-				} elseif( $config['ezshaper']['step3']['provider'] == "Generic" ) {
+				} elseif ($config['ezshaper']['step3']['provider'] == "Generic") {
 					/* create VOIP rules */
 					$rule = array();
 					$rule['type'] = "match";
@@ -1638,7 +1638,7 @@ function apply_all_chosen_items() {
 						$rule['wizard'] = "yes";
 						$rule['enabled'] = "on";
 						$rule['destination']['port'] = $voip[2]."-".$voip[3];
-						if($voip[1] != '')
+						if ($voip[1] != '')
 							$rule['protocol'] = $voip[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 						$config['filter']['rule'][] = $rule;
@@ -1648,7 +1648,7 @@ function apply_all_chosen_items() {
 
 			/* loop through p2plist[] */
 			if ($p2p) {
-				foreach($config['ezshaper']['step5'] as $key => $val) {
+				foreach ($config['ezshaper']['step5'] as $key => $val) {
 					if (!is_array($p2plist[$key]))
 						continue;
 					foreach ($p2plist[$key] as $p2pclient) {
@@ -1662,7 +1662,7 @@ function apply_all_chosen_items() {
 						$rule['floating'] = "yes";
 						$rule['wizard'] = "yes";
 						$rule['destination']['port'] = $p2pclient[2]."-".$p2pclient[3];
-						if($p2pclient[1] != '')
+						if ($p2pclient[1] != '')
 							$rule['protocol'] = $p2pclient[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 						$config['filter']['rule'][] = $rule;
@@ -1672,7 +1672,7 @@ function apply_all_chosen_items() {
 
 			/* loop through gamesplist[] */
 			if ($games) {
-				foreach($config['ezshaper']['step6'] as $key => $val) {
+				foreach ($config['ezshaper']['step6'] as $key => $val) {
 					if (!is_array($gamesplist[$key]))
 										continue;
 					foreach ($gamesplist[$key] as $Gameclient) {
@@ -1689,7 +1689,7 @@ function apply_all_chosen_items() {
 						$rule['enabled'] = "on";
 						$rule['descr'] = "m_Game {$Gameclient[0]} outbound";
 						$rule['destination']['port'] = $Gameclient[2]."-".$Gameclient[3];
-						if($Gameclient[1] != '')
+						if ($Gameclient[1] != '')
 							$rule['protocol'] = $Gameclient[1];
 						$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 						$config['filter']['rule'][] = $rule;
@@ -1699,7 +1699,7 @@ function apply_all_chosen_items() {
 
 	/* loop through othersplist[] */
 	if ($otherpriority) {
-		foreach($config['ezshaper']['step7'] as $key => $val) {
+		foreach ($config['ezshaper']['step7'] as $key => $val) {
 			if (!is_array($othersplist[$key]))
 				continue;
 			foreach ($othersplist[$key] as $otherclient) {
@@ -1739,10 +1739,10 @@ function apply_all_chosen_items() {
 					$rule['enabled'] = "on";
 					$rule['descr'] = "m_Other {$otherclient[0]} outbound";
 
-					if($otherclient[2] or $otherclient[3]) {
+					if ($otherclient[2] or $otherclient[3]) {
 						$rule['destination']['port'] = $otherclient[2]."-".$otherclient[3];
 					}
-					if($otherclient[1] != '')
+					if ($otherclient[1] != '')
 						$rule['protocol'] = $otherclient[1];
 					$rule['created'] = make_config_revision_entry(null, gettext("Traffic Shaper Wizard"));
 					$config['filter']['rule'][] = $rule;

@@ -36,21 +36,6 @@ function xmlrpc_params_to_php($params) {
 }
 
 /*
- *   xmlrpc_value_to_php: Convert an XMLRPC value into a PHP scalar/array and return it.
- */
-function xmlrpc_value_to_php($raw_value) {
-	return XML_RPC_decode($raw_value);
-}
-
-/*
- *   php_value_to_xmlrpc: Convert a PHP scalar or array into its XMLRPC equivalent.
- */
-function php_value_to_xmlrpc($value, $force_array = false) {
-	$toreturn = XML_RPC_encode($value);
-	return $force_array ? array($toreturn) : $toreturn;
-}
-
-/*
  *   xmlrpc_auth: Handle basic crypt() authentication of an XMLRPC request. This function assumes that
  *                $params[0] contains the local system's plaintext password and removes the password from
  *                the array before returning it.

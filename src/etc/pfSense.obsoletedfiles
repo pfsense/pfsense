@@ -107,6 +107,7 @@
 /etc/rc.d/uzip
 /etc/rc.dhclient_cron
 /etc/rc.dyndns.storecache
+/etc/rc.filter_configure_xmlrpc
 /etc/rc.firewall6
 /etc/rc.firmware
 /etc/rc.firmware_auto

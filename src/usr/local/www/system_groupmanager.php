@@ -192,7 +192,7 @@ if (isset($_POST['save'])) {
 	}
 
 	/* Check the POSTed members to ensure they are valid and exist */
-	if(is_array($_POST['members'])) {
+	if (is_array($_POST['members'])) {
 		foreach ($_POST['members'] as $newmember) {
 			if (!is_numeric($newmember) || empty(getUserEntryByUID($newmember))) {
 				$input_errors[] = gettext("One or more invalid group members was submitted.");
@@ -385,7 +385,7 @@ $form->addGlobal(new Form_Input(
 	$id
 ));
 
-if (isset($id) && $a_group[$id]){
+if (isset($id) && $a_group[$id]) {
 	$form->addGlobal(new Form_Input(
 		'id',
 		null,

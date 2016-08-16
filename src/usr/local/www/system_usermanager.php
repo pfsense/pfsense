@@ -247,7 +247,7 @@ if ($_POST['save']) {
 	}
 
 	/* Check the POSTed groups to ensure they are valid and exist */
-	if(is_array($_POST['groups'])) {
+	if (is_array($_POST['groups'])) {
 		foreach ($_POST['groups'] as $newgroup) {
 			if (empty(getGroupEntry($newgroup))) {
 				$input_errors[] = gettext("One or more invalid groups was submitted.");
@@ -884,7 +884,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$section->addClass('cert-options');
 
 		$nonPrvCas = array();
-		foreach($config['ca'] as $ca) {
+		foreach ($config['ca'] as $ca) {
 			if (!$ca['prv']) {
 				continue;
 			}

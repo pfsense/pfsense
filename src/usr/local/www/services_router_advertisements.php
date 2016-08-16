@@ -348,8 +348,8 @@ $carplist = get_configured_vip_list("inet6", VIP_CARP);
 
 $carplistif = array();
 
-if(count($carplist) > 0) {
-	foreach($carplist as $ifname => $vip) {
+if (count($carplist) > 0) {
+	foreach ($carplist as $ifname => $vip) {
 		if (get_configured_vip_interface($ifname) == $if) {
 			$carplistif[$ifname] = $vip;
 		}
@@ -360,7 +360,7 @@ if (count($carplistif) > 0) {
 	$iflist = array();
 
 	$iflist['interface'] = strtoupper($if);
-	foreach($carplistif as $ifname => $vip) {
+	foreach ($carplistif as $ifname => $vip) {
 		$iflist[$ifname] = get_vip_descr($vip) . " - " . $vip;
 	}
 

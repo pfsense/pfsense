@@ -326,7 +326,7 @@ function update_table_rows(data) {
 		move = 0;
 	}
 
-	if (($("#count").text() == 0) && (data.length < nentries)){
+	if (($("#count").text() == 0) && (data.length < nentries)) {
 		move += rows.length;
 	}
 
@@ -477,7 +477,7 @@ function toggleListDescriptions() {
 						<td><?=htmlspecialchars($filterent['proto'])?></td>
 					</tr>
 <?php
-				} // e-o-foreach()
+				} // e-o-foreach ()
 
 	if (count($filterlog) == 0) {
 		print '<tr class="text-nowrap"><td colspan=6>';

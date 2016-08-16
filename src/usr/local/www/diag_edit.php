@@ -1,6 +1,6 @@
 <?php
 /*
- * diag_arp.php
+ * diag_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC

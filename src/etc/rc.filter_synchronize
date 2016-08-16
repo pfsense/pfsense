@@ -218,9 +218,10 @@ function carp_sync_xml($url, $username, $password, $sections, $port = 80, $metho
 	}
 
 	foreach ($sections as $section) {
-	   /*  we can't use array_intersect_key()
-		*  due to the vip 'special case'
-		*/
+		/*
+		 * we can't use array_intersect_key()
+		 * due to the vip 'special case'
+		 */
 		switch ($section) {
 			case 'virtualip':
 				$xml[$section] = backup_vip_config_section();

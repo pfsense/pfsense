@@ -242,7 +242,15 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 			showLine(tarea, gtl);
 		});
-	});
+
+		// Goto the specified line on pressing the Enter key within the "Goto line" input element
+		$('#gotoline').keyup(function(e) {
+			if(e.keyCode == 13) {
+				$('#btngoto').click();
+			}
+		});
+
+	}); // e-o-events.push()
 
 	function loadFile() {
 		$("#fileStatus").html("");
@@ -439,6 +447,7 @@ var Base64 = {
 			loadFile();
 		});
 	<?php endif; ?>
+
 //]]>
 </script>
 

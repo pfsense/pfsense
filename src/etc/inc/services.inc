@@ -911,9 +911,9 @@ EOPP;
 				foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
 					$item_value = base64_decode($item['value']);
 					if (empty($item['type']) || $item['type'] == "text") {
-						$dhcpdconf .= "	option custom-{$dhcpif}-{$poolidx}-{$itemidx} \"{$item_value}\";\n";
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} \"{$item_value}\";\n";
 					} else {
-						$dhcpdconf .= "	option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
 					}
 				}
 			}

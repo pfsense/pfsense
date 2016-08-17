@@ -8,3 +8,7 @@ sysutils/xe-guest-utilities
 emulators/%%PRODUCT_NAME%%-pkg-Open-VM-Tools
 sysutils/%%PRODUCT_NAME%%-pkg-blinkled
 sysutils/%%PRODUCT_NAME%%-pkg-gwled
+security/%%PRODUCT_NAME%%-pkg-snort
+security/%%PRODUCT_NAME%%-pkg-suricata
+net/%%PRODUCT_NAME%%-pkg-ntopng
+net/%%PRODUCT_NAME%%-pkg-freeradius2

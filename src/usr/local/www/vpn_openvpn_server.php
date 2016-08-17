@@ -268,6 +268,7 @@ if ($_GET['act'] == "edit") {
 			$pconfig['verbosity_level'] = 1; // Default verbosity is 1
 		}
 
+		$pconfig['push_blockoutsidedns'] = $a_server[$id]['push_blockoutsidedns'];
 		$pconfig['push_register_dns'] = $a_server[$id]['push_register_dns'];
 	}
 }
@@ -534,6 +535,9 @@ if ($_POST) {
 			$server['dns_server4'] = $pconfig['dns_server4'];
 		}
 
+		if ($pconfig['push_blockoutsidedns']) {
+			$server['push_blockoutsidedns'] = $pconfig['push_blockoutsidedns'];
+		}
 		if ($pconfig['push_register_dns']) {
 			$server['push_register_dns'] = $pconfig['push_register_dns'];
 		}
@@ -1064,6 +1068,13 @@ if ($act=="new" || $act=="edit"):
 		'text',
 		$pconfig['dns_server4']
 	));
+
+	$section->addInput(new Form_Checkbox(
+		'push_blockoutsidedns',
+		'Block Outside DNS',
+		'Make Windows 10 Clients Block access to DNS servers except across OpenVPN while connected, forcing clients to use only VPN DNS servers.',
+		$pconfig['push_blockoutsidedns']
+	))->setHelp('Requires Windows 10 and OpenVPN 2.3.9 or later. Only Windows 10 is prone to DNS leakage in this way, other clients will ignore the option as they are not affected.');
 
 	$section->addInput(new Form_Checkbox(
 		'push_register_dns',

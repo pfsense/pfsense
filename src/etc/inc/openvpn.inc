@@ -556,6 +556,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
 	}
 
+	if (!empty($settings['push_blockoutsidedns'])) {
+		$conf .= "push \"block-outside-dns\"\n";
+	}
 	if (!empty($settings['push_register_dns'])) {
 		$conf .= "push \"register-dns\"\n";
 	}

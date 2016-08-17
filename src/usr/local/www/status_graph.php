@@ -10,49 +10,17 @@
  * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgment:
- *    "This product includes software developed by the pfSense Project
- *    for use in the pfSense® software distribution. (http://www.pfsense.org/).
- *
- * 4. The names "pfSense" and "pfSense Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    coreteam@pfsense.org.
- *
- * 5. Products derived from this software may not be called "pfSense"
- *    nor may "pfSense" appear in their names without prior written
- *    permission of the Electric Sheep Fencing, LLC.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *
- * "This product includes software developed by the pfSense Project
- * for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- * THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -67,6 +35,18 @@
 
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
+
+if ($_POST['width']) {
+	$width = $_POST['width'];
+} else {
+	$width = "100%";
+}
+
+if ($_POST['height']) {
+	$height = $_POST['height'];
+} else {
+	$height = "200";
+}
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
@@ -206,226 +186,6 @@ $form->add($section);
 print $form;
 
 ?>
-
-<script src="/vendor/d3/d3.min.js"></script>
-<script src="/vendor/nvd3/nv.d3.js"></script>
-<script src="/vendor/visibility/visibility-1.2.3.min.js"></script>
-
-<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
-
-<script type="text/javascript">
-
-//<![CDATA[
-events.push(function() {
-
-	var InterfaceString = "<?=$curif?>";
-
-	//store saved settings in a fresh localstorage
-	localStorage.clear();
-	localStorage.setItem('interfaces', JSON.stringify(InterfaceString.split("|"))); //TODO see if can be switched to interfaces
-	localStorage.setItem('interval', 1);
-	localStorage.setItem('invert', "true");
-	localStorage.setItem('size', 1);
-
-	window.charts = {};
-    window.myData = {};
-    window.updateIds = 0;
-    window.latest = [];
-    var refreshInterval = localStorage.getItem('interval');
-
-    //TODO make it fall on a second value so it increments better
-    var now = then = new Date(Date.now());
-
-    var nowTime = now.getTime();
-
-	$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
-
-		myData[value] = [];
-		updateIds = 0;
-		
-		var itemIn = new Object();
-		var itemOut = new Object();
-
-		itemIn.key = value + " (in)";
-		if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-		itemIn.first = true;
-		itemIn.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemIn);
-
-		itemOut.key = value + " (out)";
-		if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-		itemOut.first = true;
-		itemOut.values = [{x: nowTime, y: 0}];
-		myData[value].push(itemOut);
-
-	});
-
-	draw_graph(refreshInterval, then);
-
-	//re-draw graph when the page goes from inactive (in it's window) to active
-	Visibility.change(function (e, state) {
-		if(state === "visible") {
-
-			now = then = new Date(Date.now());
-
-			var nowTime = now.getTime();
-
-			$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
-
-				Visibility.stop(updateIds);
-
-				myData[value] = [];
-				
-				var itemIn = new Object();
-				var itemOut = new Object();
-
-				itemIn.key = value + " (in)";
-				if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-				itemIn.first = true;
-				itemIn.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemIn);
-
-				itemOut.key = value + " (out)";
-				if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-				itemOut.first = true;
-				itemOut.values = [{x: nowTime, y: 0}];
-				myData[value].push(itemOut);
-
-			});
-
-			draw_graph(refreshInterval, then);
-
-		}
-	});
-
-	// save new config defaults
-    $( '#traffic-graph-form' ).submit(function(event) {
-
-    	var error = false;
-    	$("#traffic-chart-error").hide();
-
-    	var interfaces = $( "#traffic-graph-interfaces" ).val(); 
-    	refreshInterval = parseInt($( "#traffic-graph-interval" ).val());
-    	var invert = $( "#traffic-graph-invert" ).val();
-    	var size = $( "#traffic-graph-size" ).val();
-
-    	//TODO validate interfaces data and throw error
-
-    	if(!Number.isInteger(refreshInterval) || refreshInterval < 1 || refreshInterval > 10) {
-    		error = 'Refresh Interval is not a valid number between 1 and 10.';
-    	}
-
-    	if(invert != "true" && invert != "false") {
-
-    		error = 'Invert is not a boolean of true or false.';
-
-    	} 
-
-    	if(!error) {
-
-			var formData = {
-				'traffic-graph-interfaces' : interfaces,
-				'traffic-graph-interval'   : refreshInterval,
-				'traffic-graph-invert'     : invert,
-				'traffic-graph-size'       : size
-			};
-
-			$.ajax({
-				type        : 'POST',
-				url         : '/widgets/widgets/traffic_graphs.widget.php',
-				data        : formData,
-				dataType    : 'json',
-				encode      : true
-			})
-			.done(function(message) {
-
-				if(message.success) {
-
-					Visibility.stop(updateIds);
-
-					//remove all old graphs (divs/svgs)
-					$( ".traffic-widget-chart" ).remove();
-
-					localStorage.setItem('interfaces', JSON.stringify(interfaces));
-					localStorage.setItem('interval', refreshInterval);
-					localStorage.setItem('invert', invert);
-					localStorage.setItem('size', size);
-
-					//redraw graph with new settings
-					now = then = new Date(Date.now());
-
-					var freshData = [];
-
-					var nowTime = now.getTime();
-
-					$.each( interfaces, function( key, value ) {
-
-						//create new graphs (divs/svgs)
-						$("#widget-traffic_graphs_panel-body").append('<div id="traffic-chart-' + value + '" class="d3-chart traffic-widget-chart"><svg></svg></div>');
-
-						myData[value] = [];
-						
-						var itemIn = new Object();
-						var itemOut = new Object();
-
-						itemIn.key = value + " (in)";
-						if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-						itemIn.first = true;
-						itemIn.values = [{x: nowTime, y: 0}];
-						myData[value].push(itemIn);
-
-						itemOut.key = value + " (out)";
-						if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-						itemOut.first = true;
-						itemOut.values = [{x: nowTime, y: 0}];
-						myData[value].push(itemOut);
-
-					});
-
-					draw_graph(refreshInterval, then);
-
-					$( "#traffic-graph-message" ).removeClass("text-danger").addClass("text-success");
-					$( "#traffic-graph-message" ).text(message.success);
-
-					setTimeout(function() {
-						$( "#traffic-graph-message" ).empty();
-						$( "#traffic-graph-message" ).removeClass("text-success");
-					}, 5000);
-
-	        	} else {
-
-					$( "#traffic-graph-message" ).addClass("text-danger");
-					$( "#traffic-graph-message" ).text(message.error);
-
-	        		console.warn(message.error);
-
-	        	}
-
-	        })
-	        .fail(function() {
-
-			    console.warn( "The Traffic Graphs widget AJAX request failed." );
-
-			});
-
-	    } else {
-
-	    	$( "#traffic-graph-message" ).addClass("text-danger");
-			$( "#traffic-graph-message" ).text(error);
-
-    		console.warn(error);
-
-	    }
-
-        event.preventDefault();
-    });
-
-});
-//]]>
-</script>
-
-<script src="/js/traffic-graphs.js"></script>
-
 <script type="text/javascript">
 //<![CDATA[
 
@@ -481,9 +241,13 @@ if (ipsec_enabled()) {
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">
-			<div id="traffic-chart-<?=$curif?>" class="d3-chart traffic-widget-chart">
-				<svg></svg>
-			</div>
+			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
+				<param name="id" value="graph" />
+				<param name="type" value="image/svg+xml" />
+				<param name="width" value="<?=$width;?>" />
+				<param name="height" value="<?=$height;?>" />
+				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
+			</object>
 		</div>
 		<div class="col-sm-6">
 			<table class="table table-striped table-condensed">

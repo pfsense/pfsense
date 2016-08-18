@@ -34,6 +34,9 @@
 /etc/inc/smtp.inc
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php
+/etc/inc/xmlrpc.inc
+/etc/inc/xmlrpc_client.inc
+/etc/inc/xmlrpc_server.inc
 /etc/inc/zeromq.inc
 /etc/inetd.conf
 /etc/isdn

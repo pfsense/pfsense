@@ -73,7 +73,7 @@ function clockTimeString($inDate, $showSeconds) {
 
 // For this widget the update period is 6 x larger than most others. It typically defaults
 // to once per 60 seconds, not once per 10 seconds
-$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
 
 if ($_REQUEST['updateme']) {
 //this block displays only on ajax refresh

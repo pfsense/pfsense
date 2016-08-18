@@ -84,6 +84,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	exit;
 }
 
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+
 ?>
 <table id="iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
@@ -106,12 +108,14 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			$('#iftbl').html(response);
 
 			// and do it again
-			setTimeout(get_if_stats, 5000);
+			setTimeout(get_if_stats, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
-		get_if_stats();
+		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+		// hit the server at exactly the same time)
+		setTimeout(get_if_stats, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

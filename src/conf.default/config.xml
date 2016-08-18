@@ -263,6 +263,7 @@
 	</load_balancer>
 	<widgets>
 		<sequence>system_information:col1:show,interfaces:col2:show</sequence>
+		<period>10</period>
 	</widgets>
 	<openvpn/>
 	<dnshaper/>

@@ -265,6 +265,8 @@ function printPanel() {
 	}
 }
 
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+
 ?>
 
 <script type="text/javascript">
@@ -305,14 +307,14 @@ function printPanel() {
 			$('#mainpanel').html(response);
 
 			// and do it again
-			setTimeout(get_update, 5000);
+			setTimeout(get_update, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
-        setTimeout(get_update, Math.floor((Math.random() * 10000) + 1000));
+		setTimeout(get_update, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

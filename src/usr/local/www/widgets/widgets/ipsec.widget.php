@@ -212,6 +212,7 @@ if (isset($config['ipsec']['phase1'])) {
 }
 
 $mobile = ipsec_dump_mobile();
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 
 if (isset($config['ipsec']['phase2'])): ?>
 <div id="ipsec-Overview" style="display:block;"  class="table-responsive">
@@ -337,12 +338,14 @@ function get_ipsec_stats() {
 		$('tbody', '#ipsec-' + curtab).html(response);
 
 		// and do it again
-		setTimeout(get_ipsec_stats, 6000);
+		setTimeout(get_ipsec_stats, "<?=$widgetperiod?>");
 	});
 }
 
 events.push(function(){
-	get_ipsec_stats();
+	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+	// hit the server at exactly the same time)
+	setTimeout(get_ipsec_stats, Math.floor((Math.random() * 10000) + 1000));
 });
 //]]>
 </script>

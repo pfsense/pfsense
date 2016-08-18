@@ -100,10 +100,6 @@ function carp_check_version($url, $username, $password, $method = 'host_firmware
 
 	$numberofruns = 0;
 	while ($numberofruns < 2) {
-		if ($numberofruns > 0) {
-			$options['debug'] = true;
-		}
-
 		$numberofruns++;
 
 		$cli = XML_RPC2_Client::create($url, $options);
@@ -259,10 +255,6 @@ function carp_sync_xml($url, $username, $password, $sections, $method = 'restore
 
 	$numberofruns = 0;
 	while ($numberofruns < 2) {
-		if ($numberofruns > 0) {
-			$options['debug'] = true;
-		}
-
 		$numberofruns++;
 
 		log_error("Beginning XMLRPC sync to {$url}.");

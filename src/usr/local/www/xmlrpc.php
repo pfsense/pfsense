@@ -82,7 +82,7 @@ class pfsense_xmlrpc_server {
 	public function __construct() {
 		global $config;
 
-		$this->remote_addr = $_SERVER['remote_addr'];
+		$this->remote_addr = $_SERVER['REMOTE_ADDR'];
 
 		/* grab sync to ip if enabled */
 		if (isset($config['hasync']['synchronizetoip']) &&

@@ -569,7 +569,7 @@ $HTTP_RAW_POST_DATA = file_get_contents('php://input');
 $options = array(
 	'prefix' => 'pfsense.',
 	'encoding' => 'utf-8',
-	'autoDocument' => true,
+	'autoDocument' => false,
 );
 
 $server = XML_RPC2_Server::create(new pfsense_xmlrpc_server(), $options);

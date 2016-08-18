@@ -223,6 +223,7 @@ function carp_sync_xml($url, $username, $password, $sections, $method = 'restore
 		}
 	}
 
+	$xml = array();
 	foreach ($sections as $section) {
 		/*
 		 * we can't use array_intersect_key()

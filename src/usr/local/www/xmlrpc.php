@@ -44,6 +44,7 @@ class pfsense_xmlrpc_server {
 	private function auth($username, $password) {
 		global $config;
 
+		$login_ok = false;
 		if (!empty($username) && !empty($password)) {
 			$attributes = array();
 			$authcfg = auth_get_authserver(
@@ -52,16 +53,38 @@ class pfsense_xmlrpc_server {
 			if (authenticate_user($username, $password,
 			    $authcfg, $attributes) ||
 			    authenticate_user($username, $password)) {
-				return;
+				$login_ok = true;
 			}
 		}
 
-		log_auth("webConfigurator authentication error for '" .
-		    $username . "' from " . $this->remote_addr);
+		if (!$login_ok) {
+			log_auth("webConfigurator authentication error for '" .
+			    $username . "' from " . $this->remote_addr);
 
-		require_once("XML/RPC2/Exception.php");
-		throw new XML_RPC2_FaultException(
-		    gettext('Authentication failed'), -1);
+			require_once("XML/RPC2/Exception.php");
+			throw new XML_RPC2_FaultException(gettext(
+			    'Authentication failed: Invalid username or password'),
+			    -1);
+		}
+
+		$user_entry = getUserEntry($username);
+		/*
+		 * admin (uid = 0) is allowed
+		 * or regular user with necessary privilege
+		 */
+		if (isset($user_entry['uid']) && $user_entry['uid'] != '0' &&
+		    !userHasPrivilege($user_entry, 'system-xmlrpc-ha-sync')) {
+			log_auth("webConfigurator authentication error for '" .
+			    $username . "' from " . $this->remote_addr .
+			    " not enough privileges");
+
+			require_once("XML/RPC2/Exception.php");
+			throw new XML_RPC2_FaultException(gettext(
+			    'Authentication failed: not enough privileges'),
+			    -2);
+		}
+
+		return;
 	}
 
 	private function array_overlay($a1, $a2) {

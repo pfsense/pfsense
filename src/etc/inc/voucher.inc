@@ -72,7 +72,7 @@ EOF;
 	}
 
 	try {
-		$resp = $cli->exec_php($password, $execcmd);
+		$resp = $cli->exec_php($username, $password, $execcmd);
 	} catch (XML_RPC2_FaultException $e) {
 		// The XMLRPC server returns a XMLRPC error
 		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
@@ -144,7 +144,7 @@ EOF;
 	}
 
 	try {
-		$resp = $cli->exec_php($password, $execcmd);
+		$resp = $cli->exec_php($username, $password, $execcmd);
 	} catch (XML_RPC2_FaultException $e) {
 		// The XMLRPC server returns a XMLRPC error
 		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
@@ -215,7 +215,7 @@ EOF;
 	}
 
 	try {
-		$resp = $cli->exec_php($password, $execcmd);
+		$resp = $cli->exec_php($username, $password, $execcmd);
 	} catch (XML_RPC2_FaultException $e) {
 		// The XMLRPC server returns a XMLRPC error
 		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();

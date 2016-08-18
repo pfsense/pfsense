@@ -327,7 +327,7 @@ EOF;
 					$input_errors[] = $error;
 				} else {
 					try {
-						$resp = $cli->exec_php($newvoucher['vouchersyncpass'], $execcmd);
+						$resp = $cli->exec_php($newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass'], $execcmd);
 					} catch (XML_RPC2_FaultException $e) {
 						// The XMLRPC server returns a XMLRPC error
 						$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();

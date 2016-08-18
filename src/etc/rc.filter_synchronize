@@ -111,7 +111,7 @@ function carp_check_version($url, $username, $password, $method = 'host_firmware
 		}
 
 		try {
-			$resp = $cli->$method($password);
+			$resp = $cli->$method($username, $password);
 		} catch (XML_RPC2_FaultException $e) {
 			// The XMLRPC server returns a XMLRPC error
 			$error = 'Exception calling XMLRPC method ' . $method . ' #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
@@ -268,7 +268,7 @@ function carp_sync_xml($url, $username, $password, $sections, $method = 'restore
 		}
 
 		try {
-			$resp = $cli->$method($password, $xml);
+			$resp = $cli->$method($username, $password, $xml);
 		} catch (XML_RPC2_FaultException $e) {
 			// The XMLRPC server returns a XMLRPC error
 			$error = 'Exception calling XMLRPC method ' . $method . '#' . $e->getFaultCode() . ' : ' . $e->getFaultString();
@@ -481,7 +481,7 @@ if (is_array($config['hasync'])) {
 		file_notice("sync_settings", $error, "Settings Sync", "");
 	} else {
 		try {
-			$resp = $cli->filter_configure($hasync['password']);
+			$resp = $cli->filter_configure($username, $hasync['password']);
 		} catch (XML_RPC2_FaultException $e) {
 			// The XMLRPC server returns a XMLRPC error
 			$error = 'Exception calling XMLRPC method filter_configure #' . $e->getFaultCode() . ' : ' . $e->getFaultString();

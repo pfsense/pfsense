@@ -30,8 +30,6 @@ else
 fi
 
 if [ -n "${_interactive}" ]; then
-	echo "INTERACTIVE"
 	/etc/rc.initial
 	exit
 fi
-	echo "NON"

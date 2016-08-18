@@ -98,6 +98,7 @@ $pconfig['systemlogsmanagelogpanel'] = isset($config['system']['webgui']['system
 $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['statusmonitoringsettingspanel']);
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
+$pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -144,6 +145,10 @@ if ($_POST) {
 	$reqdfieldsn = array(gettext("Hostname"), gettext("Domain"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if ($_POST['dashboardperiod']) {
+		$config['widgets']['period'] = $_POST['dashboardperiod'];
+	}
 
 	if ($_POST['webguicss']) {
 		$config['system']['webgui']['webguicss'] = $_POST['webguicss'];
@@ -388,6 +393,7 @@ $section->addInput(new Form_Input(
 	$pconfig['hostname'],
 	['placeholder' => 'pfSense']
 ))->setHelp('Name of the firewall host, without domain part');
+
 $section->addInput(new Form_Input(
 	'domain',
 	'Domain',
@@ -397,6 +403,7 @@ $section->addInput(new Form_Input(
 ))->setHelp('Do not use \'local\' as a domain name. It will cause local '.
 	'hosts running mDNS (avahi, bonjour, etc.) to be unable to resolve '.
 	'local hosts not running mDNS.');
+
 $form->add($section);
 
 $section = new Form_Section('DNS Server Settings');
@@ -473,12 +480,14 @@ $section->addInput(new Form_Checkbox(
 $form->add($section);
 
 $section = new Form_Section('Localization');
+
 $section->addInput(new Form_Select(
 	'timezone',
 	'Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonelist)
 ))->setHelp('Select the timezone or location within the timezone to be used by this system.');
+
 $section->addInput(new Form_Input(
 	'timeservers',
 	'Timeservers',
@@ -486,6 +495,7 @@ $section->addInput(new Form_Input(
 	$pconfig['timeservers']
 ))->setHelp('Use a space to separate multiple hosts (only one required). '.
 	'Remember to set up at least one DNS server if a host name is entered here!');
+
 $section->addInput(new Form_Select(
 	'language',
 	'Language',
@@ -508,6 +518,16 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+
+$section->addInput(new Form_Input(
+	'dashboardperiod',
+	'Dashboard update period',
+	'number',
+	$pconfig['dashboardperiod'],
+	['min' => '10', 'max' => '600']
+))->setHelp('Time in seconds between dashboard widget updates. Small values cause ' .
+			'more frequent updates but increase the load on the web server. ' .
+			'Minimum is 5 seconds, maximum 600 seconds');
 
 $form->add($section);
 

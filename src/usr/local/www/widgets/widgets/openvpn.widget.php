@@ -158,7 +158,7 @@ function printPanel() {
 	$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";
 	$opstring .=			"<thead>";
 	$opstring .=				"<tr>";
-	$opstring .=					"<th>" . gettext('Nome/Time') . "</th>";
+	$opstring .=					"<th>" . gettext('Name/Time') . "</th>";
 	$opstring .=					"<th>" . gettext('Remote/Virtual IP') . "</th>";
 	$opstring .=					"<th></th>";
 	$opstring .=				"</tr>";
@@ -353,8 +353,14 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	</div>
 </div>
 
+<<<<<<< HEAD
 <?php
 endforeach;
+=======
+	// Refresh the panel
+	function get_update() {
+		var ajaxRequest;
+>>>>>>> 8da4847... Text typos in openvpn.widget.php
 
 if (!empty($sk_servers)):
 ?>
@@ -489,3 +495,4 @@ if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
 }
 ?>
 </div>
+

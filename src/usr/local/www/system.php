@@ -524,7 +524,7 @@ $section->addInput(new Form_Input(
 	'Dashboard update period',
 	'number',
 	$pconfig['dashboardperiod'],
-	['min' => '10', 'max' => '600']
+	['min' => '5', 'max' => '600']
 ))->setHelp('Time in seconds between dashboard widget updates. Small values cause ' .
 			'more frequent updates but increase the load on the web server. ' .
 			'Minimum is 5 seconds, maximum 600 seconds');

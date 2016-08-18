@@ -121,7 +121,7 @@ function printPanel() {
 	$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";
 	$opstring .=			"<thead>";
 	$opstring .=				"<tr>";
-	$opstring .=					"<th>" . gettext('Nome/Time') . "</th>";
+	$opstring .=					"<th>" . gettext('Name/Time') . "</th>";
 	$opstring .=					"<th>" . gettext('Remote/Virtual IP') . "</th>";
 	$opstring .=					"<th></th>";
 	$opstring .=				"</tr>";
@@ -260,7 +260,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 		);
 	}
 
-	// REfreh the panel
+	// Refresh the panel
 	function get_update() {
 		var ajaxRequest;
 
@@ -292,3 +292,4 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	printPanel();
 ?>
 </div>
+

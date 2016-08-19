@@ -2191,8 +2191,8 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		}
 		$args .= ' ' . implode(' ', array_values($standard_args));
 
-		/* run dnsmasq */
-		$cmd = "/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}";
+		/* run dnsmasq. Use "-C /dev/null" since we use command line args only (Issue #6730) */
+		$cmd = "/usr/local/sbin/dnsmasq --all-servers -C /dev/null {$dns_rebind} {$args}";
 		//log_error("dnsmasq command: {$cmd}");
 		mwexec_bg($cmd);
 		unset($args);

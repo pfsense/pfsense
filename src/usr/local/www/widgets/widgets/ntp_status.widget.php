@@ -39,6 +39,10 @@ function clockTimeString($inDate, $showSeconds) {
 	return date($showSeconds ? 'G:i:s' : 'g:i', $inDate) . ' ';
 }
 
+// For this widget the update period is 6 x larger than most others. It typically defaults
+// to once per 60 seconds, not once per 10 seconds
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 * 6 : 60000;
+
 if ($_REQUEST['updateme']) {
 //this block displays only on ajax refresh
 	if (isset($config['system']['ipv6allow'])) {
@@ -191,7 +195,7 @@ if ($_REQUEST['updateme']) {
 ?>
 <script type="text/javascript">
 //<![CDATA[
-function ntpWidgetUpdateFromServer(){
+function ntpWidgetUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/ntp_status.widget.php',
@@ -207,7 +211,7 @@ function ntpWidgetUpdateFromServer(){
 	});
 }
 
-function ntpWidgetUpdateDisplay(){
+function ntpWidgetUpdateDisplay() {
 	// Javascript handles overflowing
 	ntpServerTime.setSeconds(ntpServerTime.getSeconds()+1);
 
@@ -474,16 +478,20 @@ clockUpdate();
 				data: pars,
 				complete: ntpstatuscallback
 			});
-		// Refresh the status every 1 minute
-		setTimeout('ntp_getstatus()', 1*60*1000);
 	}
 
 	function ntpstatuscallback(transport) {
 		// The server returns formatted html code
 		var responseStringNtp = transport.responseText
 		$('#ntpstatus').prop('innerHTML',responseStringNtp);
+
+		// Refresh the status at the configured interval
+		setTimeout('ntp_getstatus()', "<?=$widgetperiod?>");
 	}
-	// Do the first status check 1 second after the dashboard opens
-	setTimeout('ntp_getstatus()', 1000);
+
+	// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+	// hit the server at exactly the same time)
+	setTimeout(ntp_getstatus, Math.floor((Math.random() * 10000) + 1000));
+
 //]]>
 </script>

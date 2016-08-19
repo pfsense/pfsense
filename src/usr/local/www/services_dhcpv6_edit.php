@@ -243,7 +243,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if($netboot_enabled) {
+if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
 		'filename',
 		'Netboot filename',

@@ -195,7 +195,7 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
 
 	$form->add($section);
-} // e-o-if(file_exista()
+} // e-o-if (file_exists())
 
 print($form);
 

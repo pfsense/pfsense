@@ -48,6 +48,8 @@ if ($_POST) {
 	header("Location: /");
 	exit(0);
 }
+
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 ?>
 
 <div class="table-responsive">
@@ -133,12 +135,14 @@ if ($_POST) {
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 			$('#gwtblbody').html(response);
 			// and do it again
-			setTimeout(get_gw_stats, 5000);
+			setTimeout(get_gw_stats, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
-		get_gw_stats();
+		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+		// hit the server at exactly the same time)
+		setTimeout(get_gw_stats, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>

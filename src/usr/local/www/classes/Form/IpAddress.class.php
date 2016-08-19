@@ -53,6 +53,8 @@ class Form_IpAddress extends Form_Input
 			array_combine(range($max, $min), range($max, $min))
 		);
 
+		$this->_mask->addClass("pfIpMask");
+
 		return $this;
 	}
 

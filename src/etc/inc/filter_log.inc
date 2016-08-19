@@ -223,7 +223,7 @@ function parse_vpn_login_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -245,7 +245,7 @@ function parse_vpn_service_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";

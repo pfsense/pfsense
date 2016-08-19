@@ -64,7 +64,7 @@ class Form_Group extends Form_Element
 
 	public function enableDuplication($max = null, $horiz = false)
 	{
-		if($horiz)
+		if ($horiz)
 			$this->addClass('user-duplication-horiz');	// added buttons are 2 cols wide with no offset
 		else
 			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset

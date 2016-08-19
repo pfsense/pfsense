@@ -163,7 +163,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			$('#pkgtbl').html(response);
 
 			// and do it again
-			setTimeout(get_pkg_stats, 5000);
+			// NOT! There is no need to refresh this widget
+			// setTimeout(get_pkg_stats, 5000);
 		});
 	}
 

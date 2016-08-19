@@ -394,7 +394,7 @@ if ($_POST) {
 }
 
 // On error, restore the form contents so the user doesn't have to re-enter too much
-if($_POST && $input_errors) {
+if ($_POST && $input_errors) {
 	$pconfig = $_POST;
 	$pconfig['ldap_authcn'] = $_POST['ldapauthcontainers'];
 	$pconfig['ldap_template'] = $_POST['ldap_tmpltype'];
@@ -439,7 +439,7 @@ if (!($act == "new" || $act == "edit" || $input_errors)) {
 					</tr>
 				</thead>
 				<tbody>
-			<?php foreach($a_server as $i => $server): ?>
+			<?php foreach ($a_server as $i => $server): ?>
 					<tr>
 						<td><?=htmlspecialchars($server['name'])?></td>
 						<td><?=htmlspecialchars($auth_server_types[$server['type']])?></td>
@@ -651,7 +651,7 @@ $section->add($group);
 if (!isset($id)) {
 	$template_list = array();
 
-	foreach($ldap_templates as $option => $template) {
+	foreach ($ldap_templates as $option => $template) {
 		$template_list[$option] = $template['desc'];
 	}
 
@@ -880,7 +880,7 @@ events.push(function() {
 	}
 
 	function set_ldap_port() {
-		if($('#ldap_urltype').find(":selected").index() == 0)
+		if ($('#ldap_urltype').find(":selected").index() == 0)
 			$('#ldap_port').val('389');
 		else
 			$('#ldap_port').val('636');
@@ -888,7 +888,7 @@ events.push(function() {
 
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
-		if(hide)
+		if (hide)
 			$('.' + s_class).hide();
 		else
 			$('.' + s_class).show();
@@ -921,18 +921,18 @@ events.push(function() {
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
 
-	if($('#ldap_port').val() == "")
+	if ($('#ldap_port').val() == "")
 		set_ldap_port();
 
 <?php
-	if($act == 'edit') {
+	if ($act == 'edit') {
 ?>
 		$('#type option:not(:selected)').each(function(){
 			$(this).attr('disabled', 'disabled');
 		});
 
 <?php
-		if(!$input_errors) {
+		if (!$input_errors) {
 ?>
 		$('#name').prop("readonly", true);
 <?php

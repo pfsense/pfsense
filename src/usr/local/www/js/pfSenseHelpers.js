@@ -109,7 +109,7 @@ function hideLabel(text, hide) {
 
 // Hides the '/' and the subnet mask of an Ip_Address/subnet_mask group
 function hideMask(name, hide) {
-	if(hide) {
+	if (hide) {
 		$('[id^=' + name + ']').hide();
 		$('[id^=' + name + ']').prev('span').hide();
 		$('[id^=' + name + ']').parent('div').removeClass('input-group');
@@ -189,10 +189,12 @@ function setMasks() {
 // Complicated function to move all help text associated with this input id to the same id
 // on the row above. That way if you delete the last row, you don't lose the help
 function moveHelpText(id) {
-	$('#' + id).parent('div').parent('div').find('input, select, checkbox').each(function() {	 // For each <span></span>
+
+	$('#' + id).parent('div').parent('div').find('input, select, checkbox, button').each(function() {	 // For each <span></span>
 		var fromId = this.id;
 		var toId = decrStringInt(fromId);
 		var helpSpan;
+
 
 		if (!$(this).hasClass('pfIpMask') && !$(this).hasClass('btn')) {
 			if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
@@ -200,6 +202,7 @@ function moveHelpText(id) {
 			} else {
 				helpSpan = $('#' + fromId).parent('div').find('span:last').clone();
 			}
+
 			if ($(helpSpan).hasClass('help-block')) {
 				if ($('#' + decrStringInt(fromId)).parent('div').hasClass('input-group')) {
 					$('#' + decrStringInt(fromId)).parent('div').after(helpSpan);
@@ -248,6 +251,11 @@ function renumber() {
 			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
 		});
 
+		$(this).find('button').each(function() {
+			$(this).prop("id", this.id.replace(/\d+$/, "") + idx);
+			$(this).prop("name", this.name.replace(/\d+$/, "") + idx);
+		});
+
 //		$(this).find('label').attr('for', $(this).find('label').attr('for').replace(/\d+$/, "") + idx);
 
 		idx++;
@@ -263,6 +271,7 @@ function delete_row(rowDelBtn) {
 	}
 
 	$('#' + rowDelBtn).parent('div').parent('div').remove();
+
 	renumber();
 	checkLastRow();
 

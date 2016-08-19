@@ -128,7 +128,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The proxy username contains invalid characters.");
 	}
 
-	if($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+	if ($_POST['proxypass'] != $_POST['proxypass_confirm']) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
 	}
 

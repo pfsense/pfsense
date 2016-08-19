@@ -53,6 +53,7 @@ if (isset($_REQUEST['isAjax'])) {
 	}
 
 	if (is_numeric($_REQUEST['limit']) && $_REQUEST['limit'] > 0) {
+		$_REQUEST['limit']++;  // Account for the header line
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
 	}
 
@@ -96,7 +97,7 @@ $section->addInput(new Form_Input(
 	'Filter',
 	'text',
 	$host
-))->setHelp('Use a regular expression to filter IP address or hostnames.');
+))->setHelp('Use a regular expression to filter the tables.');
 
 $form->add($section);
 

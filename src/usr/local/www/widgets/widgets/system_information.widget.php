@@ -78,6 +78,12 @@ if ($_REQUEST['getupdatestatus']) {
 	exit;
 }
 
+/*   Adding one second to the system widet update period
+ *   will ensure that we update the GUI right after the stats are updated.
+ */
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+$widgetperiod += 1000;
+
 $filesystems = get_mounted_filesystems();
 ?>
 
@@ -182,7 +188,7 @@ $filesystems = get_mounted_filesystems();
 				<ul style="margin-bottom:0px">
 				<?php
 					$dns_servers = get_dns_servers();
-					foreach($dns_servers as $dns) {
+					foreach ($dns_servers as $dns) {
 						echo "<li>{$dns}</li>";
 					}
 				?>
@@ -336,13 +342,7 @@ events.push(function(){
 });
 <?php endif; ?>
 
-/*   Most widgets update their backend data every 10 seconds.  11 seconds
- *   will ensure that we update the GUI right after the stats are updated.
- *   Seconds * 1000 = value
- */
-
-var Seconds = 11;
-var update_interval = (Math.abs(Math.ceil(Seconds))-1)*1000 + 990;
+var update_interval = "<?=$widgetperiod?>";
 
 function setProgress(barName, percent) {
 	$('#' + barName).css('width', percent + '%').attr('aria-valuenow', percent);
@@ -354,7 +354,7 @@ function setTimer() {
 
 function stats(x) {
 	var values = x.split("|");
-	if ($.each(values,function(key,value){
+	if ($.each(values,function(key,value) {
 		if (value == 'undefined' || value == null)
 			return true;
 		else
@@ -486,7 +486,7 @@ function updateInterfaces(x) {
 			} else {
 				ipv4_details = details[2] + '<br />';
 			}
-			switch(details[1]) {
+			switch (details[1]) {
 				case "up":
 					$('#' + details[0] + '-up').css("display","inline");
 					$('#' + details[0] + '-down').css("display","none");

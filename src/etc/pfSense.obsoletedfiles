@@ -34,6 +34,9 @@
 /etc/inc/smtp.inc
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php
+/etc/inc/xmlrpc.inc
+/etc/inc/xmlrpc_client.inc
+/etc/inc/xmlrpc_server.inc
 /etc/inc/zeromq.inc
 /etc/inetd.conf
 /etc/isdn
@@ -107,6 +110,7 @@
 /etc/rc.d/uzip
 /etc/rc.dhclient_cron
 /etc/rc.dyndns.storecache
+/etc/rc.filter_configure_xmlrpc
 /etc/rc.firewall6
 /etc/rc.firmware
 /etc/rc.firmware_auto

@@ -25,7 +25,6 @@ sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
-#sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities

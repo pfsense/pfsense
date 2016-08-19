@@ -851,8 +851,8 @@ if ($pkg['step'][$stepid]['fields']['field'] != "") {
 
 				break;
 		} // e-o-switch
-	} // e-o-foreach(package)
-} // e-o- if(we have fields)
+	} // e-o-foreach (package)
+} // e-o-if (we have fields)
 
 $form->add($section);
 print($form);

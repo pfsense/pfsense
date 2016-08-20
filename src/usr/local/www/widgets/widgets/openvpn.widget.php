@@ -188,7 +188,7 @@ function printPanel() {
 
 				foreach ($clients as $client):
 
-	$opstring .=				"<tr name=\"r:" . client['port'] . ":" . $client['remote_host'] . "\">";
+	$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
 	$opstring .=					"<td>";
 	$opstring .=						$client['name'];
 	$opstring .=					"</td>";

@@ -151,6 +151,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['enable'] = isset($a_cp[$cpzone]['enable']);
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
 	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
+	$pconfig['ldapauth_server'] = $a_cp[$cpzone]['ldapauth_server'];
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
 	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
@@ -359,6 +360,7 @@ if ($_POST) {
 		}
 		$newcp['auth_method'] = $_POST['auth_method'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
+		$newcp['ldapauth_server'] = $_POST['ldapauth_server'];
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
@@ -721,6 +723,14 @@ $group->add(new Form_Checkbox(
 	'radius'
 ))->displayasRadio();
 
+$group->add(new Form_Checkbox(
+	'auth_method',
+	null,
+	'LDAP Authentication',
+	$pconfig['auth_method'] == 'ldap',
+	'ldap'
+))->displayasRadio();
+
 $section->add($group);
 
 $section->addInput(new Form_Checkbox(
@@ -764,6 +774,27 @@ $group->add(new Form_Checkbox(
 	$pconfig['radius_protocol'] == 'MSCHAPv2',
 	'MSCHAPv2'
 ))->displayasRadio();
+
+$section->add($group);
+
+$group = new Form_Group('LDAP Authentication Server');
+$group->addClass("ldapauth");
+
+$authlist = auth_get_authserver_list();
+$options = array();
+foreach ($authlist as $i => $auth) {
+	if ($auth['type'] != "ldap")
+		continue;
+	$found = true;
+	$options[$auth['name']] = $auth['name'];
+}
+
+$group->add(new Form_Select(
+	'ldapauth_server',
+	'Server LDAP',
+	$pconfig['ldapauth_server'],
+	$options
+));
 
 $section->add($group);
 
@@ -1209,6 +1240,7 @@ events.push(function() {
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideClass("radiusproto", !($('input[name="auth_method"]:checked').val() == 'radius'));
+		hideClass("ldapauth", !($('input[name="auth_method"]:checked').val() == 'ldap'));
 	}
 
 	function hideHTTPS() {

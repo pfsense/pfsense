@@ -247,6 +247,24 @@ EOD;
 		portal_reply_page($redirurl, "error", $errormsg);
 	}
 
+} else if ($_POST['accept'] && $cpcfg['auth_method'] == "ldap") {
+	if ($_POST['auth_user'] && $_POST['auth_pass']) {
+		$authcfg = auth_get_authserver($cpcfg['ldapauth_server']);
+		$_attributes = array();
+		//check against ldap user manager
+		$loginok = authenticate_user($_POST['auth_user'], $_POST['auth_pass'], $authcfg, $_attributes);
+		
+		if ($loginok) {
+			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "LOGIN");
+			portal_allow($clientip, $clientmac, $_POST['auth_user']);
+		} else {
+			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "FAILURE");
+			portal_reply_page($redirurl, "error", $errormsg);
+		}
+	} else {
+		portal_reply_page($redirurl, "error", $errormsg);
+	}
+
 } else if ($_POST['accept'] && $clientip && $cpcfg['auth_method'] == "none") {
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
 	portal_allow($clientip, $clientmac, "unauthenticated");

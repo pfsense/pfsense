@@ -192,8 +192,8 @@ if (($_POST['host']) && ($_POST['dialog_output'])) {
 function display_host_results ($address, $hostname, $dns_speeds) {
 	$map_lengths = function($element) { return strlen($element[0]); };
 
-	echo gettext("IP Address") . ": {$address} \n";
-	echo gettext("Host Name") . ": {$hostname} \n";
+	echo gettext("IP Address") . ": " . htmlspecialchars($address) . " \n";
+	echo gettext("Host Name") . ": " . htmlspecialchars($hostname) .  " \n";
 	echo "\n";
 	$text_table = array();
 	$text_table[] = array(gettext("Server"), gettext("Query Time"));
@@ -278,7 +278,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$resolved as $hostitem):?>
 		<tr>
-			<td><?=$hostitem['data']?></td><td><?=$hostitem['type']?></td>
+			<td><?=htmlspecialchars($hostitem['data'])?></td><td><?=htmlspecialchars($hostitem['type'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -302,7 +302,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$dns_speeds as $qt):?>
 		<tr>
-			<td><?=$qt['dns_server']?></td><td><?=$qt['query_time']?></td>
+			<td><?=htmlspecialchars($qt['dns_server'])?></td><td><?=htmlspecialchars($qt['query_time'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>

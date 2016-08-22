@@ -180,6 +180,7 @@ if (isset($id) && $a_ppps[$id]) {
 }
 
 if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -312,6 +313,7 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 				}
 			}
 		}
+
 	}
 
 	if (!$input_errors) {
@@ -342,6 +344,16 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 			$ppp['descr'] = $_POST['descr'];
 		} else {
 			unset($ppp['descr']);
+		}
+
+		// Loop through fields associated with an individual link/port and make an array of the data
+		$port_fields = array("localip", "gateway", "subnet", "bandwidth", "mtu", "mru", "mrru");
+		foreach ($_POST['interfaces'] as $iface) {
+			foreach ($port_fields as $field_label) {
+				if (isset($_POST[$field_label][$iface])) {
+					$port_data[$field_label][] = $_POST[$field_label][$iface];
+				}
+			}
 		}
 
 		switch ($_POST['type']) {
@@ -626,17 +638,17 @@ if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 		$group = new Form_Group('IP/Gateway (' . $ifnm . ')');
 
 		$group->add(new Form_IpAddress(
-			'localiplabel' . $j,
+			'localip[' . $ifnm . ']',
 			null,
 			$pconfig['localip'][$j]
-		))->addMask('subnet' . $j, $pconfig['subnet'][$j], 31)->setHelp('IP Address');
+		))->addMask('subnet[' . $ifnm . ']', $pconfig['subnet'][$j], 31)->setHelp('Local IP Address');
 
 		$group->add(new Form_Input(
-			'gateway' . $j,
+			'gateway[' . $ifnm . ']',
 			null,
 			'text',
 			$pconfig['gateway'][$j]
-		))->setHelp('IP or Hostname');
+		))->setHelp('Gateway IP or Hostname');
 
 		$j++;
 
@@ -891,28 +903,28 @@ foreach ($linklist['list'] as $ifnm => $nm) {
 	$group = new Form_Group('Link Parameters (' . $ifnm . ')');
 
 	$group->add(new Form_Input(
-		'bandwidth' . $ifnm,
+		'bandwidth[' . $ifnm . ']',
 		null,
 		'text',
 		$pconfig['bandwidth'][$ifnm]
 	))->setHelp('Bandwidth');
 
 	$group->add(new Form_Input(
-		'mtu' . $ifnm,
+		'mtu[' . $ifnm . ']',
 		null,
 		'text',
 		$pconfig['mtu'][$ifnm]
 	))->setHelp('MTU');
 
 	$group->add(new Form_Input(
-		'mru' . $ifnm,
+		'mru[' . $ifnm . ']',
 		null,
 		'text',
 		$pconfig['mru'][$ifnm]
 	))->setHelp('MRU');
 
 	$group->add(new Form_Input(
-		'mrru' . $ifnm,
+		'mrru[' . $ifnm . ']',
 		null,
 		'text',
 		$pconfig['mrru'][$ifnm]

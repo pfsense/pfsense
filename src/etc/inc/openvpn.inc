@@ -132,6 +132,7 @@ $openvpn_client_modes = array(
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
 	'' => gettext("No Preference"),
+	'noadapt' => gettext("No Preference and Adaptive Compression Disabled"),
 	'no' => gettext("Disabled - No Compression"),
 	'adaptive' => gettext("Enabled with Adaptive Compression"),
 	'yes' => gettext("Enabled without Adaptive Compression"));
@@ -1045,7 +1046,11 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	if (!empty($settings['compression'])) {
-		$conf .= "comp-lzo {$settings['compression']}\n";
+		if ($settings['compression'] == "noadapt") {
+			$conf .= "comp-noadapt\n";
+		} else {
+			$conf .= "comp-lzo {$settings['compression']}\n";
+		}
 	}
 
 	if ($settings['passtos']) {

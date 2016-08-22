@@ -37,6 +37,9 @@ $allowautocomplete = true;
 $pgtitle = array(gettext("Diagnostics"), gettext("Traceroute"));
 include("head.inc");
 
+/* Max TTL of both traceroute and traceroute6 is 255, but in practice more than
+   64 hops would most likely time out in the GUI. If a user requires a
+   traceroute that long, they can use the CLI. */
 define('MAX_TTL', 64);
 define('DEFAULT_TTL', 18);
 
@@ -93,6 +96,9 @@ if ($do_traceroute) {
 	$command = "/usr/sbin/traceroute";
 	if ($ipproto == "ipv6") {
 		$command .= "6";
+		if (empty($n)) {
+			$n = "-l";
+		}
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ipv6($sourceip);
 	} else {
 		$ifaddr = is_ipaddr($sourceip) ? $sourceip : get_interface_ip($sourceip);

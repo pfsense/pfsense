@@ -175,6 +175,11 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 				<table class="table table-hover table-condensed table-striped">
 					<thead>
 						<tr>
+							<th></th><th></th><th></th>
+							<th colspan="3" class="text-center colspanth"><?=gettext("Protocol counts")?></th>
+						</tr>
+
+						<tr>
 							<th ><?=gettext("IP");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>
 							<th ><?=gettext("Protocol");?></th>

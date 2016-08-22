@@ -118,3 +118,7 @@ a.fa, i.fa {
 .panel-heading {
     padding: 5px 10px;
 }
+
+.ui-widget {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}

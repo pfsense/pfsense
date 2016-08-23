@@ -943,3 +943,7 @@ svg {
 .chkboxlbl {
     padding-top: 4px;
 }
+
+.colspanth {
+    background-color: #eeeeee;
+}

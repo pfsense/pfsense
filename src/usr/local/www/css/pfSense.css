@@ -956,14 +956,23 @@ svg {
     display: block;
 }
 
-#chart, #chart svg {
+.d3-chart, .d3-chart svg {
     margin: 0px;
     padding: 10px 0;
     height: 445px;
     width: 100%;
 }
 
-#chart .nvtooltip > h3 {
+.traffic-widget-chart, .traffic-widget-chart svg {
+    padding: 0;
+    height: 250px;
+}
+
+.traffic-widget-chart:not(:last-child) {
+    border-bottom: 2px solid #ccc;
+}
+
+.d3-chart .nvtooltip > h3 {
     font-size: 14px;
 }
 

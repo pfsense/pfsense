@@ -518,6 +518,10 @@ textarea {
 
 /* D3 Styles */
 
+.traffic-widget-chart:not(:last-child) {
+    border-bottom: 2px solid #303030;
+}
+
 svg text {
     fill: #FFFFFF !important;
 }
@@ -531,13 +535,13 @@ g.nv-axis text, g.nv-legend text {
     stroke: #616161 !important;
 }
 
-#chart .nvtooltip > h3 {
+.d3-chart .nvtooltip > h3 {
     background-color: rgba(66,66,66, 0.9);
     border-bottom: 1px solid #616161;
     color: #e0e0e0;
 }
 
-#chart .nvtooltip {
+.d3-chart .nvtooltip {
     background: rgba(97,97,97, 0.9);
     color: #e0e0e0;
 }

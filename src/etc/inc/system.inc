@@ -458,6 +458,7 @@ function system_hosts_generate() {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
+
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
 		log_error(gettext("Error: cannot open hosts file in system_hosts_generate()."));
@@ -469,6 +470,11 @@ function system_hosts_generate() {
 	if (isset($config['unbound']['enable'])) {
 		require_once("unbound.inc");
 		unbound_hosts_generate();
+	}
+
+	/* restart dhcpleases */
+	if (!platform_booting()) {
+		system_dhcpleases_configure();
 	}
 
 	return 0;

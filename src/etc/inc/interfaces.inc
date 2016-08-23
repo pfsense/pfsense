@@ -1190,16 +1190,16 @@ function interfaces_configure() {
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
 
+		/* restart dns servers (defering dhcpd reload) */
+		if (isset($config['dnsmasq']['enable'])) {
+			services_dnsmasq_configure(false);
+		}
+		if (isset($config['unbound']['enable'])) {
+			services_unbound_configure(false);
+		}
+
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
-
-		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
-		}
-
-		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
-		}
 	}
 
 	return 0;
@@ -3568,14 +3568,15 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			require_once("services.inc");
 		}
 
+		/* restart dns servers (defering dhcpd reload) */
 		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
+			services_unbound_configure(false);
 		}
-
 		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
+			services_dnsmasq_configure(false);
 		}
 
+		/* reconfigure dhcpdv6 (leaving dhcpdv4 alone) */
 		services_dhcpd_configure("inet6");
 	}
 

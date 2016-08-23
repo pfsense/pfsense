@@ -84,6 +84,11 @@ body {
 
 .dropdown-menu>li>a {
     padding: 0px 20px;
+    line-height: 26px;
+}
+
+.dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
+    background-color: rgb(224, 224, 224);
 }
 
 .navbar-right>li>a {

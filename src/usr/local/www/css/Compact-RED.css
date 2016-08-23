@@ -133,6 +133,14 @@ body {
 }
 .panel-default>.panel-heading {
     background-color: #900;
+    padding: 2px 5px 2px 15px;
+}
+
+.panel-title {
+    line-height: 18px;
+    font-size: 12px;
+    font-family: sans-serif;
+    font-weight: bold;
 }
 
 .form-control {

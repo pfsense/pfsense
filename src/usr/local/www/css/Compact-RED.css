@@ -122,6 +122,10 @@ body {
      padding:2px;
 }
 
+.table-striped>tbody>tr:hover {
+    background-color: rgb(224, 224, 224);
+}
+
 .header .context-links {
     top: 1px;
 }

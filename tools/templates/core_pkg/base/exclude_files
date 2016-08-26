@@ -1,4 +1,6 @@
 ./boot.config
+./boot/dtb
+./boot/kernel
 ./boot/loader.conf
 ./boot/loader.conf.local
 ./boot/modules/bwi_v3_ucode.ko
@@ -16,8 +18,11 @@
 ./etc/hosts
 ./etc/master.passwd
 ./etc/passwd
+./etc/pfSense-rc
+./etc/pfSense-rc.shutdown
 ./etc/platform
 ./etc/pwd.db
+./etc/rc
 ./etc/rc.conf
 ./etc/spwd.db
 ./etc/syslog.conf
@@ -29,3 +34,4 @@
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree
 ./usr/local/share/%%PRODUCT_NAME%%/base.txz
 ./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
+./var/db/pkg

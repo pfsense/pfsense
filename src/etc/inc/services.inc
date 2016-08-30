@@ -516,6 +516,20 @@ function services_dhcpdv4_configure() {
 				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
 			}
 		}
+		if (is_array($dhcpifconf['pool'])) {
+			foreach ($dhcpifconf['pool'] as $poolidx => $poolconf) {
+				if (is_array($poolconf['numberoptions']) && is_array($poolconf['numberoptions']['item'])) {
+					foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
+						if (!empty($item['type'])) {
+							$itemtype = $item['type'];
+						} else {
+							$itemtype = "text";
+						}
+						$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+					}
+				}
+			}
+		}
 	}
 
 	$dhcpdconf = <<<EOD
@@ -754,7 +768,7 @@ EOPP;
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 		// Setup pool options
-		foreach ($all_pools as $poolconf) {
+		foreach ($all_pools as $all_pools_idx => $poolconf) {
 			if (!(ip_in_subnet($poolconf['range']['from'], "{$subnet}/{$ifcfgsn}") && ip_in_subnet($poolconf['range']['to'], "{$subnet}/{$ifcfgsn}"))) {
 				// If the user has changed the subnet from the interfaces page and applied,
 				// but has not updated the DHCP range, then the range to/from of the pool can be outside the subnet.
@@ -851,9 +865,6 @@ EOPP;
 				$pdnscfg .= "		ddns-update-style interim;\n";
 			}
 
-			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
-				$pdnscfg .= "		option domain-name-servers " . join(",", $poolconf['dnsserver']) . ";\n";
-			}
 			$dhcpdconf .= "{$pdnscfg}";
 
 			// default-lease-time
@@ -885,6 +896,23 @@ EOPP;
 			// tftp-server-name
 			if (!empty($poolconf['tftp']) && ($poolconf['tftp'] != $dhcpifconf['tftp'])) {
 				$dhcpdconf .= "		option tftp-server-name \"{$poolconf['tftp']}\";\n";
+			}
+
+			// Handle pool-specific options
+			$dhcpdconf .= "\n";
+			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
+			if ($poolconf['numberoptions']['item'] && ($all_pools_idx > 0)) {
+				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
+				// This matches the way $poolidx was used when generating the $custoptions string earlier.
+				$poolidx = $all_pools_idx - 1;
+				foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
+					$item_value = base64_decode($item['value']);
+					if (empty($item['type']) || $item['type'] == "text") {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} \"{$item_value}\";\n";
+					} else {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
+					}
+				}
 			}
 
 			// ldap-server
@@ -1282,6 +1310,7 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
+dhcp-cache-threshold 0;
 
 EOD;
 

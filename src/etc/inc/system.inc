@@ -445,6 +445,8 @@ function system_hosts_generate() {
 function system_dhcpleases_configure() {
 	global $config, $g;
 
+	$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
+
 	/* Start the monitoring process for dynamic dhcpclients. */
 	if ((isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcp'])) ||
 	    (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcp']))) {
@@ -462,7 +464,6 @@ function system_dhcpleases_configure() {
 			$unbound_conf = "";
 		}
 
-		$pidfile = "{$g['varrun_path']}/dhcpleases.pid";
 		if (isvalidpid($pidfile)) {
 			/* Make sure dhcpleases is using correct unbound or dnsmasq */
 			$_gb = exec("/bin/pgrep -F {$pidfile} -f {$dns_pid}", $output, $retval);
@@ -480,7 +481,7 @@ function system_dhcpleases_configure() {
 		}
 		@unlink($pidfile);
 		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['varetc_path']}/hosts");
-	} else {
+	} elseif (isvalidpid($pidfile)) {
 		sigkillbypid($pidfile, "TERM");
 		@unlink($pidfile);
 	}

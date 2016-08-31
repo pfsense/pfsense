@@ -623,7 +623,6 @@
 				case 'route53':
 					/* http://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html */
 					$reqdate = gmdate('D, d M Y H:i:s e');
-					//print "$reqdate\n";
 					$httphead[] = array();
 					$httphead[] = sprintf("Date: %s", $reqdate);
 					/* to avoid having user to know their AWS Region, for now use V3 */
@@ -1262,7 +1261,7 @@
 						log_error(sprintf("error message: %s", $data));
 						$status_update = false;
 					} else {
-						$status = $status_intro . success_str . gettext("IP address changed successfully");
+						$status = $status_intro . $success_str . gettext("IP address changed successfully");
 						$successful_update = true;
 					}
 					break;

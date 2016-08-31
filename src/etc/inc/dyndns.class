@@ -622,6 +622,7 @@
 					break;
 				case 'route53':
 					/* http://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html */
+					/* AWS3 Signature generation inspired by Dan Myers http://sourceforge.net/projects/php-r53/ */
 					$reqdate = gmdate('D, d M Y H:i:s e');
 					$httphead[] = array();
 					$httphead[] = sprintf("Date: %s", $reqdate);

@@ -679,59 +679,45 @@
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
 				case 'route53':
-
-					/* Setting Variables */
-					$hostname = "{$this->_dnsHost}.";
-					$ZoneID = trim($this->_dnsZoneID);
-					$AccessKeyId = $this->_dnsUser;
-					$SecretAccessKey = $this->_dnsPass;
-					$NewIP = $this->_dnsIP;
-					$NewTTL = $this->_dnsTTL;
-
-					/* Include Route 53 Library Class */
-					require_once('/etc/inc/r53.class');
-
-					/* Set Amazon AWS Credentials for this record */
-					$r53 = new Route53($AccessKeyId, $SecretAccessKey);
-
-					/* Function to find old values of records in Route 53 */
-					if (!function_exists('Searchrecords')) {
-						function SearchRecords($records, $name) {
-							$result = array();
-							foreach ($records as $record) {
-								if (strtolower($record['Name']) == strtolower($name)) {
-									$result [] = $record;
-								}
-							}
-							return ($result) ? $result : false;
+					/* http://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html */
+					$reqdate = gmdate('D, d M Y H:i:s e');
+					//print "$reqdate\n";
+					$httphead[] = array();
+					$httphead[] = sprintf("x-amz-date: %s", $reqdate);
+					/* to avoid having user to know their AWS Region, for now use V3 */
+					$httphead[] = sprintf(
+							"x-amzn-authorization: AWS3-HTTPS AWSAccessKeyId=%s,Algorithm=HmacSHA256,Signature=%s",
+							$this->_dnsUser,
+							base64_encode(hash_hmac("sha256", $date, $this->_dnsPass, true))
+					);					
+					$apiurl = sprintf("https://route53.amazonaws.com/2013-04-01/hostedzone/%s/rrset", $this->_dnsZoneID);
+					$xmlreq .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+					$xmlreq .= "<ChangeResourceRecordSetRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
+					$xmlreq .= "<ChangeBatch><Changes><Change>";
+					$xmlreq .= "<Action>UPSERT</Action>";
+					$xmlreq .= "<ResourceRecordSet>";
+					$xmlreq .= sprintf("<Name>%s</Name>", $this->_dnsHost);
+					$xmlreq .= "<Type>A</Type>";
+					$xmlreq .= sprintf("<TTL>%d</TTL>", $this->_dnsTTL);
+					$xmlreq .= sprintf("<ResourceRecords><ResourceRecord><Value>%s</Value></ResourceRecord></ResourceRecords>",
+								$this->_dnsIP);
+					$xmlreq .= "</ResourceRecordSet>";
+					$xmlreq .= "</Change></Changes></ChangeBatch>";
+					$xmlreq .= "</ChangeResourceRecordSetRequest>";
+					
+					$httphead[] = "Content-Type: text/plain";
+					$httphead[] = sprintf("Content-Length: %d", strlen($xmlreq));
+					
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
+					if($this->_dnsVerboseLog){
+						log_error(sprintf("Sending reuquest to: %s", $apiurl));
+						foreach($httphead as $hv){
+							log_error(sprintf("Header: %s", $hv));
 						}
+						log_error(sprintf("XMLPOST:\n%s\n\n", $xmlreq));
 					}
-
-					$records = $r53->listResourceRecordSets("/hostedzone/$ZoneID");
-
-					/* Get IP for your hostname in Route 53 */
-					if (false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
-						$OldTTL = $a_result[0][TTL];
-						$OldIP = $a_result[0][ResourceRecords][0];
-					} else {
-						$OldIP = "";
-					}
-
-					/* Check if we need to update DNS Record */
-					if ($OldIP !== $NewIP || $OldTTL !== $NewTTL) {
-						if (!empty($OldIP)) {
-							/* Your Hostname already exists, deleting and creating it again */
-							$changes = array();
-							$changes[] = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
-							$changes[] = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
-							$result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
-						} else {
-							/* Your Hostname does not exist yet, creating it */
-							$changes = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
-							$result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
-						}
-					}
-					$this->_checkStatus(0, $result);
+					curl_setopt($ch, CURLOPT_URL, $apiurl);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
 					break;
 				case 'custom':
 				case 'custom-v6':
@@ -890,7 +876,7 @@
 				default:
 					break;
 			}
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53') {
+			if ($this->_dnsService != 'ods') {
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
@@ -913,7 +899,7 @@
 			$error_str = "(" . gettext("Error") . ") ";
 			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
 
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53' && @curl_error($ch)) {
+			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
 				$status = gettext("Curl error occurred:") . " " . curl_error($ch);
 				log_error($status);
 				$this->status = $status;
@@ -1347,7 +1333,14 @@
 					}
 					break;
 				case 'route53':
-					$successful_update = true;
+					if(preg_match('/ErrorResponse/', $data)){
+						$status = $status_intro . $error_str . gettext("Route53 API call failed");
+						log_error(sprintf("error message: %s", $data));
+						$status_update = false;
+					} else {
+						$status = $status_intro . success_str . gettext("IP address changed successfully");
+						$successful_update = true;
+					}
 					break;
 				case 'custom':
 				case 'custom-v6':

@@ -254,14 +254,14 @@ if ($_POST) {
 			gettext("Hostname or IP"),
 			gettext("Services"));
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "auth") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
 			$reqdfieldsn[] = gettext("Authentication port");
 		}
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "acct") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
 			$reqdfieldsn[] = gettext("Accounting port");
 		}

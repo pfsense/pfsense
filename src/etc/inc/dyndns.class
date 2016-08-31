@@ -625,16 +625,16 @@
 					$reqdate = gmdate('D, d M Y H:i:s e');
 					//print "$reqdate\n";
 					$httphead[] = array();
-					$httphead[] = sprintf("x-amz-date: %s", $reqdate);
+					$httphead[] = sprintf("Date: %s", $reqdate);
 					/* to avoid having user to know their AWS Region, for now use V3 */
 					$httphead[] = sprintf(
-							"x-amzn-authorization: AWS3-HTTPS AWSAccessKeyId=%s,Algorithm=HmacSHA256,Signature=%s",
+							"X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId=%s,Algorithm=HMACSHA256,SignedHeaders=date,Signature=%s",
 							$this->_dnsUser,
-							base64_encode(hash_hmac("sha256", $date, $this->_dnsPass, true))
+							base64_encode(hash_hmac("sha256", $reqdate, $this->_dnsPass, true))
 					);					
 					$apiurl = sprintf("https://route53.amazonaws.com/2013-04-01/hostedzone/%s/rrset", $this->_dnsZoneID);
 					$xmlreq .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-					$xmlreq .= "<ChangeResourceRecordSetRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
+					$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
 					$xmlreq .= "<ChangeBatch><Changes><Change>";
 					$xmlreq .= "<Action>UPSERT</Action>";
 					$xmlreq .= "<ResourceRecordSet>";
@@ -645,7 +645,7 @@
 								$this->_dnsIP);
 					$xmlreq .= "</ResourceRecordSet>";
 					$xmlreq .= "</Change></Changes></ChangeBatch>";
-					$xmlreq .= "</ChangeResourceRecordSetRequest>";
+					$xmlreq .= "</ChangeResourceRecordSetsRequest>";
 					
 					$httphead[] = "Content-Type: text/plain";
 					$httphead[] = sprintf("Content-Length: %d", strlen($xmlreq));

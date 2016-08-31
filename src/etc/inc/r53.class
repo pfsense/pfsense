@@ -1,0 +1,132 @@
+<?php
+/**
+* r53.class for managing Amazon AWS Route53 Resources
+* 
+* This is a simplified version of r53.class for trivial "dynDNS" operations
+* that integrates well with pfSense. Based on the original r53.class by
+* Dan Myers at  http://sourceforge.net/projects/php-r53/ .
+* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+* Copyright (c) 2011, Dan Myers.
+* Parts copyright (c) 2008, Donovan Schonknecht.
+* All rights reserved.
+*
+* Redistribution and use in source and binary forms, with or without
+* modification, are permitted provided that the following conditions are met:
+*
+* - Redistributions of source code must retain the above copyright notice,
+*   this list of conditions and the following disclaimer.
+* - Redistributions in binary form must reproduce the above copyright
+*   notice, this list of conditions and the following disclaimer in the
+*   documentation and/or other materials provided with the distribution.
+*
+* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+* POSSIBILITY OF SUCH DAMAGE.
+*
+* This is a modified BSD license (the third clause has been removed).
+* The BSD license may be found here:
+* http://www.opensource.org/licenses/bsd-license.php
+*
+* Amazon Route 53 is a trademark of Amazon.com, Inc. or its affiliates.
+*
+* Route53 is based on Donovan Schonknecht's Amazon S3 PHP class, found here:
+* http://undesigned.org.za/2007/10/22/amazon-s3-php-class
+*
+* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*
+*/
+
+class Route53
+{
+	protected $__accessKey; // AWS Access key
+	protected $__secretKey; // AWS Secret key
+	
+	/**
+	* Constructor
+	*
+	* @param string $accessKey Access key
+	* @param string $secretKey Secret key
+	* @return void
+	*/
+	public function __construct($accessKey = null, $secretKey = null) {
+		if ($accessKey !== null && $secretKey !== null) {
+			$this->setAuth($accessKey, $secretKey);
+		}
+	}
+	
+	/**
+	* Set AWS access key and secret key
+	*
+	* @param string $accessKey Access key
+	* @param string $secretKey Secret key
+	* @return void
+	*/
+	public function setAuth($accessKey, $secretKey) {
+		$this->__accessKey = $accessKey;
+		$this->__secretKey = $secretKey;
+	}
+	
+	/**
+	* Return XML document for POST
+	*
+	* @param string $fqdn FQDN to set/update
+	* @param string $ip IP to set for the FQDN
+	* @param string $ttl TTL for the record
+	* @return string XML document
+	*/
+	public function getRequestBody($fqdn, $ip, $ttl){
+		$xmlreq .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
+		$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
+		$xmlreq .= "<ChangeBatch><Changes><Change>";
+		$xmlreq .= "<Action>UPSERT</Action>";
+		$xmlreq .= "<ResourceRecordSet>";
+		$xmlreq .= sprintf("<Name>%s</Name>", $fqdn);
+		$xmlreq .= "<Type>A</Type>";
+		$xmlreq .= sprintf("<TTL>%d</TTL>", $ttl);
+		$xmlreq .= sprintf("<ResourceRecords><ResourceRecord><Value>%s</Value></ResourceRecord></ResourceRecords>",	$ip);
+		$xmlreq .= "</ResourceRecordSet>";
+		$xmlreq .= "</Change></Changes></ChangeBatch>";
+		$xmlreq .= "</ChangeResourceRecordSetsRequest>";
+			
+		return $xmlreq;
+	}
+	
+	/**
+	* Return API URL
+	*
+	* @param string $zoneid Amazone Zone ID
+	* @return string URL
+	*/
+	public function getApiUrl($zoneid){
+		return sprintf("https://route53.amazonaws.com/2013-04-01/hostedzone/%s/rrset", $zoneid);
+	}
+
+	/**
+	* Return HTTP post headers 
+	* 
+	* @param int $bodylen length of the POST bost body
+	* @return Array headers
+	*/
+	public function getHttpPostHeaders($bodylen){
+		$reqdate = gmdate('D, d M Y H:i:s e');
+		$httphead[] = array();
+		$httphead[] = sprintf("Date: %s", $reqdate);
+		$httphead[] = "Content-Type: text/plain";
+		$httphead[] = sprintf("Content-Length: %d", $bodylen);
+		/* to avoid having user to know their AWS Region, for now use V3 */
+		$httphead[] = sprintf(
+			"X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId=%s,Algorithm=HMACSHA256,SignedHeaders=date,Signature=%s",
+			$this->__accessKey,
+			base64_encode(hash_hmac("sha256", $reqdate, $this->__secretKey, true))
+		);
+		return $httphead;
+	}
+}

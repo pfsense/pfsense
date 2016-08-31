@@ -620,43 +620,19 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
-				case 'route53':
-					/* http://docs.aws.amazon.com/Route53/latest/APIReference/Welcome.html */
-					/* AWS3 Signature generation inspired by Dan Myers http://sourceforge.net/projects/php-r53/ */
-					$reqdate = gmdate('D, d M Y H:i:s e');
-					$httphead[] = array();
-					$httphead[] = sprintf("Date: %s", $reqdate);
-					/* to avoid having user to know their AWS Region, for now use V3 */
-					$httphead[] = sprintf(
-							"X-Amzn-Authorization: AWS3-HTTPS AWSAccessKeyId=%s,Algorithm=HMACSHA256,SignedHeaders=date,Signature=%s",
-							$this->_dnsUser,
-							base64_encode(hash_hmac("sha256", $reqdate, $this->_dnsPass, true))
-					);					
-					$apiurl = sprintf("https://route53.amazonaws.com/2013-04-01/hostedzone/%s/rrset", $this->_dnsZoneID);
-					$xmlreq .= "<?xml version=\"1.0\" encoding=\"UTF-8\"?>";
-					$xmlreq .= "<ChangeResourceRecordSetsRequest xmlns=\"https://route53.amazonaws.com/doc/2013-04-01/\">";
-					$xmlreq .= "<ChangeBatch><Changes><Change>";
-					$xmlreq .= "<Action>UPSERT</Action>";
-					$xmlreq .= "<ResourceRecordSet>";
-					$xmlreq .= sprintf("<Name>%s</Name>", $this->_dnsHost);
-					$xmlreq .= "<Type>A</Type>";
-					$xmlreq .= sprintf("<TTL>%d</TTL>", $this->_dnsTTL);
-					$xmlreq .= sprintf("<ResourceRecords><ResourceRecord><Value>%s</Value></ResourceRecord></ResourceRecords>",
-								$this->_dnsIP);
-					$xmlreq .= "</ResourceRecordSet>";
-					$xmlreq .= "</Change></Changes></ChangeBatch>";
-					$xmlreq .= "</ChangeResourceRecordSetsRequest>";
-					
-					$httphead[] = "Content-Type: text/plain";
-					$httphead[] = sprintf("Content-Length: %d", strlen($xmlreq));
-					
+				case 'route53':		
+					require_once("r53.class");
+					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
+					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
+					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
+					$httphead = $r53->getHttpPostHeaders(strlen($xmlreq));
 					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
 					if($this->_dnsVerboseLog){
 						log_error(sprintf("Sending reuquest to: %s", $apiurl));
 						foreach($httphead as $hv){
 							log_error(sprintf("Header: %s", $hv));
 						}
-						log_error(sprintf("XMLPOST:\n%s\n\n", $xmlreq));
+						log_error(sprintf("XMLPOST: %s", $xmlreq));
 					}
 					curl_setopt($ch, CURLOPT_URL, $apiurl);
 					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);

@@ -1777,7 +1777,7 @@ function compare_hostname_to_dnscache($hostname) {
  */
 function load_crypto() {
 	global $config, $g;
-	$crypto_modules = array('glxsb', 'aesni');
+	$crypto_modules = array('aesni');
 
 	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
 		return false;

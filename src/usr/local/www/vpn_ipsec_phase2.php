@@ -333,13 +333,6 @@ if ($_POST) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
 		} else {
 			foreach ($ealgos as $ealgo) {
-				if (isset($config['system']['crypto_hardware'])) {
-					if ($config['system']['crypto_hardware'] == "glxsb") {
-						if ($ealgo['name'] == "aes" && $ealgo['keylen'] != "128") {
-							$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-						}
-					}
-				}
 				if (empty($pconfig['halgos'])) {
 					if (!strpos($ealgo['name'], "gcm")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");

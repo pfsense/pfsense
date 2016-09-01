@@ -1580,44 +1580,53 @@ function vpn_pppoe_configure(&$pppoecfg) {
 				printf(gettext("Error: cannot open mpd.conf in vpn_pppoe_configure().") . "\n");
 				return 1;
 			}
-			$mpdconf = "\n\n";
-			$mpdconf .= "poes:\n";
 
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
-				$mpdconf .= "	load poes{$pppoecfg['pppoeid']}{$i}\n";
+			$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 ";
+			if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
+				$issue_ip_type .= "0.0.0.0/0";
+			} else {
+				$issue_ip_type .= "ippool p0";
 			}
 
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
+			$ippool_p0 = ip_after($pppoecfg['remoteip'], $pppoecfg['n_pppoe_units'] - 1);
 
-				$clientip = ip_after($pppoecfg['remoteip'], $i);
-
-				if (isset($pppoecfg['radius']['radiusissueips']) && isset($pppoecfg['radius']['server']['enable'])) {
-					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 0.0.0.0/0";
-				} else {
-					$issue_ip_type = "set ipcp ranges {$pppoecfg['localip']}/32 {$clientip}/32";
-				}
-
-				$mpdconf .=<<<EOD
-
-poes{$pppoecfg['pppoeid']}{$i}:
-	new -i poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i} poes{$pppoecfg['pppoeid']}{$i}
-	{$issue_ip_type}
-	load pppoe_standard
-
-EOD;
-			}
 			if (is_numeric($pppoecfg['n_pppoe_maxlogin']) && ($pppoecfg['n_pppoe_maxlogin'] > 0)) {
 				$pppoemaxlogins = $pppoecfg['n_pppoe_maxlogin'];
 			} else {
 				$pppoemaxlogins = 1;
 			}
 
-			$mpdconf .=<<<EOD
+			$ipcp_dns = '';
+			if (!empty($pppoecfg['dns1'])) {
+				$ipcp_dns = "set ipcp dns " . $pppoecfg['dns1'];
+				if (!empty($pppoecfg['dns2'])) {
+					$ipcp_dns .= " " . $pppoecfg['dns2'];
+				}
+			} elseif (isset($config['dnsmasq']['enable']) ||
+			    isset ($config['unbound']['enable'])) {
+				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0]) {
+					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
+				}
+			} elseif (is_array($syscfg['dnsserver']) &&
+			    ($syscfg['dnsserver'][0])) {
+				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
+			}
 
-pppoe_standard:
-	set bundle no multilink
+			$mpdconf = <<<EOD
+startup:
+
+poes:
+	set ippool add p0 {$pppoecfg['remoteip']} {$ippool_p0}
+
+	create bundle template poes_b
 	set bundle enable compression
-	set auth max-logins {$pppoemaxlogins}
+
+	set ccp yes mppc
+	set mppc yes e40
+	set mppc yes e128
+	set mppc yes stateless
+
 	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set iface idle 0
@@ -1625,44 +1634,28 @@ pppoe_standard:
 	set iface disable proxy-arp
 	set iface enable tcpmssfix
 	set iface mtu 1500
+
+	set ipcp no vjcomp
+	{$issue_ip_type}
+	{$ipcp_dns}
+
+	create link template poes_l pppoe
+	set link action bundle poes_b
+
+	set auth max-logins {$pppoemaxlogins}
+
+	set pppoe iface {$pppoe_interface}
+
+	set link no multilink
 	set link no pap chap
 	{$paporchap}
 	set link keep-alive 60 180
-	set ipcp yes vjcomp
-	set ipcp no vjcomp
 	set link max-redial -1
-	set link mtu 1492
 	set link mru 1492
-	set ccp yes mpp-e40
-	set ccp yes mpp-e128
-	set ccp yes mpp-stateless
 	set link latency 1
-	#set ipcp dns 10.10.1.3
-	#set bundle accept encryption
+	set link enable incoming
 
 EOD;
-
-			if (!empty($pppoecfg['dns1'])) {
-				$mpdconf .= "	set ipcp dns " . $pppoecfg['dns1'];
-				if (!empty($pppoecfg['dns2'])) {
-					$mpdconf .= " " . $pppoecfg['dns2'];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['unbound']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-					$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-			}
 
 			if (isset ($pppoecfg['radius']['server']['enable'])) {
 				$radiusport = "";
@@ -1687,7 +1680,7 @@ EOD;
 
 EOD;
 				}
-				if (isset($pppoecfg['radius']['nasip'])) {
+				if (!empty($pppoecfg['radius']['nasip'])) {
 					$mpdconf .= "\tset radius me {$pppoecfg['radius']['nasip']}\n";
 				}
 			}
@@ -1695,32 +1688,6 @@ EOD;
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 			unset($mpdconf);
-
-			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn/mpd.links", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.links in vpn_pppoe_configure().") . "\n");
-				return 1;
-			}
-
-			$mpdlinks = "";
-
-			for ($i = 0; $i < $pppoecfg['n_pppoe_units']; $i++) {
-				$mpdlinks .=<<<EOD
-
-poes{$pppoecfg['pppoeid']}{$i}:
-	set phys type pppoe
-	set pppoe iface {$pppoe_interface}
-	set pppoe service "*"
-	set pppoe disable originate
-	set pppoe enable incoming
-
-EOD;
-			}
-
-			fwrite($fd, $mpdlinks);
-			fclose($fd);
-			unset($mpdlinks);
 
 			if ($pppoecfg['username']) {
 				/* write mpd.secret */
@@ -1754,7 +1721,7 @@ EOD;
 			/* Get support for netgraph(4) from the nic */
 			pfSense_ngctl_attach(".", $pppoe_interface);
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
+			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/pppoe{$pppoecfg['pppoeid']}-vpn -p {$g['varrun_path']}/pppoe{$pppoecfg['pppoeid']}-vpn.pid -s poes poes");
 
 			break;
 	}

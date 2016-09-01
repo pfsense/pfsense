@@ -1792,81 +1792,75 @@ function vpn_l2tp_configure() {
 				printf(gettext("Error: cannot open mpd.conf in vpn_l2tp_configure().") . "\n");
 				return 1;
 			}
-			$mpdconf = "\n\n";
-			$mpdconf .=<<<EOD
-l2tps:
 
-EOD;
+			$ippool_p0 = ip_after($l2tpcfg['remoteip'], $l2tpcfg['n_l2tp_units'] - 1);
 
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
-				$mpdconf .= "	load l2tp{$i}\n";
+			$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 ";
+			if (isset($l2tpcfg['radius']['radiusissueips']) && isset($l2tpcfg['radius']['server']['enable'])) {
+				$issue_ip_type .= "0.0.0.0/0";
+			} else {
+				$issue_ip_type .= "ippool p0";
 			}
 
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
+			$ipcp_nbns = '';
+			if (is_ipaddr($l2tpcfg['wins'])) {
+				$ipcp_nbns = "set ipcp nbns {$l2tpcfg['wins']}";
+			}
 
-				$clientip = ip_after($l2tpcfg['remoteip'], $i);
-
-				if (isset ($l2tpcfg['radius']['radiusissueips']) && isset ($l2tpcfg['radius']['enable'])) {
-					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 0.0.0.0/0";
-				} else {
-					$issue_ip_type = "set ipcp ranges {$l2tpcfg['localip']}/32 {$clientip}/32";
+			$ipcp_dns = '';
+			if (is_ipaddr($l2tpcfg['dns1'])) {
+				$ipcp_dns = "set ipcp dns " . $l2tpcfg['dns1'];
+				if (is_ipaddr($l2tpcfg['dns2'])) {
+					$ipcp_dns .= " " . $l2tpcfg['dns2'];
 				}
-
-				$mpdconf .=<<<EOD
-
-l2tp{$i}:
-	new -i l2tp{$i} l2tp{$i} l2tp{$i}
-	{$issue_ip_type}
-	load l2tp_standard
-
-EOD;
+			} elseif (isset ($config['dnsmasq']['enable']) ||
+			    isset ($config['unbound']['enable'])) {
+				$ipcp_dns = "set ipcp dns " . get_interface_ip("lan");
+				if ($syscfg['dnsserver'][0]) {
+					$ipcp_dns .= " " . $syscfg['dnsserver'][0];
+				}
+			} elseif (is_array($syscfg['dnsserver']) &&
+			    ($syscfg['dnsserver'][0])) {
+				$ipcp_dns = "set ipcp dns " . join(" ", $syscfg['dnsserver']);
 			}
 
-			$mpdconf .=<<<EOD
+			$mpdconf =<<<EOD
 
-l2tp_standard:
-	set bundle disable multilink
+startup:
+
+l2tps:
+	set ippool add p0 {$l2tpcfg['remoteip']} {$ippool_p0}
+
+	create bundle template l2tp_b
 	set bundle enable compression
 	set bundle yes crypt-reqd
-	set ipcp yes vjcomp
-	# set ipcp ranges 131.188.69.161/32 131.188.69.170/28
+
 	set ccp yes mppc
-	set iface disable on-demand
-	set iface enable proxy-arp
+
+	set iface group l2tp
 	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
+	set iface disable on-demand
+	set iface enable proxy-arp
+
+	set ipcp yes vjcomp
+	{$issue_ip_type}
+	{$ipcp_nbns}
+	{$ipcp_dns}
+
+	create link template l2tp_l l2tp
+	set link action bundle l2tp_b
+
 	set link yes acfcomp protocomp
-	set link no pap chap
+	set link enable multilink
+	set link no pap chap chap-msv2
 	{$paporchap}
 	{$l2tp_listen}
 	set link keep-alive 10 180
+	set link enable incoming
 
 EOD;
 
-			if (is_ipaddr($l2tpcfg['wins'])) {
-				$mpdconf .= "	set ipcp nbns {$l2tpcfg['wins']}\n";
-			}
-			if (is_ipaddr($l2tpcfg['dns1'])) {
-				$mpdconf .= "	set ipcp dns " . $l2tpcfg['dns1'];
-				if (is_ipaddr($l2tpcfg['dns2'])) {
-					$mpdconf .= " " . $l2tpcfg['dns2'];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['dnsmasq']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (isset ($config['unbound']['enable'])) {
-				$mpdconf .= "	set ipcp dns " . get_interface_ip("lan");
-				if ($syscfg['dnsserver'][0]) {
-					$mpdconf .= " " . $syscfg['dnsserver'][0];
-				}
-				$mpdconf .= "\n";
-			} elseif (is_array($syscfg['dnsserver']) && ($syscfg['dnsserver'][0])) {
-				$mpdconf .= "	set ipcp dns " . join(" ", $syscfg['dnsserver']) . "\n";
-			}
 
 			if (isset ($l2tpcfg['radius']['enable'])) {
 				$mpdconf .=<<<EOD
@@ -1888,33 +1882,6 @@ EOD;
 			fwrite($fd, $mpdconf);
 			fclose($fd);
 			unset($mpdconf);
-
-			/* write mpd.links */
-			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.links", "w");
-			if (!$fd) {
-				printf(gettext("Error: cannot open mpd.links in vpn_l2tp_configure().") . "\n");
-				return 1;
-			}
-
-			$mpdlinks = "";
-
-			for ($i = 0; $i < $l2tpcfg['n_l2tp_units']; $i++) {
-				$mpdlinks .=<<<EOD
-
-l2tp{$i}:
-	set link type l2tp
-	set l2tp enable incoming
-	set l2tp disable originate
-
-EOD;
-				if (!empty($l2tpcfg['secret'])) {
-					$mpdlinks .= "set l2tp secret {$l2tpcfg['secret']}\n";
-				}
-			}
-
-			fwrite($fd, $mpdlinks);
-			fclose($fd);
-			unset($mpdlinks);
 
 			/* write mpd.secret */
 			$fd = fopen("{$g['varetc_path']}/l2tp-vpn/mpd.secret", "w");
@@ -1939,7 +1906,7 @@ EOD;
 			vpn_netgraph_support();
 
 			/* fire up mpd */
-			mwexec("/usr/local/sbin/mpd4 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
+			mwexec("/usr/local/sbin/mpd5 -b -d {$g['varetc_path']}/l2tp-vpn -p {$g['varrun_path']}/l2tp-vpn.pid -s l2tps l2tps");
 
 			break;
 

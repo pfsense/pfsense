@@ -468,7 +468,7 @@ for ($idx=1; $idx<=3; $idx++) {
 		'radns' . $idx,
 		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setPattern('[a-zA-Z0-9\_\.\:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[a-zA-Z0-9_.:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(

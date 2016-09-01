@@ -471,7 +471,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9.:_]+');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 				'The subnet size specified for the internal subnet will be applied to the external subnet.');
@@ -498,7 +498,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9.:_]+');
 
 $group->setHelp('The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".');
 

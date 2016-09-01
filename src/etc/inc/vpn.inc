@@ -1627,6 +1627,7 @@ poes:
 	set mppc yes e128
 	set mppc yes stateless
 
+	set iface group pppoe
 	set iface up-script /usr/local/sbin/vpn-linkup
 	set iface down-script /usr/local/sbin/vpn-linkdown
 	set iface idle 0

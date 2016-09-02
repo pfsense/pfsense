@@ -403,12 +403,12 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
 				unset($config['dhcpd'][$id]);
-				services_dhcpd_configure();
+				services_dhcpd_configure('inet');
 			}
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
 				unset($config['dhcpdv6'][$id]);
-				services_dhcpdv6_configure();
+				services_dhcpd_configure('inet6');
 			}
 
 			if (count($config['filter']['rule']) > 0) {

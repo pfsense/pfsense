@@ -643,7 +643,7 @@ $group->add(new Form_Input(
 $group->add(new Form_Input(
 	'ldap_bindpw',
 	'Password',
-	'text',
+	'password',
 	$pconfig['ldap_bindpw']
 ));
 $section->add($group);

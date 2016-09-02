@@ -200,11 +200,14 @@ if ($_POST) {
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
 			$resolved = gethostbyname($host);
-			if ($resolved) {
-				$resolved = resolve_host_addresses($host);
-			}
 			if ($host != $resolved) {
-				$ipaddr = $resolved[0];
+				$resolved = resolve_host_addresses($host);
+				foreach ($resolved as $item) {
+					if ($item['type'] == 'A') {
+						$ipaddr = $item['data'];
+						break;
+					}
+				}
 			}
 		}
 

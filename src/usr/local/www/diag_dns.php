@@ -154,7 +154,6 @@ if ($_POST) {
 	$type = "unknown";
 	$resolved = "";
 	$ipaddr = "";
-	$hostname = "";
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
@@ -172,7 +171,6 @@ if ($_POST) {
 			if ($resolved) {
 				$resolved = resolve_host_addresses($host);
 			}
-			$hostname = $host;
 			if ($host != $resolved) {
 				$ipaddr = $resolved[0];
 			}

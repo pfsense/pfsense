@@ -65,6 +65,7 @@ function listtags() {
 		'acls', 'alias', 'aliasurl', 'allowedip', 'allowedhostname', 'authserver',
 		'bridged', 'build_port_path',
 		'ca', 'cacert', 'cert', 'crl', 'clone', 'config', 'container', 'columnitem',
+		'checkipservice',
 		'depends_on_package', 'disk', 'dnsserver', 'dnsupdate', 'domainoverrides', 'dyndns',
 		'earlyshellcmd', 'element', 'encryption-algorithm-option',
 		'field', 'fieldname',

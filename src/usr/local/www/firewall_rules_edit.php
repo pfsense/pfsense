@@ -1323,7 +1323,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$type,
 		$name .' Address',
 		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9\_\.\:]+');
+	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9_.:]+');
 
 	$section->add($group);
 

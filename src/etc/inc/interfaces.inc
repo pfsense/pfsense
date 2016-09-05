@@ -1158,16 +1158,16 @@ function interfaces_configure() {
 		/* reload IPsec tunnels */
 		vpn_ipsec_configure();
 
+		/* restart dns servers (defering dhcpd reload) */
+		if (isset($config['dnsmasq']['enable'])) {
+			services_dnsmasq_configure(false);
+		}
+		if (isset($config['unbound']['enable'])) {
+			services_unbound_configure(false);
+		}
+
 		/* reload dhcpd (interface enabled/disabled status may have changed) */
 		services_dhcpd_configure();
-
-		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
-		}
-
-		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
-		}
 	}
 
 	return 0;
@@ -1300,11 +1300,7 @@ function interface_bring_down($interface = "wan", $destroy = false, $ifacecfg = 
 	switch ($ifcfg['ipaddrv6']) {
 		case "slaac":
 		case "dhcp6":
-			$pidv6 = find_dhcp6c_process($realif);
-			if ($pidv6) {
-				posix_kill($pidv6, SIGTERM);
-			}
-			sleep(3);
+			kill_dhcp6client_process($realif);
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}.conf");
 			unlink_if_exists("{$g['varetc_path']}/dhcp6c_{$interface}_script.sh");
 			unlink_if_exists("{$g['varetc_path']}/rtsold_{$realifv6}_script.sh");
@@ -3030,19 +3026,14 @@ function find_dhcp6c_process($interface) {
 }
 
 function kill_dhcp6client_process($interface) {
- 	if (empty($interface) || !does_interface_exist($interface)) {
- 		return;
- 	}
+	if (empty($interface) || !does_interface_exist($interface)) {
+		return;
+	}
 
- 	$i = 0;
- 	while ((($pid = find_dhcp6c_process($interface)) != 0) && ($i < 3)) {
- 		/* 3rd time make it die for sure */
- 		$sig = ($i == 2 ? SIGKILL : SIGTERM);
- 		posix_kill($pid, $sig);
- 		sleep(1);
- 		$i++;
- 	}
- 	unset($i);
+	if (($pid = find_dhcp6c_process($interface)) != 0) {
+		mwexec("kill -9 {$pid}");
+		sleep(1);
+	}
 }
 
 function interface_virtual_create($interface) {
@@ -3536,14 +3527,15 @@ function interface_track6_configure($interface = "lan", $wancfg, $linkupevent = 
 			require_once("services.inc");
 		}
 
+		/* restart dns servers (defering dhcpd reload) */
 		if (isset($config['unbound']['enable'])) {
-			services_unbound_configure();
+			services_unbound_configure(false);
 		}
-
 		if (isset($config['dnsmasq']['enable'])) {
-			services_dnsmasq_configure();
+			services_dnsmasq_configure(false);
 		}
 
+		/* reconfigure dhcpdv6 (leaving dhcpdv4 alone) */
 		services_dhcpd_configure("inet6");
 	}
 
@@ -3704,12 +3696,12 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 	$rd6prefix = explode("/", $wancfg['prefix-6rd']);
 	$rd6prefixlen = $rd6prefix[1];
 	$brgw = explode('.', $wancfg['gateway-6rd']);
-	$rd6brgw = substr(Net_IPv6::_ip2Bin($rd6prefix[0]), 0, $rd6prefixlen);
+	$rd6brgw = substr(ip6_to_bin($rd6prefix[0]), 0, $rd6prefixlen);
 	$rd6brgw .= str_pad(decbin($brgw[0]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[1]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[2]), 8, '0', STR_PAD_LEFT) . str_pad(decbin($brgw[3]), 8, '0', STR_PAD_LEFT);
 	if (strlen($rd6brgw) < 128) {
 		$rd6brgw = str_pad($rd6brgw, 128, '0', STR_PAD_RIGHT);
 	}
-	$rd6brgw = Net_IPv6::compress(Net_IPv6::_bin2Ip($rd6brgw));
+	$rd6brgw = bin_to_compressed_ip6($rd6brgw);
 	unset($brgw);
 	$rd6prefix = Net_IPv6::uncompress($rd6prefix[0]);
 
@@ -3974,23 +3966,20 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_routerv6\n";
 	$rtsoldscript .= "echo $2 > {$g['tmp_path']}/{$wanif}_defaultgwv6\n";
 	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Received RA specifying route \$2 for interface {$interface}({$wanif})\"\n";
-	$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
-	$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
-	$rtsoldscript .= "\t/bin/sleep 1\n";
-	$rtsoldscript .= "fi\n";
-	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
-	$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
-	$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
+
 	/* non ipoe Process */
- 	if (!isset($wancfg['dhcp6withoutra'])) {
+	if (!isset($wancfg['dhcp6withoutra'])) {
 		$rtsoldscript .= "if [ -f {$g['varrun_path']}/dhcp6c_{$wanif}.pid ]; then\n";
 		$rtsoldscript .= "\t/bin/pkill -F {$g['varrun_path']}/dhcp6c_{$wanif}.pid\n";
 		$rtsoldscript .= "\t/bin/sleep 1\n";
 		$rtsoldscript .= "fi\n";
 	} else {
-		$rtsoldscript .= "\t/bin/sleep 1\n";
+		$rtsoldscript .= "{$g['varetc_path']}/dhcp6c_{$interface}_script.sh\n";
+		$rtsoldscript .= "/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+
+	/* add the start of dhcp6c to the rtsold script if we are going to wait for ra */
 	if (!isset($wancfg['dhcp6withoutra'])) {
 		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
@@ -4013,11 +4002,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		killbypid("{$g['varrun_path']}/rtsold_{$wanif}.pid");
 		sleep(2);
 	}
+
+	/* start dhcp6c here if we don't want to wait for ra */
 	if (isset($wancfg['dhcp6withoutra'])) {
 		kill_dhcp6client_process($wanif);
 
 		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
- 		mwexec("/usr/bin/logger -t mwtag 'Starting dhcp6 client for interface wan({$wanif} in IPoE mode)'");
+		mwexec("/usr/bin/logger -t info 'Starting dhcp6 client for interface wan({$wanif} in DHCP6 without RA mode)'");
 	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
 

@@ -304,10 +304,10 @@ print($form);
 
 
 				$alias = rule_columns_with_alias(
-					$natent['source']['address'],
-					pprint_port($natent['source']['port']),
+					$natent['source']['network'],
+					pprint_port($natent['sourceport']),
 					$natent['destination']['address'],
-					pprint_port($natent['destination']['port'])
+					pprint_port($natent['dstport'])
 				);
 ?>
 

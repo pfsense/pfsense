@@ -76,7 +76,6 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 }
 
 $crypto_modules = array(
-	'glxsb' => gettext("AMD Geode LX Security Block"),
 	'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
 $thermal_hardware_modules = array(

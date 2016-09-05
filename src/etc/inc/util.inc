@@ -371,8 +371,8 @@ function gen_subnetv4_max($ipaddr, $bits) {
 /* same as gen_subnet_max() but validates IPv6 only */
 function gen_subnetv6_max($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		$endip_bin = substr(Net_IPv6::_ip2Bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
-		return Net_IPv6::compress(Net_IPv6::_bin2Ip($endip_bin));
+		$endip_bin = substr(ip6_to_bin($ipaddr), 0, $bits) . str_repeat('1', 128 - $bits);
+		return bin_to_compressed_ip6($endip_bin);
 	}
 	return "";
 }
@@ -399,7 +399,7 @@ function gen_subnet_mask_v6($bits) {
 	/* Pad right with zeroes to reach the full address length */
 	$bin = str_pad($bin, 128, '0', STR_PAD_RIGHT);
 	/* Convert back to an IPv6 address style notation */
-	return Net_IPv6::_bin2Ip($bin);
+	return bin_to_ip6($bin);
 }
 
 /* Convert long int to IPv4 address
@@ -418,6 +418,60 @@ function ip2long32($ip) {
    Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
 	return sprintf("%u", ip2long32($ip));
+}
+
+/*
+ * Convert IPv6 address to binary
+ *
+ * Obtained from: pear-Net_IPv6
+ */
+function ip6_to_bin($ip) {
+	$binstr = '';
+
+	$ip = Net_IPv6::removeNetmaskSpec($ip);
+	$ip = Net_IPv6::Uncompress($ip);
+
+	$parts = explode(':', $ip);
+
+	foreach ( $parts as $v ) {
+
+		$str     = base_convert($v, 16, 2);
+		$binstr .= str_pad($str, 16, '0', STR_PAD_LEFT);
+
+	}
+
+	return $binstr;
+}
+
+/*
+ * Convert IPv6 binary to uncompressed address
+ *
+ * Obtained from: pear-Net_IPv6
+ */
+function bin_to_ip6($bin) {
+	$ip = "";
+
+	if (strlen($bin) < 128) {
+		$bin = str_pad($bin, 128, '0', STR_PAD_LEFT);
+	}
+
+	$parts = str_split($bin, "16");
+
+	foreach ( $parts as $v ) {
+		$str = base_convert($v, 2, 16);
+		$ip .= $str.":";
+	}
+
+	$ip = substr($ip, 0, -1);
+
+	return $ip;
+}
+
+/*
+ * Convert IPv6 binary to compressed address
+ */
+function bin_to_compressed_ip6($bin) {
+	return Net_IPv6::compress(bin_to_ip6($bin));
 }
 
 /* Find out how many IPs are contained within a given IP range
@@ -542,8 +596,8 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 	} elseif (is_ipaddrv6($ip1) && is_ipaddrv6($ip2)) {
 		$proto = 'ipv6';
 		$bits = 128;
-		$ip1bin = Net_IPv6::_ip2Bin($ip1);
-		$ip2bin = Net_IPv6::_ip2Bin($ip2);
+		$ip1bin = ip6_to_bin($ip1);
+		$ip2bin = ip6_to_bin($ip2);
 	} else {
 		return array();
 	}
@@ -622,7 +676,7 @@ function ip_range_to_subnet_array($ip1, $ip2) {
 			$i = str_split($ip, 8);
 			$out[] = implode('.', array(bindec($i[0]), bindec($i[1]), bindec($i[2]), bindec($i[3]))) . '/' . $netmask;
 		} else {
-			$out[] = Net_IPv6::compress(Net_IPv6::_bin2Ip($ip)) . '/' . $netmask;
+			$out[] = bin_to_compressed_ip6($ip) . '/' . $netmask;
 		}
 	}
 

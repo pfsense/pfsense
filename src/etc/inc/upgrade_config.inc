@@ -4970,4 +4970,11 @@ function upgrade_154_to_155() {
 		}
 	}
 }
+
+/* Unset references to glxsb in the config. See #6755 */
+function upgrade_155_to_156() {
+	if ($config['system']['crypto_hardware'] == "glxsb") {
+		unset($config['system']['crypto_hardware']);
+	}
+}
 ?>

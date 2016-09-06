@@ -1951,6 +1951,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWildcard = $conf['wildcard'],
+		$dnsProxied = $conf['proxied'],
 		$dnsMX = $conf['mx'],
 		$dnsIf = "{$conf['interface']}",
 		$dnsBackMX = NULL,

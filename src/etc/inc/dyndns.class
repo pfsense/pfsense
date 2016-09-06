@@ -95,7 +95,7 @@
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last tested: 01 April 2012
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  CloudFlare      - Last Tested: 17 July 2016
+	 *  CloudFlare      - Last Tested: 05 September 2016
 	 *  CloudFlare IPv6 - Last Tested: 17 July 2016
 	 *  Eurodns         - Last Tested: 27 June 2013
 	 *  GratisDNS       - Last Tested: 15 August 2012
@@ -133,6 +133,7 @@
 		var $_FQDN;
 		var $_dnsIP;
 		var $_dnsWildcard;
+		var $_dnsProxied;
 		var $_dnsMX;
 		var $_dnsBackMX;
 		var $_dnsServer;
@@ -164,7 +165,7 @@
 		 *   - $For custom requests, $dnsUpdateURL is parsed for '%IP%', which is replaced with the new IP.
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsDomain = '', $dnsUser = '', $dnsPass = '',
-					$dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
+					$dnsWildcard = 'OFF', $dnsProxied = false, $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
@@ -233,6 +234,7 @@
 			$this->_dnsServer = $dnsServer;
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
+			$this->_dnsProxied = $dnsProxied;
 			$this->_dnsMX = $dnsMX;
 			$this->_dnsZoneID = $dnsZoneID;
 			$this->_dnsTTL = $dnsTTL;
@@ -727,6 +729,7 @@
 							$hostData = array(
 								"content" => "{$this->_dnsIP}",
 								"type" => "{$recordType}",
+								"proxied" => $this->_dnsProxied,
 								"name" => "{$this->_dnsHost}"
 							);
 							$data_json = json_encode($hostData);

@@ -2,7 +2,7 @@
 /*
  * ecl.php
  *
- * Copyright (c) 2010-2015 Electric Sheep Fencing, LLC. All rights reserved.
+ * Copyright (c) 2010-2015 Rubicon Communications, LLC (Netgate). All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:

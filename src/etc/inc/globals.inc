@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -86,7 +86,7 @@ $g = array(
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
-	"product_copyright" => "Electric Sheep Fencing LLC",
+	"product_copyright" => "Rubicon Communications, LLC (Netgate)",
 	"product_copyright_url" => "https://pfsense.org/license",
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"product_website" => "www.pfsense.org",

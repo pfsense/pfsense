@@ -3,7 +3,7 @@
  * load_balancer_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>.
  * Copyright (c) 2005-2008 Bill Marquette
  * All rights reserved.

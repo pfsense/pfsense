@@ -3,7 +3,7 @@
 # ping_hosts.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2006-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without

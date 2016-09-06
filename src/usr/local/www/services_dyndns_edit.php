@@ -96,6 +96,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 	$pconfig['enable'] = !isset($a_dyndns[$id]['enable']);
 	$pconfig['interface'] = $a_dyndns[$id]['interface'];
 	$pconfig['wildcard'] = isset($a_dyndns[$id]['wildcard']);
+	$pconfig['proxied'] = isset($a_dyndns[$id]['proxied']);
 	$pconfig['verboselog'] = isset($a_dyndns[$id]['verboselog']);
 	$pconfig['curl_ipresolve_v4'] = isset($a_dyndns[$id]['curl_ipresolve_v4']);
 	$pconfig['curl_ssl_verifypeer'] = isset($a_dyndns[$id]['curl_ssl_verifypeer']);
@@ -190,6 +191,7 @@ if ($_POST) {
 		$dyndns['domainname'] = $_POST['domainname'];
 		$dyndns['mx'] = $_POST['mx'];
 		$dyndns['wildcard'] = $_POST['wildcard'] ? true : false;
+		$dyndns['proxied'] = $_POST['proxied'] ? true : false;
 		$dyndns['verboselog'] = $_POST['verboselog'] ? true : false;
 		$dyndns['curl_ipresolve_v4'] = $_POST['curl_ipresolve_v4'] ? true : false;
 		$dyndns['curl_ssl_verifypeer'] = $_POST['curl_ssl_verifypeer'] ? true : false;
@@ -355,6 +357,15 @@ $section->addInput(new Form_Checkbox(
 ));
 
 $section->addInput(new Form_Checkbox(
+	'proxied',
+	'CloudFlare Proxy',
+	'Enable Proxy',
+	$pconfig['proxied']
+))->setHelp('Note: This enables CloudFlares Virtual DNS proxy.  When Enabled it will route all traffic '.
+			'through their servers. By Default this is disabled and your Real IP is exposed.'.
+			'More info: <a href="https://blog.cloudflare.com/announcing-virtual-dns-ddos-mitigation-and-global-distribution-for-dns-traffic/" target="_blank">CloudFlare Blog</a>');
+
+$section->addInput(new Form_Checkbox(
 	'verboselog',
 	'Verbose logging',
 	'Enable verbose logging',
@@ -473,6 +484,7 @@ events.push(function() {
 				hideInput('host', true);
 				hideInput('mx', true);
 				hideCheckbox('wildcard', true);
+				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
 				break;
@@ -488,6 +500,7 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;
@@ -504,9 +517,24 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
 				break;
+			case "cloudflare-v6":
+			case "cloudflare":
+				hideGroupInput('domainname', true);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', true);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', false);
+				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', false);
+				hideInput('zoneid', true);
+				hideInput('ttl', true);
 			default:
 				hideGroupInput('domainname', true);
 				hideInput('resultmatch', true);
@@ -517,6 +545,7 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideCheckbox('proxied', true);
 				hideInput('zoneid', true);
 				hideInput('ttl', true);
 		}

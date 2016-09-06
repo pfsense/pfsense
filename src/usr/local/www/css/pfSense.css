@@ -77,6 +77,10 @@ h1 a:hover, h1 a:active {
     cursor: move;
 }
 
+.ui-widget {
+    font-family: Roboto, sans-serif;
+}
+
 tr.disabled td,
 tr.disabled th {
     opacity: .5;

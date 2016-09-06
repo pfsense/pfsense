@@ -757,7 +757,7 @@ function config_validate($conffile) {
 }
 
 function cleanup_backupcache($lock = false) {
-	global $g;
+	global $config, $g;
 	$i = false;
 
 	$revisions = intval(is_numericint($config['system']['backupcount']) ? $config['system']['backupcount'] : $g['default_config_backup_count']);

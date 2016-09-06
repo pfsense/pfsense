@@ -133,27 +133,12 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 }
 
 if (file_exists("/etc/platform")) {
-	$arch = php_uname("m");
-
-	if (strstr($g['product_version'], "-RELEASE")) {
-		/* This is only necessary for RELEASE */
-		$arch = ($arch == "i386") ? "" : '/' . $arch;
-		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-		$g['update_url']="https://updates.pfsense.org/_updaters{$arch}";
-		$g['update_manifest']="https://updates.pfsense.org/manifest";
-	} else {
-		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-		$g['update_url']="https://snapshots.pfsense.org/FreeBSD_releng/10.1/{$arch}/pfSense_HEAD/.updaters/";
-		$g['update_manifest']="https://updates.pfSense.org/manifest";
-	}
-
+	$g['update_manifest']="https://updates.pfsense.org/manifest";
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if ($g['platform'] == "nanobsd") {
-		$g['firmware_update_text']="pfSense-*.img.gz";
 		$g['hidebackupbeforeupgrade'] = true;
 		$g['default_config_backup_count'] = 5;
 	} else {
-		$g['firmware_update_text']="pfSense-*.tgz";
 		$g['default_config_backup_count'] = 30;
 	}
 } else { 

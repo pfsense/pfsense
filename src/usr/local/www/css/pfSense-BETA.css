@@ -2,7 +2,7 @@
  * pfSense-BETA.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,4 +81,8 @@ a.fa, i.fa {
 
 .panel-heading {
     padding: 5px 10px;
+}
+
+.ui-widget {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }

@@ -3,7 +3,7 @@
  * diag_command.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Exec+ v1.02-000 - Copyright 2001-2003, All rights reserved

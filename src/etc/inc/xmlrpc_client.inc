@@ -21,7 +21,7 @@
 
 require_once("XML/RPC2/Client.php");
 
-class pfsense_xmlrpc_client {
+class pfsense_xmlrpc_client_extended {
 	
 	private $username, $password, $url, $filenotice, $error;
 	
@@ -77,13 +77,13 @@ class pfsense_xmlrpc_client {
 				$resp = $cli->$method($this->username, $this->password, $parameter);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
-				$this->error = "Exception calling XMLRPC method1 {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
+				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
 				continue;
 			} catch (Exception $e) {
 				// Other errors (HTTP or networking problems...)
-				$this->error = "Exception calling XMLRPC method2 {$method} # " . $e->getMessage() . htmlspecialchars(print_r(debug_backtrace(),true))."DUS";
+				$this->error = "Exception calling XMLRPC method {$method} # " . $e->getMessage();
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, gettext("Error code received"), "");
 				continue;
@@ -113,4 +113,29 @@ class pfsense_xmlrpc_client {
 	function get_error() {
 		return $this->error;
 	}
+}
+
+class pfsense_xmlrpc_client extends pfsense_xmlrpc_client_extended {
+	/* Default sync class */
+	public function __construct() {
+		global $config;
+		$hasync = $config['hasync'];
+
+		if (empty($hasync['username'])) {
+			$username = "admin";
+		} else {
+			$username = $hasync['username'];
+		}
+		/* if port is empty lets rely on the protocol selection */
+		$port = $config['system']['webgui']['port'];
+		if (empty($port)) {
+			if ($config['system']['webgui']['protocol'] == "http") {
+				$port = "80";
+			} else {
+				$port = "443";
+			}
+		}
+		parent::__construct($hasync['synchronizetoip'], $port, $username, $hasync['password']);
+	}
+	
 }

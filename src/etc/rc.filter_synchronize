@@ -85,14 +85,14 @@ function remove_special_characters($string) {
 	return $string;
 }
 
-function carp_check_version($syncip, $port, $username, $password) {
+function carp_check_version() {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
 		return;
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client($syncip, $port, $username, $password);
+	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('host_firmware_version');
 
 	log_error(sprintf(gettext("XMLRPC versioncheck:").$resp['config_version'] ." -- ". $config['version']));
@@ -107,7 +107,7 @@ function carp_check_version($syncip, $port, $username, $password) {
 	return false;
 }
 
-function carp_sync_xml($syncip, $port, $username, $password, $sections) {
+function carp_sync_xml($sections) {
 	global $config, $g;
 
 	if (file_exists("{$g['varrun_path']}/booting") || platform_booting()) {
@@ -209,7 +209,7 @@ function carp_sync_xml($syncip, $port, $username, $password, $sections) {
 		}
 	}
 	
-	$rpc_client = new pfsense_xmlrpc_client($syncip, $port, $username, $password);
+	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml);
 	if ($resp != null) {
 		update_filter_reload_status("XMLRPC sync successfully completed with {$syncip}:{$port}.");
@@ -352,31 +352,17 @@ if (is_array($config['hasync'])) {
 		log_error("Nothing has been configured to be synched. Skipping....");
 		return;
 	}
-
-	if (empty($hasync['username'])) {
-		$username = "admin";
-	} else {
-		$username = $hasync['username'];
-	}
-	/* if port is empty lets rely on the protocol selection */
-	$port = $config['system']['webgui']['port'];
-	if (empty($port)) {
-		if ($config['system']['webgui']['protocol'] == "http") {
-			$port = "80";
-		} else {
-			$port = "443";
-		}
-	}
-	if (!carp_check_version($hasync['synchronizetoip'], $port, $username, $hasync['password'])) {
+	
+	if (!carp_check_version()) {
 		return;
 	}
 
 	update_filter_reload_status("Signaling CARP reload signal...");
-	if (!carp_sync_xml($hasync['synchronizetoip'], $port, $username, $hasync['password'], $sections)) {
+	if (!carp_sync_xml($sections)) {
 		return;
 	}
 
-	$rpc_client = new pfsense_xmlrpc_client($hasync['synchronizetoip'], $port, $username, $hasync['password']);
+	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('filter_configure', "", 900);
 	
 }

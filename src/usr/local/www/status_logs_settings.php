@@ -445,7 +445,7 @@ $group->add(new Form_MultiCheckbox(
 $group->add(new Form_MultiCheckbox(
 	'vpn',
 	null,
-	'VPN (PPTP, IPsec, OpenVPN) events',
+	'VPN (IPsec, OpenVPN) events',
 	$pconfig['vpn']
 ));
 

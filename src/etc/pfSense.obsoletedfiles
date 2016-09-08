@@ -913,7 +913,6 @@
 /usr/local/www/tree-images
 /usr/local/www/treeview.css
 /usr/local/www/upload_progress.php
-/usr/local/www/vendor/filebrowser/browser.php
 /usr/local/www/vpn_ipsec_ca.php
 /usr/local/www/vpn_ipsec_ca_edit.php
 /usr/local/www/vpn_ipsec_ca_edit_create_cert.php

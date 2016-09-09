@@ -835,7 +835,7 @@ function clear_all_log_files($restart = false) {
 	global $g;
 	exec("/usr/bin/killall syslogd");
 
-	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
+	$log_files = array("system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
 	foreach ($log_files as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}

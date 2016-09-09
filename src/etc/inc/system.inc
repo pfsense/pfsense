@@ -926,25 +926,40 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
 		}
+		if (isset($syslogcfg['routing'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
+		}
+		if (isset($syslogcfg['ntpd'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
 		$syslogconf .= "!ppp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ppp.log\n";
 		}
+		if (isset($syslogcfg['ppp'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!poes\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/poes.log\n";
 		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!l2tps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/l2tps.log\n";
+		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
 		$syslogconf .= "!charon,ipsec_starter\n";
@@ -975,6 +990,9 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
 		}
+		if (isset($syslogcfg['resolver'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
@@ -1004,7 +1022,6 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/filter.log\n";
 		}
-
 		if (isset($syslogcfg['filter'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}

@@ -83,6 +83,10 @@ $pconfig['relayd'] = isset($config['syslog']['relayd']);
 $pconfig['hostapd'] = isset($config['syslog']['hostapd']);
 $pconfig['logall'] = isset($config['syslog']['logall']);
 $pconfig['system'] = isset($config['syslog']['system']);
+$pconfig['resolver'] = isset($config['syslog']['resolver']);
+$pconfig['ppp'] = isset($config['syslog']['ppp']);
+$pconfig['routing'] = isset($config['syslog']['routing']);
+$pconfig['ntpd'] = isset($config['syslog']['ntpd']);
 $pconfig['enable'] = isset($config['syslog']['enable']);
 $pconfig['logdefaultblock'] = !isset($config['syslog']['nologdefaultblock']);
 $pconfig['logdefaultpass'] = isset($config['syslog']['nologdefaultpass']);
@@ -157,6 +161,10 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 		$config['syslog']['hostapd'] = $_POST['hostapd'] ? true : false;
 		$config['syslog']['logall'] = $_POST['logall'] ? true : false;
 		$config['syslog']['system'] = $_POST['system'] ? true : false;
+		$config['syslog']['resolver'] = $_POST['resolver'] ? true : false;
+		$config['syslog']['ppp'] = $_POST['ppp'] ? true : false;
+		$config['syslog']['routing'] = $_POST['routing'] ? true : false;
+		$config['syslog']['ntpd'] = $_POST['ntpd'] ? true : false;
 		$config['syslog']['disablelocallogging'] = $_POST['disablelocallogging'] ? true : false;
 		$config['syslog']['enable'] = $_POST['enable'] ? true : false;
 		$oldnologdefaultblock = isset($config['syslog']['nologdefaultblock']);
@@ -429,44 +437,72 @@ $group->add(new Form_MultiCheckbox(
 ));
 
 $group->add(new Form_MultiCheckbox(
+	'resolver',
+	null,
+	'DNS Events (Resolver/unbound, Forwarder/dnsmasq, filterdns)',
+	$pconfig['resolver']
+));
+
+$group->add(new Form_MultiCheckbox(
 	'dhcp',
 	null,
-	'DHCP service events',
+	'DHCP Events (DHCP Daemon, DHCP Relay, DHCP Client)',
 	$pconfig['dhcp']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'ppp',
+	null,
+	'PPP Events (PPPoE WAN Client, L2TP WAN Client, PPTP WAN Client)',
+	$pconfig['ppp']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'portalauth',
 	null,
-	'Portal Auth events',
+	'Captive Portal Events',
 	$pconfig['portalauth']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'vpn',
 	null,
-	'VPN (IPsec, OpenVPN) events',
+	'VPN Events (IPsec, OpenVPN, L2TP, PPPoE Server)',
 	$pconfig['vpn']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'dpinger',
 	null,
-	'Gateway Monitor events',
+	'Gateway Monitor Events',
 	$pconfig['dpinger']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'routing',
+	null,
+	'Routing Daemon Events (RADVD, UPnP, RIP, OSPF, BGP)',
+	$pconfig['routing']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'relayd',
 	null,
-	'Server Load Balancer events',
+	'Server Load Balancer Events (relayd)',
 	$pconfig['relayd']
+));
+
+$group->add(new Form_MultiCheckbox(
+	'ntpd',
+	null,
+	'Network Time Protocol Events (NTP Daemon, NTP Client)',
+	$pconfig['ntpd']
 ));
 
 $group->add(new Form_MultiCheckbox(
 	'hostapd',
 	null,
-	'Wireless events',
+	'Wireless Events (hostapd)',
 	$pconfig['hostapd']
 ));
 
@@ -510,6 +546,10 @@ events.push(function() {
 		disableInput('dpinger', hide);
 		disableInput('relayd', hide);
 		disableInput('hostapd', hide);
+		disableInput('resolver', hide);
+		disableInput('ppp', hide);
+		disableInput('routing', hide);
+		disableInput('ntpd', hide);
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------

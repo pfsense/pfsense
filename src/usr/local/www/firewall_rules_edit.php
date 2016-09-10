@@ -322,16 +322,16 @@ if ($_POST) {
 				}
 			}
 		}
-	}
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-		if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
-			$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
-		}
-		if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
-		}
-		if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
+		if (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
+			if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
+				$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
+			}
+			if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+				$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
+			}
+			if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
+				$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
+			}
 		}
 	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {

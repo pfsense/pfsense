@@ -42,8 +42,8 @@ if (isset($_POST['referer'])) {
 }
 
 function is_posnumericint($arg) {
-	// Note that to be safe we do not allow any leading zero - "01", "007"
-	return (is_numericint($arg) && $arg[0] != '0' && $arg > 0);
+	// Integer > 0? (Note that to be safe we do not allow any leading zero - "01", "007")
+	return (is_numericint($arg) && $arg[0] != '0');
 }
 
 function is_aoadv_used($rule_config) {

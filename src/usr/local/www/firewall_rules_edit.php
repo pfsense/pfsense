@@ -311,26 +311,26 @@ if ($_POST) {
 						continue;
 					}
 					if (($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to both IPv4 and IPv6");
+						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
 					}
 					if (($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned to an IPv6 Filter rule");
+						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
 					}
 					if (($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned to an IPv4 Filter rule");
+						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 					}
 				}
 			}
 		}
 		if (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
 			if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
-				$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to both IPv4 and IPv6");
+				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
 			}
 			if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-				$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
+				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
 			}
 			if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-				$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
+				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
 			}
 		}
 	}
@@ -528,7 +528,7 @@ if ($_POST) {
 	}
 	if ((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
 		if (!validate_address_family($_POST['src'], $_POST['dst'])) {
-			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+			$input_errors[] = gettext("The source and destination IP addresses must have the same family (IPv4 / IPv6).");
 		}
 	}
 	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
@@ -539,7 +539,7 @@ if ($_POST) {
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("An IPv4 or IPv6 address can not be used in combined IPv4 + IPv6 rules.");
+		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6.");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {

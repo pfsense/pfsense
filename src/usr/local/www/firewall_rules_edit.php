@@ -305,18 +305,12 @@ if ($_POST) {
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
 		if (is_array($config['gateways']['gateway_group'])) {
 			foreach ($config['gateways']['gateway_group'] as $gw_group) {
-				if ($gw_group['name'] == $_POST['gateway']) {
-					$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
-					if ($_POST['ipprotocol'] == $family) {
-						continue;
-					}
-					if (($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
+				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+					if ($_POST['ipprotocol'] == "inet46") {
 						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
-					}
-					if (($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
+					} elseif ($_POST['ipprotocol'] == "inet6") {
 						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
-					}
-					if (($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
+					} elseif ($_POST['ipprotocol'] == "inet") {
 						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 					}
 				}

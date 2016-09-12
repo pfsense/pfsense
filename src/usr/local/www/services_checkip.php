@@ -157,10 +157,11 @@ endforeach; ?>
 </nav>
 
 <div class="infoblock">
-	<?php print_info_box(gettext('' . 
+	<?php print_info_box(gettext(
 	'The first (highest in list) enabled check ip service will be used to ' . 
 	'check IP addresses for Dynamic DNS services, and ' .
-	'RFC 2136 entries that have the "Use public IP" option enabled.'), 'info', false); ?>
+	'RFC 2136 entries that have the "Use public IP" option enabled.'
+	), 'info', false); ?>
 </div>
 
 <?php include("foot.inc");

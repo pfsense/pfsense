@@ -21,11 +21,32 @@
 
 require_once("XML/RPC2/Client.php");
 
-class pfsense_xmlrpc_client_extended {
+class pfsense_xmlrpc_client {
 	
 	private $username, $password, $url, $filenotice, $error;
 	
-	public function __construct($syncip, $port, $username, $password) {
+	public function __construct() {
+		global $config;
+		$hasync = $config['hasync'];
+
+		if (empty($hasync['username'])) {
+			$username = "admin";
+		} else {
+			$username = $hasync['username'];
+		}
+		/* if port is empty lets rely on the protocol selection */
+		$port = $config['system']['webgui']['port'];
+		if (empty($port)) {
+			if ($config['system']['webgui']['protocol'] == "http") {
+				$port = "80";
+			} else {
+				$port = "443";
+			}
+		}
+		$this->setConnectionData($hasync['synchronizetoip'], $port, $username, $hasync['password']);
+	}
+	
+	public function setConnectionData($syncip, $port, $username, $password) {
 		global $config;
 		$this->username = $username;
 		$this->password = $password;
@@ -41,7 +62,6 @@ class pfsense_xmlrpc_client_extended {
 		if (is_ipaddrv6($syncip)) {
 			$syncip = "[{$syncip}]";
 		}
-		//TODO: check if the url needs to end with?:  
 		if ($protocol == "https" || $port == "443") {
 			$this->url = "https://{$syncip}:{$port}/xmlrpc.php";
 		} else {
@@ -110,32 +130,8 @@ class pfsense_xmlrpc_client_extended {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}
+	
 	function get_error() {
 		return $this->error;
 	}
-}
-
-class pfsense_xmlrpc_client extends pfsense_xmlrpc_client_extended {
-	/* Default sync class */
-	public function __construct() {
-		global $config;
-		$hasync = $config['hasync'];
-
-		if (empty($hasync['username'])) {
-			$username = "admin";
-		} else {
-			$username = $hasync['username'];
-		}
-		/* if port is empty lets rely on the protocol selection */
-		$port = $config['system']['webgui']['port'];
-		if (empty($port)) {
-			if ($config['system']['webgui']['protocol'] == "http") {
-				$port = "80";
-			} else {
-				$port = "443";
-			}
-		}
-		parent::__construct($hasync['synchronizetoip'], $port, $username, $hasync['password']);
-	}
-	
 }

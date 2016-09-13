@@ -300,7 +300,8 @@ if ($_POST) {
 
 EOF;
 				require_once("xmlrpc_client.inc");
-				$rpc_client = new pfsense_xmlrpc_client_extended(
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData(
 						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'], 
 						$newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
 				$rpc_client->set_noticefile("CaptivePortalVoucherSync");

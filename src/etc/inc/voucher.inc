@@ -42,7 +42,8 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	voucher_expire("$vouchers");
 
 EOF;
-	$rpc_client = new pfsense_xmlrpc_client_extended($syncip, $port, $username, $password);
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
 	if (empty($resp)) {
 		return false;
@@ -66,7 +67,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;
-	$rpc_client = new pfsense_xmlrpc_client_extended($syncip, $port, $username, $password);
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
 	if (empty($resp)) {
 		return false;
@@ -90,7 +92,8 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
 
 EOF;
-	$rpc_client = new pfsense_xmlrpc_client_extended($syncip, $port, $username, $password);
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
 	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
 	
 	if (!is_array($config['voucher'])) {

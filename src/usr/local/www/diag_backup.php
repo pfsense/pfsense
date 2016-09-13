@@ -401,49 +401,10 @@ if ($_POST) {
 									}
 									// Convert icmp types
 									// http://www.openbsd.org/cgi-bin/man.cgi?query=icmp&sektion=4&arch=i386&apropos=0&manpath=OpenBSD+Current
-									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
-										if ($config["filter"]["rule"][$i]['icmptype']) {
-											switch ($config["filter"]["rule"][$i]['icmptype']) {
-												case "echo":
-													$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
-													break;
-												case "unreach":
-													$config["filter"]["rule"][$i]['icmptype'] = "unreach";
-													break;
-												case "echorep":
-													$config["filter"]["rule"][$i]['icmptype'] = "echorep";
-													break;
-												case "squench":
-													$config["filter"]["rule"][$i]['icmptype'] = "squench";
-													break;
-												case "redir":
-													$config["filter"]["rule"][$i]['icmptype'] = "redir";
-													break;
-												case "timex":
-													$config["filter"]["rule"][$i]['icmptype'] = "timex";
-													break;
-												case "paramprob":
-													$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
-													break;
-												case "timest":
-													$config["filter"]["rule"][$i]['icmptype'] = "timereq";
-													break;
-												case "timestrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "timerep";
-													break;
-												case "inforeq":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
-													break;
-												case "inforep":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforep";
-													break;
-												case "maskreq":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
-													break;
-												case "maskrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
-													break;
-											}
+									$convert = array('echo' => 'echoreq', 'timest' => 'timereq', 'timestrep' => 'timerep');
+									foreach ($config["filter"]["rule"] as $ruleid => &$ruledata) {
+										if ($convert[$ruledata['icmptype']]) {
+											$ruledata['icmptype'] = $convert[$ruledata['icmptype']];
 										}
 									}
 									$config['diag']['ipv6nat'] = true;

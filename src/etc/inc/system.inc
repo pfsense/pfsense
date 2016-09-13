@@ -393,10 +393,8 @@ function system_hosts_generate() {
 						$ipaddrv6 = $host['ipaddrv6'];
 						if ($ipaddrv6 && $host['hostname']) {
 							if ($isdelegated) {
-								$trackifname = $config['interfaces'][$dhcpif]['track6-interface'];
-								$trackcfg = $config['interfaces'][$trackifname];
-								$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
-								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $pdlen);
+								// We are always in an "end-user" subnet here, which all are /64 for IPv6.
+								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, 64);
 							}
 							if ($host['domain']) {
 								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']}\n";

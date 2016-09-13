@@ -247,10 +247,6 @@ $shortcuts['ntp']['log'] = "status_logs.php?logfile=ntpd";
 $shortcuts['ntp']['status'] = "status_ntpd.php";
 $shortcuts['ntp']['service'] = "ntpd";
 
-$shortcuts['pptps'] = array();
-$shortcuts['pptps']['main'] = "vpn_pptp.php";
-$shortcuts['pptps']['log'] = "status_logs_vpn.php";
-
 $shortcuts['pppoes'] = array();
 $shortcuts['pppoes']['main'] = "services_pppoe.php";
 $shortcuts['pppoes']['log'] = "status_logs_vpn.php?vpntype=poes";

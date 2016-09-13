@@ -234,6 +234,11 @@ $(function() {
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 
+	$(".resizable").each(function() {
+		$(this).css('height', 80).resizable({minHeight: 80, minWidth: 200}).parent().css('padding-bottom', 0);
+		$(this).css('height', 78);
+	});
+		
 	// Run in-page defined events
 	while (func = window.events.shift())
 		func();

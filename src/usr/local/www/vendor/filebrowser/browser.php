@@ -3,7 +3,7 @@
 require_once("guiconfig.inc");
 
 /*
-	Copyright (C) 2013-2015 Electric Sheep Fencing, LP
+	Copyright (C) 2013-2015 Rubicon Communications, LLC (Netgate)
 
 */
 // Fetch a list of directories and files inside a given directory

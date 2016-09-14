@@ -3,7 +3,7 @@
  * shortcuts.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -246,10 +246,6 @@ $shortcuts['ntp']['main'] = "services_ntpd.php";
 $shortcuts['ntp']['log'] = "status_logs.php?logfile=ntpd";
 $shortcuts['ntp']['status'] = "status_ntpd.php";
 $shortcuts['ntp']['service'] = "ntpd";
-
-$shortcuts['pptps'] = array();
-$shortcuts['pptps']['main'] = "vpn_pptp.php";
-$shortcuts['pptps']['log'] = "status_logs_vpn.php";
 
 $shortcuts['pppoes'] = array();
 $shortcuts['pppoes']['main'] = "services_pppoe.php";

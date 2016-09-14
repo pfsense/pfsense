@@ -3,7 +3,7 @@
  * config.lib.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2009 Erik Kristensen
  * All rights reserved.
  *
@@ -757,7 +757,7 @@ function config_validate($conffile) {
 }
 
 function cleanup_backupcache($lock = false) {
-	global $g;
+	global $config, $g;
 	$i = false;
 
 	$revisions = intval(is_numericint($config['system']['backupcount']) ? $config['system']['backupcount'] : $g['default_config_backup_count']);

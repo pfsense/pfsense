@@ -3,7 +3,7 @@
  * system.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -393,10 +393,8 @@ function system_hosts_generate() {
 						$ipaddrv6 = $host['ipaddrv6'];
 						if ($ipaddrv6 && $host['hostname']) {
 							if ($isdelegated) {
-								$trackifname = $config['interfaces'][$dhcpif]['track6-interface'];
-								$trackcfg = $config['interfaces'][$trackifname];
-								$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
-								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $pdlen);
+								// We are always in an "end-user" subnet here, which all are /64 for IPv6.
+								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, 64);
 							}
 							if ($host['domain']) {
 								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']}\n";
@@ -835,7 +833,7 @@ function clear_all_log_files($restart = false) {
 	global $g;
 	exec("/usr/bin/killall syslogd");
 
-	$log_files = array("system", "filter", "dhcpd", "vpn", "pptps", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
+	$log_files = array("system", "filter", "dhcpd", "vpn", "poes", "l2tps", "openvpn", "portalauth", "ipsec", "ppp", "relayd", "wireless", "nginx", "ntpd", "gateways", "resolver", "routing");
 	foreach ($log_files as $lfile) {
 		clear_log_file("{$g['varlog_path']}/{$lfile}.log", false);
 	}
@@ -876,11 +874,11 @@ function system_syslogd_start() {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'pptps', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
-				if ($package['logging']) {
+				if (isset($package['logging']['facilityname']) && isset($package['logging']['logfilename'])) {
 					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename'])) {
 						mwexec("{$log_create_directive} {$log_size} {$g['varlog_path']}/{$package['logging']['logfilename']}");
@@ -894,30 +892,40 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/routing.log\n";
 		}
+		if (isset($syslogcfg['routing'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!ntp,ntpd,ntpdate\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ntpd.log\n";
+		}
+		if (isset($syslogcfg['ntpd'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
 		$syslogconf .= "!ppp\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/ppp.log\n";
 		}
-
-		$syslogconf .= "!pptps\n";
-		if (!isset($syslogcfg['disablelocallogging'])) {
-			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/pptps.log\n";
+		if (isset($syslogcfg['ppp'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
 		$syslogconf .= "!poes\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/poes.log\n";
 		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!l2tps\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/l2tps.log\n";
+		}
+		if (isset($syslogcfg['vpn'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
 		$syslogconf .= "!charon,ipsec_starter\n";
@@ -948,6 +956,9 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
 		}
+		if (isset($syslogcfg['resolver'])) {
+			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
+		}
 
 		$syslogconf .= "!dhcpd,dhcrelay,dhclient,dhcp6c,dhcpleases,dhcpleases6\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
@@ -977,7 +988,6 @@ function system_syslogd_start() {
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.* 								{$log_directive}{$g['varlog_path']}/filter.log\n";
 		}
-
 		if (isset($syslogcfg['filter'])) {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
@@ -1053,6 +1063,22 @@ EOD;
 		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
 	}
 
+	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");
+
+	if (isset($config['installedpackages']['package'])) {
+		foreach ($config['installedpackages']['package'] as $package) {
+			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
+			    is_dir(dirname($package['logging']['logsocket'])) &&
+			    !in_array($package['logging']['logsocket'], $log_sockets)) {
+				$log_sockets[] = $package['logging']['logsocket'];
+			}
+		}
+	}
+	$syslogd_sockets = "";
+	foreach ($log_sockets as $log_socket) {
+		$syslogd_sockets .= " -l {$log_socket}";
+	}
+
 	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
@@ -1064,8 +1090,7 @@ EOD;
 		usleep(100000);
 	}
 
-
-	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";

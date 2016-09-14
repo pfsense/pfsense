@@ -3,7 +3,7 @@
 # builder_defaults.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,8 +81,8 @@ export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
 export XML_ROOTOBJ=${XML_ROOTOBJ:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
 
-if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then
-	echo ">>>ERROR: According the following license, only Electric Sheep Fencing can build genuine pfSense® software"
+if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_NETGATE}" != "yes" ]; then
+	echo ">>>ERROR: According the following license, only Netgate can build genuine pfSense® software"
 	echo ""
 	cat ${BUILDER_ROOT}/LICENSE
 	exit 1
@@ -363,7 +363,7 @@ else
 fi
 
 if [ "${PRODUCT_NAME}" = "pfSense" ]; then
-	export VENDOR_NAME=${VENDOR_NAME:-"Electric Sheep Fencing, LLC"}
+	export VENDOR_NAME=${VENDOR_NAME:-"Rubicon Communications, LLC (Netgate)"}
 	export OVF_INFO=${OVF_INFO:-"pfSense is a free, open source customized distribution of FreeBSD tailored for use as a firewall and router. In addition to being a powerful, flexible firewalling and routing platform, it includes a long list of related features and a package system allowing further expandability without adding bloat and potential security vulnerabilities to the base distribution. pfSense is a popular project with more than 1 million downloads since its inception, and proven in countless installations ranging from small home networks protecting a PC and an Xbox to large corporations, universities and other organizations protecting thousands of network devices."}
 else
 	export VENDOR_NAME=${VENDOR_NAME:-"nonSense"}

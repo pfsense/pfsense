@@ -3,7 +3,7 @@
  * diag_ping.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2005 Bob Zoller (bob@kludgebox.com)
  * All rights reserved.
  *

@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2013 Stanley P. Miller \ stan-qaz
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -166,8 +166,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 				data: pars,
 				complete: dyndnscallback
 			});
-		// Refresh the status every 5 minutes
-		setTimeout('dyndns_getstatus()', 5*60*1000);
+
 	}
 	function dyndnscallback(transport) {
 		// The server returns a string of statuses separated by vertical bars
@@ -176,6 +175,9 @@ if ($_REQUEST['getdyndnsstatus']) {
 			var divlabel = '#dyndnsstatus' + count;
 			$(divlabel).prop('innerHTML',responseStrings[count]);
 		}
+
+		// Refresh the status every 5 minutes
+		setTimeout('dyndns_getstatus()', 5*60*1000);
 	}
 	// Do the first status check 2 seconds after the dashboard opens
 	setTimeout('dyndns_getstatus()', 2000);

@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Bill Marquette, Seth Mos
- * Copyright (c) 2008-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -100,7 +100,7 @@ function start_dpinger($gateway) {
 	$prefix = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
 	    "{$gateway['gwifip']}~{$gateway['monitor']}";
 	# dpinger socket path should not be longer then uaddr.sun_path
-	if (strlen($pidfile) > 95) {
+	if (strlen($prefix) > 95) {
 		$prefix = "{$g['varrun_path']}/dpinger_{$gateway['name']}~" .
 		    substr(md5($gateway['gwifip']),0,8) . "~" .
 		    $gateway['monitor'];

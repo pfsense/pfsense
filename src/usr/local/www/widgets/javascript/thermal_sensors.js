@@ -2,7 +2,7 @@
  * thermal_sensors.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ ajaxBusy = false;
 
 //should be called from "thermal_sensors.widget.php"
 function showThermalSensorsData() {
-	if(!ajaxBusy) {
+	if (!ajaxBusy) {
 		ajaxBusy = true;
 		//get data from thermal_sensors.widget.php
 		url = "/widgets/widgets/thermal_sensors.widget.php?getThermalSensorsData=1"
@@ -54,7 +54,7 @@ function buildThermalSensorsData(thermalSensorsData) {
 	if (thermal_sensors_widget_showRawOutput) {
 		buildThermalSensorsDataRaw(thermalSensorsData);
 	} else {
-		if(warningTemp == 9999) {
+		if (warningTemp == 9999) {
 			buildThermalSensorsDataGraph(thermalSensorsData);
 		}
 
@@ -192,11 +192,11 @@ function getThermalSensorValue(stringValue) {
 function setTempProgress(bar, percent) {
 	var barTempL, barTempM, barTempH;
 
-	if(percent <= warningTemp) {
+	if (percent <= warningTemp) {
 		barTempL = percent;
 		barTempM = 0;
 		barTempH = 0;
-	} else if(percent <= criticalTemp) {
+	} else if (percent <= criticalTemp) {
 		barTempL = warningTemp;
 		barTempM = percent - warningTemp;
 		barTempH = 0;

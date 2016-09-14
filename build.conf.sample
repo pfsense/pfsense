@@ -2,7 +2,7 @@
 # build.conf.sample
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +17,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Name of the product you are building, only ESF can build and distribute
-# pfSense® software
+# Name of the product you are building, beware that only Netgate is legally
+# authorized to build and distribute pfSense® software
 export PRODUCT_NAME="nonSense"
 export PRODUCT_URL="https://PRODUCT_URL/"
 
@@ -30,14 +30,10 @@ export PRODUCT_URL="https://PRODUCT_URL/"
 # Do not clean FreeBSD obj dirs
 #export NO_CLEAN_FREEBSD_OBJ=YES
 
-# Do not clean FreeBSD src dir
-#export NO_CLEAN_FREEBSD_SRC=YES
-
 # rsync data to upload snapshots
 #export RSYNCIP="your.snapshot.server"
 #export RSYNCUSER="username"
 #export RSYNCPATH="/usr/local/www/snapshots"
-#export RSYNCLOGS="/usr/local/www/snapshots/logs"
 
 # rsync data to upload pkg repo
 #export PKG_RSYNC_HOSTNAME="pkg_repo_hostname"

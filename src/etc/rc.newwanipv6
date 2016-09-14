@@ -4,7 +4,7 @@
  * rc.newwanipv6
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2006-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Originally part of m0n0wall (http://m0n0.ch/wall)
@@ -33,7 +33,7 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 require_once("openvpn.inc");
-require_once("IPv6.inc");
+require_once("Net/IPv6.php");
 require_once("services.inc");
 require_once("rrd.inc");
 

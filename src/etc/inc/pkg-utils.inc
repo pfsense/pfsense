@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -998,6 +998,9 @@ function package_reinstall_all() {
 		    FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 		unlink_if_exists("{$g['cf_conf_path']}/packages_to_reinstall_after_upgrade.txt");
 	} else {
+		if (!isset($config['installedpackages']['package']) || !is_array($config['installedpackages']['package'])) {
+			return true;
+		}
 		$package_list = array();
 		foreach ($config['installedpackages']['package'] as $package) {
 			$package_list[] = get_package_internal_name($package);

@@ -3,7 +3,7 @@
  * shortcuts.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -177,7 +177,7 @@ $shortcuts['dhcp']['service'] = "dhcpd";
 
 $shortcuts['dhcp6'] = array();
 $shortcuts['dhcp6']['main'] = "services_dhcpv6.php";
-$shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcp";
+$shortcuts['dhcp6']['log'] = "status_logs.php?logfile=dhcpd";
 $shortcuts['dhcp6']['status'] = "status_dhcpv6_leases.php";
 
 
@@ -247,10 +247,6 @@ $shortcuts['ntp']['log'] = "status_logs.php?logfile=ntpd";
 $shortcuts['ntp']['status'] = "status_ntpd.php";
 $shortcuts['ntp']['service'] = "ntpd";
 
-$shortcuts['pptps'] = array();
-$shortcuts['pptps']['main'] = "vpn_pptp.php";
-$shortcuts['pptps']['log'] = "status_logs_vpn.php";
-
 $shortcuts['pppoes'] = array();
 $shortcuts['pppoes']['main'] = "services_pppoe.php";
 $shortcuts['pppoes']['log'] = "status_logs_vpn.php?vpntype=poes";
@@ -269,7 +265,7 @@ $shortcuts['snmp']['service'] = "bsnmpd";
 
 $shortcuts['authentication'] = array();
 $shortcuts['authentication']['main'] = "system_authservers.php";
-$shortcuts['authentication']['status'] = "diag_authentication.php";
+// $shortcuts['authentication']['status'] = "diag_authentication.php";
 
 $shortcuts['aliases'] = array();
 $shortcuts['aliases']['main'] = "firewall_aliases.php";

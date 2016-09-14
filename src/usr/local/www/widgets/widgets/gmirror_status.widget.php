@@ -3,7 +3,7 @@
  * gmirror_status.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -35,7 +35,7 @@ require_once("gmirror.inc");
 
 <script type="text/javascript">
 //<![CDATA[
-function gmirrorStatusUpdateFromServer(){
+function gmirrorStatusUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/gmirror_status.widget.php',

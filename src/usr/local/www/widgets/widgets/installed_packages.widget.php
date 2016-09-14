@@ -6,7 +6,7 @@
  * Copyright (c) Scott Dale
  * Copyright (c) 2004-2005 T. Lechat <dev@lechat.org>
  * Copyright (c) Jonathan Watt <jwatt@jwatt.org>
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -48,7 +48,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	print("<thead>\n");
 	print(	"<tr>\n");
 	print(		"<th>" . gettext("Name")     . "</th>\n");
-	print(		"<th>" . gettext("Category") . "</th>\n");
 	print(		"<th>" . gettext("Version")  . "</th>\n");
 	print(		"<th>" . gettext("Actions")  . "</th>\n");
 	print(	"</tr>\n");
@@ -100,7 +99,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 
 		print("<tr>\n");
 		print(		'<td><span class="' . $txtcolor . '">' . $pkg['shortname'] . "</span></td>\n");
-		print(		"<td>" . implode(' ', $pkg['categories']) . "</td>\n");
 		print(		"<td>\n");
 		print(			'<i title="' . $status . '" class="fa fa-' . $statusicon . '"></i> ');
 
@@ -165,7 +163,8 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 			$('#pkgtbl').html(response);
 
 			// and do it again
-			setTimeout(get_pkg_stats, 5000);
+			// NOT! There is no need to refresh this widget
+			// setTimeout(get_pkg_stats, 5000);
 		});
 	}
 

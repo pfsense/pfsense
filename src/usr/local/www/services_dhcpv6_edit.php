@@ -3,7 +3,7 @@
  * services_dhcpv6_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -243,7 +243,7 @@ $section->addInput(new Form_Input(
 	$pconfig['descr']
 ))->setHelp('A description may be entered here for administrative reference (not parsed).');
 
-if($netboot_enabled) {
+if ($netboot_enabled) {
 	$section->addInput(new Form_Input(
 		'filename',
 		'Netboot filename',

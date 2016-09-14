@@ -3,7 +3,7 @@
  * openvpn.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,9 +39,202 @@ if ($_GET['action']) {
 	}
 }
 
-$servers = openvpn_get_active_servers();
-$sk_servers = openvpn_get_active_servers("p2p");
-$clients = openvpn_get_active_clients();
+// Compose the table contents and pass it back to the ajax caller
+if ($_REQUEST && $_REQUEST['ajax']) {
+	printPanel();
+	exit;
+}
+
+// Output the widget panel from this function so that it can be called from the AJAX handler as well as
+// when first rendering the page
+function printPanel() {
+
+	$servers = openvpn_get_active_servers();
+	$sk_servers = openvpn_get_active_servers("p2p");
+	$clients = openvpn_get_active_clients();
+
+	$opstring = "";
+
+	foreach ($servers as $server):
+
+	$opstring .= "<div class=\"widget panel panel-default\">";
+	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . htmlspecialchars($server['name']) . "</h2></div>";
+	$opstring .=	"<div class=\"table-responsive\">";
+	$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";
+	$opstring .=			"<thead>";
+	$opstring .=				"<tr>";
+	$opstring .=					"<th>" . gettext('Name/Time') . "</th>";
+	$opstring .=					"<th>" . gettext('Real/Virtual IP') . "</th>";
+	$opstring .=					"<th></th>";
+	$opstring .=				"</tr>";
+	$opstring .=			"</thead>";
+	$opstring .=			"<tbody>";
+
+				$rowIndex = 0;
+				foreach ($server['conns'] as $conn):
+					$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
+					$rowIndex++;
+
+	$opstring .=				"<tr name=\"" . "r:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" class=\"" . $evenRowClass . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$conn['common_name'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$conn['remote_host'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						"<i class=\"fa fa-times-circle\" ";
+	$opstring .=							"onclick=\"killClient('" . $server['mgmt'] . "', '" . $conn['remote_host'] . "');\" ";
+	$opstring .=							"style=\"cursor:pointer;\" ";
+	$opstring .=							"name=\"" . "i:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" ";
+	$opstring .=							"title=\"" . sprintf(gettext('Kill client connection from %s'), $conn['remote_host']) . "\">";
+	$opstring .=						"</i>";
+	$opstring .=					"</td>";
+	$opstring .=				"</tr>";
+	$opstring .=				"<tr name=\"" . "r:" . $server['mgmt'] . ":" . $conn['remote_host'] . "\" class=\"" . $evenRowClass . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$conn['connect_time'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$conn['virtual_addr'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td></td>";
+	$opstring .=				"</tr>";
+
+				endforeach;
+
+	$opstring .=			"</tbody>";
+	$opstring .=		"</table>";
+	$opstring .=	"</div>";
+	$opstring .= "</div>";
+
+	endforeach;
+
+	print($opstring);
+
+	if (!empty($sk_servers)):
+
+	$opstring = "";
+	$opstring .= "<div class=\"widget panel panel-default\">";
+	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . gettext("Peer to Peer Server Instance Statistics") . "</h2></div>";
+	$opstring .=	"<div class=\"table-responsive\">";
+	$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";
+	$opstring .=			"<thead>";
+	$opstring .=				"<tr>";
+	$opstring .=					"<th>" . gettext('Name/Time') . "</th>";
+	$opstring .=					"<th>" . gettext('Remote/Virtual IP') . "</th>";
+	$opstring .=					"<th></th>";
+	$opstring .=				"</tr>";
+	$opstring .=			"</thead>";
+	$opstring .=			"<tbody>";
+
+				foreach ($sk_servers as $sk_server):
+
+	$opstring .=				"<tr name=\"r:" . $sk_server['port'] . ":" . $sk_server['remote_host'] . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$sk_server['name'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$sk_server['remote_host'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+
+					if ($sk_server['status'] == "up") {
+						/* tunnel is up */
+	$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
+					} else {
+						/* tunnel is down */
+	$opstring .=						"<i class=\"fa fa-arrow-down text-danger\"></i>";
+					}
+
+	$opstring .=					"</td>";
+	$opstring .=				"</tr>";
+	$opstring .=				"<tr name=\"r:" . $sk_server['port'] . ":" . $sk_server['remote_host'] . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$sk_server['connect_time'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$sk_server['virtual_addr'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td></td>";
+	$opstring .=				"</tr>";
+
+				endforeach;
+
+	$opstring .=			"</tbody>";
+	$opstring .=		"</table>";
+	$opstring .=	"</div>";
+	$opstring .= "</div>";
+
+	print($opstring);
+
+	endif;
+
+	if (!empty($clients)):
+		$opstring = "";
+
+	$opstring .= "<div class=\"widget panel panel-default\">";
+	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . gettext("Client Instance Statistics") . "</h2></div>";
+	$opstring .=	"<div class=\"table-responsive\">";
+	$opstring .=		"<table class=\"table table-striped table-hover table-condensed sortable-theme-bootstrap\" data-sortable>";
+	$opstring .=			"<thead>";
+	$opstring .=				"<tr>";
+	$opstring .=					"<th>" . gettext('Name/Time') . "</th>";
+	$opstring .=					"<th>" . gettext('Remote/Virtual IP') . "</th>";
+	$opstring .=					"<th></th>";
+	$opstring .=				"</tr>";
+	$opstring .=			"</thead>";
+	$opstring .=			"<tbody>";
+
+				foreach ($clients as $client):
+
+	$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$client['name'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$client['remote_host'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+
+					if ($client['status'] == "up") {
+						/* tunnel is up */
+	$opstring .=						"<i class=\"fa fa-arrow-up text-success\"></i>";
+					} else {
+						/* tunnel is down */
+	$opstring .=						"<i class=\"fa fa-arrow-down text-danger\"></i>";
+					}
+
+	$opstring .=					"</td>";
+	$opstring .=				"</tr>";
+	$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
+	$opstring .=					"<td>";
+	$opstring .=						$client['connect_time'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td>";
+	$opstring .=						$client['virtual_addr'];
+	$opstring .=					"</td>";
+	$opstring .=					"<td></td>";
+	$opstring .=				"</tr>";
+
+				endforeach;
+
+	$opstring .=			"</tbody>";
+	$opstring .=		"</table>";
+	$opstring .=	"</div>";
+	$opstring .= "</div>";
+
+	print($opstring);
+
+	endif;
+
+	if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
+		print(gettext("No OpenVPN instances defined"));
+	}
+}
+
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
+
 ?>
 
 <script type="text/javascript">
@@ -66,179 +259,37 @@ $clients = openvpn_get_active_clients();
 			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}
+
+	// Refresh the panel
+	function get_update() {
+		var ajaxRequest;
+
+		ajaxRequest = $.ajax({
+				url: "/widgets/widgets/openvpn.widget.php",
+				type: "post",
+				data: { ajax: "ajax"}
+			});
+
+		// Deal with the results of the above ajax call
+		ajaxRequest.done(function (response, textStatus, jqXHR) {
+			$('#mainpanel').html(response);
+
+			// and do it again
+			setTimeout(get_update, "<?=$widgetperiod?>");
+		});
+	}
+
+	events.push(function(){
+		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+		// hit the server at exactly the same time)
+		setTimeout(get_update, Math.floor((Math.random() * 10000) + 1000));
+	});
 //]]>
 </script>
-<div class="content">
-<?php foreach ($servers as $server): ?>
+<div id="mainpanel" class="content">
 
-<div class="widget panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=htmlspecialchars($server['name']);?></h2></div>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext('Name/Time')?></th>
-					<th><?=gettext('Real/Virtual IP')?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
 <?php
-			$rowIndex = 0;
-			foreach ($server['conns'] as $conn):
-				$evenRowClass = $rowIndex % 2 ? " listMReven" : " listMRodd";
-				$rowIndex++;
+	printPanel();
 ?>
-				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
-					<td>
-						<?=$conn['common_name'];?>
-					</td>
-					<td>
-						<?=$conn['remote_host'];?>
-					</td>
-					<td>
-						<i class="fa fa-times-circle"
-							onclick="killClient('<?=$server['mgmt']; ?>', '<?=$conn['remote_host']; ?>');"
-							style="cursor:pointer;"
-							name="<?php echo "i:{$server['mgmt']}:{$conn['remote_host']}"; ?>"
-							title=<?=sprintf(gettext('Kill client connection from %s'), $conn['remote_host']);?>>
-						</i>
-					</td>
-				</tr>
-				<tr name="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>" class="<?=$evenRowClass?>">
-					<td>
-						<?=$conn['connect_time'];?>
-					</td>
-					<td>
-						<?=$conn['virtual_addr'];?>
-					</td>
-					<td></td>
-				</tr>
-<?php
-			endforeach;
-?>
-			</tbody>
-		</table>
-	</div>
 </div>
 
-<?php
-endforeach;
-
-if (!empty($sk_servers)):
-?>
-<div class="widget panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Peer to Peer Server Instance Statistics");?></h2></div>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext('Name/Time')?></th>
-					<th><?=gettext('Remote/Virtual IP')?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-<?php
-			foreach ($sk_servers as $sk_server):
-?>
-				<tr name='<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>'>
-					<td>
-						<?=$sk_server['name'];?>
-					</td>
-					<td>
-						<?=$sk_server['remote_host'];?>
-					</td>
-					<td>
-<?php
-				if ($sk_server['status'] == "up") {
-					/* tunnel is up */
-					echo '<i class="fa fa-arrow-up text-success"></i>';
-				} else {
-					/* tunnel is down */
-					echo '<i class="fa fa-arrow-down text-danger"></i>';
-				}
-?>
-					</td>
-				</tr>
-				<tr name="<?php echo "r:{$sk_server['port']}:{$sk_server['remote_host']}"; ?>">
-					<td>
-						<?=$sk_server['connect_time'];?>
-					</td>
-					<td>
-						<?=$sk_server['virtual_addr'];?>
-					</td>
-					<td></td>
-				</tr>
-<?php
-			endforeach;
-?>
-			</tbody>
-		</table>
-	</div>
-</div>
-
-<?php
-endif;
-
-if (!empty($clients)):
-?>
-<div class="widget panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Client Instance Statistics");?></h2></div>
-	<div class="table-responsive">
-		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
-			<thead>
-				<tr>
-					<th><?=gettext('Name/Time')?></th>
-					<th><?=gettext('Remote/Virtual IP')?></th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-<?php
-			foreach ($clients as $client):
-?>
-				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
-					<td>
-						<?=$client['name'];?>
-					</td>
-					<td>
-					<?=$client['remote_host'];?>
-					</td>
-					<td>
-<?php
-				if ($client['status'] == "up") {
-					/* tunnel is up */
-					echo '<i class="fa fa-arrow-up text-success"></i>';
-				} else {
-					/* tunnel is down */
-					echo '<i class="fa fa-arrow-down text-danger"></i>';
-				}
-?>
-					</td>
-				</tr>
-				<tr name="<?php echo "r:{$client['port']}:{$client['remote_host']}"; ?>">
-					<td>
-						<?=$client['connect_time'];?>
-					</td>
-					<td>
-						<?=$client['virtual_addr'];?>
-					</td>
-					<td></td>
-				</tr>
-<?php
-			endforeach;
-?>
-			</tbody>
-		</table>
-	</div>
-</div>
-
-<?php
-endif;
-
-if ((empty($clients)) && (empty($servers)) && (empty($sk_servers))) {
-	echo gettext("No OpenVPN instances defined");
-}
-?>
-</div>

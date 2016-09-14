@@ -3,7 +3,7 @@
  * dyndns.class
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -123,7 +123,7 @@
 		var $_cacheFile;
 		var $_cacheFile_v6;
 		var $_debugFile;
-		var $_UserAgent = 'User-Agent: phpDynDNS/0.7';
+		var $_UserAgent = 'phpDynDNS/0.7';
 		var $_errorVerbosity = 0;
 		var $_dnsService;
 		var $_dnsUser;

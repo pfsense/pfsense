@@ -3,7 +3,7 @@
  * upgrade_config.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -4437,7 +4437,7 @@ function upgrade_142_to_143() {
 	if (is_array($config['filter']['separator'])) {
 		foreach ($config['filter']['separator'] as $interface => $separators) {
 
-			if(is_array($separators)) {
+			if (is_array($separators)) {
 				foreach ($separators as $sepn => $separator) {
 
 					$seprow = substr($separator['row']['0'], 2);
@@ -4971,7 +4971,14 @@ function upgrade_154_to_155() {
 	}
 }
 
+/* Unset references to glxsb in the config. See #6755 */
 function upgrade_155_to_156() {
+	if ($config['system']['crypto_hardware'] == "glxsb") {
+		unset($config['system']['crypto_hardware']);
+	}
+}
+
+function upgrade_156_to_157() {
 	global $config;
 
 	if (is_array($config['system']['authserver'])) {

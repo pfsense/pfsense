@@ -3,7 +3,7 @@
  * system_groupmanager_addprivs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -268,7 +268,7 @@ events.push(function() {
 	});
 
 	$('#filtertxt').keypress(function(e) {
-		if(e.which == 13) {
+		if (e.which == 13) {
 			e.preventDefault();
 			$('#btnfilter').trigger('click');
 		}

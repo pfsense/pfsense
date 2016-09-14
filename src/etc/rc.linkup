@@ -4,7 +4,7 @@
  * rc.linkup
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -44,8 +44,18 @@ function handle_argument_group($iface, $argument2) {
 		return;
 	}
 
-	$ipaddr = $config['interfaces'][$iface]['ipaddr'];
-	$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
+	if (empty($config['interfaces'][$iface]['ipaddr'])) {
+		$ipaddr = '';
+	} else {
+		$ipaddr = $config['interfaces'][$iface]['ipaddr'];
+	}
+
+	if (empty($config['interfaces'][$iface]['ipaddrv6'])) {
+		$ip6addr = '';
+	} else {
+		$ip6addr = $config['interfaces'][$iface]['ipaddrv6'];
+	}
+
 	$staticv4 = false;
 	if (empty($ipaddr)) {
 		$staticv4 = true;
@@ -58,6 +68,15 @@ function handle_argument_group($iface, $argument2) {
 	} else {
 		$staticv6 = is_ipaddrv6($ip6addr);
 	}
+
+	/* Take care of events on bridge members when IP is configured on bridge */
+	$bridge_if = link_interface_to_bridge($iface);
+	if (!empty($bridge_if) && empty($ipaddr) && empty($ip6addr)) {
+		log_error("Ignoring link event for bridge member without IP config");
+
+		return;
+	}
+
 	if ($staticv4 === true && $staticv6 === true) {
 		$friendly = convert_friendly_interface_to_friendly_descr($iface);
 		log_error("Hotplug event detected for {$friendly}({$iface}) static IP ({$ipaddr} {$ip6addr})");

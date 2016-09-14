@@ -3,7 +3,7 @@
  * filter_log.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,8 +34,9 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 		return;
 	}
 
+	/* Safety belt to ensure we get enough lines for filtering without overloading the parsing code */
 	if ($filtertext) {
-		$tail = 5000;
+		$tail = 10000;
 	}
 
 	/* Always do a reverse tail, to be sure we're grabbing the 'end' of the log. */
@@ -82,29 +83,29 @@ function conv_log_filter($logfile, $nentries, $tail = 50, $filtertext = "", $fil
 
 
 	# Construct RegEx for specific log file type.
-	     if ($logfile_type == 'firewall')	{
+	if ($logfile_type == 'firewall') {
 		$pattern = "filterlog:";
 	}
-	else if ($logfile_type == 'system')		{
+	else if ($logfile_type == 'system') {
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pid_pattern . "\ +" . $log_message_pattern . "$";
 	}
 
-	else if ($logfile_type == 'vpn_login')	{
+	else if ($logfile_type == 'vpn_login') {
 		$action_pattern = "\(.*?\)";
 		$type_pattern = "\(.*?\)";
 		$ip_address_pattern = "\(.*?\)";
 		$user_pattern = "\(.*?\)";
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $process_pattern . "\ +" . $action_pattern . "\,\ *" . $type_pattern . "\,\ *" . $ip_address_pattern . "\,\ *" . $user_pattern . "$";
 	}
-	else if ($logfile_type == 'vpn_service')	{
+	else if ($logfile_type == 'vpn_service') {
 		$type_pattern = "\(.*?\):";
 		$pid_pattern = "\(?:process\ +\([0-9:]*\)\)?";
 		$pattern = "^" . $date_pattern . "\ +" . $host_pattern . "\ +" . $type_pattern . "\ +" . $pid_pattern . "\ *" . $log_message_pattern . "$";
 	}
-	else if ($logfile_type == 'unknown')	{
+	else if ($logfile_type == 'unknown') {
 		$pattern = "^" . $date_pattern . "\ +" . $log_message_pattern . "$";
 	}
-	else									{
+	else {
 		$pattern = "^\(.*\)$";
 	}
 
@@ -222,7 +223,7 @@ function parse_vpn_login_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['action']) == "") && (trim($flent['user']) == "") && (trim($flent['ip_address']) == "") )) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";
@@ -244,7 +245,7 @@ function parse_vpn_service_log_line($line) {
 	if (!( (trim($flent['time']) == "") && (trim($flent['type']) == "") && (trim($flent['message']) == "") )) {
 		return $flent;
 	} else {
-		if($g['debug']) {
+		if ($g['debug']) {
 			log_error(sprintf(gettext("There was a error parsing log entry: %s. Please report to mailing list or forum."), $line));
 		}
 		return "";

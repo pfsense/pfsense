@@ -3,7 +3,7 @@
  * log.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Scott Dale
  * All rights reserved.
  *
@@ -31,9 +31,9 @@ require_once("filter_log.inc");
 
 if ($_POST) {
 	if (is_numeric($_POST['filterlogentries'])) {
-		$config['widgets']['filterlogentries'] = $_POST['filterlogentries'];
+		$user_settings['widgets']['filterlogentries'] = $_POST['filterlogentries'];
 	} else {
-		unset($config['widgets']['filterlogentries']);
+		unset($user_settings['widgets']['filterlogentries']);
 	}
 
 	$acts = array();
@@ -48,41 +48,41 @@ if ($_POST) {
 	}
 
 	if (!empty($acts)) {
-		$config['widgets']['filterlogentriesacts'] = implode(" ", $acts);
+		$user_settings['widgets']['filterlogentriesacts'] = implode(" ", $acts);
 	} else {
-		unset($config['widgets']['filterlogentriesacts']);
+		unset($user_settings['widgets']['filterlogentriesacts']);
 	}
 	unset($acts);
 
 	if (($_POST['filterlogentriesinterfaces']) and ($_POST['filterlogentriesinterfaces'] != "All")) {
-		$config['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
+		$user_settings['widgets']['filterlogentriesinterfaces'] = trim($_POST['filterlogentriesinterfaces']);
 	} else {
-		unset($config['widgets']['filterlogentriesinterfaces']);
+		unset($user_settings['widgets']['filterlogentriesinterfaces']);
 	}
 
 	if (is_numeric($_POST['filterlogentriesinterval'])) {
-		$config['widgets']['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
+		$user_settings['widgets']['filterlogentriesinterval'] = $_POST['filterlogentriesinterval'];
 	} else {
-		unset($config['widgets']['filterlogentriesinterval']);
+		unset($user_settings['widgets']['filterlogentriesinterval']);
 	}
 
-	write_config(gettext("Saved Filter Log Entries via Dashboard"));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Filter Log Entries via Dashboard."));
 	Header("Location: /");
 	exit(0);
 }
 
-$nentries = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : 5;
+$nentries = isset($user_settings['widgets']['filterlogentries']) ? $user_settings['widgets']['filterlogentries'] : 5;
 
 //set variables for log
-$nentriesacts		= isset($config['widgets']['filterlogentriesacts'])		? $config['widgets']['filterlogentriesacts']		: 'All';
-$nentriesinterfaces = isset($config['widgets']['filterlogentriesinterfaces']) ? $config['widgets']['filterlogentriesinterfaces'] : 'All';
+$nentriesacts		= isset($user_settings['widgets']['filterlogentriesacts'])		? $user_settings['widgets']['filterlogentriesacts']		: 'All';
+$nentriesinterfaces = isset($user_settings['widgets']['filterlogentriesinterfaces']) ? $user_settings['widgets']['filterlogentriesinterfaces'] : 'All';
 
 $filterfieldsarray = array(
 	"act" => $nentriesacts,
 	"interface" => $nentriesinterfaces
 );
 
-$nentriesinterval = isset($config['widgets']['filterlogentriesinterval']) ? $config['widgets']['filterlogentriesinterval'] : 60;
+$nentriesinterval = isset($user_settings['widgets']['filterlogentriesinterval']) ? $user_settings['widgets']['filterlogentriesinterval'] : 60;
 
 $filter_logfile = "{$g['varlog_path']}/filter.log";
 
@@ -175,7 +175,7 @@ if (isset($_GET['lastsawtime'])) {
 
 <script type="text/javascript">
 //<![CDATA[
-function logWidgetUpdateFromServer(){
+function logWidgetUpdateFromServer() {
 	$.ajax({
 		type: 'get',
 		url: '/widgets/widgets/log.widget.php',
@@ -202,8 +202,8 @@ events.push(function(){
 <div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <?php
-$pconfig['nentries'] = isset($config['widgets']['filterlogentries']) ? $config['widgets']['filterlogentries'] : '';
-$pconfig['nentriesinterval'] = isset($config['widgets']['filterlogentriesinterval']) ? $config['widgets']['filterlogentriesinterval'] : '';
+$pconfig['nentries'] = isset($user_settings['widgets']['filterlogentries']) ? $user_settings['widgets']['filterlogentries'] : '';
+$pconfig['nentriesinterval'] = isset($user_settings['widgets']['filterlogentriesinterval']) ? $user_settings['widgets']['filterlogentriesinterval'] : '';
 ?>
 	<form action="/widgets/widgets/log.widget.php" method="post"
 		class="form-horizontal">

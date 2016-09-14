@@ -3,7 +3,7 @@
  * interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -1927,8 +1927,8 @@ $section->addInput(new Form_Input(
 	'Reject leases from',
 	'text',
 	$pconfig['dhcprejectfrom']
-))->setHelp('If there is a certain upstream DHCP server that should be ignored, place the IP address or subnet of the DHCP server to be ignored here. ' .
-			'This is useful for rejecting leases from cable modems that offer private IPs when they lose upstream sync.');
+))->setHelp('To make the DHCP client reject leases from an undesirable DHCP server, place the IP address of the DHCP server here. ' .
+			'This is useful for rejecting leases from cable modems that offer private IP addresses when they lose upstream sync.');
 
 $group = new Form_Group('Protocol timing');
 $group->addClass('dhcpadvanced');

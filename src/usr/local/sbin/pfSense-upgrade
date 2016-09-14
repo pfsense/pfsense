@@ -3,7 +3,7 @@
 # pfSense-upgrade
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -396,10 +396,6 @@ pkg_upgrade() {
 			_exec "pkg ${pkg_chroot} upgrade" "Upgrading necessary packages"
 			delete_annotation=""
 		fi
-
-		# XXX: workaround for #5300
-		sort -u ${chroot_dir}/usr/local/etc/php/extensions.ini > /tmp/extensions.ini
-		mv /tmp/extensions.ini ${chroot_dir}/usr/local/etc/php/extensions.ini
 
 		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 3
 		next_stage=3

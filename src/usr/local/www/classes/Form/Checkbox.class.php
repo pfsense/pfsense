@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Sjon Hortensius
- * Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,7 +57,7 @@ class Form_Checkbox extends Form_Input
 		$input = parent::_getInput();
 
 		if (empty($this->_description))
-			return $input;
+			return '<label class="chkboxlbl">'. $input .'</label>';
 
 		return '<label class="chkboxlbl">'. $input .' '. htmlspecialchars(gettext($this->_description)) .'</label>';
 	}

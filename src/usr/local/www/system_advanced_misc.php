@@ -3,7 +3,7 @@
  * system_advanced_misc.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -73,7 +73,6 @@ if (!empty($config['system']['powerd_normal_mode'])) {
 }
 
 $crypto_modules = array(
-	'glxsb' => gettext("AMD Geode LX Security Block"),
 	'aesni' => gettext("AES-NI CPU-based Acceleration"));
 
 $thermal_hardware_modules = array(
@@ -115,7 +114,7 @@ if ($_POST) {
 		$input_errors[] = gettext("The proxy username contains invalid characters.");
 	}
 
-	if($_POST['proxypass'] != $_POST['proxypass_confirm']) {
+	if ($_POST['proxypass'] != $_POST['proxypass_confirm']) {
 		$input_errors[] = gettext("Proxy password and confirmation must match.");
 	}
 

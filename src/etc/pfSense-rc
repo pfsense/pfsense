@@ -3,7 +3,7 @@
 # pfSense-rc
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -337,7 +337,7 @@ trap "echo 'Reboot interrupted'; exit 1" 3
 
 echo -n "."
 DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
-LOG_FILES="system filter dhcpd vpn pptps poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
+LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"
 
 DEFAULT_LOG_FILE_SIZE=$(/usr/local/sbin/read_xml_tag.sh string syslog/logfilesize)
 DEFAULT_LOG_FILE_SIZE=${DEFAULT_LOG_FILE_SIZE:-"511488"}

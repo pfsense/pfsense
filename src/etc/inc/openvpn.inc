@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006 Fernando Lemos
- * Copyright (c) 2006-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -100,6 +100,7 @@ $openvpn_client_modes = array(
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
 	'' => gettext("No Preference"),
+	'noadapt' => gettext("No Preference and Adaptive Compression Disabled"),
 	'no' => gettext("Disabled - No Compression"),
 	'adaptive' => gettext("Enabled with Adaptive Compression"),
 	'yes' => gettext("Enabled without Adaptive Compression"));
@@ -524,6 +525,9 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
 	}
 
+	if (!empty($settings['push_blockoutsidedns'])) {
+		$conf .= "push \"block-outside-dns\"\n";
+	}
 	if (!empty($settings['push_register_dns'])) {
 		$conf .= "push \"register-dns\"\n";
 	}
@@ -1010,7 +1014,11 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	if (!empty($settings['compression'])) {
-		$conf .= "comp-lzo {$settings['compression']}\n";
+		if ($settings['compression'] == "noadapt") {
+			$conf .= "comp-noadapt\n";
+		} else {
+			$conf .= "comp-lzo {$settings['compression']}\n";
+		}
 	}
 
 	if ($settings['passtos']) {
@@ -1100,8 +1108,8 @@ function openvpn_restart($mode, $settings) {
 		return;
 	}
 
-	/* Do not start a client if we are a CARP backup on this vip! */
-	if (($mode == "client") && (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER")) {
+	/* Do not start an instance if we are not CARP master on this vip! */
+	if (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER") {
 		return;
 	}
 
@@ -1208,10 +1216,6 @@ function openvpn_resync_csc(& $settings) {
 	}
 
 	openvpn_add_dhcpopts($settings, $conf);
-
-	if ($settings['gwredir']) {
-		$conf .= "push \"redirect-gateway def1\"\n";
-	}
 
 	openvpn_add_custom($settings, $conf);
 	/* Loop through servers, find which ones can use this CSC */

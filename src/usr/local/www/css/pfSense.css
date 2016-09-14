@@ -2,7 +2,7 @@
  * pfSense.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,6 +75,10 @@ h1 a:hover, h1 a:active {
 
 .ui-sortable-handle {
     cursor: move;
+}
+
+.ui-widget {
+    font-family: Roboto, sans-serif;
 }
 
 tr.disabled td,
@@ -229,6 +233,12 @@ tr.disabled th {
 
 .form-control option {
     padding: inherit;
+}
+
+/* location of bottom right drag icon on resizable elements */
+.ui-resizable-se {
+	bottom: 2px;
+	right: 46px;
 }
 
 #login .form-control {
@@ -600,7 +610,7 @@ footer a {
 .widget-heading-icon
 {
     display: block;
-    float:  right;
+    float: right;
 }
 
 .widget-heading-icon .fa {
@@ -629,12 +639,12 @@ textarea
 
 ul.tree{
     width: auto;
-    padding-left : 0px;
-    margin-left : 0px;
+    padding-left: 0px;
+    margin-left: 0px;
 }
 
 ul.tree img{
-    border : none;
+    border: none;
 }
 
 ul.tree, ul.tree ul {
@@ -746,24 +756,28 @@ ul.tree div a  {
 }
 
 ul.tree li .over{
-    background-color : pink;
+    background-color: pink;
 }
 
 /*
  * End of CSS for Standard tree layout
  */
 
- table[data-sortable].sortable-theme-bootstrap thead th {
+table[data-sortable].sortable-theme-bootstrap {
+    font-family: Roboto, sans-serif;
+}
+
+table[data-sortable].sortable-theme-bootstrap thead th {
     white-space: nowrap;
- }
+}
 
 @media (max-width: 1199px) {
     .nav>li>a {
         padding: 14px 9px 10px 9px;
     }
- }
+}
 
- @media (max-width: 991px) {
+@media (max-width: 991px) {
     /* change top navbar from horizontal to vertical */
     .navbar-header {
         float: none;
@@ -805,7 +819,7 @@ ul.tree li .over{
     }
 }
 
- @media (max-width: 767px) {
+@media (max-width: 767px) {
     .header {
         margin-bottom: 5px;
     }
@@ -823,12 +837,12 @@ ul.tree li .over{
 
 /** Override text-warning with something less red. */
 .text-warning {
-	color: #ffcc00;
+    color: #ffcc00;
 }
 
 /**Suppress href links when printing */
 a[href]:after {
-    content:normal
+    content: normal;
 }
 
 /** Text color for diff display when comapring configs */
@@ -845,7 +859,7 @@ a[href]:after {
 .panel-body.collapse.in>.content>.row,
 .panel-body.collapse.in>.form-group
 {
-	margin-right:0px;
+    margin-right: 0px;
 }
 
 /* Callouts */
@@ -911,7 +925,7 @@ a[href]:after {
 /* Disable 300 ms click delay so event handlers are effective. */
 /* Makes posible for non-touch compatible features to work; e.g. double tap rule to edit. */
 body{
-	touch-action: manipulation;
+    touch-action: manipulation;
 }
 
 /* D3 Styles */
@@ -920,14 +934,23 @@ svg {
     display: block;
 }
 
-#chart, #chart svg {
+.d3-chart, .d3-chart svg {
     margin: 0px;
     padding: 10px 0;
     height: 445px;
     width: 100%;
 }
 
-#chart .nvtooltip > h3 {
+.traffic-widget-chart, .traffic-widget-chart svg {
+    padding: 0;
+    height: 250px;
+}
+
+.traffic-widget-chart:not(:last-child) {
+    border-bottom: 2px solid #ccc;
+}
+
+.d3-chart .nvtooltip > h3 {
     font-size: 14px;
 }
 
@@ -938,4 +961,8 @@ svg {
 
 .chkboxlbl {
     padding-top: 4px;
+}
+
+.colspanth {
+    background-color: #eeeeee;
 }

@@ -3,7 +3,7 @@
  * thermal_sensors.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,21 +41,21 @@ const DEFAULT_CRITICAL_THRESHOLD = 70; //70 C
 const MIN_THRESHOLD_VALUE = 1; //deg C
 const MAX_THRESHOLD_VALUE = 100; //deg C
 
-//NOTE: keys used in $_POST and $config should match text and checkbox inputs' IDs/names in HTML code section
+//NOTE: keys used in $_POST and $config and $user_settings should match text and checkbox inputs' IDs/names in HTML code section
 //=========================================================================
 //save widget config settings on POST
 if ($_POST) {
-	saveThresholdSettings($config, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
-	saveThresholdSettings($config, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
+	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_zone_warning_threshold", "thermal_sensors_widget_zone_critical_threshold");
+	saveThresholdSettings($user_settings, $_POST, "thermal_sensors_widget_core_warning_threshold", "thermal_sensors_widget_core_critical_threshold");
 
 	//handle checkboxes separately
-	saveGraphDisplaySettings($config, $_POST, "thermal_sensors_widget_show_raw_output");
-	saveGraphDisplaySettings($config, $_POST, "thermal_sensors_widget_show_full_sensor_name");
-	saveGraphDisplaySettings($config, $_POST, "thermal_sensors_widget_pulsate_warning");
-	saveGraphDisplaySettings($config, $_POST, "thermal_sensors_widget_pulsate_critical");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_raw_output");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_show_full_sensor_name");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_warning");
+	saveGraphDisplaySettings($user_settings, $_POST, "thermal_sensors_widget_pulsate_critical");
 
 	//write settings to config file
-	write_config(gettext("Saved thermal_sensors_widget settings via Dashboard."));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved thermal_sensors_widget settings via Dashboard."));
 	header("Location: ../../index.php");
 }
 
@@ -86,16 +86,16 @@ function saveGraphDisplaySettings(&$configArray, &$postArray, $valueKey) {
 
 //=========================================================================
 //get Threshold settings from config (apply defaults if missing)
-$thermal_sensors_widget_zoneWarningTempThreshold = getThresholdValueFromConfig($config, "thermal_sensors_widget_zone_warning_threshold", DEFAULT_WARNING_THRESHOLD);
-$thermal_sensors_widget_zoneCriticalTempThreshold = getThresholdValueFromConfig($config, "thermal_sensors_widget_zone_critical_threshold", DEFAULT_CRITICAL_THRESHOLD);
-$thermal_sensors_widget_coreWarningTempThreshold = getThresholdValueFromConfig($config, "thermal_sensors_widget_core_warning_threshold", DEFAULT_WARNING_THRESHOLD);
-$thermal_sensors_widget_coreCriticalTempThreshold = getThresholdValueFromConfig($config, "thermal_sensors_widget_core_critical_threshold", DEFAULT_CRITICAL_THRESHOLD);
+$thermal_sensors_widget_zoneWarningTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_zone_warning_threshold", DEFAULT_WARNING_THRESHOLD);
+$thermal_sensors_widget_zoneCriticalTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_zone_critical_threshold", DEFAULT_CRITICAL_THRESHOLD);
+$thermal_sensors_widget_coreWarningTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_core_warning_threshold", DEFAULT_WARNING_THRESHOLD);
+$thermal_sensors_widget_coreCriticalTempThreshold = getThresholdValueFromConfig($user_settings, "thermal_sensors_widget_core_critical_threshold", DEFAULT_CRITICAL_THRESHOLD);
 
 //get display settings from config (apply defaults if missing)
-$thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($config, "thermal_sensors_widget_show_raw_output", false);
-$thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($config, "thermal_sensors_widget_show_full_sensor_name", false);
-$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($config, "thermal_sensors_widget_pulsate_warning", true);
-$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($config, "thermal_sensors_widget_pulsate_critical", true);
+$thermal_sensors_widget_showRawOutput = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_raw_output", false);
+$thermal_sensors_widget_showFullSensorName = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_show_full_sensor_name", false);
+$thermal_sensors_widget_pulsateWarning = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_warning", true);
+$thermal_sensors_widget_pulsateCritical = getBoolValueFromConfig($user_settings, "thermal_sensors_widget_pulsate_critical", true);
 
 function getThresholdValueFromConfig(&$configArray, $valueKey, $defaultValue) {
 

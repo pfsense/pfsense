@@ -3,7 +3,7 @@
  * vpn_l2tp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -194,7 +194,7 @@ $section = new Form_Section("Enable L2TP");
 $section->addInput(new Form_Checkbox(
 	'mode',
 	'Enable',
-	'Enable LT2P server',
+	'Enable L2TP server',
 	($pconfig['mode'] == "server"),
 	'server'
 ));

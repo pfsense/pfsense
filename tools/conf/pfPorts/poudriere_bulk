@@ -9,7 +9,7 @@ benchmarks/iperf3
 dns/dnstop
 editors/vim-lite
 editors/nano
-irc/znc
+#irc/znc
 net/mosh
 net/py-speedtest-cli
 net/trafshow
@@ -21,11 +21,11 @@ sysutils/grub2-bhyve
 sysutils/pstree
 security/%%PRODUCT_NAME%%
 sysutils/%%PRODUCT_NAME%%-builder
-#sysutils/bsdinstaller
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
 dns/%%PRODUCT_NAME%%-pkg-bind9
+net/%%PRODUCT_NAME%%-pkg-cellular
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
@@ -60,6 +60,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
 security/%%PRODUCT_NAME%%-pkg-sudo
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
+sysutils/%%PRODUCT_NAME%%-pkg-apcupsd
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
@@ -70,3 +71,5 @@ net/%%PRODUCT_NAME%%-pkg-LADVD
 net/%%PRODUCT_NAME%%-pkg-freeradius2
 sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
+sysutils/stress
+net/bird

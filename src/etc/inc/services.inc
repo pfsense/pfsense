@@ -3,7 +3,7 @@
  * services.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -395,6 +395,8 @@ function services_radvd_configure($blacklist = array()) {
 function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	global $config, $g;
 
+	$dhcpdconfigurelck = lock("dhcpdconfigure", LOCK_EX);
+
 	/* configure DHCPD chroot once */
 	$fd = fopen("{$g['tmp_path']}/dhcpd.sh", "w");
 	fwrite($fd, "/bin/mkdir -p {$g['dhcpd_chroot_path']}\n");
@@ -425,6 +427,8 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 		services_dhcpdv6_configure($blacklist);
 		services_radvd_configure($blacklist);
 	}
+
+	unlock($dhcpdconfigurelck);
 }
 
 function services_dhcpdv4_configure() {
@@ -514,6 +518,20 @@ function services_dhcpdv4_configure() {
 					$itemtype = "text";
 				}
 				$custoptions .= "option custom-{$dhcpif}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+			}
+		}
+		if (is_array($dhcpifconf['pool'])) {
+			foreach ($dhcpifconf['pool'] as $poolidx => $poolconf) {
+				if (is_array($poolconf['numberoptions']) && is_array($poolconf['numberoptions']['item'])) {
+					foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
+						if (!empty($item['type'])) {
+							$itemtype = $item['type'];
+						} else {
+							$itemtype = "text";
+						}
+						$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+					}
+				}
 			}
 		}
 	}
@@ -754,7 +772,7 @@ EOPP;
 		$dhcpdconf .= "subnet {$subnet} netmask {$subnetmask} {\n";
 
 		// Setup pool options
-		foreach ($all_pools as $poolconf) {
+		foreach ($all_pools as $all_pools_idx => $poolconf) {
 			if (!(ip_in_subnet($poolconf['range']['from'], "{$subnet}/{$ifcfgsn}") && ip_in_subnet($poolconf['range']['to'], "{$subnet}/{$ifcfgsn}"))) {
 				// If the user has changed the subnet from the interfaces page and applied,
 				// but has not updated the DHCP range, then the range to/from of the pool can be outside the subnet.
@@ -851,9 +869,6 @@ EOPP;
 				$pdnscfg .= "		ddns-update-style interim;\n";
 			}
 
-			if (is_array($poolconf['dnsserver']) && ($poolconf['dnsserver'][0]) && ($poolconf['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
-				$pdnscfg .= "		option domain-name-servers " . join(",", $poolconf['dnsserver']) . ";\n";
-			}
 			$dhcpdconf .= "{$pdnscfg}";
 
 			// default-lease-time
@@ -864,6 +879,11 @@ EOPP;
 			// max-lease-time
 			if ($poolconf['maxleasetime'] && ($poolconf['maxleasetime'] != $dhcpifconf['maxleasetime'])) {
 				$dhcpdconf .= "		max-lease-time {$poolconf['maxleasetime']};\n";
+			}
+
+			// ignore bootp
+			if (isset($poolconf['ignorebootp'])) {
+				$dhcpdconf .= "		ignore bootp;\n";
 			}
 
 			// netbios-name*
@@ -880,6 +900,23 @@ EOPP;
 			// tftp-server-name
 			if (!empty($poolconf['tftp']) && ($poolconf['tftp'] != $dhcpifconf['tftp'])) {
 				$dhcpdconf .= "		option tftp-server-name \"{$poolconf['tftp']}\";\n";
+			}
+
+			// Handle pool-specific options
+			$dhcpdconf .= "\n";
+			// Ignore the first pool, which is the "overall" pool when $all_pools_idx is 0 - those are put outside the pool block later
+			if ($poolconf['numberoptions']['item'] && ($all_pools_idx > 0)) {
+				// Use the "real" pool index from the config, excluding the "overall" pool, and based from 0.
+				// This matches the way $poolidx was used when generating the $custoptions string earlier.
+				$poolidx = $all_pools_idx - 1;
+				foreach ($poolconf['numberoptions']['item'] as $itemidx => $item) {
+					$item_value = base64_decode($item['value']);
+					if (empty($item['type']) || $item['type'] == "text") {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} \"{$item_value}\";\n";
+					} else {
+						$dhcpdconf .= "		option custom-{$dhcpif}-{$poolidx}-{$itemidx} {$item_value};\n";
+					}
+				}
 			}
 
 			// ldap-server
@@ -1041,9 +1078,9 @@ EOD;
 
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
-						$pdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
+						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
 					}
-					$pdnscfg .= "		ddns-update-style interim;\n";
+					$smdnscfg .= "		ddns-update-style interim;\n";
 				}
 
 				if (is_array($sm['dnsserver']) && ($sm['dnsserver'][0]) && ($sm['dnsserver'][0] != $dhcpifconf['dnsserver'][0])) {
@@ -1277,6 +1314,7 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
+dhcp-cache-threshold 0;
 
 EOD;
 
@@ -1308,12 +1346,11 @@ EOD;
 		}
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-
-		if ($ifcfgv6['ipaddrv6'] == 'track6') {
-			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
-		}
+		// We might have some prefix-delegation on WAN (e.g. /48),
+		// but then it is split and given out to individual interfaces
+		// (LAN, OPT1, OPT2...) as multiple /64 subnets. So the size
+		// of each subnet here is always /64.
+		$pdlen = 64;
 
 		if ($is_olsr_enabled == true) {
 			if ($dhcpv6ifconf['netmask']) {
@@ -1945,7 +1982,19 @@ function services_dyndns_configure($int = "") {
 		}
 
 		foreach ($dyndnscfg as $dyndns) {
-			if ((empty($int)) || ($int == $dyndns['interface']) || (is_array($gwgroups[$dyndns['interface']]))) {
+			/*
+			 * If it's using a gateway group, check if interface is
+			 * the active gateway for that group
+			 */
+			$group_int = '';
+			if (is_array($gwgroups[$dyndns['interface']])) {
+				if (!empty($gwgroups[$dyndns['interface']][0]['vip'])) {
+					$group_int = $gwgroups[$dyndns['interface']][0]['vip'];
+				} else {
+					$group_int = $gwgroups[$dyndns['interface']][0]['int'];
+				}
+			}
+			if ((empty($int)) || ($int == $dyndns['interface']) || ($int == $group_int)) {
 				$dyndns['verboselog'] = isset($dyndns['verboselog']);
 				$dyndns['curl_ipresolve_v4'] = isset($dyndns['curl_ipresolve_v4']);
 				$dyndns['curl_ssl_verifypeer'] = isset($dyndns['curl_ssl_verifypeer']);
@@ -2163,8 +2212,8 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		}
 		$args .= ' ' . implode(' ', array_values($standard_args));
 
-		/* run dnsmasq */
-		$cmd = "/usr/local/sbin/dnsmasq --all-servers {$dns_rebind} {$args}";
+		/* run dnsmasq. Use "-C /dev/null" since we use command line args only (Issue #6730) */
+		$cmd = "/usr/local/sbin/dnsmasq --all-servers -C /dev/null {$dns_rebind} {$args}";
 		//log_error("dnsmasq command: {$cmd}");
 		mwexec_bg($cmd);
 		unset($args);
@@ -2445,7 +2494,19 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 			if (!isset($dnsupdate['enable'])) {
 				continue;
 			}
-			if (!empty($int) && ($int != $dnsupdate['interface']) && (!is_array($gwgroups[$dnsupdate['interface']]))) {
+			/*
+			 * If it's using a gateway group, check if interface is
+			 * the active gateway for that group
+			 */
+			$group_int = '';
+			if (is_array($gwgroups[$dnsupdate['interface']])) {
+				if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
+					$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
+				} else {
+					$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
+				}
+			}
+			if (!empty($int) && ($int != $dnsupdate['interface']) && ($int != $group_int)) {
 				continue;
 			}
 			if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {

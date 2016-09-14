@@ -3,7 +3,7 @@
  * status_graph.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -35,18 +35,6 @@
 
 require_once("guiconfig.inc");
 require_once("ipsec.inc");
-
-if ($_POST['width']) {
-	$width = $_POST['width'];
-} else {
-	$width = "100%";
-}
-
-if ($_POST['height']) {
-	$height = $_POST['height'];
-} else {
-	$height = "200";
-}
 
 // Get configured interface list
 $ifdescrs = get_configured_interface_with_descr();
@@ -186,6 +174,226 @@ $form->add($section);
 print $form;
 
 ?>
+
+<script src="/vendor/d3/d3.min.js"></script>
+<script src="/vendor/nvd3/nv.d3.js"></script>
+<script src="/vendor/visibility/visibility-1.2.3.min.js"></script>
+
+<link href="/vendor/nvd3/nv.d3.css" media="screen, projection" rel="stylesheet" type="text/css">
+
+<script type="text/javascript">
+
+//<![CDATA[
+events.push(function() {
+
+	var InterfaceString = "<?=$curif?>";
+
+	//store saved settings in a fresh localstorage
+	localStorage.clear();
+	localStorage.setItem('interfaces', JSON.stringify(InterfaceString.split("|"))); //TODO see if can be switched to interfaces
+	localStorage.setItem('interval', 1);
+	localStorage.setItem('invert', "true");
+	localStorage.setItem('size', 1);
+
+	window.charts = {};
+    window.myData = {};
+    window.updateIds = 0;
+    window.latest = [];
+    var refreshInterval = localStorage.getItem('interval');
+
+    //TODO make it fall on a second value so it increments better
+    var now = then = new Date(Date.now());
+
+    var nowTime = now.getTime();
+
+	$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+
+		myData[value] = [];
+		updateIds = 0;
+
+		var itemIn = new Object();
+		var itemOut = new Object();
+
+		itemIn.key = value + " (in)";
+		if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+		itemIn.first = true;
+		itemIn.values = [{x: nowTime, y: 0}];
+		myData[value].push(itemIn);
+
+		itemOut.key = value + " (out)";
+		if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+		itemOut.first = true;
+		itemOut.values = [{x: nowTime, y: 0}];
+		myData[value].push(itemOut);
+
+	});
+
+	draw_graph(refreshInterval, then);
+
+	//re-draw graph when the page goes from inactive (in it's window) to active
+	Visibility.change(function (e, state) {
+		if(state === "visible") {
+
+			now = then = new Date(Date.now());
+
+			var nowTime = now.getTime();
+
+			$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+
+				Visibility.stop(updateIds);
+
+				myData[value] = [];
+
+				var itemIn = new Object();
+				var itemOut = new Object();
+
+				itemIn.key = value + " (in)";
+				if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+				itemIn.first = true;
+				itemIn.values = [{x: nowTime, y: 0}];
+				myData[value].push(itemIn);
+
+				itemOut.key = value + " (out)";
+				if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+				itemOut.first = true;
+				itemOut.values = [{x: nowTime, y: 0}];
+				myData[value].push(itemOut);
+
+			});
+
+			draw_graph(refreshInterval, then);
+
+		}
+	});
+
+	// save new config defaults
+    $( '#traffic-graph-form' ).submit(function(event) {
+
+		var error = false;
+		$("#traffic-chart-error").hide();
+
+		var interfaces = $( "#traffic-graph-interfaces" ).val();
+		refreshInterval = parseInt($( "#traffic-graph-interval" ).val());
+		var invert = $( "#traffic-graph-invert" ).val();
+		var size = $( "#traffic-graph-size" ).val();
+
+		//TODO validate interfaces data and throw error
+
+		if(!Number.isInteger(refreshInterval) || refreshInterval < 1 || refreshInterval > 10) {
+			error = 'Refresh Interval is not a valid number between 1 and 10.';
+		}
+
+		if(invert != "true" && invert != "false") {
+
+			error = 'Invert is not a boolean of true or false.';
+
+		}
+
+		if(!error) {
+
+			var formData = {
+				'traffic-graph-interfaces' : interfaces,
+				'traffic-graph-interval'   : refreshInterval,
+				'traffic-graph-invert'     : invert,
+				'traffic-graph-size'       : size
+			};
+
+			$.ajax({
+				type        : 'POST',
+				url         : '/widgets/widgets/traffic_graphs.widget.php',
+				data        : formData,
+				dataType    : 'json',
+				encode      : true
+			})
+			.done(function(message) {
+
+				if(message.success) {
+
+					Visibility.stop(updateIds);
+
+					//remove all old graphs (divs/svgs)
+					$( ".traffic-widget-chart" ).remove();
+
+					localStorage.setItem('interfaces', JSON.stringify(interfaces));
+					localStorage.setItem('interval', refreshInterval);
+					localStorage.setItem('invert', invert);
+					localStorage.setItem('size', size);
+
+					//redraw graph with new settings
+					now = then = new Date(Date.now());
+
+					var freshData = [];
+
+					var nowTime = now.getTime();
+
+					$.each( interfaces, function( key, value ) {
+
+						//create new graphs (divs/svgs)
+						$("#widget-traffic_graphs_panel-body").append('<div id="traffic-chart-' + value + '" class="d3-chart traffic-widget-chart"><svg></svg></div>');
+
+						myData[value] = [];
+
+						var itemIn = new Object();
+						var itemOut = new Object();
+
+						itemIn.key = value + " (in)";
+						if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
+						itemIn.first = true;
+						itemIn.values = [{x: nowTime, y: 0}];
+						myData[value].push(itemIn);
+
+						itemOut.key = value + " (out)";
+						if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
+						itemOut.first = true;
+						itemOut.values = [{x: nowTime, y: 0}];
+						myData[value].push(itemOut);
+
+					});
+
+					draw_graph(refreshInterval, then);
+
+					$( "#traffic-graph-message" ).removeClass("text-danger").addClass("text-success");
+					$( "#traffic-graph-message" ).text(message.success);
+
+					setTimeout(function() {
+						$( "#traffic-graph-message" ).empty();
+						$( "#traffic-graph-message" ).removeClass("text-success");
+					}, 5000);
+
+				} else {
+
+					$( "#traffic-graph-message" ).addClass("text-danger");
+					$( "#traffic-graph-message" ).text(message.error);
+
+					console.warn(message.error);
+
+				}
+
+	        })
+	        .fail(function() {
+
+			    console.warn( "The Traffic Graphs widget AJAX request failed." );
+
+			});
+
+	    } else {
+
+			$( "#traffic-graph-message" ).addClass("text-danger");
+			$( "#traffic-graph-message" ).text(error);
+
+			console.warn(error);
+
+	    }
+
+        event.preventDefault();
+    });
+
+});
+//]]>
+</script>
+
+<script src="/js/traffic-graphs.js"></script>
+
 <script type="text/javascript">
 //<![CDATA[
 
@@ -241,13 +449,9 @@ if (ipsec_enabled()) {
 	</div>
 	<div class="panel-body">
 		<div class="col-sm-6">
-			<object data="graph.php?ifnum=<?=htmlspecialchars($curif);?>&amp;ifname=<?=rawurlencode($ifdescrs[htmlspecialchars($curif)]);?>">
-				<param name="id" value="graph" />
-				<param name="type" value="image/svg+xml" />
-				<param name="width" value="<?=$width;?>" />
-				<param name="height" value="<?=$height;?>" />
-				<param name="pluginspage" value="http://www.adobe.com/svg/viewer/install/auto" />
-			</object>
+			<div id="traffic-chart-<?=$curif?>" class="d3-chart traffic-widget-chart">
+				<svg></svg>
+			</div>
 		</div>
 		<div class="col-sm-6">
 			<table class="table table-striped table-condensed">

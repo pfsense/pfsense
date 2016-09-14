@@ -3,7 +3,7 @@
  * config.gui.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -36,7 +36,7 @@ if ($config_parsed == true) {
 require_once('config.lib.inc');
 require_once("notices.inc");
 require_once("util.inc");
-require_once("IPv6.inc");
+require_once("Net/IPv6.php");
 if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlreader.inc");
 } else {

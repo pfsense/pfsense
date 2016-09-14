@@ -3,7 +3,7 @@
  * pkg_mgr_installed.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -67,8 +67,6 @@ function get_pkg_table() {
 		exit;
 	}
 
-	$pkgtbl .='	<div class="panel panel-default">';
-	$pkgtbl .='		<div class="panel-heading"><h2 class="panel-title">' . gettext('Installed Packages') . '</h2></div>';
 	$pkgtbl .='		<div class="table-responsive">';
 	$pkgtbl .='		<table class="table table-striped table-hover table-condensed">';
 	$pkgtbl .='			<thead>';
@@ -162,7 +160,6 @@ function get_pkg_table() {
 		}
 		$pkgtbl .='					</td>';
 		$pkgtbl .='					<td>';
-		$pkgtbl .='						<div class="row">';
 		$pkgtbl .='							<a title="' . sprintf(gettext("Remove package %s"), $pkg['name']) .
 		    '" href="pkg_mgr_install.php?mode=delete&amp;pkg=' . $pkg['name'] . '" class="fa fa-trash"></a>';
 
@@ -178,7 +175,6 @@ function get_pkg_table() {
 			$pkgtbl .='						<a target="_blank" title="' . gettext("View more information") . '" href="' .
 			    htmlspecialchars($pkg['www']) . '" class="fa fa-info"></a>';
 		}
-		$pkgtbl .='						</div>';
 		$pkgtbl .='					</td>';
 		$pkgtbl .='				</tr>';
 	}
@@ -200,7 +196,6 @@ function get_pkg_table() {
 	$pkgtbl .='		</p>';
 	$pkgtbl .='		<p><span class="text-warning">' . gettext("Newer version available") . '</span></p>';
 	$pkgtbl .='		<p><span class="text-danger">' . gettext("Package is configured but not (fully) installed") . '</span></p>';
-	$pkgtbl .='	</div>';
 
 	return $pkgtbl;
 }
@@ -216,8 +211,8 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Packages')?></h2></div>
-	<div id="pkgtbl" class="panel-body table-responsive">
+	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Installed Packages')?></h2></div>
+	<div id="pkgtbl" class="panel-body">
 		<div id="waitmsg">
 			<?php print_info_box(gettext("Please wait while the list of packages is retrieved and formatted.") . '&nbsp;<i class="fa fa-cog fa-spin"></i>'); ?>
 		</div>

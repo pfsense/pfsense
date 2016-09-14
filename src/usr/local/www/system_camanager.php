@@ -3,7 +3,7 @@
  * system_camanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -269,6 +269,9 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
+				if (!empty($pconfig['dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+				}
 				if (!ca_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['digest_alg'])) {
 					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
@@ -283,7 +286,9 @@ if ($_POST) {
 					'organizationName' => $pconfig['dn_organization'],
 					'emailAddress' => $pconfig['dn_email'],
 					'commonName' => $pconfig['dn_commonname']);
-
+				if (!empty($pconfig['dn_organizationalunit'])) {
+					$dn['organizationalUnitName'] = $pconfig['dn_organizationalunit'];
+				}
 				if (!ca_inter_create($ca, $pconfig['keylen'], $pconfig['lifetime'], $dn, $pconfig['caref'], $pconfig['digest_alg'])) {
 					while ($ssl_err = openssl_error_string()) {
 						$input_errors = array();
@@ -568,7 +573,15 @@ $section->addInput(new Form_Input(
 	'Organization',
 	'text',
 	$pconfig['dn_organization'],
-	['placeholder' => 'e.g. My Company Inc.']
+	['placeholder' => 'e.g. My Company Inc']
+));
+
+$section->addInput(new Form_Input(
+	'dn_organizationalunit',
+	'Organizational Unit',
+	'text',
+	$pconfig['dn_organizationalunit'],
+	['placeholder' => 'e.g. My Department Name (optional)']
 ));
 
 $section->addInput(new Form_Input(

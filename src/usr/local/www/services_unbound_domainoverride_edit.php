@@ -3,7 +3,7 @@
  * services_unbound_domainoverride_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2014 Warren Baker (warren@decoy.co.za)
  * Copyright (c) 2003-2005 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
@@ -133,7 +133,7 @@ $section->addInput(new Form_IpAddress(
 	'IP Address',
 	$pconfig['ip']
 ))->setHelp('IP address of the authoritative DNS server for this domain. e.g.: 192.168.100.100' . '<br />' .
-			'To use a non-default port for communication, append an \'@\' with the port number.')->setPattern('[a-zA-Z0-9\@\.\:]+');
+			'To use a non-default port for communication, append an \'@\' with the port number.')->setPattern('[a-zA-Z0-9@.:]+');
 
 $section->addInput(new Form_Input(
 	'descr',

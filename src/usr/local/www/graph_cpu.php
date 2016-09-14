@@ -3,7 +3,7 @@
  * graph_cpu.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004-2006 T. Lechat <dev@lechat.org>
  * Copyright (c) 2004-2006 Jonathan Watt <jwatt@jwatt.org>
  * All rights reserved.

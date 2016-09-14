@@ -1,0 +1,65 @@
+#
+# ex: filetype=sh
+#
+# common.subr
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# Obtained from poudriere common.sh
+eargs() {
+	local fname="$1"
+	shift
+	case $# in
+		0) err "${fname}: No arguments expected" ;;
+		1) err "${fname}: 1 argument expected: $1" ;;
+		*) err "${fname}: $# arguments expected: $*" ;;
+	esac
+}
+
+err() {
+	[ $# -eq 1 ] || eargs err msg
+	local msg="$1"
+
+	echo >&2 "====>> ERROR: $msg"
+	exit 1
+}
+
+run() {
+	[ $# -eq 2 ] || eargs run msg cmd
+	local msg="$1"
+	local cmd="$2"
+
+	echo "====>> ${msg}"
+	${cmd} 2>&1
+	rc=$?
+	[ $rc -ne 0 ] \
+		&& err "Execution of '${cmd}' failed (rc = ${rc})"
+}
+
+force_rm() {
+	[ $# -eq 1 ] || eargs force_rm directory
+	local directory="$1"
+
+	[ "${directory}" = "/" ] \
+		&& err "Removing / is not a good idea"
+
+	run "Removing immutable flags from ${directory}" \
+		"chflags -R noschg ${directory}"
+
+	run "Removing recursively ${directory}" \
+		"rm -rf ${directory}"
+}

@@ -3,7 +3,7 @@
  * status_openvpn.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc.
  * All rights reserved.
  *
@@ -82,7 +82,7 @@ include("head.inc"); ?>
 			return;
 		}
 
-		$('tr[name="r:' + values[1] + ":" + values[2] + '"]').each(
+		$('tr[id="r:' + values[1] + ":" + values[2] + '"]').each(
 			function(index,row) { $(row).fadeOut(1000); }
 		);
 	}

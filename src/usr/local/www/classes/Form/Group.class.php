@@ -3,7 +3,7 @@
  * Group.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -64,7 +64,7 @@ class Form_Group extends Form_Element
 
 	public function enableDuplication($max = null, $horiz = false)
 	{
-		if($horiz)
+		if ($horiz)
 			$this->addClass('user-duplication-horiz');	// added buttons are 2 cols wide with no offset
 		else
 			$this->addClass('user-duplication');		// added buttons 10 cols wide with 2 col offset

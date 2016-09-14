@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Sjon Hortensius
- * Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,11 +39,11 @@ class Form_Button extends Form_Input
 			$this->_tagName = 'a';
 			$this->addClass('btn-default');
 			unset($this->_attributes['type']);
-			if(isset($icon)) {
+			if (isset($icon)) {
 				$this->_attributes['icon'] = $icon;
 			}
 		}
-		else if(isset($icon))
+		else if (isset($icon))
 		{
 			$this->_tagSelfClosing = false;
 			$this->_tagName = 'button';

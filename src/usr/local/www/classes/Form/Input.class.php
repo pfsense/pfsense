@@ -3,7 +3,7 @@
  * Input.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -209,7 +209,7 @@ class Form_Input extends Form_Element
 	// These methods required by pkg_edit and the wizards that map xml element definitions to Form elements
 	public function setOnclick($text)
 	{
-		if($text)
+		if ($text)
 			$this->_attributes['onclick'] = $text;
 
 		return $this;
@@ -217,7 +217,7 @@ class Form_Input extends Form_Element
 
 	public function setOnchange($text)
 	{
-		if($text)
+		if ($text)
 			$this->_attributes['onchange'] = $text;
 
 		return $this;

@@ -2,7 +2,7 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -143,10 +143,10 @@ $(function() {
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
-		if(!($(this).hasClass('no-confirm'))) {
+		if (!($(this).hasClass('no-confirm'))) {
 			var msg = $.trim(this.textContent);
 
-			if(!msg)
+			if (!msg)
 				var msg = $.trim(this.value).toLowerCase();
 
 			var q = 'Are you sure you wish to '+ msg +'?';
@@ -201,7 +201,7 @@ $(function() {
 
 	  originalLeave.call(this, obj);
 
-	  if(self.$tip && self.$tip.length) {
+	  if (self.$tip && self.$tip.length) {
 	    container = self.$tip;
 	    timeout = self.timeout;
 	    container.one('mouseenter', function(){
@@ -234,6 +234,11 @@ $(function() {
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 
+	$(".resizable").each(function() {
+		$(this).css('height', 80).resizable({minHeight: 80, minWidth: 200}).parent().css('padding-bottom', 0);
+		$(this).css('height', 78);
+	});
+		
 	// Run in-page defined events
 	while (func = window.events.shift())
 		func();

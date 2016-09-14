@@ -5,7 +5,7 @@
  * setup_wizard.xml
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -116,28 +116,28 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
+		if (empty($_POST['hostname']) || !is_unqualified_hostname($_POST['hostname'])) {
 			include("head.inc");
 			$input_errors[] = "Hostname is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(empty($_POST['domain']) || !is_domain($_POST['domain'])) {
+		if (empty($_POST['domain']) || !is_domain($_POST['domain'])) {
 			include("head.inc");
 			$input_errors[] = "Domain is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
+		if (!empty($_POST['primarydnsserver']) && !is_ipaddr($_POST['primarydnsserver'])) {
 			include("head.inc");
 			$input_errors[] = "Primary DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
+		if (!empty($_POST['secondarydnsserver']) && !is_ipaddr($_POST['secondarydnsserver'])) {
 			include("head.inc");
 			$input_errors[] = "Second DNS server is invalid. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
@@ -188,16 +188,16 @@
 	<description>On this screen the Wide Area Network information will be configured.</description>
 	<javascriptafterformdisplay>
 		var selectedItem = 0;
-		if(document.forms[0].ipaddress.value == 'dhcp') {
+		if (document.forms[0].ipaddress.value == 'dhcp') {
 			selectedItem = 1;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'pppoe') {
+		} else if (document.forms[0].ipaddress.value == 'pppoe') {
 			selectedItem = 2;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'pptp') {
+		} else if (document.forms[0].ipaddress.value == 'pptp') {
 			selectedItem = 3;
 			document.forms[0].ipaddress.value = '';
-		} else if(document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
+		} else if (document.forms[0].ipaddress.value == 'ppp' || document.forms[0].ipaddress.value == 'l2tp') {
 			document.forms[0].ipaddress.value = '';
 		} else {
 			selectedItem = 0;
@@ -207,7 +207,7 @@
 
 		events.push(function(){
 			$('#showpppoepassword').click(function(event) {
-				if(this.checked) {
+				if (this.checked) {
 					$('#pppoepassword').attr('type', 'text');
 				} else {
 					$('#pppoepassword').attr('type', 'password');
@@ -215,7 +215,7 @@
 			});
 
 			$('#showpptppassword').click(function(event) {
-				if(this.checked) {
+				if (this.checked) {
 					$('#pptppassword').attr('type', 'text');
 				} else {
 					$('#pptppassword').attr('type', 'password');
@@ -456,21 +456,21 @@
 	</stepbeforeformdisplay>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
+		if (!empty($_POST['mtu']) && ($_POST['mtu'] < 576)) {
 			include("head.inc");
 			$input_errors[] = "MTU Must be at least 576 (Per RFC 791). Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
+		if (!empty($_POST['macaddress']) && !is_macaddr($_POST['macaddress'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid MAC Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
+		if (!empty($_POST['ipaddress']) && ($_POST['selectedtype'] == "Static")) {
 			if (!is_ipaddr($_POST['ipaddress'])) {
 				include("head.inc");
 				$input_errors[] = "Invalid WAN IP Address. Please press back in the browser window and correct.";
@@ -488,21 +488,21 @@
 				die;
 			}
 		}
-		if(!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
+		if (!empty($_POST['dhcphostname']) && !is_hostname($_POST['dhcphostname'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid DHCP Hostname. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
+		if (!empty($_POST['pptplocalipaddress']) && !is_ipaddr($_POST['pptplocalipaddress'])) {
 		    include("head.inc");
 			$input_errors[] = "Invalid PPTP Local IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
 			include("foot.inc");
 			die;
 		}
-		if(!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
+		if (!empty($_POST['pptpremoteipaddress']) && !is_ipaddr($_POST['pptpremoteipaddress'])) {
 			include("head.inc");
 			$input_errors[] = "Invalid PPTP Remote IP Address. Please press back in the browser window and correct.";
 			print_input_errors($input_errors);
@@ -552,14 +552,14 @@
 	</stepsubmitphpaction>
 	<stepsubmitbeforesave>
 		<![CDATA[
-			if($_POST['selectedtype'] == "Static") {
+			if ($_POST['selectedtype'] == "Static") {
 
 			} else {
 				$_POST['ipaddress'] = $_POST['selectedtype'];
 				$config['interfaces']['wan']['ipaddr'] = $_POST['selectedtype'];
 				write_config();
 			}
-			if(!$config['interfaces']['lan']) {
+			if (!$config['interfaces']['lan']) {
 				header("Location: /wizard.php?xml=setup_wizard.xml&stepid=6&next=Next");
 			}
 		]]>
@@ -590,7 +590,7 @@
 	</fields>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if(empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
+		if (empty($_POST['lanipaddress']) || !is_ipaddr($_POST['lanipaddress'])) {
 			print_info_box("Invalid LAN IP address. Please press back in the browser window and correct.");
 			die;
 		}
@@ -672,8 +672,8 @@
 	</fields>
 	<stepsubmitphpaction>
 	<![CDATA[
-	if($_POST['adminpassword'] != "") {
-		if($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
+	if ($_POST['adminpassword'] != "") {
+		if ($_POST['adminpassword'] == $_POST['adminpasswordagain']) {
 			$admin_user =& getUserEntryByUID(0);
 			local_user_set_password($admin_user, $_POST['adminpassword']);
 			local_user_set($admin_user);
@@ -751,7 +751,7 @@
 	<title>Wizard completed.</title>
 	<stepbeforeformdisplay>
 	<![CDATA[
-		if($g['product_name'] <> 'pfSense') {
+		if ($g['product_name'] <> 'pfSense') {
 			header("Location: " . fixup_string("\$myurl"));
 			exit;
 		}

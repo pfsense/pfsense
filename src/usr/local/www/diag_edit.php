@@ -1,9 +1,9 @@
 <?php
 /*
- * diag_arp.php
+ * diag_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -109,7 +109,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 	<div class="panel-body">
 		<div class="content">
 			<form>
-				<p><input type="text" class="form-control" id="fbTarget"/></p>
+				<p><input type="text" class="form-control" id="fbTarget" placeholder="<?=gettext('Path to file to be edited')?>"/></p>
 				<div class="btn-group">
 					<p>
 						<button type="button" class="btn btn-default btn-sm" onclick="loadFile();"	value="<?=gettext('Load')?>">
@@ -156,8 +156,8 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 			// calculate start/end
 			var startPos = 0, endPos = tarea.value.length;
-			for(var x = 0; x < lines.length; x++) {
-				if(x == lineNum) {
+			for (var x = 0; x < lines.length; x++) {
+				if (x == lineNum) {
 					break;
 				}
 				startPos += (lines[x].length+1);
@@ -169,7 +169,7 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 			// do selection
 			// Chrome / Firefox
 
-			if(typeof(tarea.selectionStart) != "undefined") {
+			if (typeof(tarea.selectionStart) != "undefined") {
 				tarea.focus();
 				tarea.selectionStart = startPos;
 				tarea.selectionEnd = endPos;
@@ -193,11 +193,32 @@ print_callout(gettext("The capabilities offered here can be dangerous. No suppor
 
 		$("#btngoto").prop('type','button');
 
+		//On clicking the GoTo button, validate the entered value
+		// and highlight the required line
 		$('#btngoto').click(function() {
 			var tarea = document.getElementById("fileContent");
-			showLine(tarea, $('#gotoline').val());
+			var gtl = $('#gotoline').val();
+			var lines = $("#fileContent").val().split(/\r|\r\n|\n/).length;
+
+			if (gtl < 1) {
+				gtl = 1;
+			}
+
+			if (gtl > lines) {
+				gtl = lines;
+			}
+
+			showLine(tarea, gtl);
 		});
-	});
+
+		// Goto the specified line on pressing the Enter key within the "Goto line" input element
+		$('#gotoline').keyup(function(e) {
+			if(e.keyCode == 13) {
+				$('#btngoto').click();
+			}
+		});
+
+	}); // e-o-events.push()
 
 	function loadFile() {
 		$("#fileStatus").html("");
@@ -394,6 +415,7 @@ var Base64 = {
 			loadFile();
 		});
 	<?php endif; ?>
+
 //]]>
 </script>
 

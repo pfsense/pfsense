@@ -3,7 +3,7 @@
  * shaper.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -2771,7 +2771,7 @@ class cbq_queue extends priq_queue {
 	function build_form() {
 		$sform = parent::build_form();
 
-		$section = new Form_Section('');
+		$section = new Form_Section('NOTITLE');
 
 		$group = new Form_Group('Bandwidth');
 
@@ -2803,6 +2803,8 @@ class cbq_queue extends priq_queue {
 			'Borrow from other queues when available',
 			($this->GetBorrow() == "on")
 		));
+
+		$sform->add($section);
 
 		return $sform;
 	}

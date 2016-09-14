@@ -3,7 +3,7 @@
  * status_dhcp_leases.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -92,7 +92,7 @@ function adjust_gmt($dt) {
 	if ($dhcpleaseinlocaltime == "yes") {
 		$ts = strtotime($dt . " GMT");
 		if ($ts !== false) {
-			return strftime("%Y/%m/%d %I:%M:%S%p", $ts);
+			return strftime("%Y/%m/%d %H:%M:%S", $ts);
 		}
 	}
 	/* If we did not need to convert to local time or the conversion failed, just return the input. */

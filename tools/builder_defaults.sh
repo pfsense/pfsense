@@ -3,7 +3,7 @@
 # builder_defaults.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,6 +37,7 @@ if [ ! -d "${BUILDER_ROOT}" ]; then
 fi
 
 export BUILDER_TOOLS=${BUILDER_TOOLS:-"${BUILDER_ROOT}/tools"}
+export BUILDER_SCRIPTS=${BUILDER_SCRIPTS:-"${BUILDER_ROOT}/build/scripts"}
 
 if [ ! -d "${BUILDER_TOOLS}" ]; then
 	echo ">>> ERROR: BUILDER_TOOLS is invalid"
@@ -80,8 +81,8 @@ export PRODUCT_SRC=${PRODUCT_SRC:-"${BUILDER_ROOT}/src"}
 export PRODUCT_EMAIL=${PRODUCT_EMAIL:-"coreteam@pfsense.org"}
 export XML_ROOTOBJ=${XML_ROOTOBJ:-$(echo "${PRODUCT_NAME}" | tr '[[:upper:]]' '[[:lower:]]')}
 
-if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_ELECTRIC_SHEEP_FENCING}" != "yes" ]; then
-	echo ">>>ERROR: According the following license, only Electric Sheep Fencing can build genuine pfSense® software"
+if [ "${PRODUCT_NAME}" = "pfSense" -a "${BUILD_AUTHORIZED_BY_NETGATE}" != "yes" ]; then
+	echo ">>>ERROR: According the following license, only Netgate can build genuine pfSense® software"
 	echo ""
 	cat ${BUILDER_ROOT}/LICENSE
 	exit 1
@@ -106,13 +107,14 @@ else
 	export GIT_REPO_BRANCH_OR_TAG="${_cur_git_repo_branch_or_tag}"
 fi
 # Use vX_Y instead of RELENG_X_Y for poudriere to make it shorter
-POUDRIERE_BRANCH=$(echo "${GIT_REPO_BRANCH_OR_TAG}" | sed 's,RELENG_,v,')
+# Replace . by _ to make tag names look correct
+POUDRIERE_BRANCH=$(echo "${GIT_REPO_BRANCH_OR_TAG}" | sed 's,RELENG_,v,; s,\.,_,g')
 
 GIT_REPO_BASE=$(git -C ${BUILDER_ROOT} config --get remote.origin.url | sed -e 's,/[^/]*$,,')
 
 # This is used for using svn for retrieving src
 export FREEBSD_REPO_BASE=${FREEBSD_REPO_BASE:-"${GIT_REPO_BASE}/freebsd-src.git"}
-export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"devel-11"}
+export FREEBSD_BRANCH=${FREEBSD_BRANCH:-"RELENG_2_4"}
 export FREEBSD_SRC_DIR=${FREEBSD_SRC_DIR:-"${SCRATCHDIR}/FreeBSD-src"}
 
 export BUILD_KERNELS=${BUILD_KERNELS:-"${PRODUCT_NAME}"}
@@ -141,18 +143,7 @@ export KERNEL_BUILD_PATH=${KERNEL_BUILD_PATH:-"${SCRATCHDIR}/kernels"}
 # Do not touch builder /usr/obj
 export MAKEOBJDIRPREFIX=${MAKEOBJDIRPREFIX:-"${SCRATCHDIR}/obj"}
 
-# Controls how many concurrent make processes are run for each stage
-_CPUS=""
-if [ -z "${NO_MAKEJ}" ]; then
-	_CPUS=$(expr $(sysctl -n kern.smp.cpus) '*' 2)
-	if [ -n "${_CPUS}" ]; then
-		_CPUS="-j${_CPUS}"
-	fi
-fi
-
-export MAKEJ=${MAKEJ:-"${_CPUS}"}
-
-export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs glxsb if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
+export MODULES_OVERRIDE=${MODULES_OVERRIDE:-"i2c ipmi ndis ipfw ipdivert dummynet fdescfs opensolaris zfs if_stf coretemp amdtemp aesni sfxge hwpmc vmm nmdm ix ixv"}
 
 # Area that the final image will appear in
 export IMAGES_FINAL_DIR=${IMAGES_FINAL_DIR:-"${SCRATCHDIR}/${PRODUCT_NAME}/"}
@@ -287,7 +278,7 @@ export PKG_RSYNC_LOGS=${PKG_RSYNC_LOGS:-"/staging/ce/packages/logs/${POUDRIERE_B
 
 # Final packages server
 if [ -n "${_IS_RELEASE}" ]; then
-	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"pkg.pfsense.org"}
+	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"files01.nyi.netgate.com files02.nyi.netgate.com"}
 	export PKG_FINAL_RSYNC_DESTDIR=${PKG_FINAL_RSYNC_DESTDIR:-"/usr/local/www/pkg"}
 else
 	export PKG_FINAL_RSYNC_HOSTNAME=${PKG_FINAL_RSYNC_HOSTNAME:-"beta.pfsense.org"}
@@ -320,13 +311,13 @@ else
 fi
 # Command used to sign pkg repo
 export PKG_REPO_SIGNING_COMMAND=${PKG_REPO_SIGNING_COMMAND:-"ssh sign@codesigner.netgate.com sudo ./sign.sh ${PKG_REPO_SIGN_KEY}"}
+export DO_NOT_SIGN_PKG_REPO=${DO_NOT_SIGN_PKG_REPO:-}
 
 # Define base package version, based on date for snaps
 export CORE_PKG_VERSION="${PRODUCT_VERSION%%-*}${CORE_PKG_DATESTRING}${PRODUCT_REVISION:+_}${PRODUCT_REVISION}"
 export CORE_PKG_PATH=${CORE_PKG_PATH:-"${SCRATCHDIR}/${PRODUCT_NAME}_${POUDRIERE_BRANCH}_${TARGET_ARCH}-core"}
 export CORE_PKG_REAL_PATH="${CORE_PKG_PATH}/.real_${DATESTRING}"
 export CORE_PKG_ALL_PATH="${CORE_PKG_PATH}/All"
-export CORE_PKG_TMP=${CORE_PKG_TMP:-"${SCRATCHDIR}/core_pkg_tmp"}
 
 export PKG_REPO_BASE=${PKG_REPO_BASE:-"${FREEBSD_SRC_DIR}/release/pkg_repos"}
 export PKG_REPO_DEFAULT=${PKG_REPO_DEFAULT:-"${PKG_REPO_BASE}/${PRODUCT_NAME}-repo.conf"}
@@ -359,8 +350,6 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}
 export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
-export RSYNCLOGS=${RSYNCLOGS:-"/usr/local/www/snapshots/logs/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}/${TARGET}"}
-export RSYNCKBYTELIMIT=${RSYNCKBYTELIMIT:-"248000"}
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}
@@ -368,15 +357,13 @@ export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastu
 if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 	export SNAPSHOTS_RSYNCIP=${PKG_RSYNC_HOSTNAME}
 	export SNAPSHOTS_RSYNCUSER=${PKG_RSYNC_USERNAME}
-	export SNAPSHOTS_RSYNCLOGS=${PKG_RSYNC_LOGS}
 else
 	export SNAPSHOTS_RSYNCIP=${RSYNCIP}
 	export SNAPSHOTS_RSYNCUSER=${RSYNCUSER}
-	export SNAPSHOTS_RSYNCLOGS=${RSYNCLOGS}
 fi
 
 if [ "${PRODUCT_NAME}" = "pfSense" ]; then
-	export VENDOR_NAME=${VENDOR_NAME:-"Electric Sheep Fencing, LLC"}
+	export VENDOR_NAME=${VENDOR_NAME:-"Rubicon Communications, LLC (Netgate)"}
 	export OVF_INFO=${OVF_INFO:-"pfSense is a free, open source customized distribution of FreeBSD tailored for use as a firewall and router. In addition to being a powerful, flexible firewalling and routing platform, it includes a long list of related features and a package system allowing further expandability without adding bloat and potential security vulnerabilities to the base distribution. pfSense is a popular project with more than 1 million downloads since its inception, and proven in countless installations ranging from small home networks protecting a PC and an Xbox to large corporations, universities and other organizations protecting thousands of network devices."}
 else
 	export VENDOR_NAME=${VENDOR_NAME:-"nonSense"}

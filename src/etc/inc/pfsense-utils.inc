@@ -3,7 +3,7 @@
  * pfsense-utils.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -707,7 +707,7 @@ function get_filename_from_url($url) {
 function get_dir($dir) {
 	$dir_array = array();
 	$d = dir($dir);
-	if(!is_object($d)) {
+	if (!is_object($d)) {
 		return array();
 	}
 	while (false !== ($entry = $d->read())) {
@@ -1777,7 +1777,7 @@ function compare_hostname_to_dnscache($hostname) {
  */
 function load_crypto() {
 	global $config, $g;
-	$crypto_modules = array('glxsb', 'aesni');
+	$crypto_modules = array('aesni');
 
 	if (!in_array($config['system']['crypto_hardware'], $crypto_modules)) {
 		return false;
@@ -2810,7 +2810,7 @@ function load_mac_manufacturer_table() {
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
- *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
  *     If check_subnets is true and cidrprefix is specified,
@@ -2831,7 +2831,7 @@ function is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = false, 
  * INPUTS
  *   IP Address to check.
  *   If ignore_if is a VIP (not carp), vip array index is passed after string _virtualip
- *   check_localip - if true then also check for matches with PPTP and LT2P addresses
+ *   check_localip - if true then also check for matches with PPTP and L2TP addresses
  *   check_subnets - if true then check if the given ipaddr is contained anywhere in the subnet of any other configured IP address
  *   cidrprefix - the CIDR prefix (16, 20, 24, 64...) of ipaddr.
  *     If check_subnets is true and cidrprefix is specified,

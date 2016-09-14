@@ -3,7 +3,7 @@
 # rc.php_ini_setup
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2014-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2014-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,8 +68,6 @@ else
 		OPCACHEMEMSIZE="50"
 	fi
 fi
-
-/usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
 
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then
@@ -198,7 +196,7 @@ post_max_size = 200M
 html_errors = Off
 zlib.output_compression = Off
 zlib.output_compression_level = 1
-include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form"
+include_path = ".:/etc/inc:/usr/local/www:/usr/local/captiveportal:/usr/local/pkg:/usr/local/www/classes:/usr/local/www/classes/Form:/usr/local/share/pear"
 display_startup_errors=on
 display_errors=on
 log_errors=on
@@ -268,7 +266,7 @@ suhosin.post.max_value_length = 500000
 suhosin.request.max_array_index_length = 256
 suhosin.request.max_vars = 5000
 suhosin.request.max_value_length = 500000
-suhosin.memory_limit = 536870912
+suhosin.memory_limit = 805306368
 
 EOF
 

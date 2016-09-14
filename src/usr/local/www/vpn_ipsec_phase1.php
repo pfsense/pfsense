@@ -3,7 +3,7 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -393,14 +393,6 @@ if ($_POST) {
 
 	if (preg_match("/aes\d+gcm/", $_POST['ealgo']) && $_POST['iketype'] != "ikev2") {
 		$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
-	}
-
-	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
-		if ($config['system']['crypto_hardware'] == "glxsb") {
-			if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128") {
-				$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-			}
-		}
 	}
 
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */

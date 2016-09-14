@@ -3,7 +3,7 @@
 # build.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,7 +26,7 @@ usage() {
 	echo "	[ options ]: "
 	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
-	echo "		--no-cleanobjdir|--no-cleanrepos|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
+	echo "		--no-cleanobjdir|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"
 	echo "		--setup - Install required repo and ports builder require to work"
 	echo "		--update-sources - Refetch FreeBSD sources"
@@ -67,9 +67,8 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			;;
-		--no-cleanobjdir|--no-cleanrepos|-d)
+		--no-cleanobjdir|-d)
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
 			;;
 		--flash-size|-f)
 			shift
@@ -84,7 +83,6 @@ while test "$1" != ""; do
 			export NO_BUILDWORLD=YES
 			export NO_BUILDKERNEL=YES
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			export NO_CLEAN_FREEBSD_SRC=YES
 			_SKIP_REBUILD_PRESTAGE=YES
 			_USE_OLD_DATESTRING=YES
 			;;
@@ -261,7 +259,6 @@ if [ -n "${SNAPSHOTS}" -a -z "${DO_NOT_UPLOAD}" ]; then
 		RSYNCIP \
 		RSYNCUSER \
 		RSYNCPATH \
-		RSYNCLOGS \
 		PKG_RSYNC_HOSTNAME \
 		PKG_RSYNC_USERNAME \
 		PKG_RSYNC_SSH_PORT \
@@ -308,6 +305,9 @@ elif [ "$IMAGETYPE" = "all" ]; then
 	_IMAGESTOBUILD="iso nanobsd nanobsd-vga memstick memstickserial"
 	if [ "${TARGET}" = "amd64" ]; then
 		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstickadi"
+		if [ -n "${_IS_RELEASE}"  ]; then
+			_IMAGESTOBUILD="${_IMAGESTOBUILD} ova"
+		fi
 	fi
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
@@ -316,8 +316,6 @@ fi
 echo ">>> Building image type(s): ${_IMAGESTOBUILD}"
 
 if [ -n "${SNAPSHOTS}" ]; then
-	snapshots_rotate_logfile
-
 	snapshots_update_status ">>> Starting snapshot build operations"
 
 	if pkg update -r ${PRODUCT_NAME} >/dev/null 2>&1; then
@@ -327,8 +325,6 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
-	[ -n "${CORE_PKG_TMP}" -a -d "${CORE_PKG_TMP}" ] \
-		&& rm -rf ${CORE_PKG_TMP}
 	[ -n "${CORE_PKG_PATH}" -a -d "${CORE_PKG_PATH}" ] \
 		&& rm -rf ${CORE_PKG_PATH}
 
@@ -343,15 +339,13 @@ if [ -z "${_SKIP_REBUILD_PRESTAGE}" ]; then
 	builder_setup
 
 	# Build world, kernel and install
-	echo ">>> Building world for ISO... $FREEBSD_BRANCH ..."
 	make_world
 
 	# Build kernels
-	echo ">>> Building kernel configs: $BUILD_KERNELS for FreeBSD: $FREEBSD_BRANCH ..."
 	build_all_kernels
 
 	# Install kernel on installer
-	installkernel ${INSTALLER_CHROOT_DIR}
+	installkernel ${INSTALLER_CHROOT_DIR} ${PRODUCT_NAME}
 
 	# Prepare pre-final staging area
 	clone_to_staging_area
@@ -448,7 +442,7 @@ if [ -n "${SNAPSHOTS}" ]; then
 fi
 
 echo ">>> ${IMAGES_FINAL_DIR} now contains:"
-ls -lah ${IMAGES_FINAL_DIR}
+(cd ${IMAGES_FINAL_DIR} && find ${IMAGES_FINAL_DIR} -type f)
 
 set -e
 # Run final finish routines

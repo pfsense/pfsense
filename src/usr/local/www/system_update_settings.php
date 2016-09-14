@@ -3,7 +3,7 @@
  * system_update_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -195,7 +195,7 @@ if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
 					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
 
 	$form->add($section);
-} // e-o-if(file_exista()
+} // e-o-if (file_exists())
 
 print($form);
 

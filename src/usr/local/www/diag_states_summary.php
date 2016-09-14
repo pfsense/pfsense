@@ -3,7 +3,7 @@
  * diag_states_summary.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -142,6 +142,11 @@ function print_summary_table($label, $iparr, $sort = TRUE) {
 			<div class="table-responsive">
 				<table class="table table-hover table-condensed table-striped">
 					<thead>
+						<tr>
+							<th></th><th></th><th></th>
+							<th colspan="3" class="text-center colspanth"><?=gettext("Protocol counts")?></th>
+						</tr>
+
 						<tr>
 							<th ><?=gettext("IP");?></th>
 							<th class="text-center"># <?=gettext("States");?></th>

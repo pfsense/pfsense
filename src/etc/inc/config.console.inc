@@ -3,7 +3,7 @@
  * config.console.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -66,6 +66,8 @@ EOD;
 		echo gettext("No interfaces found!") . "\n";
 		$iflist = array();
 	} else {
+		// ifsmallist is kept with spaces at the beginning and end to assist with str_replace() operations
+		$ifsmallist = " ";
 		foreach ($iflist as $iface => $ifa) {
 			$friendly = convert_real_interface_to_friendly_interface_name($iface);	
 			$ifstatus = pfSense_get_interface_addresses($config['interfaces'][$friendly]['if']);
@@ -73,7 +75,7 @@ EOD;
 				$status = "  (up)";
 			else
 				$status = "(down)";
-			$ifsmallist = trim($ifsmallist . " " . $iface);
+			$ifsmallist = $ifsmallist . $iface. " ";
 			echo sprintf("% -7s%s %s %s\n", $iface, $ifa['mac'],
 				$status, substr($ifa['dmesg'], 0, 48));
 		}
@@ -175,7 +177,7 @@ EOD;
 					"VLAN tag {$vlan['tag']}, parent interface {$vlan['if']}");
 
 				$iflist[$vlan['if'] . '_vlan' . $vlan['tag']] = array();
-				$ifsmallist = trim($ifsmallist . " " . $vlan['if'] . '_vlan' . $vlan['tag']);
+				$ifsmallist = $ifsmallist . $vlan['if'] . '_vlan' . $vlan['tag'] . " ";
 			}
 		}
 
@@ -189,7 +191,7 @@ EOD;
 
 		do {
 			echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
-			printf(gettext("%s(%s or a): "), "\n", $ifsmallist);
+			printf(gettext("%s(%s or a): "), "\n", trim($ifsmallist));
 			$wanif = chop(fgets($fp));
 			if ($wanif === "") {
 				return;
@@ -201,13 +203,13 @@ EOD;
 				unset($wanif);
 				continue;
 			}
-			$ifsmallist = trim(str_replace("  ", " ", str_replace($wanif, "", $ifsmallist)));
+			$ifsmallist = str_replace(" " . $wanif . " ", " ", $ifsmallist);
 		} while (!$wanif);
 
 		do {
 			printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
 				"NOTE: this enables full Firewalling/NAT mode.%s" .
-				"(%s a or nothing if finished):%s"), "\n", "\n", "\n", $ifsmallist, " ");
+				"(%s a or nothing if finished):%s"), "\n", "\n", "\n", trim($ifsmallist), " ");
 
 			$lanif = chop(fgets($fp));
 
@@ -227,7 +229,7 @@ EOD;
 				unset($lanif);
 				continue;
 			}
-			$ifsmallist = trim(str_replace("  ", " ", str_replace($lanif, "", $ifsmallist)));
+			$ifsmallist = str_replace(" " . $lanif . " ", " ", $ifsmallist);
 		} while (!$lanif);
 
 		/* optional interfaces */
@@ -246,7 +248,7 @@ EOD;
 				}
 
 				printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-					"(%s a or nothing if finished):%s"), "\n", $io, "\n", $ifsmallist, " ");
+					"(%s a or nothing if finished):%s"), "\n", $io, "\n", trim($ifsmallist), " ");
 
 				$optif[$i] = chop(fgets($fp));
 
@@ -263,7 +265,7 @@ EOD;
 						unset($optif[$i]);
 						continue;
 					}
-					$ifsmallist = trim(str_replace("  ", " ", str_replace($optif[$i], "", $ifsmallist)));
+					$ifsmallist = str_replace(" " . $optif[$i] . " ", " ", $ifsmallist);
 				} else {
 					unset($optif[$i]);
 					break;

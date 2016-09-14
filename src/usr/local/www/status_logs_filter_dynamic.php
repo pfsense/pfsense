@@ -3,7 +3,7 @@
  * status_logs_filter_dynamic.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -294,7 +294,7 @@ function update_table_rows(data) {
 		move = 0;
 	}
 
-	if (($("#count").text() == 0) && (data.length < nentries)){
+	if (($("#count").text() == 0) && (data.length < nentries)) {
 		move += rows.length;
 	}
 
@@ -445,7 +445,7 @@ function toggleListDescriptions() {
 						<td><?=htmlspecialchars($filterent['proto'])?></td>
 					</tr>
 <?php
-				} // e-o-foreach()
+				} // e-o-foreach ()
 
 	if (count($filterlog) == 0) {
 		print '<tr class="text-nowrap"><td colspan=6>';

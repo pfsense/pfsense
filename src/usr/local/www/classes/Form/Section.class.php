@@ -3,7 +3,7 @@
  * Section.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -62,12 +62,12 @@ class Form_Section extends Form_Element
 	}
 
 	// Shortcut, adds a group with a password and a confirm password field.
-	// The confirm password element is created by apprnding "_confirm" to the name supplied
+	// The confirm password element is created by appending "_confirm" to the name supplied
 	// The value is overwritten with a default pattern (So the user cannot see it)
 	public function addPassword(Form_Input $input)
 	{
 		$group = new Form_Group($input->getTitle());
-		if($input->getValue() != "") {
+		if ($input->getValue() != "") {
 			$input->setValue(DMYPWD);
 		}
 
@@ -109,7 +109,16 @@ class Form_Section extends Form_Element
 			}
 		}
 
-		return <<<EOT
+		if ($title == "NOTITLE") {
+			return <<<EOT
+	{$element}
+		{$bodyclass}
+			{$body}
+		</div>
+	</div>
+EOT;
+		} else {
+			return <<<EOT2
 	{$element}
 		<div class="panel-heading">
 			<h2 class="panel-title">{$title}{$hdricon}</h2>
@@ -118,6 +127,7 @@ class Form_Section extends Form_Element
 			{$body}
 		</div>
 	</div>
-EOT;
+EOT2;
+	}
 	}
 }

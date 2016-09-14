@@ -3,7 +3,7 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -119,10 +119,15 @@ foreach (glob("/usr/local/www/widgets/widgets/*.widget.php") as $file) {
 if (!is_array($config['widgets'])) {
 	$config['widgets'] = array();
 }
+if (!is_array($user_settings['widgets'])) {
+	$user_settings['widgets'] = array();
+}
 
 if ($_POST && $_POST['sequence']) {
 
-	$widget_settings = array();
+	// Start with the user's widget settings.
+	$widget_settings = $user_settings['widgets'];
+
 	$widget_settings['sequence'] = rtrim($_POST['sequence'], ',');
 
 	foreach ($widgets as $widgetname => $widgetconfig) {
@@ -206,8 +211,7 @@ if ($fd) {
 			or preg_match("/.*(VIA Padlock)/", $dmesgl, $matches)
 			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
 			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
-			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
+			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}

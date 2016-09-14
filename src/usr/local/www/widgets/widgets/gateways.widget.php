@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Seth Mos
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -38,16 +38,18 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 }
 
 if ($_POST) {
-	if (!is_array($config["widgets"]["gateways_widget"])) {
-		$config["widgets"]["gateways_widget"] = array();
+	if (!is_array($user_settings["widgets"]["gateways_widget"])) {
+		$user_settings["widgets"]["gateways_widget"] = array();
 	}
 	if (isset($_POST["display_type"])) {
-		$config["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
+		$user_settings["widgets"]["gateways_widget"]["display_type"] = $_POST["display_type"];
 	}
-	write_config(gettext("Updated gateways widget settings via dashboard."));
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Updated gateways widget settings via dashboard."));
 	header("Location: /");
 	exit(0);
 }
+
+$widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
 ?>
 
 <div class="table-responsive">
@@ -81,8 +83,8 @@ if ($_POST) {
 				$display_type_gw_ip = "checked";
 				$display_type_monitor_ip = "";
 				$display_type_both_ip = "";
-				if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-					$selected_radio = $config["widgets"]["gateways_widget"]["display_type"];
+				if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
+					$selected_radio = $user_settings["widgets"]["gateways_widget"]["display_type"];
 					if ($selected_radio == "gw_ip") {
 						$display_type_gw_ip = "checked";
 						$display_type_monitor_ip = "";
@@ -133,19 +135,21 @@ if ($_POST) {
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 			$('#gwtblbody').html(response);
 			// and do it again
-			setTimeout(get_gw_stats, 5000);
+			setTimeout(get_gw_stats, "<?=$widgetperiod?>");
 		});
 	}
 
 	events.push(function(){
-		get_gw_stats();
+		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
+		// hit the server at exactly the same time)
+		setTimeout(get_gw_stats, Math.floor((Math.random() * 10000) + 1000));
 	});
 //]]>
 </script>
 
 <?php
 function compose_table_body_contents() {
-	global $config;
+	global $user_settings;
 
 	$rtnstr = '';
 
@@ -153,8 +157,8 @@ function compose_table_body_contents() {
 	$gateways_status = array();
 	$gateways_status = return_gateways_status(true);
 
-	if (isset($config["widgets"]["gateways_widget"]["display_type"])) {
-		$display_type = $config["widgets"]["gateways_widget"]["display_type"];
+	if (isset($user_settings["widgets"]["gateways_widget"]["display_type"])) {
+		$display_type = $user_settings["widgets"]["gateways_widget"]["display_type"];
 	} else {
 		$display_type = "gw_ip";
 	}

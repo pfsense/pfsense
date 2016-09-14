@@ -3,7 +3,7 @@
 # build_snapshots.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -162,6 +162,9 @@ while [ /bin/true ]; do
 
 	git_last_commit
 
+	OIFS=${IFS}
+	IFS="
+"
 	if [ -n "${POUDRIERE_SNAPSHOTS}" ]; then
 		(${BUILDER_ROOT}/build.sh --update-poudriere-ports 2>&1) \
 		    | while read -r LINE; do
@@ -179,11 +182,12 @@ while [ /bin/true ]; do
 		done
 
 		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '2g 4g' \
-		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial" 2>&1) \
+		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial iso" 2>&1) \
 		    | while read -r LINE; do
 			snapshot_update_status "${LINE}"
 		done
 	fi
+	IFS=${OIFS}
 
 	if [ -z "${LOOPED_SNAPSHOTS}" ]; then
 		# only one build required, exiting

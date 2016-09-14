@@ -3,7 +3,7 @@
  * services_captiveportal_vouchers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -290,92 +290,61 @@ if ($_POST) {
 			}
 			if ($newvoucher['vouchersyncpass'] && $newvoucher['vouchersyncusername'] &&
 			    $newvoucher['vouchersyncport'] && $newvoucher['vouchersyncdbip']) {
+
 				// Synchronize the voucher DB from the master node
-				require_once("xmlrpc.inc");
-
-				$protocol = "http";
-				if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-				    $config['system']['webgui']['protocol'] == "https") {
-					$protocol = "https";
-				}
-				if ($protocol == "https" || $newvoucher['vouchersyncport'] == "443") {
-					$url = "https://{$newvoucher['vouchersyncdbip']}";
-				} else {
-					$url = "http://{$newvoucher['vouchersyncdbip']}";
-				}
-
 				$execcmd = <<<EOF
+				global \$config;
 				\$toreturn = array();
 				\$toreturn['voucher'] = \$config['voucher']['$cpzone'];
 				unset(\$toreturn['vouchersyncport'], \$toreturn['vouchersyncpass'], \$toreturn['vouchersyncusername'], \$toreturn['vouchersyncdbip']);
 
 EOF;
-
-				/* assemble xmlrpc payload */
-				$params = array(
-					XML_RPC_encode($newvoucher['vouchersyncpass']),
-					XML_RPC_encode($execcmd)
-				);
-				$port = $newvoucher['vouchersyncport'];
-				log_error(sprintf(gettext("voucher XMLRPC sync data %s:%d"), $url, $port));
-				$msg = new XML_RPC_Message('pfsense.exec_php', $params);
-				$cli = new XML_RPC_Client('/xmlrpc.php', $url, $port);
-				$cli->setCredentials($newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
-				$resp = $cli->send($msg, "250");
-				if (!is_object($resp)) {
-					$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d (pfsense.exec_php)."), $url, $port);
-					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, gettext("Communications error occurred"), "");
-					$input_errors[] = $error;
-				} elseif ($resp->faultCode()) {
-					$cli->setDebug(1);
-					$resp = $cli->send($msg, "250");
-					$error = sprintf(gettext("An error code was received while attempting CaptivePortalVoucherSync XMLRPC sync with %s:%d - Code %d: %s"), $url, $port, $resp->faultCode(), $resp->faultString());
-					log_error($error);
-					file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
-					$input_errors[] = $error;
-				} else {
-					log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s:%d (pfsense.exec_php)."), $url, $port));
+				require_once("xmlrpc_client.inc");
+				$rpc_client = new pfsense_xmlrpc_client();
+				$rpc_client->setConnectionData(
+						$newvoucher['vouchersyncdbip'], $newvoucher['vouchersyncport'], 
+						$newvoucher['vouchersyncusername'], $newvoucher['vouchersyncpass']);
+				$rpc_client->set_noticefile("CaptivePortalVoucherSync");
+				$resp = $rpc_client->xmlrpc_exec_php($execcmd);
+				if ($resp == null) {
+					$input_errors[] = $rpc_client->get_error();
 				}
+
 				if (!$input_errors) {
-					$toreturn = XML_RPC_Decode($resp->value());
-					if (!is_array($toreturn)) {
-						if ($toreturn == "Authentication failed") {
-							$input_errors[] = gettext("Could not synchronize the voucher database: Authentication Failed.");
-						}
-					} else {
+					if (is_array($resp)) {
+						log_error(sprintf(gettext("The Captive Portal voucher database has been synchronized with %s (pfsense.exec_php)."), $url));
 						// If we received back the voucher roll and other information then store it.
-						if ($toreturn['voucher']['roll']) {
-							$newvoucher['roll'] = $toreturn['voucher']['roll'];
+						if ($resp['voucher']['roll']) {
+							$newvoucher['roll'] = $resp['voucher']['roll'];
 						}
-						if ($toreturn['voucher']['rollbits']) {
-							$newvoucher['rollbits'] = $toreturn['voucher']['rollbits'];
+						if ($resp['voucher']['rollbits']) {
+							$newvoucher['rollbits'] = $resp['voucher']['rollbits'];
 						}
-						if ($toreturn['voucher']['ticketbits']) {
-							$newvoucher['ticketbits'] = $toreturn['voucher']['ticketbits'];
+						if ($resp['voucher']['ticketbits']) {
+							$newvoucher['ticketbits'] = $resp['voucher']['ticketbits'];
 						}
-						if ($toreturn['voucher']['checksumbits']) {
-							$newvoucher['checksumbits'] = $toreturn['voucher']['checksumbits'];
+						if ($resp['voucher']['checksumbits']) {
+							$newvoucher['checksumbits'] = $resp['voucher']['checksumbits'];
 						}
-						if ($toreturn['voucher']['magic']) {
-							$newvoucher['magic'] = $toreturn['voucher']['magic'];
+						if ($resp['voucher']['magic']) {
+							$newvoucher['magic'] = $resp['voucher']['magic'];
 						}
-						if ($toreturn['voucher']['exponent']) {
-							$newvoucher['exponent'] = $toreturn['voucher']['exponent'];
+						if ($resp['voucher']['exponent']) {
+							$newvoucher['exponent'] = $resp['voucher']['exponent'];
 						}
-						if ($toreturn['voucher']['publickey']) {
-							$newvoucher['publickey'] = $toreturn['voucher']['publickey'];
+						if ($resp['voucher']['publickey']) {
+							$newvoucher['publickey'] = $resp['voucher']['publickey'];
 						}
-						if ($toreturn['voucher']['privatekey']) {
-							$newvoucher['privatekey'] = $toreturn['voucher']['privatekey'];
+						if ($resp['voucher']['privatekey']) {
+							$newvoucher['privatekey'] = $resp['voucher']['privatekey'];
 						}
-						if ($toreturn['voucher']['descrmsgnoaccess']) {
-							$newvoucher['descrmsgnoaccess'] = $toreturn['voucher']['descrmsgnoaccess'];
+						if ($resp['voucher']['descrmsgnoaccess']) {
+							$newvoucher['descrmsgnoaccess'] = $resp['voucher']['descrmsgnoaccess'];
 						}
-						if ($toreturn['voucher']['descrmsgexpired']) {
-							$newvoucher['descrmsgexpired'] = $toreturn['voucher']['descrmsgexpired'];
+						if ($resp['voucher']['descrmsgexpired']) {
+							$newvoucher['descrmsgexpired'] = $resp['voucher']['descrmsgexpired'];
 						}
-						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s:%2$s'), $url, $port);
+						$savemsg = sprintf(gettext('Voucher database has been synchronized from %1$s'), $url);
 
 						$config['voucher'][$cpzone] = $newvoucher;
 						write_config();

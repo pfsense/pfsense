@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1565,15 +1565,22 @@ function get_user_settings($username) {
 	return $settings;
 }
 
-function save_widget_settings($username, $settings) {
+function save_widget_settings($username, $settings, $message = "") {
 	global $config, $userindex;
 	$user = getUserEntry($username);
+
+	if (strlen($message) > 0) {
+		$msgout = $message;
+	} else {
+		$msgout = gettext("Widget configuration has been changed.");
+	}
+
 	if (isset($user['customsettings'])) {
 		$config['system']['user'][$userindex[$username]]['widgets'] = $settings;
-		write_config(sprintf(gettext("Widget configuration has been changed for user %s."), $username));
+		write_config($msgout . " " . sprintf(gettext("(User %s)"), $username));
 	} else {
 		$config['widgets'] = $settings;
-		write_config(gettext("Widget configuration has been changed."));
+		write_config($msgout);
 	}
 }
 

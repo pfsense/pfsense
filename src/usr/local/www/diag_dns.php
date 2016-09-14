@@ -3,7 +3,7 @@
  * diag_dns.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -55,15 +55,15 @@ function resolve_host_addresses($host) {
 	$resolved = array();
 	$errreporting = error_reporting();
 	error_reporting($errreporting & ~E_WARNING);// dns_get_record throws a warning if nothing is resolved..
-	foreach($recordtypes as $recordtype) {
+	foreach ($recordtypes as $recordtype) {
 		$tmp = dns_get_record($host, $recordtype);
 		if (is_array($tmp)) {
 			$dnsresult = array_merge($dnsresult, $tmp);
 		}
 	}
 	error_reporting($errreporting);// restore original php warning/error settings.
-	
-	foreach($dnsresult as $item) {
+
+	foreach ($dnsresult as $item) {
 		$newitem = array();
 		$newitem['type'] = $item['type'];
 		switch ($item['type']) {
@@ -79,7 +79,6 @@ function resolve_host_addresses($host) {
 				$newitem['data'] = $item['ipv6'];
 				$resolved[] = $newitem;
 				break;
-				
 		}
 	}
 	return $resolved;
@@ -152,9 +151,8 @@ if ($_POST) {
 	}
 
 	$type = "unknown";
-	$resolved = "";
+	$resolved = array();
 	$ipaddr = "";
-	$hostname = "";
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
@@ -168,32 +166,23 @@ if ($_POST) {
 			}
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
-			$resolved = gethostbyname($host);
-			if ($resolved) {
-				$resolved = resolve_host_addresses($host);
-			}
-			$hostname = $host;
-			if ($host != $resolved) {
-				$ipaddr = $resolved[0];
-			}
-		}
-
-		if ($host == $resolved) {
-			$resolved = gettext("No record found");
+			$ipaddr = gethostbyname($host);
+			$resolved = resolve_host_addresses($host);
 		}
 	}
 }
 
-if (($_POST['host']) && ($_POST['dialog_output'])) {
-	display_host_results ($host, $resolved, $dns_speeds);
+if ($_POST['host'] && $_POST['dialog_output']) {
+	$host = (isset($resolvedptr) ? $resolvedptr : $host);
+	display_host_results ($ipaddr, $host, $dns_speeds);
 	exit;
 }
 
 function display_host_results ($address, $hostname, $dns_speeds) {
 	$map_lengths = function($element) { return strlen($element[0]); };
 
-	echo gettext("IP Address") . ": {$address} \n";
-	echo gettext("Host Name") . ": {$hostname} \n";
+	echo gettext("IP Address") . ": " . htmlspecialchars($address) . " \n";
+	echo gettext("Host Name") . ": " . htmlspecialchars($hostname) .  " \n";
 	echo "\n";
 	$text_table = array();
 	$text_table[] = array(gettext("Server"), gettext("Query Time"));
@@ -267,7 +256,7 @@ if (!$input_errors && $type) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 	<div class="panel-body">
-		
+
 		<table class="table">
 		<thead>
 			<tr>
@@ -278,7 +267,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$resolved as $hostitem):?>
 		<tr>
-			<td><?=$hostitem['data']?></td><td><?=$hostitem['type']?></td>
+			<td><?=htmlspecialchars($hostitem['data'])?></td><td><?=htmlspecialchars($hostitem['type'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>
@@ -302,7 +291,7 @@ if (!$input_errors && $type) {
 		<tbody>
 <?php foreach ((array)$dns_speeds as $qt):?>
 		<tr>
-			<td><?=$qt['dns_server']?></td><td><?=$qt['query_time']?></td>
+			<td><?=htmlspecialchars($qt['dns_server'])?></td><td><?=htmlspecialchars($qt['query_time'])?></td>
 		</tr>
 <?php endforeach; ?>
 		</tbody>

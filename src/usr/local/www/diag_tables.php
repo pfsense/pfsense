@@ -3,7 +3,7 @@
  * diag_tables.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -107,7 +107,7 @@ if ($_POST['Download'] && ($bogons || $urltable)) {
 		sleep(1);
 	}
 	if ($maxtimetowait < 90) {
-		$savemsg = sprintf(gettext("The %s database has been updated."), $db_name);
+		$savemsg = sprintf(gettext("The %s file contents have been updated."), $db_name);
 	}
 }
 
@@ -136,7 +136,9 @@ $group->add(new Form_Select(
 	null,
 	$tablename,
 	array_combine($tables, $tables)
-));
+))->setHelp('Select a user-defined alias name or system table name to view its contents. <br/><br/>' .
+	'Aliases become Tables when loaded into the active firewall ruleset. ' .
+	'The contents displayed on this page reflect the current addresses inside tables used by the firewall.');
 
 if ($bogons || $urltable || !empty($entries)) {
 	if ($bogons || $urltable) {

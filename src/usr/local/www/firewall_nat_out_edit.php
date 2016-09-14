@@ -3,7 +3,7 @@
  * firewall_nat_out_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -484,7 +484,7 @@ $group->add(new Form_IpAddress(
 	'source',
 	null,
 	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
 
 $group->add(new Form_Input(
 	'sourceport',
@@ -508,7 +508,7 @@ $group->add(new Form_IpAddress(
 	'destination',
 	null,
 	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9\_\.\:]+');
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
 
 $group->add(new Form_Input(
 	'dstport',

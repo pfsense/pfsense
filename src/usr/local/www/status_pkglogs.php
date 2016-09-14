@@ -3,7 +3,7 @@
  * status_pkglogs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -49,9 +49,9 @@ $i = 0;
 $pkgwithlogging = false;
 $apkg = $_GET['pkg'];
 if (!$apkg) { // If we aren't looking for a specific package, locate the first package that handles logging.
-	if ($config['installedpackages']['package'] <> "") {
+	if (isset($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
-			if (is_array($package['logging'])) {
+			if (isset($package['logging']['logfilename']) && $package['logging']['logfilename'] != '') {
 				$pkgwithlogging = true;
 				$apkg = $package['name'];
 				$apkgid = $i;

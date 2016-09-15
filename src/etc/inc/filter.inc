@@ -76,7 +76,7 @@ $filterdns = array();
 $aliases = "";
 
 /* ICMP v4+v6 subtypes */
-$icmpsubtypes = array(
+$icmptypes = array(
 	'althost'	=> array('descrip' => 'Alternate Host', 'valid4' => true, 'valid6' => false),
 	'dataconv'	=> array('descrip' => 'Datagram conversion error', 'valid4' => true, 'valid6' => false),
 	'echorep'	=> array('descrip' => 'Echo reply', 'valid4' => true, 'valid6' => true),

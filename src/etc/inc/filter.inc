@@ -43,65 +43,51 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
-/* ICMP v4 types */
-$icmptypes = array(
-	""		=> gettext("any"),
-	"echoreq"	=> gettext("Echo request"),
-	"echorep"	=> gettext("Echo reply"),
-	"unreach"	=> gettext("Destination unreachable"),
-	"squench"	=> gettext("Source quench"),
-	"redir"		=> gettext("Redirect"),
-	"althost"	=> gettext("Alternate Host"),
-	"routeradv"	=> gettext("Router advertisement"),
-	"routersol"	=> gettext("Router solicitation"),
-	"timex"		=> gettext("Time exceeded"),
-	"paramprob"	=> gettext("Invalid IP header"),
-	"timereq"	=> gettext("Timestamp"),
-	"timerep"	=> gettext("Timestamp reply"),
-	"inforeq"	=> gettext("Information request"),
-	"inforep"	=> gettext("Information reply"),
-	"maskreq"	=> gettext("Address mask request"),
-	"maskrep"	=> gettext("Address mask reply"),
-	"trace"		=> gettext("Traceroute"),
-	"dataconv"	=> gettext("Datagram conversion error"),
-	"mobredir"	=> gettext("Mobile host redirect"),
-	"ipv6-where"	=> gettext("IPv6 where-are-you"),
-	"ipv6-here"	=> gettext("IPv6 I-am-here"),
-	"mobregreq"	=> gettext("Mobile registration request"),
-	"mobregrep"	=> gettext("Mobile registration reply"),
-	"skip"		=> gettext("SKIP"),
-	"photuris"	=> gettext("Photuris")
-);
-
-/* ICMP v6 types */
-$icmp6types = array(
-	""		=> gettext("any"),
-	"unreach"	=> gettext("Destination unreachable"),
-	"toobig"	=> gettext("Packet too big"),
-	"timex"		=> gettext("Time exceeded"),
-	"paramprob"	=> gettext("Parameter problem"),
-	"echoreq"	=> gettext("Echo request"),
-	"echorep"	=> gettext("Echo reply"),
-	"groupqry"	=> gettext("Group membership query"),
-	"listqry"	=> gettext("Multicast listener query"),
-	"grouprep"	=> gettext("Group membership report"),
-	"listenrep"	=> gettext("Multicast listener report"),
-	"groupterm"	=> gettext("Group membership termination"),
-	"listendone"	=> gettext("Multicast listener done"),
-	"routersol"	=> gettext("Router solicitation"),
-	"routeradv"	=> gettext("Router advertisement"),
-	"neighbrsol"	=> gettext("Neighbor solicitation"),
-	"neighbradv"	=> gettext("Neighbor advertisement"),
-	"redir"		=> gettext("Redirect"),
-	"routrrenum"	=> gettext("Router renumbering"),
-	"wrureq"	=> gettext("Who are you request"),
-	"wrurep"	=> gettext("Who are you reply"),
-	"fqdnreq"	=> gettext("FQDN query"),
-	"fqdnrep"	=> gettext("FQDN reply"),
-	"niqry"		=> gettext("Node information request"),
-	"nirep"		=> gettext("Node information reply"),
-	"mtraceresp"	=> gettext("mtrace resp"),
-	"mtrace"	=> gettext("mtrace messages")
+/* ICMP v4+v6 subtypes */
+$icmpsubtypes = array(
+	'althost'	=> array('descrip' => 'Alternate Host', 'valid4' => true, 'valid6' => false),
+	'dataconv'	=> array('descrip' => 'Datagram conversion error', 'valid4' => true, 'valid6' => false),
+	'echorep'	=> array('descrip' => 'Echo reply', 'valid4' => true, 'valid6' => true),
+	'echoreq'	=> array('descrip' => 'Echo request', 'valid4' => true, 'valid6' => true),
+	'fqdnrep'	=> array('descrip' => 'FQDN reply', 'valid4' => false, 'valid6' => true),
+	'fqdnreq'	=> array('descrip' => 'FQDN query', 'valid4' => false, 'valid6' => true),
+	'groupqry'	=> array('descrip' => 'Group membership query', 'valid4' => false, 'valid6' => true),
+	'grouprep'	=> array('descrip' => 'Group membership report', 'valid4' => false, 'valid6' => true),
+	'groupterm'	=> array('descrip' => 'Group membership termination', 'valid4' => false, 'valid6' => true),
+	'inforep'	=> array('descrip' => 'Information reply', 'valid4' => true, 'valid6' => false),
+	'inforeq'	=> array('descrip' => 'Information request', 'valid4' => true, 'valid6' => false),
+	'ipv6-here'	=> array('descrip' => 'IPv6 I-am-here', 'valid4' => true, 'valid6' => false),
+	'ipv6-where'	=> array('descrip' => 'IPv6 where-are-you', 'valid4' => true, 'valid6' => false),
+	'listendone'	=> array('descrip' => 'Multicast listener done', 'valid4' => false, 'valid6' => true),
+	'listenrep'	=> array('descrip' => 'Multicast listener report', 'valid4' => false, 'valid6' => true),
+	'listqry'	=> array('descrip' => 'Multicast listener query', 'valid4' => false, 'valid6' => true),
+	'maskrep'	=> array('descrip' => 'Address mask reply', 'valid4' => true, 'valid6' => false),
+	'maskreq'	=> array('descrip' => 'Address mask request', 'valid4' => true, 'valid6' => false),
+	'mobredir'	=> array('descrip' => 'Mobile host redirect', 'valid4' => true, 'valid6' => false),
+	'mobregrep'	=> array('descrip' => 'Mobile registration reply', 'valid4' => true, 'valid6' => false),
+	'mobregreq'	=> array('descrip' => 'Mobile registration request', 'valid4' => true, 'valid6' => false),
+	'mtrace'	=> array('descrip' => 'mtrace messages', 'valid4' => false, 'valid6' => true),
+	'mtraceresp'	=> array('descrip' => 'mtrace resp', 'valid4' => false, 'valid6' => true),
+	'neighbradv'	=> array('descrip' => 'Neighbor advertisement', 'valid4' => false, 'valid6' => true),
+	'neighbrsol'	=> array('descrip' => 'Neighbor solicitation', 'valid4' => false, 'valid6' => true),
+	'niqry'		=> array('descrip' => 'Node information request', 'valid4' => false, 'valid6' => true),
+	'nirep'		=> array('descrip' => 'Node information reply', 'valid4' => false, 'valid6' => true),
+	'paramprob'	=> array('descrip' => 'Parameter problem (invalid IP header)', 'valid4' => true, 'valid6' => true),
+	'photuris'	=> array('descrip' => 'Photuris', 'valid4' => true, 'valid6' => false),
+	'redir'		=> array('descrip' => 'Redirect', 'valid4' => true, 'valid6' => true),
+	'routeradv'	=> array('descrip' => 'Router advertisement', 'valid4' => true, 'valid6' => true),
+	'routersol'	=> array('descrip' => 'Router solicitation', 'valid4' => true, 'valid6' => true),
+	'routrrenum'	=> array('descrip' => 'Router renumbering', 'valid4' => false, 'valid6' => true),
+	'skip'		=> array('descrip' => 'SKIP', 'valid4' => true, 'valid6' => false),
+	'squench'	=> array('descrip' => 'Source quench', 'valid4' => true, 'valid6' => false),
+	'timerep'	=> array('descrip' => 'Timestamp reply', 'valid4' => true, 'valid6' => false),
+	'timereq'	=> array('descrip' => 'Timestamp', 'valid4' => true, 'valid6' => false),
+	'timex'		=> array('descrip' => 'Time exceeded', 'valid4' => true, 'valid6' => true),
+	'toobig'	=> array('descrip' => 'Packet too big', 'valid4' => false, 'valid6' => true),
+	'trace'		=> array('descrip' => 'Traceroute', 'valid4' => true, 'valid6' => false),
+	'unreach'	=> array('descrip' => 'Destination unreachable', 'valid4' => true, 'valid6' => true),
+	'wrurep'	=> array('descrip' => 'Who are you reply', 'valid4' => false, 'valid6' => true),
+	'wrureq'	=> array('descrip' => 'Who are you request', 'valid4' => false, 'valid6' => true)
 );
 
 /*
@@ -2780,12 +2766,12 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet")) {
-		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
+	if ($rule['protocol'] == "icmp" && $rule['icmptype']) {
+		$icmptype_key = ($rule['ipprotocol'] == 'inet' ? 'icmp-type' : 'icmp6-type');
+		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
-	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6")) {
-		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
-	}
+	
 	if (!empty($rule['tag'])) {
 		$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
 	}

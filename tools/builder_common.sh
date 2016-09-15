@@ -1233,7 +1233,8 @@ clone_to_staging_area() {
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
 
 		if [ -f ${_template%%.conf}.abi ]; then
-			cp -f ${_template%%.conf}.abi ${_share_repos_path}
+			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.abi \
+				> ${_share_repos_path}/${_template_filename%%.conf}.abi
 		else
 			echo ${_default_abi} \
 				> ${_share_repos_path}/${_template_filename%%.conf}.abi

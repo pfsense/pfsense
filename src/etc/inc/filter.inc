@@ -2035,6 +2035,11 @@ function filter_nat_rules_generate() {
 				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
+				/* pool option source-hash allows specification of an optional source-hash key */
+				if ($poolopts == "source-hash" && !empty($obent['source_hash_key'])) {
+					$poolopts = "source-hash ".$obent['source_hash_key'];
+				}
+
 				$natrules .= filter_nat_rules_generate_if($obent['interface'],
 					$src,
 					$obent['sourceport'],

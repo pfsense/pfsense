@@ -1215,22 +1215,15 @@ clone_to_staging_area() {
 	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
 	mkdir -p ${_share_repos_path} >/dev/null 2>&1
 
-	setup_pkg_repo \
-		${PKG_REPO_DEFAULT} \
-		${_share_repos_path}/${PRODUCT_NAME}-repo.conf \
-		${TARGET} \
-		${TARGET_ARCH}
-
-	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
-
-	# Add additional repos
-	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo-*.conf; do
+	# Add all repos
+	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo*.conf; do
 		_template_filename=$(basename ${_template})
 		setup_pkg_repo \
 			${_template} \
 			${_share_repos_path}/${_template_filename} \
 			${TARGET} \
 			${TARGET_ARCH}
+
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
 	done
 

@@ -2067,7 +2067,7 @@ function filter_nat_rules_generate() {
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
 				/* pool option source-hash allows specification of an optional source-hash key */
-				if ($poolopts == "source-hash" && isset($obent['source_hash_key'])) {
+				if ($poolopts == "source-hash" && !empty($obent['source_hash_key'])) {
 					$poolopts = "source-hash ".$obent['source_hash_key'];
 				}
 

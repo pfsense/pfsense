@@ -35,6 +35,27 @@ require_once("ipsec.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+/* build icmptypes valid for IPv4, IPv6 and IPv<any> */
+$icmptypes4 = array('any' => gettext('any'));
+$icmptypes6 = array('any' => gettext('any'));
+$icmptypes46 = array('any' => gettext('any'));
+foreach ($icmptypes as $k => $v) {
+	if ($v['valid4']) {
+		$icmptypes4[$k] = $v['descrip'];
+		if ($v['valid6']) {
+			$icmptypes6[$k] = $v['descrip'];
+			$icmptypes46[$k] = $v['descrip'];
+		}
+	} else {
+		$icmptypes6[$k] = $v['descrip'];
+	}
+}
+$icmplookup = array(
+	'inet' => array('name' => 'IPv4', 'icmptypes' => $icmptypes4, 'helpmsg' => gettext('For ICMP rules on IPv4, one or more of these ICMP subtypes may be specified.')),
+	'inet6' => array('name' => 'IPv6', 'icmptypes' => $icmptypes6, 'helpmsg' => gettext('For ICMP rules on IPv6, one or more of these ICMP subtypes may be specified.')),
+	'inet46' => array('name' => 'IPv4+6', 'icmptypes' => $icmptypes46, 'helpmsg' => gettext('For ICMP rules on IPv4+IPv6, one or more of these ICMP subtypes may be specified. (Other ICMP subtypes are only valid under IPv4 <i>or</i> IPv6, not both)'))
+);
+
 if (isset($_POST['referer'])) {
 	$referer = $_POST['referer'];
 } else {
@@ -329,11 +350,6 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {
-		if ($_POST['ipprotocol'] == "inet46") {
-			$input_errors[] = gettext("An ICMP type can not be assigned to a rule that applies to IPv4 and IPv6");
-		}
-	}
 
 	if (($_POST['proto'] != "tcp") && ($_POST['proto'] != "udp") && ($_POST['proto'] != "tcp/udp")) {
 		$_POST['srcbeginport'] = 0;
@@ -556,6 +572,27 @@ if ($_POST) {
 		if (!in_array($_POST['os'], $ostypes)) {
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");
 		}
+	}
+
+	if ($_POST['proto'] == "icmp") {
+		$t = $_POST['icmptype'];
+		$bad_types = array();
+		if (is_array($t) && ((count($t) == 1 && !isset($t['any'])) || count($t) > 1)) {
+			// Only need to check valid if just one selected != "any", or >1 selected
+			$p = $_POST['ipprotocol'];
+			foreach ($t as $type) {
+				if (	($p == 'inet' && !array_key_exists($type, $icmptypes4)) || 
+					($p == 'inet6' && !array_key_exists($type, $icmptypes6)) || 
+					($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+						$bad_types[] = $type;
+				}
+			}
+		}
+		if (count($bad_types) > 0) {
+			$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+		}
+	} else {
+		unset($_POST['icmptype']); // field not applicable, might hold junk from old hidden selections. Unset it.
 	}
 
 	if ($_POST['ackqueue'] != "") {
@@ -790,14 +827,10 @@ if ($_POST) {
 			unset($filterent['protocol']);
 		}
 
-		if ($_POST['proto'] == "icmp") {
-			if ($filterent['ipprotocol'] == 'inet6' && $_POST['icmp6type']) {
-				$filterent['icmptype'] = $_POST['icmp6type'];
-			} else if ($filterent['ipprotocol'] != 'inet6' && $_POST['icmptype']) {
-				$filterent['icmptype'] = $_POST['icmptype'];
-			} else {
-				unset($filterent['icmptype']);
-			}
+		// Convert array of selected ICMP types to comma-separated string, for backwards compatibility (previously only allowed one type per rule)
+		if ($_POST['proto'] == "icmp" && is_array($_POST['icmptype']) && !isset($_POST['icmptype']['any']) && count($_POST['icmptype']) > 0) {
+			//if any of these conditions not met, rule would apply to all icmptypes, so we would unset
+			$filterent['icmptype'] = implode(',', $_POST['icmptype']);
 		} else {
 			unset($filterent['icmptype']);
 		}
@@ -1216,6 +1249,7 @@ $section->addInput(new Form_Select(
 	'Protocol',
 	$pconfig['proto'],
 	array(
+		'any' => gettext('any'),
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',
@@ -1228,25 +1262,22 @@ $section->addInput(new Form_Select(
 		'pim' => 'PIM',
 		'ospf' => 'OSPF',
 		'sctp' => 'SCTP',
-		'any' => gettext('any'),
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)
 ))->setHelp('Choose which IP protocol this rule should match.');
 
-$section->addInput(new Form_Select(
+$group = new Form_Group("ICMP Subtypes");
+$group->add(new Form_Select(
 	'icmptype',
-	'ICMP type',
-	$pconfig['icmptype'],
-	$icmptypes
-))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
+	'ICMP subtypes',
+	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
+	$icmplookup[$pconfig['ipprotocol']]['icmptypes'],
+	true
+))->setHelp('<div id="icmptype_help">' . gettext($icmplookup[$pconfig['ipprotocol']]['helpmsg']) . '</div>');
+$group->addClass('icmptype_section');
 
-$section->addInput(new Form_Select(
-	'icmp6type',
-	'ICMPv6 type',
-	$pconfig['icmptype'],
-	$icmp6types
-))->setHelp('If ICMP is selected for the protocol above, an ICMP type may be specified here.');
+$section->add($group);
 
 $form->add($section);
 
@@ -1856,31 +1887,21 @@ events.push(function() {
 			disableInput('os', true);
 		}
 
-		if ($('#proto').find(":selected").index() == 3) {
-			disableInput('icmptype', false);
-			disableInput('icmp6type', false);
-		} else {
-			disableInput('icmptype', true);
-			disableInput('icmp6type', true);
+		// Hide ICMP types if not icmp rule
+		hideClass('icmptype_section', $('#proto').val() != 'icmp');
+		// Update ICMP help msg to match current IP protocol
+		$('#icmptype_help').html(icmphelp[$('#ipprotocol').val()]);
+		// Update ICMP types available for current IP protocol, copying over any still-valid selections
+		var listid = "#icmptype\\[\\]"; // for ease of use
+		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
+		var new_options = icmptypes[$('#ipprotocol').val()];
+		var new_html = '';
+		for (var key in new_options) {
+			new_html += '<option value="' + key + (jQuery.inArray(key, current_sel) != -1 ? '" selected="selected">' : '">') + new_options[key] + '</option>\n';
 		}
+		$(listid).empty().html(new_html);
 
 		ext_change();
-
-		if ($('#proto').find(":selected").index() == 3 || $('#proto').find(":selected").index() == 4) {
-			if ($('#ipprotocol').find(":selected").index() == 0) { // IPv4
-				hideInput('icmptype', false);
-				hideInput('icmp6type', true);
-			} else if ($('#ipprotocol').find(":selected").index() == 1) { // IPv6
-				hideInput('icmptype', true);
-				hideInput('icmp6type', false);
-			} else { // IPv4 + IPv6
-				hideInput('icmptype', true);
-				hideInput('icmp6type', true);
-			}
-		} else {
-			hideInput('icmptype', true);
-			hideInput('icmp6type', true);
-		}
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
@@ -1900,6 +1921,19 @@ events.push(function() {
 		show_source_port_range();
 	}
 
+	function icmptype_change() {
+		var listid = "#icmptype\\[\\]"; // for ease of use
+		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
+		if (jQuery.inArray('any', current_sel) != -1) {
+			// "any" negates all selections
+			$(listid).find('option').not('[value="any"]').removeAttr('selected');
+		} 
+		if ($(listid + ' option:selected').length == 0) {
+			// no selection = select "any"
+			$(listid + ' option[value="any"]').prop('selected', true);
+		}
+	}
+
 	function src_rep_change() {
 		$('#srcendport').prop("selectedIndex", $('#srcbeginport').find(":selected").index());
 	}
@@ -1909,6 +1943,23 @@ events.push(function() {
 	}
 
 	// On initial page load
+
+<?php
+	// Generate icmptype data used in form JS
+	$out1 = "var icmptypes = [];\n";
+	$out2 = "var icmphelp = [];\n";
+	foreach ($icmplookup as $k => $v) {
+		$a = array();
+		foreach ($v['icmptypes'] as $icmp_k => $icmp_v) {
+			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
+		}
+		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
+		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', gettext($v['helpmsg'])) . "';\n";
+	}
+	echo $out1;
+	echo $out2;
+?>
+
 	proto_change();
 
 	ext_change();
@@ -1959,12 +2010,16 @@ events.push(function() {
 		typesel_change();
 	});
 
+	$('#ipprotocol').on('change', function() {
+		proto_change();
+	});
+
 	$('#proto').on('change', function() {
 		proto_change();
 	});
 
-	$('#ipprotocol').on('change', function() {
-		proto_change();
+	$('#icmptype\\[\\]').on('change', function() {
+			icmptype_change();
 	});
 
 	$('#tcpflags_any').click(function () {
@@ -2001,7 +2056,7 @@ events.push(function() {
 	// fields are disabled
 	function disable_most(disable) {
 		var elementsToDisable = [
-			'interface', 'proto', 'icmptype', 'icmp6type', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
+			'interface', 'proto', 'icmptype\\[\\]', 'srcnot', 'srctype', 'src', 'srcmask', 'srcbebinport', 'srcbeginport_cust', 'srcendport',
 			'srcendport_cust', 'dstnot', 'dsttype', 'dst', 'dstmask', 'dstbeginport', 'dstbeginport_cust', 'dstendport', 'dstendport_cust'];
 
 		for (var idx=0, len = elementsToDisable.length; idx<len; idx++) {

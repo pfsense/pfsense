@@ -913,6 +913,12 @@ clone_to_staging_area() {
 	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
 	mkdir -p ${_share_repos_path} >/dev/null 2>&1
 
+	local _freebsd_major_version=$( \
+		sed -n '/^REVISION=/ {; s,\.[0-9]*"$,,; s,^.*",,; p; q; };' \
+		${FREEBSD_SRC_DIR}/sys/conf/newvers.sh \
+	)
+	local _default_abi="FreeBSD:${_freebsd_major_version}:${TARGET_ARCH}"
+
 	# Add all repos
 	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo*.conf; do
 		_template_filename=$(basename ${_template})
@@ -923,6 +929,13 @@ clone_to_staging_area() {
 			${TARGET_ARCH}
 
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
+
+		if [ -f ${_template%%.conf}.abi ]; then
+			cp -f ${_template%%.conf}.abi ${_share_repos_path}
+		else
+			echo ${_default_abi} \
+				> ${_share_repos_path}/${_template%%.conf}.abi
+		fi
 	done
 
 	core_pkg_create repo "" ${CORE_PKG_VERSION} ${SCRATCHDIR}/repo-tmp

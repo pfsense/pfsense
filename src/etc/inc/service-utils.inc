@@ -460,14 +460,14 @@ function get_service_status_icon($service, $withtext = true, $smallicon = false,
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
 		$text_class = "text-success";
-		$fa_class = "fa fa-play";
+		$fa_class = "fa fa-check-circle";
 		$fa_class_thumbs = "fa fa-thumbs-o-up";
 		$Thumbs_UpDown = "Thumbs up";
 	} else {
 		if (is_service_enabled($service['name'])) {
 			$statustext = gettext("Stopped");
 			$text_class = "text-danger";
-			$fa_class = "fa fa-stop";
+			$fa_class = "fa fa-times-circle";
 		} else {
 			$statustext = gettext("Disabled");
 			$text_class = "text-warning";

@@ -157,7 +157,7 @@ if ($_POST) {
 		}
 
 		if ((isset($config['notifications']['smtp']['ssl'])) && 
-			(isset($config['notifications']['smtp']['tls']))) {
+		    (isset($config['notifications']['smtp']['tls']))) {
 			$input_errors[] = gettext("\"Secure SMTP Connection\" modes are mutually exclusive.  Select only one.");
 		}
 

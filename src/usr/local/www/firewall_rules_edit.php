@@ -1318,9 +1318,9 @@ $group->add(new Form_Select(
 	'icmptype',
 	'ICMP subtypes',
 	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
-	$icmplookup[$pconfig['ipprotocol']]['icmptypes'],
+	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
 	true
-))->setHelp('<div id="icmptype_help">' . gettext($icmplookup[$pconfig['ipprotocol']]['helpmsg']) . '</div>');
+))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? gettext($icmplookup[$pconfig['ipprotocol']]['helpmsg']) : '') . '</div>');
 $group->addClass('icmptype_section');
 
 $section->add($group);
@@ -1915,20 +1915,12 @@ events.push(function() {
 	}
 
 	function proto_change() {
-		if ($('#proto').find(":selected").index() < 3) {
-			portsenabled = 1;
-			hideClass('tcpflags', false);
-		} else {
-			portsenabled = 0;
-			hideClass('tcpflags', true);
-		}
+		var is_tcpudp = (jQuery.inArray($('#proto :selected').val(), ['tcp','udp', 'tcp/udp']) != -1);
+		portsenabled = (is_tcpudp ? 1 : 0);
+		hideClass('tcpflags', !is_tcpudp);
 
 		// Disable OS if the proto is not TCP.
-		if ($('#proto').find(":selected").index() < 1) {
-			disableInput('os', false);
-		} else {
-			disableInput('os', true);
-		}
+		disableInput('os', ($('#proto :selected').val() != 'tcp'));
 
 		// Hide ICMP types if not icmp rule
 		hideClass('icmptype_section', $('#proto').val() != 'icmp');
@@ -1946,7 +1938,7 @@ events.push(function() {
 
 		ext_change();
 
-		if ($('#proto').find(":selected").index() <= 2) {
+		if (is_tcpudp) {
 			hideClass('dstprtr', false);
 			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&

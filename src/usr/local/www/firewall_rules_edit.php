@@ -575,21 +575,30 @@ if ($_POST) {
 	}
 
 	if ($_POST['proto'] == "icmp") {
-		$t = $_POST['icmptype'];
-		$bad_types = array();
-		if (is_array($t) && ((count($t) == 1 && !isset($t['any'])) || count($t) > 1)) {
-			// Only need to check valid if just one selected != "any", or >1 selected
-			$p = $_POST['ipprotocol'];
-			foreach ($t as $type) {
-				if (	($p == 'inet' && !array_key_exists($type, $icmptypes4)) || 
-					($p == 'inet6' && !array_key_exists($type, $icmptypes6)) || 
-					($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
-						$bad_types[] = $type;
+		$t =& $_POST['icmptype'];
+		if (isset($t) && !is_array($t)) {
+			// shouldn't happen but avoids making assumptions for data-sanitising
+			$input_errors[] = gettext("ICMP types expected to be a list if present, but is not.");
+		} elseif (!isset($t) || count($t) == 0) {
+			// not specified or none selected
+			unset($_POST['icmptype']);
+		} else {
+			// check data
+			$bad_types = array();
+			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
+				// Only need to check valid if just one selected != "any", or >1 selected
+				$p = $_POST['ipprotocol'];
+				foreach ($t as $type) {
+					if (	($p == 'inet' && !array_key_exists($type, $icmptypes4)) || 
+						($p == 'inet6' && !array_key_exists($type, $icmptypes6)) || 
+						($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+							$bad_types[] = $type;
+					}
 				}
 			}
-		}
-		if (count($bad_types) > 0) {
-			$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+			if (count($bad_types) > 0) {
+				$input_errors[] = sprintf(gettext("Invalid ICMP subtype: %s can not be used with %s."), implode(';', $bad_types),  $t['name']);
+			}
 		}
 	} else {
 		unset($_POST['icmptype']); // field not applicable, might hold junk from old hidden selections. Unset it.

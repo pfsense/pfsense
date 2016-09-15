@@ -720,14 +720,13 @@ foreach ($a_filter as $filteri => $filterent):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
-					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
-					'"><u>';
-				echo $filterent['icmptype'];
-				echo '</u></span>';
+				$t = array();
+				foreach (explode(',', $filterent['icmptype']) as $type) {
+					$t[] = $icmptypes[$type]['descrip'];
+				}
+				echo sprintf(' <span style="cursor: help;" title="%s:%s%s"><u>%s</u></span>', gettext('ICMP subtypes'), chr(13), implode(', ', $t), $filterent['icmptype']);
 			}
-		} else echo "*";
-
+		} else echo " *";
 	?>
 						</td>
 						<td>

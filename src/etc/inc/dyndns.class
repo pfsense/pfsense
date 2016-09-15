@@ -704,7 +704,22 @@
 					$dnsServer ='api.cloudflare.com';
 					$dnsHost = str_replace(' ', '', $this->_dnsHost);
 					$host_names = explode(".", $dnsHost);
-					$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
+					$bottom_host_name = null;
+					$specific_country_tld = array(
+						"com.br",
+						"net.br"
+					);
+					foreach ($specific_country_tld as $countrytld) {
+						if($countrytld === "" || (($temp = strlen($dnsHost) - strlen($countrytld)) >= 0 && strpos($dnsHost, $countrytld, $temp) !== false)) {
+							$tempdomain = $countrytld;
+							$temphost = substr($dnsHost, 0, strrpos($dnsHost, $countrytld) - 1);
+							$temphostmain = substr($temphost, strrpos($temphost, ".") + 1);
+							$bottom_host_name = $temphostmain.".".$tempdomain;
+						}
+					}
+
+					if($bottom_host_name == null)
+						$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(

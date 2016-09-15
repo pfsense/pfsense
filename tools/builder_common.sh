@@ -934,7 +934,7 @@ clone_to_staging_area() {
 			cp -f ${_template%%.conf}.abi ${_share_repos_path}
 		else
 			echo ${_default_abi} \
-				> ${_share_repos_path}/${_template%%.conf}.abi
+				> ${_share_repos_path}/${_template_filename%%.conf}.abi
 		fi
 	done
 

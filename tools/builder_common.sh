@@ -1221,6 +1221,15 @@ clone_to_staging_area() {
 	)
 	local _default_abi="FreeBSD:${_freebsd_major_version}:${TARGET_ARCH}"
 
+	local _default_altabi="freebsd:${_freebsd_major_version}"
+	if [ "${TARGET_ARCH}" = "armv6" ]; then
+		_default_altabi="${_default_altabi}:${TARGET_ARCH}:32:el:eabi:hardfp"
+	elif [ "${TARGET_ARCH}" = "i386" ]; then
+		_default_altabi="${_default_altabi}:x86:32"
+	else
+		_default_altabi="${_default_altabi}:x86:64"
+	fi
+
 	# Add all repos
 	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo*.conf; do
 		_template_filename=$(basename ${_template})
@@ -1238,6 +1247,14 @@ clone_to_staging_area() {
 		else
 			echo ${_default_abi} \
 				> ${_share_repos_path}/${_template_filename%%.conf}.abi
+		fi
+
+		if [ -f ${_template%%.conf}.altabi ]; then
+			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.altabi \
+				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
+		else
+			echo ${_default_altabi} \
+				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
 		fi
 	done
 

@@ -156,6 +156,11 @@ if ($_POST) {
 			unset($config['notifications']['smtp']['tls']);
 		}
 
+		if ((isset($config['notifications']['smtp']['ssl'])) && 
+		    (isset($config['notifications']['smtp']['tls']))) {
+			$input_errors[] = gettext("\"Secure SMTP Connection\" modes are mutually exclusive.  Select only one.");
+		}
+
 		$config['notifications']['smtp']['notifyemailaddress'] = $_POST['smtpnotifyemailaddress'];
 		$config['notifications']['smtp']['username'] = $_POST['smtpusername'];
 
@@ -391,5 +396,23 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 print($form);
+?>
 
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// On click . .
+	$("#smtpssl").click(function() {
+		$('#smtptls').prop('checked', false);
+	});
+
+	$("#smtptls").click(function() {
+		$('#smtpssl').prop("checked", false);
+	});
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");

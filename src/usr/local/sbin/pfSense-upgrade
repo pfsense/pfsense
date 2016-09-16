@@ -255,6 +255,50 @@ pkg_unlock() {
 	done
 }
 
+abi_setup() {
+	local _freebsd_version=$(uname -r)
+	local _pkg_repo_conf="/usr/local/etc/pkg/repos/${product}.conf"
+
+	local _arch=$(uname -p)
+
+	CUR_ABI="FreeBSD:${_freebsd_version%%.*}:${_arch}"
+
+	if [ "${_arch}" == "armv6" ]; then
+		CUR_ALTABI="freebsd:${_freebsd_version%%.*}:${_arch}:32:el:eabi:hardfp"
+	elif [ "${_arch}" == "i386" ]; then
+		CUR_ALTABI="freebsd:${_freebsd_version%%.*}:x86:32"
+	else
+		CUR_ALTABI="freebsd:${_freebsd_version%%.*}:x86:64"
+	fi
+
+	if [ ! -e ${_pkg_repo_conf} ]; then
+		validate_repo_conf
+	fi
+
+	local _repo_abi_file=$(readlink ${_pkg_repo_conf})
+
+	if [ -f ${_repo_abi_file%%.conf}.abi ]; then
+		ABI=$(cat ${_repo_abi_file%%.conf}.abi)
+	else
+		ABI=${CUR_ABI}
+	fi
+
+	if [ -f ${_repo_abi_file%%.conf}.altabi ]; then
+		ALTABI=$(cat ${_repo_abi_file%%.conf}.altabi)
+	else
+		ALTABI=${CUR_ALTABI}
+	fi
+
+	if [ "${CUR_ABI}" = "${ABI}" -o "${CUR_ABI}" = "${ALTABI}" ] ; then
+		NEW_MAJOR=""
+	else
+		NEW_MAJOR=1
+		ABI="${ALTABI}"
+	fi
+
+	export CUR_ABI CUR_ALTABI ABI ALTABI NEW_MAJOR
+}
+
 pkg_update() {
 	local _run_update=1
 
@@ -262,6 +306,8 @@ pkg_update() {
 	if [ "${1}" = "force" ]; then
 		_force=" -f"
 	fi
+
+	abi_setup
 
 	_exec "pkg ${pkg_chroot} update${_force}" "Updating repositories metadata"
 }
@@ -276,6 +322,7 @@ pkg_upgrade() {
 	fi
 
 	export next_stage=$(pkg annotate -q -S ${kernel_pkg} next_stage)
+	export is_pkg_locked=$(pkg annotate -q -S ${kernel_pkg} new_major)
 
 	if [ -n "${next_stage}" -a -n "${booting}" -a -n "${boot_stage}" ]; then
 		if [ ${boot_stage} != ${next_stage} ]; then
@@ -297,7 +344,7 @@ pkg_upgrade() {
 
 		pkg_update
 
-		if [ "$(compare_pkg_version pkg)" = "<" ]; then
+		if [ -z "${NEW_MAJOR}" -a "$(compare_pkg_version pkg)" = "<" ]; then
 			_exec "pkg upgrade pkg" "Upgrading pkg" mute
 			pkg_update force
 		fi
@@ -315,7 +362,7 @@ pkg_upgrade() {
 			pkg_update force
 		fi
 
-		if [ "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
+		if [ -z "${NEW_MAJOR}" -a "$(compare_pkg_version ${_repo_pkg})" = "<" ]; then
 			cp /usr/local/etc/pkg/repos/${product}.conf \
 				/tmp/${product}.conf.copy
 			_exec "pkg upgrade ${_repo_pkg}" "Upgrading ${_repo_pkg}" mute
@@ -324,7 +371,7 @@ pkg_upgrade() {
 				pkg_update force
 
 				# New repo may contain newer pkg
-				if [ "$(compare_pkg_version pkg)" = "<" ]; then
+				if [ -z "${NEW_MAJOR}" -a "$(compare_pkg_version pkg)" = "<" ]; then
 					_exec "pkg upgrade pkg" "Upgrading pkg" mute
 					pkg_update force
 				fi
@@ -395,7 +442,15 @@ pkg_upgrade() {
 		fetch_upgrade_packages
 
 		if [ $(pkg ${pkg_chroot} upgrade -nq ${kernel_pkg} | wc -l) -gt 1 ]; then
+			# Lock pkg to avoid having pkg binary for version N+1 installed on N
+			if [ -n "${NEW_MAJOR}" ]; then
+				pkg_lock pkg
+			fi
 			_exec "pkg ${pkg_chroot} upgrade ${kernel_pkg}" "Upgrading ${product} kernel"
+		fi
+
+		if [ -n "${NEW_MAJOR}" ]; then
+			pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} new_major 1
 		fi
 
 		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 2
@@ -431,6 +486,22 @@ pkg_upgrade() {
 
 		if [ $(pkg ${pkg_chroot} upgrade -nq | wc -l) -gt 1 ]; then
 			delete_annotation=1
+			if [ -n "${is_pkg_locked}" ]; then
+				# Upgrade pkg
+				pkg_unlock pkg
+				pkg ${pkg_chroot} annotate -q -D \
+					${kernel_pkg} new_major
+				_exec "pkg-static install -f pkg" \
+					"Reinstalling pkg due to ABI change"
+
+				# Upgrade base packages using pkg-static
+				_exec "pkg-static ${pkg_chroot} upgrade -r ${product}-core" \
+					"Upgrading necessary core packages"
+
+				# Make sure PHP setup is fine
+				/etc/rc.php_ini_setup >/dev/null 2>&1
+			fi
+
 			_exec "pkg ${pkg_chroot} upgrade" "Upgrading necessary packages"
 			delete_annotation=""
 		fi
@@ -448,6 +519,13 @@ pkg_upgrade() {
 		if [ -n "${need_reboot}" -a "${platform}" = "nanobsd" ]; then
 			switch_active_nanobsd_partition
 			do_reboot
+			_exit 0
+		fi
+
+		# 2nd reboot during new major version upgrade
+		if [ -n "${is_pkg_locked}" ]; then
+			# Reboot immediately
+			do_reboot now
 			_exit 0
 		fi
 
@@ -951,6 +1029,15 @@ progress_file=${logfile%.*}.json
 
 if [ -e "${progress_file}" ]; then
 	rm -f ${progress_file}
+fi
+
+abi_setup
+
+if [ -n "${NEW_MAJOR}" -a "${action}" = "install" ]; then
+	_echo "WARNING: Current pkg repository has a new OS major version."
+	_echo "         ${product} should be upgraded before doing any other"
+	_echo "         operation"
+	_exit 1
 fi
 
 case "${action}" in

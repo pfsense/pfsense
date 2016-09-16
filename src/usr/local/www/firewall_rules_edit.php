@@ -1361,15 +1361,17 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
-			'btnsrcadv',
-			'Display Advanced',
+			'btnsrctoggle',
+			'',
 			null,
 			'fa-cog'
-		))->setAttribute('type','button')->addClass('btn-info btn-sm');
+		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
+			'The source port (or port range) is usually random and almost never equal '.
+			'to the destination port range. It is not usually required, and should usually '.
+			'be left at its default value, <b>any</b>).');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
-
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
@@ -1406,16 +1408,8 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-
-	if ($type == 'src')
-		$group->setHelp('Specify the source port or port range for this rule. This is '.
-			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b>).  The "To" field may be left '.
-			'empty if only filtering a single port.');
-	else
-		$group->setHelp('Specify the destination port or port range for this rule. ' .
-			'The "To" field may be left empty if only filtering a '.
-			'single port.');
+	$group->setHelp('Specify the destination port or port range for this rule. ' .
+		'The "To" field may be left empty if only filtering a single port.');
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
@@ -1835,7 +1829,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
@@ -1921,7 +1915,7 @@ events.push(function() {
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
-			hideInput('btnsrcadv', false);
+			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&
 			    (($('#srcendport').val() == "any") || ($('#srcendport').val() == ""))) {
 				srcportsvisible = false;
@@ -1930,7 +1924,7 @@ events.push(function() {
 			}
 		} else {
 			hideClass('dstprtr', true);
-			hideInput('btnsrcadv', true);
+			hideInput('btnsrctoggle', true);
 			srcportsvisible = false;
 		}
 
@@ -1966,7 +1960,7 @@ events.push(function() {
 		ext_change();
 	});
 
-	$('#btnsrcadv').click(function() {
+	$('#btnsrctoggle').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
 	});

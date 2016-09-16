@@ -465,7 +465,6 @@
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
-/usr/local/etc/php/extensions.ini
 /usr/local/etc/pkg.conf
 /usr/local/info
 /usr/local/lib/engines

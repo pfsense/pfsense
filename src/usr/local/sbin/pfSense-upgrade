@@ -194,27 +194,33 @@ fetch_upgrade_packages() {
 }
 
 pkg_lock() {
-	local _pkg="${1}"
+	local _pkgs="${1}"
 
-	if [ -z "${_pkg}" ]; then
+	if [ -z "${_pkgs}" ]; then
 		return
 	fi
 
-	if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "0" ]; then
-		_exec "pkg ${pkg_chroot} lock ${_pkg}" "Locking package ${_pkg}" mute
-	fi
+	for _pkg in $(pkg query -g %n "${_pkgs}"); do
+		if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "0" ]; then
+			_exec "pkg ${pkg_chroot} lock ${_pkg}" \
+				"Locking package ${_pkg}" mute
+		fi
+	done
 }
 
 pkg_unlock() {
-	local _pkg="${1}"
+	local _pkgs="${1}"
 
-	if [ -z "${_pkg}" ]; then
+	if [ -z "${_pkgs}" ]; then
 		return
 	fi
 
-	if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "1" ]; then
-		_exec "pkg ${pkg_chroot} unlock ${_pkg}" "Unlocking package ${_pkg}" mute
-	fi
+	for _pkg in $(pkg query -g %n "${_pkgs}"); do
+		if [ "$(pkg ${pkg_chroot} query %k ${_pkg})" = "1" ]; then
+			_exec "pkg ${pkg_chroot} unlock ${_pkg}" \
+				"Unlocking package ${_pkg}" mute
+		fi
+	done
 }
 
 pkg_update() {

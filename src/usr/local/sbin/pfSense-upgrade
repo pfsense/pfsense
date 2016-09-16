@@ -713,12 +713,25 @@ pkg_delete_all() {
 }
 
 do_reboot() {
+	local _now="$1"
+
+	local _msg=""
+	if [ "${_now}" = "now" ]; then
+		_msg="now."
+	else
+		_msg="in ${reboot_after} seconds."
+	fi
+
 	if [ -z "${dont_reboot}" ]; then
-		_echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds."
-		echo "Upgrade is complete.  Rebooting in ${reboot_after} seconds." | wall
-		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting in ${reboot_after} seconds." \
+		_echo "Upgrade is complete.  Rebooting ${_msg}"
+		echo "Upgrade is complete.  Rebooting ${_msg}" | wall
+		/etc/rc.notify_message -e -g -m "Upgrade is complete.  Rebooting ${_msg}" \
 			>/dev/null 2>&1
-		(sleep ${reboot_after} && /etc/rc.reboot) &
+		if [ "${_now}" = "now" ]; then
+			/etc/rc.reboot
+		else
+			(sleep ${reboot_after} && /etc/rc.reboot) &
+		fi
 	else
 		_echo "Upgrade is complete."
 		echo "Upgrade is complete." | wall

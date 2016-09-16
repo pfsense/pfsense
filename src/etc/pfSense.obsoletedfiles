@@ -764,6 +764,9 @@
 /usr/local/share/nls
 /usr/local/share/pbi-keys
 /usr/local/share/pfSense/pfSense-repo-devel.conf
+/usr/local/share/pfSense/post_upgrade_command
+/usr/local/share/pfSense/post_upgrade_command.php
+/usr/local/share/pfSense/pre_upgrade_command
 /usr/local/share/protocols
 /usr/local/share/sgml
 /usr/local/share/skel

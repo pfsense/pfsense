@@ -510,26 +510,46 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys are generally slower to use.</description>
+			<description>&lt;br/&gt;SSize of the key which will be generated. The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>
 			<options>
 				<option>
-					<name>512 bits</name>
+					<name>512 bit</name>
 					<value>512</value>
 				</option>
 				<option>
-					<name>1024 bits</name>
+					<name>1024 bit</name>
 					<value>1024</value>
 				</option>
 				<option>
-					<name>2048 bits</name>
+					<name>2048 bit</name>
 					<value>2048</value>
 				</option>
 				<option>
-					<name>4096 bits</name>
+					<name>3072 bit</name>
+					<value>3072</value>
+				</option>
+				<option>
+					<name>4096 bit</name>
 					<value>4096</value>
+				</option>
+				<option>
+					<name>7680 bit</name>
+					<value>7680</value>
+				</option>
+				<option>
+					<name>8192 bit</name>
+					<value>8192</value>
+				</option>
+				<option>
+					<name>15360 bit</name>
+					<value>15360</value>
+				</option>
+				<option>
+					<name>16384 bit</name>
+					<value>16384</value>
 				</option>
 			</options>
 		</field>
@@ -685,11 +705,31 @@
 					<value>2048</value>
 				</option>
 				<option>
+					<name>3072 bit</name>
+					<value>3072</value>
+				</option>
+				<option>
 					<name>4096 bit</name>
 					<value>4096</value>
 				</option>
+				<option>
+					<name>7680 bit</name>
+					<value>7680</value>
+				</option>
+				<option>
+					<name>8192 bit</name>
+					<value>8192</value>
+				</option>
+				<option>
+					<name>15360 bit</name>
+					<value>15360</value>
+				</option>
+				<option>
+					<name>16384 bit</name>
+					<value>16384</value>
+				</option>
 			</options>
-			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. As with other such settings, the larger values are more secure, but may be slower in operation.</description>
+			<description>&lt;br/&gt;Length of Diffie-Hellman (DH) key exchange parameters, used for establishing a secure communications channel. The DH parameters are different from key sizes, but as with other such settings, the larger the key, the more security it offers, but larger keys take considerably more time to generate. As of 2016, 2048 bit is a common and typical selection.</description>
 		</field>
 		<field>
 			<name>crypto</name>

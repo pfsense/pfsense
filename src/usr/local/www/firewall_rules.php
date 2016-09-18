@@ -680,10 +680,14 @@ foreach ($a_filter as $filteri => $filterent):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				$t = array();
-				foreach (explode(',', $filterent['icmptype']) as $type) {
-					$t[] = $icmptypes[$type]['descrip'];
-				}
+				// replace each comma-separated icmptype item by its (localised) full description
+				$t = array_map(
+				        function($type) {
+						global $icmptypes;
+						return gettext($icmptypes[$type]['descrip']);
+					},
+					explode(',', $filterent['icmptype'])
+				);
 				echo sprintf(' <span style="cursor: help;" title="%s:%s%s"><u>%s</u></span>', gettext('ICMP subtypes'), chr(13), implode(', ', $t), $filterent['icmptype']);
 			}
 		} else echo " *";

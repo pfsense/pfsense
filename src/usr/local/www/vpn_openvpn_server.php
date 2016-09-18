@@ -1215,6 +1215,7 @@ else:
 				<tr>
 					<th><?=gettext("Protocol / Port")?></th>
 					<th><?=gettext("Tunnel Network")?></th>
+					<th><?=gettext("Crypto")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
@@ -1234,7 +1235,10 @@ else:
 						<?=htmlspecialchars($server['tunnel_networkv6'])?>
 					</td>
 					<td>
-						<?=htmlspecialchars($server['description'])?>
+						<?=sprintf("Crypto: %s/%s<br/>D-H Params: %d bits", $server['crypto'], $server['digest'], $server['dh_length'])?><br />
+					</td>
+					<td>
+						<?=htmlspecialchars(sprintf('%s (%s)', $server['description'], $server['dev_mode']))?>
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>

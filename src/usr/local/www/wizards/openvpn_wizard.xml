@@ -542,7 +542,7 @@
 		<field>
 			<name>keylength</name>
 			<displayname>Key length</displayname>
-			<description>&lt;br/&gt;SSize of the key which will be generated. The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;</description>
+			<description>&lt;br/&gt;Size of the key which will be generated. The larger the key, the more security it offers, but larger keys take considerably more time to generate, and take slightly longer to validate leading to a slight slowdown in setting up new sessions (not always noticeable). As of 2016, 2048 bit is the minimum and most common selection and 4096 is the maximum in common use. For more information see &lt;a href="https://keylength.com"&gt;keylength.com&lt;/a&gt;</description>
 			<type>select</type>
 			<value>2048</value>
 			<bindstofield>ovpnserver->step9->keylength</bindstofield>

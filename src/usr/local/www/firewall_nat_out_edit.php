@@ -97,6 +97,7 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
+	$pconfig['source_hash_key'] = $a_out[$id]['source_hash_key'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
 
 	if (!$pconfig['interface']) {
@@ -227,6 +228,7 @@ if ($_POST) {
 
 	/* Verify Pool Options */
 	$poolopts = "";
+	$source_hash_key = "";
 	if ($_POST['poolopts']) {
 		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet")) {
 			$poolopts = $_POST['poolopts'];
@@ -235,6 +237,18 @@ if ($_POST) {
 				$poolopts = $_POST['poolopts'];
 			} else {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+			}
+		}
+		/* If specified, verify valid source-hash key or generate a valid key using md5 */
+		if ($_POST['source_hash_key']) {
+			if (substr($_POST['source_hash_key'],0,2) == "0x") {
+				if (ctype_xdigit(substr($_POST['source_hash_key'],2)) && strlen($_POST['source_hash_key']) == 34) {
+					$source_hash_key = $_POST['source_hash_key'];
+				} else {
+					$input_errors[] = gettext("Incorrect format for source-hash key, \"0x\" must be followed by exactly 32 hexadecimal characters.");
+				}
+			} else {
+				$source_hash_key = "0x".md5($_POST['source_hash_key']);
 			}
 		}
 	}
@@ -279,6 +293,7 @@ if ($_POST) {
 		$natent['targetip_subnet'] = (!isset($_POST['nonat'])) ? $_POST['targetip_subnet'] : "";
 		$natent['interface'] = $_POST['interface'];
 		$natent['poolopts'] = $poolopts;
+		$natent['source_hash_key'] = $source_hash_key;
 
 		/* static-port */
 		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
@@ -571,6 +586,13 @@ $section->addInput(new Form_Select(
 				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
 			'</ul><span class="help-block">');
 
+$section->addInput(new Form_Input(
+	'source_hash_key',
+	'Source Hash Key',
+	'text',
+	$pconfig['source_hash_key']
+))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10)->addClass('othersubnet');
+
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');
 
@@ -721,10 +743,16 @@ events.push(function() {
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
 			hideGroupClass('othersubnet', false);
+			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
+				hideInput('source_hash_key', false);
+			}else {
+				hideInput('source_hash_key', true);
+			}
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
 			hideGroupClass('othersubnet', true);
+			hideInput('source_hash_key', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}
@@ -752,6 +780,10 @@ events.push(function() {
 	});
 
 	$('#target').on('change', function() {
+		poolopts_change();
+	});
+
+	$('#poolopts').on('change', function() {
 		poolopts_change();
 	});
 

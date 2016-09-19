@@ -1065,23 +1065,47 @@ clone_to_staging_area() {
 	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
 	mkdir -p ${_share_repos_path} >/dev/null 2>&1
 
-	setup_pkg_repo \
-		${PKG_REPO_DEFAULT} \
-		${_share_repos_path}/${PRODUCT_NAME}-repo.conf \
-		${TARGET} \
-		${TARGET_ARCH}
+	local _freebsd_major_version=$( \
+		sed -n '/^REVISION=/ {; s,\.[0-9]*"$,,; s,^.*",,; p; q; };' \
+		${FREEBSD_SRC_DIR}/sys/conf/newvers.sh \
+	)
+	local _default_abi="FreeBSD:${_freebsd_major_version}:${TARGET_ARCH}"
 
-	cp -f ${PKG_REPO_DEFAULT%%.conf}.descr ${_share_repos_path}
+	local _default_altabi="freebsd:${_freebsd_major_version}"
+	if [ "${TARGET_ARCH}" = "armv6" ]; then
+		_default_altabi="${_default_altabi}:${TARGET_ARCH}:32:el:eabi:hardfp"
+	elif [ "${TARGET_ARCH}" = "i386" ]; then
+		_default_altabi="${_default_altabi}:x86:32"
+	else
+		_default_altabi="${_default_altabi}:x86:64"
+	fi
 
-	# Add additional repos
-	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo-*.conf; do
+	# Add all repos
+	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo*.conf; do
 		_template_filename=$(basename ${_template})
 		setup_pkg_repo \
 			${_template} \
 			${_share_repos_path}/${_template_filename} \
 			${TARGET} \
 			${TARGET_ARCH}
+
 		cp -f ${_template%%.conf}.descr ${_share_repos_path}
+
+		if [ -f ${_template%%.conf}.abi ]; then
+			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.abi \
+				> ${_share_repos_path}/${_template_filename%%.conf}.abi
+		else
+			echo ${_default_abi} \
+				> ${_share_repos_path}/${_template_filename%%.conf}.abi
+		fi
+
+		if [ -f ${_template%%.conf}.altabi ]; then
+			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.altabi \
+				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
+		else
+			echo ${_default_altabi} \
+				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
+		fi
 	done
 
 	core_pkg_create repo "" ${CORE_PKG_VERSION} ${SCRATCHDIR}/repo-tmp

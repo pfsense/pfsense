@@ -294,6 +294,7 @@ function add_row() {
 
 	// Clone it
 	var newGroup = lastRepeatableGroup.clone();
+
 	// Increment the suffix number for each input element in the new group
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
@@ -328,7 +329,7 @@ function add_row() {
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
 
-	$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+	$(newGroup).find('label:first').text(""); // Clear the label. We only want it on the very first row
 
 	// Insert the updated/cloned row
 	$(lastRepeatableGroup).after(newGroup);

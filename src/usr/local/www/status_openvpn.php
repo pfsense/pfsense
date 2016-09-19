@@ -139,10 +139,12 @@ include("head.inc"); ?>
 						<td colspan="2">
 							<table>
 								<tr>
-									<td>
 										<?php $ssvc = find_service_by_openvpn_vpnid($server['vpnid']); ?>
-										<?= get_service_status_icon($ssvc, true, true); ?>
-										<?= get_service_control_links($ssvc); ?>
+									<td>
+										<?= gettext("Status") . ": " . get_service_status_icon($ssvc, false, true, false, "service_state"); ?>
+									</td>
+									<td>
+										<?= gettext("Actions") . ": " . get_service_control_links($ssvc); ?>
 									</td>
 								</tr>
 							</table>

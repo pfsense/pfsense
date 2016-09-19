@@ -95,7 +95,7 @@ if (count($services) > 0) {
 		$service_desc = explode(".",$service['description']);
 ?>
 		<tr>
-			<td><i class="fa fa-<?=get_service_status($service) ? 'check-circle text-success' : 'times-circle text-warning'?>"></i></td>
+			<td><?=get_service_status_icon($service, false, true, false, "state")?></td>
 			<td><?=$service['dispname']?></td>
 			<td><?=$service_desc[0]?></td>
 			<td><?=get_service_control_links($service)?></td>

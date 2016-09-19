@@ -1346,12 +1346,11 @@ EOD;
 		}
 		$ifcfgsnv6 = get_interface_subnetv6($dhcpv6if);
 		$subnetv6 = gen_subnetv6($ifcfgipv6, $ifcfgsnv6);
-
-		if ($ifcfgv6['ipaddrv6'] == 'track6') {
-			$trackifname = $config['interfaces'][$ifname]['track6-interface'];
-			$trackcfg = $config['interfaces'][$trackifname];
-			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
-		}
+		// We might have some prefix-delegation on WAN (e.g. /48),
+		// but then it is split and given out to individual interfaces
+		// (LAN, OPT1, OPT2...) as multiple /64 subnets. So the size
+		// of each subnet here is always /64.
+		$pdlen = 64;
 
 		if ($is_olsr_enabled == true) {
 			if ($dhcpv6ifconf['netmask']) {

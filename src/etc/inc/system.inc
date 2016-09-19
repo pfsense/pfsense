@@ -393,10 +393,8 @@ function system_hosts_generate() {
 						$ipaddrv6 = $host['ipaddrv6'];
 						if ($ipaddrv6 && $host['hostname']) {
 							if ($isdelegated) {
-								$trackifname = $config['interfaces'][$dhcpif]['track6-interface'];
-								$trackcfg = $config['interfaces'][$trackifname];
-								$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
-								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, $pdlen);
+								// We are always in an "end-user" subnet here, which all are /64 for IPv6.
+								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, 64);
 							}
 							if ($host['domain']) {
 								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']}\n";
@@ -885,7 +883,7 @@ function system_syslogd_start() {
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
-				if ($package['logging']) {
+				if (isset($package['logging']['facilityname']) && isset($package['logging']['logfilename'])) {
 					array_push($separatelogfacilities, $package['logging']['facilityname']);
 					if (!is_file($g['varlog_path'].'/'.$package['logging']['logfilename'])) {
 						mwexec("{$log_create_directive} {$log_size} {$g['varlog_path']}/{$package['logging']['logfilename']}");
@@ -1076,6 +1074,22 @@ EOD;
 		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
 	}
 
+	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");
+
+	if (isset($config['installedpackages']['package'])) {
+		foreach ($config['installedpackages']['package'] as $package) {
+			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
+			    is_dir(dirname($package['logging']['logsocket'])) &&
+			    !in_array($package['logging']['logsocket'], $log_sockets)) {
+				$log_sockets[] = $package['logging']['logsocket'];
+			}
+		}
+	}
+	$syslogd_sockets = "";
+	foreach ($log_sockets as $log_socket) {
+		$syslogd_sockets .= " -l {$log_socket}";
+	}
+
 	if (isvalidpid("{$g['varrun_path']}/syslog.pid")) {
 		sigkillbypid("{$g['varrun_path']}/syslog.pid", "TERM");
 		usleep(100000); // syslogd often doesn't respond to a TERM quickly enough for the starting of syslogd below to be successful
@@ -1087,8 +1101,7 @@ EOD;
 		usleep(100000);
 	}
 
-
-	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c -l {$g['dhcpd_chroot_path']}/var/run/log -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
+	$retval = mwexec_bg("/usr/sbin/syslogd -s -c -c {$syslogd_sockets} -P {$g['varrun_path']}/syslog.pid {$syslogd_extra}");
 
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";

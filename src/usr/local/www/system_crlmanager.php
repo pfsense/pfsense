@@ -510,6 +510,22 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 		}
 	}
 
+	// build list of revoked refids
+	$crl_refids = array();
+	foreach ($a_crl as $cid => $acrl) {
+		if ($acrl['caref'] == $crl['caref']) {
+			foreach ($a_crl[$cid]['cert'] as $cert) {
+				$crl_refids[] = $cert['refid'];
+			}
+		}
+	}
+	// remove revoked certs from cert list  
+	foreach ($ca_certs as $cid => $cert) {
+		if (in_array($cert['refid'], $crl_refids)) {
+			unset($ca_certs[$cid]);
+		}
+	}
+
 	if (count($ca_certs) == 0) {
 		print_info_box(gettext("No certificates found for this CA."), 'danger');
 	} else {

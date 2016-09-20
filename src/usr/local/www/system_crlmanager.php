@@ -537,7 +537,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$ca_certs = array();
 	foreach ($a_cert as $cert) {
-		if ($cert['caref'] == $crl['caref']) {
+		if ($cert['caref'] == $crl['caref'] && !is_cert_revoked($cert, $id)) {
 			$ca_certs[] = $cert;
 		}
 	}

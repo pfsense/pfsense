@@ -73,7 +73,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp = &$config['captiveportal'];
 
 if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
-	$cpzone = htmlspecialchars($_GET['zone']);
+	$cpzone = strtolower(htmlspecialchars($_GET['zone']));
 	if ($a_cp[$cpzone]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		unset($a_cp[$cpzone]['enable']);

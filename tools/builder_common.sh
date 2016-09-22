@@ -46,34 +46,6 @@ git_last_commit() {
 	echo "$CURRENT_COMMIT" > $SCRATCHDIR/build_commit_info.txt
 }
 
-_umount() {
-	local _mnt="${1}"
-
-	if [ -z "${_mnt}" ]; then
-		return
-	fi
-
-	local _ntries=0
-	local _force=""
-	while df ${_mnt} >/dev/null 2>&1; do
-		if [ ${_ntries} -eq 4 ]; then
-			echo "ERROR: Error trying to umount ${_mnt}"
-			print_error_pfS
-		fi
-
-		if [ ${_ntries} -ne 0 ]; then
-			sleep 1
-		fi
-
-		if [ ${_ntries} -eq 3 ]; then
-			_force="-f "
-		fi
-
-		umount ${_force}${_mnt} 2>&1 >>${LOGFILE:-/dev/null}
-		_ntries=$((_ntries+1))
-	done
-}
-
 # Create core pkg repository
 core_pkg_create_repo() {
 	if [ ! -d "${CORE_PKG_REAL_PATH}/All" ]; then
@@ -536,7 +508,7 @@ awk '
 			print_error_pfS
 		fi
 		# Consider the unmounting as well
-		trap "_umount /dev/ufs/${_label}0; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+		trap "umount /dev/ufs/${_label}0; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
 		clone_directory_contents ${FINAL_CHROOT_DIR} ${MNT}
 
@@ -548,7 +520,7 @@ awk '
 			echo "/dev/ufs/cf /cf ufs ro,sync,noatime 1 1" >> ${MNT}/etc/fstab
 		fi
 
-		_umount ${MNT}
+		umount ${MNT}
 		# Restore the original trap
 		trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
@@ -572,14 +544,14 @@ awk '
 				print_error_pfS
 			fi
 			# Consider the unmounting as well
-			trap "_umount /dev/ufs/${_label}1; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+			trap "umount /dev/ufs/${_label}1; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
 			echo "/dev/ufs/${_label}1 / ufs ro,sync,noatime 1 1" > ${MNT}/etc/fstab
 			if [ $NANO_CONFSIZE -gt 0 ] ; then
 				echo "/dev/ufs/cf /cf ufs ro,sync,noatime 1 1" >> ${MNT}/etc/fstab
 			fi
 
-			_umount ${MNT}
+			umount ${MNT}
 			# Restore the trap back
 			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 		fi
@@ -600,11 +572,11 @@ awk '
 				print_error_pfS
 			fi
 			# Consider the unmounting as well
-			trap "_umount /dev/ufs/cf; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+			trap "umount /dev/ufs/cf; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 
 			clone_directory_contents ${FINAL_CHROOT_DIR}/cf ${MNT}
 
-			_umount ${MNT}
+			umount ${MNT}
 			# Restore the trap back
 			trap "mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 		else
@@ -716,14 +688,14 @@ create_ova_image() {
 		echo ">>> ERROR: Error mounting temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	trap "_umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
+	trap "umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
 	echo "Done!" | tee -a ${LOGFILE}
 
 	clone_directory_contents ${FINAL_CHROOT_DIR} ${_mntdir}
 
 	sync
-	_umount ${_mntdir} 2>&1 >>${LOGFILE}
+	umount ${_mntdir} 2>&1 >>${LOGFILE}
 	mdconfig -d -u ${_md}
 	trap "-" 1 2 15 EXIT
 
@@ -1755,8 +1727,8 @@ pkg_chroot() {
 	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt pkg -c ${_root} $@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
-	_umount -f ${_root}/dev
-	_umount -f ${_root}/var/cache/pkg
+	/sbin/umount -f ${_root}/dev
+	/sbin/umount -f ${_root}/var/cache/pkg
 
 	return $result
 }

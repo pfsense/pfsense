@@ -28,6 +28,8 @@
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
+//FIXME: (BUG) $config[] isn't accessible at this point when csrf_startup() executes, so next line mis-sets csrf timeout. 
+//       Ref - https://redmine.pfsense.org/issues/6803 (1st note)
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 			// NOTE - the default value of 240 mins is taken from $g['default_session_timeout_mins'] in globals.inc" 
 			// and is hard-coded here because csrf_magic is loaded early. 

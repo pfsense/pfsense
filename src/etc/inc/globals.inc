@@ -83,6 +83,8 @@ $g = array(
 	"language" => "en_US",
 	"default_session_timeout_mins" => 240
 );
+		// NOTE - the value of "default_session_timeout_mins" is hard-coded in guiconfig.inc, because csrf_magic is loaded early
+		// Any change to this default would need changing there as well.
 
 /* IP TOS flags */
 $iptos = array("lowdelay", "throughput", "reliability");

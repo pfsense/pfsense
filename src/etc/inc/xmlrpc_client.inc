@@ -20,6 +20,7 @@
  */
 
 require_once("XML/RPC2/Client.php");
+require_once("globals.inc")
 
 class pfsense_xmlrpc_client {
 	
@@ -73,7 +74,7 @@ class pfsense_xmlrpc_client {
 		$this->filenotice = $noticefile;
 	}
 
-	function xmlrpc_internal($method, $parameter, $timeout = 240) {
+	function xmlrpc_internal($method, $parameter, $timeout = $g['default_session_timeout_mins']) {
 		$this->error = null;
 		$options = array(
 			'prefix' => 'pfsense.',
@@ -121,12 +122,12 @@ class pfsense_xmlrpc_client {
 		return null;
 	}
 	
-	function xmlrpc_exec_php($execcmd, $timeout = 240) {
+	function xmlrpc_exec_php($execcmd, $timeout = $g['default_session_timeout_mins']) {
 		$resp = $this->xmlrpc_internal("exec_php", $execcmd, $timeout);
 		return $resp;
 	}
 	
-	function xmlrpc_method($method, $parameter = "", $timeout = 240) {
+	function xmlrpc_method($method, $parameter = "", $timeout = $g['default_session_timeout_mins']) {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}

@@ -916,14 +916,14 @@ create_virt_images() {
 		echo ">>> ERROR: Error mounting virt ${_image_type} / partition. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	trap "umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
+	trap "_umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
 	echo "Done!" | tee -a ${LOGFILE}
 
 	clone_directory_contents ${FINAL_CHROOT_DIR} ${_mntdir}
 
 	sync
-	umount ${_mntdir} 2>&1 >>${LOGFILE}
+	_umount ${_mntdir} 2>&1 >>${LOGFILE}
 	mdconfig -d -u ${_md}
 	trap "-" 1 2 15 EXIT
 
@@ -1426,10 +1426,10 @@ create_mfsbsd_image() {
 	bsdlabel -w -B /dev/${MD} 2>&1 | tee -a ${LOGFILE}
 	newfs -L ${PRODUCT_NAME} /dev/${MD}a 2>&1 | tee -a ${LOGFILE}
 	mount /dev/${MD}a ${MNTDIR}
-	trap "umount ${MNTDIR}; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
+	trap "_umount ${MNTDIR}; mdconfig -d -u ${MD}; return" 1 2 15 EXIT
 	clone_directory_contents ${FSDIR} ${MNTDIR}
 	trap "mdconfig -d -u ${MD}" 1 2 15 EXIT
-	umount ${MNTDIR}
+	_umount ${MNTDIR}
 	trap "-" 1 2 15 EXIT
 	mdconfig -d -u ${MD} 2>&1 | tee -a ${LOGFILE}
 	gzip -qf $IMGPATH &

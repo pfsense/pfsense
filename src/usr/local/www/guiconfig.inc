@@ -28,7 +28,10 @@
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : $g['default_session_timeout_mins'];
+		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
+			// NOTE - the default value of 240 mins is taken from $g['default_session_timeout_mins'] in globals.inc" 
+			// and is hard-coded here because csrf_magic is loaded early. 
+			// Any change to this default would need changing in both files.
 		csrf_conf('expires', $timeout_minutes * 60);
 	}
 	require_once("csrf/csrf-magic.php");

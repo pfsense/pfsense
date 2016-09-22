@@ -28,13 +28,22 @@
 if (!$nocsrf) {
 	function csrf_startup() {
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
-//FIXME: (BUG) $config[] isn't accessible at this point when csrf_startup() executes, so next line mis-sets csrf timeout. 
-//       Ref - https://redmine.pfsense.org/issues/6803 (1st note)
-		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
-			// NOTE - the default value of 240 mins is taken from $g['default_session_timeout_mins'] in globals.inc" 
-			// and is hard-coded here because csrf_magic is loaded early. 
+
+//FIXME: 
+// This code doesn't seem to work as expected, because $config[] isn't accessible within csrf_startup() when it executes, so it mis-sets csrf timeout. 
+// Ref - https://redmine.pfsense.org/issues/6803 (1st note)
+
+		if (!isset($config['system']['webgui']['session_timeout'])) {
+			csrf_conf('expires', 240 * 60);
+			// NOTE - default value 240 mins taken from $g['default_session_timeout_mins'] in globals.inc.
+			// It's hard-coded here because csrf_magic is loaded early. 
 			// Any change to this default would need changing in both files.
-		csrf_conf('expires', $timeout_minutes * 60);
+		} elseif ($config['system']['webgui']['session_timeout'] > 0) {
+			csrf_conf('expires', $config['system']['webgui']['session_timeout'] * 60);
+		} else {
+			// no CSRF timeout - not recommended for security but matches user choice of non-expiring session
+			csrf_conf('expires', false);
+		}
 	}
 	require_once("csrf/csrf-magic.php");
 }

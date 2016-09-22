@@ -1102,13 +1102,13 @@ $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
 	$pconfig['ntp1']
-))->setPattern('[.a-zA-Z0-9_]+');
+))->setPattern('[.a-zA-Z0-9-]+');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
 	$pconfig['ntp2']
-))->setPattern('[.a-zA-Z0-9_]+');
+))->setPattern('[.a-zA-Z0-9-]+');
 
 // Advanced TFTP
 $btnadv = new Form_Button(

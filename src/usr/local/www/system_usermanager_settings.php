@@ -111,11 +111,8 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (isset($_POST['session_timeout'])) {
-		$timeout = intval($_POST['session_timeout']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout <= 0)) {
-			$input_errors[] = gettext("Session timeout must be an integer value.");
-		}
+	if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "" && !is_numericint($_POST['session_timeout'])) {
+		$input_errors[] = gettext("Session timeout must be empty or a positive integer.");
 	}
 
 	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
@@ -134,7 +131,7 @@ if ($_POST) {
 			}
 		}
 
-		if (isset($_POST['session_timeout']) && $_POST['session_timeout'] != "") {
+		if (is_numericint($_POST['session_timeout'])) {
 			$config['system']['webgui']['session_timeout'] = intval($_POST['session_timeout']);
 		} else {
 			unset($config['system']['webgui']['session_timeout']);
@@ -177,15 +174,19 @@ $form = new Form;
 
 $section = new Form_Section('Settings');
 
+list($d_hr, $d_min) = [int($g['default_session_timeout_mins']/60), $g['default_session_timeout_mins'] % 60];
+if ($d_min == 0) {
+	$d = sprintf(gettext("%d hours (%d minutes)"), $d_hr, $g['default_session_timeout_mins']);
+} else {
+	$d = sprintf(gettext("%d hours %d mins (%d minutes)"), $d_hr, $d_min, $g['default_session_timeout_mins']);
+}
 $section->addInput(new Form_Input(
 	'session_timeout',
 	'Session timeout',
 	'number',
-	$pconfig['session_timeout'],
-	['min' => 0]
-))->setHelp('Time in minutes to expire idle management sessions. The default is 4 '.
-	'hours (240 minutes). Enter 0 to never expire sessions. NOTE: This is a security '.
-	'risk!');
+	$pconfig['session_timeout']
+))->setHelp(sprintf(gettext('Time in minutes to expire idle management sessions. Leave empty for the default timeout ' .
+	'of %s. Enter 0 to never expire sessions. NOTE: Non-expiry is a security risk!'), $d));
 
 $auth_servers = array();
 foreach (auth_get_authserver_list() as $auth_server) {

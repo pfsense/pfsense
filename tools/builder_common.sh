@@ -291,13 +291,13 @@ prestage_on_ram_setup() {
 prestage_on_ram_cleanup() {
 	if [ -c /dev/md10001 ]; then
 		if [ -d ${STAGE_CHROOT_DIR} ]; then
-			_umount ${STAGE_CHROOT_DIR}
+			umount ${STAGE_CHROOT_DIR}
 		fi
 		mdconfig -d -u 10001
 	fi
 	if [ -c /dev/md10002 ]; then
 		if [ -d ${FINAL_CHROOT_DIR} ]; then
-			_umount ${FINAL_CHROOT_DIR}
+			umount ${FINAL_CHROOT_DIR}
 		fi
 		mdconfig -d -u 10002
 	fi

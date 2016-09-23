@@ -661,8 +661,11 @@ function get_carp_interface_status($carpid) {
 	$interface = get_real_interface($carpiface);
 	if ($interface == NULL)
 		return "";
+	$vip = get_configured_vip($carpid);
+	if ($vip == NULL || !isset($vip['vhid']))
+		return "";
 
-	$vhid = $carp['vhid'];
+	$vhid = $vip['vhid'];
 	$carp_query = '';
 	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
 	foreach ($carp_query as $int) {

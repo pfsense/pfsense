@@ -1551,15 +1551,22 @@ function get_user_settings($username) {
 	return $settings;
 }
 
-function save_widget_settings($username, $settings) {
+function save_widget_settings($username, $settings, $message = "") {
 	global $config, $userindex;
 	$user = getUserEntry($username);
+
+	if (strlen($message) > 0) {
+		$msgout = $message;
+	} else {
+		$msgout = gettext("Widget configuration has been changed.");
+	}
+
 	if (isset($user['customsettings'])) {
 		$config['system']['user'][$userindex[$username]]['widgets'] = $settings;
-		write_config(sprintf(gettext("Widget configuration has been changed for user %s."), $username));
+		write_config($msgout . " " . sprintf(gettext("(User %s)"), $username));
 	} else {
 		$config['widgets'] = $settings;
-		write_config(gettext("Widget configuration has been changed."));
+		write_config($msgout);
 	}
 }
 

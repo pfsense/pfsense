@@ -53,7 +53,7 @@ if ($_REQUEST['getactivity']) {
 		$numstate = "100";
 	}
 
-	$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
+	$text = `pftop -b {$sorttype} -w 135 -v {$viewtype} {$numstate}`;
 	echo trim($text);
 	exit;
 }

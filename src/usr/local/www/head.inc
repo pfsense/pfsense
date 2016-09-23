@@ -682,7 +682,7 @@ if (are_notices_pending()):?>
 							<a href="<?=htmlspecialchars($notice['url'])?>"><?=htmlspecialchars($notice['id'])?></a> -
 <?php endif;?>
 						</b>
-						<?=htmlspecialchars($notice['notice'])?>
+						<?=str_replace("\n", "<br/>", htmlspecialchars($notice['notice']))?>
 						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
 					</li>
 <?php	endforeach;?>

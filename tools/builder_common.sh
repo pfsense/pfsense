@@ -965,13 +965,14 @@ create_ova_image() {
 		echo ">>> ERROR: Error mounting temporary vmdk image. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	trap "umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
+	trap "sync; sleep 3; umount ${_mntdir}; mdconfig -d -u ${_md}; return" 1 2 15 EXIT
 
 	echo "Done!" | tee -a ${LOGFILE}
 
 	clone_directory_contents ${FINAL_CHROOT_DIR} ${_mntdir}
 
 	sync
+	sleep 3
 	umount ${_mntdir} 2>&1 >>${LOGFILE}
 	mdconfig -d -u ${_md}
 	trap "-" 1 2 15 EXIT

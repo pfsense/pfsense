@@ -129,6 +129,7 @@ if ($ph2found === true) {
 
 	if (isset($ph2['mobile'])) {
 		$pconfig['mobile'] = true;
+		$pconfig['remoteid_type'] = "mobile";
 	}
 } else {
 	$pconfig['ikeid'] = $_GET['ikeid'];
@@ -146,6 +147,7 @@ if ($ph2found === true) {
 	/* mobile client */
 	if ($_GET['mobile']) {
 		$pconfig['mobile']=true;
+		$pconfig['remoteid_type'] = "mobile";
 	}
 }
 

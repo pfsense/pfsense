@@ -345,7 +345,7 @@ function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = fals
 
 	$out = '';
 	$err = '';
-	
+
 	unset($pkg_filter);
 	if (is_array($pkgs)) {
 		$pkg_filter = $pkgs;

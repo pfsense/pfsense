@@ -353,7 +353,7 @@ function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = fals
 	}
 
 	if ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'];
+		$pkgs = $g['pkg_prefix'] . '*'; // Allows same prefix to work with both pkg search + pkg info
 	}
 
 	if (!function_exists('is_subsystem_dirty')) {
@@ -377,11 +377,11 @@ function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = fals
 		mark_subsystem_dirty('pkg');
 	}
 	if (!$installed_only) {
-		// repo catalog search for all pkgs requested (either remote or local_only)
+		// repo catalog search (either remote or local_only)
 		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
 	}
 	if (($rc != 0 && $local_only) || $installed_only) {
-		/* either installed pkgs requested, or repo catalog search requested but failed. 
+		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed. 
 		
 		   The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the remote repo catalog.
 		   

@@ -195,14 +195,10 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 }
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if) {
+	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
+		$if = "wan";
+	} else {
 		$if = "FloatingRules";
-	} else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan'])) {
-			$if = "wan";
-		} else {
-			$if = "FloatingRules";
-		}
 	}
 }
 

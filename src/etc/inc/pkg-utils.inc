@@ -372,7 +372,7 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
+function get_pkg_info($pkgs = 'all', $only_local = false) {
 	global $g, $input_errors;
 
 	$out = '';
@@ -488,7 +488,7 @@ function get_pkg_info($pkgs = 'all', $info = 'all', $only_local = false) {
 function register_all_installed_packages() {
 	global $g, $config, $pkg_interface;
 
-	$pkg_info = get_pkg_info('all', 'all', true);
+	$pkg_info = get_pkg_info('all', true);
 
 	foreach ($pkg_info as $pkg) {
 		if (!isset($pkg['installed'])) {

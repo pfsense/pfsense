@@ -1194,6 +1194,7 @@ if ($is_floating)  {
 	$group->setHelp('Choose the interface and direction of packets, to match this rule.');
 }
 
+// FIXME: Found this code elsewhere used to fix widths of input elements in a group. Seems to work fine here. Is there a better fix?
 $group->add(new Form_StaticText(
 	'',
 	"</td></tr></table>"

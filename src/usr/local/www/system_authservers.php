@@ -765,7 +765,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'radius_secret',
 	'Shared Secret',
-	'text',
+	'password',
 	$pconfig['radius_secret']
 ));
 

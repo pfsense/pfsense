@@ -1189,9 +1189,9 @@ $group->add(new Form_Select(
 ));
 
 if ($is_floating)  {
-	$group->setHelp('Choose the interface(s) and direction of packets, to match this rule.');
+	$group->setHelp('Choose the interface(s) and direction of packets, to match this rule. Floating rules are usually set on packets travelling in any direction through the stated interfaces.');
 } else {
-	$group->setHelp('Choose the interface and direction of packets, to match this rule.');
+	$group->setHelp('Choose the interface and direction of packets, to match this rule. Rules are usually set on incoming packets (received by the router at the interface).');
 }
 
 // FIXME: Found this code elsewhere used to fix widths of input elements in a group. Seems to work fine here. Is there a better fix?

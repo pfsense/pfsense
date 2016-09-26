@@ -733,8 +733,10 @@ if ($_POST) {
 		if (isset($_POST['tagged'])) {
 			$filterent['tagged'] = $_POST['tagged'];
 		}
-		if ($if == "FloatingRules" || isset($_POST['floating'])) {
+		if (isset($_POST['direction'])) {
 			$filterent['direction'] = $_POST['direction'];
+		}
+		if ($if == "FloatingRules" || isset($_POST['floating'])) {
 			if (isset($_POST['quick']) && $_POST['quick'] <> "") {
 				$filterent['quick'] = $_POST['quick'];
 			}
@@ -1163,35 +1165,43 @@ if ($edit_disabled) {
 	}
 }
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
-	$section->addInput($input = new Form_Select(
-		'interface',
-		'Interface',
-		$pconfig['interface'],
-		build_if_list(),
-		true
-	))->setHelp('Choose the interface(s) for this rule.');
+$group = new Form_Group('Interface and direction');
+
+$is_floating = ($if == "FloatingRules" || isset($pconfig['floating'])); // for ease
+
+$group->add($input = new Form_Select(
+	'interface',
+	($is_floating ? 'Interface(s)' : 'Interface'),
+	$pconfig['interface'],
+	build_if_list(),
+	($is_floating ? true : null)
+));
+
+$group->add(new Form_Select(
+	'direction',
+	'Direction',
+	isset($pconfig['direction']) ? $pconfig['direction'] : ($is_floating ? "any" : "in"),
+	array(
+		'any' => gettext('any'),
+		'in' => gettext('in'),
+		'out' => gettext('out'),
+	)
+));
+
+if ($is_floating)  {
+	$group->setHelp('Choose the interface(s) and direction of packets, to match this rule.');
 } else {
-	$section->addInput($input = new Form_Select(
-		'interface',
-		'Interface',
-		$pconfig['interface'],
-		build_if_list()
-	))->setHelp('Choose the interface from which packets must come to match this rule.');
+	$group->setHelp('Choose the interface and direction of packets, to match this rule.');
 }
 
-if ($if == "FloatingRules" || isset($pconfig['floating'])) {
-	$section->addInput(new Form_Select(
-		'direction',
-		'Direction',
-		$pconfig['direction'],
-		array(
-			'any' => gettext('any'),
-			'in' => gettext('in'),
-			'out' => gettext('out'),
-		)
-	));
+$group->add(new Form_StaticText(
+	'',
+	"</td></tr></table>"
+));
 
+$section->add($group);
+
+if ($is_floating) {
 	$section->addInput(new Form_Input(
 		'floating',
 		'Floating',

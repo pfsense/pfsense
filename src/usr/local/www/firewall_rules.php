@@ -363,7 +363,7 @@ if (isset($config['interfaces'][$if]['blockbogons'])) {
 $rulescnt = pfSense_get_pf_rules();
 
 // Update this if you add or remove columns!
-$columns_in_table = 13;
+$columns_in_table = 14;
 
 ?>
 <form method="post">
@@ -376,6 +376,7 @@ $columns_in_table = 13;
 						<th><!-- checkbox --></th>
 						<th><!-- status icons --></th>
 						<th><?=gettext("States")?></th>
+						<th style="text-align:center"><?=($if == "FloatingRules" ? gettext("Interfaces+<br/>direction") : gettext("Direction")) ?></th>
 						<th><?=gettext("Protocol")?></th>
 						<th><?=gettext("Source")?></th>
 						<th><?=gettext("Port")?></th>
@@ -404,6 +405,7 @@ $columns_in_table = 13;
 						<td>*</td>
 						<td>*</td>
 						<td>*</td>
+						<td>*</td>
 						<td><?=$iflist[$if];?> Address</td>
 						<td><?=$alports?></td>
 						<td>*</td>
@@ -420,6 +422,7 @@ $columns_in_table = 13;
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td><?php print_states(intval(RFC1918_TRACKER)); ?></td>
+						<td>*</td>
 						<td>*</td>
 						<td><?=gettext("RFC 1918 networks");?></td>
 						<td>*</td>
@@ -439,6 +442,7 @@ $columns_in_table = 13;
 						<td></td>
 						<td title="<?=gettext("traffic is blocked")?>"><i class="fa fa-times text-danger"></i></td>
 						<td><?php print_states(intval(BOGONS_TRACKER)); ?></td>
+						<td>*</td>
 						<td>*</td>
 						<td><?=sprintf(gettext("Reserved%sNot assigned by IANA"), "<br />");?></td>
 						<td>*</td>
@@ -661,6 +665,17 @@ foreach ($a_filter as $filteri => $filterent):
 		}
 	?>
 				<td><?php print_states(intval($filterent['tracker'])); ?></td>
+ 				<td>
+ 	<?php
+		$s = (($filterent['direction'] == 'in' || $filterent['direction'] == 'out') ? gettext($filterent['direction']) : '*');
+		if ($filterent['interface'] != $if || $if == "FloatingRules") {
+			echo sprintf(str_replace(',', ',<wbr>&#8203;', $filterent['interface']) . ' ' . $s);
+			// add <wbr>&#8203; (2 x zero width space methods for linebreaking). Doesn't work in all browsers but not fatal if non-working.
+		} else {
+			echo $s;
+		}
+	?>
+				</td>
 				<td>
 	<?php
 		if (isset($filterent['ipprotocol'])) {

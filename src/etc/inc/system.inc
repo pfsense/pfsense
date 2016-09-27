@@ -683,7 +683,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			$interfacegw = $gateway['interface'];
 
 			$blackhole = "";
-			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3))) {
+			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 4))) {
 				$blackhole = "-blackhole";
 			}
 

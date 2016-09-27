@@ -137,7 +137,7 @@ $filesystems = get_mounted_filesystems();
 				}
 			?>
 			<br />
-			<?=gettext("Serial: ") . system_get_serial();?>
+			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
 			</td>
 		</tr>
 		<tr>

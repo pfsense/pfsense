@@ -59,6 +59,7 @@
 require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
+require_once('system.inc');
 include_once("includes/functions.inc.php");
 
 if ($_REQUEST['getupdatestatus']) {
@@ -123,6 +124,21 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("Name");?></th>
 			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
+		</tr>
+		<tr>
+			<th><?=gettext("System");?></th>
+			<td>
+			<?php
+				$platform = system_identify_specific_platform();
+				if (isset($platform['descr'])) {
+					echo $platform['descr'];
+				} else {
+					echo gettext('Unknown system');
+				}
+			?>
+			<br />
+			<?=gettext("Serial: ") . system_get_serial();?>
+			</td>
 		</tr>
 		<tr>
 			<th><?=gettext("Version");?></th>

@@ -362,6 +362,13 @@ if ($_POST) {
 			}
 		}
 
+		/* Configure staic ARP entry, or remove ARP entry if this host is dynamic. See https://redmine.pfsense.org/issues/6821 */
+		if ($mapent['arp_table_static_entry']) {
+			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']));
+		} else {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']));
+		}
+
 		header("Location: services_dhcp.php?if={$if}");
 		exit;
 	}

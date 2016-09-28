@@ -632,6 +632,10 @@ if ($act == "delpool") {
 
 if ($act == "del") {
 	if ($a_maps[$_GET['id']]) {
+		/* Remove staic ARP entry, if necessary */
+		if (isset($a_maps[$_GET['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_GET['id']]['ipaddr']));
+		}
 		unset($a_maps[$_GET['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {

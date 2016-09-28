@@ -385,7 +385,7 @@ events.push(function() {
 print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP.") . '<br />' .
    '<br />' . gettext("Permanent ARP entries are shown for local interfaces or static ARP entries.") .
    '<br />' . gettext("Normal dynamic ARP entries show a countdown timer until they will expire and then be re-checked.") .
-   '<br />' . gettext("Incomplete ARP entries indicate that the target host has not yet replied to an ARP response."), 'info', false);
+   '<br />' . gettext("Incomplete ARP entries indicate that the target host has not yet replied to an ARP request."), 'info', false);
 ?>
 </div>
 

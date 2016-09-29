@@ -814,7 +814,7 @@ create_virt_images() {
 	local _ext="img"
 	case "${_image_type}" in
 		azure)
-			_format="vhd"
+			_format="vhdf"
 			_ext="vhd"
 			;;
 		kvm|openstack)

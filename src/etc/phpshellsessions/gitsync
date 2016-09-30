@@ -49,14 +49,15 @@ if (is_array($command_split)) {
 }
 
 $valid_args = array(
-	"--minimal" => "\tPerform a minimal copy of only the updated files.\n" .
+	"--minimal" => "\tPerform a copy of only the updated files.\n" .
 	    "\tNot recommended if the system has files modified by any method other\n" .
 	    "\tthan gitsync.\n",
-	"--diff" => "\tPerform a copy of only the files that are different or missing.\n" .
+	"--diff" => "\tPerform a copy of only the different and missing files.\n" .
 	    "\tRecommended for SSD if system has files modified by any method other\n" .
 	    "\tthan gitsync.\n",
-	"--verbose" => "\tDisplay constructed command.  In combination with the --diff\n" .
-	    "\toption, display the array of different and missing files.\n",
+	"--show_files" => "\tShow the updated, different and missing files.\n" .
+	    "\t(when used with --minimal and --diff options)\n",
+	"--show_command" => "\tShow the constructed command.\n",
 	"--dry-run" => "\tDry-run only.  No files copied.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
@@ -374,21 +375,30 @@ foreach ($merge_repos as $merge_repo) {
 	}
 }
 
+$updated_files_array[1] = array();
 if (isset($args["--minimal"])) {
 	if (file_exists("/etc/version.gitsync")) {
 		$old_revision = trim(file_get_contents("/etc/version.gitsync"));
 	} else if (file_exists("/etc/version.lastcommit")) {
 		$old_revision = trim(file_get_contents("/etc/version.lastcommit"));
 	}
-	$files_to_copy = strtr(shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only --relative=src " . escapeshellarg($old_revision)), "\n", " ");
-	$tar_options = '-C ./src';
-} else {
-	$files_to_copy = '.';
-	$tar_options = '-C ./src';
+
+	# Find updated files.
+	$updated_files = shell_exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} diff --name-only --relative=src " . escapeshellarg($old_revision));
+
+	# Get the path of each updated file.
+	preg_match_all('@(?:^(.+?)$)@sim', $updated_files, $updated_files_array, PREG_PATTERN_ORDER);
+
+	if(isset($args["--show_files"])) {
+		echo "===> Updated Files: \n";
+		print_r($updated_files_array[1]);
+	}
 }
 
 // Save new commit ID for later minimal file copies
-exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
+if(!isset($args["--dry-run"])) {
+	exec("cd $CODIR/pfSenseGITREPO/pfSenseGITREPO && {$GIT_BIN} rev-parse -q --verify HEAD > /etc/version.gitsync");
+}
 
 // Remove files that we do not want to overwrite the system with
 @unlink("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/etc/crontab");
@@ -409,13 +419,15 @@ exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/conf*");
 exec("rm -rf {$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/cf 2>/dev/null");
 @chmod("{$CODIR}/pfSenseGITREPO/pfSenseGITREPO/src/tmp", 01777);
 
+$different_files_array[1] = array();
+$missing_files_array[1] = array();
 if(isset($args["--diff"])) {
 	# Find different and missing files.
 	$different_missing_files = shell_exec("/usr/bin/diff -qr / $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/ | /usr/bin/grep -E '^(Files .*? and $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/.*? differ)|(Only in $CODIR/pfSenseGITREPO/pfSenseGITREPO/src/)'");
 
 	# Get the path of each different or missing file.
-	preg_match_all('@(?:^Files .*? and '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.*?) differ.*?$)@sim', $different_missing_files, $different_files_array, PREG_PATTERN_ORDER);
-	preg_match_all('@(?:^Only in '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.*?)$)@sim', $different_missing_files, $missing_files_array, PREG_PATTERN_ORDER);
+	preg_match_all('@(?:^Files .*? and '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.+?) differ.*?$)@sim', $different_missing_files, $different_files_array, PREG_PATTERN_ORDER);
+	preg_match_all('@(?:^Only in '.$CODIR.'/pfSenseGITREPO/pfSenseGITREPO/src/(.+?)$)@sim', $different_missing_files, $missing_files_array, PREG_PATTERN_ORDER);
 
 	# Deal with diff's output format of missing files (path: missing_file).
 	foreach ($missing_files_array[1] as $key => $file) {
@@ -443,24 +455,33 @@ if(isset($args["--diff"])) {
 		$missing_files_array[1][$key] = $file;
 	}
 
-	# Convert the list from array to space separated quoted strings.  Quoted for white space file name support.
-	$different_files = $missing_files = '';
-	if (count($different_files_array[1]) > 0)
-		$different_files .= '"' . implode('" "', $different_files_array[1]) . '"';
-	if (count($missing_files_array[1]) > 0)
-		$missing_files .= '"' . implode('" "', $missing_files_array[1]) . '"';
-
-	# Files to be copied.
-	$files_to_copy = trim($different_files . " " . $missing_files);
-	$tar_options = '-C ./src';
-
-	if(isset($args["--verbose"])) {
+	if(isset($args["--show_files"])) {
 		echo "===> Different Files: \n";
 		print_r($different_files_array[1]);
 		echo "===> Missing Files: \n";
 		print_r($missing_files_array[1]);
 	}
 }
+
+# Files to be copied.
+if(isset($args["--minimal"]) || isset($args["--diff"])) {
+	$files_to_copy_array = array_merge($updated_files_array[1], $different_files_array[1], $missing_files_array[1]);
+	$files_to_copy_array = array_unique($files_to_copy_array);
+
+	unset($updated_files_array);
+	unset($different_files_array);
+	unset($missing_files_array);
+
+	# Convert the list from an array to a space separated quoted string.  Quoted for white space file name support.
+	if (count($files_to_copy_array) > 0) {	# Leave the string empty/unset if there is nothing to copy.
+		$files_to_copy = '"' . implode('" "', $files_to_copy_array) . '"';
+	}
+	unset($files_to_copy_array);
+} else {
+	$files_to_copy = '.';
+}
+
+$tar_options = '-C ./src';
 
 echo "===> Installing new files...\n";
 
@@ -471,7 +492,7 @@ if ($g['platform'] == $g['product_name']) {
 }
 
 if (!empty($files_to_copy)) {
-	if(isset($args["--verbose"])) {
+	if(isset($args["--show_command"])) {
 		echo "===> Command: \n$command\n";
 	}
 	if(!isset($args["--dry-run"])) {

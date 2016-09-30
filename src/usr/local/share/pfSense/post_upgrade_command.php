@@ -62,7 +62,14 @@
 			exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git config remote.origin.url " . escapeshellarg($config['system']['gitsync']['repositoryurl']));
 		}
 		if (!empty($config['system']['gitsync']['branch'])) {
-			system("pfSsh.php playback gitsync " . escapeshellarg($config['system']['gitsync']['branch']) . " --upgrading");
+
+			$options  = isset($config['system']['gitsync']['minimal']) ? ' --minimal' : '';
+			$options .= isset($config['system']['gitsync']['diff']) ? ' --diff' : '';
+			$options .= isset($config['system']['gitsync']['show_files']) ? ' --show-files' : '';
+			$options .= isset($config['system']['gitsync']['show_command']) ? ' --show-command' : '';
+			$options .= isset($config['system']['gitsync']['dryrun']) ? ' --dry-run' : '';
+
+			system("pfSsh.php playback gitsync " . escapeshellarg($config['system']['gitsync']['branch']) . $options . " --upgrading");
 		}
 	}
 

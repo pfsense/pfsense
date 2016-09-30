@@ -494,6 +494,9 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
+		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh";
+		$set_passwd = false;
+
 		switch ($g['default-config-flavor']) {
 		case "azure":
 		case "ec2":
@@ -502,19 +505,24 @@ function local_user_set(& $user) {
 			/* Do nothing */
 			break;
 		default:
-			$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
-			if ($debug) {
-				log_error(sprintf(gettext("Running: %s"), $cmd));
-			}
-			$fd = popen($cmd, "w");
+			$cmd .= " -H 0";
+			$set_passwd = true;
+			break;
+		}
+
+		if ($debug) {
+			log_error(sprintf(gettext("Running: %s"), $cmd));
+		}
+		$fd = popen($cmd, "w");
+		if ($set_passwd) {
 			if (empty($user['bcrypt-hash'])) {
 				fwrite($fd, $user['password']);
 			} else {
 				fwrite($fd, $user['bcrypt-hash']);
 			}
-			pclose($fd);
-			break;
 		}
+		pclose($fd);
+
 		$user_group = "wheel";
 		$user_home = "/root";
 		$user_shell = "/etc/rc.initial";

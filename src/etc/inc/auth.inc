@@ -494,19 +494,17 @@ function local_user_set(& $user) {
 
 	/* root user special handling */
 	if ($user_uid == 0) {
-		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh";
-		$set_passwd = false;
+		$cmd = "/usr/sbin/pw usermod -q -n root -s /bin/sh -H 0";
 
 		switch ($g['default-config-flavor']) {
 		case "azure":
 		case "ec2":
 		case "ec2-csm":
 		case "openstack-csm":
-			/* Do nothing */
+			$lock_root = true;
 			break;
 		default:
-			$cmd .= " -H 0";
-			$set_passwd = true;
+			$lock_root = false;
 			break;
 		}
 
@@ -514,14 +512,20 @@ function local_user_set(& $user) {
 			log_error(sprintf(gettext("Running: %s"), $cmd));
 		}
 		$fd = popen($cmd, "w");
-		if ($set_passwd) {
-			if (empty($user['bcrypt-hash'])) {
-				fwrite($fd, $user['password']);
-			} else {
-				fwrite($fd, $user['bcrypt-hash']);
-			}
+		if (empty($user['bcrypt-hash'])) {
+			fwrite($fd, $user['password']);
+		} else {
+			fwrite($fd, $user['bcrypt-hash']);
 		}
 		pclose($fd);
+
+		if ($lock_root) {
+			$cmd = "/usr/sbin/pw lock root -q";
+			if ($debug) {
+				log_error(sprintf(gettext("Running: %s"), $cmd));
+			}
+			mwexec($cmd);
+		}
 
 		$user_group = "wheel";
 		$user_home = "/root";

@@ -2979,13 +2979,14 @@ EOD;
 		}
 	}
 
-	/* 20150318 cmb - Note: the below no longer appears to be true on FreeBSD 10.x, so don't set
-	 * mode twice (for now at least). This can be removed entirely in the future if no problems are found
-
-	 * The mode must be specified in a separate command before ifconfig
-	 * will allow the mode and channel at the same time in the next. */
-	//mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
-	//fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+	/* The mode must be specified in a separate command before ifconfig
+	 * will allow the mode and channel at the same time in the next.
+	 * Only do this for AP mode as this breaks client mode (PR 198680).
+	 */
+	if ($wlcfg['mode'] == "hostap") {
+	    mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
+	    fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+	}
 
 	/* configure wireless */
 	$wlcmd_args = implode(" ", $wlcmd);

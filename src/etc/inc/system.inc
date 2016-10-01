@@ -1821,7 +1821,7 @@ function system_ntp_configure() {
 		foreach ($networkacl as $acl) {
 			$ntpcfg .= "\nrestrict ";
 			if (is_ipaddrv6($acl['acl_network'])) {
-				$ntpcfg .= "-6 {$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
+				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
 			} elseif (is_ipaddrv4($acl['acl_network'])) {
 				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask($acl['mask']) . " ";
 			} else {

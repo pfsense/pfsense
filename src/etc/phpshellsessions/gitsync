@@ -468,22 +468,22 @@ if(isset($args["--minimal"]) || isset($args["--diff"])) {
 	$files_to_copy_array = array_merge($updated_files_array[1], $different_files_array[1], $missing_files_array[1]);
 	$files_to_copy_array = array_unique($files_to_copy_array);
 
-	unset($updated_files_array);
-	unset($different_files_array);
-	unset($missing_files_array);
+	unset($updated_files_array, $different_files_array, $missing_files_array);
 
 	# Convert the list from an array to a space separated quoted string.  Quoted for white space file name support.
 	if (count($files_to_copy_array) > 0) {	# Leave the string empty/unset if there is nothing to copy.
 		$files_to_copy = '"' . implode('" "', $files_to_copy_array) . '"';
 	}
+	$qty_files_to_copy = count($files_to_copy_array);
 	unset($files_to_copy_array);
 } else {
 	$files_to_copy = '.';
+	$qty_files_to_copy = chr(8);
 }
 
 $tar_options = '-C ./src';
 
-echo "===> Installing new files...\n";
+echo "===> Installing $qty_files_to_copy new files...\n";
 
 if ($g['platform'] == $g['product_name']) {
 	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";

@@ -2955,8 +2955,8 @@ EOD;
 	 * Only do this for AP mode as this breaks client mode (PR 198680).
 	 */
 	if ($wlcfg['mode'] == "hostap") {
-	    mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
-	    fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
+		mwexec("/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard));
+		fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " mode " . escapeshellarg($standard) . "\n");
 	}
 
 	/* configure wireless */

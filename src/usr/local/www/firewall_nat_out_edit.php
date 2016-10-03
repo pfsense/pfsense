@@ -557,9 +557,9 @@ $section->addInput(new Form_Select(
 ))->setHelp(
 	'Packets matching this rule will have their source IP replaced by the specified IP address or subnet. This ' .
 	'can be an interface IP address, an alias of type \'host\', a virtual IP, or an IP/subnet. The default is ' .
-	'the IP address of the interface chosen above. Pool options can be specified for a host alias or manually-enetered ' .
+	'the IP address of the interface chosen above. Pool options can be specified for a host alias or manually-entered ' .
 	'IP/subnet.<br />If the required IP address does not already belong to a device or interface, then a ' . 
-	<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> should be created for it (usually of type "IP Alias"). ' .
+	'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> should be created for it (usually of type "IP Alias"). ' .
 	'Then return to this page to create a rule on the Virtual IP.');
 
 $section->addInput(new Form_IpAddress(

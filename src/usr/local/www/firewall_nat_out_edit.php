@@ -475,10 +475,9 @@ $section->addInput(new Form_Select(
 	'Interface',
 	$pconfig['interface'],
 	$interfaces
-))->setHelp('Outbound NAT rules are set on the interface through which packets leave the router, ' .
-	    '<u>not</u> the interface through which they leave their source and arrive at the router.  ' .
-	    'In most cases, Outbound NAT rules apply to packets leaving the LAN which will be forwarded ' .
-	    'through the WAN, and "WAN" will be the interface specified in the NAT rule.');
+))->setHelp('This is the interface through which packets leave the router, <u>not</u> the interface through which ' .
+	    'they leave their source and arrive at the router.<br/>Most outbound NAT rules apply to packets leaving ' .
+	    'the LAN which will be forwarded through the WAN, and "WAN" will be the interface specified in the NAT rule.');  
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 

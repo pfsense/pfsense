@@ -603,16 +603,6 @@ $section->addInput(new Form_Select(
 				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
 			'</ul><span class="help-block">');
 
-<<<<<<< HEAD
-=======
-$section->addInput(new Form_Input(
-	'source_hash_key',
-	'Source Hash Key',
-	'text',
-	$pconfig['source_hash_key']
-))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
-
->>>>>>> 850c3d8... Fixed #6835 by revising Javascript show/hide
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');
 
@@ -764,25 +754,12 @@ events.push(function() {
 			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
-<<<<<<< HEAD
-			hideGroupClass('othersubnet', false);
-		} else {
-			$('#poolopts').prop('selectedIndex',0);
-			hideInput('poolopts', true);
-			hideGroupClass('othersubnet', true);
-=======
 			hideIpAddress('targetip', false);
-			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
-				hideInput('source_hash_key', false);
-			}else {
-				hideInput('source_hash_key', true);
-			}
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
 			hideInput('source_host_key', true);
 			hideIpAddress('targetip', true);
->>>>>>> 850c3d8... Fixed #6835 by revising Javascript show/hide
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}

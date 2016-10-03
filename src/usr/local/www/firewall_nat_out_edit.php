@@ -508,7 +508,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['sourceport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or range')->setWidth('2');
 
 $section->add($group);
 
@@ -532,7 +532,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['dstport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or range')->setWidth('2');
 
 $section->add($group);
 

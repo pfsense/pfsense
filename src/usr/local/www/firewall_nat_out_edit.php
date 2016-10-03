@@ -3,56 +3,24 @@
  * firewall_nat_out_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
  * Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgment:
- *    "This product includes software developed by the pfSense Project
- *    for use in the pfSense® software distribution. (http://www.pfsense.org/).
- *
- * 4. The names "pfSense" and "pfSense Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    coreteam@pfsense.org.
- *
- * 5. Products derived from this software may not be called "pfSense"
- *    nor may "pfSense" appear in their names without prior written
- *    permission of the Electric Sheep Fencing, LLC.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *
- * "This product includes software developed by the pfSense Project
- * for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- * THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 ##|+PRIV
@@ -129,6 +97,7 @@ if (isset($id) && $a_out[$id]) {
 	$pconfig['targetip'] = $a_out[$id]['targetip'];
 	$pconfig['targetip_subnet'] = $a_out[$id]['targetip_subnet'];
 	$pconfig['poolopts'] = $a_out[$id]['poolopts'];
+	$pconfig['source_hash_key'] = $a_out[$id]['source_hash_key'];
 	$pconfig['interface'] = $a_out[$id]['interface'];
 
 	if (!$pconfig['interface']) {
@@ -259,6 +228,7 @@ if ($_POST) {
 
 	/* Verify Pool Options */
 	$poolopts = "";
+	$source_hash_key = "";
 	if ($_POST['poolopts']) {
 		if (is_subnet($_POST['target']) || ($_POST['target'] == "other-subnet")) {
 			$poolopts = $_POST['poolopts'];
@@ -267,6 +237,18 @@ if ($_POST) {
 				$poolopts = $_POST['poolopts'];
 			} else {
 				$input_errors[] = gettext("Only Round Robin pool options may be chosen when selecting an alias.");
+			}
+		}
+		/* If specified, verify valid source-hash key or generate a valid key using md5 */
+		if ($_POST['source_hash_key']) {
+			if (substr($_POST['source_hash_key'],0,2) == "0x") {
+				if (ctype_xdigit(substr($_POST['source_hash_key'],2)) && strlen($_POST['source_hash_key']) == 34) {
+					$source_hash_key = $_POST['source_hash_key'];
+				} else {
+					$input_errors[] = gettext("Incorrect format for source-hash key, \"0x\" must be followed by exactly 32 hexadecimal characters.");
+				}
+			} else {
+				$source_hash_key = "0x".md5($_POST['source_hash_key']);
 			}
 		}
 	}
@@ -311,6 +293,7 @@ if ($_POST) {
 		$natent['targetip_subnet'] = (!isset($_POST['nonat'])) ? $_POST['targetip_subnet'] : "";
 		$natent['interface'] = $_POST['interface'];
 		$natent['poolopts'] = $poolopts;
+		$natent['source_hash_key'] = $source_hash_key;
 
 		/* static-port */
 		if (isset($_POST['staticnatport']) && $protocol_uses_ports && !isset($_POST['nonat'])) {
@@ -603,8 +586,6 @@ $section->addInput(new Form_Select(
 				'<li>' . 'Sticky Address: The Sticky Address option can be used with the Random and Round Robin pool types to ensure that a particular source address is always mapped to the same translation address.' . '</li>' .
 			'</ul><span class="help-block">');
 
-<<<<<<< HEAD
-=======
 $section->addInput(new Form_Input(
 	'source_hash_key',
 	'Source Hash Key',
@@ -612,7 +593,6 @@ $section->addInput(new Form_Input(
 	$pconfig['source_hash_key']
 ))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
 
->>>>>>> 850c3d8... Fixed #6835 by revising Javascript show/hide
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');
 
@@ -764,13 +744,6 @@ events.push(function() {
 			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
-<<<<<<< HEAD
-			hideGroupClass('othersubnet', false);
-		} else {
-			$('#poolopts').prop('selectedIndex',0);
-			hideInput('poolopts', true);
-			hideGroupClass('othersubnet', true);
-=======
 			hideIpAddress('targetip', false);
 			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
 				hideInput('source_hash_key', false);
@@ -782,7 +755,6 @@ events.push(function() {
 			hideInput('poolopts', true);
 			hideInput('source_host_key', true);
 			hideIpAddress('targetip', true);
->>>>>>> 850c3d8... Fixed #6835 by revising Javascript show/hide
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}
@@ -810,6 +782,10 @@ events.push(function() {
 	});
 
 	$('#target').on('change', function() {
+		poolopts_change();
+	});
+
+	$('#poolopts').on('change', function() {
 		poolopts_change();
 	});
 

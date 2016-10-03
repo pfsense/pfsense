@@ -606,7 +606,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the source port or range for the outbound NAT mapping.');
+))->setHelp('Enter a port or range here to map the original source port(s) to the specified port(s) when the rule is applied.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',

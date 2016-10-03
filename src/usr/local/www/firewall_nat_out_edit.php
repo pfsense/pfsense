@@ -768,11 +768,11 @@ events.push(function() {
 	function poolopts_change() {
 		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
 			hideInput('poolopts', false);
-			hideInput('source_host_key', true);
+			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
 			hideInput('poolopts', false);
-			hideInput('source_host_key', true);
+			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
@@ -785,7 +785,7 @@ events.push(function() {
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
-			hideInput('source_host_key', true);
+			hideInput('source_hash_key', true);
 			hideIpAddress('targetip', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');

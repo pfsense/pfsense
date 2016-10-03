@@ -589,7 +589,7 @@ $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
-))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
+))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->setHelp(
 		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
 		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
 		'select it here (' .
@@ -623,7 +623,7 @@ $section->addInput(new Form_Input(
 	'Source Hash Key',
 	'text',
 	$pconfig['source_hash_key']
-))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10)->addClass('othersubnet');
+))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
 
 $group = new Form_Group('Port');
 $group->addClass('natportgrp');
@@ -768,13 +768,15 @@ events.push(function() {
 	function poolopts_change() {
 		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
+			hideInput('source_host_key', true);
+			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
+			hideInput('source_host_key', true);
+			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', false);
+			hideIpAddress('targetip', false);
 			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
 				hideInput('source_hash_key', false);
 			}else {
@@ -783,8 +785,8 @@ events.push(function() {
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
-			hideGroupClass('othersubnet', true);
-			hideInput('source_hash_key', true);
+			hideInput('source_host_key', true);
+			hideIpAddress('targetip', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}

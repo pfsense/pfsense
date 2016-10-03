@@ -613,7 +613,7 @@ $group->add(new Form_Checkbox(
 	null,
 	'Static port',
 	$pconfig['staticnatport']
-));
+))->setHelp('Checking this option will force the source port to remain unchanged when the rule is applied');
 
 $section->add($group);
 $form->add($section);

@@ -475,7 +475,9 @@ $section->addInput(new Form_Select(
 	'Interface',
 	$pconfig['interface'],
 	$interfaces
-))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+))->setHelp('This is the interface through which packets leave the router, <u>not</u> the interface through which ' .
+	    'they leave their source and arrive at the router.<br/>Most outbound NAT rules apply to packets leaving ' .
+	    'the LAN which will be forwarded through the WAN, and "WAN" will be the interface specified in the NAT rule.');  
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 
@@ -506,7 +508,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['sourceport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or range')->setWidth('2');
 
 $section->add($group);
 
@@ -530,7 +532,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['dstport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or range')->setWidth('2');
 
 $section->add($group);
 
@@ -551,18 +553,21 @@ $section->addInput(new Form_Select(
 	'Address',
 	$pconfig['target'],
 	build_target_list()
-));
+))->setHelp(
+	'Packets matching this rule will have their source IP replaced by the specified IP address or subnet. This ' .
+	'can be an interface IP address, an alias of type \'host\', a virtual IP, or an IP/subnet. The default is ' .
+	'the IP address of the interface chosen above.<br />' .
+	'If the required IP address does not already belong to a device or interface, then a ' . <a href="firewall_virtual_ip.php">' . 
+	'gettext("Virtual IP") . '</a> should be created for it (usually of type "IP Alias"). ' .
+	'Then return to this page to create a rule on the Virtual IP.');
 
 $section->addInput(new Form_IpAddress(
 	'targetip',
-	'Other subnet',
+	'Other IP or subnet',
 	$pconfig['targetip']
 ))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
-		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
-		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
-		'select it here (' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' .
-		'addresses need to be defined on the interface first)');
+	'Packets matching this rule will be mapped to the specified IP address or subnet. Note: to map to an arbitrary IP or subnet, ' .
+	'you would usually define a Virtual IP and then select the Virtual IP from the dropdown list instead (see above).');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -601,14 +606,14 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the source port or range for the outbound NAT mapping.');
+))->setHelp('Enter a port or range here to map the original source port(s) to the specified port(s) when the rule is applied.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
 	null,
 	'Static port',
 	$pconfig['staticnatport']
-));
+))->setHelp('Forces the source port to stay unchanged when the rule is applied');
 
 $section->add($group);
 $form->add($section);

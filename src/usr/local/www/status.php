@@ -185,7 +185,7 @@ defCmdT("pf Info", "/sbin/pfctl -si");
 defCmdT("pf Show All", "/sbin/pfctl -sa");
 defCmdT("pf Queues", "/sbin/pfctl -s queue -v");
 defCmdT("pf OSFP", "/sbin/pfctl -s osfp");
-defCmdT("pfsync Stats", "/usr/bin/netstat -s -ppfsync");
+defCmdT("Network Protocol Statistics", "/usr/bin/netstat -s");
 defCmdT("pftop Default", "/usr/local/sbin/pftop -a -b");
 defCmdT("pftop Long", "/usr/local/sbin/pftop -w 150 -a -b -v long");
 defCmdT("pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");

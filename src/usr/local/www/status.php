@@ -165,7 +165,7 @@ defCmdT("System Uptime", "/usr/bin/uptime");
 defCmdT("Interfaces", "/sbin/ifconfig -a");
 defCmdT("Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
-defCmdT("Processes", "/bin/ps xauww");
+defCmdT("Processes", "/bin/ps xauwwd");
 defCmdT("Mounted Filesystems", "/sbin/mount");
 defCmdT("Free Disk Space", "/bin/df -hi");
 defCmdT("Routing tables", "/usr/bin/netstat -nWr");

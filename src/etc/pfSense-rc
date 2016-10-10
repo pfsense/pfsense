@@ -158,6 +158,9 @@ if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
+# Restore contents of the RAM disk store
+/etc/rc.restore_ramdisk_store
+
 # Make sure /home exists
 [ -d /home ] \
 	|| mkdir /home

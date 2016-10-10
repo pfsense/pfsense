@@ -3153,48 +3153,6 @@ function pkg_call_plugins($plugin_type, $plugin_params) {
 	return $results;
 }
 
-function restore_ram_disk() {
-	global $g, $config;
-
-	$RAM_Disk_Store_path = "{$g['cf_conf_path']}/RAM_Disk_Store/";
-
-	/* restore the ram disk */
-	$backup_files = glob("{$RAM_Disk_Store_path}*.tgz");
-	if (is_array($backup_files) && count($backup_files) > 0) {
-		echo "Restoring contents of RAM disk store...";
-		foreach ($backup_files as $backup_file) {
-			if (file_exists($backup_file)) {
-				$restore = "";
-				$return = "";
-				exec("cd /;LANG=C /usr/bin/tar -xzf {$backup_file} 2>&1", $restore, $return);
-				$restore = implode(" ", $restore);
-				if ($return <> 0) {
-					log_error(sprintf(gettext('RAM disk restore failed exited with %1$s, the error is: %2$s %3$s%4$s'), $return, $restore, $backup_file, "\n"));
-					$error = true;
-					continue;
-				}
-				/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-				if (!isset($config['system']['use_mfs_tmpvar'])) {
-					@unlink("{$backup_file}");
-				}
-			}
-		}
-
-		if ($error) {
-			log_error(sprintf(gettext('RAM disk restore failed.%1$s'), "\n"));
-			echo "error.\n";
-			return false;
-		} else {
-			log_error(sprintf(gettext('RAM disk restore succeeded.%1$s'), "\n"));
-			echo "done.\n";
-			if (count(glob("{$RAM_Disk_Store_path}*")) === 0) {
-				rmdir("{$RAM_Disk_Store_path}");
-			}
-			return true;
-		}
-	}
-}
-
 // Convert IPv6 addresses to lower case
 function addrtolower($ip) {
 	if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {

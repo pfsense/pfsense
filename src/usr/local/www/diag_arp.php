@@ -238,15 +238,14 @@ foreach ($ifdescrs as $key => $interface) {
 
 $data = array();
 foreach ($rawdata as $line) {
-	$elements = explode(' ', $line);
-
-	if ($elements[3] != "(incomplete)") {
-		$arpent = array();
-		$arpent['ip'] = trim(str_replace(array('(', ')'), '', $elements[1]));
-		$arpent['mac'] = trim($elements[3]);
-		$arpent['interface'] = trim($elements[5]);
-		$data[] = $arpent;
-	}
+	$elements = explode(' ', $line, 7);
+	$arpent = array();
+	$arpent['ip'] = trim(str_replace(array('(', ')'), '', $elements[1]));
+	$arpent['mac'] = trim($elements[3]);
+	$arpent['interface'] = trim($elements[5]);
+	$arpent['status'] = trim(substr($elements[6], 0, strrpos($elements[6], ' ')));
+	$arpent['linktype'] = trim(str_replace(array('[', ']'), '', strrchr($elements[6], ' ')));
+	$data[] = $arpent;
 }
 
 function _getHostName($mac, $ip) {
@@ -334,6 +333,8 @@ $mac_man = load_mac_manufacturer_table();
 				<th><?= gettext("IP address")?></th>
 				<th><?= gettext("MAC address")?></th>
 				<th><?= gettext("Hostname")?></th>
+				<th><?= gettext("Status")?></th>
+				<th><?= gettext("Link Type")?></th>
 				<th data-sortable="false"><?=gettext("Actions")?></th>
 			</tr>
 		</thead>
@@ -356,6 +357,8 @@ $mac_man = load_mac_manufacturer_table();
 	?>
 				</td>
 				<td><?=trim(str_replace("Z_ ", "", $entry['dnsresolve']))?></td>
+				<td><?=ucfirst($entry['status'])?></td>
+				<td><?=$entry['linktype']?></td>
 				<td>
 					<a class="fa fa-trash" title="<?=gettext('Delete arp cache entry')?>"	href="diag_arp.php?deleteentry=<?=$entry['ip']?>"></a>
 				</td>
@@ -379,7 +382,10 @@ events.push(function() {
 
 <div class="infoblock blockopen">
 <?php
-print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP."), 'info', false);
+print_info_box(gettext("Local IPv6 peers use ") . '<a href="diag_ndp.php">' . gettext("NDP") . '</a>' . gettext(" instead of ARP.") . '<br />' .
+   '<br />' . gettext("Permanent ARP entries are shown for local interfaces or static ARP entries.") .
+   '<br />' . gettext("Normal dynamic ARP entries show a countdown timer until they will expire and then be re-checked.") .
+   '<br />' . gettext("Incomplete ARP entries indicate that the target host has not yet replied to an ARP request."), 'info', false);
 ?>
 </div>
 

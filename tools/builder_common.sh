@@ -1063,55 +1063,6 @@ clone_to_staging_area() {
 		-X ${_exclude_files} \
 		.
 
-	local _share_repos_path="${SCRATCHDIR}/repo-tmp/${PRODUCT_SHARE_DIR}/pkg/repos"
-	rm -rf ${SCRATCHDIR}/repo-tmp >/dev/null 2>&1
-	mkdir -p ${_share_repos_path} >/dev/null 2>&1
-
-	local _freebsd_major_version=$( \
-		sed -n '/^REVISION=/ {; s,\.[0-9]*"$,,; s,^.*",,; p; q; };' \
-		${FREEBSD_SRC_DIR}/sys/conf/newvers.sh \
-	)
-	local _default_abi="FreeBSD:${_freebsd_major_version}:${TARGET_ARCH}"
-
-	local _default_altabi="freebsd:${_freebsd_major_version}"
-	if [ "${TARGET_ARCH}" = "armv6" ]; then
-		_default_altabi="${_default_altabi}:${TARGET_ARCH}:32:el:eabi:hardfp"
-	elif [ "${TARGET_ARCH}" = "i386" ]; then
-		_default_altabi="${_default_altabi}:x86:32"
-	else
-		_default_altabi="${_default_altabi}:x86:64"
-	fi
-
-	# Add all repos
-	for _template in ${PKG_REPO_BASE}/${PRODUCT_NAME}-repo*.conf; do
-		_template_filename=$(basename ${_template})
-		setup_pkg_repo \
-			${_template} \
-			${_share_repos_path}/${_template_filename} \
-			${TARGET} \
-			${TARGET_ARCH}
-
-		cp -f ${_template%%.conf}.descr ${_share_repos_path}
-
-		if [ -f ${_template%%.conf}.abi ]; then
-			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.abi \
-				> ${_share_repos_path}/${_template_filename%%.conf}.abi
-		else
-			echo ${_default_abi} \
-				> ${_share_repos_path}/${_template_filename%%.conf}.abi
-		fi
-
-		if [ -f ${_template%%.conf}.altabi ]; then
-			sed -e "s,%%ARCH%%,${TARGET_ARCH},g" ${_template%%.conf}.altabi \
-				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
-		else
-			echo ${_default_altabi} \
-				> ${_share_repos_path}/${_template_filename%%.conf}.altabi
-		fi
-	done
-
-	core_pkg_create repo "" ${CORE_PKG_VERSION} ${SCRATCHDIR}/repo-tmp
-
 	core_pkg_create rc "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
 	core_pkg_create base-nanobsd "" ${CORE_PKG_VERSION} ${STAGE_CHROOT_DIR}
@@ -1261,7 +1212,6 @@ customize_stagearea_for_image() {
 	create_final_staging_area
 
 	pkg_chroot_add ${FINAL_CHROOT_DIR} rc
-	pkg_chroot_add ${FINAL_CHROOT_DIR} repo
 
 	if [ "${_image_type}" = "nanobsd" -o \
 	     "${_image_type}" = "nanobsd-vga" ]; then
@@ -2337,8 +2287,18 @@ poudriere_bulk() {
 		mkdir -p /usr/local/etc/poudriere.d
 
 	if [ -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" ]; then
-		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" /usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+		cp -f "${BUILDER_TOOLS}/conf/pfPorts/make.conf" \
+			/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
 	fi
+
+	cat <<EOF >>/usr/local/etc/poudriere.d/${POUDRIERE_PORTS_NAME}-make.conf
+PKG_REPO_BRANCH_DEVEL=${PKG_REPO_BRANCH_DEVEL}
+PKG_REPO_BRANCH_RELEASE=${PKG_REPO_BRANCH_RELEASE}
+PKG_REPO_SERVER_DEVEL=${PKG_REPO_SERVER_DEVEL}
+PKG_REPO_SERVER_RELEASE=${PKG_REPO_SERVER_RELEASE}
+POUDRIERE_PORTS_NAME=${POUDRIERE_PORTS_NAME}
+PRODUCT_NAME=${PRODUCT_NAME}
+EOF
 
 	# Change version of pfSense meta ports for snapshots
 	if [ -z "${_IS_RELEASE}" ]; then
@@ -2346,8 +2306,14 @@ poudriere_bulk() {
 		sed -i '' \
 			-e "/^DISTVERSION/ s,^.*,DISTVERSION=	${_meta_pkg_version}," \
 			-e "/^PORTREVISION=/d" \
-			/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/security/${PRODUCT_NAME}/Makefile
+			/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/security/${PRODUCT_NAME}/Makefile \
+			/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/Makefile
 	fi
+
+	# Copy over pkg repo templates to pfSense-repo
+	mkdir -p /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
+	cp -f ${BUILDER_TOOLS}/templates/pkg_repos/* \
+		/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
 
 	for jail_arch in ${_archs}; do
 		jail_name=$(poudriere_jail_name ${jail_arch})

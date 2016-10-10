@@ -21,6 +21,8 @@
 
 require_once("XML/RPC2/Client.php");
 
+define('PEAR_IGNORE_BACKTRACE', 1);
+
 class pfsense_xmlrpc_client {
 	
 	private $username, $password, $url, $filenotice, $error;
@@ -45,35 +47,34 @@ class pfsense_xmlrpc_client {
 		}
 		$this->setConnectionData($hasync['synchronizetoip'], $port, $username, $hasync['password']);
 	}
-	
-	public function setConnectionData($syncip, $port, $username, $password) {
+
+	public function setConnectionData($syncip, $port, $username, $password, $scheme = "") {
 		global $config;
 		$this->username = $username;
 		$this->password = $password;
 		$this->filenotice = "sync_settings";
-		
-		$protocol = "http";
-		if (is_array($config['system']) && 
-			is_array($config['system']['webgui']) && 
-			!empty($config['system']['webgui']['protocol']) &&
-			$config['system']['webgui']['protocol'] == "https") {
-			$protocol = "https";
+		if (empty($scheme)) {
+			$scheme = "http";
+			if ($port == "443") {
+				$scheme = "https";
+			} else if (is_array($config['system']) &&
+				is_array($config['system']['webgui']) &&
+				!empty($config['system']['webgui']['protocol']) &&
+				$config['system']['webgui']['protocol'] == "https") {
+				$scheme = "https";
+			}
 		}
 		if (is_ipaddrv6($syncip)) {
 			$syncip = "[{$syncip}]";
 		}
-		if ($protocol == "https" || $port == "443") {
-			$this->url = "https://{$syncip}:{$port}/xmlrpc.php";
-		} else {
-			$this->url = "http://{$syncip}:{$port}/xmlrpc.php";
-		}
-	}
-	
-	function set_noticefile($noticefile) {
-		$this->filenotice = $noticefile;
+		$this->url = "{$scheme}://{$syncip}:{$port}/xmlrpc.php";
 	}
 
-	function xmlrpc_internal($method, $parameter, $timeout = 240) {
+	public function set_noticefile($noticefile) {
+		$this->filenotice = $noticefile;
+	}
+	
+	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
 		$this->error = null;
 		$options = array(
 			'prefix' => 'pfsense.',
@@ -94,10 +95,24 @@ class pfsense_xmlrpc_client {
 				continue;
 			}
 			try {//restore_config_section
+				$REQUEST_URI = $_SERVER['REQUEST_URI'];
+				unset($_SERVER['REQUEST_URI']); // force use of 'toText()' when setting XML_RPC2_CurlException message
 				$resp = $cli->$method($this->username, $this->password, $parameter);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
 				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
+				log_error($this->error);
+				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
+				continue;
+			}  catch (XML_RPC2_CurlException $e) {
+				$previouserror = $e->getPrevious();// HTTP_Request2_ConnectionException
+				if ($previouserror == null) {
+					// CurlException doesnt get filled with PreviousError,
+					// however we dont want to show the stacktrace included in the 'message' to non sysadmin users
+					$this->error = "CurlException calling XMLRPC method {$method} #" . strtok($e->getMessage(), "\n");
+				} else {
+					$this->error = "CurlException calling XMLRPC method {$method} #" . $previouserror->getMessage();
+				}
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
 				continue;
@@ -107,6 +122,11 @@ class pfsense_xmlrpc_client {
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, gettext("Error code received"), "");
 				continue;
+			} finally {
+				if (isset($REQUEST_URI)) {
+					// restore the unset variable to its previous state.
+					$_SERVER['REQUEST_URI'] = $REQUEST_URI;
+				}
 			}
 
 			if (!is_array($resp) && trim($resp) == "Authentication failed") {
@@ -121,17 +141,21 @@ class pfsense_xmlrpc_client {
 		return null;
 	}
 	
-	function xmlrpc_exec_php($execcmd, $timeout = 240) {
+	public function xmlrpc_exec_php($execcmd, $timeout = 240) {
 		$resp = $this->xmlrpc_internal("exec_php", $execcmd, $timeout);
 		return $resp;
 	}
 	
-	function xmlrpc_method($method, $parameter = "", $timeout = 240) {
+	public function xmlrpc_method($method, $parameter = "", $timeout = 240) {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}
 	
-	function get_error() {
+	public function get_error() {
 		return $this->error;
+	}
+	
+	public function getUrl() {
+		return $this->url;
 	}
 }

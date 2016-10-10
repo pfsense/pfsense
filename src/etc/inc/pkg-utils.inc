@@ -1231,6 +1231,21 @@ function pkg_switch_repo($path) {
 	@unlink("/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 	@symlink($path, "/usr/local/etc/pkg/repos/{$g['product_name']}.conf");
 
+	$abi_file = str_replace('.conf', '.abi', $path);
+	$altabi_file = str_replace('.conf', '.altabi', $path);
+
+	if (file_exists($abi_file) && file_exists($altabi_file)) {
+		$abi = file_get_contents($abi_file);
+		$altabi = file_get_contents($altabi_file);
+
+		$pkg_conf = array(
+			"ABI={$abi}",
+			"ALTABI={$altabi}"
+		);
+
+		file_put_contents("/usr/local/etc/pkg.conf", $pkg_conf);
+	}
+
 	return pkg_update(true);
 }
 

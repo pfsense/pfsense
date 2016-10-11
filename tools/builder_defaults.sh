@@ -54,12 +54,7 @@ fi
 # Make sure pkg will not be interactive
 export ASSUME_ALWAYS_YES=true
 
-# Architecture, supported ARCH values are:
-#  Tier 1: i386, AMD64, and PC98
-#  Tier 2: ARM, PowerPC, ia64, Sparc64 and sun4v
-#  Tier 3: MIPS and S/390
-#  Tier 4: None at the moment
-#  Source: http://www.freebsd.org/doc/en/articles/committers-guide/archs.html
+# Architecture
 export TARGET=${TARGET:-"`uname -m`"}
 export TARGET_ARCH=${TARGET_ARCH:-${TARGET}}
 # Set TARGET_ARCH_CONF_DIR
@@ -179,25 +174,6 @@ export OVA_SWAP_PART_SIZE_IN_GB=${OVA_SWAP_PART_SIZE_IN_GB:-"0"}
 # Temporary place to save files
 export OVA_TMP=${OVA_TMP:-"${SCRATCHDIR}/ova_tmp"}
 # end of OVF
-
-# Number of code images on media (1 or 2)
-export NANO_IMAGES=2
-# 0 -> Leave second image all zeroes so it compresses better.
-# 1 -> Initialize second image with a copy of the first
-export NANO_INIT_IMG2=1
-export NANO_NEWFS="-b 4096 -f 512 -i 8192 -O1"
-export FLASH_SIZE=${FLASH_SIZE:-"2g"}
-# Size of code file system in 512 bytes sectors
-# If zero, size will be as large as possible.
-export NANO_CODESIZE=0
-# Size of data file system in 512 bytes sectors
-# If zero: no partition configured.
-# If negative: max size possible
-export NANO_DATASIZE=0
-# Size of Product /conf partition  # 102400 = 50 megabytes.
-export NANO_CONFSIZE=102400
-# packet is OK for 90% of embedded
-export NANO_BOOT0CFG="-o packet -s 1 -m 3"
 
 # NOTE: Date string is used for creating file names of images
 #       The file is used for sharing the same value with build_snapshots.sh
@@ -342,9 +318,6 @@ export OVAPATH=${OVAPATH:-"${IMAGES_FINAL_DIR}/virtualization/${PRODUCT_NAME}${P
 export MEMSTICK_VARIANTS=${MEMSTICK_VARIANTS:-}
 export VARIANTIMAGES=""
 export VARIANTUPDATES=""
-
-# nanobsd templates
-export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NAME_SUFFIX}-${PRODUCT_VERSION}${PRODUCT_REVISION:+-p}${PRODUCT_REVISION}-%%SIZE%%-${TARGET}-%%TYPE%%${TIMESTAMP_SUFFIX}.img"}
 
 # Rsync data to send snapshots
 export RSYNCUSER=${RSYNCUSER:-"snapshots"}

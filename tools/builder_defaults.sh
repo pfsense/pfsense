@@ -356,9 +356,8 @@ export NANOBSD_IMG_TEMPLATE=${NANOBSD_IMG_TEMPLATE:-"${PRODUCT_NAME}${PRODUCT_NA
 
 # Rsync data to send snapshots
 export RSYNCIP=${RSYNCIP:-"firmware.netgate.com"}
-export RSYNCPATH=${RSYNCPATH:-"/firmware/beta/snapshots"}
 export RSYNCUSER=${RSYNCUSER:-"wwwsync"}
-export RSYNCPATH=${RSYNCPATH:-"/usr/local/www/snapshots/${TARGET}/${PRODUCT_NAME}_${GIT_REPO_BRANCH_OR_TAG}"}
+export RSYNCPATH=${RSYNCPATH:-"/firmware/beta/snapshots"}
 
 export SNAPSHOTSLOGFILE=${SNAPSHOTSLOGFILE:-"${SCRATCHDIR}/snapshots-build.log"}
 export SNAPSHOTSLASTUPDATE=${SNAPSHOTSLASTUPDATE:-"${SCRATCHDIR}/snapshots-lastupdate.log"}

@@ -55,12 +55,8 @@ fi
 export ASSUME_ALWAYS_YES=true
 
 # Architecture
-export TARGET=${TARGET:-"`uname -m`"}
-export TARGET_ARCH=${TARGET_ARCH:-${TARGET}}
-# Set TARGET_ARCH_CONF_DIR
-if [ "$TARGET_ARCH" = "" ]; then
-        export TARGET_ARCH=`uname -p`
-fi
+export TARGET=${TARGET:-"$(uname -m)"}
+export TARGET_ARCH=${TARGET_ARCH:-"$(uname -p)"}
 
 # Directory to be used for writing temporary information
 export SCRATCHDIR=${SCRATCHDIR:-"${BUILDER_ROOT}/tmp"}

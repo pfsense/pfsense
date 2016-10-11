@@ -376,6 +376,9 @@ include: {$g['unbound_chroot_path']}{$cfgsubdir}/host_entries.conf
 # dhcp lease entries
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/dhcpleases_entries.conf
 
+# OpenVPN client entries
+include: {$g['unbound_chroot_path']}{$cfgsubdir}/openvpn.*.conf
+
 # Domain overrides
 include: {$g['unbound_chroot_path']}{$cfgsubdir}/domainoverrides.conf
 {$forward_conf}

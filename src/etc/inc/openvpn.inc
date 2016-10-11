@@ -777,6 +777,15 @@ function openvpn_reconfigure($mode, $settings) {
 				break;
 		}
 	}
+	if (isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
+		switch($settings['mode']) {
+			case 'server_tls':
+			case 'server_tls_user':
+				$domain = !empty($settings['dns_domain']) ? $settings['dns_domain'] : $config['system']['domain'];
+				$conf .= "learn-address \"/usr/local/sbin/openvpn.learn-address.sh $domain\"\n";
+				break;
+		}
+	}
 
 	/*
 	 * When binding specific address, wait cases where interface is in

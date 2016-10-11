@@ -65,6 +65,9 @@ if (isset($a_unboundcfg['regdhcp'])) {
 if (isset($a_unboundcfg['regdhcpstatic'])) {
 	$pconfig['regdhcpstatic'] = true;
 }
+if (isset($a_unboundcfg['regovpnclients'])) {
+	$pconfig['regovpnclients'] = true;
+}
 
 $pconfig['port'] = $a_unboundcfg['port'];
 $pconfig['custom_options'] = base64_decode($a_unboundcfg['custom_options']);
@@ -179,6 +182,7 @@ if ($_POST['save']) {
 		$a_unboundcfg['forwarding'] = isset($pconfig['forwarding']);
 		$a_unboundcfg['regdhcp'] = isset($pconfig['regdhcp']);
 		$a_unboundcfg['regdhcpstatic'] = isset($pconfig['regdhcpstatic']);
+		$a_unboundcfg['regovpnclients'] = isset($pconfig['regovpnclients']);
 		$a_unboundcfg['active_interface'] = $pconfig['active_interface'];
 		$a_unboundcfg['outgoing_interface'] = $pconfig['outgoing_interface'];
 		$a_unboundcfg['system_domain_local_zone_type'] = $pconfig['system_domain_local_zone_type'];
@@ -346,6 +350,14 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
 					'The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
 
+$section->addInput(new Form_Checkbox(
+	'regovpnclients',
+	'OpenVPN Clients',
+	'Register connected OpenVPN clients in the DNS Resolver',
+	$pconfig['regovpnclients']
+))->setHelp(sprintf('If this option is set, then the common name (CN) of connected OpenVPN clients will be registered in the DNS Resolver, so that their name can be resolved. '.
+					'The domain in %sSystem: General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
+
 $btnadv = new Form_Button(
 	'btnadvcustom',
 	'Custom options',
@@ -408,6 +420,7 @@ events.push(function() {
 		hideCheckbox('forwarding', hide);
 		hideCheckbox('regdhcp', hide);
 		hideCheckbox('regdhcpstatic', hide);
+		hideCheckbox('regovpnclients', hide);
 		hideInput('btnadvcustom', hide);
 		hideInput('custom_options', hide || !showadvcustom);
 	}

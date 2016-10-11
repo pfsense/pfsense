@@ -42,7 +42,6 @@ export PKG_RSYNC_HOSTNAME="firmware.netgate.com"
 export PKG_RSYNC_USERNAME="wwwsync"
 export PKG_RSYNC_SSH_PORT="22"
 export PKG_RSYNC_DESTDIR="/firmware/beta/packages"
-export PKG_RSYNC_LOGS="/firmware/beta"
 
 # pkg repo URL
 #export PKG_REPO_SERVER_DEVEL="pkg+http://firmware.netgate.com/beta/packages"

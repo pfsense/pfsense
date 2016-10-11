@@ -368,11 +368,11 @@ function openvpn_port_next($prot, $interface = "wan") {
 function openvpn_get_cipherlist() {
 
 	$ciphers = array();
-	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep "default key" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep \'(.*key\' | sed \'s/, TLS client\/server mode only//\'');
 	$cipher_lines = explode("\n", trim($cipher_out));
 	sort($cipher_lines);
 	foreach ($cipher_lines as $line) {
-		$words = explode(' ', $line);
+		$words = explode(' ', $line, 2);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
 	$ciphers["none"] = gettext("None (No Encryption)");

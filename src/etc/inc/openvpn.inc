@@ -777,7 +777,7 @@ function openvpn_reconfigure($mode, $settings) {
 				break;
 		}
 	}
-	if (isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
+	if ($settings['dev_mode'] === 'tun' && isset($config['unbound']['enable']) && isset($config['unbound']['regovpnclients'])) {
 		switch($settings['mode']) {
 			case 'server_tls':
 			case 'server_tls_user':

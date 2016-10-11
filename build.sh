@@ -20,11 +20,10 @@
 
 set +e
 usage() {
-	echo "Usage $0 [options] [ iso | nanobsd | ova | nanobsd-vga | memstick | memstickserial | memstickadi | all | none ]"
-	echo "		all = iso nanobsd nanobsd-vga memstick memstickserial memstickadi"
+	echo "Usage $0 [options] [ iso | ova | memstick | memstickserial | memstickadi | all | none ]"
+	echo "		all = iso memstick memstickserial memstickadi"
 	echo "		none = upgrade only pkg repo"
 	echo "	[ options ]: "
-	echo "		--flash-size|-f size(s) - a list of flash sizes to build with nanobsd i.e. '2g 4g'. Default: 2g"
 	echo "		--no-buildworld|-c - Will set NO_BUILDWORLD NO_BUILDKERNEL to not build kernel and world"
 	echo "		--no-cleanobjdir|-d - Will not clean FreeBSD object built dir to allow restarting a build with NO_CLEAN"
 	echo "		--resume-image-build|-r - Includes -c -d and also will just move directly to image creation using pre-staged data"
@@ -69,15 +68,6 @@ while test "$1" != ""; do
 			;;
 		--no-cleanobjdir|-d)
 			export NO_CLEAN_FREEBSD_OBJ=YES
-			;;
-		--flash-size|-f)
-			shift
-			if [ $# -eq 0 ]; then
-				echo "--flash-size needs extra parameter."
-				echo
-				usage
-			fi
-			export FLASH_SIZE="${1}"
 			;;
 		--resume-image-build|-r)
 			export NO_BUILDWORLD=YES
@@ -153,7 +143,7 @@ while test "$1" != ""; do
 		--do-not-upload|-u)
 			export DO_NOT_UPLOAD=1
 			;;
-		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|*nanobsd*|*nanobsd-vga*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
+		all|none|*iso*|*ova*|*memstick*|*memstickserial*|*memstickadi*|ec2|ec2-csm|kvm|bhyve|azure|openstack-csm)
 			BUILDACTION="images"
 			IMAGETYPE="${1}"
 			;;
@@ -384,9 +374,6 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 			;;
 		memstickadi)
 			create_memstick_adi_image
-			;;
-		nanobsd|nanobsd-vga)
-			create_nanobsd_diskimage ${_IMGTOBUILD} "${FLASH_SIZE}"
 			;;
 		ova)
 			old_custom_package_list="${custom_package_list}"

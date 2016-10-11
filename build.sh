@@ -302,12 +302,9 @@ fi
 if [ "$IMAGETYPE" = "none" ]; then
 	_IMAGESTOBUILD=""
 elif [ "$IMAGETYPE" = "all" ]; then
-	_IMAGESTOBUILD="nanobsd"
-	if [ "${TARGET}" = "amd64" ]; then
-		_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
-			memstickserial memstickadi ova ec2 azure \
-			kvm bhyve"
-	fi
+	_IMAGESTOBUILD="${_IMAGESTOBUILD} memstick \
+		memstickserial memstickadi ova ec2 azure \
+		kvm bhyve"
 else
 	_IMAGESTOBUILD="${IMAGETYPE}"
 fi

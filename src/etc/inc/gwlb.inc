@@ -923,6 +923,7 @@ function return_gateway_groups_array() {
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
+						if (file_exists('/usr/local/bin/gateway_status.sh')) { mwexec("/usr/local/bin/gateway_status.sh $gwname down"); }
                                         	if (!file_exists("/tmp/.down.$gwname")) {
                                                 	$msg .= "\n".implode("|", $status);
 							touch("/tmp/.down.$gwname");
@@ -932,6 +933,7 @@ function return_gateway_groups_array() {
                                         	}
 					} else {
 						/* Online add member */
+						if (file_exists('/usr/local/bin/gateway_status.sh')) { mwexec("/usr/local/bin/gateway_status.sh $gwname up"); }
 						if (!is_array($tiers[$tier])) {
 							$tiers[$tier] = array();
 						}

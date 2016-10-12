@@ -60,7 +60,6 @@ $g = array(
 	"product_website" => "www.pfsense.org",
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
-	"hideplatform" => false,
 	"hidebackupbeforeupgrade" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,

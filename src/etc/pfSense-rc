@@ -202,19 +202,11 @@ if [ "$PLATFORM" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
 	/sbin/mdmfs -S -M -s 4m md $varrunpath
 fi
 
-# Use php -n here because we are not ready to load extensions yet
-hideplatform=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var hideplatform)
-if [ "$hideplatform" = "true" ]; then
-	platformbanner="" # hide the platform
-else
-	platformbanner=" on the '${PLATFORM}' platform"
-fi
-
 echo
 cat /usr/local/share/pfSense/ascii-art/pfsense-logo-small.txt
 echo
 echo
-echo "Welcome to ${product} ${version}${version_patch}${platformbanner}..."
+echo "Welcome to ${product} ${version}${version_patch}..."
 echo
 
 /sbin/conscontrol mute off >/dev/null

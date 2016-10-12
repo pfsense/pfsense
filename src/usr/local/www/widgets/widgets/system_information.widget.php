@@ -125,17 +125,6 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			</td>
 		</tr>
-		<?php if (!$g['hideplatform']): ?>
-		<tr>
-			<th><?=gettext("Platform");?></th>
-			<td>
-				<?=htmlspecialchars($g['platform']);?>
-				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
-					echo " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")";
-				} ?>
-			</td>
-		</tr>
-		<?php endif; ?>
 		<?php if ($g['platform'] == "nanobsd"): ?>
 			<?php
 			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;

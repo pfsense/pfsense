@@ -77,7 +77,8 @@ $g = array(
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
-	"language" => "en_US"
+	"language" => "en_US",
+	"default_config_backup_count" => 30
 );
 
 /* IP TOS flags */
@@ -99,17 +100,10 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 
 if (file_exists("/etc/platform")) {
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
-	if ($g['platform'] == "nanobsd") {
-		$g['default_config_backup_count'] = 5;
-	} else {
-		$g['default_config_backup_count'] = 30;
-	}
 } else { 
 	// shouldn't happen but "just in case" no platform were detected 
 	$g['platform'] = 'undetected'; 
-	$g['default_config_backup_count'] = 30; 
-} 
-
+}
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");

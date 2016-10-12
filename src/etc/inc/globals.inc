@@ -60,15 +60,12 @@ $g = array(
 	"product_website" => "www.pfsense.org",
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
-	"hideplatform" => false,
-	"hidebackupbeforeupgrade" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
 	"latest_config" => "15.6",
-	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
@@ -80,7 +77,8 @@ $g = array(
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
-	"language" => "en_US"
+	"language" => "en_US",
+	"default_config_backup_count" => 30
 );
 
 /* IP TOS flags */
@@ -100,21 +98,8 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
 }
 
-if (file_exists("/etc/platform")) {
-	$g['update_manifest']="https://updates.pfsense.org/manifest";
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
-	if ($g['platform'] == "nanobsd") {
-		$g['hidebackupbeforeupgrade'] = true;
-		$g['default_config_backup_count'] = 5;
-	} else {
-		$g['default_config_backup_count'] = 30;
-	}
-} else { 
-	// shouldn't happen but "just in case" no platform were detected 
-	$g['platform'] = 'undetected'; 
-	$g['default_config_backup_count'] = 30; 
-} 
-
+/* XXX: Backward compatible */
+$g['platform'] = $g['product_name'];
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");

@@ -61,7 +61,6 @@ if ($_POST['submit'] == "DOWNLOAD" && file_exists($_POST['dlPath'])) {
 }
 
 if ($_POST) {
-	conf_mount_rw();
 }
 
 // Function: is Blank
@@ -324,5 +323,4 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 include("foot.inc");
 
 if ($_POST) {
-	conf_mount_ro();
 }

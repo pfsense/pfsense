@@ -164,9 +164,7 @@ function check_and_returnif_section_exists($section) {
 if ($_POST['apply']) {
 	ob_flush();
 	flush();
-	conf_mount_rw();
 	clear_subsystem_dirty("restore");
-	conf_mount_ro();
 	exit;
 }
 
@@ -311,7 +309,6 @@ if ($_POST) {
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 								}
 								filter_configure();
 								$savemsg = gettext("The configuration area has been restored. The firewall may need to be rebooted.");
@@ -325,7 +322,6 @@ if ($_POST) {
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 								/* this will be picked up by /index.php */
-								conf_mount_rw();
 								mark_subsystem_dirty("restore");
 								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
@@ -349,7 +345,6 @@ if ($_POST) {
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 								}
 								if ($m0n0wall_upgrade == true) {
 									if ($config['system']['gateway'] <> "") {
@@ -411,7 +406,6 @@ if ($_POST) {
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");
 								}

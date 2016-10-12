@@ -5,7 +5,6 @@
 
 # Save the rrd databases to the config path.
 if [ -d "${RRDDBPATH}" ]; then
-	[ -z "$NO_REMOUNT" ] && /etc/rc.conf_mount_rw
 	[ -f "${CF_CONF_PATH}/rrd.tgz" ] && /bin/rm -f "${CF_CONF_PATH}"/rrd.tgz
 
 	tgzlist=""
@@ -22,6 +21,5 @@ if [ -d "${RRDDBPATH}" ]; then
 		cd / && /usr/bin/tar -czf "${CF_CONF_PATH}/rrd.tgz" ${tgzlist}
 		/bin/rm -f "${RRDDBPATH}"/*.tgz
 	fi
-	[ -z "$NO_REMOUNT" ] && /etc/rc.conf_mount_ro
 fi
 

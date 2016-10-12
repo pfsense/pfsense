@@ -24,50 +24,6 @@
 
 require_once("pkg-utils.inc");
 
-$run_installer = false;
-
-function rescue_detect_keypress() {
-	global $run_installer;
-
-	// How long do you want the script to wait before moving on (in seconds)
-	$timeout=3;
-	echo "\n";
-	echo "[ Press R to enter recovery mode or ]\n";
-	echo "[  press I to launch the installer  ]\n\n";
-	echo "(R)ecovery mode can assist by rescuing config.xml\n";
-	echo "from a broken hard disk installation, etc.\n\n";
-	echo "(I)nstaller will be invoked\n\n";
-	echo "Timeout before auto boot continues (seconds): {$timeout}";
-	$key = null;
-	exec("/bin/stty erase " . chr(8));
-	while (!in_array($key, array("r", "R", "i", "I"))) {
-		echo chr(8) . "{$timeout}";
-		`/bin/stty -icanon min 0 time 25`;
-		$key = trim(`KEY=\`dd count=1 2>/dev/null\`; echo \$KEY`);
-		`/bin/stty icanon`;
-		// Decrement our timeout value
-		$timeout--;
-		// If we have reached 0 exit and continue on
-		if ($timeout == 0) {
-			break;
-		}
-	}
-	// If R or I was pressed do our logic here
-	if (in_array($key, array("r", "R"))) {
-		putenv("TERM=xterm");
-		echo "\n\nRecovery mode selected...\n";
-		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
-	} else {
-		$run_installer = true;
-		/* Make sure / is read-write */
-		exec('/sbin/mount -u /');
-		return;
-	}
-
-	passthru("/etc/rc.reboot");
-	exit;
-}
-
 echo " done.\n";
 
 echo "Initializing...";
@@ -117,7 +73,6 @@ $physmem = $memory[0];
 $realmem = $memory[1];
 echo " done.\n";
 
-conf_mount_rw();
 
 /* save dmesg output to file */
 system_dmesg_save();
@@ -149,11 +104,6 @@ start_devd();
 set_device_perms();
 unmute_kernel_msgs();
 echo "done.\n";
-
-// Display rescue configuration option
-if ($g['platform'] == "cdrom") {
-	rescue_detect_keypress();
-}
 
 echo "Loading configuration...";
 parse_config_bootup();
@@ -411,8 +361,7 @@ if (file_exists("/sbin/shutdown.old")) {
 }
 
 /* Resync / Reinstall packages if need be */
-if (file_exists('/conf/needs_package_sync') &&
-    ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
+if (file_exists('/conf/needs_package_sync')) {
 	mark_subsystem_dirty('packagelock');
 	if (package_reinstall_all()) {
 		@unlink('/conf/needs_package_sync');
@@ -421,9 +370,7 @@ if (file_exists('/conf/needs_package_sync') &&
 }
 
 /* Detect installed binary pkgs that are not registered in the system */
-if ($g['platform'] != "cdrom") {
-	register_all_installed_packages();
-}
+register_all_installed_packages();
 
 /* Give syslogd a kick after everything else has been initialized, otherwise it can occasionally
    fail to route syslog messages properly on both IPv4 and IPv6 */
@@ -443,25 +390,5 @@ if ($ipsec_dynamic_hosts || !empty($filterdns)) {
 
 led_normalize();
 
-if ($run_installer) {
-	//  critical disable dns rebind protection to allow installer
-	//  to work on RFC-1918 address space
-	$config['system']['webgui']['nodnsrebindcheck'] = true;
-	write_config();
-	services_unbound_configure();
-
-	putenv("TERM=xterm");
-	echo "\n\nInstaller mode selected...\n";
-	passthru("/usr/bin/env TERM=xterm /bin/tcsh -c /scripts/lua_installer");
-
-	// If installer fails, call a recovery shell
-	if (!file_exists("/tmp/install_complete")) {
-		passthru("/usr/bin/env TERM=xterm /bin/tcsh");
-	}
-	passthru("/etc/rc.reboot");
-	exit;
-}
-
-conf_mount_ro();
 
 ?>

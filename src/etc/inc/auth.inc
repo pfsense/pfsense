@@ -370,7 +370,6 @@ function local_backed($username, $passwd) {
 
 function local_sync_accounts() {
 	global $debug, $config;
-	conf_mount_rw();
 
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
@@ -444,7 +443,6 @@ function local_sync_accounts() {
 		}
 	}
 
-	conf_mount_ro();
 
 }
 
@@ -456,7 +454,6 @@ function local_user_set(& $user) {
 		return;
 	}
 
-	conf_mount_rw();
 
 	$home_base = "/home/";
 	$user_uid = $user['uid'];
@@ -600,7 +597,6 @@ function local_user_set(& $user) {
 	$un = $lock_account ? "" : "un";
 	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 
-	conf_mount_ro();
 }
 
 function local_user_del($user) {

@@ -106,9 +106,6 @@ BOGON_V6_CKSUM=`/usr/bin/fetch -T 30 -q -o - "${v6urlcksum}" | awk '{ print $4 }
 ON_DISK_V6_CKSUM=`md5 /tmp/bogonsv6 | awk '{ print $4 }'`
 
 if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DISK_V6_CKSUM" ]; then
-	# At least one of the downloaded checksums matches, so mount RW
-	/etc/rc.conf_mount_rw
-
 	ENTRIES_MAX=`pfctl -s memory | awk '/table-entries/ { print $4 }'`
 
 	if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ]; then
@@ -154,9 +151,6 @@ if [ "$BOGON_V4_CKSUM" = "$ON_DISK_V4_CKSUM" ] || [ "$BOGON_V6_CKSUM" = "$ON_DIS
 		echo "Could not download ${v6url} (checksum mismatch)" | logger
 		checksum_error="true"
 	fi
-
-	# We mounted RW, so switch back to RO
-	/etc/rc.conf_mount_ro
 fi
 
 if [ "$checksum_error" != "" ]; then

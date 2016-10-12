@@ -923,26 +923,26 @@ function return_gateway_groups_array() {
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
-                                        	if (!file_exists("/tmp/.down.$gwname")) {
-                                                	$msg .= "\n".implode("|", $status);
-							touch("/tmp/.down.$gwname");
-                                                	log_error($msg);
-                                                	notify_via_growl($msg);
-                                                	notify_via_smtp($msg);
-                                        	}
+						if (!file_exists("/tmp/.down.{$gwname}")) {
+							$msg .= "\n".implode("|", $status);
+							touch("/tmp/.down.{$gwname}");
+							log_error($msg);
+							notify_via_growl($msg);
+							notify_via_smtp($msg);
+						}
 					} else {
 						/* Online add member */
 						if (!is_array($tiers[$tier])) {
 							$tiers[$tier] = array();
 						}
 						$tiers[$tier][] = $gwname;
-						if (file_exists("/tmp/.down.$gwname")) {
-							$msg = "MONITOR: {$gwname} is available now, adding to routing group";
+						if (file_exists("/tmp/.down.{$gwname}")) {
+							$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
 							$msg .= "\n".implode("|", $status);
+							unlink("/tmp/.down.{$gwname}");
 							log_error($msg);
 							notify_via_growl($msg);
 							notify_via_smtp($msg);
-							unlink("/tmp/.down.$gwname");
 						}
 					}
 				} else if (isset($gateways_arr[$gwname]['monitor_disable'])) {

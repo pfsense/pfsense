@@ -304,36 +304,8 @@ EOD;
  ******/
 /* mount flash card read/write */
 function conf_mount_rw() {
-	global $g, $config;
-
-	/* do not mount on cdrom platform */
-	if ($g['platform'] == "cdrom" or $g['platform'] == $g['product_name']) {
-		return;
-	}
-
-	if ((refcount_reference(1000) > 1) && is_writable("/")) {
-		return;
-	}
-
-	$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
-	if ($status <> 0) {
-		if (platform_booting()) {
-			echo gettext("/cf Filesystem is dirty.") . "\n";
-		}
-		$status = mwexec("/sbin/mount -u -w -o sync,noatime {$g['cf_path']}");
-	}
-
-	/*    if the platform is soekris or wrap or $product, lets mount the
-	 *    compact flash cards root.
-	*/
-	$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
-	/* we could not mount this correctly. */
-	if ($status <> 0) {
-		log_error(gettext("/ File system is dirty."));
-		$status = mwexec("/sbin/mount -u -w -o sync,noatime /");
-	}
-
-	mark_subsystem_dirty('mount');
+	/* Obsoleted. Keep it here untill all calls are removed */
+	return;
 }
 
 /****f* config/conf_mount_ro
@@ -343,35 +315,8 @@ function conf_mount_rw() {
  *   null
  ******/
 function conf_mount_ro() {
-	global $g, $config;
-
-	// do nothing here. redmine #6184
+	/* Obsoleted. Keep it here untill all calls are removed */
 	return;
-
-	/* Do not trust $g['platform'] since this can be clobbered during factory reset. */
-	$platform = trim(file_get_contents("/etc/platform"));
-	/* do not umount on cdrom or pfSense platforms */
-	if ($platform == "cdrom" or $platform == $g['product_name']) {
-		return;
-	}
-
-	if (refcount_unreference(1000) > 0) {
-		return;
-	}
-
-	if (isset($config['system']['nanobsd_force_rw'])) {
-		return;
-	}
-
-	if (platform_booting()) {
-		return;
-	}
-
-	clear_subsystem_dirty('mount');
-	/* sync data, then force a remount of /cf */
-	pfSense_fsync($g['cf_path']);
-	mwexec("/sbin/mount -u -r -f -o sync,noatime {$g['cf_path']}");
-	mwexec("/sbin/mount -u -r -f -o sync,noatime /");
 }
 
 /****f* config/convert_config

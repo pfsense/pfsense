@@ -165,9 +165,7 @@ if (file_exists('/conf/needs_package_sync')) {
 			}
 		}
 	} else {
-		conf_mount_rw();
 		@unlink('/conf/needs_package_sync');
-		conf_mount_ro();
 	}
 }
 

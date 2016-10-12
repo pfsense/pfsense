@@ -30,11 +30,6 @@ if (!isset($config['system']['enablesshd'])) {
 	return;
 }
 
-/* are we already running?  if not, do conf_mount_rw(), otherwise it should already be rw */
-if (!is_subsystem_dirty('sshdkeys')) {
-	conf_mount_rw();
-}
-
 $sshConfigDir = "/etc/ssh";
 
 $keys = array(
@@ -198,6 +193,5 @@ if ($g['platform'] == "nanobsd") {
 	}
 	$_gb = exec("/bin/cp -p {$sshConfigDir}/ssh_host* /conf/sshd");
 }
-conf_mount_ro();
 unset($keys, $keyfiles);
 ?>

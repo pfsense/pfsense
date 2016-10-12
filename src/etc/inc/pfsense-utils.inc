@@ -788,7 +788,6 @@ function backup_config_section($section_name) {
  */
 function restore_config_section($section_name, $new_contents) {
 	global $config, $g;
-	conf_mount_rw();
 	$fout = fopen("{$g['tmp_path']}/tmpxml", "w");
 	fwrite($fout, $new_contents);
 	fclose($fout);
@@ -816,7 +815,6 @@ function restore_config_section($section_name, $new_contents) {
 	}
 	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
-	conf_mount_ro();
 	return true;
 }
 
@@ -828,7 +826,6 @@ function restore_config_section($section_name, $new_contents) {
  */
 function merge_config_section($section_name, $new_contents) {
 	global $config;
-	conf_mount_rw();
 	$fname = get_tmp_filename();
 	$fout = fopen($fname, "w");
 	fwrite($fout, $new_contents);
@@ -838,7 +835,6 @@ function merge_config_section($section_name, $new_contents) {
 	unlink($fname);
 	write_config(sprintf(gettext("Restored %s of config file (maybe from CARP partner)"), $section_name));
 	disable_security_checks();
-	conf_mount_ro();
 	return;
 }
 
@@ -1057,10 +1053,8 @@ function reload_all_sync() {
 	system_ntp_configure();
 
 	/* sync pw database */
-	conf_mount_rw();
 	unlink_if_exists("/etc/spwd.db.tmp");
 	mwexec("/usr/sbin/pwd_mkdb -d /etc/ /etc/master.passwd");
-	conf_mount_ro();
 
 	/* restart sshd */
 	send_event("service restart sshd");
@@ -1071,7 +1065,6 @@ function reload_all_sync() {
 
 function setup_serial_port($when = "save", $path = "") {
 	global $g, $config;
-	conf_mount_rw();
 	$ttys_file = "{$path}/etc/ttys";
 	$boot_config_file = "{$path}/boot.config";
 	$loader_conf_file = "{$path}/boot/loader.conf";
@@ -1197,7 +1190,6 @@ function setup_serial_port($when = "save", $path = "") {
 		reload_ttys();
 	}
 
-	conf_mount_ro();
 	return;
 }
 
@@ -2372,7 +2364,6 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 	    $forceupdate) {
 
 		// Try to fetch the URL supplied
-		conf_mount_rw();
 		unlink_if_exists($tmp_urltable_filename);
 		$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 		if (download_file($url, $tmp_urltable_filename, $verify_ssl)) {
@@ -2403,10 +2394,8 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 			if (!$validateonly) {
 				touch($urltable_filename);
 			}
-			conf_mount_ro();
 			return false;
 		}
-		conf_mount_ro();
 		return true;
 	} else {
 		// File exists, and it doesn't need to be updated.
@@ -2464,7 +2453,6 @@ function nanobsd_switch_boot_slice() {
 	$ATOFLASH = "{$BOOT_DRIVE}s{$ASLICE}";
 	$ACOMPLETE_PATH = "{$BOOT_DRIVE}s{$ASLICE}a";
 	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
-	conf_mount_rw();
 	set_single_sysctl("kern.geom.debugflags", "16");
 	exec("/sbin/gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
 	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
@@ -2474,7 +2462,6 @@ function nanobsd_switch_boot_slice() {
 		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
 	}
 	set_single_sysctl("kern.geom.debugflags", "0");
-	conf_mount_ro();
 }
 function nanobsd_clone_slice() {
 	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;

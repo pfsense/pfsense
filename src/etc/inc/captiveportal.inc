@@ -1547,7 +1547,6 @@ function captiveportal_write_elements() {
 	}
 
 	if (is_array($cpcfg['element'])) {
-		conf_mount_rw();
 		foreach ($cpcfg['element'] as $data) {
 			/* Do not attempt to decode or write out empty files. */
 			if (empty($data['content']) || empty(base64_decode($data['content']))) {
@@ -1561,7 +1560,6 @@ function captiveportal_write_elements() {
 				@symlink("{$g['captiveportal_element_path']}/{$data['name']}", "{$g['captiveportal_path']}/{$data['name']}");
 			}
 		}
-		conf_mount_ro();
 	}
 
 	return 0;

@@ -83,9 +83,7 @@ if (platform_booting(true)) {
 			if (!config_validate("{$g['conf_path']}/config.xml")) {
 				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
 			}
-			conf_mount_rw();
 			file_put_contents("/cf/conf/config.xml", $config_contents);
-			conf_mount_ro();
 		}
 		unset($config_contents);
 	}

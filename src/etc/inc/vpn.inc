@@ -199,17 +199,14 @@ function vpn_ipsec_configure($restart = false) {
 
 	if (!file_exists("/usr/local/etc/ipsec.d") ||
 	    !is_link("/usr/local/etc/ipsec.d")) {
-		conf_mount_rw();
 		if (file_exists("/usr/local/etc/ipsec.d")) {
 			rmdir_recursive("/usr/local/etc/ipsec.d");
 		}
 		@symlink("{$g['varetc_path']}/ipsec/ipsec.d",
 		    "/usr/local/etc/ipsec.d");
-		conf_mount_ro();
 	}
 	if (!file_exists("{$g['varetc_path']}/etc/strongswan.d") ||
 	    !is_link("{$g['varetc_path']}/etc/strongswan.d")) {
-		conf_mount_rw();
 		if (is_link("{$g['varetc_path']}/etc/strongswan.d")) {
 			@unlink("{$g['varetc_path']}/etc/strongswan.d");
 		} else {
@@ -217,23 +214,18 @@ function vpn_ipsec_configure($restart = false) {
 		}
 		@symlink("/usr/local/etc/strongswan.d",
 		    "{$g['varetc_path']}/ipsec/strongswan.d");
-		conf_mount_ro();
 	}
 	if (!file_exists("/usr/local/etc/strongswan.conf") ||
 	    !is_link("/usr/local/etc/strongswan.conf")) {
-		conf_mount_rw();
 		@unlink("/usr/local/etc/strongswan.conf");
 		@symlink("{$g['varetc_path']}/ipsec/strongswan.conf",
 		    "/usr/local/etc/strongswan.conf");
-		conf_mount_ro();
 	}
 	if (!file_exists("/usr/local/etc/ipsec.conf") ||
 	    !is_link("/usr/local/etc/ipsec.conf")) {
-		conf_mount_rw();
 		@unlink("/usr/local/etc/ipsec.conf");
 		@symlink("{$g['varetc_path']}/ipsec/ipsec.conf",
 		    "/usr/local/etc/ipsec.conf");
-		conf_mount_ro();
 	}
 
 	if (platform_booting()) {

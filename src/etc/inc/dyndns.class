@@ -1458,7 +1458,6 @@
 			if ($successful_update == true) {
 				/* Write WAN IP to cache file */
 				$wan_ip = $this->_checkIP();
-				conf_mount_rw();
 				if ($this->_useIPv6 == false && $wan_ip > 0) {
 					$currentTime = time();
 					notify_all_remote(sprintf(gettext('DynDNS updated IP Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
@@ -1475,7 +1474,6 @@
 				} else {
 					@unlink($this->_cacheFile_v6);
 				}
-				conf_mount_ro();
 			}
 			$this->status = $status;
 			log_error($status);
@@ -1558,10 +1556,8 @@
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IPv6: %s"), $cacheIP);
 				} else {
-					conf_mount_rw();
 					$cacheIP = '::';
 					@file_put_contents($this->_cacheFile, "::|{$currentTime}");
-					conf_mount_ro();
 					$cacheTime = $currentTime;
 					$initial = true;
 					$log_error .= gettext("No Cached IPv6 found.");
@@ -1574,10 +1570,8 @@
 					$initial = false;
 					$log_error .= sprintf(gettext("Cached IP: %s"), $cacheIP);
 				} else {
-					conf_mount_rw();
 					$cacheIP = '0.0.0.0';
 					@file_put_contents($this->_cacheFile, "0.0.0.0:{$currentTime}");
-					conf_mount_ro();
 					$cacheTime = $currentTime;
 					$initial = true;
 					$log_error .= gettext("No Cached IP found.");
@@ -1634,11 +1628,9 @@
 				return;
 			}
 			$string = date('m-d-y h:i:s').' - ('.$this->_debugID.') - ['.$this->_dnsService.'] - '.$data."\n";
-			conf_mount_rw();
 			$file = fopen($this->_debugFile, 'a');
 			fwrite($file, $string);
 			fclose($file);
-			conf_mount_ro();
 		}
 		function _checkIP() {
 			global $debug;

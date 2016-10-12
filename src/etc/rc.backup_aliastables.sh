@@ -7,8 +7,6 @@
 
 # Save the alias tables database to the RAM disk store.
 if [ -d "${DBPATH}" ]; then
-	[ -z "$NO_REMOUNT" ] && /etc/rc.conf_mount_rw
-
 	if [ ! -d "${RAM_Disk_Store}" ]; then
 		mkdir -p "${RAM_Disk_Store}"
 	fi
@@ -19,6 +17,4 @@ if [ -d "${DBPATH}" ]; then
 			cd / && /usr/bin/tar -czf "${RAM_Disk_Store}/${filename}.tgz" -C / "${DBPATH}/${filename}"
 		fi
 	done
-
-	[ -z "$NO_REMOUNT" ] && /etc/rc.conf_mount_ro
 fi

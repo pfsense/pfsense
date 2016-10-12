@@ -200,7 +200,6 @@ function restore_backup($file) {
 	global $g;
 
 	if (file_exists($file)) {
-		conf_mount_rw();
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		copy("$file", "/cf/conf/config.xml");
 		pfSense_fsync("/cf/conf/config.xml");
@@ -208,7 +207,6 @@ function restore_backup($file) {
 		disable_security_checks();
 		log_error(sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file));
 		file_notice("config.xml", sprintf(gettext('%1$s is restoring the configuration %2$s'), $g['product_name'], $file), "pfSenseConfigurator", "");
-		conf_mount_ro();
 	}
 }
 
@@ -459,7 +457,6 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 
 	$config['revision'] = make_config_revision_entry($desc);
 
-	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
 
 	/* generate configuration XML */
@@ -499,15 +496,10 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	unlock($lockkey);
 
 	if ($write_config_only) {
-		/* tell kernel to sync fs data */
-		conf_mount_ro();
 		return $config;
 	}
 
 	unlink_if_exists("/usr/local/pkg/pf/carp_sync_client.php");
-
-	/* tell kernel to sync fs data */
-	conf_mount_ro();
 
 	/* sync carp entries to other firewalls */
 	carp_sync_client();
@@ -529,7 +521,6 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 function reset_factory_defaults($lock = false, $reboot_required = true) {
 	global $g;
 
-	conf_mount_rw();
 
 	/* Remove all additional packages */
 	mwexec("/bin/sh /usr/local/sbin/{$g['product_name']}-upgrade " .
@@ -569,7 +560,6 @@ function reset_factory_defaults($lock = false, $reboot_required = true) {
 	if (!$lock) {
 		unlock($lockkey);
 	}
-	conf_mount_ro();
 	setup_serial_port();
 	return 0;
 }
@@ -583,7 +573,6 @@ function config_restore($conffile) {
 
 	backup_config();
 
-	conf_mount_rw();
 
 	$lockkey = lock('config', LOCK_EX);
 
@@ -596,7 +585,6 @@ function config_restore($conffile) {
 
 	$config = parse_config(true);
 
-	conf_mount_ro();
 
 	write_config(sprintf(gettext("Reverted to %s."), array_pop(explode("/", $conffile))), false);
 
@@ -620,7 +608,6 @@ function config_install($conffile) {
 		log_error(gettext("Installing configuration ...."));
 	}
 
-	conf_mount_rw();
 	$lockkey = lock('config', LOCK_EX);
 
 	copy($conffile, "{$g['conf_path']}/config.xml");
@@ -633,7 +620,6 @@ function config_install($conffile) {
 	}
 
 	unlock($lockkey);
-	conf_mount_ro();
 
 	return 0;
 }
@@ -699,7 +685,6 @@ function cleanup_backupcache($lock = false) {
 		$lockkey = lock('config');
 	}
 
-	conf_mount_rw();
 
 	$backups = get_backups();
 	if ($backups) {
@@ -771,7 +756,6 @@ function cleanup_backupcache($lock = false) {
 	fwrite($bakout, serialize($tocache));
 	fclose($bakout);
 	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
-	conf_mount_ro();
 
 	if (!$lock) {
 		unlock($lockkey);
@@ -799,7 +783,6 @@ function get_backups() {
 function backup_config() {
 	global $config, $g;
 
-	conf_mount_rw();
 
 	/* Create backup directory if needed */
 	safe_mkdir("{$g['cf_conf_path']}/backup");
@@ -830,7 +813,6 @@ function backup_config() {
 	fclose($bakout);
 	pfSense_fsync("{$g['cf_conf_path']}/backup/backup.cache");
 
-	conf_mount_ro();
 
 	return true;
 }

@@ -153,7 +153,6 @@ function run_cmds($cmds) {
 }
 
 unlink_if_exists("/tmp/config.cache");
-conf_mount_rw();
 
 if (!file_exists($GIT_BIN)) {
 	require_once("pkg-utils.inc");
@@ -258,7 +257,6 @@ if (!$found) {
 	}
 	if (!$found) {
 		echo "\nNo valid branch found.  Exiting.\n\n";
-		conf_mount_ro();
 		exit;
 	}
 }
@@ -305,13 +303,11 @@ if (!$args[0] && !$upgrading) {
 if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
 	if (!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
-		conf_mount_ro();
 		exit();
 	}
 	echo "===> Restoring previous CVSSync backup... Please wait...\n";
 	exec("tar Uxpf /root/cvssync_backup.tgz -C /");
 	post_cvssync_commands();
-	conf_mount_ro();
 	exit();
 } else {
 	$nobackup = true; // do not backup embedded
@@ -370,7 +366,6 @@ foreach ($merge_repos as $merge_repo) {
 	if ($ret <> 0) {
 		echo "\nMerge failed.  Aborting sync.\n\n";
 		run_cmds($git_cmd);
-		conf_mount_ro();
 		exit;
 	}
 }
@@ -526,4 +521,3 @@ if (!$upgrading) {
 	echo "Your system is now sync'd.\n\n";
 }
 
-conf_mount_ro();

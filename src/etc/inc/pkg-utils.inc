@@ -124,14 +124,12 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-	conf_mount_rw();
 
 	pkg_debug("pkg_call(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
-		conf_mount_ro();
 		return false;
 	}
 
@@ -172,7 +170,6 @@ function pkg_call($params, $mute = false, $extra_env = array()) {
 	fclose($pipes[2]);
 	proc_close($process);
 
-	conf_mount_ro();
 
 	$rc = $status['exitcode'];
 
@@ -209,14 +206,12 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 		2 => array("pipe", "w")	 /* stderr */
 	);
 
-	conf_mount_rw();
 
 	pkg_debug("pkg_exec(): {$params}\n");
 	$process = proc_open("/usr/sbin/pkg {$params}", $descriptorspec, $pipes,
 	    '/', pkg_env($extra_env));
 
 	if (!is_resource($process)) {
-		conf_mount_ro();
 		return -1;
 	}
 
@@ -232,7 +227,6 @@ function pkg_exec($params, &$stdout, &$stderr, $extra_env = array()) {
 	}
 	fclose($pipes[2]);
 
-	conf_mount_ro();
 
 	return proc_close($process);
 }
@@ -493,7 +487,6 @@ function resync_all_package_configs($show_message = false) {
 		echo "Syncing packages:";
 	}
 
-	conf_mount_rw();
 
 	foreach ($config['installedpackages']['package'] as $idx => $package) {
 		if (empty($package['name'])) {
@@ -514,7 +507,6 @@ function resync_all_package_configs($show_message = false) {
 	}
 
 	@unlink("/conf/needs_package_sync");
-	conf_mount_ro();
 }
 
 function uninstall_package($package_name) {
@@ -673,7 +665,6 @@ function install_package_xml($package_name) {
 	}
 
 	/* safe side. Write config below will send to ro again. */
-	conf_mount_rw();
 
 	pkg_debug(gettext("Beginning package installation.") . "\n");
 	log_error(sprintf(gettext('Beginning package installation for %s .'), $pkg_info['name']));
@@ -692,7 +683,6 @@ function install_package_xml($package_name) {
 	}
 	unlink_if_exists('/conf/needs_package_sync');
 	write_config(sprintf(gettext("Intermediate config write during package install for %s."), $pkg_info['name']));
-	conf_mount_ro();
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
@@ -822,14 +812,12 @@ function install_package_xml($package_name) {
 function delete_package_xml($package_name, $when = "post-deinstall") {
 	global $g, $config, $pkg_interface;
 
-	conf_mount_rw();
 
 	$pkgid = get_package_id($package_name);
 	if ($pkgid == -1) {
 		update_status(sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $package_name, "\n\n"));
 		ob_flush();
 		sleep(1);
-		conf_mount_ro();
 		return;
 	}
 	pkg_debug(sprintf(gettext("Removing %s package... "), $package_name));
@@ -952,7 +940,6 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 		system_syslogd_start();
 	}
 
-	conf_mount_ro();
 }
 
 /*

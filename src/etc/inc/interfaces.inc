@@ -2838,7 +2838,8 @@ EOD;
 			/* add line to script to restore old mac to make hostapd happy */
 			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
 				$if_oldmac = file_get_contents("{$g['tmp_path']}/{$if}_oldmac");
-				if (is_macaddr($if_oldmac)) {
+				$if_curmac = get_interface_mac($if);
+				if ($if_curmac != $if_oldmac && is_macaddr($if_oldmac)) {
 					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
 						" link " . escapeshellarg($if_oldmac) . "\n");
 				}
@@ -2847,15 +2848,11 @@ EOD;
 			fwrite($fd_set, "{$hostapd} -B -P {$g['varrun_path']}/hostapd_{$if}.pid {$g['varetc_path']}/hostapd_{$if}.conf\n");
 
 			/* add line to script to restore spoofed mac after running hostapd */
-			if (file_exists("{$g['tmp_path']}/{$if}_oldmac")) {
-				if ($wl['spoofmac']) {
-					$if_curmac = $wl['spoofmac'];
-				} else {
-					$if_curmac = get_interface_mac($if);
-				}
-				if (is_macaddr($if_curmac)) {
+			if ($wl['spoofmac']) {
+				$if_curmac = get_interface_mac($if);
+				if ($wl['spoofmac'] != $if_curmac && is_macaddr($wl['spoofmac'])) {
 					fwrite($fd_set, "{$ifconfig} " . escapeshellarg($if) .
-						" link " . escapeshellarg($if_curmac) . "\n");
+						" link " . escapeshellarg($wl['spoofmac']) . "\n");
 				}
 			}
 		}

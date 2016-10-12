@@ -562,12 +562,6 @@ $priv_list['page-system-packagemanager-installed']['descr'] = gettext("Allow acc
 $priv_list['page-system-packagemanager-installed']['match'] = array();
 $priv_list['page-system-packagemanager-installed']['match'][] = "pkg_mgr_installed.php*";
 
-$priv_list['page-diagnostics-restart-httpd'] = array();
-$priv_list['page-diagnostics-restart-httpd']['name'] = gettext("WebCfg - Diagnostics: Restart Web Server Daemon");
-$priv_list['page-diagnostics-restart-httpd']['descr'] = gettext("Allow access to the 'Diagnostics: Restart Web Server Daemon' page.");
-$priv_list['page-diagnostics-restart-httpd']['match'] = array();
-$priv_list['page-diagnostics-restart-httpd']['match'][] = "restart_httpd.php*";
-
 $priv_list['page-services-captiveportal'] = array();
 $priv_list['page-services-captiveportal']['name'] = gettext("WebCfg - Services: Captive portal");
 $priv_list['page-services-captiveportal']['descr'] = gettext("Allow access to the 'Services: Captive portal' page.");

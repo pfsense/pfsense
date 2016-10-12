@@ -93,8 +93,7 @@ function pkg_env($extra_env = array()) {
 		$pkg_env_vars['HTTP_PROXY'] = $http_proxy;
 	}
 
-	if ($g['platform'] == "nanobsd" ||
-	    isset($config['system']['use_mfs_tmpvar'])) {
+	if (isset($config['system']['use_mfs_tmpvar'])) {
 		$pkg_env_vars['PKG_DBDIR'] = '/root/var/db/pkg';
 		$pkg_env_vars['PKG_CACHEDIR'] = '/root/var/cache/pkg';
 	}

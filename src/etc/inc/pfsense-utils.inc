@@ -928,7 +928,7 @@ function host_firmware_version($tocheck = "") {
 		"firmware" => array("version" => $g['product_version']),
 		"kernel"   => array("version" => $os_version),
 		"base"     => array("version" => $os_version),
-		"platform" => trim(file_get_contents('/etc/platform', " \n")),
+		"platform" => $g['platform'],
 		"config_version" => $config['version']
 	);
 }
@@ -1078,15 +1078,11 @@ function setup_serial_port($when = "save", $path = "") {
 	$serialspeed = (is_numeric($config['system']['serialspeed'])) ? $config['system']['serialspeed'] : "115200";
 	$serial_only = false;
 
-	if (($g['platform'] == "nanobsd") && isset($g['enableserial_force'])) {
+	$specific_platform = system_identify_specific_platform();
+	if ($specific_platform['name'] == 'RCC-VE' ||
+	    $specific_platform['name'] == 'RCC' ||
+	    $specific_platform['name'] == 'RCC-DFF') {
 		$serial_only = true;
-	} else {
-		$specific_platform = system_identify_specific_platform();
-		if ($specific_platform['name'] == 'RCC-VE' ||
-		    $specific_platform['name'] == 'RCC' ||
-		    $specific_platform['name'] == 'RCC-DFF') {
-			$serial_only = true;
-		}
 	}
 
 	$boot_config_split = explode("\n", $boot_config);
@@ -1197,8 +1193,7 @@ function is_serial_enabled() {
 	global $g, $config;
 
 	if (!isset($g['enableserial_force']) &&
-	    !isset($config['system']['enableserial']) &&
-	    ($g['platform'] == $g['product_name'])) {
+	    !isset($config['system']['enableserial'])) {
 		return false;
 	}
 
@@ -2383,7 +2378,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 			}
 
 			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-			if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+			if (!isset($config['system']['use_mfs_tmpvar'])) {
 				unlink_if_exists("{$g['cf_conf_path']}/RAM_Disk_Store{$urltable_filename}.tgz");
 			} else {
 				/* Update the RAM disk store with the new/updated table file. */
@@ -2401,151 +2396,6 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 		// File exists, and it doesn't need to be updated.
 		return -1;
 	}
-}
-function get_real_slice_from_glabel($label) {
-	$label = escapeshellarg($label);
-	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/{$label} | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' '`);
-}
-function nanobsd_get_boot_slice() {
-	return trim(`/sbin/mount | /usr/bin/grep pfsense | /usr/bin/cut -d'/' -f4 | /usr/bin/cut -d' ' -f1`);
-}
-function nanobsd_get_boot_drive() {
-	return trim(`/sbin/glabel list | /usr/bin/grep -B2 ufs/pfsense | /usr/bin/head -n 1 | /usr/bin/cut -f3 -d' ' | /usr/bin/cut -d's' -f1`);
-}
-function nanobsd_get_active_slice() {
-	$boot_drive = nanobsd_get_boot_drive();
-	$active = trim(`gpart show $boot_drive | grep '\[active\]' | awk '{print $3;}'`);
-
-	return "{$boot_drive}s{$active}";
-}
-function nanobsd_get_size() {
-	return strtoupper(file_get_contents("/etc/nanosize.txt"));
-}
-function nanobsd_switch_boot_slice() {
-	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-	nanobsd_detect_slice_info();
-
-	if ($BOOTFLASH == $ACTIVE_SLICE) {
-		$slice = $TOFLASH;
-	} else {
-		$slice = $BOOTFLASH;
-	}
-
-	for ($i = 0; $i < ob_get_level(); $i++) {
-		ob_end_flush();
-	}
-	ob_implicit_flush(1);
-	if (strstr($slice, "s2")) {
-		$ASLICE = "2";
-		$AOLDSLICE = "1";
-		$AGLABEL_SLICE = "pfsense1";
-		$AUFS_ID = "1";
-		$AOLD_UFS_ID = "0";
-	} else {
-		$ASLICE = "1";
-		$AOLDSLICE = "2";
-		$AGLABEL_SLICE = "pfsense0";
-		$AUFS_ID = "0";
-		$AOLD_UFS_ID = "1";
-	}
-	$ATOFLASH = "{$BOOT_DRIVE}s{$ASLICE}";
-	$ACOMPLETE_PATH = "{$BOOT_DRIVE}s{$ASLICE}a";
-	$ABOOTFLASH = "{$BOOT_DRIVE}s{$AOLDSLICE}";
-	set_single_sysctl("kern.geom.debugflags", "16");
-	exec("/sbin/gpart set -a active -i {$ASLICE} {$BOOT_DRIVE}");
-	exec("/usr/sbin/boot0cfg -s {$ASLICE} -v /dev/{$BOOT_DRIVE}");
-	// We can't update these if they are mounted now.
-	if ($BOOTFLASH != $slice) {
-		exec("/sbin/tunefs -L ${AGLABEL_SLICE} /dev/$ACOMPLETE_PATH");
-		nanobsd_update_fstab($AGLABEL_SLICE, $ACOMPLETE_PATH, $AOLD_UFS_ID, $AUFS_ID);
-	}
-	set_single_sysctl("kern.geom.debugflags", "0");
-}
-function nanobsd_clone_slice() {
-	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-	nanobsd_detect_slice_info();
-
-	for ($i = 0; $i < ob_get_level(); $i++) {
-		ob_end_flush();
-	}
-	ob_implicit_flush(1);
-	set_single_sysctl("kern.geom.debugflags", "16");
-	exec("/bin/dd if=/dev/zero of=/dev/{$TOFLASH} bs=1m count=1");
-	exec("/bin/dd if=/dev/{$BOOTFLASH} of=/dev/{$TOFLASH} bs=64k");
-	exec("/sbin/tunefs -L {$GLABEL_SLICE} /dev/{$COMPLETE_PATH}");
-	$status = nanobsd_update_fstab($GLABEL_SLICE, $COMPLETE_PATH, $OLD_UFS_ID, $UFS_ID);
-	set_single_sysctl("kern.geom.debugflags", "0");
-	if ($status) {
-		return false;
-	} else {
-		return true;
-	}
-}
-function nanobsd_update_fstab($gslice, $complete_path, $oldufs, $newufs) {
-	$tmppath = "/tmp/{$gslice}";
-	$fstabpath = "/tmp/{$gslice}/etc/fstab";
-
-	mkdir($tmppath);
-	exec("/sbin/fsck_ufs -y /dev/{$complete_path}");
-	exec("/sbin/mount /dev/ufs/{$gslice} {$tmppath}");
-	copy("/etc/fstab", $fstabpath);
-
-	if (!file_exists($fstabpath)) {
-		$fstab = <<<EOF
-/dev/ufs/{$gslice} / ufs ro,noatime 1 1
-/dev/ufs/cf /cf ufs ro,noatime 1 1
-EOF;
-		if (file_put_contents($fstabpath, $fstab)) {
-			$status = true;
-		} else {
-			$status = false;
-		}
-	} else {
-		$status = exec("/usr/bin/sed -i \"\" \"s/pfsense{$oldufs}/pfsense{$newufs}/g\" {$fstabpath}");
-	}
-	exec("/sbin/umount {$tmppath}");
-	rmdir($tmppath);
-
-	return $status;
-}
-function nanobsd_detect_slice_info() {
-	global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-	global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-	global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-
-	$BOOT_DEVICE=nanobsd_get_boot_slice();
-	$REAL_BOOT_DEVICE=get_real_slice_from_glabel($BOOT_DEVICE);
-	$BOOT_DRIVE=nanobsd_get_boot_drive();
-	$ACTIVE_SLICE=nanobsd_get_active_slice();
-
-	// Detect which slice is active and set information.
-	if (strstr($REAL_BOOT_DEVICE, "s1")) {
-		$SLICE = "2";
-		$OLDSLICE = "1";
-		$GLABEL_SLICE = "pfsense1";
-		$UFS_ID = "1";
-		$OLD_UFS_ID = "0";
-
-	} else {
-		$SLICE = "1";
-		$OLDSLICE = "2";
-		$GLABEL_SLICE = "pfsense0";
-		$UFS_ID = "0";
-		$OLD_UFS_ID = "1";
-	}
-	$TOFLASH = "{$BOOT_DRIVE}s{$SLICE}";
-	$COMPLETE_PATH = "{$BOOT_DRIVE}s{$SLICE}a";
-	$COMPLETE_BOOT_PATH = "{$BOOT_DRIVE}s{$OLDSLICE}";
-	$BOOTFLASH = "{$BOOT_DRIVE}s{$OLDSLICE}";
-}
-
-function nanobsd_friendly_slice_name($slicename) {
-	global $g;
-	return strtolower(str_ireplace('pfsense', $g['product_name'], $slicename));
 }
 
 function get_include_contents($filename) {
@@ -3305,7 +3155,7 @@ function restore_aliastables() {
 				}
 			}
 			/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-			if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+			if (!isset($config['system']['use_mfs_tmpvar'])) {
 				unlink_if_exists("{$file}");
 			}
 		}

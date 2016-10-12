@@ -358,8 +358,7 @@ if (file_exists("/sbin/shutdown.old")) {
 }
 
 /* Resync / Reinstall packages if need be */
-if (file_exists('/conf/needs_package_sync') &&
-    ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd")) {
+if (file_exists('/conf/needs_package_sync')) {
 	mark_subsystem_dirty('packagelock');
 	if (package_reinstall_all()) {
 		@unlink('/conf/needs_package_sync');

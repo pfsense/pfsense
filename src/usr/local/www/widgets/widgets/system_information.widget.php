@@ -125,25 +125,6 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			</td>
 		</tr>
-		<?php if ($g['platform'] == "nanobsd"): ?>
-			<?php
-			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-			nanobsd_detect_slice_info();
-			$rw = is_writable("/") ? "(rw)" : "(ro)";
-			?>
-		<tr>
-			<th><?=gettext("NanoBSD Boot Slice");?></th>
-			<td>
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?=$rw;?>
-				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br /><br /><?=gettext('Next Boot')?>:<br />
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
-				<?php endif; ?>
-			</td>
-		</tr>
-		<?php endif; ?>
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>

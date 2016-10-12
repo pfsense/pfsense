@@ -20,7 +20,6 @@
 #
 
 # Set our operating platform
-PLATFORM=`/bin/cat /etc/platform`
 VERSION=`/bin/cat /etc/version`
 MIN_REALMEM_FOR_OPCACHE=512
 
@@ -70,11 +69,7 @@ else
 fi
 
 # Set upload directory
-if [ "$PLATFORM" = "nanobsd" ]; then
-	UPLOADTMPDIR=$(/usr/local/sbin/read_global_var upload_path "/root")
-else
-	UPLOADTMPDIR="/tmp"
-fi
+UPLOADTMPDIR="/tmp"
 
 # Define php modules.  Do not add .so, it will
 # be done automatically by the script below.

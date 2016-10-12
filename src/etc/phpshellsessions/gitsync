@@ -300,7 +300,7 @@ if (!$args[0] && !$upgrading) {
 	} while (!empty($merge_repo));
 }
 
-if ($branch == "RESTORE" && $g['platform'] == $g['product_name']) {
+if ($branch == "RESTORE") {
 	if (!file_exists("/root/cvssync_backup.tgz")) {
 		echo "Sorry, we could not find a previous CVSSync backup file.\n";
 		exit();
@@ -480,11 +480,7 @@ $tar_options = '-C ./src';
 
 echo "===> Installing $qty_files_to_copy new files...\n";
 
-if ($g['platform'] == $g['product_name']) {
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";
-} else {
-	$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -xpf -) 2>/dev/null";
-}
+$command = "cd $CODIR/pfSenseGITREPO/pfSenseGITREPO ; tar -cpf - {$tar_options} {$files_to_copy} | (cd / ; tar -Uxpf -)";
 
 if (!empty($files_to_copy)) {
 	if(isset($args["--show_command"])) {

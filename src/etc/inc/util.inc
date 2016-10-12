@@ -2017,11 +2017,7 @@ function get_memory() {
 
 function mute_kernel_msgs() {
 	global $g, $config;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	if ($config['system']['enableserial']) {
 		return;
 	}
@@ -2030,11 +2026,7 @@ function mute_kernel_msgs() {
 
 function unmute_kernel_msgs() {
 	global $g;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	exec("/sbin/conscontrol mute off");
 }
 

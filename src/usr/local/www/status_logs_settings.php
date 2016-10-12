@@ -313,7 +313,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Checkbox(
 	'disablelocallogging',
 	'Local Logging',
-	$g['platform'] == $g['product_name'] ? "Disable writing log files to the local disk" : "Disable writing log files to the local RAM disk",
+	"Disable writing log files to the local disk",
 	$pconfig['disablelocallogging']
 ));
 

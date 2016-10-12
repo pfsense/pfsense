@@ -36,8 +36,6 @@ oIFS=${IFS}
 IFS="
 "
 
-PLATFORM=$(cat /etc/platform)
-
 # Process obsolete files
 if [ -f /etc/%%PRODUCT_NAME%%.obsoletedfiles ]; then
 	for f in $(cat /etc/%%PRODUCT_NAME%%.obsoletedfiles); do

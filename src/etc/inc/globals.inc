@@ -98,12 +98,8 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
 }
 
-if (file_exists("/etc/platform")) {
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
-} else { 
-	// shouldn't happen but "just in case" no platform were detected 
-	$g['platform'] = 'undetected'; 
-}
+/* XXX: Backward compatible */
+$g['platform'] = $g['product_name'];
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");

@@ -99,7 +99,6 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 }
 
 if (file_exists("/etc/platform")) {
-	$g['update_manifest']="https://updates.pfsense.org/manifest";
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if ($g['platform'] == "nanobsd") {
 		$g['hidebackupbeforeupgrade'] = true;

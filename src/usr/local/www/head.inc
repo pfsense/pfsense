@@ -365,10 +365,6 @@ $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.p
 $diagnostics_menu[] = array(gettext("Traceroute"), "/diag_traceroute.php");
 $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php");
 
-if ($g['platform'] == "nanobsd") {
-	$diagnostics_menu[] = array(gettext("NanoBSD"), "/diag_nanobsd.php");
-}
-
 if (isset($config['system']['developer'])) {
 	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
 }

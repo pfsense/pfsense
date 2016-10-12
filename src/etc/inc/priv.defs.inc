@@ -105,12 +105,6 @@ $priv_list['page-diagnostics-limiter-info']['descr'] = gettext("Allows access to
 $priv_list['page-diagnostics-limiter-info']['match'] = array();
 $priv_list['page-diagnostics-limiter-info']['match'][] = "diag_limiter_info.php*";
 
-$priv_list['page-diagnostics-nanobsd'] = array();
-$priv_list['page-diagnostics-nanobsd']['name'] = gettext("WebCfg - Diagnostics: NanoBSD");
-$priv_list['page-diagnostics-nanobsd']['descr'] = gettext("Allow access to the 'Diagnostics: NanoBSD' page.");
-$priv_list['page-diagnostics-nanobsd']['match'] = array();
-$priv_list['page-diagnostics-nanobsd']['match'][] = "diag_nanobsd.php*";
-
 $priv_list['page-diagnostics-ndptable'] = array();
 $priv_list['page-diagnostics-ndptable']['name'] = gettext("WebCfg - Diagnostics: NDP Table");
 $priv_list['page-diagnostics-ndptable']['descr'] = gettext("Allow access to the 'Diagnostics: NDP Table' page.");

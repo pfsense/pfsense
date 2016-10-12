@@ -2610,11 +2610,6 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	$wlcmd = array();
 	$wl_sysctl = array();
-	/* Disable this for now as we will bring up the interface as a last step.
-	 * Bringing up the interface with all the other arguments causes issues when using VAPs.
-	 * Related to #5616.
-	 */
-	//$wlcmd[] = "up";
 	/* Set a/b/g standard */
 	$standard = str_replace(" Turbo", "", $wlcfg['standard']);
 	/* skip mode entirely for "auto" */

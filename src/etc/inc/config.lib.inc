@@ -228,32 +228,20 @@ function parse_config_bootup() {
 	$lockkey = lock('config');
 	if (!file_exists("{$g['conf_path']}/config.xml")) {
 		if (platform_booting()) {
-			if (strstr($g['platform'], "cdrom")) {
-				/* try copying the default config. to the floppy */
-				echo gettext("Resetting factory defaults...") . "\n";
-				reset_factory_defaults(true, false);
-				if (!file_exists("{$g['conf_path']}/config.xml")) {
-					echo gettext("No XML configuration file found - using factory defaults.\n" .
-								 "Make sure that the configuration floppy disk with the conf/config.xml\n" .
-								 "file is inserted. If it isn't, the configuration changes will be lost\n" .
-								 "on reboot.\n");
-				}
-			} else {
-				$last_backup = discover_last_backup();
-				if ($last_backup) {
-					log_error("No config.xml found, attempting last known config restore.");
-					file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
-					restore_backup("/cf/conf/backup/{$last_backup}");
-				}
-				if (!file_exists("{$g['conf_path']}/config.xml")) {
-					echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_name']) . "\n";
-					unlock($lockkey);
-					mwexec("/sbin/halt");
-					exit;
-				}
-				log_error("Last known config found and restored.  Please double check the configuration file for accuracy.");
-				file_notice("config.xml", gettext("Last known config found and restored.  Please double check the configuration file for accuracy."), "pfSenseConfigurator", "");
+			$last_backup = discover_last_backup();
+			if ($last_backup) {
+				log_error("No config.xml found, attempting last known config restore.");
+				file_notice("config.xml", gettext("No config.xml found, attempting last known config restore."), "pfSenseConfigurator", "");
+				restore_backup("/cf/conf/backup/{$last_backup}");
 			}
+			if (!file_exists("{$g['conf_path']}/config.xml")) {
+				echo sprintf(gettext("XML configuration file not found.  %s cannot continue booting."), $g['product_name']) . "\n";
+				unlock($lockkey);
+				mwexec("/sbin/halt");
+				exit;
+			}
+			log_error("Last known config found and restored.  Please double check the configuration file for accuracy.");
+			file_notice("config.xml", gettext("Last known config found and restored.  Please double check the configuration file for accuracy."), "pfSenseConfigurator", "");
 		} else {
 			unlock($lockkey);
 			log_error(gettext("Could not find a usable configuration file! Exiting...."));
@@ -810,10 +798,6 @@ function get_backups() {
 
 function backup_config() {
 	global $config, $g;
-
-	if ($g['platform'] == "cdrom") {
-		return;
-	}
 
 	conf_mount_rw();
 

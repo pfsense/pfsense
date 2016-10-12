@@ -88,10 +88,6 @@ for i in /var/db/pfi/capable_*; do
 	fi
 done
 
-if [ "$PLATFORM" = "cdrom" ]; then
-	option99="99) Install ${product} to a hard drive, etc."
-fi
-
 # display a cheap menu
 echo ""
 echo " 0) Logout (SSH only)                  9) pfTop"
@@ -104,10 +100,6 @@ echo " 6) Halt system                       15) Restore recent configuration"
 echo " 7) Ping host                         16) Restart PHP-FPM"
 echo " 8) Shell"
 echo " ${option98} "
-
-if [ "${option99}" != "" ]; then
-	/bin/echo "${option99}"
-fi
 
 echo
 read -p "Enter an option: " opmode
@@ -169,13 +161,6 @@ case ${opmode} in
 98)
 	if [ ! -f /tmp/config_moved ]; then
 		/etc/rc.initial.store_config_to_removable_device
-	fi
-	;;
-99)
-	if [ -e /dev/ukbd0 ]; then
-		env TERM=xterm /scripts/lua_installer
-	else
-		/scripts/lua_installer
 	fi
 	;;
 100)

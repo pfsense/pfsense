@@ -70,86 +70,84 @@ if [ -e /root/force_fsck ]; then
 	/sbin/fsck -y -F -t ufs
 fi
 
-if [ "${PLATFORM}" != "cdrom" ]; then
-	FSCK_ACTION_NEEDED=0
-	/sbin/fsck -p -F
-	case $? in
-	0)
-		echo "Filesystems are clean, continuing..."
-		echo "Mounting filesystems..."
-		;;
-	8)
-		echo "Preen mode recommended running a check that will be performed now."
-		FSCK_ACTION_NEEDED=1
-		;;
-	*)
-		echo "Stopping boot is recommended because filesystem manual action is needed, nevertheless automated repair of the filesystem will be attempted."
-		FSCK_ACTION_NEEDED=1
-		;;
-	esac
+FSCK_ACTION_NEEDED=0
+/sbin/fsck -p -F
+case $? in
+0)
+	echo "Filesystems are clean, continuing..."
+	echo "Mounting filesystems..."
+	;;
+8)
+	echo "Preen mode recommended running a check that will be performed now."
+	FSCK_ACTION_NEEDED=1
+	;;
+*)
+	echo "Stopping boot is recommended because filesystem manual action is needed, nevertheless automated repair of the filesystem will be attempted."
+	FSCK_ACTION_NEEDED=1
+	;;
+esac
 
-	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
-		echo "WARNING: Trying to recover filesystem from inconsistency..."
-		/sbin/fsck -yF
-	fi
+if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
+	echo "WARNING: Trying to recover filesystem from inconsistency..."
+	/sbin/fsck -yF
+fi
 
+/sbin/mount -a 2>/dev/null
+mount_rc=$?
+attempts=0
+while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
+	/sbin/fsck -yF
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
-	attempts=0
-	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-		/sbin/fsck -yF
-		/sbin/mount -a 2>/dev/null
-		mount_rc=$?
-		attempts=$((attempts+1))
-	done
+	attempts=$((attempts+1))
+done
 
-	if [ "${PLATFORM}" = "nanobsd" ]; then
-		# XXX This script does need all filesystems rw!!!!
-		# Put this workaround for now until better ways are found.
-		/sbin/mount -u -w -o sync,noatime /
-		/sbin/mount -u -w -o sync,noatime /cf
+if [ "${PLATFORM}" = "nanobsd" ]; then
+	# XXX This script does need all filesystems rw!!!!
+	# Put this workaround for now until better ways are found.
+	/sbin/mount -u -w -o sync,noatime /
+	/sbin/mount -u -w -o sync,noatime /cf
+fi
+
+# If /conf is a directory, convert it to a symlink to /cf/conf
+if [ -d "/conf" ]; then
+	# If item is not a symlink then rm and recreate
+	CONFPOINTSTO=`readlink /conf`
+	if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
+		/bin/rm -rf /conf
+		/bin/ln -s /cf/conf /conf
 	fi
+fi
 
-	# If /conf is a directory, convert it to a symlink to /cf/conf
-	if [ -d "/conf" ]; then
-		# If item is not a symlink then rm and recreate
-		CONFPOINTSTO=`readlink /conf`
-		if ! test "x$CONFPOINTSTO" = "x/cf/conf"; then
-			/bin/rm -rf /conf
-			/bin/ln -s /cf/conf /conf
-		fi
-	fi
-
-	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-	unset MOVE_PKG_DATA
-	if [ "$PLATFORM" = "${product}" ]; then
-		# If use MFS var is disabled, move files back to place
-		if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
-			MOVE_PKG_DATA=1
-			rm -rf /var/db/pkg 2>/dev/null
-			rm -rf /var/cache/pkg 2>/dev/null
-			mv /root/var/db/pkg /var/db
-			mv /root/var/cache/pkg /var/cache
-		# If use MFS var is enabled, move files to a safe place
-		elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
-			MOVE_PKG_DATA=1
-			/bin/mkdir -p /root/var/db /root/var/cache
-			mv /var/db/pkg /root/var/db
-			mv /var/cache/pkg /root/var/cache
-		fi
-	elif [ "${PLATFORM}" = "nanobsd" ]; then
+USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+unset MOVE_PKG_DATA
+if [ "$PLATFORM" = "${product}" ]; then
+	# If use MFS var is disabled, move files back to place
+	if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
 		MOVE_PKG_DATA=1
+		rm -rf /var/db/pkg 2>/dev/null
+		rm -rf /var/cache/pkg 2>/dev/null
+		mv /root/var/db/pkg /var/db
+		mv /root/var/cache/pkg /var/cache
+	# If use MFS var is enabled, move files to a safe place
+	elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
+		MOVE_PKG_DATA=1
+		/bin/mkdir -p /root/var/db /root/var/cache
+		mv /var/db/pkg /root/var/db
+		mv /var/cache/pkg /root/var/cache
 	fi
+elif [ "${PLATFORM}" = "nanobsd" ]; then
+	MOVE_PKG_DATA=1
+fi
 
-	if [ "${PLATFORM}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
-		/etc/rc.embedded
-	fi
+if [ "${PLATFORM}" = "nanobsd" ] || [ "${USE_MFS_TMPVAR}" = "true" ]; then
+	/etc/rc.embedded
+fi
 
-	if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
-		/bin/mkdir -p /var/db /var/cache
-		ln -sf ../../root/var/db/pkg /var/db/pkg
-		ln -sf ../../root/var/cache/pkg /var/cache/pkg
-	fi
+if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
+	/bin/mkdir -p /var/db /var/cache
+	ln -sf ../../root/var/db/pkg /var/db/pkg
+	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
 # Make sure /home exists
@@ -179,8 +177,6 @@ elif [ "$PLATFORM" = "${product}" ]; then
 			fi
 		fi
 	fi
-elif [ "${PLATFORM}" = "cdrom" ]; then
-	/etc/rc.cdrom
 fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
@@ -215,24 +211,6 @@ if [ "$PLATFORM" = "${product}" ]; then
 	SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 	/sbin/swapon -a 2>/dev/null >/dev/null
 	/etc/rc.savecore
-fi
-
-if [ "$PLATFORM" = "cdrom" ] ; then
-	echo -n "Mounting unionfs directories..."
-	/bin/mkdir /tmp/unionfs
-	/bin/mkdir /tmp/unionfs/usr
-	/bin/mkdir /tmp/unionfs/root
-	/bin/mkdir /tmp/unionfs/sbin
-	/bin/mkdir /tmp/unionfs/bin
-	/bin/mkdir /tmp/unionfs/boot
-	/bin/mkdir /tmp/unionfs/confdefault
-	/sbin/mount_unionfs /tmp/unionfs/usr /usr/
-	/sbin/mount_unionfs /tmp/unionfs/root /root/
-	/sbin/mount_unionfs /tmp/unionfs/bin /bin/
-	/sbin/mount_unionfs /tmp/unionfs/sbin /sbin/
-	/sbin/mount_unionfs /tmp/unionfs/boot /boot/
-	/sbin/mount_unionfs /tmp/unionfs/confdefault /conf.default/
-	echo "done."
 fi
 
 # make some directories in /var
@@ -300,17 +278,12 @@ if [ ! -h /tmp/tmp ]; then
 fi
 
 # Make sure our /tmp is 777 + Sticky
-if [ ! "$PLATFORM" = "cdrom" ] ; then
-	/bin/rm -rf /tmp/*
-fi
 /bin/chmod 1777 /tmp
 
-if [ ! "$PLATFORM" = "cdrom" ] ; then
-	# Malloc debugging check
-	if [ -L /etc/malloc.conf ]; then
-		#ln -s aj /etc/malloc.conf
-		/bin/rm /etc/malloc.conf
-	fi
+# Malloc debugging check
+if [ -L /etc/malloc.conf ]; then
+	#ln -s aj /etc/malloc.conf
+	/bin/rm /etc/malloc.conf
 fi
 
 if [ ! -L /etc/dhclient.conf ]; then

@@ -60,7 +60,6 @@ $g = array(
 	"product_website" => "www.pfsense.org",
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
-	"hidebackupbeforeupgrade" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
@@ -101,7 +100,6 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 if (file_exists("/etc/platform")) {
 	$g['platform'] = trim(file_get_contents("/etc/platform"));
 	if ($g['platform'] == "nanobsd") {
-		$g['hidebackupbeforeupgrade'] = true;
 		$g['default_config_backup_count'] = 5;
 	} else {
 		$g['default_config_backup_count'] = 30;

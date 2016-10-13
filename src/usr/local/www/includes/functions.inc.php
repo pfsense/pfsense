@@ -159,7 +159,14 @@ function get_mbuf($percent=false) {
 }
 
 function get_temp() {
-	$temp_out = get_single_sysctl("dev.cpu.0.temperature");
+
+	$platform = system_identify_specific_platform();
+	if ($platform['name'] == "uFW") {
+		$temp_out = get_single_sysctl("dev.am335x_scm.0.temperature");
+	}
+	if ($temp_out == "") {
+		$temp_out = get_single_sysctl("dev.cpu.0.temperature");
+	}
 	if ($temp_out == "") {
 		$temp_out = get_single_sysctl("hw.acpi.thermal.tz0.temperature");
 	}

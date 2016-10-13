@@ -276,24 +276,30 @@ if (isset($_POST['apply'])) {
 			}
 		}
 
+		$range_from_to_ok = true;
+
 		if ($_POST['range_from']) {
 			if (!is_ipaddrv6($_POST['range_from'])) {
 				$input_errors[] = gettext("A valid range must be specified.");
+				$range_from_to_ok = false;
 			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
 			    !Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
 				$input_errors[] = sprintf(gettext(
 				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
 				    $ifcfgsn, $str_help_mask);
+				$range_from_to_ok = false;
 			}
 		}
 		if ($_POST['range_to']) {
 			if (!is_ipaddrv6($_POST['range_to'])) {
 				$input_errors[] = gettext("A valid range must be specified.");
+				$range_from_to_ok = false;
 			} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
 			    !Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
 				$input_errors[] = sprintf(gettext(
 				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
 				    $ifcfgsn, $str_help_mask);
+				$range_from_to_ok = false;
 			}
 		}
 		if (($_POST['gateway'] && !is_ipaddrv6($_POST['gateway']))) {
@@ -346,7 +352,7 @@ if (isset($_POST['apply'])) {
 		}
 
 		// Disallow a range that includes the virtualip
-		if (is_array($config['virtualip']['vip'])) {
+		if ($range_from_to_ok && is_array($config['virtualip']['vip'])) {
 			foreach ($config['virtualip']['vip'] as $vip) {
 				if ($vip['interface'] == $if) {
 					if ($vip['subnetv6'] && is_inrange_v6($vip['subnetv6'], $_POST['range_from'], $_POST['range_to'])) {

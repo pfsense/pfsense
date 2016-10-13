@@ -2254,6 +2254,11 @@ function system_identify_specific_platform() {
 			break;
 	}
 
+	$_gb = exec('/bin/kenv uboot.board_name 2>/dev/null', $board);
+	if ($board[0] === "A335uFW") {
+		return (array('name' => 'uFW', 'descr' => 'Netgate SG-1000'));
+	}
+
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}

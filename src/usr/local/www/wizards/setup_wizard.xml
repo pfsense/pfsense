@@ -619,32 +619,39 @@
 			die;
 		}
 
-		$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
-		$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+		/*
+		   If the existing DHCP range on LAN is not in the new subnet or
+		   is invalid, then replace the range with a newly crafted one.
+		*/
+		if (!ip_in_subnet($config['dhcpd']['lan']['range']['from'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}") ||
+		    !ip_in_subnet($config['dhcpd']['lan']['range']['to'], "{$_POST['lanipaddress']}/{$_POST['subnetmask']}")) {
 
-		if ($ipaddresses_after >= $ipaddresses_before) {
-			// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
-			if ($ipaddresses_after > 30) {
-				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-				// This case will work out like the old defaults if the user has specified the ".1" address.
-				// The range will be something like ".10" to ".245"
-				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+			$ipaddresses_before = ip_range_size_v4($lowestip, $_POST['lanipaddress']);
+			$ipaddresses_after = ip_range_size_v4($_POST['lanipaddress'], $highestip);
+			if ($ipaddresses_after >= $ipaddresses_before) {
+				// The LAN IP is in the 1st half of the subnet, so put DHCP in the 2nd half.
+				if ($ipaddresses_after > 30) {
+					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+					// This case will work out like the old defaults if the user has specified the ".1" address.
+					// The range will be something like ".10" to ".245"
+					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress'], 9);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip, 10);
+				} else {
+					// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
+					$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
+				}
 			} else {
-				// There is not much space in the subnet, so allocate everything above the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($_POST['lanipaddress']);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($highestip);
-			}
-		} else {
-			// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
-			if ($ipaddresses_before > 30) {
-				// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
-			} else {
-				// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
-				$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
-				$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+				// The LAN IP is in the 2nd half of the subnet, so put DHCP in the 1st half.
+				if ($ipaddresses_before > 30) {
+					// There is reasonable space in the subnet, use a smaller chunk of the space for DHCP
+					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip, 10);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress'], 9);
+				} else {
+					// There is not much space in the subnet, so allocate everything below the LAN IP to DHCP.
+					$config['dhcpd']['lan']['range']['from'] = ip_after($lowestip);
+					$config['dhcpd']['lan']['range']['to'] = ip_before($_POST['lanipaddress']);
+				}
 			}
 		}
 		]]>

@@ -1366,9 +1366,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 			null,
 			'fa-cog'
 		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
-			'The source port (or port range) is usually random and almost never equal '.
-			'to the destination port range. It is not usually required, and should usually '.
-			'be left at its default value, <b>any</b>).');
+			'The <b>Source Port Range</b> for a connection is typically random '.
+			'and almost never equal to the destination port. '.
+			'In most cases this setting must remain at its default value, <b>any</b>.');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
@@ -1376,7 +1376,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' port range');
+	$group = new Form_Group($name .' Port Range');
 
 	$group->addClass($type . 'portrange');
 

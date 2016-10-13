@@ -2094,6 +2094,7 @@ function has_hw_watchdog() {
 	switch ($platform['name']) {
 		case 'RCC-VE':
 		case 'RCC-DFF':
+		case 'uFW':
 			return (1);
 			break;
 	}

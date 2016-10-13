@@ -65,6 +65,10 @@ if [ -e /root/force_fsck ]; then
 	/sbin/fsck -y -F -t ufs
 fi
 
+if [ -e /root/force_growfs ]; then
+	/etc/rc.d/growfs onestart
+fi
+
 FSCK_ACTION_NEEDED=0
 /sbin/fsck -p -F
 case $? in
@@ -139,6 +143,7 @@ fi
 	|| mkdir /home
 
 /bin/rm -f /root/force_fsck
+/bin/rm -f /root/force_growfs
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
 

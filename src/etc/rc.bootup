@@ -253,8 +253,10 @@ interfaces_loopback_configure();
 /* start syslogd */
 system_syslogd_start();
 
-/* restore alias tables */
-restore_aliastables();
+/* Log the RAM disk restore messages. */
+if (file_exists("/var/log/restore_ramdisk_store.boot")) {
+	exec("logger -f /var/log/restore_ramdisk_store.boot");
+}
 
 echo "Starting Secure Shell Services...";
 send_event("service reload sshd");

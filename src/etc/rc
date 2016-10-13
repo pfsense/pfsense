@@ -182,6 +182,9 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 		ln -sf ../../root/var/db/pkg /var/db/pkg
 		ln -sf ../../root/var/cache/pkg /var/cache/pkg
 	fi
+
+	# Restore contents of the RAM disk store
+	/etc/rc.restore_ramdisk_store
 fi
 
 /bin/rm -f /root/force_fsck

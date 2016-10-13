@@ -2054,6 +2054,14 @@ function system_setup_sysctl() {
 	if (isset($config['system']['sharednet'])) {
 		system_disable_arp_wrong_if();
 	}
+
+	$platform = system_identify_specific_platform();
+	if ($platform['name'] == "uFW") {
+		set_sysctl(array(
+			"hw.intr_storm_threshold" => "40000",
+			"kern.random.harvest.mask" => "351",
+		));
+	}
 }
 
 function system_disable_arp_wrong_if() {

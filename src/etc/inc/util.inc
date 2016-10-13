@@ -1155,8 +1155,12 @@ function is_inrange_v4($test, $start, $end) {
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v6($test, $start, $end) {
-	if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
-		return true;
+	if (is_ipaddrv6($test) && is_ipaddrv6($start) && is_ipaddrv6($end)) {
+		if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
+			return true;
+		} else {
+			return false;
+		}
 	} else {
 		return false;
 	}

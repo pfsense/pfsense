@@ -1329,9 +1329,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 			null,
 			'fa-cog'
 		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
-			'The source port (or port range) is usually random and almost never equal '.
-			'to the destination port range. It is not usually required, and should usually '.
-			'be left at its default value, <b>any</b>).');
+			'Usually the source port (or port range) is random and almost never equal '.
+			'to the destination port range. It should be left at its default value '.
+			'(<b>any</b>) unless other setting is explicitly required.');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];

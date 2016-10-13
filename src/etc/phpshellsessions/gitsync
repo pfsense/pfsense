@@ -88,9 +88,9 @@ $valid_args = array(
 	"--diff" => "\tPerform a copy of only the different and missing files.\n" .
 	    "\tRecommended for SSD if system has files modified by any method other\n" .
 	    "\tthan gitsync.\n",
-	"--show_files" => "\tShow the updated, different and missing files.\n" .
+	"--show-files" => "\tShow the updated, different and missing files.\n" .
 	    "\t(when used with --minimal and --diff options)\n",
-	"--show_command" => "\tShow the constructed command.\n",
+	"--show-command" => "\tShow the constructed command.\n",
 	"--dry-run" => "\tDry-run only.  No files copied.\n",
 	"--help" => "\tDisplay this help list.\n"
 	);
@@ -422,7 +422,7 @@ if (isset($args["--minimal"])) {
 	# Get the path of each updated file.
 	preg_match_all('@(?:^(.+?)$)@sim', $updated_files, $updated_files_array, PREG_PATTERN_ORDER);
 
-	if(isset($args["--show_files"])) {
+	if(isset($args["--show-files"])) {
 		echo "===> Updated Files: \n";
 		print_r($updated_files_array[1]);
 	}
@@ -488,7 +488,7 @@ if(isset($args["--diff"])) {
 		$missing_files_array[1][$key] = $file;
 	}
 
-	if(isset($args["--show_files"])) {
+	if(isset($args["--show-files"])) {
 		echo "===> Different Files: \n";
 		print_r($different_files_array[1]);
 		echo "===> Missing Files: \n";
@@ -525,7 +525,7 @@ if ($g['platform'] == $g['product_name']) {
 }
 
 if (!empty($files_to_copy)) {
-	if(isset($args["--show_command"])) {
+	if(isset($args["--show-command"])) {
 		echo "===> Command: \n$command\n";
 	}
 	if(!isset($args["--dry-run"])) {

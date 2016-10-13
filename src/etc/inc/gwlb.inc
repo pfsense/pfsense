@@ -968,10 +968,9 @@ function return_gateway_groups_array() {
 							$tiers[$tier] = array();
 						}
 						$tiers[$tier][] = $gwname;
-						if (file_exists("/tmp/.down.{$gwname}")) {
+						if (unlink_if_exists("/tmp/.down.{$gwname}")) {
 							$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
 							$msg .= "\n".implode("|", $status);
-							unlink("/tmp/.down.{$gwname}");
 							log_error($msg);
 							notify_via_growl($msg);
 							notify_via_smtp($msg);

@@ -1200,20 +1200,30 @@ function is_valid_shaperbw($val) {
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v4($test, $start, $end) {
-	if ((ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv4($test) || !is_ipaddrv4($start) || !is_ipaddrv4($end)) {
 		return false;
 	}
+
+	if (ip2ulong($test) <= ip2ulong($end) &&
+	    ip2ulong($test) >= ip2ulong($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v6($test, $start, $end) {
-	if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv6($test) || !is_ipaddrv6($start) || !is_ipaddrv6($end)) {
 		return false;
 	}
+
+	if (inet_pton($test) <= inet_pton($end) &&
+	    inet_pton($test) >= inet_pton($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */

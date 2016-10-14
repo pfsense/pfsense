@@ -390,7 +390,7 @@ function convert_config() {
  * RESULT
  *   boolean - true if successful, false if not
  ******/
-function safe_write_file($file, $content, $force_binary) {
+function safe_write_file($file, $content, $force_binary = false) {
 	$tmp_file = $file . "." . getmypid();
 	$write_mode = $force_binary ? "wb" : "w";
 
@@ -463,7 +463,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
 	/* write new configuration */
-	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
+	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig)) {
 		log_error(gettext("WARNING: Config contents could not be saved. Could not open file!"));
 		unlock($lockkey);
 		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));

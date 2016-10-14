@@ -154,6 +154,7 @@ $auth_server_types = array(
 
 $ldap_urltypes = array(
 	'TCP - Standard' => 389,
+	'TCP - STARTTLS' => 389,
 	'SSL - Encrypted' => 636);
 
 $ldap_scopes = array(

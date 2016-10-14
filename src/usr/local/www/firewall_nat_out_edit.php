@@ -475,7 +475,7 @@ $section->addInput(new Form_Select(
 	'Interface',
 	$pconfig['interface'],
 	$interfaces
-))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 
@@ -506,7 +506,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['sourceport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
@@ -530,7 +530,7 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['dstport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
@@ -551,18 +551,17 @@ $section->addInput(new Form_Select(
 	'Address',
 	$pconfig['target'],
 	build_target_list()
-));
+))->setHelp(	'Connections matching this rule will be mapped to the specified <b>Address</b>.' . '<br />' .
+		'The <b>Address</b> can be an Interface, a Host-type Alias, or a ' .
+		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' address.');
 
 $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
 ))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->setHelp(
-		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
-		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
-		'select it here (' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' .
-		'addresses need to be defined on the interface first)');
+		'This subnet must be routed to the firewall or each address in the subnet must be defined in one or more ' .
+		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' addresses.');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -593,7 +592,7 @@ $section->addInput(new Form_Input(
 	$pconfig['source_hash_key']
 ))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
 
-$group = new Form_Group('Port');
+$group = new Form_Group('Port or Range');
 $group->addClass('natportgrp');
 
 $group->add(new Form_Input(
@@ -601,12 +600,15 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the source port or range for the outbound NAT mapping.');
+))->setHelp('Enter the external source <b>Port or Range</b> used for remapping '.
+		'the original source port on connections matching the rule. <br/><br/>'.
+		'Port ranges are a low port and high port number separated by ":".<br/>'.
+		'Leave blank when <b>Static Port</b> is checked.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
 	null,
-	'Static port',
+	'Static Port',
 	$pconfig['staticnatport']
 ));
 

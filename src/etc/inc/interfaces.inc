@@ -2574,8 +2574,6 @@ function interface_wireless_configure($if, &$wl, &$wlcfg) {
 
 	$wlcmd = array();
 	$wl_sysctl = array();
-	/* Make sure it's up */
-	$wlcmd[] = "up";
 	/* Set a/b/g standard */
 	$standard = str_replace(" Turbo", "", $wlcfg['standard']);
 	/* skip mode entirely for "auto" */
@@ -2954,6 +2952,9 @@ EOD;
 	$wlcmd_args = implode(" ", $wlcmd);
 	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " " . $wlcmd_args, false);
 	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " " . "$wlcmd_args \n");
+	/* Bring the interface up only after setting up all the other parameters. */
+	mwexec("/sbin/ifconfig " . escapeshellarg($if) . " up", false);
+	fwrite($wlan_setup_log, "/sbin/ifconfig " . escapeshellarg($if) . " up\n");
 	fclose($wlan_setup_log);
 
 	unset($wlcmd_args, $wlcmd);

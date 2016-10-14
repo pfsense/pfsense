@@ -384,13 +384,13 @@ function convert_config() {
  *   process, them renaming the temporary file over the original.
  * INPUTS
  *   $filename  - string containing the filename of the file to write
- *   $content   - string containing the file content to write to file
+ *   $content   - string or array containing the file content to write to file
  *   $force_binary      - boolean denoting whether we should force binary
  *   mode writing.
  * RESULT
  *   boolean - true if successful, false if not
  ******/
-function safe_write_file($file, $content, $force_binary) {
+function safe_write_file($file, $content, $force_binary = false) {
 	$tmp_file = $file . "." . getmypid();
 	$write_mode = $force_binary ? "wb" : "w";
 
@@ -399,7 +399,15 @@ function safe_write_file($file, $content, $force_binary) {
 		// Unable to open temporary file for writing
 		return false;
 	}
-	if (!fwrite($fd, $content)) {
+	if (is_array($content)) {
+		foreach ($content as $line) {
+			if (!fwrite($fd, $line . "\n")) {
+				// Unable to write to temporary file
+				fclose($fd);
+				return false;
+			}
+		}
+	} elseif (!fwrite($fd, $content)) {
 		// Unable to write to temporary file
 		fclose($fd);
 		return false;
@@ -463,7 +471,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	$xmlconfig = dump_xml_config($config, $g['xml_rootobj']);
 
 	/* write new configuration */
-	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig, false)) {
+	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig)) {
 		log_error(gettext("WARNING: Config contents could not be saved. Could not open file!"));
 		unlock($lockkey);
 		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));

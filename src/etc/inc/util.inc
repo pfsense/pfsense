@@ -1146,20 +1146,30 @@ function is_valid_shaperbw($val) {
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v4($test, $start, $end) {
-	if ((ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv4($test) || !is_ipaddrv4($start) || !is_ipaddrv4($end)) {
 		return false;
 	}
+
+	if (ip2ulong($test) <= ip2ulong($end) &&
+	    ip2ulong($test) >= ip2ulong($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v6($test, $start, $end) {
-	if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv6($test) || !is_ipaddrv6($start) || !is_ipaddrv6($end)) {
 		return false;
 	}
+
+	if (inet_pton($test) <= inet_pton($end) &&
+	    inet_pton($test) >= inet_pton($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
@@ -1632,16 +1642,24 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
-/* unlink a file, or pattern-match of a file, if it exists
-   if the file/path contains glob() compatible wildcards, all matching files will be unlinked
-   if no matches, no error occurs */
+/*	unlink a file, or pattern-match of a file, if it exists
+	if the file/path contains glob() compatible wildcards, all matching files will be unlinked
+	any warning/errors are suppressed (e.g. no matching files to delete)
+	If there are matching file(s) and they were all unlinked OK, then return true.
+	Otherwise return false (the requested file(s) did not exist, or could not be deleted)
+	This allows the caller to know if they were the one to successfully delete the file(s).
+*/
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		@array_map("unlink", $to_do);
+		// Returns an array of true/false indicating if each unlink worked
+		$results = @array_map("unlink", $to_do);
+		// If there is no false in the array, then all went well
+		$result = !in_array(false, $results, true);
 	} else {
-		@unlink($fn);
+		$result = @unlink($fn);
 	}
+	return $result;
 }
 /* make a global alias table (for faster lookups) */
 function alias_make_table($config) {

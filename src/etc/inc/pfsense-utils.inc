@@ -1215,17 +1215,54 @@ function setup_serial_port($when = "save", $path = "") {
 		$console_type = 'al.Pc';
 		$serial_type = 'al.' . $serialspeed;
 	}
+
+	$console_line = "console	none				unknown	off secure\n";
+	$ttyv0_line = "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n";
+	$ttyu_line = "\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n";
+
+	$found = array();
+
 	foreach ($ttys_split as $tty) {
 		if (stristr($tty, "ttyv0")) {
-			fwrite($fd, "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n");
-		} else if (stristr($tty, "ttyu")) {
+			$found['ttyv0'] = 1;
+			fwrite($fd, $ttyv0_line);
+		} elseif (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
-			fwrite($fd, "{$ttyn}	\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n");
+			$found[$ttyn] = 1;
+			fwrite($fd, "{$ttyn}	{$ttyu_line}");
+		} elseif (substr($tty, 0, 7) == 'console') {
+			$found['console'] = 1;
+			fwrite($fd, $tty . "\n");
 		} else {
 			fwrite($fd, $tty . "\n");
 		}
 	}
 	unset($on_off, $console_type, $serial_type);
+
+	/* Detect missing main lines on original file and try to rebuild it */
+	$items = array(
+		'console',
+		'ttyv0',
+		'ttyu0',
+		'ttyu1',
+		'ttyu2',
+		'ttyu3'
+	);
+
+	foreach ($items as $item) {
+		if (isset($found[$item])) {
+			continue;
+		}
+
+		if ($item == 'console') {
+			fwrite($fd, $console_line);
+		} elseif ($item == 'ttyv0') {
+			fwrite($fd, $ttyv0_line);
+		} else {
+			fwrite($fd, "{$item}	{$ttyu_line}");
+		}
+	}
+
 	fclose($fd);
 	if ($when != "upgrade") {
 		reload_ttys();

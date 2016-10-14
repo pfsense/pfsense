@@ -1130,81 +1130,90 @@ function setup_serial_port($when = "save", $path = "") {
 		}
 
 		$boot_config_split = explode("\n", $boot_config);
-		$fd = fopen($boot_config_file, "w");
-		if ($fd) {
-			foreach ($boot_config_split as $bcs) {
-				if (stristr($bcs, "-D") || stristr($bcs, "-h")) {
-					/* DONT WRITE OUT, WE'LL DO IT LATER */
-				} else {
-					if ($bcs <> "") {
-						fwrite($fd, "{$bcs}\n");
-					}
-				}
+		$data = array();
+		foreach ($boot_config_split as $bcs) {
+			/* Ignore -D and -h lines now */
+			if (!empty($bcs) && !stristr($bcs, "-D") &&
+			    !stristr($bcs, "-h")) {
+				$data[] = $bcs;
 			}
-			if ($serial_only === true) {
-				fwrite($fd, "-S{$serialspeed} -h");
-			} else if (is_serial_enabled()) {
-				fwrite($fd, "-S{$serialspeed} -D");
-			}
-			fclose($fd);
 		}
+		if ($serial_only === true) {
+			$data[] = "-S{$serialspeed} -h";
+		} elseif (is_serial_enabled()) {
+			$data[] = "-S{$serialspeed} -D";
+		}
+
+		if (empty($data)) {
+			@unlink($boot_conf_file);
+		} else {
+			safe_write_file($boot_config_file, $data);
+		}
+
+		unset($boot_config, $boot_config_file, $boot_config_split);
 
 		/* serial console - write out /boot/loader.conf */
 		if ($when == "upgrade") {
 			system("echo \"Reading {$loader_conf_file}...\" >> /conf/upgrade_log.txt");
 		}
-		$boot_config = file_get_contents($loader_conf_file);
-		$boot_config_split = explode("\n", $boot_config);
-		if (count($boot_config_split) > 0) {
-			$new_boot_config = array();
-			// Loop through and only add lines that are not empty, and which
-			//  do not contain a console directive.
-			foreach ($boot_config_split as $bcs) {
-				if (!empty($bcs) &&
-				    (stripos($bcs, "console") === false) &&
-				    (stripos($bcs, "boot_multicons") === false) &&
-				    (stripos($bcs, "boot_serial") === false) &&
-				    (stripos($bcs, "hw.usb.no_pf") === false) &&
-				    (stripos($bcs, "hint.uart.0.flags") === false) &&
-				    (stripos($bcs, "hint.uart.1.flags") === false)) {
-					$new_boot_config[] = $bcs;
-				}
-			}
 
-			if ($serial_only === true) {
-				$new_boot_config[] = 'boot_serial="YES"';
-				$new_boot_config[] = 'console="comconsole"';
-			} else if (is_serial_enabled()) {
-				$new_boot_config[] = 'boot_multicons="YES"';
-				$new_boot_config[] = 'boot_serial="YES"';
-				$primaryconsole = isset($g['primaryconsole_force']) ? $g['primaryconsole_force'] : $config['system']['primaryconsole'];
-				switch ($primaryconsole) {
-					case "video":
-						$new_boot_config[] = 'console="vidconsole,comconsole"';
-						break;
-					case "serial":
-					default:
-						$new_boot_config[] = 'console="comconsole,vidconsole"';
-				}
-			}
-			$new_boot_config[] = 'comconsole_speed="' . $serialspeed . '"';
+		$loader_conf = file_get_contents($loader_conf_file);
+		$loader_conf_split = explode("\n", $loader_conf);
 
-			$specplatform = system_identify_specific_platform();
-			if ($specplatform['name'] == 'RCC-VE' ||
-			    $specplatform['name'] == 'RCC' ||
-			    $specplatform['name'] == 'RCC-DFF') {
-				$new_boot_config[] = 'comconsole_port="0x2F8"';
-				$new_boot_config[] = 'hint.uart.0.flags="0x00"';
-				$new_boot_config[] = 'hint.uart.1.flags="0x10"';
+		$data = array();
+		// Loop through and only add lines that are not empty, and which
+		//  do not contain a console directive.
+		foreach ($loader_conf_split as $bcs) {
+			if (!empty($bcs) &&
+			    (stripos($bcs, "console") === false) &&
+			    (stripos($bcs, "boot_multicons") === false) &&
+			    (stripos($bcs, "boot_serial") === false) &&
+			    (stripos($bcs, "hw.usb.no_pf") === false) &&
+			    (stripos($bcs, "hint.uart.0.flags") === false) &&
+			    (stripos($bcs, "hint.uart.1.flags") === false)) {
+				$data[] = $bcs;
 			}
-			$new_boot_config[] = 'hw.usb.no_pf="1"';
-
-			file_put_contents($loader_conf_file, implode("\n", $new_boot_config) . "\n");
 		}
+
+		if ($serial_only === true) {
+			$data[] = 'boot_serial="YES"';
+			$data[] = 'console="comconsole"';
+		} else if (is_serial_enabled()) {
+			$data[] = 'boot_multicons="YES"';
+			$data[] = 'boot_serial="YES"';
+			$primaryconsole = isset($g['primaryconsole_force']) ?
+			    $g['primaryconsole_force'] :
+			    $config['system']['primaryconsole'];
+			switch ($primaryconsole) {
+				case "video":
+					$data[] = 'console="vidconsole,comconsole"';
+					break;
+				case "serial":
+				default:
+					$data[] = 'console="comconsole,vidconsole"';
+			}
+		}
+		$data[] = 'comconsole_speed="' . $serialspeed . '"';
+
+		$specplatform = system_identify_specific_platform();
+		if ($specplatform['name'] == 'RCC-VE' ||
+		    $specplatform['name'] == 'RCC' ||
+		    $specplatform['name'] == 'RCC-DFF') {
+			$data[] = 'comconsole_port="0x2F8"';
+			$data[] = 'hint.uart.0.flags="0x00"';
+			$data[] = 'hint.uart.1.flags="0x10"';
+		}
+		$data[] = 'hw.usb.no_pf="1"';
+
+		safe_write_file($loader_conf_file, $data);
+
+		unset($loader_conf, $loader_conf_split, $loader_config_file);
 	}
+
 	$ttys = file_get_contents($ttys_file);
 	$ttys_split = explode("\n", $ttys);
-	$fd = fopen($ttys_file, "w");
+
+	$data = array();
 
 	$on_off = (is_serial_enabled() ? 'onifconsole' : 'off');
 
@@ -1216,25 +1225,32 @@ function setup_serial_port($when = "save", $path = "") {
 		$serial_type = 'al.' . $serialspeed;
 	}
 
-	$console_line = "console	none				unknown	off secure\n";
-	$ttyv0_line = "ttyv0	\"/usr/libexec/getty {$console_type}\"	cons25	on	secure\n";
-	$ttyu_line = "\"/usr/libexec/getty {$serial_type}\"	cons25	{$on_off}	secure\n";
+	$console_line = "console\tnone\t\t\t\tunknown\toff\tsecure";
+	$ttyv0_line =
+	    "ttyv0\t\"/usr/libexec/getty {$console_type}\"\tcons25\ton\tsecure";
+	$ttyu_line =
+	    "\"/usr/libexec/getty {$serial_type}\"\tcons25\t{$on_off}\tsecure";
 
 	$found = array();
 
 	foreach ($ttys_split as $tty) {
+		/* Ignore blank lines */
+		if (empty($tty)) {
+			continue;
+		}
+
 		if (stristr($tty, "ttyv0")) {
 			$found['ttyv0'] = 1;
-			fwrite($fd, $ttyv0_line);
+			$data[] = $ttyv0_line;
 		} elseif (stristr($tty, "ttyu")) {
 			$ttyn = substr($tty, 0, 5);
 			$found[$ttyn] = 1;
-			fwrite($fd, "{$ttyn}	{$ttyu_line}");
+			$data[] = "{$ttyn}\t{$ttyu_line}";
 		} elseif (substr($tty, 0, 7) == 'console') {
 			$found['console'] = 1;
-			fwrite($fd, $tty . "\n");
+			$data[] = $tty;
 		} else {
-			fwrite($fd, $tty . "\n");
+			$data[] = $tty;
 		}
 	}
 	unset($on_off, $console_type, $serial_type);
@@ -1255,15 +1271,18 @@ function setup_serial_port($when = "save", $path = "") {
 		}
 
 		if ($item == 'console') {
-			fwrite($fd, $console_line);
+			$data[] = $console_line;
 		} elseif ($item == 'ttyv0') {
-			fwrite($fd, $ttyv0_line);
+			$data[] = $ttyv0_line;
 		} else {
-			fwrite($fd, "{$item}	{$ttyu_line}");
+			$data[] = "{$item}\t{$ttyu_line}";
 		}
 	}
 
-	fclose($fd);
+	safe_write_file($ttys_file, $data);
+
+	unset($ttys, $ttys_file, $ttys_split, $data);
+
 	if ($when != "upgrade") {
 		reload_ttys();
 	}

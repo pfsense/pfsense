@@ -384,7 +384,7 @@ function convert_config() {
  *   process, them renaming the temporary file over the original.
  * INPUTS
  *   $filename  - string containing the filename of the file to write
- *   $content   - string containing the file content to write to file
+ *   $content   - string or array containing the file content to write to file
  *   $force_binary      - boolean denoting whether we should force binary
  *   mode writing.
  * RESULT
@@ -399,7 +399,15 @@ function safe_write_file($file, $content, $force_binary = false) {
 		// Unable to open temporary file for writing
 		return false;
 	}
-	if (!fwrite($fd, $content)) {
+	if (is_array($content)) {
+		foreach ($content as $line) {
+			if (!fwrite($fd, $line . "\n")) {
+				// Unable to write to temporary file
+				fclose($fd);
+				return false;
+			}
+		}
+	} elseif (!fwrite($fd, $content)) {
 		// Unable to write to temporary file
 		fclose($fd);
 		return false;

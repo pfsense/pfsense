@@ -299,12 +299,14 @@ function getAllowedPages($username, &$attributes = array()) {
 	$allowed_pages = array();
 	$allowed_groups = array();
 
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	// obtain ldap groups if we are in ldap mode
-	if ($authcfg['type'] == "ldap") {
-		$allowed_groups = @ldap_get_groups($username, $authcfg);
-	} elseif ($authcfg['type'] == "radius") {
-		$allowed_groups = @radius_get_groups($attributes);
+	if ($_SESSION['remoteauth']) {
+		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		// obtain ldap groups if we are in ldap mode
+		if ($authcfg['type'] == "ldap") {
+			$allowed_groups = @ldap_get_groups($username, $authcfg);
+		} elseif ($authcfg['type'] == "radius") {
+			$allowed_groups = @radius_get_groups($attributes);
+		}
 	}
 	if (!$allowed_groups) {
 		// search for a local user by name

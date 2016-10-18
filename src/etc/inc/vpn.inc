@@ -880,7 +880,7 @@ EOD;
 						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv4($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route change -host {$sourcehost} {$gatewayip}", true);
+								route_add_or_change("-host {$sourcehost} {$gatewayip}");
 							}
 						}
 					}
@@ -907,7 +907,7 @@ EOD;
 						if (!ip_in_subnet($sourcehost, "{$subnet_ip}/{$subnet_bits}")) {
 							if (is_ipaddrv6($gatewayip)) {
 								// log_error("IPSEC interface is not WAN but {$ifacesuse}, adding static route for VPN endpoint {$rgip} via {$gatewayip}");
-								mwexec("/sbin/route change -inet6 -host {$sourcehost} {$gatewayip}", true);
+								route_add_or_change("-inet6 -host {$sourcehost} {$gatewayip}");
 							}
 						}
 					}

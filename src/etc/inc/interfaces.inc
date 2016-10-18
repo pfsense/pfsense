@@ -1006,10 +1006,10 @@ function interface_gif_configure(&$gif, $gifkey = "") {
 	}
 
 	if (is_ipaddrv4($realifgw)) {
-		mwexec("/sbin/route change -host " . escapeshellarg($gif['remote-addr']) . " {$realifgw}");
+		route_add_or_change("-host {$gif['remote-addr']} {$realifgw}");
 	}
 	if (is_ipaddrv6($realifgw)) {
-		mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gif['remote-addr']) . " {$realifgw}");
+		route_add_or_change("-host -inet6 {$gif['remote-addr']} {$realifgw}");
 	}
 
 	interfaces_bring_up($gifif);
@@ -3738,7 +3738,7 @@ function interface_6rd_configure($interface = "wan", $wancfg) {
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway)) {
-		mwexec("/sbin/route change -host " . escapeshellarg($wancfg['gateway-6rd']) . " {$ip4gateway}");
+		route_add_or_change("-host {$wancfg['gateway-6rd']} {$ip4gateway}");
 	}
 
 	/* configure dependent interfaces */
@@ -3845,7 +3845,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 
 	$ip4gateway = get_interface_gateway($interface);
 	if (is_ipaddrv4($ip4gateway)) {
-		mwexec("/sbin/route change -host 192.88.99.1 {$ip4gateway}");
+		route_add_or_change("-host 192.88.99.1 {$ip4gateway}");
 	}
 
 	if (!platform_booting()) {

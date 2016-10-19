@@ -2298,6 +2298,36 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
+/* Try to change a static route, if it doesn't exist, add it */
+function route_add_or_change($args) {
+	global $config;
+
+	if (empty($args)) {
+		return false;
+	}
+
+	/* First, try to add it */
+	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
+
+	if (isset($config['system']['route-debug'])) {
+		$mt = microtime();
+		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
+	}
+
+	if ($rc != 0) {
+		/* If it fails, try to change it */
+		$_gb = exec(escapeshellcmd("/sbin/route change " . $args),
+		    $output, $rc);
+
+		if (isset($config['system']['route-debug'])) {
+			$mt = microtime();
+			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
+		}
+	}
+
+	return ($rc == 0);
+}
+
 function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
 	global $config, $aliastable;
 

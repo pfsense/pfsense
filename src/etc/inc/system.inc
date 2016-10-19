@@ -213,17 +213,14 @@ function system_resolvconf_generate($dynupdate = false) {
 			$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
 
 			if (is_ipaddr($gatewayip)) {
-				$cmd = 'change';
+				route_add_or_change("-host {$inet6}{$dnsserver} {$gatewayip}");
 			} else {
 				/* Remove old route when disable gw */
-				$cmd = 'delete';
-				$gatewayip = '';
-			}
-
-			mwexec("/sbin/route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
-			if (isset($config['system']['route-debug'])) {
-				$mt = microtime();
-				log_error("ROUTING debug: $mt - route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
+				mwexec("/sbin/route delete -host {$inet6}{$dnsserver}");
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver}");
+				}
 			}
 		}
 	}
@@ -593,12 +590,8 @@ function system_routing_configure($interface = "") {
 			$srinterfacegw = $gateway['interface'];
 			if (is_ipaddr($srgatewayip) && !empty($srinterfacegw)) {
 				$inet = (!is_ipaddrv4($srgatewayip) ? "-inet6" : "-inet");
-				$cmd = "/sbin/route change {$inet} " . escapeshellarg($srgatewayip) . " ";
-				mwexec($cmd . "-iface " . escapeshellarg($srinterfacegw));
-				if (isset($config['system']['route-debug'])) {
-					$mt = microtime();
-					log_error("ROUTING debug: $mt - $cmd -iface $srinterfacegw ");
-				}
+				route_add_or_change("{$inet} {$srgatewayip} " .
+				    "-iface {$srinterfacegw}");
 			}
 		}
 	}
@@ -608,7 +601,7 @@ function system_routing_configure($interface = "") {
 			;
 		} else if (is_ipaddrv4($gatewayip)) {
 			log_error(sprintf(gettext("ROUTING: setting default route to %s"), $gatewayip));
-			mwexec("/sbin/route change -inet default " . escapeshellarg($gatewayip));
+			route_add_or_change("-inet default {$gatewayip}");
 		}
 
 		if (!empty($interface) && $interface != $interfacegwv6) {
@@ -619,7 +612,7 @@ function system_routing_configure($interface = "") {
 				$ifscope = "%{$defaultifv6}";
 			}
 			log_error(sprintf(gettext("ROUTING: setting IPv6 default route to %s"), $gatewayipv6 . $ifscope));
-			mwexec("/sbin/route change -inet6 default " . escapeshellarg("{$gatewayipv6}{$ifscope}"));
+			route_add_or_change("-inet6 default {$gatewayipv6}{$ifscope}");
 		}
 	}
 
@@ -710,7 +703,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 				$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
 
-				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
+				$cmd = "{$inet} {$blackhole} {$ip} ";
 
 				if (is_subnet($ip)) {
 					if (is_ipaddr($gatewayip)) {
@@ -718,17 +711,9 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 							// add interface scope for link local v6 routes
 							$gatewayip .= "%$interfacegw";
 						}
-						mwexec($cmd . escapeshellarg($gatewayip));
-						if (isset($config['system']['route-debug'])) {
-							$mt = microtime();
-							log_error("ROUTING debug: $mt - $cmd $gatewayip");
-						}
+						route_add_or_change($cmd . $gatewayip);
 					} else if (!empty($interfacegw)) {
-						mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
-						if (isset($config['system']['route-debug'])) {
-							$mt = microtime();
-							log_error("ROUTING debug: $mt - $cmd -iface $interfacegw ");
-						}
+						route_add_or_change($cmd . "-iface {$interfacegw}");
 					}
 				}
 			}

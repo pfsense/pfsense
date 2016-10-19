@@ -50,12 +50,14 @@ if [ "${PROTOCOL}" == "inet" ]; then
 		if echo "${DNS1_RAW}" | grep -q dns1; then
 			DNS1=`echo "${DNS1_RAW}" | awk '{print $2}'`
 			echo "${DNS1}" >> /var/etc/nameserver_${IF}
-			route change "${DNS1}" ${REMOTE_IP}
+			route change "${DNS1}" ${REMOTE_IP} \
+				|| route add "${DNS1}" ${REMOTE_IP}
 		fi
 		if echo "${DNS2_RAW}" | grep -q dns2; then
 			DNS2=`echo "${DNS2_RAW}" | awk '{print $2}'`
 			echo "${DNS2}" >> /var/etc/nameserver_${IF}
-			route change "${DNS2}" ${REMOTE_IP}
+			route change "${DNS2}" ${REMOTE_IP} \
+				|| route add "${DNS2}" ${REMOTE_IP}
 		fi
 		pfSctl -c 'service reload dns'
 		sleep 1
@@ -75,12 +77,14 @@ elif [ "${PROTOCOL}" == "inet6" ]; then
 		if echo "${DNS1_RAW}" | grep -q dns1; then
 			DNS1=`echo "${DNS1_RAW}" | awk '{print $2}'`
 			echo "${DNS1}" >> /var/etc/nameserver_v6${IF}
-			route change -inet6 "${DNS1}" ${REMOTE_IP}
+			route change -inet6 "${DNS1}" ${REMOTE_IP} \
+				|| route add -inet6 "${DNS1}" ${REMOTE_IP}
 		fi
 		if echo "${DNS2_RAW}" | grep -q dns2; then
 			DNS2=`echo "${DNS2_RAW}" | awk '{print $2}'`
 			echo "${DNS2}" >> /var/etc/nameserver_v6${IF}
-			route change -inet6 "${DNS2}" ${REMOTE_IP}
+			route change -inet6 "${DNS2}" ${REMOTE_IP} \
+				|| route add -inet6 "${DNS2}" ${REMOTE_IP}
 		fi
 		pfSctl -c 'service reload dns'
 		sleep 1

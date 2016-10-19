@@ -159,8 +159,15 @@ $cleanpattern = "'/^ia-.. /, /^}/ !d; s,;$,,; s,  *, ,g'";
 /* Join each block in single line */
 $splitpattern = "'{printf $0}; $0 ~ /^\}/ {printf \"\\n\"}'";
 
-/* stuff the leases file in a proper format into a array by line */
-exec("{$sed} {$cleanpattern} {$leasesfile} | {$awk} {$splitpattern}", $leases_content);
+if (is_file($leasesfile)) {
+	/* stuff the leases file in a proper format into an array by line */
+	exec("{$sed} {$cleanpattern} {$leasesfile} | {$awk} {$splitpattern}", $leases_content);
+	$leasesfile_found = true;
+} else {
+	$leases_content = array();
+	$leasesfile_found = false;
+}
+
 $leases_count = count($leases_content);
 exec("/usr/sbin/ndp -an", $rawdata);
 $ndpdata = array();
@@ -415,7 +422,7 @@ if (count($pools) > 0) {
 /* only print pool status when we have one */
 }
 
-if (empty($leases)) {
+if (!$leasesfile_found) {
 	print_info_box(gettext("No leases file found. Is the DHCPv6 server active?"), 'warning', false);
 }
 

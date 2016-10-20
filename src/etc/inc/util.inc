@@ -985,9 +985,19 @@ function is_domain($domain, $allow_wildcard=false) {
 }
 
 /* returns true if $macaddr is a valid MAC address */
-function is_macaddr($macaddr, $partial=false) {
-	$repeat = ($partial) ? '1,5' : '5';
-	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
+function is_macaddr($macaddr) {
+	$values = explode(":", $macaddr);
+	if (count($values) != 6) {
+		return false;
+	}
+	for ($i = 0; $i < 6; $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+
+	return true;
 }
 
 /*

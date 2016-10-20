@@ -850,12 +850,12 @@ events.push(function() {
 <?php
 			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
-			    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-			    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
-			    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
-			    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
-			    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
-			    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
+			    (!empty($pconfig['weight']) && $pconfig['weight'] > 1) ||
+			    (!empty($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
+			    (!empty($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
+			    (!empty($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
+			    (!empty($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
+			    (!empty($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
 				$showadv = false;
 			} else {
 				$showadv = true;

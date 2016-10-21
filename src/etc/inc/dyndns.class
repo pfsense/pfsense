@@ -57,6 +57,7 @@
 	 *    - DNS Made Easy (www.dnsmadeeasy.com)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
+	 *    - OnAppV4 (onapp.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -107,6 +108,7 @@
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
+	 *  OnAppV4         - Last Tested: 21 October 2016
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen

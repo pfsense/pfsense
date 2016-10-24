@@ -75,15 +75,16 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 			}
 			$sn = (is_ipaddrv6($ip)) ? 128 : 32;
 			if (is_ipaddr($ip)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ip);
-				if (is_array($ipfw)) {
-					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
-					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
-				}
+				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ip}/{$sn}");
 
-				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ip, $sn);
-				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ip, $sn);
+				pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+				pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+
+				if (is_array($rule) && !empty($rule['pipe'])) {
+					captiveportal_free_dn_ruleno($rule['pipe']);
+					pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
+					pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
+				}
 			}
 		}
 

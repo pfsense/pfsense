@@ -720,7 +720,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
-			'RADIUS can override the default settings. Leave empty or set to 0 for no limit.');
+			'RADIUS can override the default settings. Leave empty for no limit.');
 
 $form->add($section);
 

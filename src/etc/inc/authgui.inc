@@ -250,7 +250,7 @@ $hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hos
 	}
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
-?>htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain'])
+?>
 
 				<div class="panel panel-default">
 					<div class="panel-heading">

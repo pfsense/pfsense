@@ -220,6 +220,7 @@ if (isset($user_settings['webgui']['webguicss'])) {
 	}
 }
 
+$hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -244,11 +245,11 @@ if (isset($user_settings['webgui']['webguicss'])) {
 	}
 
 	$loginautocomplete = isset($config['system']['webgui']['loginautocomplete']) ? '' : 'autocomplete="off"';
-?>
+?>htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain'])
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2 class="panel-title"><?=sprintf(gettext("Login to %s"), $g['product_name'])?></h2>
+						<h2 class="panel-title"><?=sprintf(gettext("Login to %s %s"), $g['product_name'], $hoststr)?></h2>
 					</div>
 
 					<div class="panel-body">

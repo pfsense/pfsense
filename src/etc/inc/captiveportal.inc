@@ -1328,8 +1328,7 @@ function captiveportal_filterdns_configure() {
 		} else {
 			mwexec("/usr/local/sbin/filterdns -p " .
 			    "{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid" .
-			    " -i 300 -c {$cp_filterdns_filename} " .
-			    "-y {$cpzoneid} -d 1");
+			    " -i 300 -c {$cp_filterdns_filename} -d 1");
 		}
 	} else {
 		killbypid("{$g['varrun_path']}/filterdns-{$cpzone}-cpah.pid");

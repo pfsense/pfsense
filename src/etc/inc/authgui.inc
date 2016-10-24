@@ -220,7 +220,12 @@ if (isset($user_settings['webgui']['webguicss'])) {
 	}
 }
 
+if (isset($config['system']['webgui']['loginshowhost'])) {
 $hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+} else {
+	$hoststr = "";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

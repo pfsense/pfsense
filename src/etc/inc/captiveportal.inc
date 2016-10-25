@@ -349,6 +349,8 @@ EOD;
 
 		captiveportal_radius_stop_all();
 
+		captiveportal_filterdns_configure();
+
 		/* send Accounting-Off to server */
 		if (!platform_booting()) {
 			captiveportal_send_server_accounting(true);
@@ -1319,7 +1321,8 @@ function captiveportal_filterdns_configure() {
 	$cp_filterdns_filename = $g['varetc_path'] .
 	    "/filterdns-{$cpzone}-captiveportal.conf";
 
-	if (is_array($config['captiveportal'][$cpzone]['allowedhostname']) &&
+	if (isset($config['captiveportal'][$cpzone]['enable']) &&
+	    is_array($config['captiveportal'][$cpzone]['allowedhostname']) &&
 	    file_exists($cp_filterdns_filename)) {
 		if (isvalidpid($g['varrun_path'] .
 		    "/filterdns-{$cpzone}-cpah.pid")) {

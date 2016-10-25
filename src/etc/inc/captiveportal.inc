@@ -490,7 +490,7 @@ function captiveportal_init_general_rules($flush = false) {
 table cp_ifaces create type iface valtype skipto
 
 # Redirect each CP interface to its specific rule
-add 1000 skipto tablearg all from any to any via cp_ifaces
+add 1000 skipto tablearg all from any to any via table(cp_ifaces)
 
 # This interface has no cp zone configured
 add 1100 allow all from any to any

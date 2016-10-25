@@ -65,17 +65,13 @@ $limit = '100';
 $filter = '';
 
 if (isset($_REQUEST['isAjax'])) {
-	$netstat = "/usr/bin/netstat -rW";
+	$netstat = "/usr/bin/netstat -rnW";
 	if (isset($_REQUEST['IPv6'])) {
 		$netstat .= " -f inet6";
 		echo "IPv6\n";
 	} else {
 		$netstat .= " -f inet";
 		echo "IPv4\n";
-
-	}
-	if (!isset($_REQUEST['resolve'])) {
-		$netstat .= " -n";
 	}
 
 	if (!empty($_REQUEST['filter'])) {
@@ -89,8 +85,45 @@ if (isset($_REQUEST['isAjax'])) {
 		$netstat .= " | /usr/bin/head -n {$_REQUEST['limit']}";
 	}
 
-	echo htmlspecialchars_decode(shell_exec($netstat));
+	if (isset($_REQUEST['resolve'])) {
+		$netstat_output_array = explode("\n", shell_exec($netstat));
+		$output_text = "";
+		foreach ($netstat_output_array as $netstat_line) {
+			$netstat_columns_array = explode(" ", $netstat_line);
+			$output_line = "";
+			foreach ($netstat_columns_array as $netstat_column) {
+				// An address can be like:
+				// address%dev/CIDR     ff01::%em0/32
+				// address%dev          fe80::a00:1234:5678:9abc%em0
+				// address/CIDR         2001:470:12:abcd::/64       192.168.1.0/24
+				// or just an address   2001:470:12:abcd:1:2:3:4    192.168.1.1
+				// Separate the bit before and after any slash.
+				$slash_parts = explode("/", $netstat_column);
+				// Then separate the bit before and after any percent sign.
+				$percent_parts = explode("%", $slash_parts[0]);
+				if (is_ipaddr($percent_parts[0])) {
+					// Try and reverse resolve the first part, which looks like an IP Address
+					$output_line .= gethostbyaddr($percent_parts[0]);
+					if (strlen($percent_parts[1]) > 0) {
+						// Put back the percent bit.
+						$output_line .= "%" . $percent_parts[1];
+					}
+					if (strlen($slash_parts[1]) > 0) {
+						// Put back the slash bit.
+						$output_line .= "/" . $slash_parts[1];
+					}
+				} else {
+					$output_line .= $netstat_column;
+				}
+				$output_line .= " ";
+			}
+			$output_text .= trim($output_line) . "\n";
+		}
+	} else {
+		$output_text = shell_exec($netstat);
+	}
 
+	echo htmlspecialchars_decode($output_text);
 	exit;
 }
 

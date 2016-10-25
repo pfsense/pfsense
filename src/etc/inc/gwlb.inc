@@ -223,12 +223,11 @@ function setup_gateways_monitor() {
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+				$route_to = "-host {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-						" -iface " . escapeshellarg($gateway['interface']), true);
+					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
 				} else {
-					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-						" " . escapeshellarg($gateway['gateway']), true);
+					route_add_or_change("{$route_to} {$gateway['gateway']}");
 				}
 
 				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
@@ -265,12 +264,11 @@ function setup_gateways_monitor() {
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+				$route_to = "-host -inet6 {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-						" -iface " . escapeshellarg($gateway['interface']), true);
+					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
 				} else {
-					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-						" " . escapeshellarg($gateway['gateway']), true);
+					route_add_or_change("{$route_to} {$gateway['gateway']}");
 				}
 
 				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
@@ -842,7 +840,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			} else {
 				$inetfamily = "-inet";
 			}
-			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
+			route_add_or_change("{$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
 	} else if (!empty($dfltgwname)) {
 		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
@@ -861,7 +859,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 		}
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway']) {
-			mwexec("/sbin/route change -{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
+			route_add_or_change("-{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
 		}
 	}
 }
@@ -923,26 +921,25 @@ function return_gateway_groups_array() {
 						$gwdown = true;
 					}
 					if ($gwdown == true) {
-                                        	if (!file_exists("/tmp/.down.$gwname")) {
-                                                	$msg .= "\n".implode("|", $status);
-							touch("/tmp/.down.$gwname");
-                                                	log_error($msg);
-                                                	notify_via_growl($msg);
-                                                	notify_via_smtp($msg);
-                                        	}
+						if (!file_exists("/tmp/.down.{$gwname}")) {
+							$msg .= "\n".implode("|", $status);
+							touch("/tmp/.down.{$gwname}");
+							log_error($msg);
+							notify_via_growl($msg);
+							notify_via_smtp($msg);
+						}
 					} else {
 						/* Online add member */
 						if (!is_array($tiers[$tier])) {
 							$tiers[$tier] = array();
 						}
 						$tiers[$tier][] = $gwname;
-						if (file_exists("/tmp/.down.$gwname")) {
-							$msg = "MONITOR: {$gwname} is available now, adding to routing group";
+						if (unlink_if_exists("/tmp/.down.{$gwname}")) {
+							$msg = sprintf(gettext('MONITOR: %1$s is available now, adding to routing group %2$s'), $gwname, $group['name']);
 							$msg .= "\n".implode("|", $status);
 							log_error($msg);
 							notify_via_growl($msg);
 							notify_via_smtp($msg);
-							unlink("/tmp/.down.$gwname");
 						}
 					}
 				} else if (isset($gateways_arr[$gwname]['monitor_disable'])) {

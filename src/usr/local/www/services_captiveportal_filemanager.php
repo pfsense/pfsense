@@ -52,7 +52,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
@@ -120,10 +120,8 @@ if ($_POST) {
 		}
 	}
 } else if (($_GET['act'] == "del") && !empty($cpzone) && $a_element[$_GET['id']]) {
-	conf_mount_rw();
 	@unlink("{$g['captiveportal_element_path']}/" . $a_element[$_GET['id']]['name']);
 	@unlink("{$g['captiveportal_path']}/" . $a_element[$_GET['id']]['name']);
-	conf_mount_ro();
 	unset($a_element[$_GET['id']]);
 	write_config();
 	header("Location: services_captiveportal_filemanager.php?zone={$cpzone}");

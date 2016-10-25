@@ -20,8 +20,6 @@
  * limitations under the License.
  */
 
-require_once("config.inc");
-
-conf_mount_rw();
+/* Do nothing */
 
 ?>

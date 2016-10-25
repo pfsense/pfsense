@@ -65,10 +65,8 @@ if ($_POST['action']) {
 				print_info_box(gettext("No file name specified."), 'danger');
 				print('|');
 			} else {
-				conf_mount_rw();
 				$_POST['data'] = str_replace("\r", "", base64_decode($_POST['data']));
 				$ret = file_put_contents($_POST['file'], $_POST['data']);
-				conf_mount_ro();
 				if ($_POST['file'] == "/conf/config.xml" || $_POST['file'] == "/cf/conf/config.xml") {
 					if (file_exists("/tmp/config.cache")) {
 						unlink("/tmp/config.cache");

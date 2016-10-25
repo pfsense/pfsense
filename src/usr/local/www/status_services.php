@@ -107,21 +107,11 @@ if (count($services) > 0) {
 						<td>
 							<?=$service['name']?>
 						</td>
-
 						<td>
 							<?=$service['description']?>
 						</td>
-<?php
-		// if service is running then listr else listbg
-		$bgclass = null;
-		$running = false;
-
-		if (get_service_status($service)) {
-			$running = true;
-		}
-?>
 						<td>
-							<?=$running ? '<span class="text-success">' . gettext("Running") . '</span>':'<span class="text-danger">' . gettext("Stopped") . '</span>'?>
+							<?= get_service_status_icon($service, false, true, false, "state"); ?>
 						</td>
 						<td>
 							<?=get_service_control_links($service)?>

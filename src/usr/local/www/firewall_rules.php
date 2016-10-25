@@ -163,14 +163,10 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 }
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if) {
+	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
+		$if = "wan";
+	} else {
 		$if = "FloatingRules";
-	} else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan'])) {
-			$if = "wan";
-		} else {
-			$if = "FloatingRules";
-		}
 	}
 }
 
@@ -221,6 +217,7 @@ if (isset($_POST['del_x'])) {
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
+		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
@@ -228,9 +225,11 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 
 			// Update the separators
-			$ridx = ifridx($if, $rulei);	// get rule index within interface
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			$ridx = ifridx($if, $rulei) - $num_deleted;	// get rule index within interface
 			$mvnrows = -1;
 			move_separators($a_separators, $ridx, $mvnrows);
+			$num_deleted++;
 		}
 
 		if ($deleted) {

@@ -164,9 +164,7 @@ function check_and_returnif_section_exists($section) {
 if ($_POST['apply']) {
 	ob_flush();
 	flush();
-	conf_mount_rw();
 	clear_subsystem_dirty("restore");
-	conf_mount_ro();
 	exit;
 }
 
@@ -311,7 +309,6 @@ if ($_POST) {
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 								}
 								filter_configure();
 								$savemsg = gettext("The configuration area has been restored. The firewall may need to be rebooted.");
@@ -325,7 +322,6 @@ if ($_POST) {
 							file_put_contents($_FILES['conffile']['tmp_name'], $data);
 							if (config_install($_FILES['conffile']['tmp_name']) == 0) {
 								/* this will be picked up by /index.php */
-								conf_mount_rw();
 								mark_subsystem_dirty("restore");
 								touch("/conf/needs_package_sync_after_reboot");
 								/* remove cache, we will force a config reboot */
@@ -349,7 +345,6 @@ if ($_POST) {
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 								}
 								if ($m0n0wall_upgrade == true) {
 									if ($config['system']['gateway'] <> "") {
@@ -401,56 +396,16 @@ if ($_POST) {
 									}
 									// Convert icmp types
 									// http://www.openbsd.org/cgi-bin/man.cgi?query=icmp&sektion=4&arch=i386&apropos=0&manpath=OpenBSD+Current
-									for ($i = 0; isset($config["filter"]["rule"][$i]); $i++) {
-										if ($config["filter"]["rule"][$i]['icmptype']) {
-											switch ($config["filter"]["rule"][$i]['icmptype']) {
-												case "echo":
-													$config["filter"]["rule"][$i]['icmptype'] = "echoreq";
-													break;
-												case "unreach":
-													$config["filter"]["rule"][$i]['icmptype'] = "unreach";
-													break;
-												case "echorep":
-													$config["filter"]["rule"][$i]['icmptype'] = "echorep";
-													break;
-												case "squench":
-													$config["filter"]["rule"][$i]['icmptype'] = "squench";
-													break;
-												case "redir":
-													$config["filter"]["rule"][$i]['icmptype'] = "redir";
-													break;
-												case "timex":
-													$config["filter"]["rule"][$i]['icmptype'] = "timex";
-													break;
-												case "paramprob":
-													$config["filter"]["rule"][$i]['icmptype'] = "paramprob";
-													break;
-												case "timest":
-													$config["filter"]["rule"][$i]['icmptype'] = "timereq";
-													break;
-												case "timestrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "timerep";
-													break;
-												case "inforeq":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforeq";
-													break;
-												case "inforep":
-													$config["filter"]["rule"][$i]['icmptype'] = "inforep";
-													break;
-												case "maskreq":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskreq";
-													break;
-												case "maskrep":
-													$config["filter"]["rule"][$i]['icmptype'] = "maskrep";
-													break;
-											}
+									$convert = array('echo' => 'echoreq', 'timest' => 'timereq', 'timestrep' => 'timerep');
+									foreach ($config["filter"]["rule"] as $ruleid => &$ruledata) {
+										if ($convert[$ruledata['icmptype']]) {
+											$ruledata['icmptype'] = $convert[$ruledata['icmptype']];
 										}
 									}
 									$config['diag']['ipv6nat'] = true;
 									write_config();
 									add_base_packages_menu_items();
 									convert_config();
-									conf_mount_ro();
 									$savemsg = gettext("The m0n0wall configuration has been restored and upgraded to pfSense.");
 									mark_subsystem_dirty("restore");
 								}

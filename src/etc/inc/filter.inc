@@ -730,14 +730,12 @@ function filter_generate_aliases() {
 	$aliases .= "table <snort2c>\n";
 	$aliases .= "table <virusprot>\n";
 	if (!file_exists("/etc/bogons") || !file_exists("/etc/bogonsv6")) {
-		conf_mount_rw();
 		if (!file_exists("/etc/bogons")) {
 			@file_put_contents("/etc/bogons", "");
 		}
 		if (!file_exists("/etc/bogonsv6")) {
 			@file_put_contents("/etc/bogonsv6", "");
 		}
-		conf_mount_ro();
 	}
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
 	if (is_bogonsv6_used()) {
@@ -2034,6 +2032,11 @@ function filter_nat_rules_generate() {
 
 				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
+
+				/* pool option source-hash allows specification of an optional source-hash key */
+				if ($poolopts == "source-hash" && !empty($obent['source_hash_key'])) {
+					$poolopts = "source-hash ".$obent['source_hash_key'];
+				}
 
 				$natrules .= filter_nat_rules_generate_if($obent['interface'],
 					$src,

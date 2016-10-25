@@ -480,7 +480,7 @@ function services_dhcpdv4_configure() {
 			}
 		}
 		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (!isset($config['system']['use_mfs_tmpvar'])) {
 			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
 		}
 	}
@@ -1258,18 +1258,19 @@ function services_dhcpdv6_configure($blacklist = array()) {
 		return 0;
 	}
 
-	if (platform_booting()) {
-		if ($g['platform'] != $g['product_name']) {
-			/* restore the leases, if we have them */
-			if (file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
-				$dhcprestore = "";
-				$dhcpreturn = "";
-				exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1", $dhcprestore, $dhcpreturn);
-				$dhcprestore = implode(" ", $dhcprestore);
-				if ($dhcpreturn <> 0) {
-					log_error(sprintf(gettext('DHCP leases v6 restore failed exited with %1$s, the error is: %2$s'), $dhcpreturn, $dhcprestore));
-				}
-			}
+	/* restore the leases, if we have them */
+	if (platform_booting() &&
+	    isset($config['system']['use_mfs_tmpvar']) &&
+	    file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
+		$dhcprestore = "";
+		$dhcpreturn = "";
+		exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1",
+		    $dhcprestore, $dhcpreturn);
+		$dhcprestore = implode(" ", $dhcprestore);
+		if ($dhcpreturn <> 0) {
+			log_error(sprintf(gettext(
+			    'DHCP leases v6 restore failed exited with %1$s, the error is: %2$s'),
+			    $dhcpreturn, $dhcprestore));
 		}
 	}
 
@@ -2335,12 +2336,8 @@ trap := "{$config['snmpd']['trapstring']}"
 EOD;
 		}
 
-		$platform = trim(file_get_contents('/etc/platform'));
-		if (($platform == "pfSense") && ($g['product_name'] != "pfSense")) {
-			$platform = $g['product_name'];
-		}
 		$sysDescr = "{$g['product_name']} " . php_uname("n") .
-			" {$g['product_version']} {$platform} " . php_uname("s") .
+			" {$g['product_version']} {$g['platform']} " . php_uname("s") .
 			" " . php_uname("r") . " " . php_uname("m");
 
 		$snmpdconf .= <<<EOD
@@ -2585,7 +2582,6 @@ EOD;
 				$maxCacheAgeSecs = 25 * 24 * 60 * 60;
 				$need_update = false;
 
-				conf_mount_rw();
 				/* Update IPv4 if we have it. */
 				if (is_ipaddrv4($wanip) && $dnsupdate['recordtype'] != "AAAA") {
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
@@ -2617,7 +2613,6 @@ EOD;
 				} else {
 					@unlink("{$cacheFile}.ipv6");
 				}
-				conf_mount_ro();
 
 				$upinst .= "\n";	/* mind that trailing newline! */
 
@@ -2647,7 +2642,6 @@ EOD;
 function configure_cron() {
 	global $g, $config;
 
-	conf_mount_rw();
 	/* preserve existing crontab entries */
 	$crontab_contents = file("/etc/crontab", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
@@ -2703,7 +2697,6 @@ function configure_cron() {
 		sigkillbypid("{$g['varrun_path']}/cron.pid", "HUP");
 	}
 
-	conf_mount_ro();
 }
 
 function upnp_action ($action) {

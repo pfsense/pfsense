@@ -30,10 +30,6 @@ function activate_powerd() {
 		exec("/usr/bin/killall powerd");
 	}
 	if (isset($config['system']['powerd_enable'])) {
-		if ($g["platform"] == "nanobsd") {
-			exec("/sbin/kldload cpufreq");
-		}
-
 		$ac_mode = "hadp";
 		if (!empty($config['system']['powerd_ac_mode'])) {
 			$ac_mode = $config['system']['powerd_ac_mode'];
@@ -217,17 +213,14 @@ function system_resolvconf_generate($dynupdate = false) {
 			$dnsserver = $syscfg['dnsserver'][$dnscounter - 1];
 
 			if (is_ipaddr($gatewayip)) {
-				$cmd = 'change';
+				route_add_or_change("-host {$inet6}{$dnsserver} {$gatewayip}");
 			} else {
 				/* Remove old route when disable gw */
-				$cmd = 'delete';
-				$gatewayip = '';
-			}
-
-			mwexec("/sbin/route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
-			if (isset($config['system']['route-debug'])) {
-				$mt = microtime();
-				log_error("ROUTING debug: $mt - route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
+				mwexec("/sbin/route delete -host {$inet6}{$dnsserver}");
+				if (isset($config['system']['route-debug'])) {
+					$mt = microtime();
+					log_error("ROUTING debug: $mt - route delete -host {$inet6}{$dnsserver}");
+				}
 			}
 		}
 	}
@@ -597,12 +590,8 @@ function system_routing_configure($interface = "") {
 			$srinterfacegw = $gateway['interface'];
 			if (is_ipaddr($srgatewayip) && !empty($srinterfacegw)) {
 				$inet = (!is_ipaddrv4($srgatewayip) ? "-inet6" : "-inet");
-				$cmd = "/sbin/route change {$inet} " . escapeshellarg($srgatewayip) . " ";
-				mwexec($cmd . "-iface " . escapeshellarg($srinterfacegw));
-				if (isset($config['system']['route-debug'])) {
-					$mt = microtime();
-					log_error("ROUTING debug: $mt - $cmd -iface $srinterfacegw ");
-				}
+				route_add_or_change("{$inet} {$srgatewayip} " .
+				    "-iface {$srinterfacegw}");
 			}
 		}
 	}
@@ -612,7 +601,7 @@ function system_routing_configure($interface = "") {
 			;
 		} else if (is_ipaddrv4($gatewayip)) {
 			log_error(sprintf(gettext("ROUTING: setting default route to %s"), $gatewayip));
-			mwexec("/sbin/route change -inet default " . escapeshellarg($gatewayip));
+			route_add_or_change("-inet default {$gatewayip}");
 		}
 
 		if (!empty($interface) && $interface != $interfacegwv6) {
@@ -623,7 +612,7 @@ function system_routing_configure($interface = "") {
 				$ifscope = "%{$defaultifv6}";
 			}
 			log_error(sprintf(gettext("ROUTING: setting IPv6 default route to %s"), $gatewayipv6 . $ifscope));
-			mwexec("/sbin/route change -inet6 default " . escapeshellarg("{$gatewayipv6}{$ifscope}"));
+			route_add_or_change("-inet6 default {$gatewayipv6}{$ifscope}");
 		}
 	}
 
@@ -655,7 +644,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 			$interfacegw = $gateway['interface'];
 
 			$blackhole = "";
-			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 3))) {
+			if (!strcasecmp("Null", substr($rtent['gateway'], 0, 4))) {
 				$blackhole = "-blackhole";
 			}
 
@@ -714,7 +703,7 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 
 				$inet = (is_subnetv6($ip) ? "-inet6" : "-inet");
 
-				$cmd = "/sbin/route change {$inet} {$blackhole} " . escapeshellarg($ip) . " ";
+				$cmd = "{$inet} {$blackhole} {$ip} ";
 
 				if (is_subnet($ip)) {
 					if (is_ipaddr($gatewayip)) {
@@ -722,17 +711,9 @@ function system_staticroutes_configure($interface = "", $update_dns = false) {
 							// add interface scope for link local v6 routes
 							$gatewayip .= "%$interfacegw";
 						}
-						mwexec($cmd . escapeshellarg($gatewayip));
-						if (isset($config['system']['route-debug'])) {
-							$mt = microtime();
-							log_error("ROUTING debug: $mt - $cmd $gatewayip");
-						}
+						route_add_or_change($cmd . $gatewayip);
 					} else if (!empty($interfacegw)) {
-						mwexec($cmd . "-iface " . escapeshellarg($interfacegw));
-						if (isset($config['system']['route-debug'])) {
-							$mt = microtime();
-							log_error("ROUTING debug: $mt - $cmd -iface $interfacegw ");
-						}
+						route_add_or_change($cmd . "-iface {$interfacegw}");
 					}
 				}
 			}
@@ -1489,11 +1470,9 @@ function system_timezone_configure() {
 
 	/* extract appropriate timezone file */
 	$timezone = (isset($syscfg['timezone']) ? $syscfg['timezone'] : $g['default_timezone']);
-	conf_mount_rw();
 	/* DO NOT remove \n otherwise tzsetup will fail */
 	@file_put_contents("/var/db/zoneinfo", $timezone . "\n");
 	mwexec("/usr/sbin/tzsetup -r");
-	conf_mount_ro();
 
 	if (platform_booting()) {
 		echo gettext("done.") . "\n";
@@ -1509,7 +1488,6 @@ function system_ntp_setup_gps($serialport) {
 		return false;
 	}
 
-	conf_mount_rw();
 	// Create symlink that ntpd requires
 	unlink_if_exists($gps_device);
 	@symlink($serialport, $gps_device);
@@ -1554,7 +1532,6 @@ function system_ntp_setup_gps($serialport) {
 		@file_put_contents("/etc/remote", "gps0:dv={$serialport}:br#{$gpsbaud}:pa=none:\n", FILE_APPEND);
 	}
 
-	conf_mount_ro();
 
 	return true;
 }
@@ -1569,12 +1546,10 @@ function system_ntp_setup_pps($serialport) {
 		return false;
 	}
 
-	conf_mount_rw();
 	// Create symlink that ntpd requires
 	unlink_if_exists($pps_device);
 	@symlink($serialport, $pps_device);
 
-	conf_mount_ro();
 
 	return true;
 }
@@ -1808,7 +1783,7 @@ function system_ntp_configure() {
 		foreach ($networkacl as $acl) {
 			$ntpcfg .= "\nrestrict ";
 			if (is_ipaddrv6($acl['acl_network'])) {
-				$ntpcfg .= "-6 {$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
+				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
 			} elseif (is_ipaddrv4($acl['acl_network'])) {
 				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask($acl['mask']) . " ";
 			} else {
@@ -2218,11 +2193,6 @@ function system_identify_specific_platform() {
 			break;
 	}
 
-	/* the rest of the code only deals with 'embedded' platforms */
-	if ($g['platform'] != 'nanobsd') {
-		return array('name' => $g['platform'], 'descr' => $g['platform']);
-	}
-
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {
 		return array('name' => 'wrap', 'descr' => gettext('PC Engines WRAP'));
 	}
@@ -2251,8 +2221,7 @@ function system_identify_specific_platform() {
 	}
 	unset($dmesg_boot);
 
-	/* unknown embedded platform */
-	return array('name' => 'embedded', 'descr' => gettext('embedded (unknown)'));
+	return array('name' => $g['platform'], 'descr' => $g['platform']);
 }
 
 function system_get_dmesg_boot() {

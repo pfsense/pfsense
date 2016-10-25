@@ -467,7 +467,6 @@ if ($_POST['apply']) {
 	} else {
 		$pconfig['track6-prefix-id'] = 0;
 	}
-	conf_mount_rw();
 
 	/* filter out spaces from descriptions */
 	$_POST['descr'] = remove_bad_chars($_POST['descr']);
@@ -1392,7 +1391,6 @@ if ($_POST['apply']) {
 			handle_wireless_post();
 		}
 
-		conf_mount_ro();
 		write_config();
 
 		if (file_exists("{$g['tmp_path']}/.interfaces.apply")) {

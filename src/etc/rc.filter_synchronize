@@ -212,7 +212,8 @@ function carp_sync_xml($sections) {
 	$rpc_client = new pfsense_xmlrpc_client();
 	$resp = $rpc_client->xmlrpc_method('restore_config_section', $xml);
 	if ($resp != null) {
-		update_filter_reload_status("XMLRPC sync successfully completed with {$syncip}:{$port}.");
+		$url = $rpc_client->getUrl();
+		update_filter_reload_status("XMLRPC sync successfully completed with {$url}.");
 		return true;
 	}
 	return false;

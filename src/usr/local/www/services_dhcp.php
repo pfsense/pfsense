@@ -632,6 +632,10 @@ if ($act == "delpool") {
 
 if ($act == "del") {
 	if ($a_maps[$_GET['id']]) {
+		/* Remove static ARP entry, if necessary */
+		if (isset($a_maps[$_GET['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_GET['id']]['ipaddr']));
+		}
 		unset($a_maps[$_GET['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {
@@ -1070,13 +1074,13 @@ $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
 	$pconfig['ntp1']
-))->setPattern('[.a-zA-Z0-9_]+');
+))->setPattern('[.a-zA-Z0-9-]+');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
 	$pconfig['ntp2']
-))->setPattern('[.a-zA-Z0-9_]+');
+))->setPattern('[.a-zA-Z0-9-]+');
 
 // Advanced TFTP
 $btnadv = new Form_Button(

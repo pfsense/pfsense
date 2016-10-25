@@ -62,7 +62,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$cpzone = strtolower($_POST['zone']);
+		$cpzone = strtolower(htmlspecialchars($_POST['zone']));
 		$a_cp[$cpzone] = array();
 		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];

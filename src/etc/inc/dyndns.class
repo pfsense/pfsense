@@ -343,7 +343,7 @@
 			}
 
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
-				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
@@ -837,8 +837,11 @@
 					break;
 			}
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53') {
-				$data = curl_exec($ch);
-				$this->_checkStatus($ch, $data);
+				$response = curl_exec($ch);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+				$header = substr($response, 0, $header_size);
+				$data = substr($response, $header_size);
+				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
 			}
 		}
@@ -1349,14 +1352,12 @@
 					/* Responds with HTTP 200 on success.
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */
-					$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-					$header = substr($data, 0, $header_size);
-					$body = substr($data, $header_size);
-					if (preg_match("/Status: 200\s/i", $header)) {
+;
+					if (preg_match("/\s200\sOK/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
-					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {
-						$arrbody = json_decode($body, true);
+					} else if (preg_match("/\s4\d\d\s/i", $header)) {
+						$arrbody = json_decode($data, true);
 						$message = $arrbody['message'] . ".";
 						if (isset($arrbody['errors']['content'])) {
 							foreach ($arrbody['errors']['content'] as $key => $content) {
@@ -1366,8 +1367,8 @@
 						$status = $status_intro . $error_str . $message;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $body);
-						$this->_debug($body);
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
 					}
 					break;
 				case 'googledomains':

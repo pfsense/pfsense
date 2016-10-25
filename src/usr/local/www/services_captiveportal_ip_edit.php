@@ -167,25 +167,28 @@ if ($_POST) {
 		if (isset($a_cp[$cpzone]['enable']) && is_module_loaded("ipfw.ko")) {
 			$rules = "";
 			$cpzoneid = $a_cp[$cpzone]['zoneid'];
-			unset($ipfw);
+
+			unset($rule);
 			if (isset($oldip) && isset($oldmask)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $oldip);
-				$rules .= "table 3 delete {$oldip}/{$oldmask}\n";
-				$rules .= "table 4 delete {$oldip}/{$oldmask}\n";
-				if (is_array($ipfw)) {
-					$rules .= "pipe delete {$ipfw['dnpipe']}\n";
-					$rules .= "pipe delete " . ($ipfw['dnpipe']+1 . "\n");
+				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$oldip}/{$oldmask}");
+
+				$rules .= "table {$cpzone}_allowed_up delete {$oldip}/{$oldmask}\n";
+				$rules .= "table {$cpzone}_allowed_down delete {$oldip}/{$oldmask}\n";
+
+				if (is_array($rule) && !empty($rule['pipe'])) {
+					$rules .= "pipe delete {$rule['pipe']}\n";
+					$rules .= "pipe delete " . ($rule['pipe']+1 . "\n");
 				}
 			}
 
 			$rules .= captiveportal_allowedip_configure_entry($ip);
-			if (is_array($ipfw)) {
-				captiveportal_free_dn_ruleno($ipfw['dnpipe']);
+			if (is_array($rule) && !empty($rule['pipe'])) {
+				captiveportal_free_dn_ruleno($rule['pipe']);
 			}
 
 			$uniqid = uniqid("{$cpzone}_allowed");
 			@file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		}
 

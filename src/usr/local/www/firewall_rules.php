@@ -725,7 +725,7 @@ foreach ($a_filter as $filteri => $filterent):
 						array_map(
 						        function($type) {
 								global $icmptypes;
-								return gettext($icmptypes[$type]['descrip']);
+								return $icmptypes[$type]['descrip'];
 							},
 							explode(',', $filterent['icmptype'])
 						)

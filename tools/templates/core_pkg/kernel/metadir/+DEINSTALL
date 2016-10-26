@@ -7,7 +7,8 @@ fi
 echo "===> Keeping a copy of current kernel in /boot/kernel.old"
 
 # Check if there is a current kernel to be moved
-if [ ! -f /boot/kernel/kernel.gz ]; then
+if [ ! -f /boot/kernel/kernel.gz ] \
+    && [ ! -f /boot/kernel/kernel ]; then
 	echo "ERROR: Current kernel not found"
 	exit 1
 fi

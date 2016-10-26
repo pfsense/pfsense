@@ -1273,6 +1273,15 @@ clone_to_staging_area() {
 	# Make sure pkg is present
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
+	# Make sure correct repo is available on tmp dir
+	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
+	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
+		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		staging
+
 	echo "Done!"
 }
 
@@ -1374,6 +1383,9 @@ customize_stagearea_for_image() {
 			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
+
+	# Remove temporary repo conf
+	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
 }
 
 create_distribution_tarball() {
@@ -1734,7 +1746,12 @@ pkg_chroot() {
 	/sbin/mount -t devfs devfs ${_root}/dev
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
-	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt pkg -c ${_root} $@ >/dev/null 2>&1
+	local _params=""
+	if [ -f "${_root}/tmp/pkg-repos/repo.conf" ]; then
+		_params="--repo-conf-dir /tmp/pkg-repos "
+	fi
+	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
+		pkg -c ${_root} ${_params}$@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev
@@ -1816,24 +1833,13 @@ install_pkg_install_ports() {
 install_bsdinstaller() {
 	local _params=""
 
-	# Use staging repo on RELEASE
-	if [ -n "${_IS_RELEASE}" ]; then
-		mkdir -p ${FINAL_CHROOT_DIR}/tmp/pkg-repo
-		cp -f ${STAGE_CHROOT_DIR}${PKG_REPO_PATH} \
-			${FINAL_CHROOT_DIR}/tmp/pkg-repo
-		_params="--repo-conf-dir /tmp/pkg-repo "
-	fi
-
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (starting)"
-	pkg_chroot ${FINAL_CHROOT_DIR} ${_params}install -f bsdinstaller
+	pkg_chroot ${FINAL_CHROOT_DIR} install -f bsdinstaller
 	sed -i '' -e "s,%%PRODUCT_NAME%%,${PRODUCT_NAME}," \
 		  -e "s,%%PRODUCT_VERSION%%,${PRODUCT_VERSION}," \
 		  -e "s,%%ARCH%%,${TARGET}," \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense.lua \
 		  ${FINAL_CHROOT_DIR}/usr/local/share/dfuibe_lua/conf/pfSense_rescue.lua
-	if [ -n "${_IS_RELEASE}" ]; then
-		rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repo
-	fi
 	echo ">>> Installing BSDInstaller in chroot (${FINAL_CHROOT_DIR})... (finished)"
 }
 

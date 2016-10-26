@@ -692,7 +692,9 @@ foreach ($a_filter as $filteri => $filterent):
 					);
 				echo sprintf(' <span style="cursor: help;" title="%s:%s%s"><u>%s</u></span>', gettext('ICMP subtypes'), chr(13), $t, $filterent['icmptype']);
 			}
-		} else echo " *";
+		} else {
+			echo " *";
+		}
 	?>
 						</td>
 						<td>

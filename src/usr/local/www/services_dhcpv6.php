@@ -340,10 +340,15 @@ if (isset($_POST['apply'])) {
 		}
 		if (!$input_errors) {
 			/* make sure the range lies within the current subnet */
-			$subnet_start = gen_subnetv6($ifcfgip, $ifcfgsn);
-			$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
-
 			if (is_ipaddrv6($ifcfgip)) {
+				if ($ifcfgip == "::") {
+					$subnet_start = "0::";
+				} else {
+					$subnet_start = gen_subnetv6($ifcfgip, $ifcfgsn);
+				}
+
+				$subnet_end = gen_subnetv6_max($ifcfgip, $ifcfgsn);
+
 				if ((!is_inrange_v6($_POST['range_from'], $subnet_start, $subnet_end)) ||
 				    (!is_inrange_v6($_POST['range_to'], $subnet_start, $subnet_end))) {
 					$input_errors[] = gettext("The specified range lies outside of the current subnet.");

@@ -432,6 +432,7 @@ pkg_upgrade() {
 		# XXX: workaround for #5300
 		sort -u ${chroot_dir}/usr/local/etc/php/extensions.ini > /tmp/extensions.ini
 		mv /tmp/extensions.ini ${chroot_dir}/usr/local/etc/php/extensions.ini
+		chmod 0644 ${chroot_dir}/usr/local/etc/php/extensions.ini
 
 		pkg ${pkg_chroot} annotate -q -M ${kernel_pkg} next_stage 3
 		next_stage=3

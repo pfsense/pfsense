@@ -102,6 +102,7 @@ else
 fi
 
 /usr/bin/sort -u -o /usr/local/etc/php/extensions.ini /usr/local/etc/php/extensions.ini
+chmod 0644 /usr/local/etc/php/extensions.ini
 
 # Set upload directory
 if [ "$PLATFORM" = "nanobsd" ]; then

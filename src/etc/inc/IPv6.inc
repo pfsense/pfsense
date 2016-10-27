@@ -740,8 +740,10 @@ class Net_IPv6
 
         }
 
-        $cip = preg_replace('/((^:)|(:$))/', '', $cip);
-        $cip = preg_replace('/((^:)|(:$))/', '::', $cip);
+        if ($cip != "::") {
+            $cip = preg_replace('/((^:)|(:$))/', '', $cip);
+            $cip = preg_replace('/((^:)|(:$))/', '::', $cip);
+        }
 
         if (empty($cip)) {
 

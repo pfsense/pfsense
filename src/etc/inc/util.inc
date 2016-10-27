@@ -267,7 +267,7 @@ function gen_subnetv4($ipaddr, $bits) {
 /* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+		return compress_ip6(Net_IPv6::getNetmask($ipaddr, $bits));
 	}
 	return "";
 }
@@ -392,10 +392,22 @@ function bin_to_ip6($bin) {
 }
 
 /*
+ * Compress an IPv6 address
+*/
+function compress_ip6($ipaddr) {
+	if ($ipaddr == "0:0:0:0:0:0:0:0") {
+		// Special case until Net_IPv6::compress() handles the zero address correctly
+		return "::";
+	} else {
+		return Net_IPv6::compress($ipaddr);
+	}
+}
+
+/*
  * Convert IPv6 binary to compressed address
  */
 function bin_to_compressed_ip6($bin) {
-	return Net_IPv6::compress(bin_to_ip6($bin));
+	return compress_ip6(bin_to_ip6($bin));
 }
 
 /* Find out how many IPs are contained within a given IP range

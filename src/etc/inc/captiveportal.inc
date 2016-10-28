@@ -1128,25 +1128,20 @@ function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false)
 	if ($macent['action'] == 'pass') {
 		$rules = "";
 
-		if ($bwUp == 0 && $bwDown == 0) {
-			$pipeup = 0;
-			$pipedown = 0;
+		$pipeno = captiveportal_get_next_dn_ruleno();
+
+		$pipeup = $pipeno;
+		if ($pipeinrule == true) {
+			$_gb = @pfSense_ipfw_pipe("pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16");
 		} else {
-			$pipeno = captiveportal_get_next_dn_ruleno();
+			$rules .= "pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16\n";
+		}
 
-			$pipeup = $pipeno;
-			if ($pipeinrule == true) {
-				$_gb = @pfSense_ipfw_pipe("pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16");
-			} else {
-				$rules .= "pipe {$pipeno} config bw {$bwUp}Kbit/s queue 100 buckets 16\n";
-			}
-
-			$pipedown = $pipeno + 1;
-			if ($pipeinrule == true) {
-				$_gb = @pfSense_ipfw_pipe("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
-			} else {
-				$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16\n";
-			}
+		$pipedown = $pipeno + 1;
+		if ($pipeinrule == true) {
+			$_gb = @pfSense_ipfw_pipe("pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16");
+		} else {
+			$rules .= "pipe {$pipedown} config bw {$bwDown}Kbit/s queue 100 buckets 16\n";
 		}
 
 		$rules .= "table {$cpzone}_pipe_mac add any,{$macent['mac']} {$pipeup}\n";
@@ -1263,15 +1258,11 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 		$enBwdown = $config['captiveportal'][$cpzone]['bwdefaultdn'];
 	}
 
-	if ($enBwup == 0 && $enBwdown == 0) {
-		$pipeup = 0;
-		$pipedown = 0;
-	} else {
-		$pipeup = captiveportal_get_next_dn_ruleno();
-		$_gb = @pfSense_ipfw_pipe("pipe {$pipeup} config bw {$enBwup}Kbit/s queue 100 buckets 16");
-		$pipedown = $pipeup + 1;
-		$_gb = @pfSense_ipfw_pipe("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
-	}
+	$pipeup = captiveportal_get_next_dn_ruleno();
+	$_gb = @pfSense_ipfw_pipe("pipe {$pipeup} config bw {$enBwup}Kbit/s queue 100 buckets 16");
+	$pipedown = $pipeup + 1;
+	$_gb = @pfSense_ipfw_pipe("pipe {$pipedown} config bw {$enBwdown}Kbit/s queue 100 buckets 16");
+
 	if ($ishostname === true) {
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} {$cpzone}_allowed_up pipe {$pipeup}\n";
 		$cp_filterdns_conf .= "ipfw {$ipent['hostname']} {$cpzone}_allowed_down pipe {$pipedown}\n";
@@ -1279,6 +1270,7 @@ function captiveportal_allowedip_configure_entry($ipent, $ishostname = false) {
 			return array("", $cp_filterdns_conf);
 		}
 	}
+
 	$subnet = "";
 	if (!empty($ipent['sn'])) {
 		$subnet = "/{$ipent['sn']}";

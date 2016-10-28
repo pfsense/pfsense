@@ -606,7 +606,7 @@ function captiveportal_init_rules($reinit = false) {
 	    "deny layer2 not mac-type ip,ipv6");
 
 	/* These tables contain host ips */
-	$cprules .= "table {$cpzone}_host_ips create type addr valtype pipe\n";
+	$cprules .= "table {$cpzone}_host_ips create type addr\n";
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,
 	    "pass ip from any to table({$cpzone}_host_ips) in");
 	$cprules .= captiveportal_create_ipfw_rule("add", $rulenum,

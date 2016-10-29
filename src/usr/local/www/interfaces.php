@@ -3348,7 +3348,8 @@ events.push(function() {
 	}
 
 	function report_failure(request, textStatus, errorThrown) {
-		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
+		contenttype = ";"+request.getResponseHeader("Content-Type")+";";
+		if (textStatus === "error" && contenttype.indexOf(";text/plain;") !== -1) {
 			alert(request.responseText);
 		} else {
 			alert("The IPv4 gateway could not be created.");

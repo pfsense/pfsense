@@ -629,8 +629,12 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g;
+	global $g, $config;
 
+	if(!isset($config['ipsec']['client']['enable'])) {
+		return array();
+	}
+	
 	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
 	if ($rc != 0) {

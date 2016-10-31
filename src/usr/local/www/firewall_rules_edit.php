@@ -68,6 +68,7 @@ function is_aoadv_used($rule_config) {
 	    ($rule_config['nopfsync']) ||
 	    (($rule_config['statetype'] != "") && ($rule_config['statetype'] != "keep state")) ||
 	    ($rule_config['nosync']) ||
+	    ($rule_config['xmlrpcmodification']) ||
 	    ($rule_config['vlanprio'] != "") ||
 	    ($rule_config['vlanprioset'] != "") ||
 	    ($rule_config['sched'] != "") ||
@@ -245,6 +246,7 @@ if (isset($id) && $a_filter[$id]) {
 
 	/* advanced - nosync */
 	$pconfig['nosync'] = isset($a_filter[$id]['nosync']);
+	$pconfig['xmlrpcmodification'] = $a_filter[$id]['xmlrpcmodification'];
 
 	/* advanced - new connection per second banning*/
 	$pconfig['max-src-conn-rate'] = $a_filter[$id]['max-src-conn-rate'];
@@ -773,6 +775,12 @@ if ($_POST) {
 			$filterent['nosync'] = true;
 		} else {
 			unset($filterent['nosync']);
+		}
+		
+		if ($_POST['xmlrpcmodification'] <> "") {
+			$filterent['xmlrpcmodification'] = $_POST['xmlrpcmodification'];
+		} else {
+			unset($filterent['xmlrpcmodification']);
 		}
 
 		/* unless both values are provided, unset the values - ticket #650 */
@@ -1541,6 +1549,15 @@ $section->addInput(new Form_Checkbox(
 	'Prevent the rule on Master from automatically syncing to other CARP members',
 	$pconfig['nosync']
 ))->setHelp('This does NOT prevent the rule from being overwritten on Slave.');
+
+$xmlrpcmod = array("" => "none", "enable" => "Enable on backup", "disable" => "Disable on backup");
+
+$section->addInput(new Form_Select(
+	'xmlrpcmodification',
+	'XMLRPC modification',
+	$pconfig['xmlrpcmodification'],
+	$xmlrpcmod
+))->setHelp('Modify rule after syncing it to the XMLRPC target.');
 
 $vlanprio = array("" => "none", "be" => "BE", "bk" => "BK", "ee" => "EE", "ca" => "CA", "vi" => "VI", "vo" => "VO", "ic" => "IC", "nc" => "NC");
 

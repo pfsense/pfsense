@@ -143,6 +143,12 @@ function carp_sync_xml($sections) {
 			if (isset ($config_copy['filter']['rule'][$x]['nosync'])) {
 				unset ($config_copy['filter']['rule'][$x]);
 			}
+			if ($config_copy['filter']['rule'][$x]['xmlrpcmodification'] == "enable") {
+				unset($config_copy['filter']['rule'][$x]['disabled']);
+			}
+			if ($config_copy['filter']['rule'][$x]['xmlrpcmodification'] == "disable") {
+				$config_copy['filter']['rule'][$x]['disabled'] = true;
+			}
 		}
 	}
 	if (is_array($config_copy['aliases']['alias'])) {

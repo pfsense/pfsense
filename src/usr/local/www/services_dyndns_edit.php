@@ -302,6 +302,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.' . '<br />' .
 			'GleSYS: Enter the record ID.' . '<br />' .
 			'DNSimple: Enter only the domain name.' . '<br />' .
+			'OnAppV4: Enter the complete fully qualified domain name(example: myhost.domain.org) and next the record name(example: myhost).' . '<br />' .
 			'Namecheap: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by Namecheap.');
 
 $section->add($group);
@@ -312,7 +313,8 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['mx']
 ))->setHelp('Note: With DynDNS service only a hostname can be used, not an IP address. '.
-			'Set this option only if a special MX record is needed. Not all services support this.');
+			'Set this option only if a special MX record is needed. Not all services support this. ' . '<br />' .
+			'Note: With OnAppV4 put the record_id. ');
 
 $section->addInput(new Form_Checkbox(
 	'wildcard',
@@ -368,6 +370,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['zoneid']
 ))->setHelp('Enter Zone ID that was received when creating the domain in Route 53.' . '<br />' .
+			'OnAppV4: Enter the Zone ID of record to update.' . '<br />' .
 			'DNSimple: Enter the Record ID of record to update.');
 
 $section->addInput(new Form_Input(
@@ -375,7 +378,8 @@ $section->addInput(new Form_Input(
 	'Update URL',
 	'text',
 	$pconfig['updateurl']
-))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.');
+))->setHelp('This is the only field required by for Custom Dynamic DNS, and is only used by Custom Entries.' . '<br />' .
+			'OnAppV4: Enter the base URL of the site using OnAppV4 API. Example http://onapp.test ');
 
 $section->addInput(new Form_Textarea(
 	'resultmatch',
@@ -455,6 +459,19 @@ events.push(function() {
 				hideInput('host', false);
 				hideInput('mx', false);
 				hideCheckbox('wildcard', false);
+				hideInput('zoneid', false);
+				hideInput('ttl', false);
+				break;
+			case "onapp-v4":
+				hideGroupInput('domainname', false);
+				hideInput('resultmatch', true);
+				hideInput('updateurl', false);
+				hideInput('requestif', true);
+				hideCheckbox('curl_ipresolve_v4', true);
+				hideCheckbox('curl_ssl_verifypeer', true);
+				hideInput('host', false);
+				hideInput('mx', false);
+				hideCheckbox('wildcard', true);
 				hideInput('zoneid', false);
 				hideInput('ttl', false);
 				break;

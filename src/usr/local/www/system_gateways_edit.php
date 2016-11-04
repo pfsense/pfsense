@@ -526,6 +526,15 @@ if ($_POST) {
 
 		if (isset($_POST['disabled'])) {
 			$gateway['disabled'] = true;
+			/* Check if the gateway was enabled but changed to disabled. */
+			if ((isset($realid) && $a_gateway_item[$realid]) && ($pconfig['disabled'] == false)) {
+				/*  If the disabled gateway was the default route, remove the default route */
+				if (is_ipaddr($gateway['gateway']) &&
+				    isset($gateway['defaultgw'])) {
+					$inet = (!is_ipaddrv4($gateway['gateway']) ? '-inet6' : '-inet');
+					mwexec("/sbin/route delete {$inet} default");
+				}
+			}
 		} else {
 			unset($gateway['disabled']);
 		}

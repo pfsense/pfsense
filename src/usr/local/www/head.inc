@@ -239,7 +239,10 @@ foreach ($opts as $oif => $odescr) {
 		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+
+// Interface list no longer sorted per Redmine #6753
+// $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+$interfaces_menu = array_merge($interfaces_menu, return_ext_menu("Interfaces"));
 
 // Firewall
 $firewall_menu = array();

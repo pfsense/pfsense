@@ -1487,28 +1487,28 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetRed())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
 
 		$group->setHelp('Select options for this queue');
 

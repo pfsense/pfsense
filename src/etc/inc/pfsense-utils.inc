@@ -1889,6 +1889,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_FILE, $fp);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
 	curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);

@@ -169,9 +169,8 @@
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 
-			global $config, $g;
-
-			if ($dnsService == "namecheap") {
+			global $config, $g, $dyndns_split_domain_types;
+			if (in_array($dnsService, $dyndns_split_domain_types)) {
 				$this->_FQDN = $dnsHost . "." . $dnsDomain;
 			} else {
 				$this->_FQDN = $dnsHost;
@@ -196,7 +195,15 @@
 			case 'freedns-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
-			case 'namecheap':
+			case "namecheap":
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case "cloudflare-v6":
+			case "cloudflare":
+			case "gratisdns":
+				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -703,8 +710,6 @@
 					$needsIP = TRUE;
 					$dnsServer ='api.cloudflare.com';
 					$dnsHost = str_replace(' ', '', $this->_dnsHost);
-					$host_names = explode(".", $dnsHost);
-					$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -714,12 +719,12 @@
 					));
 
 					// Get zone ID
-					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$bottom_host_name}";
+					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
 					curl_setopt($ch, CURLOPT_URL, $getZoneId);
 					$output = json_decode(curl_exec($ch));
 					$zone = $output->result[0]->id;
 					if ($zone) { // If zone ID was found get host ID
-						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_dnsHost}&type={$recordType}";
+						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);
 						$output = json_decode(curl_exec($ch));
 						$host = $output->result[0]->id;
@@ -750,15 +755,7 @@
 				case 'gratisdns':
 					$needsIP = TRUE;
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					$host = trim($this->_dnsHost);
-					$hostnames = explode(".", $host);
-					$hostnames_count = count($hostnames);
-					if ($hostnames_count > 2) {
-						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
-					} else {
-						$domain = $host;
-					}
-					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $host . '&d=' . $domain . '&i=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $this->_dnsDomain . '&i=' . $this->_dnsIP);
 					break;
 				case 'ovh-dynhost':
 					$needsIP = FALSE;

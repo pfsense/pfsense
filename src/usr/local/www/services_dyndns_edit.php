@@ -76,6 +76,7 @@ if (isset($id) && isset($a_dyndns[$id])) {
 }
 
 if ($_POST) {
+	global $dyndns_split_domain_types;
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -96,7 +97,7 @@ if ($_POST) {
 		$reqdfieldsn[] = gettext("Password");
 		$reqdfields[] = "username";
 		$reqdfieldsn[] = gettext("Username");
-		if ($pconfig['type'] == "namecheap") {
+		if (in_array($pconfig['type'], $dyndns_split_domain_types)) {
 			$reqdfields[] = "domainname";
 			$reqdfieldsn[] = gettext("Domain name");
 		}
@@ -302,7 +303,7 @@ $group->setHelp('Enter the complete fully qualified domain name. Example: myhost
 			'he.net tunnelbroker: Enter the tunnel ID.' . '<br />' .
 			'GleSYS: Enter the record ID.' . '<br />' .
 			'DNSimple: Enter only the domain name.' . '<br />' .
-			'Namecheap: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by Namecheap.');
+			'Namecheap, Cloudflare, GratisDNS: Enter the hostname and the domain separately, with the domain being the domain or subdomain zone being handled by the provider.');
 
 $section->add($group);
 
@@ -459,6 +460,9 @@ events.push(function() {
 				hideInput('ttl', false);
 				break;
 			case "namecheap":
+			case "cloudflare-v6":
+			case "cloudflare":
+			case "gratisdns":
 				hideGroupInput('domainname', false);
 				hideInput('resultmatch', true);
 				hideInput('updateurl', true);

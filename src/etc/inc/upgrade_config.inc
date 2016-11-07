@@ -5011,4 +5011,21 @@ function upgrade_156_to_157() {
 	}
 }
 
+function upgrade_157_to_158() {
+	global $config;
+	/* Convert Dynamic DNS passwords to base64 encoding. Redmine #6688 */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		$dyndns['password'] = base64_encode($dyndns['password']);
+	}
+}
+
 ?>

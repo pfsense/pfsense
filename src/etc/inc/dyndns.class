@@ -234,7 +234,7 @@
 			}
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
-			$this->_dnsPass = $dnsPass;
+			$this->_dnsPass = base64_decode($dnsPass);
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsDomain = $dnsDomain;
 			$this->_dnsServer = $dnsServer;

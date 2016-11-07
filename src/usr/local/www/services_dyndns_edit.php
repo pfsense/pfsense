@@ -150,7 +150,7 @@ if ($_POST) {
 		$dyndns['type'] = $_POST['type'];
 		$dyndns['username'] = $_POST['username'];
 		if ($_POST['passwordfld'] != DMYPWD) {
-			$dyndns['password'] = $_POST['passwordfld'];
+			$dyndns['password'] = base64_encode($_POST['passwordfld']);
 		} else {
 			$dyndns['password'] = $a_dyndns[$id]['password'];;
 		}

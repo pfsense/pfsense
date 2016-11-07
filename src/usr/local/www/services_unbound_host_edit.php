@@ -340,3 +340,12 @@ $form->add($section);
 print($form);
 
 include("foot.inc");
+?>
+<script type="text/javascript">
+//<![CDATA[
+	events.push(function() {
+		// Suppress "Delete row" button if there are fewer than two rows
+		checkLastRow();
+});
+//]]>
+</script>

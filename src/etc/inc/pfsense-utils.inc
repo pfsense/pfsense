@@ -380,12 +380,24 @@ function hardware_offloading_applyflags($iface) {
 		if (isset($options['encaps']['rxcsum'])) {
 			$flags_off |= IFCAP_RXCSUM;
 		}
+		if (isset($options['encaps']['txcsum6'])) {
+			$flags_off |= IFCAP_TXCSUM_IPV6;
+		}
+		if (isset($options['encaps']['rxcsum6'])) {
+			$flags_off |= IFCAP_RXCSUM_IPV6;
+		}
 	} else {
 		if (isset($options['caps']['txcsum'])) {
 			$flags_on |= IFCAP_TXCSUM;
 		}
 		if (isset($options['caps']['rxcsum'])) {
 			$flags_on |= IFCAP_RXCSUM;
+		}
+		if (isset($options['caps']['txcsum6'])) {
+			$flags_on |= IFCAP_TXCSUM_IPV6;
+		}
+		if (isset($options['caps']['rxcsum6'])) {
+			$flags_on |= IFCAP_RXCSUM_IPV6;
 		}
 	}
 

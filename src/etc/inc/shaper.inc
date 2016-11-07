@@ -2299,7 +2299,8 @@ EOJS;
 			'bandwidth',
 			null,
 			'number',
-			$this->GetBandwidth()
+			$this->GetBandwidth(),
+			['step' => 'any', 'min' => '0.000']
 		));
 
 		$group->add(new Form_Select(

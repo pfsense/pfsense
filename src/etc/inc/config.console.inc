@@ -454,7 +454,7 @@ function vlan_setup() {
 		$vlan['if'] = chop(fgets($fp));
 
 		if ($vlan['if']) {
-			if (!array_key_exists($vlan['if'], $iflist) or
+			if (!array_key_exists($vlan['if'], $iflist) || 
 			    !is_jumbo_capable($vlan['if'])) {
 				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $vlan['if'], "\n");
 				continue;

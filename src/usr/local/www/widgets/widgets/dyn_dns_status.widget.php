@@ -21,6 +21,7 @@
  */
 
 $nocsrf = true;
+global $dyndns_split_domain_types;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -51,7 +52,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 			echo "|";
 		}
 		$cache_sep = ":";
-		if ($dyndns['type'] == "namecheap") {
+		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 		} elseif (empty($dyndns['type'])) {
 			/* RFC2136, add some dummy values */
@@ -100,7 +101,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 	<tbody>
 	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
 
-		if ($dyndns['type'] == "namecheap") {
+		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 		} elseif (empty($dyndns['type'])) {
 			/* RFC2136, add some dummy values */

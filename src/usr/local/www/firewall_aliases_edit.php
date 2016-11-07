@@ -132,6 +132,7 @@ if (isset($id) && $a_aliases[$id]) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");
 

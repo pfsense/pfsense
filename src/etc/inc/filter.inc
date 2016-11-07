@@ -3105,6 +3105,7 @@ EOD;
 #---------------------------------------------------------------------------
 block in {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
 block out {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+
 EOD;
 
 	if (isset($config['system']['ipv6allow'])) {
@@ -3137,11 +3138,13 @@ EOD;
 # We use the mighty pf, we cannot be fooled.
 block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
 EOD;
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
 block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
 EOD;
 	}
 	$ipfrules .= <<<EOD
@@ -3485,20 +3488,24 @@ EOD;
 # loopback
 pass in {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
 pass out {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
+
 EOD;
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
 pass in {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
 pass out {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
+
 EOD;
 	}
 	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out {$log['pass']} inet all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv4 from firewall host itself"
+
 EOD;
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
 pass out {$log['pass']} inet6 all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv6 from firewall host itself"
+
 EOD;
 	}
 	$ipfrules .= "\n";

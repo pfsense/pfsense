@@ -908,14 +908,14 @@ function apply_all_chosen_items() {
 		$tmpcf['enabled'] = "on";
 		If ($sched == "CBQ") {
 			$tmpcf['borrow'] = "on";
-			$tmpcf['bandwidth'] = $remainbw * 0.2;
+			$tmpcf['bandwidth'] = intval($remainbw * 0.2);
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		else if ($sched == "HFSC") {
 			$lkbw = 0.20 * $remainbw;
-			$tmpcf['linkshare3'] = "{$lkbw}%";
+			$tmpcf['linkshare3'] = intval($lkbw) . "%";
 			$tmpcf['linkshare'] = "on";
-			$tmpcf['bandwidth'] = $lkbw;
+			$tmpcf['bandwidth'] = intval($lkbw);
 			$tmpcf['bandwidthtype'] = "%";
 		}
 		array_push($tmppath, "qACK");

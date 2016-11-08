@@ -22,6 +22,8 @@ get_if_mac() {
 	echo "${_if_mac}"
 }
 
+hostname="factory-logger.pfmechanics.com"
+
 if ! pgrep -q dhclient; then
 	# First, find a connected interface
 	if=$(ifconfig \
@@ -229,7 +231,6 @@ postreq="${postreq}&submit=Submit"
 
 postreq_len=$(echo "${postreq}" | wc -c)
 
-hostname="factory-logger.pfmechanics.com"
 cat <<EOF > /tmp/postdata
 POST http://${hostname}/log.php HTTP/1.0
 Content-Type: application/x-www-form-urlencoded

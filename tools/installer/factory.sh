@@ -186,6 +186,22 @@ fi
 
 wlan_mac=$(get_if_mac wlan0)
 
+if [ "${selected_model}" = "SG-1000" ]; then
+	fetch -o - http://${hostname}/pfSense-netgate-sg-1000-latest.img.gz 2>/dev/null \
+		| gunzip \
+		| dd of=/dev/mmcsd0 bs=1m
+	if [ $? -ne 0 ]; then
+		echo "Error: Anything went wrong when tried to dd image to eMMC"
+		exit 1
+	fi
+
+	if ! mount /dev/mmcsd0s2a /mnt; then
+		echo "Error mounting pfSense partition"
+		exit 1
+	fi
+	trap "umount /mnt; return" 1 2 15 EXIT
+fi
+
 exec 3>&1
 col=30
 factory_raw_data=$(dialog --nocancel \

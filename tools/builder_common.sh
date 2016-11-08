@@ -242,6 +242,9 @@ make_world() {
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# XXX set root password since we don't have nullok enabled
+	pw -R ${INSTALLER_CHROOT_DIR} usermod root -w yes
+
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \

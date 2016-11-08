@@ -241,4 +241,4 @@ ${postreq}
 EOF
 
 /usr/bin/nc < /tmp/postdata -w 5 ${hostname} 80 >/tmp/postresult
-return $?
+exit $?

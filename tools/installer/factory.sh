@@ -117,22 +117,24 @@ if [ -z "${selected_model}" ]; then
 	exec 3>&1
 fi
 
-echo 'boot_serial="YES"' > /tmp/loader.conf.pfSense
-if [ -n "${is_adi}" ]; then
-	echo "-S115200 -h" > /tmp/boot.config
-	echo 'console="comconsole"' >> /tmp/loader.conf.pfSense
-	echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
-	echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
-	echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
-else
-	echo "-S115200 -D" > /tmp/boot.config
-	echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense
-	echo 'console="comconsole,vidconsole"' >> /tmp/loader.conf.pfSense
+if [ "${machine_arch}" != "armv6" ]; then
+	echo 'boot_serial="YES"' > /tmp/loader.conf.pfSense
+	if [ -n "${is_adi}" ]; then
+		echo "-S115200 -h" > /tmp/boot.config
+		echo 'console="comconsole"' >> /tmp/loader.conf.pfSense
+		echo 'comconsole_port="0x2F8"' >> /tmp/loader.conf.pfSense
+		echo 'hint.uart.0.flags="0x00"' >> /tmp/loader.conf.pfSense
+		echo 'hint.uart.1.flags="0x10"' >> /tmp/loader.conf.pfSense
+	else
+		echo "-S115200 -D" > /tmp/boot.config
+		echo 'boot_multicons="YES"' >> /tmp/loader.conf.pfSense
+		echo 'console="comconsole,vidconsole"' >> /tmp/loader.conf.pfSense
+	fi
+	echo 'comconsole_speed="115200"' >> /tmp/loader.conf.pfSense
+	echo 'kern.ipc.nmbclusters="1000000"' >> /tmp/loader.conf.pfSense
+	echo 'kern.ipc.nmbjumbop="524288"' >> /tmp/loader.conf.pfSense
+	echo 'kern.ipc.nmbjumbo9="524288"' >> /tmp/loader.conf.pfSense
 fi
-echo 'comconsole_speed="115200"' >> /tmp/loader.conf.pfSense
-echo 'kern.ipc.nmbclusters="1000000"' >> /tmp/loader.conf.pfSense
-echo 'kern.ipc.nmbjumbop="524288"' >> /tmp/loader.conf.pfSense
-echo 'kern.ipc.nmbjumbo9="524288"' >> /tmp/loader.conf.pfSense
 
 if [ -z "${buildroom}" ]; then
 	exit 0

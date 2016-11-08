@@ -900,20 +900,23 @@ EOD;
 					$sourcehost = $rgmap['remote-gateway'];
 				}
 
-				if ($ph1ent['protocol'] == 'inet') {
-					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+				if (substr($ph1ent['interface'], 0, 4) == "_vip") {
+					$vpninterface = get_configured_vip_interface($ph1ent['interface']);
+					if (substr($vpninterface, 0, 4) == "_vip") {
+						// vips are nested if its a ipalias with a carp parent
+						$vpninterface = get_configured_vip_interface($vpninterface);
+					}
+					$ifacesuse = get_real_interface($vpninterface);
+				} else {
+					$ifacesuse = get_failover_interface($ph1ent['interface']);
+					if (substr($ifacesuse, 0, 4) == "_vip") {
+						$vpninterface = get_configured_vip_interface($ifacesuse);
 						$ifacesuse = get_real_interface($vpninterface);
 					} else {
-						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (substr($ifacesuse, 0, 4) == "_vip") {
-							$vpninterface = get_configured_vip_interface($ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface);
-						} else {
-							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
-						}
+						$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
 					}
-
+				}
+				if ($ph1ent['protocol'] == 'inet') {
 					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
 						$gatewayip = get_interface_gateway($vpninterface);
 						$interfaceip = get_interface_ip($vpninterface);
@@ -928,20 +931,7 @@ EOD;
 						}
 					}
 				} else if ($ph1ent['protocol'] == 'inet6') {
-					if (substr($ph1ent['interface'], 0, 4) == "_vip") {
-						$vpninterface = get_configured_vip_interface($ph1ent['interface']);
-						$ifacesuse = get_real_interface($vpninterface);
-					} else {
-						$ifacesuse = get_failover_interface($ph1ent['interface']);
-						if (substr($ifacesuse, 0, 4) == "_vip") {
-							$vpninterface = get_configured_vip_interface($ifacesuse);
-							$ifacesuse = get_real_interface($vpninterface);
-						} else {
-							$vpninterface = convert_real_interface_to_friendly_interface_name($ifacesuse);
-						}
-					}
-
-					if (!empty($ifacesuse) && interface_has_gateway($vpninterface)) {
+					if (!empty($ifacesuse) && interface_has_gatewayv6($vpninterface)) {
 						$gatewayip = get_interface_gateway_v6($vpninterface);
 						$interfaceip = get_interface_ipv6($vpninterface);
 						$subnet_bits = get_interface_subnetv6($vpninterface);

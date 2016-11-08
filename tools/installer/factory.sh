@@ -165,6 +165,9 @@ case "${selected_model}" in
 	SG-4860*|SG-8860*)
 		wan_if="igb1"
 		;;
+	SG-1000)
+		wan_if="cpsw0"
+		;;
 	*)
 		wan_if="igb0"
 		;;

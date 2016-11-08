@@ -242,6 +242,10 @@ make_world() {
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# Add factory installer script to /root
+	install -o root -g wheel -m 0755 ${BUILDER_TOOLS}/installer/factory.sh \
+		${INSTALLER_CHROOT_DIR}/root
+
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \

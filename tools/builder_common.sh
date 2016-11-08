@@ -246,6 +246,9 @@ make_world() {
 	install -o root -g wheel -m 0755 ${BUILDER_TOOLS}/installer/factory.sh \
 		${INSTALLER_CHROOT_DIR}/root
 
+	# XXX set root password since we don't have nullok enabled
+	pw -R ${INSTALLER_CHROOT_DIR} usermod root -w yes
+
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \

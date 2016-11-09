@@ -22,10 +22,7 @@ get_if_mac() {
 	echo "${_if_mac}"
 }
 
-#hostname="factory-logger.pfmechanics.com"
-# XXX /etc is readonly on ufw-installer and it ends up without
-# DNS resolution. Use IP address here for now
-hostname="172.27.43.10"
+hostname="factory-logger.pfmechanics.com"
 
 if ! pgrep -q dhclient; then
 	# First, find a connected interface

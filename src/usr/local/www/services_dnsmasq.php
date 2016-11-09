@@ -37,7 +37,7 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 
-// Sort host entries for display in alpabetical order
+// Sort host entries for display in alphabetical order
 function hostcmp($a, $b) {
 	return strcasecmp($a['host'], $b['host']);
 }
@@ -52,7 +52,7 @@ function hosts_sort() {
 	usort($a_hosts, "hostcmp");
 }
 
-// Sort domain entries for display in alpabetical order
+// Sort domain entries for display in alphabetical order
 function domaincmp($a, $b) {
 	return strcasecmp($a['domain'], $b['domain']);
 }

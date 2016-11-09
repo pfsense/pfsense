@@ -3105,13 +3105,13 @@ EOD;
 #---------------------------------------------------------------------------
 block in {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
 block out {$log['block']} inet all tracker {$increment_tracker($tracker)} label "Default deny rule IPv4"
+block in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
+block out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
 EOD;
 
 	if (isset($config['system']['ipv6allow'])) {
 		$ipfrules .= <<<EOD
-block in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
-block out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
 # IPv6 ICMP is not auxilary, it is required for operation
 # See man icmp6(4)

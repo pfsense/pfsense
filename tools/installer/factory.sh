@@ -176,12 +176,14 @@ esac
 
 wan_mac=$(get_if_mac ${wan_if})
 
-# Get WLAN mac address
-wlan_devices=$(sysctl -n net.wlan.devices)
-if [ -n "${wlan_devices}" ]; then
-	if ! does_if_exist wlan0; then
-		wlan_dev=$(echo "${wlan_devices}" | awk '{ print $1 }')
-		ifconfig create wlan0 wlandev ${wlan_dev} >/dev/null 2>&1
+if [ "${selected_model}" != "SG-1000" ]; then
+	# Get WLAN mac address
+	wlan_devices=$(sysctl -n net.wlan.devices)
+	if [ -n "${wlan_devices}" ]; then
+		if ! does_if_exist wlan0; then
+			wlan_dev=$(echo "${wlan_devices}" | awk '{ print $1 }')
+			ifconfig create wlan0 wlandev ${wlan_dev} >/dev/null 2>&1
+		fi
 	fi
 fi
 

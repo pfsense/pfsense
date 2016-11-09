@@ -134,6 +134,7 @@ if [ "${machine_arch}" != "armv6" ]; then
 	echo 'kern.ipc.nmbclusters="1000000"' >> /tmp/loader.conf.pfSense
 	echo 'kern.ipc.nmbjumbop="524288"' >> /tmp/loader.conf.pfSense
 	echo 'kern.ipc.nmbjumbo9="524288"' >> /tmp/loader.conf.pfSense
+	echo 'hw.usb.no_pf="1"' >> /tmp/loader.conf.pfSense
 fi
 
 if [ -z "${buildroom}" ]; then

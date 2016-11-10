@@ -199,7 +199,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 		image_url=$(dialog --nocancel \
 			--backtitle "pfSense installer" \
 			--title "Select image" \
-			--inputbox "Image URI" 0 0 "${image_default_url}"
+			--inputbox "Image URI" 0 0 "${image_default_url}" \
 		2>&1 1>&3)
 		exec 3>&-
 	done

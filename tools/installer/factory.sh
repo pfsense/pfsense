@@ -114,7 +114,7 @@ if [ -z "${selected_model}" ]; then
 		--title "Hardware model" \
 		--menu "Select corresponding hardware model" \
 		0 0 0 2>&1 1>&3) || exit 1
-	exec 3>&1
+	exec 3>&-
 fi
 
 if [ "${machine_arch}" != "armv6" ]; then
@@ -217,7 +217,7 @@ factory_raw_data=$(dialog --nocancel \
 	"Print sticker (0/1)" 4 0 "1" 4 $col 1 0 \
 	"Builder Initials" 5 0 "" 5 $col 16 0 \
 	2>&1 1>&3)
-exec 3>&1
+exec 3>&-
 
 factory_data=$(echo "$factory_raw_data" \
 	| sed 's,#,,g' \

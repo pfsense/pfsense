@@ -204,7 +204,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 		exec 3>&-
 	done
 
-	fetch -o - "${image_url}" 2>/dev/null \
+	fetch -o - "${image_url}" \
 		| gunzip \
 		| dd of=/dev/mmcsd0 bs=1m
 	if [ $? -ne 0 ]; then

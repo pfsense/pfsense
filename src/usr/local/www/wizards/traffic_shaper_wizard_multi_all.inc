@@ -762,7 +762,7 @@ function apply_all_chosen_items() {
 		$upfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 		$upbw = floatval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
 
-		if ($config['ezshaper']['step3']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step3']['enable']) {
 			$voip = true;
 			$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
 			$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
@@ -772,7 +772,7 @@ function apply_all_chosen_items() {
 				$factor = wizard_get_bandwidthtype_scale($voipbwunit);
 			$remainbw += $voipbw * $factor;
 		}
-		if ($config['ezshaper']['step4']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step4']['enable']) {
 			$penalty = true;
 			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
@@ -785,7 +785,7 @@ function apply_all_chosen_items() {
 			$penalty = false;
 			$penaltybw = 0;
 		}
-		if ($config['ezshaper']['step5']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step5']['enable']) {
 			$p2p = true;
 			if ($config['ezshaper']['step5']['p2pcatchall']) {
 				$p2pcatchall = true;
@@ -817,17 +817,17 @@ function apply_all_chosen_items() {
 			$otherpriority = false;
 		}
 
-		$remainbw = round($remainbw / $upbw * 100, 2);
-
-		if (intval($remainbw) > 0 && intval($remainbw) > 30) {
-			$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
-			exit;
-		} else {
-			$remainbw = 100 - $remainbw;
-		}
-
 		if ($sched != "PRIQ") {
+			$remainbw = round($remainbw / $upbw * 100, 2);
+
+			if (intval($remainbw) > 0 && intval($remainbw) > 30) {
+				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
+				exit;
+			} else {
+				$remainbw = 100 - $remainbw;
+			}
+
 			if ($sched == "CBQ")
 				$q =& new cbq_queue();
 			else if ($sched == "HFSC")
@@ -1158,8 +1158,7 @@ function apply_all_chosen_items() {
 		$otherpriority = false;
 		$remainbw = 0;
 
-
-		if ($config['ezshaper']['step3']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step3']['enable']) {
 			$voip = true;
 			$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 			$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
@@ -1172,7 +1171,7 @@ function apply_all_chosen_items() {
 			} else
 				$remainbw += 32000; /* 32Kbit/s reserved for HFSC link sharing */
 		}
-		if ($config['ezshaper']['step4']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step4']['enable']) {
 			$penalty = true;
 			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
 			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
@@ -1185,7 +1184,7 @@ function apply_all_chosen_items() {
 			$penalty = false;
 			$penaltybw = 0;
 		}
-		if ($config['ezshaper']['step5']['enable']) {
+		if ($sched != "PRIQ" && $config['ezshaper']['step5']['enable']) {
 			$p2p = true;
 			if ($config['ezshaper']['step5']['p2pcatchall']) {
 				$p2pcatchall = true;
@@ -1216,17 +1215,19 @@ function apply_all_chosen_items() {
 		} else  {
 			$otherpriority = false;
 		}
-		$remainbw = round($remainbw / $lanbw * 100, 2);
+		if ($sched != "PRIQ") {
+			$remainbw = round($remainbw / $lanbw * 100, 2);
 
-		if (intval($remainbw) > 0 && intval($remainbw) > 40) {
-			$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
-			header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
-			exit;
-		} else {
-			$remainbw = 100 - $remainbw;
+			if (intval($remainbw) > 0 && intval($remainbw) > 40) {
+				$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
+				header("Location: wizard.php?xml=traffic_shaper_wizard_multi_all.xml&stepid=2&message={$savemsg}");
+				exit;
+			} else {
+				$remainbw = 100 - $remainbw;
+			}
+
+			$lanqbw = $lanbw;
 		}
-
-		$lanqbw = $lanbw;
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();
@@ -1256,7 +1257,8 @@ function apply_all_chosen_items() {
 			//var_dump($input_errors);
 			$qtmp->wconfig();
 
-			$lanqbw *= 0.8; /* lanqbw - 20% */
+			if ($sched != "PRIQ")
+				$lanqbw *= 0.8; /* lanqbw - 20% */
 		}
 
 		if ($sched != "PRIQ") {

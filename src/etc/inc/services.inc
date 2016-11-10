@@ -431,6 +431,90 @@ function services_dhcpd_configure($family = "all", $blacklist = array()) {
 	unlock($dhcpdconfigurelck);
 }
 
+/* see: http://www.ipamworldwide.com/ipam/isc-dhcpv4-options.html */
+$dhcpoptionsname[1] = "subnet-mask";
+$dhcpoptionsname[2] = "time-offset";
+$dhcpoptionsname[3] = "routers";
+$dhcpoptionsname[4] = "time-servers";
+$dhcpoptionsname[5] = "ien116-name-servers";
+$dhcpoptionsname[6] = "domain-name-servers";
+$dhcpoptionsname[7] = "log-servers";
+$dhcpoptionsname[8] = "cookie-servers";
+$dhcpoptionsname[9] = "lpr-servers";
+$dhcpoptionsname[10] = "impress-servers";
+$dhcpoptionsname[11] = "resource-location-servers";
+$dhcpoptionsname[12] = "host-name";
+$dhcpoptionsname[13] = "boot-size";
+$dhcpoptionsname[14] = "merit-dump";
+$dhcpoptionsname[15] = "domain-name";
+$dhcpoptionsname[16] = "swap-server";
+$dhcpoptionsname[17] = "root-path";
+$dhcpoptionsname[18] = "extensions-path";
+$dhcpoptionsname[19] = "ip-forwarding";
+$dhcpoptionsname[20] = "non-local-source-routing";
+$dhcpoptionsname[21] = "policy-filter";
+$dhcpoptionsname[22] = "max-dgram-reassembly";
+$dhcpoptionsname[23] = "default-ip-ttl";
+$dhcpoptionsname[24] = "path-mtu-aging-timeout";
+$dhcpoptionsname[25] = "path-mtu-plateau-table";
+$dhcpoptionsname[26] = "interface-mtu";
+$dhcpoptionsname[27] = "all-subnets-local";
+$dhcpoptionsname[28] = "broadcast-address";
+$dhcpoptionsname[29] = "perform-mask-discovery";
+$dhcpoptionsname[30] = "mask-supplier";
+$dhcpoptionsname[31] = "router-discovery";
+$dhcpoptionsname[32] = "router-solicitation-address";
+$dhcpoptionsname[33] = "static-routes";
+$dhcpoptionsname[34] = "trailer-encapsulation";
+$dhcpoptionsname[35] = "arp-cache-timeout";
+$dhcpoptionsname[36] = "ieee802-3-encapsulation";
+$dhcpoptionsname[37] = "default-tcp-ttl";
+$dhcpoptionsname[38] = "tcp-keepalive-interval";
+$dhcpoptionsname[39] = "tcp-keepalive-garbage";
+$dhcpoptionsname[40] = "nis-domain";
+$dhcpoptionsname[41] = "nis-servers";
+$dhcpoptionsname[42] = "ntp-servers";
+$dhcpoptionsname[43] = "vendor-encapsulated-options";
+$dhcpoptionsname[44] = "netbios-name-servers";
+$dhcpoptionsname[45] = "netbios-dd-server";
+$dhcpoptionsname[46] = "netbios-node-type";
+$dhcpoptionsname[47] = "netbios-scope";
+$dhcpoptionsname[48] = "font-servers";
+$dhcpoptionsname[49] = "x-display-manager";
+$dhcpoptionsname[56] = "dhcp-message";
+$dhcpoptionsname[57] = "dhcp-max-message-size";
+$dhcpoptionsname[60] = "vendor-class-identifier";
+$dhcpoptionsname[61] = "dhcp-client-identifier";
+$dhcpoptionsname[62] = "nwip-domain";
+$dhcpoptionsname[63] = "nwip-suboptions";
+$dhcpoptionsname[64] = "nisplus-domain";
+$dhcpoptionsname[65] = "nisplus-servers";
+$dhcpoptionsname[66] = "tftp-server-name";
+$dhcpoptionsname[67] = "bootfile-name";
+$dhcpoptionsname[68] = "mobile-ip-home-agent";
+$dhcpoptionsname[69] = "smtp-server";
+$dhcpoptionsname[70] = "pop-server";
+$dhcpoptionsname[71] = "nntp-server";
+$dhcpoptionsname[72] = "www-server";
+$dhcpoptionsname[73] = "finger-server";
+$dhcpoptionsname[74] = "irc-server";
+$dhcpoptionsname[75] = "streettalk-server";
+$dhcpoptionsname[76] = "streettalk-directory-";
+$dhcpoptionsname[77] = "user-class";
+$dhcpoptionsname[78] = "slp-directory-agent";
+$dhcpoptionsname[79] = "slp-service-scope";
+$dhcpoptionsname[85] = "nds-servers";";
+$dhcpoptionsname[86] = "nds-tree-name";
+$dhcpoptionsname[87] = "nds-context";
+$dhcpoptionsname[88] = "bcms-controller-names";
+$dhcpoptionsname[89] = "bcms-controller-address";
+$dhcpoptionsname[98] = "uap-servers";
+$dhcpoptionsname[112] = "netinfo-server-address";
+$dhcpoptionsname[113] = "netinfo-server-tag";
+$dhcpoptionsname[114] = "default-url";
+$dhcpoptionsname[119] = "domain-search";
+$dhcpoptionsname[125] = "vivso";
+
 function services_dhcpdv4_configure() {
 	global $config, $g;
 	$need_ddns_updates = false;
@@ -529,7 +613,11 @@ function services_dhcpdv4_configure() {
 						} else {
 							$itemtype = "text";
 						}
-						$custoptions .= "option custom-{$dhcpif}-{$poolidx}-{$itemidx} code {$item['number']} = {$itemtype};\n";
+                                                $optionname = "custom-{$dhcpif}-{$poolidx}-{$itemidx}";
+                                                if (array_key_exists($item['type'], $dhcpoptionsname)) {
+                                                	$optionname = $dhcpoptionsname[$item['type']];
+                                                }
+						$custoptions .= "option $optionname code {$item['number']} = {$itemtype};\n";
 					}
 				}
 			}

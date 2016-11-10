@@ -41,8 +41,10 @@ class pfsense_xmlrpc_server {
 	private $loop_detected = false;
 	private $remote_addr;
 
-	private function auth($username, $password) {
+	private function auth() {
 		global $config;
+		$username = $_SERVER['PHP_AUTH_USER'];
+		$password = $_SERVER['PHP_AUTH_PW'];
 
 		$login_ok = false;
 		if (!empty($username) && !empty($password)) {
@@ -109,7 +111,7 @@ class pfsense_xmlrpc_server {
 
 		/* grab sync to ip if enabled */
 		if (isset($config['hasync']['synchronizetoip']) &&
-		    $config['hasync']['synchronizetoip'] == $remote_addr) {
+		    $config['hasync']['synchronizetoip'] == $this->remote_addr) {
 			$this->loop_detected = true;
 		}
 	}
@@ -117,28 +119,22 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Get host version information
 	 *
-	 * @param string $username
-	 * @param string $password
-	 *
 	 * @return array
 	 */
-	public function host_firmware_version($username, $password) {
-		$this->auth($username, $password);
-
+	public function host_firmware_version($dummy = 1) {
+		$this->auth();
 		return host_firmware_version();
 	}
 
 	/**
 	 * Executes a PHP block of code
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param string $code
 	 *
 	 * @return bool
 	 */
-	public function exec_php($username, $password, $code) {
-		$this->auth($username, $password);
+	public function exec_php($code) {
+		$this->auth();
 
 		eval($code);
 		if ($toreturn) {
@@ -151,14 +147,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Executes shell commands
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param string $code
 	 *
 	 * @return bool
 	 */
-	public function exec_shell($username, $password, $code) {
-		$this->auth($username, $password);
+	public function exec_shell($code) {
+		$this->auth();
 
 		mwexec($code);
 		return true;
@@ -167,14 +161,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Backup chosen config sections
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param array $section
 	 *
 	 * @return array
 	 */
-	public function backup_config_section($username, $password, $section) {
-		$this->auth($username, $password);
+	public function backup_config_section($section) {
+		$this->auth();
 
 		global $config;
 
@@ -184,14 +176,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Restore defined config section into local config
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param array $sections
 	 *
 	 * @return bool
 	 */
-	public function restore_config_section($username, $password, $sections) {
-		$this->auth($username, $password);
+	public function restore_config_section($sections) {
+		$this->auth();
 
 		global $config;
 
@@ -406,14 +396,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Merge items into installedpackages config section
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param array $section
 	 *
 	 * @return bool
 	 */
-	public function merge_installedpackages_section($username, $password, $section) {
-		$this->auth($username, $password);
+	public function merge_installedpackages_section($section) {
+		$this->auth();
 
 		global $config;
 
@@ -435,14 +423,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Merge items into config
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param array $section
 	 *
 	 * @return bool
 	 */
-	public function merge_config_section($username, $password, $section) {
-		$this->auth($username, $password);
+	public function merge_config_section($section) {
+		$this->auth();
 
 		global $config;
 
@@ -464,13 +450,10 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Wrapper for filter_configure()
 	 *
-	 * @param string $username
-	 * @param string $password
-	 *
 	 * @return bool
 	 */
-	public function filter_configure($username, $password) {
-		$this->auth($username, $password);
+	public function filter_configure() {
+		$this->auth();
 
 		global $g, $config;
 
@@ -523,13 +506,10 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Wrapper for configuring CARP interfaces
 	 *
-	 * @param string $username
-	 * @param string $password
-	 *
 	 * @return bool
 	 */
-	public function interfaces_carp_configure($username, $password) {
-		$this->auth($username, $password);
+	public function interfaces_carp_configure() {
+		$this->auth();
 
 		if ($this->loop_detected) {
 			log_error("Disallowing CARP sync loop");
@@ -544,13 +524,10 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Wrapper for rc.reboot
 	 *
-	 * @param string $username
-	 * @param string $password
-	 *
 	 * @return bool
 	 */
-	public function reboot($username, $password) {
-		$this->auth($username, $password);
+	public function reboot() {
+		$this->auth();
 
 		mwexec_bg("/etc/rc.reboot");
 
@@ -560,14 +537,12 @@ class pfsense_xmlrpc_server {
 	/**
 	 * Wrapper for get_notices()
 	 *
-	 * @param string $username
-	 * @param string $password
 	 * @param string $category
 	 *
 	 * @return bool
 	 */
-	public function get_notices($username, $password, $category = 'all') {
-		$this->auth($username, $password);
+	public function get_notices($category = 'all') {
+		$this->auth();
 
 		global $g;
 

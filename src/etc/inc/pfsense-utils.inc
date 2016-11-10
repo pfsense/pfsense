@@ -380,12 +380,24 @@ function hardware_offloading_applyflags($iface) {
 		if (isset($options['encaps']['rxcsum'])) {
 			$flags_off |= IFCAP_RXCSUM;
 		}
+		if (isset($options['encaps']['txcsum6'])) {
+			$flags_off |= IFCAP_TXCSUM_IPV6;
+		}
+		if (isset($options['encaps']['rxcsum6'])) {
+			$flags_off |= IFCAP_RXCSUM_IPV6;
+		}
 	} else {
 		if (isset($options['caps']['txcsum'])) {
 			$flags_on |= IFCAP_TXCSUM;
 		}
 		if (isset($options['caps']['rxcsum'])) {
 			$flags_on |= IFCAP_RXCSUM;
+		}
+		if (isset($options['caps']['txcsum6'])) {
+			$flags_on |= IFCAP_TXCSUM_IPV6;
+		}
+		if (isset($options['caps']['rxcsum6'])) {
+			$flags_on |= IFCAP_RXCSUM_IPV6;
 		}
 	}
 
@@ -629,8 +641,11 @@ function get_carp_interface_status($carpid) {
 	$interface = get_real_interface($carpiface);
 	if ($interface == NULL)
 		return "";
+	$vip = get_configured_vip($carpid);
+	if ($vip == NULL || !isset($vip['vhid']))
+		return "";
 
-	$vhid = $carp['vhid'];
+	$vhid = $vip['vhid'];
 	$carp_query = '';
 	$_gb = exec("/sbin/ifconfig $interface | /usr/bin/grep carp: | /usr/bin/grep \"vhid $vhid\"", $carp_query);
 	foreach ($carp_query as $int) {

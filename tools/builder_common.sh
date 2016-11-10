@@ -242,6 +242,9 @@ make_world() {
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# XXX set root password since we don't have nullok enabled
+	pw -R ${INSTALLER_CHROOT_DIR} usermod root -w yes
+
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \
@@ -606,6 +609,15 @@ clone_to_staging_area() {
 	# Make sure pkg is present
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
+	# Make sure correct repo is available on tmp dir
+	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
+	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
+		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		staging
+
 	echo "Done!"
 }
 
@@ -688,6 +700,9 @@ customize_stagearea_for_image() {
 			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
+
+	# Remove temporary repo conf
+	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
 }
 
 create_distribution_tarball() {
@@ -1015,7 +1030,12 @@ pkg_chroot() {
 	/sbin/mount -t devfs devfs ${_root}/dev
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
-	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt pkg -c ${_root} $@ >/dev/null 2>&1
+	local _params=""
+	if [ -f "${_root}/tmp/pkg-repos/repo.conf" ]; then
+		_params="--repo-conf-dir /tmp/pkg-repos "
+	fi
+	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
+		pkg -c ${_root} ${_params}$@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev

@@ -37,6 +37,36 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 
+// Sort host entries for display in alphabetical order
+function hostcmp($a, $b) {
+	return strcasecmp($a['host'], $b['host']);
+}
+
+function hosts_sort() {
+	global $a_hosts;
+
+	if (!is_array($a_hosts)) {
+		return;
+	}
+
+	usort($a_hosts, "hostcmp");
+}
+
+// Sort domain entries for display in alphabetical order
+function domaincmp($a, $b) {
+	return strcasecmp($a['domain'], $b['domain']);
+}
+
+function domains_sort() {
+	global $a_domainOverrides;
+
+	if (!is_array($a_domainOverrides)) {
+		return;
+	}
+
+	usort($a_domainOverrides, "domaincmp");
+}
+
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
@@ -46,8 +76,8 @@ $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
 $pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
-
 $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
+
 if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
 } else {
@@ -63,7 +93,9 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 }
 
 $a_hosts = &$config['dnsmasq']['hosts'];
+hosts_sort();
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+domains_sort();
 
 if ($_POST) {
 	if ($_POST['apply']) {

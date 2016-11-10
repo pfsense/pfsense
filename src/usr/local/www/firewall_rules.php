@@ -946,6 +946,9 @@ events.push(function() {
 
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
+		scroll: true,
+		overflow: 'scroll',
+		scrollSensitivity: 100,
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			reindex_rules(ui.item.parent('tbody'));

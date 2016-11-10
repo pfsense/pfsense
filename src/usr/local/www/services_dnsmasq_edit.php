@@ -31,20 +31,6 @@
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
 
-function hostcmp($a, $b) {
-	return strcasecmp($a['host'], $b['host']);
-}
-
-function hosts_sort() {
-	global $g, $config;
-
-	if (!is_array($config['dnsmasq']['hosts'])) {
-		return;
-	}
-
-	usort($config['dnsmasq']['hosts'], "hostcmp");
-}
-
 require_once("guiconfig.inc");
 
 if (!is_array($config['dnsmasq']['hosts'])) {
@@ -139,6 +125,7 @@ if ($_POST) {
 			}
 		}
 	}
+
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
 		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
@@ -167,7 +154,6 @@ if ($_POST) {
 		} else {
 			$a_hosts[] = $hostent;
 		}
-		hosts_sort();
 
 		mark_subsystem_dirty('hosts');
 

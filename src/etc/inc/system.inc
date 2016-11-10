@@ -1018,11 +1018,6 @@ EOD;
 		}
 		unset($syslogconf);
 
-		// Ensure that the log directory exists
-		if (!is_dir("{$g['dhcpd_chroot_path']}/var/run")) {
-			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
-		}
-
 		$sourceip = "";
 		if (!empty($syslogcfg['sourceip'])) {
 			if ($syslogcfg['ipproto'] == "ipv6") {
@@ -1049,14 +1044,17 @@ EOD;
 	if (isset($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
-			    is_dir(dirname($package['logging']['logsocket'])) &&
 			    !in_array($package['logging']['logsocket'], $log_sockets)) {
 				$log_sockets[] = $package['logging']['logsocket'];
 			}
 		}
 	}
+	
 	$syslogd_sockets = "";
 	foreach ($log_sockets as $log_socket) {
+		// Ensure that the log directory exists
+		$logpath = dirname($log_socket);
+		safe_mkdir($logpath);
 		$syslogd_sockets .= " -l {$log_socket}";
 	}
 

@@ -844,13 +844,15 @@ $group = new Form_Group('Range');
 $group->add(new Form_IpAddress(
 	'range_from',
 	null,
-	$pconfig['range_from']
+	$pconfig['range_from'],
+	'V4'
 ))->setHelp('From');
 
 $group->add(new Form_IpAddress(
 	'range_to',
 	null,
-	$pconfig['range_to']
+	$pconfig['range_to'],
+	'V4'
 ))->setHelp('To');
 
 $section->add($group);
@@ -888,21 +890,24 @@ $section = new Form_Section('Servers');
 $section->addInput(new Form_IpAddress(
 	'wins1',
 	'WINS servers',
-	$pconfig['wins1']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 1');
+	$pconfig['wins1'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 1');
 
 $section->addInput(new Form_IpAddress(
 	'wins2',
 	null,
-	$pconfig['wins2']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 2');
+	$pconfig['wins2'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 2');
 
 for ($idx=1; $idx<=4; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
-		$pconfig['dns' . $idx]
-	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
+		$pconfig['dns' . $idx],
+		'V4'
+	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
 
 $form->add($section);
@@ -912,7 +917,8 @@ $section = new Form_Section('Other Options');
 $section->addInput(new Form_IpAddress(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway']
+	$pconfig['gateway'],
+	'V4'
 ))->setPattern('[.a-zA-Z0-9_]+')
   ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment.');
 
@@ -948,7 +954,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_IpAddress(
 		'failover_peerip',
 		'Failover peer IP',
-		$pconfig['failover_peerip']
+		$pconfig['failover_peerip'],
+		'V4'
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP. ' .
 				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
 }
@@ -1009,7 +1016,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'Primary DDNS address',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
@@ -1073,13 +1081,15 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
-	$pconfig['ntp1']
+	$pconfig['ntp1'],
+	'V4'
 ))->setPattern('[.a-zA-Z0-9-]+');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
-	$pconfig['ntp2']
+	$pconfig['ntp2'],
+	'V4'
 ))->setPattern('[.a-zA-Z0-9-]+');
 
 // Advanced TFTP
@@ -1150,7 +1160,8 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_IpAddress(
 	'nextserver',
 	'Next Server',
-	$pconfig['nextserver']
+	$pconfig['nextserver'],
+	'V4'
 ))->setHelp('Enter the IP address of the next server');
 
 $section->addInput(new Form_Input(

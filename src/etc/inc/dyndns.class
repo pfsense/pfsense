@@ -169,9 +169,8 @@
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 
-			global $config, $g;
-
-			if ($dnsService == "namecheap") {
+			global $config, $g, $dyndns_split_domain_types;
+			if (in_array($dnsService, $dyndns_split_domain_types)) {
 				$this->_FQDN = $dnsHost . "." . $dnsDomain;
 			} else {
 				$this->_FQDN = $dnsHost;
@@ -196,7 +195,15 @@
 			case 'freedns-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
-			case 'namecheap':
+			case "namecheap":
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case "cloudflare-v6":
+			case "cloudflare":
+			case "gratisdns":
+				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -227,7 +234,7 @@
 			}
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
-			$this->_dnsPass = $dnsPass;
+			$this->_dnsPass = base64_decode($dnsPass);
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsDomain = $dnsDomain;
 			$this->_dnsServer = $dnsServer;
@@ -343,7 +350,7 @@
 			}
 
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
-				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
@@ -703,8 +710,6 @@
 					$needsIP = TRUE;
 					$dnsServer ='api.cloudflare.com';
 					$dnsHost = str_replace(' ', '', $this->_dnsHost);
-					$host_names = explode(".", $dnsHost);
-					$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -714,12 +719,12 @@
 					));
 
 					// Get zone ID
-					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$bottom_host_name}";
+					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
 					curl_setopt($ch, CURLOPT_URL, $getZoneId);
 					$output = json_decode(curl_exec($ch));
 					$zone = $output->result[0]->id;
 					if ($zone) { // If zone ID was found get host ID
-						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_dnsHost}&type={$recordType}";
+						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);
 						$output = json_decode(curl_exec($ch));
 						$host = $output->result[0]->id;
@@ -750,15 +755,7 @@
 				case 'gratisdns':
 					$needsIP = TRUE;
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					$host = trim($this->_dnsHost);
-					$hostnames = explode(".", $host);
-					$hostnames_count = count($hostnames);
-					if ($hostnames_count > 2) {
-						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
-					} else {
-						$domain = $host;
-					}
-					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $host . '&d=' . $domain . '&i=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $this->_dnsDomain . '&i=' . $this->_dnsIP);
 					break;
 				case 'ovh-dynhost':
 					$needsIP = FALSE;
@@ -837,8 +834,11 @@
 					break;
 			}
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53') {
-				$data = curl_exec($ch);
-				$this->_checkStatus($ch, $data);
+				$response = curl_exec($ch);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+				$header = substr($response, 0, $header_size);
+				$data = substr($response, $header_size);
+				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
 			}
 		}
@@ -1349,14 +1349,12 @@
 					/* Responds with HTTP 200 on success.
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */
-					$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-					$header = substr($data, 0, $header_size);
-					$body = substr($data, $header_size);
-					if (preg_match("/Status: 200\s/i", $header)) {
+;
+					if (preg_match("/\s200\sOK/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
-					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {
-						$arrbody = json_decode($body, true);
+					} else if (preg_match("/\s4\d\d\s/i", $header)) {
+						$arrbody = json_decode($data, true);
 						$message = $arrbody['message'] . ".";
 						if (isset($arrbody['errors']['content'])) {
 							foreach ($arrbody['errors']['content'] as $key => $content) {
@@ -1366,8 +1364,8 @@
 						$status = $status_intro . $error_str . $message;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $body);
-						$this->_debug($body);
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
 					}
 					break;
 				case 'googledomains':

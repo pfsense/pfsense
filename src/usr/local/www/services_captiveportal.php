@@ -341,7 +341,6 @@ if ($_POST) {
 
 			$cpzoneid = $newcp['zoneid'];
 		}
-		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface'])) {
 			$newcp['interface'] = implode(",", $_POST['cinterface']);
 		}
@@ -449,19 +448,8 @@ if ($_POST) {
 
 		write_config();
 
-		/* Clear up unselected interfaces */
-		$newifaces = explode(",", $newcp['interface']);
-		$toremove = array_diff($oldifaces, $newifaces);
-
-		if (!empty($toremove)) {
-			foreach ($toremove as $removeif) {
-				$removeif = get_real_interface($removeif);
-				mwexec("/sbin/ipfw zone {$cpzoneid} mdel {$removeif}");
-			}
-		}
-
 		captiveportal_configure_zone($newcp);
-		unset($newcp, $newifaces, $toremove);
+		unset($newcp);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");
 		exit;
@@ -688,7 +676,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
-			'RADIUS can override the default settings. Leave empty or set to 0 for no limit.');
+			'RADIUS can override the default settings. Leave empty for no limit.');
 
 $form->add($section);
 

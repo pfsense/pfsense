@@ -94,6 +94,7 @@ tr.disabled th {
 .table-responsive {
     clear: both;
     margin-bottom: 0px;
+    overflow-x: visible;    /** Required to allow dragging to automatically scroll the page */
 }
 
 /* navigation */

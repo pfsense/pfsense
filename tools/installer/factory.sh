@@ -66,7 +66,9 @@ case "${machine_arch}" in
 		esac
 		;;
 	armv6)
-		# XXX add code to read serial from ufw
+		dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16
+		serial=$(hexdump -C /tmp/serial.bin | \
+			sed '1!d; s,\.*\|$,,; s,^.*\|,,')
 		;;
 	*)
 		echo "Unsuported platform"

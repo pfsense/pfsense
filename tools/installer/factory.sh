@@ -219,43 +219,50 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	trap "umount /mnt; return" 1 2 15 EXIT
 fi
 
-exec 3>&1
-col=30
-factory_raw_data=$(dialog --nocancel \
-	--backtitle "pfSense installer" \
-	--title "Register Serial Number" \
-	--form "Enter system information" 0 0 0 \
-	"Model" 1 0 "${selected_model}" 1 $col 0 0 \
-	"Serial" 2 0 "${serial}" 2 $col 16 16 \
-	"Order Number" 3 0 "" 3 $col 16 0 \
-	"Print sticker (0/1)" 4 0 "1" 4 $col 1 0 \
-	"Builder Initials" 5 0 "" 5 $col 16 0 \
-	2>&1 1>&3)
-exec 3>&-
+while true; do
+	exec 3>&1
+	col=30
+	factory_raw_data=$(dialog --nocancel \
+		--backtitle "pfSense installer" \
+		--title "Register Serial Number" \
+		--form "Enter system information" 0 0 0 \
+		"Model" 1 0 "${selected_model}" 1 $col 0 0 \
+		"Serial" 2 0 "${serial}" 2 $col 16 16 \
+		"Order Number" 3 0 "" 3 $col 16 0 \
+		"Print sticker (0/1)" 4 0 "1" 4 $col 1 0 \
+		"Builder Initials" 5 0 "" 5 $col 16 0 \
+		2>&1 1>&3)
+	exec 3>&-
 
-factory_data=$(echo "$factory_raw_data" \
-	| sed 's,#,,g' \
-	| paste -d'#' -s -)
+	factory_data=$(echo "$factory_raw_data" \
+		| sed 's,#,,g' \
+		| paste -d'#' -s -)
 
-set_vars=$(echo "$factory_data" | \
-	awk '
-	BEGIN { FS="#" }
-	{
-		print "serial=\""$1"\"";
-		print "order=\""$2"\""
-		print "sticker=\""$3"\"";
-		print "builder=\""$4"\"";
-	}')
+	set_vars=$(echo "$factory_data" | \
+		awk '
+		BEGIN { FS="#" }
+		{
+			print "serial=\""$1"\"";
+			print "order=\""$2"\""
+			print "sticker=\""$3"\"";
+			print "builder=\""$4"\"";
+		}')
 
-eval "${set_vars}"
+	eval "${set_vars}"
 
-if [ "${sticker}" != "0" ]; then
-	sticker=1
-fi
+	if [ "${sticker}" != "0" ]; then
+		sticker=1
+	fi
 
-if [ -z "${serial}" -o -z "${order}" -o -z "${builder}" ]; then
-	exit 1
-fi
+	if [ -n "${serial}" -a -n "${order}" -a -n "${builder}" ]; then
+		break
+	fi
+
+	dialog --backtitle "pfSense installer" --title "Error" \
+		--msgbox \
+		"Serial, Order Number and Builder Initials are mandatory" \
+		0 0
+done
 
 release_ver="UNKNOWN"
 if [ -f /mnt/etc/version ]; then

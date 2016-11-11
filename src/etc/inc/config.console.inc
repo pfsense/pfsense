@@ -987,8 +987,8 @@ function check_for_alternate_interfaces() {
 			$default_device['lan'] = "vr0";
 			break;
 		case 'uFW':
-			$default_device['wan'] = "cpsw1";
-			$default_device['lan'] = "cpsw0";
+			$default_device['wan'] = "cpsw0";
+			$default_device['lan'] = "cpsw1";
 			break;
 		case 'APU':
 			$default_device['wan'] = "re1";

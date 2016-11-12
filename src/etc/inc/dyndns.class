@@ -89,6 +89,7 @@
 	 *    - DNS Made Easy (www.dnsmadeeasy.com)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
+	 *    - All-Inkl (all-inkl.com)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -139,6 +140,7 @@
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
+	 *  All-Inkl        - Last Tested: 12 November 2016
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -332,6 +334,7 @@
 					case 'dnsmadeeasy':
 					case 'spdyn':
 					case 'spdyn-v6':
+					case 'all-inkl':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -864,6 +867,12 @@
 						$port = ":" . $this->_dnsPort;
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
+				case 'all-inkl':
+					$needsIP = FALSE;
+					$server = 'https://dyndns.kasserver.com/';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . 'myip=' . $this->_dnsIP);
 					break;
 				default:
 					break;
@@ -1486,6 +1495,22 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'all-inkl':
+ 					if (preg_match('/good\s'.$this->_dnsIP.'/i', $data)) {
+							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+ 							$successful_update = true;
+ 					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Result did not match.");
+					} else if (preg_match("/\s401\sUnauthorized/i", $header)) {
+						$status = $status_intro . $error_str . gettext("Invalid username or password");
+					} 
+					else {
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $header.$data);
+ 							$this->_debug($data);
+ 							$this->_debug($header);
+ 					}
+ 					break;
 			}
 
 			if ($successful_update == true) {

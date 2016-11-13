@@ -1354,8 +1354,9 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_IpAddress(
 		$type,
 		$name .' Address',
-		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9_.:]+');
+		$pconfig[$type],
+		'ALIASV4V6'
+	))->addMask($type .'mask', $pconfig[$type.'mask']);
 
 	$section->add($group);
 

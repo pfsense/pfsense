@@ -1302,7 +1302,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	// The rule type dropdown on the GUI can be one of the special names like
 	// "any" "LANnet" "LAN address"... or "Single host or alias" or "Network"
-	if (is_specialnet($pconfig[$type])) {
+	if ($pconfig[$type.'type']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		$ruleType = $pconfig[$type.'type'];
+	} elseif (is_specialnet($pconfig[$type])) {
 		// It is one of the special names, let it through as-is.
 		$ruleType = $pconfig[$type];
 	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||

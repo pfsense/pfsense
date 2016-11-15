@@ -169,7 +169,8 @@ function createDestinationServerInputGroup($value = null) {
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
-		$value
+		$value,
+		'V6'
 	))->setWidth(4)
 	  ->setHelp('This is the IPv6 address of the server to which DHCPv6 requests are relayed.')
 	  ->setIsRepeated();

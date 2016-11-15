@@ -1809,7 +1809,8 @@ $section->addClass('staticv4');
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IPv4 Address',
-	$pconfig['ipaddr']
+	$pconfig['ipaddr'],
+	'V4'
 ))->addMask('subnet', $pconfig['subnet'], 32);
 
 $group = new Form_Group('IPv4 Upstream gateway');
@@ -1842,7 +1843,8 @@ $section->addClass('staticv6');
 $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
 	'IPv6 address',
-	$pconfig['ipaddrv6']
+	$pconfig['ipaddrv6'],
+	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
 
 $group = new Form_Group('IPv6 Upstream gateway');
@@ -1887,7 +1889,8 @@ $modal->addInput(new Form_Input(
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
 	'Gateway IPv6',
-	null
+	null,
+	'V6'
 ));
 
 $modal->addInput(new Form_Input(
@@ -1954,7 +1957,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'alias-address',
 	'Alias IPv4 address',
-	$pconfig['alias-address']
+	$pconfig['alias-address'],
+	'V4'
 ))->addMask('alias-subnet', $pconfig['alias-subnet'], 32)->setHelp('The value in this field is used as a fixed alias IPv4 address by the DHCP client.');
 
 $section->addInput(new Form_Input(
@@ -2240,7 +2244,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_address',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_address']
+	$pconfig['adv_dhcp6_id_assoc_statement_address'],
+	'V6'
 ))->sethelp('IPv6 address');
 
 $group->add(new Form_Input(
@@ -2280,7 +2285,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_prefix',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_prefix']
+	$pconfig['adv_dhcp6_id_assoc_statement_prefix'],
+	'V6'
 ))->sethelp('IPv6 prefix');
 
 $group->add(new Form_Input(
@@ -2725,13 +2731,15 @@ $section->addPassword(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'Local IP address',
-	$pconfig['pptp_localip'][0]
+	$pconfig['pptp_localip'][0],
+	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'Remote IP address',
-	$pconfig['pptp_remote'][0]
+	$pconfig['pptp_remote'][0],
+	'V4'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -3200,7 +3208,8 @@ $modal->addInput(new Form_Input(
 $modal->addInput(new Form_IpAddress(
 	'gatewayip',
 	'Gateway IPv4',
-	null
+	null,
+	'V4'
 ));
 
 $modal->addInput(new Form_Input(

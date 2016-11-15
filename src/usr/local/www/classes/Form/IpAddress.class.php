@@ -53,7 +53,7 @@ class Form_IpAddress extends Form_Input
 				break;
 
 			case "ALIASV4":
-				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
+				$this->_attributes['pattern'] = '[a-zA-Z0-9_.]+';
 				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an alias';
 				break;
 

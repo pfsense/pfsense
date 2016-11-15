@@ -786,8 +786,9 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	$pconfig['ddnsdomainprimary']
-))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
+	$pconfig['ddnsdomainprimary'],
+	'V4'
+))->setHelp('Enter the primary domain name server IPv4 address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
 	'ddnsdomainkeyname',

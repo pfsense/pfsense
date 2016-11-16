@@ -1029,11 +1029,6 @@ EOD;
 		}
 		unset($syslogconf);
 
-		// Ensure that the log directory exists
-		if (!is_dir("{$g['dhcpd_chroot_path']}/var/run")) {
-			exec("/bin/mkdir -p {$g['dhcpd_chroot_path']}/var/run");
-		}
-
 		$sourceip = "";
 		if (!empty($syslogcfg['sourceip'])) {
 			if ($syslogcfg['ipproto'] == "ipv6") {
@@ -1060,14 +1055,17 @@ EOD;
 	if (isset($config['installedpackages']['package'])) {
 		foreach ($config['installedpackages']['package'] as $package) {
 			if (isset($package['logging']['logsocket']) && $package['logging']['logsocket'] != '' &&
-			    is_dir(dirname($package['logging']['logsocket'])) &&
 			    !in_array($package['logging']['logsocket'], $log_sockets)) {
 				$log_sockets[] = $package['logging']['logsocket'];
 			}
 		}
 	}
+	
 	$syslogd_sockets = "";
 	foreach ($log_sockets as $log_socket) {
+		// Ensure that the log directory exists
+		$logpath = dirname($log_socket);
+		safe_mkdir($logpath);
 		$syslogd_sockets .= " -l {$log_socket}";
 	}
 
@@ -1708,11 +1706,20 @@ function system_ntp_configure() {
 		$ntpcfg .= "fudge 127.127.1.0 stratum 12\n";
 	}
 	/* End GPS configuration */
-
+	$auto_pool_suffix = "pool.ntp.org";
+	$have_pools = false;
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through ntp servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
-		$ntpcfg .= "server {$ts} iburst maxpoll 9";
+		if ((substr_compare($ts, $auto_pool_suffix, strlen($ts) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
+		    || substr_count($config['ntpd']['ispool'], $ts)) {
+			$ntpcfg .= 'pool ';
+			$have_pools = true;
+		} else {
+			$ntpcfg .= 'server ';
+		}
+
+		$ntpcfg .= "{$ts} iburst maxpoll 9";
 		if (substr_count($config['ntpd']['prefer'], $ts)) {
 			$ntpcfg .= ' prefer';
 		}
@@ -1788,6 +1795,27 @@ function system_ntp_configure() {
 	if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
 		$ntpcfg .= ' notrap';
 	}
+
+	/* Pools require "restrict source" and cannot contain "nopeer". */
+	if ($have_pools) {
+		$ntpcfg .= "\nrestrict source";
+		if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
+			$ntpcfg .= ' kod limited';
+		}
+		if (empty($config['ntpd']['nomodify'])) { /*note: this one works backwards */
+			$ntpcfg .= ' nomodify';
+		}
+		if (!empty($config['ntpd']['noquery'])) {
+			$ntpcfg .= ' noquery';
+		}
+		if (!empty($config['ntpd']['noserve'])) {
+			$ntpcfg .= ' noserve';
+		}
+		if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
+			$ntpcfg .= ' notrap';
+		}
+	}
+
 	/* Custom Access Restrictions */
 	if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
 		$networkacl = $config['ntpd']['restrictions']['row'];

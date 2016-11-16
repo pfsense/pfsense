@@ -171,8 +171,8 @@ if ($_POST) {
 				switch ($fields['type']) {
 					case "rowhelper":
 						// save rowhelper items.
-						$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
-				//		$rowhelpername="row";
+						#$rowhelpername=($fields['fieldname'] ? $fields['fieldname'] : "row");
+						$rowhelpername="row";
 						foreach ($fields['rowhelper']['rowhelperfield'] as $rowhelperfield) {
 							foreach ($_POST as $key => $value) {
 								$matches = array();
@@ -1364,8 +1364,8 @@ foreach ($pkg['fields']['field'] as $pkga) {
 
 		case "rowhelper":
 
-			// $rowhelpername="row";
-				$rowhelpername=($pkga['fieldname'] ? $pkga['fieldname'] : "row");
+			$rowhelpername="row";
+
 				$rowcounter = 0;
 				$trc = 0;
 

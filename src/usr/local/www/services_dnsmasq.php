@@ -125,8 +125,21 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 }
 
 $a_hosts = &$config['dnsmasq']['hosts'];
+
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_hosts); $idx++) {
+	$a_hosts[$idx]['idx'] = $idx;
+}
+
 hosts_sort();
+
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_domainOverrides); $idx++) {
+	$a_domainOverrides[$idx]['idx'] = $idx;
+}
+
 domains_sort();
 
 if ($_POST) {
@@ -405,8 +418,8 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$hostent['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$hostent['idx']?>"></a>
 					</td>
 				</tr>
 
@@ -477,8 +490,8 @@ foreach ($a_domainOverrides as $i => $doment):
 						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$doment['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$doment['idx']?>"></a>
 					</td>
 				</tr>
 <?php

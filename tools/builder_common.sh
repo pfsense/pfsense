@@ -931,7 +931,7 @@ customize_stagearea_for_image() {
 create_distribution_tarball() {
 	mkdir -p ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist
 
-	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs \
+	tar -C ${FINAL_CHROOT_DIR} --exclude ./pkgs \
 		-cJf ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/base.txz .
 
 	(cd ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist && \

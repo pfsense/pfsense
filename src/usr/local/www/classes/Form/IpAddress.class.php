@@ -30,37 +30,17 @@ class Form_IpAddress extends Form_Input
 
 		switch ($type) {
 			case "BOTH":
-				$this->_attributes['pattern'] = '[a-f0-9:.]*';
+				$this->_attributes['pattern'] = '[a-fA-F0-9:.]*';
 				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1';
-				$this->_attributes['onChange'] = 'javascript:this.value=this.value.toLowerCase();';
 				break;
 
 			case "V4":
 				$this->_attributes['pattern'] = '[0-9.]*';
-				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4';
 				break;
 
 			case "V6":
-				$this->_attributes['pattern'] = '[a-f0-9:]*';
+				$this->_attributes['pattern'] = '[a-fA-F0-9:]*';
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
-				$this->_attributes['onChange'] = 'javascript:this.value=this.value.toLowerCase();';
-				break;
-
-			case "ALIASV4V6":
-				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
-				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias';
-				$this->_attributes['onChange'] = 'javascript:if (this.value.indexOf(":") > -1) {this.value=this.value.toLowerCase();}';
-				break;
-
-			case "ALIASV4":
-				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
-				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an alias';
-				break;
-
-			case "ALIASV6":
-				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
-				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or an alias';
-				$this->_attributes['onChange'] = 'javascript:if (this.value.indexOf(":") > -1) {this.value=this.value.toLowerCase();}';
 				break;
 		}
 	}

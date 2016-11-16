@@ -896,7 +896,6 @@ customize_stagearea_for_image() {
 			chroot ${FINAL_CHROOT_DIR} pwd_mkdb /etc/master.passwd
 	esac
 
-
 	pkg_chroot_add ${FINAL_CHROOT_DIR} ${_default_config}
 
 	# XXX: Workaround to avoid pkg to complain regarding release
@@ -1343,7 +1342,6 @@ pkg_chroot() {
 
 	return $result
 }
-
 
 pkg_chroot_add() {
 	if [ -z "${1}" -o -z "${2}" ]; then

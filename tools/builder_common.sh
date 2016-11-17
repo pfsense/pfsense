@@ -1017,7 +1017,7 @@ create_memstick_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${_image_path}
 
@@ -1064,7 +1064,7 @@ create_memstick_serial_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKSERIALPATH}
 
@@ -1113,7 +1113,7 @@ create_memstick_adi_image() {
 
 	create_distribution_tarball
 
-	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-memstick.sh \
+	sh ${FREEBSD_SRC_DIR}/release/${TARGET}/make-mfsroot-memstick.sh \
 		${INSTALLER_CHROOT_DIR} \
 		${MEMSTICKADIPATH}
 

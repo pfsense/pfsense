@@ -570,7 +570,7 @@ function cert_get_purpose($str_crt, $decode = true) {
 	$crt_details = openssl_x509_parse($str_crt);
 	$purpose = array();
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
-	$purpose['server'] = ($crt_details['extensions']['nsCertType'] == "SSL Server") ? 'Yes': 'No';
+	$purpose['server'] = (strpos($crt_details['extensions']['nsCertType'], 'SSL Server') !== FALSE) ? 'Yes': 'No';
 	return $purpose;
 }
 

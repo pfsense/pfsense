@@ -43,7 +43,7 @@ if ($_GET['getstatus']) {
 }
 if ($_POST['reloadfilter']) {
 	send_event("filter reload");
-	header("Location: status_filter_reload.php");
+	header("Location: status_filter_reload.php?reloading=true");
 	exit;
 }
 if ($_POST['syncfilter']) {
@@ -54,7 +54,6 @@ if ($_POST['syncfilter']) {
 
 include("head.inc");
 ?>
-
 
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Filter Reload");?></h2></div>
@@ -69,19 +68,14 @@ if ($config['hasync'] && $config['hasync']["synchronizetoip"] != ""): ?>
 endif;
 ?>
 			</form>
-
 			<br />
-
-			<div id="status" class="panel panel-default">
-				<?=$status; ?>
-			</div>
-
-			<div id="doneurl">
-			</div>
-
+			<div id="status"></div>
+			<div id="doneurl"></div>
 			<br/>
 
+<?php if ($_GET['reloading']) { ?>
 			<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading."); ?></div>
+<?php } ?>
 
 		</div>
 	</div>
@@ -100,20 +94,23 @@ function update_data(obj) {
 	result_text = result_text_split[1];
 	result_text = result_text.replace("\n", "");
 	result_text = result_text.replace("\r", "");
+
 	if (result_text) {
 		$('#status').html(result_text + '...');
 	} else {
 		$('#status').html('<?=gettext("Obtaining filter status...");?>');
 	}
+
 	if (result_text == "Initializing") {
 		$('#status').html('<?=gettext("Initializing...");?>');
 	} else if (result_text == "Done") {
-		$('#status').effect('highlight');
+		$('#status').addClass("alert alert-success");
 		$('#status').html('<?=gettext("Done.  The filter rules have been reloaded.");?>');
 		$('#reloadinfo').css("visibility", "hidden");
 		$('#doneurl').css("visibility", "visible");
 		$('#doneurl').html("<p><a href='status_queues.php'><?=gettext("Queue Status");?><\/a><\/p>");
 	}
+
 	window.setTimeout('update_status_thread()', 2500);
 }
 //]]>
@@ -163,12 +160,15 @@ if (typeof getURL == 'undefined') {
 					contentType : http_request.getResponseHeader("Content-Type") } );
 			}
 		}
+
 		http_request.open('GET', url, true);
 		http_request.send(null);
 	}
 }
 
-window.setTimeout('update_status_thread()', 2500);
+if ("<?=$_GET['reloading']?>" == "true") {
+ 	window.setTimeout('update_status_thread()', 2500);
+ }
 //]]>
 </script>
 

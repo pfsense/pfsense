@@ -930,12 +930,16 @@ customize_stagearea_for_image() {
 create_distribution_tarball() {
 	mkdir -p ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist
 
+	echo -n ">>> Creating distribution tarball... " | tee -a ${LOGFILE}
 	tar -C ${FINAL_CHROOT_DIR} --exclude ./pkgs \
 		-cJf ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/base.txz .
+	echo "Done!" | tee -a ${LOGFILE}
 
+	echo -n ">>> Creating manifest... " | tee -a ${LOGFILE}
 	(cd ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist && \
 		sh ${FREEBSD_SRC_DIR}/release/scripts/make-manifest.sh base.txz) \
 		> ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/MANIFEST
+	echo "Done!" | tee -a ${LOGFILE}
 }
 
 create_mfsbsd_image() {

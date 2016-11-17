@@ -3236,4 +3236,12 @@ function restore_aliastables() {
 	return false;
 }
 
+// Convert IPv6 addresses to lower case
+function addrtolower($ip) {
+	if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+		return(strtolower($ip));
+	} else {
+		return($ip);
+	}
+}
 ?>

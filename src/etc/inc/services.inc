@@ -1314,7 +1314,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 

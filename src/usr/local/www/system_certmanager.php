@@ -947,6 +947,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 			<thead>
 				<tr>
 					<th><?=gettext("Name")?></th>
+					<th><?=gettext("EKU")?></th>
 					<th><?=gettext("Issuer")?></th>
 					<th><?=gettext("Distinguished Name")?></th>
 					<th><?=gettext("In Use")?></th>
@@ -999,6 +1000,10 @@ foreach ($a_cert as $i => $cert):
 						<?php if (is_array($purpose)): ?>
 							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b>
 						<?php endif?>
+					</td>
+					<td><?php foreach($purpose['EKU'] as $eku) {?>
+						<?=$eku?><br />
+					<?php } ?>
 					</td>
 					<td><?=$caname?></td>
 					<td>

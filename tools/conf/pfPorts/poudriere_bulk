@@ -73,3 +73,4 @@ sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 sysutils/stress
 net/bird
+net/hping

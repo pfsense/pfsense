@@ -997,7 +997,7 @@ foreach ($a_cert as $i => $cert):
 							<i><?=$cert_types[$cert['type']]?></i><br />
 						<?php endif?>
 						<?php if (is_array($purpose)): ?>
-							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b>
+							CA: <b><?=$purpose['ca']?></b>, <?=gettext("Server")?>: <b><?=$purpose['server']?></b><br /><?=gettext("Server EKU")?>: <b><?=$purpose['serverEKU']?></b>
 						<?php endif?>
 					</td>
 					<td><?=$caname?></td>

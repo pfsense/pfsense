@@ -229,23 +229,8 @@ for f in /etc/hosts \
 	fi
 done
 
-# Setup compatibility link for packages that
-# have trouble overriding the PREFIX configure
-# argument since we build our packages in a
-# separated PREFIX area
-# Only create if symlink does not exist.
-if [ ! -h /tmp/tmp ]; then
-	/bin/ln -hfs / /tmp/tmp
-fi
-
 # Make sure our /tmp is 777 + Sticky
 /bin/chmod 1777 /tmp
-
-# Malloc debugging check
-if [ -L /etc/malloc.conf ]; then
-	#ln -s aj /etc/malloc.conf
-	/bin/rm /etc/malloc.conf
-fi
 
 if [ ! -L /etc/dhclient.conf ]; then
 	/bin/rm -rf /etc/dhclient.conf

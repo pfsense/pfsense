@@ -728,6 +728,7 @@ function step8_stepsubmitphpaction() {
 	/* And we're no longer dirty! */
 	clear_subsystem_dirty('shaper');
 
+	update_filter_reload_status("Initializing", true);
 	header("Location: status_filter_reload.php");
 	exit;
 }

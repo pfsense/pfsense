@@ -171,7 +171,7 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$dnslock = lock('resolvconf', LOCK_EX);
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	$fd = fopen("{$g['etc_path']}/resolv.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
 		unlock($dnslock);
@@ -182,7 +182,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fclose($fd);
 
 	// Prevent resolvconf(8) from rewriting our resolv.conf
-	$fd = fopen("{$g['varetc_path']}/resolvconf.conf", "w");
+	$fd = fopen("{$g['etc_path']}/resolvconf.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolvconf.conf in system_resolvconf_generate().\n");
 		return 1;
@@ -418,7 +418,7 @@ function system_hosts_generate() {
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
 
-	$fd = fopen("{$g['varetc_path']}/hosts", "w");
+	$fd = fopen("{$g['etc_path']}/hosts", "w");
 	if (!$fd) {
 		log_error(gettext("Error: cannot open hosts file in system_hosts_generate()."));
 		return 1;
@@ -477,7 +477,7 @@ function system_dhcpleases_configure() {
 			sigkillbyname('dhcpleases', "TERM");
 		}
 		@unlink($pidfile);
-		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['varetc_path']}/hosts");
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
 	} elseif (isvalidpid($pidfile)) {
 		sigkillbypid($pidfile, "TERM");
 		@unlink($pidfile);
@@ -1011,7 +1011,7 @@ EOD;
 EOD;
 		}
 		/* write syslog.conf */
-		if (!@file_put_contents("{$g['varetc_path']}/syslog.conf", $syslogconf)) {
+		if (!@file_put_contents("{$g['etc_path']}/syslog.conf", $syslogconf)) {
 			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
 			unset($syslogconf);
 			return 1;
@@ -1036,7 +1036,7 @@ EOD;
 			}
 		}
 
-		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
+		$syslogd_extra = "-f {$g['etc_path']}/syslog.conf {$sourceip}";
 	}
 
 	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");

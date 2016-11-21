@@ -1,0 +1,100 @@
+#!/bin/sh
+#
+# rc.initial
+#
+# part of pfSense (https://www.pfsense.org)
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+# originally based on m0n0wall (http://neon1.net/m0n0wall)
+# Copyright (c) 2003-2004 Manuel Kasper <mk@neon1.net>.
+# All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# make sure the user can't kill us by pressing Ctrl-C,
+# ctrl-z, etc.
+trap : 2
+trap : 3
+trap : 4
+
+read -p "This operation will erase the eMMC, do you want to continue ? (y/N) " confirm
+case "${confirm}" in
+[Yy] | [Yy][Ee] | [Yy][Ee][Ss])
+	break
+	;;
+*)
+	echo exiting.
+	exit 0
+esac
+
+MMCDEV=mmcsd1
+
+echo "Erasing eMMC..."
+/bin/dd if=/dev/zero of=/dev/${MMCDEV} bs=64k count=800
+
+echo "Creating FAT32 boot partition on eMMC"
+/sbin/gpart create -s MBR ${MMCDEV}
+/sbin/gpart add -a 63 -s 35006k -t '!12' ${MMCDEV}
+/sbin/gpart set -a active -i 1 ${MMCDEV}
+/sbin/newfs_msdos -L 'EMMCBOOT' -c 1 -F 32 /dev/${MMCDEV}s1
+
+/sbin/mount_msdosfs /dev/${MMCDEV}s1 /mnt
+cp /boot/msdos/* /mnt
+/sbin/umount /mnt
+
+echo "Creating pfSense partition on eMMC"
+/sbin/gpart add -t freebsd ${MMCDEV}
+/sbin/gpart create -s BSD ${MMCDEV}s2
+/sbin/gpart add -t freebsd-ufs -a 2m ${MMCDEV}s2
+/sbin/newfs -UjE /dev/${MMCDEV}s2a
+/sbin/mount /dev/${MMCDEV}s2a /mnt
+
+echo
+echo "Copying the system from SD to eMMC"
+
+/usr/bin/tar -cf - -C / \
+	--exclude usr/src \
+	--exclude usr/ports \
+	--exclude usr/obj \
+	--exclude 'usr/swap*' \
+	--exclude mnt \
+	--exclude .sujournal \
+	--exclude var/run \
+	--exclude dev \
+	--exclude tmp \
+	--exclude boot/msdos \
+	. \
+| /usr/bin/tar -xf - -C /mnt
+
+echo
+echo "Cleaning up the copied system"
+# Reset permissions, ensure the required directories
+(cd /mnt ; mtree -Uief /etc/mtree/BSD.root.dist)
+(cd /mnt/usr ; mtree -Uief /etc/mtree/BSD.usr.dist)
+(cd /mnt/usr/include ; mtree -Uief /etc/mtree/BSD.include.dist)
+(cd /mnt/var ; mtree -Uief /etc/mtree/BSD.var.dist)
+# Remove existing SSH host keys
+rm -f /mnt/etc/ssh/*key*
+
+umount /mnt
+sync ; sync l sync
+
+echo
+echo "System copied."
+echo
+echo "To reboot from eMMC:"
+echo " * Clean shutdown: shutdown -p now"
+echo " * Remove the power"
+echo " * Remove the SD card"
+echo " * Reapply power (do NOT close the SD boot jumper)"

@@ -85,6 +85,17 @@ for i in /var/db/pfi/capable_*; do
 	fi
 done
 
+uFW=$(/bin/kenv uboot.board_name)
+if [ "${uFW}" = "A335uFW" ]; then
+	rootdev=$(/sbin/mount | /usr/bin/grep " on / " | /usr/bin/cut -f1 -d" ")
+	if [ "${rootdev}" = "/dev/mmcsd0s2a" ]; then
+		MMCDEV=$(/sbin/geom disk list mmcsd0 | /usr/bin/grep MMCHC)
+	fi
+	if [ -z "${MMCDEV}" ]; then
+		install_option="99) Install to eMMC"
+	fi
+fi
+
 # display a cheap menu
 echo ""
 echo " 0) Logout (SSH only)                  9) pfTop"
@@ -96,7 +107,12 @@ echo " 5) Reboot system                     ${sshd_option}"
 echo " 6) Halt system                       15) Restore recent configuration"
 echo " 7) Ping host                         16) Restart PHP-FPM"
 echo " 8) Shell"
-echo " ${option98} "
+if [ -n "${option98}" ]; then
+	echo " ${option98} "
+fi
+if [ -n "${install_option}" ]; then
+	echo " ${install_option} "
+fi
 
 echo
 read -p "Enter an option: " opmode
@@ -158,6 +174,11 @@ case ${opmode} in
 98)
 	if [ ! -f /tmp/config_moved ]; then
 		/etc/rc.initial.store_config_to_removable_device
+	fi
+	;;
+99)
+	if [ "${uFW}" = "A335uFW" ]; then
+		/etc/rc.ufw.install_to_emmc
 	fi
 	;;
 100)

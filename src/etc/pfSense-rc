@@ -221,9 +221,6 @@ fi
 
 echo -n "Creating symlinks..."
 # Repair symlinks if they are broken
-if [ -f /etc/newsyslog.conf ]; then
-	/bin/rm -f /etc/newsyslog.conf
-fi
 if [ ! -L /etc/syslog.conf ]; then
 	/bin/rm -rf /etc/syslog.conf
 	if [ ! -f /var/etc/syslog.conf ]; then

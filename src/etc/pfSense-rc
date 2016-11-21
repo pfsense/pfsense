@@ -57,7 +57,7 @@ echo "Configuring crash dumps..."
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/ddb.conf
+	/sbin/ddb /etc/${product}-ddb.conf
 fi
 
 fsck_forced_iterations=`/bin/kenv pfsense.fsck.force`

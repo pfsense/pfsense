@@ -219,31 +219,15 @@ if [ -L /usr/local/etc/strongswan.conf ]; then
 	rm -f /usr/local/etc/strongswan.conf
 fi
 
-echo -n "Creating symlinks..."
-# Repair symlinks if they are broken
-if [ ! -L /etc/syslog.conf ]; then
-	/bin/rm -rf /etc/syslog.conf
-	if [ ! -f /var/etc/syslog.conf ]; then
-		touch /var/etc/syslog.conf
+# Remove deprecated symlinks - #5538
+for f in /etc/hosts \
+    /etc/resolv.conf \
+    /etc/resolvconf.conf \
+    /etc/syslog.conf; do
+	if [ -L "${f}" ]; then
+		rm -f ${f}
 	fi
-	/bin/ln -s /var/etc/syslog.conf /etc/syslog.conf
-fi
-
-# Repair symlinks if they are broken
-if [ ! -L /etc/hosts ]; then
-	/bin/rm -rf /etc/hosts
-	/bin/ln -s /var/etc/hosts /etc/hosts
-fi
-
-if [ ! -L /etc/resolv.conf ]; then
-	/bin/rm -rf /etc/resolv.conf
-	/bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
-fi
-
-if [ ! -L /etc/resolvconf.conf ]; then
-	/bin/rm -rf /etc/resolvconf.conf
-	/bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
-fi
+done
 
 # Setup compatibility link for packages that
 # have trouble overriding the PREFIX configure

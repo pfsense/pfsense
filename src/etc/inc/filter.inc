@@ -264,7 +264,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$filterlck = lock('filter', LOCK_EX);
 
 	filter_pflog_start();
-	update_filter_reload_status(gettext("Initializing"));
+	update_filter_reload_status(gettext("Initializing"), true);  // second argument = overwrite existing file
 
 	/* invalidate interface cache */
 	get_interface_arr(true);

@@ -112,6 +112,23 @@ if ($_POST) {
 	if (!$input_errors) {
 		if (isset($id) && $a_vlans[$id]) {
 			if (($a_vlans[$id]['if'] != $_POST['if']) || ($a_vlans[$id]['tag'] != $_POST['tag'])) {
+				$platform = system_identify_specific_platform();
+				if ($platform['name'] == "uFW") {
+					switch ($a_vlans[$id]['if']) {
+					case "cpsw0":
+						$swport = "1t";
+						break;
+					case "cpsw1":
+						$swport = "2t";
+						break;
+					default:
+						$swport = -1;
+					}
+				}
+				if (isset($swport) && $swport != -1) {
+					$tag = $a_vlans[$id]['tag'];
+					mwexec("/sbin/etherswitchcfg vlangroup$tag vlan 0");
+				}
 				if (!empty($a_vlans[$id]['vlanif'])) {
 					$confif = convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']);
 					// Destroy previous vlan

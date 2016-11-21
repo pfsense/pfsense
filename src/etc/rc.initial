@@ -87,7 +87,7 @@ done
 
 uFW=$(/bin/kenv uboot.board_name)
 if [ "${uFW}" = "A335uFW" ]; then
-	rootdev=$(/sbin/mount | /usr/bin/grep " on / " | /usr/bin/cut -f1 -d" ")
+	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1 -d" ")
 	if [ "${rootdev}" = "/dev/mmcsd0s2a" ]; then
 		MMCDEV=$(/sbin/geom disk list mmcsd0 | /usr/bin/grep MMCHC)
 	fi

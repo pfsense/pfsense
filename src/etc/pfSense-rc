@@ -258,9 +258,6 @@ fi
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
 
-# Remove old nameserver resolution files
-/bin/rm -f /var/etc/nameserver*
-
 echo -n "."
 DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)
 LOG_FILES="system filter dhcpd vpn poes l2tps openvpn portalauth ipsec ppp relayd wireless nginx ntpd gateways resolver routing"

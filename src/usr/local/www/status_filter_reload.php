@@ -43,7 +43,7 @@ if ($_GET['getstatus']) {
 }
 if ($_POST['reloadfilter']) {
 	send_event("filter reload");
-	header("Location: status_filter_reload.php?reloading=true");
+	header("Location: status_filter_reload.php");
 	exit;
 }
 if ($_POST['syncfilter']) {
@@ -69,11 +69,16 @@ endif;
 ?>
 			</form>
 			<br />
-			<div id="status"></div>
 			<div id="doneurl"></div>
+			<br />
+			<div class="panel panel-default">
+				<div class="panel-heading"><h2 class="panel-title"><?=gettext("Reload status")?></h2></div>
+				<div class="panel-body" id="status">
+				</div>
+			</div>
 			<br/>
 
-<?php if ($_GET['reloading']) { ?>
+<?php if (!$_GET['user']) { ?>
 			<div id="reloadinfo"><?=gettext("This page will automatically refresh every 3 seconds until the filter is done reloading."); ?></div>
 <?php } ?>
 
@@ -92,26 +97,21 @@ function update_data(obj) {
 	var result_text = obj.content;
 	var result_text_split = result_text.split("|");
 	result_text = result_text_split[1];
-	result_text = result_text.replace("\n", "");
-	result_text = result_text.replace("\r", "");
 
 	if (result_text) {
-		$('#status').html(result_text + '...');
+		$('#status').html('<pre>' + result_text + '</pre>');
 	} else {
-		$('#status').html('<?=gettext("Obtaining filter status...");?>');
+		$('#status').html('<pre>' + '<?=gettext("Obtaining filter status...");?>' + '</pre>');
 	}
 
-	if (result_text == "Initializing") {
-		$('#status').html('<?=gettext("Initializing...");?>');
-	} else if (result_text == "Done") {
-		$('#status').addClass("alert alert-success");
-		$('#status').html('<?=gettext("Done.  The filter rules have been reloaded.");?>');
+	if (result_text.endsWith("Done\n")) {
 		$('#reloadinfo').css("visibility", "hidden");
 		$('#doneurl').css("visibility", "visible");
 		$('#doneurl').html("<p><a href='status_queues.php'><?=gettext("Queue Status");?><\/a><\/p>");
+		$('#reloadinfo').html("");
+	}  else {
+		window.setTimeout('update_status_thread()', 1500);
 	}
-
-	window.setTimeout('update_status_thread()', 2500);
 }
 //]]>
 </script>
@@ -166,8 +166,8 @@ if (typeof getURL == 'undefined') {
 	}
 }
 
-if ("<?=$_GET['reloading']?>" == "true") {
- 	window.setTimeout('update_status_thread()', 2500);
+if ("<?=$_GET['user']?>" != "true") {
+ 	window.setTimeout('update_status_thread()', 1500);
  }
 //]]>
 </script>

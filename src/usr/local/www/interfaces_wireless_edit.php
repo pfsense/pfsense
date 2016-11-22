@@ -148,13 +148,11 @@ function build_parent_list() {
 	global $g;
 
 	$parentlist = array();
-	$portlist = get_interface_list();
+	$portlist = explode(" ", get_single_sysctl("net.wlan.devices"));
 	$count = 0;
-	foreach ($portlist as $ifn => $ifinfo) {
-		if (preg_match($g['wireless_regex'], $ifn)) {
-			$parentlist[$ifn] = htmlspecialchars($ifn . ' (' . $ifinfo['mac'] . ')');
-			$count++;
-		}
+	foreach ($portlist as $ifn) {
+		$parentlist[$ifn] = htmlspecialchars($ifn);
+		$count++;
 	}
 
 	if ($count > 0) {

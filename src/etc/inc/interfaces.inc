@@ -4728,6 +4728,27 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
+function interface_list_wireless() {
+	$portlist = explode(" ", get_single_sysctl("net.wlan.devices"));
+
+	$result = array();
+	foreach ($portlist as $port) {
+		if (preg_match("/^([^0-9]+)([0-9]+)/", $port, $matches) != 1) {
+			continue;
+		}
+
+		$desc = get_single_sysctl(
+		    "dev.{$matches[1]}.{$matches[2]}.%desc");
+
+		$result[] = array(
+		    "if" => $port,
+		    "desc" => $desc
+		);
+	}
+
+	return $result;
+}
+
 function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = true) {
 	global $config, $g;
 

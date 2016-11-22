@@ -97,7 +97,7 @@ if ($_POST) {
 		if (!$clone['cloneif']) {
 			$clone_id = 1;
 			do {
-				$clone_exists = false;
+				$clone_exists = falsek;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";
 				foreach ($a_clones as $existing) {
 					if ($clone['cloneif'] == $existing['cloneif']) {
@@ -148,10 +148,11 @@ function build_parent_list() {
 	global $g;
 
 	$parentlist = array();
-	$portlist = explode(" ", get_single_sysctl("net.wlan.devices"));
+	$portlist = interface_list_wireless();
 	$count = 0;
 	foreach ($portlist as $ifn) {
-		$parentlist[$ifn] = htmlspecialchars($ifn);
+		$parentlist[$ifn['if']] = htmlspecialchars($ifn['if'] .
+		    " ( " . $ifn['desc'] . " )");
 		$count++;
 	}
 

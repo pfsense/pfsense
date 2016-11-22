@@ -90,7 +90,7 @@ echo
 echo "System copied."
 echo
 echo "To reboot from eMMC:"
-echo " * Clean shutdown: shutdown -p now"
+echo " * Clean shutdown: halt system (option 6)"
 echo " * Remove the power"
 echo " * Remove the SD card"
 echo " * Reapply power (do NOT close the SD boot jumper)"

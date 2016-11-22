@@ -487,10 +487,10 @@ if ($_POST) {
 	}
 
 	if ($_POST['src']) {
-		$_POST['src'] = trim($_POST['src']);
+		$_POST['src'] = addrtolower(trim($_POST['src']));
 	}
 	if ($_POST['dst']) {
-		$_POST['dst'] = trim($_POST['dst']);
+		$_POST['dst'] = addrtolower(trim($_POST['dst']));
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */

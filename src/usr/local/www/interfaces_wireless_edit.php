@@ -151,8 +151,7 @@ function build_parent_list() {
 	$portlist = interface_list_wireless();
 	$count = 0;
 	foreach ($portlist as $ifn) {
-		$parentlist[$ifn['if']] = htmlspecialchars($ifn['if'] .
-		    " ( " . $ifn['desc'] . " )");
+		$parentlist[$ifn['if']] = htmlspecialchars($ifn['descr']);
 		$count++;
 	}
 

@@ -4737,12 +4737,12 @@ function interface_list_wireless() {
 			continue;
 		}
 
-		$desc = get_single_sysctl(
-		    "dev.{$matches[1]}.{$matches[2]}.%desc");
+		$desc = $port . " ( " . get_single_sysctl(
+		    "dev.{$matches[1]}.{$matches[2]}.%desc") . " )";
 
 		$result[] = array(
 		    "if" => $port,
-		    "desc" => $desc
+		    "descr" => $desc
 		);
 	}
 

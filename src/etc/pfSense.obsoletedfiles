@@ -1093,7 +1093,11 @@
 /var/db/rrd/71
 /var/db/rrd/index.html
 /var/dhcpd/lib/libc.so.6
+/var/etc/hosts
 /var/etc/pppoe-vpn
+/var/etc/resolv.conf
+/var/etc/resolvconf.conf
+/var/etc/syslog.conf
 /var/mail/_relayd
 /var/mail/unbound
 /usr/local/www/d3pie

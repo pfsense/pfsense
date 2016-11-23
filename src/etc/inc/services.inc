@@ -550,7 +550,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -1315,7 +1314,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -2098,7 +2096,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
-			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
+			$args .= " --dhcp-hostsfile={$g['etc_path']}/hosts ";
 		}
 
 		/* Setup listen port, if non-default */

@@ -79,3 +79,4 @@ net/%%PRODUCT_NAME%%-pkg-aws-wizard
 net/%%PRODUCT_NAME%%-pkg-ipsec-profile-wizard
 sysutils/stress
 net/bird
+net/hping

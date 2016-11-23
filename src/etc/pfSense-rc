@@ -57,7 +57,7 @@ echo "Configuring crash dumps..."
 
 # Setup ddb on all platforms.
 if [ ! -z "`sysctl -Nq debug.ddb.scripting.scripts`" ]; then
-	/sbin/ddb /etc/ddb.conf
+	/sbin/ddb /etc/${product}-ddb.conf
 fi
 
 fsck_forced_iterations=`/bin/kenv pfsense.fsck.force`
@@ -224,52 +224,18 @@ if [ -L /usr/local/etc/strongswan.conf ]; then
 	rm -f /usr/local/etc/strongswan.conf
 fi
 
-echo -n "Creating symlinks..."
-# Repair symlinks if they are broken
-if [ -f /etc/newsyslog.conf ]; then
-	/bin/rm -f /etc/newsyslog.conf
-fi
-if [ ! -L /etc/syslog.conf ]; then
-	/bin/rm -rf /etc/syslog.conf
-	if [ ! -f /var/etc/syslog.conf ]; then
-		touch /var/etc/syslog.conf
+# Remove deprecated symlinks - #5538
+for f in /etc/hosts \
+    /etc/resolv.conf \
+    /etc/resolvconf.conf \
+    /etc/syslog.conf; do
+	if [ -L "${f}" ]; then
+		rm -f ${f}
 	fi
-	/bin/ln -s /var/etc/syslog.conf /etc/syslog.conf
-fi
-
-# Repair symlinks if they are broken
-if [ ! -L /etc/hosts ]; then
-	/bin/rm -rf /etc/hosts
-	/bin/ln -s /var/etc/hosts /etc/hosts
-fi
-
-if [ ! -L /etc/resolv.conf ]; then
-	/bin/rm -rf /etc/resolv.conf
-	/bin/ln -s /var/etc/resolv.conf /etc/resolv.conf
-fi
-
-if [ ! -L /etc/resolvconf.conf ]; then
-	/bin/rm -rf /etc/resolvconf.conf
-	/bin/ln -s /var/etc/resolvconf.conf /etc/resolvconf.conf
-fi
-
-# Setup compatibility link for packages that
-# have trouble overriding the PREFIX configure
-# argument since we build our packages in a
-# separated PREFIX area
-# Only create if symlink does not exist.
-if [ ! -h /tmp/tmp ]; then
-	/bin/ln -hfs / /tmp/tmp
-fi
+done
 
 # Make sure our /tmp is 777 + Sticky
 /bin/chmod 1777 /tmp
-
-# Malloc debugging check
-if [ -L /etc/malloc.conf ]; then
-	#ln -s aj /etc/malloc.conf
-	/bin/rm /etc/malloc.conf
-fi
 
 if [ ! -L /etc/dhclient.conf ]; then
 	/bin/rm -rf /etc/dhclient.conf
@@ -281,9 +247,6 @@ fi
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3
-
-# Remove old nameserver resolution files
-/bin/rm -f /var/etc/nameserver*
 
 echo -n "."
 DISABLESYSLOGCLOG=$(/usr/local/sbin/read_xml_tag.sh boolean system/disablesyslogclog)

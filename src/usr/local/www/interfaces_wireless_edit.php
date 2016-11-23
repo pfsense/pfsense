@@ -95,7 +95,7 @@ if ($_POST) {
 		}
 
 		if (!$clone['cloneif']) {
-			$clone_id = 1;
+			$clone_id = 0;
 			do {
 				$clone_exists = false;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";

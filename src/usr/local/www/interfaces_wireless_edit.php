@@ -97,7 +97,7 @@ if ($_POST) {
 		if (!$clone['cloneif']) {
 			$clone_id = 1;
 			do {
-				$clone_exists = falsek;
+				$clone_exists = false;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";
 				foreach ($a_clones as $existing) {
 					if ($clone['cloneif'] == $existing['cloneif']) {

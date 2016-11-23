@@ -233,6 +233,10 @@ $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
 	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
 }
+$platform = system_identify_specific_platform();
+if ($platform['name'] == "uFW") {
+	$interfaces_menu[] = array(gettext("(switch)"), "/switch_system.php");
+}
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {

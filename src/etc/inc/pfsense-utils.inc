@@ -1919,7 +1919,7 @@ function load_thermal_hardware() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86", "VirtualBox");
-	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output, $rc);
+	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $output, $rc);
 
 	if ($rc != 0 || !isset($output[0])) {
 		return false;

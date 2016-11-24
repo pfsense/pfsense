@@ -2172,7 +2172,7 @@ EOD;
 
 function system_get_serial() {
 	unset($output);
-	$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+	$_gb = exec('/bin/kenv -q smbios.system.serial 2>/dev/null', $output);
 	$serial = $output[0];
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
@@ -2199,8 +2199,8 @@ function system_identify_specific_platform() {
 	/* Try to guess from smbios strings */
 	unset($product);
 	unset($maker);
-	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $product);
-	$_gb = exec('/bin/kenv smbios.system.maker 2>/dev/null', $maker);
+	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
+	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	switch ($product[0]) {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));

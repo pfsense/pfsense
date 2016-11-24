@@ -85,7 +85,7 @@ for i in /var/db/pfi/capable_*; do
 	fi
 done
 
-uFW=$(/bin/kenv uboot.board_name)
+uFW=$(/bin/kenv -q uboot.board_name)
 if [ "${uFW}" = "A335uFW" ]; then
 	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1)
 	if [ "${rootdev}" = "/dev/mmcsd0s2a" ]; then

@@ -30,6 +30,16 @@ $hostname = $config['system']['hostname'];
 $product = $g['product_name'];
 $machine = trim(`uname -m`);
 
+/* Export the product variable. */
+if (is_writable("/etc")) {
+	if (!file_exists("/etc/product_name") || is_writable("/etc/product_name"))
+		$handle = fopen("/etc/product_name", 'w');
+	if ($handle != NULL)
+		fwrite($handle, $product);
+	if ($handle != NULL)
+		fclose($handle);
+}
+
 print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(false, true);

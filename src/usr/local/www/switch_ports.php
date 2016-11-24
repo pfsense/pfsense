@@ -27,6 +27,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("switch.inc");
 
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("Ports"));
 $shortcut_section = "ports";
@@ -113,14 +114,13 @@ foreach ($swdevices as $swdev) {
 	/* Just in case... */
 	pfSense_etherswitch_close();
 
-	if (pfSense_etherswitch_open($swdevice) == false) {
-		continue;
-	}
+	if (pfSense_etherswitch_open($swdevice) == false)
+		echo "cannot open the switch device\n";
 
 	$swinfo = pfSense_etherswitch_getinfo();
 	if ($swinfo == NULL) {
 		pfSense_etherswitch_close();
-		continue;
+		echo "cannot get switch device information\n";
 	}
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
 		$port = pfSense_etherswitch_getport($i);
@@ -130,7 +130,24 @@ foreach ($swdevices as $swdev) {
 ?>
 					<tr>
 						<td>
-							<?= htmlspecialchars($port['port'])?>
+<?
+		echo htmlspecialchars($port['port']);
+		$host = false;
+		foreach ($port['flags'] as $flag => $val) {
+			if ($flag == "HOST") {
+				$host = true;
+				break;
+			}
+		}
+		if ($host == true) {
+			echo " (host)";
+		} else {
+			$swport = switch_map_port($port['port']);
+			if ($swport != NULL) {
+				echo " ($swport)";
+			}
+		}
+?>
 						</td>
 						<td>
 							<?= htmlspecialchars($port['pvid'])?>

@@ -31,6 +31,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("switch.inc");
 
 if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
@@ -113,6 +114,37 @@ display_top_tabs($tab_array);
 					</thead>
 					<tbody>
 <?php
+
+	$swvlans = switch_get_system_vlans();
+	if ($swvlans != NULL && is_array($swvlans)) {
+		foreach($swvlans as $swvlan) {
+?>
+						<tr>
+							<td>
+<?php
+			printf("%s", htmlspecialchars($swvlan['if']));
+			$iface = convert_real_interface_to_friendly_interface_name($swvlan['if']);
+			if (isset($iface) && strlen($iface) > 0)
+				printf(" (%s)", htmlspecialchars($iface));
+?>
+							</td>
+							<td><?=htmlspecialchars($swvlan['vid']);?></td>
+							<td>
+							</td>
+							<td>
+<?
+			echo gettext('Default System VLAN');
+			echo " - ";
+			echo htmlspecialchars($swvlan['switchname']);
+?>
+							</td>
+							<td>
+							</td>
+						<tr>
+<?
+		}
+	}
+
 	$i = 0;
 	foreach ($a_vlans as $vlan) {
 ?>

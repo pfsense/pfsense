@@ -31,6 +31,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("switch.inc");
 
 if (!is_array($config['vlans']['vlan'])) {
 	$config['vlans']['vlan'] = array();
@@ -89,6 +90,14 @@ if ($_POST) {
 			if (!empty($a_vlans[$id]['vlanif']) && convert_real_interface_to_friendly_interface_name($a_vlans[$id]['vlanif']) != NULL) {
 				$input_errors[] = gettext("The VLAN tag cannot be changed while the interface is assigned.");
 			}
+		}
+	}
+	$swvlans = switch_get_system_vlans();
+	if ($swvlans != NULL && is_array($swvlans)) {
+		foreach($swvlans as $swvlan) {
+			if ($swvlan['vid'] != $_POST['tag'])
+				continue;
+			$input_errors[] = sprintf(gettext("A VLAN with the tag %s is defined as a system default on this system."), $swvlan['vid']);
 		}
 	}
 	foreach ($a_vlans as $vlan) {

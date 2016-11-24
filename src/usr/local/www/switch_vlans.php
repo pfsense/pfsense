@@ -27,6 +27,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("switch.inc");
 
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"));
 $shortcut_section = "vlans";
@@ -52,12 +53,16 @@ display_top_tabs($tab_array);
 	<tbody>
 <?php
 
+/* Available switch devices on platform. */
 $swdevices = array();
+/* Read-only VLANs (necessary to basic system operation). */
+$vlans_system = array();
 
 $platform = system_identify_specific_platform();
 if ($platform['name'] == "uFW") {
 	/* Only one switch on uFW. */
 	$swdevices[] = "/dev/etherswitch0";
+	$vlans_system = switch_get_system_vlans();
 }
 
 $swdevice = NULL;
@@ -103,6 +108,7 @@ foreach ($swdevices as $swdev) {
 						<th><?=gettext("VLAN group"); ?></th>
 						<th><?=gettext("VLAN ID"); ?></th>
 						<th><?=gettext("Members"); ?></th>
+						<th><?=gettext("Description"); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -128,10 +134,10 @@ foreach ($swdevices as $swdev) {
 ?>
 					<tr>
 						<td>
-							<?= htmlspecialchars($vgroup['vlangroup'])?>
+							<?= htmlspecialchars($vgroup['vlangroup']); ?>
 						</td>
 						<td>
-							<?= htmlspecialchars($vgroup['vid'])?>
+							<?= htmlspecialchars($vgroup['vid']); ?>
 						</td>
 						<td>
 <?
@@ -141,6 +147,16 @@ foreach ($swdevices as $swdev) {
 				echo ",";
 			echo "$member";
 			$comma = true;
+		}
+?>
+						</td>
+						<td>
+<?
+		foreach ($vlans_system as $svlan) {
+			if ($svlan['vid'] != $vgroup['vid'])
+				continue;
+			echo "Default System VLAN";
+			break;
 		}
 ?>
 						</td>

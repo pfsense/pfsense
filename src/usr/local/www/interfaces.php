@@ -691,6 +691,8 @@ if ($_POST['apply']) {
 		}
 	}
 	if ($_POST['ipaddrv6']) {
+		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
+
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} else {

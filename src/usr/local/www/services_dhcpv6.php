@@ -289,8 +289,8 @@ if (isset($_POST['apply'])) {
 		if (($_POST['ddnsdomain'] && !is_domain($_POST['ddnsdomain']))) {
 			$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 		}
-		if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-			$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
+		if (($_POST['ddnsdomain'] && !is_ipaddrv6($_POST['ddnsdomainprimary']))) {
+			$input_errors[] = gettext("A valid primary domain name server IPv6 address must be specified for the dynamic domain name.");
 		}
 		if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 		    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {

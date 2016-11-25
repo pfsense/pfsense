@@ -139,6 +139,7 @@ if (isset($config['system']['ssh']['sshdkeyonly'])) {
 	$sshconf .= "ChallengeResponseAuthentication no\n";
 	$sshconf .= "PasswordAuthentication no\n";
 	$sshconf .= "PubkeyAuthentication yes\n";
+	$sshconf .= "UsePAM no\n";
 } else {
 	$sshconf .= "# Login via Key and Password\n";
 	$sshconf .= "ChallengeResponseAuthentication yes\n";
@@ -146,7 +147,6 @@ if (isset($config['system']['ssh']['sshdkeyonly'])) {
 	$sshconf .= "PubkeyAuthentication yes\n";
 }
 $sshconf .= "UseDNS no\n";
-$sshconf .= "UsePAM no\n";
 $sshconf .= "LoginGraceTime 30s\n";
 /* Hide FreeBSD version */
 $sshconf .= "VersionAddendum none\n";

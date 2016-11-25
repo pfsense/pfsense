@@ -173,8 +173,8 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if (($_POST['ipaddr'] && !is_ipaddrv4($_POST['ipaddr']))) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified.");
 	}
 
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
@@ -232,10 +232,10 @@ if ($_POST) {
 	}
 
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the gateway.");
 	}
 	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
 	$parent_ip = get_interface_ip($POST['if']);
@@ -249,7 +249,7 @@ if ($_POST) {
 	    ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) ||
 	    ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) ||
 	    ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+		$input_errors[] = gettext("A valid IPV4 address must be specified for each of the DNS servers.");
 	}
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
@@ -262,7 +262,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 	}
 	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
 	}
 	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
@@ -279,13 +279,13 @@ if ($_POST) {
 	}
 
 	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
 	}
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
-		$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
+		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
 	}
 	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the network boot server.");
 	}
 
 	if (!$input_errors) {
@@ -431,7 +431,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
-	$pconfig['ipaddr']
+	$pconfig['ipaddr'],
+	'V4'
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
 			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
 
@@ -595,7 +596,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(

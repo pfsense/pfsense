@@ -39,7 +39,7 @@ class Form_IpAddress extends Form_Input
 				break;
 
 			case "V6":
-				$this->_attributes['pattern'] = '[a-fA-F0-9:]*';
+				$this->_attributes['pattern'] = '[a-fA-F0-9:.]*';
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
 				break;
 		}

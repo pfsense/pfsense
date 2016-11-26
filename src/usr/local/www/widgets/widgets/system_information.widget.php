@@ -128,6 +128,12 @@ $filesystems = get_mounted_filesystems();
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
+<?
+	if ($platform['name'] == "uFW") {
+		echo "<br>\n";
+		echo htmlspecialchars(get_single_sysctl("hw.ti_model"));
+	}
+?>
 				<div id="cpufreq"><?= get_cpufreq(); ?></div>
 		<?php
 			$cpucount = get_cpu_count();

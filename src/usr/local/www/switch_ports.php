@@ -38,70 +38,102 @@ $tab_array[] = array(gettext("System"), false, "switch_system.php");
 $tab_array[] = array(gettext("Ports"), true, "switch_ports.php");
 $tab_array[] = array(gettext("VLANs"), false, "switch_vlans.php");
 display_top_tabs($tab_array);
-?>
-<div class="panel panel-default">
-<form action="interfaces_assign.php" method="post">
-	<div class="table-responsive">
-	<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th>&nbsp;</th>
-			<th><?=gettext("Switch")?></th>
-			<th>&nbsp;</th>
-		</tr>
-	</thead>
-	<tbody>
-<?php
 
-$swdevices = array();
+// Build an array with which to populate the switch device selector
+function get_switches($devicelist) {
 
-$platform = system_identify_specific_platform();
-if ($platform['name'] == "uFW") {
-	/* Only one switch on uFW. */
-	$swdevices[] = "/dev/etherswitch0";
-}
+	$switches = array();
 
-$swdevice = NULL;
-foreach ($swdevices as $swdev) {
-	/* Just in case... */
-	pfSense_etherswitch_close();
-
-	if (pfSense_etherswitch_open($swdev) == false) {
-		continue;
-	}
-
-	$swinfo = pfSense_etherswitch_getinfo();
-	if ($swinfo == NULL) {
+	foreach ($devicelist as $swdev) {
+		/* Just in case... */
 		pfSense_etherswitch_close();
-		continue;
-	}
-	if ($swdevice == NULL)
-		$swdevice = $swdev;
-?>
-		<tr>
-			<td>&nbsp;</td>
-			<td><select name="swdevice" id="swdevice" class="form-control">
-				<option value="<?= $swdev ?>"><?= $swinfo['name'] ?>
-			    </select>
-			</td>
-			<td>&nbsp;</td>
-		</tr>
-<?
-	pfSense_etherswitch_close();
-}
-?>
-	</tbody>
-	</table>
-	</div>
-</form>
 
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Switch Ports')?></h2></div>
+		if (pfSense_etherswitch_open($swdev) == false) {
+			continue;
+		}
+
+		$swinfo = pfSense_etherswitch_getinfo();
+
+		if ($swinfo == NULL) {
+			pfSense_etherswitch_close();
+			continue;
+		}
+		if ($swdevice == NULL)
+			$swdevice = $swdev;
+
+		$switches[$swdev] = $swinfo['name'];
+
+		pfSense_etherswitch_close();
+	}
+
+	return($switches);
+}
+
+// List the available switches
+// ToDo: Check this is the correct way to get teh switch information
+$swdevices = array();
+$swdevices = glob("/dev/etherswitch*");
+
+// If there is more than one switch, draw a selector to allow the user to choose which one to look at
+if (count($swdevices) > 1) {
+	$form = new Form(false);
+
+	$section = new Form_Section('Dynamic DNS Client');
+
+	$section->addInput(new Form_Select(
+		'swdevice',
+		'Switch',
+		$_POST['swdevice'],
+		get_switches($swdevices)
+	));
+
+	$form->add($section);
+
+	print($form);
+
+} else {
+	// If running on a Netgate micro-firewall, display that in the panel title
+	if (system_identify_specific_platform()['name'] == "uFW") {
+		$ufwname = "uFW ";
+	}
+}
+
+// If the selector was changed, the selected value becomes the default
+if($_POST['swdevice']) {
+	$swdevice = $_POST['swdevice'];
+} else {
+	$swdevice = $swdevices[0];
+}
+
+/* Just in case... */
+pfSense_etherswitch_close();
+
+if (pfSense_etherswitch_open($swdevice) == false) {
+	$input_errors[] = "Cannot open the switch device\n";
+}
+
+$swinfo = pfSense_etherswitch_getinfo();
+
+if ($swinfo == NULL) {
+	pfSense_etherswitch_close();
+	$input_errors[] = "Cannot get switch device information\n";
+}
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+} else {
+	// Don't draw the table if there were hardware errors
+?>
+
+<div class="panel panel-default">
+	<div class="panel-heading"><h2 class="panel-title"><?=$ufwname . gettext('Switch Ports')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
-						<th><?=gettext("Port"); ?></th>
+						<th><?=gettext("Port #"); ?></th>
+						<th><?=gettext("Port name"); ?></th>
 						<th><?=gettext("Port VID"); ?></th>
 						<th><?=gettext("Flags"); ?></th>
 						<th><?=gettext("Media"); ?></th>
@@ -111,17 +143,7 @@ foreach ($swdevices as $swdev) {
 				<tbody>
 <?php
 
-	/* Just in case... */
-	pfSense_etherswitch_close();
 
-	if (pfSense_etherswitch_open($swdevice) == false)
-		echo "cannot open the switch device\n";
-
-	$swinfo = pfSense_etherswitch_getinfo();
-	if ($swinfo == NULL) {
-		pfSense_etherswitch_close();
-		echo "cannot get switch device information\n";
-	}
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
 		$port = pfSense_etherswitch_getport($i);
 		if ($port == NULL) {
@@ -131,20 +153,27 @@ foreach ($swdevices as $swdev) {
 					<tr>
 						<td>
 <?
-		echo htmlspecialchars($port['port']);
+		print(htmlspecialchars($port['port']));
+
+?>
+						</td>
+						<td>
+<?php
 		$host = false;
+
 		foreach ($port['flags'] as $flag => $val) {
 			if ($flag == "HOST") {
 				$host = true;
 				break;
 			}
 		}
+
 		if ($host == true) {
-			echo " (host)";
+			echo " host";
 		} else {
 			$swport = switch_map_port($port['port']);
 			if ($swport != NULL) {
-				echo " ($swport)";
+				echo "$swport";
 			}
 		}
 ?>
@@ -178,6 +207,7 @@ foreach ($swdevices as $swdev) {
 						</td>
 					</tr>
 <?
+		}
 	}
 
 	pfSense_etherswitch_close();
@@ -188,5 +218,17 @@ foreach ($swdevices as $swdev) {
 		</div>
 	</div>
 </div>
+
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	// Automatically submit the form when the selector is changed
+	$('#swdevice').on('change', function () {
+		$('form').submit();
+	});
+});
+//]]>
+</script>
 <?php
 include("foot.inc");

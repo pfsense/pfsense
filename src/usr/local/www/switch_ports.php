@@ -200,10 +200,23 @@ if ($input_errors) {
 				echo " (". htmlspecialchars($port['media']['active']) .")";
 			}
 		}
+
+		print('</td>');
+
+		switch (strtolower(htmlspecialchars($port['status']))) {
+			case 'no carrier':
+				print('<td class="text-danger">');
+				break;
+			case 'active':
+				print('<td class="text-success">');
+				break;
+			default:
+				print('<td>');
+				break;
+		}
+
+		print(htmlspecialchars($port['status']));
 ?>
-						</td>
-						<td>
-							<?= htmlspecialchars($port['status'])?>
 						</td>
 					</tr>
 <?

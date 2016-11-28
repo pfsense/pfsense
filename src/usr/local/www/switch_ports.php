@@ -215,7 +215,7 @@ if ($input_errors) {
 				break;
 		}
 
-		print(htmlspecialchars($port['status']));
+		print(ucwords(htmlspecialchars($port['status'])));
 ?>
 						</td>
 					</tr>

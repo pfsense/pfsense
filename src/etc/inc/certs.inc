@@ -604,6 +604,65 @@ function prv_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "prv");
 }
 
+function is_openvpn_server_ca($caref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-server'])) {
+		return;
+	}
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if ($ovpns['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_openvpn_client_ca($caref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-client'])) {
+		return;
+	}
+	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+		if ($ovpnc['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_ipsec_peer_ca($caref) {
+	global $config;
+	if (!is_array($config['ipsec']['phase1'])) {
+		return;
+	}
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if ($ipsec['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_ldap_peer_ca($caref) {
+	global $config;
+	if (!is_array($config['system']['authserver'])) {
+		return;
+	}
+	foreach ($config['system']['authserver'] as $authserver) {
+		if ($authserver['ldap_caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function ca_in_use($caref) {
+	return (is_openvpn_server_ca($caref) ||
+		is_openvpn_client_ca($caref) ||
+		is_ipsec_peer_ca($caref) ||
+		is_ldap_peer_ca($caref));
+}
+
 function is_user_cert($certref) {
 	global $config;
 	if (!is_array($config['system']['user'])) {

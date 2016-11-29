@@ -143,14 +143,16 @@ function ca_chain(& $cert) {
 	return "";
 }
 
-function ca_import(& $ca, $str, $key = "", $serial = 0) {
+function ca_import(& $ca, $str, $key = "", $serial = "") {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
 	if (!empty($key)) {
 		$ca['prv'] = base64_encode($key);
 	}
-	if (!empty($serial)) {
+	if (empty($serial)) {
+		$ca['serial'] = 0;
+	} else {
 		$ca['serial'] = $serial;
 	}
 	$subject = cert_get_subject($str, false);
@@ -314,6 +316,9 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
 		if (!$ca_res_key) {
 			return false;
+		}
+		if (empty($ca['serial'])) {
+			$ca['serial'] = 0;
 		}
 		$ca_serial = ++$ca['serial'];
 	}

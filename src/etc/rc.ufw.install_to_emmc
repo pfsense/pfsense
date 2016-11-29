@@ -39,22 +39,45 @@ MMCDEV=mmcsd1
 echo "Erasing eMMC..."
 /bin/dd if=/dev/zero of=/dev/${MMCDEV} bs=64k count=800
 
+# Found available label for EMMCBOOT
+idx=0
+while [ -e "/dev/msdosfs/EMMCBOOT${idx}" ]; do
+	idx=$((idx+1))
+done
+EMMCBOOT_LABEL="EMMCBOOT${idx}"
+
+# Found available label for /
+idx=0
+while [ -e "/dev/ufs/pfSense${idx}" ]; do
+	idx=$((idx+1))
+done
+PFSENSE_LABEL="pfSense${idx}"
+
 echo "Creating FAT32 boot partition on eMMC"
 /sbin/gpart create -s MBR ${MMCDEV}
 /sbin/gpart add -a 63 -s 35006k -t '!12' ${MMCDEV}
 /sbin/gpart set -a active -i 1 ${MMCDEV}
-/sbin/newfs_msdos -L 'EMMCBOOT' -c 1 -F 32 /dev/${MMCDEV}s1
+/sbin/newfs_msdos -L ${EMMCBOOT_LABEL} -c 1 -F 32 /dev/${MMCDEV}s1
 
 echo "Creating pfSense partition on eMMC"
 /sbin/gpart add -t freebsd ${MMCDEV}
 /sbin/gpart create -s BSD ${MMCDEV}s2
 /sbin/gpart add -t freebsd-ufs -a 2m ${MMCDEV}s2
-/sbin/newfs -UjE /dev/${MMCDEV}s2a
+/sbin/newfs -UjE -L ${PFSENSE_LABEL} /dev/${MMCDEV}s2a
 
 echo "Mounting chroot environment"
-/sbin/mount /dev/${MMCDEV}s2a /mnt
+/sbin/mount /dev/ufs/${PFSENSE_LABEL} /mnt
+if [ $? -ne 0 ]; then
+	echo "ERROR! Impossible to mount /mnt"
+	exit 1
+fi
 mkdir -p /mnt/boot/msdos
-/sbin/mount_msdosfs /dev/${MMCDEV}s1 /mnt/boot/msdos
+/sbin/mount_msdosfs /dev/msdosfs/${EMMCBOOT_LABEL} /mnt/boot/msdos
+if [ $? -ne 0 ]; then
+	umount /mnt
+	echo "ERROR! Impossible to mount /mnt/boot/msdos"
+	exit 1
+fi
 
 echo
 echo "Copying the system from SD to eMMC"
@@ -81,6 +104,12 @@ echo "Cleaning up the copied system"
 (cd /mnt/var ; mtree -Uief /etc/mtree/BSD.var.dist)
 # Remove existing SSH host keys
 rm -f /mnt/etc/ssh/*key*
+
+# Fix fstab
+sed -i '' \
+	-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/msdosfs/${EMMCBOOT_LABEL}," \
+	-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/ufs/${PFSENSE_LABEL}," \
+	/mnt/etc/fstab
 
 umount /mnt/boot/msdos
 umount /mnt

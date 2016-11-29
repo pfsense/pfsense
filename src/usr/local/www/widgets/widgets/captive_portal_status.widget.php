@@ -80,7 +80,7 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 }
 
 if (($_GET['act'] == "del") && !empty($cpzone) && isset($cpzoneid)) {
-	captiveportal_disconnect_client($_GET['id']);
+	captiveportal_disconnect_client($_GET['id'], 6);
 }
 unset($cpzone);
 

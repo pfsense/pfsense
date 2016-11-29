@@ -35,12 +35,16 @@ $fp = fopen('php://stdin', 'r');
 echo "\n" . sprintf(gettext("%s will reboot. This may take a few minutes, depending on your hardware."), $g['product_name']) . "\n";
 echo gettext("Do you want to proceed?") . "\n\n";
 echo "    " . gettext("Y/y: Reboot normally") . "\n";
-echo "    " . gettext("S: Reboot into Single User Mode (requires console access!)") . "\n";
-echo "    " . gettext("F: Reboot and run a filesystem check") . "\n\n";
+$platform = system_identify_specific_platform();
+if ($platform['name'] != "uFW") {
+	echo "    " . gettext("S: Reboot into Single User Mode (requires console access!)") . "\n";
+	echo "    " . gettext("F: Reboot and run a filesystem check") . "\n";
+}
+echo "    " . gettext("Enter: Abort") . "\n\n";
 
 echo gettext("Enter an option:") . " ";
 
-switch (chop(fgets($fp))) {
+switch (strtoupper(chop(fgets($fp)))) {
 	case "S":
 		mwexec('/sbin/nextboot -o "-s" -k kernel');
 		echo "\n" . sprintf(gettext("%s is rebooting into single user mode now."), $g['product_name']) . "\n";
@@ -52,7 +56,8 @@ switch (chop(fgets($fp))) {
 		system_reboot_sync();
 		break;
 	case "Y":
-	case "y":
+	case "YE":
+	case "YES":
 		echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_name']) . "\n";
 		system_reboot_sync();
 		break;

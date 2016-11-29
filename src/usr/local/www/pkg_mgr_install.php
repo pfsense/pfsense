@@ -241,7 +241,7 @@ $tab_array = array();
 
 if ($firmwareupdate) {
 	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
-	$tab_array[] = array(gettext("System Update"), true, "");
+	$tab_array[] = array(gettext("System Update"), true, "pkg_mgr_install.php?id=firmware");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));

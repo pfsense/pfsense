@@ -773,7 +773,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'text',
 		$pconfig['expires']
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
-		'the expiration date');
+		'the expiration date as MM/DD/YYYY');
 
 	$section->addInput(new Form_Checkbox(
 		'customsettings',

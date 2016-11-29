@@ -214,11 +214,37 @@ if [ "${selected_model}" = "SG-1000" ]; then
 		exit 1
 	fi
 
-	if ! mount /dev/mmcsd0s2a /mnt; then
+	# Get / ufsid
+	UFSID=$(glabel status -s /dev/mmcsd0s2a 2>/dev/null \
+		| head -n 1 | cut -d' ' -f1)
+
+	if [ -z "${UFSID}" ]; then
+		echo "Error obtaining UFSID"
+		exit 1
+	fi
+
+	if ! mount /dev/${UFSID} /mnt; then
 		echo "Error mounting pfSense partition"
 		exit 1
 	fi
 	trap "umount /mnt; return" 1 2 15 EXIT
+
+	# Found available label for EMMCBOOT
+	idx=0
+	while [ -e "/dev/label/EMMCBOOT${idx}" ]; do
+		idx=$((idx+1))
+	done
+	EMMCBOOT_LABEL="EMMCBOOT${idx}"
+
+	if ! glabel label ${EMMCBOOT_LABEL} /dev/mmcsd0s1; then
+		echo "Error setting EMMCBOOT label"
+		exit 1
+	fi
+
+	sed -i '' \
+		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${EMMCBOOT_LABEL}," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
+		/mnt/etc/fstab
 fi
 
 while true; do

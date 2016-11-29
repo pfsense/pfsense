@@ -45,16 +45,16 @@ echo "Creating FAT32 boot partition on eMMC"
 /sbin/gpart set -a active -i 1 ${MMCDEV}
 /sbin/newfs_msdos -L 'EMMCBOOT' -c 1 -F 32 /dev/${MMCDEV}s1
 
-/sbin/mount_msdosfs /dev/${MMCDEV}s1 /mnt
-cp /boot/msdos/* /mnt
-/sbin/umount /mnt
-
 echo "Creating pfSense partition on eMMC"
 /sbin/gpart add -t freebsd ${MMCDEV}
 /sbin/gpart create -s BSD ${MMCDEV}s2
 /sbin/gpart add -t freebsd-ufs -a 2m ${MMCDEV}s2
 /sbin/newfs -UjE /dev/${MMCDEV}s2a
+
+echo "Mounting chroot environment"
 /sbin/mount /dev/${MMCDEV}s2a /mnt
+mkdir -p /mnt/boot/msdos
+/sbin/mount_msdosfs /dev/${MMCDEV}s1 /mnt/boot/msdos
 
 echo
 echo "Copying the system from SD to eMMC"
@@ -69,7 +69,6 @@ echo "Copying the system from SD to eMMC"
 	--exclude var/run \
 	--exclude dev \
 	--exclude tmp \
-	--exclude boot/msdos \
 	. \
 | /usr/bin/tar -xf - -C /mnt
 
@@ -83,6 +82,7 @@ echo "Cleaning up the copied system"
 # Remove existing SSH host keys
 rm -f /mnt/etc/ssh/*key*
 
+umount /mnt/boot/msdos
 umount /mnt
 sync ; sync ; sync
 

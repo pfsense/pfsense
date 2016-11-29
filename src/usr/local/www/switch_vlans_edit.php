@@ -29,11 +29,18 @@
 require_once("guiconfig.inc");
 require_once("switch.inc");
 
-$pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), gettext("Edits"));
+$pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), gettext("Edit"));
 $shortcut_section = "vlans";
 include("head.inc");
 
 print("<h3>Under construction</h3>");
+print("<br />");
 
-<?php
+if ($_GET['act'] == "edit" ) {
+	$vid = $_GET['vid'];
+	$device = $_GET['swdevice'];
+
+	print("Editing VLAN ID: " . $vid . " on device: " . $device);
+}
+
 include("foot.inc");

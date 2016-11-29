@@ -215,7 +215,7 @@ if [ "${selected_model}" = "SG-1000" ]; then
 	fi
 
 	# Get / ufsid
-	UFSID=$(glabel status -s /dev/mmcsd0s2a 2>/dev/null \
+	UFSID=$(glabel status -s mmcsd0s2a 2>/dev/null \
 		| head -n 1 | cut -d' ' -f1)
 
 	if [ -z "${UFSID}" ]; then

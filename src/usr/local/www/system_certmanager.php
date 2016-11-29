@@ -457,7 +457,7 @@ if ($_POST) {
 				write_config();
 			}
 
-			if ($userid) {
+			if ($userid && !$input_errors) {
 				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 				exit;
 			}

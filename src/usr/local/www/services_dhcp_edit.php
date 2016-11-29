@@ -287,10 +287,10 @@ if ($_POST) {
 	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for the network boot server.");
 	}
-	if (isset($_POST['arp_table_static_entry']) && (empty($_POST['mac']) || empty($_POST['ipaddr']))) {
-		$input_errors[] = gettext("A valid MAC address and IPv4 must be specified for use with static ARP.");
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['mac'])) {
+		$input_errors[] = gettext("A valid MAC address must be specified for use with static ARP.");
 	}
-	if (isset($_POST['arp_table_static_entry']) && ) {
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['ipaddr'])) {
 		$input_errors[] = gettext("A valid IPv4 address must be specified for use with static ARP.");
 	}
 

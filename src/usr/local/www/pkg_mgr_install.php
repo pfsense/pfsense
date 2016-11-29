@@ -78,7 +78,7 @@ if ($_REQUEST['ajax']) {
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
 	// packages, hence the de-bounce here
 	if (!isvalidpid($pidfile)) {
-		usleep(100000);
+		usleep(400000);
 		if (!isvalidpid($pidfile)) {
 			$running = "stopped";
 			// The log files may not be complete when the process terminates so we need wait until we see the
@@ -132,6 +132,8 @@ if ($_REQUEST['ajax']) {
 	} else {
 		$resparray['log'] = "not_ready";
 		print(json_encode($resparray));
+	//	file_put_contents("/root/update.log", json_encode($resparray), FILE_APPEND);
+	//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
 		exit;
 	}
 
@@ -159,6 +161,9 @@ if ($_REQUEST['ajax']) {
 
 	// Glob all the arrays we have made together, and convert to JSON
 	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
+//	file_put_contents("/root/update.log", json_encode($resparray + $pidarray + $statusarray + $progarray), FILE_APPEND);
+//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
+
 	exit;
 }
 
@@ -439,6 +444,9 @@ if ($confirmed && !$completed) {
 	$progbar = true;
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 
+	// Remove the log file before starting
+	unlink_if_exists($logfilename);
+
 	switch ($pkgmode) {
 		case 'delete':
 			mwexec_bg("{$upgrade_script} -r {$pkgname}");
@@ -581,6 +589,8 @@ function get_firmware_versions()
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
 			}
+		} else {
+			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>");
 		}
 	});
 }
@@ -702,7 +712,7 @@ function startCountdown() {
 
 events.push(function() {
 	if ("<?=$start_polling?>") {
-		setTimeout(getLogsStatus, 1000);
+		setTimeout(getLogsStatus, 3000);
 		show_info();
 	}
 

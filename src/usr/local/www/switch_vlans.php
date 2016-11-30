@@ -90,7 +90,7 @@ $vlans_system = switch_get_system_vlans();
 if (count($swdevices) > 1) {
 	$form = new Form(false);
 
-	$section = new Form_Section('Dynamic DNS Client');
+	$section = new Form_Section('Select switch');
 
 	$section->addInput(new Form_Select(
 		'swdevice',

@@ -142,6 +142,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
@@ -168,6 +169,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($_GET['ddnsforcehostname']);
 	$pconfig['ntp1'] = $_GET['ntp1'];
 	$pconfig['ntp2'] = $_GET['ntp2'];
 	$pconfig['tftp'] = $_GET['tftp'];
@@ -363,6 +365,7 @@ if ($_POST) {
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$mapent['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 
 		unset($mapent['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -611,6 +614,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ddnsupdate']
 ));
 
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	'DDNS Hostname',
+	'Make dynamic DNS registered hostname the same as Hostname above.',
+	$pconfig['ddnsforcehostname']
+));
+
 $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
@@ -712,7 +722,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
@@ -726,6 +736,7 @@ events.push(function() {
 		}
 
 		hideCheckbox('ddnsupdate', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);

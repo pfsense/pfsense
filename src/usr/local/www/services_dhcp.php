@@ -1017,7 +1017,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Checkbox(
 	'ddnsforcehostname',
-	null,
+	'DDNS Hostnames',
 	'Force dynamic DNS hostname to be the same as configured hostname for Static Mappings',
 	$pconfig['ddnsforcehostname']
 ))->setHelp('Default is to allow DHCP client to supply hostname to be registered.');

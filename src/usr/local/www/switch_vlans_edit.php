@@ -35,6 +35,7 @@ include("head.inc");
 
 // Create an array containing a list of the available ports on the specified switch
 // Currently faked by getting hte number of ports from $_GET
+// ToDo: Need to add "tagged" indicator
 function available_ports($ports) {
 
 	$portlist = array();
@@ -47,25 +48,25 @@ function available_ports($ports) {
 }
 
 switch ($_GET['act']) {
-		case "edit" :
-			$vid = $_GET['vid'];
-			$device = $_GET['swdevice'];
+	case "edit" :
+		$vid = $_GET['vid'];
+		$device = $_GET['swdevice'];
 
-			print("<h3>Under construction</h3>");
-			print("<br />");
+		print("<h3>Under construction</h3>");
+		print("<br />");
 
-			print("Editing VLAN ID: " . $vid . " on device: " . $device);
+		print("Editing VLAN ID: " . $vid . " on device: " . $device);
 
-		break;
+	break;
 
-		case "new" :
-			$device = $_GET['swdevice'];
+	case "new" :
+		$device = $_GET['swdevice'];
 
-			$pconfig['vlanid'] = "";
-			$pconfig['desc'] = "";
-			$nports = $_GET['nports'];
+		$pconfig['vlanid'] = "";
+		$pconfig['desc'] = "";
+		$nports = $_GET['nports'];
 
-		break;
+	break;
 }
 
 $form = new Form();

@@ -175,6 +175,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['ddnsdomainkeyname'] = $dhcpdconf['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $dhcpdconf['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $dhcpdconf['ntpserver'];
@@ -541,6 +542,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$dhcpdconf['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$dhcpdconf['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$dhcpdconf['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
 
@@ -1013,6 +1015,13 @@ $section->addInput(new Form_Input(
 ))->setHelp('Leave blank to disable dynamic DNS registration.' . '<br />' .
 			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	null,
+	'Force dynamic DNS hostname to be the same as configured hostname for Static Mappings',
+	$pconfig['ddnsforcehostname']
+))->setHelp('Default is to allow DHCP client to supply hostname to be registered.');
+
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'Primary DDNS address',
@@ -1396,7 +1405,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
@@ -1411,6 +1420,7 @@ events.push(function() {
 
 		hideCheckbox('ddnsupdate', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);

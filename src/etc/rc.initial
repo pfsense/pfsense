@@ -92,7 +92,11 @@ done
 uFW=$(/bin/kenv -q uboot.board_name)
 if [ "${uFW}" = "A335uFW" ]; then
 	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1)
-	if [ "${rootdev}" = "/dev/mmcsd0s2a" ]; then
+	if [ "${rootdev}" = "/dev/ufs/pfSense0" ]; then
+		rootdev=$(/sbin/geom label status | \
+		    /usr/bin/grep "ufs/pfSense0" | /usr/bin/awk '{ printf $3 }')
+	fi
+	if [ "${rootdev}" = "/dev/mmcsd0s2a" -o "${rootdev}" = "mmcsd0s2a" ]; then
 		MMCDEV=$(/sbin/geom disk list mmcsd0 | /usr/bin/grep MMCHC)
 	fi
 	if [ -z "${MMCDEV}" ]; then

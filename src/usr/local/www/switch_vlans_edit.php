@@ -34,24 +34,11 @@ $shortcut_section = "vlans";
 include("head.inc");
 
 // Create an array containing a list of hte available ports on the specified switch
-function available_ports($dev) {
-
-	//pfSense_etherswitch_close();
-
-	if (pfSense_etherswitch_open($dev) == false) {
-		return(array());
-	}
-
-	$swinfo = pfSense_etherswitch_getinfo();
-
-	if ($swinfo == NULL) {
-		pfSense_etherswitch_close();
-		return(array();
-	}
+function available_ports($ports) {
 
 	$portlist = array();
 
-	for($idx=0; $idx<$swinfo['nports']; $idx++) {
+	for($idx=0; $idx<$ports; $idx++) {
 		$portlist[$idx] = "Port " . $idx;
 	}
 
@@ -75,6 +62,7 @@ switch ($_GET['act']) {
 
 			$pconfig['vlanid'] = "";
 			$pconfig['desc'] = "";
+			$nports = $_GET['nports'];
 
 		break;
 }
@@ -102,17 +90,17 @@ $group = new Form_Group('VLAN Members');
 $usersGroups = array();
 
 $group->add(new Form_Select(
-	'ports',
+	'availports',
 	null,
 	array(),
-	available_ports($device),
+	available_ports($nports),
 	true
-))->setHelp('Available ports');
+))->setHelp('Available ports<br />Click to add or remove a port from the VLAN');
 
 $group->add(new Form_Select(
 	'members',
 	null,
-	array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+	array(),
 	$usersGroups,
 	true
 ))->setHelp('VLAN Members');
@@ -128,8 +116,42 @@ print($form);
 //<![CDATA[
 events.push(function() {
 
-	$('#ports').click(function () {
-		alert("Hi");
+	function updateMembers(mem) {
+		var found = false;
+
+		// If the member exists, remove it
+		$('[id="members[]"] option').each(function() {
+		    if($(this).val() == mem) {
+		    	$(this).remove();
+				found = true;
+		    }
+		});
+
+		// If not, add it
+	    if (!found) {
+			$('[id="members[]"]').append(new Option('Port ' + mem , mem));
+	    }
+
+	    // Sort alphabetically
+		var options = $('[id="members[]"] option');
+
+		options.detach().sort(function(a,b) {
+		    var at = $(a).text();
+		    var bt = $(b).text();
+		    return (at > bt)?1:((at < bt)?-1:0);
+		});
+
+		options.appendTo('[id="members[]"]');
+
+		// Unselect all options
+		$('[id="availports[]"] option:selected').removeAttr("selected");
+
+
+	}
+
+	// On click, update teh members list
+	$('[id="availports[]"]').click(function () {
+		updateMembers($(this).val());
 	});
 });
 //]]>

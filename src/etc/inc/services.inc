@@ -1084,6 +1084,10 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
+					# TODO: Implement ddnsforcehostname option for DHCP Server per interface
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
 				}
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
@@ -1110,12 +1114,6 @@ EOD;
 				if (isset($sm['ddnsupdate'])) {
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
 						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
-					}
-# TODO: Implement ddnsforcehostname option for DHCP Server per interface
-					if (isset($dhcpifconf['ddnsforcehostname']) && $sm['hostname']) {
-						$ddnshostname = str_replace(" ", "_", $sm['hostname']);
-						$ddnshostname = str_replace(".", "_", $ddnshostname);
-						$smdnscfg .= "		ddns-hostname \"{$ddnshostname}\";\n";
 					}
 					$smdnscfg .= "		ddns-update-style interim;\n";
 				}

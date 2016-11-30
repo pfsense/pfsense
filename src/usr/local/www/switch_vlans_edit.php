@@ -47,6 +47,11 @@ function available_ports($ports) {
 	return($portlist);
 }
 
+if ($_POST) {
+	// $_POST data will look like this:  [vlanid] => "4321" [desc] => "My test VLAN" [members] => Array ( [0] => 1 [1] => 2 )
+	//print_r($_POST);
+}
+
 switch ($_GET['act']) {
 	case "edit" :
 		$vid = $_GET['vid'];
@@ -61,11 +66,9 @@ switch ($_GET['act']) {
 
 	case "new" :
 		$device = $_GET['swdevice'];
-
 		$pconfig['vlanid'] = "";
 		$pconfig['desc'] = "";
 		$nports = $_GET['nports'];
-
 	break;
 }
 
@@ -156,6 +159,16 @@ events.push(function() {
 	$('[id="availports[]"]').click(function () {
 		updateMembers($(this).val());
 	});
+
+	// When the form is posted, all options in members must be selected if htey are to submit
+	$("#save").prop('type' ,'button');
+
+	$('#save').click(function() {
+		$('[id="members[]"] option').prop('selected', true);
+		$('form').submit();
+	});
+
+
 });
 //]]>
 </script>

@@ -2199,15 +2199,20 @@ EOD;
 }
 
 function system_get_serial() {
+
+	$platform = system_identify_specific_platform();
+
 	unset($output);
-	if (php_uname("m") == "arm") {
-		mwexec("dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16");
-		$_gb = exec("hexdump -C /tmp/serial.bin | " .
-			"sed '1!d; s,\.*\|$,,; s,^.*\|,,'", $output);
+	if ($platform['name'] == 'uFW') {
+		$fd = fopen('/dev/icee0', 'rb');
+		if ($fd) {
+			fseek($fd, 16);
+			$serial = preg_replace('/[^0-9]/', '', fread($fd, 12));
+		}
 	} else {
 		$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+		$serial = $output[0];
 	}
-	$serial = $output[0];
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
 

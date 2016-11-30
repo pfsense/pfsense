@@ -1079,6 +1079,12 @@ EOD;
 					if (($sm['ddnsdomain'] <> "") && ($sm['ddnsdomain'] != $dhcpifconf['ddnsdomain'])) {
 						$smdnscfg .= "		ddns-domainname \"{$sm['ddnsdomain']}\";\n";
 					}
+# TODO: Implement ddnsforcehostname option for DHCP Server per interface
+					if (isset($dhcpifconf['ddnsforcehostname']) && $sm['hostname']) {
+						$ddnshostname = str_replace(" ", "_", $sm['hostname']);
+						$ddnshostname = str_replace(".", "_", $ddnshostname);
+						$smdnscfg .= "		ddns-hostname \"{$ddnshostname}\";\n";
+					}
 					$smdnscfg .= "		ddns-update-style interim;\n";
 				}
 

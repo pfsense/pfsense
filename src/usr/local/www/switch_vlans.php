@@ -122,10 +122,25 @@ if($_POST['swdevice']) {
 }
 
 
+/* Just in case... */
 pfSense_etherswitch_close();
 
-?>
+if (pfSense_etherswitch_open($swdevice) == false) {
+	$input_errors[] = "Cannot open the switch device\n";
+}
 
+$swinfo = pfSense_etherswitch_getinfo();
+
+if ($swinfo == NULL) {
+	pfSense_etherswitch_close();
+	$input_errors[] = "Cannot get switch device information\n";
+}
+
+if ($input_errors) {
+	print_input_errors($input_errors);
+} else {
+	// Don't draw the table if there were hardware errors
+?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Switch VLANs')?></h2></div>
 	<div class="panel-body">
@@ -142,19 +157,6 @@ pfSense_etherswitch_close();
 				</thead>
 				<tbody>
 <?php
-
-/* Just in case... */
-pfSense_etherswitch_close();
-
-if (pfSense_etherswitch_open($swdevice) == false) {
-	continue;
-}
-
-$swinfo = pfSense_etherswitch_getinfo();
-if ($swinfo == NULL) {
-	pfSense_etherswitch_close();
-	continue;
-}
 
 for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 	$vgroup = pfSense_etherswitch_getvlangroup($i);
@@ -187,12 +189,12 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 <?
 	foreach ($vlans_system as $svlan) {
 		if ($svlan['vid'] != $vgroup['vid']) {
-			$sys = true;
+			$sys = false;
 			continue;
 		}
 
 		echo "Default System VLAN";
-		$sys = false;
+		$sys = true;
 
 		break;
 	}
@@ -224,6 +226,9 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 		<?=gettext("Add");?>
 	</a>
 </nav>
+
+<?php } // e-o-if($input_errors) else . .
+?>
 
 <script type="text/javascript">
 //<![CDATA[

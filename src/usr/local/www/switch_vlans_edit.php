@@ -33,14 +33,106 @@ $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), get
 $shortcut_section = "vlans";
 include("head.inc");
 
-print("<h3>Under construction</h3>");
-print("<br />");
+// Create an array containing a list of hte available ports on the specified switch
+function available_ports($dev) {
 
-if ($_GET['act'] == "edit" ) {
-	$vid = $_GET['vid'];
-	$device = $_GET['swdevice'];
+	//pfSense_etherswitch_close();
 
-	print("Editing VLAN ID: " . $vid . " on device: " . $device);
+	if (pfSense_etherswitch_open($dev) == false) {
+		return(array());
+	}
+
+	$swinfo = pfSense_etherswitch_getinfo();
+
+	if ($swinfo == NULL) {
+		pfSense_etherswitch_close();
+		return(array();
+	}
+
+	$portlist = array();
+
+	for($idx=0; $idx<$swinfo['nports']; $idx++) {
+		$portlist[$idx] = "Port " . $idx;
+	}
+
+	return($portlist);
 }
 
+switch ($_GET['act']) {
+		case "edit" :
+			$vid = $_GET['vid'];
+			$device = $_GET['swdevice'];
+
+			print("<h3>Under construction</h3>");
+			print("<br />");
+
+			print("Editing VLAN ID: " . $vid . " on device: " . $device);
+
+		break;
+
+		case "new" :
+			$device = $_GET['swdevice'];
+
+			$pconfig['vlanid'] = "";
+			$pconfig['desc'] = "";
+
+		break;
+}
+
+$form = new Form();
+
+$section = new Form_Section("Vlan properties");
+
+$section->addInput(new Form_Input(
+	'vlanid',
+	'VLAN ID',
+	'number',
+	$pconfig['vlanid']
+))->setHelp("Enter a VLAN ID number (that is not already in use.)");
+
+$section->addInput(new Form_Input(
+	'desc',
+	'Description',
+	'text',
+	$pconfig['desc']
+))->setHelp("A description may be entered here for administrative reference (not parsed).");
+
+$group = new Form_Group('VLAN Members');
+
+$usersGroups = array();
+
+$group->add(new Form_Select(
+	'ports',
+	null,
+	array(),
+	available_ports($device),
+	true
+))->setHelp('Available ports');
+
+$group->add(new Form_Select(
+	'members',
+	null,
+	array_combine((array)$pconfig['groups'], (array)$pconfig['groups']),
+	$usersGroups,
+	true
+))->setHelp('VLAN Members');
+
+$section->add($group);
+
+$form->add($section);
+
+print($form);
+
+?>
+<script type="text/javascript">
+//<![CDATA[
+events.push(function() {
+
+	$('#ports').click(function () {
+		alert("Hi");
+	});
+});
+//]]>
+</script>
+<?php
 include("foot.inc");

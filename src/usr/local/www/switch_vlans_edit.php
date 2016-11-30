@@ -33,7 +33,8 @@ $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("VLANs"), get
 $shortcut_section = "vlans";
 include("head.inc");
 
-// Create an array containing a list of hte available ports on the specified switch
+// Create an array containing a list of the available ports on the specified switch
+// Currently faked by getting hte number of ports from $_GET
 function available_ports($ports) {
 
 	$portlist = array();
@@ -103,7 +104,8 @@ $group->add(new Form_Select(
 	array(),
 	$usersGroups,
 	true
-))->setHelp('VLAN Members');
+))->setReadonly()
+  ->setHelp('VLAN Members');
 
 $section->add($group);
 
@@ -149,7 +151,7 @@ events.push(function() {
 
 	}
 
-	// On click, update teh members list
+	// On click, update the members list
 	$('[id="availports[]"]').click(function () {
 		updateMembers($(this).val());
 	});

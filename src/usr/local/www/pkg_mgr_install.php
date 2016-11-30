@@ -619,7 +619,7 @@ function getLogsStatus() {
 
 //		alert("JSON data: " + JSON.stringify(json));
 
-		if (json.log != "not ready") {
+		if (json.log != "not_ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
 			scrollToBottom();

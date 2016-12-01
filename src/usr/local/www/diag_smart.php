@@ -101,8 +101,8 @@ $tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SE
 display_top_tabs($tab_array);
 
 $specplatform = system_identify_specific_platform();
-if ($specplatform['name'] == "Hyper-V") {
-	echo gettext("S.M.A.R.T. is not supported in Hyper-V guests.");
+if (($specplatform['name'] == "Hyper-V") || ($specplatform['name'] == "uFW")) {
+	echo sprintf(gettext("S.M.A.R.T. is not supported on this system (%s)."), $specplatform['descr']);
 	include("foot.inc");
 	exit;
 }

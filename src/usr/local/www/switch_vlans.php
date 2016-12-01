@@ -46,25 +46,15 @@ function get_switches($devicelist) {
 	$switches = array();
 
 	foreach ($devicelist as $swdev) {
-		/* Just in case... */
-		pfSense_etherswitch_close();
-
-		if (pfSense_etherswitch_open($swdev) == false) {
-			continue;
-		}
 
 		$swinfo = pfSense_etherswitch_getinfo();
-
 		if ($swinfo == NULL) {
-			pfSense_etherswitch_close();
 			continue;
 		}
 		if ($swdevice == NULL)
 			$swdevice = $swdev;
 
 		$switches[$swdev] = $swinfo['name'];
-
-		pfSense_etherswitch_close();
 	}
 
 	return($switches);
@@ -81,10 +71,9 @@ if ($_GET['act'] == "del") {
 }
 
 // List the available switches
-// ToDo: Check this is the correct way to get teh switch information
-$swdevices = array();
-$swdevices = glob("/dev/etherswitch*");
+$swdevices = switch_get_devices();
 $vlans_system = switch_get_system_vlans();
+$swtitle = switch_get_title();
 
 // If there is more than one switch, draw a selector to allow the user to choose which one to look at
 if (count($swdevices) > 1) {
@@ -103,11 +92,6 @@ if (count($swdevices) > 1) {
 
 	print($form);
 
-} else {
-	// If running on a Netgate micro-firewall, display that in the panel title
-	if (system_identify_specific_platform()['name'] == "uFW") {
-		$ufwname = "uFW ";
-	}
 }
 
 if ($_GET['swdevice']) {
@@ -122,17 +106,8 @@ if($_POST['swdevice']) {
 }
 
 
-/* Just in case... */
-pfSense_etherswitch_close();
-
-if (pfSense_etherswitch_open($swdevice) == false) {
-	$input_errors[] = "Cannot open the switch device\n";
-}
-
 $swinfo = pfSense_etherswitch_getinfo();
-
 if ($swinfo == NULL) {
-	pfSense_etherswitch_close();
 	$input_errors[] = "Cannot get switch device information\n";
 }
 
@@ -142,7 +117,7 @@ if ($input_errors) {
 	// Don't draw the table if there were hardware errors
 ?>
 <div class="panel panel-default">
-	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Switch VLANs')?></h2></div>
+	<div class="panel-heading"><h2 class="panel-title"><?= gettext($swtitle) ." ". gettext('Switch VLANs')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
 			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
@@ -210,8 +185,6 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 					</tr>
 <?
 	}
-
-	pfSense_etherswitch_close();
 
 ?>
 				</tbody>

@@ -34,14 +34,21 @@ $shortcut_section = "vlans";
 include("head.inc");
 
 // Create an array containing a list of the available ports on the specified switch
-// Currently faked by getting hte number of ports from $_GET
 // ToDo: Need to add "tagged" indicator
-function available_ports($ports) {
+function available_ports($swdevice) {
 
 	$portlist = array();
 
-	for($idx=0; $idx<$ports; $idx++) {
-		$portlist[$idx] = "Port " . $idx;
+	$swinfo = pfSense_etherswitch_getinfo();
+	if ($swinfo == NULL) {
+		return ($portlist);
+	}
+
+	for ($idx = 0; $idx < $swinfo['nports']; $idx++) {
+		$swport = pfSense_etherswitch_getport($idx);
+		if ($swport == NULL)
+			break;
+		$portlist[$idx] = "Port ". $swport['port'];
 	}
 
 	return($portlist);
@@ -68,7 +75,6 @@ switch ($_GET['act']) {
 		$device = $_GET['swdevice'];
 		$pconfig['vlanid'] = "";
 		$pconfig['desc'] = "";
-		$nports = $_GET['nports'];
 	break;
 }
 
@@ -98,7 +104,7 @@ $group->add(new Form_Select(
 	'availports',
 	null,
 	array(),
-	available_ports($nports),
+	available_ports($device),
 	true
 ))->setHelp('Available ports<br />Click to add or remove a port from the VLAN');
 

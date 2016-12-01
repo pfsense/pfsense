@@ -113,4 +113,36 @@ function switch_map_port($port) {
 	return (NULL);
 }
 
+function switch_get_devices() {
+
+	$swdevices = array();
+	$platform = system_identify_specific_platform();
+	if (!isset($platform) || !is_array($platform))
+		return ($swdevices);
+
+	switch ($platform['name']) {
+	case "uFW":
+		/* Only one switch on uFW. */
+		$swdevices[] = "/dev/etherswitch0";
+		break;
+	}
+
+	return ($swdevices);
+}
+
+function switch_get_title() {
+
+	$platform = system_identify_specific_platform();
+	if (!isset($platform) || !is_array($platform))
+		return ("");
+
+	switch ($platform['name']) {
+	case "uFW":
+		return ("SG-1000");
+		break;
+	}
+
+	return ("");
+}
+
 ?>

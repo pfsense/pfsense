@@ -27,6 +27,7 @@
 ##|-PRIV
 
 require_once("guiconfig.inc");
+require_once("switch.inc");
 
 $pgtitle = array(gettext("Interfaces"), gettext("Switch"), gettext("System"));
 $shortcut_section = "system";
@@ -55,25 +56,11 @@ display_top_tabs($tab_array);
 				<tbody>
 <?php
 
-$swdevices = array();
-
-$platform = system_identify_specific_platform();
-if ($platform['name'] == "uFW") {
-	/* Only one switch on uFW. */
-	$swdevices[] = "/dev/etherswitch0";
-}
-
+$swdevices = switch_get_devices();
 foreach ($swdevices as $swdev) {
-
-	/* Just in case... */
-	pfSense_etherswitch_close();
-
-	if (pfSense_etherswitch_open($swdev) == false)
-		continue;
 
 	$swinfo = pfSense_etherswitch_getinfo();
 	if ($swinfo == NULL) {
-		pfSense_etherswitch_close();
 		continue;
 	}
 ?>
@@ -104,7 +91,6 @@ foreach ($swdevices as $swdev) {
 					</tr>
 <?
 
-	pfSense_etherswitch_close();
 }
 
 ?>

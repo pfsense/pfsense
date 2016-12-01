@@ -622,7 +622,7 @@
 	</fields>
 	<stepsubmitphpaction>
 		<![CDATA[
-		if (empty($_POST['lanipaddress'])) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
+		if (empty($_POST['lanipaddress']) || (!is_ipaddr($_POST['lanipaddress']) && (strtolower($_POST['lanipaddress']) != "dhcp"))) {
 			print_info_box("Invalid LAN IP address. Please press back in the browser window and correct.");
 			die;
 		}

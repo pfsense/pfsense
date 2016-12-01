@@ -41,8 +41,6 @@ if ($action != 'config') {
 	$pgtitle[] = gettext('Config');
 }
 $smartctl = "/usr/local/sbin/smartctl";
-$smartd = "/usr/local/sbin/smartd";
-$start_script = "/usr/local/etc/rc.d/smartd.sh";
 
 $valid_test_types = array("offline", "short", "long", "conveyance");
 $valid_info_types = array("i", "H", "c", "A", "a");
@@ -64,41 +62,12 @@ function add_colors($string) {
 	return preg_replace($patterns, $replacements, $string);
 }
 
-// Edits smartd.conf file, adds or removes email for failed disk reporting
-function update_email($email) {
-	/* Bail if an e-mail address is invalid */
-	if (!empty($email) && (filter_var($email, FILTER_VALIDATE_EMAIL) === false)) {
-		return;
-	}
-
-	if (!file_exists("/usr/local/etc/smartd.conf") && file_exists("/usr/local/etc/smartd.conf.sample")) {
-		copy("/usr/local/etc/smartd.conf.sample", "/usr/local/etc/smartd.conf");
-	}
-	// Did they pass an email?
-	if (!empty($email)) {
-		// Put it in the smartd.conf file
-		shell_exec("/usr/bin/sed -i .old " . escapeshellarg("s/^DEVICESCAN.*/DEVICESCAN -H -m {$email}/") . " /usr/local/etc/smartd.conf");
-	} else {
-		// Remove email flags in smartd.conf
-		shell_exec("/usr/bin/sed -i .old 's/^DEVICESCAN.*/DEVICESCAN/' /usr/local/etc/smartd.conf");
-	}
-}
-
-function smartmonctl($action) {
-	global $start_script;
-	shell_exec($start_script . escapeshellarg($action));
-}
 $targetdev = basename($_POST['device']);
 
 if (!file_exists('/dev/' . $targetdev)) {
 	echo gettext("Device does not exist, bailing.");
 	return;
 }
-
-$tab_array = array();
-$tab_array[0] = array(htmlspecialchars(gettext("Information & Tests")), ($action != 'config'), $_SERVER['PHP_SELF'] . "?action=default");
-$tab_array[1] = array(gettext("Config"), ($action == 'config'), $_SERVER['PHP_SELF'] . "?action=config");
-display_top_tabs($tab_array);
 
 $specplatform = system_identify_specific_platform();
 if (($specplatform['name'] == "Hyper-V") || ($specplatform['name'] == "uFW")) {
@@ -215,75 +184,6 @@ switch ($action) {
 		</div>
 <?php
 		break;
-	}
-
-	// Config changes, users email in xml config and write changes to smartd.conf
-	case 'config':
-	{
-		if (isset($_POST['test'])) {
-
-// FIXME				shell_exec($smartd . " -M test -m " . $config['system']['smartmonemail']);
-			$savemsg = sprintf(gettext("Email sent to %s"), $config['system']['smartmonemail']);
-			smartmonctl("stop");
-			smartmonctl("start");
-			$style = 'warning';
-		} else if (isset($_POST['save'])) {
-			if (!empty($_POST['smartmonemail']) && (filter_var($_POST['smartmonemail'], FILTER_VALIDATE_EMAIL) === false)) {
-				$savemsg = "The supplied e-mail address is invalid.";
-				$style = 'danger';
-			} else {
-				$config['system']['smartmonemail'] = $_POST['smartmonemail'];
-				write_config();
-				$retval = 0;
-				config_lock();
-				if (stristr($retval, "error") != true) {
-					$savemsg = get_std_save_message($retval);
-					$style = 'success';
-				} else {
-					$savemsg = $retval;
-					$style='danger';
-				}
-				config_unlock();
-				// Write the changes to the smartd.conf file
-				update_email($_POST['smartmonemail']);
-				// Send sig HUP to smartd, rereads the config file
-				shell_exec("/usr/bin/killall -HUP smartd");
-			}
-		}
-
-	// Was the config changed? if so, print the message
-	if ($savemsg) {
-		print_info_box($savemsg, $style);
-	}
-
-	// Get users email from the xml file
-	$pconfig['smartmonemail'] = $config['system']['smartmonemail'];
-
-	$form = new Form();
-
-	$section = new Form_Section('Configuration');
-
-	$section->addInput(new Form_Input(
-		'smartmonemail',
-		'Email Address',
-		'text',
-		$pconfig['smartmonemail']
-	 ));
-
-	$form->add($section);
-
-	if (!empty($pconfig['smartmonemail'])) {
-		$form->addGlobal(new Form_Button(
-			'test',
-			'Send test email',
-			null,
-			'fa-send'
-		))->addClass('btn-info');
-	}
-
-	print($form);
-
-	break;
 	}
 
 	// Default page, prints the forms to view info, test, etc...

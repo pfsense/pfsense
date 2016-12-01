@@ -47,7 +47,7 @@ function get_switches($devicelist) {
 
 	foreach ($devicelist as $swdev) {
 
-		$swinfo = pfSense_etherswitch_getinfo();
+		$swinfo = pfSense_etherswitch_getinfo($swdev);
 		if ($swinfo == NULL) {
 			continue;
 		}
@@ -106,7 +106,7 @@ if($_POST['swdevice']) {
 }
 
 
-$swinfo = pfSense_etherswitch_getinfo();
+$swinfo = pfSense_etherswitch_getinfo($swdevice);
 if ($swinfo == NULL) {
 	$input_errors[] = "Cannot get switch device information\n";
 }
@@ -134,7 +134,7 @@ if ($input_errors) {
 <?php
 
 for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
-	$vgroup = pfSense_etherswitch_getvlangroup($i);
+	$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
 	if ($vgroup == NULL) {
 		continue;
 	}

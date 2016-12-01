@@ -48,19 +48,13 @@ function switch_ufw_get_system_vlans() {
 	/* Only one switch on uFW. */
 	$swdevice = "/dev/etherswitch0";
 	$vlans_system = ufw_get_system_vlans_array();
-
-	if (pfSense_etherswitch_open($swdevice) == false) {
-		return (NULL);
-	}
-
-	$swinfo = pfSense_etherswitch_getinfo();
+	$swinfo = pfSense_etherswitch_getinfo($swdevice);
 	if ($swinfo == NULL) {
-		pfSense_etherswitch_close();
 		return (NULL);
 	}
 	$vlans = array();
 	for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
-		$vgroup = pfSense_etherswitch_getvlangroup($i);
+		$vgroup = pfSense_etherswitch_getvlangroup($swdevice, $i);
 		if ($vgroup == NULL) {
 			continue;
 		}
@@ -73,7 +67,6 @@ function switch_ufw_get_system_vlans() {
 			break;
 		}
 	}
-	pfSense_etherswitch_close();
 	return ($vlans);
 }
 

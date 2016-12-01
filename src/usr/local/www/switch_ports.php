@@ -46,7 +46,7 @@ function get_switches($devicelist) {
 
 	foreach ($devicelist as $swdev) {
 
-		$swinfo = pfSense_etherswitch_getinfo();
+		$swinfo = pfSense_etherswitch_getinfo($swdev);
 		if ($swinfo == NULL) {
 			continue;
 		}
@@ -89,7 +89,7 @@ if($_POST['swdevice']) {
 	$swdevice = $swdevices[0];
 }
 
-$swinfo = pfSense_etherswitch_getinfo();
+$swinfo = pfSense_etherswitch_getinfo($swdevice);
 if ($swinfo == NULL) {
 	$input_errors[] = "Cannot get switch device information\n";
 }
@@ -120,7 +120,7 @@ if ($input_errors) {
 
 
 	for ($i = 0; $i < $swinfo['nports']; $i++) {
-		$port = pfSense_etherswitch_getport($i);
+		$port = pfSense_etherswitch_getport($swdevice, $i);
 		if ($port == NULL) {
 			continue;
 		}

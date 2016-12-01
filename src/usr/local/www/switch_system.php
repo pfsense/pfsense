@@ -59,7 +59,7 @@ display_top_tabs($tab_array);
 $swdevices = switch_get_devices();
 foreach ($swdevices as $swdev) {
 
-	$swinfo = pfSense_etherswitch_getinfo();
+	$swinfo = pfSense_etherswitch_getinfo($swdev);
 	if ($swinfo == NULL) {
 		continue;
 	}

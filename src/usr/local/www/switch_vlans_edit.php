@@ -39,13 +39,13 @@ function available_ports($swdevice) {
 
 	$portlist = array();
 
-	$swinfo = pfSense_etherswitch_getinfo();
+	$swinfo = pfSense_etherswitch_getinfo($swdevice);
 	if ($swinfo == NULL) {
 		return ($portlist);
 	}
 
 	for ($idx = 0; $idx < $swinfo['nports']; $idx++) {
-		$swport = pfSense_etherswitch_getport($idx);
+		$swport = pfSense_etherswitch_getport($swdevice, $idx);
 		if ($swport == NULL)
 			break;
 		$portlist[$idx] = "Port ". $swport['port'];

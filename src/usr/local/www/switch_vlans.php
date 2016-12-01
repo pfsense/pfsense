@@ -221,7 +221,7 @@ for ($i = 0; $i < $swinfo['nvlangroups']; $i++) {
 </div>
 
 <nav class="action-buttons">
-	<a href="switch_vlans_edit.php?swdevice=<?=$swdevice?>&amp;act=new" role="button" class="btn btn-success btn-sm">
+	<a href="switch_vlans_edit.php?swdevice=<?=$swdevice?>&amp;act=new&nports=<?=htmlspecialchars($swinfo['nports'])?>" role="button" class="btn btn-success btn-sm">
 		<i class="fa fa-plus icon-embed-btn"></i>
 		<?=gettext("Add");?>
 	</a>

@@ -426,7 +426,7 @@ if ($confirmed):
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=gettext("Please wait while the update system initializes")?></textarea>
 		</div>
 	</div>
 <?php

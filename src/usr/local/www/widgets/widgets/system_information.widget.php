@@ -65,7 +65,7 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		print(gettext("The system is on the latest version."));
+		printf('<span class="text-success">%s</span>', gettext("The system is on the latest version."));
 		break;
 	case '>':
 		print(gettext("The system is on a later version than<br />the official release."));

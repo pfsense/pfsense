@@ -77,16 +77,17 @@ if ($_REQUEST['ajax']) {
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
 	// packages, hence the de-bounce here
+	for ($idx=0;$idx<5 && !isvalidpid($pidfile); $idx++) {
+		usleep(200000);
+	}
+
 	if (!isvalidpid($pidfile)) {
-		usleep(400000);
-		if (!isvalidpid($pidfile)) {
-			$running = "stopped";
-			// The log files may not be complete when the process terminates so we need wait until we see the
-			// exit status (__RC=x)
-			waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
-			filter_configure();
-			send_event("service restart packages");
-		}
+		$running = "stopped";
+		// The log files may not be complete when the process terminates so we need wait until we see the
+		// exit status (__RC=x)
+		waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+		filter_configure();
+		send_event("service restart packages");
 	}
 
 	$pidarray = array('pid' => $running);

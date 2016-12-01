@@ -1801,7 +1801,7 @@ function captiveportal_get_ipfw_passthru_ruleno($value) {
 function getVolume($ip, $mac = NULL) {
 	global $config, $cpzone, $cpzoneid;
 
-	$reverse = empty($config['captiveportal'][$cpzone]['reverseacct']) ? false : true;
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
 	$volume = array();
 	// Initialize vars properly, since we don't want NULL vars
 	$volume['input_pkts'] = $volume['input_bytes'] = $volume['output_pkts'] = $volume['output_bytes'] = 0 ;

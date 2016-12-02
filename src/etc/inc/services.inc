@@ -1052,6 +1052,9 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
 				}
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";

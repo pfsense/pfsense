@@ -263,7 +263,7 @@ while true; do
 		"Model" 1 0 "${selected_model}" 1 $col 0 0 \
 		"Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
 		"Order Number" 3 0 "" 3 $col 16 0 \
-		"Print sticker (0/1)" 4 0 "1" 4 $col 1 0 \
+		"Print sticker (0/1)" 4 0 "1" 4 $col 2 1 \
 		"Builder Initials" 5 0 "" 5 $col 16 0 \
 		2>&1 1>&3)
 	exec 3>&-

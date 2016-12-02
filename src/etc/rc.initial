@@ -96,7 +96,7 @@ if [ "${uFW}" = "A335uFW" ]; then
 		rootdev=$(/sbin/geom label status | \
 		    /usr/bin/grep "ufs/pfSense0" | /usr/bin/awk '{ printf $3 }')
 	fi
-	if [ "${rootdev}" = "/dev/mmcsd0s2a" -o "${rootdev}" = "mmcsd0s2a" ]; then
+	if [ -n $(echo "${rootdev}" | /usr/bin/grep mmcsd0s2) ]; then
 		MMCDEV=$(/sbin/geom disk list mmcsd0 | /usr/bin/grep MMCHC)
 	fi
 	if [ -z "${MMCDEV}" ]; then

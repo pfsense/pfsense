@@ -2333,6 +2333,11 @@ function services_snmpd_configure() {
 			echo gettext("Starting SNMP daemon... ");
 		}
 
+		/* Make sure a printcap file exists or else bsnmpd will log errors. See https://redmine.pfsense.org/issues/6838 */
+		if (!file_exists('/etc/printcap')) {
+			@file_put_contents('/etc/printcap', "# Empty file to prevent bsnmpd from logging errors.\n");
+		}
+
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {

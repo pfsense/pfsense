@@ -28,6 +28,7 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+www/pound
 dns/%%PRODUCT_NAME%%-pkg-bind9
 net/%%PRODUCT_NAME%%-pkg-cellular
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG

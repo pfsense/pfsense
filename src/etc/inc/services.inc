@@ -1052,6 +1052,9 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
 				}
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
@@ -2297,6 +2300,11 @@ function services_snmpd_configure() {
 			echo gettext("Starting SNMP daemon... ");
 		}
 
+		/* Make sure a printcap file exists or else bsnmpd will log errors. See https://redmine.pfsense.org/issues/6838 */
+		if (!file_exists('/etc/printcap')) {
+			@file_put_contents('/etc/printcap', "# Empty file to prevent bsnmpd from logging errors.\n");
+		}
+
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
@@ -2373,24 +2381,34 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		$bind_to_ip = "0.0.0.0";
+		$bind_to_ips = array();
 		if (isset($config['snmpd']['bindip'])) {
-			if (is_ipaddr($config['snmpd']['bindip'])) {
-				$bind_to_ip = $config['snmpd']['bindip'];
-			} else {
-				$if = get_real_interface($config['snmpd']['bindip']);
-				if (does_interface_exist($if)) {
-					$bind_to_ip = get_interface_ip($config['snmpd']['bindip']);
+			foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
+				if (is_ipaddr($bind_to_ip)) {
+					$bind_to_ips[] = $bind_to_ip;
+				} else {
+					$if = get_real_interface($bind_to_ip);
+					if (does_interface_exist($if)) {
+						$bindip = get_interface_ip($bind_to_ip);
+						if (is_ipaddr($bindip)) {
+							$bind_to_ips[] = $bindip;
+						}
+					}
 				}
 			}
 		}
+		if (!count($bind_to_ips)) {
+			$bind_to_ips = array("0.0.0.0");
+		}
 
 		if (is_port($config['snmpd']['pollport'])) {
-			$snmpdconf .= <<<EOD
+			foreach ($bind_to_ips as $bind_to_ip) {
+				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
 
 EOD;
 
+			}
 		}
 
 		$snmpdconf .= <<<EOD

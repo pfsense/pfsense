@@ -28,9 +28,22 @@ if [ "${dev_type}" = "tun" ]; then
 	else
 		/bin/echo ${5} > /tmp/${1}_router
 	fi
+
+	if [ -n "${route_ipv6_gateway_1}" ]; then
+		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
+	elif [ -n "${ifconfig_ipv6_remote}" ]; then
+		/bin/echo ${ifconfig_ipv6_remote} > /tmp/${1}_routerv6
+	elif [ -n "${ifconfig_ipv6_local}" ]; then
+		/bin/echo ${ifconfig_ipv6_local} > /tmp/${1}_routerv6
+	fi
+
 else
 	if [ -n "${route_vpn_gateway}" ]; then
 		/bin/echo ${route_vpn_gateway} > /tmp/${1}_router
+	fi
+
+	if [ -n "${route_ipv6_gateway_1}" ]; then
+		/bin/echo ${route_ipv6_gateway_1} > /tmp/${1}_routerv6
 	fi
 fi
 

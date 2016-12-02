@@ -247,6 +247,12 @@ if [ "${selected_model}" = "SG-1000" ]; then
 		/mnt/etc/fstab
 fi
 
+default_serial="${serial}"
+serial_size=0
+# Serial is empty, let operator edit it
+if [ -z "${default_serial}" ]; then
+	serial_size=16
+fi
 while true; do
 	exec 3>&1
 	col=30
@@ -255,7 +261,7 @@ while true; do
 		--title "Register Serial Number" \
 		--form "Enter system information" 0 0 0 \
 		"Model" 1 0 "${selected_model}" 1 $col 0 0 \
-		"Serial" 2 0 "${serial}" 2 $col 16 16 \
+		"Serial" 2 0 "${default_serial}" 2 $col ${serial_size} ${serial_size} \
 		"Order Number" 3 0 "" 3 $col 16 0 \
 		"Print sticker (0/1)" 4 0 "1" 4 $col 1 0 \
 		"Builder Initials" 5 0 "" 5 $col 16 0 \
@@ -266,15 +272,26 @@ while true; do
 		| sed 's,#,,g' \
 		| paste -d'#' -s -)
 
-	set_vars=$(echo "$factory_data" | \
-		awk '
-		BEGIN { FS="#" }
-		{
-			print "serial=\""$1"\"";
-			print "order=\""$2"\""
-			print "sticker=\""$3"\"";
-			print "builder=\""$4"\"";
-		}')
+	if [ ${serial_size} -eq 0 ]; then
+		set_vars=$(echo "$factory_data" | \
+			awk '
+			BEGIN { FS="#" }
+			{
+				print "order=\""$1"\""
+				print "sticker=\""$2"\"";
+				print "builder=\""$3"\"";
+			}')
+	else
+		set_vars=$(echo "$factory_data" | \
+			awk '
+			BEGIN { FS="#" }
+			{
+				print "serial=\""$1"\"";
+				print "order=\""$2"\""
+				print "sticker=\""$3"\"";
+				print "builder=\""$4"\"";
+			}')
+	fi
 
 	eval "${set_vars}"
 

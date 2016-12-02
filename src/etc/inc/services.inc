@@ -2403,7 +2403,7 @@ EOD;
 
 		if (is_port($config['snmpd']['pollport'])) {
 			foreach ($bind_to_ips as $bind_to_ip) {
-			$snmpdconf .= <<<EOD
+				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
 
 EOD;

@@ -242,14 +242,14 @@ $div = false;
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("Assign"), "/interfaces_assign.php");
+	$interfaces_menu[] = array(gettext("Assignments"), "/interfaces_assign.php");
 	$div = true;
 }
 
 $platform = system_identify_specific_platform();
 
 if ($platform['name'] == "uFW") {
-	$interfaces_menu[] = array(gettext("Switch"), "/switch_system.php");
+	$interfaces_menu[] = array(gettext("Switches"), "/switch_system.php");
 	$div = true;
 }
 

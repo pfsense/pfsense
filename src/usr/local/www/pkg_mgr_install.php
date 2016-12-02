@@ -77,16 +77,17 @@ if ($_REQUEST['ajax']) {
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
 	// packages, hence the de-bounce here
+	for ($idx=0;$idx<5 && !isvalidpid($pidfile); $idx++) {
+		usleep(200000);
+	}
+
 	if (!isvalidpid($pidfile)) {
-		usleep(400000);
-		if (!isvalidpid($pidfile)) {
-			$running = "stopped";
-			// The log files may not be complete when the process terminates so we need wait until we see the
-			// exit status (__RC=x)
-			waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
-			filter_configure();
-			send_event("service restart packages");
-		}
+		$running = "stopped";
+		// The log files may not be complete when the process terminates so we need wait until we see the
+		// exit status (__RC=x)
+		waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+		filter_configure();
+		send_event("service restart packages");
 	}
 
 	$pidarray = array('pid' => $running);
@@ -425,7 +426,7 @@ if ($confirmed):
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=($completed ? $_POST['output'] : gettext("Please wait while the update system initializes"))?></textarea>
 		</div>
 	</div>
 <?php
@@ -548,7 +549,7 @@ function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
-			"<?=gettext("This may take several minutes!")?>" + "</p>");
+			"<?=gettext("This may take several minutes. Do not leave or refresh the page!")?>" + "</p>");
 	} else {
 		$('#final').html("<p><?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "</p><p>" +
 			"<?=gettext("This may take several minutes!")?>" + "</p>");

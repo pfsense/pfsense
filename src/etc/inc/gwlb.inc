@@ -625,6 +625,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		switch ($ifcfg['ipaddr']) {
 			case "dhcp":
 			case "pppoe":
+			case "l2tp":
 			case "pptp":
 			case "ppp":
 				$ctype = strtoupper($ifcfg['ipaddr']);

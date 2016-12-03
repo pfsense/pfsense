@@ -3,7 +3,7 @@
  * system_gateways_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -494,6 +494,15 @@ if ($_POST) {
 
 		if (isset($_POST['disabled'])) {
 			$gateway['disabled'] = true;
+			/* Check if the gateway was enabled but changed to disabled. */
+			if ((isset($realid) && $a_gateway_item[$realid]) && ($pconfig['disabled'] == false)) {
+				/*  If the disabled gateway was the default route, remove the default route */
+				if (is_ipaddr($gateway['gateway']) &&
+				    isset($gateway['defaultgw'])) {
+					$inet = (!is_ipaddrv4($gateway['gateway']) ? '-inet6' : '-inet');
+					mwexec("/sbin/route delete {$inet} default");
+				}
+			}
 		} else {
 			unset($gateway['disabled']);
 		}
@@ -850,12 +859,12 @@ events.push(function() {
 <?php
 			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
-			    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-			    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
-			    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
-			    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
-			    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
-			    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
+			    (!empty($pconfig['weight']) && $pconfig['weight'] > 1) ||
+			    (!empty($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
+			    (!empty($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
+			    (!empty($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
+			    (!empty($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
+			    (!empty($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
 				$showadv = false;
 			} else {
 				$showadv = true;

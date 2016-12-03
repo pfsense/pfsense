@@ -3,7 +3,7 @@
  * services_captiveportal_mac_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -54,7 +54,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -172,7 +172,7 @@ if ($_POST) {
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
 			$uniqid = uniqid("{$cpzone}_macedit");
 			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 			unset($cpzoneid);
 		}

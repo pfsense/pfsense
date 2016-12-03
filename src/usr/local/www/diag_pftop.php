@@ -3,7 +3,7 @@
  * diag_pftop.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +53,7 @@ if ($_REQUEST['getactivity']) {
 		$numstate = "100";
 	}
 
-	$text = `pftop -b {$sorttype} -v {$viewtype} {$numstate}`;
+	$text = `pftop -b {$sorttype} -w 135 -v {$viewtype} {$numstate}`;
 	echo trim($text);
 	exit;
 }

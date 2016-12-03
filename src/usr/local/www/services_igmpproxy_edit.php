@@ -3,7 +3,7 @@
  * services_igmpproxy_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -224,7 +224,7 @@ foreach ($item as $ww) {
 		null,
 		$address,
 		['placeholder' => 'Address']
-	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet)->setWidth(4)->setPattern('[a-zA-Z0-9\_\.\:]+');
+	))->sethelp($tracker == $rows ? 'Network/CIDR':null)->addMask('address_subnet' . $tracker, $address_subnet)->setWidth(4)->setPattern('[a-zA-Z0-9_.:]+');
 
 	$group->add(new Form_Button(
 		'deleterow' . $counter,

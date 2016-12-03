@@ -3,7 +3,7 @@
  * diag_packet_capture.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -188,7 +188,6 @@ if ($_POST) {
 	if (!count($input_errors)) {
 		$do_tcpdump = true;
 
-		conf_mount_rw();
 
 		if ($_POST['promiscuous']) {
 			//if promiscuous mode is checked
@@ -491,7 +490,6 @@ if ($do_tcpdump) :
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
 		print('</textarea>');
 
-		conf_mount_ro();
 ?>
 		</div>
 	</div>

@@ -3,7 +3,7 @@
  * firewall_aliases_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -132,6 +132,7 @@ if (isset($id) && $a_aliases[$id]) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");
 
@@ -418,7 +419,7 @@ if ($_POST) {
 					$tmpaddress .= "/" . $input_address_subnet[$idx];
 				}
 			}
-			$address[] = $tmpaddress;
+			$address[] = addrtolower($tmpaddress);
 		}
 		unset($desc_fmt_err_found);
 		if ($wrongaliases <> "") {

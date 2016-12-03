@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -370,7 +370,6 @@ function local_backed($username, $passwd) {
 
 function local_sync_accounts() {
 	global $debug, $config;
-	conf_mount_rw();
 
 	/* remove local users to avoid uid conflicts */
 	$fd = popen("/usr/sbin/pw usershow -a", "r");
@@ -444,7 +443,6 @@ function local_sync_accounts() {
 		}
 	}
 
-	conf_mount_ro();
 
 }
 
@@ -456,7 +454,6 @@ function local_user_set(& $user) {
 		return;
 	}
 
-	conf_mount_rw();
 
 	$home_base = "/home/";
 	$user_uid = $user['uid'];
@@ -578,7 +575,6 @@ function local_user_set(& $user) {
 	$un = $lock_account ? "" : "un";
 	exec("/usr/sbin/pw {$un}lock " . escapeshellarg($user_name) . " -q 2>/dev/null");
 
-	conf_mount_ro();
 }
 
 function local_user_del($user) {
@@ -1668,11 +1664,12 @@ function session_auth() {
 	$attributes = array();
 	if (isset($_POST['login']) && !empty($_POST['usernamefld']) && !empty($_POST['passwordfld'])) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-		if (authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes) ||
-		    authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
+		$remoteauth = authenticate_user($_POST['usernamefld'], $_POST['passwordfld'], $authcfg, $attributes);
+		if ($remoteauth || authenticate_user($_POST['usernamefld'], $_POST['passwordfld'])) {
 			// Generate a new id to avoid session fixation
 			session_regenerate_id();
 			$_SESSION['Logged_In'] = "True";
+			$_SESSION['remoteauth'] = $remoteauth;
 			$_SESSION['Username'] = $_POST['usernamefld'];
 			$_SESSION['user_radius_attributes'] = $attributes;
 			$_SESSION['last_access'] = time();

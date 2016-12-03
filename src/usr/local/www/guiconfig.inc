@@ -3,7 +3,7 @@
  * guiconfig.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -27,6 +27,7 @@
 /* THIS MUST BE ABOVE ALL OTHER CODE */
 if (!$nocsrf) {
 	function csrf_startup() {
+		global $config;
 		csrf_conf('rewrite-js', '/csrf/csrf-magic.js');
 		$timeout_minutes = isset($config['system']['webgui']['session_timeout']) ? $config['system']['webgui']['session_timeout'] : 240;
 		csrf_conf('expires', $timeout_minutes * 60);

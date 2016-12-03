@@ -3,7 +3,7 @@
  * globals.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,33 +54,32 @@ $g = array(
 	"admin_group" => "admins",
 	"product_name" => "pfSense",
 	"product_version" => trim(file_get_contents("/etc/version"), " \n"),
-	"product_copyright" => "Electric Sheep Fencing LLC",
+	"product_copyright" => "Rubicon Communications, LLC (Netgate)",
 	"product_copyright_url" => "https://pfsense.org/license",
 	"product_copyright_years" => "2004 - ".date("Y"),
 	"product_website" => "www.pfsense.org",
 	"product_website_footer" => "https://www.pfsense.org/?gui=bootstrap",
 	"product_email" => "coreteam@pfsense.org",
-	"hideplatform" => false,
-	"hidebackupbeforeupgrade" => false,
 	"disablehelpmenu" => false,
 	"disablehelpicon" => false,
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "15.5",
-	"nopkg_platforms" => array("cdrom"),
+	"latest_config" => "15.8",
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
 	"wan_interface_name" => "wan",
 	"captiveportal_path" => "/usr/local/captiveportal",
 	"captiveportal_element_path" => "/var/db/cpelements",
 	"captiveportal_element_sizelimit" => 1048576,
+	"captiveportal_rules_interval" => 50,
 	"services_dhcp_server_enable" => true,
-	"wireless_regex" => "/^(ndis|wi|ath|an|ral|ural|iwi|wlan|rum|run|bwn|zyd|mwl|bwi|ipw|iwn|malo|uath|upgt|urtw|wpi)/",
+	"wireless_regex" => "/^(ath|bwi|bwn|ipw|iwi|iwm|iwn|malo|mwl|ral|rsu|rum|run|uath|upgt|ural|urtw|urtwn|wi|wpi|wtap|zyd)[0-9]+/",
 	"help_base_url" => "/help.php",
 	"pkg_prefix" => "pfSense-pkg-",
 	"default_timezone" => "Etc/UTC",
-	"language" => "en_US"
+	"language" => "en_US",
+	"default_config_backup_count" => 30
 );
 
 /* IP TOS flags */
@@ -100,36 +99,8 @@ if (is_numeric($g["product_version_patch"]) && $g["product_version_patch"] != "0
 	$g['product_version_string'] .= "-p{$g['product_version_patch']}";
 }
 
-if (file_exists("/etc/platform")) {
-	$arch = php_uname("m");
-
-	if (strstr($g['product_version'], "-RELEASE")) {
-		/* This is only necessary for RELEASE */
-		$arch = ($arch == "i386") ? "" : '/' . $arch;
-		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-		$g['update_url']="https://updates.pfsense.org/_updaters{$arch}";
-		$g['update_manifest']="https://updates.pfsense.org/manifest";
-	} else {
-		/* Full installs and NanoBSD use the same update directory and manifest in 2.x */
-		$g['update_url']="https://snapshots.pfsense.org/FreeBSD_releng/10.1/{$arch}/pfSense_HEAD/.updaters/";
-		$g['update_manifest']="https://updates.pfSense.org/manifest";
-	}
-
-	$g['platform'] = trim(file_get_contents("/etc/platform"));
-	if ($g['platform'] == "nanobsd") {
-		$g['firmware_update_text']="pfSense-*.img.gz";
-		$g['hidebackupbeforeupgrade'] = true;
-		$g['default_config_backup_count'] = 5;
-	} else {
-		$g['firmware_update_text']="pfSense-*.tgz";
-		$g['default_config_backup_count'] = 30;
-	}
-} else { 
-	// shouldn't happen but "just in case" no platform were detected 
-	$g['platform'] = 'undetected'; 
-	$g['default_config_backup_count'] = 30; 
-} 
-
+/* XXX: Backward compatible */
+$g['platform'] = $g['product_name'];
 
 if (file_exists("{$g['etc_path']}/default-config-flavor")) {
 	$flavor_array = file("{$g['etc_path']}/default-config-flavor");
@@ -224,4 +195,5 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns");
 ?>

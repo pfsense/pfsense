@@ -3,7 +3,7 @@
  * voucher.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2007-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2007-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -30,22 +30,9 @@ if (!function_exists('captiveportal_syslog')) {
 }
 
 function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $username) {
-	global $g, $config, $cpzone;
-	require_once("XML/RPC2/Client.php");
-
-	$protocol = "http";
-	if (is_array($config['system']) &&
-	    is_array($config['system']['webgui']) &&
-	    !empty($config['system']['webgui']['protocol']) &&
-	    $config['system']['webgui']['protocol'] == "https") {
-		$protocol = "https";
-	}
-	if ($protocol == "https" || $port == "443") {
-		$url = "https://{$syncip}:{$port}";
-	} else {
-		$url = "http://{$syncip}:{$port}";
-	}
-
+	global $cpzone;
+	require_once("xmlrpc_client.inc");
+	
 	/* Construct code that is run on remote machine */
 	$execcmd = <<<EOF
 	global \$cpzone;
@@ -55,67 +42,20 @@ function xmlrpc_sync_voucher_expire($vouchers, $syncip, $port, $password, $usern
 	voucher_expire("$vouchers");
 
 EOF;
-
-	$options = array(
-		'prefix' => 'pfsense.',
-		'sslverify' => false,
-		'connectionTimeout' => 240
-	);
-
-	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url));
-	$cli = XML_RPC2_Client::create($url, $options);
-	if (!is_object($cli)) {
-		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url);
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
+	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
+	if (empty($resp)) {
 		return false;
 	}
-
-	try {
-		$resp = $cli->exec_php($username, $password, $execcmd);
-	} catch (XML_RPC2_FaultException $e) {
-		// The XMLRPC server returns a XMLRPC error
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return false;
-	} catch (Exception $e) {
-		// Other errors (HTTP or networking problems...)
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getMessage();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
-		return false;
-	}
-
-	if (!is_array($resp) && trim($resp) == "Authentication failed") {
-		$error = "An authentication failure occurred while trying to access {$url} (exec_php).";
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-		return false;
-	}
-
-	log_error(sprintf(gettext("CaptivePortalVoucherSync XMLRPC reload data success with %s (pfsense.exec_php)."), $url));
-
 	return $resp;
 }
 
 function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $username, $term_cause = 1, $stop_time = null) {
-	global $g, $config, $cpzone;
-	require_once("XML/RPC2/Client.php");
-
-	$protocol = "http";
-	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-	    $config['system']['webgui']['protocol'] == "https") {
-		$protocol = "https";
-	}
-	if ($protocol == "https" || $port == "443") {
-		$url = "https://{$syncip}:{$port}";
-	} else {
-		$url = "http://{$syncip}:{$port}";
-	}
-
+	global $cpzone;
+	require_once("xmlrpc_client.inc");
 	/* Construct code that is run on remote machine */
-	$dbent_str = serialize($dbent);
+	$dbent_str = addslashes(serialize($dbent));
 	$tmp_stop_time = (isset($stop_time)) ? $stop_time : "null";
 	$execcmd = <<<EOF
 	global \$cpzone;
@@ -127,64 +67,18 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;
-
-	$options = array(
-		'prefix' => 'pfsense.',
-		'sslverify' => false,
-		'connectionTimeout' => 240
-	);
-
-	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url));
-	$cli = XML_RPC2_Client::create($url, $options);
-	if (!is_object($cli)) {
-		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url);
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
+	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
+	if (empty($resp)) {
 		return false;
 	}
-
-	try {
-		$resp = $cli->exec_php($username, $password, $execcmd);
-	} catch (XML_RPC2_FaultException $e) {
-		// The XMLRPC server returns a XMLRPC error
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return false;
-	} catch (Exception $e) {
-		// Other errors (HTTP or networking problems...)
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getMessage();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
-		return false;
-	}
-
-	if (!is_array($resp) && trim($resp) == "Authentication failed") {
-		$error = "An authentication failure occurred while trying to access {$url} (exec_php).";
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-		return false;
-	}
-
-	log_error(sprintf(gettext("CaptivePortalVoucherSync XMLRPC reload data success with %s (pfsense.exec_php)."), $url));
-
 	return $resp;
 }
 
 function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, $username) {
-	global $g, $config, $cpzone;
-	require_once("XML/RPC2/Client.php");
-
-	$protocol = "http";
-	if (is_array($config['system']) && is_array($config['system']['webgui']) && !empty($config['system']['webgui']['protocol']) &&
-	    $config['system']['webgui']['protocol'] == "https") {
-		$protocol = "https";
-	}
-	if ($protocol == "https" || $port == "443") {
-		$url = "https://{$syncip}:{$port}";
-	} else {
-		$url = "http://{$syncip}:{$port}";
-	}
+	global $config, $cpzone;
+	require_once("xmlrpc_client.inc");
 
 	/* Construct code that is run on remote machine */
 	$execcmd = <<<EOF
@@ -198,52 +92,17 @@ function xmlrpc_sync_used_voucher($voucher_received, $syncip, $port, $password, 
 	\$toreturn['voucher']['roll'] = \$config['voucher'][\$cpzone]['roll'];
 
 EOF;
-
-	$options = array(
-		'prefix' => 'pfsense.',
-		'sslverify' => false,
-		'connectionTimeout' => 240
-	);
-
-	log_error(sprintf(gettext("Captive Portal Voucher XMLRPC sync data %s."), $url));
-	$cli = XML_RPC2_Client::create($url, $options);
-	if (!is_object($cli)) {
-		$error = sprintf(gettext("A communications error occurred while attempting CaptivePortalVoucherSync XMLRPC sync with %s (pfsense.exec_php)."), $url);
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-		return null;
-	}
-
-	try {
-		$resp = $cli->exec_php($username, $password, $execcmd);
-	} catch (XML_RPC2_FaultException $e) {
-		// The XMLRPC server returns a XMLRPC error
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getFaultCode() . ' : ' . $e->getFaultString();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, "Communications error occurred", "");
-		return null;
-	} catch (Exception $e) {
-		// Other errors (HTTP or networking problems...)
-		$error = 'Exception calling XMLRPC method exec_php #' . $e->getMessage();
-		log_error($error);
-		file_notice("CaptivePortalVoucherSync", $error, gettext("Error code received"), "");
-		return null;
-	}
-
-	if (!is_array($resp) && trim($resp) == "Authentication failed") {
-		$error = "An authentication failure occurred while trying to access {$url} (exec_php).";
-		log_error($error);
-		file_notice("sync_settings", $error, "Settings Sync", "");
-		return null;
-	}
-
+	$rpc_client = new pfsense_xmlrpc_client();
+	$rpc_client->setConnectionData($syncip, $port, $username, $password);
+	$resp = $rpc_client->xmlrpc_exec_php($execcmd);
+	
 	if (!is_array($config['voucher'])) {
 		$config['voucher'] = array();
 	}
 
 	if (is_array($resp['voucher']['roll'])) {
 		$config['voucher'][$cpzone]['roll'] = $resp['voucher']['roll'];
-		write_config(sprintf(gettext("Captive Portal Voucher database synchronized with %s"), $url));
+		write_config(sprintf(gettext("Captive Portal Voucher database synchronized with %s:%s"), $syncip, $port));
 		voucher_configure_zone(true);
 		unset($resp['voucher']);
 	} else if (!isset($resp['timeleft'])) {

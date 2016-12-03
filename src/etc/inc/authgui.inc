@@ -6,7 +6,7 @@
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -220,6 +220,12 @@ if (isset($user_settings['webgui']['webguicss'])) {
 	}
 }
 
+if (isset($config['system']['webgui']['loginshowhost'])) {
+$hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+} else {
+	$hoststr = "";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -248,7 +254,7 @@ if (isset($user_settings['webgui']['webguicss'])) {
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2 class="panel-title"><?=sprintf(gettext("Login to %s"), $g['product_name'])?></h2>
+						<h2 class="panel-title"><?=sprintf(gettext("Login to %s %s"), $g['product_name'], $hoststr)?></h2>
 					</div>
 
 					<div class="panel-body">

@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2006 Fernando Lemos
- * Copyright (c) 2006-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2006-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * This file was rewritten from scratch by Fernando Lemos but
@@ -368,11 +368,11 @@ function openvpn_port_next($prot, $interface = "wan") {
 function openvpn_get_cipherlist() {
 
 	$ciphers = array();
-	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep "default key" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep \'(.*key\' | sed \'s/, TLS client\/server mode only//\'');
 	$cipher_lines = explode("\n", trim($cipher_out));
 	sort($cipher_lines);
 	foreach ($cipher_lines as $line) {
-		$words = explode(' ', $line);
+		$words = explode(' ', $line, 2);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
 	$ciphers["none"] = gettext("None (No Encryption)");

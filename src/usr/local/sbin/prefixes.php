@@ -3,7 +3,7 @@
  * prefixes.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -98,7 +98,8 @@ foreach ($duid_arr as $entry) {
 // echo "add routes\n";
 if (count($routes) > 0) {
 	foreach ($routes as $address => $prefix) {
-		echo "/sbin/route change -inet6 {$prefix} {$address}\n";
+		echo "/sbin/route change -inet6 {$prefix} {$address} " .
+		    "|| /sbin/route add -inet6 {$prefix} {$address}\n";
 	}
 }
 

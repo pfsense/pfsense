@@ -2,7 +2,7 @@
  * pfSenseHelpers.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,14 +58,6 @@ function hideClass(s_class, hide) {
 		$('.' + s_class).show();
 }
 
-// Hides all elements of the specified class assigned to a group. This will usually be a group
-function hideGroupClass(s_class, hide) {
-	if (hide)
-		$('.' + s_class).parent().parent().parent().hide();
-	else
-		$('.' + s_class).parent().parent().parent().show();
-}
-
 function hideSelect(id, hide) {
 	if (hide)
 		$('#' + id).parent('div').parent('div').addClass('hidden');
@@ -80,7 +72,7 @@ function hideMultiCheckbox(id, hide) {
 		$("[name=" + id + "]").parent().removeClass('hidden');
 }
 
-// Hides the <div> in which the specified IP address element lives so that the input, its label and help text are hidden
+// Hides the <div> in which the specified IP address element lives so that the input, any mask selector, its label and help text are hidden
 function hideIpAddress(id, hide) {
 	if (hide)
 		$('#' + id).parent().parent().parent('div').addClass('hidden');
@@ -294,6 +286,7 @@ function add_row() {
 
 	// Clone it
 	var newGroup = lastRepeatableGroup.clone();
+
 	// Increment the suffix number for each input element in the new group
 	$(newGroup).find('input').each(function() {
 		$(this).prop("id", bumpStringInt(this.id));
@@ -328,7 +321,7 @@ function add_row() {
 	// And for "for" tags
 //	$(newGroup).find('label').attr('for', bumpStringInt($(newGroup).find('label').attr('for')));
 
-	$(newGroup).find('label').text(""); // Clear the label. We only want it on the very first row
+	$(newGroup).find('label:first').text(""); // Clear the label. We only want it on the very first row
 
 	// Insert the updated/cloned row
 	$(lastRepeatableGroup).after(newGroup);

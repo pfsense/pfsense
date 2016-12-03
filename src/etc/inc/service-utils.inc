@@ -3,7 +3,7 @@
  * service-utils.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2005-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2005-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Colin Smith (ethethlay@gmail.com)
  * All rights reserved.
  *
@@ -454,27 +454,50 @@ function get_service_status($service) {
 	return $running;
 }
 
-function get_service_status_icon($service, $withtext = true, $smallicon = false) {
-	global $g;
+function get_service_status_icon($service, $withtext = true, $smallicon = false, $withthumbs = false, $title = "service_state") {
 	$output = "";
+
 	if (get_service_status($service)) {
 		$statustext = gettext("Running");
-		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "fa fa-play" : "fa fa-lg fa-play";
-		$output .= "\" ></i></a>";
-		if ($withtext) {
-			$output .= "&nbsp;" . $statustext;
-		}
+		$text_class = "text-success";
+		$fa_class = "fa fa-check-circle";
+		$fa_class_thumbs = "fa fa-thumbs-o-up";
+		$Thumbs_UpDown = "Thumbs up";
 	} else {
-		$service_enabled = is_service_enabled($service['name']);
-		$statustext = ($service_enabled) ? gettext("Stopped") : gettext("Disabled");
-		$output .= "<a title=\"" . sprintf(gettext("%s Service is"), $service["name"]) . " {$statustext}\" ><i class=\"";
-		$output .= ($smallicon) ? "fa fa-times" : "fa fa-lg fa-times";
-		$output .= "\" ></i></a>";
-		if ($withtext) {
-			$output .= "&nbsp;" . $statustext;
+		if (is_service_enabled($service['name'])) {
+			$statustext = gettext("Stopped");
+			$text_class = "text-danger";
+			$fa_class = "fa fa-times-circle";
+		} else {
+			$statustext = gettext("Disabled");
+			$text_class = "text-warning";
+			$fa_class = "fa fa-ban";
 		}
+		$fa_class_thumbs = "fa fa-thumbs-o-down";
+		$Thumbs_UpDown = "Thumbs down";
 	}
+	$fa_size = ($smallicon) ? "fa-1x" : "fa-lg";
+
+	$spacer = ($withthumbs || $withtext) ? " " : "";
+	if ($title == "state") {
+		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"{$statustext}\"></i>{$spacer}";
+	} elseif ($title == "service_state") {
+		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext("%s Service is %s"), $service["name"], $statustext) . "\"></i>{$spacer}";
+	} elseif ($title == "description_state") {
+		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext("%s, %s Service is %s"), $service["description"], $statustext) . "\"></i>{$spacer}";
+	} elseif ($title == "description_service_state") {
+		$output = "<i class=\"{$text_class} {$fa_class} {$fa_size}\" title=\"" . sprintf(gettext("%s, %s Service is %s"), $service["description"], $service["name"], $statustext) . "\"></i>{$spacer}";
+	}
+
+	$spacer = ($withtext) ? " " : "";
+	if ($withthumbs) {
+		$output .= "<i class=\"{$text_class} {$fa_class_thumbs} {$fa_size}\" title=\"{$Thumbs_UpDown}\"></i>{$spacer}";
+	}
+
+	if ($withtext) {
+		$output .= "<span class=\"" . $text_class . "\">" . $statustext . "</span>";
+	}
+
 	return $output;
 }
 

@@ -3,7 +3,7 @@
  * status_captiveportal.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -61,7 +61,7 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 }
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
-	captiveportal_disconnect_client($_GET['id']);
+	captiveportal_disconnect_client($_GET['id'], 6);
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }

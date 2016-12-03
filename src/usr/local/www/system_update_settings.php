@@ -3,7 +3,7 @@
  * system_update_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -76,11 +76,6 @@ $gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
 
-exec("/usr/bin/fetch -q -o {$g['tmp_path']}/manifest \"{$g['update_manifest']}\"");
-if (file_exists("{$g['tmp_path']}/manifest")) {
-	$preset_urls_split = explode("\n", file_get_contents("{$g['tmp_path']}/manifest"));
-}
-
 // Create an array of repo names and descriptions to populate the "Branch" selector
 function build_repo_list() {
 	global $repos;
@@ -147,7 +142,7 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 
-if (file_exists("/usr/local/bin/git") && $g['platform'] == $g['product_name']) {
+if (file_exists("/usr/local/bin/git")) {
 	$section = new Form_Section('GitSync');
 
 	$section->addInput(new Form_Checkbox(

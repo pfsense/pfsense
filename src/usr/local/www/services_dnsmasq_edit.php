@@ -3,7 +3,7 @@
  * services_dnsmasq_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -30,20 +30,6 @@
 ##|*DESCR=Allow access to the 'Services: DNS Forwarder: Edit host' page.
 ##|*MATCH=services_dnsmasq_edit.php*
 ##|-PRIV
-
-function hostcmp($a, $b) {
-	return strcasecmp($a['host'], $b['host']);
-}
-
-function hosts_sort() {
-	global $g, $config;
-
-	if (!is_array($config['dnsmasq']['hosts'])) {
-		return;
-	}
-
-	usort($config['dnsmasq']['hosts'], "hostcmp");
-}
 
 require_once("guiconfig.inc");
 
@@ -139,6 +125,7 @@ if ($_POST) {
 			}
 		}
 	}
+
 	/* check for overlaps */
 	foreach ($a_hosts as $hostent) {
 		if (isset($id) && ($a_hosts[$id]) && ($a_hosts[$id] === $hostent)) {
@@ -167,7 +154,6 @@ if ($_POST) {
 		} else {
 			$a_hosts[] = $hostent;
 		}
-		hosts_sort();
 
 		mark_subsystem_dirty('hosts');
 

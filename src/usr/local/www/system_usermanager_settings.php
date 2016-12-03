@@ -3,7 +3,7 @@
  * system_usermanager_settings.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -188,8 +188,8 @@ $section->addInput(new Form_Input(
 	'risk!');
 
 $auth_servers = array();
-foreach (auth_get_authserver_list() as $auth_server) {
-	$auth_servers[ $auth_server['name'] ] = $auth_server['name'];
+foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
+	$auth_servers[ $idx_authserver ] = $auth_server['name'];
 }
 
 $section->addInput(new Form_Select(

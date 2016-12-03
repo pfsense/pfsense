@@ -3,7 +3,7 @@
  * vpn_ipsec_phase1.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -395,14 +395,6 @@ if ($_POST) {
 		$input_errors[] = gettext("Encryption Algorithm AES-GCM can only be used with IKEv2");
 	}
 
-	if (!empty($_POST['ealgo']) && isset($config['system']['crypto_hardware'])) {
-		if ($config['system']['crypto_hardware'] == "glxsb") {
-			if ($_POST['ealgo'] == "aes" && $_POST['ealgo_keylen'] != "128") {
-				$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-			}
-		}
-	}
-
 	/* auth backend for mobile eap-radius VPNs should be a RADIUS server */
 	if (($pconfig['authentication_method'] == 'eap-radius') && $pconfig['mobile']) {
 		if (!empty($config['ipsec']['client']['user_source'])) {
@@ -667,7 +659,7 @@ $section->addInput(new Form_Select(
 	'iketype',
 	'Key Exchange version',
 	$pconfig['iketype'],
-	array("ikev1" => "V1", "ikev2" => "V2", "auto" => gettext("Auto"))
+	array("ikev1" => "IKEv1", "ikev2" => "IKEv2", "auto" => gettext("Auto"))
 ))->setHelp('Select the Internet Key Exchange protocol version to be used. Auto uses IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder.');
 
 $section->addInput(new Form_Select(

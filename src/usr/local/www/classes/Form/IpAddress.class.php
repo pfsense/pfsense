@@ -3,7 +3,7 @@
  * IpAddress.class.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2015 Sjon Hortensius
  * All rights reserved.
  *
@@ -30,7 +30,8 @@ class Form_IpAddress extends Form_Input
 
 		switch ($type) {
 			case "BOTH":
-				$this->_attributes['pattern'] = '[a-f0-9:.]*';
+				$this->_attributes['pattern'] = '[a-fA-F0-9:.]*';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1';
 				break;
 
 			case "V4":
@@ -38,7 +39,8 @@ class Form_IpAddress extends Form_Input
 				break;
 
 			case "V6":
-				$this->_attributes['pattern'] = '[a-f0-9:]*';
+				$this->_attributes['pattern'] = '[a-fA-F0-9:.]*';
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
 				break;
 		}
 	}

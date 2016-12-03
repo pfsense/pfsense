@@ -2,7 +2,7 @@
  * pfSense.js
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -234,6 +234,11 @@ $(function() {
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 
+	$(".resizable").each(function() {
+		$(this).css('height', 80).resizable({minHeight: 80, minWidth: 200}).parent().css('padding-bottom', 0);
+		$(this).css('height', 78);
+	});
+		
 	// Run in-page defined events
 	while (func = window.events.shift())
 		func();

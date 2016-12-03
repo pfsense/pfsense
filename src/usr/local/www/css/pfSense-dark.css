@@ -2,7 +2,7 @@
  * pfSense-dark.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,9 +43,9 @@ h1 a:link, h1 a:visited {
     color: #fff;
 }
 
-h1 a:hover, h1 a:active { 
-    color: #fff; 
-    text-decoration: none !important; 
+h1 a:hover, h1 a:active {
+    color: #fff;
+    text-decoration: none !important;
 }
 
 /** Content structure */
@@ -348,13 +348,13 @@ caption {
 
 a.list-group-item, .list-group-item {
     background-color: #424242;
-    color: #e0e0e0;  
-    border: 1px solid #212121;  
+    color: #e0e0e0;
+    border: 1px solid #212121;
 }
 
 a.list-group-item:focus, a.list-group-item:hover, .list-group-item:focus, .list-group-item:hover {
     background-color: #303030;
-    color: #e0e0e0; 
+    color: #e0e0e0;
 }
 
 a.list-group-item .list-group-item-heading, .list-group-item .list-group-item-heading {
@@ -406,12 +406,12 @@ ul.tree li A:link, ul.tree li A:hover, ul.tree li A:visited {
 
 table[data-sortable].sortable-theme-bootstrap th[data-sorted="true"] {
     background-color: #000;
-    color: #009688; 
+    color: #009688;
     border-bottom-color: #009688;
 }
 
 table[data-sortable].sortable-theme-bootstrap tbody td {
-    border-top: 1px solid #303030; 
+    border-top: 1px solid #303030;
 }
 
 textarea {
@@ -422,6 +422,10 @@ textarea {
 .ui-autocomplete {
     color: #212121;
     background-color: #e0e0e0;
+}
+
+.ui-widget {
+    font-family: Roboto, sans-serif;
 }
 
 /* Callouts */

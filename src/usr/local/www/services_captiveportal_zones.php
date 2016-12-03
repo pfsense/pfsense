@@ -3,7 +3,7 @@
  * services_captiveportal_zones.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,7 +41,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp = &$config['captiveportal'];
 
 if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
-	$cpzone = htmlspecialchars($_GET['zone']);
+	$cpzone = strtolower(htmlspecialchars($_GET['zone']));
 	if ($a_cp[$cpzone]) {
 		$cpzoneid = $a_cp[$cpzone]['zoneid'];
 		unset($a_cp[$cpzone]['enable']);

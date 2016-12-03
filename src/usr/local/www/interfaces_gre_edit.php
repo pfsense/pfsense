@@ -3,7 +3,7 @@
  * interfaces_gre_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -59,6 +59,10 @@ if ($_POST) {
 
 	unset($input_errors);
 	$pconfig = $_POST;
+
+	$pconfig['tunnel-local-addr'] = addrtolower($_POST['tunnel-local-addr']);
+	$pconfig['tunnel-remote-addr'] = addrtolower($_POST['tunnel-remote-addr']);
+	$pconfig['remote-addr'] = addrtolower($_POST['remote-addr']);
 
 	/* input validation */
 	$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");

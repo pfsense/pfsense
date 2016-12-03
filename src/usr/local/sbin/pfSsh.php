@@ -5,7 +5,7 @@
  * pfSsh
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -269,7 +269,6 @@ while ($shell_active == true) {
 			fwrite($recording_fd, $playbackbuffer);
 			fclose($recording_fd);
 			$command = "";
-			conf_mount_ro();
 			echo "Recording stopped.\n";
 			$recording = false;
 		} else {
@@ -293,7 +292,6 @@ while ($shell_active == true) {
 			$command = "";
 		} else {
 			/* time to record */
-			conf_mount_rw();
 			safe_mkdir("/etc/phpshellsessions");
 			$recording_fn = basename($command_split[1]);
 			$recording_fd = fopen("/etc/phpshellsessions/{$recording_fn}","w");

@@ -3,7 +3,7 @@
  * certs.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2008-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc. All rights reserved.
  * All rights reserved.
  *
@@ -143,14 +143,16 @@ function ca_chain(& $cert) {
 	return "";
 }
 
-function ca_import(& $ca, $str, $key = "", $serial = 0) {
+function ca_import(& $ca, $str, $key = "", $serial = "") {
 	global $config;
 
 	$ca['crt'] = base64_encode($str);
 	if (!empty($key)) {
 		$ca['prv'] = base64_encode($key);
 	}
-	if (!empty($serial)) {
+	if (empty($serial)) {
+		$ca['serial'] = 0;
+	} else {
 		$ca['serial'] = $serial;
 	}
 	$subject = cert_get_subject($str, false);
@@ -314,6 +316,9 @@ function cert_create(& $cert, $caref, $keylen, $lifetime, $dn, $type = "user", $
 		$ca_res_key = openssl_pkey_get_private(array(0 => $ca_str_key, 1 => ""));
 		if (!$ca_res_key) {
 			return false;
+		}
+		if (empty($ca['serial'])) {
+			$ca['serial'] = 0;
 		}
 		$ca_serial = ++$ca['serial'];
 	}
@@ -570,7 +575,7 @@ function cert_get_purpose($str_crt, $decode = true) {
 	$crt_details = openssl_x509_parse($str_crt);
 	$purpose = array();
 	$purpose['ca'] = (stristr($crt_details['extensions']['basicConstraints'], 'CA:TRUE') === false) ? 'No': 'Yes';
-	$purpose['server'] = ($crt_details['extensions']['nsCertType'] == "SSL Server") ? 'Yes': 'No';
+	$purpose['server'] = (strpos($crt_details['extensions']['nsCertType'], 'SSL Server') !== FALSE) ? 'Yes': 'No';
 	return $purpose;
 }
 
@@ -602,6 +607,65 @@ function cert_get_serial($str_crt, $decode = true) {
 
 function prv_get_modulus($str_crt, $decode = true) {
 	return cert_get_modulus($str_crt, $decode, "prv");
+}
+
+function is_openvpn_server_ca($caref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-server'])) {
+		return;
+	}
+	foreach ($config['openvpn']['openvpn-server'] as $ovpns) {
+		if ($ovpns['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_openvpn_client_ca($caref) {
+	global $config;
+	if (!is_array($config['openvpn']['openvpn-client'])) {
+		return;
+	}
+	foreach ($config['openvpn']['openvpn-client'] as $ovpnc) {
+		if ($ovpnc['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_ipsec_peer_ca($caref) {
+	global $config;
+	if (!is_array($config['ipsec']['phase1'])) {
+		return;
+	}
+	foreach ($config['ipsec']['phase1'] as $ipsec) {
+		if ($ipsec['caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function is_ldap_peer_ca($caref) {
+	global $config;
+	if (!is_array($config['system']['authserver'])) {
+		return;
+	}
+	foreach ($config['system']['authserver'] as $authserver) {
+		if ($authserver['ldap_caref'] == $caref) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function ca_in_use($caref) {
+	return (is_openvpn_server_ca($caref) ||
+		is_openvpn_client_ca($caref) ||
+		is_ipsec_peer_ca($caref) ||
+		is_ldap_peer_ca($caref));
 }
 
 function is_user_cert($certref) {

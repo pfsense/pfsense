@@ -3,7 +3,7 @@
  * xmlparse.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -226,7 +226,7 @@ function dump_xml_config_sub($arr, $indent) {
 					if (is_array($cval)) {
 						if (empty($cval)) {
 							$xmlconfig .= str_repeat("\t", $indent);
-							$xmlconfig .= "<$ent/>\n";
+							$xmlconfig .= "<$ent></$ent>\n";
 						} else {
 							$xmlconfig .= str_repeat("\t", $indent);
 							$xmlconfig .= "<$ent>\n";
@@ -240,7 +240,7 @@ function dump_xml_config_sub($arr, $indent) {
 						}
 						$xmlconfig .= str_repeat("\t", $indent);
 						if ((is_bool($cval) && $cval == true) || ($cval === "")) {
-							$xmlconfig .= "<$ent/>\n";
+							$xmlconfig .= "<$ent></$ent>\n";
 						} else if ((substr($ent, 0, 5) == "descr") ||
 						    (substr($ent, 0, 6) == "detail") ||
 						    (substr($ent, 0, 12) == "login_banner") ||
@@ -257,7 +257,7 @@ function dump_xml_config_sub($arr, $indent) {
 				}
 			} else if (empty($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent/>\n";
+				$xmlconfig .= "<$ent></$ent>\n";
 			} else {
 				/* it's an array */
 				$xmlconfig .= str_repeat("\t", $indent);
@@ -269,7 +269,7 @@ function dump_xml_config_sub($arr, $indent) {
 		} else {
 			if ((is_bool($val) && ($val == true)) || ($val === "")) {
 				$xmlconfig .= str_repeat("\t", $indent);
-				$xmlconfig .= "<$ent/>\n";
+				$xmlconfig .= "<$ent></$ent>\n";
 			} else if (!is_bool($val)) {
 				$xmlconfig .= str_repeat("\t", $indent);
 				if ((substr($ent, 0, 5) == "descr") ||

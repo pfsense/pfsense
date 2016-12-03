@@ -3,7 +3,7 @@
  * interfaces_assign.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -403,12 +403,12 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 
 			if (is_array($config['dhcpd']) && is_array($config['dhcpd'][$id])) {
 				unset($config['dhcpd'][$id]);
-				services_dhcpd_configure();
+				services_dhcpd_configure('inet');
 			}
 
 			if (is_array($config['dhcpdv6']) && is_array($config['dhcpdv6'][$id])) {
 				unset($config['dhcpdv6'][$id]);
-				services_dhcpdv6_configure();
+				services_dhcpd_configure('inet6');
 			}
 
 			if (count($config['filter']['rule']) > 0) {
@@ -577,7 +577,9 @@ display_top_tabs($tab_array);
 <br />
 
 <?php
-print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown."), 'info', false);
+print_info_box(gettext("Interfaces that are configured as members of a lagg(4) interface will not be shown.") .
+    '<br/><br/>' .
+    gettext("Wireless interfaces must be created on the Wireless tab before they can be assigned."), 'info', false);
 ?>
 
 <?php include("foot.inc")?>

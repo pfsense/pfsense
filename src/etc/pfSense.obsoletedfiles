@@ -35,7 +35,6 @@
 /etc/inc/sysctl.inc
 /etc/inc/uuid.php
 /etc/inc/xmlrpc.inc
-/etc/inc/xmlrpc_client.inc
 /etc/inc/xmlrpc_server.inc
 /etc/inc/zeromq.inc
 /etc/inetd.conf
@@ -466,7 +465,6 @@
 /usr/local/bin/spawn-fcgi
 /usr/local/bin/tickadj
 /usr/local/bin/verifysig
-/usr/local/etc/php/extensions.ini
 /usr/local/etc/pkg.conf
 /usr/local/info
 /usr/local/lib/engines
@@ -765,6 +763,9 @@
 /usr/local/share/nls
 /usr/local/share/pbi-keys
 /usr/local/share/pfSense/pfSense-repo-devel.conf
+/usr/local/share/pfSense/post_upgrade_command
+/usr/local/share/pfSense/post_upgrade_command.php
+/usr/local/share/pfSense/pre_upgrade_command
 /usr/local/share/protocols
 /usr/local/share/sgml
 /usr/local/share/skel
@@ -1092,7 +1093,11 @@
 /var/db/rrd/71
 /var/db/rrd/index.html
 /var/dhcpd/lib/libc.so.6
+/var/etc/hosts
 /var/etc/pppoe-vpn
+/var/etc/resolv.conf
+/var/etc/resolvconf.conf
+/var/etc/syslog.conf
 /var/mail/_relayd
 /var/mail/unbound
 /usr/local/www/d3pie

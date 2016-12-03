@@ -3,7 +3,7 @@
  * priv.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
@@ -267,12 +267,14 @@ function getAllowedPages($username, &$attributes = array()) {
 	$allowed_pages = array();
 	$allowed_groups = array();
 
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	// obtain ldap groups if we are in ldap mode
-	if ($authcfg['type'] == "ldap") {
-		$allowed_groups = @ldap_get_groups($username, $authcfg);
-	} elseif ($authcfg['type'] == "radius") {
-		$allowed_groups = @radius_get_groups($attributes);
+	if ($_SESSION['remoteauth']) {
+		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		// obtain ldap groups if we are in ldap mode
+		if ($authcfg['type'] == "ldap") {
+			$allowed_groups = @ldap_get_groups($username, $authcfg);
+		} elseif ($authcfg['type'] == "radius") {
+			$allowed_groups = @radius_get_groups($attributes);
+		}
 	}
 	if (!$allowed_groups) {
 		// search for a local user by name

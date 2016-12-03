@@ -2,7 +2,7 @@
  * pfSense.css
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,6 +75,10 @@ h1 a:hover, h1 a:active {
 
 .ui-sortable-handle {
     cursor: move;
+}
+
+.ui-widget {
+    font-family: Roboto, sans-serif;
 }
 
 tr.disabled td,
@@ -229,6 +233,12 @@ tr.disabled th {
 
 .form-control option {
     padding: inherit;
+}
+
+/* location of bottom right drag icon on resizable elements */
+.ui-resizable-se {
+	bottom: 2px;
+	right: 46px;
 }
 
 #login .form-control {

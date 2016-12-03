@@ -3,7 +3,7 @@
  * firewall_rules_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -42,8 +42,8 @@ if (isset($_POST['referer'])) {
 }
 
 function is_posnumericint($arg) {
-	// Note that to be safe we do not allow any leading zero - "01", "007"
-	return (is_numericint($arg) && $arg[0] != '0' && $arg > 0);
+	// Integer > 0? (Note that to be safe we do not allow any leading zero - "01", "007")
+	return (is_numericint($arg) && $arg[0] != '0');
 }
 
 function is_aoadv_used($rule_config) {
@@ -305,33 +305,28 @@ if ($_POST) {
 	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
 		if (is_array($config['gateways']['gateway_group'])) {
 			foreach ($config['gateways']['gateway_group'] as $gw_group) {
-				if ($gw_group['name'] == $_POST['gateway']) {
-					$family = $a_gatewaygroups[$_POST['gateway']]['ipprotocol'];
-					if ($_POST['ipprotocol'] == $family) {
-						continue;
-					}
-					if (($_POST['ipprotocol'] == "inet46") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
-					}
-					if (($_POST['ipprotocol'] == "inet6") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv4 gateway group can not be assigned on an IPv6 Address Family rule");
-					}
-					if (($_POST['ipprotocol'] == "inet") && ($_POST['ipprotocol'] != $family)) {
-						$input_errors[] = gettext("An IPv6 gateway group can not be assigned on an IPv4 Address Family rule");
+				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
+					if ($_POST['ipprotocol'] == "inet46") {
+						$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+					} elseif ($_POST['ipprotocol'] == "inet6") {
+						$input_errors[] = gettext("An IPv4 gateway group can not be assigned in IPv6 rules.");
+					} elseif ($_POST['ipprotocol'] == "inet") {
+						$input_errors[] = gettext("An IPv6 gateway group can not be assigned in IPv4 rules.");
 					}
 				}
 			}
 		}
-	}
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "") && (is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-		if (($_POST['ipprotocol'] == "inet46") && ($_POST['gateway'] <> "")) {
-			$input_errors[] = gettext("A gateway can not be assigned to a rule that applies to IPv4 and IPv6");
-		}
-		if (($_POST['ipprotocol'] == "inet6") && (!is_ipaddrv6(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv4 Gateway can not be assigned to an IPv6 Filter rule");
-		}
-		if (($_POST['ipprotocol'] == "inet") && (!is_ipaddrv4(lookup_gateway_ip_by_name($_POST['gateway'])))) {
-			$input_errors[] = gettext("An IPv6 Gateway can not be assigned to an IPv4 Filter rule");
+		if ($iptype = is_ipaddr(lookup_gateway_ip_by_name($_POST['gateway']))) {
+			// this also implies that  $_POST['gateway'] was set and not empty
+			if ($_POST['ipprotocol'] == "inet46") {
+				$input_errors[] = gettext("Gateways can not be assigned in a rule that applies to both IPv4 and IPv6.");
+			}
+			if (($_POST['ipprotocol'] == "inet6") && ($iptype != 6)) {
+				$input_errors[] = gettext("An IPv4 gateway can not be assigned in IPv6 rules.");
+			}
+			if (($_POST['ipprotocol'] == "inet") && ($iptype != 4)) {
+				$input_errors[] = gettext("An IPv6 gateway can not be assigned in IPv4 rules.");
+			}
 		}
 	}
 	if (($_POST['proto'] == "icmp") && ($_POST['icmptype'] <> "")) {
@@ -492,10 +487,10 @@ if ($_POST) {
 	}
 
 	if ($_POST['src']) {
-		$_POST['src'] = trim($_POST['src']);
+		$_POST['src'] = addrtolower(trim($_POST['src']));
 	}
 	if ($_POST['dst']) {
-		$_POST['dst'] = trim($_POST['dst']);
+		$_POST['dst'] = addrtolower(trim($_POST['dst']));
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
@@ -528,7 +523,7 @@ if ($_POST) {
 	}
 	if ((is_ipaddr($_POST['src']) && is_ipaddr($_POST['dst']))) {
 		if (!validate_address_family($_POST['src'], $_POST['dst'])) {
-			$input_errors[] = sprintf(gettext("The Source IP address %s Address Family differs from the destination %s."), $_POST['src'], $_POST['dst']);
+			$input_errors[] = gettext("The source and destination IP addresses must have the same family (IPv4 / IPv6).");
 		}
 	}
 	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
@@ -539,7 +534,7 @@ if ($_POST) {
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("An IPv4 or IPv6 address can not be used in combined IPv4 + IPv6 rules.");
+		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6.");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -1270,7 +1265,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	// The rule type dropdown on the GUI can be one of the special names like
 	// "any" "LANnet" "LAN address"... or "Single host or alias" or "Network"
-	if (is_specialnet($pconfig[$type])) {
+	if ($pconfig[$type.'type']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		$ruleType = $pconfig[$type.'type'];
+	} elseif (is_specialnet($pconfig[$type])) {
 		// It is one of the special names, let it through as-is.
 		$ruleType = $pconfig[$type];
 	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
@@ -1323,26 +1321,28 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		$type,
 		$name .' Address',
 		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9\_\.\:]+');
+	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9_.:]+');
 
 	$section->add($group);
 
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
-			'btnsrcadv',
-			'Display Advanced',
+			'btnsrctoggle',
+			'',
 			null,
 			'fa-cog'
-		))->setAttribute('type','button')->addClass('btn-info btn-sm');
+		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
+			'The <b>Source Port Range</b> for a connection is typically random '.
+			'and almost never equal to the destination port. '.
+			'In most cases this setting must remain at its default value, <b>any</b>.');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
-
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' port range');
+	$group = new Form_Group($name .' Port Range');
 
 	$group->addClass($type . 'portrange');
 
@@ -1374,16 +1374,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-
-	if ($type == 'src')
-		$group->setHelp('Specify the source port or port range for this rule. This is '.
-			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b>).  The "To" field may be left '.
-			'empty if only filtering a single port.');
-	else
-		$group->setHelp('Specify the destination port or port range for this rule. ' .
-			'The "To" field may be left empty if only filtering a '.
-			'single port.');
+	$group->setHelp(sprintf('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.',strtolower($name)));
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
@@ -1803,7 +1794,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
@@ -1889,7 +1880,7 @@ events.push(function() {
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
-			hideInput('btnsrcadv', false);
+			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&
 			    (($('#srcendport').val() == "any") || ($('#srcendport').val() == ""))) {
 				srcportsvisible = false;
@@ -1898,7 +1889,7 @@ events.push(function() {
 			}
 		} else {
 			hideClass('dstprtr', true);
-			hideInput('btnsrcadv', true);
+			hideInput('btnsrctoggle', true);
 			srcportsvisible = false;
 		}
 
@@ -1934,7 +1925,7 @@ events.push(function() {
 		ext_change();
 	});
 
-	$('#btnsrcadv').click(function() {
+	$('#btnsrctoggle').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
 	});

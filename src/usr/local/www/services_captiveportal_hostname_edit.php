@@ -3,7 +3,7 @@
  * services_captiveportal_hostname_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,7 +47,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 $cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
@@ -142,7 +142,7 @@ if ($_POST) {
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules", true);
+		mwexec("/sbin/ipfw {$g['tmp_path']}/hostname_rules", true);
 		unset($rules);
 
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");

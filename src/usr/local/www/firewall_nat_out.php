@@ -3,7 +3,7 @@
  * firewall_nat_out.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -304,10 +304,10 @@ print($form);
 
 
 				$alias = rule_columns_with_alias(
-					$natent['source']['address'],
-					pprint_port($natent['source']['port']),
+					$natent['source']['network'],
+					pprint_port($natent['sourceport']),
 					$natent['destination']['address'],
-					pprint_port($natent['destination']['port'])
+					pprint_port($natent['dstport'])
 				);
 ?>
 

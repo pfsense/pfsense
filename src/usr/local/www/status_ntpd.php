@@ -3,7 +3,7 @@
  * status_ntpd.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2013 Dagorlad
  * All rights reserved.
  *
@@ -45,10 +45,28 @@ if (!isset($config['ntpd']['noquery'])) {
 	$ntpq_servers = array();
 	foreach ($ntpq_output as $line) {
 		$server = array();
+		$status_char = substr($line, 0, 1);
+		$line = substr($line, 1);
+		$peerinfo = preg_split("/[\s\t]+/", $line);
 
-		switch (substr($line, 0, 1)) {
+		$server['server'] = $peerinfo[0];
+		$server['refid'] = $peerinfo[1];
+		$server['stratum'] = $peerinfo[2];
+		$server['type'] = $peerinfo[3];
+		$server['when'] = $peerinfo[4];
+		$server['poll'] = $peerinfo[5];
+		$server['reach'] = $peerinfo[6];
+		$server['delay'] = $peerinfo[7];
+		$server['offset'] = $peerinfo[8];
+		$server['jitter'] = $peerinfo[9];
+
+		switch ($status_char) {
 			case " ":
-				$server['status'] = gettext("Unreach/Pending");
+				if ($server['refid'] == ".POOL.") {
+					$server['status'] = gettext("Pool Placeholder");
+				} else {
+					$server['status'] = gettext("Unreach/Pending");
+				}
 				break;
 			case "*":
 				$server['status'] = gettext("Active Peer");
@@ -72,20 +90,6 @@ if (!isset($config['ntpd']['noquery'])) {
 				$server['status'] = gettext("Outlier");
 				break;
 		}
-
-		$line = substr($line, 1);
-		$peerinfo = preg_split("/[\s\t]+/", $line);
-
-		$server['server'] = $peerinfo[0];
-		$server['refid'] = $peerinfo[1];
-		$server['stratum'] = $peerinfo[2];
-		$server['type'] = $peerinfo[3];
-		$server['when'] = $peerinfo[4];
-		$server['poll'] = $peerinfo[5];
-		$server['reach'] = $peerinfo[6];
-		$server['delay'] = $peerinfo[7];
-		$server['offset'] = $peerinfo[8];
-		$server['jitter'] = $peerinfo[9];
 
 		$ntpq_servers[] = $server;
 	}

@@ -3,7 +3,7 @@
  * openvpn_wizard.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -203,7 +203,7 @@ function step7_submitphpaction() {
 	} elseif (has_special_chars($_POST['country']) || has_special_chars($_POST['state']) ||
 	    has_special_chars($_POST['city']) || has_special_chars($_POST['organization'])) {
 		$stepid--;
-		$input_errors[] = "Please do not use special characters in Certificate field names.";
+		$input_errors[] = "Please limit Certificate field names to only the following characters: A-Z, a-z, space, underscore, and dash.";
 	} elseif (in_array($_POST['descr'], $canames) || in_array($_POST['descr'], $cacns)) {
 		$stepid--;
 		$savemsg = "Please enter a different name for the Certificate Authority. A Certificate Authority with that name already exists.";

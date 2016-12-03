@@ -3,7 +3,7 @@
  * services_router_advertisements.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Seth Mos <seth.mos@dds.nl>
  * All rights reserved.
  *
@@ -37,11 +37,6 @@ if (!$g['services_dhcp_server_enable']) {
 	header("Location: /");
 	exit;
 }
-
-/*	Fix failover DHCP problem
- *	http://article.gmane.org/gmane.comp.security.firewalls.pfsense.support/18749
- */
-ini_set("memory_limit", "64M");
 
 $if = $_GET['if'];
 if ($_POST['if']) {
@@ -436,7 +431,7 @@ for ($idx=1; $idx<=3; $idx++) {
 		'radns' . $idx,
 		'Server ' . $idx,
 		$pconfig['radns' . $idx]
-	))->setPattern('[a-zA-Z0-9\_\.\:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+	))->setPattern('[a-zA-Z0-9_.:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(

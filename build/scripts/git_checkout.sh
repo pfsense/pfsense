@@ -3,7 +3,7 @@
 # git_checkout.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -81,8 +81,8 @@ if [ -d "${destdir}/.git" ]; then
 	current_url=$(${git} -C ${destdir} config --get remote.origin.url)
 
 	[ "${current_url}" != "${repo_url}" ] \
-		&& err "destination directory contains a different git " \
-		"repository"
+		&& err \
+		"destination directory contains a different git repository"
 
 	run "Removing local changes from git repo ${repo_url} (${branch})" \
 		"${git} -C ${destdir} reset -q --hard"

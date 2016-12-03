@@ -24,7 +24,9 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+www/pound
 dns/%%PRODUCT_NAME%%-pkg-bind9
+net/%%PRODUCT_NAME%%-pkg-cellular
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
 net/%%PRODUCT_NAME%%-pkg-haproxy
 net/%%PRODUCT_NAME%%-pkg-haproxy-devel
@@ -72,3 +74,4 @@ sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 sysutils/stress
 net/bird
+net/hping

@@ -3,7 +3,7 @@
  * vpn_ipsec_phase2.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -97,6 +97,7 @@ if ($ph2found === true) {
 
 	if (isset($ph2['mobile'])) {
 		$pconfig['mobile'] = true;
+		$pconfig['remoteid_type'] = "mobile";
 	}
 } else {
 	$pconfig['ikeid'] = $_GET['ikeid'];
@@ -114,6 +115,7 @@ if ($ph2found === true) {
 	/* mobile client */
 	if ($_GET['mobile']) {
 		$pconfig['mobile']=true;
+		$pconfig['remoteid_type'] = "mobile";
 	}
 }
 
@@ -333,13 +335,6 @@ if ($_POST) {
 			$input_errors[] = gettext("At least one encryption algorithm must be selected.");
 		} else {
 			foreach ($ealgos as $ealgo) {
-				if (isset($config['system']['crypto_hardware'])) {
-					if ($config['system']['crypto_hardware'] == "glxsb") {
-						if ($ealgo['name'] == "aes" && $ealgo['keylen'] != "128") {
-							$input_errors[] = gettext("Only 128 bit AES can be used where the glxsb crypto accelerator is enabled.");
-						}
-					}
-				}
 				if (empty($pconfig['halgos'])) {
 					if (!strpos($ealgo['name'], "gcm")) {
 						$input_errors[] = gettext("At least one hashing algorithm needs to be selected.");

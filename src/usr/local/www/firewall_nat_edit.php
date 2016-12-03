@@ -3,7 +3,7 @@
  * firewall_nat_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -577,7 +577,8 @@ function build_dsttype_list() {
 			if (is_ipaddrv6($sn['subnet'])) {
 				continue;
 			}
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -590,8 +591,6 @@ function build_dsttype_list() {
 
 					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			} else {
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}

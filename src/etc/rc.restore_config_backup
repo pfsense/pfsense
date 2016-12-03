@@ -4,7 +4,7 @@
  * rc.restore_config_backup
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -91,7 +91,6 @@ function restore_history_backup($number) {
 		echo gettext("Y/N?") . " : ";
 		$confirm = strtoupper(chop(fgets($fp)));
 		if ($confirm == gettext("Y")) {
-			conf_mount_rw();
 			if (config_restore($g['conf_path'] . '/backup/config-' . $thisbackup['time'] . '.xml') == 0) {
 				echo "\n";
 				echo sprintf(gettext('Successfully reverted to timestamp %1$s with description "%2$s".'), date(gettext("n/j/y H:i:s"), $thisbackup['time']), $thisbackup['description']);
@@ -99,7 +98,6 @@ function restore_history_backup($number) {
 			} else {
 				echo gettext("Unable to revert to the selected configuration.") . "\n";
 			}
-			conf_mount_ro();
 		} else {
 			echo gettext("Restore cancelled.") . "\n";
 		}

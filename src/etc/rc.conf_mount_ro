@@ -4,7 +4,7 @@
  * rc.conf_mount_ro
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,8 +20,6 @@
  * limitations under the License.
  */
 
-require_once("config.inc");
-
-conf_mount_ro();
+/* Do nothing */
 
 ?>

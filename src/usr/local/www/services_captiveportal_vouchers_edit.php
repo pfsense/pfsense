@@ -3,7 +3,7 @@
  * services_captiveportal_vouchers_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2007 Marcel Wiget <mwiget@mac.com>
  * All rights reserved.
  *
@@ -38,7 +38,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");

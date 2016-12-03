@@ -3,7 +3,7 @@
  * interfaces_wireless_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2010 Erik Fonnesbeck
  * All rights reserved.
  *
@@ -95,7 +95,7 @@ if ($_POST) {
 		}
 
 		if (!$clone['cloneif']) {
-			$clone_id = 1;
+			$clone_id = 0;
 			do {
 				$clone_exists = false;
 				$clone['cloneif'] = "{$_POST['if']}_wlan{$clone_id}";
@@ -148,13 +148,11 @@ function build_parent_list() {
 	global $g;
 
 	$parentlist = array();
-	$portlist = get_interface_list();
+	$portlist = interface_list_wireless();
 	$count = 0;
-	foreach ($portlist as $ifn => $ifinfo) {
-		if (preg_match($g['wireless_regex'], $ifn)) {
-			$parentlist[$ifn] = htmlspecialchars($ifn . ' (' . $ifinfo['mac'] . ')');
-			$count++;
-		}
+	foreach ($portlist as $ifn) {
+		$parentlist[$ifn['if']] = htmlspecialchars($ifn['descr']);
+		$count++;
 	}
 
 	if ($count > 0) {

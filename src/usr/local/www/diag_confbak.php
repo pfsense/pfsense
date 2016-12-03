@@ -3,7 +3,7 @@
  * diag_confbak.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -44,7 +44,6 @@ if (isset($_POST['backupcount'])) {
 		return;
 	}
 
-	conf_mount_rw();
 	$confvers = unserialize(file_get_contents($g['cf_conf_path'] . '/backup/backup.cache'));
 
 	if ($_GET['newver'] != "") {
@@ -58,7 +57,6 @@ if (isset($_POST['backupcount'])) {
 		unlink_if_exists($g['conf_path'] . '/backup/config-' . $_GET['rmver'] . '.xml');
 		$savemsg = sprintf(gettext('Deleted backup with timestamp %1$s and description "%2$s".'), date(gettext("n/j/y H:i:s"), $_GET['rmver']), htmlspecialchars($confvers[$_GET['rmver']]['description']));
 	}
-	conf_mount_ro();
 }
 
 if ($_GET['getcfg'] != "") {

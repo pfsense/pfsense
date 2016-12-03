@@ -3,7 +3,7 @@
  * system_authservers.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -254,14 +254,14 @@ if ($_POST) {
 			gettext("Hostname or IP"),
 			gettext("Services"));
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "auth") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "auth") {
 			$reqdfields[] = "radius_auth_port";
 			$reqdfieldsn[] = gettext("Authentication port");
 		}
 
-		if ($pconfig['radisu_srvcs'] == "both" ||
-			$pconfig['radisu_srvcs'] == "acct") {
+		if ($pconfig['radius_srvcs'] == "both" ||
+			$pconfig['radius_srvcs'] == "acct") {
 			$reqdfields[] = "radius_acct_port";
 			$reqdfieldsn[] = gettext("Accounting port");
 		}
@@ -643,7 +643,7 @@ $group->add(new Form_Input(
 $group->add(new Form_Input(
 	'ldap_bindpw',
 	'Password',
-	'text',
+	'password',
 	$pconfig['ldap_bindpw']
 ));
 $section->add($group);
@@ -733,7 +733,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_Input(
 	'radius_secret',
 	'Shared Secret',
-	'text',
+	'password',
 	$pconfig['radius_secret']
 ));
 

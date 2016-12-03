@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2015 Warren Baker <warren@percol8.co.za>
- * Copyright (c) 2015-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2015-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)

@@ -3,7 +3,7 @@
  * diag_dump_states.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Colin Smith
  * All rights reserved.
  *
@@ -214,11 +214,6 @@ print $form;
 	$states = 0;
 	if ($res != NULL && is_array($res)) {
 		$states = count($res);
-	}
-
-	/* XXX - limit to 10.000 states. */
-	if ($states > 10000) {
-		$states = 10000;
 	}
 
 	for ($i = 0; $i < $states; $i++) {

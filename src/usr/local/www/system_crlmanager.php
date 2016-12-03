@@ -3,7 +3,7 @@
  * system_crlmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -505,7 +505,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$ca_certs = array();
 	foreach ($a_cert as $cert) {
-		if ($cert['caref'] == $crl['caref']) {
+		if ($cert['caref'] == $crl['caref'] && !is_cert_revoked($cert, $id)) {
 			$ca_certs[] = $cert;
 		}
 	}

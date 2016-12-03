@@ -3,7 +3,7 @@
  * status.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://neon1.net/m0n0wall)
@@ -165,7 +165,7 @@ defCmdT("System Uptime", "/usr/bin/uptime");
 defCmdT("Interfaces", "/sbin/ifconfig -a");
 defCmdT("Interface Statistics", "/usr/bin/netstat -nWi");
 defCmdT("Top Process Info", "/usr/bin/top | /usr/bin/head -n5");
-defCmdT("Processes", "/bin/ps xauww");
+defCmdT("Processes", "/bin/ps xauwwd");
 defCmdT("Mounted Filesystems", "/sbin/mount");
 defCmdT("Free Disk Space", "/bin/df -hi");
 defCmdT("Routing tables", "/usr/bin/netstat -nWr");
@@ -185,7 +185,7 @@ defCmdT("pf Info", "/sbin/pfctl -si");
 defCmdT("pf Show All", "/sbin/pfctl -sa");
 defCmdT("pf Queues", "/sbin/pfctl -s queue -v");
 defCmdT("pf OSFP", "/sbin/pfctl -s osfp");
-defCmdT("pfsync Stats", "/usr/bin/netstat -s -ppfsync");
+defCmdT("Network Protocol Statistics", "/usr/bin/netstat -s");
 defCmdT("pftop Default", "/usr/local/sbin/pftop -a -b");
 defCmdT("pftop Long", "/usr/local/sbin/pftop -w 150 -a -b -v long");
 defCmdT("pftop Queue", "/usr/local/sbin/pftop -w 150 -a -b -v queue");

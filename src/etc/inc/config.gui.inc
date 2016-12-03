@@ -3,7 +3,7 @@
  * config.gui.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -43,13 +43,6 @@ if (file_exists("/cf/conf/use_xmlreader")) {
 	require_once("xmlparse.inc");
 }
 require_once("crypt.inc");
-
-/* read platform */
-if (file_exists("{$g['etc_path']}/platform")) {
-	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
-} else {
-	$g['platform'] = "unknown";
-}
 
 /* if /debugging exists, lets set $debugging
    so we can output more information */

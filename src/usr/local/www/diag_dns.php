@@ -3,7 +3,7 @@
  * diag_dns.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,7 +62,7 @@ function resolve_host_addresses($host) {
 		}
 	}
 	error_reporting($errreporting);// restore original php warning/error settings.
-	
+
 	foreach ($dnsresult as $item) {
 		$newitem = array();
 		$newitem['type'] = $item['type'];
@@ -79,7 +79,6 @@ function resolve_host_addresses($host) {
 				$newitem['data'] = $item['ipv6'];
 				$resolved[] = $newitem;
 				break;
-				
 		}
 	}
 	return $resolved;
@@ -152,9 +151,8 @@ if ($_POST) {
 	}
 
 	$type = "unknown";
-	$resolved = "";
+	$resolved = array();
 	$ipaddr = "";
-	$hostname = "";
 	if (!$input_errors) {
 		if (is_ipaddr($host)) {
 			$type = "ip";
@@ -168,24 +166,15 @@ if ($_POST) {
 			}
 		} elseif (is_hostname($host)) {
 			$type = "hostname";
-			$resolved = gethostbyname($host);
-			if ($resolved) {
-				$resolved = resolve_host_addresses($host);
-			}
-			$hostname = $host;
-			if ($host != $resolved) {
-				$ipaddr = $resolved[0];
-			}
-		}
-
-		if ($host == $resolved) {
-			$resolved = gettext("No record found");
+			$ipaddr = gethostbyname($host);
+			$resolved = resolve_host_addresses($host);
 		}
 	}
 }
 
-if (($_POST['host']) && ($_POST['dialog_output'])) {
-	display_host_results ($host, $resolved, $dns_speeds);
+if ($_POST['host'] && $_POST['dialog_output']) {
+	$host = (isset($resolvedptr) ? $resolvedptr : $host);
+	display_host_results ($ipaddr, $host, $dns_speeds);
 	exit;
 }
 
@@ -267,7 +256,7 @@ if (!$input_errors && $type) {
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Results')?></h2></div>
 	<div class="panel-body">
-		
+
 		<table class="table">
 		<thead>
 			<tr>

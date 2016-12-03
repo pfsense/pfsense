@@ -3,7 +3,7 @@
 # build_snapshots.sh
 #
 # part of pfSense (https://www.pfsense.org)
-# Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+# Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
 # All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -181,7 +181,7 @@ while [ /bin/true ]; do
 			snapshot_update_status "${LINE}"
 		done
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '2g 4g' \
+		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
 		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial iso" 2>&1) \
 		    | while read -r LINE; do
 			snapshot_update_status "${LINE}"

@@ -3,7 +3,7 @@
  * services_checkip.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -156,9 +156,12 @@ endforeach; ?>
 	</a>
 </nav>
 
-<?php
-print_info_box(gettext('The first (highest in list) enabled check ip service will be used to ' . 
-						'check IP addresses for Dynamic DNS services, and ' .
-						'RFC 2136 entries that have the "Use public IP" option enabled.'));
+<div class="infoblock">
+	<?php print_info_box(gettext(
+	'The first (highest in list) enabled check ip service will be used to ' . 
+	'check IP addresses for Dynamic DNS services, and ' .
+	'RFC 2136 entries that have the "Use public IP" option enabled.'
+	), 'info', false); ?>
+</div>
 
-include("foot.inc");
+<?php include("foot.inc");

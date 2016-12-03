@@ -4,7 +4,7 @@
  * rc.captiveportal_configure_mac
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2015 Electric Sheep Fencing, LLC
+ * Copyright (c) 2015 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,6 +39,6 @@ $filename = "{$g['tmp_path']}/{$cpzoneidx}_mac_{$startidx}_{$stopidx}";
 captiveportal_passthrumac_configure($filename, $startidx, $stopidx);
 //log_error("STOPPED: " .time() . " - {$cpzone} : $startidx : {$stopidx} : {$cpzoneidx} : {$filename}");
 
-mwexec("/sbin/ipfw -x {$cpzoneidx} -q {$filename}");
+mwexec("/sbin/ipfw -q {$filename}");
 @unlink($filename);
 ?>

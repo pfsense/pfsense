@@ -3,7 +3,7 @@
  * xmlreader.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -187,7 +187,8 @@ function dump_xml_config_sub(& $writer, $arr) {
 				foreach ($val as $cval) {
 					if (is_array($cval)) {
 						if (empty($cval)) {
-							$writer->writeElement($ent);
+							$writer->startElement($ent);
+							$writer->endElement();
 						} else {
 							$writer->startElement($ent);
 							dump_xml_config_sub($writer, $cval);
@@ -198,14 +199,16 @@ function dump_xml_config_sub(& $writer, $arr) {
 							continue;
 						}
 						if ((is_bool($val) && ($val == true)) || ($val === "")) {
-							$writer->writeElement($ent);
+							$writer->startElement($ent);
+							$writer->endElement();
 						} else if (!is_bool($val)) {
 							$writer->writeElement($ent, $cval);
 						}
 					}
 				}
 			} else if (empty($val)) {
-				$writer->writeElement($ent);
+				$writer->startElement($ent);
+				$writer->endElement();
 			} else {
 				/* it's an array */
 				$writer->startElement($ent);
@@ -214,7 +217,8 @@ function dump_xml_config_sub(& $writer, $arr) {
 			}
 		} else {
 			if ((is_bool($val) && ($val == true)) || ($val === "")) {
-				$writer->writeElement($ent);
+				$writer->startElement($ent);
+				$writer->endElement();
 			} else if (!is_bool($val)) {
 				$writer->writeElement($ent, $val);
 			}
@@ -231,6 +235,8 @@ function dump_xml_config($arr, $rootobj) {
 			$listtags[$tag] = $tag;
 		}
 	}
+
+
 	return dump_xml_config_raw($arr, $rootobj);
 }
 

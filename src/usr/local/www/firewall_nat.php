@@ -3,7 +3,7 @@
  * firewall_nat.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -129,6 +129,7 @@ if (isset($_POST['del_x'])) {
 	/* delete selected rules */
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		$a_separators = &$config['nat']['separator'];
+		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
 			$target = $rule['target'];
@@ -136,16 +137,17 @@ if (isset($_POST['del_x'])) {
 			// Check for filter rule associations
 			if (isset($a_nat[$rulei]['associated-rule-id'])) {
 				delete_id($a_nat[$rulei]['associated-rule-id'], $config['filter']['rule']);
-
 				mark_subsystem_dirty('filter');
 			}
 
 			unset($a_nat[$rulei]);
 
 			// Update the separators
-			$ridx = $rulei;
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			$ridx = $rulei - $num_deleted;
 			$mvnrows = -1;
 			move_separators($a_separators, $ridx, $mvnrows);
+			$num_deleted++;
 		}
 
 		if (write_config()) {
@@ -191,6 +193,14 @@ display_top_tabs($tab_array);
 
 $columns_in_table = 13;
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">

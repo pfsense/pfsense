@@ -3,7 +3,7 @@
  * services_dhcp.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -175,6 +175,7 @@ if (is_array($dhcpdconf)) {
 	$pconfig['ddnsdomainkeyname'] = $dhcpdconf['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $dhcpdconf['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($dhcpdconf['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($dhcpdconf['ddnsforcehostname']);
 	$pconfig['mac_allow'] = $dhcpdconf['mac_allow'];
 	$pconfig['mac_deny'] = $dhcpdconf['mac_deny'];
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $dhcpdconf['ntpserver'];
@@ -541,6 +542,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$dhcpdconf['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$dhcpdconf['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$dhcpdconf['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 		$dhcpdconf['mac_allow'] = $_POST['mac_allow'];
 		$dhcpdconf['mac_deny'] = $_POST['mac_deny'];
 
@@ -632,6 +634,10 @@ if ($act == "delpool") {
 
 if ($act == "del") {
 	if ($a_maps[$_GET['id']]) {
+		/* Remove static ARP entry, if necessary */
+		if (isset($a_maps[$_GET['id']]['arp_table_static_entry'])) {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($a_maps[$_GET['id']]['ipaddr']));
+		}
 		unset($a_maps[$_GET['id']]);
 		write_config();
 		if (isset($config['dhcpd'][$if]['enable'])) {
@@ -840,13 +846,15 @@ $group = new Form_Group('Range');
 $group->add(new Form_IpAddress(
 	'range_from',
 	null,
-	$pconfig['range_from']
+	$pconfig['range_from'],
+	'V4'
 ))->setHelp('From');
 
 $group->add(new Form_IpAddress(
 	'range_to',
 	null,
-	$pconfig['range_to']
+	$pconfig['range_to'],
+	'V4'
 ))->setHelp('To');
 
 $section->add($group);
@@ -884,21 +892,24 @@ $section = new Form_Section('Servers');
 $section->addInput(new Form_IpAddress(
 	'wins1',
 	'WINS servers',
-	$pconfig['wins1']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 1');
+	$pconfig['wins1'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 1');
 
 $section->addInput(new Form_IpAddress(
 	'wins2',
 	null,
-	$pconfig['wins2']
-))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'WINS Server 2');
+	$pconfig['wins2'],
+	'V4'
+))->setAttribute('placeholder', 'WINS Server 2');
 
 for ($idx=1; $idx<=4; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'dns' . $idx,
 		($idx == 1) ? 'DNS servers':null,
-		$pconfig['dns' . $idx]
-	))->setPattern('[.a-zA-Z0-9_]+')->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
+		$pconfig['dns' . $idx],
+		'V4'
+	))->setAttribute('placeholder', 'DNS Server ' . $idx)->setHelp(($idx == 4) ? 'Leave blank to use the system default DNS servers: this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the System / General Setup page.':'');
 }
 
 $form->add($section);
@@ -908,7 +919,8 @@ $section = new Form_Section('Other Options');
 $section->addInput(new Form_IpAddress(
 	'gateway',
 	'Gateway',
-	$pconfig['gateway']
+	$pconfig['gateway'],
+	'V4'
 ))->setPattern('[.a-zA-Z0-9_]+')
   ->setHelp('The default is to use the IP on this interface of the firewall as the gateway. Specify an alternate gateway here if this is not the correct gateway for the network. Type "none" for no gateway assignment.');
 
@@ -944,7 +956,8 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 	$section->addInput(new Form_IpAddress(
 		'failover_peerip',
 		'Failover peer IP',
-		$pconfig['failover_peerip']
+		$pconfig['failover_peerip'],
+		'V4'
 	))->setHelp('Leave blank to disable. Enter the interface IP address of the other machine. Machines must be using CARP. ' .
 				'Interface\'s advskew determines whether the DHCPd process is Primary or Secondary. Ensure one machine\'s advskew &lt; 20 (and the other is &gt; 20).');
 }
@@ -1002,10 +1015,18 @@ $section->addInput(new Form_Input(
 ))->setHelp('Leave blank to disable dynamic DNS registration.' . '<br />' .
 			'Enter the dynamic DNS domain which will be used to register client names in the DNS server.');
 
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	'DDNS Hostnames',
+	'Force dynamic DNS hostname to be the same as configured hostname for Static Mappings',
+	$pconfig['ddnsforcehostname']
+))->setHelp('Default registers host name option supplied by DHCP client.');
+
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'Primary DDNS address',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
@@ -1069,14 +1090,16 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_IpAddress(
 	'ntp1',
 	'NTP Server 1',
-	$pconfig['ntp1']
-))->setPattern('[.a-zA-Z0-9_]+');
+	$pconfig['ntp1'],
+	'V4'
+))->setPattern('[.a-zA-Z0-9-]+');
 
 $section->addInput(new Form_IpAddress(
 	'ntp2',
 	'NTP Server 2',
-	$pconfig['ntp2']
-))->setPattern('[.a-zA-Z0-9_]+');
+	$pconfig['ntp2'],
+	'V4'
+))->setPattern('[.a-zA-Z0-9-]+');
 
 // Advanced TFTP
 $btnadv = new Form_Button(
@@ -1146,7 +1169,8 @@ $section->addInput(new Form_Checkbox(
 $section->addInput(new Form_IpAddress(
 	'nextserver',
 	'Next Server',
-	$pconfig['nextserver']
+	$pconfig['nextserver'],
+	'V4'
 ))->setHelp('Enter the IP address of the next server');
 
 $section->addInput(new Form_Input(
@@ -1381,7 +1405,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
@@ -1396,6 +1420,7 @@ events.push(function() {
 
 		hideCheckbox('ddnsupdate', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);
 		hideInput('ddnsdomainkey', !showadvdns);

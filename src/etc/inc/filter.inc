@@ -5,7 +5,7 @@
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2005 Bill Marquette
  * Copyright (c) 2006 Peter Allgeyer
- * Copyright (c) 2008-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2008-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -232,7 +232,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$filterlck = lock('filter', LOCK_EX);
 
 	filter_pflog_start();
-	update_filter_reload_status(gettext("Initializing"));
+	update_filter_reload_status(gettext("Initializing"), true);  // second argument = overwrite existing file
 
 	/* invalidate interface cache */
 	get_interface_arr(true);
@@ -730,14 +730,12 @@ function filter_generate_aliases() {
 	$aliases .= "table <snort2c>\n";
 	$aliases .= "table <virusprot>\n";
 	if (!file_exists("/etc/bogons") || !file_exists("/etc/bogonsv6")) {
-		conf_mount_rw();
 		if (!file_exists("/etc/bogons")) {
 			@file_put_contents("/etc/bogons", "");
 		}
 		if (!file_exists("/etc/bogonsv6")) {
 			@file_put_contents("/etc/bogonsv6", "");
 		}
-		conf_mount_ro();
 	}
 	$aliases .= "table <bogons> persist file \"/etc/bogons\"\n";
 	if (is_bogonsv6_used()) {
@@ -2035,6 +2033,11 @@ function filter_nat_rules_generate() {
 				$obtarget = ($obent['target'] == "other-subnet") ? $obent['targetip'] . '/' . $obent['targetip_subnet']: $obent['target'];
 				$poolopts = (is_subnet($obtarget) || is_alias($obtarget)) ? $obent['poolopts'] : "";
 
+				/* pool option source-hash allows specification of an optional source-hash key */
+				if ($poolopts == "source-hash" && !empty($obent['source_hash_key'])) {
+					$poolopts = "source-hash ".$obent['source_hash_key'];
+				}
+
 				$natrules .= filter_nat_rules_generate_if($obent['interface'],
 					$src,
 					$obent['sourceport'],
@@ -3105,6 +3108,11 @@ block out {$log['block']} inet all tracker {$increment_tracker($tracker)} label 
 block in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 block out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
+EOD;
+
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
+
 # IPv6 ICMP is not auxilary, it is required for operation
 # See man icmp6(4)
 # 1    unreach         Destination unreachable
@@ -3124,11 +3132,22 @@ pass in {$log['pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 i
 pass in {$log['pass']} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 pass in {$log['pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 
+EOD;
+	}
+	$ipfrules .= <<<EOD
 # We use the mighty pf, we cannot be fooled.
 block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
+EOD;
+	}
+	$ipfrules .= <<<EOD
 
 # Snort package
 block {$log['block']} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
@@ -3469,13 +3488,27 @@ EOD;
 # loopback
 pass in {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
 pass out {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 pass in {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
 pass out {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
+
+EOD;
+	}
+	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out {$log['pass']} inet all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv4 from firewall host itself"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 pass out {$log['pass']} inet6 all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv6 from firewall host itself"
 
 EOD;
+	}
+	$ipfrules .= "\n";
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;

@@ -3,7 +3,7 @@
  * interfaces_vlan.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -131,7 +131,7 @@ display_top_tabs($tab_array);
 							<td>
 								<a class="fa fa-pencil"	title="<?=gettext('Edit VLAN')?>"	role="button" href="interfaces_vlan_edit.php?id=<?=$i?>"></a>
 <!--						<a class="btn btn-danger btn-xs" role="button" href="interfaces_vlan.php?act=del&amp;id=<?=$i?>"><?=gettext('Delete')?></a></td> -->
-								<a class="fa fa-trash"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
+								<a class="fa fa-trash no-confirm"	title="<?=gettext('Delete VLAN')?>"	role="button" id="del-<?=$i?>"></a>
 							</td>
 						</tr>
 <?php
@@ -159,15 +159,23 @@ display_top_tabs($tab_array);
 		'tagging will still work, but the reduced MTU may cause problems.<br />See the '.
 		'%s handbook for information on supported cards.'), $g['product_name']), 'info', false); ?>
 </div>
+
+<?php
+	$delmsg = gettext("Are you sure you want to delete this VLAN?");
+?>
+
 <script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Select 'delete button' clicks, extract the id, set the hidden input values and submit
 	$('[id^=del-]').click(function(event) {
-		$('#act').val('del');
-		$('#id').val(this.id.replace("del-", ""));
-		$(this).parents('form').submit();
+		if (confirm("<?=$delmsg?>")) {
+			$('#act').val('del');
+			$('#id').val(this.id.replace("del-", ""));
+			$(this).parents('form').submit();
+		}
 	});
+
 });
 //]]>
 </script>

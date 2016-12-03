@@ -5,7 +5,7 @@
  *
  * part of pfSense
  * Copyright (c) 2005 Colin Smith
- * Copyright (c) 2005-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2005-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,18 +29,8 @@ require_once("interfaces.inc");
 $hostname = $config['system']['hostname'];
 $product = $g['product_name'];
 $machine = trim(`uname -m`);
-$hideplatform = $g['hideplatform'];
 
-if (!$hideplatform) {
-	if ($g['platform'] == $g['product_name']) {
-		$platform = "full-install";
-	} else {
-		$platform = $g['platform'];
-	}
-	$platformbanner = " {$platform}";
-}
-
-print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}{$platformbanner}) on {$hostname} ***\n";
+print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";
 
 $iflist = get_configured_interface_with_descr(false, true);
 foreach ($iflist as $ifname => $friendly) {

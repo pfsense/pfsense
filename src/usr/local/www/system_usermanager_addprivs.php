@@ -3,7 +3,7 @@
  * system_usermanager_addprivs.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt.
  * All rights reserved.
  *
@@ -60,7 +60,6 @@ uasort($spriv_list, "admusercmp");
 
 if ($_POST) {
 
-	conf_mount_rw();
 
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -87,14 +86,12 @@ if ($_POST) {
 		local_user_set($a_user);
 		$retval = write_config();
 		$savemsg = get_std_save_message($retval);
-		conf_mount_ro();
 
 		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 
 		exit;
 	}
 
-	conf_mount_ro();
 }
 
 function build_priv_list() {

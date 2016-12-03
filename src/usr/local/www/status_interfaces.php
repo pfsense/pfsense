@@ -3,7 +3,7 @@
  * status_interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -124,7 +124,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 				showDef($ifinfo['subnetv6'], gettext('Subnet mask IPv6'), $ifinfo['subnetv6']);
 				showDef($ifinfo['gatewayv6'], gettext("Gateway IPv6"), $config['interfaces'][$ifdescr]['gatewayv6'] . " " . $ifinfo['gatewayv6']);
 
-				if ($ifdescr == "wan" && file_exists("{$g['varetc_path']}/resolv.conf")) {
+				if ($ifdescr == "wan" && file_exists("{$g['etc_path']}/resolv.conf")) {
 					$dns_servers = get_dns_servers();
 					$dnscnt = 0;
 					foreach ($dns_servers as $dns) {

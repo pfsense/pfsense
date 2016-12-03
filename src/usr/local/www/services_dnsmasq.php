@@ -3,7 +3,7 @@
  * services_dnsmasq.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2003-2004 Bob Zoller <bob@kludgebox.com>
  * All rights reserved.
  *
@@ -37,6 +37,36 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("system.inc");
 
+// Sort host entries for display in alphabetical order
+function hostcmp($a, $b) {
+	return strcasecmp($a['host'], $b['host']);
+}
+
+function hosts_sort() {
+	global $a_hosts;
+
+	if (!is_array($a_hosts)) {
+		return;
+	}
+
+	usort($a_hosts, "hostcmp");
+}
+
+// Sort domain entries for display in alphabetical order
+function domaincmp($a, $b) {
+	return strcasecmp($a['domain'], $b['domain']);
+}
+
+function domains_sort() {
+	global $a_domainOverrides;
+
+	if (!is_array($a_domainOverrides)) {
+		return;
+	}
+
+	usort($a_domainOverrides, "domaincmp");
+}
+
 $pconfig['enable'] = isset($config['dnsmasq']['enable']);
 $pconfig['regdhcp'] = isset($config['dnsmasq']['regdhcp']);
 $pconfig['regdhcpstatic'] = isset($config['dnsmasq']['regdhcpstatic']);
@@ -46,8 +76,8 @@ $pconfig['domain_needed'] = isset($config['dnsmasq']['domain_needed']);
 $pconfig['no_private_reverse'] = isset($config['dnsmasq']['no_private_reverse']);
 $pconfig['port'] = $config['dnsmasq']['port'];
 $pconfig['custom_options'] = $config['dnsmasq']['custom_options'];
-
 $pconfig['strictbind'] = isset($config['dnsmasq']['strictbind']);
+
 if (!empty($config['dnsmasq']['interface'])) {
 	$pconfig['interface'] = explode(",", $config['dnsmasq']['interface']);
 } else {
@@ -63,7 +93,22 @@ if (!is_array($config['dnsmasq']['domainoverrides'])) {
 }
 
 $a_hosts = &$config['dnsmasq']['hosts'];
+
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_hosts); $idx++) {
+	$a_hosts[$idx]['idx'] = $idx;
+}
+
+hosts_sort();
+
 $a_domainOverrides = &$config['dnsmasq']['domainoverrides'];
+
+// Add a temporary index so we don't lose the order after sorting
+for ($idx=0; $idx<count($a_domainOverrides); $idx++) {
+	$a_domainOverrides[$idx]['idx'] = $idx;
+}
+
+domains_sort();
 
 if ($_POST) {
 	if ($_POST['apply']) {
@@ -341,8 +386,8 @@ foreach ($a_hosts as $i => $hostent):
 						<?=htmlspecialchars($hostent['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit host override')?>" 	href="services_dnsmasq_edit.php?id=<?=$hostent['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete host override')?>"	href="services_dnsmasq.php?type=host&amp;act=del&amp;id=<?=$hostent['idx']?>"></a>
 					</td>
 				</tr>
 
@@ -413,8 +458,8 @@ foreach ($a_domainOverrides as $i => $doment):
 						<?=htmlspecialchars($doment['descr'])?>
 					</td>
 					<td>
-						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$i?>"></a>
-						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$i?>"></a>
+						<a class="fa fa-pencil"	title="<?=gettext('Edit domain override')?>" href="services_dnsmasq_domainoverride_edit.php?id=<?=$doment['idx']?>"></a>
+						<a class="fa fa-trash"	title="<?=gettext('Delete domain override')?>" href="services_dnsmasq.php?act=del&amp;type=doverride&amp;id=<?=$doment['idx']?>"></a>
 					</td>
 				</tr>
 <?php

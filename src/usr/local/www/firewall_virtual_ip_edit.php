@@ -3,7 +3,7 @@
  * firewall_virtual_ip_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Bill Marquette <bill.marquette@gmail.com>
  * All rights reserved.
  *
@@ -72,7 +72,6 @@ if (isset($id) && $a_vip[$id]) {
 	$pconfig['advskew'] = $a_vip[$id]['advskew'];
 	$pconfig['advbase'] = $a_vip[$id]['advbase'];
 	$pconfig['password'] = $a_vip[$id]['password'];
-	$pconfig['range'] = $a_vip[$id]['range'];
 	$pconfig['subnet'] = $a_vip[$id]['subnet'];
 	$pconfig['subnet_bits'] = $a_vip[$id]['subnet_bits'];
 	$pconfig['noexpand'] = $a_vip[$id]['noexpand'];
@@ -210,14 +209,8 @@ if ($_POST) {
 		$vipent['mode'] = $_POST['mode'];
 		$vipent['interface'] = $_POST['interface'];
 
-		/* ProxyARP specific fields */
-		if ($_POST['mode'] === "proxyarp") {
-			if ($_POST['type'] == "range") {
-				$vipent['range']['from'] = $_POST['range_from'];
-				$vipent['range']['to'] = $_POST['range_to'];
-
-			}
-
+		/* ProxyARP & Other specific fields */
+		if (($_POST['mode'] === "proxyarp") || ($_POST['mode'] === "other")) {
 			$vipent['noexpand'] = isset($_POST['noexpand']);
 		}
 
@@ -373,7 +366,7 @@ $section->addInput(new Form_Select(
 $section->addInput(new Form_Select(
 	'type',
 	'Address type',
-	((!$pconfig['range'] && $pconfig['subnet_bits'] == 32) || (!isset($pconfig['subnet']))) ? 'single':'network',
+	(!isset($pconfig['subnet'])) ? 'single':'network',
 	array(
 		'single' => gettext('Single address'),
 		'network' => gettext('Network')
@@ -508,10 +501,12 @@ events.push(function() {
 			$('#address_note').html("<?=$proxyarphelp?>");
 			disableInput('type', false);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
+			hideCheckbox('noexpand', false);
 		} else {
 			$('#address_note').html('');
 			disableInput('type', false);
 			disableInput('subnet_bits', ($('#type').val() == 'single'));
+			hideCheckbox('noexpand', false);
 		}
 	}
 

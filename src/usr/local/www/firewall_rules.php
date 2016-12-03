@@ -3,7 +3,7 @@
  * firewall_rules.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -163,14 +163,10 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 }
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if) {
+	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
+		$if = "wan";
+	} else {
 		$if = "FloatingRules";
-	} else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan'])) {
-			$if = "wan";
-		} else {
-			$if = "FloatingRules";
-		}
 	}
 }
 
@@ -221,6 +217,7 @@ if (isset($_POST['del_x'])) {
 
 	if (is_array($_POST['rule']) && count($_POST['rule'])) {
 		$a_separators = &$config['filter']['separator'][strtolower($if)];
+		$num_deleted = 0;
 
 		foreach ($_POST['rule'] as $rulei) {
 			delete_nat_association($a_filter[$rulei]['associated-rule-id']);
@@ -228,9 +225,11 @@ if (isset($_POST['del_x'])) {
 			$deleted = true;
 
 			// Update the separators
-			$ridx = ifridx($if, $rulei);	// get rule index within interface
+			// As rules are deleted, $ridx has to be decremented or separator position will break
+			$ridx = ifridx($if, $rulei) - $num_deleted;	// get rule index within interface
 			$mvnrows = -1;
 			move_separators($a_separators, $ridx, $mvnrows);
+			$num_deleted++;
 		}
 
 		if ($deleted) {
@@ -363,11 +362,20 @@ $rulescnt = pfSense_get_pf_rules();
 $columns_in_table = 13;
 
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
+
 <form method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table id="ruletable" class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -947,6 +955,9 @@ events.push(function() {
 
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
+		scroll: true,
+		overflow: 'scroll',
+		scrollSensitivity: 100,
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			reindex_rules(ui.item.parent('tbody'));

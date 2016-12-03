@@ -3,7 +3,7 @@
  * services_captiveportal_mac.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2004 Dinesh Nair <dinesh@alphaque.com>
  * All rights reserved.
  *
@@ -44,7 +44,7 @@ $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
 }
-$cpzone = strtolower($cpzone);
+$cpzone = strtolower(htmlspecialchars($cpzone));
 
 if (empty($cpzone) || empty($config['captiveportal'][$cpzone])) {
 	header("Location: services_captiveportal_zones.php");
@@ -73,7 +73,7 @@ if ($_POST) {
 			$rules = captiveportal_passthrumac_configure();
 			if (!empty($rules)) {
 				@file_put_contents("{$g['tmp_path']}/passthrumac_gui", $rules);
-				mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/passthrumac_gui");
+				mwexec("/sbin/ipfw {$g['tmp_path']}/passthrumac_gui");
 				@unlink("{$g['tmp_path']}/passthrumac_gui");
 			}
 			$savemsg = get_std_save_message($retval);
@@ -120,7 +120,7 @@ if ($_POST) {
 				$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$idx]);
 				$uniqid = uniqid("{$cpzone}_mac");
 				file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-				mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+				mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 				@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 				unset($a_passthrumacs[$idx]);
 				write_config();
@@ -141,7 +141,7 @@ if ($_GET['act'] == "del") {
 		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_GET['id']]);
 		$uniqid = uniqid("{$cpzone}_mac");
 		file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-		mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 		@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();
@@ -170,7 +170,7 @@ $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_fil
 display_top_tabs($tab_array, true);
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
+	<table class="table table-hover table-striped table-condensed sortable-theme-bootstrap table-rowdblclickedit" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext('Action')?></th>

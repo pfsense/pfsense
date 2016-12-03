@@ -3,7 +3,7 @@
  * system_groupmanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005 Paul Taylor <paultaylor@winn-dixie.com>
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
@@ -73,9 +73,7 @@ if ($act == "delgroup") {
 		exit;
 	}
 
-	conf_mount_rw();
 	local_group_del($a_group[$id]);
-	conf_mount_ro();
 	$groupdeleted = $a_group[$id]['name'];
 	unset($a_group[$id]);
 	write_config();
@@ -124,9 +122,7 @@ if (isset($_GET['dellall_x'])) {
 	if (!empty($del_groups)) {
 		foreach ($del_groups as $groupid) {
 			if (isset($a_group[$groupid]) && $a_group[$groupid]['scope'] != "system") {
-				conf_mount_rw();
 				local_group_del($a_group[$groupid]);
-				conf_mount_ro();
 				unset($a_group[$groupid]);
 			}
 		}
@@ -203,9 +199,7 @@ if (isset($_POST['save'])) {
 
 		admin_groups_sort();
 
-		conf_mount_rw();
 		local_group_set($group);
-		conf_mount_ro();
 
 		/* Refresh users in this group since their privileges may have changed. */
 		if (is_array($group['member'])) {

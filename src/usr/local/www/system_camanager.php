@@ -3,7 +3,7 @@
  * system_camanager.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2008 Shrew Soft Inc
  * All rights reserved.
  *
@@ -75,13 +75,15 @@ if ($act == "del") {
 		exit;
 	}
 
+	/* Only remove CA reference when deleting. It can be reconnected if a new matching CA is imported */
 	$index = count($a_cert) - 1;
 	for (;$index >= 0; $index--) {
 		if ($a_cert[$index]['caref'] == $a_ca[$id]['refid']) {
-			unset($a_cert[$index]);
+			unset($a_cert[$index]['caref']);
 		}
 	}
 
+	/* Remove any CRLs for this CA, there is no way to recover the connection once the CA has been removed. */
 	$index = count($a_crl) - 1;
 	for (;$index >= 0; $index--) {
 		if ($a_crl[$index]['caref'] == $a_ca[$id]['refid']) {
@@ -172,6 +174,9 @@ if ($_POST) {
 		}
 		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
+		}
+		if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 		}
 	}
 	if ($pconfig['method'] == "internal") {
@@ -359,6 +364,7 @@ if (!($act == "new" || $act == "edit" || $act == gettext("Save") || $input_error
 					<th><?=gettext("Issuer")?></th>
 					<th><?=gettext("Certificates")?></th>
 					<th><?=gettext("Distinguished Name")?></th>
+					<th><?=gettext("In Use")?></th>
 					<th><?=gettext("Actions")?></th>
 				</tr>
 			</thead>
@@ -407,13 +413,29 @@ foreach ($a_ca as $i => $ca):
 							<?=gettext("Valid From")?>: <b><?=$startdate ?></b><br /><?=gettext("Valid Until")?>: <b><?=$enddate ?></b>
 						</small>
 					</td>
-					<td>
+					<td class="text-nowrap">
+						<?php if (is_openvpn_server_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Server")?><br/>
+						<?php endif?>
+						<?php if (is_openvpn_client_ca($ca['refid'])): ?>
+							<?=gettext("OpenVPN Client")?><br/>
+						<?php endif?>
+						<?php if (is_ipsec_peer_ca($ca['refid'])): ?>
+							<?=gettext("IPsec Tunnel")?><br/>
+						<?php endif?>
+						<?php if (is_ldap_peer_ca($ca['refid'])): ?>
+							<?=gettext("LDAP Server")?>
+						<?php endif?>
+					</td>
+					<td class="text-nowrap">
 						<a class="fa fa-pencil"	title="<?=gettext("Edit CA")?>"	href="system_camanager.php?act=edit&amp;id=<?=$i?>"></a>
 						<a class="fa fa-certificate"	title="<?=gettext("Export CA")?>"	href="system_camanager.php?act=exp&amp;id=<?=$i?>"></a>
 					<?php if ($ca['prv']): ?>
 						<a class="fa fa-key"	title="<?=gettext("Export key")?>"	href="system_camanager.php?act=expkey&amp;id=<?=$i?>"></a>
 					<?php endif?>
-						<a class="fa fa-trash" 	title="<?=gettext("Delete CA")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+					<?php if (!ca_in_use($ca['refid'])): ?>
+						<a class="fa fa-trash" 	title="<?=gettext("Delete CA and its CRLs")?>"	href="system_camanager.php?act=del&amp;id=<?=$i?>"></a>
+					<?php endif?>
 					</td>
 				</tr>
 <?php endforeach; ?>

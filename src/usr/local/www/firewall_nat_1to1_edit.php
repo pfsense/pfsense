@@ -3,7 +3,7 @@
  * firewall_nat_1to1_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -312,21 +312,20 @@ function build_dsttype_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
-
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
 					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-
+			} else {
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}
 		}
@@ -439,7 +438,7 @@ $group->add(new Form_IpAddress(
 	'src',
 	null,
 	is_specialnet($pconfig['src']) ? '': $pconfig['src']
-))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+))->addMask('srcmask', $pconfig['srcmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9.:_]+');
 
 $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 				'The subnet size specified for the internal subnet will be applied to the external subnet.');
@@ -466,7 +465,7 @@ $group->add(new Form_IpAddress(
 	'dst',
 	null,
 	is_specialnet($pconfig['dst']) ? '': $pconfig['dst']
-))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9\.\:\_]+');
+))->addMask('dstmask', $pconfig['dstmask'], 31)->setHelp('Address/mask')->setPattern('[a-zA-Z0-9.:_]+');
 
 $group->setHelp('The 1:1 mapping will only be used for connections to or from the specified destination. Hint: this is usually "Any".');
 

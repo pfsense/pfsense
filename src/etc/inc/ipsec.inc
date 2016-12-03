@@ -4,7 +4,7 @@
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2008 Shrew Soft Inc.
- * Copyright (c) 2007-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2007-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -597,8 +597,12 @@ function ipsec_dump_sad() {
  * Return dump of mobile user list
  */
 function ipsec_dump_mobile() {
-	global $g;
+	global $g, $config;
 
+	if(!isset($config['ipsec']['client']['enable'])) {
+		return array();
+	}
+	
 	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
 	if ($rc != 0) {

@@ -3,7 +3,7 @@
  * index.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally based on m0n0wall (http://m0n0.ch/wall)
@@ -155,19 +155,15 @@ if (file_exists("/usr/sbin/swapinfo")) {
 ## If packages are installed lets resync
 if (file_exists('/conf/needs_package_sync')) {
 	if ($config['installedpackages'] <> '' && is_array($config['installedpackages']['package'])) {
-		if ($g['platform'] == $g['product_name'] || $g['platform'] == "nanobsd") {
-			## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
-			## the package reinstall page. That is about to be done by the boot script anyway.
-			## The code in head.inc will put up a notice to the user.
-			if (!platform_booting()) {
-				header('Location: pkg_mgr_install.php?mode=reinstallall');
-				exit;
-			}
+		## If the user has logged into webGUI quickly while the system is booting then do not redirect them to
+		## the package reinstall page. That is about to be done by the boot script anyway.
+		## The code in head.inc will put up a notice to the user.
+		if (!platform_booting()) {
+			header('Location: pkg_mgr_install.php?mode=reinstallall');
+			exit;
 		}
 	} else {
-		conf_mount_rw();
 		@unlink('/conf/needs_package_sync');
-		conf_mount_ro();
 	}
 }
 
@@ -211,8 +207,7 @@ if ($fd) {
 			or preg_match("/.*(VIA Padlock)/", $dmesgl, $matches)
 			or preg_match("/^safe.: (\w.*)/", $dmesgl, $matches)
 			or preg_match("/^ubsec.: (.*?),/", $dmesgl, $matches)
-			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)
-			or preg_match("/^glxsb.: (.*?),/", $dmesgl, $matches)) {
+			or preg_match("/^padlock.: <(.*?)>,/", $dmesgl, $matches)) {
 			$hwcrypto = $matches[1];
 			break;
 		}

@@ -3,7 +3,7 @@
  * services_captiveportal_zones_edit.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -62,7 +62,7 @@ if ($_POST) {
 	}
 
 	if (!$input_errors) {
-		$cpzone = strtolower($_POST['zone']);
+		$cpzone = strtolower(htmlspecialchars($_POST['zone']));
 		$a_cp[$cpzone] = array();
 		$a_cp[$cpzone]['zone'] = str_replace(" ", "", $_POST['zone']);
 		$a_cp[$cpzone]['descr'] = $_POST['descr'];

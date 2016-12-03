@@ -3,7 +3,7 @@
  * config.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * originally part of m0n0wall (http://m0n0.ch/wall)
@@ -57,13 +57,6 @@ if (file_exists("/cf/conf/use_xmlreader")) {
 }
 require_once("crypt.inc");
 
-/* read platform */
-if (file_exists("{$g['etc_path']}/platform")) {
-	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
-} else {
-	$g['platform'] = "unknown";
-}
-
 /* if /debugging exists, lets set $debugging
    so we can output more information */
 if (file_exists("/debugging")) {
@@ -83,9 +76,7 @@ if (platform_booting(true)) {
 			if (!config_validate("{$g['conf_path']}/config.xml")) {
 				log_error(gettext("ERROR!  Could not convert m0n0wall -> pfsense in config.xml"));
 			}
-			conf_mount_rw();
 			file_put_contents("/cf/conf/config.xml", $config_contents);
-			conf_mount_ro();
 		}
 		unset($config_contents);
 	}
@@ -98,63 +89,44 @@ if (platform_booting(true)) {
 		/* check if there's already an fstab (NFS booting?) */
 		if (!file_exists("{$g['etc_path']}/fstab")) {
 			echo ".";
-			if (strstr($g['platform'], "cdrom")) {
-				/* config is on floppy disk for CD-ROM version */
-				$cfgdevice = $cfgpartition = "fd0";
-				$_gb = exec('/sbin/dmesg -a', $dmesg);
-				if (preg_match("/da0/", $dmesg) == true) {
-					$cfgdevice = $cfgpartition = "da0" ;
-					if (mwexec("/sbin/mount -r /dev/{$cfgdevice} /cf")) {
-						/* could not mount, fallback to floppy */
-						$cfgdevice = $cfgpartition = "fd0";
+			/* probe kernel known disks until we find one with config.xml */
+			$disks = explode(" ", get_single_sysctl("kern.disks"));
+			foreach ($disks as $mountdisk) {
+				/* skip mfs mounted filesystems */
+				if (strstr($mountdisk, "md")) {
+					continue;
+				}
+				if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
+					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+						/* found it */
+						$cfgdevice = $mountdisk;
+						$cfgpartition = $cfgdevice . "a";
+						$cfgfstype = "ufs";
+						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
+					}
+
+					mwexec("/sbin/umount -f {$g['cf_path']}");
+
+					if ($cfgdevice) {
+						break;
 					}
 				}
-				unset($dmesg);
-				$cfgfstype = "msdosfs";
-				echo gettext("CDROM build") . "\n";
-				echo "   " . gettext("CFG:") . " {$cfgpartition}\n";
-				echo "  " . gettext("TYPE:") . " {$cfgfstype}\n";
-			} else {
-				echo ".";
-				/* probe kernel known disks until we find one with config.xml */
-				$disks = explode(" ", get_single_sysctl("kern.disks"));
-				foreach ($disks as $mountdisk) {
-					/* skip mfs mounted filesystems */
-					if (strstr($mountdisk, "md")) {
-						continue;
+				if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
+					if (platform_booting()) {
+						echo ".";
 					}
-					if (mwexec("/sbin/mount -r /dev/{$mountdisk}a {$g['cf_path']}") == 0) {
-						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-							/* found it */
-							$cfgdevice = $mountdisk;
-							$cfgpartition = $cfgdevice . "a";
-							$cfgfstype = "ufs";
-							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-						}
-
-						mwexec("/sbin/umount -f {$g['cf_path']}");
-
-						if ($cfgdevice) {
-							break;
-						}
+					if (file_exists("{$g['cf_conf_path']}/config.xml")) {
+						/* found it */
+						$cfgdevice = $mountdisk;
+						$cfgpartition = $cfgdevice . "d";
+						$cfgfstype = "ufs";
+						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
 					}
-					if (mwexec("/sbin/mount -r /dev/{$mountdisk}d {$g['cf_path']}") == 0) {
-						if (platform_booting()) {
-							echo ".";
-						}
-						if (file_exists("{$g['cf_conf_path']}/config.xml")) {
-							/* found it */
-							$cfgdevice = $mountdisk;
-							$cfgpartition = $cfgdevice . "d";
-							$cfgfstype = "ufs";
-							printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
-						}
 
-						mwexec("/sbin/umount -f {$g['cf_path']}");
+					mwexec("/sbin/umount -f {$g['cf_path']}");
 
-						if ($cfgdevice) {
-							break;
-						}
+					if ($cfgdevice) {
+						break;
 					}
 				}
 			}

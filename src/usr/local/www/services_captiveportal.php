@@ -222,6 +222,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
+	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
 	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext']) {
@@ -462,6 +463,7 @@ if ($_POST) {
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
+		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
 		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 
 		if (!is_array($newcp['page'])) {
@@ -1017,6 +1019,15 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['reverseacct']
 ))->setHelp('When enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. ' .
 			'Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload.');
+
+$section->addInput(new Form_Checkbox(
+	'includeidletime',
+	'Idle time accounting',
+	'Include idle time in session time',
+	$pconfig['includeidletime']
+))->setHelp('When enabled, if a client is disconnected for exceeding the idle timeout the time spent idle is included in the total session time. ' .
+			'Otherwise the session time reported to the RADIUS server is the time between when the session started and when the last ' .
+			'activity was recorded.');
 
 $section->addInput(new Form_Input(
 	'radiusnasid',

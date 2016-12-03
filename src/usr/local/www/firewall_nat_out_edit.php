@@ -530,8 +530,9 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'source',
 	null,
-	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
+	$pconfig['source'],
+	'ALIASV4V6'
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'sourceport',
@@ -554,8 +555,9 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'destination',
 	null,
-	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
+	$pconfig['destination'] == "any" ? "":$pconfig['destination'],
+	'ALIASV4V6'
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'dstport',

@@ -822,7 +822,7 @@
 			}
 			if ($this->_dnsService != 'ods') {
 				$response = curl_exec($ch);
-				$header_size = curl_getinfo($ch, CURLINFO_	ER_SIZE);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
 				$data = substr($response, $header_size);
 				$this->_checkStatus($ch, $data, $header);

@@ -216,11 +216,6 @@ print $form;
 		$states = count($res);
 	}
 
-	/* XXX - limit to 10.000 states. */
-	if ($states > 10000) {
-		$states = 10000;
-	}
-
 	for ($i = 0; $i < $states; $i++) {
 		$info = $res[$i]['src'];
 		$srcip = get_ip($res[$i]['src']);

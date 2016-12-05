@@ -258,7 +258,7 @@ function delete_row(rowDelBtn) {
 	var rowLabel;
 
 	// If we are deleting row zero, we need to save/restore the label
-	if (rowDelBtn == "deleterow0") {
+	if ( (rowDelBtn == "deleterow0") && ((typeof retainhelp) == "undefined")) {
 		rowLabel = $('#' + rowDelBtn).parent('div').parent('div').find('label').text();
 	}
 

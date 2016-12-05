@@ -446,7 +446,8 @@ if ($confirmed && !$completed) {
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
 
 	// Remove the log file before starting
-	unlink_if_exists($logfilename);
+
+	unlink_if_exists($logfilename . ".txt");
 
 	switch ($pkgmode) {
 		case 'delete':

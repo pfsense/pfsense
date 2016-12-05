@@ -1927,7 +1927,8 @@ function filter_nat_rules_generate() {
 			$natif = $FilterIflist[$natif]['descr'];
 
 			$natrules .= "binat on \${$natif} from {$srcaddr} to any -> {$dstaddr}\n";
-			$natrules .= "binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
+			/* This second line breaks pf on pfSense 2.4/FreeBSD 11. See https://redmine.pfsense.org/issues/6985 */
+			$natrules .= "# binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
 
 		}
 	}

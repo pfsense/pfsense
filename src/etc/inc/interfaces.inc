@@ -4728,6 +4728,27 @@ function interface_get_wireless_clone($wlif) {
 	}
 }
 
+function interface_list_wireless() {
+	$portlist = explode(" ", get_single_sysctl("net.wlan.devices"));
+
+	$result = array();
+	foreach ($portlist as $port) {
+		if (preg_match("/^([^0-9]+)([0-9]+)/", $port, $matches) != 1) {
+			continue;
+		}
+
+		$desc = $port . " ( " . get_single_sysctl(
+		    "dev.{$matches[1]}.{$matches[2]}.%desc") . " )";
+
+		$result[] = array(
+		    "if" => $port,
+		    "descr" => $desc
+		);
+	}
+
+	return $result;
+}
+
 function get_real_interface($interface = "wan", $family = "all", $realv6iface = false, $flush = true) {
 	global $config, $g;
 
@@ -5906,7 +5927,9 @@ function interfaces_staticarp_configure($if) {
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
 		if (is_array($config['dhcpd'][$if]['staticmap'])) {
 			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
-				mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
+				if (!empty($arpent['ipaddr']) && !empty($arpent['mac'])) {
+					mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
+				}
 			}
 		}
 	} else {
@@ -5914,7 +5937,7 @@ function interfaces_staticarp_configure($if) {
 		mwexec("/usr/sbin/arp -d -i " . escapeshellarg($ifcfg['if']) . " -a > /dev/null 2>&1 ");
 		if (is_array($config['dhcpd'][$if]) && is_array($config['dhcpd'][$if]['staticmap'])) {
 			foreach ($config['dhcpd'][$if]['staticmap'] as $arpent) {
-				if (isset($arpent['arp_table_static_entry'])) {
+				if (isset($arpent['arp_table_static_entry']) && !empty($arpent['ipaddr']) && !empty($arpent['mac'])) {
 					mwexec("/usr/sbin/arp -s " . escapeshellarg($arpent['ipaddr']) . " " . escapeshellarg($arpent['mac']));
 				}
 			}

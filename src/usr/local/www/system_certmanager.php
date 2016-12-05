@@ -231,6 +231,9 @@ if ($_POST) {
 			if ($_POST['cert'] && (!strstr($_POST['cert'], "BEGIN CERTIFICATE") || !strstr($_POST['cert'], "END CERTIFICATE"))) {
 				$input_errors[] = gettext("This certificate does not appear to be valid.");
 			}
+			if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+				$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
+			}
 		}
 
 		if ($pconfig['method'] == "internal") {
@@ -454,7 +457,7 @@ if ($_POST) {
 				write_config();
 			}
 
-			if ($userid) {
+			if ($userid && !$input_errors) {
 				post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 				exit;
 			}

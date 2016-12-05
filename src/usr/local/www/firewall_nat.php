@@ -193,6 +193,14 @@ display_top_tabs($tab_array);
 
 $columns_in_table = 13;
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">

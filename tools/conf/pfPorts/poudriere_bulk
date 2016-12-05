@@ -24,6 +24,7 @@ sysutils/%%PRODUCT_NAME%%-builder
 sysutils/lsof
 sysutils/tmux
 sysutils/xe-guest-utilities
+www/pound
 dns/%%PRODUCT_NAME%%-pkg-bind9
 net/%%PRODUCT_NAME%%-pkg-cellular
 net/%%PRODUCT_NAME%%-pkg-pfBlockerNG
@@ -62,6 +63,7 @@ security/%%PRODUCT_NAME%%-pkg-sudo
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
 sysutils/%%PRODUCT_NAME%%-pkg-apcupsd
 ftp/%%PRODUCT_NAME%%-pkg-FTP_Client_Proxy
+ftp/%%PRODUCT_NAME%%-pkg-tftpd
 security/%%PRODUCT_NAME%%-pkg-suricata
 www/%%PRODUCT_NAME%%-pkg-squid
 net/%%PRODUCT_NAME%%-pkg-ntopng
@@ -73,3 +75,4 @@ sysutils/%%PRODUCT_NAME%%-pkg-syslog-ng
 net/%%PRODUCT_NAME%%-pkg-Status_Traffic_Totals
 sysutils/stress
 net/bird
+net/hping

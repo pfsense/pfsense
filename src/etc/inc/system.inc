@@ -171,7 +171,7 @@ function system_resolvconf_generate($dynupdate = false) {
 
 	$dnslock = lock('resolvconf', LOCK_EX);
 
-	$fd = fopen("{$g['varetc_path']}/resolv.conf", "w");
+	$fd = fopen("{$g['etc_path']}/resolv.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolv.conf in system_resolvconf_generate().\n");
 		unlock($dnslock);
@@ -182,7 +182,7 @@ function system_resolvconf_generate($dynupdate = false) {
 	fclose($fd);
 
 	// Prevent resolvconf(8) from rewriting our resolv.conf
-	$fd = fopen("{$g['varetc_path']}/resolvconf.conf", "w");
+	$fd = fopen("{$g['etc_path']}/resolvconf.conf", "w");
 	if (!$fd) {
 		printf("Error: cannot open resolvconf.conf in system_resolvconf_generate().\n");
 		return 1;
@@ -418,7 +418,7 @@ function system_hosts_generate() {
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
 
-	$fd = fopen("{$g['varetc_path']}/hosts", "w");
+	$fd = fopen("{$g['etc_path']}/hosts", "w");
 	if (!$fd) {
 		log_error(gettext("Error: cannot open hosts file in system_hosts_generate()."));
 		return 1;
@@ -477,7 +477,7 @@ function system_dhcpleases_configure() {
 			sigkillbyname('dhcpleases', "TERM");
 		}
 		@unlink($pidfile);
-		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['varetc_path']}/hosts");
+		mwexec("/usr/local/sbin/dhcpleases -l {$g['dhcpd_chroot_path']}/var/db/dhcpd.leases -d {$config['system']['domain']} -p {$g['varrun_path']}/{$dns_pid} {$unbound_conf} -h {$g['etc_path']}/hosts");
 	} elseif (isvalidpid($pidfile)) {
 		sigkillbypid($pidfile, "TERM");
 		@unlink($pidfile);
@@ -1011,7 +1011,7 @@ EOD;
 EOD;
 		}
 		/* write syslog.conf */
-		if (!@file_put_contents("{$g['varetc_path']}/syslog.conf", $syslogconf)) {
+		if (!@file_put_contents("{$g['etc_path']}/syslog.conf", $syslogconf)) {
 			printf(gettext("Error: cannot open syslog.conf in system_syslogd_start().%s"), "\n");
 			unset($syslogconf);
 			return 1;
@@ -1036,7 +1036,7 @@ EOD;
 			}
 		}
 
-		$syslogd_extra = "-f {$g['varetc_path']}/syslog.conf {$sourceip}";
+		$syslogd_extra = "-f {$g['etc_path']}/syslog.conf {$sourceip}";
 	}
 
 	$log_sockets = array("{$g['dhcpd_chroot_path']}/var/run/log");
@@ -1695,11 +1695,20 @@ function system_ntp_configure() {
 		$ntpcfg .= "fudge 127.127.1.0 stratum 12\n";
 	}
 	/* End GPS configuration */
-
+	$auto_pool_suffix = "pool.ntp.org";
+	$have_pools = false;
 	$ntpcfg .= "\n\n# Upstream Servers\n";
 	/* foreach through ntp servers and write out to ntpd.conf */
 	foreach (explode(' ', $config['system']['timeservers']) as $ts) {
-		$ntpcfg .= "server {$ts} iburst maxpoll 9";
+		if ((substr_compare($ts, $auto_pool_suffix, strlen($ts) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
+		    || substr_count($config['ntpd']['ispool'], $ts)) {
+			$ntpcfg .= 'pool ';
+			$have_pools = true;
+		} else {
+			$ntpcfg .= 'server ';
+		}
+
+		$ntpcfg .= "{$ts} iburst maxpoll 9";
 		if (substr_count($config['ntpd']['prefer'], $ts)) {
 			$ntpcfg .= ' prefer';
 		}
@@ -1775,6 +1784,27 @@ function system_ntp_configure() {
 	if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
 		$ntpcfg .= ' notrap';
 	}
+
+	/* Pools require "restrict source" and cannot contain "nopeer". */
+	if ($have_pools) {
+		$ntpcfg .= "\nrestrict source";
+		if (empty($config['ntpd']['kod'])) { /*note: this one works backwards */
+			$ntpcfg .= ' kod limited';
+		}
+		if (empty($config['ntpd']['nomodify'])) { /*note: this one works backwards */
+			$ntpcfg .= ' nomodify';
+		}
+		if (!empty($config['ntpd']['noquery'])) {
+			$ntpcfg .= ' noquery';
+		}
+		if (!empty($config['ntpd']['noserve'])) {
+			$ntpcfg .= ' noserve';
+		}
+		if (empty($config['ntpd']['notrap'])) { /*note: this one works backwards */
+			$ntpcfg .= ' notrap';
+		}
+	}
+
 	/* Custom Access Restrictions */
 	if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
 		$networkacl = $config['ntpd']['restrictions']['row'];
@@ -2115,7 +2145,7 @@ EOD;
 
 function system_get_serial() {
 	unset($output);
-	$_gb = exec('/bin/kenv smbios.system.serial 2>/dev/null', $output);
+	$_gb = exec('/bin/kenv -q smbios.system.serial 2>/dev/null', $output);
 	$serial = $output[0];
 
 	$vm_guest = get_single_sysctl('kern.vm_guest');
@@ -2142,8 +2172,8 @@ function system_identify_specific_platform() {
 	/* Try to guess from smbios strings */
 	unset($product);
 	unset($maker);
-	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $product);
-	$_gb = exec('/bin/kenv smbios.system.maker 2>/dev/null', $maker);
+	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $product);
+	$_gb = exec('/bin/kenv -q smbios.system.maker 2>/dev/null', $maker);
 	switch ($product[0]) {
 		case 'FW7541':
 			return (array('name' => 'FW7541', 'descr' => 'Netgate FW7541'));

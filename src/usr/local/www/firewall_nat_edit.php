@@ -577,7 +577,8 @@ function build_dsttype_list() {
 			if (is_ipaddrv6($sn['subnet'])) {
 				continue;
 			}
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
 				if (isset($sn['noexpand'])) {
 					continue;
 				}
@@ -590,8 +591,6 @@ function build_dsttype_list() {
 
 					$list[$snip] = $snip . ' (' . $sn['descr'] . ')';
 				}
-
-				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			} else {
 				$list[$sn['subnet']] = $sn['subnet'] . ' (' . $sn['descr'] . ')';
 			}

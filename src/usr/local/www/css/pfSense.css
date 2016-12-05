@@ -69,6 +69,17 @@ h1 a:hover, h1 a:active {
     text-decoration: none !important;
 }
 
+/* Zero-width optional linebreaks can help the browser to linebreak at 'good' places.
+   Unfortunately the two most compatible options aren't consistently supported. 
+   "\00200B" or #8203; is part of unicode and widely implemented; and <wbr> is widely
+   supported even on old browsers but not IE<5.5 and IE>7.
+   http://stackoverflow.com/a/23759279/2238378 suggests a neat "80%" solution for broad
+   compatibility pre-HTML5 - use <wbr> and automatically insert #&8203; after it. Should
+   be invisible, facilitates neat line breaking when manual control is desired. */
+wbr:after {
+    content: "\00200B";
+}
+
 .container.fixed {
     padding-top: 60px;
 }
@@ -94,7 +105,6 @@ tr.disabled th {
 .table-responsive {
     clear: both;
     margin-bottom: 0px;
-    overflow-x: visible;    /** Required to allow dragging to automatically scroll the page */
 }
 
 /* navigation */

@@ -23,8 +23,8 @@
  * limitations under the License.
  */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -550,7 +550,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -1053,6 +1052,9 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
 				}
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
@@ -1315,7 +1317,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -2098,7 +2099,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
-			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
+			$args .= " --dhcp-hostsfile={$g['etc_path']}/hosts ";
 		}
 
 		/* Setup listen port, if non-default */
@@ -2299,6 +2300,11 @@ function services_snmpd_configure() {
 			echo gettext("Starting SNMP daemon... ");
 		}
 
+		/* Make sure a printcap file exists or else bsnmpd will log errors. See https://redmine.pfsense.org/issues/6838 */
+		if (!file_exists('/etc/printcap')) {
+			@file_put_contents('/etc/printcap', "# Empty file to prevent bsnmpd from logging errors.\n");
+		}
+
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
@@ -2375,24 +2381,34 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		$bind_to_ip = "0.0.0.0";
+		$bind_to_ips = array();
 		if (isset($config['snmpd']['bindip'])) {
-			if (is_ipaddr($config['snmpd']['bindip'])) {
-				$bind_to_ip = $config['snmpd']['bindip'];
-			} else {
-				$if = get_real_interface($config['snmpd']['bindip']);
-				if (does_interface_exist($if)) {
-					$bind_to_ip = get_interface_ip($config['snmpd']['bindip']);
+			foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
+				if (is_ipaddr($bind_to_ip)) {
+					$bind_to_ips[] = $bind_to_ip;
+				} else {
+					$if = get_real_interface($bind_to_ip);
+					if (does_interface_exist($if)) {
+						$bindip = get_interface_ip($bind_to_ip);
+						if (is_ipaddr($bindip)) {
+							$bind_to_ips[] = $bindip;
+						}
+					}
 				}
 			}
 		}
+		if (!count($bind_to_ips)) {
+			$bind_to_ips = array("0.0.0.0");
+		}
 
 		if (is_port($config['snmpd']['pollport'])) {
-			$snmpdconf .= <<<EOD
+			foreach ($bind_to_ips as $bind_to_ip) {
+				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
 
 EOD;
 
+			}
 		}
 
 		$snmpdconf .= <<<EOD

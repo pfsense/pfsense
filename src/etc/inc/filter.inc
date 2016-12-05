@@ -232,7 +232,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$filterlck = lock('filter', LOCK_EX);
 
 	filter_pflog_start();
-	update_filter_reload_status(gettext("Initializing"));
+	update_filter_reload_status(gettext("Initializing"), true);  // second argument = overwrite existing file
 
 	/* invalidate interface cache */
 	get_interface_arr(true);
@@ -1927,7 +1927,8 @@ function filter_nat_rules_generate() {
 			$natif = $FilterIflist[$natif]['descr'];
 
 			$natrules .= "binat on \${$natif} from {$srcaddr} to any -> {$dstaddr}\n";
-			$natrules .= "binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
+			/* This second line breaks pf on pfSense 2.4/FreeBSD 11. See https://redmine.pfsense.org/issues/6985 */
+			$natrules .= "# binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
 
 		}
 	}

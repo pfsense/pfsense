@@ -419,7 +419,7 @@ if ($_POST) {
 					$tmpaddress .= "/" . $input_address_subnet[$idx];
 				}
 			}
-			$address[] = $tmpaddress;
+			$address[] = addrtolower($tmpaddress);
 		}
 		unset($desc_fmt_err_found);
 		if ($wrongaliases <> "") {

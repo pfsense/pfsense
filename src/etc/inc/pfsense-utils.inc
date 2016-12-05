@@ -1872,7 +1872,7 @@ function load_thermal_hardware() {
  ******/
 function isvm() {
 	$virtualenvs = array("vmware", "parallels", "qemu", "bochs", "plex86", "VirtualBox");
-	$_gb = exec('/bin/kenv smbios.system.product 2>/dev/null', $output, $rc);
+	$_gb = exec('/bin/kenv -q smbios.system.product 2>/dev/null', $output, $rc);
 
 	if ($rc != 0 || !isset($output[0])) {
 		return false;
@@ -3236,4 +3236,12 @@ function restore_aliastables() {
 	return false;
 }
 
+// Convert IPv6 addresses to lower case
+function addrtolower($ip) {
+	if (!filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+		return(strtolower($ip));
+	} else {
+		return($ip);
+	}
+}
 ?>

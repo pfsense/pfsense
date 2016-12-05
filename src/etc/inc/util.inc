@@ -807,10 +807,10 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 		return 0;
 	}
 
-	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// 2**N returns an exact result as an INT if possible, and a float/double if not.
 	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
 	$result = 2 ** $snsize;
-	
+
 	if ($exact && !is_int($result)) {
 		//exact required but can't represent result exactly as an INT
 		return 0;
@@ -850,7 +850,7 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
 	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
-	
+
 	if ($subnetv4_start1 == '' || $subnetv4_start2 == '') {
 		// One or both args is not a valid IPv4 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -865,7 +865,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
 	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
-	
+
 	if ($subnetv6_start1 == '' || $subnetv6_start2 == '') {
 		// One or both args is not a valid IPv6 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -1863,10 +1863,14 @@ function format_number($num, $precision = 3) {
 	return ("$num {$units[$i]}");
 }
 
-function update_filter_reload_status($text) {
+function update_filter_reload_status($text, $new=false) {
 	global $g;
 
-	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+	if ($new) {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL);
+	} else {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL, FILE_APPEND);
+	}
 }
 
 /****** util/return_dir_as_array

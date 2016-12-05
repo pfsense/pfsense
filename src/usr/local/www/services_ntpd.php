@@ -68,6 +68,7 @@ if ($_POST) {
 
 		unset($config['ntpd']['prefer']);
 		unset($config['ntpd']['noselect']);
+		unset($config['ntpd']['ispool']);
 		$timeservers = '';
 
 		for ($i = 0; $i < NUMTIMESERVERS; $i++) {
@@ -79,6 +80,9 @@ if ($_POST) {
 				}
 				if (!empty($_POST["servselect{$i}"])) {
 					$config['ntpd']['noselect'] .= "{$tserver} ";
+				}
+				if (!empty($_POST["servispool{$i}"])) {
+					$config['ntpd']['ispool'] .= "{$tserver} ";
 				}
 			}
 		}
@@ -218,6 +222,7 @@ $section->addInput(new Form_Select(
 
 $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
+$auto_pool_suffix = "pool.ntp.org";
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
 	$group->addClass('repeatable');
@@ -244,6 +249,14 @@ for ($counter=0; $counter < $maxrows; $counter++) {
 		isset($config['ntpd']['noselect']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['noselect'], $timeservers[$counter])
 	 ))->sethelp('No Select');
 
+	$group->add(new Form_Checkbox(
+		'servispool' . $counter,
+		null,
+		null,
+		(substr_compare($timeservers[$counter], $auto_pool_suffix, strlen($timeservers[$counter]) - strlen($auto_pool_suffix), strlen($auto_pool_suffix)) === 0)
+		 || (isset($config['ntpd']['ispool']) && isset($timeservers[$counter]) && substr_count($config['ntpd']['ispool'], $timeservers[$counter]))
+	 ))->sethelp('Is a Pool');
+
 	$group->add(new Form_Button(
 		'deleterow' . $counter,
 		'Delete',
@@ -264,9 +277,10 @@ $section->addInput(new Form_Button(
 $section->addInput(new Form_StaticText(
 	null,
 	$btnaddrow
-))->setHelp('For best results three to five servers should be configured here.' . '<br />' .
-			'The prefer option indicates that NTP should favor the use of this server more than all others.' . '<br />' .
-			'The no select option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.');
+))->setHelp('For best results three to five servers should be configured here, or at least one pool.' . '<br />' .
+			'The <b>Prefer</b> option indicates that NTP should favor the use of this server more than all others.' . '<br />' .
+			'The <b>No Select</b> option indicates that NTP should not use this server for time, but stats for this server will be collected and displayed.' . '<br />' .
+			'The <b>Is a Pool</b> option indicates this entry is a pool of NTP servers and not a single address. This is assumed for *.pool.ntp.org.');
 
 $section->addInput(new Form_Input(
 	'ntporphan',

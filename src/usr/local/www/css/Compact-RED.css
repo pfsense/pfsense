@@ -126,6 +126,11 @@ body {
     background-color: rgb(224, 224, 224);
 }
 
+table.sortable-theme-bootstrap[data-sortable] {
+    font-size: 12px;
+    font-family: sans-serif;
+}
+
 .header .context-links {
     top: 1px;
 }

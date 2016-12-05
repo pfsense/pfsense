@@ -43,7 +43,7 @@ if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restr
 }
 
 if ($_POST) {
-	print_r($_POST);
+
 	unset($input_errors);
 	$pconfig = $_POST;
 

@@ -65,10 +65,11 @@ if (!is_array($config['dyndnses']['dyndns'])) {
 }
 
 $a_dyndns = &$config['dyndnses']['dyndns'];
+global $dyndns_split_domain_types;
 
 if ($_GET['act'] == "del") {
 	$conf = $a_dyndns[$_GET['id']];
-	if ($conf['type'] == "namecheap") {
+	if (in_array($conf['type'], $dyndns_split_domain_types)) {
 		$hostname = $conf['host'] . "." . $conf['domainname'];
 	} else {
 		$hostname = $conf['host'];
@@ -128,7 +129,7 @@ display_top_tabs($tab_array);
 <?php
 $i = 0;
 foreach ($a_dyndns as $dyndns):
-	if ($dyndns['type'] == "namecheap") {
+	if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 		$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 	} else {
 		$hostname = $dyndns['host'];

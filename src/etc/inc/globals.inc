@@ -99,7 +99,7 @@ $g = array(
 	"disablecrashreporter" => false,
 	"crashreporterurl" => "https://crashreporter.pfsense.org/crash_reporter.php",
 	"debug" => false,
-	"latest_config" => "15.5",
+	"latest_config" => "15.8",
 	"nopkg_platforms" => array("cdrom"),
 	"minimum_ram_warning" => "101",
 	"minimum_ram_warning_text" => "128 MB",
@@ -241,4 +241,5 @@ $factory_default_checkipservice = array(
 	"descr" => 'Default Check IP Service'
 );
 
+$dyndns_split_domain_types = array("namecheap", "cloudflare", "cloudflare-v6", "gratisdns");
 ?>

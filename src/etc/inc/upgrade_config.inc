@@ -4971,11 +4971,8 @@ function upgrade_154_to_155() {
 	}
 }
 
-/* Unset references to glxsb in the config. See #6755 */
 function upgrade_155_to_156() {
-	if ($config['system']['crypto_hardware'] == "glxsb") {
-		unset($config['system']['crypto_hardware']);
-	}
+	// Unused
 }
 
 function upgrade_156_to_157() {
@@ -5025,6 +5022,15 @@ function upgrade_157_to_158() {
 
 	foreach ($a_dyndns as &$dyndns) {
 		$dyndns['password'] = base64_encode($dyndns['password']);
+	}
+}
+
+/* Unset references to glxsb in the config. See #6755 */
+function upgrade_158_to_159() {
+	global $config;
+
+	if ($config['system']['crypto_hardware'] == "glxsb") {
+		unset($config['system']['crypto_hardware']);
 	}
 }
 

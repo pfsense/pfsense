@@ -83,6 +83,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['action_disable'] = isset($a_gateways[$id]['action_disable']);
 	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
@@ -428,6 +429,9 @@ if ($_POST) {
 		if ($_POST['monitor_disable'] == "yes") {
 			$gateway['monitor_disable'] = true;
 		}
+		if ($_POST['action_disable'] == "yes") {
+			$gateway['action_disable'] = true;
+		}
 		if ($_POST['nonlocalgateway'] == "yes") {
 			$gateway['nonlocalgateway'] = true;
 		}
@@ -643,6 +647,13 @@ $section->addInput(new Form_Checkbox(
 	'Disable Gateway Monitoring',
 	$pconfig['monitor_disable']
 ))->toggles('.toggle-monitor-ip')->setHelp('This will consider this gateway as always being up.');
+
+$section->addInput(new Form_Checkbox(
+	'action_disable',
+	'Gateway Action',
+	'Disable Gateway Monitoring Action',
+	$pconfig['action_disable']
+))->setHelp('No action will be taken on gateway events. The gateway is always considered up.');
 
 $group = new Form_Group('Monitor IP');
 $group->addClass('toggle-monitor-ip', 'collapse');

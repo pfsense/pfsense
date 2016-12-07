@@ -159,9 +159,15 @@ display_top_tabs($tab_array);
 					} elseif (stristr($status['status'], "down")) {
 						$online = gettext("Offline");
 						$bgcolor = "bg-danger";
+					} elseif (stristr($status['status'], "highloss")) {
+						$online = gettext("Danger, Packetloss") . ': ' . $status['loss'];
+						$bgcolor = "bg-danger";
 					} elseif (stristr($status['status'], "loss")) {
 						$online = gettext("Warning, Packetloss") . ': ' . $status['loss'];
 						$bgcolor = "bg-warning";
+					} elseif (stristr($status['status'], "highdelay")) {
+						$online = gettext("Danger, Latency") . ': ' . $status['delay'];
+						$bgcolor = "bg-danger";
 					} elseif (stristr($status['status'], "delay")) {
 						$online = gettext("Warning, Latency") . ': ' . $status['delay'];
 						$bgcolor = "bg-warning";

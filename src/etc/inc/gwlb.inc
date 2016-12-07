@@ -147,7 +147,9 @@ function start_dpinger($gateway) {
 	$params .= "-B {$gateway['gwifip']} ";	/* Bind src address */
 	$params .= "-p {$pidfile} ";		/* PID filename */
 	$params .= "-u {$socket} ";		/* Status Socket */
-	$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+	if (!$gateway['action_disable']) {
+		$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+	}
 
 	$params .= "-d " .
 	    (isset($gateway['data_payload']) && is_numeric($gateway['data_payload'])
@@ -332,7 +334,7 @@ function setup_gateways_monitor() {
 	return;
 }
 
-function get_dpinger_status($gwname) {
+function get_dpinger_status($gwname, $detailed = false) {
 	global $g;
 
 	$running_processes = running_dpinger_processes();
@@ -402,9 +404,18 @@ function get_dpinger_status($gwname) {
 			}
 		}
 
-		if ($r['latency_avg'] > $settings['latencyhigh'] ||
-		    $r['loss'] > $settings['losshigh']) {
-			$r['status'] = "down";
+		if ($r['latency_avg'] > $settings['latencyhigh']) {
+			if ($detailed) {
+				$r['status'] = "highdelay";
+			} else {
+				$r['status'] = "down";
+			}
+		} else if ($r['loss'] > $settings['losshigh']) {
+			if ($detailed) {
+				$r['status'] = "highloss";
+			} else {
+				$r['status'] = "down";
+			}
 		} else if ($r['latency_avg'] > $settings['latencylow']) {
 			$r['status'] = "delay";
 		} else if ($r['loss'] > $settings['losslow']) {
@@ -425,7 +436,11 @@ function return_gateways_status($byname = false) {
 	$gateways_arr = return_gateways_array();
 
 	foreach ($dpinger_gws as $gwname => $gwdata) {
-		$dpinger_status = get_dpinger_status($gwname);
+		// If action is disabled for this gateway, then we want a detailed status.
+		// That reports "highdelay" or "highloss" rather than just "down".
+		// Because reporting the gateway down would be misleading (gateway action is disabled)
+		$detailed = $gateways_arr[$gwname]['action_disable'];
+		$dpinger_status = get_dpinger_status($gwname, $detailed);
 		if ($dpinger_status === false) {
 			continue;
 		}
@@ -559,6 +574,10 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$gateway['monitor_disable'] = true;
 			} else if (empty($gateway['monitor'])) {
 				$gateway['monitor'] = $gateway['gateway'];
+			}
+
+			if (isset($gateway['action_disable'])) {
+				$gateway['action_disable'] = true;
 			}
 
 			$gateway['friendlyiface'] = $gateway['interface'];
@@ -842,13 +861,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		if (($gwsttng['ipprotocol'] == $ipprotocol) && isset($gwsttng['defaultgw'])) {
 			$dfltgwfound = true;
 			$dfltgwname = $gwname;
-			if (!isset($gwsttng['monitor_disable']) && $gateways_status[$gwname]['status'] != "none") {
+			if (!isset($gwsttng['monitor_disable']) && !isset($gwsttng['action_disable']) && $gateways_status[$gwname]['status'] != "none") {
 				$dfltgwdown = true;
 			}
 		}
 		/* Keep a record of the last up gateway */
 		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
+		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
 			$upgw = $gwname;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
@@ -977,7 +996,7 @@ function return_gateway_groups_array() {
 							notify_via_smtp($msg);
 						}
 					}
-				} else if (isset($gateways_arr[$gwname]['monitor_disable'])) {
+				} else if (isset($gateways_arr[$gwname]['monitor_disable']) || isset($gateways_arr[$gwname]['action_disable'])) {
 					$tiers[$tier][] = $gwname;
 				}
 			}

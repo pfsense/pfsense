@@ -244,7 +244,7 @@ sticker=1
 if [ -z "${default_serial}" ]; then
 	serial_size=16
 fi
-while true; do
+while [ "${selected_model}" != "SG-1000" ]; do
 	exec 3>&1
 	col=30
 	factory_raw_data=$(dialog --nocancel \
@@ -305,9 +305,11 @@ if [ -f /mnt/etc/version ]; then
 	release_ver=$(cat /mnt/etc/version)
 fi
 
-postreq="model=${selected_model}&serial=${serial}&order=${order}"
-postreq="${postreq}&release=${release_ver}&wan_mac=${wan_mac}"
-postreq="${postreq}&wlan_mac=${wlan_mac}&print=${sticker}&builder=${builder}"
+postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
+postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"
+if [ "${selected_model}" != "SG-1000" ]; then
+	postreq="${postreq}&wlan_mac=${wlan_mac}&order=${order}&builder=${builder}"
+fi
 postreq="${postreq}&submit=Submit"
 
 postreq_len=$(echo "${postreq}" | wc -c)

@@ -38,6 +38,10 @@ require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
 
+function get_must_be_both_text() {
+	return(" " . gettext("They must be either both IPv4 or both IPv6 addresses."));
+}
+
 $specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 
@@ -163,9 +167,16 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	$extipaddrtype = false;
+	$srcipaddrtype = false;
+	$dstipaddrtype = false;
+
 	/* For external, user can enter only ip's */
-	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
-		$input_errors[] = gettext("A valid external subnet must be specified.");
+	if ($_POST['external']) {
+		$extipaddrtype = is_ipaddr($_POST['external']);
+		if (!$extipaddrtype) {
+			$input_errors[] = gettext("A valid external subnet must be specified.");
+		}
 	}
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
@@ -175,8 +186,21 @@ if ($_POST) {
 
 	/* For src, user can enter only ip's or networks */
 	if (!is_specialnet($_POST['srctype'])) {
-		if (($_POST['src'] && !is_ipaddr($_POST['src']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
+		if ($_POST['src']) {
+			$srcipaddrtype = is_ipaddr($_POST['src']);
+			if ($srcipaddrtype) {
+				if ($extipaddrtype) {
+					if ($srcipaddrtype != $extipaddrtype) {
+						$input_errors[] = sprintf(
+							gettext("The external IP address (%s) and internal IP address (%s) are of different address families.") .
+								get_must_be_both_text(),
+							$_POST['external'],
+							$_POST['src']);
+					}
+				}
+			} else {
+				$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
+			}
 		}
 
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
@@ -186,8 +210,36 @@ if ($_POST) {
 
 	/* For dst, user can enter ip's, networks or aliases */
 	if (!is_specialnet($_POST['dsttype'])) {
-		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		if ($_POST['dst']) {
+			if (is_ipaddroralias($_POST['dst'])) {
+				$dstipaddrtype = is_ipaddr($_POST['dst']);
+				if ($dstipaddrtype) {
+					if ($extipaddrtype) {
+						if ($dstipaddrtype != $extipaddrtype) {
+							$input_errors[] = sprintf(
+								gettext("The external IP address (%s) and destination IP address (%s) are of different address families.") .
+									get_must_be_both_text(),
+								$_POST['external'],
+								$_POST['dst']);
+						}
+					}
+					if ($srcipaddrtype) {
+						if ($dstipaddrtype != $srcipaddrtype) {
+							$input_errors[] = sprintf(
+								gettext("The internal IP address (%s) and destination IP address (%s) are of different address families.") .
+									get_must_be_both_text(),
+								$_POST['src'],
+								$_POST['dst']);
+						}
+					}
+				} else {
+					// Must be an alias.
+					// pf does not report "error loading rules" if the address family of items in the alias does not match the external/internal address family.
+					// So that is up to the user to make sensible, we do not try and verify it here.
+				}
+			} else {
+				$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+			}
 		}
 
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {

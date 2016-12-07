@@ -305,6 +305,10 @@ if [ -f /mnt/etc/version ]; then
 	release_ver=$(cat /mnt/etc/version)
 fi
 
+umount /mnt
+sync; sync; sync
+trap "-" 1 2 15 EXIT
+
 postreq="model=${selected_model}&serial=${serial}&release=${release_ver}"
 postreq="${postreq}&wan_mac=${wan_mac}&print=${sticker}"
 if [ "${selected_model}" != "SG-1000" ]; then

@@ -193,18 +193,8 @@ wlan_mac=$(get_if_mac wlan0)
 
 if [ "${selected_model}" = "SG-1000" ]; then
 	image_default_url="http://${hostname}/pfSense-netgate-sg-1000-latest.img.gz"
-	unset image_url
-
-	while [ -z "${image_url}" ]; do
-		# Let operator chose a different URL
-		exec 3>&1
-		image_url=$(dialog --nocancel \
-			--backtitle "pfSense installer" \
-			--title "Select image" \
-			--inputbox "Image URI" 0 0 "${image_default_url}" \
-		2>&1 1>&3)
-		exec 3>&-
-	done
+	image_url=$(kenv -q ufw.install.image.url)
+	image_url=${image_url:-${image_default_url}}
 
 	fetch -o - "${image_url}" \
 		| gunzip \

@@ -814,7 +814,9 @@ function captiveportal_prune_old() {
 			if ($lastact && (($pruning_time - $lastact) >= $uidletimeout)) {
 				$timedout = true;
 				$term_cause = 4; // Idle-Timeout
-				$stop_time = $lastact; // Entry added to comply with WISPr
+				if (!isset($config['captiveportal'][$cpzone]['includeidletime'])) {
+					$stop_time = $lastact;
+				}
 			}
 		}
 

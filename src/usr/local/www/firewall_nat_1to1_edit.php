@@ -100,7 +100,6 @@ if (isset($_GET['dup'])) {
 if ($_POST) {
 
 	unset($input_errors);
-	$pconfig = $_POST;
 	/*	run through $_POST items encoding HTML entities so that the user
 	 *	cannot think he is slick and perform a XSS attack on the unwilling
 	 */
@@ -161,6 +160,8 @@ if ($_POST) {
 		$_POST['dstmask'] = 32;
 		$_POST['dsttype'] = "single";
 	}
+
+	$pconfig = $_POST;
 
 	/* For external, user can enter only ip's */
 	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
@@ -276,6 +277,11 @@ function build_srctype_list() {
 function srctype_selected() {
 	global $pconfig;
 
+	if ($pconfig['srctype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['srctype'];
+	}
+
 	$sel = is_specialnet($pconfig['src']);
 
 	if (!$sel) {
@@ -336,6 +342,11 @@ function build_dsttype_list() {
 
 function dsttype_selected() {
 	global $pconfig;
+
+	if ($pconfig['dsttype']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		return $pconfig['dsttype'];
+	}
 
 	$sel = is_specialnet($pconfig['dst']);
 

@@ -189,14 +189,12 @@ if ($_POST) {
 		if ($_POST['src']) {
 			$srcipaddrtype = is_ipaddr($_POST['src']);
 			if ($srcipaddrtype) {
-				if ($extipaddrtype) {
-					if ($srcipaddrtype != $extipaddrtype) {
-						$input_errors[] = sprintf(
-							gettext("The external IP address (%s) and internal IP address (%s) are of different address families.") .
-								get_must_be_both_text(),
-							$_POST['external'],
-							$_POST['src']);
-					}
+				if ($extipaddrtype && ($srcipaddrtype != $extipaddrtype)) {
+					$input_errors[] = sprintf(
+						gettext("The external IP address (%s) and internal IP address (%s) are of different address families.") .
+							get_must_be_both_text(),
+						$_POST['external'],
+						$_POST['src']);
 				}
 			} else {
 				$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
@@ -214,23 +212,19 @@ if ($_POST) {
 			if (is_ipaddroralias($_POST['dst'])) {
 				$dstipaddrtype = is_ipaddr($_POST['dst']);
 				if ($dstipaddrtype) {
-					if ($extipaddrtype) {
-						if ($dstipaddrtype != $extipaddrtype) {
-							$input_errors[] = sprintf(
-								gettext("The external IP address (%s) and destination IP address (%s) are of different address families.") .
-									get_must_be_both_text(),
-								$_POST['external'],
-								$_POST['dst']);
-						}
+					if ($extipaddrtype && ($dstipaddrtype != $extipaddrtype)) {
+						$input_errors[] = sprintf(
+							gettext("The external IP address (%s) and destination IP address (%s) are of different address families.") .
+								get_must_be_both_text(),
+							$_POST['external'],
+							$_POST['dst']);
 					}
-					if ($srcipaddrtype) {
-						if ($dstipaddrtype != $srcipaddrtype) {
-							$input_errors[] = sprintf(
-								gettext("The internal IP address (%s) and destination IP address (%s) are of different address families.") .
-									get_must_be_both_text(),
-								$_POST['src'],
-								$_POST['dst']);
-						}
+					if ($srcipaddrtype && ($dstipaddrtype != $srcipaddrtype)) {
+						$input_errors[] = sprintf(
+							gettext("The internal IP address (%s) and destination IP address (%s) are of different address families.") .
+								get_must_be_both_text(),
+							$_POST['src'],
+							$_POST['dst']);
 					}
 				} else {
 					// Must be an alias.

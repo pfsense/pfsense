@@ -331,7 +331,7 @@ function build_dsttype_list() {
 	global $pconfig, $config, $ifdisp;
 
 	$sel = is_specialnet($pconfig['dst']);
-	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'), '(self)' => gettext('This Firewall (self)'));
+	$list = array('any' => gettext('Any'), 'single' => gettext('Single host or alias'), 'network' => gettext('Network'));
 
 	if (have_ruleint_access("pppoe")) {
 		$list['pppoe'] = gettext('PPPoE clients');

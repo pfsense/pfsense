@@ -517,7 +517,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" .$this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" . $this->_dnsHost . '&dnsto=' . $this->_dnsIP);
 					break;
 				case 'dyns':
 					$needsIP = FALSE;

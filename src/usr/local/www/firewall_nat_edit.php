@@ -487,6 +487,10 @@ if ($_POST) {
 			$filterent['protocol'] = $_POST['proto'];
 			$filterent['destination']['address'] = $_POST['localip'];
 
+			if (isset($_POST['disabled'])) {
+				$filterent['disabled'] = true;
+			}
+
 			$dstpfrom = $_POST['localbeginport'];
 			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
 

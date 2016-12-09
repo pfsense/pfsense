@@ -3812,7 +3812,7 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	foreach ($stfbrbinarr as $bin) {
 		$stfbrarr[] = dechex(bindec($bin));
 	}
-	$stfbrgw = Net_IPv6::compress(implode(":", $stfbrarr));
+	$stfbrgw = compress_ip6(implode(":", $stfbrarr));
 
 	/* convert the 128 bits for the broker address back into a valid IPv6 address */
 	$stflanarr = array();
@@ -3821,9 +3821,9 @@ function interface_6to4_configure($interface = "wan", $wancfg) {
 	foreach ($stflanbinarr as $bin) {
 		$stflanarr[] = dechex(bindec($bin));
 	}
-	$stflanpr = Net_IPv6::compress(implode(":", $stflanarr));
+	$stflanpr = compress_ip6(implode(":", $stflanarr));
 	$stflanarr[7] = 1;
-	$stflan = Net_IPv6::compress(implode(":", $stflanarr));
+	$stflan = compress_ip6(implode(":", $stflanarr));
 
 	/* setup the stf interface */
 	if (!is_module_loaded("if_stf")) {

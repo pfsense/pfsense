@@ -107,7 +107,7 @@ function delete_id($id, &$array) {
  * RESULT
  *   mixed   - The id, NULL if not found
  ******/
-function get_id($id, &$array) {
+function get_id($id, $array) {
 	// Use $foo = &get_id('id', array('id'=>'value'));
 
 	if (!is_array($array)) {

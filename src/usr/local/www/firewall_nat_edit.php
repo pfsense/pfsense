@@ -358,8 +358,13 @@ if ($_POST) {
 
 		$natent = array();
 
-		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
-		$natent['nordr'] = isset($_POST['nordr']) ? true:false;
+		if (isset($_POST['disabled'])) {
+			$natent['disabled'] = true;
+		}
+
+		if (isset($_POST['nordr'])) {
+			$natent['nordr'] = true;
+		}
 
 		if ($natent['nordr']) {
 			$_POST['associated-rule-id'] = '';
@@ -376,7 +381,7 @@ if ($_POST) {
 
 		$natent['protocol'] = $_POST['proto'];
 
-		if (!$natent['nordr']) {
+		if (!isset($natent['nordr'])) {
 			$natent['target'] = $_POST['localip'];
 			$natent['local-port'] = $_POST['localbeginport'];
 		}

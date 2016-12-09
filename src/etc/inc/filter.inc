@@ -3397,6 +3397,7 @@ EOD;
 				}
 				/* allow access to DHCP relay on interfaces */
 				if (isset($config['dhcrelay']['enable'])) {
+					$dhcrelaycfg =& $config['dhcrelay'];
 					$dhcifaces = explode(",", $dhcrelaycfg['interface']);
 					foreach ($dhcifaces as $dhcrelayif) {
 						if ($dhcrelayif == $on) {

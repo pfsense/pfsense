@@ -57,6 +57,40 @@ function delete_id($id, &$array) {
 	return true;
 }
 
+/****f* itemid/toggle_id
+ * NAME
+ *   toggle_id - enable/disable item with ['assiciated-rule-id'] = $id from $array
+ * INPUTS
+ *   $id       - int: The ID to delete
+ *   $array    - array to delete the item from
+ *   $status   - true to enable item and false to disable
+ * RESULT
+ *   boolean   - true if item was found and set
+ ******/
+function toggle_id($id, &$array, $status) {
+	global $config;
+
+	if (!is_array($array)) {
+		return false;
+	}
+
+	// Search for the item in the array
+	$toggle_index = get_id($id, $array);
+
+	// If we found the item, unset it
+	if ($toggle_index === false) {
+		return false;
+	}
+
+	if ($status) {
+		unset($array[$toggle_index]['disabled']);
+	} else {
+		$array[$toggle_index]['disabled'] = true;
+	}
+
+	return true;
+}
+
 /****f* itemid/get_id
  * NAME
  *   get_id - Get an item id with ['associated-rule-id'] = $id from $array

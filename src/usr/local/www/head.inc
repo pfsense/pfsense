@@ -198,12 +198,21 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+
+			if ($item[0] == '-DIVIDER-') {
+				print(' <li class="divider"></li>');
+			} else {
+				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+			}
 		}
 	}
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
+
+
+// NOTE:
+// $your_menu[] = array(gettext("-DIVIDER-"), ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -228,11 +237,26 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
+$div = false;
+
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_menu[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$div = true;
 }
+
+$platform = system_identify_specific_platform();
+
+if ($platform['name'] == "uFW") {
+	$interfaces_menu[] = array(gettext("Switches"), "/switch_system.php");
+	$div = true;
+}
+
+if ($div) {
+	$interfaces_menu[] = array(gettext("-DIVIDER-"), "");
+}
+
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
@@ -432,7 +456,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
-					} ?>
+					}
+?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
@@ -440,7 +465,9 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					</a>
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
 				</li>
-			<?php endforeach?>
+
+<?php
+			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<?php if (are_notices_pending()):?>

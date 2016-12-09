@@ -575,6 +575,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<i class="fa fa-repeat icon-pointer"></i>
 			</a>
 		</li>
+		<li>
+			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
+				<i class="fa fa-download icon-pointer"></i>
+			</a>
+		</li>
 	<?php endif?>
 
 <?php

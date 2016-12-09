@@ -279,7 +279,7 @@ foreach ($a_nat as $natent):
 						</td>
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>

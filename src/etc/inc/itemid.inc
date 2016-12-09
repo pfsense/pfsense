@@ -64,38 +64,29 @@
 function delete_id($id, &$array) {
 	global $config;
 
-	// Index to delete
-	$delete_index = NULL;
-
 	if (!is_array($array)) {
 		return false;
 	}
 
 	// Search for the item in the array
-	foreach ($array as $key => $item) {
-		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
-			$delete_index = $key;
-			$if = $item['interface'];
-			break;
-		}
-	}
+	$delete_index = get_id($id, $array);
 
 	// If we found the item, unset it
-	if ($delete_index !== NULL) {
-		unset($array[$delete_index]);
-
-		// Update the separators
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = ifridx($if, $delete_index);	// get rule index within interface
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
-
-		return true;
-	} else {
+	if ($delete_index === false) {
 		return false;
 	}
 
+	$if = $array[$delete_index]['interface'];
+	unset($array[$delete_index]);
+
+	// Update the separators
+	$a_separators = &$config['filter']['separator'][strtolower($if)];
+	// get rule index within interface
+	$ridx = ifridx($if, $delete_index);
+	$mvnrows = -1;
+	move_separators($a_separators, $ridx, $mvnrows);
+
+	return true;
 }
 
 /****f* itemid/get_id
@@ -117,7 +108,8 @@ function get_id($id, $array) {
 	// Search for the item in the array
 	foreach ($array as $key => $item) {
 		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
+		if (isset($item['associated-rule-id']) &&
+		    $item['associated-rule-id'] == $id) {
 			return $key;
 		}
 	}

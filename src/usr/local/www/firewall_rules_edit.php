@@ -500,7 +500,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
-		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
+		if (is_alias($_POST['srcbeginport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
@@ -514,7 +514,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
-		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
+		if (is_alias($_POST['dstbeginport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||

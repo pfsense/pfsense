@@ -22,7 +22,7 @@
 
 /****f* itemid/delete_id
  * NAME
- *   delete_id - delete an item with ['id'] = $id from $array
+ *   delete_id - delete an item with ['assiciated-rule-id'] = $id from $array
  * INPUTS
  *   $id       - int: The ID to delete
  *   $array    - array to delete the item from
@@ -70,13 +70,13 @@ function delete_id($id, &$array) {
  * NAME
  *   get_id - Get an item id with ['associated-rule-id'] = $id from $array
  * INPUTS
- *   $id       - string: The ID to get
- *   $array    - array to get the item from
+ *   $id     - string: The ID to get
+ *   $array  - array to get the item from
  * RESULT
- *   mixed   - The id, NULL if not found
+ *   mixed   - The id, false if not found
  ******/
 function get_id($id, $array) {
-	// Use $foo = &get_id('id', array('id'=>'value'));
+	// Use $foo = get_id('id', array('id'=>'value'));
 
 	if (!is_array($array)) {
 		return false;

@@ -496,6 +496,15 @@ if ($_POST) {
 
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id]) {
+
+			if (isset($natent['associated-rule-id']) &&
+			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
+				// Check for filter rule associations
+				toggle_id($natent['associated-rule-id'],
+				    $config['filter']['rule'],
+				    !isset($natent['disabled']));
+				mark_subsystem_dirty('filter');
+			}
 			$a_nat[$id] = $natent;
 		} else {
 			$natent['created'] = make_config_revision_entry();

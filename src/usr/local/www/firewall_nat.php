@@ -161,9 +161,20 @@ if (isset($_POST['del_x'])) {
 	if ($a_nat[$_GET['id']]) {
 		if (isset($a_nat[$_GET['id']]['disabled'])) {
 			unset($a_nat[$_GET['id']]['disabled']);
+			$rule_status = true;
 		} else {
 			$a_nat[$_GET['id']]['disabled'] = true;
+			$rule_status = false;
 		}
+
+		// Check for filter rule associations
+		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
+			toggle_id($a_nat[$_GET['id']]['associated-rule-id'],
+			    $config['filter']['rule'], $rule_status);
+			unset($rule_status);
+			mark_subsystem_dirty('filter');
+		}
+
 		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}

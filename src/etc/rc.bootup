@@ -230,6 +230,15 @@ echo "Setting up gateway monitors...";
 setup_gateways_monitor();
 echo "done.\n";
 
+/* set up static routes */
+system_routing_configure();
+
+/* start dnsmasq service */
+services_dnsmasq_configure();
+
+/* start unbound service */
+services_unbound_configure();
+
 echo "Synchronizing user settings...";
 local_sync_accounts();
 echo "done.\n";
@@ -248,17 +257,8 @@ echo "Configuring CRON...";
 configure_cron();
 echo "done.\n";
 
-/* set up static routes */
-system_routing_configure();
-
 /* enable routing */
 system_routing_enable();
-
-/* start dnsmasq service */
-services_dnsmasq_configure();
-
-/* start unbound service */
-services_unbound_configure();
 
 /* Enable ntpd */
 echo "Starting NTP time client...";

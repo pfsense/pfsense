@@ -2683,6 +2683,10 @@ function configure_cron() {
 				$http_proxy .= ':' . $config['system']['proxyport'];
 			}
 			$crontab_contents .= "HTTP_PROXY={$http_proxy}";
+
+			if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$config['system']['proxyuser']}:{$config['system']['proxypass']}";
+			}
 		}
 
 		foreach ($config['cron']['item'] as $item) {

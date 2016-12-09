@@ -1236,7 +1236,13 @@ events.push(function() {
 
 	hideSource(!srcenabled);
 	ext_change();
+<?php
+if (!$_POST) {
+?>
 	dst_change($('#interface').val(),'<?=htmlspecialchars($pconfig['interface'])?>','<?=htmlspecialchars($pconfig['dst'])?>');
+<?php
+}
+?>
 	iface_old = $('#interface').val();
 	typesel_change();
 	proto_change();

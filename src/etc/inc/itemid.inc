@@ -22,7 +22,7 @@
 
 /****f* itemid/delete_id
  * NAME
- *   delete_id - delete an item with ['id'] = $id from $array
+ *   delete_id - delete an item with ['assiciated-rule-id'] = $id from $array
  * INPUTS
  *   $id       - int: The ID to delete
  *   $array    - array to delete the item from
@@ -32,51 +32,76 @@
 function delete_id($id, &$array) {
 	global $config;
 
-	// Index to delete
-	$delete_index = NULL;
+	if (!is_array($array)) {
+		return false;
+	}
+
+	// Search for the item in the array
+	$delete_index = get_id($id, $array);
+
+	// If we found the item, unset it
+	if ($delete_index === false) {
+		return false;
+	}
+
+	$if = $array[$delete_index]['interface'];
+	unset($array[$delete_index]);
+
+	// Update the separators
+	$a_separators = &$config['filter']['separator'][strtolower($if)];
+	// get rule index within interface
+	$ridx = ifridx($if, $delete_index);
+	$mvnrows = -1;
+	move_separators($a_separators, $ridx, $mvnrows);
+
+	return true;
+}
+
+/****f* itemid/toggle_id
+ * NAME
+ *   toggle_id - enable/disable item with ['assiciated-rule-id'] = $id from $array
+ * INPUTS
+ *   $id       - int: The ID to delete
+ *   $array    - array to delete the item from
+ *   $status   - true to enable item and false to disable
+ * RESULT
+ *   boolean   - true if item was found and set
+ ******/
+function toggle_id($id, &$array, $status) {
+	global $config;
 
 	if (!is_array($array)) {
 		return false;
 	}
 
 	// Search for the item in the array
-	foreach ($array as $key => $item) {
-		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
-			$delete_index = $key;
-			$if = $item['interface'];
-			break;
-		}
-	}
+	$toggle_index = get_id($id, $array);
 
 	// If we found the item, unset it
-	if ($delete_index !== NULL) {
-		unset($array[$delete_index]);
-
-		// Update the separators
-		$a_separators = &$config['filter']['separator'][strtolower($if)];
-		$ridx = ifridx($if, $delete_index);	// get rule index within interface
-		$mvnrows = -1;
-		move_separators($a_separators, $ridx, $mvnrows);
-
-		return true;
-	} else {
+	if ($toggle_index === false) {
 		return false;
 	}
 
+	if ($status) {
+		unset($array[$toggle_index]['disabled']);
+	} else {
+		$array[$toggle_index]['disabled'] = true;
+	}
+
+	return true;
 }
 
 /****f* itemid/get_id
  * NAME
  *   get_id - Get an item id with ['associated-rule-id'] = $id from $array
  * INPUTS
- *   $id       - string: The ID to get
- *   $array    - array to get the item from
+ *   $id     - string: The ID to get
+ *   $array  - array to get the item from
  * RESULT
- *   mixed   - The id, NULL if not found
+ *   mixed   - The id, false if not found
  ******/
-function get_id($id, &$array) {
-	// Use $foo = &get_id('id', array('id'=>'value'));
+function get_id($id, $array) {
+	// Use $foo = get_id('id', array('id'=>'value'));
 
 	if (!is_array($array)) {
 		return false;
@@ -85,7 +110,8 @@ function get_id($id, &$array) {
 	// Search for the item in the array
 	foreach ($array as $key => $item) {
 		// If this item is the one we want to delete
-		if (isset($item['associated-rule-id']) && $item['associated-rule-id'] == $id) {
+		if (isset($item['associated-rule-id']) &&
+		    $item['associated-rule-id'] == $id) {
 			return $key;
 		}
 	}

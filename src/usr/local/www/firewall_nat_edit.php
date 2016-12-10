@@ -358,8 +358,13 @@ if ($_POST) {
 
 		$natent = array();
 
-		$natent['disabled'] = isset($_POST['disabled']) ? true:false;
-		$natent['nordr'] = isset($_POST['nordr']) ? true:false;
+		if (isset($_POST['disabled'])) {
+			$natent['disabled'] = true;
+		}
+
+		if (isset($_POST['nordr'])) {
+			$natent['nordr'] = true;
+		}
 
 		if ($natent['nordr']) {
 			$_POST['associated-rule-id'] = '';
@@ -376,7 +381,7 @@ if ($_POST) {
 
 		$natent['protocol'] = $_POST['proto'];
 
-		if (!$natent['nordr']) {
+		if (!isset($natent['nordr'])) {
 			$natent['target'] = $_POST['localip'];
 			$natent['local-port'] = $_POST['localbeginport'];
 		}
@@ -450,6 +455,10 @@ if ($_POST) {
 			$filterent['protocol'] = $_POST['proto'];
 			$filterent['destination']['address'] = $_POST['localip'];
 
+			if (isset($_POST['disabled'])) {
+				$filterent['disabled'] = true;
+			}
+
 			$dstpfrom = $_POST['localbeginport'];
 			$dstpto = $dstpfrom + $_POST['dstendport'] - $_POST['dstbeginport'];
 
@@ -487,6 +496,15 @@ if ($_POST) {
 
 		// Update the NAT entry now
 		if (isset($id) && $a_nat[$id]) {
+
+			if (isset($natent['associated-rule-id']) &&
+			    (isset($a_nat[$id]['disabled']) !== isset($natent['disabled']))) {
+				// Check for filter rule associations
+				toggle_id($natent['associated-rule-id'],
+				    $config['filter']['rule'],
+				    !isset($natent['disabled']));
+				mark_subsystem_dirty('filter');
+			}
 			$a_nat[$id] = $natent;
 		} else {
 			$natent['created'] = make_config_revision_entry();

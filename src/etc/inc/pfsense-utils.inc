@@ -1139,7 +1139,8 @@ function setup_serial_port($when = "save", $path = "") {
 			$specific_platform = system_identify_specific_platform();
 			if ($specific_platform['name'] == 'RCC-VE' ||
 			    $specific_platform['name'] == 'RCC' ||
-			    $specific_platform['name'] == 'RCC-DFF') {
+			    $specific_platform['name'] == 'RCC-DFF' ||
+			    $specific_platform['name'] == 'apu2') {
 				$serial_only = true;
 			}
 		}

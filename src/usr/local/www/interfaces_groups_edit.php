@@ -111,6 +111,14 @@ if ($_POST) {
 		$input_errors[] = gettext("Group name cannot end with digit.");
 	}
 
+	/*
+	 * Packages (e.g. tinc) creates interface groups, reserve this
+	 * namespace pkg- for them
+	 */
+	if (substr($_POST['ifname'], 0, 4) == 'pkg-') {
+		$input_errors[] = gettext("Group name cannot start with pkg-");
+	}
+
 	foreach ($interface_list_disabled as $gif => $gdescr) {
 		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";

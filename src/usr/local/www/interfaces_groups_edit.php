@@ -67,8 +67,16 @@ if ($_POST) {
 		}
 	}
 
-	if (preg_match("/([^a-zA-Z])+/", $_POST['ifname'], $match)) {
-		$input_errors[] = gettext("Only letters A-Z are allowed as the group name.");
+	if (strlen($_POST['ifname']) > 16) {
+		$input_errors[] = gettext("Group name cannot have more than 16 characters.");
+	}
+
+	if (preg_match("/([^a-zA-Z0-9-_])+/", $_POST['ifname'])) {
+		$input_errors[] = gettext("Only letters (A-Z), digits (0-9), '-' and '_' are allowed as the group name.");
+	}
+
+	if (preg_match("/[0-9]$/", $_POST['ifname'])) {
+		$input_errors[] = gettext("Group name cannot end with digit.");
 	}
 
 	foreach ($interface_list_disabled as $gif => $gdescr) {
@@ -189,7 +197,7 @@ $section->addInput(new Form_Input(
 	'Group Name',
 	'text',
 	$pconfig['ifname'],
-	['placeholder' => 'Group Name']
+	['placeholder' => 'Group Name', 'maxlength' => "16"]
 ))->setWidth(6)->setHelp('No numbers or spaces are allowed. '.
 	'Only characters: a-zA-Z');
 

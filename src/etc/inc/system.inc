@@ -2241,6 +2241,9 @@ function system_identify_specific_platform() {
 		case 'SYS-5018D-FN4T':
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;
+		case 'apu2':
+			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
+			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));

@@ -1,4 +1,3 @@
-#!/usr/local/bin/php-cgi -f
 <?php
 /*
  * openvpn.auth-user.php
@@ -97,7 +96,7 @@ function getCalledStationId() {
 openlog("openvpn", LOG_ODELAY, LOG_AUTH);
 
 if (isset($_GET['username'])) {
-	$authmodes = explode(",", $_GET['authcfg']);
+	$authmodes = explode(",", base64_decode($_GET['authcfg']));
 	/* Any string retrieved through $_GET is automatically urlDecoded */
 	$username = base64_decode($_GET['username']);
 	$password = base64_decode($_GET['password']);

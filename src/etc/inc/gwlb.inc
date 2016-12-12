@@ -940,7 +940,11 @@ function return_gateway_groups_array() {
 						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $gwname, $group['name']);
 						$gwdown = true;
 					}
+					$pluginparams = array();
+					$pluginparams['type'] = 'gateway';
+					$pluginparams['name'] = ${gwname};
 					if ($gwdown == true) {
+						$pluginparams['event'] = 'gateway.down';
 						if (!file_exists("/tmp/.down.{$gwname}")) {
 							$msg .= "\n".implode("|", $status);
 							touch("/tmp/.down.{$gwname}");
@@ -949,6 +953,7 @@ function return_gateway_groups_array() {
 							notify_via_smtp($msg);
 						}
 					} else {
+						$pluginparams['event'] = 'gateway.up';
 						/* Online add member */
 						if (!is_array($tiers[$tier])) {
 							$tiers[$tier] = array();
@@ -962,6 +967,9 @@ function return_gateway_groups_array() {
 							notify_via_smtp($msg);
 						}
 					}
+					if (isset($gateways_arr[$gwname]['interface']))
+						$pluginparams['interface'] = $gateways_arr[$gwname]['interface'];
+					pkg_call_plugins('plugin_gateway', $pluginparams);
 				} else if (isset($gateways_arr[$gwname]['monitor_disable']) || isset($gateways_arr[$gwname]['action_disable'])) {
 					$tiers[$tier][] = $gwname;
 				}

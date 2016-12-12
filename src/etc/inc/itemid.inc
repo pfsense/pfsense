@@ -22,7 +22,7 @@
 
 /****f* itemid/delete_id
  * NAME
- *   delete_id - delete an item with ['assiciated-rule-id'] = $id from $array
+ *   delete_id - delete an item with ['associated-rule-id'] = $id from $array
  * INPUTS
  *   $id       - int: The ID to delete
  *   $array    - array to delete the item from
@@ -59,7 +59,7 @@ function delete_id($id, &$array) {
 
 /****f* itemid/toggle_id
  * NAME
- *   toggle_id - enable/disable item with ['assiciated-rule-id'] = $id from $array
+ *   toggle_id - enable/disable item with ['associated-rule-id'] = $id from $array
  * INPUTS
  *   $id       - int: The ID to delete
  *   $array    - array to delete the item from

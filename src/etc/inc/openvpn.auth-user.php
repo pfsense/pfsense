@@ -1,4 +1,3 @@
-#!/usr/local/bin/php-cgi -f
 <?php
 /*
  * openvpn.auth-user.php

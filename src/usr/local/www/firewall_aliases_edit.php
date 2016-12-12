@@ -170,6 +170,15 @@ if ($_POST) {
 		}
 	}
 
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
+		}
+	}
+
 	$alias = array();
 	$address = array();
 	$final_address_details = array();

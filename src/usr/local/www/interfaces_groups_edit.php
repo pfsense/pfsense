@@ -109,6 +109,15 @@ if ($_POST) {
 		}
 	}
 
+	/* Is the description already used as an alias name? */
+	if (is_array($config['aliases']['alias'])) {
+		foreach ($config['aliases']['alias'] as $alias) {
+			if ($alias['name'] == $_POST['ifname']) {
+				$input_errors[] = gettext("An alias with this name already exists.");
+			}
+		}
+	}
+
 	if (isset($_POST['members'])) {
 		$members = implode(" ", $_POST['members']);
 	} else {

@@ -939,6 +939,17 @@ function filter_get_vpns_list() {
 		require_once("ipsec.inc");
 	}
 	if (ipsec_enabled()) {
+		/* Include mobile IPsec client subnet in the VPN network list.
+		   See https://redmine.pfsense.org/issues/7005 */
+		if (is_array($config['ipsec']['client'])
+		    && isset($config['ipsec']['client']['enable'])
+		    && isset($config['ipsec']['client']['pool_address'])
+		    && isset($config['ipsec']['client']['pool_netbits'])) {
+			$client_subnet = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
+			if (is_subnet($client_subnet)) {
+				 $vpns_arr[] = $client_subnet;
+			}
+		}
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {

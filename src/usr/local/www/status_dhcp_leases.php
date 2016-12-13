@@ -307,25 +307,33 @@ if (count($pools) > 0) {
 	asort($pools);
 }
 
+$got_cid = false;
+
 foreach ($config['interfaces'] as $ifname => $ifarr) {
 	if (is_array($config['dhcpd'][$ifname]) &&
 	    is_array($config['dhcpd'][$ifname]['staticmap'])) {
 		$staticmap_array_index = 0;
 		foreach ($config['dhcpd'][$ifname]['staticmap'] as $static) {
-			$slease = array();
-			$slease['ip'] = $static['ipaddr'];
-			$slease['type'] = $static_string;
-			$slease['mac'] = $static['mac'];
-			$slease['if'] = $ifname;
-			$slease['start'] = "";
-			$slease['end'] = "";
-			$slease['hostname'] = htmlentities($static['hostname']);
-			$slease['descr'] = htmlentities($static['descr']);
-			$slease['act'] = $static_string;
-			$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
-			$slease['staticmap_array_index'] = $staticmap_array_index;
-			$leases[] = $slease;
-			$staticmap_array_index++;
+			if (!empty($static['mac']) || !empty($static['cid'])) {
+				$slease = array();
+				$slease['ip'] = $static['ipaddr'];
+				$slease['type'] = $static_string;
+				if (!empty($static['cid'])) {
+					$slease['cid'] = $static['cid'];
+					$got_cid = true;
+				}
+				$slease['mac'] = $static['mac'];
+				$slease['if'] = $ifname;
+				$slease['start'] = "";
+				$slease['end'] = "";
+				$slease['hostname'] = htmlentities($static['hostname']);
+				$slease['descr'] = htmlentities($static['descr']);
+				$slease['act'] = $static_string;
+				$slease['online'] = in_array(strtolower($slease['mac']), $arpdata_mac) ? $online_string : $offline_string;
+				$slease['staticmap_array_index'] = $staticmap_array_index;
+				$leases[] = $slease;
+				$staticmap_array_index++;
+			}
 		}
 	}
 }
@@ -377,6 +385,14 @@ if (count($pools) > 0) {
 					<th><!-- icon --></th>
 					<th><?=gettext("IP address")?></th>
 					<th><?=gettext("MAC address")?></th>
+<?php
+/* only make CID column when we have one */
+if ($got_cid) {
+?>
+					<th><?=gettext("Client Id")?></th>
+<?php
+}
+?>
 					<th><?=gettext("Hostname")?></th>
 					<th><?=gettext("Description")?></th>
 					<th><?=gettext("Start")?></th>
@@ -390,11 +406,14 @@ if (count($pools) > 0) {
 <?php
 $dhcp_leases_subnet_counter = array(); //array to sum up # of leases / subnet
 $iflist = get_configured_interface_with_descr(); //get interface descr for # of leases
+$no_leases_displayed = true;
 
 foreach ($leases as $data):
 	if ($data['act'] != $active_string && $data['act'] != $static_string && $_GET['all'] != 1) {
 		continue;
 	}
+
+	$no_leases_displayed = false;
 
 	if ($data['act'] == $active_string) {
 		/* Active DHCP Lease */
@@ -454,6 +473,14 @@ foreach ($leases as $data):
 							(<?=$mac_man[$mac_hi]?>)
 						<?php endif; ?>
 					</td>
+<?php
+/* only make CID column when we have one */
+if ($got_cid) {
+?>
+					<td><?=$data['cid']?></td>
+<?php
+}
+?>
 					<td><?=$data['hostname']?></td>
 					<td><?=$data['descr']?></td>
 					<? if ($data['type'] != "static"): ?>
@@ -482,6 +509,12 @@ foreach ($leases as $data):
 					</td>
 				</tr>
 <?php endforeach; ?>
+<?php if ($no_leases_displayed): ?>
+				<tr>
+					<td></td>
+					<td><?=gettext("No leases to display")?></td>
+				</tr>
+<?php endif; ?>
 			</tbody>
 		</table>
 	</div>
@@ -501,6 +534,7 @@ foreach ($leases as $data):
 			</thead>
 			<tbody>
 <?php
+if (count($dhcp_leases_subnet_counter)) {
 	ksort($dhcp_leases_subnet_counter);
 	foreach ($dhcp_leases_subnet_counter as $listcounters):
 ?>
@@ -510,7 +544,16 @@ foreach ($leases as $data):
 					<td><?=$listcounters['to']?></td>
 					<td><?=$listcounters['count']?></td>
 				</tr>
-<?php endforeach; ?>
+<?php
+	endforeach;
+} else {
+?>
+				<tr>
+					<td><?=gettext("No leases are in use")?></td>
+				</tr>
+<?php
+	}
+?>
 			</tbody>
 		</table>
 	</div>

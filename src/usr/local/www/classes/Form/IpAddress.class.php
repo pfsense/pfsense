@@ -36,11 +36,27 @@ class Form_IpAddress extends Form_Input
 
 			case "V4":
 				$this->_attributes['pattern'] = '[0-9.]*';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4';
 				break;
 
 			case "V6":
 				$this->_attributes['pattern'] = '[a-fA-F0-9:.]*';
 				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
+				break;
+
+			case "ALIASV4V6":
+				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias';
+				break;
+
+			case "ALIASV4":
+				$this->_attributes['pattern'] = '[a-zA-Z0-9_.]+';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an alias';
+				break;
+
+			case "ALIASV6":
+				$this->_attributes['pattern'] = '[a-zA-Z0-9_.:]+';
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or an alias';
 				break;
 		}
 	}

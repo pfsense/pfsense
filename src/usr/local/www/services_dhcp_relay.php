@@ -116,8 +116,8 @@ if ($_POST) {
 		if ($_POST['server']) {
 			foreach ($_POST['server'] as $checksrv => $srv) {
 				if (!empty($srv[0])) { // Filter out any empties
-					if (!is_ipaddr($srv[0])) {
-						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IP address."), $srv[0]);
+					if (!is_ipaddrv4($srv[0])) {
+						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv4 address."), $srv[0]);
 					}
 
 					if (!empty($svrlist)) {
@@ -207,9 +207,10 @@ function createDestinationServerInputGroup($value = null) {
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
-		$value
+		$value,
+		'V4'
 	))->setWidth(4)
-	  ->setHelp('This is the IP address of the server to which DHCP requests are relayed.')
+	  ->setHelp('This is the IPv4 address of the server to which DHCP requests are relayed.')
 	  ->setIsRepeated();
 
 	$group->enableDuplication(null, true); // Buttons are in-line with the input

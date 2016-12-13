@@ -534,7 +534,7 @@ if ($got_cid) {
 			</thead>
 			<tbody>
 <?php
-if (count($dhcp_leases_subnet_counter)) {
+if (count($dhcp_leases_subnet_counter)):
 	ksort($dhcp_leases_subnet_counter);
 	foreach ($dhcp_leases_subnet_counter as $listcounters):
 ?>
@@ -546,14 +546,12 @@ if (count($dhcp_leases_subnet_counter)) {
 				</tr>
 <?php
 	endforeach;
-} else {
+else:
 ?>
 				<tr>
 					<td><?=gettext("No leases are in use")?></td>
 				</tr>
-<?php
-	}
-?>
+<?php endif; ?>
 			</tbody>
 		</table>
 	</div>

@@ -3019,18 +3019,19 @@ function dhcpv6_pd_str_help($pdlen) {
 		$result = '::x:xxxx:xxxx:xxxx:xxxx';
 		break;
 	/*
-	 * XXX 63, 62 and 61 should use same mask of 60 but it would
-	 * we let user chose this bit it can end up out of PD network
+	 * XXX 63, 62 and 61 should use same mask as 60 but if
+	 * we let the user choose this bit it can end up out of PD network
 	 *
-	 * Leave this with the same of 64 for now until we find a way to
-	 * let user chose it. The side-effect is users with PD with one
-	 * of these lengths will not be able to setup DHCP server range
+	 * Leave this with the same as 64 for now until we find a way to
+	 * let the user choose it. The side-effect is users with PD with one
+	 * of these lengths will not be able to setup DHCP server ranges
 	 * for full PD size, only for last /64 network
 	 */
 	case 61:
 	case 62:
 	case 63:
 	case 64:
+	default:
 		$result = '::xxxx:xxxx:xxxx:xxxx';
 		break;
 	}

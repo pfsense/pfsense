@@ -3176,6 +3176,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 	case 56:
 		$prefix_len = 17;
 		break;
+	case 59:
 	case 60:
 		$prefix_len = 18;
 		break;
@@ -3213,6 +3214,7 @@ function dhcpv6_pd_str_help($pdlen) {
 	case 56:
 		$result = '::xx:xxxx:xxxx:xxxx:xxxx';
 		break;
+	case 59:
 	case 60:
 		$result = '::x:xxxx:xxxx:xxxx:xxxx';
 		break;

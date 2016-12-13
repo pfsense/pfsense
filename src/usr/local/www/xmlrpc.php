@@ -276,7 +276,7 @@ function restore_config_section_xmlrpc($raw_params) {
 						continue; // Skip reconfiguring this vips since nothing has changed.
 					}
 				}
-			} else if ($vip['mode'] == "ipalias" && strstr($vip['interface'], "_vip") && isset($oldvips[$vip['subnet']])) {
+			} else if ($vip['mode'] == "ipalias" && (substr($vip['interface'], 0, 4) == '_vip' || strstr($vip['interface'], "lo0")) && isset($oldvips[$vip['subnet']])) {
 				if ($oldvips[$vip['subnet']]['content'] == "{$vip['interface']}{$vip['subnet']}{$vip['subnet_bits']}") {
 					if (does_vip_exist($vip)) {
 						unset($oldvips[$vip['subnet']]);

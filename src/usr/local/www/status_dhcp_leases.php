@@ -448,8 +448,8 @@ foreach ($leases as $data):
 						<a class="fa fa-trash" title="<?=gettext('Delete lease')?>"	href="status_dhcp_leases.php?deleteip=<?=$data['ip']?>&amp;all=<?=intval($_GET['all'])?>"></a>
 <?php endif; ?>
 					</td>
-<?php endforeach; ?>
 				</tr>
+<?php endforeach; ?>
 			</tbody>
 		</table>
 	</div>

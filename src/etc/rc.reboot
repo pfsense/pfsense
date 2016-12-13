@@ -75,6 +75,7 @@ if [ "${PLATFORM}" != "${product}" ] || [ "${USE_MFS_TMPVAR}" = "true" ] || [ "$
 	/etc/rc.backup_aliastables.sh
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh
+	/etc/rc.backup_logs.sh
 fi
 
 sleep 1

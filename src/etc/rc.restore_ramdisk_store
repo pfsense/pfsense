@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# pfSense-rc.shutdown
+# rc.restore_ramdisk_store
 #
 # part of pfSense (https://www.pfsense.org)
 # Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
@@ -50,41 +50,71 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
-	echo "Cannot shutdown at this moment, a config write operation is in progress and 30 seconds have passed."
-	exit -1
-fi
+# Wildcard file existence check function
+wildcard_file_exists() {
+	for file in "$1"; do
+		if [ -f "$file" ]; then
+			return 0
+			break
+		fi
+	done
+	return 1
+}
 
-# Read product_name from $g, defaults to pfSense
-product=$(/usr/local/sbin/read_global_var product_name pfSense)
+: ${DBPATH:=/var/dhcpd/var/db}
+: ${CF_CONF_PATH:=/cf/conf}
 
-echo
-echo "${product} is now shutting down ..."
-echo
+: ${RAM_Disk_Store:=${CF_CONF_PATH}/RAM_Disk_Store}
 
-stty status '^T'
+# See if there are any backup files (*.tgz) in the RAM disk store.  If so, restore them.
+if wildcard_file_exists "${RAM_Disk_Store}/"*".tgz"; then
 
-# Set shell to ignore SIGINT (2), but not children;
-trap : 2
+	mesg="Restoring contents of RAM disk store..."
+	echo -n "$mesg"
 
-HOME=/; export HOME
-PATH=/sbin:/bin:/usr/sbin:/usr/bin
-export PATH
+	# Set our operating platform
+	PLATFORM=`/bin/cat /etc/platform`
 
-# If PLATFORM is $product then remove
-# temporary files on shutdown from /tmp/
-PLATFORM=`cat /etc/platform`
-if [ "$PLATFORM" = "${product}" ]; then
-	find -x /tmp/* -type f -exec rm -f {} \; >/dev/null 2>&1
-fi
+	# Read product_name from $g, defaults to pfSense
+	# Use php -n here because we are not ready to load extensions yet
+	product=$(/usr/local/bin/php -n /usr/local/sbin/read_global_var product_name pfSense)
 
-USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
-DISK_NAME=`/bin/df /var/db/rrd | /usr/bin/tail -1 | /usr/bin/awk '{print $1;}'`
-DISK_TYPE=`/usr/bin/basename ${DISK_NAME} | /usr/bin/cut -c1-2`
-# If we are not on a full install, or if the full install wants RAM disks, or if the full install _was_ using RAM disks, but isn't for the next boot...
-if [ "${PLATFORM}" != "${product}" ] || [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
-	/etc/rc.backup_aliastables.sh
-	/etc/rc.backup_rrd.sh
-	/etc/rc.backup_dhcpleases.sh
-	/etc/rc.backup_logs.sh
+	USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+
+	# Restore the ram disk
+	for backup_file in "${RAM_Disk_Store}/"*".tgz"; do
+		if [ -f "$backup_file" ]; then
+			cd / && /usr/bin/tar -xzf "${backup_file}" -C / 2>&1
+			exit_code=$?
+			if [ $exit_code -ne 0 ]; then
+				mesg="$mesg\nRAM disk restore failed: exit code $exit_code: $backup_file"
+				error=1;
+				continue
+			fi
+
+			mesg="$mesg\nRAM disk restore succeeded: $backup_file"
+
+			#If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition.
+			if [ "${PLATFORM}" = "${product}" ] && [ "${USE_MFS_TMPVAR}" != "true" ]; then
+				/bin/rm -f "${backup_file}"
+			fi
+		fi
+	done
+
+	if [ $error ]; then
+		mesg="$mesg\nRAM disk restore failed."
+		echo " error.";
+	else
+		mesg="$mesg\nRAM disk restore succeeded."
+		echo " done.";
+	fi
+
+	/bin/mkdir -p /var/log/
+	printf "$mesg" > /var/log/restore_ramdisk_store.boot
+
+	# See if there are any backup files (*.tgz) in the RAM disk store.  If not, and no error, clean up.
+	if ! wildcard_file_exists "${RAM_Disk_Store}/"*".tgz" && [ ! $error ]; then
+		/bin/rmdir "$RAM_Disk_Store" >/dev/null 2>&1
+		/bin/rm -f /var/log/restore_ramdisk_store.boot
+	fi
 fi

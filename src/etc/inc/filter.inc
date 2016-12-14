@@ -356,7 +356,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$limitrules .= "set timeout { $timeoutlist }\n";
 	}
 
-	if (!empty($config['system']['adaptivestart']) && !empty($config['system']['adaptiveend'])) {
+	if (is_numericint($config['system']['adaptivestart']) && is_numericint($config['system']['adaptiveend'])) {
 		$limitrules .= "set timeout { adaptive.start {$config['system']['adaptivestart']}, adaptive.end {$config['system']['adaptiveend']} }\n";
 	}
 

@@ -60,6 +60,7 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
 net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
+security/%%PRODUCT_NAME%%-pkg-tinc
 security/%%PRODUCT_NAME%%-pkg-sudo
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
 sysutils/%%PRODUCT_NAME%%-pkg-apcupsd

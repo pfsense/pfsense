@@ -739,8 +739,8 @@ create_iso_image() {
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
-
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -791,7 +791,8 @@ create_memstick_image() {
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -832,13 +833,14 @@ create_memstick_serial_image() {
 	echo "-S115200 -D" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_multicons="YES"' >  ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 
-	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
-	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
+	cat ${BOOTCONF} > ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -879,7 +881,8 @@ create_memstick_adi_image() {
 	echo "-S115200 -h" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_serial="YES"' > ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	echo 'comconsole_port="0x2F8"' >> ${LOADERCONF}

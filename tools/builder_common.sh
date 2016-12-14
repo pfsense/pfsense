@@ -1678,7 +1678,7 @@ EOF
 
 	# Copy over pkg repo templates to pfSense-repo
 	mkdir -p /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
-	cp -f ${BUILDER_TOOLS}/templates/pkg_repos/* \
+	cp -f ${PKG_REPO_BASE}/* \
 		/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
 
 	for jail_arch in ${_archs}; do

@@ -169,7 +169,7 @@ case "${selected_model}" in
 		wan_if="igb1"
 		;;
 	SG-1000)
-		wan_if="cpsw1"
+		wan_if="cpsw0"
 		;;
 	*)
 		wan_if="igb0"

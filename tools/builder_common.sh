@@ -839,8 +839,8 @@ create_memstick_serial_image() {
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 
-	cat ${BOOTCONF} > ${FINAL_CHROOT_DIR}/boot.config
-	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
+	cat ${BOOTCONF} >> ${FINAL_CHROOT_DIR}/boot.config
+	cat ${LOADERCONF} >> ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 

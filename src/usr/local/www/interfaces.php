@@ -658,6 +658,7 @@ if ($_POST['apply']) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
+	$_POST['dhcp6-duid'] = strtolower(str_replace("-", ":", $_POST['dhcp6-duid']));
 	if ($_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
@@ -780,6 +781,9 @@ if ($_POST['apply']) {
 	}
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
+	}
+	if (($_POST['dhcp6-duid'] && !is_duid($_POST['dhcp6-duid']))) {
+		$input_errors[] = gettext("A valid DUID must be specified.");
 	}
 	if ($_POST['mtu']) {
 		if (!is_numericint($_POST['mtu'])) {
@@ -2136,6 +2140,14 @@ $section->addInput(new Form_Checkbox(
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
 ));
+$section->addInput(new Form_Input(
+	'dhcp6-duid',
+	'DHCP6 DUID',
+	'text',
+	$pconfig['dhcp6-duid'],
+	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
+	))->setWidth(9)->sethelp('Enter the DUID to use here. If no DUID is entered, dhcp6c will auto generate a new one if one does not exist.' . '<br />' .
+			'Use this option also if using RAM Disk, as the DUID will be lost on reboot. The existing DUID may be found in var/db/dhcp6_duid.');
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',

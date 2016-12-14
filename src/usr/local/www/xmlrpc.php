@@ -322,10 +322,11 @@ class pfsense_xmlrpc_server {
 						 */
 						continue;
 					}
-				} elseif ($vip['mode'] == "ipalias" &&
-				    strstr($vip['interface'], "_vip") &&
-				    isset($oldvips[$vip['subnet']])) {
 
+				} elseif ($vip['mode'] == "ipalias" &&
+				    (substr($vip['interface'], 0, 4) == '_vip'
+				    || strstr($vip['interface'], "lo0")) &&
+				    isset($oldvips[$vip['subnet']])) {
 					$key = $vip['subnet'];
 					if ($oldvips[$key]['content'] ==
 					    $vip['interface'] .

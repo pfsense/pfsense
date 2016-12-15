@@ -3867,15 +3867,15 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
-	
-	if ($wancfg['dhcp6-duid'] != '') {
+
+	if (!empty($wancfg['dhcp6-duid']) {
 	// Write the DUID file
 		$dhcp6duid = $wancfg['dhcp6-duid'];
 		if(!write_dhcp6_duid($dhcp6duid)) {
 			log_error(gettext("Failed to write user DUID file!"));
 		}
 	}
-	
+
 	if ($wancfg['adv_dhcp6_config_file_override']) {
 		// DHCP6 Config File Override
 		$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
@@ -3986,7 +3986,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	
 	/* add the start of dhcp6c to the rtsold script if we are going to wait for ra */
 	if (!isset($wancfg['dhcp6withoutra'])) {
-		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} $noreleaseOption -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
+		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 	}
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */

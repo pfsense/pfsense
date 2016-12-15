@@ -2133,17 +2133,19 @@ function filter_nat_rules_generate() {
 	// Open xinetd.conf write handle
 	$xinetd_fd = fopen("{$g['varetc_path']}/xinetd.conf", "w");
 
-	/* add tftp protocol helper */
-	$ftp_proxy_entry = array(
-		'port' => 6969,
-		'socket_type' => 'dgram',
-		'protocol' => 'udp',
-		'wait' => 'yes',
-		'user' => 'root',
-		'server' => '/usr/libexec/tftp-proxy',
-		'server_args' => '-v'
-	);
-	fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
+	if (!empty($config['system']['tftpinterface'])) {
+		/* add tftp protocol helper */
+		$ftp_proxy_entry = array(
+			'port' => 6969,
+			'socket_type' => 'dgram',
+			'protocol' => 'udp',
+			'wait' => 'yes',
+			'user' => 'root',
+			'server' => '/usr/libexec/tftp-proxy',
+			'server_args' => '-v'
+		);
+		fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
+	}
 
 	if (isset($config['nat']['rule'])) {
 		/* start reflection redirects on port 19000 of localhost */
@@ -2362,7 +2364,7 @@ function filter_nat_rules_generate() {
 	}
 
 	// Check if xinetd is running, if not start it.	If so, restart it gracefully.
-	if (file_exists("{$g['varetc_path']}/xinetd.conf")) {
+	if (file_exists("{$g['varetc_path']}/xinetd.conf") && (filesize("{$g['varetc_path']}/xinetd.conf") > 0)) {
 		if (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
 			sigkillbypid("{$g['varrun_path']}/xinetd.pid", "HUP");
 		} else {
@@ -2371,6 +2373,8 @@ function filter_nat_rules_generate() {
 			    "-f {$g['varetc_path']}/xinetd.conf " .
 			    "-pidfile {$g['varrun_path']}/xinetd.pid");
 		}
+	} elseif (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
+		killbypid("{$g['varrun_path']}/xinetd.pid");
 	}
 
 	return $natrules;

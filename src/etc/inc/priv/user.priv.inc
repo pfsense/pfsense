@@ -44,7 +44,7 @@ $priv_list['user-shell-access']['descr'] = gettext("Indicates whether the user i
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
-$priv_list['user-copy-files']['descr'] = gettext("Indicates whether the user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP");
+$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
 
 $priv_list['user-ssh-tunnel'] = array();
 $priv_list['user-ssh-tunnel']['name']  = gettext("User - System: SSH tunneling");

@@ -1000,6 +1000,20 @@ function is_macaddr($macaddr) {
 
 	return true;
 }
+/* returns true if $dhcp6duid is a valid duid entrry */
+function is_duid($dhcp6duid) {
+	$values = explode(":", $dhcp6duid);
+	if (count($values) != 16) {
+		return false;
+	}
+	for ($i = 0; $i < 16; $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+	return true;
+}
 
 /*
 	If $return_message is true then
@@ -2474,5 +2488,19 @@ function get_smart_drive_list() {
 	sort($disk_list);
 	return $disk_list;
 }
-
+/* Write the DHCP6 DUID file */
+function write_dhcp6_duid($duidfile) {
+	// Create the hex array from the dhcp6duid config entry and write to file
+				
+	$temp = str_replace(":","",$duidfile);
+	$duid_binstring = pack("H*",$temp);
+	if ($fd = fopen("/var/db/dhcp6c_duid", "wb")){
+		fwrite($fd, $duid_binstring);
+		fclose($fd);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 ?>

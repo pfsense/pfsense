@@ -3520,7 +3520,8 @@ msgid "User - System: Copy files (scp)"
 msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:47
-msgid "Indicates whether the user is allowed to copy files "
+msgid "Indicates whether this user is allowed to copy files onto the %s appliance "
+"via SCP/SFTP."
 msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:53

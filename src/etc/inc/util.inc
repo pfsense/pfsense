@@ -2478,7 +2478,7 @@ function get_smart_drive_list() {
 // Validate a network address
 //	$addr: the address to validate
 //	$type: IPV4|IPV6|IPV4V6
-//	$label: the used by the GUI to display this value. Required to compose an error message
+//	$label: the label used by the GUI to display this value. Required to compose an error message
 //	$err_msg: pointer to the callers error message array so that error messages can be added to it here
 //	$alias: are aliases permitted for this address?
 function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {

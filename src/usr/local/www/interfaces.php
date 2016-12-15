@@ -274,7 +274,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "slaac";
 		break;
 	case "dhcp6":
-		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
+		$pconfig['dhcp6duid'] = $wancfg['dhcp6duid'];
 		if (!isset($wancfg['dhcp6-ia-pd-len'])) {
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		}
@@ -285,6 +285,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -323,6 +324,7 @@ switch ($wancfg['ipaddrv6']) {
 $pconfig['blockpriv'] = isset($wancfg['blockpriv']);
 $pconfig['blockbogons'] = isset($wancfg['blockbogons']);
 $pconfig['spoofmac'] = $wancfg['spoofmac'];
+$pconfig['dhcp6cduid'] = $wancfg['dhcp6cduid'];
 $pconfig['mtu'] = $wancfg['mtu'];
 $pconfig['mss'] = $wancfg['mss'];
 
@@ -658,6 +660,8 @@ if ($_POST['apply']) {
 	/* normalize MAC addresses - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
 	$staticroutes = get_staticroutes(true);
 	$_POST['spoofmac'] = strtolower(str_replace("-", ":", $_POST['spoofmac']));
+	/* normalize DUID - lowercase and convert Windows-ized hyphenated MACs to colon delimited */
+	$_POST['dhcp6duid'] = strtolower(str_replace("-", ":", $_POST['dhcp6duid']));
 	if ($_POST['ipaddr']) {
 		if (!is_ipaddrv4($_POST['ipaddr'])) {
 			$input_errors[] = gettext("A valid IPv4 address must be specified.");
@@ -780,6 +784,9 @@ if ($_POST['apply']) {
 	}
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
+	}
+	if (($_POST['dhcp6duid'] && !is_duid($_POST['dhcp6duid']))) {
+		$input_errors[] = gettext("A valid DUID must be specified.");
 	}
 	if ($_POST['mtu']) {
 		if (!is_numericint($_POST['mtu'])) {
@@ -972,7 +979,7 @@ if ($_POST['apply']) {
 		unset($wancfg['gatewayv6']);
 		unset($wancfg['dhcphostname']);
 		unset($wancfg['dhcprejectfrom']);
-		unset($wancfg['dhcp6-duid']);
+		unset($wancfg['dhcp6duid']);
 		unset($wancfg['dhcp6-ia-pd-len']);
 		unset($wancfg['dhcp6-ia-pd-send-hint']);
 		unset($wancfg['dhcp6prefixonly']);
@@ -981,6 +988,7 @@ if ($_POST['apply']) {
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
+		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1213,7 +1221,7 @@ if ($_POST['apply']) {
 				break;
 			case "dhcp6":
 				$wancfg['ipaddrv6'] = "dhcp6";
-				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
+				$wancfg['dhcp6duid'] = $_POST['dhcp6duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
 				if ($_POST['dhcp6-ia-pd-send-hint'] == "yes") {
 					$wancfg['dhcp6-ia-pd-send-hint'] = true;
@@ -1230,6 +1238,9 @@ if ($_POST['apply']) {
 
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6norelease'] == "yes") {
+					$wancfg['dhcp6norelease'] = true;
 				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
@@ -2136,6 +2147,21 @@ $section->addInput(new Form_Checkbox(
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
 ));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Prevent dhcp6c from sending a release signal',
+	'Some ISPs will release the allocation and allocate a new PD/address if they receive a release signal',
+	$pconfig['dhcp6norelease']
+));
+$section->addInput(new Form_Input(
+	'dhcp6duid',
+	'DHCP6 DUID',
+	'text',
+	$pconfig['dhcp6duid'],
+	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
+	))->setWidth(9)->sethelp('Enter the DUID to use here. If no DUID is entered, dhcp6c will auto generate a new one if one does not exist.' . '<br />' .
+			'Use this option also if using RAM Disk, as the DUID will be lost on reboot. The existing DUID may be found in var/db/dhcp6_duid.');
+
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',

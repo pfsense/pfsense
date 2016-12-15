@@ -38,7 +38,7 @@ require_once("shaper.inc");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_nat_1to1.php');
 
-$specialsrcdst = explode(" ", "any pptp pppoe l2tp openvpn");
+$specialsrcdst = explode(" ", "any (self) pptp pppoe l2tp openvpn");
 $ifdisp = get_configured_interface_with_descr();
 
 foreach ($ifdisp as $kif => $kdescr) {

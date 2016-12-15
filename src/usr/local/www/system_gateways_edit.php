@@ -221,8 +221,8 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['monitor'] != "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		$input_errors[] = gettext("A valid monitor IP address must be specified.");
+	if (($_POST['monitor'] != "") && ($_POST['monitor'] != "dynamic")) {
+		validateipaddr($_POST['monitor'], IPV4V6, "Monitor IP", $input_errors, false);
 	}
 	if (isset($_POST['data_payload']) && is_numeric($_POST['data_payload']) && $_POST['data_payload'] < 0) {
 		$input_errors[] = gettext("A valid data payload must be specified.");

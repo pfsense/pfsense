@@ -79,13 +79,13 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ((empty($_POST['adaptivestart']) && !empty($_POST['adaptiveend'])) || (!empty($_POST['adaptivestart']) && empty($_POST['adaptiveend']))) {
+	if ((isset($_POST['adaptivestart']) && !isset($_POST['adaptiveend'])) || (!isset($_POST['adaptivestart']) && isset($_POST['adaptiveend']))) {
 		$input_errors[] = gettext("The Firewall Adaptive values must be set together.");
 	}
-	if (!empty($_POST['adaptivestart']) && !is_numericint($_POST['adaptivestart'])) {
+	if (isset($_POST['adaptivestart']) && (strlen($_POST['adaptivestart']) > 0) && !is_numericint($_POST['adaptivestart'])) {
 		$input_errors[] = gettext("The Firewall Adaptive Start value must be an integer.");
 	}
-	if (!empty($_POST['adaptive-end']) && !is_numericint($_POST['adaptive-end'])) {
+	if (isset($_POST['adaptive-end']) && (strlen($_POST['adaptive-end']) > 0) && !is_numericint($_POST['adaptive-end'])) {
 		$input_errors[] = gettext("The Firewall Adaptive End value must be an integer.");
 	}
 	if ($_POST['firewall-maximum-states'] && !is_numericint($_POST['firewall-maximum-states'])) {
@@ -183,12 +183,12 @@ if ($_POST) {
 			unset($config['system']['scrubrnid']);
 		}
 
-		if (!empty($_POST['adaptiveend'])) {
+		if (is_numericint($_POST['adaptiveend'])) {
 			$config['system']['adaptiveend'] = $_POST['adaptiveend'];
 		} else {
 			unset($config['system']['adaptiveend']);
 		}
-		if (!empty($_POST['adaptivestart'])) {
+		if (is_numericint($_POST['adaptivestart'])) {
 			$config['system']['adaptivestart'] = $_POST['adaptivestart'];
 		} else {
 			unset($config['system']['adaptivestart']);
@@ -448,24 +448,27 @@ $group->add(new Form_Input(
 	'Adaptive start',
 	'number',
 	$pconfig['adaptivestart'],
-	['min' => 1]
+	['min' => 0]
 ))->setHelp('When the number of state entries exceeds this value, adaptive '.
 	'scaling begins.  All timeout values are scaled linearly with factor '.
-	'(adaptive.end - number of states) / (adaptive.end - adaptive.start).');
+	'(adaptive.end - number of states) / (adaptive.end - adaptive.start). '.
+	'Defaults to 60% of the Firewall Maximum States value');
 
 $group->add(new Form_Input(
 	'adaptiveend',
 	'Adaptive end',
 	'number',
 	$pconfig['adaptiveend'],
-	['min' => 1]
+	['min' => 0]
 ))->setHelp('When reaching this number of state entries, all timeout values '.
 	'become zero, effectively purging all state entries immediately.  This '.
 	'value is used to define the scale factor, it should not actually be '.
-	'reached (set a lower state limit, see below).');
+	'reached (set a lower state limit, see below). '.
+	'Defaults to 120% of the Firewall Maximum States value');
 
 $group->setHelp('Timeouts for states can be scaled adaptively as the number of '.
-	'state table entries grows. Leave blank for the default (0)');
+	'state table entries grows. Leave blank to use default values, set to '.
+	'0 to disable Adaptive Timeouts');
 
 $section->add($group);
 

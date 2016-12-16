@@ -474,6 +474,8 @@ function local_user_set(& $user) {
 		$user_shell = "/bin/tcsh";
 	} elseif (userHasPrivilege($user, "user-copy-files")) {
 		$user_shell = "/usr/local/bin/scponly";
+	} elseif (userHasPrivilege($user, "user-copy-files-chroot")) {
+		$user_shell = "/usr/local/sbin/scponlyc";
 	} elseif (userHasPrivilege($user, "user-ssh-tunnel")) {
 		$user_shell = "/usr/local/sbin/ssh_tunnel_shell";
 	} elseif (userHasPrivilege($user, "user-ipsec-xauth-dialin")) {

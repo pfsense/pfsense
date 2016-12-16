@@ -2491,16 +2491,20 @@ function get_smart_drive_list() {
 /* Write the DHCP6 DUID file */
 function write_dhcp6_duid($duidfile) {
 	// Create the hex array from the dhcp6duid config entry and write to file
-				
-	$temp = str_replace(":","",$duidfile);
-	$duid_binstring = pack("H*",$temp);
-	if ($fd = fopen("/var/db/dhcp6c_duid", "wb")){
-		fwrite($fd, $duid_binstring);
-		fclose($fd);
-		return true;
+	if(is_duid($duidfile))
+	{
+		$temp = str_replace(":","",$duidfile);
+		$duid_binstring = pack("H*",$temp);
+		if ($fd = fopen("/var/db/dhcp6c_duid", "wb")) {
+			fwrite($fd, $duid_binstring);
+			fclose($fd);
+			return;
+		}
+		else {
+			log_error(gettext("Error: attempting to write DUID file - File write error"));
+			return;
+		}
 	}
-	else {
-		return false;
-	}
+	log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
 }
 ?>

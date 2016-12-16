@@ -2559,7 +2559,7 @@ function write_dhcp6_duid($duidfile) {
 	{
 		$temp = str_replace(":","",$duidfile);
 		$duid_binstring = pack("H*",$temp);
-		if ($fd = fopen("{$g['vardb_path']}/", "wb")) {
+		if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
 			fwrite($fd, $duid_binstring);
 			fclose($fd);
 			return;

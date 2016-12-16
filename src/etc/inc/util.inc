@@ -2553,11 +2553,13 @@ function is_duid($dhcp6duid) {
 /* Write the DHCP6 DUID file */
 function write_dhcp6_duid($duidfile) {
 	// Create the hex array from the dhcp6duid config entry and write to file
+	global $g;
+	
 	if(is_duid($duidfile))
 	{
 		$temp = str_replace(":","",$duidfile);
 		$duid_binstring = pack("H*",$temp);
-		if ($fd = fopen("/var/db/dhcp6c_duid", "wb")) {
+		if ($fd = fopen("{$g['varrun_path']}/", "wb")) {
 			fwrite($fd, $duid_binstring);
 			fclose($fd);
 			return;

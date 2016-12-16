@@ -2502,7 +2502,7 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 			if (is_ipaddrv6($addr)) {
 				$addr = strtolower($addr);
 				return true;
-			} else if($alias) {
+			} else if ($alias) {
 				if (is_alias($addr)) {
 					return true;
 				} else {
@@ -2520,7 +2520,7 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 				return true;
 			} else if (is_ipaddrv4($addr)) {
 				return true;
-			} else if($alias) {
+			} else if ($alias) {
 				if (is_alias($addr)) {
 					return true;
 				} else {

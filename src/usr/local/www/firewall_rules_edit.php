@@ -1897,10 +1897,16 @@ events.push(function() {
 		var current_sel = ($(listid).val() || ['any']); // Ensures we get correct array when none selected
 		var new_options = icmptypes[$('#ipprotocol').val()];
 		var new_html = '';
+		//remove and re-create the select element (otherwise the options can disappear in Safari)
+		$(listid).remove();
+		var select = $("<select></select>").attr("id", "icmptype[]").attr("name", "icmptype[]").addClass("form-control").attr("multiple", "multiple");
+		$('div.icmptype_section > div.col-sm-10').prepend(select);
+
 		for (var key in new_options) {
 			new_html += '<option value="' + key + (jQuery.inArray(key, current_sel) != -1 ? '" selected="selected">' : '">') + new_options[key] + '</option>\n';
 		}
-		$(listid).empty().html(new_html);
+
+		$(listid).html(new_html);
 
 		ext_change();
 

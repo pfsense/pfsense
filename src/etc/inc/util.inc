@@ -2509,11 +2509,11 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 				if (is_alias($addr)) {
 					return true;
 				} else {
-					$err_msg[] = $label . gettext(" must be a valid IPv4 address or alias.");
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
 					return false;
 				}
 			} else {
-				$err_msg[] = $label . gettext(" must be a valid IPv4 address.");
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address."), $label);
 				return false;
 			}
 		break;
@@ -2525,11 +2525,11 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 				if (is_alias($addr)) {
 					return true;
 				} else {
-					$err_msg[] = $label . gettext(" must be a valid IPv6 address or alias.");
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
 					return false;
 				}
 			} else {
-				$err_msg[] = $label . gettext(" must be a valid IPv6 address.");
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address."), $label);
 				return false;
 			}
 		break;
@@ -2543,11 +2543,11 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 				if (is_alias($addr)) {
 					return true;
 				} else {
-					$err_msg[] = $label . gettext(" must be a valid IPv4 or IPv6 address or alias.");
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
 					return false;
 				}
 			} else {
-				$err_msg[] = $label . gettext(" must be a valid IPv4 or IPv6 address.");
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address."), $label);
 				return false;
 			}
 		break;

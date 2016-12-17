@@ -78,6 +78,7 @@ main() {
 	echo
 	echo
 
+	trap "-" 1 2 15 EXIT
 	/sbin/shutdown -p now
 }
 

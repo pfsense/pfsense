@@ -1,0 +1,114 @@
+#!/bin/sh
+
+#
+# Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
+# All rights reserved.
+#
+
+main() {
+
+	echo
+	echo "This will install the standard firmware and will erase all the existing"
+	echo "contents of eMMC permanently."
+	echo
+	read -p "Are you sure you want to continue ? (y/N) " confirm
+	echo
+
+	case "${confirm}" in
+	[Yy] | [Yy][Ee] | [Yy][Ee][Ss])
+		break
+		;;
+	*)
+		echo rebooting.
+		reboot
+	esac
+
+	echo "Erasing the eMMC contents..."
+	/bin/dd if=/dev/zero of=/dev/${MMCDEV} bs=64k count=800 2> /dev/null
+
+	echo "Writing the firmware to eMMC..."
+	echo "(this may take a few minutes to complete)"
+	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${MMCDEV} bs=1m
+
+	echo
+	echo "Done!"
+	echo
+	echo "The system will halt now, please power off and remove the firmware"
+	echo "recovery storage device."
+	echo
+	echo
+
+	/sbin/shutdown -h now
+}
+
+# Try to read serial
+machine_arch=$(uname -p)
+unset is_adi
+case "${machine_arch}" in
+	amd64)
+		serial=$(kenv smbios.system.serial)
+		product=$(kenv -q smbios.system.product)
+		case "${product}" in
+			RCC-VE|DFFv2|RCC)
+				is_adi=1
+				;;
+		esac
+		;;
+        armv6)
+		product=$(kenv -q uboot.board_name)
+		dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16 \
+		    2> /dev/null
+		serial=$(hexdump -C /tmp/serial.bin | \
+			sed '1!d; s,\.*\|$,,; s,^.*\|,,')
+		;;
+	*)
+		echo "Unsuported platform"
+		exit 1
+esac
+
+# XXX is it really necessary?
+if [ "${serial}" = "123456789" ]; then
+	serial=""
+fi
+
+# Bad serial
+if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
+	serial=""
+fi
+
+echo
+echo "Netgate SG-1000 firmware recovery"
+if [ -z "${product}" -o "${product}" != "A335uFW" ]; then
+	echo
+	echo "unsupported system: unknown product.  aborting."
+	sleep 5
+	reboot
+fi
+
+if [ -z "${serial}" ]; then
+	echo
+	echo "unsupported system: no serial number.  aborting."
+	sleep 5
+	reboot
+fi
+echo "Serial: ${serial}"
+
+MMCDEV=mmcsd1
+MMCHC=$(/sbin/geom disk list ${MMCDEV} | /usr/bin/grep MMCHC)
+if [ -z "${MMCHC}" ]; then
+	echo
+	echo "no eMMC device detected.  aborting."
+	sleep 5
+	reboot
+fi
+
+IMG=$(/bin/cat /usr/local/share/pfSense/img.path 2> /dev/null)
+if [ -z "${IMG}" -o ! -f "${IMG}" ]; then
+	echo
+	echo "cannot find the firmware image.  aborting."
+	sleep 5
+	reboot
+fi
+
+trap main 1 2 15 EXIT
+main

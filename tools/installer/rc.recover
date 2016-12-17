@@ -30,6 +30,46 @@ main() {
 	echo "(this may take a few minutes to complete)"
 	/usr/bin/gzip -dc ${IMG} | /bin/dd of=/dev/${MMCDEV} bs=1m
 
+	echo "Fixing eMMC labels..."
+	# Get / ufsid
+	UFSID=$(/sbin/glabel status -s "${MMCDEV}s2a" 2>/dev/null \
+		| /usr/bin/head -n 1 | /usr/bin/cut -d' ' -f1)
+
+	if [ -z "${UFSID}" ]; then
+		echo
+		echo "error obtaining UFSID.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	if ! /sbin/mount /dev/${UFSID} /mnt; then
+		echo
+		echo "error mounting pfSense partition.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	# Found available label for EMMCBOOT
+	idx=0
+	while [ -e "/dev/label/EMMCBOOT${idx}" ]; do
+		idx=$((idx+1))
+	done
+	EMMCBOOT_LABEL="EMMCBOOT${idx}"
+	if ! /sbin/glabel label ${EMMCBOOT_LABEL} "/dev/${MMCDEV}s1"; then
+		echo
+		echo "error setting EMMCBOOT label.  aborting."
+		sleep 5
+		reboot
+	fi
+
+	/usr/bin/sed -i '' \
+		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${EMMCBOOT_LABEL}," \
+		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
+		/mnt/etc/fstab
+
+	/sbin/umount /mnt
+	sync ; sync ; sync
+
 	echo
 	echo "Done!"
 	echo
@@ -46,8 +86,8 @@ machine_arch=$(uname -p)
 unset is_adi
 case "${machine_arch}" in
 	amd64)
-		serial=$(kenv smbios.system.serial)
-		product=$(kenv -q smbios.system.product)
+		serial=$(/bin/kenv smbios.system.serial)
+		product=$(/bin/kenv -q smbios.system.product)
 		case "${product}" in
 			RCC-VE|DFFv2|RCC)
 				is_adi=1
@@ -55,11 +95,11 @@ case "${machine_arch}" in
 		esac
 		;;
         armv6)
-		product=$(kenv -q uboot.board_name)
-		dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16 \
+		product=$(/bin/kenv -q uboot.board_name)
+		/bin/dd if=/dev/icee0 of=/tmp/serial.bin bs=1 count=12 skip=16 \
 		    2> /dev/null
 		serial=$(hexdump -C /tmp/serial.bin | \
-			sed '1!d; s,\.*\|$,,; s,^.*\|,,')
+			/usr/bin/sed '1!d; s,\.*\|$,,; s,^.*\|,,')
 		;;
 	*)
 		echo "Unsuported platform"
@@ -76,8 +116,8 @@ if ! echo "${serial}" | egrep -q '^[0-9]*$'; then
 	serial=""
 fi
 
-echo
 echo "Netgate SG-1000 firmware recovery"
+
 if [ -z "${product}" -o "${product}" != "A335uFW" ]; then
 	echo
 	echo "unsupported system: unknown product.  aborting."
@@ -91,6 +131,7 @@ if [ -z "${serial}" ]; then
 	sleep 5
 	reboot
 fi
+
 echo "Serial: ${serial}"
 
 MMCDEV=mmcsd1

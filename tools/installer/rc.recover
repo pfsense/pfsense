@@ -79,7 +79,7 @@ main() {
 	echo
 
 	trap "-" 1 2 15 EXIT
-	/sbin/shutdown -p now
+	/sbin/shutdown -h now
 }
 
 # Try to read serial

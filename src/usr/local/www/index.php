@@ -80,6 +80,8 @@ if ($g['disablecrashreporter'] != true) {
 	}
 }
 
+$platform = system_identify_specific_platform();
+
 ##build list of php include files
 $phpincludefiles = array();
 $directory = "/usr/local/www/widgets/include/";
@@ -88,6 +90,9 @@ $filename = "";
 
 while (false !== ($filename = readdir($dirhandle))) {
 	if (!stristr($filename, ".inc")) {
+		continue;
+	}
+	if ($platform['name'] == "uFW" && $filename == "smart_status.inc") {
 		continue;
 	}
 	$phpincludefiles[] = $filename;

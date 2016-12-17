@@ -176,7 +176,7 @@ $(function() {
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
 		if (!($(this).hasClass('no-confirm'))) {
-			var msg = $.trim(this.textContent);
+			var msg = $.trim(this.textContent).toLowerCase();
 
 			if (!msg)
 				var msg = $.trim(this.value).toLowerCase();

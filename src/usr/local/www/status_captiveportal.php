@@ -66,6 +66,12 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	exit;
 }
 
+if ($_GET['deleteall'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
+	captiveportal_disconnect_all();
+	header("Location: status_captiveportal.php?zone={$cpzone}");
+	exit;
+}
+
 function clientcmp($a, $b) {
 	global $order;
 	return strcmp($a[$order], $b[$order]);
@@ -245,22 +251,24 @@ endif;
 <?php
 if (!empty($cpzone)):
 	if ($_GET['showact']): ?>
-		<input type="hidden" name="showact" value="0" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Don't show last activity")?>">
+		<button type="submit" class="btn btn-info" name="showact" value="0")?>">
 			<i class="fa fa-minus-circle icon-embed-btn"></i>
 			<?=gettext("Hide Last Activity")?>
 		</button>
 <?php
 	else:
 ?>
-		<input type="hidden" name="showact" value="1" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Show last activity")?>">
+		<button type="submit" class="btn btn-info" name="showact" value="1">
 			<i class="fa fa-plus-circle icon-embed-btn"></i>
 			<?=gettext("Show Last Activity")?>
 		</button>
 <?php
 	endif;
 ?>
+	<button type="submit" class="btn btn-danger" name="deleteall" value="del">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Disconnect All Users")?>
+	</button>
 	<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone)?>" />
 <?php
 endif;

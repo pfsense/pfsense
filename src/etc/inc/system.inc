@@ -823,6 +823,7 @@ function clear_all_log_files($restart = false) {
 		system_syslogd_start();
 		killbyname("dhcpd");
 		services_dhcpd_configure();
+		services_unbound_configure(false);
 	}
 	return;
 }

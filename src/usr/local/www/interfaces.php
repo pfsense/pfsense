@@ -285,6 +285,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -985,6 +986,7 @@ if ($_POST['apply']) {
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
+		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1234,6 +1236,9 @@ if ($_POST['apply']) {
 
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6norelease'] == "yes") {
+					$wancfg['dhcp6norelease'] = true;
 				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
@@ -2139,6 +2144,12 @@ $section->addInput(new Form_Checkbox(
 	'Do not wait for a RA',
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Do not allow PD/Address release',
+	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
+	$pconfig['dhcp6norelease']
 ));
 $section->addInput(new Form_Input(
 	'dhcp6-duid',

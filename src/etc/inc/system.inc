@@ -822,6 +822,9 @@ function clear_all_log_files($restart = false) {
 	if ($restart) {
 		system_syslogd_start();
 		killbyname("dhcpd");
+		if (!function_exists('services_dhcpd_configure')) {
+			require_once('services.inc');
+		}
 		services_dhcpd_configure();
 		services_unbound_configure(false);
 	}

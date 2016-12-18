@@ -84,7 +84,7 @@ if (!$config['installedpackages'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
-	print_info_box('UPnP is currently disabled.', 'danger');
+	print_info_box('UPnP is currently disabled. Go to <a href="pkg_edit.php?xml=miniupnpd.xml">Services > UPnP &amp; NAT-PMP</a> to enable.', 'danger');
 	include("foot.inc");
 	exit;
 }

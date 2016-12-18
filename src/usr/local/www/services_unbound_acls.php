@@ -169,7 +169,9 @@ $actionHelp =
 					sprintf(gettext('%sDeny:%s Stops queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
 					sprintf(gettext('%sRefuse:%s Stops queries from hosts within the netblock defined below, but sends a DNS rcode REFUSED error message back to the client.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
 					sprintf(gettext('%sAllow:%s Allow queries from hosts within the netblock defined below.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
-					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.'), '<span class="text-success"><strong>', '</strong></span>');
+					sprintf(gettext('%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within the netblock defined below. Used for cache snooping and ideally should only be configured for the administrative host.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+					sprintf(gettext('%sDeny Nonlocal:%s Allow only authoritative local-data queries from hosts within the netblock defined below. Messages that are disallowed are dropped.%s'), '<span class="text-success"><strong>', '</strong></span>', '<br />') .
+					sprintf(gettext('%sRefuse Nonlocal:%s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
 
@@ -228,7 +230,7 @@ if ($act == "new" || $act == "edit") {
 		'aclaction',
 		'Action',
 		strtolower($pconfig['aclaction']),
-		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'))
+		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'), 'deny nonlocal' => gettext('Deny Nonlocal'), 'refuse nonlocal' => gettext('Refuse Nonlocal'))
 	))->setHelp($actionHelp);
 
 	$section->addInput(new Form_Input(

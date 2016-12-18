@@ -32,12 +32,18 @@ $machine = trim(`uname -m`);
 
 /* Export the product variable. */
 if (is_writable("/etc")) {
+	$handle = NULL;
 	if (!file_exists("/etc/product_name") || is_writable("/etc/product_name"))
 		$handle = fopen("/etc/product_name", 'w');
 	if ($handle != NULL)
 		fwrite($handle, $product);
 	if ($handle != NULL)
 		fclose($handle);
+}
+
+$platform = system_identify_specific_platform();
+if (isset($platform['descr'])) {
+	printf("%s - %s: %s\n\n", $platform['descr'], gettext("Serial"), system_get_serial());
 }
 
 print "*** Welcome to {$product} {$g['product_version_string']} ({$machine}) on {$hostname} ***\n";

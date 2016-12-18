@@ -22240,7 +22240,23 @@ msgstr ""
 msgid ""
 "%sAllow Snoop:%s Allow recursive and nonrecursive access from hosts within "
 "the netblock defined below. Used for cache snooping and ideally should only "
-"be configured for the administrative host."
+"be configured for the administrative host.%s"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_acls.php:173
+#, php-format
+msgid ""
+"%sDeny Nonlocal:%s Allow only authoritative local-data queries from hosts "
+"within the netblock defined below. Messages that are disallowed are "
+"dropped.%s"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_acls.php:174
+#, php-format
+msgid ""
+"%sRefuse Nonlocal:%s Allow only authoritative local-data queries from hosts "
+"within the netblock defined below. Sends a DNS rcode REFUSED error message "
+"back to the client for messages that are disallowed."
 msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:204
@@ -22257,6 +22273,14 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:231
 msgid "Allow Snoop"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_acls.php:231
+msgid "Deny Nonlocal"
+msgstr ""
+
+#: src/usr/local/www/services_unbound_acls.php:231
+msgid "Refuse Nonlocal"
 msgstr ""
 
 #: src/usr/local/www/services_unbound_acls.php:290

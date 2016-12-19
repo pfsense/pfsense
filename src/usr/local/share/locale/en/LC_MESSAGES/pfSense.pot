@@ -21768,23 +21768,29 @@ msgid "Only interfaces configured with a static IP will be shown."
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:108
-msgid "Router Only"
+msgid "Router Only - RA Flags [none], Prefix Flags [router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:109
-msgid "Unmanaged"
+msgid "Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:110
-msgid "Managed"
+msgid ""
+"Managed - RA Flags [managed, other stateful], Prefix Flags "
+"[onlink, router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:111
-msgid "Assisted"
+msgid ""
+"Assisted - RA Flags [managed, other stateful], Prefix Flags "
+"[onlink, auto, router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:112
-msgid "Stateless DHCP"
+msgid ""
+"Stateless DHCP - RA Flags [other stateful], Prefix Flags "
+"[onlink, auto, router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:114
@@ -21853,14 +21859,18 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:296
 msgid ""
-"Select the Operating Mode for the Router Advertisement (RA) Daemon. Use:<br /"
-">&nbsp;<strong>Router Only</strong> to only advertise this router<br />&nbsp;"
-"<strong>Unmanaged</strong> for Router Advertising with Stateless "
-"Autoconfig<br />&nbsp;<strong>Managed</strong> for assignment through a "
-"DHCPv6 Server<br />&nbsp;<strong>Assisted</strong> for DHCPv6 Server "
-"assignment combined with Stateless Autoconfig. It is not required to "
-"activate this DHCPv6 server when set to \"Managed\", this can be another "
-"host on the network"
+"Select the Operating Mode for the Router Advertisement (RA) Daemon.<br />"
+"<br /><strong>Disabled</strong> - RADVD will not be enabled on this "
+"interface.<br /><strong>Router Only</strong> - Will advertise this "
+"router.<br /><strong>Unmanaged</strong> - Will advertise this router with "
+"stateless autoconfig.<br /><strong>Managed</strong> - Will advertise this "
+"router with all configuration through a DHCPv6 server.<br /><strong>Assisted"
+"</strong> - Will advertise this router with configuration through a DHCPv6 "
+"server and/or stateless autoconfig.<br /><strong>Stateless DHCP</strong> - "
+"Will advertise this router with stateless autoconfig and other configuration "
+"information available via DHCPv6.<br /><br />It is not required to activate "
+"DHCPv6 server on pfSense when set to \"Managed\", \"Assisted\" or "
+"\"Stateless DHCP\", it can be another host on the network."
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:305

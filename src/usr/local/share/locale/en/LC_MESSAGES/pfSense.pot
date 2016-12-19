@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-19 13:20-0200\n"
+"POT-Creation-Date: 2016-12-19 13:24-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -6266,7 +6266,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd.php:262
 #: src/usr/local/www/services_ntpd_acls.php:286
 #: src/usr/local/www/services_pppoe_edit.php:523
-#: src/usr/local/www/services_router_advertisements.php:406
+#: src/usr/local/www/services_router_advertisements.php:408
 #: src/usr/local/www/services_unbound_acls.php:266
 #: src/usr/local/www/services_unbound_host_edit.php:290
 #: src/usr/local/www/system_certmanager.php:758
@@ -9989,7 +9989,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_acls.php:300
 #: src/usr/local/www/services_pppoe.php:147
 #: src/usr/local/www/services_rfc2136.php:201
-#: src/usr/local/www/services_router_advertisements.php:420
+#: src/usr/local/www/services_router_advertisements.php:422
 #: src/usr/local/www/services_unbound.php:500
 #: src/usr/local/www/services_unbound.php:549
 #: src/usr/local/www/services_unbound_acls.php:335
@@ -10737,29 +10737,13 @@ msgstr ""
 msgid "Destination address"
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1_edit.php:168
-msgid "A valid external subnet must be specified."
-msgstr ""
-
 #: src/usr/local/www/firewall_nat_1to1_edit.php:173
 #: src/usr/local/www/firewall_nat_edit.php:283
 msgid "Alias entries must specify a single host or alias."
 msgstr ""
 
-#: src/usr/local/www/firewall_nat_1to1_edit.php:179
-#, php-format
-msgid "%s is not a valid internal IP address."
-msgstr ""
-
 #: src/usr/local/www/firewall_nat_1to1_edit.php:183
 msgid "A valid internal bit count must be specified."
-msgstr ""
-
-#: src/usr/local/www/firewall_nat_1to1_edit.php:190
-#: src/usr/local/www/firewall_nat_edit.php:300
-#: src/usr/local/www/firewall_rules_edit.php:518
-#, php-format
-msgid "%s is not a valid destination IP address or alias."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:194
@@ -11037,6 +11021,12 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:196
 #: src/usr/local/www/firewall_rules_edit.php:513
 msgid "A valid source bit count must be specified."
+msgstr ""
+
+#: src/usr/local/www/firewall_nat_edit.php:300
+#: src/usr/local/www/firewall_rules_edit.php:518
+#, php-format
+msgid "%s is not a valid destination IP address or alias."
 msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:303
@@ -11821,7 +11811,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_acls.php:173
 #: src/usr/local/www/services_ntpd_gps.php:196
 #: src/usr/local/www/services_ntpd_pps.php:115
-#: src/usr/local/www/services_router_advertisements.php:446
+#: src/usr/local/www/services_router_advertisements.php:448
 #: src/usr/local/www/status_logs_common.inc:98
 #: src/usr/local/www/status_logs_settings.php:188
 #: src/usr/local/www/status_logs_settings.php:222
@@ -19662,7 +19652,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:945
 #: src/usr/local/www/services_dhcp_edit.php:558
 #: src/usr/local/www/services_dhcpv6.php:704
-#: src/usr/local/www/services_router_advertisements.php:439
+#: src/usr/local/www/services_router_advertisements.php:441
 msgid "Domain search list"
 msgstr ""
 
@@ -21777,20 +21767,19 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:110
 msgid ""
-"Managed - RA Flags [managed, other stateful], Prefix Flags "
-"[onlink, router]"
+"Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:111
 msgid ""
-"Assisted - RA Flags [managed, other stateful], Prefix Flags "
-"[onlink, auto, router]"
+"Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, "
+"router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:112
 msgid ""
-"Stateless DHCP - RA Flags [other stateful], Prefix Flags "
-"[onlink, auto, router]"
+"Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, "
+"router]"
 msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:114
@@ -21859,103 +21848,103 @@ msgstr ""
 
 #: src/usr/local/www/services_router_advertisements.php:296
 msgid ""
-"Select the Operating Mode for the Router Advertisement (RA) Daemon.<br />"
-"<br /><strong>Disabled</strong> - RADVD will not be enabled on this "
-"interface.<br /><strong>Router Only</strong> - Will advertise this "
-"router.<br /><strong>Unmanaged</strong> - Will advertise this router with "
-"stateless autoconfig.<br /><strong>Managed</strong> - Will advertise this "
-"router with all configuration through a DHCPv6 server.<br /><strong>Assisted"
-"</strong> - Will advertise this router with configuration through a DHCPv6 "
-"server and/or stateless autoconfig.<br /><strong>Stateless DHCP</strong> - "
-"Will advertise this router with stateless autoconfig and other configuration "
-"information available via DHCPv6.<br /><br />It is not required to activate "
-"DHCPv6 server on pfSense when set to \"Managed\", \"Assisted\" or "
-"\"Stateless DHCP\", it can be another host on the network."
+"Select the Operating Mode for the Router Advertisement (RA) Daemon.<br /"
+"><br /><strong>Disabled</strong> - RADVD will not be enabled on this "
+"interface.<br /><strong>Router Only</strong> - Will advertise this router."
+"<br /><strong>Unmanaged</strong> - Will advertise this router with stateless "
+"autoconfig.<br /><strong>Managed</strong> - Will advertise this router with "
+"all configuration through a DHCPv6 server.<br /><strong>Assisted</strong> - "
+"Will advertise this router with configuration through a DHCPv6 server and/or "
+"stateless autoconfig.<br /><strong>Stateless DHCP</strong> - Will advertise "
+"this router with stateless autoconfig and other configuration information "
+"available via DHCPv6.<br /><br />It is not required to activate DHCPv6 "
+"server on pfSense when set to \"Managed\", \"Assisted\" or \"Stateless DHCP"
+"\", it can be another host on the network."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:305
+#: src/usr/local/www/services_router_advertisements.php:307
 msgid "Router priority"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:308
+#: src/usr/local/www/services_router_advertisements.php:310
 msgid "Select the Priority for the Router Advertisement (RA) Daemon."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:332
+#: src/usr/local/www/services_router_advertisements.php:334
 msgid "RA Interface"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:335
+#: src/usr/local/www/services_router_advertisements.php:337
 msgid "Select the Interface for the Router Advertisement (RA) Daemon."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:340
+#: src/usr/local/www/services_router_advertisements.php:342
 msgid "Default valid lifetime"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:344
+#: src/usr/local/www/services_router_advertisements.php:346
 msgid ""
 "The length of time in seconds (relative to the time the packet is sent) that "
 "the prefix is valid for the purpose of on-link determination. <br />The "
 "default is 86400 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:349
+#: src/usr/local/www/services_router_advertisements.php:351
 msgid "Default preferred lifetime"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:352
+#: src/usr/local/www/services_router_advertisements.php:354
 msgid ""
 "Seconds. The length of time in seconds (relative to the time the packet is "
 "sent) that addresses generated from the prefix via stateless address "
 "autoconfiguration remain preferred. <br />The default is 14400 seconds."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:357
+#: src/usr/local/www/services_router_advertisements.php:359
 msgid "Minimum RA interval"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:361
+#: src/usr/local/www/services_router_advertisements.php:363
 msgid ""
 "The minimum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:365
+#: src/usr/local/www/services_router_advertisements.php:367
 msgid "Maximum RA interval"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:369
+#: src/usr/local/www/services_router_advertisements.php:371
 msgid ""
 "The maximum time allowed between sending unsolicited multicast router "
 "advertisements in seconds."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:373
+#: src/usr/local/www/services_router_advertisements.php:375
 msgid "Router lifetime"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:377
+#: src/usr/local/www/services_router_advertisements.php:379
 msgid "The lifetime associated with the default router in seconds."
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:380
+#: src/usr/local/www/services_router_advertisements.php:382
 msgid "RA Subnets"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:396
+#: src/usr/local/www/services_router_advertisements.php:398
 msgid "Subnets"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:427
+#: src/usr/local/www/services_router_advertisements.php:429
 msgid "DNS Configuration"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:432
+#: src/usr/local/www/services_router_advertisements.php:434
 msgid "Server "
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:442
+#: src/usr/local/www/services_router_advertisements.php:444
 msgid ""
 "The RA server can optionally provide a domain search list. Use the semicolon "
 "character as separator."
@@ -32162,7 +32151,7 @@ msgstr ""
 msgid "AAAA (IPv6)"
 msgstr ""
 
-#: src/usr/local/www/services_router_advertisements.php:447
+#: src/usr/local/www/services_router_advertisements.php:449
 msgid "Use same settings as DHCPv6 server"
 msgstr ""
 

@@ -154,6 +154,19 @@ $subnets_help = '<span class="help-block">' .
 		"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.") .
 	'</span>';
 
+// THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
+$ramode_help = 'Select the Operating Mode for the Router Advertisement (RA) Daemon.' .
+	'<div class="infoblock">' .
+	'<br />' .
+	'<strong>Disabled</strong> - RADVD will not be enabled on this interface.' . '<br />' .
+	'<strong>Router Only</strong> - Will advertise this router.' . '<br />' .
+	'<strong>Unmanaged</strong> - Will advertise this router with stateless autoconfig.' . '<br />' .
+	'<strong>Managed</strong> - Will advertise this router with all configuration through a DHCPv6 server.' . '<br />' .
+	'<strong>Assisted</strong> - Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '<br />' .
+	'<strong>Stateless DHCP</strong> - Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '<br /><br />' .
+	'It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.' .
+	'</div';
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -325,14 +338,7 @@ $section->addInput(new Form_Select(
 	'Router mode',
 	$pconfig['ramode'],
 	$advertise_modes
-))->setHelp('Select the Operating Mode for the Router Advertisement (RA) Daemon.' . '<br /><br />' .
-			'<strong>Disabled</strong> - RADVD will not be enabled on this interface.' . '<br />' .
-			'<strong>Router Only</strong> - Will advertise this router.' . '<br />' .
-			'<strong>Unmanaged</strong> - Will advertise this router with stateless autoconfig.' . '<br />' .
-			'<strong>Managed</strong> - Will advertise this router with all configuration through a DHCPv6 server.' . '<br />' .
-			'<strong>Assisted</strong> - Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '<br />' .
-			'<strong>Stateless DHCP</strong> - Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '<br /><br />' .
-			'It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.');
+))->setHelp($ramode_help);
 
 $section->addInput(new Form_Select(
 	'rapriority',

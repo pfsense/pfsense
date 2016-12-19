@@ -157,13 +157,14 @@ $subnets_help = '<span class="help-block">' .
 // THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
 $ramode_help = 'Select the Operating Mode for the Router Advertisement (RA) Daemon.' .
 	'<div class="infoblock">' .
-	'<br />' .
-	'<strong>Disabled</strong> - RADVD will not be enabled on this interface.' . '<br />' .
-	'<strong>Router Only</strong> - Will advertise this router.' . '<br />' .
-	'<strong>Unmanaged</strong> - Will advertise this router with stateless autoconfig.' . '<br />' .
-	'<strong>Managed</strong> - Will advertise this router with all configuration through a DHCPv6 server.' . '<br />' .
-	'<strong>Assisted</strong> - Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '<br />' .
-	'<strong>Stateless DHCP</strong> - Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '<br /><br />' .
+	'<dl class="dl-horizontal responsive">' .
+	'<dt>' . 'Disabled' . '</dt><dd>' . 'RADVD will not be enabled on this interface.' . '</dd>' .
+	'<dt>' . 'Router Only' . '</dt><dd>' . 'Will advertise this router.' . '</dd>' .
+	'<dt>' . 'Unmanaged' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig.' . '</dd>' .
+	'<dt>' . 'Managed' . '</dt><dd>' . 'Will advertise this router with all configuration through a DHCPv6 server.' . '</dd>' .
+	'<dt>' . 'Assisted' . '</dt><dd>' . 'Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '</dd>' .
+	'<dt>' . 'Stateless DHCP' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '</dd>' .
+	'</dl>' .
 	'It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.' .
 	'</div';
 

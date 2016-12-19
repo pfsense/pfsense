@@ -3867,6 +3867,10 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
+	if (!empty($wancfg['dhcp6-duid']) {
+	// Write the DUID file
+		write_dhcp6_duid($wancfg['dhcp6-duid']));
+	}
 
 	if ($wancfg['adv_dhcp6_config_file_override']) {
 		// DHCP6 Config File Override

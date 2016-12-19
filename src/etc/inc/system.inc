@@ -1923,14 +1923,14 @@ function system_reboot_sync() {
 }
 
 function system_reboot_cleanup() {
-	global $config, $cpzone;
+	global $config, $cpzone, $cpzoneid;
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpzone=>$cp) {
-			captiveportal_radius_stop_all();
-			captiveportal_send_server_accounting(true);
+			$cpzoneid = $cp[zoneid];
+			captiveportal_disconnect_all(7); // Admin-Reboot
 		}
 	}
 	require_once("voucher.inc");

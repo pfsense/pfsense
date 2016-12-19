@@ -347,14 +347,9 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
-		captiveportal_radius_stop_all();
+		captiveportal_disconnect_all(10); // NAS-Request
 
 		captiveportal_filterdns_configure();
-
-		/* send Accounting-Off to server */
-		if (!platform_booting()) {
-			captiveportal_send_server_accounting(true);
-		}
 
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");

@@ -282,7 +282,7 @@ if ($_POST['submit'] == "EXEC" && !isBlank($_POST['txtCommand'])):?>
 		fclose($phpfile);
 
 		$output = array();
-		exec("/usr/local/bin/php " . $tmpname, $output);
+		exec("/usr/local/bin/php -d log_errors=off " . $tmpname, $output);
 
 		unlink($tmpname);
 

@@ -71,10 +71,15 @@ function clientcmp($a, $b) {
 	return strcmp($a[$order], $b[$order]);
 }
 
+$cp_status_orders = array('ip', 'mac', 'user', 'lastact', 'start');
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
 	if ($_GET['order']) {
+		/* If an invalid order was submitted, clear it. */
+		if (!in_array($_GET['order'], $cp_status_orders)) {
+			unset($_GET['order']);
+		}
 		if ($_GET['order'] == "ip") {
 			$order = 2;
 		} else if ($_GET['order'] == "mac") {
@@ -92,7 +97,7 @@ if (!empty($cpzone)) {
 $pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
 if (!empty($cpzone)) {
-	$pgtitle[] = $a_cp[$cpzone]['zone'];
+	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
 		$pgtitle[] = gettext("Active Users");
@@ -175,7 +180,7 @@ if (!empty($cpzone)): ?>
 	foreach ($cpdb as $cpent): ?>
 			<tr>
 				<td>
-					<?=$cpent[2]?>
+					<?= htmlspecialchars($cpent[2]); ?>
 				</td>
 				<td>
 <?php
@@ -184,7 +189,7 @@ if (!empty($cpzone)): ?>
 			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
 			print htmlentities($mac);
 			if (isset($mac_man[$mac_hi])) {
-				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
+				print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
 			}
 		}
 ?>	&nbsp;
@@ -215,7 +220,7 @@ if (!empty($cpzone)): ?>
 		endif;
 ?>
 				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=htmlspecialchars($_GET['order'])?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
 				</td>
 			</tr>
 <?php

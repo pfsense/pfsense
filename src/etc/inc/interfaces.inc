@@ -3868,6 +3868,11 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 
+	if (!empty($wancfg['dhcp6-duid']) {
+	// Write the DUID file
+		write_dhcp6_duid($wancfg['dhcp6-duid']));
+	}
+
 	if ($wancfg['adv_dhcp6_config_file_override']) {
 		// DHCP6 Config File Override
 		$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
@@ -3974,10 +3979,11 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$rtsoldscript .= "/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+	$noreleaseOption = isset($wancfg['dhcp6norelease']) ? "-n" : "";
 
 	/* add the start of dhcp6c to the rtsold script if we are going to wait for ra */
 	if (!isset($wancfg['dhcp6withoutra'])) {
-		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
+		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 	}
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
@@ -4003,7 +4009,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (isset($wancfg['dhcp6withoutra'])) {
 		kill_dhcp6client_process($wanif);
 
-		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
+		mwexec("/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
 		mwexec("/usr/bin/logger -t info 'Starting dhcp6 client for interface wan({$wanif} in DHCP6 without RA mode)'");
 	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");

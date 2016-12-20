@@ -62,6 +62,17 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
 	captiveportal_disconnect_client($_GET['id'], 6);
+	/* keep displaying last activity times */
+	if ($_GET['showact']) {
+		header("Location: status_captiveportal.php?zone={$cpzone}&showact=1");
+	} else {
+		header("Location: status_captiveportal.php?zone={$cpzone}");
+	}
+	exit;
+}
+
+if ($_GET['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
+	captiveportal_disconnect_all();
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }
@@ -197,30 +208,30 @@ else:
 endif;
 ?>
 
-
-<form action="status_captiveportal.php" method="get" style="margin: 14px;">
+<nav class="action-buttons">
 <?php
 if (!empty($cpzone)):
 	if ($_GET['showact']): ?>
-		<input type="hidden" name="showact" value="0" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Don't show last activity")?>">
-			<i class="fa fa-minus-circle icon-embed-btn"></i>
-			<?=gettext("Hide Last Activity")?>
-		</button>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
+		<i class="fa fa-minus-circle icon-embed-btn"></i>
+		<?=gettext("Hide Last Activity")?>
+	</a>
 <?php
 	else:
 ?>
-		<input type="hidden" name="showact" value="1" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Show last activity")?>">
-			<i class="fa fa-plus-circle icon-embed-btn"></i>
-			<?=gettext("Show Last Activity")?>
-		</button>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=1" role="button" class="btn btn-info" title="<?=gettext("Show last activity")?>">
+		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<?=gettext("Show Last Activity")?>
+	</a>
 <?php
 	endif;
 ?>
-	<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone)?>" />
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Disconnect All Users")?>
+	</a>
 <?php
 endif;
 ?>
-</form>
+</nav>
 <?php include("foot.inc");

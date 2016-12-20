@@ -186,11 +186,6 @@ echo "Starting Secure Shell Services...";
 send_event("service reload sshd");
 echo "done.\n";
 
-/* setup polling */
-echo "Setting up polling defaults...";
-setup_polling();
-echo "done.\n";
-
 /* setup interface microcode which improves tcp/ip speed */
 echo "Setting up interfaces microcode...";
 setup_microcode();

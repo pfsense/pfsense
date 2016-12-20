@@ -41,7 +41,6 @@ $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
-$pconfig['polling_enable'] = isset($config['system']['polling']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
 $pconfig['disablesegmentationoffloading'] = isset($config['system']['disablesegmentationoffloading']);
@@ -90,14 +89,6 @@ if ($_POST) {
 		} else {
 			unset($config['system']['sharednet']);
 			system_enable_arp_wrong_if();
-		}
-
-		if ($_POST['polling_enable'] == "yes") {
-			$config['system']['polling'] = true;
-			setup_polling();
-		} else {
-			unset($config['system']['polling']);
-			setup_polling();
 		}
 
 		if ($_POST['disablechecksumoffloading'] == "yes") {
@@ -197,18 +188,6 @@ $section->addInput(new Form_Checkbox(
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');
-
-$section->addInput(new Form_Checkbox(
-	'polling_enable',
-	'Device polling',
-	'Enable device polling',
-	$pconfig['polling_enable']
-))->setHelp('Device polling is a technique that lets the system periodically poll '.
-	'network devices for new data instead of relying on interrupts. This prevents '.
-	'the webConfigurator, SSH, etc. from being inaccessible due to interrupt floods '.
-	'when under extreme load. Generally this is not recommended. Not all NICs support '.
-	'polling; see the %s homepage for a list of supported cards.', [$g["product_name"]]);
-
 
 $section->addInput(new Form_Checkbox(
 	'disablechecksumoffloading',

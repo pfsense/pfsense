@@ -2491,10 +2491,10 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 	switch ($type) {
 		case IPV4:
 			if (is_ipaddrv4($addr)) {
-				return 4;
+				return IPV4;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return 1;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
 					return false;
@@ -2507,10 +2507,10 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 		case IPV6:
 			if (is_ipaddrv6($addr)) {
 				$addr = strtolower($addr);
-				return 6;
+				return IPV6;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return 1;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
 					return false;
@@ -2523,12 +2523,12 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 		case IPV4V6:
 			if (is_ipaddrv6($addr)) {
 				$addr = strtolower($addr);
-				return 6;
+				return IPV6;
 			} else if (is_ipaddrv4($addr)) {
-				return 4;
+				return IPV4;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return 1;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
 					return false;

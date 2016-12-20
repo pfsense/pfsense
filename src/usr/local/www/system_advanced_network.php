@@ -90,9 +90,10 @@ if ($_POST) {
 			if (!is_duid($_POST['global-v6duid']) || strlen($_POST['global-v6duid']) != 47) {
 				$input_errors[] = gettext("A valid DUID must be specified.");
 			} else {
-			    $config['system']['global-v6duid'] = $_POST['global-v6duid'];
+				$config['system']['global-v6duid'] = $_POST['global-v6duid'];
 			}
-		} else {
+		}
+		else {
 			$config['system']['global-v6duid'] = "";
 		}
 

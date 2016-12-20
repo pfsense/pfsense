@@ -2482,9 +2482,9 @@ function get_smart_drive_list() {
 //	$err_msg: pointer to the callers error message array so that error messages can be added to it here
 //	$alias: are aliases permitted for this address?
 // Returns:
-//	4 - if $addr is a valid IPv4 address
-//	6 - if $addr is a valid IPv6 address
-//	1 - if $alias=true and $addr is an alias
+//	IPV4 - if $addr is a valid IPv4 address
+//	IPV6 - if $addr is a valid IPv6 address
+//	ALIAS - if $alias=true and $addr is an alias
 //	false - otherwise
 
 function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {

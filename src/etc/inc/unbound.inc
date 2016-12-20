@@ -740,6 +740,10 @@ function unbound_acls_config($cfgsubdir = "") {
 			foreach ($unbound_acl['row'] as $network) {
 				if ($unbound_acl['aclaction'] == "allow snoop") {
 					$unbound_acl['aclaction'] = "allow_snoop";
+				} elseif ($unbound_acl['aclaction'] == "deny nonlocal") {
+					$unbound_acl['aclaction'] = "deny_non_local";
+				} elseif ($unbound_acl['aclaction'] == "refuse nonlocal") {
+					$unbound_acl['aclaction'] = "refuse_non_local";
 				}
 				$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
 			}

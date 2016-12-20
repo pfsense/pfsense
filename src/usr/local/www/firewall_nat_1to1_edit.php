@@ -239,7 +239,7 @@ if ($_POST) {
 	if (!is_specialnet($_POST['dsttype'])) {
 		if ($_POST['dst']) {
 			$dstipaddrtype = validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, true);
-			if ($dstipaddrtype == ALIAS) {
+			if ($dstipaddrtype == 1) {
 				// It is an alias.
 				// pf does not report "error loading rules" if the address family of items in the alias does not match the external/internal address family.
 				// So that is up to the user to make sensible, we do not try and verify it here.

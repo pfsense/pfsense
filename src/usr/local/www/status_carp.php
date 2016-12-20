@@ -52,12 +52,12 @@ function find_ipalias($carpif) {
 
 $status = get_carp_status();
 
-if ($_POST['carp_maintenancemode'] != "") {
+if ($status != 0 && $_POST['carp_maintenancemode'] != "") {
 	interfaces_carp_set_maintenancemode(!isset($config["virtualip_carp_maintenancemode"]));
 }
 
 if ($_POST['disablecarp'] != "") {
-	if ($status > 0) {
+	if ($status != 0) {
 		set_single_sysctl('net.inet.carp.allow', '0');
 		if (is_array($config['virtualip']['vip'])) {
 			$viparr = &$config['virtualip']['vip'];
@@ -133,7 +133,7 @@ if ($carpcount == 0) {
 ?>
 <form action="status_carp.php" method="post">
 <?php
-	if ($status > 0) {
+	if ($status != 0) {
 		$carp_enabled = true;
 	} else {
 		$carp_enabled = false;

@@ -164,8 +164,8 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* For external, user can enter only ip's */
-	if (($_POST['external'] && !is_ipaddr($_POST['external']))) {
-		$input_errors[] = gettext("A valid external subnet must be specified.");
+	if (($_POST['external'])) {
+		validateipaddr($_POST['external'], IPV4V6, "External subnet IP", $input_errors, false);
 	}
 
 	/* For dst, if user enters an alias and selects "network" then disallow. */
@@ -173,10 +173,10 @@ if ($_POST) {
 		$input_errors[] = gettext("Alias entries must specify a single host or alias.");
 	}
 
-	/* For src, user can enter only ip's or networks */
+	/* For src, user can enter only ips or networks */
 	if (!is_specialnet($_POST['srctype'])) {
-		if (($_POST['src'] && !is_ipaddr($_POST['src']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid internal IP address."), $_POST['src']);
+		if (($_POST['src'])) {
+			validateipaddr($_POST['src'], IPV4V6, "Internal address", $input_errors, false);
 		}
 
 		if (($_POST['srcmask'] && !is_numericint($_POST['srcmask']))) {
@@ -184,10 +184,10 @@ if ($_POST) {
 		}
 	}
 
-	/* For dst, user can enter ip's, networks or aliases */
+	/* For dst, user can enter ips, networks or aliases */
 	if (!is_specialnet($_POST['dsttype'])) {
-		if (($_POST['dst'] && !is_ipaddroralias($_POST['dst']))) {
-			$input_errors[] = sprintf(gettext("%s is not a valid destination IP address or alias."), $_POST['dst']);
+		if (($_POST['dst'])) {
+			validateipaddr($_POST['dst'], IPV4V6, "Destination address", $input_errors, true);
 		}
 
 		if (($_POST['dstmask'] && !is_numericint($_POST['dstmask']))) {

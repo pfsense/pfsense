@@ -181,6 +181,7 @@ if ($carpcount == 0) {
 			continue;
 		}
 
+		$icon = '';
 		$vhid = $carp['vhid'];
 		$status = get_carp_interface_status("_vip{$carp['uniqid']}");
 		$aliases = find_ipalias("_vip{$carp['uniqid']}");

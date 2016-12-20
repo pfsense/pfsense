@@ -105,11 +105,11 @@ if (!is_array($pconfig['subnets'])) {
 
 $advertise_modes = array(
 	"disabled" => 	gettext("Disabled"),
-	"router" => 	gettext("Router Only"),
-	"unmanaged" => 	gettext("Unmanaged"),
-	"managed" => 	gettext("Managed"),
-	"assist" => 	gettext("Assisted"),
-	"stateless_dhcp" => gettext("Stateless DHCP"));
+	"router" => 	gettext("Router Only - RA Flags [none], Prefix Flags [router]"),
+	"unmanaged" => 	gettext("Unmanaged - RA Flags [none], Prefix Flags [onlink, auto, router]"),
+	"managed" => 	gettext("Managed - RA Flags [managed, other stateful], Prefix Flags [onlink, router]"),
+	"assist" => 	gettext("Assisted - RA Flags [managed, other stateful], Prefix Flags [onlink, auto, router]"),
+	"stateless_dhcp" => gettext("Stateless DHCP - RA Flags [other stateful], Prefix Flags [onlink, auto, router]"));
 $priority_modes = array(
 	"low" => 	gettext("Low"),
 	"medium" => gettext("Normal"),
@@ -121,6 +121,20 @@ $subnets_help = '<span class="help-block">' .
 		"/128 specifies a single IPv6 host; /64 specifies a normal IPv6 network; etc.  " .
 		"If no subnets are specified here, the Router Advertisement (RA) Daemon will advertise to the subnet to which the router's interface is assigned.") .
 	'</span>';
+
+// THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
+$ramode_help = 'Select the Operating Mode for the Router Advertisement (RA) Daemon.' .
+	'<div class="infoblock">' .
+	'<dl class="dl-horizontal responsive">' .
+	'<dt>' . 'Disabled' . '</dt><dd>' . 'RADVD will not be enabled on this interface.' . '</dd>' .
+	'<dt>' . 'Router Only' . '</dt><dd>' . 'Will advertise this router.' . '</dd>' .
+	'<dt>' . 'Unmanaged' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig.' . '</dd>' .
+	'<dt>' . 'Managed' . '</dt><dd>' . 'Will advertise this router with all configuration through a DHCPv6 server.' . '</dd>' .
+	'<dt>' . 'Assisted' . '</dt><dd>' . 'Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '</dd>' .
+	'<dt>' . 'Stateless DHCP' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '</dd>' .
+	'</dl>' .
+	'It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.' .
+	'</div';
 
 if ($_POST) {
 	unset($input_errors);
@@ -293,12 +307,7 @@ $section->addInput(new Form_Select(
 	'Router mode',
 	$pconfig['ramode'],
 	$advertise_modes
-))->setHelp('Select the Operating Mode for the Router Advertisement (RA) Daemon. Use:' . '<br />' .
-			'&nbsp;<strong>Router Only</strong> to only advertise this router' . '<br />' .
-			'&nbsp;<strong>Unmanaged</strong> for Router Advertising with Stateless Autoconfig' . '<br />' .
-			'&nbsp;<strong>Managed</strong> for assignment through a DHCPv6 Server' . '<br />' .
-			'&nbsp;<strong>Assisted</strong> for DHCPv6 Server assignment combined with Stateless Autoconfig. ' .
-			'It is not required to activate this DHCPv6 server when set to "Managed", this can be another host on the network');
+))->setHelp($ramode_help);
 
 $section->addInput(new Form_Select(
 	'rapriority',

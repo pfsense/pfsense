@@ -85,10 +85,11 @@ if ($_POST) {
 			unset($config['system']['prefer_ipv4']);
 		}
 
-		$_POST['global-v6duid'] = strtolower(str_replace("-", ":", $_POST['global-v6duid']));
-		if (($_POST['global-v6duid'] && !is_duid($_POST['global-v6duid']))) {
-		$input_errors[] = gettext("A valid DUID must be specified.");
-		} else {
+		if (($_POST['global-v6duid']) != "") {
+			$_POST['global-v6duid'] = strtolower(str_replace("-", ":", $_POST['global-v6duid']));
+			if (!is_duid($_POST['global-v6duid'])) {
+				$input_errors[] = gettext("A valid DUID must be specified.");
+			} else {
 			$config['system']['global-v6duid'] = $_POST['global-v6duid'];
 		}
 

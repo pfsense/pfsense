@@ -63,15 +63,22 @@ if (!$if || !isset($iflist[$if])) {
 	// First look for an interface with DHCP already enabled.
 	foreach ($iflist as $ifent => $ifname) {
 		$oc = $config['interfaces'][$ifent];
-		if (is_array($config['dhcpd'][$ifent]) && isset($config['dhcpd'][$ifent]['enable']) && (is_ipaddrv4($oc['ipaddr']))) {
+		if (is_array($config['dhcpd'][$ifent]) &&
+		    isset($config['dhcpd'][$ifent]['enable']) &&
+		    is_ipaddrv4($oc['ipaddr']) && $oc['subnet'] < 31) {
 			$if = $ifent;
 			$found_starting_if = true;
 			break;
 		}
 	}
 
-	// If there is no DHCP-enabled interface and LAN is a candidate, then choose LAN.
-	if (!$found_starting_if && isset($iflist['lan']) && is_ipaddrv4($config['interfaces']['lan']['ipaddr'])) {
+	/*
+	 * If there is no DHCP-enabled interface and LAN is a candidate,
+	 * then choose LAN.
+	 */
+	if (!$found_starting_if && isset($iflist['lan']) &&
+	    is_ipaddrv4($config['interfaces']['lan']['ipaddr']) &&
+	    $config['interfaces']['lan']['subnet'] < 31) {
 		$if = 'lan';
 		$found_starting_if = true;
 	}
@@ -80,8 +87,15 @@ if (!$if || !isset($iflist[$if])) {
 	if (!$found_starting_if) {
 		foreach ($iflist as $ifent => $ifname) {
 			$oc = $config['interfaces'][$ifent];
-			if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-				(!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+
+			/* Not static IPv4 or subnet >= 31 */
+			if (!is_ipaddrv4($oc['ipaddr']) ||
+			    empty($oc['subnet']) || $oc['subnet'] < 31) {
+				continue;
+			}
+
+			if (!is_array($config['dhcpd'][$ifent]) ||
+			    !isset($config['dhcpd'][$ifent]['enable'])) {
 				continue;
 			}
 
@@ -732,8 +746,10 @@ $i = 0;
 
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
-	if ((is_array($config['dhcpd'][$ifent]) && !isset($config['dhcpd'][$ifent]['enable']) && (!is_ipaddrv4($oc['ipaddr']))) ||
-	    (!is_array($config['dhcpd'][$ifent]) && (!is_ipaddrv4($oc['ipaddr'])))) {
+
+	/* Not static IPv4 or subnet >= 31 */
+	if (!is_ipaddrv4($oc['ipaddr']) ||
+	    empty($oc['subnet']) || $oc['subnet'] >= 31) {
 		continue;
 	}
 

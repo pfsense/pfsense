@@ -781,6 +781,9 @@ if ($_POST['apply']) {
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
+	if (($_POST['dhcp6-duid'] && ($config['system']['global-v6duid'] == ""))) {
+		$input_errors[] = gettext("No System DUID has been entered.");
+	}
 	if ($_POST['mtu']) {
 		if (!is_numericint($_POST['mtu'])) {
 			$input_errors[] = "MTU must be an integer.";
@@ -2129,6 +2132,12 @@ $section->addInput(new Form_Checkbox(
 	'Debug',
 	'Start DHCP6 client in debug mode',
 	$pconfig['dhcp6debug']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6-duid',
+	'Use System DUID',
+	'The DUID defined in System->Advanced->Networking will be used on this interface.',
+	$pconfig['dhcp6-duid']
 ));
 $section->addInput(new Form_Checkbox(
 	'dhcp6withoutra',

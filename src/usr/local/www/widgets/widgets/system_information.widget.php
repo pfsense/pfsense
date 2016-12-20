@@ -287,7 +287,8 @@ $filesystems = get_mounted_filesystems();
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter"><?=gettext('(Updating in 10 seconds)')?></span>
+				<?php $update_period = (isset($config['widgets']['period']) && !empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
+				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
 			</td>
 		</tr>
 		<tr>

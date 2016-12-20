@@ -2481,14 +2481,20 @@ function get_smart_drive_list() {
 //	$label: the label used by the GUI to display this value. Required to compose an error message
 //	$err_msg: pointer to the callers error message array so that error messages can be added to it here
 //	$alias: are aliases permitted for this address?
+// Returns:
+//	IPV4 - if $addr is a valid IPv4 address
+//	IPV6 - if $addr is a valid IPv6 address
+//	ALIAS - if $alias=true and $addr is an alias
+//	false - otherwise
+
 function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 	switch ($type) {
 		case IPV4:
 			if (is_ipaddrv4($addr)) {
-				return true;
+				return IPV4;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return true;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
 					return false;
@@ -2501,10 +2507,10 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 		case IPV6:
 			if (is_ipaddrv6($addr)) {
 				$addr = strtolower($addr);
-				return true;
+				return IPV6;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return true;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
 					return false;
@@ -2517,12 +2523,12 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 		case IPV4V6:
 			if (is_ipaddrv6($addr)) {
 				$addr = strtolower($addr);
-				return true;
+				return IPV6;
 			} else if (is_ipaddrv4($addr)) {
-				return true;
+				return IPV4;
 			} else if ($alias) {
 				if (is_alias($addr)) {
-					return true;
+					return ALIAS;
 				} else {
 					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
 					return false;

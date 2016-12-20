@@ -274,7 +274,6 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "slaac";
 		break;
 	case "dhcp6":
-		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
 		if (!isset($wancfg['dhcp6-ia-pd-len'])) {
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		}
@@ -285,6 +284,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6-duid'] = isset($wancfg['dhcp6-duid']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -1216,7 +1216,6 @@ if ($_POST['apply']) {
 				break;
 			case "dhcp6":
 				$wancfg['ipaddrv6'] = "dhcp6";
-				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
 				if ($_POST['dhcp6-ia-pd-send-hint'] == "yes") {
 					$wancfg['dhcp6-ia-pd-send-hint'] = true;
@@ -1230,9 +1229,11 @@ if ($_POST['apply']) {
 				if ($_POST['dhcp6debug'] == "yes") {
 					$wancfg['dhcp6debug'] = true;
 				}
-
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6-duid'] == "yes") {
+					$wancfg['ddhcp6-duid'] = true;
 				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];

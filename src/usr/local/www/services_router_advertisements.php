@@ -155,18 +155,18 @@ $subnets_help = '<span class="help-block">' .
 	'</span>';
 
 // THe use of <div class="infoblock"> here causes the text to be hidden until the user clicks the "info" icon
-$ramode_help = 'Select the Operating Mode for the Router Advertisement (RA) Daemon.' .
+$ramode_help = gettext('Select the Operating Mode for the Router Advertisement (RA) Daemon.') .
 	'<div class="infoblock">' .
 	'<dl class="dl-horizontal responsive">' .
-	'<dt>' . 'Disabled' . '</dt><dd>' . 'RADVD will not be enabled on this interface.' . '</dd>' .
-	'<dt>' . 'Router Only' . '</dt><dd>' . 'Will advertise this router.' . '</dd>' .
-	'<dt>' . 'Unmanaged' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig.' . '</dd>' .
-	'<dt>' . 'Managed' . '</dt><dd>' . 'Will advertise this router with all configuration through a DHCPv6 server.' . '</dd>' .
-	'<dt>' . 'Assisted' . '</dt><dd>' . 'Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.' . '</dd>' .
-	'<dt>' . 'Stateless DHCP' . '</dt><dd>' . 'Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.' . '</dd>' .
+	'<dt>' . gettext('Disabled') . 		 '</dt><dd>' . gettext('RADVD will not be enabled on this interface.') . '</dd>' .
+	'<dt>' . gettext('Router Only') . 	 '</dt><dd>' . gettext('Will advertise this router.') . '</dd>' .
+	'<dt>' . gettext('Unmanaged') . 	 '</dt><dd>' . gettext('Will advertise this router with stateless autoconfig.') . '</dd>' .
+	'<dt>' . gettext('Managed') . 		 '</dt><dd>' . gettext('Will advertise this router with all configuration through a DHCPv6 server.') . '</dd>' .
+	'<dt>' . gettext('Assisted') . 		 '</dt><dd>' . gettext('Will advertise this router with configuration through a DHCPv6 server and/or stateless autoconfig.') . '</dd>' .
+	'<dt>' . gettext('Stateless DHCP') . '</dt><dd>' . gettext('Will advertise this router with stateless autoconfig and other configuration information available via DHCPv6.') . '</dd>' .
 	'</dl>' .
-	'It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.' .
-	'</div';
+	gettext('It is not required to activate DHCPv6 server on pfSense when set to "Managed", "Assisted" or "Stateless DHCP", it can be another host on the network.') .
+	'</div>';
 
 if ($_POST) {
 	unset($input_errors);

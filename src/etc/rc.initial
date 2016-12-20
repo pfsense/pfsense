@@ -56,9 +56,9 @@
 
 # make sure the user can't kill us by pressing Ctrl-C,
 # ctrl-z, etc.
-#trap : 2
-#trap : 3
-#trap : 4
+trap : 2
+trap : 3
+trap : 4
 
 if [ -f /etc/rc.local ]; then
 	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`

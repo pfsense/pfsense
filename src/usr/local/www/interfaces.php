@@ -1233,7 +1233,7 @@ if ($_POST['apply']) {
 					$wancfg['dhcp6withoutra'] = true;
 				}
 				if ($_POST['dhcp6-duid'] == "yes") {
-					$wancfg['ddhcp6-duid'] = true;
+					$wancfg['dhcp6-duid'] = true;
 				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];

@@ -514,7 +514,7 @@ function netgate_hardware_setup() {
 		break;
 	case 'RCC-VE':
 	case 'RCC-DFF':
-		/* SG-4460 or SG-8860 */
+		/* SG-4860 or SG-8860 */
 		if (does_interface_exist('igb4')) {
 			$config['interfaces']['wan']['if'] = 'igb1';
 			$config['interfaces']['lan']['if'] = 'igb0';

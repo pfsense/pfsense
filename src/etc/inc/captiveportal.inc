@@ -995,6 +995,32 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 	}
 }
 
+/* remove all clients */
+function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+	global $g, $config, $cpzone, $cpzoneid;
+
+	$radiussrvs = captiveportal_get_radius_servers();
+	$cpdb = captiveportal_read_db();
+
+	$unsetindexes = array();
+
+	foreach ($cpdb as $cpentry) {
+		if (empty($cpentry[11])) {
+			$cpentry[11] = 'first';
+		}
+		$radiusservers = $radiussrvs[$cpentry[11]];
+
+		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
+		$unsetindexes[] = $cpentry[5];
+	}
+	unset($cpdb);
+
+	if (!empty($unsetindexes)) {
+		captiveportal_remove_entries($unsetindexes);
+	}
+}
+
 /* send RADIUS acct stop for all current clients */
 function captiveportal_radius_stop_all() {
 	global $config, $cpzone;

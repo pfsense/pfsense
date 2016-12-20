@@ -413,13 +413,6 @@ function hardware_offloading_applyflags($iface) {
 		$flags_on |= IFCAP_LRO;
 	}
 
-	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if (!isset($config['system']['polling'])) {
-		$flags_off |= IFCAP_POLLING;
-	} else if (isset($options['caps']['polling'])) {
-		$flags_on |= IFCAP_POLLING;
-	}
-
 	pfSense_interface_capabilities($iface, -$flags_off);
 	pfSense_interface_capabilities($iface, $flags_on);
 }
@@ -461,25 +454,6 @@ function enable_hardware_offloading($interface) {
 		hardware_offloading_applyflags($realhwif[0]);
 		hardware_offloading_applyflags($int);
 	}
-}
-
-/****f* pfsense-utils/interface_supports_polling
- * NAME
- *   checks to see if an interface supports polling according to man polling
- * INPUTS
- *
- * RESULT
- *   true or false
- * NOTES
- *
- ******/
-function interface_supports_polling($iface) {
-	$opts = pfSense_get_interface_addresses($iface);
-	if (is_array($opts) && isset($opts['caps']['polling'])) {
-		return true;
-	}
-
-	return false;
 }
 
 /****f* pfsense-utils/is_alias_inuse
@@ -555,36 +529,6 @@ function is_schedule_inuse($schedule) {
 		}
 	}
 	return false;
-}
-
-/****f* pfsense-utils/setup_polling
- * NAME
- *   sets up polling
- * INPUTS
- *
- * RESULT
- *   null
- * NOTES
- *
- ******/
-function setup_polling() {
-	global $g, $config;
-
-	if (isset($config['system']['polling'])) {
-		set_single_sysctl("kern.polling.idle_poll", "1");
-	} else {
-		set_single_sysctl("kern.polling.idle_poll", "0");
-	}
-
-	if ($config['system']['polling_each_burst']) {
-		set_single_sysctl("kern.polling.each_burst", $config['system']['polling_each_burst']);
-	}
-	if ($config['system']['polling_burst_max']) {
-		set_single_sysctl("kern.polling.burst_max", $config['system']['polling_burst_max']);
-	}
-	if ($config['system']['polling_user_frac']) {
-		set_single_sysctl("kern.polling.user_frac", $config['system']['polling_user_frac']);
-	}
 }
 
 /****f* pfsense-utils/setup_microcode

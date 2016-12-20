@@ -24321,12 +24321,6 @@ msgstr ""
 msgid "Rules have been cleared and the daemon restarted."
 msgstr ""
 
-#: src/usr/local/www/status_upnp.php:55
-msgid ""
-"UPnP is currently disabled. Go to <a href=\"pkg_edit.php?xml=miniupnpd.xml\">"
-"Services > UPnP &amp; NAT-PMP</a> to enable."
-msgstr ""
-
 #: src/usr/local/www/status_upnp.php:63
 msgid "UPnP &amp; NAT-PMP Rules"
 msgstr ""

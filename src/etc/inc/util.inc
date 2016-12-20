@@ -2536,7 +2536,8 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
 
 	return false;
 }
-* returns true if $dhcp6duid is a valid duid entrry */
+
+/* returns true if $dhcp6duid is a valid duid entrry */
 function is_duid($dhcp6duid) {
 	$values = explode(":", $dhcp6duid);
 	if (count($values) != 16) {
@@ -2550,25 +2551,25 @@ function is_duid($dhcp6duid) {
 	}
 	return true;
 }
+
 /* Write the DHCP6 DUID file */
-function write_dhcp6_duid($duidfile) {
+function write_dhcp6_duid($duid) {
 	// Create the hex array from the dhcp6duid config entry and write to file
 	global $g;
  	
- 	if(is_duid($duidfile))
+ 	if(!is_duid($duid))
  	{
- 		$temp = str_replace(":","",$duidfile);
- 		$duid_binstring = pack("H*",$temp);
- 		if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
- 			fwrite($fd, $duid_binstring);
-			fclose($fd);
- 			return;
- 		}
- 		else {
- 			log_error(gettext("Error: attempting to write DUID file - File write error"));
- 			return;
- 		}
+		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+ 		return false;
  	}
- 	log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+	$temp = str_replace(":","",$duid);
+ 	$duid_binstring = pack("H*",$temp);
+ 	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
+ 		fwrite($fd, $duid_binstring);
+		fclose($fd);
+ 		return true;
+ 	}
+ 	log_error(gettext("Error: attempting to write DUID file - File write error"));
+	return false;
 }
 ?>

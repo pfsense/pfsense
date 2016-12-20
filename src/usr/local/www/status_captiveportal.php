@@ -98,33 +98,8 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	exit;
 }
 
-function clientcmp($a, $b) {
-	global $order;
-	return strcmp($a[$order], $b[$order]);
-}
-
-$cp_status_orders = array('ip', 'mac', 'user', 'lastact', 'start');
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
-
-	if ($_GET['order']) {
-		/* If an invalid order was submitted, clear it. */
-		if (!in_array($_GET['order'], $cp_status_orders)) {
-			unset($_GET['order']);
-		}
-		if ($_GET['order'] == "ip") {
-			$order = 2;
-		} else if ($_GET['order'] == "mac") {
-			$order = 3;
-		} else if ($_GET['order'] == "user") {
-			$order = 4;
-		} else if ($_GET['order'] == "lastact") {
-			$order = 5;
-		} else {
-			$order = 0;
-		}
-		usort($cpdb, "clientcmp");
-	}
 }
 $pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
@@ -180,41 +155,30 @@ if (!empty($cpzone)): ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext("Users Logged In (%d)"), count($cpdb))?></h2></div>
 	<div class="panel-body table-responsive">
-
-		<table class="table table-striped table-hover table-condensed">
-			<tr>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("IP address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("MAC address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Username")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Session start")?></a>
-				</th>
-
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr>
+					<th><?=gettext("IP address")?></th>
+					<th><?=gettext("MAC address")?></th>
+					<th><?=gettext("Username")?></th>
+					<th><?=gettext("Session start")?></th>
 <?php
 	if ($_GET['showact']):
 ?>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Last activity")?></a>
-				</th>
+					<th><?=gettext("Last activity")?></th>
 <?php
 	endif;
 ?>
-				<th><?=gettext("Actions")?></th>
-			</tr>
+					<th data-sortable="false"><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 
 	foreach ($cpdb as $cpent): ?>
-			<tr>
-				<td>
-					<?= htmlspecialchars($cpent[2]); ?>
-				</td>
-				<td>
+				<tr>
+					<td><?= htmlspecialchars($cpent[2]);?></td>
+					<td>
 <?php
 		$mac=trim($cpent[3]);
 		if (!empty($mac)) {
@@ -225,39 +189,34 @@ if (!empty($cpzone)): ?>
 			}
 		}
 ?>	&nbsp;
-				</td>
-				<td>
-					<?=htmlspecialchars($cpent[4])?>&nbsp;
-				</td>
+					</td>
+					<td><?=htmlspecialchars($cpent[4])?></td>
 <?php
 		if ($_GET['showact']):
 			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
-				<td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
+					<td>
 <?php
 			if ($last_act != 0) {
 				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
 			}
 ?>
-				</td>
+					</td>
 <?php
 		else:
 ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
 <?php
 		endif;
 ?>
-				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=htmlspecialchars($_GET['order'])?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
-				</td>
-			</tr>
+					<td>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+					</td>
+				</tr>
 <?php
 	endforeach;
 ?>
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -272,8 +231,6 @@ endif;
 
 
 <form action="status_captiveportal.php" method="get" style="margin: 14px;">
-	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order'])?>" />
-
 <?php
 if (!empty($cpzone)):
 	if ($_GET['showact']): ?>

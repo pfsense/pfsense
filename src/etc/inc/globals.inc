@@ -58,6 +58,12 @@ define('COLLAPSIBLE', 0x08);
 define('SEC_CLOSED', 0x04);
 define('SEC_OPEN', 0x00);
 
+// IP address types
+define("IPV4", 4);
+define("IPV6", 6);
+define("IPV4V6", 2);
+define("ALIAS", 1);
+
 // AddPassword method defines
 define('DMYPWD', "********");
 

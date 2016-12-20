@@ -121,7 +121,7 @@ function print_states($tracker) {
 	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
 	    format_number($evaluations), format_number($packets), format_bytes($bytes),
 	    format_number($states), format_number($stcreations));
-	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
 }
 
 function delete_nat_association($id) {

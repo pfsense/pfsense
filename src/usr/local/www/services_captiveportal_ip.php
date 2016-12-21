@@ -138,12 +138,12 @@ display_top_tabs($tab_array, true);
 
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("IP Addresses"); ?></th>
 				<th><?=gettext("Description"); ?></th>
-				<th><?=gettext("Actions"); ?></th>
+				<th data-sortable="false"><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 

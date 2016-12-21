@@ -107,17 +107,17 @@ display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-	    <thead>
-    		<tr>
-    			<th><?=gettext("Roll#"); ?></th>
-    			<th><?=gettext("Minutes/Ticket"); ?></th>
-    			<th><?=gettext("# of Tickets"); ?></th>
-    			<th><?=gettext("Comment"); ?></th>
-    			<th><?=gettext("used"); ?></th>
-    			<th><?=gettext("active"); ?></th>
-    			<th><?=gettext("ready"); ?></th>
-    		</tr>
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<thead>
+    			<tr>
+    				<th><?=gettext("Roll#"); ?></th>
+    				<th><?=gettext("Minutes/Ticket"); ?></th>
+    				<th><?=gettext("# of Tickets"); ?></th>
+    				<th><?=gettext("Comment"); ?></th>
+    				<th><?=gettext("used"); ?></th>
+    				<th><?=gettext("active"); ?></th>
+    				<th><?=gettext("ready"); ?></th>
+    			</tr>
 		</thead>
 		<tbody>
 <?php
@@ -130,35 +130,21 @@ display_top_tabs($tab_array);
 				/* used also count active vouchers, remove them */
 				$used = $used - $active;
 ?>
-    		<tr>
-    			<td>
-    				<?=htmlspecialchars($rollent['number'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['minutes'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['count'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['comment'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($used)?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($active)?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($ready)?>
-    			</td>
-    		</tr>
+    			<tr>
+    				<td><?=htmlspecialchars($rollent['number'])?></td>
+    				<td><?=htmlspecialchars($rollent['minutes'])?></td>
+    				<td><?=htmlspecialchars($rollent['count'])?></td>
+    				<td><?=htmlspecialchars($rollent['comment'])?></td>
+    				<td><?=htmlspecialchars($used)?></td>
+    				<td><?=htmlspecialchars($active)?></td>
+    				<td><?=htmlspecialchars($ready)?></td>
+    			</tr>
 <?php
 				$i++;
 			endforeach;
 
 			unlock($voucherlck)?>
-	    </tbody>
+		</tbody>
 	</table>
 </div>
 <?php include("foot.inc");

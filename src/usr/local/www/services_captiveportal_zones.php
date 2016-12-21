@@ -104,14 +104,14 @@ if (is_subsystem_dirty('captiveportal')) {
 	<div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive Portal Zones')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-rowdblclickedit">
+			<table class="table table-striped table-hover table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext('Zone')?></th>
 						<th><?=gettext('Interfaces')?></th>
 						<th><?=gettext('Number of users'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><?=gettext('Actions'); ?></th>
+						<th data-sortable="false"><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>

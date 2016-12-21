@@ -1848,6 +1848,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 	curl_setopt($ch, CURLOPT_FILE, $fp);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
@@ -1902,6 +1903,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	 */
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);

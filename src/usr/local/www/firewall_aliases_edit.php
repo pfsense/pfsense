@@ -226,6 +226,7 @@ if ($_POST) {
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					$input_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $_POST['address' . $x]);
 					continue;
 				}
 
@@ -520,7 +521,7 @@ if ($_POST) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
 		$pconfig['descr'] = $_POST['descr'];
-		if (($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
+		if (isset($alias['aliasurl']) && ($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
 			$pconfig['address'] = implode(" ", $alias['aliasurl']);
 		} else {
 			$pconfig['address'] = implode(" ", $address);

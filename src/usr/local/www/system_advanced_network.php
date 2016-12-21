@@ -119,8 +119,8 @@ if ($_POST) {
 		if ($_POST['disablelargereceiveoffloading'] == "yes") {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
-			unset($config['system']['disablelargereceiveoffloading']);
-		}
+			unset($config['system']['disablelargereceiveoffloading']); hi		
+}
 
 		setup_microcode();
 
@@ -206,7 +206,7 @@ $section->addInput(new Form_Input(
 	$pconfig['global-v6duid'],
 	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
 	))->setWidth(9)->sethelp('Enter the DUID to use here. Use this option if using RAM Disk, as the DUID will be lost on reboot. The existing DUID may be found in var/db/dhcp6_duid.' .'<br />' .
-			'NOTE: Do not use this option with multiple DHCP6 interfaces.');
+			'NOTE: Do not use this option with multiple DHCP6 WAN interfaces.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

@@ -57,11 +57,6 @@ if (empty($cpzone)) {
 $pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars($a_cp[$cpzone]['zone']), gettext("Active Vouchers"));
 $shortcut_section = "captiveportal-vouchers";
 
-function clientcmp($a, $b) {
-	global $order;
-	return strcmp($a[$order], $b[$order]);
-}
-
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
 	$config['voucher'][$cpzone]['roll'] = array();
 }
@@ -94,11 +89,6 @@ foreach ($a_roll as $rollent) {
 	}
 }
 
-if ($_GET['order']) {
-	$order = $_GET['order'];
-	usort($db, "clientcmp");
-}
-
 include("head.inc");
 
 $tab_array = array();
@@ -113,14 +103,14 @@ display_top_tabs($tab_array);
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext("Vouchers in Use (%d)"), count($db))?></h2></div>
 	<div class="panel-body table-responsive">
-		<table class="table table-striped table-hover table-condensed">
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
 			<thead>
 				<tr>
-					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=0&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Voucher"); ?></a></th>
-					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=1&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Roll"); ?></a></th>
-					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=2&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Activated at"); ?></a></th>
-					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=3&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires in"); ?></a></th>
-					<th><a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=4&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Expires at"); ?></a></th>
+					<th><?=gettext("Voucher"); ?></th>
+					<th><?=gettext("Roll"); ?></th>
+					<th><?=gettext("Activated at"); ?></th>
+					<th><?=gettext("Expires in"); ?></th>
+					<th><?=gettext("Expires at"); ?></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -128,10 +118,10 @@ display_top_tabs($tab_array);
 foreach ($db as $dbent):
 ?>
 				<tr>
-					<td><?=$dbent[0]?></td>
-					<td><?=$dbent[1]?></td>
+					<td><?=htmlspecialchars($dbent[0])?></td>
+					<td><?=htmlspecialchars($dbent[1])?></td>
 					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[2]))?></td>
-					<td><?=$dbent[3]?><?=gettext("min"); ?></td>
+					<td><?=htmlspecialchars($dbent[3])?><?=gettext("min"); ?></td>
 					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $dbent[4]))?></td>
 				</tr>
 <?php

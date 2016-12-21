@@ -2559,24 +2559,22 @@ function is_duid($dhcp6duid) {
 }
 
 /* Write the DHCP6 DUID file */
-function write_dhcp6_duid($duidfile) {
+function write_dhcp6_duid($duidstring) {
 	// Create the hex array from the dhcp6duid config entry and write to file
 	global $g;
  	
- 	if(is_duid($duidfile))
- 	{
- 		$temp = str_replace(":","",$duidfile);
- 		$duid_binstring = pack("H*",$temp);
- 		if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
- 			fwrite($fd, $duid_binstring);
-			fclose($fd);
- 			return;
- 		}
- 		else {
- 			log_error(gettext("Error: attempting to write DUID file - File write error"));
- 			return;
- 		}
- 	}
- 	log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+ 	if(!is_duid($duidstring)) {
+		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+		return false;
+	}
+	$temp = str_replace(":","",$duidstring);
+	$duid_binstring = pack("H*",$temp);
+	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
+		fwrite($fd, $duid_binstring);
+		fclose($fd);
+		return true;
+	}
+	log_error(gettext("Error: attempting to write DUID file - File write error"));
+	return false;
 }
 ?>

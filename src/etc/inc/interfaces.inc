@@ -3868,7 +3868,8 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 
-	if (isset($wancfg['dhcp6-duid'])) {
+	if (isset($wancfg['dhcp6-duid'])  &&
+    	    !empty($config['system']['global-v6duid'])) {
 	// Write the DUID file
 		if(!write_dhcp6_duid($config['system']['global-v6duid'])) {
 			log_error(gettext("Failed to write user DUID file!"));

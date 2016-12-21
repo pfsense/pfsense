@@ -4344,7 +4344,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
 		$dhclientconf .= "reject {$wancfg['dhcprejectfrom']};\n";
 	}
-	$dhclientconf .= "\tscript \"/sbin/dhclient-script\";\n";
+	$dhclientconf .= "\tscript \"/usr/local/sbin/pfSense-dhclient-script\";\n";
 	$dhclientconf .= "}\n";
 
 	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);

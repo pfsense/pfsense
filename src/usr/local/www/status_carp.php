@@ -111,6 +111,10 @@ if ($savemsg) {
 	print_info_box($savemsg, 'success');
 }
 
+if ($status == 0 && $_POST['carp_maintenancemode'] != "") {
+	print_info_box('Please enable CARP before setting the maintenance mode.');
+}
+
 $carpcount = 0;
 if (is_array($config['virtualip']['vip'])) {
 	foreach ($config['virtualip']['vip'] as $carp) {

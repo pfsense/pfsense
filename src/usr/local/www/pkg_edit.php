@@ -858,7 +858,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$items = array($value);
 			}
 
-			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			foreach ($pkga['options']['option'] as $opt) {
 				$optionlist[$opt['value']] = $opt['name'];
@@ -909,7 +909,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$items = array($value);
 			}
 
-			$onchange = (isset($pkga['onchange']) ? "onchange=\"{$pkga['onchange']}\"" : '');
+			$onchange = (isset($pkga['onchange']) ? "{$pkga['onchange']}" : '');
 
 			$source_url = $pkga['source'];
 			eval("\$pkg_source_txt = &$source_url;");

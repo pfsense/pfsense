@@ -385,7 +385,7 @@ display_top_tabs($tab_array, true);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Voucher Rolls");?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext("Roll #")?></th>
@@ -401,18 +401,10 @@ $i = 0;
 foreach ($a_roll as $rollent):
 ?>
 					<tr>
-						<td>
-							<?=htmlspecialchars($rollent['number']); ?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['minutes'])?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['count'])?>&nbsp;
-						</td>
-						<td>
-							<?=htmlspecialchars($rollent['descr']); ?>&nbsp;
-						</td>
+						<td><?=htmlspecialchars($rollent['number']); ?></td>
+						<td><?=htmlspecialchars($rollent['minutes'])?></td>
+						<td><?=htmlspecialchars($rollent['count'])?></td>
+						<td><?=htmlspecialchars($rollent['descr']); ?></td>
 						<td>
 							<!-- These buttons are hidden/shown on checking the 'enable' checkbox -->
 							<a class="fa fa-pencil"		title="<?=gettext("Edit voucher roll"); ?>" href="services_captiveportal_vouchers_edit.php?zone=<?=$cpzone?>&amp;id=<?=$i; ?>"></a>

@@ -452,6 +452,14 @@ if (!$dfltmsg && $sform)  {
 	</table>
 </div>
 
+<?php if (empty(get_interface_list_to_show())): ?>
+<div>
+	<div class="infoblock blockopen">
+		<?php print_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false); ?>
+	</div>
+</div>
+<?php endif; ?>
+
 <?php
 if ($dfltmsg) {
 ?>

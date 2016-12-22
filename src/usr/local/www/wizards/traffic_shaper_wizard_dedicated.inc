@@ -38,8 +38,12 @@ function step1_stepbeforeformdisplay() {
 	}
 
 	foreach ($fields as &$field)
-		if ($field['name'] == 'numberofconnections')
+		if ($field['name'] == 'numberofconnections') {
 			$field['value'] = ($wans < $lans ? $wans : $lans);
+			if (($wans == 0) && ($lans == 0)) {
+				$field['description'] .= sprint_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false);
+			}
+		}
 }
 
 function step1_submitphpaction() {
@@ -76,7 +80,7 @@ function step2_stepbeforeformdisplay() {
 	}
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 	if ($numberofconnections > ($wans < $lans ? $wans : $lans)) {
-		$savemsg=gettext("There are less interfaces than number of connections!");
+		$savemsg=gettext("The specified number of connections is greater than the number of ALTQ-capable assigned interfaces!");
 		$stepid--;
 		return;
 	}

@@ -158,6 +158,7 @@ $tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php")
 $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+$duid = get_duid_from_file();
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -204,9 +205,11 @@ $section->addInput(new Form_Input(
 	'DHCP6 DUID',
 	'text',
 	$pconfig['global-v6duid'],
-	['placeholder' => 'xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']
-	))->setWidth(9)->sethelp('Enter the DUID to use here. Use this option if using RAM Disk, as the DUID will be lost on reboot. The existing DUID may be found in var/db/dhcp6_duid.' .'<br />' .
-			'NOTE: Do not use this option with multiple DHCP6 WAN interfaces.');
+	['placeholder' => $duid]
+	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID whuch will be used on the next WAN interface UP event.' .'<br />' .
+			'Unless you enter a DUID the system will default to using the DUID created by the client on start, this DUID is NOT saved to config.' .
+			'It is strongly recommended if you use RAM disk to enter a DUID here and then SAVE, the DUID will then be saved to config also and' .
+			' will be active on the next WAN interface UP event.');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

@@ -2578,4 +2578,35 @@ function write_dhcp6_duid($duidstring) {
 	log_error(gettext("Error: attempting to write DUID file - File write error"));
 	return false;
 }
+/* returns duid string from 'vardb_path']}/dhcp6c_duid' */
+function get_duid_from_file()
+{
+	global $g;
+	
+	$count = 0;
+	
+	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r")) {
+		
+		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
+			
+			$string = fread($fd,filesize("{$g['vardb_path']}/dhcp6c_duid"));
+					
+			while($count < 16) {
+				
+				$a = $string[$count];
+				$duid_ASCII .= bin2hex($a);
+				$count++;
+				if($count < 16) {
+					$duid_ASCII .= ":";
+				}
+			}
+		}
+		fclose($fd);
+	}
+	//if no file or error with read then the string returns blanked DUID string
+	if($count != 16) {
+		return "--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--";
+	}
+	return($duid_ASCII);	
+}
 ?>

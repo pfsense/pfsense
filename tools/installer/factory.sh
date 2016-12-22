@@ -235,6 +235,9 @@ if [ "${selected_model}" = "SG-1000" ]; then
 		-e "/[[:blank:]]\/boot\/msdos[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/label/${EMMCBOOT_LABEL}," \
 		-e "/[[:blank:]]\/[[:blank:]]/ s,^/dev/[^[:blank:]]*,/dev/${UFSID}," \
 		/mnt/etc/fstab
+
+	# Enable the factory post installation automatic halt
+	touch /mnt/root/factory_boot
 fi
 
 default_serial="${serial}"

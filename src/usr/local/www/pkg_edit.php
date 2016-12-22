@@ -1141,7 +1141,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 				$grp->setWidth($pkga['width']);
 			}
 
-			if (grouping) {
+			if ($grouping) {
 				$group->add($grp);
 			} else {
 				if (isset($pkga['advancedfield']) && isset($advfield_count)) {
@@ -1325,7 +1325,7 @@ foreach ($pkg['fields']['field'] as $pkga) {
 			);
 			$newbtn->addClass($newbtnclass);
 
-			if (grouping) {
+			if ($grouping) {
 				$group->add(new Form_StaticText(
 					null,
 					$newbtn . '<br />' . '<div class="help-block">' . fixup_string($pkga['description']) . '</div>'

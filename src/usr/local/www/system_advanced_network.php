@@ -119,7 +119,7 @@ if ($_POST) {
 		if ($_POST['disablelargereceiveoffloading'] == "yes") {
 			$config['system']['disablelargereceiveoffloading'] = true;
 		} else {
-			unset($config['system']['disablelargereceiveoffloading']); 
+			unset($config['system']['disablelargereceiveoffloading']);
 		}
 
 		setup_microcode();

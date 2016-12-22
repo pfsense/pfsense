@@ -28,6 +28,11 @@ trap : 2
 trap : 3
 trap : 4
 
+if [ -f /root/factory_boot ]; then
+	FACTORY_BOOT=1
+	/bin/rm -f /root/factory_boot
+fi
+
 if [ -f /etc/rc.local ]; then
 	RCLOCALPWD=`ps awux | grep rc.local | grep -v grep | awk '{ print $2 }'`
 	if [ "$RCLOCALPWD" = "" ]; then
@@ -123,7 +128,16 @@ if [ -n "${install_option}" ]; then
 fi
 
 echo
-read -p "Enter an option: " opmode
+if [ -n "${FACTORY_BOOT}" ]; then
+	read -t 5 -p "Enter an option: " opmode
+	if [ ${?} -eq 142 ]; then
+		echo
+		echo "Factory boot timeout. Halting the system."
+		env FACTORY_BOOT=1 /etc/rc.initial.halt
+	fi
+else
+	read -p "Enter an option: " opmode
+fi
 echo
 
 # see what the user has chosen

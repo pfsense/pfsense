@@ -29,16 +29,27 @@
 require_once("config.inc");
 require_once("functions.inc");
 
-$fp = fopen('php://stdin', 'r');
+function local_system_halt() {
+	global $g;
 
-echo "\n" . sprintf(gettext("%s will shutdown and halt system. This may take a few minutes, depending on your hardware."), $g['product_name']) . "\n";
-echo gettext("Do you want to proceed [y|n]?") . " ";
-
-if (strcasecmp(chop(fgets($fp)), "y") == 0) {
 	echo "\n" . sprintf(gettext("%s will shutdown and halt system now."), $g['product_name']) . "\n";
 	system_halt();
 }
 
+$factory_boot = getenv('FACTORY_BOOT');
+if ($factory_boot == "1") {
+	local_system_halt();
+	return;
+}
+
+$fp = fopen('php://stdin', 'r');
+echo "\n" . sprintf(gettext("%s will shutdown and halt system. This may take a few minutes, depending on your hardware."), $g['product_name']) . "\n";
+echo gettext("Do you want to proceed [y|n]?") . " ";
+$input = chop(fgets($fp)); 
 fclose($fp);
+if (strcasecmp($input, "y") == 0) {
+	local_system_halt();
+}
+
 
 ?>

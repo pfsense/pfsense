@@ -917,6 +917,11 @@ EOPP;
 				$dhcpdconf .= "		ignore bootp;\n";
 			}
 
+			// ignore-client-uids
+			if (isset($poolconf['ignoreclientuids'])) {
+				$dhcpdconf .= "		ignore-client-uids true;\n";
+			}
+
 			// netbios-name*
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";

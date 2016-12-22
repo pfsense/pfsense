@@ -5972,6 +5972,52 @@ function get_failover_interface($interface, $family = "all") {
 	return get_real_interface($interface, $family);
 }
 
+/****f* interfaces/interface_has_dhcp
+ * NAME
+ *   interface_has_dhcp - determine if the interface or gateway group uses DHCP
+ * INPUTS
+ *   interface or gateway group name
+ *   family - 4 (check for IPv4 DHCP) or 6 (check for IPv6 DHCP)
+ * RESULT
+ *   true - if the interface uses DHCP/DHCP6, or the name is a gateway group which has any member that uses DHCP/DHCP6
+ *   false - otherwise (DHCP/DHCP6 not in use, or the name is not an interface or gateway group)
+ ******/
+function interface_has_dhcp($interface, $family = 4) {
+	global $config;
+
+	if ($config['interfaces'][$interface]) {
+		if (($family == 4) && ($config['interfaces'][$interface]['ipaddr'] == "dhcp")) {
+			return true;
+		}
+		if (($family == 6) && ($config['interfaces'][$interface]['ipaddrv6'] == "dhcp6")) {
+			return true;
+		}
+	} else {
+		if (is_array($config['gateways']['gateway_group'])) {
+			if ($family == 6) {
+				$dhcp_string = "_DHCP6";
+			} else {
+				$dhcp_string = "_DHCP";
+			}
+
+			foreach ($config['gateways']['gateway_group'] as $group) {
+				if ($group['name'] == $interface) {
+					if (is_array($group['item'])) {
+						foreach ($group['item'] as $item) {
+							$item_data = explode("|", $item);
+							if (substr($item_data[0], -strlen($dhcp_string)) == $dhcp_string) {
+								return true;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
 function remove_ifindex($ifname) {
 	return preg_replace("/[0-9]+$/", "", $ifname);
 }

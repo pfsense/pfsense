@@ -133,8 +133,11 @@ j="-j${njobs}"
 [ -n "${objdir}" ] \
 	&& export MAKEOBJDIRPREFIX=${objdir}
 
-[ -z "${installation_media}" ] \
-	&& export WITHOUT_BSDINSTALL=yes WITHOUT_RESCUE=yes
+if [ -n "${installation_media}" ]; then
+	export WITHOUT_RESCUE=yes
+else
+	export WITHOUT_BSDINSTALL=yes
+fi
 
 export DESTDIR=${destdir}
 

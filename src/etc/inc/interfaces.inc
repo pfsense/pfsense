@@ -6003,29 +6003,31 @@ function interface_has_dhcp($interface, $family = 4) {
 	if ($config['interfaces'][$interface]) {
 		if (($family == 4) && ($config['interfaces'][$interface]['ipaddr'] == "dhcp")) {
 			return true;
-		}
-		if (($family == 6) && ($config['interfaces'][$interface]['ipaddrv6'] == "dhcp6")) {
+		} elseif (($family == 6) && ($config['interfaces'][$interface]['ipaddrv6'] == "dhcp6")) {
 			return true;
+		} else {
+			return false;
 		}
-	} else {
-		if (is_array($config['gateways']['gateway_group'])) {
-			if ($family == 6) {
-				$dhcp_string = "_DHCP6";
-			} else {
-				$dhcp_string = "_DHCP";
-			}
+	}
 
-			foreach ($config['gateways']['gateway_group'] as $group) {
-				if ($group['name'] == $interface) {
-					if (is_array($group['item'])) {
-						foreach ($group['item'] as $item) {
-							$item_data = explode("|", $item);
-							if (substr($item_data[0], -strlen($dhcp_string)) == $dhcp_string) {
-								return true;
-							}
-						}
-					}
-				}
+	if (!is_array($config['gateways']['gateway_group'])) {
+		return false;
+	}
+
+	if ($family == 6) {
+		$dhcp_string = "_DHCP6";
+	} else {
+		$dhcp_string = "_DHCP";
+	}
+
+	foreach ($config['gateways']['gateway_group'] as $group) {
+		if (($group['name'] != $interface) || !is_array($group['item'])) {
+			continue;
+		}
+		foreach ($group['item'] as $item) {
+			$item_data = explode("|", $item);
+			if (substr($item_data[0], -strlen($dhcp_string)) == $dhcp_string) {
+				return true;
 			}
 		}
 	}

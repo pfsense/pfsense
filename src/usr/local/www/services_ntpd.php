@@ -286,7 +286,8 @@ $section->addInput(new Form_Input(
 	'ntporphan',
 	'Orphan Mode',
 	'text',
-	$pconfig['ntporphan']
+	$pconfig['orphan'],
+	['placeholder' => "12"]
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
 			'The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough ' .
 			'to insure that any other servers available to clients are preferred over this server (default: 12).');

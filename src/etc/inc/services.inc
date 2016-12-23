@@ -1659,7 +1659,7 @@ EOD;
 	}
 	$igmpconf .= "\n";
 
-	$igmpfl = fopen($g['tmp_path'] . "/igmpproxy.conf", "w");
+	$igmpfl = fopen($g['varetc_path'] . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
 		log_error(gettext("Could not write Igmpproxy configuration file!"));
 		return;
@@ -1669,9 +1669,9 @@ EOD;
 	unset($igmpconf);
 
 	if (isset($config['syslog']['igmpxverbose'])) {
-		mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['tmp_path']}/igmpproxy.conf");
+		mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['varetc_path']}/igmpproxy.conf");
 	} else {
-		mwexec_bg("/usr/local/sbin/igmpproxy {$g['tmp_path']}/igmpproxy.conf");
+		mwexec_bg("/usr/local/sbin/igmpproxy {$g['varetc_path']}/igmpproxy.conf");
 	}
 
 	log_error(gettext("Started IGMP proxy service."));

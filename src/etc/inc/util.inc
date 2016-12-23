@@ -2586,14 +2586,10 @@ function get_duid_from_file()
 	$count = 0;
 	
 	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r")) {
-		
 		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
-			
-			$string = fread($fd,filesize("{$g['vardb_path']}/dhcp6c_duid"));
-					
-			while($count < 16) {
-				
-				$a = $string[$count];
+			$buffer = fread($fd,filesize("{$g['vardb_path']}/dhcp6c_duid"));					
+			while($count < 16) {				
+				$a = $buffer[$count];
 				$duid_ASCII .= bin2hex($a);
 				$count++;
 				if($count < 16) {

@@ -1144,6 +1144,7 @@ $section->addInput(new Form_StaticText(
 $section->addInput(new Form_Input(
 	'tftp',
 	'TFTP Server',
+	'text',
 	$pconfig['tftp']
 ))->setHelp('Leave blank to disable. Enter a valid IP address, hostname or URL for the TFTP server.');
 

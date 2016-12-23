@@ -208,8 +208,8 @@ $section->addInput(new Form_Input(
 	['placeholder' => $duid]
 	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID whuch will be used on the next WAN interface UP event.' .'<br />' .
 			'Unless you enter a DUID the system will default to using the DUID created by the client on start, this DUID is NOT saved to config.' .
-			'It is strongly recommended if you use RAM disk to enter a DUID here and then SAVE, the DUID will then be saved to config also and' .
-			' will be active on the next WAN interface UP event.');
+			'It is strongly recommended if you use RAM disk to enter a DUID here and then save. The saved DUID will take effect after a machine'.
+			' reboot or re-configure of the WAN interface(s).');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

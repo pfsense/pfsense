@@ -779,6 +779,8 @@ foreach ($iflist as $ifent => $ifname) {
 	/* Not static IPv4 or subnet >= 31 */
 	if ($oc['subnet'] >= 31) {
 		$have_small_subnet = true;
+		$example_name = $ifname;
+		$example_cidr = $oc['subnet'];
 		continue;
 	}
 	if (!is_ipaddrv4($oc['ipaddr']) || empty($oc['subnet'])) {
@@ -797,11 +799,11 @@ foreach ($iflist as $ifent => $ifname) {
 
 if ($tabscounter == 0) {
 	if ($have_small_subnet) {
-		$sentence2 = gettext("This system's static IPv4 interfaces have subnet 31 or 32.");
+		$sentence2 = sprintf(gettext('%1$s has a CIDR mask of %2$s, which does not contain enough addresses.'), htmlspecialchars($example_name), htmlspecialchars($example_cidr));
 	} else {
-		$sentence2 = gettext("This system has none.");
+		$sentence2 = gettext("This system has no interfaces configured with a static IPv4 address.");
 	}
-	print_info_box(gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address with subnet less than 31.") . " " . $sentence2);
+	print_info_box(gettext("The DHCP Server requires a static IPv4 subnet large enough to serve addresses to clients.") . " " . $sentence2);
 	include("foot.inc");
 	exit;
 }

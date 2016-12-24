@@ -2721,7 +2721,7 @@ $section->addInput(new Form_IpAddress(
 	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
-$section->addInput(new Form_IpAddress(
+$section->addInput(new Form_Input(
 	'pptp_remote0',
 	'Remote IP address',
 	$pconfig['pptp_remote'][0],

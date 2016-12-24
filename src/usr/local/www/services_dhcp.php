@@ -743,13 +743,17 @@ if (is_subsystem_dirty('staticmaps')) {
 $tab_array = array();
 $tabscounter = 0;
 $i = 0;
+$have_small_subnet = false;
 
 foreach ($iflist as $ifent => $ifname) {
 	$oc = $config['interfaces'][$ifent];
 
 	/* Not static IPv4 or subnet >= 31 */
-	if (!is_ipaddrv4($oc['ipaddr']) ||
-	    empty($oc['subnet']) || $oc['subnet'] >= 31) {
+	if ($oc['subnet'] >= 31) {
+		$have_small_subnet = true;
+		continue;
+	}
+	if (!is_ipaddrv4($oc['ipaddr']) || empty($oc['subnet'])) {
 		continue;
 	}
 
@@ -764,7 +768,12 @@ foreach ($iflist as $ifent => $ifname) {
 }
 
 if ($tabscounter == 0) {
-	print_info_box(gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address. This system has none."));
+	if ($have_small_subnet) {
+		$sentence2 = gettext("This system's static IPv4 interfaces have subnet 31 or 32.");
+	} else {
+		$sentence2 = gettext("This system has none.");
+	}
+	print_info_box(gettext("The DHCP Server can only be enabled on interfaces configured with a static IPv4 address with subnet less than 31.") . " " . $sentence2);
 	include("foot.inc");
 	exit;
 }

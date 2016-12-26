@@ -159,7 +159,13 @@ if (!empty($cpzone)): ?>
 			<thead>
 				<tr>
 					<th><?=gettext("IP address")?></th>
+<?php
+	if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])):
+?>
 					<th><?=gettext("MAC address")?></th>
+<?php
+	endif;
+?>
 					<th><?=gettext("Username")?></th>
 					<th><?=gettext("Session start")?></th>
 <?php
@@ -178,18 +184,24 @@ if (!empty($cpzone)): ?>
 	foreach ($cpdb as $cpent): ?>
 				<tr>
 					<td><?= htmlspecialchars($cpent[2]);?></td>
+<?php
+		if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+?>
 					<td>
 <?php
-		$mac=trim($cpent[3]);
-		if (!empty($mac)) {
-			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			print htmlentities($mac);
-			if (isset($mac_man[$mac_hi])) {
-				print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
+			$mac=trim($cpent[3]);
+			if (!empty($mac)) {
+				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				print htmlentities($mac);
+				if (isset($mac_man[$mac_hi])) {
+					print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
+				}
 			}
-		}
 ?>	&nbsp;
 					</td>
+<?php
+		}
+?>
 					<td><?=htmlspecialchars($cpent[4])?></td>
 <?php
 		if ($_GET['showact']):

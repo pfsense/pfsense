@@ -68,6 +68,56 @@ require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
 
+function print_details($cpent) {
+	global $config, $cpzone, $cpzoneid;
+
+	printf("<a data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" data-content=\" ", gettext("Session details"));
+
+	/* print the duration of the session */
+	$session_time = time() - $cpent[0];
+	printf(gettext("Session duration: %s") . "<br>", convert_seconds_to_dhms($session_time));
+
+	/* print the time left before session timeout or session terminate time or the closer of the two if both are set */
+	if (!empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = min($cpent[0] + $cpent[7] - time(),$cpent[9] - time());
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (!empty($cpent[7]) && empty($cpent[9])) {
+		$session_time_left = $cpent[0] + $cpent[7] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = $cpent[9] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	}
+
+	/* print idle time and time left before disconnection if idle timeout is set */
+	if ($_GET['showact']) {
+		$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+
+		/* if the user never sent traffic, set last activity time to the login time */
+		$last_act = $last_act ? $last_act : $cpent[0];
+
+		$idle_time = time() - $last_act;
+		printf(gettext("Idle time: %s") . "<br>", convert_seconds_to_dhms($idle_time));
+
+		if (!empty($cpent[8])) {
+			$idle_time_left = $last_act + $cpent[8] - time();
+			printf(gettext("Idle time left: %s") . "<br>", convert_seconds_to_dhms($idle_time_left));
+		}
+	}
+
+	/* print bytes sent and received, invert the values if reverse accounting is enabled */
+	$volume = getVolume($cpent[2], $cpent[3]);
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	if ($reverse) {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['output_bytes']), format_bytes($volume['input_bytes']));
+	} else {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['input_bytes']), format_bytes($volume['output_bytes']));
+	}
+
+	/* print username */
+	printf("%s</a>", htmlspecialchars($cpent[4]));
+}
+
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
 	$cpzone = $_POST['zone'];
@@ -98,12 +148,11 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET[
 	exit;
 }
 
-if (!empty($cpzone)) {
-	$cpdb = captiveportal_read_db();
-}
 $pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
 if (!empty($cpzone)) {
+	$cpdb = captiveportal_read_db();
+
 	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
@@ -183,7 +232,7 @@ if (!empty($cpzone)): ?>
 
 	foreach ($cpdb as $cpent): ?>
 				<tr>
-					<td><?= htmlspecialchars($cpent[2]);?></td>
+					<td><?=htmlspecialchars($cpent[2])?></td>
 <?php
 		if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
 ?>
@@ -197,21 +246,22 @@ if (!empty($cpzone)): ?>
 					print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
 				}
 			}
-?>	&nbsp;
+?>
 					</td>
 <?php
 		}
 ?>
-					<td><?=htmlspecialchars($cpent[4])?></td>
+					<td><?php print_details($cpent); ?></td>
 <?php
 		if ($_GET['showact']):
-			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
+			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+			/* if the user never sent traffic, set last activity time to the login time */
+			$last_act = $last_act ? $last_act : $cpent[0];
+?>
 					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
 					<td>
 <?php
-			if ($last_act != 0) {
-				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
-			}
+			echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
 ?>
 					</td>
 <?php

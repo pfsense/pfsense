@@ -31,7 +31,8 @@ if (file_exists("{$g['varrun_path']}/booting")) {
 	return;
 }
 
-$staticroutes = get_staticroutes();
+// Get enabled static routes
+$staticroutes = get_staticroutes(false, false, true);
 
 if (count($staticroutes)) {
 	log_error("Static Routes: One or more aliases used for routing has changed its IP. Refreshing.");

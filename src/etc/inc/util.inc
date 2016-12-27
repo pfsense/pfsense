@@ -2343,7 +2343,7 @@ function route_add_or_change($args) {
 	return ($rc == 0);
 }
 
-function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
+function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
@@ -2355,6 +2355,10 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) 
 	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
+		if ($returnenabledroutesonly && isset($route['disabled'])) {
+			continue;
+		}
+
 		if (is_alias($route['network'])) {
 			if (!isset($aliastable[$route['network']])) {
 				continue;

@@ -1052,7 +1052,8 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 			}
 		}
 	}
-	foreach (get_staticroutes() as $netent) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $netent) {
 		if (is_subnet($netent['network'])) {
 			if ($returnsubnetsonly) {
 				$networks_arr[] = $netent['network'];
@@ -1569,7 +1570,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	$tonathosts = array("127.0.0.0/8");
 	$descriptions = array(gettext("localhost"));
 
-	foreach (get_staticroutes() as $route) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
 			$gateway =& $GatewaysList[$route['gateway']];
@@ -3708,7 +3710,7 @@ EOD;
 	 */
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n";
-		foreach (get_staticroutes() as $route) {
+		foreach (get_staticroutes(false, false, true) as $route) { // Parameter 3 returnenabledroutesonly
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if (is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];

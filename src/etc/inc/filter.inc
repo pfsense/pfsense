@@ -791,7 +791,6 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$extralias = "";
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
@@ -804,14 +803,14 @@ function filter_generate_aliases() {
 			case "host":
 			case "network":
 			case "url":
-				$tableaddrs = "{$addrlist}{$extralias}";
+				$tableaddrs = "{$addrlist}";
 				if (empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
 					if (empty($aliased['address'])) {
 						$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
 					}
 				} else {
-					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+					$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
 				}
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
@@ -835,7 +834,7 @@ function filter_generate_aliases() {
 						}
 					}
 				}
-				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
+				$aliases .= "table <{$aliased['name']}> { {$newaddress} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				break;
 			case "urltable":
@@ -858,7 +857,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
 				break;
 			default:
-				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
+				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']} }\"\n";
 				break;
 			}
 		}

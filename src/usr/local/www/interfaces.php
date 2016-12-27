@@ -2760,7 +2760,7 @@ $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'Remote IP address',
 	$pconfig['pptp_remote'][0],
-	'V4'
+	'HOSTV4'
 ));
 
 $section->addInput(new Form_Checkbox(

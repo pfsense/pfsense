@@ -328,6 +328,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['interface'] = $_GET['if'];
 	}
 	$pconfig['type'] = "pass";
+	$pconfig['proto'] = "tcp"; // ensures port fields visible and default=tcp, for a new rule
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }

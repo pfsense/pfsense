@@ -2721,11 +2721,11 @@ $section->addInput(new Form_IpAddress(
 	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
-$section->addInput(new Form_Input(
+$section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'Remote IP address',
 	$pconfig['pptp_remote'][0],
-	'text'
+	'HOSTV4'
 ));
 
 $section->addInput(new Form_Checkbox(

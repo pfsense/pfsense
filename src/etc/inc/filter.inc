@@ -594,11 +594,10 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
-	global $aliastable, $filterdns;
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, $use_filterdns = false) {
+	global $aliastable, $filterdns, $use_filterdns;
 
 	$addresses = explode(" ", $alias);
-	$use_filterdns = false;
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -628,7 +627,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no necessity to do it again. */
 			else if (!isset($aliasnesting[$address])) {
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {

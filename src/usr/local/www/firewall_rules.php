@@ -690,7 +690,7 @@ foreach ($a_filter as $filteri => $filterent):
 							explode(',', $filterent['icmptype'])
 						)
 					);
-				echo sprintf(' <span style="cursor: help;" title="%s:%s%s"><u>%s</u></span>', gettext('ICMP subtypes'), chr(13), $t, $filterent['icmptype']);
+				echo sprintf('<br /><div style="cursor:help;padding:1px;line-height:1.1em;max-height:2.5em;max-width:180px;overflow-y:auto;overflow-x:hidden" title="%s:%s%s"><small><u>%s</u></small></div>', gettext('ICMP subtypes'), chr(13), $t, str_replace(',', '</u>, <u>',$filterent['icmptype']));
 			}
 		} else {
 			echo " *";

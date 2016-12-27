@@ -91,8 +91,7 @@ if ($_POST) {
 			} else {
 				$config['system']['global-v6duid'] = $_POST['global-v6duid'];
 			}
-		}
-		else {
+		} else {
 			unset($config['system']['global-v6duid']);
 		}
 

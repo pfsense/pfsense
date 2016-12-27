@@ -337,7 +337,7 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = false) {
+function get_pkg_info($pkgs = 'all', $local_only = false, $installed_only = false) {
 	global $g, $input_errors;
 
 	$out = '';
@@ -359,14 +359,14 @@ function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = fals
 
 	/* Do not run remote operations if pkg has a lock */
 	if (is_subsystem_dirty('pkg')) {
-		$only_local = true;
+		$local_only = true;
 		$lock = false;
 	} else {
 		$lock = true;
 	}
 
 	$extra_param = "";
-	if ($only_local) {
+	if ($local_only) {
 		$extra_param = "-U ";
 	}
 
@@ -377,14 +377,15 @@ function get_pkg_info($pkgs = 'all', $only_local = false, $installed_only = fals
 		// repo catalog search (either remote or local_only)
 		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
 	}
-	if (($rc != 0 && $only_local) || $installed_only) {
-		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed. 
+	if (($rc != 0 && $local_only) || $installed_only) {
+		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed.
 		
 		   The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the remote repo catalog.
 		   
-		   If the calling code would have accepted local copy info (which isn't assumed up to date) then it makes sense to 
-		   fall back on pkg info to at least return the known info about installed pkgs (pkg info should still work), instead 
+		   If the calling code would have accepted local copy info (which isn't assumed up to date) then it makes sense to
+		   fall back on pkg info to at least return the known info about installed pkgs (pkg info should still work), instead
 		   of failing and returning no info at all. For example, this enables offline view + management of installed pkgs. */
+	
 		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);
 	}
 	if ($lock) {

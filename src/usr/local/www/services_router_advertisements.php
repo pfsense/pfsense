@@ -407,7 +407,8 @@ foreach ($pconfig['subnets'] as $subnet) {
 	$group->add(new Form_IpAddress(
 		$address_name,
 		null,
-		$address
+		$address,
+		'V6'
 	))->addMask($bits_name, $subnet);
 
 	$group->add(new Form_Button(
@@ -439,8 +440,9 @@ for ($idx=1; $idx<=3; $idx++) {
 	$section->addInput(new Form_IpAddress(
 		'radns' . $idx,
 		'Server ' . $idx,
-		$pconfig['radns' . $idx]
-	))->setPattern('[a-zA-Z0-9_.:]+')->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
+		$pconfig['radns' . $idx],
+		'ALIASV6'
+	))->setHelp(($idx < 3) ? '':'Leave blank to use the system default DNS servers - this interface\'s IP if DNS Forwarder or Resolver is enabled, otherwise the servers configured on the General page');
 }
 
 $section->addInput(new Form_Input(

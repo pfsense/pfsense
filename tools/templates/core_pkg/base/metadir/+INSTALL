@@ -27,7 +27,8 @@ chflags -R noschg \
 echo "===> Extracting new base tarball"
 
 # Install new base files
-tar -C / -xJPUf /usr/local/share/%%PRODUCT_NAME%%/base.txz
+tar -C / --exclude ./var/empty -xJPUf \
+	/usr/local/share/%%PRODUCT_NAME%%/base.txz
 
 echo "===> Removing static obsoleted files"
 

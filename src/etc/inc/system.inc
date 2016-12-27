@@ -1902,7 +1902,7 @@ function system_ntp_configure() {
 
 	/* if /var/empty does not exist, create it */
 	if (!is_dir("/var/empty")) {
-		mkdir("/var/empty", 0775, true);
+		mkdir("/var/empty", 0555, true);
 	}
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */

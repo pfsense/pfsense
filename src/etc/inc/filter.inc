@@ -594,11 +594,10 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
-	global $aliastable, $filterdns;
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, $use_filterdns = false) {
+	global $aliastable, $filterdns, $use_filterdns;
 
 	$addresses = explode(" ", $alias);
-	$use_filterdns = false;
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -628,7 +627,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no necessity to do it again. */
 			else if (!isset($aliasnesting[$address])) {
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
@@ -758,7 +757,6 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$extralias = "";
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
@@ -771,14 +769,14 @@ function filter_generate_aliases() {
 			case "host":
 			case "network":
 			case "url":
-				$tableaddrs = "{$addrlist}{$extralias}";
+				$tableaddrs = "{$addrlist}";
 				if (empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
 					if (empty($aliased['address'])) {
 						$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
 					}
 				} else {
-					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+					$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
 				}
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
@@ -802,7 +800,7 @@ function filter_generate_aliases() {
 						}
 					}
 				}
-				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
+				$aliases .= "table <{$aliased['name']}> { {$newaddress} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				break;
 			case "urltable":
@@ -825,7 +823,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
 				break;
 			default:
-				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
+				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']} }\"\n";
 				break;
 			}
 		}
@@ -1052,7 +1050,8 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 			}
 		}
 	}
-	foreach (get_staticroutes() as $netent) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $netent) {
 		if (is_subnet($netent['network'])) {
 			if ($returnsubnetsonly) {
 				$networks_arr[] = $netent['network'];
@@ -1569,7 +1568,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	$tonathosts = array("127.0.0.0/8");
 	$descriptions = array(gettext("localhost"));
 
-	foreach (get_staticroutes() as $route) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
 			$gateway =& $GatewaysList[$route['gateway']];
@@ -3708,7 +3708,7 @@ EOD;
 	 */
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n";
-		foreach (get_staticroutes() as $route) {
+		foreach (get_staticroutes(false, false, true) as $route) { // Parameter 3 returnenabledroutesonly
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if (is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];

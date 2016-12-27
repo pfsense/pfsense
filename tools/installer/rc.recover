@@ -11,6 +11,9 @@ main() {
 	echo "This will install the standard firmware and will erase all the existing"
 	echo "contents of eMMC permanently."
 	echo
+	echo eMMC device: ${MMCDEV}
+	echo
+	echo
 	read -p "Are you sure you want to continue ? (y/N) " confirm
 	echo
 
@@ -135,8 +138,15 @@ fi
 
 echo "Serial: ${serial}"
 
-MMCDEV=mmcsd1
-MMCHC=$(/sbin/geom disk list ${MMCDEV} | /usr/bin/grep MMCHC)
+# Find the eMMC device
+for DEV in mmcsd0 mmcsd1
+do
+	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
+	if [ -n "${MMCHC}" ]; then
+		MMCDEV=${DEV}
+		break;
+	fi
+done
 if [ -z "${MMCHC}" ]; then
 	echo
 	echo "no eMMC device detected.  aborting."

@@ -193,12 +193,10 @@ if ($_POST) {
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";
 		$dnsgwitem = "dns{$dnscounter}gw";
-		if ($_POST[$dnsgwitem]) {
-			if (interface_has_gateway($_POST[$dnsgwitem])) {
-				foreach ($direct_networks_list as $direct_network) {
-					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
-					}
+		if ($_POST[$dnsgwitem] && ($_POST[$dnsgwitem] <> "none")) {
+			foreach ($direct_networks_list as $direct_network) {
+				if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
+					$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 				}
 			}
 		}

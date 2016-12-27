@@ -1002,7 +1002,11 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 	$radiussrvs = captiveportal_get_radius_servers();
 	$cpdb = captiveportal_read_db();
 
-	$unsetindexes = array();
+	/* remove immediately the active users from the database to avoid races */
+	$unsetindexes = array_column($cpdb,5);
+	if (!empty($unsetindexes)) {
+		captiveportal_remove_entries($unsetindexes);
+	}
 
 	foreach ($cpdb as $cpentry) {
 		if (empty($cpentry[11])) {
@@ -1012,13 +1016,8 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
-		$unsetindexes[] = $cpentry[5];
 	}
 	unset($cpdb);
-
-	if (!empty($unsetindexes)) {
-		captiveportal_remove_entries($unsetindexes);
-	}
 }
 
 /* send RADIUS acct stop for all current clients */

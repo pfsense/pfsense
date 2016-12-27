@@ -168,14 +168,14 @@ if ($_POST) {
 			if (is_ipaddrv4($_POST['network']) &&
 			    isset($if['ipaddr']) && isset($if['subnet']) &&
 			    is_ipaddrv4($if['ipaddr']) && is_numeric($if['subnet']) &&
-			    ($_POST['network_subnet'] == $if['subnet']) &&
-			    (gen_subnet($_POST['network'], $_POST['network_subnet']) == gen_subnet($if['ipaddr'], $if['subnet']))) {
+			    ($_POST['network_subnet'] >= $if['subnet']) &&
+			    (ip_in_subnet($_POST['network'], gen_subnet($if['ipaddr'], $if['subnet']) . "/" . $if['subnet']))) {
 				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			} else if (is_ipaddrv6($_POST['network']) &&
 			    isset($if['ipaddrv6']) && isset($if['subnetv6']) &&
 			    is_ipaddrv6($if['ipaddrv6']) && is_numeric($if['subnetv6']) &&
-			    ($_POST['network_subnet'] == $if['subnetv6']) &&
-			    (gen_subnetv6($_POST['network'], $_POST['network_subnet']) == gen_subnetv6($if['ipaddrv6'], $if['subnetv6']))) {
+			    ($_POST['network_subnet'] >= $if['subnetv6']) &&
+			    (ip_in_subnet($_POST['network'], gen_subnet($if['ipaddrv6'], $if['subnetv6']) . "/" . $if['subnetv6']))) {
 				$input_errors[] = sprintf(gettext("This network conflicts with address configured on interface %s."), $if['descr']);
 			}
 		}

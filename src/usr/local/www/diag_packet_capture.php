@@ -72,6 +72,8 @@ function fixup_host($value, $position) {
 		return "{$andor}host {$not}" . $host;
 	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
+	} elseif (is_macaddr($host)) {
+		return "{$andor}ether host {$not}" . $host;
 	} else {
 		return "";
 	}
@@ -157,8 +159,8 @@ if ($_POST) {
 		}
 
 		foreach ($hosts as $h) {
-			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h))) {
-				$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $h);
+			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h)) && !is_macaddr(strip_host_logic($h))) {
+				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
 			}
 		}
 	}

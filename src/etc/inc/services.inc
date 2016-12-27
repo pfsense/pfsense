@@ -1741,7 +1741,8 @@ function services_dhcrelay_configure() {
 			}
 		}
 		if (!isset($destif)) {
-			foreach (get_staticroutes() as $rtent) {
+			// For each enabled static route
+			foreach (get_staticroutes(false, false, true) as $rtent) {
 				if (ip_in_subnet($srvip, $rtent['network'])) {
 					$a_gateways = return_gateways_array(true);
 					$destif = $a_gateways[$rtent['gateway']]['interface'];
@@ -1874,6 +1875,9 @@ function services_dhcrelay6_configure() {
 		if (!isset($destif)) {
 			if (is_array($config['staticroutes']['route'])) {
 				foreach ($config['staticroutes']['route'] as $rtent) {
+					if (isset($rtent['disabled'])) {
+						continue;
+					}
 					if (ip_in_subnet($srvip, $rtent['network'])) {
 						$a_gateways = return_gateways_array(true);
 						$destif = $a_gateways[$rtent['gateway']]['interface'];

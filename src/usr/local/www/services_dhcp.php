@@ -183,6 +183,7 @@ if (is_array($dhcpdconf)) {
 	list($pconfig['dns1'], $pconfig['dns2'], $pconfig['dns3'], $pconfig['dns4']) = $dhcpdconf['dnsserver'];
 	$pconfig['ignorebootp'] = isset($dhcpdconf['ignorebootp']);
 	$pconfig['denyunknown'] = isset($dhcpdconf['denyunknown']);
+	$pconfig['ignoreclientuids'] = isset($dhcpdconf['ignoreclientuids']);
 	$pconfig['nonak'] = isset($dhcpdconf['nonak']);
 	$pconfig['ddnsdomain'] = $dhcpdconf['ddnsdomain'];
 	$pconfig['ddnsdomainprimary'] = $dhcpdconf['ddnsdomainprimary'];
@@ -556,6 +557,7 @@ if (isset($_POST['save'])) {
 		$dhcpdconf['domainsearchlist'] = $_POST['domainsearchlist'];
 		$dhcpdconf['ignorebootp'] = ($_POST['ignorebootp']) ? true : false;
 		$dhcpdconf['denyunknown'] = ($_POST['denyunknown']) ? true : false;
+		$dhcpdconf['ignoreclientuids'] = ($_POST['ignoreclientuids']) ? true : false;
 		$dhcpdconf['nonak'] = ($_POST['nonak']) ? true : false;
 		$dhcpdconf['ddnsdomain'] = $_POST['ddnsdomain'];
 		$dhcpdconf['ddnsdomainprimary'] = $_POST['ddnsdomainprimary'];
@@ -826,6 +828,13 @@ $section->addInput(new Form_Checkbox(
 	'Denied clients will be ignored rather than rejected.',
 	$pconfig['nonak']
 ))->setHelp("This option is not compatible with failover and cannot be enabled when a Failover Peer IP address is configured.");
+
+$section->addInput(new Form_Checkbox(
+	'ignoreclientuids',
+	'Ignore client identifiers',
+	'If a client includes a unique identifier in its DHCP request, that UID will not be recorded in its lease.',
+	$pconfig['ignoreclientuids']
+))->setHelp("This option may be useful when a client can dual boot using different client identifiers but the same hardware (MAC) address.  Note that the resulting server behavior violates the official DHCP specification.");
 
 
 if (is_numeric($pool) || ($act == "newpool")) {

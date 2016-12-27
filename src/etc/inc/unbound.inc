@@ -747,7 +747,7 @@ function unbound_acls_config($cfgsubdir = "") {
 				// add for IPv6 static routes to local networks
 				// for safety, we include only routes reachable on an interface with no
 				// gateway specified - read: not an Internet connection.
-				$static_routes = get_staticroutes();
+				$static_routes = get_staticroutes(false, false, true); // Parameter 3 returnenabledroutesonly
 				foreach ($static_routes as $route) {
 					if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
 						// route is on this interface, interface doesn't have gateway, add it

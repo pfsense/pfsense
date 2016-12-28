@@ -106,7 +106,12 @@ if ($g['disablecrashreporter'] != true) {
 		}
 
 		if ($x > 0) {
-			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug. Click <a href='crash_reporter.php'>here</a> for more information."), $g['product_name']);
+			$savemsg = sprintf(gettext("%s has detected a crash report or programming bug."), $g['product_name']) . " ";
+			if (isAllowedPage("/crash_reporter.php")) {
+				$savemsg .= sprintf(gettext("Click <a href='crash_reporter.php'>here</a> for more information."));
+			} else {
+				$savemsg .= sprintf(gettext("Contact the system administrator for more information."));
+			}
 			$class = "warning";
 		}
 	}

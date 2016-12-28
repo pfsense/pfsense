@@ -21,5 +21,6 @@
 /sbin/pfctl -i $1 -Fs
 /bin/rm -f /var/etc/nameserver_$1
 /bin/rm -f /tmp/$1_router
+/bin/rm -f /tmp/$1_routerv6
 /bin/rm -f /tmp/$1up
 /usr/local/sbin/pfSctl -c 'filter reload'

@@ -110,6 +110,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkeyname'] = $a_maps[$id]['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $a_maps[$id]['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($a_maps[$id]['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($a_maps[$id]['ddnsforcehostname']);
 	list($pconfig['ntp1'], $pconfig['ntp2']) = $a_maps[$id]['ntpserver'];
 	$pconfig['tftp'] = $a_maps[$id]['tftp'];
 } else {
@@ -136,6 +137,7 @@ if (isset($id) && $a_maps[$id]) {
 	$pconfig['ddnsdomainkeyname'] = $_GET['ddnsdomainkeyname'];
 	$pconfig['ddnsdomainkey'] = $_GET['ddnsdomainkey'];
 	$pconfig['ddnsupdate'] = isset($_GET['ddnsupdate']);
+	$pconfig['ddnsforcehostname'] = isset($_GET['ddnsforcehostname']);
 	$pconfig['ntp1'] = $_GET['ntp1'];
 	$pconfig['ntp2'] = $_GET['ntp2'];
 	$pconfig['tftp'] = $_GET['tftp'];
@@ -173,8 +175,8 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ipaddr'] && !is_ipaddr($_POST['ipaddr']))) {
-		$input_errors[] = gettext("A valid IP address must be specified.");
+	if (($_POST['ipaddr'] && !is_ipaddrv4($_POST['ipaddr']))) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified.");
 	}
 
 	if (($_POST['mac'] && !is_macaddr($_POST['mac']))) {
@@ -232,10 +234,10 @@ if ($_POST) {
 	}
 
 	if (($_POST['gateway'] && !is_ipaddrv4($_POST['gateway']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the gateway.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the gateway.");
 	}
 	if (($_POST['wins1'] && !is_ipaddrv4($_POST['wins1'])) || ($_POST['wins2'] && !is_ipaddrv4($_POST['wins2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary WINS servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary WINS servers.");
 	}
 
 	$parent_ip = get_interface_ip($POST['if']);
@@ -249,7 +251,7 @@ if ($_POST) {
 	    ($_POST['dns2'] && !is_ipaddrv4($_POST['dns2'])) ||
 	    ($_POST['dns3'] && !is_ipaddrv4($_POST['dns3'])) ||
 	    ($_POST['dns4'] && !is_ipaddrv4($_POST['dns4']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for each of the DNS servers.");
+		$input_errors[] = gettext("A valid IPV4 address must be specified for each of the DNS servers.");
 	}
 
 	if ($_POST['deftime'] && (!is_numeric($_POST['deftime']) || ($_POST['deftime'] < 60))) {
@@ -262,7 +264,7 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid domain name must be specified for the dynamic DNS registration.");
 	}
 	if (($_POST['ddnsdomain'] && !is_ipaddrv4($_POST['ddnsdomainprimary']))) {
-		$input_errors[] = gettext("A valid primary domain name server IP address must be specified for the dynamic domain name.");
+		$input_errors[] = gettext("A valid primary domain name server IPv4 address must be specified for the dynamic domain name.");
 	}
 	if (($_POST['ddnsdomainkey'] && !$_POST['ddnsdomainkeyname']) ||
 	    ($_POST['ddnsdomainkeyname'] && !$_POST['ddnsdomainkey'])) {
@@ -279,13 +281,19 @@ if ($_POST) {
 	}
 
 	if (($_POST['ntp1'] && !is_ipaddrv4($_POST['ntp1'])) || ($_POST['ntp2'] && !is_ipaddrv4($_POST['ntp2']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the primary/secondary NTP servers.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the primary/secondary NTP servers.");
 	}
 	if ($_POST['tftp'] && !is_ipaddrv4($_POST['tftp']) && !is_domain($_POST['tftp']) && !filter_var($_POST['tftp'], FILTER_VALIDATE_URL)) {
-		$input_errors[] = gettext("A valid IP address, hostname or URL must be specified for the TFTP server.");
+		$input_errors[] = gettext("A valid IPv4 address, hostname or URL must be specified for the TFTP server.");
 	}
 	if (($_POST['nextserver'] && !is_ipaddrv4($_POST['nextserver']))) {
-		$input_errors[] = gettext("A valid IP address must be specified for the network boot server.");
+		$input_errors[] = gettext("A valid IPv4 address must be specified for the network boot server.");
+	}
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['mac'])) {
+		$input_errors[] = gettext("A valid MAC address must be specified for use with static ARP.");
+	}
+	if (isset($_POST['arp_table_static_entry']) && empty($_POST['ipaddr'])) {
+		$input_errors[] = gettext("A valid IPv4 address must be specified for use with static ARP.");
 	}
 
 	if (!$input_errors) {
@@ -331,6 +339,7 @@ if ($_POST) {
 		$mapent['ddnsdomainkeyname'] = $_POST['ddnsdomainkeyname'];
 		$mapent['ddnsdomainkey'] = $_POST['ddnsdomainkey'];
 		$mapent['ddnsupdate'] = ($_POST['ddnsupdate']) ? true : false;
+		$mapent['ddnsforcehostname'] = ($_POST['ddnsforcehostname']) ? true : false;
 
 		unset($mapent['ntpserver']);
 		if ($_POST['ntp1']) {
@@ -360,6 +369,13 @@ if ($_POST) {
 			if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
 				mark_subsystem_dirty('unbound');
 			}
+		}
+
+		/* Configure static ARP entry, or remove ARP entry if this host is dynamic. See https://redmine.pfsense.org/issues/6821 */
+		if ($mapent['arp_table_static_entry']) {
+			mwexec("/usr/sbin/arp -S " . escapeshellarg($mapent['ipaddr']) . " " . escapeshellarg($mapent['mac']));
+		} else {
+			mwexec("/usr/sbin/arp -d " . escapeshellarg($mapent['ipaddr']));
 		}
 
 		header("Location: services_dhcp.php?if={$if}");
@@ -424,7 +440,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IP Address',
-	$pconfig['ipaddr']
+	$pconfig['ipaddr'],
+	'V4'
 ))->setHelp('If an IPv4 address is entered, the address must be outside of the pool.' . '<br />' .
 			'If no IPv4 address is given, one will be dynamically allocated from the pool.');
 
@@ -578,6 +595,13 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ddnsupdate']
 ));
 
+$section->addInput(new Form_Checkbox(
+	'ddnsforcehostname',
+	'DDNS Hostname',
+	'Make dynamic DNS registered hostname the same as Hostname above.',
+	$pconfig['ddnsforcehostname']
+));
+
 $section->addInput(new Form_Input(
 	'ddnsdomain',
 	'DDNS Domain',
@@ -588,7 +612,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'ddnsdomainprimary',
 	'DDNS Server IP',
-	$pconfig['ddnsdomainprimary']
+	$pconfig['ddnsdomainprimary'],
+	'V4'
 ))->setHelp('Enter the primary domain name server IP address for the dynamic domain name.');
 
 $section->addInput(new Form_Input(
@@ -678,7 +703,7 @@ events.push(function() {
 		// On page load decide the initial state based on the data.
 		if (ispageload) {
 <?php
-			if (!$pconfig['ddnsupdate'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
+			if (!$pconfig['ddnsupdate'] && !$pconfig['ddnsforcehostname'] && empty($pconfig['ddnsdomain']) && empty($pconfig['ddnsdomainprimary']) &&
 			    empty($pconfig['ddnsdomainkeyname']) && empty($pconfig['ddnsdomainkey'])) {
 				$showadv = false;
 			} else {
@@ -692,6 +717,7 @@ events.push(function() {
 		}
 
 		hideCheckbox('ddnsupdate', !showadvdns);
+		hideCheckbox('ddnsforcehostname', !showadvdns);
 		hideInput('ddnsdomain', !showadvdns);
 		hideInput('ddnsdomainprimary', !showadvdns);
 		hideInput('ddnsdomainkeyname', !showadvdns);

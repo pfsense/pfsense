@@ -23,7 +23,7 @@ require_once("XML/RPC2/Client.php");
 
 class pfsense_xmlrpc_client {
 	
-	private $username, $password, $url, $filenotice, $error;
+	private $username, $password, $url, $logurl, $filenotice, $error;
 	
 	public function __construct() {
 		global $config;
@@ -45,35 +45,38 @@ class pfsense_xmlrpc_client {
 		}
 		$this->setConnectionData($hasync['synchronizetoip'], $port, $username, $hasync['password']);
 	}
-	
-	public function setConnectionData($syncip, $port, $username, $password) {
+
+	public function setConnectionData($syncip, $port, $username, $password, $scheme = "") {
 		global $config;
 		$this->username = $username;
 		$this->password = $password;
 		$this->filenotice = "sync_settings";
-		
-		$protocol = "http";
-		if (is_array($config['system']) && 
-			is_array($config['system']['webgui']) && 
-			!empty($config['system']['webgui']['protocol']) &&
-			$config['system']['webgui']['protocol'] == "https") {
-			$protocol = "https";
+		if (empty($scheme)) {
+			$scheme = "http";
+			if ($port == "443") {
+				$scheme = "https";
+			} else if (is_array($config['system']) &&
+				is_array($config['system']['webgui']) &&
+				!empty($config['system']['webgui']['protocol']) &&
+				$config['system']['webgui']['protocol'] == "https") {
+				$scheme = "https";
+			}
 		}
 		if (is_ipaddrv6($syncip)) {
 			$syncip = "[{$syncip}]";
 		}
-		if ($protocol == "https" || $port == "443") {
-			$this->url = "https://{$syncip}:{$port}/xmlrpc.php";
-		} else {
-			$this->url = "http://{$syncip}:{$port}/xmlrpc.php";
-		}
-	}
-	
-	function set_noticefile($noticefile) {
-		$this->filenotice = $noticefile;
+		$user = urlencode($this->username);
+		$pass = urlencode($this->password);
+		
+		$this->logurl = "{$scheme}://{$syncip}:{$port}/xmlrpc.php";
+		$this->url = "{$scheme}://{$user}:{$pass}@{$syncip}:{$port}/xmlrpc.php";
 	}
 
-	function xmlrpc_internal($method, $parameter, $timeout = 240) {
+	public function set_noticefile($noticefile) {
+		$this->filenotice = $noticefile;
+	}
+	
+	private function xmlrpc_internal($method, $parameter, $timeout = 240) {
 		$this->error = null;
 		$options = array(
 			'prefix' => 'pfsense.',
@@ -85,19 +88,33 @@ class pfsense_xmlrpc_client {
 		while ($numberofruns < 2) {
 			$numberofruns++;
 
-			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->url));
+			log_error(sprintf(gettext("Beginning XMLRPC sync data to %s."), $this->logurl));
 			$cli = XML_RPC2_Client::create($this->url, $options);
 			if (!is_object($cli)) {
-				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->url, $method);
+				$this->error = sprintf(gettext("A communications error occurred while attempting XMLRPC sync with %s (pfsense.%s)."), $this->log, $method);
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Settings Sync", "");
 				continue;
 			}
 			try {//restore_config_section
-				$resp = $cli->$method($this->username, $this->password, $parameter);
+				$REQUEST_URI = $_SERVER['REQUEST_URI'];
+				unset($_SERVER['REQUEST_URI']); // force use of 'toText()' when setting XML_RPC2_CurlException message
+				$resp = $cli->$method($parameter);
 			} catch (XML_RPC2_FaultException $e) {
 				// The XMLRPC server returns a XMLRPC error
 				$this->error = "Exception calling XMLRPC method {$method} #" . $e->getFaultCode() . ' : ' . $e->getFaultString();
+				log_error($this->error);
+				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
+				continue;
+			}  catch (XML_RPC2_CurlException $e) {
+				$previouserror = $e->getPrevious();// HTTP_Request2_ConnectionException
+				if ($previouserror == null) {
+					// CurlException doesnt get filled with PreviousError,
+					// however we dont want to show the stacktrace included in the 'message' to non sysadmin users
+					$this->error = "CurlException calling XMLRPC method {$method} #" . $e->getMessage();
+				} else {
+					$this->error = "CurlException calling XMLRPC method {$method} #" . $previouserror->getMessage();
+				}
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Communications error occurred", "");
 				continue;
@@ -107,31 +124,40 @@ class pfsense_xmlrpc_client {
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, gettext("Error code received"), "");
 				continue;
+			} finally {
+				if (isset($REQUEST_URI)) {
+					// restore the unset variable to its previous state.
+					$_SERVER['REQUEST_URI'] = $REQUEST_URI;
+				}
 			}
 
 			if (!is_array($resp) && trim($resp) == "Authentication failed") {
-				$this->error = "An authentication failure occurred while trying to access {$this->url} ({$method}).";
+				$this->error = "An authentication failure occurred while trying to access {$this->logurl} ({$method}).";
 				log_error($this->error);
 				file_notice($this->filenotice, $this->error, "Settings Sync", "");
 				continue;
 			}
-			log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->url));
+			log_error(sprintf(gettext("XMLRPC reload data success with %s (pfsense.{$method})."), $this->logurl));
 			return $resp;
 		}
 		return null;
 	}
 	
-	function xmlrpc_exec_php($execcmd, $timeout = 240) {
+	public function xmlrpc_exec_php($execcmd, $timeout = 240) {
 		$resp = $this->xmlrpc_internal("exec_php", $execcmd, $timeout);
 		return $resp;
 	}
 	
-	function xmlrpc_method($method, $parameter = "", $timeout = 240) {
+	public function xmlrpc_method($method, $parameter = "", $timeout = 240) {
 		$resp = $this->xmlrpc_internal($method, $parameter, $timeout);
 		return $resp;
 	}
 	
-	function get_error() {
+	public function get_error() {
 		return $this->error;
+	}
+	
+	public function getUrl() {
+		return $this->logurl;
 	}
 }

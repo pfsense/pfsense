@@ -190,6 +190,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['passthrumacaddusername'] = isset($a_cp[$cpzone]['passthrumacaddusername']);
 	$pconfig['radmac_format'] = $a_cp[$cpzone]['radmac_format'];
 	$pconfig['reverseacct'] = isset($a_cp[$cpzone]['reverseacct']);
+	$pconfig['includeidletime'] = isset($a_cp[$cpzone]['includeidletime']);
 	$pconfig['radiusnasid'] = $a_cp[$cpzone]['radiusnasid'];
 	$pconfig['page'] = array();
 	if ($a_cp[$cpzone]['page']['htmltext']) {
@@ -341,7 +342,6 @@ if ($_POST) {
 
 			$cpzoneid = $newcp['zoneid'];
 		}
-		$oldifaces = explode(",", $newcp['interface']);
 		if (is_array($_POST['cinterface'])) {
 			$newcp['interface'] = implode(",", $_POST['cinterface']);
 		}
@@ -430,6 +430,7 @@ if ($_POST) {
 		$newcp['passthrumacaddusername'] = $_POST['passthrumacaddusername'] ? true : false;
 		$newcp['radmac_format'] = $_POST['radmac_format'] ? $_POST['radmac_format'] : false;
 		$newcp['reverseacct'] = $_POST['reverseacct'] ? true : false;
+		$newcp['includeidletime'] = $_POST['includeidletime'] ? true : false;
 		$newcp['radiusnasid'] = trim($_POST['radiusnasid']);
 
 		if (!is_array($newcp['page'])) {
@@ -449,19 +450,8 @@ if ($_POST) {
 
 		write_config();
 
-		/* Clear up unselected interfaces */
-		$newifaces = explode(",", $newcp['interface']);
-		$toremove = array_diff($oldifaces, $newifaces);
-
-		if (!empty($toremove)) {
-			foreach ($toremove as $removeif) {
-				$removeif = get_real_interface($removeif);
-				mwexec("/sbin/ipfw zone {$cpzoneid} mdel {$removeif}");
-			}
-		}
-
 		captiveportal_configure_zone($newcp);
-		unset($newcp, $newifaces, $toremove);
+		unset($newcp);
 		filter_configure();
 		header("Location: services_captiveportal_zones.php");
 		exit;
@@ -688,7 +678,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['bwdefaultup']
 ))->setHelp('If this option is set, the captive portal will restrict each user who logs in to the specified default bandwidth. ' .
-			'RADIUS can override the default settings. Leave empty or set to 0 for no limit.');
+			'RADIUS can override the default settings. Leave empty for no limit.');
 
 $form->add($section);
 
@@ -986,6 +976,15 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, data counts for RADIUS accounting packets will be taken from the client perspective, not the NAS. ' .
 			'Acct-Input-Octets will represent download, and Acct-Output-Octets will represent upload.');
 
+$section->addInput(new Form_Checkbox(
+	'includeidletime',
+	'Idle time accounting',
+	'Include idle time in session time',
+	$pconfig['includeidletime']
+))->setHelp('When enabled, if a client is disconnected for exceeding the idle timeout the time spent idle is included in the total session time. ' .
+			'Otherwise the session time reported to the RADIUS server is the time between when the session started and when the last ' .
+			'activity was recorded.');
+
 $section->addInput(new Form_Input(
 	'radiusnasid',
 	'NAS Identifier',
@@ -1083,7 +1082,7 @@ if ($pconfig['page']['htmltext']) {
 	$group->add(new Form_Button(
 		'btnview',
 		'View',
-		$href,
+		'?zone=' . $cpzone . '&act=viewhtml',
 		'fa-file-text-o'
 	))->addClass('btn btn-info btn-xs')->setAttribute("target", "_blank");
 

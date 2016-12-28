@@ -1,10 +1,8 @@
-#!/usr/local/bin/php-cgi -f
-<?php
 /*
- * rc.conf_mount_rw
+ * pftabledrill
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +17,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/* Do nothing */
-
-?>
+$table_list = "";
+exec("/sbin/pfctl -sT 2>&1", $table_list);
+foreach ($table_list as $table) {
+	echo "\n{$table} contents:\n";
+	system("/sbin/pfctl -T show -t " . escapeshellarg($table));
+}

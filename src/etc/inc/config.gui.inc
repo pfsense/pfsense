@@ -44,13 +44,6 @@ if (file_exists("/cf/conf/use_xmlreader")) {
 }
 require_once("crypt.inc");
 
-/* read platform */
-if (file_exists("{$g['etc_path']}/platform")) {
-	$g['platform'] = chop(file_get_contents("{$g['etc_path']}/platform"));
-} else {
-	$g['platform'] = "unknown";
-}
-
 /* if /debugging exists, lets set $debugging
    so we can output more information */
 if (file_exists("/debugging")) {

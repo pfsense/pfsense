@@ -368,11 +368,11 @@ function openvpn_port_next($prot, $interface = "wan") {
 function openvpn_get_cipherlist() {
 
 	$ciphers = array();
-	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep "default key" | /usr/bin/awk \'{print $1, "(" $2 "-" $3 ")";}\'');
+	$cipher_out = shell_exec('/usr/local/sbin/openvpn --show-ciphers | /usr/bin/grep \'(.*key\' | sed \'s/, TLS client\/server mode only//\'');
 	$cipher_lines = explode("\n", trim($cipher_out));
 	sort($cipher_lines);
 	foreach ($cipher_lines as $line) {
-		$words = explode(' ', $line);
+		$words = explode(' ', $line, 2);
 		$ciphers[$words[0]] = "{$words[0]} {$words[1]}";
 	}
 	$ciphers["none"] = gettext("None (No Encryption)");
@@ -821,7 +821,7 @@ function openvpn_reconfigure($mode, $settings) {
 					if ($settings['strictusercn']) {
 						$strictusercn = "true";
 					}
-					$conf .= "auth-user-pass-verify \"/usr/local/sbin/ovpn_auth_verify user '{$settings['authmode']}' {$strictusercn} {$mode_id} {$settings['local_port']}\" via-env\n";
+					$conf .= "auth-user-pass-verify \"/usr/local/sbin/ovpn_auth_verify user " . base64_encode($settings['authmode']) . " {$strictusercn} {$mode_id} {$settings['local_port']}\" via-env\n";
 				}
 				break;
 		}
@@ -1079,7 +1079,7 @@ function openvpn_restart($mode, $settings) {
 
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
-
+	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
 	if (file_exists($pfile)) {
@@ -1105,11 +1105,13 @@ function openvpn_restart($mode, $settings) {
 	}
 
 	if (isset($settings['disable'])) {
+		unlock($lockhandle);
 		return;
 	}
 
 	/* Do not start an instance if we are not CARP master on this vip! */
 	if (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER") {
+		unlock($lockhandle);
 		return;
 	}
 
@@ -1118,6 +1120,7 @@ function openvpn_restart($mode, $settings) {
 	if (is_array($a_groups[$settings['interface']])) {
 		/* the interface is a gateway group. If a vip is defined and its a CARP backup then do not start */
 		if (($a_groups[$settings['interface']][0]['vip'] <> "") && (get_carp_interface_status($a_groups[$settings['interface']][0]['vip']) != "MASTER")) {
+			unlock($lockhandle);
 			return;
 		}
 	}
@@ -1125,11 +1128,12 @@ function openvpn_restart($mode, $settings) {
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	openvpn_clear_route($mode, $settings);
-	mwexec_bg("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
+	mwexec("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
 
 	if (!platform_booting()) {
 		send_event("filter reload");
 	}
+	unlock($lockhandle);
 }
 
 function openvpn_delete($mode, & $settings) {

@@ -27,6 +27,7 @@
 require_once("functions.inc");
 require_once("guiconfig.inc");
 require_once('notices.inc');
+require_once('system.inc');
 include_once("includes/functions.inc.php");
 
 if ($_REQUEST['getupdatestatus']) {
@@ -64,7 +65,7 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		print(gettext("The system is on the latest version."));
+		printf('<span class="text-success">%s</span>', gettext("The system is on the latest version."));
 		break;
 	case '>':
 		print(gettext("The system is on a later version than<br />the official release."));
@@ -93,6 +94,21 @@ $filesystems = get_mounted_filesystems();
 			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
 		<tr>
+			<th><?=gettext("System");?></th>
+			<td>
+			<?php
+				$platform = system_identify_specific_platform();
+				if (isset($platform['descr'])) {
+					echo $platform['descr'];
+				} else {
+					echo gettext('Unknown system');
+				}
+			?>
+			<br />
+			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
+			</td>
+		</tr>
+		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
 				<strong><?=$g['product_version_string']?></strong>
@@ -109,36 +125,6 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			</td>
 		</tr>
-		<?php if (!$g['hideplatform']): ?>
-		<tr>
-			<th><?=gettext("Platform");?></th>
-			<td>
-				<?=htmlspecialchars($g['platform']);?>
-				<?php if (($g['platform'] == "nanobsd") && (file_exists("/etc/nanosize.txt"))) {
-					echo " (" . htmlspecialchars(trim(file_get_contents("/etc/nanosize.txt"))) . ")";
-				} ?>
-			</td>
-		</tr>
-		<?php endif; ?>
-		<?php if ($g['platform'] == "nanobsd"): ?>
-			<?php
-			global $SLICE, $OLDSLICE, $TOFLASH, $COMPLETE_PATH, $COMPLETE_BOOT_PATH;
-			global $GLABEL_SLICE, $UFS_ID, $OLD_UFS_ID, $BOOTFLASH;
-			global $BOOT_DEVICE, $REAL_BOOT_DEVICE, $BOOT_DRIVE, $ACTIVE_SLICE;
-			nanobsd_detect_slice_info();
-			$rw = is_writable("/") ? "(rw)" : "(ro)";
-			?>
-		<tr>
-			<th><?=gettext("NanoBSD Boot Slice");?></th>
-			<td>
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($BOOT_DEVICE));?> / <?=htmlspecialchars($BOOTFLASH);?><?=$rw;?>
-				<?php if ($BOOTFLASH != $ACTIVE_SLICE): ?>
-				<br /><br /><?=gettext('Next Boot')?>:<br />
-				<?=htmlspecialchars(nanobsd_friendly_slice_name($GLABEL_SLICE));?> / <?=htmlspecialchars($ACTIVE_SLICE);?>
-				<?php endif; ?>
-			</td>
-		</tr>
-		<?php endif; ?>
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
@@ -239,7 +225,8 @@ $filesystems = get_mounted_filesystems();
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter"><?=gettext('(Updating in 10 seconds)')?></span>
+				<?php $update_period = (!empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
+				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
 			</td>
 		</tr>
 		<tr>

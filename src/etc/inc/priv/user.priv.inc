@@ -44,17 +44,21 @@ $priv_list['user-shell-access']['descr'] = gettext("Indicates whether the user i
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
-$priv_list['user-copy-files']['descr'] = gettext("Indicates whether the user is allowed to copy files ".
-										 "onto the {$g['product_name']} appliance via SCP/SFTP. ".
-										 "To use this privilege, scponly must be installed ".
-										 "on the appliance (Hint: pkg_add -r scponly).");
+$priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
+
+$priv_list['user-copy-files-chroot'] = array();
+$priv_list['user-copy-files-chroot']['name']  = gettext("User - System: Copy files to home directory (chrooted scp)");
+$priv_list['user-copy-files-chroot']['descr'] = gettext("Indicates whether this user is allowed to copy files to the home directory via SCP/SFTP.".
+										"Note: User - System - Copy files (scp) conflicts with this privilege.".
+						       				"Warning: Manual chroot setup required, see /usr/local/etc/rc.d/scponlyc.");
 
 $priv_list['user-ssh-tunnel'] = array();
 $priv_list['user-ssh-tunnel']['name']  = gettext("User - System: SSH tunneling");
 $priv_list['user-ssh-tunnel']['descr'] = gettext("Indicates whether the user is able to login for ".
 										"tunneling via SSH when they have no shell access. ".
-										"Note: User - System - Copy files conflicts with ".
-										"this privilege.");
+										"Note: User - System - Copy files (scp) and ".
+						 				"System: Copy files to home directory (chrooted scp) ".
+										"conflict with this privilege.");
 
 $priv_list['user-ipsec-xauth-dialin'] = array();
 $priv_list['user-ipsec-xauth-dialin']['name'] = gettext("User - VPN: IPsec xauth Dialin");

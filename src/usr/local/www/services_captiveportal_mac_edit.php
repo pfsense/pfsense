@@ -172,7 +172,7 @@ if ($_POST) {
 			$rules .= captiveportal_passthrumac_configure_entry($mac);
 			$uniqid = uniqid("{$cpzone}_macedit");
 			file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-			mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+			mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 			@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 			unset($cpzoneid);
 		}

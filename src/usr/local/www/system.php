@@ -67,6 +67,7 @@ $pconfig['statusmonitoringsettingspanel'] = isset($config['system']['webgui']['s
 $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu'];
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 $pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
+$pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -123,6 +124,8 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['webguicss']);
 	}
+
+	$config['system']['webgui']['loginshowhost'] = $_POST['loginshowhost'] ? true:false;
 
 	if ($_POST['webguifixedmenu']) {
 		$config['system']['webgui']['webguifixedmenu'] = $_POST['webguifixedmenu'];
@@ -190,12 +193,10 @@ if ($_POST) {
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";
 		$dnsgwitem = "dns{$dnscounter}gw";
-		if ($_POST[$dnsgwitem]) {
-			if (interface_has_gateway($_POST[$dnsgwitem])) {
-				foreach ($direct_networks_list as $direct_network) {
-					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
-					}
+		if ($_POST[$dnsgwitem] && ($_POST[$dnsgwitem] <> "none")) {
+			foreach ($direct_networks_list as $direct_network) {
+				if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
+					$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 				}
 			}
 		}
@@ -486,6 +487,13 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+
+$section->addInput(new Form_Checkbox(
+	'loginshowhost',
+	'Login hostname',
+	'Show hostname on login banner',
+	$pconfig['loginshowhost']
+));
 
 $section->addInput(new Form_Input(
 	'dashboardperiod',

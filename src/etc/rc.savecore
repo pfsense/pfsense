@@ -20,7 +20,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dumpdev=`/bin/realpath /dev/dumpdev`
+dumpdev=`/bin/realpath -q /dev/dumpdev`
 dumpdir='/var/crash'
 
 if [ ! -c "${dumpdev}" ]; then

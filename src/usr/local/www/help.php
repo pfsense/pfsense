@@ -81,7 +81,6 @@ $helppages = array(
 	'status_logs_filter_summary.php' => 'https://doc.pfsense.org/index.php/Firewall_Logs',
 	'status_logs_settings.php' => 'https://doc.pfsense.org/index.php/Log_Settings',
 	'status_logs_vpn.php' => 'https://doc.pfsense.org/index.php/PPTP_VPN_Logs',
-	'diag_nanobsd.php' => 'https://doc.pfsense.org/index.php/NanoBSD_Diagnostics',
 	'diag_ping.php' => 'https://doc.pfsense.org/index.php/Ping_Host',
 	'status_pkglogs.php' => 'https://doc.pfsense.org/index.php/Package_Logs',
 	'diag_tables.php' => 'https://doc.pfsense.org/index.php/Tables',

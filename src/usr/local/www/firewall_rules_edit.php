@@ -463,7 +463,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['srcbeginport_cust'] && $_POST['srcendport_cust']) {
-		if (is_alias($_POST['srcendport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
+		if (is_alias($_POST['srcbeginport_cust']) && is_alias($_POST['srcendport_cust']) && $_POST['srcbeginport_cust'] != $_POST['srcendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Source port range from: and to: fields';
 		}
 		if ((is_alias($_POST['srcbeginport_cust']) && (!is_alias($_POST['srcendport_cust']) && $_POST['srcendport_cust'] != '')) ||
@@ -477,7 +477,7 @@ if ($_POST) {
 		}
 	}
 	if ($_POST['dstbeginport_cust'] && $_POST['dstendport_cust']) {
-		if (is_alias($_POST['dstendport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
+		if (is_alias($_POST['dstbeginport_cust']) && is_alias($_POST['dstendport_cust']) && $_POST['dstbeginport_cust'] != $_POST['dstendport_cust']) {
 			$input_errors[] = 'The same port alias must be used in Destination port range from: and to: fields';
 		}
 		if ((is_alias($_POST['dstbeginport_cust']) && (!is_alias($_POST['dstendport_cust']) && $_POST['dstendport_cust'] != '')) ||
@@ -487,10 +487,10 @@ if ($_POST) {
 	}
 
 	if ($_POST['src']) {
-		$_POST['src'] = trim($_POST['src']);
+		$_POST['src'] = addrtolower(trim($_POST['src']));
 	}
 	if ($_POST['dst']) {
-		$_POST['dst'] = trim($_POST['dst']);
+		$_POST['dst'] = addrtolower(trim($_POST['dst']));
 	}
 
 	/* if user enters an alias and selects "network" then disallow. */
@@ -1265,7 +1265,10 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 
 	// The rule type dropdown on the GUI can be one of the special names like
 	// "any" "LANnet" "LAN address"... or "Single host or alias" or "Network"
-	if (is_specialnet($pconfig[$type])) {
+	if ($pconfig[$type.'type']) {
+		// The rule type came from the $_POST array, after input errors, so keep it.
+		$ruleType = $pconfig[$type.'type'];
+	} elseif (is_specialnet($pconfig[$type])) {
 		// It is one of the special names, let it through as-is.
 		$ruleType = $pconfig[$type];
 	} elseif ((is_ipaddrv6($pconfig[$type]) && $pconfig[$type.'mask'] == 128) ||
@@ -1317,27 +1320,30 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$group->add(new Form_IpAddress(
 		$type,
 		$name .' Address',
-		$pconfig[$type]
-	))->addMask($type .'mask', $pconfig[$type.'mask'])->setPattern('[a-zA-Z0-9_.:]+');
+		$pconfig[$type],
+		'ALIASV4V6'
+	))->addMask($type .'mask', $pconfig[$type.'mask']);
 
 	$section->add($group);
 
 	if ($type == 'src') {
 		$section->addInput(new Form_Button(
-			'btnsrcadv',
-			'Display Advanced',
+			'btnsrctoggle',
+			'',
 			null,
 			'fa-cog'
-		))->setAttribute('type','button')->addClass('btn-info btn-sm');
+		))->setAttribute('type','button')->addClass('btn-info btn-sm')->setHelp(
+			'The <b>Source Port Range</b> for a connection is typically random '.
+			'and almost never equal to the destination port. '.
+			'In most cases this setting must remain at its default value, <b>any</b>.');
 	}
 
 	$portValues = ['' => gettext('(other)'), 'any' => gettext('any')];
-
 	foreach ($wkports as $port => $portName) {
 		$portValues[$port] = $portName.' ('. $port .')';
 	}
 
-	$group = new Form_Group($name .' port range');
+	$group = new Form_Group($name .' Port Range');
 
 	$group->addClass($type . 'portrange');
 
@@ -1369,16 +1375,7 @@ foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 		(isset($portValues[ $pconfig[$type .'endport'] ]) ? null : $pconfig[$type .'endport'])
 	))->setHelp('Custom');
 
-
-	if ($type == 'src')
-		$group->setHelp('Specify the source port or port range for this rule. This is '.
-			'usually random and almost never equal to the destination port range (and '.
-			'should usually be <b>any</b>).  The "To" field may be left '.
-			'empty if only filtering a single port.');
-	else
-		$group->setHelp('Specify the destination port or port range for this rule. ' .
-			'The "To" field may be left empty if only filtering a '.
-			'single port.');
+	$group->setHelp(sprintf('Specify the %s port or port range for this rule. The "To" field may be left empty if only filtering a single port.',strtolower($name)));
 
 	$group->addClass(($type == 'src') ? 'srcprtr':'dstprtr');
 	$section->add($group);
@@ -1798,7 +1795,7 @@ events.push(function() {
 		} else {
 			text = "<?=gettext('Display Advanced');?>";
 		}
-		$('#btnsrcadv').html('<i class="fa fa-cog"></i> ' + text);
+		$('#btnsrctoggle').html('<i class="fa fa-cog"></i> ' + text);
 	}
 
 	function typesel_change() {
@@ -1884,7 +1881,7 @@ events.push(function() {
 
 		if ($('#proto').find(":selected").index() <= 2) {
 			hideClass('dstprtr', false);
-			hideInput('btnsrcadv', false);
+			hideInput('btnsrctoggle', false);
 			if ((($('#srcbeginport').val() == "any") || ($('#srcbeginport').val() == "")) &&
 			    (($('#srcendport').val() == "any") || ($('#srcendport').val() == ""))) {
 				srcportsvisible = false;
@@ -1893,7 +1890,7 @@ events.push(function() {
 			}
 		} else {
 			hideClass('dstprtr', true);
-			hideInput('btnsrcadv', true);
+			hideInput('btnsrctoggle', true);
 			srcportsvisible = false;
 		}
 
@@ -1929,7 +1926,7 @@ events.push(function() {
 		ext_change();
 	});
 
-	$('#btnsrcadv').click(function() {
+	$('#btnsrctoggle').click(function() {
 		srcportsvisible = !srcportsvisible;
 		show_source_port_range();
 	});

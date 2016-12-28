@@ -132,6 +132,7 @@ if (isset($id) && $a_aliases[$id]) {
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$vertical_bar_err_text = gettext("Vertical bars (|) at start or end, or double in the middle of descriptions not allowed. Descriptions have been cleaned. Check and save again.");
 
@@ -166,6 +167,15 @@ if ($_POST) {
 		if ($interface['descr'] == $_POST['name']) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
+		}
+	}
+
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
 		}
 	}
 
@@ -216,6 +226,7 @@ if ($_POST) {
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					$input_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $_POST['address' . $x]);
 					continue;
 				}
 
@@ -418,7 +429,7 @@ if ($_POST) {
 					$tmpaddress .= "/" . $input_address_subnet[$idx];
 				}
 			}
-			$address[] = $tmpaddress;
+			$address[] = addrtolower($tmpaddress);
 		}
 		unset($desc_fmt_err_found);
 		if ($wrongaliases <> "") {
@@ -510,7 +521,7 @@ if ($_POST) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
 		$pconfig['descr'] = $_POST['descr'];
-		if (($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
+		if (isset($alias['aliasurl']) && ($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
 			$pconfig['address'] = implode(" ", $alias['aliasurl']);
 		} else {
 			$pconfig['address'] = implode(" ", $address);
@@ -696,7 +707,8 @@ while ($counter < count($addresses)) {
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
 		$tab == 'port' ? 'Port':'Address',
-		$address
+		$address,
+		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 
 	$group->add(new Form_Input(

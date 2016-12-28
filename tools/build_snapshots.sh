@@ -181,7 +181,7 @@ while [ /bin/true ]; do
 			snapshot_update_status "${LINE}"
 		done
 
-		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} --flash-size '2g 4g' \
+		(${BUILDER_ROOT}/build.sh ${NO_UPLOAD} \
 		    --snapshots ${NO_IMAGES} "memstick memstickadi memstickserial iso" 2>&1) \
 		    | while read -r LINE; do
 			snapshot_update_status "${LINE}"

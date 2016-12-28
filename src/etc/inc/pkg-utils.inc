@@ -338,6 +338,7 @@ function get_package_internal_name($package_data) {
 
 // Get information about packages.
 function get_pkg_info($pkgs = 'all', $local_only = false, $installed_only = false) {
+
 	global $g, $input_errors;
 
 	$out = '';
@@ -468,6 +469,7 @@ function register_all_installed_packages() {
 	global $g, $config, $pkg_interface;
 
 	$pkg_info = get_pkg_info('all', true, true);
+
 
 	foreach ($pkg_info as $pkg) {
 		if (!isset($pkg['installed'])) {

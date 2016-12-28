@@ -90,6 +90,15 @@ if ($_POST['aliasimport'] != "") {
 		}
 	}
 
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
+		}
+	}
+
 	if ($_POST['aliasimport']) {
 		$tocheck = explode("\n", $_POST['aliasimport']);
 		$imported_ips = array();

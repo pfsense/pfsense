@@ -270,7 +270,6 @@ if ($_POST) {
 			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
 		}
 
-		conf_mount_rw();
 		setup_serial_port();
 		// Restart DNS in case dns rebinding toggled
 		if (isset($config['dnsmasq']['enable'])) {
@@ -278,7 +277,6 @@ if ($_POST) {
 		} elseif (isset($config['unbound']['enable'])) {
 			services_unbound_configure();
 		}
-		conf_mount_ro();
 	}
 }
 

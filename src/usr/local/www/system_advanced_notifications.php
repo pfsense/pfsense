@@ -207,56 +207,6 @@ display_top_tabs($tab_array);
 
 $form = new Form;
 
-$section = new Form_Section('Growl');
-
-$section->addInput(new Form_Checkbox(
-	'disable_growl',
-	'Disable Growl',
-	'Disable Growl Notifications',
-	$pconfig['disable_growl']
-))->setHelp('Check this option to disable growl notifications but preserve the '.
-	'settings below.');
-
-$section->addInput(new Form_Input(
-	'name',
-	'Registration Name',
-	'text',
-	$pconfig['name'],
-	['placeholder' => 'pfSense-Growl']
-))->setHelp('Enter the name to register with the Growl server.');
-
-$section->addInput(new Form_Input(
-	'notification_name',
-	'Notification Name',
-	'text',
-	$pconfig['notification_name'],
-	['placeholder' => $g["product_name"].' growl alert']
-
-))->setHelp('Enter a name for the Growl notifications.');
-
-$section->addInput(new Form_Input(
-	'ipaddress',
-	'IP Address',
-	'text',
-	$pconfig['ipaddress']
-))->setHelp('This is the IP address to send growl notifications to.');
-
-$section->addPassword(new Form_Input(
-	'password',
-	'Password',
-	'text',
-	$pconfig['password']
-))->setHelp('Enter the password of the remote growl notification device.');
-
-$section->addInput(new Form_Button(
-	'test-growl',
-	'Test Growl Settings',
-	null,
-	'fa-rss'
-))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
-	'marked as disabled.');
-
-$form->add($section);
 $section = new Form_Section('E-Mail');
 
 $section->addInput(new Form_Checkbox(
@@ -357,6 +307,57 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['disablebeep']
 ))->setHelp('When this is checked, startup and shutdown sounds will no longer '.
 	'play.');
+
+$form->add($section);
+
+$section = new Form_Section('Growl');
+
+$section->addInput(new Form_Checkbox(
+	'disable_growl',
+	'Disable Growl',
+	'Disable Growl Notifications',
+	$pconfig['disable_growl']
+))->setHelp('Check this option to disable growl notifications but preserve the '.
+	'settings below.');
+
+$section->addInput(new Form_Input(
+	'name',
+	'Registration Name',
+	'text',
+	$pconfig['name'],
+	['placeholder' => 'pfSense-Growl']
+))->setHelp('Enter the name to register with the Growl server.');
+
+$section->addInput(new Form_Input(
+	'notification_name',
+	'Notification Name',
+	'text',
+	$pconfig['notification_name'],
+	['placeholder' => $g["product_name"].' growl alert']
+
+))->setHelp('Enter a name for the Growl notifications.');
+
+$section->addInput(new Form_Input(
+	'ipaddress',
+	'IP Address',
+	'text',
+	$pconfig['ipaddress']
+))->setHelp('This is the IP address to send growl notifications to.');
+
+$section->addPassword(new Form_Input(
+	'password',
+	'Password',
+	'text',
+	$pconfig['password']
+))->setHelp('Enter the password of the remote growl notification device.');
+
+$section->addInput(new Form_Button(
+	'test-growl',
+	'Test Growl Settings',
+	null,
+	'fa-rss'
+))->addClass('btn-info')->setHelp('A test notification will be sent even if the service is '.
+	'marked as disabled.');
 
 $form->add($section);
 print($form);

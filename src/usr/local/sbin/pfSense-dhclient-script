@@ -102,7 +102,11 @@ add_new_address() {
 		netmask $new_subnet_mask \
 		broadcast $new_broadcast_address \
 		$medium
-	$IFCONFIG $interface setfirst $new_ip_address
+
+	# Disable this for now, setfirst support is not present and this
+	# causes a bogus interface address. See https://redmine.pfsense.org/issues/7042
+
+	# $IFCONFIG $interface setfirst $new_ip_address
 
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"

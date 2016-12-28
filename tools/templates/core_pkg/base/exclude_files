@@ -31,7 +31,9 @@
 ./proc
 ./sys
 ./tmp
+./usr/lib/debug
+./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
 ./usr/local/share/%%PRODUCT_NAME%%/base.mtree
 ./usr/local/share/%%PRODUCT_NAME%%/base.txz
-./usr/local/etc/pkg/repos/%%PRODUCT_NAME%%.conf
+./usr/local/share/%%PRODUCT_NAME%%/pkg
 ./var/db/pkg

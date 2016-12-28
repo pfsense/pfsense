@@ -77,16 +77,17 @@ if ($_REQUEST['ajax']) {
 
 	// When we do a reinstallall, it is technically possible that we might catch the system in-between
 	// packages, hence the de-bounce here
+	for ($idx=0;$idx<5 && !isvalidpid($pidfile); $idx++) {
+		usleep(200000);
+	}
+
 	if (!isvalidpid($pidfile)) {
-		usleep(100000);
-		if (!isvalidpid($pidfile)) {
-			$running = "stopped";
-			// The log files may not be complete when the process terminates so we need wait until we see the
-			// exit status (__RC=x)
-			waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
-			filter_configure();
-			send_event("service restart packages");
-		}
+		$running = "stopped";
+		// The log files may not be complete when the process terminates so we need wait until we see the
+		// exit status (__RC=x)
+		waitfor_string_in_file($_REQUEST['logfilename'] . '.txt', "__RC=", 10);
+		filter_configure();
+		send_event("service restart packages");
 	}
 
 	$pidarray = array('pid' => $running);
@@ -132,6 +133,8 @@ if ($_REQUEST['ajax']) {
 	} else {
 		$resparray['log'] = "not_ready";
 		print(json_encode($resparray));
+	//	file_put_contents("/root/update.log", json_encode($resparray), FILE_APPEND);
+	//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
 		exit;
 	}
 
@@ -159,6 +162,9 @@ if ($_REQUEST['ajax']) {
 
 	// Glob all the arrays we have made together, and convert to JSON
 	print(json_encode($resparray + $pidarray + $statusarray + $progarray));
+//	file_put_contents("/root/update.log", json_encode($resparray + $pidarray + $statusarray + $progarray), FILE_APPEND);
+//	file_put_contents("/root/update.log", "\r\n---------------------------------------------------------------\r\n", FILE_APPEND);
+
 	exit;
 }
 
@@ -236,7 +242,7 @@ $tab_array = array();
 
 if ($firmwareupdate) {
 	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
-	$tab_array[] = array(gettext("System Update"), true, "");
+	$tab_array[] = array(gettext("System Update"), true, "pkg_mgr_install.php?id=firmware");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));
@@ -420,7 +426,7 @@ if ($confirmed):
 		</div>
 
 		<div class="panel-body">
-			<textarea rows="15" class="form-control" id="output" name="output"><?=$_POST['output']?></textarea>
+			<textarea rows="15" class="form-control" id="output" name="output"><?=($completed ? $_POST['output'] : gettext("Please wait while the update system initializes"))?></textarea>
 		</div>
 	</div>
 <?php
@@ -438,6 +444,10 @@ if ($confirmed && !$completed) {
 
 	$progbar = true;
 	$upgrade_script = "/usr/local/sbin/{$g['product_name']}-upgrade -y -l {$logfilename}.txt -p {$g['tmp_path']}/{$g['product_name']}-upgrade.sock";
+
+	// Remove the log file before starting
+
+	unlink_if_exists($logfilename . ".txt");
 
 	switch ($pkgmode) {
 		case 'delete':
@@ -540,7 +550,7 @@ function show_info() {
 	$('#final').addClass("alert-info");
 	if ("<?=$pkgmode?>" != "reinstallall") {
 		$('#final').html("<p><?=$pkg_wait_txt?>" + "</p><p>" +
-			"<?=gettext("This may take several minutes!")?>" + "</p>");
+			"<?=gettext("This may take several minutes. Do not leave or refresh the page!")?>" + "</p>");
 	} else {
 		$('#final').html("<p><?=gettext('Please wait while the reinstallation of all packages completes.')?>" + "</p><p>" +
 			"<?=gettext("This may take several minutes!")?>" + "</p>");
@@ -581,6 +591,8 @@ function get_firmware_versions()
 				$('#confirmlabel').text( "<?=$confirmlabel?>");
 				$('#pkgconfirm').show();
 			}
+		} else {
+			$('#uptodate').html('<span class="text-danger">' + 'Unable to check for updates' + "</span>");
 		}
 	});
 }
@@ -609,7 +621,7 @@ function getLogsStatus() {
 
 //		alert("JSON data: " + JSON.stringify(json));
 
-		if (json.log != "not ready") {
+		if (json.log != "not_ready") {
 			// Write the log file to the "output" textarea
 			$('#output').html(json.log);
 			scrollToBottom();
@@ -702,7 +714,7 @@ function startCountdown() {
 
 events.push(function() {
 	if ("<?=$start_polling?>") {
-		setTimeout(getLogsStatus, 1000);
+		setTimeout(getLogsStatus, 3000);
 		show_info();
 	}
 

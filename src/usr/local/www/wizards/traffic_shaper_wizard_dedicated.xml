@@ -40,7 +40,7 @@
 				<name>numberofconnections</name>
 				<type>input</type>
 				<validate>^[0-9]+$</validate>
-				<description>Number of connections the system has</description>
+				<description>Number of WAN-type connections (Gateway selected on their interface settings, or dynamic assignment.)</description>
 				<bindstofield>ezshaper->step1->numberofconnections</bindstofield>
 			</field>
 			<field>

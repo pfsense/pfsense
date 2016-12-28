@@ -1,5 +1,4 @@
 #!/usr/local/bin/php-cgi -f
-
 <?php
 /*
  * pfSsh
@@ -22,13 +21,21 @@
  */
 
 require_once("globals.inc");
-echo "Starting the {$g['product_name']} developer shell";
+if ($argc < 2) {
+	echo "Starting the {$g['product_name']} developer shell";
+}
 require_once("functions.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("config.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("util.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 
 $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break",
 	 "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
@@ -167,7 +174,9 @@ EOF;
 
 $fp = fopen('php://stdin', 'r');
 
-echo ".\n\n";
+if ($argc < 2) {
+	echo ".\n\n";
+}
 
 $pkg_interface='console';
 
@@ -269,7 +278,6 @@ while ($shell_active == true) {
 			fwrite($recording_fd, $playbackbuffer);
 			fclose($recording_fd);
 			$command = "";
-			conf_mount_ro();
 			echo "Recording stopped.\n";
 			$recording = false;
 		} else {
@@ -293,7 +301,6 @@ while ($shell_active == true) {
 			$command = "";
 		} else {
 			/* time to record */
-			conf_mount_rw();
 			safe_mkdir("/etc/phpshellsessions");
 			$recording_fn = basename($command_split[1]);
 			$recording_fd = fopen("/etc/phpshellsessions/{$recording_fn}","w");

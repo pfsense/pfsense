@@ -2064,7 +2064,7 @@ function upgrade_054_to_055() {
 
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-	if ($g['platform'] != $g['product_name']) {
+	if (isset($config['system']['use_mfs_tmpvar'])) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -2193,7 +2193,7 @@ function upgrade_054_to_055() {
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
-	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
+	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	unlink_if_exists("{$g['vardb_path']}/rrd/*.xml");
 	if (platform_booting()) {
 		echo "Updating configuration...";
@@ -2783,7 +2783,7 @@ function upgrade_080_to_081() {
 	$rrddbpath = "/var/db/rrd/";
 	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
 
-	if ($g['platform'] != $g['product_name']) {
+	if (isset($config['system']['use_mfs_tmpvar'])) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -2927,7 +2927,7 @@ function upgrade_080_to_081() {
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
-	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
+	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 	if (platform_booting()) {
 		echo "Updating configuration...";
 	}
@@ -3255,7 +3255,7 @@ function upgrade_095_to_096() {
 	$rrddbpath = "/var/db/rrd";
 	$rrdtool = "/usr/local/bin/rrdtool";
 
-	if ($g['platform'] != $g['product_name']) {
+	if (isset($config['system']['use_mfs_tmpvar'])) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -3286,7 +3286,7 @@ function upgrade_095_to_096() {
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
-	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
+	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
 function upgrade_096_to_097() {
@@ -4647,7 +4647,7 @@ function upgrade_145_to_146() {
 	$awkcmd .= "    print;\n";
 	$awkcmd .= "}'";
 
-	if ($g['platform'] != $g['product_name']) {
+	if (isset($config['system']['use_mfs_tmpvar'])) {
 		/* restore the databases, if we have one */
 		if (restore_rrd()) {
 			/* Make sure to move the rrd backup out of the way. We will make a new one after converting. */
@@ -4673,7 +4673,7 @@ function upgrade_145_to_146() {
 	}
 	/* Let's save the RRD graphs after we run enable RRD graphing */
 	/* The function will restore the rrd.tgz so we will save it after */
-	exec("cd /; LANG=C NO_REMOUNT=1 RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
+	exec("cd /; LANG=C RRDDBPATH='{$rrddbpath}' CF_CONF_PATH='{$g['cf_conf_path']}' /etc/rc.backup_rrd.sh");
 }
 
 function upgrade_bgpd_146_to_147() {
@@ -4866,7 +4866,7 @@ function upgrade_151_to_152() {
 	require_once("/etc/inc/services.inc");
 
 	// Remove these cron jobs on full install if not using ramdisk.
-	if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+	if (!isset($config['system']['use_mfs_tmpvar'])) {
 		install_cron_job("/etc/rc.backup_rrd.sh", false);
 		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
 	}
@@ -4971,10 +4971,67 @@ function upgrade_154_to_155() {
 	}
 }
 
-/* Unset references to glxsb in the config. See #6755 */
 function upgrade_155_to_156() {
+	// Unused
+}
+
+function upgrade_156_to_157() {
+	global $config;
+	/* Convert Cloudflare and GratisDNS type DynDNS entries to the new split hostname and domain format */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		if (($dyndns['type'] == "cloudflare") || ($dyndns['type'] == "cloudflare-v6") || ($dyndns['type'] == "gratisdns")) {
+			/* Use the old style logic to split the host and domain one last time. */
+			$dparts = explode(".", trim($dyndns['host']));
+			$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
+			$domain_offset = count($dparts) - $domain_part_count;
+			$dyndns['host'] = implode(".", array_slice($dparts, 0, $domain_offset));
+			$dyndns['domainname'] = implode(".", array_slice($dparts, $domain_offset));
+		}
+	}
+
+	/* unset old pppoerestart cron job if it exists. redmine 1905 */
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $idx => $cronitem) {
+			if ($cronitem['command'] == "/etc/pppoerestart") {
+				unset($config['cron']['item'][$idx]);
+			}
+		}
+	}
+}
+
+function upgrade_157_to_158() {
+	global $config;
+	/* Convert Dynamic DNS passwords to base64 encoding. Redmine #6688 */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		$dyndns['password'] = base64_encode($dyndns['password']);
+	}
+}
+
+/* Unset references to glxsb in the config. See #6755 */
+function upgrade_158_to_159() {
+	global $config;
+
 	if ($config['system']['crypto_hardware'] == "glxsb") {
 		unset($config['system']['crypto_hardware']);
 	}
 }
+
 ?>

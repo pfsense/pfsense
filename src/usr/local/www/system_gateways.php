@@ -119,6 +119,14 @@ function delete_gateway_item($id) {
 		return;
 	}
 
+	/* If the removed gateway was the default route, remove the default route */
+	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
+	    !isset($a_gateways[$id]['disabled']) &&
+	    isset($a_gateways[$id]['defaultgw'])) {
+		$inet = (!is_ipaddrv4($a_gateways[$id]['gateway']) ? '-inet6' : '-inet');
+		mwexec("/sbin/route delete {$inet} default");
+	}
+
 	/* NOTE: Cleanup static routes for the interface route if any */
 	if (!empty($a_gateways[$id]) && is_ipaddr($a_gateways[$id]['gateway']) &&
 	    $gateway['gateway'] != $a_gateways[$id]['gateway'] &&
@@ -195,6 +203,12 @@ if (isset($_POST['del_x'])) {
 	if ($ok_to_toggle) {
 		if ($disable_gw) {
 			$a_gateway_item[$realid]['disabled'] = true;
+			/* If the disabled gateway was the default route, remove the default route */
+			if (!empty($a_gateway_item[$realid]) && is_ipaddr($a_gateway_item[$realid]['gateway']) &&
+			    isset($a_gateway_item[$realid]['defaultgw'])) {
+				$inet = (!is_ipaddrv4($a_gateway_item[$realid]['gateway']) ? '-inet6' : '-inet');
+				mwexec("/sbin/route delete {$inet} default");
+			}
 		} else {
 			unset($a_gateway_item[$realid]['disabled']);
 		}
@@ -235,7 +249,7 @@ display_top_tabs($tab_array);
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Gateways')?></h2></div>
 	<div class="panel-body">
 		<div class="table-responsive">
-			<table class="table table-striped tabel-hover table-condensed table-rowdblclickedit">
+			<table class="table table-striped table-hover table-condensed table-rowdblclickedit">
 				<thead>
 					<tr>
 						<th></th>

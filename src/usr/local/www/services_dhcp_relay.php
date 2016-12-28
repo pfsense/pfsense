@@ -38,6 +38,7 @@ if (empty($config['dhcrelay']['interface'])) {
 }
 
 $pconfig['agentoption'] = isset($config['dhcrelay']['agentoption']);
+$pconfig['server'] = $config['dhcrelay']['server'];
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -82,17 +83,22 @@ if ($_POST) {
 
 		if ($_POST['server']) {
 			foreach ($_POST['server'] as $checksrv => $srv) {
-				if (!is_ipaddr($srv[0])) {
-					$input_errors[] = gettext("A valid Destination Server IP address must be specified.");
-				}
-
 				if (!empty($srv[0])) { // Filter out any empties
+					if (!is_ipaddrv4($srv[0])) {
+						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv4 address."), $srv[0]);
+					}
+
 					if (!empty($svrlist)) {
 						$svrlist .= ',';
 					}
 
 					$svrlist .= $srv[0];
 				}
+			}
+
+			// Check that the user input something in one of the Destination Server fields
+			if (empty($svrlist)) {
+				$input_errors[] = gettext("At least one Destination Server IP address must be specified.");
 			}
 		}
 	}
@@ -114,8 +120,6 @@ if ($_POST) {
 		filter_configure();
 	}
 }
-
-$pconfig['server'] = $config['dhcrelay']['server'];
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Relay"));
 $shortcut_section = "dhcp";
@@ -171,9 +175,10 @@ function createDestinationServerInputGroup($value = null) {
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
-		$value
+		$value,
+		'V4'
 	))->setWidth(4)
-	  ->setHelp('This is the IP address of the server to which DHCP requests are relayed.')
+	  ->setHelp('This is the IPv4 address of the server to which DHCP requests are relayed.')
 	  ->setIsRepeated();
 
 	$group->enableDuplication(null, true); // Buttons are in-line with the input

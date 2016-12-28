@@ -91,9 +91,7 @@ if ($_GET['act'] == "deluser") {
 	if ($_GET['username'] == $_SESSION['Username']) {
 		$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $_GET['username']);
 	} else {
-		conf_mount_rw();
 		local_user_del($a_user[$id]);
-		conf_mount_ro();
 		$userdeleted = $a_user[$id]['name'];
 		unset($a_user[$id]);
 		write_config();
@@ -122,12 +120,10 @@ if (isset($_POST['dellall'])) {
 				if ($a_user[$userid]['name'] == $_SESSION['Username']) {
 					$delete_errors[] = sprintf(gettext("Cannot delete user %s because you are currently logged in as that user."), $a_user[$userid]['name']);
 				} else {
-					conf_mount_rw();
 					$deleted_users = $deleted_users . $comma . $a_user[$userid]['name'];
 					$comma = ", ";
 					$deleted_count++;
 					local_user_del($a_user[$userid]);
-					conf_mount_ro();
 					unset($a_user[$userid]);
 				}
 			} else {
@@ -276,7 +272,6 @@ if ($_POST['save']) {
 
 	if (!$input_errors) {
 
-		conf_mount_rw();
 		$userent = array();
 		if (isset($id) && $a_user[$id]) {
 			$userent = $a_user[$id];
@@ -427,7 +422,6 @@ if ($_POST['save']) {
 			run_plugins("/etc/inc/privhooks");
 		}
 
-		conf_mount_ro();
 
 		pfSenseHeader("system_usermanager.php");
 	}
@@ -741,7 +735,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		'text',
 		$pconfig['expires']
 	))->setHelp('Leave blank if the account shouldn\'t expire, otherwise enter '.
-		'the expiration date');
+		'the expiration date as MM/DD/YYYY');
 
 	$section->addInput(new Form_Checkbox(
 		'customsettings',

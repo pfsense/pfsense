@@ -470,6 +470,49 @@ function return_gateways_status($byname = false) {
 	return($status);
 }
 
+function return_gateways_status_text($byname = false, $brief = false) {
+	$gwstat = return_gateways_status($byname);
+	$output = "";
+	$widths = array();
+	$col_sep = 2;
+	if ($brief) {
+		$collist = array('status' => "Status");
+	} else {
+		$collist = array('monitorip' => "Monitor",
+				'srcip' => "Source",
+				'delay' => "Delay",
+				'stddev' => "StdDev",
+				'loss' => "Loss",
+				'status' => "Status");
+	}
+	foreach ($gwstat as $gw) {
+		foreach ($gw as $gwdidx => $gwdata) {
+			if (strlen($gwdata) > $widths[$gwdidx]) {
+				$widths[$gwdidx] = strlen($gwdata);
+			}
+		}
+	}
+
+	$output .= str_pad("Name", $widths['name'] + $col_sep, " ", STR_PAD_RIGHT);
+	foreach ($collist as $hdrcol => $hdrdesc) {
+		if (strlen($hdrdesc) > $widths[$hdrcol]) {
+			$widths[$hdrcol] = strlen($hdrdesc);
+		}
+		$output .= str_pad($hdrdesc, $widths[$hdrcol] + $col_sep, " ", (substr($hdrcol, -2, 2) == "ip") ? STR_PAD_RIGHT : STR_PAD_LEFT);
+	}
+	$output .= "\n";
+
+	foreach ($gwstat as $idx => $gw) {
+		$output .= str_pad($gw['name'], $widths['name'] + $col_sep, " ", STR_PAD_RIGHT);
+		foreach (array_keys($collist) as $col) {
+			$output .= str_pad($gw[$col], $widths[$col] + $col_sep, " ", (substr($col, -2, 2) == "ip") ? STR_PAD_RIGHT : STR_PAD_LEFT);
+		}
+		$output .= "\n";
+	}
+
+	return $output;
+}
+
 /* Return all configured gateways on the system */
 function return_gateways_array($disabled = false, $localhost = false, $inactive = false) {
 	global $config, $g;

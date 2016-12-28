@@ -345,13 +345,13 @@ $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
-
+	
 	unset($input_errors);
-
+	
 	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
-		$input_errors[] = gettext("The IP protocol is not recognized."); 
+		$input_errors[] = gettext("The IP protocol is not recognized.");
 	}
-
+	
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {

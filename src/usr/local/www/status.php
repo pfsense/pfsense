@@ -164,15 +164,43 @@ function execCmds() {
 function get_firewall_info() {
 	global $g, $output_path;
 	/* Firewall Platform/Serial */
-	$firewall_info = "Product Name: {$g['product_name']}";
+	$firewall_info = "Product Name: " . htmlspecialchars($g['product_name']);
 	$platform = system_identify_specific_platform();
 	if (!empty($platform['descr'])) {
-		$firewall_info .= "<br/>Platform: {$platform['descr']}";
+		$firewall_info .= "<br/>Platform: " . htmlspecialchars($platform['descr']);
 	}
 	$serial = system_get_serial();
 	if (!empty($serial)) {
-		$firewall_info .= "<br/>SN/UUID: {$serial}";
+		$firewall_info .= "<br/>SN/UUID: " . htmlspecialchars($serial);
 	}
+
+	if (!empty($g['product_version_string'])) {
+		$firewall_info .= "<br/>" . htmlspecialchars($platform['descr']) .
+		    " version: " . htmlspecialchars($g['product_version_string']);
+	}
+
+	if (file_exists('/etc/version.buildtime')) {
+		$build_time = file_get_contents('/etc/version.buildtime');
+		if (!empty($build_time)) {
+			$firewall_info .= "<br/>Built On: " . htmlspecialchars($build_time);
+		}
+	}
+	if (file_exists('/etc/version.lastcommit')) {
+		$build_commit = file_get_contents('/etc/version.lastcommit');
+		if (!empty($build_commit)) {
+			$firewall_info .= "<br/>Last Commit: " . htmlspecialchars($build_commit);
+		}
+	}
+
+	if (file_exists('/etc/version.gitsync')) {
+		$gitsync = file_get_contents('/etc/version.gitsync');
+		if (!empty($gitsync)) {
+			$firewall_info .= "<br/>A gitsync was performed at " .
+			    date("D M j G:i:s T Y", filemtime('/etc/version.gitsync')) .
+			    " to commit " . htmlspecialchars($gitsync);
+		}
+	}
+
 	file_put_contents("{$output_path}/Product Info.txt", str_replace("<br/>", "\n", $firewall_info) . "\n");
 	return $firewall_info;
 }
@@ -282,11 +310,11 @@ defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
-defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 defCmdT("Disk-ZFS List", "/sbin/zfs list");
 defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
 defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
 defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
+defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
 exec("/bin/date", $dateOutput, $dateStatus);
 $currentDate = $dateOutput[0];

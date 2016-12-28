@@ -328,7 +328,6 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['interface'] = $_GET['if'];
 	}
 	$pconfig['type'] = "pass";
-	$pconfig['proto'] = "tcp"; // ensures port fields visible and default=tcp, for a new rule
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
@@ -1300,10 +1299,10 @@ $section->addInput(new Form_Select(
 	'Protocol',
 	$pconfig['proto'],
 	array(
-		'any' => gettext('any'),
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',
+		'any' => gettext('any'),
 		'icmp' => 'ICMP',
 		'esp' => 'ESP',
 		'ah' => 'AH',

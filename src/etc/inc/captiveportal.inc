@@ -1086,6 +1086,16 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
 	global $g, $config, $cpzone, $cpzoneid;
 
+	/* check if we're pruning old entries and eventually wait */
+	$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 60);
+
+	/* if we still don't have the lock, unlock forcefully and take it */
+	if (!$rcprunelock) {
+		log_error("CP zone ${cpzone}: could not obtain the lock for more than 60 seconds, lock taken forcefully to disconnect all users");
+		unlock_force("rcprunecaptiveportal{$cpzone}");
+		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
+	}
+
 	$radiussrvs = captiveportal_get_radius_servers();
 	$cpdb = captiveportal_read_db();
 
@@ -1105,6 +1115,8 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
 	}
 	unset($cpdb);
+
+	unlock($rcprunelock);
 }
 
 /* send RADIUS acct stop for all current clients */

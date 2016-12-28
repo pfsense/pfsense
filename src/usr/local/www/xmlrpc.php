@@ -550,10 +550,10 @@ class pfsense_xmlrpc_server {
 		if (!function_exists("get_notices")) {
 			require_once("notices.inc");
 		}
-		if (!$params) {
+		if (!$category) {
 			$toreturn = get_notices();
 		} else {
-			$toreturn = get_notices($params);
+			$toreturn = get_notices($category);
 		}
 
 		return $toreturn;

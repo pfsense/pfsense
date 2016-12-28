@@ -418,6 +418,20 @@ $numColumns = $user_settings['webgui']['dashboardcolumns'];
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
 }
+
+$display_notices = false;
+$allow_clear_notices = false;
+
+if (are_notices_pending()) {
+	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
+	$user_entry = getUserEntry($_SESSION['Username']);
+	if (userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
+		$display_notices = true;
+		$allow_clear_notices = true;
+	} elseif (userHasPrivilege($user_entry, "user-view-notices")) {
+		$display_notices = true;
+	}
+}
 ?>
 <body id="<?=$numColumns?>">
 <nav id="topmenu" class="navbar navbar-<?=$menuclass?>-top navbar-inverse">
@@ -470,7 +484,7 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<?php if (are_notices_pending()):?>
+				<?php if ($display_notices):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
@@ -631,7 +645,8 @@ if ($config['remote_managed_pages']['item']) {
 
 // Modal notices window
 // The notices modal needs to be outside of the page display div or things get messy
-if (are_notices_pending()):?>
+if ($display_notices):
+?>
 
 <div id="notices" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -681,7 +696,7 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
-<?php if (isAllowedPage("/index.php")):?>
+<?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 <?php endif;?>
 			</div>
@@ -709,7 +724,8 @@ if (are_notices_pending()):?>
 //]]>
 </script>
 
-<?php endif;
+<?php
+endif; // ($display_notices)
 
 // Get the flash Messages
 get_flash_message();

@@ -393,8 +393,7 @@
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
 
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
-				curl_setopt($ch, CURLOPT_HEADER, 1);
+			if ($this->_dnsService != 'ods') {
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
@@ -809,7 +808,6 @@
 					$server = 'https://api.dnsimple.com/v1/domains/';
 					$token = $this->_dnsUser . ':' . $this->_dnsPass;
 					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
-					curl_setopt($ch, CURLOPT_HEADER, 1);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
@@ -856,6 +854,7 @@
 					break;
 			}
 			if ($this->_dnsService != 'ods') {
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
@@ -869,7 +868,7 @@
 		 * Private Function (added 12 July 2005) [beta]
 		 *   Retrieve Update Status
 		 */
-		function _checkStatus($ch, $data) {
+		function _checkStatus($ch, $data, $header) {
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() starting.'), $this->_dnsService, $this->_FQDN));
 			}

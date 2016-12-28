@@ -700,7 +700,9 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+<?php if (isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+<?php endif;?>
 			</div>
 		</div>
 	</div>

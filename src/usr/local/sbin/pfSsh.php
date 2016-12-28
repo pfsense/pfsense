@@ -1,5 +1,4 @@
 #!/usr/local/bin/php-cgi -f
-
 <?php
 /*
  * pfSsh
@@ -22,13 +21,21 @@
  */
 
 require_once("globals.inc");
-echo "Starting the {$g['product_name']} developer shell";
+if ($argc < 2) {
+	echo "Starting the {$g['product_name']} developer shell";
+}
 require_once("functions.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("config.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 require_once("util.inc");
-echo ".";
+if ($argc < 2) {
+	echo ".";
+}
 
 $shell_cmds = array("alias", "alloc", "bg", "bind", "bindkey", "break",
 	 "breaksw", "builtins", "case", "cd", "chdir", "command", "complete", "continue", "default",
@@ -167,7 +174,9 @@ EOF;
 
 $fp = fopen('php://stdin', 'r');
 
-echo ".\n\n";
+if ($argc < 2) {
+	echo ".\n\n";
+}
 
 $pkg_interface='console';
 

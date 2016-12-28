@@ -534,30 +534,6 @@ class pfsense_xmlrpc_server {
 
 		return true;
 	}
-
-	/**
-	 * Wrapper for get_notices()
-	 *
-	 * @param string $category
-	 *
-	 * @return bool
-	 */
-	public function get_notices($category = 'all') {
-		$this->auth();
-
-		global $g;
-
-		if (!function_exists("get_notices")) {
-			require_once("notices.inc");
-		}
-		if (!$params) {
-			$toreturn = get_notices();
-		} else {
-			$toreturn = get_notices($params);
-		}
-
-		return $toreturn;
-	}
 }
 
 $xmlrpclockkey = lock('xmlrpc', LOCK_EX);

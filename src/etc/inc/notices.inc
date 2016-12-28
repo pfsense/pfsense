@@ -85,8 +85,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	led_normalize();
 	led_morse(1, 'sos');
 	if (!$local_only) {
-		notify_via_growl($notice);
-		notify_via_smtp($notice);
+		notify_all_remote($notice);
 	}
 	return $queuekey;
 }

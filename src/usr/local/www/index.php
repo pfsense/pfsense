@@ -78,7 +78,7 @@ if ($g['disablecrashreporter'] != true) {
 			if (isAllowedPage("/crash_reporter.php")) {
 				$savemsg .= sprintf(gettext("Click <a href='crash_reporter.php'>here</a> for more information."));
 			} else {
-				$savemsg .= sprintf(gettext("Contact the system administrator for more information."));
+				$savemsg .= sprintf(gettext("Contact a firewall administrator for more information."));
 			}
 			$class = "warning";
 		}

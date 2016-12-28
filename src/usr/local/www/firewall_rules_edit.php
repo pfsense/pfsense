@@ -1302,7 +1302,6 @@ $section->addInput(new Form_Select(
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',
-		'any' => gettext('any'),
 		'icmp' => 'ICMP',
 		'esp' => 'ESP',
 		'ah' => 'AH',
@@ -1312,6 +1311,7 @@ $section->addInput(new Form_Select(
 		'pim' => 'PIM',
 		'ospf' => 'OSPF',
 		'sctp' => 'SCTP',
+		'any' => gettext('any'),
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)

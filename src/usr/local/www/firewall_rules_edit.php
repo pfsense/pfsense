@@ -1217,7 +1217,7 @@ $section->addInput(new Form_Select(
 	'Protocol',
 	$pconfig['proto'],
 	array(
-		'any' => gettext('any'),
+		'any' => gettext('Any'),
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',

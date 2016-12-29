@@ -310,10 +310,13 @@ defCmdT("OS-Kernel Environment", "/bin/kenv");
 defCmdT("OS-Installed Packages", "/usr/sbin/pkg info");
 defCmdT("Hardware-PCI Devices", "/usr/sbin/pciconf -lvb");
 defCmdT("Hardware-USB Devices", "/usr/sbin/usbconfig dump_device_desc");
-defCmdT("Disk-ZFS List", "/sbin/zfs list");
-defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
-defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
-defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
+
+if (is_module_loaded("zfs.ko")) {
+	defCmdT("Disk-ZFS List", "/sbin/zfs list");
+	defCmdT("Disk-ZFS Properties", "/sbin/zfs get all");
+	defCmdT("Disk-ZFS Pool List", "/sbin/zpool list");
+	defCmdT("Disk-ZFS Pool Status", "/sbin/zpool status");
+}
 defCmdT("Disk-GEOM Mirror Status", "/sbin/gmirror status");
 
 exec("/bin/date", $dateOutput, $dateStatus);

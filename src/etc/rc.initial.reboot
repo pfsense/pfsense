@@ -35,6 +35,7 @@ $fp = fopen('php://stdin', 'r');
 echo "\n" . sprintf(gettext("%s will reboot. This may take a few minutes, depending on your hardware."), $g['product_name']) . "\n";
 echo gettext("Do you want to proceed?") . "\n\n";
 echo "    " . gettext("Y/y: Reboot normally") . "\n";
+echo "    " . gettext("R/r: Reroot (Stop processes, remount disks, re-run startup sequence)") . "\n";
 $platform = system_identify_specific_platform();
 if ($platform['name'] != "uFW") {
 	echo "    " . gettext("S: Reboot into Single User Mode (requires console access!)") . "\n";
@@ -55,11 +56,18 @@ switch (strtoupper(chop(fgets($fp)))) {
 		echo "\n" . sprintf(gettext("%s is rebooting for a filesystem check now."), $g['product_name']) . "\n";
 		system_reboot_sync();
 		break;
+	case "R":
+	case "r":
+		echo "\n" . sprintf(gettext("%s is rerooting now."), $g['product_name']) . "\n";
+		system_reboot_sync(true);
+		break;
 	case "Y":
 	case "YE":
 	case "YES":
 		echo "\n" . sprintf(gettext("%s is rebooting now."), $g['product_name']) . "\n";
 		system_reboot_sync();
+		break;
+	default:
 		break;
 }
 

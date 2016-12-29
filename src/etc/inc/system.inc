@@ -1918,12 +1918,16 @@ function system_reboot() {
 	mwexec("nohup /etc/rc.reboot > /dev/null 2>&1 &");
 }
 
-function system_reboot_sync() {
+function system_reboot_sync($reroot=false) {
 	global $g;
+
+	if ($reroot) {
+		$args = " -r ";
+	}
 
 	system_reboot_cleanup();
 
-	mwexec("/etc/rc.reboot > /dev/null 2>&1");
+	mwexec("/etc/rc.reboot {$args} > /dev/null 2>&1");
 }
 
 function system_reboot_cleanup() {

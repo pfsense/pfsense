@@ -5228,9 +5228,23 @@ function find_interface_ip($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
-		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
-		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		if (file_exists("/var/db/${interface}_ip")) {
+			$ifip = chop(file_get_contents("/var/db/${interface}_ip"));
+			$ifaddrs = pfSense_getall_interface_addresses($interface);
+			foreach ($ifaddrs as $ifaddr) {
+				list($ip, $mask) = explode("/", $ifaddr);
+				if ($ip == $ifip) {
+					$interface_ip_arr_cache[$interface] = $ip;
+					$interface_sn_arr_cache[$interface] = $mask;
+					break;
+				}
+			}
+		}
+		if (!isset($interface_ip_arr_cache[$interface])) {
+			$ifinfo = pfSense_get_interface_addresses($interface);
+			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
+			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		}
 	}
 
 	return $interface_ip_arr_cache[$interface];

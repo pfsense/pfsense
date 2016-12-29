@@ -135,6 +135,7 @@
 /etc/rc.parse-isc-dhcpd
 /etc/rc.restore_full_backup
 /etc/rc.sendmail
+/etc/rc.initial.store_config_to_removable_device
 /etc/rrdtool.core
 /etc/ttys_wrap
 /etc/usbd.conf

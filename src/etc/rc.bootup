@@ -347,11 +347,6 @@ activate_powerd();
 /* Set preferred protocol */
 prefer_ipv4_or_ipv6();
 
-/* Remove the old shutdown binary if we kept it. */
-if (file_exists("/sbin/shutdown.old")) {
-	@unlink("/sbin/shutdown.old");
-}
-
 /* Resync / Reinstall packages if need be */
 if (file_exists('/conf/needs_package_sync')) {
 	mark_subsystem_dirty('packagelock');

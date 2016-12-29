@@ -218,6 +218,7 @@
 /sbin/mount_oldnfs
 /sbin/mount_procfs
 /sbin/ppp-script
+/sbin/shutdown.old
 /scripts/dev_bootstrap.sh
 /tmp/post_upgrade_command
 /tmp/post_upgrade_command.php

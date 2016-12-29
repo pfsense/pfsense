@@ -38,8 +38,12 @@ function step1_stepbeforeformdisplay() {
 	}
 
 	foreach ($fields as &$field)
-		if ($field['name'] == 'numberofconnections')
+		if ($field['name'] == 'numberofconnections') {
 			$field['value'] = ($wans < $lans ? $wans : $lans);
+			if (($wans == 0) && ($lans == 0)) {
+				$field['description'] .= sprint_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false);
+			}
+		}
 }
 
 function step1_submitphpaction() {
@@ -76,7 +80,7 @@ function step2_stepbeforeformdisplay() {
 	}
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 	if ($numberofconnections > ($wans < $lans ? $wans : $lans)) {
-		$savemsg=gettext("There are less interfaces than number of connections!");
+		$savemsg=gettext("The specified number of connections is greater than the number of ALTQ-capable assigned interfaces!");
 		$stepid--;
 		return;
 	}
@@ -132,16 +136,16 @@ function step2_stepbeforeformdisplay() {
 		$field['typehint'] = "Queueing discipline to apply on the download of this connection.";
 		$field['options']['option'] = array();
 		$opts = array();
+		$opts['name'] = "PRIQ";
+		$opts['value'] = "PRIQ";
+		$field['options']['option'][] = $opts;
+		$opts = array();
 		$opts['name'] = "HFSC";
 		$opts['value'] = "HFSC";
 		$field['options']['option'][] = $opts;
 		$opts = array();
 		$opts['name'] = "CBQ";
 		$opts['value'] = "CBQ";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['name'] = "PRIQ";
-		$opts['value'] = "PRIQ";
 		$field['options']['option'][] = $opts;
 		$field['bindstofield'] = "ezshaper->step2->local{$i}downloadscheduler";
 		$fields[] = $field;
@@ -178,16 +182,16 @@ function step2_stepbeforeformdisplay() {
 		$field['typehint'] = "Queueing discipline to apply on the upload of this connection.";
 		$field['options']['option'] = array();
 		$opts = array();
+		$opts['name'] = "PRIQ";
+		$opts['value'] = "PRIQ";
+		$field['options']['option'][] = $opts;
+		$opts = array();
 		$opts['name'] = "HFSC";
 		$opts['value'] = "HFSC";
 		$field['options']['option'][] = $opts;
 		$opts = array();
 		$opts['name'] = "CBQ";
 		$opts['value'] = "CBQ";
-		$field['options']['option'][] = $opts;
-		$opts = array();
-		$opts['name'] = "PRIQ";
-		$opts['value'] = "PRIQ";
 		$field['options']['option'][] = $opts;
 		$field['bindstofield'] = "ezshaper->step2->conn{$i}uploadscheduler";
 		$fields[] = $field;
@@ -630,7 +634,7 @@ function step8_stepsubmitphpaction() {
 	/* And we're no longer dirty! */
 	clear_subsystem_dirty('shaper');
 
-	update_filter_reload_status("Initializing");
+	update_filter_reload_status("Initializing", true);
 	header("Location: status_filter_reload.php");
 	exit;
 }
@@ -696,71 +700,72 @@ function apply_all_chosen_items() {
 		$upfactor = wizard_get_bandwidthtype_scale($config['ezshaper']['step2']["conn{$i}uploadspeed"]);
 		$upbw = floatval($config['ezshaper']['step2']["conn{$i}upload"]) * $upfactor;
 
-		if ($config['ezshaper']['step3']['enable']) {
-				$voip = true;
-				$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
-				$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
-				if ($voipbwunit == "%")
-					$factor =  $upbw/100;
-				else
-					$factor = wizard_get_bandwidthtype_scale($voipbwunit);
-				$remainbw += $voipbw * $factor;
-			}
-			if ($config['ezshaper']['step4']['enable']) {
-				$penalty = true;
-				$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-				$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-				if ($penaltybwunit == "%")
+		if ($sched != "PRIQ" && $config['ezshaper']['step3']['enable']) {
+			$voip = true;
+			$voipbw = $config['ezshaper']['step3']["conn{$i}upload"];
+			$voipbwunit = $config['ezshaper']['step3']["conn{$i}uploadspeed"];
+			if ($voipbwunit == "%")
+				$factor =  $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($voipbwunit);
+			$remainbw += $voipbw * $factor;
+		}
+		if ($sched != "PRIQ" && $config['ezshaper']['step4']['enable']) {
+			$penalty = true;
+			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
+			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+			if ($penaltybwunit == "%")
+				$factor = $upbw/100;
+			else
+				$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
+			$remainbw += $penaltybw * $factor;
+		} else {
+			$penalty = false;
+			$penaltybw = 0;
+		}
+		if ($sched != "PRIQ" && $config['ezshaper']['step5']['enable']) {
+			$p2p = true;
+			if ($config['ezshaper']['step5']['p2pcatchall']) {
+				$p2pcatchall = true;
+				$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
+				$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+				if ($p2pcatchbwunit == "%")
 					$factor = $upbw/100;
 				else
-					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
-				$remainbw += $penaltybw * $factor;
+					$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
+				$remainbw += $p2pcatchbw * $factor;
 			} else {
-				$penalty = false;
-				$penaltybw = 0;
-			}
-			if ($config['ezshaper']['step5']['enable']) {
-				$p2p = true;
-				if ($config['ezshaper']['step5']['p2pcatchall']) {
-					$p2pcatchall = true;
-					$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-					$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-					if ($p2pcatchbwunit == "%")
-						$factor = $upbw/100;
-					else
-						$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
-					$remainbw += $p2pcatchbw * $factor;
-				} else {
-					$p2pcatchall = false;
-					$p2pcatchbw = 0;
-				}
-			} else {
-				$p2p = false;
 				$p2pcatchall = false;
 				$p2pcatchbw = 0;
 			}
-			if ($config['ezshaper']['step6']['enable']) {
-				$games = true;
-			} else {
-				$games = false;
-			}
+		} else {
+			$p2p = false;
+			$p2pcatchall = false;
+			$p2pcatchbw = 0;
+		}
+		if ($config['ezshaper']['step6']['enable']) {
+			$games = true;
+		} else {
+			$games = false;
+		}
 
-			if ($config['ezshaper']['step7']['enable']) {
-				$otherpriority = true;
-			} else  {
-				$otherpriority = false;
-			}
-			$remainbw = round($remainbw / $upbw * 100, 2);
-
-			if (intval($remainbw) > 0 && intval($remainbw) > 30) {
-				$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
-				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$savemsg}");
-				exit;
-			} else {
-				$remainbw = 100 - $remainbw;
-			}
+		if ($config['ezshaper']['step7']['enable']) {
+			$otherpriority = true;
+		} else  {
+			$otherpriority = false;
+		}
 
 			if ($sched != "PRIQ") {
+				$remainbw = round($remainbw / $upbw * 100, 2);
+
+				if (intval($remainbw) > 0 && intval($remainbw) > 30) {
+					$savemsg=gettext("Custom Bandwidths are greater than 30%. Please lower them for the wizard to continue.");
+					header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$savemsg}");
+					exit;
+				} else {
+					$remainbw = 100 - $remainbw;
+				}
+
 				if ($sched == "CBQ")
 					$q =& new cbq_queue();
 				else if ($sched == "HFSC")
@@ -1078,7 +1083,7 @@ function apply_all_chosen_items() {
 			$otherpriority = false;
 			$remainbw = 0;
 
-			if ($config['ezshaper']['step3']['enable']) {
+			if ($sched != "PRIQ" && $config['ezshaper']['step3']['enable']) {
 				$voip = true;
 				$voipbw = $config['ezshaper']['step3']["local{$i}download"];
 				$voipbwunit = $config['ezshaper']['step3']["local{$i}downloadspeed"];
@@ -1087,43 +1092,43 @@ function apply_all_chosen_items() {
 						$factor = $downbw/100;
 					else
 						$factor = wizard_get_bandwidthtype_scale($voipbwunit);
-				$remainbw += floatval($voipbw) * $factor;
-			} else
+					$remainbw += floatval($voipbw) * $factor;
+				} else
 				$remainbw += 32000; /* 32Kbit/s reserved for HFSC link sharing */
-		}
-		if ($config['ezshaper']['step4']['enable']) {
-			$penalty = true;
-			$penaltybw = $config['ezshaper']['step4']['bandwidth'];
-			$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
-			if ($penaltybwunit == "%")
-				$factor = $downbw/100;
-			else
-				$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
-			$remainbw += floatval($penaltybw) * $factor;
-		} else {
-			$penalty = false;
-			$penaltybw = 0;
-		}
-		if ($config['ezshaper']['step5']['enable']) {
-			$p2p = true;
-			if ($config['ezshaper']['step5']['p2pcatchall']) {
-				$p2pcatchall = true;
-				$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
-				$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
-				if ($p2pcatchbwunit == "%")
+			}
+			if ($sched != "PRIQ" && $config['ezshaper']['step4']['enable']) {
+				$penalty = true;
+				$penaltybw = $config['ezshaper']['step4']['bandwidth'];
+				$penaltybwunit = $config['ezshaper']['step4']['bandwidthunit'];
+				if ($penaltybwunit == "%")
 					$factor = $downbw/100;
 				else
-					$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
-				$remainbw += floatval($p2pcatchbw) * $factor;
+					$factor = wizard_get_bandwidthtype_scale($penaltybwunit);
+				$remainbw += floatval($penaltybw) * $factor;
 			} else {
+				$penalty = false;
+				$penaltybw = 0;
+			}
+			if ($sched != "PRIQ" && $config['ezshaper']['step5']['enable']) {
+				$p2p = true;
+				if ($config['ezshaper']['step5']['p2pcatchall']) {
+					$p2pcatchall = true;
+					$p2pcatchbw = $config['ezshaper']['step5']['bandwidth'];
+					$p2pcatchbwunit = $config['ezshaper']['step5']['bandwidthunit'];
+					if ($p2pcatchbwunit == "%")
+						$factor = $downbw/100;
+					else
+						$factor = wizard_get_bandwidthtype_scale($p2pcatchbwunit);
+					$remainbw += floatval($p2pcatchbw) * $factor;
+				} else {
+					$p2pcatchall = false;
+					$p2pcatchbw = 0;
+				}
+			} else {
+				$p2p = false;
 				$p2pcatchall = false;
 				$p2pcatchbw = 0;
 			}
-		} else {
-			$p2p = false;
-			$p2pcatchall = false;
-			$p2pcatchbw = 0;
-		}
 		if ($config['ezshaper']['step6']['enable']) {
 			$games = true;
 		} else {
@@ -1135,16 +1140,18 @@ function apply_all_chosen_items() {
 		} else  {
 			$otherpriority = false;
 		}
-		$remainbw = round($remainbw / $downbw * 100, 2);
-		if (intval($remainbw) > 0 && intval($remainbw) > 40) {
-			$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
-			header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$savemsg}");
-			exit;
-		} else {
-			$remainbw = 100 - $remainbw;
+		if ($sched != "PRIQ") {
+			$remainbw = round($remainbw / $downbw * 100, 2);
+			if (intval($remainbw) > 0 && intval($remainbw) > 40) {
+				$savemsg=gettext("Custom Bandwidths are greater than 40%. Please lower them for the wizard to continue.");
+				header("Location: wizard.php?xml=traffic_shaper_wizard_dedicated.xml&stepid=2&message={$savemsg}");
+				exit;
+			} else {
+				$remainbw = 100 - $remainbw;
+			}
+			$downqbw = $downbw;
 		}
 
-		$downqbw = $downbw;
 		if (!$p2pcatchall) {
 			if ($sched == "PRIQ")
 				$q =& new priq_queue();

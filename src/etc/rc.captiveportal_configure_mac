@@ -39,6 +39,6 @@ $filename = "{$g['tmp_path']}/{$cpzoneidx}_mac_{$startidx}_{$stopidx}";
 captiveportal_passthrumac_configure($filename, $startidx, $stopidx);
 //log_error("STOPPED: " .time() . " - {$cpzone} : $startidx : {$stopidx} : {$cpzoneidx} : {$filename}");
 
-mwexec("/sbin/ipfw -x {$cpzoneidx} -q {$filename}");
+mwexec("/sbin/ipfw -q {$filename}");
 @unlink($filename);
 ?>

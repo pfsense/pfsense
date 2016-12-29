@@ -98,7 +98,8 @@ foreach ($duid_arr as $entry) {
 // echo "add routes\n";
 if (count($routes) > 0) {
 	foreach ($routes as $address => $prefix) {
-		echo "/sbin/route change -inet6 {$prefix} {$address}\n";
+		echo "/sbin/route change -inet6 {$prefix} {$address} " .
+		    "|| /sbin/route add -inet6 {$prefix} {$address}\n";
 	}
 }
 

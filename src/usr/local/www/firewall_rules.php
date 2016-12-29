@@ -89,7 +89,7 @@ function print_states($tracker) {
 	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
 	    format_number($evaluations), format_number($packets), format_bytes($bytes),
 	    format_number($states), format_number($stcreations));
-	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
 }
 
 function delete_nat_association($id) {
@@ -163,14 +163,10 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 }
 
 if (!$if || !isset($iflist[$if])) {
-	if ("any" == $if) {
+	if ($if != "any" && $if != "FloatingRules" && isset($iflist['wan'])) {
+		$if = "wan";
+	} else {
 		$if = "FloatingRules";
-	} else if ("FloatingRules" != $if) {
-		if (isset($iflist['wan'])) {
-			$if = "wan";
-		} else {
-			$if = "FloatingRules";
-		}
 	}
 }
 
@@ -366,11 +362,20 @@ $rulescnt = pfSense_get_pf_rules();
 $columns_in_table = 13;
 
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
+
 <form method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table id="ruletable" class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -950,6 +955,9 @@ events.push(function() {
 
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
+		scroll: true,
+		overflow: 'scroll',
+		scrollSensitivity: 100,
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			reindex_rules(ui.item.parent('tbody'));

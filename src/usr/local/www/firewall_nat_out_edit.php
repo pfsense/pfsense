@@ -386,16 +386,14 @@ function build_target_list() {
 
 	if (is_array($config['virtualip']['vip'])) {
 		foreach ($config['virtualip']['vip'] as $sn) {
-			if (isset($sn['noexpand'])) {
-				continue;
-			}
-
-			if ($sn['mode'] == "proxyarp" && $sn['type'] == "network") {
+			if (($sn['mode'] == "proxyarp" || $sn['mode'] == "other") && $sn['type'] == "network") {
+				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
+				if (isset($sn['noexpand'])) {
+					continue;
+				}
 				$start = ip2long32(gen_subnet($sn['subnet'], $sn['subnet_bits']));
 				$end = ip2long32(gen_subnet_max($sn['subnet'], $sn['subnet_bits']));
 				$len = $end - $start;
-				$list[$sn['subnet'] . '/' . $sn['subnet_bits']] = 'Subnet: ' . $sn['subnet'] . '/' . $sn['subnet_bits'] . ' (' . $sn['descr'] . ')';
-
 				for ($i = 0; $i <= $len; $i++) {
 					$snip = long2ip32($start+$i);
 
@@ -475,7 +473,7 @@ $section->addInput(new Form_Select(
 	'Interface',
 	$pconfig['interface'],
 	$interfaces
-))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
+))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
 
 $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 
@@ -498,15 +496,16 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'source',
 	null,
-	$pconfig['source']
-))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
+	$pconfig['source'],
+	'ALIASV4V6'
+))->addMask('source_subnet', $pconfig['source_subnet'])->setHelp('Source network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'sourceport',
 	null,
 	'text',
 	$pconfig['sourceport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
@@ -522,15 +521,16 @@ $group->add(new Form_Select(
 $group->add(new Form_IpAddress(
 	'destination',
 	null,
-	$pconfig['destination'] == "any" ? "":$pconfig['destination']
-))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.')->setPattern('[a-zA-Z0-9_.:]+');
+	$pconfig['destination'] == "any" ? "":$pconfig['destination'],
+	'ALIASV4V6'
+))->addMask('destination_subnet', $pconfig['destination_subnet'])->setHelp('Destination network for the outbound NAT mapping.');
 
 $group->add(new Form_Input(
 	'dstport',
 	null,
 	'text',
 	$pconfig['dstport']
-))->setHelp('Port')->setWidth('2');
+))->setHelp('Port or Range')->setWidth('2');
 
 $section->add($group);
 
@@ -551,18 +551,17 @@ $section->addInput(new Form_Select(
 	'Address',
 	$pconfig['target'],
 	build_target_list()
-));
+))->setHelp(	'Connections matching this rule will be mapped to the specified <b>Address</b>.' . '<br />' .
+		'The <b>Address</b> can be an Interface, a Host-type Alias, or a ' .
+		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' address.');
 
 $section->addInput(new Form_IpAddress(
 	'targetip',
 	'Other subnet',
 	$pconfig['targetip']
-))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->addClass('othersubnet')->setHelp(
-		'Packets matching this rule will be mapped to the IP address given here.' . '<br />' .
-		'To apply this rule to a different IP address than the IP address of the interface chosen above, ' .
-		'select it here (' .
-		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' .
-		'addresses need to be defined on the interface first)');
+))->addMask('targetip_subnet', $pconfig['targetip_subnet'])->setHelp(
+		'This subnet must be routed to the firewall or each address in the subnet must be defined in one or more ' .
+		'<a href="firewall_virtual_ip.php">' . gettext("Virtual IP") . '</a> ' . ' addresses.');
 
 $section->addInput(new Form_Select(
 	'poolopts',
@@ -591,9 +590,9 @@ $section->addInput(new Form_Input(
 	'Source Hash Key',
 	'text',
 	$pconfig['source_hash_key']
-))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10)->addClass('othersubnet');
+))->setHelp('The key that is fed to the hashing algorithm in hex format, preceeded by "0x", or any string. A non-hex string is hashed using md5 to a hexadecimal key. Defaults to a randomly generated value.')->setWidth(10);
 
-$group = new Form_Group('Port');
+$group = new Form_Group('Port or Range');
 $group->addClass('natportgrp');
 
 $group->add(new Form_Input(
@@ -601,12 +600,15 @@ $group->add(new Form_Input(
 	null,
 	'text',
 	$pconfig['natport']
-))->setHelp('Enter the source port or range for the outbound NAT mapping.');
+))->setHelp('Enter the external source <b>Port or Range</b> used for remapping '.
+		'the original source port on connections matching the rule. <br/><br/>'.
+		'Port ranges are a low port and high port number separated by ":".<br/>'.
+		'Leave blank when <b>Static Port</b> is checked.');
 
 $group->add(new Form_Checkbox(
 	'staticnatport',
 	null,
-	'Static port',
+	'Static Port',
 	$pconfig['staticnatport']
 ));
 
@@ -736,13 +738,15 @@ events.push(function() {
 	function poolopts_change() {
 		if ($('#target option:selected').text().trim().substring(0,4) == "Host") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
+			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,6) == "Subnet") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', true);
+			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
 		} else if ($('#target option:selected').text().trim().substring(0,5) == "Other") {
 			hideInput('poolopts', false);
-			hideGroupClass('othersubnet', false);
+			hideIpAddress('targetip', false);
 			if ($('#poolopts option:selected').text().trim().substring(0,6) == "Source") {
 				hideInput('source_hash_key', false);
 			}else {
@@ -751,8 +755,8 @@ events.push(function() {
 		} else {
 			$('#poolopts').prop('selectedIndex',0);
 			hideInput('poolopts', true);
-			hideGroupClass('othersubnet', true);
 			hideInput('source_hash_key', true);
+			hideIpAddress('targetip', true);
 			$('#targetip').val('');
 			$('#targetip_subnet').val('0');
 		}

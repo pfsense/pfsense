@@ -255,7 +255,7 @@ if ($_POST) {
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
-		if (($g['platform'] == $g['product_name']) && !isset($config['system']['use_mfs_tmpvar'])) {
+		if (!isset($config['system']['use_mfs_tmpvar'])) {
 			install_cron_job("/etc/rc.backup_rrd.sh", false);
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
 		} else {
@@ -497,7 +497,7 @@ $section->addInput(new Form_Checkbox(
 	'use_mfs_tmpvar',
 	'Use RAM Disks',
 	'Use memory file system for /tmp and /var',
-	($pconfig['use_mfs_tmpvar'] || $g['platform'] != $g['product_name'])
+	$pconfig['use_mfs_tmpvar']
 ))->setHelp('Set this to use /tmp and /var as RAM disks (memory file '.
 	'system disks) on a full install rather than use the hard disk. Setting this will '.
 	'cause the data in /tmp and /var to be lost, including log data. RRD '.
@@ -543,22 +543,20 @@ $section->addInput(new Form_Input(
 
 $form->add($section);
 
-if ($g['platform'] == "pfSense") {
-	$section = new Form_Section('Hardware Settings');
+$section = new Form_Section('Hardware Settings');
 
-	$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
-	$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
+$opts = array(0.5,  1, 2,  3,  4,  5,  7.5,  10,  15,  20,  30,  60);
+$vals = array(  6, 12, 24, 36, 48, 60,  90, 120, 180, 240, 241, 242);
 
-	$section->addInput(new Form_Select(
-		'harddiskstandby',
-		'Hard disk standby time',
-		$pconfig['harddiskstandby'],
-		['' => gettext("Always on")] + array_combine($opts, $vals)
-	))->setHelp("Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access." . "<br />" .
-				"<strong> Do not set this for CF cards.</strong>");
+$section->addInput(new Form_Select(
+	'harddiskstandby',
+	'Hard disk standby time',
+	$pconfig['harddiskstandby'],
+	['' => gettext("Always on")] + array_combine($opts, $vals)
+))->setHelp("Puts the hard disk into standby mode when the selected number of minutes has elapsed since the last access." . "<br />" .
+			"<strong> Do not set this for CF cards.</strong>");
 
-	$form->add($section);
-}
+$form->add($section);
 
 $section = new Form_Section('Installation Feedback');
 

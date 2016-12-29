@@ -161,9 +161,20 @@ if (isset($_POST['del_x'])) {
 	if ($a_nat[$_GET['id']]) {
 		if (isset($a_nat[$_GET['id']]['disabled'])) {
 			unset($a_nat[$_GET['id']]['disabled']);
+			$rule_status = true;
 		} else {
 			$a_nat[$_GET['id']]['disabled'] = true;
+			$rule_status = false;
 		}
+
+		// Check for filter rule associations
+		if (isset($a_nat[$_GET['id']]['associated-rule-id'])) {
+			toggle_id($a_nat[$_GET['id']]['associated-rule-id'],
+			    $config['filter']['rule'], $rule_status);
+			unset($rule_status);
+			mark_subsystem_dirty('filter');
+		}
+
 		if (write_config(gettext("Firewall: NAT: Port forward, enable/disable NAT rule"))) {
 			mark_subsystem_dirty('natconf');
 		}
@@ -193,6 +204,14 @@ display_top_tabs($tab_array);
 
 $columns_in_table = 13;
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
 
 <form action="firewall_nat.php" method="post" name="iform">
 	<div class="panel panel-default">
@@ -271,7 +290,7 @@ foreach ($a_nat as $natent):
 						</td>
 						<td>
 							<a href="?act=toggle&amp;id=<?=$i?>">
-								<i class="fa <?= ($iconfn == "pass") ? "fa-check":"fa-times"?>" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
+								<i class="fa fa-check" title="<?=gettext("click to toggle enabled/disabled status")?>"></i>
 <?php 	if (isset($natent['nordr'])) { ?>
 								&nbsp;<i class="fa fa-hand-stop-o text-danger" title="<?=gettext("Negated: This rule excludes NAT from a later rule")?>"></i>
 <?php 	} ?>

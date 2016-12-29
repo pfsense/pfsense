@@ -55,8 +55,9 @@ function isvalidproc($proc) {
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (file_exists($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") . " -F {$pidfile}", true);
+	if (isvalidpid($pidfile)) {
+		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		    " -F {$pidfile}", true);
 	}
 
 	return 0;
@@ -226,82 +227,6 @@ function send_multiple_events($cmds) {
 		}
 		$try++;
 	}
-}
-
-function refcount_init($reference) {
-	$shmid = @shmop_open($reference, "c", 0644, 10);
-	@shmop_write($shmid, str_pad("0", 10, "\x0", STR_PAD_RIGHT), 0);
-	@shmop_close($shmid);
-}
-
-function refcount_reference($reference) {
-	/* Take out a lock across the shared memory read, increment, write sequence to make it atomic. */
-	$shm_lck = lock("shm{$reference}", LOCK_EX);
-	try {
-		/* NOTE: A warning is generated when shared memory does not exist */
-		$shmid = @shmop_open($reference, "w", 0, 0);
-		if (!$shmid) {
-			refcount_init($reference);
-			$shmid = @shmop_open($reference, "w", 0, 0);
-			if (!$shmid) {
-				log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
-				unlock($shm_lck);
-				return;
-			}
-		}
-		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) + 1;
-		@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
-		@shmop_close($shmid);
-		unlock($shm_lck);
-	} catch (Exception $e) {
-		log_error($e->getMessage());
-		unlock($shm_lck);
-	}
-
-	return $shm_data;
-}
-
-function refcount_unreference($reference) {
-	/* Take out a lock across the shared memory read, decrement, write sequence to make it atomic. */
-	$shm_lck = lock("shm{$reference}", LOCK_EX);
-	try {
-		$shmid = @shmop_open($reference, "w", 0, 0);
-		if (!$shmid) {
-			refcount_init($reference);
-			log_error(sprintf(gettext("Could not open shared memory %s"), $reference));
-			unlock($shm_lck);
-			return;
-		}
-		$shm_data = @shmop_read($shmid, 0, 10);
-		$shm_data = intval($shm_data) - 1;
-		if ($shm_data < 0) {
-			//debug_backtrace();
-			log_error(sprintf(gettext("Reference %s is going negative, not doing unreference."), $reference));
-		} else {
-			@shmop_write($shmid, str_pad($shm_data, 10, "\x0", STR_PAD_RIGHT), 0);
-		}
-		@shmop_close($shmid);
-		unlock($shm_lck);
-	} catch (Exception $e) {
-		log_error($e->getMessage());
-		unlock($shm_lck);
-	}
-
-	return $shm_data;
-}
-
-function refcount_read($reference) {
-	/* This function just reads the current value of the refcount for information. */
-	/* There is no need for locking. */
-	$shmid = @shmop_open($reference, "a", 0, 0);
-	if (!$shmid) {
-		log_error(sprintf(gettext("Could not open shared memory for read %s"), $reference));
-		return -1;
-	}
-	$shm_data = @shmop_read($shmid, 0, 10);
-	@shmop_close($shmid);
-	return $shm_data;
 }
 
 function is_module_loaded($module_name) {
@@ -882,10 +807,10 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 		return 0;
 	}
 
-	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// 2**N returns an exact result as an INT if possible, and a float/double if not.
 	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
 	$result = 2 ** $snsize;
-	
+
 	if ($exact && !is_int($result)) {
 		//exact required but can't represent result exactly as an INT
 		return 0;
@@ -925,7 +850,7 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
 	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
-	
+
 	if ($subnetv4_start1 == '' || $subnetv4_start2 == '') {
 		// One or both args is not a valid IPv4 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -940,7 +865,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
 	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
-	
+
 	if ($subnetv6_start1 == '' || $subnetv6_start2 == '') {
 		// One or both args is not a valid IPv6 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -1061,9 +986,19 @@ function is_domain($domain, $allow_wildcard=false) {
 }
 
 /* returns true if $macaddr is a valid MAC address */
-function is_macaddr($macaddr, $partial=false) {
-	$repeat = ($partial) ? '1,5' : '5';
-	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
+function is_macaddr($macaddr) {
+	$values = explode(":", $macaddr);
+	if (count($values) != 6) {
+		return false;
+	}
+	for ($i = 0; $i < 6; $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+
+	return true;
 }
 
 /*
@@ -1222,20 +1157,30 @@ function is_valid_shaperbw($val) {
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v4($test, $start, $end) {
-	if ((ip2ulong($test) <= ip2ulong($end)) && (ip2ulong($test) >= ip2ulong($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv4($test) || !is_ipaddrv4($start) || !is_ipaddrv4($end)) {
 		return false;
 	}
+
+	if (ip2ulong($test) <= ip2ulong($end) &&
+	    ip2ulong($test) >= ip2ulong($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
 function is_inrange_v6($test, $start, $end) {
-	if ((inet_pton($test) <= inet_pton($end)) && (inet_pton($test) >= inet_pton($start))) {
-		return true;
-	} else {
+	if (!is_ipaddrv6($test) || !is_ipaddrv6($start) || !is_ipaddrv6($end)) {
 		return false;
 	}
+
+	if (inet_pton($test) <= inet_pton($end) &&
+	    inet_pton($test) >= inet_pton($start)) {
+		return true;
+	}
+
+	return false;
 }
 
 /* returns true if $test is in the range between $start and $end */
@@ -1708,16 +1653,24 @@ function mwexec_bg($command, $clearsigmask = false) {
 	return mwexec($command, false, $clearsigmask, true);
 }
 
-/* unlink a file, or pattern-match of a file, if it exists
-   if the file/path contains glob() compatible wildcards, all matching files will be unlinked
-   if no matches, no error occurs */
+/*	unlink a file, or pattern-match of a file, if it exists
+	if the file/path contains glob() compatible wildcards, all matching files will be unlinked
+	any warning/errors are suppressed (e.g. no matching files to delete)
+	If there are matching file(s) and they were all unlinked OK, then return true.
+	Otherwise return false (the requested file(s) did not exist, or could not be deleted)
+	This allows the caller to know if they were the one to successfully delete the file(s).
+*/
 function unlink_if_exists($fn) {
 	$to_do = glob($fn);
 	if (is_array($to_do) && count($to_do) > 0) {
-		@array_map("unlink", $to_do);
+		// Returns an array of true/false indicating if each unlink worked
+		$results = @array_map("unlink", $to_do);
+		// If there is no false in the array, then all went well
+		$result = !in_array(false, $results, true);
 	} else {
-		@unlink($fn);
+		$result = @unlink($fn);
 	}
+	return $result;
 }
 /* make a global alias table (for faster lookups) */
 function alias_make_table($config) {
@@ -1905,15 +1858,19 @@ function format_number($num, $precision = 3) {
 		$num /= 1000;
 		$i++;
 	}
-	round($num, $precision);
+	$num = round($num, $precision);
 
 	return ("$num {$units[$i]}");
 }
 
-function update_filter_reload_status($text) {
+function update_filter_reload_status($text, $new=false) {
 	global $g;
 
-	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+	if ($new) {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL);
+	} else {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL, FILE_APPEND);
+	}
 }
 
 /****** util/return_dir_as_array
@@ -2093,11 +2050,7 @@ function get_memory() {
 
 function mute_kernel_msgs() {
 	global $g, $config;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	if ($config['system']['enableserial']) {
 		return;
 	}
@@ -2106,11 +2059,7 @@ function mute_kernel_msgs() {
 
 function unmute_kernel_msgs() {
 	global $g;
-	// Do not mute serial console.  The kernel gets very very cranky
-	// and will start dishing you cannot control tty errors.
-	if ($g['platform'] == 'nanobsd') {
-		return;
-	}
+
 	exec("/sbin/conscontrol mute off");
 }
 
@@ -2364,7 +2313,37 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
-function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
+/* Try to change a static route, if it doesn't exist, add it */
+function route_add_or_change($args) {
+	global $config;
+
+	if (empty($args)) {
+		return false;
+	}
+
+	/* First, try to add it */
+	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
+
+	if (isset($config['system']['route-debug'])) {
+		$mt = microtime();
+		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
+	}
+
+	if ($rc != 0) {
+		/* If it fails, try to change it */
+		$_gb = exec(escapeshellcmd("/sbin/route change " . $args),
+		    $output, $rc);
+
+		if (isset($config['system']['route-debug'])) {
+			$mt = microtime();
+			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
+		}
+	}
+
+	return ($rc == 0);
+}
+
+function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
@@ -2376,6 +2355,10 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) 
 	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
+		if ($returnenabledroutesonly && isset($route['disabled'])) {
+			continue;
+		}
+
 		if (is_alias($route['network'])) {
 			if (!isset($aliastable[$route['network']])) {
 				continue;
@@ -2496,4 +2479,71 @@ function get_smart_drive_list() {
 	return $disk_list;
 }
 
+// Validate a network address
+//	$addr: the address to validate
+//	$type: IPV4|IPV6|IPV4V6
+//	$label: the label used by the GUI to display this value. Required to compose an error message
+//	$err_msg: pointer to the callers error message array so that error messages can be added to it here
+//	$alias: are aliases permitted for this address?
+// Returns:
+//	IPV4 - if $addr is a valid IPv4 address
+//	IPV6 - if $addr is a valid IPv6 address
+//	ALIAS - if $alias=true and $addr is an alias
+//	false - otherwise
+
+function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
+	switch ($type) {
+		case IPV4:
+			if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address."), $label);
+				return false;
+			}
+		break;
+		case IPV6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address."), $label);
+				return false;
+			}
+		break;
+		case IPV4V6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address."), $label);
+				return false;
+			}
+		break;
+	}
+
+	return false;
+}
 ?>

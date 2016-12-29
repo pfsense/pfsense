@@ -712,7 +712,7 @@ function unbound_acls_config($cfgsubdir = "") {
 				// add for IPv6 static routes to local networks
 				// for safety, we include only routes reachable on an interface with no
 				// gateway specified - read: not an Internet connection.
-				$static_routes = get_staticroutes();
+				$static_routes = get_staticroutes(false, false, true); // Parameter 3 returnenabledroutesonly
 				foreach ($static_routes as $route) {
 					if ((lookup_gateway_interface_by_name($route['gateway']) == $ubif) && !interface_has_gateway($ubif)) {
 						// route is on this interface, interface doesn't have gateway, add it
@@ -740,6 +740,10 @@ function unbound_acls_config($cfgsubdir = "") {
 			foreach ($unbound_acl['row'] as $network) {
 				if ($unbound_acl['aclaction'] == "allow snoop") {
 					$unbound_acl['aclaction'] = "allow_snoop";
+				} elseif ($unbound_acl['aclaction'] == "deny nonlocal") {
+					$unbound_acl['aclaction'] = "deny_non_local";
+				} elseif ($unbound_acl['aclaction'] == "refuse nonlocal") {
+					$unbound_acl['aclaction'] = "refuse_non_local";
 				}
 				$aclcfg .= "access-control: {$network['acl_network']}/{$network['mask']} {$unbound_acl['aclaction']}\n";
 			}

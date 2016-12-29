@@ -1,10 +1,8 @@
-#!/usr/local/bin/php-cgi -f
-<?php
 /*
- * rc.conf_mount_rw
+ * gatewaystatus
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2016 Rubicon Communications, LLC (Netgate)
  * All rights reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +17,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/* Do nothing */
-
-?>
+require_once("gwlb.inc");
+global $argv;
+echo return_gateways_status_text(true, ($argv[3] == "brief"));

@@ -142,7 +142,7 @@ if ($_POST) {
 
 		$rules = captiveportal_allowedhostname_configure();
 		@file_put_contents("{$g['tmp_path']}/hostname_rules", $rules);
-		mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/hostname_rules", true);
+		mwexec("/sbin/ipfw {$g['tmp_path']}/hostname_rules", true);
 		unset($rules);
 
 		header("Location: services_captiveportal_hostname.php?zone={$cpzone}");

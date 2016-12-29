@@ -189,8 +189,8 @@ $section->addInput(new Form_Input(
 	'of %s. Enter 0 to never expire sessions. NOTE: Non-expiry is a security risk!'), $d));
 
 $auth_servers = array();
-foreach (auth_get_authserver_list() as $auth_server) {
-	$auth_servers[ $auth_server['name'] ] = $auth_server['name'];
+foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
+	$auth_servers[ $idx_authserver ] = $auth_server['name'];
 }
 
 $section->addInput(new Form_Select(

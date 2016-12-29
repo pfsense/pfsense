@@ -187,9 +187,17 @@ if ($_POST) {
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv4 protocol and an IPv6 IP address cannot be selected.");
 	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
-		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+		// If an underlying interface to be used by this client uses DHCP, then it may not have received an IP address yet.
+		// So in that case we do not report a problem.
+		if (!interface_has_dhcp($iv_iface, 4)) {
+			$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+		}
 	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
-		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+		// If an underlying interface to be used by this client uses DHCP6, then it may not have received an IP address yet.
+		// So in that case we do not report a problem.
+		if (!interface_has_dhcp($iv_iface, 6)) {
+			$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+		}
 	}
 
 	if ($pconfig['mode'] != "p2p_shared_key") {

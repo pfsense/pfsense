@@ -198,12 +198,21 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+
+			if ($item[0] == '-DIVIDER-') {
+				print(' <li class="divider"></li>');
+			} else {
+				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+			}
 		}
 	}
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
+
+
+// NOTE:
+// $your_menu[] = array(gettext("-DIVIDER-"), ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -212,9 +221,7 @@ $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
 $system_menu[] = array(gettext("High Avail. Sync"), "/system_hasync.php");
-if ($g['platform'] == $g['product_name'] or $g['platform'] == "nanobsd") {
-	$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
-}
+$system_menu[] = array(gettext("Package Manager"), "/pkg_mgr_installed.php");
 $system_menu[] = array(gettext("Setup Wizard"), "/wizard.php?xml=setup_wizard.xml");
 $system_menu[] = array(gettext("Routing"), "/system_gateways.php");
 $system_menu[] = array(gettext("Cert. Manager"), "/system_camanager.php");
@@ -230,18 +237,36 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
+$div = false;
+
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_menu[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$div = true;
 }
+
+$platform = system_identify_specific_platform();
+
+if ($platform['name'] == "uFW") {
+	$interfaces_menu[] = array(gettext("Switches"), "/switch_system.php");
+	$div = true;
+}
+
+if ($div) {
+	$interfaces_menu[] = array(gettext("-DIVIDER-"), "");
+}
+
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
 		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+
+// Interface list no longer sorted per Redmine #6753
+// $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+$interfaces_menu = array_merge($interfaces_menu, return_ext_menu("Interfaces"));
 
 // Firewall
 $firewall_menu = array();
@@ -299,17 +324,13 @@ $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
 $status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
-$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php");
+$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php?user=true");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");
 $status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
 $status_menu[] = array(gettext("NTP"), "/status_ntpd.php");
 $status_menu[] = array(gettext("OpenVPN"), "/status_openvpn.php");
-
-if ($g['platform'] == $g['product_name']) {
-	$status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
-}
-
+$status_menu[] = array(gettext("Package Logs"), "/status_pkglogs.php");
 $status_menu[] = array(gettext("Queues"), "/status_queues.php");
 $status_menu[] = array(gettext("Services"), "/status_services.php");
 $status_menu[] = array(gettext("System Logs"), "/status_logs.php");
@@ -364,14 +385,6 @@ $diagnostics_menu[] = array(gettext("States Summary"), "/diag_states_summary.php
 $diagnostics_menu[] = array(gettext("System Activity"), "/diag_system_activity.php");
 $diagnostics_menu[] = array(gettext("Traceroute"), "/diag_traceroute.php");
 $diagnostics_menu[] = array(gettext("Packet Capture"), "/diag_packet_capture.php");
-
-if ($g['platform'] == "nanobsd") {
-	$diagnostics_menu[] = array(gettext("NanoBSD"), "/diag_nanobsd.php");
-}
-
-if (isset($config['system']['developer'])) {
-	$diagnostics_menu[] = array(gettext("Restart HTTPD"), "/restart_httpd.php", "style" => "font-weight: bold; color: yellow;");
-}
 
 $diagnostics_menu = msort(array_merge($diagnostics_menu, return_ext_menu("Diagnostics")), 0);
 
@@ -443,7 +456,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
-					} ?>
+					}
+?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
@@ -451,7 +465,9 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					</a>
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
 				</li>
-			<?php endforeach?>
+
+<?php
+			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				<?php if (are_notices_pending()):?>
@@ -538,6 +554,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 		<li>
 			<a class="update-graph" title="<?=gettext("Refresh Graph")?>">
 				<i class="fa fa-repeat icon-pointer"></i>
+			</a>
+		</li>
+		<li>
+			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
+				<i class="fa fa-download icon-pointer"></i>
 			</a>
 		</li>
 	<?php endif?>
@@ -650,7 +671,7 @@ if (are_notices_pending()):?>
 							<a href="<?=htmlspecialchars($notice['url'])?>"><?=htmlspecialchars($notice['id'])?></a> -
 <?php endif;?>
 						</b>
-						<?=htmlspecialchars($notice['notice'])?>
+						<?=str_replace("\n", "<br/>", htmlspecialchars($notice['notice']))?>
 						<i>@ <?=date('Y-m-d H:i:s', $notice['time'])?></i>
 					</li>
 <?php	endforeach;?>
@@ -660,7 +681,9 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+<?php if (isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+<?php endif;?>
 			</div>
 		</div>
 	</div>

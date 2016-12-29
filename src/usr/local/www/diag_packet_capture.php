@@ -72,6 +72,8 @@ function fixup_host($value, $position) {
 		return "{$andor}host {$not}" . $host;
 	} elseif (is_subnet($host)) {
 		return "{$andor}net {$not}" . $host;
+	} elseif (is_macaddr($host)) {
+		return "{$andor}ether host {$not}" . $host;
 	} else {
 		return "";
 	}
@@ -157,8 +159,8 @@ if ($_POST) {
 		}
 
 		foreach ($hosts as $h) {
-			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h))) {
-				$input_errors[] = sprintf(gettext("A valid IP address or CIDR block must be specified. [%s]"), $h);
+			if (!is_subnet(strip_host_logic($h)) && !is_ipaddr(strip_host_logic($h)) && !is_macaddr(strip_host_logic($h))) {
+				$input_errors[] = sprintf(gettext("A valid IP address, CIDR block, or MAC address must be specified. [%s]"), $h);
 			}
 		}
 	}
@@ -188,7 +190,6 @@ if ($_POST) {
 	if (!count($input_errors)) {
 		$do_tcpdump = true;
 
-		conf_mount_rw();
 
 		if ($_POST['promiscuous']) {
 			//if promiscuous mode is checked
@@ -491,7 +492,6 @@ if ($do_tcpdump) :
 		system("/usr/sbin/tcpdump {$disabledns} {$detail_args} {$iscarp} -r {$fp}{$fn}");
 		print('</textarea>');
 
-		conf_mount_ro();
 ?>
 		</div>
 	</div>

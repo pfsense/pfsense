@@ -4223,6 +4223,9 @@ function discover_pkg_rules($ruletype) {
 
 	$rules = "";
 	foreach ($config['installedpackages']['package'] as $package) {
+		if (empty($package['filter_rule_function'])) {
+			continue;
+		}
 		if (!file_exists("/usr/local/pkg/" .
 		    $package['configurationfile'])) {
 			continue;
@@ -4232,7 +4235,7 @@ function discover_pkg_rules($ruletype) {
 		    $package['configurationfile'], 'packagegui');
 		$pkgname = substr(reverse_strrchr($package['configurationfile'],
 		    "."), 0, -1);
-		$pkg_generate_rules = "{$pkgname}_generate_rules";
+		$pkg_generate_rules = $package['filter_rule_function'];
 
 		update_filter_reload_status(sprintf(gettext(
 		    'Checking for %1$s PF hooks in package %2$s'), $ruletype,

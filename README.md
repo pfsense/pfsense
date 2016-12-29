@@ -26,4 +26,3 @@ Before making source code changes, be sure to review our [Developer Style Guide]
 Changes may be submitted as [pull requests on github](https://help.github.com/articles/using-pull-requests/) once the LA and CLA signing process has been completed. After being submitted, our developers will review the requests, offer feedback, and merge the changes if they are acceptable.
 
 Contact [coreteam@pfsense.org](mailto:coreteam@pfsense.org "Mail to coreteam@pfsense.org") with any additional questions or concerns.
-testing

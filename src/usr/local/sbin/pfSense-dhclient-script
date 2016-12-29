@@ -105,8 +105,12 @@ add_new_address() {
 
 	# Disable this for now, setfirst support is not present and this
 	# causes a bogus interface address. See https://redmine.pfsense.org/issues/7042
-
+	#
 	# $IFCONFIG $interface setfirst $new_ip_address
+	#
+	# Simply add the v4 address until the setfirst feature is sorted out.
+
+	$IFCONFIG $interface inet $new_ip_address
 
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"

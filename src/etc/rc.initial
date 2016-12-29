@@ -78,13 +78,6 @@ else
 	sshd_option="14) Enable Secure Shell (sshd)";
 fi
 
-for i in /var/db/pfi/capable_*; do
-	if [ -f $i -a ! -L /cf/conf ]; then
-		option98="98) Move configuration file to removable device"
-		break
-	fi
-done
-
 # display a cheap menu
 echo ""
 echo " 0) Logout (SSH only)                  9) pfTop"
@@ -96,7 +89,6 @@ echo " 5) Reboot system                     ${sshd_option}"
 echo " 6) Halt system                       15) Restore recent configuration"
 echo " 7) Ping host                         16) Restart PHP-FPM"
 echo " 8) Shell"
-echo " ${option98} "
 
 echo
 read -p "Enter an option: " opmode
@@ -154,11 +146,6 @@ case ${opmode} in
 	;;
 16)
 	/etc/rc.php-fpm_restart
-	;;
-98)
-	if [ ! -f /tmp/config_moved ]; then
-		/etc/rc.initial.store_config_to_removable_device
-	fi
 	;;
 100)
 	if grep "$WORD" "$CONFIG"; then

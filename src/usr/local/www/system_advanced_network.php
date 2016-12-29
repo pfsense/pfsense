@@ -205,7 +205,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['global-v6duid'],
 	['placeholder' => $duid]
-	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID whuch will be used on the next WAN interface UP event.' .'<br />' .
+	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID which will be used on the next WAN interface UP event.' .'<br />' .
 			'Unless you enter a DUID the system will default to using the DUID created by the client on start, this DUID is NOT saved to config.' .
 			'It is strongly recommended if you use RAM disk to enter a DUID here and then save. The saved DUID will take effect after a machine'.
 			' reboot or re-configure of the WAN interface(s).');

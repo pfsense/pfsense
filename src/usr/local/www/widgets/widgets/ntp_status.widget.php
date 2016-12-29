@@ -137,11 +137,11 @@ if ($_REQUEST['updateme']) {
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
-				$gps_sat = $gps_vars[7];
+				$gps_sat = (int)$gps_vars[7];
 				$gps_la = $gps_vars[3];
 				$gps_lo = $gps_vars[5];
 			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
-				$gps_vars = explode(",", $tmp);
+				$gps_vars = preg_split('/[,\*]+/', $tmp);
 				$gps_ok	= ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;

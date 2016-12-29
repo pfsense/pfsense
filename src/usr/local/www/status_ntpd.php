@@ -138,6 +138,8 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
 				$gps_lon = $gps_lon_deg + $gps_lon_min;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
+				$gps_la = $gps_vars[4];
+				$gps_lo = $gps_vars[6];
 			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok = $gps_vars[6];
@@ -151,9 +153,11 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
-				$gps_sat = $gps_vars[7];
+				$gps_sat = (int)$gps_vars[7];
+				$gps_la = $gps_vars[3];
+				$gps_lo = $gps_vars[5];
 			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
-				$gps_vars = explode(",", $tmp);
+				$gps_vars = preg_split('/[,\*]+/', $tmp);
 				$gps_ok = ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
 				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
@@ -163,6 +167,8 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
 				$gps_lon = $gps_lon_deg + $gps_lon_min;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
+				$gps_la = $gps_vars[2];
+				$gps_lo = $gps_vars[4];
 			}
 		}
 	}
@@ -233,7 +239,7 @@ function print_status() {
 }
 
 function print_gps() {
-	global 	$gps_lat, $gps_lon, $gps_lat_deg, $gps_lon_deg, $gps_lat_min, $gps_lon_min, $gps_vars,
+	global 	$gps_lat, $gps_lon, $gps_lat_deg, $gps_lon_deg, $gps_lat_min, $gps_lon_min, $gps_la, $gps_lo,
 			$gps_alt, $gps_alt_unit, $gps_sat, $gps_satview, $gps_goo_lnk;
 
 	print("<tr>\n");
@@ -242,7 +248,7 @@ function print_gps() {
 	print(" (");
 	printf("%d%s", $gps_lat_deg, "&deg;");
 	printf("%.5f", $gps_lat_min*60);
-	print($gps_vars[4]);
+	print($gps_la);
 	print(")");
 	print("</td>\n");
 	print("<td>\n");
@@ -250,7 +256,7 @@ function print_gps() {
 	print(" (");
 	printf("%d%s", $gps_lon_deg, "&deg;");
 	printf("%.5f", $gps_lon_min*60);
-	print($gps_vars[6]);
+	print($gps_lo);
 	print(")");
 	print("</td>\n");
 
@@ -261,7 +267,7 @@ function print_gps() {
 	}
 
 	if (isset($gps_sat) || isset($gps_satview)) {
-		print('<td class="text-center">');
+		print('<td>');
 
 		if (isset($gps_satview)) {
 			print(gettext('in view ') . intval($gps_satview));

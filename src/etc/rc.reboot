@@ -23,6 +23,11 @@ if ! /usr/bin/lockf -s -t 30 /tmp/config.lock /usr/bin/true; then
 	exit 1
 fi
 
+unset REROOT
+if [ "${1}" = "-r" ]; then
+	REROOT=${1}
+fi
+
 sleep 1
 
 # Read product_name from $g, defaults to pfSense
@@ -43,5 +48,4 @@ fi
 
 sleep 1
 
-SHUTDOWN=/sbin/shutdown
-$SHUTDOWN -r now
+/sbin/reboot ${REROOT} now

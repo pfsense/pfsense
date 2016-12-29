@@ -328,6 +328,7 @@ if (isset($id) && $a_filter[$id]) {
 		$pconfig['interface'] = $_GET['if'];
 	}
 	$pconfig['type'] = "pass";
+	$pconfig['proto'] = "tcp"; // for new blank rules, default=tcp, also ensures ports fields are visible
 	$pconfig['src'] = "any";
 	$pconfig['dst'] = "any";
 }
@@ -1299,6 +1300,7 @@ $section->addInput(new Form_Select(
 	'Protocol',
 	$pconfig['proto'],
 	array(
+		'any' => gettext('any'),
 		'tcp' => 'TCP',
 		'udp' => 'UDP',
 		'tcp/udp' => 'TCP/UDP',
@@ -1311,7 +1313,6 @@ $section->addInput(new Form_Select(
 		'pim' => 'PIM',
 		'ospf' => 'OSPF',
 		'sctp' => 'SCTP',
-		'any' => gettext('any'),
 		'carp' => 'CARP',
 		'pfsync' => 'PFSYNC',
 	)

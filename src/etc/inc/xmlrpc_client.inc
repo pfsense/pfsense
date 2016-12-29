@@ -75,8 +75,8 @@ class pfsense_xmlrpc_client {
 
 	public function set_noticefile($noticefile) {
 		$this->filenotice = $noticefile;
-  }
-  
+	}
+	
 	private function xmlrpc_internal($method, $parameter, $timeout = $g['default_session_timeout_mins']) {
 		$this->error = null;
 		$options = array(
@@ -157,7 +157,7 @@ class pfsense_xmlrpc_client {
 	public function get_error() {
 		return $this->error;
 	}
-  
+	
 	public function getUrl() {
 		return $this->logurl;
 	}

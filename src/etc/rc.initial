@@ -96,7 +96,7 @@ done
 
 uFW=$(/bin/kenv -q uboot.board_name)
 if [ "${uFW}" = "A335uFW" ]; then
-	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1 -d' ')
+	rootdev=$(/sbin/mount -p / | /usr/bin/awk '{ printf $1 }')
 	if [ -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufs)" -o \
 	     -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufsid)" ]; then
 		rootdev=$(/sbin/geom label status | \

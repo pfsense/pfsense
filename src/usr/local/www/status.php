@@ -175,7 +175,7 @@ function get_firewall_info() {
 	}
 
 	if (!empty($g['product_version_string'])) {
-		$firewall_info .= "<br/>" . htmlspecialchars($platform['descr']) .
+		$firewall_info .= "<br/>" . htmlspecialchars($g['product_name']) .
 		    " version: " . htmlspecialchars($g['product_version_string']);
 	}
 

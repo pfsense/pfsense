@@ -4211,34 +4211,63 @@ EOD;
 function discover_pkg_rules($ruletype) {
 	global $config, $g, $aliases;
 
-	/* Bail if there is no pkg directory, or if the package files might be out of sync. */
-	if (!is_dir("/usr/local/pkg") || file_exists('/conf/needs_package_sync')) {
+	/*
+	 * Bail if there is no pkg directory, if there are no installed
+	 * packages or if the package files might be out of sync.
+	 */
+	if (!is_array($config['installedpackages']['package']) ||
+	    !is_dir("/usr/local/pkg") ||
+	    file_exists('/conf/needs_package_sync')) {
 		return "";
 	}
 
 	$rules = "";
-	$files = glob("/usr/local/pkg/*.inc");
-	foreach ($files as $pkg_inc) {
-		update_filter_reload_status(sprintf(gettext('Checking for %1$s PF hooks in package %2$s'), $ruletype, $pkg_inc));
-		$pkg = basename($pkg_inc, ".inc");
-		$pkg_generate_rules = "{$pkg}_generate_rules";
+	foreach ($config['installedpackages']['package'] as $package) {
+		if (!file_exists("/usr/local/pkg/" .
+		    $package['configurationfile'])) {
+			continue;
+		}
+
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+		    $package['configurationfile'], 'packagegui');
+		$pkgname = substr(reverse_strrchr($package['configurationfile'],
+		    "."), 0, -1);
+		$pkg_generate_rules = "{$pkgname}_generate_rules";
+
+		update_filter_reload_status(sprintf(gettext(
+		    'Checking for %1$s PF hooks in package %2$s'), $ruletype,
+		    $pkg_config['include_file']));
+
+		if (!empty($pkg_config['include_file']) &&
+		    file_exists($pkg_config['include_file'])) {
+			require_once($pkg_config['include_file']);
+		}
+
 		if (!function_exists($pkg_generate_rules)) {
-			require_once($pkg_inc);
+			continue;
 		}
-		if (function_exists($pkg_generate_rules)) {
-			update_filter_reload_status(sprintf(gettext('Processing early %1$s rules for package %2$s'), $ruletype, $pkg_inc));
-			$tmprules = $pkg_generate_rules("$ruletype");
-			file_put_contents("{$g['tmp_path']}/rules.test.packages", $aliases . $tmprules);
-			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
-			if ($status <> 0) {
-				$errorrules = sprintf(gettext("There was an error while parsing the package filter rules for %s."), $pkg_inc) . "\n";
-				log_error($errorrules);
-				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n{$tmprules}\n");
-				continue;
-			}
-			$rules .= $tmprules;
+
+		update_filter_reload_status(sprintf(gettext(
+		    'Processing early %1$s rules for package %2$s'), $ruletype,
+		    $pkg_config['include_file']));
+
+		$tmprules = $pkg_generate_rules("$ruletype");
+		file_put_contents("{$g['tmp_path']}/rules.test.packages",
+		    $aliases . $tmprules);
+		$status = mwexec(
+		    "/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
+		if ($status <> 0) {
+			$errorrules = sprintf(gettext(
+			    "There was an error while parsing the package filter rules for %s."),
+			    $pkg_config['include_file']) . "\n";
+			log_error($errorrules);
+			file_put_contents("{$g['tmp_path']}/rules.packages.{$pkgname}",
+			    "#{$errorrules}\n{$tmprules}\n");
+			continue;
 		}
+		$rules .= $tmprules;
 	}
+
 	return $rules;
 }
 

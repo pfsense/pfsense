@@ -186,7 +186,7 @@ $section->addInput(new Form_Input(
 	'number',
 	$pconfig['session_timeout']
 ))->setHelp(sprintf(gettext('Time in minutes to expire idle management sessions. Leave empty for the default timeout ' .
-	'of %s. Enter 0 to never expire sessions. NOTE: Non-expiry is a security risk!'), $d));
+	'of %s. A value of 0 will never expire idle sessions; this is a security risk!'), $d));
 
 $auth_servers = array();
 foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {

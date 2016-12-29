@@ -487,7 +487,7 @@ display_top_tabs($tab_array);
 			<tbody id="ipsec-body">
 				<tr>
 					<td colspan="10">
-						<?=print_info_box(gettext("Collecting IPsec status information."), warning, "")?>
+						<?=print_info_box(gettext("Collecting IPsec status information."), "warning", "")?>
 					</td>
 				</tr>
 			</tbody>
@@ -537,7 +537,7 @@ events.push(function() {
 		ajaxRequest.done(function (response, textStatus, jqXHR) {
 
 			if (!response) {
-				response = '<tr><td colspan="10"><?=print_info_box(gettext("No IPsec status information available."), warning, "")?></td></tr>';
+				response = '<tr><td colspan="10"><?=print_info_box(gettext("No IPsec status information available."), "warning", "")?></td></tr>';
 			}
 
 			$('#ipsec-body').html(response);

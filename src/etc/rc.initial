@@ -96,13 +96,16 @@ done
 
 uFW=$(/bin/kenv -q uboot.board_name)
 if [ "${uFW}" = "A335uFW" ]; then
-	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1)
-	if [ "${rootdev}" = "/dev/ufs/pfSense0" ]; then
+	rootdev=$(/sbin/mount -p / | /usr/bin/cut -f1 -d' ')
+	if [ -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufs)" -o \
+	     -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufsid)" ]; then
 		rootdev=$(/sbin/geom label status | \
-		    /usr/bin/grep "ufs/pfSense0" | /usr/bin/awk '{ printf $3 }')
+		    /usr/bin/grep "${rootdev#/dev/}" | \
+		    /usr/bin/awk '{ printf $3 }')
 	fi
-	if [ -n $(echo "${rootdev}" | /usr/bin/grep mmcsd0s2) ]; then
-		MMCDEV=$(/sbin/geom disk list mmcsd0 | /usr/bin/grep MMCHC)
+	if [ -n "$(echo ${rootdev} | /usr/bin/grep s2a)" ]; then
+		DEV=${rootdev%s2a}
+		MMCDEV=$(/sbin/geom disk list ${DEV} | /usr/bin/grep MMCHC)
 	fi
 	if [ -z "${MMCDEV}" ]; then
 		install_option="99) Install to eMMC"

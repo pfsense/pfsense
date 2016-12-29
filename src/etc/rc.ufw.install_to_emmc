@@ -34,7 +34,21 @@ case "${confirm}" in
 	exit 0
 esac
 
-MMCDEV=mmcsd1
+# Find the eMMC device
+for DEV in mmcsd0 mmcsd1
+do
+	MMCHC=$(/sbin/geom disk list ${DEV} 2> /dev/null | /usr/bin/grep MMCHC)
+	if [ -n "${MMCHC}" ]; then
+		MMCDEV=${DEV}
+		break;
+	fi
+done
+if [ -z "${MMCHC}" ]; then
+	echo
+	echo "no eMMC device detected.  aborting."
+	sleep 5
+	exit 1
+fi
 
 echo "Erasing eMMC..."
 /bin/dd if=/dev/zero of=/dev/${MMCDEV} bs=64k count=800
@@ -121,7 +135,7 @@ echo
 echo "To reboot from eMMC:"
 echo " * Clean shutdown: halt system (option 6)"
 echo " * Remove the power"
-echo " * Remove the SD card"
+echo " * Remove the boot device"
 echo " * Reapply power (do NOT close the SD boot jumper)"
 echo
 echo

@@ -29,7 +29,7 @@ $thermal_sensors_widget_title = gettext("Thermal Sensors");
 //NOTE: depends on proper config in System >> Advanced >> Miscellaneous tab >> Thermal Sensors section.
 function getThermalSensorsData() {
 
-	$_gb = exec("/sbin/sysctl -a | grep temperature", $dfout);
+	$_gb = exec("/sbin/sysctl -a | grep temperature | grep -v dev.am335x_scm.0", $dfout);
 	$dfout_filtered = array_filter($dfout, function($v) {
 		return strpos($negsign, ' -') === false;
 	});

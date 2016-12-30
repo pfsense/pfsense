@@ -425,7 +425,7 @@ if ($act == "new" || $act == "edit"):
 		'IPv6 Remote Network/s',
 		'text',
 		$pconfig['remote_networkv6']
-	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
+	))->setHelp('These are the IPv6 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
 				'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
 				'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
 

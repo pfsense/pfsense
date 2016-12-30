@@ -229,7 +229,6 @@ if ($_GET['act'] == "edit") {
 
 		$pconfig['duplicate_cn'] = isset($a_server[$id]['duplicate_cn']);
 
-		$pconfig['no_tun_ipv6'] = $a_server[$id]['no_tun_ipv6'];
 		if (isset($a_server[$id]['verbosity_level'])) {
 			$pconfig['verbosity_level'] = $a_server[$id]['verbosity_level'];
 		} else {
@@ -527,7 +526,6 @@ if ($_POST) {
 		$server['netbios_ntype'] = $pconfig['netbios_ntype'];
 		$server['netbios_scope'] = $pconfig['netbios_scope'];
 
-		$server['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$server['verbosity_level'] = $pconfig['verbosity_level'];
 
 		if ($pconfig['netbios_enable']) {
@@ -955,13 +953,6 @@ if ($act=="new" || $act=="edit"):
 		'Allow multiple concurrent connections from clients using the same Common Name.',
 		$pconfig['duplicate_cn']
 	))->setHelp('(This is not generally recommended, but may be needed for some scenarios.)');
-
-	$section->addInput(new Form_Checkbox(
-		'no_tun_ipv6',
-		'Disable IPv6',
-		'Don\'t forward IPv6 traffic. ',
-		$pconfig['no_tun_ipv6']
-	));
 
 	$form->add($section);
 
@@ -1476,7 +1467,6 @@ events.push(function() {
 
 		switch (value) {
 			case "tun":
-				hideCheckbox('no_tun_ipv6', false);
 				hideInput('tunnel_network', false);
 				hideCheckbox('serverbridge_dhcp', true);
 				hideInput('serverbridge_interface', true);
@@ -1496,7 +1486,6 @@ events.push(function() {
 				break;
 
 			case "tap":
-				hideCheckbox('no_tun_ipv6', true);
 				hideInput('tunnel_network', false);
 
 				if (!p2p) {

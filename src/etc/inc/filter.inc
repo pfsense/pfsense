@@ -2718,14 +2718,14 @@ function filter_generate_user_rule($rule) {
 	} else {
 		$aline['type'] = $type . " ";
 	}
-	if (isset($rule['floating']) && $rule['floating'] == "yes") {
-		if ($rule['direction'] != "any") {
-			$aline['direction'] = " " . $rule['direction'] . " ";
-		}
-	} else {
-		/* ensure the direction is in */
+	if (isset($rule['direction']) && in_array($rule['direction'], ['in', 'out'])) {
+		// if explicitly in/out, use that value
+		$aline['direction'] = " " . $rule['direction'] . " ";
+	} elseif (!(isset($rule['floating']) && $rule['floating'] == "yes") && $rule['direction'] != 'any') {
+		// not floating rule and not "any", "in" or "out", so set to "in" - default for non floating rules
 		$aline['direction'] = " in ";
 	}
+		// else "any" direction, either by default or because set explicitly - nothing to add to rule
 	if (isset($rule['log'])) {
 		$aline['log'] = "log ";
 	}

@@ -159,7 +159,6 @@ if ($_GET['act'] == "edit") {
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
 
-		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
 		if (isset($a_client[$id]['verbosity_level'])) {
@@ -378,7 +377,6 @@ if ($_POST) {
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
 
-		$client['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
@@ -728,13 +726,6 @@ if ($act=="new" || $act=="edit"):
 	));
 
 	$section->addInput(new Form_Checkbox(
-		'no_tun_ipv6',
-		'Disable IPv6',
-		'Don\'t forward IPv6 traffic. ',
-		$pconfig['no_tun_ipv6']
-	));
-
-	$section->addInput(new Form_Checkbox(
 		'route_no_pull',
 		'Don\'t pull routes',
 		'Bars the server from adding routes to the client\'s routing table',
@@ -883,7 +874,6 @@ events.push(function() {
 	}
 
 	function dev_mode_change() {
-		hideCheckbox('no_tun_ipv6', ($('#dev_mode').val() == 'tap'));
 		hideInput('topology',  ($('#dev_mode').val() == 'tap') || $('#mode').val() == "p2p_shared_key");
 	}
 

@@ -594,8 +594,8 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, $use_filterdns = false) {
-	global $aliastable, $filterdns, $use_filterdns;
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
+	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
 	$finallist = "";

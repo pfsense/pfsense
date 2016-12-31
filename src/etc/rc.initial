@@ -92,13 +92,14 @@ if [ "${uFW}" = "A335uFW" ]; then
 	rootdev=$(/sbin/mount -p / | /usr/bin/awk '{ printf $1 }')
 	if [ -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufs)" -o \
 	     -n "$(echo ${rootdev} | /usr/bin/grep /dev/ufsid)" ]; then
-		rootdev=$(/sbin/geom label status | \
+		rootdev=$(/sbin/geom label status 2> /dev/null | \
 		    /usr/bin/grep "${rootdev#/dev/}" | \
 		    /usr/bin/awk '{ printf $3 }')
 	fi
 	if [ -n "$(echo ${rootdev} | /usr/bin/grep s2a)" ]; then
 		DEV=${rootdev%s2a}
-		MMCDEV=$(/sbin/geom disk list ${DEV} | /usr/bin/grep MMCHC)
+		MMCDEV=$(/sbin/geom disk list ${DEV} 2> /dev/null | \
+		    /usr/bin/grep MMCHC)
 	fi
 	if [ -z "${MMCDEV}" ]; then
 		install_option="99) Install to eMMC"

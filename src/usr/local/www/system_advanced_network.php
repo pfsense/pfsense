@@ -158,23 +158,25 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('NOTE: This does not disable any IPv6 features on the firewall, it only '.
 	'blocks traffic.');
 
+
 $group = new Form_Group('IPv6 over IPv4 Tunneling');
 $group->add(new Form_Checkbox(
 	'ipv6nat_enable',
 	'IPv6 over IPv4 Tunneling',
-	'Enable IPv4 NAT encapsulation of IPv6 packets',
+	'Enable IPv6 over IPv4 tunneling',
 	$pconfig['ipv6nat_enable']
 ));
 
 $group->add(new Form_Input(
 	'ipv6nat_ipaddr',
-	'IP address',
+	'IP address of tunneling peer',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
-))->setHelp('Enable IPv4 NAT encapsulation of IPv6 packets. <br/>This provides an '.
-	'RFC 2893 compatibility mechanism that can be used to tunneling IPv6 packets over '.
-	'IPv4 routing infrastructures. If enabled, don\'t forget to add a firewall rule to '.
-	'permit IPv6 packets.');
+))->setHelp('The IPv4 address of the tunneling peer');
+
+$group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, that can be used ' .
+	'to tunnel IPv6 packets over IPv4 routing infrastructures. A firewall rule to allow passing of IPv6 packets ' .
+	'must also be <a href="firewall_rules.php">created</a>.');
 
 $section->add($group);
 

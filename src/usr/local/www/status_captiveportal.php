@@ -57,8 +57,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
-##|*NAME=Status: Captive portal
-##|*DESCR=Allow access to the 'Status: Captive portal' page.
+##|*NAME=Status: Captive Portal
+##|*DESCR=Allow access to the 'Status: Captive Portal' page.
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
 

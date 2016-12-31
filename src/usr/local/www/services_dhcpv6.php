@@ -58,8 +58,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpv6server
-##|*NAME=Services: DHCPv6 server
-##|*DESCR=Allow access to the 'Services: DHCPv6 server' page.
+##|*NAME=Services: DHCPv6 Server
+##|*DESCR=Allow access to the 'Services: DHCPv6 Server' page.
 ##|*MATCH=services_dhcpv6.php*
 ##|-PRIV
 

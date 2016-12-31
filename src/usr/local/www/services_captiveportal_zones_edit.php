@@ -53,8 +53,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editzones
-##|*NAME=Services: Captive portal: Edit Zones
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit Zones' page.
+##|*NAME=Services: Captive Portal: Edit Zones
+##|*DESCR=Allow access to the 'Services: Captive Portal: Edit Zones' page.
 ##|*MATCH=services_captiveportal_zones_edit.php*
 ##|-PRIV
 

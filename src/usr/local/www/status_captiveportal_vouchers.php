@@ -54,8 +54,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal-vouchers
-##|*NAME=Status: Captive portal Vouchers
-##|*DESCR=Allow access to the 'Status: Captive portal Vouchers' page.
+##|*NAME=Status: Captive Portal Vouchers
+##|*DESCR=Allow access to the 'Status: Captive Portal Vouchers' page.
 ##|*MATCH=status_captiveportal_vouchers.php*
 ##|-PRIV
 

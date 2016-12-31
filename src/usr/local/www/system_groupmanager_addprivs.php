@@ -171,6 +171,41 @@ $section->addInput(new Form_Input(
 	null
 ))->setHelp('Show only the choices containing this term');
 
+$section->addInput(new Form_StaticText(
+	gettext('Privilege information'),
+	'<span class="help-block">'.
+	gettext('The following privileges effectively give the user all privileges ' .
+		' because they get access to execute general commands, edit system files, ' .
+		' modify users, change passwords or similar:') .
+	'<br/><br/>' .
+	gettext('User - System: Copy files (scp)') .
+	'<br/>' .
+	gettext('User - System: Shell account access') .
+	'<br/>' .
+	gettext('WebCfg - All pages') .
+	'<br/>' .
+	gettext('WebCfg - Diagnostics: Backup & Restore') .
+	'<br/>' .
+	gettext('WebCfg - Diagnostics: Command') .
+	'<br/>' .
+	gettext('WebCfg - Diagnostics: Edit File') .
+	'<br/>' .
+	gettext('WebCfg - Diagnostics: Factory defaults') .
+	'<br/>' .
+	gettext('WebCfg - System: Authentication Servers') .
+	'<br/>' .
+	gettext('WebCfg - System: Group Manager') .
+	'<br/>' .
+	gettext('WebCfg - System: Group Manager: Add Privileges') .
+	'<br/>' .
+	gettext('WebCfg - System: User Manager') .
+	'<br/>' .
+	gettext('WebCfg - System: User Manager: Add Privileges') .
+	'<br/>' .
+	gettext('WebCfg - System: User Manager: Settings') .
+	'</span>'
+));
+
 $btnfilter = new Form_Button(
 	'btnfilter',
 	'Filter',

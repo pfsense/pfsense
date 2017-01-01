@@ -24,6 +24,7 @@
 ##|*IDENT=page-system-authservers
 ##|*NAME=System: Authentication Servers
 ##|*DESCR=Allow access to the 'System: Authentication Servers' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_authservers.php*
 ##|-PRIV
 

@@ -49,10 +49,12 @@ $priv_list['user-view-clear-notices']['descr'] = gettext("This user can view and
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = gettext("User - System: Shell account access");
 $priv_list['user-shell-access']['descr'] = gettext("Indicates whether the user is able to login for example via SSH.");
+$priv_list['user-shell-access']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
 $priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
+$priv_list['user-copy-files']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files-chroot'] = array();
 $priv_list['user-copy-files-chroot']['name']  = gettext("User - System: Copy files to home directory (chrooted scp)");

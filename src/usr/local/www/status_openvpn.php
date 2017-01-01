@@ -102,7 +102,8 @@ include("head.inc"); ?>
 					<tr>
 						<th><?=gettext("Common Name")?></th>
 						<th><?=gettext("Real Address")?></th>
-						<th><?=gettext("Virtual Address"); ?></th>
+						<th><?=gettext("Virtual IPv4 Address"); ?></th>
+						<th><?=gettext("Virtual IPv6 Address"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Bytes Sent")?></th>
 						<th><?=gettext("Bytes Received")?></th>
@@ -118,6 +119,7 @@ include("head.inc"); ?>
 						<td><?=$conn['common_name'];?></td>
 						<td><?=$conn['remote_host'];?></td>
 						<td><?=$conn['virtual_addr'];?></td>
+						<td><?=$conn['virtual_addr6'];?></td>
 						<td><?=$conn['connect_time'];?></td>
 						<td><?=format_bytes($conn['bytes_sent']);?></td>
 						<td><?=format_bytes($conn['bytes_recv']);?></td>

@@ -251,7 +251,13 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($sk_server['name']);?></td>
 						<td><?=$sk_server['status'];?></td>
 						<td><?=$sk_server['connect_time'];?></td>
-						<td><?=$sk_server['virtual_addr'];?></td>
+						<td>
+							<?=$sk_server['virtual_addr'];?>
+					<?php if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])): ?>
+							<br />
+					<?php endif; ?>
+							<?=$sk_server['virtual_addr6'];?>
+						</td>
 						<td><?=$sk_server['remote_host'];?></td>
 						<td><?=format_bytes($sk_server['bytes_sent']);?> / <?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>

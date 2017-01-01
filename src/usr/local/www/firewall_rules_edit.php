@@ -1288,7 +1288,7 @@ $group->add(new Form_Select(
 	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
 	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
 	true
-))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? gettext($icmplookup[$pconfig['ipprotocol']]['helpmsg']) : '') . '</div>');
+))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
 $group->addClass('icmptype_section');
 
 $section->add($group);
@@ -1963,7 +1963,7 @@ events.push(function() {
 			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
 		}
 		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
-		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', gettext($v['helpmsg'])) . "';\n";
+		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', $v['helpmsg']) . "';\n";
 	}
 	echo $out1;
 	echo $out2;

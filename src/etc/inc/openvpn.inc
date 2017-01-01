@@ -33,7 +33,14 @@ require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
 global $openvpn_prots;
-$openvpn_prots = array("UDP", "UDP6", "TCP", "TCP6");
+$openvpn_prots = array(
+	"UDP4" => "UDP on IPv4 only",
+	"UDP6" => "UDP on IPv6 only",
+	"TCP4" => "TCP on IPv4 only",
+	"TCP6" => "TCP on IPv6 only",
+	"UDP" => "UDP IPv4 and IPv6 on all interfaces (multihome)",
+	"TCP" => "TCP IPv4 and IPv6 on all interfaces (multihome)"
+);
 
 global $openvpn_dev_mode;
 $openvpn_dev_mode = array("tun", "tap");
@@ -718,10 +725,30 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	/* Determine the local IP to use - and make sure it matches with the selected protocol. */
-	if (is_ipaddrv4($iface_ip) && (stristr($settings['protocol'], "6") === false)) {
-		$conf .= "local {$iface_ip}\n";
-	} elseif (is_ipaddrv6($iface_ipv6) && (stristr($settings['protocol'], "6") !== false)) {
-		$conf .= "local {$iface_ipv6}\n";
+	switch ($settings['protocol']) {
+		case 'UDP':
+		case 'TCP':
+			$conf .= "multihome\n";
+			break;
+		case 'UDP4':
+		case 'TCP4':
+			if (is_ipaddrv4($iface_ip)) {
+				$conf .= "local {$iface_ip}\n";
+			}
+			if ($settings['interface'] == "any") {
+				$conf .= "multihome\n";
+			}
+			break;
+		case 'UDP6':
+		case 'TCP6':
+			if (is_ipaddrv6($iface_ipv6)) {
+				$conf .= "local {$iface_ipv6}\n";
+			}
+			if ($settings['interface'] == "any") {
+				$conf .= "multihome\n";
+			}
+			break;
+		default:
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none")) {

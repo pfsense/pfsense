@@ -317,7 +317,9 @@ $section->addInput(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
-));
+))->setHelp(sprintf('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
+					' %sSystem: General Setup%s or those obtained via DHCP/PPP on WAN'.
+					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',

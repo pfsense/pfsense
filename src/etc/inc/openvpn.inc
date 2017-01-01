@@ -513,16 +513,20 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 	}
 
 	if (!empty($settings['dns_server1'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server1']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server1'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server1']}\"\n";
 	}
 	if (!empty($settings['dns_server2'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server2']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server2'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server2']}\"\n";
 	}
 	if (!empty($settings['dns_server3'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server3']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server3'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server3']}\"\n";
 	}
 	if (!empty($settings['dns_server4'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server4'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server4']}\"\n";
 	}
 
 	if (!empty($settings['push_blockoutsidedns'])) {

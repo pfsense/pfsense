@@ -460,6 +460,12 @@ if ($_POST) {
 
 	$pconfig = $_POST;
 
+	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	} else {
+		unset($pconfig['icmptype']);
+	}
+
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {

@@ -16,6 +16,7 @@ $priv_list = array();
 $priv_list['page-all'] = array();
 $priv_list['page-all']['name'] = gettext("WebCfg - All pages");
 $priv_list['page-all']['descr'] = gettext("Allow access to all pages");
+$priv_list['page-all']['warn'] = "standard-warning-root";
 $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
@@ -40,12 +41,14 @@ $priv_list['page-diagnostics-authentication']['match'][] = "diag_authentication.
 $priv_list['page-diagnostics-backup-restore'] = array();
 $priv_list['page-diagnostics-backup-restore']['name'] = gettext("WebCfg - Diagnostics: Backup & Restore");
 $priv_list['page-diagnostics-backup-restore']['descr'] = gettext("Allow access to the 'Diagnostics: Backup & Restore' page.");
+$priv_list['page-diagnostics-backup-restore']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-backup-restore']['match'] = array();
 $priv_list['page-diagnostics-backup-restore']['match'][] = "diag_backup.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = gettext("WebCfg - Diagnostics: Command");
 $priv_list['page-diagnostics-command']['descr'] = gettext("Allow access to the 'Diagnostics: Command' page.");
+$priv_list['page-diagnostics-command']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-command']['match'] = array();
 $priv_list['page-diagnostics-command']['match'][] = "diag_command.php*";
 
@@ -58,6 +61,7 @@ $priv_list['page-diagnostics-configurationhistory']['match'][] = "diag_confbak.p
 $priv_list['page-diagnostics-factorydefaults'] = array();
 $priv_list['page-diagnostics-factorydefaults']['name'] = gettext("WebCfg - Diagnostics: Factory defaults");
 $priv_list['page-diagnostics-factorydefaults']['descr'] = gettext("Allow access to the 'Diagnostics: Factory defaults' page.");
+$priv_list['page-diagnostics-factorydefaults']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-factorydefaults']['match'] = array();
 $priv_list['page-diagnostics-factorydefaults']['match'][] = "diag_defaults.php*";
 
@@ -82,6 +86,7 @@ $priv_list['page-diagnostics-sourcetracking']['match'][] = "diag_dump_states_sou
 $priv_list['page-diagnostics-edit'] = array();
 $priv_list['page-diagnostics-edit']['name'] = gettext("WebCfg - Diagnostics: Edit File");
 $priv_list['page-diagnostics-edit']['descr'] = gettext("Allow access to the 'Diagnostics: Edit File' page.");
+$priv_list['page-diagnostics-edit']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-edit']['match'] = array();
 $priv_list['page-diagnostics-edit']['match'][] = "diag_edit.php*";
 $priv_list['page-diagnostics-edit']['match'][] = "browser.php*";
@@ -1078,6 +1083,7 @@ $priv_list['page-system-advanced-sysctl']['match'][] = "system_advanced_sysctl.p
 $priv_list['page-system-authservers'] = array();
 $priv_list['page-system-authservers']['name'] = gettext("WebCfg - System: Authentication Servers");
 $priv_list['page-system-authservers']['descr'] = gettext("Allow access to the 'System: Authentication Servers' page.");
+$priv_list['page-system-authservers']['warn'] = "standard-warning-root";
 $priv_list['page-system-authservers']['match'] = array();
 $priv_list['page-system-authservers']['match'][] = "system_authservers.php*";
 
@@ -1126,12 +1132,14 @@ $priv_list['page-system-gateways-editgateway']['match'][] = "system_gateways_edi
 $priv_list['page-system-groupmanager'] = array();
 $priv_list['page-system-groupmanager']['name'] = gettext("WebCfg - System: Group Manager");
 $priv_list['page-system-groupmanager']['descr'] = gettext("Allow access to the 'System: Group Manager' page.");
+$priv_list['page-system-groupmanager']['warn'] = "standard-warning-root";
 $priv_list['page-system-groupmanager']['match'] = array();
 $priv_list['page-system-groupmanager']['match'][] = "system_groupmanager.php*";
 
 $priv_list['page-system-groupmanager-addprivs'] = array();
 $priv_list['page-system-groupmanager-addprivs']['name'] = gettext("WebCfg - System: Group Manager: Add Privileges");
 $priv_list['page-system-groupmanager-addprivs']['descr'] = gettext("Allow access to the 'System: Group Manager: Add Privileges' page.");
+$priv_list['page-system-groupmanager-addprivs']['warn'] = "standard-warning-root";
 $priv_list['page-system-groupmanager-addprivs']['match'] = array();
 $priv_list['page-system-groupmanager-addprivs']['match'][] = "system_groupmanager_addprivs.php*";
 
@@ -1168,12 +1176,14 @@ $priv_list['page-system-user-settings']['match'][] = "system_user_settings.php*"
 $priv_list['page-system-usermanager'] = array();
 $priv_list['page-system-usermanager']['name'] = gettext("WebCfg - System: User Manager");
 $priv_list['page-system-usermanager']['descr'] = gettext("Allow access to the 'System: User Manager' page.");
+$priv_list['page-system-usermanager']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager']['match'] = array();
 $priv_list['page-system-usermanager']['match'][] = "system_usermanager.php*";
 
 $priv_list['page-system-usermanager-addprivs'] = array();
 $priv_list['page-system-usermanager-addprivs']['name'] = gettext("WebCfg - System: User Manager: Add Privileges");
 $priv_list['page-system-usermanager-addprivs']['descr'] = gettext("Allow access to the 'System: User Manager: Add Privileges' page.");
+$priv_list['page-system-usermanager-addprivs']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager-addprivs']['match'] = array();
 $priv_list['page-system-usermanager-addprivs']['match'][] = "system_usermanager_addprivs.php*";
 
@@ -1186,6 +1196,7 @@ $priv_list['page-system-usermanager-passwordmg']['match'][] = "system_usermanage
 $priv_list['page-system-usermanager-settings'] = array();
 $priv_list['page-system-usermanager-settings']['name'] = gettext("WebCfg - System: User Manager: Settings");
 $priv_list['page-system-usermanager-settings']['descr'] = gettext("Allow access to the 'System: User Manager: Settings' page.");
+$priv_list['page-system-usermanager-settings']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager-settings']['match'] = array();
 $priv_list['page-system-usermanager-settings']['match'][] = "system_usermanager_settings.php*";
 

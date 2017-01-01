@@ -1543,6 +1543,10 @@ function openvpn_get_client_status($client, $socket) {
 				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
 				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
+				$client['remote_port'] = $list[5];
+				$client['local_host'] = $list[6];
+				$client['local_port'] = $list[7];
+				$client['virtual_addr6'] = $list[8];
 			}
 			if (strstr($line, "CONNECTING")) {
 				$client['status'] = "connecting";

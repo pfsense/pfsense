@@ -274,7 +274,10 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['type6'] = "slaac";
 		break;
 	case "dhcp6":
-		$pconfig['dhcp6-duid'] = $wancfg['dhcp6-duid'];
+		if(empty($config['system']['global-v6duid'])) {
+			unset($wancfg['dhcp6-duid']);
+		}
+		$pconfig['dhcp6-duid'] = isset($wancfg['dhcp6-duid']);
 		if (!isset($wancfg['dhcp6-ia-pd-len'])) {
 			$wancfg['dhcp6-ia-pd-len'] = "none";
 		}
@@ -794,6 +797,9 @@ if ($_POST['apply']) {
 	if (($_POST['spoofmac'] && !is_macaddr($_POST['spoofmac']))) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
+	if (($_POST['dhcp6-duid'] && empty($config['system']['global-v6duid']))) {
+		$input_errors[] = gettext("No System DUID has been entered. Please enter a valid DUID in System->Advanced->Networking");
+	}
 	if ($_POST['mtu']) {
 		if (!is_numericint($_POST['mtu'])) {
 			$input_errors[] = "MTU must be an integer.";
@@ -1227,7 +1233,9 @@ if ($_POST['apply']) {
 				break;
 			case "dhcp6":
 				$wancfg['ipaddrv6'] = "dhcp6";
-				$wancfg['dhcp6-duid'] = $_POST['dhcp6-duid'];
+				if ($_POST['dhcp6-duid'] == "yes") {
+					$wancfg['dhcp6-duid'] = true;
+				}
 				$wancfg['dhcp6-ia-pd-len'] = $_POST['dhcp6-ia-pd-len'];
 				if ($_POST['dhcp6-ia-pd-send-hint'] == "yes") {
 					$wancfg['dhcp6-ia-pd-send-hint'] = true;
@@ -2158,6 +2166,12 @@ $section->addInput(new Form_Checkbox(
 	'Do not allow PD/Address release',
 	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
 	$pconfig['dhcp6norelease']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6-duid',
+	'Use System DUID',
+	'The DUID defined in System->Advanced->Networking will be used on this interface.',
+	$pconfig['dhcp6-duid']
 ));
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',

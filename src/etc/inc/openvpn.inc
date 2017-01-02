@@ -1052,7 +1052,7 @@ function openvpn_reconfigure($mode, $settings) {
 			}
 			if ($mode == 'server') {
 				if (is_numeric($settings['dh_length'])) {
-					if (!in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
+					if (!in_array($settings['dh_length'], array_keys($openvpn_dh_lengths))) {
 						/* The user selected a DH parameter length that does not have a corresponding file. */
 						log_error(gettext("Failed to construct OpenVPN server configuration. The selected DH Parameter length cannot be used."));
 						return;

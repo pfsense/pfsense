@@ -457,7 +457,7 @@ function build_priv_table() {
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
 		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
-			$privhtml .=			' ' . gettext('(root privilege)');
+			$privhtml .=			' ' . gettext('(admin privilege)');
 			$user_has_root_priv = true;
 		}
 		$privhtml .=			'</td>';
@@ -477,7 +477,7 @@ function build_priv_table() {
 	if ($user_has_root_priv) {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td colspan="3">';
-		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has root privilege') . '</b>';
+		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has administrator-level privilege') . '</b>';
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
 		$privhtml .=			'</td>';

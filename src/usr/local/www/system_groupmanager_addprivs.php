@@ -189,7 +189,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_StaticText(
 	gettext('Privilege information'),
 	'<span class="help-block">'.
-	gettext('The following privileges effectively give root privilege to users in the group' .
+	gettext('The following privileges effectively give administrator-level privilege to users in the group' .
 		' because the user gains access to execute general commands, edit system files, ' .
 		' modify users, change passwords or similar:') .
 	'<br/>' .
@@ -245,7 +245,7 @@ events.push(function() {
 
 			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
 			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
-				$desc .= ' ' . gettext('(This privilege effectively gives root privilege to users in the group)');
+				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level privilege to users in the group)');
 			}
 			$desc = addslashes($desc);
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";

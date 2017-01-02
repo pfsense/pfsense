@@ -76,8 +76,21 @@ $openvpn_verbosity_level = array(
 
 global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
-	1024, 2048, 3072, 4096, 7680, 8192, 15360, 16384
+	1024 => "1024 bit",
+	2048 => "2048 bit",
+	3072 => "3072 bit",
+	4096 => "4096 bit",
+	7680 => "7680 bit",
+	8192 => "8192 bit",
+	15360 => "15360 bit",
+	16384 => "16384 bit",
+	"none" => "ECDH Only"
 );
+foreach ($openvpn_dh_lengths as $idx => $dhlen) {
+	if (is_numeric($idx) && !file_exists("/etc/dh-parameters.{$idx}")) {
+		unset($openvpn_dh_lengths[$idx]);
+	}
+}
 
 global $openvpn_cert_depths;
 $openvpn_cert_depths = array(
@@ -384,6 +397,25 @@ function openvpn_get_cipherlist() {
 	}
 	$ciphers["none"] = gettext("None (No Encryption)");
 	return $ciphers;
+}
+
+function openvpn_get_curvelist() {
+
+	$curves = array();
+	$curves["none"] = gettext("Use Default");
+	$curve_out = shell_exec('/usr/local/sbin/openvpn --show-curves | /usr/bin/grep -v \'Available Elliptic curves\'');
+	$curve_lines = explode("\n", trim($curve_out));
+	sort($curve_lines);
+	foreach ($curve_lines as $line) {
+		$line = trim($line);
+		$curves[$line] = $line;
+	}
+	return $curves;
+}
+
+function openvpn_validate_curve($curve) {
+	$curves = openvpn_get_curvelist();
+	return array_key_exists($curve, $curves);
 }
 
 function openvpn_get_digestlist() {
@@ -1019,7 +1051,20 @@ function openvpn_reconfigure($mode, $settings) {
 				openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 			}
 			if ($mode == 'server') {
-				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
+				if (is_numeric($settings['dh_length'])) {
+					if (!in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
+						/* The user selected a DH parameter length that does not have a corresponding file. */
+						log_error(gettext("Failed to construct OpenVPN server configuration. The selected DH Parameter length cannot be used."));
+						return;
+					}
+					$dh_file = "{$g['etc_path']}/dh-parameters.{$settings['dh_length']}";
+				} else {
+					$dh_file = $settings['dh_length'];
+				}
+				$conf .= "dh {$dh_file}\n";
+				if (!empty($settings['ecdh_curve']) && ($settings['ecdh_curve'] != "none") && openvpn_validate_curve($settings['ecdh_curve'])) {
+					$conf .= "ecdh-curve {$settings['ecdh_curve']}\n";
+				}
 			}
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);

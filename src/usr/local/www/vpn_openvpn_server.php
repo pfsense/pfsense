@@ -138,6 +138,7 @@ if ($_GET['act'] == "edit") {
 			$pconfig['crlref'] = $a_server[$id]['crlref'];
 			$pconfig['certref'] = $a_server[$id]['certref'];
 			$pconfig['dh_length'] = $a_server[$id]['dh_length'];
+			$pconfig['ecdh_curve'] = $a_server[$id]['ecdh_curve'];
 			if (isset($a_server[$id]['cert_depth'])) {
 				$pconfig['cert_depth'] = $a_server[$id]['cert_depth'];
 			} else {
@@ -396,6 +397,15 @@ if ($_POST) {
 		if (empty(trim($pconfig['certref']))) {
 			$input_errors[] = gettext("The selected certificate is not valid");
 		}
+
+		if (!empty($pconfig['dh_length']) && !in_array($pconfig['dh_length'], array_keys($openvpn_dh_lengths))) {
+			$input_errors[] = gettext("The specified DH Parameter length is invalid or the DH file does not exist.");
+		}
+
+		if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
+			$input_errors[] = gettext("The specified ECDH Curve is invalid.");
+		}
+
 		$reqdfields = explode(" ", "caref certref");
 		$reqdfieldsn = array(gettext("Certificate Authority"), gettext("Certificate"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -466,6 +476,7 @@ if ($_POST) {
 			$server['crlref'] = $pconfig['crlref'];
 			$server['certref'] = $pconfig['certref'];
 			$server['dh_length'] = $pconfig['dh_length'];
+			$server['ecdh_curve'] = $pconfig['ecdh_curve'];
 			$server['cert_depth'] = $pconfig['cert_depth'];
 			if ($pconfig['mode'] == "server_tls_user") {
 				$server['strictusercn'] = $pconfig['strictusercn'];
@@ -761,10 +772,17 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'dh_length',
-		'DH Parameter length (bits)',
+		'DH Parameter Length',
 		$pconfig['dh_length'],
-		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
+		$openvpn_dh_lengths
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
+
+	$section->addInput(new Form_Select(
+		'ecdh_curve',
+		'ECDH Curve',
+		$pconfig['ecdh_curve'],
+		openvpn_get_curvelist()
+		));
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(
@@ -1202,7 +1220,12 @@ else:
 						<?=htmlspecialchars($server['tunnel_networkv6'])?>
 					</td>
 					<td>
-						<?=sprintf("Crypto: %s/%s<br/>D-H Params: %d bits", $server['crypto'], $server['digest'], $server['dh_length'])?><br />
+						<?=sprintf("Crypto: %s/%s", $server['crypto'], $server['digest']);?>
+					<?php if (is_numeric($server['dh_length'])): ?>
+						<?=sprintf("<br/>D-H Params: %d bits", $server['dh_length']);?>
+					<?php elseif ($server['dh_length'] == "none"): ?>
+						<br />D-H Disabled, using ECDH Only
+					<?php endif; ?>
 					</td>
 					<td>
 						<?=htmlspecialchars(sprintf('%s (%s)', $server['description'], $server['dev_mode']))?>
@@ -1269,6 +1292,7 @@ events.push(function() {
 				hideInput('tls', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
+				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);
@@ -1279,6 +1303,7 @@ events.push(function() {
 				hideInput('tls', false);
 				hideInput('certref', false);
 				hideInput('dh_length', false);
+				hideInput('ecdh_curve', false);
 				hideInput('cert_depth', false);
 				hideCheckbox('strictusercn', false);
 				hideCheckbox('autokey_enable', true);
@@ -1294,6 +1319,7 @@ events.push(function() {
 				hideInput('certref', true);
 				hideCheckbox('tlsauth_enable', true);
 				hideInput('dh_length', true);
+				hideInput('ecdh_curve', true);
 				hideInput('cert_depth', true);
 				hideCheckbox('strictusercn', true);
 				hideCheckbox('autokey_enable', true);

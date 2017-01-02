@@ -2101,7 +2101,7 @@ events.push(function() {
 						function($type) { return "icmptype_{$type}"; }, 
 						array_keys($icmptypes)
 					);
-	$disabled_elements_list = "'" . implode(', ', array_merge($disabled_static_elements, $disabled_icmp_checkboxes)) . "'";
+	$disabled_elements_list = "'" . implode("', '", array_merge($disabled_static_elements, $disabled_icmp_checkboxes)) . "'";
 ?>
 
 		var elementsToDisable = [<?=$disabled_elements_list ?>];

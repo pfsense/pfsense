@@ -572,7 +572,7 @@ if ($_POST) {
 	}
 	if ($_POST['os']) {
 		if ($_POST['proto'] != "tcp") {
-			$input_errors[] = gettext("OS detection is only valid with the TCP protocol.");
+			$input_errors[] = gettext("OS detection is only available for TCP.");
 		}
 		if (!in_array($_POST['os'], $ostypes)) {
 			$input_errors[] = gettext("Invalid OS detection selection. Please select a valid OS.");

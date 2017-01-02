@@ -40,6 +40,7 @@ require_once("shaper.inc");
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
+$pconfig['global-v6duid'] = $config['system']['global-v6duid'];
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
@@ -81,6 +82,17 @@ if ($_POST) {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
 			unset($config['system']['prefer_ipv4']);
+		}
+
+		if (!empty($_POST['global-v6duid'])) {
+			$_POST['global-v6duid'] = strtolower(str_replace("-", ":", $_POST['global-v6duid']));
+			if (!is_duid($_POST['global-v6duid'])) {
+				$input_errors[] = gettext("A valid DUID must be specified");
+			} else {
+				$config['system']['global-v6duid'] = $_POST['global-v6duid'];
+			}
+		} else {
+			unset($config['system']['global-v6duid']);
 		}
 
 		if ($_POST['sharednet'] == "yes") {
@@ -145,6 +157,7 @@ $tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php")
 $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+$duid = get_duid_from_file();
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -185,6 +198,17 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['prefer_ipv4']
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
+
+$section->addInput(new Form_Input(
+	'global-v6duid',
+	'DHCP6 DUID',
+	'text',
+	$pconfig['global-v6duid'],
+	['placeholder' => $duid]
+	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID which will be used on the next WAN interface UP event.' .'<br />' .
+			'Unless you enter a DUID the system will default to using the DUID created by the client on start, this DUID is NOT saved to config.' .
+			'It is strongly recommended if you use RAM disk to enter a DUID here and then save. The saved DUID will take effect after a machine'.
+			' reboot or re-configure of the WAN interface(s).');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

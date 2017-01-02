@@ -58,6 +58,12 @@ if [ "${HTTP_PROXY}" != "" ]; then
 	export HTTP_PROXY
 fi
 
+USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+if [ "${USE_MFS_TMPVAR}" = "true" ]; then
+	export PKG_DBDIR='/root/var/db/pkg'
+	export PKG_CACHEDIR='/root/var/cache/pkg'
+fi
+
 # Detect interactive logins and display the shell
 if [ -n "${SSH_TTY}" -o "${TERM}" = "cons25" ]; then
 	/etc/rc.initial

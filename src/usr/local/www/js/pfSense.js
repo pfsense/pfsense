@@ -175,7 +175,7 @@ $(function() {
 	// Use element title in the confirmation message, or if not available
 	// the element value
 	$('.btn-danger, .fa-trash').on('click', function(e){
-		if (!($(this).hasClass('no-confirm'))) {
+		if (!($(this).hasClass('no-confirm')) && !($(this).hasClass('icon-embed-btn'))) {
 			var msg = $.trim(this.textContent).toLowerCase();
 
 			if (!msg)
@@ -262,7 +262,7 @@ $(function() {
 	$('.table-rowdblclickedit>tbody>tr').dblclick(function () {
 		$(this).find(".fa-pencil")[0].click();
 	});
-	
+
 	// Focus first input
 	$(':input:enabled:visible:first').focus();
 
@@ -270,7 +270,7 @@ $(function() {
 		$(this).css('height', 80).resizable({minHeight: 80, minWidth: 200}).parent().css('padding-bottom', 0);
 		$(this).css('height', 78);
 	});
-		
+
 	// Run in-page defined events
 	while (func = window.events.shift())
 		func();

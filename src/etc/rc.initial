@@ -96,8 +96,13 @@ if [ "${uFW}" = "A335uFW" ]; then
 		    /usr/bin/grep "${rootdev#/dev/}" | \
 		    /usr/bin/awk '{ printf $3 }')
 	fi
-	if [ -n "$(echo ${rootdev} | /usr/bin/grep s2a)" ]; then
+	if [ -n "$(echo ${rootdev} | /usr/bin/grep -e 's2$')" ]; then
+		DEV=${rootdev%s2}
+	fi
+	if [ -n "$(echo ${rootdev} | /usr/bin/grep -e 's2a$')" ]; then
 		DEV=${rootdev%s2a}
+	fi
+	fi [ -n "${DEV}" ]; then
 		MMCDEV=$(/sbin/geom disk list ${DEV} 2> /dev/null | \
 		    /usr/bin/grep MMCHC)
 	fi

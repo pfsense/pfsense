@@ -33,7 +33,14 @@ require_once('pfsense-utils.inc');
 require_once("auth.inc");
 
 global $openvpn_prots;
-$openvpn_prots = array("UDP", "UDP6", "TCP", "TCP6");
+$openvpn_prots = array(
+	"UDP4" => "UDP on IPv4 only",
+	"UDP6" => "UDP on IPv6 only",
+	"TCP4" => "TCP on IPv4 only",
+	"TCP6" => "TCP on IPv6 only",
+	"UDP" => "UDP IPv4 and IPv6 on all interfaces (multihome)",
+	"TCP" => "TCP IPv4 and IPv6 on all interfaces (multihome)"
+);
 
 global $openvpn_dev_mode;
 $openvpn_dev_mode = array("tun", "tap");
@@ -69,8 +76,21 @@ $openvpn_verbosity_level = array(
 
 global $openvpn_dh_lengths;
 $openvpn_dh_lengths = array(
-	1024, 2048, 3072, 4096, 7680, 8192, 15360, 16384
+	1024 => "1024 bit",
+	2048 => "2048 bit",
+	3072 => "3072 bit",
+	4096 => "4096 bit",
+	7680 => "7680 bit",
+	8192 => "8192 bit",
+	15360 => "15360 bit",
+	16384 => "16384 bit",
+	"none" => "ECDH Only"
 );
+foreach ($openvpn_dh_lengths as $idx => $dhlen) {
+	if (is_numeric($idx) && !file_exists("/etc/dh-parameters.{$idx}")) {
+		unset($openvpn_dh_lengths[$idx]);
+	}
+}
 
 global $openvpn_cert_depths;
 $openvpn_cert_depths = array(
@@ -379,6 +399,25 @@ function openvpn_get_cipherlist() {
 	return $ciphers;
 }
 
+function openvpn_get_curvelist() {
+
+	$curves = array();
+	$curves["none"] = gettext("Use Default");
+	$curve_out = shell_exec('/usr/local/sbin/openvpn --show-curves | /usr/bin/grep -v \'Available Elliptic curves\'');
+	$curve_lines = explode("\n", trim($curve_out));
+	sort($curve_lines);
+	foreach ($curve_lines as $line) {
+		$line = trim($line);
+		$curves[$line] = $line;
+	}
+	return $curves;
+}
+
+function openvpn_validate_curve($curve) {
+	$curves = openvpn_get_curvelist();
+	return array_key_exists($curve, $curves);
+}
+
 function openvpn_get_digestlist() {
 
 	$digests = array();
@@ -513,16 +552,20 @@ function openvpn_add_dhcpopts(& $settings, & $conf) {
 	}
 
 	if (!empty($settings['dns_server1'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server1']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server1'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server1']}\"\n";
 	}
 	if (!empty($settings['dns_server2'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server2']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server2'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server2']}\"\n";
 	}
 	if (!empty($settings['dns_server3'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server3']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server3'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server3']}\"\n";
 	}
 	if (!empty($settings['dns_server4'])) {
-		$conf .= "push \"dhcp-option DNS {$settings['dns_server4']}\"\n";
+		$dnstype = (is_ipaddrv6($settings['dns_server4'])) ? "DNS6" : "DNS";
+		$conf .= "push \"dhcp-option {$dnstype} {$settings['dns_server4']}\"\n";
 	}
 
 	if (!empty($settings['push_blockoutsidedns'])) {
@@ -595,7 +638,7 @@ function openvpn_add_keyfile(& $data, & $conf, $mode_id, $directive, $opt = "") 
 }
 
 function openvpn_reconfigure($mode, $settings) {
-	global $g, $config, $openvpn_tls_server_modes;
+	global $g, $config, $openvpn_tls_server_modes, $openvpn_dh_lengths;
 
 	if (empty($settings)) {
 		return;
@@ -714,10 +757,30 @@ function openvpn_reconfigure($mode, $settings) {
 	}
 
 	/* Determine the local IP to use - and make sure it matches with the selected protocol. */
-	if (is_ipaddrv4($iface_ip) && (stristr($settings['protocol'], "6") === false)) {
-		$conf .= "local {$iface_ip}\n";
-	} elseif (is_ipaddrv6($iface_ipv6) && (stristr($settings['protocol'], "6") !== false)) {
-		$conf .= "local {$iface_ipv6}\n";
+	switch ($settings['protocol']) {
+		case 'UDP':
+		case 'TCP':
+			$conf .= "multihome\n";
+			break;
+		case 'UDP4':
+		case 'TCP4':
+			if (is_ipaddrv4($iface_ip)) {
+				$conf .= "local {$iface_ip}\n";
+			}
+			if ($settings['interface'] == "any") {
+				$conf .= "multihome\n";
+			}
+			break;
+		case 'UDP6':
+		case 'TCP6':
+			if (is_ipaddrv6($iface_ipv6)) {
+				$conf .= "local {$iface_ipv6}\n";
+			}
+			if ($settings['interface'] == "any") {
+				$conf .= "multihome\n";
+			}
+			break;
+		default:
 	}
 
 	if (openvpn_validate_engine($settings['engine']) && ($settings['engine'] != "none")) {
@@ -988,7 +1051,20 @@ function openvpn_reconfigure($mode, $settings) {
 				openvpn_add_keyfile($cert['prv'], $conf, $mode_id, "key");
 			}
 			if ($mode == 'server') {
-				$conf .= "dh {$g['etc_path']}/dh-parameters.{$settings['dh_length']}\n";
+				if (is_numeric($settings['dh_length'])) {
+					if (!in_array($settings['dh_length'], array_keys($openvpn_dh_lengths))) {
+						/* The user selected a DH parameter length that does not have a corresponding file. */
+						log_error(gettext("Failed to construct OpenVPN server configuration. The selected DH Parameter length cannot be used."));
+						return;
+					}
+					$dh_file = "{$g['etc_path']}/dh-parameters.{$settings['dh_length']}";
+				} else {
+					$dh_file = $settings['dh_length'];
+				}
+				$conf .= "dh {$dh_file}\n";
+				if (!empty($settings['ecdh_curve']) && ($settings['ecdh_curve'] != "none") && openvpn_validate_curve($settings['ecdh_curve'])) {
+					$conf .= "ecdh-curve {$settings['ecdh_curve']}\n";
+				}
 			}
 			if (!empty($settings['crlref'])) {
 				$crl = lookup_crl($settings['crlref']);
@@ -1446,9 +1522,14 @@ function openvpn_get_server_status($server, $socket) {
 				$conn['common_name'] = $list[1];
 				$conn['remote_host'] = $list[2];
 				$conn['virtual_addr'] = $list[3];
-				$conn['bytes_recv'] = $list[4];
-				$conn['bytes_sent'] = $list[5];
-				$conn['connect_time'] = $list[6];
+				$conn['virtual_addr6'] = $list[4];
+				$conn['bytes_recv'] = $list[5];
+				$conn['bytes_sent'] = $list[6];
+				$conn['connect_time'] = $list[7];
+				$conn['connect_time_unix'] = $list[8];
+				$conn['user_name'] = $list[9];
+				$conn['client_id'] = $list[10];
+				$conn['peer_id'] = $list[11];
 				$server['conns'][] = $conn;
 			}
 			/* parse routing table lines */
@@ -1538,6 +1619,10 @@ function openvpn_get_client_status($client, $socket) {
 				$client['connect_time'] = date("D M j G:i:s Y", $list[0]);
 				$client['virtual_addr'] = $list[3];
 				$client['remote_host'] = $list[4];
+				$client['remote_port'] = $list[5];
+				$client['local_host'] = $list[6];
+				$client['local_port'] = $list[7];
+				$client['virtual_addr6'] = $list[8];
 			}
 			if (strstr($line, "CONNECTING")) {
 				$client['status'] = "connecting";

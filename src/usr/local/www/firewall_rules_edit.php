@@ -314,13 +314,13 @@ $dnqlist =& get_unique_dnqueue_list();
 $a_gatewaygroups = return_gateway_groups_array();
 
 if ($_POST) {
-	
+
 	unset($input_errors);
-	
+
 	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
 		$input_errors[] = gettext("The IP protocol is not recognized.");
 	}
-	
+
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
@@ -422,6 +422,12 @@ if ($_POST) {
 	}
 
 	$pconfig = $_POST;
+
+	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
+		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
+	} else {
+		unset($pconfig['icmptype']);
+	}
 
 	/* input validation */
 	$reqdfields = explode(" ", "type proto");
@@ -594,9 +600,9 @@ if ($_POST) {
 				// Only need to check valid if just one selected != "any", or >1 selected
 				$p = $_POST['ipprotocol'];
 				foreach ($t as $type) {
-					if (	($p == 'inet' && !array_key_exists($type, $icmptypes4)) || 
-						($p == 'inet6' && !array_key_exists($type, $icmptypes6)) || 
-						($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
+					if (($p == 'inet' && !array_key_exists($type, $icmptypes4)) ||
+					    ($p == 'inet6' && !array_key_exists($type, $icmptypes6)) ||
+					    ($p == 'inet46' && !array_key_exists($type, $icmptypes46))) {
 							$bad_types[] = $type;
 					}
 				}
@@ -1288,7 +1294,7 @@ $group->add(new Form_Select(
 	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
 	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
 	true
-))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? gettext($icmplookup[$pconfig['ipprotocol']]['helpmsg']) : '') . '</div>');
+))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
 $group->addClass('icmptype_section');
 
 $section->add($group);
@@ -1936,7 +1942,7 @@ events.push(function() {
 		if (jQuery.inArray('any', current_sel) != -1) {
 			// "any" negates all selections
 			$(listid).find('option').not('[value="any"]').removeAttr('selected');
-		} 
+		}
 		if ($(listid + ' option:selected').length == 0) {
 			// no selection = select "any"
 			$(listid + ' option[value="any"]').prop('selected', true);
@@ -1963,7 +1969,7 @@ events.push(function() {
 			$a[] = sprintf("'%s':'%s'", $icmp_k, $icmp_v);
 		}
 		$out1 .= "icmptypes['{$k}'] = {\n\t" . implode(",\n\t", $a) . "\n};\n";
-		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', gettext($v['helpmsg'])) . "';\n";
+		$out2 .= "icmphelp['{$k}'] = '" . str_replace("'", '&apos;', $v['helpmsg']) . "';\n";
 	}
 	echo $out1;
 	echo $out2;

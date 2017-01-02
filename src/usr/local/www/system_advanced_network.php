@@ -205,10 +205,13 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['global-v6duid'],
 	['placeholder' => $duid]
-	))->setWidth(9)->sethelp('The current DUID is displayed above. You may enter a new DUID which will be used on the next WAN interface UP event.' .'<br />' .
-			'Unless you enter a DUID the system will default to using the DUID created by the client on start, this DUID is NOT saved to config.' .
-			'It is strongly recommended if you use RAM disk to enter a DUID here and then save. The saved DUID will take effect after a machine'.
-			' reboot or re-configure of the WAN interface(s).');
+	))->setWidth(9)->sethelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. ' .
+		'<br />' .
+		'By default, the firewall automatically creates a dynamic DUID which is not saved in the firewall configuration. '.
+		'To ensure the same DUID is retained by the firewall at all times, enter a DUID in this field. ' .
+		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.' .
+		'<br />' .
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot. ');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

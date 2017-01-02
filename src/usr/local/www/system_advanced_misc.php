@@ -590,7 +590,7 @@ events.push(function() {
 		}
 	});
 
-    drb = "<?=$pconfig['doreboot']?>";
+	drb = "<?=$pconfig['doreboot']?>";
 
 	if (drb == "yes") {
 		$('form').append("<input type=\"hidden\" name=\"override\" value=\"yes\" />");

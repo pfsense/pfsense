@@ -160,14 +160,16 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 			MOVE_PKG_DATA=1
 			rm -rf /var/db/pkg 2>/dev/null
 			rm -rf /var/cache/pkg 2>/dev/null
-			mv /root/var/db/pkg /var/db
-			mv /root/var/cache/pkg /var/cache
+			mv -f /root/var/db/pkg /var/db
+			mv -f /root/var/cache/pkg /var/cache
 		# If use MFS var is enabled, move files to a safe place
 		elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
 			MOVE_PKG_DATA=1
+			rm -rf /root/var/db/pkg 2>/dev/null
+			rm -rf /root/var/cache/pkg 2>/dev/null
 			/bin/mkdir -p /root/var/db /root/var/cache
-			mv /var/db/pkg /root/var/db
-			mv /var/cache/pkg /root/var/cache
+			mv -f /var/db/pkg /root/var/db
+			mv -f /var/cache/pkg /root/var/cache
 		fi
 	elif [ "${PLATFORM}" = "nanobsd" ]; then
 		MOVE_PKG_DATA=1

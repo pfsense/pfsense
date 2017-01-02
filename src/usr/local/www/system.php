@@ -392,7 +392,7 @@ for ($i=1; $i<5; $i++) {
 
 	$help = "Enter IP addresses to be used by the system for DNS resolution. " .
 		"These are also used for the DHCP service, DNS Forwarder and DNS Resolver " .
-		"(if it has DNS Query Forwarding enabled).";
+		"when it has DNS Query Forwarding enabled.";
 
 	if ($multiwan)	{
 		$options = array('none' => 'none');

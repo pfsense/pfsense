@@ -477,7 +477,7 @@ function build_priv_table() {
 	if ($user_has_root_priv) {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td colspan="3">';
-		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has administrator-level privilege') . '</b>';
+		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has administrator-level access') . '</b>';
 		$privhtml .=			'</td>';
 		$privhtml .=			'<td>';
 		$privhtml .=			'</td>';

@@ -13,12 +13,13 @@ if [ -d "${RRDDBPATH}" ]; then
 		xmlfile="${rrdfile%.rrd}.xml"
 		tgzfile="${rrdfile%.rrd}.tgz"
 		/usr/bin/nice -n20 /usr/local/bin/rrdtool dump "$rrdfile" "$xmlfile"
-		cd / && /usr/bin/tar -czf "${tgzfile}" -C / "${RRDDBPATH#/}"/*.xml
-		/bin/rm -f "${RRDDBPATH}"/*.xml
+		/usr/bin/tar -czf "${tgzfile}" -C / ${xmlfile#/}
+		/bin/rm -f ${xmlfile}
 		tgzlist="${tgzlist} @${tgzfile}"
 	done
+
 	if [ -n "${tgzlist}" ]; then
-		cd / && /usr/bin/tar -czf "${CF_CONF_PATH}/rrd.tgz" ${tgzlist}
+		/usr/bin/tar -czf "${CF_CONF_PATH}/rrd.tgz" -C / ${tgzlist}
 		/bin/rm -f "${RRDDBPATH}"/*.tgz
 	fi
 fi

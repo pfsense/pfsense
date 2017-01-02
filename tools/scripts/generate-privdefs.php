@@ -96,6 +96,7 @@ $pdata .= "\n";
 $pdata .= "\$priv_list['page-all'] = array();\n";
 $pdata .= "\$priv_list['page-all']['name'] = gettext(\"WebCfg - All pages\");\n";
 $pdata .= "\$priv_list['page-all']['descr'] = gettext(\"Allow access to all pages\");\n";
+$pdata .= "\$priv_list['page-all']['warn'] = \"standard-warning-root\";\n";
 $pdata .= "\$priv_list['page-all']['match'] = array();\n";
 $pdata .= "\$priv_list['page-all']['match'][] = \"*\";\n";
 $pdata .= "\n";
@@ -107,6 +108,7 @@ foreach ($data as $fname => $tags) {
 		$ident = "";
 		$name = "";
 		$descr = "";
+		$warn = "";
 		$match = array();
 
 		foreach ($vals as $vname => $vlist) {
@@ -120,6 +122,9 @@ foreach ($data as $fname => $tags) {
 					break;
 				case "DESCR":
 					$descr = $vlist[0];
+					break;
+				case "WARN":
+					$warn = $vlist[0];
 					break;
 				case "MATCH":
 					$match = $vlist;
@@ -140,6 +145,11 @@ foreach ($data as $fname => $tags) {
 		$pdata .= "\$priv_list['{$ident}'] = array();\n";
 		$pdata .= "\$priv_list['{$ident}']['name'] = gettext(\"WebCfg - {$name}\");\n";
 		$pdata .= "\$priv_list['{$ident}']['descr'] = gettext(\"{$descr}\");\n";
+
+		if (strlen($warn) > 0) {
+			$pdata .= "\$priv_list['{$ident}']['warn'] = \"{$warn}\";\n";
+		}
+
 		$pdata .= "\$priv_list['{$ident}']['match'] = array();\n";
 
 		foreach ($match as $url)

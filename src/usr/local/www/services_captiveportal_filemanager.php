@@ -27,8 +27,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-filemanager
-##|*NAME=Services: Captive portal: File Manager
-##|*DESCR=Allow access to the 'Services: Captive portal: File Manager' page.
+##|*NAME=Services: Captive Portal: File Manager
+##|*DESCR=Allow access to the 'Services: Captive Portal: File Manager' page.
 ##|*MATCH=services_captiveportal_filemanager.php*
 ##|-PRIV
 

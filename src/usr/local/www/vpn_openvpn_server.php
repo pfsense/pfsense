@@ -775,14 +775,24 @@ if ($act=="new" || $act=="edit"):
 		'DH Parameter Length',
 		$pconfig['dh_length'],
 		$openvpn_dh_lengths
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
+		))->setHelp('Diffie-Hellman (DH) parameter set used for key exchange.' .
+		    '<div class="infoblock">' .
+		    sprint_info_box('Only DH parameter sets which exist in /etc/ are shown. ' .
+		        '<br/>' .
+		        'Generating new or stronger DH parameters is CPU-intensive and must be performed manually. ' .
+		        'Consult <a href="https://doc.pfsense.org/index.php/DH_Parameters">the doc wiki article on DH Parameters</a> ' .
+		        'for information on generating new or stronger paramater sets.', 'info', false) .
+		    '</div>');
 
 	$section->addInput(new Form_Select(
 		'ecdh_curve',
 		'ECDH Curve',
 		$pconfig['ecdh_curve'],
 		openvpn_get_curvelist()
-		));
+		))->setHelp('The Elliptic Curve to use for key exchange. ' .
+		    '<br/>' .
+		    'The curve from the server certificate is used by default when the server uses an ECDSA certificate. ' .
+		    'Otherwise, secp384r1 is used as a fallback.');
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(

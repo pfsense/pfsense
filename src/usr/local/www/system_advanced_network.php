@@ -40,6 +40,7 @@ require_once("shaper.inc");
 $pconfig['ipv6nat_enable'] = isset($config['diag']['ipv6nat']['enable']);
 $pconfig['ipv6nat_ipaddr'] = $config['diag']['ipv6nat']['ipaddr'];
 $pconfig['ipv6allow'] = isset($config['system']['ipv6allow']);
+$pconfig['global-v6duid'] = $config['system']['global-v6duid'];
 $pconfig['prefer_ipv4'] = isset($config['system']['prefer_ipv4']);
 $pconfig['sharednet'] = $config['system']['sharednet'];
 $pconfig['disablechecksumoffloading'] = isset($config['system']['disablechecksumoffloading']);
@@ -81,6 +82,17 @@ if ($_POST) {
 			$config['system']['prefer_ipv4'] = true;
 		} else {
 			unset($config['system']['prefer_ipv4']);
+		}
+
+		if (!empty($_POST['global-v6duid'])) {
+			$_POST['global-v6duid'] = strtolower(str_replace("-", ":", $_POST['global-v6duid']));
+			if (!is_duid($_POST['global-v6duid'])) {
+				$input_errors[] = gettext("A valid DUID must be specified");
+			} else {
+				$config['system']['global-v6duid'] = $_POST['global-v6duid'];
+			}
+		} else {
+			unset($config['system']['global-v6duid']);
 		}
 
 		if ($_POST['sharednet'] == "yes") {
@@ -145,6 +157,7 @@ $tab_array[] = array(gettext("Networking"), true, "system_advanced_network.php")
 $tab_array[] = array(gettext("Miscellaneous"), false, "system_advanced_misc.php");
 $tab_array[] = array(gettext("System Tunables"), false, "system_advanced_sysctl.php");
 $tab_array[] = array(gettext("Notifications"), false, "system_advanced_notifications.php");
+$duid = get_duid_from_file();
 display_top_tabs($tab_array);
 
 $form = new Form;
@@ -185,6 +198,20 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['prefer_ipv4']
 ))->setHelp('By default, if IPv6 is configured and a hostname resolves IPv6 and IPv4 addresses, '. 
 	'IPv6 will be used. If this option is selected, IPv4 will be preferred over IPv6.');
+
+$section->addInput(new Form_Input(
+	'global-v6duid',
+	'DHCP6 DUID',
+	'text',
+	$pconfig['global-v6duid'],
+	['placeholder' => $duid]
+	))->setWidth(9)->sethelp('This is the DHCPv6 Unique Identifier (DUID) used by the firewall when requesting an IPv6 address. ' .
+		'<br />' .
+		'By default, the firewall automatically creates a dynamic DUID which is not saved in the firewall configuration. '.
+		'To ensure the same DUID is retained by the firewall at all times, enter a DUID in this field. ' .
+		'The new DUID will take effect after a reboot or when the WAN interface(s) are reconfigured by the firewall.' .
+		'<br />' .
+		'If the firewall is configured to use a RAM disk for /var, the best practice is to store a DUID here otherwise the DUID will change on each reboot. ');
 
 $form->add($section);
 $section = new Form_Section('Network Interfaces');

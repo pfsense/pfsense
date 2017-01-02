@@ -319,7 +319,7 @@ if ($_POST) {
 	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
 		$input_errors[] = gettext("The IP protocol is not recognized.");
 	}
-	
+
 	if (isset($a_filter[$id]['associated-rule-id'])) {
 		$_POST['proto'] = $pconfig['proto'];
 		if ($pconfig['proto'] == "icmp") {
@@ -429,7 +429,8 @@ if ($_POST) {
 	}  
 
 	/* further input validation */
-	$reqdfields = explode(" ", "type proto");
+
+  $reqdfields = explode(" ", "type proto");
 	if (isset($a_filter[$id]['associated-rule-id']) === false) {
 		$reqdfields[] = "src";
 		$reqdfields[] = "dst";

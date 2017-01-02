@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedips
-##|*NAME=Services: Captive portal: Allowed IPs
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed IPs' page.
+##|*NAME=Services: Captive Portal: Allowed IPs
+##|*DESCR=Allow access to the 'Services: Captive Portal: Allowed IPs' page.
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 

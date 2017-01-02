@@ -5034,4 +5034,33 @@ function upgrade_158_to_159() {
 	}
 }
 
+/* Convert OpenVPN "protocol" to new style for OpenVPN 2.4, old udp/tcp was
+ * IPv4 only, now is dual stack, so change it to udp4/tcp4
+ */
+function upgrade_159_to_160() {
+	global $config;
+
+	if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
+	}
+}
 ?>

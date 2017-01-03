@@ -415,6 +415,10 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
+	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['crypto'], "GCM")) {
+		$input_errors[] = gettext("CGM Encryption Algorithms cannot be used with Shared Key mode.");
+	}
+
 	if ($pconfig['dev_mode'] != "tap") {
 		$reqdfields[] = 'tunnel_network';
 		$reqdfieldsn[] = gettext('Tunnel network');

@@ -50,6 +50,7 @@ $pconfig['powerd_enable'] = isset($config['system']['powerd_enable']);
 $pconfig['crypto_hardware'] = $config['system']['crypto_hardware'];
 $pconfig['thermal_hardware'] = $config['system']['thermal_hardware'];
 $pconfig['schedule_states'] = isset($config['system']['schedule_states']);
+$pconfig['require_state_filter'] = isset($config['system']['require_state_filter']);
 $pconfig['gw_down_kill_states'] = isset($config['system']['gw_down_kill_states']);
 $pconfig['skip_rules_gw_down'] = isset($config['system']['skip_rules_gw_down']);
 $pconfig['use_mfs_tmpvar'] = isset($config['system']['use_mfs_tmpvar']);
@@ -215,6 +216,12 @@ if ($_POST) {
 		} else {
 			unset($config['system']['schedule_states']);
 		}
+
+ 		if ($_POST['require_state_filter'] == "yes") {
+ 			$config['system']['require_state_filter'] = true;
+ 		} else {
+ 			unset($config['system']['require_state_filter']);
+ 		}
 
 		if ($_POST['gw_down_kill_states'] == "yes") {
 			$config['system']['gw_down_kill_states'] = true;
@@ -469,6 +476,17 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('By default, when a schedule expires, connections permitted by that '.
 	'schedule are killed. This option overrides that behavior by not clearing states '.
 	'for existing connections.');
+
+$section = new Form_Section('Large Data Set Behavior');
+ 
+$section->addInput(new Form_Checkbox(
+ 	'require_state_filter',
+ 	'Require State Filter',
+ 	'Do not display state table without a filter',
+	$pconfig['require_state_filter']
+))->setHelp('By default, the entire state table is displayed when entering '.
+	'Diagnostics > States. This option requires a filter to be entered '.
+	'before the states are displayed. Useful for systems with large state tables.');
 
 $form->add($section);
 $section = new Form_Section('Gateway Monitoring');

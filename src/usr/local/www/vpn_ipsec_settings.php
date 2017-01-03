@@ -177,9 +177,6 @@ if ($_POST) {
 		$retval |= filter_configure();
 
 		vpn_ipsec_configure($needsrestart);
-
-		header("Location: vpn_ipsec_settings.php");
-		return;
 	}
 
 	// The logic value sent by $POST for autoexcludelanaddress is opposite to

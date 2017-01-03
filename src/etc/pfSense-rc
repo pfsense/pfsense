@@ -105,6 +105,20 @@ while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
 	attempts=$((attempts+1))
 done
 
+# Handle ZFS read-only case
+/sbin/kldstat -qm zfs
+if [ $? -eq 0 ]; then
+	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+	if [ $ZFSFSAVAILABLE -eq 0 ]; then
+		/sbin/kldunload zfs
+	elif [ -f /usr/bin/grep ]; then
+		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+		if [ "$ZFSROOT" != "" ]; then
+			/sbin/zfs set readonly=off $ZFSROOT
+		fi
+	fi
+fi
+
 # If /conf is a directory, convert it to a symlink to /cf/conf
 if [ -d "/conf" ]; then
 	# If item is not a symlink then rm and recreate
@@ -151,20 +165,6 @@ fi
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
-
-# Handle ZFS read-only case
-/sbin/kldstat -qm zfs
-if [ $? -eq 0 ]; then
-	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-	if [ $ZFSFSAVAILABLE -eq 0 ]; then
-		/sbin/kldunload zfs
-	elif [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
-		fi
-	fi
-fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then

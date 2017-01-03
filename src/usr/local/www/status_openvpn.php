@@ -312,7 +312,13 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($client['name']);?></td>
 						<td><?=$client['status'];?></td>
 						<td><?=$client['connect_time'];?></td>
-						<td><?=$client['local_host'];?>:<?=$client['local_port'];?></td>
+						<td>
+					<?php if (empty($client['local_host']) && empty($client['local_port'])): ?>
+							(pending)
+					<?php else: ?>
+							<?=$client['local_host'];?>:<?=$client['local_port'];?>
+					<?php endif; ?>
+						</td>
 						<td>
 							<?=$client['virtual_addr'];?>
 					<?php if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])): ?>
@@ -320,7 +326,13 @@ include("head.inc"); ?>
 					<?php endif; ?>
 							<?=$client['virtual_addr6'];?>
 						</td>
-						<td><?=$client['remote_host'];?>:<?=$client['remote_port'];?></td>
+						<td>
+					<?php if (empty($client['remote_host']) && empty($client['remote_port'])): ?>
+							(pending)
+					<?php else: ?>
+							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
+					<?php endif; ?>
+						</td>
 						<td><?=format_bytes($client['bytes_sent']);?> / <?=format_bytes($client['bytes_recv']);?></td>
 						<td>
 							<table>

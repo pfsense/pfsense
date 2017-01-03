@@ -165,6 +165,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
+		$pconfig['compression_push'] = $a_server[$id]['compression_push'];
 		$pconfig['passtos'] = $a_server[$id]['passtos'];
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
@@ -414,6 +415,10 @@ if ($_POST) {
 		$reqdfieldsn = array(gettext('Shared key'));
 	}
 
+	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['crypto'], "GCM")) {
+		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
+	}
+
 	if ($pconfig['dev_mode'] != "tap") {
 		$reqdfields[] = 'tunnel_network';
 		$reqdfieldsn[] = gettext('Tunnel network');
@@ -498,6 +503,7 @@ if ($_POST) {
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
 		$server['compression'] = $pconfig['compression'];
+		$server['compression_push'] = $pconfig['compression_push'];
 		$server['passtos'] = $pconfig['passtos'];
 		$server['client2client'] = $pconfig['client2client'];
 
@@ -775,14 +781,24 @@ if ($act=="new" || $act=="edit"):
 		'DH Parameter Length',
 		$pconfig['dh_length'],
 		$openvpn_dh_lengths
-		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
+		))->setHelp('Diffie-Hellman (DH) parameter set used for key exchange.' .
+		    '<div class="infoblock">' .
+		    sprint_info_box('Only DH parameter sets which exist in /etc/ are shown. ' .
+		        '<br/>' .
+		        'Generating new or stronger DH parameters is CPU-intensive and must be performed manually. ' .
+		        'Consult <a href="https://doc.pfsense.org/index.php/DH_Parameters">the doc wiki article on DH Parameters</a> ' .
+		        'for information on generating new or stronger paramater sets.', 'info', false) .
+		    '</div>');
 
 	$section->addInput(new Form_Select(
 		'ecdh_curve',
 		'ECDH Curve',
 		$pconfig['ecdh_curve'],
 		openvpn_get_curvelist()
-		));
+		))->setHelp('The Elliptic Curve to use for key exchange. ' .
+		    '<br/>' .
+		    'The curve from the server certificate is used by default when the server uses an ECDSA certificate. ' .
+		    'Otherwise, secp384r1 is used as a fallback.');
 
 	if (!$pconfig['shared_key']) {
 		$section->addInput(new Form_Checkbox(
@@ -950,6 +966,13 @@ if ($act=="new" || $act=="edit"):
 		))->setHelp('Compress tunnel packets using the LZO algorithm. ' .
 					'Adaptive compression will dynamically disable compression for a period of time if OpenVPN detects that the data in the ' .
 					'packets is not being compressed efficiently.');
+
+	$section->addInput(new Form_Checkbox(
+		'compression_push',
+		'Push Compression',
+		'Push the selected Compression setting to connecting clients.',
+		$pconfig['compression_push']
+	));
 
 	$section->addInput(new Form_Checkbox(
 		'passtos',
@@ -1298,6 +1321,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
+				hideCheckbox('compression_push', false);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1309,6 +1333,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
+				hideCheckbox('compression_push', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1325,6 +1350,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);
+				hideCheckbox('compression_push', true);
 			break;
 		}
 

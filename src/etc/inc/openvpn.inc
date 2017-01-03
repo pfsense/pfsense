@@ -137,6 +137,12 @@ $openvpn_topologies = array(
 //	'p2p => gettext("Peer to Peer -- One IP address per client peer-to-peer style. Does not work on Windows.")
 );
 
+global $openvpn_tls_modes;
+$openvpn_tls_modes = array(
+	'auth' => gettext("TLS Authentication"),
+	'crypt' => gettext("TLS Encryption and Authentication"),
+);
+
 function openvpn_build_mode_list() {
 	global $openvpn_server_modes;
 
@@ -871,7 +877,7 @@ function openvpn_reconfigure($mode, $settings) {
 		// configure user auth modes
 		switch ($settings['mode']) {
 			case 'server_user':
-				$conf .= "client-cert-not-required\n";
+				$conf .= "verify-client-cert none\n";
 			case 'server_tls_user':
 				/* username-as-common-name is not compatible with server-bridge */
 				if (stristr($conf, "server-bridge") === false) {
@@ -1077,12 +1083,18 @@ function openvpn_reconfigure($mode, $settings) {
 				openvpn_add_keyfile($crl['text'], $conf, $mode_id, "crl-verify");
 			}
 			if ($settings['tls']) {
-				if ($mode == "server") {
-					$tlsopt = 0;
+				if ($settings['tls_type'] == "crypt") {
+					$tls_directive = "tls-crypt";
+					$tlsopt = "";
 				} else {
-					$tlsopt = 1;
+					$tls_directive = "tls-auth";
+					if ($mode == "server") {
+						$tlsopt = 0;
+					} else {
+						$tlsopt = 1;
+					}
 				}
-				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, "tls-auth", $tlsopt);
+				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);
 			}
 			break;
 	}

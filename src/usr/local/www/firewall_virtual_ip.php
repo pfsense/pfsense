@@ -79,7 +79,6 @@ if ($_POST) {
 
 		$retval = 0;
 		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		clear_subsystem_dirty('vip');
 	}
@@ -240,8 +239,8 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-} else if ($savemsg) {
-	print_info_box($savemsg, 'success');
+} else if ($_POST['apply']) {
+	print_apply_result_box($retval);
 } else if (is_subsystem_dirty('vip')) {
 	print_apply_box(gettext("The VIP configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }

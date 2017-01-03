@@ -121,19 +121,11 @@ if ($_GET) {
 			}
 
 			if (write_config()) {
+				$changes_applied = true;
 				$retval = 0;
 				$retval |= filter_configure();
-
-				if (stristr($retval, "error") <> true) {
-					$savemsg = get_std_save_message($retval);
-					$class = 'success';
-				} else {
-					$savemsg = $retval;
-					$class = 'warning';
-				}
 			} else {
-				$savemsg = gettext("Unable to write config.xml (Access Denied?).");
-				$class = 'warning';
+				$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
 			}
 
 			$dfltmsg = true;
@@ -280,17 +272,9 @@ if ($_POST) {
 		}
 	} else if ($_POST['apply']) {
 		write_config();
-
+		$changes_applied = true;
 		$retval = 0;
-		$retval = filter_configure();
-
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-			$class = 'success';
-		} else {
-			$savemsg = $retval;
-			$class = 'warning';
-		}
+		$retval |= filter_configure();
 
 		/* reset rrd queues */
 		system("rm -f /var/db/rrd/*queuedrops.rrd");
@@ -369,8 +353,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($no_write_config_msg) {
+	print_info_box($no_write_config_msg, 'danger');
+}
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('shaper')) {

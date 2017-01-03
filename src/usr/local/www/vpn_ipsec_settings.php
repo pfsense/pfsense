@@ -172,15 +172,9 @@ if ($_POST) {
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-			$class = 'success';
-		} else {
-			$savemsg = gettext($retval);
-			$class = 'warning';
-		}
+		$retval |= filter_configure();
 
 		vpn_ipsec_configure($needsrestart);
 
@@ -220,8 +214,8 @@ function maxmss_checked(obj) {
 </script>
 
 <?php
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if ($input_errors) {

@@ -54,7 +54,7 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
+	$info_msg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
 	    gettext("Only interfaces configured with a static IP will be shown.");
 }
 
@@ -243,8 +243,9 @@ if ($_POST) {
 		}
 
 		write_config();
-		$retval = services_radvd_configure();
-		$savemsg = get_std_save_message($retval);
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= services_radvd_configure();
 	}
 }
 
@@ -261,8 +262,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
+}
+
+if ($info_msg) {
+	print_info_box($info_msg, 'success');
 }
 
 /* active tabs */

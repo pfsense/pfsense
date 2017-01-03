@@ -47,7 +47,6 @@ if ($_POST) {
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
 
-		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('loadbalancer');
 	}
 }
@@ -93,8 +92,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('loadbalancer')) {

@@ -314,8 +314,9 @@ if ($_POST) {
 			write_config($changedesc);
 		}
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_hostname_configure();
+		$retval |= system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
 		if (isset($config['dnsmasq']['enable'])) {
@@ -332,8 +333,6 @@ if ($_POST) {
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();
-
-		$savemsg = get_std_save_message($retval);
 	}
 
 	unset($ignore_posted_dnsgw);
@@ -346,8 +345,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 ?>
 <div id="container">

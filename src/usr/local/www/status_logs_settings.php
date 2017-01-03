@@ -80,7 +80,7 @@ function is_valid_syslog_server($target) {
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files(true);
-	$savemsg .= gettext("The log files have been reset.");
+	$reset_msg = gettext("The log files have been reset.");
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -162,8 +162,9 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_syslogd_start();
+		$retval |= system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
 		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
 		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
@@ -171,14 +172,12 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$retval |= filter_configure();
 		}
 
-		$savemsg = get_std_save_message($retval);
-
 		if ($oldnolognginx !== isset($config['syslog']['nolognginx'])) {
 			ob_flush();
 			flush();
 			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 			send_event("service restart webgui");
-			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+			$extra_save_msg = gettext("WebGUI process is restarting.");
 		}
 
 		filter_pflog_start(true);
@@ -204,8 +203,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($reset_msg) {
+	print_info_box($reset_msg, 'success');
+}
+
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 }
 
 $tab_array = array();

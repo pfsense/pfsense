@@ -65,7 +65,7 @@ if ($_REQUEST['getupdatestatus']) {
 <?php
 		break;
 	case '=':
-		print(gettext("The system is on the latest version."));
+		printf('<span class="text-success">%s</span>', gettext("The system is on the latest version."));
 		break;
 	case '>':
 		print(gettext("The system is on a later version than<br />the official release."));
@@ -225,7 +225,8 @@ $filesystems = get_mounted_filesystems();
 					<div id="cpuPB" class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%">
 					</div>
 				</div>
-				<span id="cpumeter"><?=gettext('(Updating in 10 seconds)')?></span>
+				<?php $update_period = (!empty($config['widgets']['period'])) ? $config['widgets']['period'] : "10"; ?>
+				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
 			</td>
 		</tr>
 		<tr>

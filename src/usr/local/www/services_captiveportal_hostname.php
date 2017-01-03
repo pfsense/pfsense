@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedhostnames
-##|*NAME=Services: Captive portal: Allowed Hostnames
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed Hostnames' page.
+##|*NAME=Services: Captive Portal: Allowed Hostnames
+##|*DESCR=Allow access to the 'Services: Captive Portal: Allowed Hostnames' page.
 ##|*MATCH=services_captiveportal_hostname.php*
 ##|-PRIV
 
@@ -75,15 +75,16 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 			}
 			$sn = (is_ipaddrv6($ip)) ? 128 : 32;
 			if (is_ipaddr($ip)) {
-				$ipfw = pfSense_ipfw_getTablestats($cpzoneid, IP_FW_TABLE_XLISTENTRY, 3, $ip);
-				if (is_array($ipfw)) {
-					captiveportal_free_dn_ruleno($ipfw['dnpipe']);
-					pfSense_pipe_action("pipe delete {$ipfw['dnpipe']}");
-					pfSense_pipe_action("pipe delete " . ($ipfw['dnpipe']+1));
-				}
+				$rule = pfSense_ipfw_table_lookup("{$cpzone}_allowed_up", "{$ip}/{$sn}");
 
-				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 3, $ip, $sn);
-				pfSense_ipfw_Tableaction($cpzoneid, IP_FW_TABLE_XDEL, 4, $ip, $sn);
+				pfSense_ipfw_table("{$cpzone}_allowed_up", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+				pfSense_ipfw_table("{$cpzone}_allowed_down", IP_FW_TABLE_XDEL, "{$ip}/{$sn}");
+
+				if (is_array($rule) && !empty($rule['pipe'])) {
+					captiveportal_free_dn_ruleno($rule['pipe']);
+					pfSense_ipfw_pipe("pipe delete {$rule['pipe']}");
+					pfSense_ipfw_pipe("pipe delete " . ($rule['pipe']+1));
+				}
 			}
 		}
 
@@ -111,12 +112,12 @@ $tab_array[] = array(gettext("File Manager"), false, "services_captiveportal_fil
 display_top_tabs($tab_array, true);
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("Hostname"); ?></th>
 				<th><?=gettext("Description"); ?></th>
-				<th><?=gettext("Actions"); ?></th>
+				<th data-sortable="false"><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 

@@ -59,6 +59,8 @@ if ($_POST['apply']) {
 	clear_subsystem_dirty('shaper');
 }
 
+$shaperIFlist = get_configured_interface_with_descr();
+
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
 $shortcut_section = "trafficshaper";
 
@@ -108,5 +110,13 @@ endforeach;
 		</dl>
 	</div>
 </div>
+<?php if (empty(get_interface_list_to_show())): ?>
+<div>
+	<div class="infoblock blockopen">
+		<?php print_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false); ?>
+	</div>
+</div>
+<?php endif; ?>
+
 <?php
 include("foot.inc");

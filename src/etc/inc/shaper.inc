@@ -1455,28 +1455,28 @@ class priq_queue {
 			null,
 			null,
 			!empty($this->GetRed())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#red">' . gettext('Random Early Detection') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'rio',
 			null,
 			null,
 			!empty($this->GetRio())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#rio">' . gettext('Random Early Detection In and Out') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'ecn',
 			null,
 			null,
 			!empty($this->GetEcn())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Explicit Congestion Notification') . '</a>');
 
 		$group->add(new Form_Checkbox(
 			'codel',
 			null,
 			null,
 			!empty($this->GetCodel())
-		))->setHelp('<a target="_new" href="http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
+		))->setHelp('<a target="_new" href="https://web.archive.org/web/20160404153707/http://www.openbsd.org/faq/pf/queueing.html#ecn">' . gettext('Codel Active Queue') . '</a>');
 
 		$group->setHelp('Select options for this queue');
 
@@ -2267,7 +2267,8 @@ EOJS;
 			'bandwidth',
 			null,
 			'number',
-			$this->GetBandwidth()
+			$this->GetBandwidth(),
+			['step' => 'any', 'min' => '0.000']
 		));
 
 		$group->add(new Form_Select(
@@ -3373,7 +3374,7 @@ class dnpipe_class extends dummynet_class {
 			$q->delete_queue();
 		}
 		unset_dn_object_by_reference($this->GetLink());
-		@pfSense_pipe_action("pipe delete " . $this->GetNumber());
+		@pfSense_ipfw_pipe("pipe delete " . $this->GetNumber());
 	}
 	function GetBandwidth() {
 		return $this->qbandwidth;
@@ -3987,7 +3988,7 @@ class dnqueue_class extends dummynet_class {
 	function delete_queue() {
 		cleanup_dnqueue_from_rules($this->GetQname());
 		unset_dn_object_by_reference($this->GetLink());
-		@pfSense_pipe_action("queue delete " . $this->GetNumber());
+		@pfSense_ipfw_pipe("queue delete " . $this->GetNumber());
 	}
 
 	function validate_input($data, &$input_errors) {

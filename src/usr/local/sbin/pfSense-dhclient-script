@@ -102,7 +102,6 @@ add_new_address() {
 		netmask $new_subnet_mask \
 		broadcast $new_broadcast_address \
 		$medium
-	$IFCONFIG $interface setfirst $new_ip_address
 
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"

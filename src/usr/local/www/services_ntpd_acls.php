@@ -35,6 +35,7 @@ require_once("shaper.inc");
 if (!is_array($config['ntpd'])) {
 	$config['ntpd'] = array();
 }
+
 if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
 	$networkacl = $config['ntpd']['restrictions']['row'];
 } else {
@@ -42,6 +43,7 @@ if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restr
 }
 
 if ($_POST) {
+
 	unset($input_errors);
 	$pconfig = $_POST;
 
@@ -84,21 +86,19 @@ if ($_POST) {
 			}
 			/* End ACL Flags */
 
-			if (!is_ipaddr($networkacl[$x]['acl_network'])) {
-				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
-			}
-			if (is_ipaddr($networkacl[$x]['acl_network'])) {
-				if (!is_subnet($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-					$input_errors[] = gettext("A valid IPv4 netmask must be entered for each IPv4 row under Networks.");
+			if (isset($networkacl[$x]['notrap']) || isset($networkacl[$x]['kod']) || isset($networkacl[$x]['nomodify'])
+			   || isset($networkacl[$x]['noquery']) || isset($networkacl[$x]['nopeer']) || isset($networkacl[$x]['noserve'])) {
+				if (!is_ipaddr($networkacl[$x]['acl_network'])) {
+					$input_errors[] = sprintf(gettext("A valid IP address must be entered for row %s under Networks."), $networkacl[$x]['acl_network']);
+				} else {
+					if (is_ipaddrv4($networkacl[$x]['acl_network'])) {
+						if (!is_subnetv4($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+							$input_errors[] = sprintf(gettext("A valid IPv4 netmask must be entered for IPv4 row %s under Networks."), $networkacl[$x]['acl_network']);
+						}
+					} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
+						$input_errors[] = sprintf(gettext("A valid IPv6 netmask must be entered for IPv6 row %s under Networks."), $networkacl[$x]['acl_network']);
+					}
 				}
-			} else if (function_exists("is_ipaddrv6")) {
-				if (!is_ipaddrv6($networkacl[$x]['acl_network'])) {
-					$input_errors[] = gettext("A valid IPv6 address must be entered for {$networkacl[$x]['acl_network']}.");
-				} else if (!is_subnetv6($networkacl[$x]['acl_network']."/".$networkacl[$x]['mask'])) {
-					$input_errors[] = gettext("A valid IPv6 netmask must be entered for each IPv6 row under Networks.");
-				}
-			} else {
-				$input_errors[] = gettext("A valid IP address must be entered for each row under Networks.");
 			}
 		} else if (isset($networkacl[$x])) {
 			unset($networkacl[$x]);
@@ -245,35 +245,35 @@ foreach ($networkacl as $item) {
 		null,
 		$item['kod']
 	))->setHelp('KOD');
-	
+
 	$group->add(new Form_Checkbox(
 		'nomodify' . $counter,
 		null,
 		null,
 		$item['nomodify']
 	))->setHelp('nomodify');
-	
+
 	$group->add(new Form_Checkbox(
 		'noquery' . $counter,
 		null,
 		null,
 		$item['noquery']
 	))->setHelp('noquery');
-	
+
 	$group->add(new Form_Checkbox(
 		'noserve' . $counter,
 		null,
 		null,
 		$item['noserve']
 	))->setHelp('noserve');
-	
+
 	$group->add(new Form_Checkbox(
 		'nopeer' . $counter,
 		null,
 		null,
 		$item['nopeer']
 	))->setHelp('nopeer');
-	
+
 	$group->add(new Form_Checkbox(
 		'notrap' . $counter,
 		null,
@@ -286,9 +286,10 @@ foreach ($networkacl as $item) {
 		'Delete',
 		null,
 		'fa-trash'
-	))->addClass('btn-warning');
+	))->addClass('btn-warning btn-xs');
 
 	$group->addClass('repeatable');
+
 	$section->add($group);
 
 	$counter++;
@@ -309,9 +310,11 @@ print($form);
 
 <script type="text/javascript">
 //<![CDATA[
-	// If this variable is declared, any help text will not be deleted when rows are added
-	// IOW the help text will appear on every row
-	retainhelp = true;
+events.push(function(){
+	retainhelp = false;
+	checkLastRow();
+});
+//]]>
 </script>
 
 <?php include("foot.inc");

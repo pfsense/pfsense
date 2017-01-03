@@ -51,7 +51,7 @@ if ($_REQUEST['updateme']) {
 		$inet_version = " -4";
 	}
 
-	exec("/usr/local/sbin/ntpq -pn $inet_version | /usr/bin/tail +3", $ntpq_output);
+	exec("/usr/local/sbin/ntpq -pn -w $inet_version | /usr/bin/tail +3", $ntpq_output);
 	$ntpq_counter = 0;
 	$stratum_text = gettext("stratum");
 	foreach ($ntpq_output as $line) {

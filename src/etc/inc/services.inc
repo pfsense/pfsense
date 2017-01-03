@@ -23,8 +23,8 @@
  * limitations under the License.
  */
 
-define('DYNDNS_PROVIDER_VALUES', 'citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
-define('DYNDNS_PROVIDER_DESCRIPTIONS', 'City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
+define('DYNDNS_PROVIDER_VALUES', 'all-inkl citynetwork cloudflare cloudflare-v6 custom custom-v6 dnsexit dnsimple dnsmadeeasy dnsomatic duiadns duiadns-v6 dyndns dyndns-custom dyndns-static dyns easydns eurodns freedns freedns-v6 glesys googledomains gratisdns he-net he-net-v6 he-net-tunnelbroker loopia namecheap noip noip-free ods opendns ovh-dynhost route53 selfhost spdyn spdyn-v6 zoneedit');
+define('DYNDNS_PROVIDER_DESCRIPTIONS', 'All-Inkl.com,City Network,CloudFlare,CloudFlare (v6),Custom,Custom (v6),DNSexit,DNSimple,DNS Made Easy,DNS-O-Matic,DuiaDns.net,DuiaDns.net (v6),DynDNS (dynamic),DynDNS (custom),DynDNS (static),DyNS,easyDNS,Euro Dns,freeDNS,freeDNS (v6),GleSYS,Google Domains,GratisDNS,HE.net,HE.net (v6),HE.net Tunnelbroker,Loopia,Namecheap,No-IP,No-IP (free),ODS.org,OpenDNS,OVH DynHOST,Route 53,SelfHost,SPDYN,SPDYN (v6),ZoneEdit');
 
 /* implement ipv6 route advertising daemon */
 function services_radvd_configure($blacklist = array()) {
@@ -550,7 +550,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -886,6 +885,11 @@ EOPP;
 				$dhcpdconf .= "		ignore bootp;\n";
 			}
 
+			// ignore-client-uids
+			if (isset($poolconf['ignoreclientuids'])) {
+				$dhcpdconf .= "		ignore-client-uids true;\n";
+			}
+
 			// netbios-name*
 			if (is_array($poolconf['winsserver']) && $poolconf['winsserver'][0] && ($poolconf['winsserver'][0] != $dhcpifconf['winsserver'][0])) {
 				$dhcpdconf .= "		option netbios-name-servers " . join(",", $poolconf['winsserver']) . ";\n";
@@ -1053,6 +1057,9 @@ EOD;
 					$dhhostname = str_replace(" ", "_", $sm['hostname']);
 					$dhhostname = str_replace(".", "_", $dhhostname);
 					$dhcpdconf .= "	option host-name \"{$dhhostname}\";\n";
+					if ((isset($dhcpifconf['ddnsupdate']) || isset($sm['ddnsupdate'])) && (isset($dhcpifconf['ddnsforcehostname']) || isset($sm['ddnsforcehostname']))) {
+						$dhcpdconf .= "	ddns-hostname \"{$dhhostname}\";\n";
+					}
 				}
 				if ($sm['filename']) {
 					$dhcpdconf .= "	filename \"{$sm['filename']}\";\n";
@@ -1315,7 +1322,6 @@ one-lease-per-client true;
 deny duplicates;
 ping-check true;
 update-conflict-detection false;
-dhcp-cache-threshold 0;
 
 EOD;
 
@@ -1658,7 +1664,7 @@ EOD;
 	}
 	$igmpconf .= "\n";
 
-	$igmpfl = fopen($g['tmp_path'] . "/igmpproxy.conf", "w");
+	$igmpfl = fopen($g['varetc_path'] . "/igmpproxy.conf", "w");
 	if (!$igmpfl) {
 		log_error(gettext("Could not write Igmpproxy configuration file!"));
 		return;
@@ -1668,9 +1674,9 @@ EOD;
 	unset($igmpconf);
 
 	if (isset($config['syslog']['igmpxverbose'])) {
-		mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['tmp_path']}/igmpproxy.conf");
+		mwexec_bg("/usr/local/sbin/igmpproxy -v {$g['varetc_path']}/igmpproxy.conf");
 	} else {
-		mwexec_bg("/usr/local/sbin/igmpproxy {$g['tmp_path']}/igmpproxy.conf");
+		mwexec_bg("/usr/local/sbin/igmpproxy {$g['varetc_path']}/igmpproxy.conf");
 	}
 
 	log_error(gettext("Started IGMP proxy service."));
@@ -1740,7 +1746,8 @@ function services_dhcrelay_configure() {
 			}
 		}
 		if (!isset($destif)) {
-			foreach (get_staticroutes() as $rtent) {
+			// For each enabled static route
+			foreach (get_staticroutes(false, false, true) as $rtent) {
 				if (ip_in_subnet($srvip, $rtent['network'])) {
 					$a_gateways = return_gateways_array(true);
 					$destif = $a_gateways[$rtent['gateway']]['interface'];
@@ -1873,6 +1880,9 @@ function services_dhcrelay6_configure() {
 		if (!isset($destif)) {
 			if (is_array($config['staticroutes']['route'])) {
 				foreach ($config['staticroutes']['route'] as $rtent) {
+					if (isset($rtent['disabled'])) {
+						continue;
+					}
 					if (ip_in_subnet($srvip, $rtent['network'])) {
 						$a_gateways = return_gateways_array(true);
 						$destif = $a_gateways[$rtent['gateway']]['interface'];
@@ -2098,7 +2108,7 @@ function services_dnsmasq_configure($restart_dhcp = true) {
 		$args = "";
 
 		if (isset($config['dnsmasq']['regdhcp'])) {
-			$args .= " --dhcp-hostsfile={$g['varetc_path']}/hosts ";
+			$args .= " --dhcp-hostsfile={$g['etc_path']}/hosts ";
 		}
 
 		/* Setup listen port, if non-default */
@@ -2299,6 +2309,11 @@ function services_snmpd_configure() {
 			echo gettext("Starting SNMP daemon... ");
 		}
 
+		/* Make sure a printcap file exists or else bsnmpd will log errors. See https://redmine.pfsense.org/issues/6838 */
+		if (!file_exists('/etc/printcap')) {
+			@file_put_contents('/etc/printcap', "# Empty file to prevent bsnmpd from logging errors.\n");
+		}
+
 		/* generate snmpd.conf */
 		$fd = fopen("{$g['varetc_path']}/snmpd.conf", "w");
 		if (!$fd) {
@@ -2375,24 +2390,34 @@ begemotSnmpdCommunityDisable    = 1
 
 EOD;
 
-		$bind_to_ip = "0.0.0.0";
+		$bind_to_ips = array();
 		if (isset($config['snmpd']['bindip'])) {
-			if (is_ipaddr($config['snmpd']['bindip'])) {
-				$bind_to_ip = $config['snmpd']['bindip'];
-			} else {
-				$if = get_real_interface($config['snmpd']['bindip']);
-				if (does_interface_exist($if)) {
-					$bind_to_ip = get_interface_ip($config['snmpd']['bindip']);
+			foreach (explode(",", $config['snmpd']['bindip']) as $bind_to_ip) {
+				if (is_ipaddr($bind_to_ip)) {
+					$bind_to_ips[] = $bind_to_ip;
+				} else {
+					$if = get_real_interface($bind_to_ip);
+					if (does_interface_exist($if)) {
+						$bindip = get_interface_ip($bind_to_ip);
+						if (is_ipaddr($bindip)) {
+							$bind_to_ips[] = $bindip;
+						}
+					}
 				}
 			}
 		}
+		if (!count($bind_to_ips)) {
+			$bind_to_ips = array("0.0.0.0");
+		}
 
 		if (is_port($config['snmpd']['pollport'])) {
-			$snmpdconf .= <<<EOD
+			foreach ($bind_to_ips as $bind_to_ip) {
+				$snmpdconf .= <<<EOD
 begemotSnmpdPortStatus.{$bind_to_ip}.{$config['snmpd']['pollport']} = 1
 
 EOD;
 
+			}
 		}
 
 		$snmpdconf .= <<<EOD
@@ -2484,155 +2509,220 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 	}
 
 	/* Dynamic DNS updating active? */
-	if (is_array($config['dnsupdates']['dnsupdate'])) {
-		$notify_text = "";
-		$gwgroups = return_gateway_groups_array();
-		foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
-			if (!isset($dnsupdate['enable'])) {
-				continue;
-			}
-			/*
-			 * If it's using a gateway group, check if interface is
-			 * the active gateway for that group
-			 */
-			$group_int = '';
-			if (is_array($gwgroups[$dnsupdate['interface']])) {
-				if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
-					$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
-				} else {
-					$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
-				}
-			}
-			if (!empty($int) && ($int != $dnsupdate['interface']) && ($int != $group_int)) {
-				continue;
-			}
-			if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {
-				continue;
-			}
+	if (!is_array($config['dnsupdates']['dnsupdate'])) {
+		return 0;
+	}
 
-			/* determine interface name */
-			$if = get_failover_interface($dnsupdate['interface']);
-
-			if (isset($dnsupdate['usepublicip'])) {
-				$wanip = dyndnsCheckIP($if);
+	$notify_text = "";
+	$gwgroups = return_gateway_groups_array();
+	foreach ($config['dnsupdates']['dnsupdate'] as $i => $dnsupdate) {
+		if (!isset($dnsupdate['enable'])) {
+			continue;
+		}
+		/*
+		 * If it's using a gateway group, check if interface is
+		 * the active gateway for that group
+		 */
+		$group_int = '';
+		if (is_array($gwgroups[$dnsupdate['interface']])) {
+			if (!empty($gwgroups[$dnsupdate['interface']][0]['vip'])) {
+				$group_int = $gwgroups[$dnsupdate['interface']][0]['vip'];
 			} else {
-				$wanip = get_interface_ip($if);
+				$group_int = $gwgroups[$dnsupdate['interface']][0]['int'];
 			}
+		}
+		if (!empty($int) && ($int != $dnsupdate['interface']) && ($int != $group_int)) {
+			continue;
+		}
+		if (!empty($updatehost) && ($updatehost != $dnsupdate['host'])) {
+			continue;
+		}
 
-			$wanipv6 = get_interface_ipv6($if);
-			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
-			$currentTime = time();
+		/* determine interface name */
+		$if = get_failover_interface($dnsupdate['interface']);
 
-			if ($wanip || $wanipv6) {
-				$keyname = $dnsupdate['keyname'];
-				/* trailing dot */
-				if (substr($keyname, -1) != ".") {
-					$keyname .= ".";
-				}
+		if (isset($dnsupdate['usepublicip'])) {
+			$wanip = dyndnsCheckIP($if);
+		} else {
+			$wanip = get_interface_ip($if);
+		}
 
-				$hostname = $dnsupdate['host'];
-				/* trailing dot */
-				if (substr($hostname, -1) != ".") {
-					$hostname .= ".";
-				}
+		$wanipv6 = get_interface_ipv6($if);
+		$cacheFile = $g['conf_path'] .
+		    "/dyndns_{$dnsupdate['interface']}_rfc2136_" .
+		    escapeshellarg($dnsupdate['host']) .
+		    "_{$dnsupdate['server']}.cache";
+		$cacheFilev6 = $cacheFile . ".ipv6";
+		$currentTime = time();
 
-				/* write private key file
-				   this is dumb - public and private keys are the same for HMAC-MD5,
-				   but nsupdate insists on having both */
-				$fd = fopen("{$g['varetc_path']}/K{$i}{$keyname}+157+00000.private", "w");
-				$privkey = <<<EOD
+		if (!$wanip && !$wanipv6) {
+			continue;
+		}
+
+		$keyname = $dnsupdate['keyname'];
+		/* trailing dot */
+		if (substr($keyname, -1) != ".") {
+			$keyname .= ".";
+		}
+
+		$hostname = $dnsupdate['host'];
+		/* trailing dot */
+		if (substr($hostname, -1) != ".") {
+			$hostname .= ".";
+		}
+
+		/*
+		 * write private key file
+		 * this is dumb - public and private keys are the same for
+		 * HMAC-MD5, but nsupdate insists on having both
+		 */
+		$fd = fopen($g['varetc_path'] .
+		    "/K{$i}{$keyname}+157+00000.private", "w");
+		$privkey = <<<EOD
 Private-key-format: v1.2
 Algorithm: 157 (HMAC)
 Key: {$dnsupdate['keydata']}
 
 EOD;
-				fwrite($fd, $privkey);
-				fclose($fd);
+		fwrite($fd, $privkey);
+		fclose($fd);
 
-				/* write public key file */
-				if ($dnsupdate['keytype'] == "zone") {
-					$flags = 257;
-					$proto = 3;
-				} else if ($dnsupdate['keytype'] == "host") {
-					$flags = 513;
-					$proto = 3;
-				} else if ($dnsupdate['keytype'] == "user") {
-					$flags = 0;
-					$proto = 2;
-				}
+		/* write public key file */
+		if ($dnsupdate['keytype'] == "zone") {
+			$flags = 257;
+			$proto = 3;
+		} else if ($dnsupdate['keytype'] == "host") {
+			$flags = 513;
+			$proto = 3;
+		} else if ($dnsupdate['keytype'] == "user") {
+			$flags = 0;
+			$proto = 2;
+		}
 
-				$fd = fopen("{$g['varetc_path']}/K{$i}{$keyname}+157+00000.key", "w");
-				fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 {$dnsupdate['keydata']}\n");
-				fclose($fd);
+		$fd = fopen($g['varetc_path'] .
+		    "/K{$i}{$keyname}+157+00000.key", "w");
+		fwrite($fd, "{$keyname} IN KEY {$flags} {$proto} 157 " .
+		    "{$dnsupdate['keydata']}\n");
+		fclose($fd);
 
-				/* generate update instructions */
-				$upinst = "";
-				if (!empty($dnsupdate['server'])) {
-					$upinst .= "server {$dnsupdate['server']}\n";
-				}
+		/* generate update instructions */
+		$upinst = "";
+		if (!empty($dnsupdate['server'])) {
+			$upinst .= "server {$dnsupdate['server']}\n";
+		}
 
-				if (file_exists($cacheFile)) {
-					list($cachedipv4, $cacheTimev4) = explode("|", file_get_contents($cacheFile));
-				}
-				if (file_exists("{$cacheFile}.ipv6")) {
-					list($cachedipv6, $cacheTimev6) = explode("|", file_get_contents("{$cacheFile}.ipv6"));
-				}
+		if (file_exists($cacheFile)) {
+			list($cachedipv4, $cacheTimev4) = explode("|",
+			    file_get_contents($cacheFile));
+		}
+		if (file_exists($cacheFilev6)) {
+			list($cachedipv6, $cacheTimev6) = explode("|",
+			    file_get_contents($cacheFilev6));
+		}
 
-				// 25 Days
-				$maxCacheAgeSecs = 25 * 24 * 60 * 60;
-				$need_update = false;
+		// 25 Days
+		$maxCacheAgeSecs = 25 * 24 * 60 * 60;
+		$need_update = false;
 
-				/* Update IPv4 if we have it. */
-				if (is_ipaddrv4($wanip) && $dnsupdate['recordtype'] != "AAAA") {
-					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
-						$upinst .= "update delete {$dnsupdate['host']}. A\n";
-						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
-						$notify_text .= sprintf(gettext('DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
-						@file_put_contents($cacheFile, "{$wanip}|{$currentTime}");
-						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $cacheFile, $wanip));
-						$need_update = true;
-					} else {
-						log_error(sprintf(gettext("phpDynDNS: Not updating %s A record because the IP address has not changed."), $dnsupdate['host']));
-					}
-				} else {
-					@unlink($cacheFile);
-				}
+		/* Update IPv4 if we have it. */
+		if (is_ipaddrv4($wanip) && $dnsupdate['recordtype'] != "AAAA") {
+			if (($wanip != $cachedipv4) || $forced ||
+			    (($currentTime - $cacheTimev4) > $maxCacheAgeSecs)) {
+				$upinst .= "update delete " .
+				    "{$dnsupdate['host']}. A\n";
+				$upinst .= "update add {$dnsupdate['host']}. " .
+				    "{$dnsupdate['ttl']} A {$wanip}\n";
+				$need_update = true;
+			} else {
+				log_error(sprintf(gettext(
+				    "phpDynDNS: Not updating %s A record because the IP address has not changed."),
+				    $dnsupdate['host']));
+			}
+		} else {
+			@unlink($cacheFile);
+			unset($cacheFile);
+		}
 
-				/* Update IPv6 if we have it. */
-				if (is_ipaddrv6($wanipv6) && $dnsupdate['recordtype'] != "A") {
-					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
-						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
-						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
-						$notify_text .= sprintf(gettext('DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
-						@file_put_contents("{$cacheFile}.ipv6", "{$wanipv6}|{$currentTime}");
-						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s.ipv6: %2$s'), $cacheFile, $wanipv6));
-						$need_update = true;
-					} else {
-						log_error(sprintf(gettext("phpDynDNS: Not updating %s AAAA record because the IPv6 address has not changed."), $dnsupdate['host']));
-					}
-				} else {
-					@unlink("{$cacheFile}.ipv6");
-				}
+		/* Update IPv6 if we have it. */
+		if (is_ipaddrv6($wanipv6) && $dnsupdate['recordtype'] != "A") {
+			if (($wanipv6 != $cachedipv6) || $forced ||
+			    (($currentTime - $cacheTimev6) > $maxCacheAgeSecs)) {
+				$upinst .= "update delete " .
+				    "{$dnsupdate['host']}. AAAA\n";
+				$upinst .= "update add {$dnsupdate['host']}. " .
+				    "{$dnsupdate['ttl']} AAAA {$wanipv6}\n";
+				$need_update = true;
+			} else {
+				log_error(sprintf(gettext(
+				    "phpDynDNS: Not updating %s AAAA record because the IPv6 address has not changed."),
+				    $dnsupdate['host']));
+			}
+		} else {
+			@unlink($cacheFilev6);
+			unset($cacheFilev6);
+		}
 
-				$upinst .= "\n";	/* mind that trailing newline! */
+		$upinst .= "\n";	/* mind that trailing newline! */
 
-				if ($need_update) {
-					@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}", $upinst);
-					unset($upinst);
-					/* invoke nsupdate */
-					$cmd = "/usr/local/bin/nsupdate -k {$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
-					if (isset($dnsupdate['usetcp'])) {
-						$cmd .= " -v";
-					}
-					$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
-					mwexec_bg($cmd);
-					unset($cmd);
-				}
+		if (!$need_update) {
+			continue;
+		}
+
+		@file_put_contents("{$g['varetc_path']}/nsupdatecmds{$i}",
+		    $upinst);
+		unset($upinst);
+		/* invoke nsupdate */
+		$cmd = "/usr/local/bin/nsupdate -k " .
+		    "{$g['varetc_path']}/K{$i}{$keyname}+157+00000.key";
+
+		if (isset($dnsupdate['usetcp'])) {
+			$cmd .= " -v";
+		}
+
+		$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
+
+		if (mwexec($cmd) == 0) {
+			if (!empty($cacheFile)) {
+				@file_put_contents($cacheFile,
+				    "{$wanip}|{$currentTime}");
+				log_error(sprintf(gettext(
+				    'phpDynDNS: updating cache file %1$s: %2$s'),
+				    $cacheFile, $wanip));
+				$notify_text .= sprintf(gettext(
+				    'DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'),
+				    $dnsupdate['host'],
+				    convert_real_interface_to_friendly_descr($if),
+				    $if, $wanip) . "\n";
+			}
+			if (!empty($cacheFilev6)) {
+				@file_put_contents($cacheFilev6,
+				    "{$wanipv6}|{$currentTime}");
+				log_error(sprintf(gettext(
+				    'phpDynDNS: updating cache file %1$s: %2$s'),
+				    $cacheFilev6, $wanipv6));
+				$notify_text .= sprintf(gettext(
+				    'DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'),
+				    $dnsupdate['host'],
+				    convert_real_interface_to_friendly_descr($if),
+				    $if, $wanipv6) . "\n";
+			}
+		} else {
+			if (!empty($cacheFile)) {
+				log_error(sprintf(gettext(
+				    'phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)'),
+				    $dnsupdate['host'], $wanip));
+			}
+			if (!empty($cacheFilev6)) {
+				log_error(sprintf(gettext(
+				    'phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)'),
+				    $dnsupdate['host'], $wanipv6));
 			}
 		}
-		if (!empty($notify_text)) {
-			notify_all_remote($notify_text);
-		}
+		unset($cmd);
+	}
+
+	if (!empty($notify_text)) {
+		notify_all_remote($notify_text);
 	}
 
 	return 0;
@@ -2667,6 +2757,10 @@ function configure_cron() {
 				$http_proxy .= ':' . $config['system']['proxyport'];
 			}
 			$crontab_contents .= "HTTP_PROXY={$http_proxy}";
+
+			if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+				$crontab_contents .= "HTTP_PROXY_AUTH=basic:*:{$config['system']['proxyuser']}:{$config['system']['proxypass']}";
+			}
 		}
 
 		foreach ($config['cron']['item'] as $item) {

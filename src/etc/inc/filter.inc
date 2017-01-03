@@ -43,65 +43,51 @@ $filterdns = array();
 /* Used for aliases and interface macros */
 $aliases = "";
 
-/* ICMP v4 types */
+/* ICMP v4+v6 subtypes */
 $icmptypes = array(
-	""		=> gettext("any"),
-	"echoreq"	=> gettext("Echo request"),
-	"echorep"	=> gettext("Echo reply"),
-	"unreach"	=> gettext("Destination unreachable"),
-	"squench"	=> gettext("Source quench"),
-	"redir"		=> gettext("Redirect"),
-	"althost"	=> gettext("Alternate Host"),
-	"routeradv"	=> gettext("Router advertisement"),
-	"routersol"	=> gettext("Router solicitation"),
-	"timex"		=> gettext("Time exceeded"),
-	"paramprob"	=> gettext("Invalid IP header"),
-	"timereq"	=> gettext("Timestamp"),
-	"timerep"	=> gettext("Timestamp reply"),
-	"inforeq"	=> gettext("Information request"),
-	"inforep"	=> gettext("Information reply"),
-	"maskreq"	=> gettext("Address mask request"),
-	"maskrep"	=> gettext("Address mask reply"),
-	"trace"		=> gettext("Traceroute"),
-	"dataconv"	=> gettext("Datagram conversion error"),
-	"mobredir"	=> gettext("Mobile host redirect"),
-	"ipv6-where"	=> gettext("IPv6 where-are-you"),
-	"ipv6-here"	=> gettext("IPv6 I-am-here"),
-	"mobregreq"	=> gettext("Mobile registration request"),
-	"mobregrep"	=> gettext("Mobile registration reply"),
-	"skip"		=> gettext("SKIP"),
-	"photuris"	=> gettext("Photuris")
-);
-
-/* ICMP v6 types */
-$icmp6types = array(
-	""		=> gettext("any"),
-	"unreach"	=> gettext("Destination unreachable"),
-	"toobig"	=> gettext("Packet too big"),
-	"timex"		=> gettext("Time exceeded"),
-	"paramprob"	=> gettext("Parameter problem"),
-	"echoreq"	=> gettext("Echo request"),
-	"echorep"	=> gettext("Echo reply"),
-	"groupqry"	=> gettext("Group membership query"),
-	"listqry"	=> gettext("Multicast listener query"),
-	"grouprep"	=> gettext("Group membership report"),
-	"listenrep"	=> gettext("Multicast listener report"),
-	"groupterm"	=> gettext("Group membership termination"),
-	"listendone"	=> gettext("Multicast listener done"),
-	"routersol"	=> gettext("Router solicitation"),
-	"routeradv"	=> gettext("Router advertisement"),
-	"neighbrsol"	=> gettext("Neighbor solicitation"),
-	"neighbradv"	=> gettext("Neighbor advertisement"),
-	"redir"		=> gettext("Redirect"),
-	"routrrenum"	=> gettext("Router renumbering"),
-	"wrureq"	=> gettext("Who are you request"),
-	"wrurep"	=> gettext("Who are you reply"),
-	"fqdnreq"	=> gettext("FQDN query"),
-	"fqdnrep"	=> gettext("FQDN reply"),
-	"niqry"		=> gettext("Node information request"),
-	"nirep"		=> gettext("Node information reply"),
-	"mtraceresp"	=> gettext("mtrace resp"),
-	"mtrace"	=> gettext("mtrace messages")
+	'althost'	=> array('descrip' => gettext('Alternate Host'), 'valid4' => true, 'valid6' => false), 
+ 	'dataconv'	=> array('descrip' => gettext('Datagram conversion error'), 'valid4' => true, 'valid6' => false), 
+ 	'echorep'	=> array('descrip' => gettext('Echo reply'), 'valid4' => true, 'valid6' => true), 
+ 	'echoreq'	=> array('descrip' => gettext('Echo request'), 'valid4' => true, 'valid6' => true), 
+ 	'fqdnrep'	=> array('descrip' => gettext('FQDN reply'), 'valid4' => false, 'valid6' => true), 
+ 	'fqdnreq'	=> array('descrip' => gettext('FQDN query'), 'valid4' => false, 'valid6' => true), 
+ 	'groupqry'	=> array('descrip' => gettext('Group membership query'), 'valid4' => false, 'valid6' => true), 
+ 	'grouprep'	=> array('descrip' => gettext('Group membership report'), 'valid4' => false, 'valid6' => true), 
+ 	'groupterm'	=> array('descrip' => gettext('Group membership termination'), 'valid4' => false, 'valid6' => true), 
+ 	'inforep'	=> array('descrip' => gettext('Information reply'), 'valid4' => true, 'valid6' => false), 
+ 	'inforeq'	=> array('descrip' => gettext('Information request'), 'valid4' => true, 'valid6' => false), 
+ 	'ipv6-here'	=> array('descrip' => gettext('IPv6 I-am-here'), 'valid4' => true, 'valid6' => false), 
+ 	'ipv6-where'	=> array('descrip' => gettext('IPv6 where-are-you'), 'valid4' => true, 'valid6' => false), 
+ 	'listendone'	=> array('descrip' => gettext('Multicast listener done'), 'valid4' => false, 'valid6' => true), 
+ 	'listenrep'	=> array('descrip' => gettext('Multicast listener report'), 'valid4' => false, 'valid6' => true), 
+ 	'listqry'	=> array('descrip' => gettext('Multicast listener query'), 'valid4' => false, 'valid6' => true), 
+ 	'maskrep'	=> array('descrip' => gettext('Address mask reply'), 'valid4' => true, 'valid6' => false), 
+ 	'maskreq'	=> array('descrip' => gettext('Address mask request'), 'valid4' => true, 'valid6' => false), 
+ 	'mobredir'	=> array('descrip' => gettext('Mobile host redirect'), 'valid4' => true, 'valid6' => false), 
+ 	'mobregrep'	=> array('descrip' => gettext('Mobile registration reply'), 'valid4' => true, 'valid6' => false), 
+ 	'mobregreq'	=> array('descrip' => gettext('Mobile registration request'), 'valid4' => true, 'valid6' => false), 
+ 	'mtrace'	=> array('descrip' => gettext('mtrace messages'), 'valid4' => false, 'valid6' => true), 
+ 	'mtraceresp'	=> array('descrip' => gettext('mtrace resp'), 'valid4' => false, 'valid6' => true), 
+ 	'neighbradv'	=> array('descrip' => gettext('Neighbor advertisement'), 'valid4' => false, 'valid6' => true), 
+ 	'neighbrsol'	=> array('descrip' => gettext('Neighbor solicitation'), 'valid4' => false, 'valid6' => true), 
+ 	'niqry'		=> array('descrip' => gettext('Node information request'), 'valid4' => false, 'valid6' => true), 
+ 	'nirep'		=> array('descrip' => gettext('Node information reply'), 'valid4' => false, 'valid6' => true), 
+ 	'paramprob'	=> array('descrip' => gettext('Parameter problem (invalid IP header)'), 'valid4' => true, 'valid6' => true), 
+ 	'photuris'	=> array('descrip' => gettext('Photuris'), 'valid4' => true, 'valid6' => false), 
+ 	'redir'		=> array('descrip' => gettext('Redirect'), 'valid4' => true, 'valid6' => true), 
+ 	'routeradv'	=> array('descrip' => gettext('Router advertisement'), 'valid4' => true, 'valid6' => true), 
+ 	'routersol'	=> array('descrip' => gettext('Router solicitation'), 'valid4' => true, 'valid6' => true), 
+ 	'routrrenum'	=> array('descrip' => gettext('Router renumbering'), 'valid4' => false, 'valid6' => true), 
+ 	'skip'		=> array('descrip' => gettext('SKIP'), 'valid4' => true, 'valid6' => false), 
+ 	'squench'	=> array('descrip' => gettext('Source quench'), 'valid4' => true, 'valid6' => false), 
+ 	'timerep'	=> array('descrip' => gettext('Timestamp reply'), 'valid4' => true, 'valid6' => false), 
+ 	'timereq'	=> array('descrip' => gettext('Timestamp'), 'valid4' => true, 'valid6' => false), 
+ 	'timex'		=> array('descrip' => gettext('Time exceeded'), 'valid4' => true, 'valid6' => true), 
+ 	'toobig'	=> array('descrip' => gettext('Packet too big'), 'valid4' => false, 'valid6' => true), 
+ 	'trace'		=> array('descrip' => gettext('Traceroute'), 'valid4' => true, 'valid6' => false), 
+ 	'unreach'	=> array('descrip' => gettext('Destination unreachable'), 'valid4' => true, 'valid6' => true), 
+ 	'wrurep'	=> array('descrip' => gettext('Who are you reply'), 'valid4' => false, 'valid6' => true), 
+ 	'wrureq'	=> array('descrip' => gettext('Who are you request'), 'valid4' => false, 'valid6' => true) 
 );
 
 /*
@@ -232,7 +218,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 	$filterlck = lock('filter', LOCK_EX);
 
 	filter_pflog_start();
-	update_filter_reload_status(gettext("Initializing"));
+	update_filter_reload_status(gettext("Initializing"), true);  // second argument = overwrite existing file
 
 	/* invalidate interface cache */
 	get_interface_arr(true);
@@ -356,7 +342,7 @@ function filter_configure_sync($delete_states_if_needed = true) {
 		$limitrules .= "set timeout { $timeoutlist }\n";
 	}
 
-	if (!empty($config['system']['adaptivestart']) && !empty($config['system']['adaptiveend'])) {
+	if (is_numericint($config['system']['adaptivestart']) && is_numericint($config['system']['adaptiveend'])) {
 		$limitrules .= "set timeout { adaptive.start {$config['system']['adaptivestart']}, adaptive.end {$config['system']['adaptiveend']} }\n";
 	}
 
@@ -594,11 +580,10 @@ function filter_generate_scrubing() {
 	return $scrubrules;
 }
 
-function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting) {
+function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddrnesting, &$use_filterdns = false) {
 	global $aliastable, $filterdns;
 
 	$addresses = explode(" ", $alias);
-	$use_filterdns = false;
 	$finallist = "";
 	$builtlist = "";
 	$urltable_nesting = "";
@@ -628,7 +613,7 @@ function filter_generate_nested_alias($name, $alias, &$aliasnesting, &$aliasaddr
 			}
 			/* We already expanded this alias so there is no necessity to do it again. */
 			else if (!isset($aliasnesting[$address])) {
-				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting);
+				$tmpline = filter_generate_nested_alias($name, $aliastable[$address], $aliasnesting, $aliasaddrnesting, $use_filterdns);
 			}
 		} else if (!isset($aliasaddrnesting[$address])) {
 			if (!is_ipaddr($address) && !is_subnet($address) && !((($alias_type == 'port') || ($alias_type == 'url_ports')) && (is_port($address) || is_portrange($address))) && is_hostname($address)) {
@@ -758,7 +743,6 @@ function filter_generate_aliases() {
 	/* Setup pf groups */
 	if (isset($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $aliased) {
-			$extralias = "";
 			$aliasnesting = array();
 			$aliasaddrnesting = array();
 			if (is_numericint($aliased['name'])) {
@@ -771,14 +755,14 @@ function filter_generate_aliases() {
 			case "host":
 			case "network":
 			case "url":
-				$tableaddrs = "{$addrlist}{$extralias}";
+				$tableaddrs = "{$addrlist}";
 				if (empty($tableaddrs)) {
 					$aliases .= "table <{$aliased['name']}> persist\n";
 					if (empty($aliased['address'])) {
 						$after_filter_configure_run[] = "/sbin/pfctl -T flush -t " . escapeshellarg($aliased['name']);
 					}
 				} else {
-					$aliases .= "table <{$aliased['name']}> { {$addrlist}{$extralias} } \n";
+					$aliases .= "table <{$aliased['name']}> { {$addrlist} } \n";
 				}
 
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
@@ -802,7 +786,7 @@ function filter_generate_aliases() {
 						}
 					}
 				}
-				$aliases .= "table <{$aliased['name']}> { {$newaddress}{$extralias} } \n";
+				$aliases .= "table <{$aliased['name']}> { {$newaddress} } \n";
 				$aliases .= "{$aliased['name']} = \"<{$aliased['name']}>\"\n";
 				break;
 			case "urltable":
@@ -825,7 +809,7 @@ function filter_generate_aliases() {
 				$aliases .= "{$aliased['name']} = \"{ {$addrlist} }\"\n";
 				break;
 			default:
-				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']}{$extralias} }\"\n";
+				$aliases .= "{$aliased['name']} = \"{ {$aliased['address']} }\"\n";
 				break;
 			}
 		}
@@ -939,6 +923,17 @@ function filter_get_vpns_list() {
 		require_once("ipsec.inc");
 	}
 	if (ipsec_enabled()) {
+		/* Include mobile IPsec client subnet in the VPN network list.
+		   See https://redmine.pfsense.org/issues/7005 */
+		if (is_array($config['ipsec']['client'])
+		    && isset($config['ipsec']['client']['enable'])
+		    && isset($config['ipsec']['client']['pool_address'])
+		    && isset($config['ipsec']['client']['pool_netbits'])) {
+			$client_subnet = "{$config['ipsec']['client']['pool_address']}/{$config['ipsec']['client']['pool_netbits']}";
+			if (is_subnet($client_subnet)) {
+				 $vpns_arr[] = $client_subnet;
+			}
+		}
 		if (is_array($config['ipsec']['phase2'])) {
 			foreach ($config['ipsec']['phase2'] as $ph2ent) {
 				if ((!$ph2ent['mobile']) && ($ph2ent['mode'] != 'transport')) {
@@ -1041,7 +1036,8 @@ function filter_get_direct_networks_list($returnsubnetsonly = true) {
 			}
 		}
 	}
-	foreach (get_staticroutes() as $netent) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $netent) {
 		if (is_subnet($netent['network'])) {
 			if ($returnsubnetsonly) {
 				$networks_arr[] = $netent['network'];
@@ -1558,7 +1554,8 @@ function filter_nat_rules_automatic_tonathosts($with_descr = false) {
 	$tonathosts = array("127.0.0.0/8");
 	$descriptions = array(gettext("localhost"));
 
-	foreach (get_staticroutes() as $route) {
+	// Add any enabled static routes
+	foreach (get_staticroutes(false, false, true) as $route) {
 		$netip = explode("/", $route['network']);
 		if (isset($GatewaysList[$route['gateway']])) {
 			$gateway =& $GatewaysList[$route['gateway']];
@@ -1926,8 +1923,8 @@ function filter_nat_rules_generate() {
 
 			$natif = $FilterIflist[$natif]['descr'];
 
-			$natrules .= "binat on \${$natif} from {$srcaddr} to any -> {$dstaddr}\n";
-			$natrules .= "binat on \${$natif} from any to {$dstaddr} -> {$srcaddr}\n";
+			$natrules .= "binat on \${$natif} inet6 from {$srcaddr} to any -> {$dstaddr}\n";
+			$natrules .= "binat on \${$natif} inet6 from any to {$dstaddr} -> {$srcaddr}\n";
 
 		}
 	}
@@ -2122,17 +2119,19 @@ function filter_nat_rules_generate() {
 	// Open xinetd.conf write handle
 	$xinetd_fd = fopen("{$g['varetc_path']}/xinetd.conf", "w");
 
-	/* add tftp protocol helper */
-	$ftp_proxy_entry = array(
-		'port' => 6969,
-		'socket_type' => 'dgram',
-		'protocol' => 'udp',
-		'wait' => 'yes',
-		'user' => 'root',
-		'server' => '/usr/libexec/tftp-proxy',
-		'server_args' => '-v'
-	);
-	fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
+	if (!empty($config['system']['tftpinterface'])) {
+		/* add tftp protocol helper */
+		$ftp_proxy_entry = array(
+			'port' => 6969,
+			'socket_type' => 'dgram',
+			'protocol' => 'udp',
+			'wait' => 'yes',
+			'user' => 'root',
+			'server' => '/usr/libexec/tftp-proxy',
+			'server_args' => '-v'
+		);
+		fwrite($xinetd_fd, xinetd_service_entry($ftp_proxy_entry));
+	}
 
 	if (isset($config['nat']['rule'])) {
 		/* start reflection redirects on port 19000 of localhost */
@@ -2351,7 +2350,7 @@ function filter_nat_rules_generate() {
 	}
 
 	// Check if xinetd is running, if not start it.	If so, restart it gracefully.
-	if (file_exists("{$g['varetc_path']}/xinetd.conf")) {
+	if (file_exists("{$g['varetc_path']}/xinetd.conf") && (filesize("{$g['varetc_path']}/xinetd.conf") > 0)) {
 		if (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
 			sigkillbypid("{$g['varrun_path']}/xinetd.pid", "HUP");
 		} else {
@@ -2360,6 +2359,8 @@ function filter_nat_rules_generate() {
 			    "-f {$g['varetc_path']}/xinetd.conf " .
 			    "-pidfile {$g['varrun_path']}/xinetd.pid");
 		}
+	} elseif (isvalidpid("{$g['varrun_path']}/xinetd.pid")) {
+		killbypid("{$g['varrun_path']}/xinetd.pid");
 	}
 
 	return $natrules;
@@ -2783,12 +2784,12 @@ function filter_generate_user_rule($rule) {
 	}
 	$aline['dst'] = "to $dst ";
 
-	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet")) {
-		$aline['icmp-type'] = "icmp-type {$rule['icmptype']} ";
+	if ($rule['protocol'] == "icmp" && $rule['icmptype']) {
+		$icmptype_key = ($rule['ipprotocol'] == 'inet' ? 'icmp-type' : 'icmp6-type');
+		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
+		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}
-	if (($rule['protocol'] == "icmp") && $rule['icmptype'] && ($rule['ipprotocol'] == "inet6")) {
-		$aline['icmp6-type'] = "icmp6-type {$rule['icmptype']} ";
-	}
+	
 	if (!empty($rule['tag'])) {
 		$aline['tag'] = " tag \"" .$rule['tag']. "\" ";
 	}
@@ -3108,6 +3109,11 @@ block out {$log['block']} inet all tracker {$increment_tracker($tracker)} label 
 block in {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 block out {$log['block']} inet6 all tracker {$increment_tracker($tracker)} label "Default deny rule IPv6"
 
+EOD;
+
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
+
 # IPv6 ICMP is not auxilary, it is required for operation
 # See man icmp6(4)
 # 1    unreach         Destination unreachable
@@ -3127,11 +3133,22 @@ pass in {$log['pass']} quick inet6 proto ipv6-icmp from fe80::/10 to fe80::/10 i
 pass in {$log['pass']} quick inet6 proto ipv6-icmp from ff02::/16 to fe80::/10 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 pass in {$log['pass']} quick inet6 proto ipv6-icmp from fe80::/10 to ff02::/16 icmp6-type {128,133,134,135,136} tracker {$increment_tracker($tracker)} keep state
 
+EOD;
+	}
+	$ipfrules .= <<<EOD
 # We use the mighty pf, we cannot be fooled.
 block {$log['block']} quick inet proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 block {$log['block']} quick inet6 proto { tcp, udp } from any port = 0 to any tracker {$increment_tracker($tracker)} label "Block traffic from port 0"
 block {$log['block']} quick inet6 proto { tcp, udp } from any to any port = 0 tracker {$increment_tracker($tracker)} label "Block traffic to port 0"
+
+EOD;
+	}
+	$ipfrules .= <<<EOD
 
 # Snort package
 block {$log['block']} quick from <snort2c> to any tracker {$increment_tracker($tracker)} label "Block snort2c hosts"
@@ -3380,7 +3397,7 @@ EOD;
 				}
 				/* allow access to DHCP relay on interfaces */
 				if (isset($config['dhcrelay']['enable'])) {
-					$dhcifaces = explode(",", $dhcrelaycfg['interface']);
+					$dhcifaces = explode(",", $config['dhcrelay']['interface']);
 					foreach ($dhcifaces as $dhcrelayif) {
 						if ($dhcrelayif == $on) {
 							$ipfrules .= <<<EOD
@@ -3472,13 +3489,27 @@ EOD;
 # loopback
 pass in {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
 pass out {$log['pass']} on \$loopback inet all tracker {$increment_tracker($tracker)} label "pass IPv4 loopback"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 pass in {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
 pass out {$log['pass']} on \$loopback inet6 all tracker {$increment_tracker($tracker)} label "pass IPv6 loopback"
+
+EOD;
+	}
+	$ipfrules .= <<<EOD
 # let out anything from the firewall host itself and decrypted IPsec traffic
 pass out {$log['pass']} inet all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv4 from firewall host itself"
+
+EOD;
+	if (isset($config['system']['ipv6allow'])) {
+		$ipfrules .= <<<EOD
 pass out {$log['pass']} inet6 all keep state allow-opts tracker {$increment_tracker($tracker)} label "let out anything IPv6 from firewall host itself"
 
 EOD;
+	}
+	$ipfrules .= "\n";
 
 	$saved_tracker += 100;
 	$tracker = $saved_tracker;
@@ -3663,7 +3694,7 @@ EOD;
 	 */
 	if (isset($config['filter']['bypassstaticroutes']) && is_array($config['staticroutes']['route']) && count($config['staticroutes']['route'])) {
 		$ipfrules .= "# Add rules to bypass firewall rules for static routes\n";
-		foreach (get_staticroutes() as $route) {
+		foreach (get_staticroutes(false, false, true) as $route) { // Parameter 3 returnenabledroutesonly
 			$friendly = $GatewaysList[$route['gateway']]['friendlyiface'];
 			if (is_array($FilterIflist[$friendly])) {
 				$oc = $FilterIflist[$friendly];
@@ -4166,34 +4197,66 @@ EOD;
 function discover_pkg_rules($ruletype) {
 	global $config, $g, $aliases;
 
-	/* Bail if there is no pkg directory, or if the package files might be out of sync. */
-	if (!is_dir("/usr/local/pkg") || file_exists('/conf/needs_package_sync')) {
+	/*
+	 * Bail if there is no pkg directory, if there are no installed
+	 * packages or if the package files might be out of sync.
+	 */
+	if (!is_array($config['installedpackages']['package']) ||
+	    !is_dir("/usr/local/pkg") ||
+	    file_exists('/conf/needs_package_sync')) {
 		return "";
 	}
 
 	$rules = "";
-	$files = glob("/usr/local/pkg/*.inc");
-	foreach ($files as $pkg_inc) {
-		update_filter_reload_status(sprintf(gettext('Checking for %1$s PF hooks in package %2$s'), $ruletype, $pkg_inc));
-		$pkg = basename($pkg_inc, ".inc");
-		$pkg_generate_rules = "{$pkg}_generate_rules";
+	foreach ($config['installedpackages']['package'] as $package) {
+		if (empty($package['filter_rule_function'])) {
+			continue;
+		}
+		if (!file_exists("/usr/local/pkg/" .
+		    $package['configurationfile'])) {
+			continue;
+		}
+
+		$pkg_config = parse_xml_config_pkg("/usr/local/pkg/" .
+		    $package['configurationfile'], 'packagegui');
+		$pkgname = substr(reverse_strrchr($package['configurationfile'],
+		    "."), 0, -1);
+		$pkg_generate_rules = $package['filter_rule_function'];
+
+		update_filter_reload_status(sprintf(gettext(
+		    'Checking for %1$s PF hooks in package %2$s'), $ruletype,
+		    $pkg_config['include_file']));
+
+		if (!empty($pkg_config['include_file']) &&
+		    file_exists($pkg_config['include_file'])) {
+			require_once($pkg_config['include_file']);
+		}
+
 		if (!function_exists($pkg_generate_rules)) {
-			require_once($pkg_inc);
+			continue;
 		}
-		if (function_exists($pkg_generate_rules)) {
-			update_filter_reload_status(sprintf(gettext('Processing early %1$s rules for package %2$s'), $ruletype, $pkg_inc));
-			$tmprules = $pkg_generate_rules("$ruletype");
-			file_put_contents("{$g['tmp_path']}/rules.test.packages", $aliases . $tmprules);
-			$status = mwexec("/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
-			if ($status <> 0) {
-				$errorrules = sprintf(gettext("There was an error while parsing the package filter rules for %s."), $pkg_inc) . "\n";
-				log_error($errorrules);
-				file_put_contents("{$g['tmp_path']}/rules.packages.{$pkg}", "#{$errorrules}\n{$tmprules}\n");
-				continue;
-			}
-			$rules .= $tmprules;
+
+		update_filter_reload_status(sprintf(gettext(
+		    'Processing early %1$s rules for package %2$s'), $ruletype,
+		    $pkg_config['include_file']));
+
+		$tmprules = $pkg_generate_rules("$ruletype");
+		file_put_contents("{$g['tmp_path']}/rules.test.packages",
+		    $aliases . $tmprules);
+		$status = mwexec(
+		    "/sbin/pfctl -nf {$g['tmp_path']}/rules.test.packages");
+		if ($status <> 0) {
+			$errorrules = sprintf(gettext(
+			    "There was an error while parsing the package filter rules for %s."),
+			    $pkg_config['include_file']) . "\n";
+			log_error($errorrules);
+			file_put_contents("{$g['tmp_path']}/rules.packages.{$pkgname}",
+			    "#{$errorrules}\n{$tmprules}\n");
+			continue;
 		}
+		$rules .= $tmprules;
 	}
+
 	return $rules;
 }
 

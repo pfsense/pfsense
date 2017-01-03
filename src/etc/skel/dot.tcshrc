@@ -47,3 +47,17 @@ if (${http_proxy} != "") then
 	endif
 	setenv HTTP_PROXY ${http_proxy}
 endif
+
+set http_proxy_auth_user=`/usr/local/sbin/read_xml_tag.sh string system/proxyuser`
+set http_proxy_auth_pass=`/usr/local/sbin/read_xml_tag.sh string system/proxypass`
+
+if ( ${http_proxy_auth_user} != "" && ${http_proxy_auth_pass} != "" ) then
+	set http_proxy_auth="basic:*:${http_proxy_auth_user}:${http_proxy_auth_pass}"
+	setenv HTTP_PROXY_AUTH "${http_proxy_auth}"
+endif
+
+set use_mfs_tmpvar=`/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar`
+if ( $use_mfs_tmpvar == "true" ) then
+	setenv PKG_DBDIR '/root/var/db/pkg'
+	setenv PKG_CACHEDIR '/root/var/cache/pkg'
+endif

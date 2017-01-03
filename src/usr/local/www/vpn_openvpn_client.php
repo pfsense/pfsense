@@ -31,7 +31,7 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-global $openvpn_topologies;
+global $openvpn_topologies, $openvpn_tls_modes;
 
 if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
@@ -137,6 +137,7 @@ if ($_GET['act'] == "edit") {
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
+				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
 			}
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
@@ -159,7 +160,6 @@ if ($_GET['act'] == "edit") {
 		$pconfig['autokey_enable'] = "yes";
 		$pconfig['autotls_enable'] = "yes";
 
-		$pconfig['no_tun_ipv6'] = $a_client[$id]['no_tun_ipv6'];
 		$pconfig['route_no_pull'] = $a_client[$id]['route_no_pull'];
 		$pconfig['route_no_exec'] = $a_client[$id]['route_no_exec'];
 		if (isset($a_client[$id]['verbosity_level'])) {
@@ -187,9 +187,17 @@ if ($_POST) {
 	} elseif (is_ipaddrv6($iv_ip) && (stristr($pconfig['protocol'], "6") === false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv4 protocol and an IPv6 IP address cannot be selected.");
 	} elseif ((stristr($pconfig['protocol'], "6") === false) && !get_interface_ip($iv_iface) && ($pconfig['interface'] != "any")) {
-		$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+		// If an underlying interface to be used by this client uses DHCP, then it may not have received an IP address yet.
+		// So in that case we do not report a problem.
+		if (!interface_has_dhcp($iv_iface, 4)) {
+			$input_errors[] = gettext("An IPv4 protocol was selected, but the selected interface has no IPv4 address.");
+		}
 	} elseif ((stristr($pconfig['protocol'], "6") !== false) && !get_interface_ipv6($iv_iface) && ($pconfig['interface'] != "any")) {
-		$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+		// If an underlying interface to be used by this client uses DHCP6, then it may not have received an IP address yet.
+		// So in that case we do not report a problem.
+		if (!interface_has_dhcp($iv_iface, 6)) {
+			$input_errors[] = gettext("An IPv6 protocol was selected, but the selected interface has no IPv6 address.");
+		}
 	}
 
 	if ($pconfig['mode'] != "p2p_shared_key") {
@@ -282,8 +290,15 @@ if ($_POST) {
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
 		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
-			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
+			$input_errors[] = gettext("The field 'TLS Key' does not appear to be valid");
 		}
+		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
+			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
+		}
+	}
+
+	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['crypto'], "GCM")) {
+		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
 	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
@@ -354,6 +369,7 @@ if ($_POST) {
 					$pconfig['tls'] = openvpn_create_key();
 				}
 				$client['tls'] = base64_encode($pconfig['tls']);
+				$client['tls_type'] = $pconfig['tls_type'];
 			}
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
@@ -370,7 +386,6 @@ if ($_POST) {
 		$client['compression'] = $pconfig['compression'];
 		$client['passtos'] = $pconfig['passtos'];
 
-		$client['no_tun_ipv6'] = $pconfig['no_tun_ipv6'];
 		$client['route_no_pull'] = $pconfig['route_no_pull'];
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
@@ -441,7 +456,7 @@ if ($act=="new" || $act=="edit"):
 		'protocol',
 		'Protocol',
 		$pconfig['protocol'],
-		array_combine($openvpn_prots, $openvpn_prots)
+		$openvpn_prots
 		));
 
 	$section->addInput(new Form_Select(
@@ -554,25 +569,38 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
-		'TLS authentication',
-		'Enable authentication of TLS packets.',
+		'TLS Configuration',
+		'Use a TLS Key',
 		$pconfig['tlsauth_enable']
-	));
+	))->setHelp("A TLS key enhances security of an OpenVPN connection by requiring both parties to have a common key before a peer can perform a TLS handshake. " .
+	    "This layer of HMAC authentication allows control channel packets without the proper key to be dropped, protecting the peers from attack or unauthorized connections." .
+	    "The TLS Key does not have any effect on tunnel data.");
 
 	if (!$pconfig['tls']) {
 		$section->addInput(new Form_Checkbox(
 			'autotls_enable',
 			null,
-			'Automatically generate a shared TLS authentication key.',
+			'Automatically generate a TLS Key.',
 			$pconfig['autotls_enable']
 		));
 	}
 
 	$section->addInput(new Form_Textarea(
 		'tls',
-		'Key',
+		'TLS Key',
 		$pconfig['tls']
-	))->setHelp('Paste the shared key here');
+	))->setHelp("Paste the TLS key here." .
+	    "<br/>" .
+	    "This key is used to sign control channel packets with an HMAC signature for authentication when establishing the tunnel. ");
+
+	$section->addInput(new Form_Select(
+		'tls_type',
+		'TLS Key Usage Mode',
+		empty($pconfig['tls_type']) ? 'auth':$pconfig['tls_type'],
+		$openvpn_tls_modes
+		))->setHelp("In Authentication mode the TLS key is used only as HMAC authentication for the control channel, protecting the peers from unauthorized connections. " .
+		    "<br/>" .
+		    "Encryption and Authentication mode also encrypts control channel communication, providing more privacy and traffic control channel obfuscation.");
 
 	if (count($a_ca)) {
 		$list = array();
@@ -634,14 +662,18 @@ if ($act=="new" || $act=="edit"):
 		'Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
-		));
+		))->setHelp('The Encryption Algorithm used for data channel packets.');
 
 	$section->addInput(new Form_Select(
 		'digest',
 		'Auth digest algorithm',
 		$pconfig['digest'],
 		openvpn_get_digestlist()
-		))->setHelp('Leave this set to SHA1 unless all clients are set to match. SHA1 is the default for OpenVPN. ');
+		))->setHelp('The algorithm used to authenticate data channel packets, and control channel packets if a TLS Key is present.' .
+		    '<br />' .
+		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.' .
+		    '<br />' .
+		    'Leave this set to SHA1 unless the server uses a different value. SHA1 is the default for OpenVPN. ');
 
 	$section->addInput(new Form_Select(
 		'engine',
@@ -717,13 +749,6 @@ if ($act=="new" || $act=="edit"):
 		'Type-of-Service',
 		'Set the TOS IP header value of tunnel packets to match the encapsulated packet value.',
 		$pconfig['passtos']
-	));
-
-	$section->addInput(new Form_Checkbox(
-		'no_tun_ipv6',
-		'Disable IPv6',
-		'Don\'t forward IPv6 traffic. ',
-		$pconfig['no_tun_ipv6']
 	));
 
 	$section->addInput(new Form_Checkbox(
@@ -875,7 +900,6 @@ events.push(function() {
 	}
 
 	function dev_mode_change() {
-		hideCheckbox('no_tun_ipv6', ($('#dev_mode').val() == 'tap'));
 		hideInput('topology',  ($('#dev_mode').val() == 'tap') || $('#mode').val() == "p2p_shared_key");
 	}
 
@@ -898,6 +922,7 @@ events.push(function() {
 	// Process "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
 		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------

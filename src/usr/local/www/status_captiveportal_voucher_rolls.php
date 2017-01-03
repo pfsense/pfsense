@@ -22,8 +22,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal-voucher-rolls
-##|*NAME=Status: Captive portal Voucher Rolls
-##|*DESCR=Allow access to the 'Status: Captive portal Voucher Rolls' page.
+##|*NAME=Status: Captive Portal Voucher Rolls
+##|*DESCR=Allow access to the 'Status: Captive Portal Voucher Rolls' page.
 ##|*MATCH=status_captiveportal_voucher_rolls.php*
 ##|-PRIV
 
@@ -40,16 +40,21 @@ if (isset($_POST['zone'])) {
 }
 $cpzone = strtolower($cpzone);
 
+if (!is_array($config['captiveportal'])) {
+	$config['captiveportal'] = array();
+}
+$a_cp =& $config['captiveportal'];
+/* If the zone does not exist, do not display the invalid zone */
+if (!array_key_exists($cpzone, $a_cp)) {
+	$cpzone = "";
+}
+
 if (empty($cpzone)) {
 	header("Location: services_captiveportal_zones.php");
 	exit;
 }
 
-if (!is_array($config['captiveportal'])) {
-	$config['captiveportal'] = array();
-}
-$a_cp =& $config['captiveportal'];
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Voucher Rolls"));
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"), htmlspecialchars($a_cp[$cpzone]['zone']), gettext("Voucher Rolls"));
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {
@@ -61,26 +66,26 @@ $a_roll = &$config['voucher'][$cpzone]['roll'];
 include("head.inc");
 
 $tab_array = array();
-$tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Voucher Rolls"), true, "status_captiveportal_voucher_rolls.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone={$cpzone}");
-$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone={$cpzone}");
+$tab_array[] = array(gettext("Active Users"), false, "status_captiveportal.php?zone=" . htmlspecialchars($cpzone));
+$tab_array[] = array(gettext("Active Vouchers"), false, "status_captiveportal_vouchers.php?zone=" . htmlspecialchars($cpzone));
+$tab_array[] = array(gettext("Voucher Rolls"), true, "status_captiveportal_voucher_rolls.php?zone=" . htmlspecialchars($cpzone));
+$tab_array[] = array(gettext("Test Vouchers"), false, "status_captiveportal_test.php?zone=" . htmlspecialchars($cpzone));
+$tab_array[] = array(gettext("Expire Vouchers"), false, "status_captiveportal_expire.php?zone=" . htmlspecialchars($cpzone));
 display_top_tabs($tab_array);
 ?>
 
 <div class="table-responsive">
-	<table class="table table-striped table-hover table-condensed">
-	    <thead>
-    		<tr>
-    			<th><?=gettext("Roll#"); ?></th>
-    			<th><?=gettext("Minutes/Ticket"); ?></th>
-    			<th><?=gettext("# of Tickets"); ?></th>
-    			<th><?=gettext("Comment"); ?></th>
-    			<th><?=gettext("used"); ?></th>
-    			<th><?=gettext("active"); ?></th>
-    			<th><?=gettext("ready"); ?></th>
-    		</tr>
+	<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+		<thead>
+    			<tr>
+    				<th><?=gettext("Roll#"); ?></th>
+    				<th><?=gettext("Minutes/Ticket"); ?></th>
+    				<th><?=gettext("# of Tickets"); ?></th>
+    				<th><?=gettext("Comment"); ?></th>
+    				<th><?=gettext("used"); ?></th>
+    				<th><?=gettext("active"); ?></th>
+    				<th><?=gettext("ready"); ?></th>
+    			</tr>
 		</thead>
 		<tbody>
 <?php
@@ -93,35 +98,21 @@ display_top_tabs($tab_array);
 				/* used also count active vouchers, remove them */
 				$used = $used - $active;
 ?>
-    		<tr>
-    			<td>
-    				<?=htmlspecialchars($rollent['number'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['minutes'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['count'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($rollent['comment'])?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($used)?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($active)?>
-    			</td>
-    			<td>
-    				<?=htmlspecialchars($ready)?>
-    			</td>
-    		</tr>
+    			<tr>
+    				<td><?=htmlspecialchars($rollent['number'])?></td>
+    				<td><?=htmlspecialchars($rollent['minutes'])?></td>
+    				<td><?=htmlspecialchars($rollent['count'])?></td>
+    				<td><?=htmlspecialchars($rollent['comment'])?></td>
+    				<td><?=htmlspecialchars($used)?></td>
+    				<td><?=htmlspecialchars($active)?></td>
+    				<td><?=htmlspecialchars($ready)?></td>
+    			</tr>
 <?php
 				$i++;
 			endforeach;
 
 			unlock($voucherlck)?>
-	    </tbody>
+		</tbody>
 	</table>
 </div>
 <?php include("foot.inc");

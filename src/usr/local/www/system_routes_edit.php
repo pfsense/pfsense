@@ -245,8 +245,9 @@ $section = new Form_Section('Edit Route Entry');
 $section->addInput(new Form_IpAddress(
 	'network',
 	'Destination network',
-	$pconfig['network']
-))->addMask('network_subnet', $pconfig['network_subnet'])->setPattern('[.a-zA-Z0-9_:]+')->setHelp('Destination network for this static route');
+	$pconfig['network'],
+	'ALIASV4V6'
+))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
 
 $allGateways = array_combine(
 	array_map(function($g){ return $g['name']; }, $a_gateways),

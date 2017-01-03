@@ -85,8 +85,7 @@ function file_notice($id, $notice, $category = "General", $url = "", $priority =
 	led_normalize();
 	led_morse(1, 'sos');
 	if (!$local_only) {
-		notify_via_growl($notice);
-		notify_via_smtp($notice);
+		notify_all_remote($notice);
 	}
 	return $queuekey;
 }
@@ -198,61 +197,6 @@ function dump_xml_notices() {
 	}
 	$xml = dump_xml_config($toput, 'notices');
 	return $xml;
-}
-
-/****f* notices/print_notices
- * NAME
- *   print_notices
- * INPUTS
- *	 $notices, $category
- * RESULT
- *   prints notices to the GUI
- ******/
-function print_notices($notices, $category = "all") {
-	foreach ($notices as $notice) {
-		if ($category != "all") {
-			if (in_array($notice['category'], $category)) {
-				$categories[] = $notice['category'];
-			}
-		} else {
-			$categories[] = $notice['category'];
-		}
-	}
-	$categories = array_unique($categories);
-	sort($categories);
-	foreach ($categories as $category) {
-		$toreturn .= "<ul><li>{$category}<ul>";
-		foreach ($notices as $notice) {
-			if (strtolower($notice['category']) == strtolower($category)) {
-				if ($notice['id'] != "") {
-					if ($notice['url'] != "") {
-						$toreturn .= "<li><a href={$notice['url']}>{$notice['id']}</a> - {$notice['notice']}</li>";
-					} else {
-						$toreturn .= "<li>{$notice['id']} - {$notice['notice']}</li>";
-					}
-				}
-			}
-		}
-		$toreturn .= "</ul></li></ul>";
-	}
-	return $toreturn;
-}
-
-/****f* notices/print_notice_box
- * NAME
- *   print_notice_box
- * INPUTS
- *	 $category
- * RESULT
- *   prints an info box to the GUI
- ******/
-function print_notice_box($category = "all") {
-	$notices = get_notices();
-	if (!$notices) {
-		return;
-	}
-	print_info_box(print_notices($notices, $category));
-	return;
 }
 
 /****f* notices/are_notices_pending

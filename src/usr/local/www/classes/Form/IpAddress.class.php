@@ -30,15 +30,38 @@ class Form_IpAddress extends Form_Input
 
 		switch ($type) {
 			case "BOTH":
-				$this->_attributes['pattern'] = '[a-f0-9:.]*';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1';
 				break;
 
 			case "V4":
-				$this->_attributes['pattern'] = '[0-9.]*';
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4';
 				break;
 
 			case "V6":
-				$this->_attributes['pattern'] = '[a-f0-9:]*';
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1';
+
+			case "ALIASV4V6":
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or an alias';
+				break;
+
+			case "ALIASV4":
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an alias';
+				break;
+
+			case "ALIASV6":
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or an alias';
+				break;
+
+			case "HOSTV4V6":
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or an IPv6 address like 1:2a:3b:ffff::1 or a host name like myhost.example.com';
+				break;
+
+			case "HOSTV4":
+				$this->_attributes['title'] = 'An IPv4 address like 1.2.3.4 or a host name like myhost.example.com';
+				break;
+
+			case "HOSTV6":
+				$this->_attributes['title'] = 'An IPv6 address like 1:2a:3b:ffff::1 or a host name like myhost.example.com';
 				break;
 		}
 	}

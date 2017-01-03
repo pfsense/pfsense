@@ -57,6 +57,9 @@
 	 *    - DNS Made Easy (www.dnsmadeeasy.com)
 	 *    - SPDYN (spdyn.de)
 	 *    - SPDYN IPv6 (spdyn.de)
+	 *    - All-Inkl (all-inkl.com)
+	 *    - DuiaDNS (www.duiadns.net)
+	 *    - DuiaDNS IPv6 (www.duiadns.net)
 	 * +----------------------------------------------------+
 	 *  Requirements:
 	 *    - PHP version 4.0.2 or higher with the CURL Library and the PCRE Library
@@ -93,7 +96,7 @@
 	 *  HE.net IPv6     - Last Tested: 7 July 2013
 	 *  HE.net Tunnel   - Last Tested: 28 June 2011
 	 *  SelfHost        - Last Tested: 26 December 2011
-	 *  Amazon Route 53 - Last tested: 01 April 2012
+	 *  Amazon Route 53 - Last Tested: 30 August 2016 
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
 	 *  CloudFlare      - Last Tested: 17 July 2016
 	 *  CloudFlare IPv6 - Last Tested: 17 July 2016
@@ -107,6 +110,9 @@
 	 *  DNS Made Easy   - Last Tested: 27 April 2015
 	 *  SPDYN           - Last Tested: 02 July 2016
 	 *  SPDYN IPv6      - Last Tested: 02 July 2016
+	 *  All-Inkl        - Last Tested: 12 November 2016
+	 *  DuiaDNS         - Last Tested: 25 November 2016
+	 *  DuiaDNS IPv6    - Last Tested: 25 November 2016
 	 * +====================================================+
 	 *
 	 * @author 	E.Kristensen
@@ -169,9 +175,8 @@
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
 
-			global $config, $g;
-
-			if ($dnsService == "namecheap") {
+			global $config, $g, $dyndns_split_domain_types;
+			if (in_array($dnsService, $dyndns_split_domain_types)) {
 				$this->_FQDN = $dnsHost . "." . $dnsDomain;
 			} else {
 				$this->_FQDN = $dnsHost;
@@ -196,7 +201,15 @@
 			case 'freedns-v6':
 				if (!$dnsHost) $this->_error(5);
 				break;
-			case 'namecheap':
+			case "namecheap":
+				if (!$dnsPass) $this->_error(4);
+				if (!$dnsHost) $this->_error(5);
+				if (!$dnsDomain) $this->_error(5);
+				break;
+			case "cloudflare-v6":
+			case "cloudflare":
+			case "gratisdns":
+				if (!$dnsUser) $this->_error(3);
 				if (!$dnsPass) $this->_error(4);
 				if (!$dnsHost) $this->_error(5);
 				if (!$dnsDomain) $this->_error(5);
@@ -218,6 +231,7 @@
 				case 'he-net-v6':
 				case 'custom-v6':
 				case 'spdyn-v6':
+				case 'duiadns-v6':
 				case 'freedns-v6':
 				case 'cloudflare-v6':
 					$this->_useIPv6 = true;
@@ -227,7 +241,7 @@
 			}
 			$this->_dnsService = strtolower($dnsService);
 			$this->_dnsUser = $dnsUser;
-			$this->_dnsPass = $dnsPass;
+			$this->_dnsPass = base64_decode($dnsPass);
 			$this->_dnsHost = $dnsHost;
 			$this->_dnsDomain = $dnsDomain;
 			$this->_dnsServer = $dnsServer;
@@ -286,6 +300,8 @@
 					case 'namecheap':
 					case 'he-net':
 					case 'he-net-v6':
+					case 'duiadns':
+					case 'duiadns-v6':
 					case 'selfhost':
 					case 'he-net-tunnelbroker':
 					case 'route53':
@@ -300,6 +316,7 @@
 					case 'dnsmadeeasy':
 					case 'spdyn':
 					case 'spdyn-v6':
+					case 'all-inkl':
 						$this->_update();
 						if ($this->_dnsDummyUpdateDone == true) {
 							// If a dummy update was needed, then sleep a while and do the update again to put the proper address back.
@@ -343,7 +360,7 @@
 			}
 
 			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
-				curl_setopt($ch, CURLOPT_HEADER, 0);
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
@@ -468,7 +485,7 @@
 					if ($this->_dnsPort) {
 						$port = ":" . $this->_dnsPort;
 					}
-					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" .$this->_dnsHost);
+					curl_setopt($ch, CURLOPT_URL, "{$server}{$port}?host=" . $this->_dnsHost . '&dnsto=' . $this->_dnsIP);
 					break;
 				case 'dyns':
 					$needsIP = FALSE;
@@ -590,6 +607,15 @@
 					$server = "https://dynamicdns.park-your-domain.com/update?host={$this->_dnsHost}&domain={$this->_dnsDomain}&password={$dnspass}&ip={$this->_dnsIP}";
 					curl_setopt($ch, CURLOPT_URL, $server);
 					break;
+				case 'duiadns':
+				case 'duiadns-v6':
+					$needsIP = FALSE;
+					$server = "https://ipv4.duiadns.net/dyndns.duia?";
+					curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+					curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser . ':' . $this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . 'hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
+					break;
 				case 'he-net':
 				case 'he-net-v6':
 					$needsIP = FALSE;
@@ -620,60 +646,22 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?system=dyndns&hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP . '&wildcard='.$this->_dnsWildcard . '&mx=' . $this->_dnsMX . '&backmx=NO');
 					break;
-				case 'route53':
-
-					/* Setting Variables */
-					$hostname = "{$this->_dnsHost}.";
-					$ZoneID = trim($this->_dnsZoneID);
-					$AccessKeyId = $this->_dnsUser;
-					$SecretAccessKey = $this->_dnsPass;
-					$NewIP = $this->_dnsIP;
-					$NewTTL = $this->_dnsTTL;
-
-					/* Include Route 53 Library Class */
-					require_once('/etc/inc/r53.class');
-
-					/* Set Amazon AWS Credentials for this record */
-					$r53 = new Route53($AccessKeyId, $SecretAccessKey);
-
-					/* Function to find old values of records in Route 53 */
-					if (!function_exists('Searchrecords')) {
-						function SearchRecords($records, $name) {
-							$result = array();
-							foreach ($records as $record) {
-								if (strtolower($record['Name']) == strtolower($name)) {
-									$result [] = $record;
-								}
-							}
-							return ($result) ? $result : false;
+				case 'route53':		
+					require_once("r53.class");
+					$r53 = new Route53($this->_dnsUser, $this->_dnsPass);
+					$apiurl = $r53->getApiUrl($this->_dnsZoneID);
+					$xmlreq = $r53->getRequestBody($this->_dnsHost, $this->_dnsIP, $this->_dnsTTL);
+					$httphead = $r53->getHttpPostHeaders(strlen($xmlreq));
+					curl_setopt($ch, CURLOPT_HTTPHEADER, $httphead);
+					if($this->_dnsVerboseLog){
+						log_error(sprintf("Sending reuquest to: %s", $apiurl));
+						foreach($httphead as $hv){
+							log_error(sprintf("Header: %s", $hv));
 						}
+						log_error(sprintf("XMLPOST: %s", $xmlreq));
 					}
-
-					$records = $r53->listResourceRecordSets("/hostedzone/$ZoneID");
-
-					/* Get IP for your hostname in Route 53 */
-					if (false !== ($a_result = SearchRecords($records['ResourceRecordSets'], "$hostname"))) {
-						$OldTTL = $a_result[0][TTL];
-						$OldIP = $a_result[0][ResourceRecords][0];
-					} else {
-						$OldIP = "";
-					}
-
-					/* Check if we need to update DNS Record */
-					if ($OldIP !== $NewIP || $OldTTL !== $NewTTL) {
-						if (!empty($OldIP)) {
-							/* Your Hostname already exists, deleting and creating it again */
-							$changes = array();
-							$changes[] = $r53->prepareChange(DELETE, $hostname, A, $OldTTL, $OldIP);
-							$changes[] = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
-							$result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
-						} else {
-							/* Your Hostname does not exist yet, creating it */
-							$changes = $r53->prepareChange(CREATE, $hostname, A, $NewTTL, $NewIP);
-							$result = $r53->changeResourceRecordSets("/hostedzone/$ZoneID", $changes);
-						}
-					}
-					$this->_checkStatus(0, $result);
+					curl_setopt($ch, CURLOPT_URL, $apiurl);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $xmlreq);
 					break;
 				case 'custom':
 				case 'custom-v6':
@@ -703,8 +691,6 @@
 					$needsIP = TRUE;
 					$dnsServer ='api.cloudflare.com';
 					$dnsHost = str_replace(' ', '', $this->_dnsHost);
-					$host_names = explode(".", $dnsHost);
-					$bottom_host_name = $host_names[count($host_names)-2] . "." . $host_names[count($host_names)-1];
 
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array(
@@ -714,12 +700,12 @@
 					));
 
 					// Get zone ID
-					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$bottom_host_name}";
+					$getZoneId = "https://{$dnsServer}/client/v4/zones/?name={$this->_dnsDomain}";
 					curl_setopt($ch, CURLOPT_URL, $getZoneId);
 					$output = json_decode(curl_exec($ch));
 					$zone = $output->result[0]->id;
 					if ($zone) { // If zone ID was found get host ID
-						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_dnsHost}&type={$recordType}";
+						$getHostId = "https://{$dnsServer}/client/v4/zones/{$zone}/dns_records?name={$this->_FQDN}&type={$recordType}";
 						curl_setopt($ch, CURLOPT_URL, $getHostId);
 						$output = json_decode(curl_exec($ch));
 						$host = $output->result[0]->id;
@@ -750,15 +736,7 @@
 				case 'gratisdns':
 					$needsIP = TRUE;
 					$server = "https://ssl.gratisdns.dk/ddns.phtml";
-					$host = trim($this->_dnsHost);
-					$hostnames = explode(".", $host);
-					$hostnames_count = count($hostnames);
-					if ($hostnames_count > 2) {
-						$domain = $hostnames[$hostnames_count-2] . "." . $hostnames[$hostnames_count-1];
-					} else {
-						$domain = $host;
-					}
-					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $host . '&d=' . $domain . '&i=' . $this->_dnsIP);
+					curl_setopt($ch, CURLOPT_URL, $server . '?u=' . $this->_dnsUser . '&p=' . $this->_dnsPass . '&h=' . $this->_dnsHost . '&d=' . $this->_dnsDomain . '&i=' . $this->_dnsIP);
 					break;
 				case 'ovh-dynhost':
 					$needsIP = FALSE;
@@ -833,12 +811,21 @@
 					}
 					curl_setopt($ch, CURLOPT_URL, $server .$port . '?hostname=' . $this->_dnsHost . '&myip=' . $this->_dnsIP);
 					break;
+				case 'all-inkl':
+					$needsIP = FALSE;
+					$server = 'https://dyndns.kasserver.com/';
+					curl_setopt($ch, CURLOPT_USERPWD, $this->_dnsUser.':'.$this->_dnsPass);
+					curl_setopt($ch, CURLOPT_URL, $server . 'myip=' . $this->_dnsIP);
+					break;
 				default:
 					break;
 			}
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53') {
-				$data = curl_exec($ch);
-				$this->_checkStatus($ch, $data);
+			if ($this->_dnsService != 'ods') {
+				$response = curl_exec($ch);
+				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
+				$header = substr($response, 0, $header_size);
+				$data = substr($response, $header_size);
+				$this->_checkStatus($ch, $data, $header);
 				@curl_close($ch);
 			}
 		}
@@ -856,7 +843,7 @@
 			$error_str = "(" . gettext("Error") . ") ";
 			$status_intro = "phpDynDNS ({$this->_dnsHost}): ";
 
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53' && @curl_error($ch)) {
+			if ($this->_dnsService != 'ods' && @curl_error($ch)) {
 				$status = gettext("Curl error occurred:") . " " . curl_error($ch);
 				log_error($status);
 				$this->status = $status;
@@ -1205,7 +1192,26 @@
 						$this->_debug($data);
 					}
 					break;
-
+				case 'duiadns':
+				case 'duiadns-v6':
+					if (preg_match("/error/i", $data)) {
+						$status = $status_intro . $error_str . gettext("Server side error.");
+					} else if (preg_match('/nohost/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Bad Request - A hostname was not provided.");
+					} else if (preg_match('/badauth/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Invalid username or password.");
+					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
+						$successful_update = true;
+					} else if (preg_match('/nochg/i', $data)) {
+						$status = $status_intro . $success_str . gettext("No Change In IP Address.");
+						$successful_update = true;
+					} else {
+						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
+					}
+					break;
 				case 'he-net':
 				case 'he-net-v6':
 					if (preg_match("/badip/i", $data)) {
@@ -1271,7 +1277,14 @@
 					}
 					break;
 				case 'route53':
-					$successful_update = true;
+					if(preg_match('/ErrorResponse/', $data)){
+						$status = $status_intro . $error_str . gettext("Route53 API call failed");
+						log_error(sprintf("error message: %s", $data));
+						$status_update = false;
+					} else {
+						$status = $status_intro . $success_str . gettext("IP address changed successfully");
+						$successful_update = true;
+					}
 					break;
 				case 'custom':
 				case 'custom-v6':
@@ -1349,14 +1362,12 @@
 					/* Responds with HTTP 200 on success.
 					   Responds with HTTP 4xx on error.
 					   Returns JSON data as body */
-					$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-					$header = substr($data, 0, $header_size);
-					$body = substr($data, $header_size);
-					if (preg_match("/Status: 200\s/i", $header)) {
+;
+					if (preg_match("/\s200\sOK/i", $header)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
-					} else if (preg_match("/Status: 4\d\d\s/i", $header)) {
-						$arrbody = json_decode($body, true);
+					} else if (preg_match("/\s4\d\d\s/i", $header)) {
+						$arrbody = json_decode($data, true);
 						$message = $arrbody['message'] . ".";
 						if (isset($arrbody['errors']['content'])) {
 							foreach ($arrbody['errors']['content'] as $key => $content) {
@@ -1366,8 +1377,8 @@
 						$status = $status_intro . $error_str . $message;
 					} else {
 						$status = $status_intro . "(" . gettext("Unknown Response") . ")";
-						log_error($status_intro . gettext("PAYLOAD:") . " " . $body);
-						$this->_debug($body);
+						log_error($status_intro . gettext("PAYLOAD:") . " " . $data);
+						$this->_debug($data);
 					}
 					break;
 				case 'googledomains':
@@ -1453,6 +1464,22 @@
 						$this->_debug($data);
 					}
 					break;
+				case 'all-inkl':
+ 					if (preg_match('/good\s'.$this->_dnsIP.'/i', $data)) {
+							$status = $status_intro . $success_str . gettext("IP Address Changed Successfully!") . " (" . $this->_dnsIP . ")";
+ 							$successful_update = true;
+ 					} else if (preg_match('/good/i', $data)) {
+						$status = $status_intro . $error_str . gettext("Result did not match.");
+					} else if (preg_match("/\s401\sUnauthorized/i", $header)) {
+						$status = $status_intro . $error_str . gettext("Invalid username or password");
+					} 
+					else {
+							$status = $status_intro . "(" . gettext("Unknown Response") . ")";
+							log_error($status_intro . gettext("PAYLOAD:") . " " . $header.$data);
+ 							$this->_debug($data);
+ 							$this->_debug($header);
+ 					}
+ 					break;
 			}
 
 			if ($successful_update == true) {

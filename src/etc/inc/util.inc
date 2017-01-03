@@ -55,8 +55,9 @@ function isvalidproc($proc) {
 /* sigkill a process by pid file */
 /* return 1 for success and 0 for a failure */
 function sigkillbypid($pidfile, $sig) {
-	if (file_exists($pidfile)) {
-		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") . " -F {$pidfile}", true);
+	if (isvalidpid($pidfile)) {
+		return mwexec("/bin/pkill " . escapeshellarg("-{$sig}") .
+		    " -F {$pidfile}", true);
 	}
 
 	return 0;
@@ -806,10 +807,10 @@ function subnet_size_by_netmask($iptype, $bits, $exact=false) {
 		return 0;
 	}
 
-	// 2**N returns an exact result as an INT if possible, and a float/double if not. 
+	// 2**N returns an exact result as an INT if possible, and a float/double if not.
 	// Detect this switch, rather than comparing $result<=PHP_MAX_INT or $bits >=8*PHP_INT_SIZE as it's (probably) easier to get completely reliable
 	$result = 2 ** $snsize;
-	
+
 	if ($exact && !is_int($result)) {
 		//exact required but can't represent result exactly as an INT
 		return 0;
@@ -849,7 +850,7 @@ function check_subnetsv4_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv4_start1 = gen_subnetv4($subnet1, $largest_sn);
 	$subnetv4_start2 = gen_subnetv4($subnet2, $largest_sn);
-	
+
 	if ($subnetv4_start1 == '' || $subnetv4_start2 == '') {
 		// One or both args is not a valid IPv4 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -864,7 +865,7 @@ function check_subnetsv6_overlap($subnet1, $bits1, $subnet2, $bits2) {
 	$largest_sn = min($bits1, $bits2);
 	$subnetv6_start1 = gen_subnetv6($subnet1, $largest_sn);
 	$subnetv6_start2 = gen_subnetv6($subnet2, $largest_sn);
-	
+
 	if ($subnetv6_start1 == '' || $subnetv6_start2 == '') {
 		// One or both args is not a valid IPv6 subnet
 		//FIXME: needs to return "bad data" not true/false if bad. For now return false, best we can do until fixed
@@ -985,9 +986,19 @@ function is_domain($domain, $allow_wildcard=false) {
 }
 
 /* returns true if $macaddr is a valid MAC address */
-function is_macaddr($macaddr, $partial=false) {
-	$repeat = ($partial) ? '1,5' : '5';
-	return preg_match('/^[0-9A-F]{2}(?:[:][0-9A-F]{2}){'.$repeat.'}$/i', $macaddr) == 1 ? true : false;
+function is_macaddr($macaddr) {
+	$values = explode(":", $macaddr);
+	if (count($values) != 6) {
+		return false;
+	}
+	for ($i = 0; $i < 6; $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+
+	return true;
 }
 
 /*
@@ -1847,15 +1858,19 @@ function format_number($num, $precision = 3) {
 		$num /= 1000;
 		$i++;
 	}
-	round($num, $precision);
+	$num = round($num, $precision);
 
 	return ("$num {$units[$i]}");
 }
 
-function update_filter_reload_status($text) {
+function update_filter_reload_status($text, $new=false) {
 	global $g;
 
-	file_put_contents("{$g['varrun_path']}/filter_reload_status", $text);
+	if ($new) {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL);
+	} else {
+		file_put_contents("{$g['varrun_path']}/filter_reload_status", $text  . PHP_EOL, FILE_APPEND);
+	}
 }
 
 /****** util/return_dir_as_array
@@ -2298,7 +2313,37 @@ function explode_assoc($delimiter, $string) {
 	return $result;
 }
 
-function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) {
+/* Try to change a static route, if it doesn't exist, add it */
+function route_add_or_change($args) {
+	global $config;
+
+	if (empty($args)) {
+		return false;
+	}
+
+	/* First, try to add it */
+	$_gb = exec(escapeshellcmd("/sbin/route add " . $args), $output, $rc);
+
+	if (isset($config['system']['route-debug'])) {
+		$mt = microtime();
+		log_error("ROUTING debug: $mt - ADD RC={$rc} - $args");
+	}
+
+	if ($rc != 0) {
+		/* If it fails, try to change it */
+		$_gb = exec(escapeshellcmd("/sbin/route change " . $args),
+		    $output, $rc);
+
+		if (isset($config['system']['route-debug'])) {
+			$mt = microtime();
+			log_error("ROUTING debug: $mt - CHG RC={$rc} - $args");
+		}
+	}
+
+	return ($rc == 0);
+}
+
+function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false, $returnenabledroutesonly = false) {
 	global $config, $aliastable;
 
 	/* Bail if there are no routes, but return an array always so callers don't have to check. */
@@ -2310,6 +2355,10 @@ function get_staticroutes($returnsubnetsonly = false, $returnhostnames = false) 
 	$allsubnets = array();
 	/* Loop through routes and expand aliases as we find them. */
 	foreach ($config['staticroutes']['route'] as $route) {
+		if ($returnenabledroutesonly && isset($route['disabled'])) {
+			continue;
+		}
+
 		if (is_alias($route['network'])) {
 			if (!isset($aliastable[$route['network']])) {
 				continue;
@@ -2430,4 +2479,134 @@ function get_smart_drive_list() {
 	return $disk_list;
 }
 
+// Validate a network address
+//	$addr: the address to validate
+//	$type: IPV4|IPV6|IPV4V6
+//	$label: the label used by the GUI to display this value. Required to compose an error message
+//	$err_msg: pointer to the callers error message array so that error messages can be added to it here
+//	$alias: are aliases permitted for this address?
+// Returns:
+//	IPV4 - if $addr is a valid IPv4 address
+//	IPV6 - if $addr is a valid IPv6 address
+//	ALIAS - if $alias=true and $addr is an alias
+//	false - otherwise
+
+function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
+	switch ($type) {
+		case IPV4:
+			if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 address."), $label);
+				return false;
+			}
+		break;
+		case IPV6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv6 address."), $label);
+				return false;
+			}
+		break;
+		case IPV4V6:
+			if (is_ipaddrv6($addr)) {
+				$addr = strtolower($addr);
+				return IPV6;
+			} else if (is_ipaddrv4($addr)) {
+				return IPV4;
+			} else if ($alias) {
+				if (is_alias($addr)) {
+					return ALIAS;
+				} else {
+					$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address or alias."), $label);
+					return false;
+				}
+			} else {
+				$err_msg[] = sprintf(gettext("%s must be a valid IPv4 or IPv6 address."), $label);
+				return false;
+			}
+		break;
+	}
+
+	return false;
+}
+
+/* returns true if $dhcp6duid is a valid duid entrry */
+function is_duid($dhcp6duid) {
+	$values = explode(":", $dhcp6duid);
+	if (count($values) != 16 || strlen($dhcp6duid) != 47) {
+		return false;
+	}
+	for ($i = 0; $i < 16; $i++) {
+		if (ctype_xdigit($values[$i]) == false)
+			return false;
+		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)
+			return false;
+	}
+	return true;
+}
+
+/* Write the DHCP6 DUID file */
+function write_dhcp6_duid($duidstring) {
+	// Create the hex array from the dhcp6duid config entry and write to file
+	global $g;
+ 	
+ 	if(!is_duid($duidstring)) {
+		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
+		return false;
+	}
+	$temp = str_replace(":","",$duidstring);
+	$duid_binstring = pack("H*",$temp);
+	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "wb")) {
+		fwrite($fd, $duid_binstring);
+		fclose($fd);
+		return true;
+	}
+	log_error(gettext("Error: attempting to write DUID file - File write error"));
+	return false;
+}
+
+/* returns duid string from 'vardb_path']}/dhcp6c_duid' */
+function get_duid_from_file()
+{
+	global $g;
+	
+	$duid_ASCII = "";
+	$count = 0;
+	
+	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r")) {
+		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
+			$buffer = fread($fd,16);					
+			while($count < 16) {
+				$duid_ASCII .= bin2hex($buffer[$count]);
+				$count++;
+				if($count < 16) {
+					$duid_ASCII .= ":";
+				}
+			}
+		}
+		fclose($fd);
+	}
+	//if no file or error with read then the string returns blanked DUID string
+	if(!is_duid($duid_ASCII)) {
+		return "--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--";
+	}
+	return($duid_ASCII);	
+}
 ?>

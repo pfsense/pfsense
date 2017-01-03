@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-macaddresses
-##|*NAME=Services: Captive portal: Mac Addresses
-##|*DESCR=Allow access to the 'Services: Captive portal: Mac Addresses' page.
+##|*NAME=Services: Captive Portal: Mac Addresses
+##|*DESCR=Allow access to the 'Services: Captive Portal: Mac Addresses' page.
 ##|*MATCH=services_captiveportal_mac.php*
 ##|-PRIV
 
@@ -73,7 +73,7 @@ if ($_POST) {
 			$rules = captiveportal_passthrumac_configure();
 			if (!empty($rules)) {
 				@file_put_contents("{$g['tmp_path']}/passthrumac_gui", $rules);
-				mwexec("/sbin/ipfw -x {$cpzoneid} {$g['tmp_path']}/passthrumac_gui");
+				mwexec("/sbin/ipfw {$g['tmp_path']}/passthrumac_gui");
 				@unlink("{$g['tmp_path']}/passthrumac_gui");
 			}
 			$savemsg = get_std_save_message($retval);
@@ -120,7 +120,7 @@ if ($_POST) {
 				$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$idx]);
 				$uniqid = uniqid("{$cpzone}_mac");
 				file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-				mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+				mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 				@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 				unset($a_passthrumacs[$idx]);
 				write_config();
@@ -141,7 +141,7 @@ if ($_GET['act'] == "del") {
 		$rules = captiveportal_passthrumac_delete_entry($a_passthrumacs[$_GET['id']]);
 		$uniqid = uniqid("{$cpzone}_mac");
 		file_put_contents("{$g['tmp_path']}/{$uniqid}_tmp", $rules);
-		mwexec("/sbin/ipfw -x {$cpzoneid} -q {$g['tmp_path']}/{$uniqid}_tmp");
+		mwexec("/sbin/ipfw -q {$g['tmp_path']}/{$uniqid}_tmp");
 		@unlink("{$g['tmp_path']}/{$uniqid}_tmp");
 		unset($a_passthrumacs[$_GET['id']]);
 		write_config();

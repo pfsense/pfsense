@@ -97,6 +97,10 @@ function printPanel() {
 	$opstring .=					"</td>";
 	$opstring .=					"<td>";
 	$opstring .=						$conn['virtual_addr'];
+	if (!empty($conn['virtual_addr']) && !empty($conn['virtual_addr6'])) {
+		$opstring .=						"<br />";
+	}
+	$opstring .=						$conn['virtual_addr6'];
 	$opstring .=					"</td>";
 	$opstring .=					"<td></td>";
 	$opstring .=				"</tr>";
@@ -155,6 +159,10 @@ function printPanel() {
 	$opstring .=					"</td>";
 	$opstring .=					"<td>";
 	$opstring .=						$sk_server['virtual_addr'];
+	if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])) {
+		$opstring .=						"<br />";
+	}
+	$opstring .=						$sk_server['virtual_addr6'];
 	$opstring .=					"</td>";
 	$opstring .=					"<td></td>";
 	$opstring .=				"</tr>";
@@ -213,6 +221,10 @@ function printPanel() {
 	$opstring .=					"</td>";
 	$opstring .=					"<td>";
 	$opstring .=						$client['virtual_addr'];
+	if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])) {
+		$opstring .=						"<br />";
+	}
+	$opstring .=						$client['virtual_addr6'];
 	$opstring .=					"</td>";
 	$opstring .=					"<td></td>";
 	$opstring .=				"</tr>";

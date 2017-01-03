@@ -115,7 +115,9 @@ function start_dpinger($gateway) {
 	$params .= "-B {$gateway['gwifip']} ";	/* Bind src address */
 	$params .= "-p {$pidfile} ";		/* PID filename */
 	$params .= "-u {$socket} ";		/* Status Socket */
-	$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+	if (!$gateway['action_disable']) {
+		$params .= "-C \"{$alarm_cmd}\" ";	/* Command to run on alarm */
+	}
 
 	$params .= "-d " .
 	    (isset($gateway['data_payload']) && is_numeric($gateway['data_payload'])
@@ -223,12 +225,11 @@ function setup_gateways_monitor() {
 			 */
 			if (is_ipaddrv4($gateway['gateway']) && $gateway['monitor'] != $gateway['gateway']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+				$route_to = "-host {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-						" -iface " . escapeshellarg($gateway['interface']), true);
+					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
 				} else {
-					mwexec("/sbin/route change -host " . escapeshellarg($gateway['monitor']) .
-						" " . escapeshellarg($gateway['gateway']), true);
+					route_add_or_change("{$route_to} {$gateway['gateway']}");
 				}
 
 				pfSense_kill_states("0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmp");
@@ -265,12 +266,11 @@ function setup_gateways_monitor() {
 			 */
 			if ($gateway['gateway'] != $gateway['monitor']) {
 				log_error(sprintf(gettext('Removing static route for monitor %1$s and adding a new route through %2$s'), $gateway['monitor'], $gateway['gateway']));
+				$route_to = "-host -inet6 {$gateway['monitor']}";
 				if (interface_isppp_type($gateway['friendlyiface'])) {
-					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-						" -iface " . escapeshellarg($gateway['interface']), true);
+					route_add_or_change("{$route_to} -iface {$gateway['interface']}");
 				} else {
-					mwexec("/sbin/route change -host -inet6 " . escapeshellarg($gateway['monitor']) .
-						" " . escapeshellarg($gateway['gateway']), true);
+					route_add_or_change("{$route_to} {$gateway['gateway']}");
 				}
 
 				pfSense_kill_states("::0.0.0.0/0", $gateway['monitor'], $gateway['interface'], "icmpv6");
@@ -300,7 +300,7 @@ function setup_gateways_monitor() {
 	return;
 }
 
-function get_dpinger_status($gwname) {
+function get_dpinger_status($gwname, $detailed = false) {
 	global $g;
 
 	$running_processes = running_dpinger_processes();
@@ -370,9 +370,18 @@ function get_dpinger_status($gwname) {
 			}
 		}
 
-		if ($r['latency_avg'] > $settings['latencyhigh'] ||
-		    $r['loss'] > $settings['losshigh']) {
-			$r['status'] = "down";
+		if ($r['latency_avg'] > $settings['latencyhigh']) {
+			if ($detailed) {
+				$r['status'] = "highdelay";
+			} else {
+				$r['status'] = "down";
+			}
+		} else if ($r['loss'] > $settings['losshigh']) {
+			if ($detailed) {
+				$r['status'] = "highloss";
+			} else {
+				$r['status'] = "down";
+			}
 		} else if ($r['latency_avg'] > $settings['latencylow']) {
 			$r['status'] = "delay";
 		} else if ($r['loss'] > $settings['losslow']) {
@@ -393,7 +402,11 @@ function return_gateways_status($byname = false) {
 	$gateways_arr = return_gateways_array();
 
 	foreach ($dpinger_gws as $gwname => $gwdata) {
-		$dpinger_status = get_dpinger_status($gwname);
+		// If action is disabled for this gateway, then we want a detailed status.
+		// That reports "highdelay" or "highloss" rather than just "down".
+		// Because reporting the gateway down would be misleading (gateway action is disabled)
+		$detailed = $gateways_arr[$gwname]['action_disable'];
+		$dpinger_status = get_dpinger_status($gwname, $detailed);
 		if ($dpinger_status === false) {
 			continue;
 		}
@@ -455,6 +468,49 @@ function return_gateways_status($byname = false) {
 		}
 	}
 	return($status);
+}
+
+function return_gateways_status_text($byname = false, $brief = false) {
+	$gwstat = return_gateways_status($byname);
+	$output = "";
+	$widths = array();
+	$col_sep = 2;
+	if ($brief) {
+		$collist = array('status' => "Status");
+	} else {
+		$collist = array('monitorip' => "Monitor",
+				'srcip' => "Source",
+				'delay' => "Delay",
+				'stddev' => "StdDev",
+				'loss' => "Loss",
+				'status' => "Status");
+	}
+	foreach ($gwstat as $gw) {
+		foreach ($gw as $gwdidx => $gwdata) {
+			if (strlen($gwdata) > $widths[$gwdidx]) {
+				$widths[$gwdidx] = strlen($gwdata);
+			}
+		}
+	}
+
+	$output .= str_pad("Name", $widths['name'] + $col_sep, " ", STR_PAD_RIGHT);
+	foreach ($collist as $hdrcol => $hdrdesc) {
+		if (strlen($hdrdesc) > $widths[$hdrcol]) {
+			$widths[$hdrcol] = strlen($hdrdesc);
+		}
+		$output .= str_pad($hdrdesc, $widths[$hdrcol] + $col_sep, " ", (substr($hdrcol, -2, 2) == "ip") ? STR_PAD_RIGHT : STR_PAD_LEFT);
+	}
+	$output .= "\n";
+
+	foreach ($gwstat as $idx => $gw) {
+		$output .= str_pad($gw['name'], $widths['name'] + $col_sep, " ", STR_PAD_RIGHT);
+		foreach (array_keys($collist) as $col) {
+			$output .= str_pad($gw[$col], $widths[$col] + $col_sep, " ", (substr($col, -2, 2) == "ip") ? STR_PAD_RIGHT : STR_PAD_LEFT);
+		}
+		$output .= "\n";
+	}
+
+	return $output;
 }
 
 /* Return all configured gateways on the system */
@@ -529,6 +585,10 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 				$gateway['monitor'] = $gateway['gateway'];
 			}
 
+			if (isset($gateway['action_disable'])) {
+				$gateway['action_disable'] = true;
+			}
+
 			$gateway['friendlyiface'] = $gateway['interface'];
 
 			/* special treatment for tunnel interfaces */
@@ -593,6 +653,7 @@ function return_gateways_array($disabled = false, $localhost = false, $inactive 
 		switch ($ifcfg['ipaddr']) {
 			case "dhcp":
 			case "pppoe":
+			case "l2tp":
 			case "pptp":
 			case "ppp":
 				$ctype = strtoupper($ifcfg['ipaddr']);
@@ -809,13 +870,13 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 		if (($gwsttng['ipprotocol'] == $ipprotocol) && isset($gwsttng['defaultgw'])) {
 			$dfltgwfound = true;
 			$dfltgwname = $gwname;
-			if (!isset($gwsttng['monitor_disable']) && $gateways_status[$gwname]['status'] != "none") {
+			if (!isset($gwsttng['monitor_disable']) && !isset($gwsttng['action_disable']) && $gateways_status[$gwname]['status'] != "none") {
 				$dfltgwdown = true;
 			}
 		}
 		/* Keep a record of the last up gateway */
 		/* XXX: Blacklist lan for now since it might cause issues to those who have a gateway set for it */
-		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
+		if (empty($upgw) && ($gwsttng['ipprotocol'] == $ipprotocol) && (isset($gwsttng['monitor_disable']) || isset($gwsttng['action_disable']) || $gateways_status[$gwname]['status'] == "none") && $gwsttng[$gwname]['friendlyiface'] != "lan") {
 			$upgw = $gwname;
 		}
 		if ($dfltgwdown == true && !empty($upgw)) {
@@ -842,7 +903,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			} else {
 				$inetfamily = "-inet";
 			}
-			mwexec("/sbin/route change {$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
+			route_add_or_change("{$inetfamily} default {$gateways_arr[$upgw]['gateway']}");
 		}
 	} else if (!empty($dfltgwname)) {
 		$defaultgw = trim(exec("/sbin/route -n get -{$ipprotocol} default | /usr/bin/awk '/gateway:/ {print $2}'"), " \n");
@@ -861,7 +922,7 @@ function fixup_default_gateway($ipprotocol, $gateways_status, $gateways_arr) {
 			}
 		}
 		if ($defaultgw != $gateways_arr[$dfltgwname]['gateway']) {
-			mwexec("/sbin/route change -{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
+			route_add_or_change("-{$ipprotocol} default {$gateways_arr[$dfltgwname]['gateway']}");
 		}
 	}
 }
@@ -922,7 +983,11 @@ function return_gateway_groups_array() {
 						$msg = sprintf(gettext('MONITOR: %1$s has high latency, omitting from routing group %2$s'), $gwname, $group['name']);
 						$gwdown = true;
 					}
+					$pluginparams = array();
+					$pluginparams['type'] = 'gateway';
+					$pluginparams['name'] = ${gwname};
 					if ($gwdown == true) {
+						$pluginparams['event'] = 'gateway.down';
 						if (!file_exists("/tmp/.down.{$gwname}")) {
 							$msg .= "\n".implode("|", $status);
 							touch("/tmp/.down.{$gwname}");
@@ -931,6 +996,7 @@ function return_gateway_groups_array() {
 							notify_via_smtp($msg);
 						}
 					} else {
+						$pluginparams['event'] = 'gateway.up';
 						/* Online add member */
 						if (!is_array($tiers[$tier])) {
 							$tiers[$tier] = array();
@@ -944,7 +1010,10 @@ function return_gateway_groups_array() {
 							notify_via_smtp($msg);
 						}
 					}
-				} else if (isset($gateways_arr[$gwname]['monitor_disable'])) {
+					if (isset($gateways_arr[$gwname]['interface']))
+						$pluginparams['interface'] = $gateways_arr[$gwname]['interface'];
+					pkg_call_plugins('plugin_gateway', $pluginparams);
+				} else if (isset($gateways_arr[$gwname]['monitor_disable']) || isset($gateways_arr[$gwname]['action_disable'])) {
 					$tiers[$tier][] = $gwname;
 				}
 			}

@@ -83,6 +83,7 @@ if (isset($id) && $a_gateways[$id]) {
 	$pconfig['losshigh'] = $a_gateways[$id]['losshigh'];
 	$pconfig['monitor'] = $a_gateways[$id]['monitor'];
 	$pconfig['monitor_disable'] = isset($a_gateways[$id]['monitor_disable']);
+	$pconfig['action_disable'] = isset($a_gateways[$id]['action_disable']);
 	$pconfig['data_payload'] = $a_gateways[$id]['data_payload'];
 	$pconfig['nonlocalgateway'] = isset($a_gateways[$id]['nonlocalgateway']);
 	$pconfig['descr'] = $a_gateways[$id]['descr'];
@@ -220,8 +221,8 @@ if ($_POST) {
 			}
 		}
 	}
-	if (($_POST['monitor'] != "") && !is_ipaddr($_POST['monitor']) && $_POST['monitor'] != "dynamic") {
-		$input_errors[] = gettext("A valid monitor IP address must be specified.");
+	if (($_POST['monitor'] != "") && ($_POST['monitor'] != "dynamic")) {
+		validateipaddr($_POST['monitor'], IPV4V6, "Monitor IP", $input_errors, false);
 	}
 	if (isset($_POST['data_payload']) && is_numeric($_POST['data_payload']) && $_POST['data_payload'] < 0) {
 		$input_errors[] = gettext("A valid data payload must be specified.");
@@ -428,6 +429,9 @@ if ($_POST) {
 		if ($_POST['monitor_disable'] == "yes") {
 			$gateway['monitor_disable'] = true;
 		}
+		if ($_POST['action_disable'] == "yes") {
+			$gateway['action_disable'] = true;
+		}
 		if ($_POST['nonlocalgateway'] == "yes") {
 			$gateway['nonlocalgateway'] = true;
 		}
@@ -494,6 +498,15 @@ if ($_POST) {
 
 		if (isset($_POST['disabled'])) {
 			$gateway['disabled'] = true;
+			/* Check if the gateway was enabled but changed to disabled. */
+			if ((isset($realid) && $a_gateway_item[$realid]) && ($pconfig['disabled'] == false)) {
+				/*  If the disabled gateway was the default route, remove the default route */
+				if (is_ipaddr($gateway['gateway']) &&
+				    isset($gateway['defaultgw'])) {
+					$inet = (!is_ipaddrv4($gateway['gateway']) ? '-inet6' : '-inet');
+					mwexec("/sbin/route delete {$inet} default");
+				}
+			}
 		} else {
 			unset($gateway['disabled']);
 		}
@@ -634,6 +647,13 @@ $section->addInput(new Form_Checkbox(
 	'Disable Gateway Monitoring',
 	$pconfig['monitor_disable']
 ))->toggles('.toggle-monitor-ip')->setHelp('This will consider this gateway as always being up.');
+
+$section->addInput(new Form_Checkbox(
+	'action_disable',
+	'Gateway Action',
+	'Disable Gateway Monitoring Action',
+	$pconfig['action_disable']
+))->setHelp('No action will be taken on gateway events. The gateway is always considered up.');
 
 $group = new Form_Group('Monitor IP');
 $group->addClass('toggle-monitor-ip', 'collapse');
@@ -850,12 +870,12 @@ events.push(function() {
 <?php
 			if (!(!empty($pconfig['latencylow']) || !empty($pconfig['latencyhigh']) ||
 			    !empty($pconfig['losslow']) || !empty($pconfig['losshigh']) || !empty($pconfig['data_payload']) ||
-			    (isset($pconfig['weight']) && $pconfig['weight'] > 1) ||
-			    (isset($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
-			    (isset($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
-			    (isset($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
-			    (isset($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
-			    (isset($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
+			    (!empty($pconfig['weight']) && $pconfig['weight'] > 1) ||
+			    (!empty($pconfig['interval']) && !($pconfig['interval'] == $dpinger_default['interval'])) ||
+			    (!empty($pconfig['loss_interval']) && !($pconfig['loss_interval'] == $dpinger_default['loss_interval'])) ||
+			    (!empty($pconfig['time_period']) && !($pconfig['time_period'] == $dpinger_default['time_period'])) ||
+			    (!empty($pconfig['alert_interval']) && !($pconfig['alert_interval'] == $dpinger_default['alert_interval'])) ||
+			    (!empty($pconfig['nonlocalgateway']) && $pconfig['nonlocalgateway']))) {
 				$showadv = false;
 			} else {
 				$showadv = true;

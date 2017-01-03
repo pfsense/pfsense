@@ -472,6 +472,8 @@ function local_user_set(& $user) {
 	/* Cases here should be ordered by most privileged to least privileged. */
 	if (userHasPrivilege($user, "user-shell-access") || userHasPrivilege($user, "page-all")) {
 		$user_shell = "/bin/tcsh";
+	} elseif (userHasPrivilege($user, "user-copy-files-chroot")) {
+		$user_shell = "/usr/local/sbin/scponlyc";
 	} elseif (userHasPrivilege($user, "user-copy-files")) {
 		$user_shell = "/usr/local/bin/scponly";
 	} elseif (userHasPrivilege($user, "user-ssh-tunnel")) {
@@ -783,10 +785,10 @@ function ldap_test_connection($authcfg) {
 	global $debug, $config, $g;
 
 	if ($authcfg) {
-		if (strstr($authcfg['ldap_urltype'], "Standard")) {
-			$ldapproto = "ldap";
-		} else {
+		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
+		} else {
+			$ldapproto = "ldap";
 		}
 		$ldapserver = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport = $authcfg['ldap_port'];
@@ -827,7 +829,7 @@ function ldap_setup_caenv($authcfg) {
 	require_once("certs.inc");
 
 	unset($caref);
-	if (empty($authcfg['ldap_caref']) || !strstr($authcfg['ldap_urltype'], "SSL")) {
+	if (empty($authcfg['ldap_caref']) || strstr($authcfg['ldap_urltype'], "Standard")) {
 		putenv('LDAPTLS_REQCERT=never');
 		return;
 	} else {
@@ -857,10 +859,10 @@ function ldap_test_bind($authcfg) {
 	global $debug, $config, $g;
 
 	if ($authcfg) {
-		if (strstr($authcfg['ldap_urltype'], "Standard")) {
-			$ldapproto = "ldap";
-		} else {
+		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
+		} else {
+			$ldapproto = "ldap";
 		}
 		$ldapserver = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport = $authcfg['ldap_port'];
@@ -906,6 +908,14 @@ function ldap_test_bind($authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
+	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
+		if (!(ldap_start_tls($ldap))) {
+			log_error(sprintf(gettext("ERROR! ldap_test_bind() could not STARTTLS to server %s."), $ldapname));
+			@ldap_close($ldap);
+			return false;
+		}
+	}
+
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
 	if ($ldapanon == true) {
@@ -933,10 +943,10 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	$ous = array();
 
 	if ($authcfg) {
-		if (strstr($authcfg['ldap_urltype'], "Standard")) {
-			$ldapproto = "ldap";
-		} else {
+		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
+		} else {
+			$ldapproto = "ldap";
 		}
 		$ldapserver = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport = $authcfg['ldap_port'];
@@ -987,6 +997,14 @@ function ldap_get_user_ous($show_complete_ou=true, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
+
+	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
+		if (!(ldap_start_tls($ldap))) {
+			log_error(sprintf(gettext("ERROR! ldap_get_user_ous() could not STARTTLS to server %s."), $ldapname));
+			@ldap_close($ldap);
+			return false;
+		}
+	}
 
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
 	$ldapbindpw = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindpw) : $ldapbindpw;
@@ -1057,10 +1075,10 @@ function ldap_get_groups($username, $authcfg) {
 
 	//log_error("Getting LDAP groups for {$username}.");
 	if ($authcfg) {
-		if (strstr($authcfg['ldap_urltype'], "Standard")) {
-			$ldapproto = "ldap";
-		} else {
+		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
+		} else {
+			$ldapproto = "ldap";
 		}
 		$ldapserver = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport = $authcfg['ldap_port'];
@@ -1122,6 +1140,14 @@ function ldap_get_groups($username, $authcfg) {
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
+
+	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
+		if (!(ldap_start_tls($ldap))) {
+			log_error(sprintf(gettext("ERROR! ldap_get_groups() could not STARTTLS to server %s."), $ldapname));
+			@ldap_close($ldap);
+			return false;
+		}
+	}
 
 	/* bind as user that has rights to read group attributes */
 	$ldapbindun = isset($authcfg['ldap_utf8']) ? utf8_encode($ldapbindun) : $ldapbindun;
@@ -1199,10 +1225,10 @@ function ldap_backed($username, $passwd, $authcfg) {
 	}
 
 	if ($authcfg) {
-		if (strstr($authcfg['ldap_urltype'], "Standard")) {
-			$ldapproto = "ldap";
-		} else {
+		if (strstr($authcfg['ldap_urltype'], "SSL")) {
 			$ldapproto = "ldaps";
+		} else {
+			$ldapproto = "ldap";
 		}
 		$ldapserver = "{$ldapproto}://" . ldap_format_host($authcfg['host']);
 		$ldapport = $authcfg['ldap_port'];
@@ -1251,16 +1277,24 @@ function ldap_backed($username, $passwd, $authcfg) {
 	/* Setup CA environment if needed. */
 	ldap_setup_caenv($authcfg);
 
+	/* Make sure we can connect to LDAP */
+	$error = false;
+	if (!($ldap = ldap_connect($ldapserver))) {
+		$error = true;
+	}
+
 	ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 	ldap_set_option($ldap, LDAP_OPT_DEREF, LDAP_DEREF_SEARCHING);
 	ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, (int)$ldapver);
 	ldap_set_option($ldap, LDAP_OPT_TIMELIMIT, (int)$ldaptimeout);
 	ldap_set_option($ldap, LDAP_OPT_NETWORK_TIMEOUT, (int)$ldaptimeout);
 
-	/* Make sure we can connect to LDAP */
-	$error = false;
-	if (!($ldap = ldap_connect($ldapserver))) {
-		$error = true;
+	if (strstr($authcfg['ldap_urltype'], "STARTTLS")) {
+		if (!(ldap_start_tls($ldap))) {
+			log_error(sprintf(gettext("ERROR! ldap_backed() could not STARTTLS to server %s."), $ldapname));
+			@ldap_close($ldap);
+			return false;
+		}
 	}
 
 	if ($error == true) {

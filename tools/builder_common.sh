@@ -242,6 +242,9 @@ make_world() {
 		-d ${INSTALLER_CHROOT_DIR} \
 		|| print_error_pfS
 
+	# XXX set root password since we don't have nullok enabled
+	pw -R ${INSTALLER_CHROOT_DIR} usermod root -w yes
+
 	echo ">>> Installing world without bsdinstall for ${TARGET} architecture..." | tee -a ${LOGFILE}
 	script -aq $LOGFILE ${BUILDER_SCRIPTS}/install_freebsd.sh -K \
 		-s ${FREEBSD_SRC_DIR} \
@@ -606,6 +609,15 @@ clone_to_staging_area() {
 	# Make sure pkg is present
 	pkg_bootstrap ${STAGE_CHROOT_DIR}
 
+	# Make sure correct repo is available on tmp dir
+	mkdir -p ${STAGE_CHROOT_DIR}/tmp/pkg-repos
+	setup_pkg_repo \
+		${PKG_REPO_DEFAULT} \
+		${STAGE_CHROOT_DIR}/tmp/pkg-repos/repo.conf \
+		${TARGET} \
+		${TARGET_ARCH} \
+		staging
+
 	echo "Done!"
 }
 
@@ -688,17 +700,24 @@ customize_stagearea_for_image() {
 			${BUILDER_TOOLS}/templates/custom_logos/${_image_variant}/*.png \
 			${FINAL_CHROOT_DIR}/usr/local/share/${PRODUCT_NAME}/custom_logos
 	fi
+
+	# Remove temporary repo conf
+	rm -rf ${FINAL_CHROOT_DIR}/tmp/pkg-repos
 }
 
 create_distribution_tarball() {
 	mkdir -p ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist
 
-	tar -C ${FINAL_CHROOT_DIR} --exclude ./install --exclude ./pkgs \
+	echo -n ">>> Creating distribution tarball... " | tee -a ${LOGFILE}
+	tar -C ${FINAL_CHROOT_DIR} --exclude ./pkgs \
 		-cJf ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/base.txz .
+	echo "Done!" | tee -a ${LOGFILE}
 
+	echo -n ">>> Creating manifest... " | tee -a ${LOGFILE}
 	(cd ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist && \
 		sh ${FREEBSD_SRC_DIR}/release/scripts/make-manifest.sh base.txz) \
 		> ${INSTALLER_CHROOT_DIR}/usr/freebsd-dist/MANIFEST
+	echo "Done!" | tee -a ${LOGFILE}
 }
 
 create_iso_image() {
@@ -720,8 +739,8 @@ create_iso_image() {
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
-
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -765,14 +784,15 @@ create_memstick_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -804,7 +824,7 @@ create_memstick_serial_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -813,7 +833,8 @@ create_memstick_serial_image() {
 	echo "-S115200 -D" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_multicons="YES"' >  ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
@@ -851,7 +872,7 @@ create_memstick_adi_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -860,7 +881,8 @@ create_memstick_adi_image() {
 	echo "-S115200 -h" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_serial="YES"' > ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	echo 'comconsole_port="0x2F8"' >> ${LOADERCONF}
@@ -1015,7 +1037,12 @@ pkg_chroot() {
 	/sbin/mount -t devfs devfs ${_root}/dev
 	cp -f /etc/resolv.conf ${_root}/etc/resolv.conf
 	touch ${BUILDER_LOGS}/install_pkg_install_ports.txt
-	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt pkg -c ${_root} $@ >/dev/null 2>&1
+	local _params=""
+	if [ -f "${_root}/tmp/pkg-repos/repo.conf" ]; then
+		_params="--repo-conf-dir /tmp/pkg-repos "
+	fi
+	script -aq ${BUILDER_LOGS}/install_pkg_install_ports.txt \
+		pkg -c ${_root} ${_params}$@ >/dev/null 2>&1
 	local result=$?
 	rm -f ${_root}/etc/resolv.conf
 	/sbin/umount -f ${_root}/dev
@@ -1651,7 +1678,7 @@ EOF
 
 	# Copy over pkg repo templates to pfSense-repo
 	mkdir -p /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
-	cp -f ${BUILDER_TOOLS}/templates/pkg_repos/* \
+	cp -f ${PKG_REPO_BASE}/* \
 		/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
 
 	for jail_arch in ${_archs}; do

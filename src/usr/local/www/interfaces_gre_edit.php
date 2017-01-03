@@ -60,6 +60,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	$pconfig['tunnel-local-addr'] = addrtolower($_POST['tunnel-local-addr']);
+	$pconfig['tunnel-remote-addr'] = addrtolower($_POST['tunnel-remote-addr']);
+	$pconfig['remote-addr'] = addrtolower($_POST['remote-addr']);
+
 	/* input validation */
 	$reqdfields = explode(" ", "if remote-addr tunnel-local-addr tunnel-remote-addr tunnel-remote-net");
 	$reqdfieldsn = array(gettext("Parent interface"), gettext("Remote tunnel endpoint IP address"), gettext("Local tunnel IP address"), gettext("Remote tunnel IP address"), gettext("Remote tunnel network"));

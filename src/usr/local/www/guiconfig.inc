@@ -122,6 +122,7 @@ $auth_server_types = array(
 
 $ldap_urltypes = array(
 	'TCP - Standard' => 389,
+	'TCP - STARTTLS' => 389,
 	'SSL - Encrypted' => 636);
 
 $ldap_scopes = array(
@@ -275,13 +276,15 @@ function verify_gzip_file($fname) {
 	}
 }
 
-// print_info_box() has been updated so that any required button is explicitly created, rather than relying on the detection of certain
+// sprint_info_box() returns a string with a formatted informational box, it does not print the box.
+// To format and print in one step, call print_info_box() as usual.
+// Any required button is explicitly created, rather than relying on the detection of certain
 // strings in the message (such as "apply"). print_info_box_np() has been exterminated.
 // $class = the bootstrap style class (default, info, warning, success, danger)
 // $btnname and btntext describe the optional button and its display text, the default is an 'x' Close button.
 // Note that there is also a shortcut function print_apply_box here that creates a standard "apply" box for you.
 // In many cases just substitute that for print_info_box_np() to easily get a warning style "Apply changes" box.
-function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
+function sprint_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
 
 	if (strpos($class, "alert-") !== 0) {
 		$class = 'alert-' . $class;
@@ -308,7 +311,12 @@ function print_info_box($msg, $class="alert-warning", $btnname = "close", $btnte
 		$msg .= '</form>';
 	}
 
-	echo '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
+	return '<div class="alert ' . $class . ' clearfix" role="alert">' . $msg . '</div>';
+}
+
+// Format and print an info box. See sprint_info_box() for details.
+function print_info_box($msg, $class="alert-warning", $btnname = "close", $btntext = "", $btnicon = "", $btnclass = "default") {
+	echo sprint_info_box($msg, $class, $btnname, $btntext, $btnicon, $btnclass);
 }
 
 function print_apply_box($msg) {

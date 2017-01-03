@@ -89,7 +89,7 @@ function print_states($tracker) {
 	printf("data-content=\"evaluations: %s<br>packets: %s<br>bytes: %s<br>states: %s<br>state creations: %s\" data-html=\"true\">",
 	    format_number($evaluations), format_number($packets), format_bytes($bytes),
 	    format_number($states), format_number($stcreations));
-	printf("%d/%s</a><br>", format_number($states), format_bytes($bytes));
+	printf("%s/%s</a><br>", format_number($states), format_bytes($bytes));
 }
 
 function delete_nat_association($id) {
@@ -362,11 +362,20 @@ $rulescnt = pfSense_get_pf_rules();
 $columns_in_table = 13;
 
 ?>
+<!-- Allow table to scroll when dragging outside of the display window -->
+<style>
+.table-responsive {
+    clear: both;
+    overflow-x: visible;
+    margin-bottom: 0px;
+}
+</style>
+
 <form method="post">
 	<div class="panel panel-default">
 		<div class="panel-heading"><h2 class="panel-title"><?=gettext("Rules (Drag to Change Order)")?></h2></div>
 		<div id="mainarea" class="table-responsive panel-body">
-			<table id="ruletable" class="table table-hover table-striped table-condensed">
+			<table id="ruletable" class="table table-hover table-striped table-condensed" style="overflow-x: 'visible'">
 				<thead>
 					<tr>
 						<th><!-- checkbox --></th>
@@ -679,14 +688,21 @@ foreach ($a_filter as $filteri => $filterent):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
-					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
-					'"><u>';
-				echo $filterent['icmptype'];
-				echo '</u></span>';
+				// replace each comma-separated icmptype item by its (localised) full description
+				$t = 	implode(', ',
+						array_map(
+						        function($type) {
+								global $icmptypes;
+								return $icmptypes[$type]['descrip'];
+							},
+							explode(',', $filterent['icmptype'])
+						)
+					);
+				echo sprintf('<br /><div style="cursor:help;padding:1px;line-height:1.1em;max-height:2.5em;max-width:180px;overflow-y:auto;overflow-x:hidden" title="%s:%s%s"><small><u>%s</u></small></div>', gettext('ICMP subtypes'), chr(13), $t, str_replace(',', '</u>, <u>',$filterent['icmptype']));
 			}
-		} else echo "*";
-
+		} else {
+			echo " *";
+		}
 	?>
 						</td>
 						<td>
@@ -946,6 +962,9 @@ events.push(function() {
 
 	$('table tbody.user-entries').sortable({
 		cursor: 'grabbing',
+		scroll: true,
+		overflow: 'scroll',
+		scrollSensitivity: 100,
 		update: function(event, ui) {
 			$('#order-store').removeAttr('disabled');
 			reindex_rules(ui.item.parent('tbody'));

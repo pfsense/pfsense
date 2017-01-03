@@ -4971,10 +4971,96 @@ function upgrade_154_to_155() {
 	}
 }
 
-/* Unset references to glxsb in the config. See #6755 */
 function upgrade_155_to_156() {
+	// Unused
+}
+
+function upgrade_156_to_157() {
+	global $config;
+	/* Convert Cloudflare and GratisDNS type DynDNS entries to the new split hostname and domain format */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		if (($dyndns['type'] == "cloudflare") || ($dyndns['type'] == "cloudflare-v6") || ($dyndns['type'] == "gratisdns")) {
+			/* Use the old style logic to split the host and domain one last time. */
+			$dparts = explode(".", trim($dyndns['host']));
+			$domain_part_count = ($dparts[count($dparts)-1] == "uk") ? 3 : 2;
+			$domain_offset = count($dparts) - $domain_part_count;
+			$dyndns['host'] = implode(".", array_slice($dparts, 0, $domain_offset));
+			$dyndns['domainname'] = implode(".", array_slice($dparts, $domain_offset));
+		}
+	}
+
+	/* unset old pppoerestart cron job if it exists. redmine 1905 */
+	if (is_array($config['cron']['item'])) {
+		foreach ($config['cron']['item'] as $idx => $cronitem) {
+			if ($cronitem['command'] == "/etc/pppoerestart") {
+				unset($config['cron']['item'][$idx]);
+			}
+		}
+	}
+}
+
+function upgrade_157_to_158() {
+	global $config;
+	/* Convert Dynamic DNS passwords to base64 encoding. Redmine #6688 */
+
+	if (!is_array($config['dyndnses'])) {
+		$config['dyndnses'] = array();
+	}
+	if (!is_array($config['dyndnses']['dyndns'])) {
+		$config['dyndnses']['dyndns'] = array();
+	}
+	$a_dyndns = &$config['dyndnses']['dyndns'];
+
+	foreach ($a_dyndns as &$dyndns) {
+		$dyndns['password'] = base64_encode($dyndns['password']);
+	}
+}
+
+/* Unset references to glxsb in the config. See #6755 */
+function upgrade_158_to_159() {
+	global $config;
+
 	if ($config['system']['crypto_hardware'] == "glxsb") {
 		unset($config['system']['crypto_hardware']);
+	}
+}
+
+/* Convert OpenVPN "protocol" to new style for OpenVPN 2.4, old udp/tcp was
+ * IPv4 only, now is dual stack, so change it to udp4/tcp4
+ */
+function upgrade_159_to_160() {
+	global $config;
+
+	if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
 	}
 }
 ?>

@@ -39,6 +39,7 @@ if (empty($config['dhcrelay6']['interface'])) {
 }
 
 $pconfig['agentoption'] = isset($config['dhcrelay6']['agentoption']);
+$pconfig['server'] = $config['dhcrelay6']['server'];
 
 $iflist = array_intersect_key(
 	get_configured_interface_with_descr(),
@@ -83,12 +84,11 @@ if ($_POST) {
 
 		if ($_POST['server']) {
 			foreach ($_POST['server'] as $checksrv => $srv) {
-				if (!is_ipaddrv6($srv[0])) {
-					$input_errors[] = gettext("A valid Destination Server IPv6 address must be specified.");
-				}
-
-
 				if (!empty($srv[0])) { // Filter out any empties
+					if (!is_ipaddrv6($srv[0])) {
+						$input_errors[] = sprintf(gettext("Destination Server IP address %s is not a valid IPv6 address."), $srv[0]);
+					}
+
 					if (!empty($svrlist)) {
 						$svrlist .= ',';
 					}
@@ -96,8 +96,16 @@ if ($_POST) {
 					$svrlist .= $srv[0];
 				}
 			}
+
+			// Check that the user input something in one of the Destination Server fields
+			if (empty($svrlist)) {
+				$input_errors[] = gettext("At least one Destination Server IP address must be specified.");
+			}
 		}
 	}
+
+	// Now $svrlist is a comma separated list of servers ready to save to the config system
+	$pconfig['server'] = $svrlist;
 
 	if (!$input_errors) {
 		$config['dhcrelay6']['enable'] = $_POST['enable'] ? true : false;
@@ -112,8 +120,6 @@ if ($_POST) {
 		$savemsg = get_std_save_message($retval);
 	}
 }
-
-$pconfig['server'] = $config['dhcrelay6']['server'];
 
 $pgtitle = array(gettext("Services"), gettext("DHCPv6 Relay"));
 $shortcut_section = "dhcp6";
@@ -169,7 +175,8 @@ function createDestinationServerInputGroup($value = null) {
 	$group->add(new Form_IpAddress(
 		'server',
 		'Destination server',
-		$value
+		$value,
+		'V6'
 	))->setWidth(4)
 	  ->setHelp('This is the IPv6 address of the server to which DHCPv6 requests are relayed.')
 	  ->setIsRepeated();

@@ -81,8 +81,8 @@ if [ -d "${destdir}/.git" ]; then
 	current_url=$(${git} -C ${destdir} config --get remote.origin.url)
 
 	[ "${current_url}" != "${repo_url}" ] \
-		&& err "destination directory contains a different git " \
-		"repository"
+		&& err \
+		"destination directory contains a different git repository"
 
 	run "Removing local changes from git repo ${repo_url} (${branch})" \
 		"${git} -C ${destdir} reset -q --hard"

@@ -198,12 +198,21 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			if ($item['style']) {
 				$attr .= sprintf(" style=\"%s\"", htmlentities($item['style']));
 			}
-			echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+
+			if ($item[0] == '-DIVIDER-') {
+				print(' <li class="divider"></li>');
+			} else {
+				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+			}
 		}
 	}
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
+
+
+// NOTE:
+// $your_menu[] = array(gettext("-DIVIDER-"), ""); adds a horizontal divider to the menu. See $interfaces_menu[] for example
 
 // System
 $system_menu = array();
@@ -228,18 +237,36 @@ if ($user_settings['customsettings'] && isAllowedPage("system_user_settings.php*
 
 $system_menu = msort(array_merge($system_menu, return_ext_menu("System")), 0);
 
+$div = false;
+
 // Interfaces
 $interfaces_menu = array();
 if (!isset($config['system']['webgui']['noassigninterfaces'])) {
-	$interfaces_menu[] = array(gettext("(assign)"), "/interfaces_assign.php");
+	$interfaces_menu[] = array(gettext("Assignments"), "/interfaces_assign.php");
+	$div = true;
 }
+
+$platform = system_identify_specific_platform();
+
+if ($platform['name'] == "uFW") {
+	$interfaces_menu[] = array(gettext("Switches"), "/switch_system.php");
+	$div = true;
+}
+
+if ($div) {
+	$interfaces_menu[] = array(gettext("-DIVIDER-"), "");
+}
+
 $opts = get_configured_interface_with_descr(false, true);
 foreach ($opts as $oif => $odescr) {
 	if (!isset($config['interfaces'][$oif]['ovpn'])) {
 		$interfaces_menu[] = array(htmlspecialchars($odescr), "/interfaces.php?if={$oif}");
 	}
 }
-$interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+
+// Interface list no longer sorted per Redmine #6753
+// $interfaces_menu = msort(array_merge($interfaces_menu, return_ext_menu("Interfaces")), 0);
+$interfaces_menu = array_merge($interfaces_menu, return_ext_menu("Interfaces"));
 
 // Firewall
 $firewall_menu = array();
@@ -297,7 +324,7 @@ $status_menu[] = array(gettext("Dashboard"), "/index.php");
 $status_menu[] = array(gettext("Gateways"), "/status_gateways.php");
 $status_menu[] = array(gettext("DHCP Leases"), "/status_dhcp_leases.php");
 $status_menu[] = array(gettext("DHCPv6 Leases"), "/status_dhcpv6_leases.php");
-$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php");
+$status_menu[] = array(gettext("Filter Reload"), "/status_filter_reload.php?user=true");
 $status_menu[] = array(gettext("Interfaces"), "/status_interfaces.php");
 $status_menu[] = array(gettext("IPsec"), "/status_ipsec.php");
 $status_menu[] = array(gettext("Load Balancer"), "/status_lb_pool.php");
@@ -391,6 +418,20 @@ $numColumns = $user_settings['webgui']['dashboardcolumns'];
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
 }
+
+$display_notices = false;
+$allow_clear_notices = false;
+
+if (are_notices_pending()) {
+	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
+	$user_entry = getUserEntry($_SESSION['Username']);
+	if (userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
+		$display_notices = true;
+		$allow_clear_notices = true;
+	} elseif (userHasPrivilege($user_entry, "user-view-notices")) {
+		$display_notices = true;
+	}
+}
 ?>
 <body id="<?=$numColumns?>">
 <nav id="topmenu" class="navbar navbar-<?=$menuclass?>-top navbar-inverse">
@@ -429,7 +470,8 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				] as $item):
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
-					} ?>
+					}
+?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
@@ -437,10 +479,12 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 					</a>
 					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
 				</li>
-			<?php endforeach?>
+
+<?php
+			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<?php if (are_notices_pending()):?>
+				<?php if ($display_notices):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
@@ -526,6 +570,11 @@ if (($pagename === "index.php") && ($numColumns > 2)) {
 				<i class="fa fa-repeat icon-pointer"></i>
 			</a>
 		</li>
+		<li>
+			<a class="export-graph" id="export-graph" title="<?=gettext("Export Graph")?>">
+				<i class="fa fa-download icon-pointer"></i>
+			</a>
+		</li>
 	<?php endif?>
 
 <?php
@@ -596,7 +645,8 @@ if ($config['remote_managed_pages']['item']) {
 
 // Modal notices window
 // The notices modal needs to be outside of the page display div or things get messy
-if (are_notices_pending()):?>
+if ($display_notices):
+?>
 
 <div id="notices" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -646,7 +696,9 @@ if (are_notices_pending()):?>
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
+<?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
+<?php endif;?>
 			</div>
 		</div>
 	</div>
@@ -672,7 +724,8 @@ if (are_notices_pending()):?>
 //]]>
 </script>
 
-<?php endif;
+<?php
+endif; // ($display_notices)
 
 // Get the flash Messages
 get_flash_message();

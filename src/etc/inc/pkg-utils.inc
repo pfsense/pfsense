@@ -91,6 +91,10 @@ function pkg_env($extra_env = array()) {
 			$http_proxy .= ':' . $config['system']['proxyport'];
 		}
 		$pkg_env_vars['HTTP_PROXY'] = $http_proxy;
+
+		if (!empty($config['system']['proxyuser']) && !empty($config['system']['proxypass'])) {
+			$pkg_env_vars['HTTP_PROXY_AUTH'] = "basic:*:{$config['system']['proxyuser']}:{$config['system']['proxypass']}";
+		}
 	}
 
 	if (isset($config['system']['use_mfs_tmpvar'])) {

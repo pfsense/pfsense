@@ -21,6 +21,7 @@
  */
 
 $nocsrf = true;
+global $dyndns_split_domain_types;
 
 require_once("guiconfig.inc");
 require_once("pfsense-utils.inc");
@@ -51,7 +52,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 			echo "|";
 		}
 		$cache_sep = ":";
-		if ($dyndns['type'] == "namecheap") {
+		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 		} elseif (empty($dyndns['type'])) {
 			/* RFC2136, add some dummy values */
@@ -64,20 +65,32 @@ if ($_REQUEST['getdyndnsstatus']) {
 		}
 
 		$filename = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}.cache";
+		$filename_v6 = "{$g['conf_path']}/dyndns_{$dyndns['interface']}{$dyndns['type']}" . escapeshellarg($hostname) . "{$dyndns['id']}_v6.cache";
 		if (file_exists($filename)) {
-			if (($dyndns['type'] == '_rfc2136_') && (!isset($dyndns['usepublicip']))) {
-				$ipaddr = get_interface_ip(get_failover_interface($dyndns['interface']));
-			} else {
-				$ipaddr = dyndnsCheckIP($dyndns['interface']);
-			}
-			$cached_ip_s = explode($cache_sep, file_get_contents($filename));
+			$ipaddr = dyndnsCheckIP($dyndns['interface']);
+			$cached_ip_s = explode(":", file_get_contents($filename));
 			$cached_ip = $cached_ip_s[0];
-			if (trim($ipaddr) != trim($cached_ip)) {
+
+			if ($ipaddr != $cached_ip) {
 				print('<span class="text-danger">');
 			} else {
 				print('<span class="text-success">');
 			}
+
 			print(htmlspecialchars($cached_ip));
+			print('</span>');
+		} else if (file_exists($filename_v6)) {
+			$ipv6addr = get_interface_ipv6($dyndns['interface']);
+			$cached_ipv6_s = explode("|", file_get_contents($filename_v6));
+			$cached_ipv6 = $cached_ipv6_s[0];
+
+			if ($ipv6addr != $cached_ipv6) {
+				print('<span class="text-danger">');
+			} else {
+				print('<span class="text-success">');
+			}
+
+			print(htmlspecialchars($cached_ipv6));
 			print('</span>');
 		} else {
 			print('N/A ' . date("H:i:s"));
@@ -100,7 +113,7 @@ if ($_REQUEST['getdyndnsstatus']) {
 	<tbody>
 	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
 
-		if ($dyndns['type'] == "namecheap") {
+		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
 		} elseif (empty($dyndns['type'])) {
 			/* RFC2136, add some dummy values */

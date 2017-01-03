@@ -22,241 +22,199 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 require_once("priv.defs.inc");
-
 /* Load and process custom privs. */
 function get_priv_files($directory) {
-	$dir_array = array();
-	if (!is_dir($directory)) {
-		return;
-	}
-	if ($dh = opendir($directory)) {
-		while (($file = readdir($dh)) !== false) {
-			$canadd = 0;
-			if ($file == ".") {
-				$canadd = 1;
-			}
-			if ($file == "..") {
-				$canadd = 1;
-			}
-			if ($canadd == 0) {
-				array_push($dir_array, $file);
-			}
-		}
-		closedir($dh);
-	}
-	if (!is_array($dir_array)) {
-		return;
-	}
-	return $dir_array;
+    $dir_array = array();
+    if (!is_dir($directory)) {
+        return;
+    }
+    if ($dh = opendir($directory)) {
+        while (($file = readdir($dh)) !== false) {
+            $canadd = 0;
+            if ($file == ".") {
+                $canadd = 1;
+            }
+            if ($file == "..") {
+                $canadd = 1;
+            }
+            if ($canadd == 0) {
+                array_push($dir_array, $file);
+            }
+        }
+        closedir($dh);
+    }
+    if (!is_array($dir_array)) {
+        return;
+    }
+    return $dir_array;
 }
-
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
-		include_once("/etc/inc/priv/{$file}");
-	}
+    if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
+        include_once("/etc/inc/priv/{$file}");
+    }
 }
 if (is_dir("/usr/local/pkg/priv")) {
-	$dir_array = get_priv_files("/usr/local/pkg/priv");
-	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
-			include_once("/usr/local/pkg/priv/{$file}");
-		}
-	}
+    $dir_array = get_priv_files("/usr/local/pkg/priv");
+    foreach ($dir_array as $file) {
+        if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
+            include_once("/usr/local/pkg/priv/{$file}");
+        }
+    }
 }
-
 if (is_array($priv_list)) {
-	sort_privs($priv_list);
+    sort_privs($priv_list);
 }
-
 function cmp_privkeys($a, $b) {
-	/* user privs at the top */
-	$auser = strncmp("user-", $a, 5);
-	$buser = strncmp("user-", $b, 5);
-	if ($auser != $buser) {
-		return $auser - $buser;
-	}
-
-	/* name compare others */
-	return strcasecmp($a, $b);
+    /* user privs at the top */
+    $auser = strncmp("user-", $a, 5);
+    $buser = strncmp("user-", $b, 5);
+    if ($auser != $buser) {
+        return $auser - $buser;
+    }
+    /* name compare others */
+    return strcasecmp($a, $b);
 }
-
 function sort_privs(& $privs) {
-	uksort($privs, "cmp_privkeys");
+    uksort($privs, "cmp_privkeys");
 }
-
 function cmp_page_matches($page, & $matches, $fullwc = true) {
-
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
-
-	if (!is_array($matches)) {
-		return false;
-	}
-
-	/* skip any leading fwdslash */
-	$test = strpos($page, "/");
-	if ($test !== false && $test == 0) {
-		$page = substr($page, 1);
-	}
-
-	/* look for a match */
-	foreach ($matches as $match) {
-
-		/* possibly ignore full wildcard match */
-		if (!$fullwc && !strcmp($match , "*")) {
-			continue;
-		}
-
-		/* compare exact or wildcard match */
-		$match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
-		$result = preg_match("@^/{$match}$@", "/{$page}");
-
-		if ($result) {
-			return true;
-		}
-	}
-
-	return false;
+//  $dbg_matches = implode(",", $matches);
+//  log_error("debug: checking page {$page} match with {$dbg_matches}");
+    if (!is_array($matches)) {
+        return false;
+    }
+    /* skip any leading fwdslash */
+    $test = strpos($page, "/");
+    if ($test !== false && $test == 0) {
+        $page = substr($page, 1);
+    }
+    /* look for a match */
+    foreach ($matches as $match) {
+        /* possibly ignore full wildcard match */
+        if (!$fullwc && !strcmp($match , "*")) {
+            continue;
+        }
+        /* compare exact or wildcard match */
+        $match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
+        $result = preg_match("@^/{$match}$@", "/{$page}");
+        if ($result) {
+            return true;
+        }
+    }
+    return false;
 }
-
 function map_page_privname($page) {
-	global $priv_list;
-
-	foreach ($priv_list as $pname => $pdata) {
-		if (strncmp($pname, "page-", 5)) {
-			continue;
-		}
-		$fullwc = false;
-		if (!strcasecmp($page, "any")||!strcmp($page, "*")) {
-			$fullwc = true;
-		}
-		if (cmp_page_matches($page, $pdata['match'], $fullwc)) {
-			return $pname;
-		}
-	}
-
-	return false;
+    global $priv_list;
+    foreach ($priv_list as $pname => $pdata) {
+        if (strncmp($pname, "page-", 5)) {
+            continue;
+        }
+        $fullwc = false;
+        if (!strcasecmp($page, "any")||!strcmp($page, "*")) {
+            $fullwc = true;
+        }
+        if (cmp_page_matches($page, $pdata['match'], $fullwc)) {
+            return $pname;
+        }
+    }
+    return false;
 }
-
 function get_user_privdesc(& $user) {
-	global $priv_list;
-
-	$privs = array();
-
-	$user_privs = $user['priv'];
-	if (!is_array($user_privs)) {
-		$user_privs = array();
-	}
-
-	$names = local_user_get_groups($user, true);
-
-	foreach ($names as $name) {
-		$group = getGroupEntry($name);
-		$group_privs = $group['priv'];
-		if (!is_array($group_privs)) {
-			continue;
-		}
-		foreach ($group_privs as $pname) {
-			if (in_array($pname, $user_privs)) {
-				continue;
-			}
-			if (!$priv_list[$pname]) {
-				continue;
-			}
-			$priv = $priv_list[$pname];
-			$priv['group'] = $group['name'];
-			$privs[] = $priv;
-		}
-	}
-
-	foreach ($user_privs as $pname) {
-		if ($priv_list[$pname]) {
-			$privs[] = $priv_list[$pname];
-		}
-	}
-
-	return $privs;
+    global $priv_list;
+    $privs = array();
+    $user_privs = $user['priv'];
+    if (!is_array($user_privs)) {
+        $user_privs = array();
+    }
+    $names = local_user_get_groups($user, true);
+    foreach ($names as $name) {
+        $group = getGroupEntry($name);
+        $group_privs = $group['priv'];
+        if (!is_array($group_privs)) {
+            continue;
+        }
+        foreach ($group_privs as $pname) {
+            if (in_array($pname, $user_privs)) {
+                continue;
+            }
+            if (!$priv_list[$pname]) {
+                continue;
+            }
+            $priv = $priv_list[$pname];
+            $priv['group'] = $group['name'];
+            $privs[] = $priv;
+        }
+    }
+    foreach ($user_privs as $pname) {
+        if ($priv_list[$pname]) {
+            $privs[] = $priv_list[$pname];
+        }
+    }
+    return $privs;
 }
-
 function isAllowed($username, $page) {
-	global $_SESSION;
-
-	if (!isset($username)) {
-		return false;
-	}
-
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
-	}
-
-	/* user privilege access check */
-	if (cmp_page_matches($page, $_SESSION['page-match'])) {
-		return true;
-	}
-
-	return false;
+    global $_SESSION;
+    if (!isset($username)) {
+        return false;
+    }
+    /* admin/root access check */
+    $user = getUserEntry($username);
+    if (isset($user)) {
+        if (isset($user['uid'])) {
+            if ($user['uid'] == 0) {
+                return true;
+            }
+        }
+    }
+    /* user privilege access check */
+    if (cmp_page_matches($page, $_SESSION['page-match'])) {
+        return true;
+    }
+    return false;
 }
-
-
 function isAllowedPage($page) {
-	global $_SESSION;
-
-
-	$username = $_SESSION['Username'];
-
-	if (!isset($username)) {
-		return false;
-	}
-
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
-	}
-
-	/* user privilege access check */
-	return cmp_page_matches($page, $_SESSION['page-match']);
+    global $_SESSION;
+    $username = $_SESSION['Username'];
+    if (!isset($username)) {
+        return false;
+    }
+    /* admin/root access check */
+    $user = getUserEntry($username);
+    if (isset($user)) {
+        if (isset($user['uid'])) {
+            if ($user['uid'] == 0) {
+                return true;
+            }
+        }
+    }
+    /* user privilege access check */
+    return cmp_page_matches($page, $_SESSION['page-match']);
 }
-
 function getPrivPages(& $entry, & $allowed_pages) {
-	global $priv_list;
-
-	if (!is_array($entry['priv'])) {
-		return;
-	}
-
-	foreach ($entry['priv'] as $pname) {
-		if (strncmp($pname, "page-", 5)) {
-			continue;
-		}
-		$priv = &$priv_list[$pname];
-		if (!is_array($priv)) {
-			continue;
-		}
-		$matches = &$priv['match'];
-		if (!is_array($matches)) {
-			continue;
-		}
-		foreach ($matches as $match) {
-			$allowed_pages[] = $match;
-		}
-	}
+    global $priv_list;
+    if (!is_array($entry['priv'])) {
+        return;
+    }
+    foreach ($entry['priv'] as $pname) {
+        if (strncmp($pname, "page-", 5)) {
+            continue;
+        }
+        $priv = &$priv_list[$pname];
+        if (!is_array($priv)) {
+            continue;
+        }
+        $matches = &$priv['match'];
+        if (!is_array($matches)) {
+            continue;
+        }
+        foreach ($matches as $match) {
+            $allowed_pages[] = $match;
+        }
+    }
 }
-
 function getAllowedPages($username, &$attributes = array()) {
 	global $config, $_SESSION;
 
@@ -325,14 +283,11 @@ function getAllowedPages($username, &$attributes = array()) {
 
 	return $allowed_pages;
 }
-
 function sort_user_privs($privs) {
-	// Privileges to place first, to redirect properly.
-	$priority_privs = array("page-dashboard-all", "page-system-login-logout");
-
-	$fprivs = array_intersect($privs, $priority_privs);
-	$sprivs = array_diff($privs, $priority_privs);
-
-	return array_merge($fprivs, $sprivs);
+    // Privileges to place first, to redirect properly.
+    $priority_privs = array("page-dashboard-all", "page-system-login-logout");
+    $fprivs = array_intersect($privs, $priority_privs);
+    $sprivs = array_diff($privs, $priority_privs);
+    return array_merge($fprivs, $sprivs);
 }
 ?>

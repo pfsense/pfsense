@@ -102,7 +102,7 @@ if [ "${uFW}" = "A335uFW" ]; then
 	if [ -n "$(echo ${rootdev} | /usr/bin/grep -e 's2a$')" ]; then
 		DEV=${rootdev%s2a}
 	fi
-	fi [ -n "${DEV}" ]; then
+	if [ -n "${DEV}" ]; then
 		MMCDEV=$(/sbin/geom disk list ${DEV} 2> /dev/null | \
 		    /usr/bin/grep MMCHC)
 	fi

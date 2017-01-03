@@ -2546,6 +2546,7 @@ function services_dnsupdate_process($int = "", $updatehost = "", $forced = false
 
 			$wanipv6 = get_interface_ipv6($if);
 			$cacheFile = "{$g['conf_path']}/dyndns_{$dnsupdate['interface']}_rfc2136_" . escapeshellarg($dnsupdate['host']) . "_{$dnsupdate['server']}.cache";
+			$cacheFilev6 = $cacheFile . ".ipv6";
 			$currentTime = time();
 
 			if ($wanip || $wanipv6) {
@@ -2599,8 +2600,8 @@ EOD;
 				if (file_exists($cacheFile)) {
 					list($cachedipv4, $cacheTimev4) = explode("|", file_get_contents($cacheFile));
 				}
-				if (file_exists("{$cacheFile}.ipv6")) {
-					list($cachedipv6, $cacheTimev6) = explode("|", file_get_contents("{$cacheFile}.ipv6"));
+				if (file_exists($cacheFilev6)) {
+					list($cachedipv6, $cacheTimev6) = explode("|", file_get_contents($cacheFilev6));
 				}
 
 				// 25 Days
@@ -2612,15 +2613,13 @@ EOD;
 					if (($wanip != $cachedipv4) || (($currentTime - $cacheTimev4) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. A\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} A {$wanip}\n";
-						$notify_text .= sprintf(gettext('DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
-						@file_put_contents($cacheFile, "{$wanip}|{$currentTime}");
-						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $cacheFile, $wanip));
 						$need_update = true;
 					} else {
 						log_error(sprintf(gettext("phpDynDNS: Not updating %s A record because the IP address has not changed."), $dnsupdate['host']));
 					}
 				} else {
 					@unlink($cacheFile);
+					unset($cacheFile);
 				}
 
 				/* Update IPv6 if we have it. */
@@ -2628,15 +2627,13 @@ EOD;
 					if (($wanipv6 != $cachedipv6) || (($currentTime - $cacheTimev6) > $maxCacheAgeSecs) || $forced) {
 						$upinst .= "update delete {$dnsupdate['host']}. AAAA\n";
 						$upinst .= "update add {$dnsupdate['host']}. {$dnsupdate['ttl']} AAAA {$wanipv6}\n";
-						$notify_text .= sprintf(gettext('DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
-						@file_put_contents("{$cacheFile}.ipv6", "{$wanipv6}|{$currentTime}");
-						log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s.ipv6: %2$s'), $cacheFile, $wanipv6));
 						$need_update = true;
 					} else {
 						log_error(sprintf(gettext("phpDynDNS: Not updating %s AAAA record because the IPv6 address has not changed."), $dnsupdate['host']));
 					}
 				} else {
-					@unlink("{$cacheFile}.ipv6");
+					@unlink($cacheFilev6);
+					unset($cacheFilev6);
 				}
 
 				$upinst .= "\n";	/* mind that trailing newline! */
@@ -2650,7 +2647,25 @@ EOD;
 						$cmd .= " -v";
 					}
 					$cmd .= " {$g['varetc_path']}/nsupdatecmds{$i}";
-					mwexec_bg($cmd);
+					if (mwexec($cmd) == 0) {
+						if (!empty($cacheFile)) {
+							@file_put_contents($cacheFile, "{$wanip}|{$currentTime}");
+							log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $cacheFile, $wanip));
+							$notify_text .= sprintf(gettext('DynDNS updated IP Address (A) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanip) . "\n";
+						}
+						if (!empty($cacheFilev6)) {
+							@file_put_contents($cacheFilev6, "{$wanipv6}|{$currentTime}");
+							log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $cacheFilev6, $wanipv6));
+							$notify_text .= sprintf(gettext('DynDNS updated IPv6 Address (AAAA) for %1$s on %2$s (%3$s) to %4$s'), $dnsupdate['host'], convert_real_interface_to_friendly_descr($if), $if, $wanipv6) . "\n";
+						}
+					} else {
+						if (!empty($cacheFile)) {
+							log_error(sprintf(gettext('phpDynDNS: ERROR while updating IP Address (A) for %1$s (%2$s)'), $dnsupdate['host'], $wanip));
+						}
+						if (!empty($cacheFilev6)) {
+							log_error(sprintf(gettext('phpDynDNS: ERROR while updating IP Address (AAAA) for %1$s (%2$s)'), $dnsupdate['host'], $wanipv6));
+						}
+					}
 					unset($cmd);
 				}
 			}

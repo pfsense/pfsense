@@ -294,7 +294,7 @@ if ($_POST) {
 	}
 
 	if (($pconfig['mode'] == "p2p_shared_key") && strstr($pconfig['crypto'], "GCM")) {
-		$input_errors[] = gettext("CGM Encryption Algorithms cannot be used with Shared Key mode.");
+		$input_errors[] = gettext("GCM Encryption Algorithms cannot be used with Shared Key mode.");
 	}
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */

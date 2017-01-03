@@ -838,14 +838,18 @@ if ($act=="new" || $act=="edit"):
 		'Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
-		));
+		))->setHelp('The Encryption Algorithm used for data channel packets.');
 
 	$section->addInput(new Form_Select(
 		'digest',
 		'Auth digest algorithm',
 		$pconfig['digest'],
 		openvpn_get_digestlist()
-		))->setHelp('Leave this set to SHA1 unless all clients are set to match. SHA1 is the default for OpenVPN. ');
+		))->setHelp('The algorithm used to authenticate data channel packets, and control channel packets if a TLS Key is present.' .
+		    '<br />' .
+		    'When an AEAD Encryption Algorithm mode is used, such as AES-GCM, this digest is used for the control channel only, not the data channel.' .
+		    '<br />' .
+		    'Leave this set to SHA1 unless all clients are set to match. SHA1 is the default for OpenVPN. ');
 
 	$section->addInput(new Form_Select(
 		'engine',

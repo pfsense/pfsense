@@ -877,7 +877,7 @@ function openvpn_reconfigure($mode, $settings) {
 		// configure user auth modes
 		switch ($settings['mode']) {
 			case 'server_user':
-				$conf .= "client-cert-not-required\n";
+				$conf .= "verify-client-cert none\n";
 			case 'server_tls_user':
 				/* username-as-common-name is not compatible with server-bridge */
 				if (stristr($conf, "server-bridge") === false) {

@@ -164,7 +164,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		$changes_applied = true;
 		$retval = 0;
-		$retval |= system_syslogd_start();
+		system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
 		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
 		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||

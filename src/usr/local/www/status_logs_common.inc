@@ -714,12 +714,12 @@ function manage_log_code() {
 			}
 
 			$retval = 0;
+			$changes_applied = true;
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
 			if ($logging_changed) {
 				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
-				$changes_applied = true;
-				$retval |= system_syslogd_start();
+				system_syslogd_start();
 			} else {
 				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
 			}
@@ -739,7 +739,6 @@ function manage_log_code() {
 			if ($logfile == 'filter') {
 				if ($firewall_logging_changed) {
 					require_once("filter.inc");
-					$changes_applied = true;
 					$retval |= filter_configure();
 					filter_pflog_start(true);
 				}

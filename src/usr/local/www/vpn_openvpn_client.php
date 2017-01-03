@@ -31,7 +31,7 @@ require_once("guiconfig.inc");
 require_once("openvpn.inc");
 require_once("pkg-utils.inc");
 
-global $openvpn_topologies;
+global $openvpn_topologies, $openvpn_tls_modes;
 
 if (!is_array($config['openvpn']['openvpn-client'])) {
 	$config['openvpn']['openvpn-client'] = array();
@@ -137,6 +137,7 @@ if ($_GET['act'] == "edit") {
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
+				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
 			}
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
@@ -289,7 +290,10 @@ if ($_POST) {
 	if ($tls_mode && $pconfig['tlsauth_enable'] && !$pconfig['autotls_enable']) {
 		if (!strstr($pconfig['tls'], "-----BEGIN OpenVPN Static key V1-----") ||
 		    !strstr($pconfig['tls'], "-----END OpenVPN Static key V1-----")) {
-			$input_errors[] = gettext("The field 'TLS Authentication Key' does not appear to be valid");
+			$input_errors[] = gettext("The field 'TLS Key' does not appear to be valid");
+		}
+		if (!in_array($pconfig['tls_type'], array_keys($openvpn_tls_modes))) {
+			$input_errors[] = gettext("The field 'TLS Key Usage Mode' is not valid");
 		}
 	}
 
@@ -365,6 +369,7 @@ if ($_POST) {
 					$pconfig['tls'] = openvpn_create_key();
 				}
 				$client['tls'] = base64_encode($pconfig['tls']);
+				$client['tls_type'] = $pconfig['tls_type'];
 			}
 		} else {
 			$client['shared_key'] = base64_encode($pconfig['shared_key']);
@@ -564,25 +569,38 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Checkbox(
 		'tlsauth_enable',
-		'TLS authentication',
-		'Enable authentication of TLS packets.',
+		'TLS Configuration',
+		'Use a TLS Key',
 		$pconfig['tlsauth_enable']
-	));
+	))->setHelp("A TLS key enhances security of an OpenVPN connection by requiring both parties to have a common key before a peer can perform a TLS handshake. " .
+	    "This layer of HMAC authentication allows control channel packets without the proper key to be dropped, protecting the peers from attack or unauthorized connections." .
+	    "The TLS Key does not have any effect on tunnel data.");
 
 	if (!$pconfig['tls']) {
 		$section->addInput(new Form_Checkbox(
 			'autotls_enable',
 			null,
-			'Automatically generate a shared TLS authentication key.',
+			'Automatically generate a TLS Key.',
 			$pconfig['autotls_enable']
 		));
 	}
 
 	$section->addInput(new Form_Textarea(
 		'tls',
-		'Key',
+		'TLS Key',
 		$pconfig['tls']
-	))->setHelp('Paste the shared key here');
+	))->setHelp("Paste the TLS key here." .
+	    "<br/>" .
+	    "This key is used to sign control channel packets with an HMAC signature for authentication when establishing the tunnel. ");
+
+	$section->addInput(new Form_Select(
+		'tls_type',
+		'TLS Key Usage Mode',
+		empty($pconfig['tls_type']) ? 'auth':$pconfig['tls_type'],
+		$openvpn_tls_modes
+		))->setHelp("In Authentication mode the TLS key is used only as HMAC authentication for the control channel, protecting the peers from unauthorized connections. " .
+		    "<br/>" .
+		    "Encryption and Authentication mode also encrypts control channel communication, providing more privacy and traffic control channel obfuscation.");
 
 	if (count($a_ca)) {
 		$list = array();
@@ -900,6 +918,7 @@ events.push(function() {
 	// Process "Automatically generate a shared TLS authentication key" checkbox
 	function autotls_change() {
 		hideInput('tls', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
+		hideInput('tls_type', $('#autotls_enable').prop('checked') || !$('#tlsauth_enable').prop('checked'));
 	}
 
 	// ---------- Monitor elements for change and call the appropriate display functions ------------------------------

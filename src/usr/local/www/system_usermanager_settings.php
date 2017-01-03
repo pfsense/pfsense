@@ -146,6 +146,12 @@ if ($_POST) {
 			unset($config['system']['webgui']['authmode']);
 		}
 
+                if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
+                        $config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+                } else {
+                        unset($config['system']['webgui']['auth_refresh_time']);
+                }
+
 		write_config();
 
 	}
@@ -198,6 +204,15 @@ $section->addInput(new Form_Select(
 	$pconfig['authmode'],
 	$auth_servers
 ));
+
+$section->addInput(new Form_Input(
+        'auth_refresh_time',
+        'Auth Refresh Time',
+        'number',
+        $pconfig['auth_refresh_time'],
+        ['min' => 0, 'max' => 3600]
+))->setHelp('Time in seconds to cache authentication results. The default is 30 seconds, maximum 3600 (one hour). '.
+        'Shorter times result in more frequent queries to auth services, and more logs generated.');
 
 $form->addGlobal(new Form_Button(
 	'savetest',

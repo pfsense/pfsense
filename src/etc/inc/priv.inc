@@ -3,356 +3,273 @@
  * priv.inc
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2005-2006 Bill Marquette <bill.marquette@gmail.com>
  * Copyright (c) 2006 Paul Taylor <paultaylor@winn-dixie.com>.
  * Copyright (c) 2008 Shrew Soft Inc
  * Copyright (c) 2003-2006 Manuel Kasper <mk@neon1.net>.
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgment:
- *    "This product includes software developed by the pfSense Project
- *    for use in the pfSense® software distribution. (http://www.pfsense.org/).
- *
- * 4. The names "pfSense" and "pfSense Project" must not be used to
- *    endorse or promote products derived from this software without
- *    prior written permission. For written permission, please contact
- *    coreteam@pfsense.org.
- *
- * 5. Products derived from this software may not be called "pfSense"
- *    nor may "pfSense" appear in their names without prior written
- *    permission of the Electric Sheep Fencing, LLC.
- *
- * 6. Redistributions of any form whatsoever must retain the following
- *    acknowledgment:
- *
- * "This product includes software developed by the pfSense Project
- * for use in the pfSense software distribution (http://www.pfsense.org/).
- *
- * THIS SOFTWARE IS PROVIDED BY THE pfSense PROJECT ``AS IS'' AND ANY
- * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE pfSense PROJECT OR
- * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-
 require_once("priv.defs.inc");
-
 /* Load and process custom privs. */
 function get_priv_files($directory) {
-	$dir_array = array();
-	if (!is_dir($directory)) {
-		return;
-	}
-	if ($dh = opendir($directory)) {
-		while (($file = readdir($dh)) !== false) {
-			$canadd = 0;
-			if ($file == ".") {
-				$canadd = 1;
-			}
-			if ($file == "..") {
-				$canadd = 1;
-			}
-			if ($canadd == 0) {
-				array_push($dir_array, $file);
-			}
-		}
-		closedir($dh);
-	}
-	if (!is_array($dir_array)) {
-		return;
-	}
-	return $dir_array;
+    $dir_array = array();
+    if (!is_dir($directory)) {
+        return;
+    }
+    if ($dh = opendir($directory)) {
+        while (($file = readdir($dh)) !== false) {
+            $canadd = 0;
+            if ($file == ".") {
+                $canadd = 1;
+            }
+            if ($file == "..") {
+                $canadd = 1;
+            }
+            if ($canadd == 0) {
+                array_push($dir_array, $file);
+            }
+        }
+        closedir($dh);
+    }
+    if (!is_array($dir_array)) {
+        return;
+    }
+    return $dir_array;
 }
-
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
-		include_once("/etc/inc/priv/{$file}");
-	}
+    if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
+        include_once("/etc/inc/priv/{$file}");
+    }
 }
 if (is_dir("/usr/local/pkg/priv")) {
-	$dir_array = get_priv_files("/usr/local/pkg/priv");
-	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
-			include_once("/usr/local/pkg/priv/{$file}");
-		}
-	}
+    $dir_array = get_priv_files("/usr/local/pkg/priv");
+    foreach ($dir_array as $file) {
+        if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
+            include_once("/usr/local/pkg/priv/{$file}");
+        }
+    }
 }
-
 if (is_array($priv_list)) {
-	sort_privs($priv_list);
+    sort_privs($priv_list);
 }
-
 function cmp_privkeys($a, $b) {
-	/* user privs at the top */
-	$auser = strncmp("user-", $a, 5);
-	$buser = strncmp("user-", $b, 5);
-	if ($auser != $buser) {
-		return $auser - $buser;
-	}
-
-	/* name compare others */
-	return strcasecmp($a, $b);
+    /* user privs at the top */
+    $auser = strncmp("user-", $a, 5);
+    $buser = strncmp("user-", $b, 5);
+    if ($auser != $buser) {
+        return $auser - $buser;
+    }
+    /* name compare others */
+    return strcasecmp($a, $b);
 }
-
 function sort_privs(& $privs) {
-	uksort($privs, "cmp_privkeys");
+    uksort($privs, "cmp_privkeys");
 }
-
 function cmp_page_matches($page, & $matches, $fullwc = true) {
-
-//	$dbg_matches = implode(",", $matches);
-//	log_error("debug: checking page {$page} match with {$dbg_matches}");
-
-	if (!is_array($matches)) {
-		return false;
-	}
-
-	/* skip any leading fwdslash */
-	$test = strpos($page, "/");
-	if ($test !== false && $test == 0) {
-		$page = substr($page, 1);
-	}
-
-	/* look for a match */
-	foreach ($matches as $match) {
-
-		/* possibly ignore full wildcard match */
-		if (!$fullwc && !strcmp($match , "*")) {
-			continue;
-		}
-
-		/* compare exact or wildcard match */
-		$match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
-		$result = preg_match("@^/{$match}$@", "/{$page}");
-
-		if ($result) {
-			return true;
-		}
-	}
-
-	return false;
+//  $dbg_matches = implode(",", $matches);
+//  log_error("debug: checking page {$page} match with {$dbg_matches}");
+    if (!is_array($matches)) {
+        return false;
+    }
+    /* skip any leading fwdslash */
+    $test = strpos($page, "/");
+    if ($test !== false && $test == 0) {
+        $page = substr($page, 1);
+    }
+    /* look for a match */
+    foreach ($matches as $match) {
+        /* possibly ignore full wildcard match */
+        if (!$fullwc && !strcmp($match , "*")) {
+            continue;
+        }
+        /* compare exact or wildcard match */
+        $match = str_replace(array(".", "*", "?"), array("\.", ".*", "\?"), $match);
+        $result = preg_match("@^/{$match}$@", "/{$page}");
+        if ($result) {
+            return true;
+        }
+    }
+    return false;
 }
-
 function map_page_privname($page) {
-	global $priv_list;
-
-	foreach ($priv_list as $pname => $pdata) {
-		if (strncmp($pname, "page-", 5)) {
-			continue;
-		}
-		$fullwc = false;
-		if (!strcasecmp($page, "any")||!strcmp($page, "*")) {
-			$fullwc = true;
-		}
-		if (cmp_page_matches($page, $pdata['match'], $fullwc)) {
-			return $pname;
-		}
-	}
-
-	return false;
+    global $priv_list;
+    foreach ($priv_list as $pname => $pdata) {
+        if (strncmp($pname, "page-", 5)) {
+            continue;
+        }
+        $fullwc = false;
+        if (!strcasecmp($page, "any")||!strcmp($page, "*")) {
+            $fullwc = true;
+        }
+        if (cmp_page_matches($page, $pdata['match'], $fullwc)) {
+            return $pname;
+        }
+    }
+    return false;
 }
-
 function get_user_privdesc(& $user) {
-	global $priv_list;
-
-	$privs = array();
-
-	$user_privs = $user['priv'];
-	if (!is_array($user_privs)) {
-		$user_privs = array();
-	}
-
-	$names = local_user_get_groups($user, true);
-
-	foreach ($names as $name) {
-		$group = getGroupEntry($name);
-		$group_privs = $group['priv'];
-		if (!is_array($group_privs)) {
-			continue;
-		}
-		foreach ($group_privs as $pname) {
-			if (in_array($pname, $user_privs)) {
-				continue;
-			}
-			if (!$priv_list[$pname]) {
-				continue;
-			}
-			$priv = $priv_list[$pname];
-			$priv['group'] = $group['name'];
-			$privs[] = $priv;
-		}
-	}
-
-	foreach ($user_privs as $pname) {
-		if ($priv_list[$pname]) {
-			$privs[] = $priv_list[$pname];
-		}
-	}
-
-	return $privs;
+    global $priv_list;
+    $privs = array();
+    $user_privs = $user['priv'];
+    if (!is_array($user_privs)) {
+        $user_privs = array();
+    }
+    $names = local_user_get_groups($user, true);
+    foreach ($names as $name) {
+        $group = getGroupEntry($name);
+        $group_privs = $group['priv'];
+        if (!is_array($group_privs)) {
+            continue;
+        }
+        foreach ($group_privs as $pname) {
+            if (in_array($pname, $user_privs)) {
+                continue;
+            }
+            if (!$priv_list[$pname]) {
+                continue;
+            }
+            $priv = $priv_list[$pname];
+            $priv['group'] = $group['name'];
+            $privs[] = $priv;
+        }
+    }
+    foreach ($user_privs as $pname) {
+        if ($priv_list[$pname]) {
+            $privs[] = $priv_list[$pname];
+        }
+    }
+    return $privs;
 }
-
 function isAllowed($username, $page) {
-	global $_SESSION;
-
-	if (!isset($username)) {
-		return false;
-	}
-
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
-	}
-
-	/* user privilege access check */
-	if (cmp_page_matches($page, $_SESSION['page-match'])) {
-		return true;
-	}
-
-	return false;
+    global $_SESSION;
+    if (!isset($username)) {
+        return false;
+    }
+    /* admin/root access check */
+    $user = getUserEntry($username);
+    if (isset($user)) {
+        if (isset($user['uid'])) {
+            if ($user['uid'] == 0) {
+                return true;
+            }
+        }
+    }
+    /* user privilege access check */
+    if (cmp_page_matches($page, $_SESSION['page-match'])) {
+        return true;
+    }
+    return false;
 }
-
-
 function isAllowedPage($page) {
-	global $_SESSION;
-
-
-	$username = $_SESSION['Username'];
-
-	if (!isset($username)) {
-		return false;
-	}
-
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
-	}
-
-	/* user privilege access check */
-	return cmp_page_matches($page, $_SESSION['page-match']);
+    global $_SESSION;
+    $username = $_SESSION['Username'];
+    if (!isset($username)) {
+        return false;
+    }
+    /* admin/root access check */
+    $user = getUserEntry($username);
+    if (isset($user)) {
+        if (isset($user['uid'])) {
+            if ($user['uid'] == 0) {
+                return true;
+            }
+        }
+    }
+    /* user privilege access check */
+    return cmp_page_matches($page, $_SESSION['page-match']);
 }
-
 function getPrivPages(& $entry, & $allowed_pages) {
-	global $priv_list;
-
-	if (!is_array($entry['priv'])) {
-		return;
-	}
-
-	foreach ($entry['priv'] as $pname) {
-		if (strncmp($pname, "page-", 5)) {
-			continue;
-		}
-		$priv = &$priv_list[$pname];
-		if (!is_array($priv)) {
-			continue;
-		}
-		$matches = &$priv['match'];
-		if (!is_array($matches)) {
-			continue;
-		}
-		foreach ($matches as $match) {
-			$allowed_pages[] = $match;
-		}
-	}
+    global $priv_list;
+    if (!is_array($entry['priv'])) {
+        return;
+    }
+    foreach ($entry['priv'] as $pname) {
+        if (strncmp($pname, "page-", 5)) {
+            continue;
+        }
+        $priv = &$priv_list[$pname];
+        if (!is_array($priv)) {
+            continue;
+        }
+        $matches = &$priv['match'];
+        if (!is_array($matches)) {
+            continue;
+        }
+        foreach ($matches as $match) {
+            $allowed_pages[] = $match;
+        }
+    }
 }
-
 function getAllowedPages($username, &$attributes = array()) {
-	global $config, $_SESSION;
-
-	if (!function_exists("ldap_connect")) {
-		return;
-	}
-
-	$allowed_pages = array();
-	$allowed_groups = array();
-
-	$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-	// obtain ldap groups if we are in ldap mode
-	if ($authcfg['type'] == "ldap") {
+    global $config, $_SESSION;
+    if (!function_exists("ldap_connect")) {
+        return;
+    }
+    $allowed_pages = array();
+    $allowed_groups = array();
+    if ($_SESSION['remoteauth']) {
+        $authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+        // obtain ldap groups if we are in ldap mode
+        if ($authcfg['type'] == "ldap") {
                 if ( !isset($_SESSION["ldap_allowed_groups"]) ) {
-		        $allowed_groups = @ldap_get_groups($username, $authcfg);
+                        $allowed_groups = @ldap_get_groups($username, $authcfg);
                         $_SESSION["ldap_allowed_groups"] = $allowed_groups;
                 } else {
                         $allowed_groups = $_SESSION["ldap_allowed_groups"];
                 }
-	} elseif ($authcfg['type'] == "radius") {
+        } elseif ($authcfg['type'] == "radius") {
                 if ( !isset($_SESSION["radius_allowed_groups"]) ) {
                         $allowed_groups = @radius_get_groups($attributes);
                         $_SESSION["radius_allowed_groups"] = $allowed_groups;
                 } else {
                         $allowed_groups = $_SESSION["radius_allowed_groups"];
                 }
-	}
-	if (!$allowed_groups) {
-		// search for a local user by name
-		$local_user = getUserEntry($username);
-
-		// obtain local user pages and groups if we have a local user
-		if ($local_user) {
-			getPrivPages($local_user, $allowed_pages);
-			$allowed_groups = local_user_get_groups($local_user);
-		}
-	}
-
-	// build a list of allowed pages
-	if (is_array($config['system']['group']) && is_array($allowed_groups)) {
-		foreach ($config['system']['group'] as $group) {
-			if (in_array($group['name'], $allowed_groups)) {
-				getPrivPages($group, $allowed_pages);
-			}
-		}
-	}
-
-//	$dbg_pages = implode(",", $allowed_pages);
-//	$dbg_groups = implode(",", $allowed_groups);
-//	log_error("debug: user {$username} groups = {$dbg_groups}");
-//	log_error("debug: user {$username} pages = {$dbg_pages}");
-
-	$_SESSION['page-match'] = $allowed_pages;
-
-	return $allowed_pages;
+        }
+    }
+    if (!$allowed_groups) {
+        // search for a local user by name
+        $local_user = getUserEntry($username);
+        // obtain local user pages and groups if we have a local user
+        if ($local_user) {
+            getPrivPages($local_user, $allowed_pages);
+            $allowed_groups = local_user_get_groups($local_user);
+        }
+    }
+    // build a list of allowed pages
+    if (is_array($config['system']['group']) && is_array($allowed_groups)) {
+        foreach ($config['system']['group'] as $group) {
+            if (in_array($group['name'], $allowed_groups)) {
+                getPrivPages($group, $allowed_pages);
+            }
+        }
+    }
+//  $dbg_pages = implode(",", $allowed_pages);
+//  $dbg_groups = implode(",", $allowed_groups);
+//  log_error("debug: user {$username} groups = {$dbg_groups}");
+//  log_error("debug: user {$username} pages = {$dbg_pages}");
+    $_SESSION['page-match'] = $allowed_pages;
+    return $allowed_pages;
 }
-
 function sort_user_privs($privs) {
-	// Privileges to place first, to redirect properly.
-	$priority_privs = array("page-dashboard-all", "page-system-login-logout");
-
-	$fprivs = array_intersect($privs, $priority_privs);
-	$sprivs = array_diff($privs, $priority_privs);
-
-	return array_merge($fprivs, $sprivs);
+    // Privileges to place first, to redirect properly.
+    $priority_privs = array("page-dashboard-all", "page-system-login-logout");
+    $fprivs = array_intersect($privs, $priority_privs);
+    $sprivs = array_diff($privs, $priority_privs);
+    return array_merge($fprivs, $sprivs);
 }
 ?>

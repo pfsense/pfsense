@@ -165,6 +165,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['local_networkv6'] = $a_server[$id]['local_networkv6'];
 		$pconfig['maxclients'] = $a_server[$id]['maxclients'];
 		$pconfig['compression'] = $a_server[$id]['compression'];
+		$pconfig['compression_push'] = $a_server[$id]['compression_push'];
 		$pconfig['passtos'] = $a_server[$id]['passtos'];
 		$pconfig['client2client'] = $a_server[$id]['client2client'];
 
@@ -498,6 +499,7 @@ if ($_POST) {
 		$server['local_networkv6'] = $pconfig['local_networkv6'];
 		$server['maxclients'] = $pconfig['maxclients'];
 		$server['compression'] = $pconfig['compression'];
+		$server['compression_push'] = $pconfig['compression_push'];
 		$server['passtos'] = $pconfig['passtos'];
 		$server['client2client'] = $pconfig['client2client'];
 
@@ -962,6 +964,13 @@ if ($act=="new" || $act=="edit"):
 					'packets is not being compressed efficiently.');
 
 	$section->addInput(new Form_Checkbox(
+		'compression_push',
+		'Push Compression',
+		'Push the selected Compression setting to connecting clients.',
+		$pconfig['compression_push']
+	));
+
+	$section->addInput(new Form_Checkbox(
 		'passtos',
 		'Type-of-Service',
 		'Set the TOS IP header value of tunnel packets to match the encapsulated packet value.',
@@ -1308,6 +1317,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', false);
+				hideCheckbox('compression_push', false);
 			break;
 			case "server_tls_user":
 				hideInput('tls', false);
@@ -1319,6 +1329,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', true);
 				hideInput('topology', false);
+				hideCheckbox('compression_push', false);
 			break;
 			case "p2p_shared_key":
 				hideInput('tls', true);
@@ -1335,6 +1346,7 @@ events.push(function() {
 				hideCheckbox('autokey_enable', true);
 				hideInput('shared_key', false);
 				hideInput('topology', true);
+				hideCheckbox('compression_push', true);
 			break;
 		}
 

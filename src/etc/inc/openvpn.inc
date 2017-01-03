@@ -119,11 +119,16 @@ $openvpn_client_modes = array(
 
 global $openvpn_compression_modes;
 $openvpn_compression_modes = array(
-	'' => gettext("No Preference"),
-	'noadapt' => gettext("No Preference and Adaptive Compression Disabled"),
-	'no' => gettext("Disabled - No Compression"),
-	'adaptive' => gettext("Enabled with Adaptive Compression"),
-	'yes' => gettext("Enabled without Adaptive Compression"));
+	'' => gettext("Omit Preference (Use OpenVPN Default)"),
+	'lz4' => gettext("LZ4 Compression [compress lz4]"),
+	'lz4-v2' => gettext("LZ4 Comression v2 [compress lz4-v2]"),
+	'lzo' => gettext("LZO Compression [compress lzo, equivalent to comp-lzo yes for compatibility]"),
+	'stub' => gettext("Enable Compression (stub) [compress]"),
+	'noadapt' => gettext("Omit Preference, + Disable Adaptive LZO Compression [Legacy style, comp-noadapt]"),
+	'adaptive' => gettext("Adaptive LZO Compression [Legacy style, comp-lzo adaptive]"),
+	'yes' => gettext("LZO Compression [Legacy style, comp-lzo yes]"),
+	'no' => gettext("No LZO Compression [Legacy style, comp-lzo no]"),
+);
 
 global $openvpn_topologies;
 $openvpn_topologies = array(
@@ -1082,11 +1087,31 @@ function openvpn_reconfigure($mode, $settings) {
 			break;
 	}
 
-	if (!empty($settings['compression'])) {
-		if ($settings['compression'] == "noadapt") {
-			$conf .= "comp-noadapt\n";
-		} else {
-			$conf .= "comp-lzo {$settings['compression']}\n";
+	$compression = "";
+	switch ($settings['compression']) {
+		case 'lz4':
+		case 'lz4-v2':
+		case 'lzo':
+		case 'stub':
+			$compression .= "compress {$settings['compression']}";
+			break;
+		case 'noadapt':
+			$compression .= "comp-noadapt";
+			break;
+		case 'adaptive':
+		case 'yes':
+		case 'no':
+			$compression .= "comp-lzo {$settings['compression']}";
+			break;
+		default:
+			/* Add nothing to the configuration */
+			break;
+	}
+
+	if (!empty($compression)) {
+		$conf .= "{$compression}\n";
+		if ($settings['compression_push']) {
+			$conf .= "push \"{$compression}\"\n";
 		}
 	}
 

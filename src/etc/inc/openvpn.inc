@@ -1257,7 +1257,7 @@ function openvpn_restart($mode, $settings) {
 	unlock($lockhandle);
 }
 
-function openvpn_delete($mode, & $settings) {
+function openvpn_delete($mode, $settings) {
 	global $g, $config;
 
 	$vpnid = $settings['vpnid'];

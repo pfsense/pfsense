@@ -149,7 +149,7 @@ if ($_GET['act'] == "edit") {
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
-				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
+				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
@@ -881,7 +881,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_server[$id]) {
+	if (isset($id) && $a_client[$id]) {
 		$section->addInput(new Form_Input(
 			'id',
 			null,

@@ -97,7 +97,7 @@ if ($_GET['act'] == "del") {
 
 if ($_GET['act'] == "new") {
 	$pconfig['ncp_enable'] = "enabled";
-	$pconfig['ncp-ciphers'] = "AES-256-GCM, AES-128-GCM";
+	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
@@ -430,7 +430,7 @@ if ($_POST) {
 
 		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['ncp-ciphers']) && is_array($pconfig['ncp-ciphers'])) {
 			foreach ($pconfig['ncp-ciphers'] as $ncpc) {
-				if (!in_array($ncpc, $cipher_validation_list)) {
+				if (!in_array(trim($ncpc), $cipher_validation_list)) {
 					$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
 				}
 			}

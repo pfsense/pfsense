@@ -895,8 +895,6 @@ if ($act=="new" || $act=="edit"):
 	$group->setHelp('Available NCP Encryption Algorithms / Allowed NCP Encryption Algorithms' .
 					'<div class="infoblock">' . sprint_info_box(
 					'Click an NCP Encryption Algorithm in the left-side list to add or remove it from the Allowed NCP Encryption Algorithms list.' . '<br />' .
-					'When a compatible client connects, OpenVPN attempts to negotiate an Encryption Algorithm from the list of allowed algorithms' .
-					'defined on the client and server.' . '<br /' .
 					'For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
 					'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.', 'info', false) .
 					'</div>');

@@ -818,7 +818,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_server[$id]) {
+	if (isset($id) && $a_client[$id]) {
 		$section->addInput(new Form_Input(
 			'id',
 			null,

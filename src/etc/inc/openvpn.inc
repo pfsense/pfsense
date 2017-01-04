@@ -143,7 +143,7 @@ $openvpn_topologies = array(
 global $openvpn_tls_modes;
 $openvpn_tls_modes = array(
 	'auth' => gettext("TLS Authentication"),
-	'crypt' => gettext("TLS Encryption and Authentication"),
+	'crypt' => gettext("TLS Encryption and Authentication")
 );
 
 function openvpn_build_mode_list() {

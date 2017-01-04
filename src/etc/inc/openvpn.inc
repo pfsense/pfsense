@@ -1100,6 +1100,17 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);
 			}
+
+			/* NCP support. If it is not set, assume enabled since that is OpenVPN's default. */
+			if ($settings['ncp_enable'] == "disabled") {
+				$conf .= "ncp-disable\n";
+			} else {
+				/* If the ncp-ciphers list is empty, don't specify a list so OpenVPN's default will be used. */
+				if (!empty($settings['ncp-ciphers'])) {
+					$conf .= "ncp-ciphers " . str_replace(',', ':', $settings['ncp-ciphers']) . "\n";
+				}
+			}
+
 			break;
 	}
 

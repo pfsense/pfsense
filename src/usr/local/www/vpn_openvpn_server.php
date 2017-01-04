@@ -265,6 +265,11 @@ if ($_POST) {
 		$vpnid = 0;
 	}
 
+	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
+	if (!in_array($pconfig['crypto'], $cipher_validation_list)) {
+		$input_errors[] = gettext("The selected Encryption Algorithm is not valid.");
+	}
+
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
 	if (is_ipaddrv4($iv_ip) && (stristr($pconfig['protocol'], "6") !== false)) {
 		$input_errors[] = gettext("Protocol and IP address families do not match. An IPv6 protocol and an IPv4 IP address cannot be selected.");
@@ -421,6 +426,12 @@ if ($_POST) {
 
 		if (!empty($pconfig['ecdh_curve']) && !openvpn_validate_curve($pconfig['ecdh_curve'])) {
 			$input_errors[] = gettext("The specified ECDH Curve is invalid.");
+		}
+
+		foreach ($pconfig['ncp-ciphers'] as $ncpc) {
+			if (!in_array($ncpc, $cipher_validation_list)) {
+				$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+			}
 		}
 
 		$reqdfields = explode(" ", "caref certref");

@@ -166,7 +166,7 @@ events.push(function() {
 		updateMembers($(this).val());
 	});
 
-	// When the form is posted, all options in members must be selected if they are to submit
+	// When the form is posted, all options in members must be selected if htey are to submit
 	$("#save").prop('type' ,'button');
 
 	$('#save').click(function() {

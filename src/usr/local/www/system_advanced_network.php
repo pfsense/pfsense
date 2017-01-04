@@ -210,14 +210,14 @@ $group->add(new Form_Checkbox(
 
 $group->add(new Form_Input(
 	'ipv6nat_ipaddr',
-	'IP address of tunneling peer',
+	'Tunnel Peer\'s IP Address',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
 ))->setHelp('The IPv4 address of the tunneling peer');
 
-$group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, that can be used ' .
-	'to tunnel IPv6 packets over IPv4 routing infrastructures. A firewall rule to allow passing of IPv6 packets ' .
-	'must also be <a href="firewall_rules.php">created</a>.');
+$group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
+	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. A firewall rule to pass IPv6 packets ' .
+	'is <a href="firewall_rules.php">also necessary</a>.');
 
 $section->add($group);
 

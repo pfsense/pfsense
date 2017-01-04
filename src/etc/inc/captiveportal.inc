@@ -347,14 +347,9 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
-		captiveportal_radius_stop_all();
+		captiveportal_radius_stop_all(10); // NAS-Request
 
 		captiveportal_filterdns_configure();
-
-		/* send Accounting-Off to server */
-		if (!platform_booting()) {
-			captiveportal_send_server_accounting(true);
-		}
 
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
@@ -1120,32 +1115,37 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 }
 
 /* send RADIUS acct stop for all current clients */
-function captiveportal_radius_stop_all() {
-	global $config, $cpzone;
+function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+	global $g, $config, $cpzone, $cpzoneid;
 
-	if (!isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
-		return;
+	$cpdb = captiveportal_read_db();
+
+	$radacct = isset($config['captiveportal'][$cpzone]['radacct_enable']) ? true : false;
+	if ($radacct) {
+		$radiusservers = captiveportal_get_radius_servers();
 	}
 
-	$radiusservers = captiveportal_get_radius_servers();
-	if (!empty($radiusservers)) {
-		$cpdb = captiveportal_read_db();
-		foreach ($cpdb as $cpentry) {
-			if (empty($cpentry[11])) {
-				$cpentry[11] = 'first';
-			}
-			if (!empty($radiusservers[$cpentry[11]])) {
-				RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-					$cpentry[4], // username
-					$cpentry[5], // sessionid
-					$cpentry[0], // start time
-					$radiusservers[$cpentry[11]],
-					$cpentry[2], // clientip
-					$cpentry[3], // clientmac
-					7); // Admin Reboot
+	foreach ($cpdb as $cpentry) {
+		if ($radacct) {
+			if (!empty($radiusservers)) {
+				if (empty($cpentry[11])) {
+					$cpentry[11] = 'first';
+				}
+				if (!empty($radiusservers[$cpentry[11]])) {
+					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[5], // sessionid
+						$cpentry[0], // start time
+						$radiusservers[$cpentry[11]],
+						$cpentry[2], // clientip
+						$cpentry[3], // clientmac
+						$term_cause);
+				}
 			}
 		}
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
 	}
+	unset($cpdb);
 }
 
 function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false) {

@@ -367,8 +367,17 @@ function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 			continue;
 		}
 
+		/* (TCP|UDP)(4|6) does not conflict unless interface is any */
+		if (($interface != "any" && $settings['interface'] != "any") &&
+		    (strlen($prot) == 4) &&
+		    (strlen($settings['protocol']) == 4) &&
+		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
+		    substr($prot,3,1) != substr($settings['protocol'],3,1)) {
+			continue;
+		}
+
 		if ($port == $settings['local_port'] &&
-		    $prot == $settings['protocol'] &&
+		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
 		    ($interface == $settings['interface'] ||
 		    $interface == "any" || $settings['interface'] == "any")) {
 			return $settings['vpnid'];

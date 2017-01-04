@@ -1263,13 +1263,6 @@ function openvpn_delete($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 
-	if (isset($settings['dev_mode'])) {
-		$tunname = "{$settings['dev_mode']}{$vpnid}";
-	} else {
-		/* defaults to tun */
-		$tunname = "tun{$vpnid}";
-	}
-
 	if ($mode == "server") {
 		$devname = "ovpns{$vpnid}";
 	} else {
@@ -1288,11 +1281,8 @@ function openvpn_delete($mode, $settings) {
 		posix_kill($pid, SIGTERM);
 	}
 
-	/* remove the device from the openvpn group */
-	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " -group openvpn");
-
-	/* restore the original adapter name */
-	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " name " . escapeshellarg($tunname));
+	/* destroy the device */
+	pfSense_interface_destroy($devname);
 
 	/* remove the configuration files */
 	@array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));

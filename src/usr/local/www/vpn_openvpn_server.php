@@ -119,8 +119,16 @@ if ($_GET['act'] == "edit") {
 		$pconfig['mode'] = $a_server[$id]['mode'];
 		$pconfig['protocol'] = $a_server[$id]['protocol'];
 		$pconfig['authmode'] = $a_server[$id]['authmode'];
-		$pconfig['ncp-ciphers'] = $a_server[$id]['ncp-ciphers'];
-		$pconfig['ncp_enable'] = $a_server[$id]['ncp_enable'];
+		if (isset($a_server[$id]['ncp-ciphers'])) {
+			$pconfig['ncp-ciphers'] = $a_server[$id]['ncp-ciphers'];
+		} else {
+			$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+		}
+		if (isset($a_server[$id]['ncp_enable'])) {
+			$pconfig['ncp_enable'] = $a_server[$id]['ncp_enable'];
+		} else {
+			$pconfig['ncp_enable'] = "enabled";
+		}
 		$pconfig['dev_mode'] = $a_server[$id]['dev_mode'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
 
@@ -860,15 +868,16 @@ if ($act=="new" || $act=="edit"):
 		'Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
-		))->setHelp('The Encryption Algorithm used for data channel packets.');
+		))->setHelp('The Encryption Algorithm used for data channel packets when Negotiable Cryptographic Parameter (NCP) support is not available.');
 
 	$section->addInput(new Form_Checkbox(
 		'ncp_enable',
 		'Enable NCP',
-		'Check this option to allow OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
-				'Encryption Algorithms from those selected in the NCP Encryption Algorithms list below.',
+		'Enable Negotiable Cryptographic Parameters',
 		($pconfig['ncp_enable'] == "enabled")
-	))->setHelp('<div class="infoblock">' . sprint_info_box('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.' . '<br />' .
+	))->setHelp(		'Check this option to allow OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
+				'Encryption Algorithms from those selected in the NCP Algorithms list below.' .
+				'<div class="infoblock">' . sprint_info_box('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.' . '<br />' .
 				'When disabled, only the selected Encryption Algorithm is allowed.', 'info', false) . '</div>');
 
 	$group = new Form_Group('NCP Algorithms');
@@ -880,7 +889,7 @@ if ($act=="new" || $act=="edit"):
 		openvpn_get_cipherlist(),
 		true
 	))->setAttribute('size', '10')
-	  ->setHelp('Available algorithms<br />Click to add or remove an algorithm from the list');
+	  ->setHelp('Available NCP Encryption Algorithms<br />Click to add or remove an algorithm from the list');
 
 	$group->add(new Form_Select(
 		'ncp-ciphers',
@@ -890,11 +899,10 @@ if ($act=="new" || $act=="edit"):
 		true
 	))->setReadonly()
 	  ->setAttribute('size', '10')
-	  ->setHelp('Algorithm list. Click an algorithm name to remove it from the list');
+	  ->setHelp('Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from the list');
 
-	$group->setHelp('Available NCP Encryption Algorithms / Allowed NCP Encryption Algorithms' .
+	$group->setHelp(		'The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
 					'<div class="infoblock">' . sprint_info_box(
-					'Click an NCP Encryption Algorithm in the left-side list to add or remove it from the Allowed NCP Encryption Algorithms list.' . '<br />' .
 					'For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
 					'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.', 'info', false) .
 					'</div>');

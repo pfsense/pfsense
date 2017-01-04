@@ -1779,7 +1779,9 @@ events.push(function() {
 
 	// On click, remove the cipher from the list
 	$('[id="ncp-ciphers[]"]').click(function () {
-		updateCiphers($(this).val());
+		if ($(this).val() != null) {
+			updateCiphers($(this).val());
+		}
 	});
 
 	// Make sure hte "Availlable ciphers" selector is not submitted with the form,

@@ -160,6 +160,7 @@ $section->addInput(new Form_Checkbox(
 
 
 $group = new Form_Group('IPv6 over IPv4');
+
 $group->add(new Form_Checkbox(
 	'ipv6nat_enable',
 	'IPv6 over IPv4 Tunneling',
@@ -169,10 +170,10 @@ $group->add(new Form_Checkbox(
 
 $group->add(new Form_Input(
 	'ipv6nat_ipaddr',
-	'Tunnel Peer\'s IP Address',
+	'IPv4 address of Tunnel Peer',
 	'text',
 	$pconfig['ipv6nat_ipaddr']
-))->setHelp('The IPv4 address of the tunneling peer');
+));
 
 $group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
 	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. A firewall rule to pass IPv6 packets ' .

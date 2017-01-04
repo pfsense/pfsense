@@ -269,11 +269,12 @@ function getAllowedPages($username, &$attributes = array()) {
 
 	if ($_SESSION['remoteauth']) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-        	// cache auth results for a short time to prevent hammering auth services & logs
-        	$recheck_time = 30;
-        	if (isset($config['system']['webgui']['auth_refresh_time'])) {
-        	    $recheck_time = $config['system']['webgui']['auth_refresh_time'];
-	        }
+        	// cache auth results for a short time to ease load on auth services & logs
+		if (isset($config['system']['webgui']['auth_refresh_time'])) {
+			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+		} else {
+			$recheck_time = 30;
+		}
 	        // obtain ldap groups if we are in ldap mode
 	        if ($authcfg['type'] == "ldap") {
 	                if  ( isset($_SESSION["ldap_allowed_groups"]) &&

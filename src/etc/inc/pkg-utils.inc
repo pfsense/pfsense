@@ -382,12 +382,15 @@ function get_pkg_info($pkgs = 'all', $local_only = false, $installed_only = fals
 	}
 	if ($installed_only || ($local_only && $rc != 0)) {
 		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed.
-		
-		   The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the remote repo catalog.
-		   
-		   If the calling code would have accepted local copy info (which isn't assumed up to date) then it makes sense to
-		   fall back on pkg info to at least return the known info about installed pkgs (pkg info should still work), instead
-		   of failing and returning no info at all. For example, this enables offline view + management of installed pkgs. */
+		 *
+		 * The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the 
+		 * remote repo catalog.
+		 * 
+		 * If the calling code would have accepted local copy info (which isn't assumed up to date) then it
+		 * makes sense to fall back on pkg info to at least return the known info about installed pkgs (pkg
+		 * info should still work), instead of failing and returning no info at all. For example, this
+		 * enables offline view + management of installed pkgs. 
+		 */
 	
 		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);
 	}

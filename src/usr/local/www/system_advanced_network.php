@@ -200,7 +200,7 @@ $section->addInput(new Form_Checkbox(
 	'blocks traffic.');
 
 
-$group = new Form_Group('IPv6 over IPv4 Tunneling');
+$group = new Form_Group('IPv6 over IPv4');
 $group->add(new Form_Checkbox(
 	'ipv6nat_enable',
 	'IPv6 over IPv4 Tunneling',

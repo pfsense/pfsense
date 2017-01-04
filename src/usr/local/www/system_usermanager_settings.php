@@ -117,6 +117,13 @@ if ($_POST) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
 		}
 	}
+	
+	if (isset($_POST['auth_refresh_time'])) {
+		$timeout = intval($_POST['auth_refresh_time']);
+		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 )) {
+			$input_errors[] = gettext("Authentication refresh time must be an integer between 0 and 3600 (inclusive).");
+		}
+	}
 
 	if (($_POST['authmode'] == "Local Database") && $_POST['savetest']) {
 		$savemsg = gettext("Settings have been saved, but the test was not performed because it is not supported for local databases.");
@@ -212,7 +219,7 @@ $section->addInput(new Form_Input(
         $pconfig['auth_refresh_time'],
         ['min' => 0, 'max' => 3600]
 ))->setHelp('Time in seconds to cache authentication results. The default is 30 seconds, maximum 3600 (one hour). '.
-        'Shorter times result in more frequent queries to auth services, and more logs generated.');
+        'Shorter times result in more frequent queries to authentication servers.');
 
 $form->addGlobal(new Form_Button(
 	'savetest',

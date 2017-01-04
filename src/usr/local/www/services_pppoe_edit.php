@@ -317,10 +317,6 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
 $form = new Form();
 
 $section = new Form_Section('PPPoE Server Configuration');

@@ -1086,10 +1086,24 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
 	global $g, $config, $cpzone, $cpzoneid;
 
+	/* check if we're pruning old entries and eventually wait */
+	$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 60);
+
+	/* if we still don't have the lock, unlock forcefully and take it */
+	if (!$rcprunelock) {
+		log_error("CP zone ${cpzone}: could not obtain the lock for more than 60 seconds, lock taken forcefully to disconnect all users");
+		unlock_force("rcprunecaptiveportal{$cpzone}");
+		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
+	}
+
 	$radiussrvs = captiveportal_get_radius_servers();
 	$cpdb = captiveportal_read_db();
 
-	$unsetindexes = array();
+	/* remove immediately the active users from the database to avoid races */
+	$unsetindexes = array_column($cpdb,5);
+	if (!empty($unsetindexes)) {
+		captiveportal_remove_entries($unsetindexes);
+	}
 
 	foreach ($cpdb as $cpentry) {
 		if (empty($cpentry[11])) {
@@ -1099,13 +1113,10 @@ function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNE
 
 		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
 		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
-		$unsetindexes[] = $cpentry[5];
 	}
 	unset($cpdb);
 
-	if (!empty($unsetindexes)) {
-		captiveportal_remove_entries($unsetindexes);
-	}
+	unlock($rcprunelock);
 }
 
 /* send RADIUS acct stop for all current clients */

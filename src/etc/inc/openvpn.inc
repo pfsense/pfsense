@@ -1288,8 +1288,11 @@ function openvpn_delete($mode, & $settings) {
 		posix_kill($pid, SIGTERM);
 	}
 
-	/* destroy the device */
-	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " destroy");
+	/* remove the device from the openvpn group */
+	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " -group openvpn");
+
+	/* restore the original adapter name */
+	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " name " . escapeshellarg($tunname));
 
 	/* remove the configuration files */
 	@array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));

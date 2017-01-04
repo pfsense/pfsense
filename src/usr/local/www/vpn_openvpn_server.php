@@ -671,15 +671,16 @@ if ($act=="new" || $act=="edit"):
 		'dev_mode',
 		'Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
-		array_combine($openvpn_dev_mode, $openvpn_dev_mode)
-		));
+		$openvpn_dev_mode
+		))->setHelp("\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms." .
+		    "<br/>\"tap\" mode is capable of carrying 802.3 (OSI Layer 2.)");
 
 	$section->addInput(new Form_Select(
 		'interface',
 		'Interface',
 		$pconfig['interface'],
 		openvpn_build_if_list()
-		));
+		))->setHelp("The interface or Virtual IP address where OpenVPN will receive client connections.");
 
 	$section->addInput(new Form_Input(
 		'local_port',
@@ -687,7 +688,7 @@ if ($act=="new" || $act=="edit"):
 		'number',
 		$pconfig['local_port'],
 		['min' => '0']
-	));
+	))->setHelp("The port used by OpenVPN to receive client connections.");
 
 	$section->addInput(new Form_Input(
 		'description',

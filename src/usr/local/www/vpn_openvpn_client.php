@@ -463,15 +463,16 @@ if ($act=="new" || $act=="edit"):
 		'dev_mode',
 		'Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
-		array_combine($openvpn_dev_mode, $openvpn_dev_mode)
-		));
+		$openvpn_dev_mode
+		))->setHelp("\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms." .
+		    "<br/>\"tap\" mode is capable of carrying 802.3 (OSI Layer 2.)");
 
 	$section->addInput(new Form_Select(
 		'interface',
 		'Interface',
 		$pconfig['interface'],
 		openvpn_build_if_list()
-		));
+		))->setHelp("The interface used by the firewall to originate this OpenVPN client connection");
 
 	$section->addInput(new Form_Input(
 		'local_port',
@@ -486,21 +487,30 @@ if ($act=="new" || $act=="edit"):
 		'Server host or address',
 		'text',
 		$pconfig['server_addr']
-	));
+	))->setHelp("The IP address or hostname of the OpenVPN server.");
+
+	$section->addInput(new Form_Checkbox(
+		'resolve_retry',
+		'Server hostname resolution',
+		'Infinitely resolve server ',
+		$pconfig['resolve_retry']
+	))->setHelp('Continuously attempt to resolve the server host name. ' .
+	    'Useful when communicating with a server that is not permanently connected to the Internet.');
 
 	$section->addInput(new Form_Input(
 		'server_port',
 		'Server port',
 		'number',
 		$pconfig['server_port']
-	));
+	))->setHelp("The port used by the server to receive client connections.");
 
 	$section->addInput(new Form_Input(
 		'proxy_addr',
 		'Proxy host or address',
 		'text',
 		$pconfig['proxy_addr']
-	));
+	))->setHelp("The address for an HTTP Proxy this client can use to connect to a remote server." .
+	    "<br/>TCP must be used for the client and server protocol.");
 
 	$section->addInput(new Form_Input(
 		'proxy_port',
@@ -511,10 +521,10 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'proxy_authtype',
-		'Proxy Auth. - Extra options',
+		'Proxy Authentication',
 		$pconfig['proxy_authtype'],
 		array('none' => gettext('none'), 'basic' => gettext('basic'), 'ntlm' => gettext('ntlm'))
-		));
+		))->setHelp("The type of authentication used by the proxy server.");
 
 	$section->addInput(new Form_Input(
 		'proxy_user',
@@ -529,14 +539,6 @@ if ($act=="new" || $act=="edit"):
 		'password',
 		$pconfig['proxy_passwd']
 	));
-
-	$section->addInput(new Form_Checkbox(
-		'resolve_retry',
-		'Server hostname resolution',
-		'Infinitely resolve server ',
-		$pconfig['resolve_retry']
-	))->setHelp('Continuously attempt to resolve the server host name. ' .
-				'Useful when communicating with a server that is not permanently connected to the Internet.');
 
 	$section->addInput(new Form_Input(
 		'description',

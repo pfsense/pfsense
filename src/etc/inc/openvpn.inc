@@ -43,7 +43,10 @@ $openvpn_prots = array(
 );
 
 global $openvpn_dev_mode;
-$openvpn_dev_mode = array("tun", "tap");
+$openvpn_dev_mode = array(
+	"tun" => "tun - Layer 3 Tunnel Mode",
+	"tap" => "tap - Layer 2 Tap Mode"
+);
 
 global $openvpn_verbosity_level;
 $openvpn_verbosity_level = array(

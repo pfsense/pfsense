@@ -68,6 +68,7 @@ $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 $pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
+$pconfig['requirestatefilter'] = isset($config['system']['requirestatefilter']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -176,6 +177,8 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['dashboardcolumns']);
 	}
+
+	$config['system']['requirestatefilter'] = $_POST['requirestatefilter'] ? true:false;
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {

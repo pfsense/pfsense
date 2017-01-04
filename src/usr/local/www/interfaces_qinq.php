@@ -99,7 +99,7 @@ if ($_GET['act'] == "del") {
 		}
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}qinq:");
 		mwexec("/usr/sbin/ngctl shutdown {$qinq['vlanif']}:");
-		mwexec("/sbin/ifconfig {$qinq['vlanif']} destroy");
+		pfSense_interface_destroy($qinq['vlanif']);
 		unset($a_qinqs[$id]);
 
 		write_config();

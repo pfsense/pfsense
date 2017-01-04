@@ -89,7 +89,7 @@ if ($_GET['act'] == "del") {
 	if (clone_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This wireless clone cannot be deleted because it is assigned as an interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_clones[$_GET['id']]['cloneif'] . " destroy");
+		pfSense_interface_destroy($a_clones[$_GET['id']]['cloneif']);
 		unset($a_clones[$_GET['id']]);
 
 		write_config();

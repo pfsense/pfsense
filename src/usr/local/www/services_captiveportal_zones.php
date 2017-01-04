@@ -60,10 +60,6 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"));
 $shortcut_section = "captiveportal";
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
 if (is_subsystem_dirty('captiveportal')) {
 	print_apply_box(gettext("The Captive Portal entry list has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }

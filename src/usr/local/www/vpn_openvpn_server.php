@@ -428,9 +428,11 @@ if ($_POST) {
 			$input_errors[] = gettext("The specified ECDH Curve is invalid.");
 		}
 
-		foreach ($pconfig['ncp-ciphers'] as $ncpc) {
-			if (!in_array($ncpc, $cipher_validation_list)) {
-				$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['ncp-ciphers']) && is_array($pconfig['ncp-ciphers'])) {
+			foreach ($pconfig['ncp-ciphers'] as $ncpc) {
+				if (!in_array($ncpc, $cipher_validation_list)) {
+					$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+				}
 			}
 		}
 

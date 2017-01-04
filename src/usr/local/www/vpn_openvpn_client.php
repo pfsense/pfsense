@@ -320,9 +320,11 @@ if ($_POST) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
-		foreach ($pconfig['ncp-ciphers'] as $ncpc) {
-			if (!in_array($ncpc, $cipher_validation_list)) {
-				$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['ncp-ciphers']) && is_array($pconfig['ncp-ciphers'])) {
+			foreach ($pconfig['ncp-ciphers'] as $ncpc) {
+				if (!in_array($ncpc, $cipher_validation_list)) {
+					$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+				}
 			}
 		}
 		$reqdfields = explode(" ", "caref");

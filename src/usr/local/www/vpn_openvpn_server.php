@@ -1755,16 +1755,16 @@ events.push(function() {
 
 		// If the cipher exists, remove it
 		$('[id="ncp-ciphers[]"] option').each(function() {
-		    if($(this).val() == mem) {
-		    	$(this).remove();
+			if($(this).val() == mem) {
+				$(this).remove();
 				found = true;
-		    }
+			}
 		});
 
 		// If not, add it
-	    if (!found) {
+		if (!found) {
 			$('[id="ncp-ciphers[]"]').append(new Option(mem , mem));
-	    }
+		}
 
 		// Unselect all options
 		$('[id="availciphers[]"] option:selected').removeAttr("selected");

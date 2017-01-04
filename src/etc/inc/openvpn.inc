@@ -143,7 +143,7 @@ $openvpn_topologies = array(
 global $openvpn_tls_modes;
 $openvpn_tls_modes = array(
 	'auth' => gettext("TLS Authentication"),
-	'crypt' => gettext("TLS Encryption and Authentication"),
+	'crypt' => gettext("TLS Encryption and Authentication")
 );
 
 function openvpn_build_mode_list() {
@@ -349,37 +349,29 @@ function openvpn_vpnid_next() {
 function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 	global $config;
 
+	$ovpn_settings = array();
 	if (is_array($config['openvpn']['openvpn-server'])) {
-		foreach ($config['openvpn']['openvpn-server'] as & $settings) {
-			if (isset($settings['disable'])) {
-				continue;
-			}
-
-			if ($curvpnid != 0 && $curvpnid == $settings['vpnid']) {
-				continue;
-			}
-
-			if ($port == $settings['local_port'] && $prot == $settings['protocol'] &&
-			    ($interface == $settings['interface'] || $interface == "any" || $settings['interface'] == "any")) {
-				return $settings['vpnid'];
-			}
-		}
+		$ovpn_settings = $config['openvpn']['openvpn-server'];
+	}
+	if (is_array($config['openvpn']['openvpn-client'])) {
+		$ovpn_settings = array_merge($ovpn_settings,
+		    $config['openvpn']['openvpn-client']);
 	}
 
-	if (is_array($config['openvpn']['openvpn-client'])) {
-		foreach ($config['openvpn']['openvpn-client'] as & $settings) {
-			if (isset($settings['disable'])) {
-				continue;
-			}
+	foreach ($ovpn_settings as $settings) {
+		if (isset($settings['disable'])) {
+			continue;
+		}
 
-			if ($curvpnid != 0 && $curvpnid == $settings['vpnid']) {
-				continue;
-			}
+		if ($curvpnid != 0 && $curvpnid == $settings['vpnid']) {
+			continue;
+		}
 
-			if ($port == $settings['local_port'] && $prot == $settings['protocol'] &&
-			    ($interface == $settings['interface'] || $interface == "any" || $settings['interface'] == "any")) {
-				return $settings['vpnid'];
-			}
+		if ($port == $settings['local_port'] &&
+		    $prot == $settings['protocol'] &&
+		    ($interface == $settings['interface'] ||
+		    $interface == "any" || $settings['interface'] == "any")) {
+			return $settings['vpnid'];
 		}
 	}
 

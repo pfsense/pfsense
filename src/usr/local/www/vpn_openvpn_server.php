@@ -121,7 +121,7 @@ if ($_GET['act'] == "edit") {
 		$pconfig['authmode'] = $a_server[$id]['authmode'];
 		$pconfig['ncp-ciphers'] = $a_server[$id]['ncp-ciphers'];
 		$pconfig['ncp_enable'] = $a_server[$id]['ncp_enable'];
-		$pconfig['dev_mode'] = $a_server[$id]['ncp_enable'];
+		$pconfig['dev_mode'] = $a_server[$id]['dev_mode'];
 		$pconfig['interface'] = $a_server[$id]['interface'];
 
 		if (!empty($a_server[$id]['ipaddr'])) {

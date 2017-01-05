@@ -500,6 +500,8 @@ function return_gateways_status($byname = false) {
 			$status[$target]['loss'] = "";
 			$status[$target]['status'] = "none";
 		}
+
+		$status[$target]['monitor_disable'] = true;
 	}
 	return($status);
 }

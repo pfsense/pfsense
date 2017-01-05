@@ -92,17 +92,17 @@ if ($_REQUEST['ajax']) {
 	}
 }
 
-$pconfig['session_timeout'] = &$config['system']['webgui']['session_timeout'];
+$pconfig['session_timeout'] = $config['system']['webgui']['session_timeout'];
 
 if (isset($config['system']['webgui']['authmode'])) {
-	$pconfig['authmode'] = &$config['system']['webgui']['authmode'];
+	$pconfig['authmode'] = $config['system']['webgui']['authmode'];
 } else {
 	$pconfig['authmode'] = "Local Database";
 }
 
-$pconfig['backend'] = &$config['system']['webgui']['backend'];
+$pconfig['backend'] = $config['system']['webgui']['backend'];
 
-$pconfig['auth_refresh_time'] = &$config['system']['webgui']['auth_refresh_time'];
+$pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time'];
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
@@ -119,10 +119,10 @@ if ($_POST) {
 			$input_errors[] = gettext("Session timeout must be an integer value.");
 		}
 	}
-	
+
 	if (isset($_POST['auth_refresh_time'])) {
 		$timeout = intval($_POST['auth_refresh_time']);
-		if ($timeout != "" && (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 )) {
+		if (!is_numeric($timeout) || $timeout < 0 || $timeout > 3600 ) {
 			$input_errors[] = gettext("Authentication refresh time must be an integer between 0 and 3600 (inclusive).");
 		}
 	}
@@ -155,11 +155,11 @@ if ($_POST) {
 			unset($config['system']['webgui']['authmode']);
 		}
 		
-                if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
-                        $config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
-                } else {
-                        unset($config['system']['webgui']['auth_refresh_time']);
-                }
+		if (isset($_POST['auth_refresh_time']) && $_POST['auth_refresh_time'] != "") {
+			$config['system']['webgui']['auth_refresh_time'] = intval($_POST['auth_refresh_time']);
+		} else {
+			unset($config['system']['webgui']['auth_refresh_time']);
+		}
 
 		write_config();
 
@@ -215,13 +215,13 @@ $section->addInput(new Form_Select(
 ));
 
 $section->addInput(new Form_Input(
-        'auth_refresh_time',
-        'Auth Refresh Time',
-        'number',
-        $pconfig['auth_refresh_time'],
-        ['min' => 0, 'max' => 3600]
+	'auth_refresh_time',
+	'Auth Refresh Time',
+	'number',
+	$pconfig['auth_refresh_time'],
+	['min' => 0, 'max' => 3600]
 ))->setHelp('Time in seconds to cache authentication results. The default is 30 seconds, maximum 3600 (one hour). '.
-        'Shorter times result in more frequent queries to authentication servers.');
+	'Shorter times result in more frequent queries to authentication servers.');
 
 $form->addGlobal(new Form_Button(
 	'savetest',

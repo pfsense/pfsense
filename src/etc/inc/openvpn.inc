@@ -1356,6 +1356,13 @@ function openvpn_resync_csc(& $settings) {
 							$csc_conf .= "ifconfig-push {$clientip} {$serverip}\n";
 						}
 					}
+
+					if (!empty($serversettings['tunnel_networkv6']) && !empty($settings['tunnel_networkv6'])) {
+						list($ipv6, $prefix) = explode('/', trim($serversettings['tunnel_networkv6']));
+						list($ipv6_1, $ipv6_2) = openvpn_get_interface_ipv6($ipv6, $prefix);
+						$csc_conf .= "ifconfig-ipv6-push {$settings['tunnel_networkv6']} {$ipv6_1}\n";
+					}
+
 					file_put_contents($csc_path, $csc_conf);
 					chown($csc_path, 'nobody');
 					chgrp($csc_path, 'nobody');

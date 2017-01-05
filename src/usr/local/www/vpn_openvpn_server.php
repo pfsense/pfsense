@@ -1789,7 +1789,7 @@ events.push(function() {
 		}
 	});
 
-	// Make sure hte "Availlable ciphers" selector is not submitted with the form,
+	// Make sure the "Available ciphers" selector is not submitted with the form,
 	// and select all of the chosen ciphers so that they are submitted
 	$('form').submit(function() {
 		$("#availciphers" ).prop( "disabled", true);

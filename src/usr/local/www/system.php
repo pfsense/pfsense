@@ -93,6 +93,33 @@ if ($pconfig['timezone'] <> $_POST['timezone']) {
 }
 
 $timezonelist = system_get_timezone_list();
+$timezonedesc = $timezonelist;
+
+// Etc/GMT entries work the opposite way to what people expect.
+// Ref: https://github.com/eggert/tz/blob/master/etcetera and Redmine issue 7089
+// Add explanatory text to entries like:
+// Etc/GMT+1 and Etc/GMT-1
+// but not:
+// Etc/GMT or Etc/GMT+0
+foreach ($timezonedesc as $idx => $desc) {
+	if ((substr($desc, 0, 7) == "Etc/GMT") && (substr($desc, 8, 1) != "0")) {
+		$hr_offset = substr($desc, 8);
+		if (substr($desc, 7, 1) == "+") {
+			if ($hr_offset == "1") {
+				$timezonedesc[$idx] = $desc . " " . sprintf(gettext("(%s hour BEHIND GMT)"), $hr_offset);
+			} else {
+				$timezonedesc[$idx] = $desc . " " . sprintf(gettext("(%s hours BEHIND GMT)"), $hr_offset);
+			}
+		}
+		if (substr($desc, 7, 1) == "-") {
+			if ($hr_offset == "1") {
+				$timezonedesc[$idx] = $desc . " " . sprintf(gettext("(%s hour AHEAD of GMT)"), $hr_offset);
+			} else {
+				$timezonedesc[$idx] = $desc . " " . sprintf(gettext("(%s hours AHEAD of GMT)"), $hr_offset);
+			}
+		}
+	}
+}
 
 $multiwan = false;
 $interfaces = get_configured_interface_list();
@@ -455,7 +482,7 @@ $section->addInput(new Form_Select(
 	'timezone',
 	'Timezone',
 	$pconfig['timezone'],
-	array_combine($timezonelist, $timezonelist)
+	array_combine($timezonelist, $timezonedesc)
 ))->setHelp('Select the timezone or location within the timezone to be used by this system.');
 
 $section->addInput(new Form_Input(

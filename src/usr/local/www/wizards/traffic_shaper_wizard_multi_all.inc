@@ -39,10 +39,17 @@ function step1_stepbeforeformdisplay() {
 	}
 
 	foreach ($fields as &$field) {
-		if ($field['name'] == 'numberofconnections')
+		if ($field['name'] == 'numberofconnections') {
 			$field['value'] = $wans;
-		else if ($field['name'] == 'numberoflocalinterfaces')
+			if ($wans == 0) {
+				$field['description'] .= sprint_info_box(gettext("This firewall does not have any WAN-type interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false);
+			}
+		} else if ($field['name'] == 'numberoflocalinterfaces') {
 			$field['value'] = $lans;
+			if ($lans == 0) {
+				$field['description'] .= sprint_info_box(gettext("This firewall does not have any LAN-type interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false);
+			}
+		}
 	}
 }
 
@@ -96,14 +103,14 @@ function step2_stepbeforeformdisplay() {
 	}
 	$numberofconnections = intval($config['ezshaper']['step1']['numberofconnections']);
 	if ($numberofconnections > $wans) {
-		$savemsg=gettext("There are less interfaces than number of connections!");
+		$savemsg=gettext("The specified number of connections is greater than the number of ALTQ-capable assigned interfaces!");
 		$stepid--;
 		return;
 	}
 
 	$numberoflocalinterfaces = intval($config['ezshaper']['step1']['numberoflocalinterfaces']);
 	if ($numberoflocalinterfaces > $lans) {
-		$savemsg=gettext("There are less interfaces than number of connections!");
+		$savemsg=gettext("The specified number of connections is greater than the number of ALTQ-capable assigned interfaces!");
 		$stepid--;
 		return;
 	}

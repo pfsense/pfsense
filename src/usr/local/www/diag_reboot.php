@@ -43,8 +43,8 @@ $guiretry = 20;		// Seconds to try again if $guitimeout was not long enough
 $pgtitle = array(gettext("Diagnostics"), gettext("Reboot"));
 include("head.inc");
 
-
-if (($_SERVER['REQUEST_METHOD'] == 'POST') && ($_POST['override'] != "yes")) {
+if (($_SERVER['REQUEST_METHOD'] == 'POST') && (empty($_POST['override']) ||
+    ($_POST['override'] != "yes"))):
 	if (DEBUG) {
 		print_info_box(gettext("Not actually rebooting (DEBUG is set true)."), 'success');
 	} else {
@@ -98,7 +98,7 @@ events.push(function() {
 //]]>
 </script>
 <?php
-} else {
+else:
 
 ?>
 
@@ -135,6 +135,6 @@ events.push(function() {
 </script>
 <?php
 
-}
+endif;
 
 include("foot.inc");

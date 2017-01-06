@@ -3868,6 +3868,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 
+	if (!empty($config['system']['global-v6duid'])) {
+		// Write the DUID file
+		if(!write_dhcp6_duid($config['system']['global-v6duid'])) {
+		    log_error(gettext("Failed to write user DUID file!"));
+		}
+	}
+	
 	if ($wancfg['adv_dhcp6_config_file_override']) {
 		// DHCP6 Config File Override
 		$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
@@ -3974,10 +3981,12 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$rtsoldscript .= "/bin/sleep 1\n";
 	}
 	$debugOption = isset($wancfg['dhcp6debug']) ? "-D" : "-d";
+	$noreleaseOption = isset($wancfg['dhcp6norelease']) ? "-n" : "";
+
 
 	/* add the start of dhcp6c to the rtsold script if we are going to wait for ra */
 	if (!isset($wancfg['dhcp6withoutra'])) {
-		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
+		$rtsoldscript .= "/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_{$interface}.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}\n";
 		$rtsoldscript .= "/usr/bin/logger -t rtsold \"Starting dhcp6 client for interface {$interface}({$wanif})\"\n";
 	}
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */
@@ -4003,7 +4012,7 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	if (isset($wancfg['dhcp6withoutra'])) {
 		kill_dhcp6client_process($wanif);
 
-		mwexec("/usr/local/sbin/dhcp6c {$debugOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
+		mwexec("/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$wanif}.pid {$wanif}");
 		mwexec("/usr/bin/logger -t info 'Starting dhcp6 client for interface wan({$wanif} in DHCP6 without RA mode)'");
 	}
 	mwexec("/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}");
@@ -4342,7 +4351,7 @@ function DHCP_Config_File_Advanced($interface, $wancfg, $wanif) {
 	if (is_ipaddrv4($wancfg['dhcprejectfrom'])) {
 		$dhclientconf .= "reject {$wancfg['dhcprejectfrom']};\n";
 	}
-	$dhclientconf .= "\tscript \"/sbin/dhclient-script\";\n";
+	$dhclientconf .= "\tscript \"/usr/local/sbin/pfSense-dhclient-script\";\n";
 	$dhclientconf .= "}\n";
 
 	$dhclientconf = DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);
@@ -5226,9 +5235,23 @@ function find_interface_ip($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
-		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
-		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		if (file_exists("/var/db/${interface}_ip")) {
+			$ifip = chop(file_get_contents("/var/db/${interface}_ip"));
+			$ifaddrs = pfSense_getall_interface_addresses($interface);
+			foreach ($ifaddrs as $ifaddr) {
+				list($ip, $mask) = explode("/", $ifaddr);
+				if ($ip == $ifip) {
+					$interface_ip_arr_cache[$interface] = $ip;
+					$interface_sn_arr_cache[$interface] = $mask;
+					break;
+				}
+			}
+		}
+		if (!isset($interface_ip_arr_cache[$interface])) {
+			$ifinfo = pfSense_get_interface_addresses($interface);
+			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
+			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		}
 	}
 
 	return $interface_ip_arr_cache[$interface];
@@ -5968,6 +5991,54 @@ function get_failover_interface($interface, $family = "all") {
 	/* fall through to get_real_interface */
 	/* XXX: Really needed? */
 	return get_real_interface($interface, $family);
+}
+
+/****f* interfaces/interface_has_dhcp
+ * NAME
+ *   interface_has_dhcp - determine if the interface or gateway group uses DHCP
+ * INPUTS
+ *   interface or gateway group name
+ *   family - 4 (check for IPv4 DHCP) or 6 (check for IPv6 DHCP)
+ * RESULT
+ *   true - if the interface uses DHCP/DHCP6, or the name is a gateway group which has any member that uses DHCP/DHCP6
+ *   false - otherwise (DHCP/DHCP6 not in use, or the name is not an interface or gateway group)
+ ******/
+function interface_has_dhcp($interface, $family = 4) {
+	global $config;
+
+	if ($config['interfaces'][$interface]) {
+		if (($family == 4) && ($config['interfaces'][$interface]['ipaddr'] == "dhcp")) {
+			return true;
+		} elseif (($family == 6) && ($config['interfaces'][$interface]['ipaddrv6'] == "dhcp6")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	if (!is_array($config['gateways']['gateway_group'])) {
+		return false;
+	}
+
+	if ($family == 6) {
+		$dhcp_string = "_DHCP6";
+	} else {
+		$dhcp_string = "_DHCP";
+	}
+
+	foreach ($config['gateways']['gateway_group'] as $group) {
+		if (($group['name'] != $interface) || !is_array($group['item'])) {
+			continue;
+		}
+		foreach ($group['item'] as $item) {
+			$item_data = explode("|", $item);
+			if (substr($item_data[0], -strlen($dhcp_string)) == $dhcp_string) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 function remove_ifindex($ifname) {

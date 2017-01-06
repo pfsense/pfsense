@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-allowedips
-##|*NAME=Services: Captive portal: Allowed IPs
-##|*DESCR=Allow access to the 'Services: Captive portal: Allowed IPs' page.
+##|*NAME=Services: Captive Portal: Allowed IPs
+##|*DESCR=Allow access to the 'Services: Captive Portal: Allowed IPs' page.
 ##|*MATCH=services_captiveportal_ip.php*
 ##|-PRIV
 
@@ -92,10 +92,6 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zone={$cpzone}");
@@ -107,12 +103,12 @@ display_top_tabs($tab_array, true);
 
 ?>
 <div class="table-responsive">
-	<table class="table table-hover table-striped table-condensed table-rowdblclickedit">
+	<table class="table table-hover table-striped table-condensed table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 		<thead>
 			<tr>
 				<th><?=gettext("IP Addresses"); ?></th>
 				<th><?=gettext("Description"); ?></th>
-				<th><?=gettext("Actions"); ?></th>
+				<th data-sortable="false"><?=gettext("Actions"); ?></th>
 			</tr>
 		</thead>
 

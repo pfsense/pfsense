@@ -170,6 +170,15 @@ if ($_POST) {
 		}
 	}
 
+	/* Is the description already used as an interface group name? */
+	if (is_array($config['ifgroups']['ifgroupentry'])) {
+		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+			if ($ifgroupentry['ifname'] == $_POST['name']) {
+				$input_errors[] = gettext("Sorry, an interface group with this name already exists.");
+			}
+		}
+	}
+
 	$alias = array();
 	$address = array();
 	$final_address_details = array();
@@ -217,6 +226,7 @@ if ($_POST) {
 				$verify_ssl = isset($config['system']['checkaliasesurlcert']);
 				mkdir($temp_filename);
 				if (!download_file($_POST['address' . $x], $temp_filename . "/aliases", $verify_ssl)) {
+					$input_errors[] = sprintf(gettext("Could not fetch the URL '%s'."), $_POST['address' . $x]);
 					continue;
 				}
 
@@ -511,7 +521,7 @@ if ($_POST) {
 		//we received input errors, copy data to prevent retype
 		$pconfig['name'] = $_POST['name'];
 		$pconfig['descr'] = $_POST['descr'];
-		if (($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
+		if (isset($alias['aliasurl']) && ($_POST['type'] == 'url') || ($_POST['type'] == 'url_ports')) {
 			$pconfig['address'] = implode(" ", $alias['aliasurl']);
 		} else {
 			$pconfig['address'] = implode(" ", $address);
@@ -697,7 +707,8 @@ while ($counter < count($addresses)) {
 	$group->add(new Form_IpAddress(
 		'address' . $counter,
 		$tab == 'port' ? 'Port':'Address',
-		$address
+		$address,
+		'ALIASV4V6'
 	))->addMask('address_subnet' . $counter, $address_subnet)->setWidth(4)->setPattern($pattern_str[$tab]);
 
 	$group->add(new Form_Input(

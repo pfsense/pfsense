@@ -285,6 +285,7 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
 		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -514,8 +515,20 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The interface description cannot contain only numbers.");
 	}
 	/* input validation */
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (!preg_match("/^staticv4/", $_POST['type']))) {
-		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
+	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
+		if (!preg_match("/^staticv4/", $_POST['type'])) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "a static IP configuration. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		} elseif (!empty($_POST['subnet']) && $_POST['subnet'] >= 31) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "IPv4 subnet < 31. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		}
 	}
 	if (isset($config['dhcpdv6']) && isset($config['dhcpdv6'][$if]['enable']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
 		$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only with a static IPv6 configuration. Please disable the DHCPv6 Server service on this interface first, then change the interface configuration.");
@@ -981,6 +994,7 @@ if ($_POST['apply']) {
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
 		unset($wancfg['dhcp6withoutra']);
+		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1230,6 +1244,9 @@ if ($_POST['apply']) {
 
 				if ($_POST['dhcp6withoutra'] == "yes") {
 					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6norelease'] == "yes") {
+					$wancfg['dhcp6norelease'] = true;
 				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
@@ -1594,7 +1611,7 @@ function check_wireless_mode() {
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
 			$input_errors[] = sprintf(gettext("Unable to change mode to %s. The maximum number of wireless clones supported in this mode may have been reached."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
+			pfSense_interface_destroy("{$wlanif}_");
 		}
 		$wancfg['wireless']['mode'] = $old_wireless_mode;
 	}
@@ -2114,7 +2131,7 @@ $section->addInput(new Form_Select(
 	'dhcp6-ia-pd-len',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['dhcp6-ia-pd-len'],
-	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
+	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 5 => "59", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
 ))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');
 
 $section->addInput(new Form_Checkbox(
@@ -2135,6 +2152,12 @@ $section->addInput(new Form_Checkbox(
 	'Do not wait for a RA',
 	'Required by some ISPs, especially those not using PPPoE',
 	$pconfig['dhcp6withoutra']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Do not allow PD/Address release',
+	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
+	$pconfig['dhcp6norelease']
 ));
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
@@ -2702,7 +2725,7 @@ $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'Remote IP address',
 	$pconfig['pptp_remote'][0],
-	'V4'
+	'HOSTV4'
 ));
 
 $section->addInput(new Form_Checkbox(

@@ -25,8 +25,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
-##|*NAME=Status: Captive portal
-##|*DESCR=Allow access to the 'Status: Captive portal' page.
+##|*NAME=Status: Captive Portal
+##|*DESCR=Allow access to the 'Status: Captive Portal' page.
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
 
@@ -35,6 +35,56 @@ require_once("functions.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 require_once("captiveportal.inc");
+
+function print_details($cpent) {
+	global $config, $cpzone, $cpzoneid;
+
+	printf("<a data-toggle=\"popover\" data-trigger=\"hover focus\" title=\"%s\" data-content=\" ", gettext("Session details"));
+
+	/* print the duration of the session */
+	$session_time = time() - $cpent[0];
+	printf(gettext("Session duration: %s") . "<br>", convert_seconds_to_dhms($session_time));
+
+	/* print the time left before session timeout or session terminate time or the closer of the two if both are set */
+	if (!empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = min($cpent[0] + $cpent[7] - time(),$cpent[9] - time());
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (!empty($cpent[7]) && empty($cpent[9])) {
+		$session_time_left = $cpent[0] + $cpent[7] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	} elseif (empty($cpent[7]) && !empty($cpent[9])) {
+		$session_time_left = $cpent[9] - time();
+		printf(gettext("Session time left: %s") . "<br>", convert_seconds_to_dhms($session_time_left));
+	}
+
+	/* print idle time and time left before disconnection if idle timeout is set */
+	if ($_GET['showact']) {
+		$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+
+		/* if the user never sent traffic, set last activity time to the login time */
+		$last_act = $last_act ? $last_act : $cpent[0];
+
+		$idle_time = time() - $last_act;
+		printf(gettext("Idle time: %s") . "<br>", convert_seconds_to_dhms($idle_time));
+
+		if (!empty($cpent[8])) {
+			$idle_time_left = $last_act + $cpent[8] - time();
+			printf(gettext("Idle time left: %s") . "<br>", convert_seconds_to_dhms($idle_time_left));
+		}
+	}
+
+	/* print bytes sent and received, invert the values if reverse accounting is enabled */
+	$volume = getVolume($cpent[2], $cpent[3]);
+	$reverse = isset($config['captiveportal'][$cpzone]['reverseacct']) ? true : false;
+	if ($reverse) {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['output_bytes']), format_bytes($volume['input_bytes']));
+	} else {
+		printf(gettext("Bytes sent: %s") . "<br>" . gettext("Bytes received: %s") . "\" data-html=\"true\">", format_bytes($volume['input_bytes']), format_bytes($volume['output_bytes']));
+	}
+
+	/* print username */
+	printf("%s</a>", htmlspecialchars($cpent[4]));
+}
 
 $cpzone = $_GET['zone'];
 if (isset($_POST['zone'])) {
@@ -62,37 +112,27 @@ if (isset($cpzone) && !empty($cpzone) && isset($a_cp[$cpzone]['zoneid'])) {
 
 if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid) && isset($_GET['id'])) {
 	captiveportal_disconnect_client($_GET['id'], 6);
+	/* keep displaying last activity times */
+	if ($_GET['showact']) {
+		header("Location: status_captiveportal.php?zone={$cpzone}&showact=1");
+	} else {
+		header("Location: status_captiveportal.php?zone={$cpzone}");
+	}
+	exit;
+}
+
+if ($_GET['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
+	captiveportal_disconnect_all();
 	header("Location: status_captiveportal.php?zone={$cpzone}");
 	exit;
 }
 
-function clientcmp($a, $b) {
-	global $order;
-	return strcmp($a[$order], $b[$order]);
-}
+$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
 
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
-	if ($_GET['order']) {
-		if ($_GET['order'] == "ip") {
-			$order = 2;
-		} else if ($_GET['order'] == "mac") {
-			$order = 3;
-		} else if ($_GET['order'] == "user") {
-			$order = 4;
-		} else if ($_GET['order'] == "lastact") {
-			$order = 5;
-		} else {
-			$order = 0;
-		}
-		usort($cpdb, "clientcmp");
-	}
-}
-$pgtitle = array(gettext("Status"), gettext("Captive Portal"));
-
-if (!empty($cpzone)) {
-	$pgtitle[] = $a_cp[$cpzone]['zone'];
+	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
 		$pgtitle[] = gettext("Active Users");
@@ -143,84 +183,81 @@ if (!empty($cpzone)): ?>
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=sprintf(gettext("Users Logged In (%d)"), count($cpdb))?></h2></div>
 	<div class="panel-body table-responsive">
-
-		<table class="table table-striped table-hover table-condensed">
-			<tr>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=ip&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("IP address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=mac&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("MAC address")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=user&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Username")?></a>
-				</th>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=start&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Session start")?></a>
-				</th>
-
+		<table class="table table-striped table-hover table-condensed sortable-theme-bootstrap" data-sortable>
+			<thead>
+				<tr>
+					<th><?=gettext("IP address")?></th>
 <?php
-	if ($_GET['showact']):
+	if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])):
 ?>
-				<th>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=lastact&amp;showact=<?=htmlspecialchars($_GET['showact'])?>"><?=gettext("Last activity")?></a>
-				</th>
+					<th><?=gettext("MAC address")?></th>
 <?php
 	endif;
 ?>
-				<th><?=gettext("Actions")?></th>
-			</tr>
+					<th><?=gettext("Username")?></th>
+					<th><?=gettext("Session start")?></th>
+<?php
+	if ($_GET['showact']):
+?>
+					<th><?=gettext("Last activity")?></th>
+<?php
+	endif;
+?>
+					<th data-sortable="false"><?=gettext("Actions")?></th>
+				</tr>
+			</thead>
+			<tbody>
 <?php
 
 	foreach ($cpdb as $cpent): ?>
-			<tr>
-				<td>
-					<?=$cpent[2]?>
-				</td>
-				<td>
+				<tr>
+					<td><?=htmlspecialchars($cpent[2])?></td>
 <?php
-		$mac=trim($cpent[3]);
-		if (!empty($mac)) {
-			$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
-			print htmlentities($mac);
-			if (isset($mac_man[$mac_hi])) {
-				print "<br /><font size=\"-2\"><i>{$mac_man[$mac_hi]}</i></font>";
-			}
-		}
-?>	&nbsp;
-				</td>
-				<td>
-					<?=htmlspecialchars($cpent[4])?>&nbsp;
-				</td>
+		if (!isset($config['captiveportal'][$cpzone]['nomacfilter'])) {
+?>
+					<td>
 <?php
-		if ($_GET['showact']):
-			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]); ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
-				<td>
-<?php
-			if ($last_act != 0) {
-				echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+			$mac=trim($cpent[3]);
+			if (!empty($mac)) {
+				$mac_hi = strtoupper($mac[0] . $mac[1] . $mac[3] . $mac[4] . $mac[6] . $mac[7]);
+				print htmlentities($mac);
+				if (isset($mac_man[$mac_hi])) {
+					print "<br /><font size=\"-2\"><i>" . htmlspecialchars($mac_man[$mac_hi]) . "</i></font>";
+				}
 			}
 ?>
-				</td>
+					</td>
+<?php
+		}
+?>
+					<td><?php print_details($cpent); ?></td>
+<?php
+		if ($_GET['showact']):
+			$last_act = captiveportal_get_last_activity($cpent[2], $cpent[3]);
+			/* if the user never sent traffic, set last activity time to the login time */
+			$last_act = $last_act ? $last_act : $cpent[0];
+?>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
+					<td>
+<?php
+			echo htmlspecialchars(date("m/d/Y H:i:s", $last_act));
+?>
+					</td>
 <?php
 		else:
 ?>
-				<td>
-					<?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?>
-				</td>
+					<td><?=htmlspecialchars(date("m/d/Y H:i:s", $cpent[0]))?></td>
 <?php
 		endif;
 ?>
-				<td>
-					<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;order=<?=$_GET['order']?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=$cpent[5]?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
-				</td>
-			</tr>
+					<td>
+						<a href="?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=<?=htmlspecialchars($_GET['showact'])?>&amp;act=del&amp;id=<?=htmlspecialchars($cpent[5])?>"><i class="fa fa-trash" title="<?=gettext("Disconnect this User")?>"></i></a>
+					</td>
+				</tr>
 <?php
 	endforeach;
 ?>
+			</tbody>
 		</table>
 	</div>
 </div>
@@ -233,32 +270,30 @@ else:
 endif;
 ?>
 
-
-<form action="status_captiveportal.php" method="get" style="margin: 14px;">
-	<input type="hidden" name="order" value="<?=htmlspecialchars($_GET['order'])?>" />
-
+<nav class="action-buttons">
 <?php
 if (!empty($cpzone)):
 	if ($_GET['showact']): ?>
-		<input type="hidden" name="showact" value="0" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Don't show last activity")?>">
-			<i class="fa fa-minus-circle icon-embed-btn"></i>
-			<?=gettext("Hide Last Activity")?>
-		</button>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=0" role="button" class="btn btn-info" title="<?=gettext("Don't show last activity")?>">
+		<i class="fa fa-minus-circle icon-embed-btn"></i>
+		<?=gettext("Hide Last Activity")?>
+	</a>
 <?php
 	else:
 ?>
-		<input type="hidden" name="showact" value="1" />
-		<button type="submit" class="btn btn-info" value="<?=gettext("Show last activity")?>">
-			<i class="fa fa-plus-circle icon-embed-btn"></i>
-			<?=gettext("Show Last Activity")?>
-		</button>
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;showact=1" role="button" class="btn btn-info" title="<?=gettext("Show last activity")?>">
+		<i class="fa fa-plus-circle icon-embed-btn"></i>
+		<?=gettext("Show Last Activity")?>
+	</a>
 <?php
 	endif;
 ?>
-	<input type="hidden" name="zone" value="<?=htmlspecialchars($cpzone)?>" />
+	<a href="status_captiveportal.php?zone=<?=htmlspecialchars($cpzone)?>&amp;deleteall=1" role="button" class="btn btn-danger" title="<?=gettext("Disconnect all active users")?>">
+		<i class="fa fa-trash icon-embed-btn"></i>
+		<?=gettext("Disconnect All Users")?>
+	</a>
 <?php
 endif;
 ?>
-</form>
+</nav>
 <?php include("foot.inc");

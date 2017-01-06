@@ -105,6 +105,20 @@ while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
 	attempts=$((attempts+1))
 done
 
+# Handle ZFS read-only case
+/sbin/kldstat -qm zfs
+if [ $? -eq 0 ]; then
+	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+	if [ $ZFSFSAVAILABLE -eq 0 ]; then
+		/sbin/kldunload zfs
+	elif [ -f /usr/bin/grep ]; then
+		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
+		if [ "$ZFSROOT" != "" ]; then
+			/sbin/zfs set readonly=off $ZFSROOT
+		fi
+	fi
+fi
+
 # If /conf is a directory, convert it to a symlink to /cf/conf
 if [ -d "/conf" ]; then
 	# If item is not a symlink then rm and recreate
@@ -122,14 +136,16 @@ if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
 	MOVE_PKG_DATA=1
 	rm -rf /var/db/pkg 2>/dev/null
 	rm -rf /var/cache/pkg 2>/dev/null
-	mv /root/var/db/pkg /var/db
-	mv /root/var/cache/pkg /var/cache
+	mv -f /root/var/db/pkg /var/db
+	mv -f /root/var/cache/pkg /var/cache
 # If use MFS var is enabled, move files to a safe place
 elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
 	MOVE_PKG_DATA=1
+	rm -rf /root/var/db/pkg 2>/dev/null
+	rm -rf /root/var/cache/pkg 2>/dev/null
 	/bin/mkdir -p /root/var/db /root/var/cache
-	mv /var/db/pkg /root/var/db
-	mv /var/cache/pkg /root/var/cache
+	mv -f /var/db/pkg /root/var/db
+	mv -f /var/cache/pkg /root/var/cache
 fi
 
 if [ "${USE_MFS_TMPVAR}" = "true" ]; then
@@ -149,20 +165,6 @@ fi
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
-
-# Handle ZFS read-only case
-/sbin/kldstat -qm zfs
-if [ $? -eq 0 ]; then
-	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-	if [ $ZFSFSAVAILABLE -eq 0 ]; then
-		/sbin/kldunload zfs
-	elif [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
-		fi
-	fi
-fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then
@@ -198,6 +200,7 @@ SWAPDEVICE=`/bin/cat /etc/fstab | /usr/bin/grep swap | /usr/bin/cut -f1`
 
 # make some directories in /var
 /bin/mkdir -p $varrunpath /var/log /var/etc /var/db/entropy /var/db/rrd /var/at/jobs/ /var/empty /var/log/nginx 2>/dev/null
+chmod 0555 /var/empty
 /bin/rm -rf $varrunpath/*
 
 # Cleanup configuration files from previous instance

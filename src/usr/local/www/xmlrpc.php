@@ -322,10 +322,11 @@ class pfsense_xmlrpc_server {
 						 */
 						continue;
 					}
-				} elseif ($vip['mode'] == "ipalias" &&
-				    strstr($vip['interface'], "_vip") &&
-				    isset($oldvips[$vip['subnet']])) {
 
+				} elseif ($vip['mode'] == "ipalias" &&
+				    (substr($vip['interface'], 0, 4) == '_vip'
+				    || strstr($vip['interface'], "lo0")) &&
+				    isset($oldvips[$vip['subnet']])) {
 					$key = $vip['subnet'];
 					if ($oldvips[$key]['content'] ==
 					    $vip['interface'] .
@@ -532,30 +533,6 @@ class pfsense_xmlrpc_server {
 		mwexec_bg("/etc/rc.reboot");
 
 		return true;
-	}
-
-	/**
-	 * Wrapper for get_notices()
-	 *
-	 * @param string $category
-	 *
-	 * @return bool
-	 */
-	public function get_notices($category = 'all') {
-		$this->auth();
-
-		global $g;
-
-		if (!function_exists("get_notices")) {
-			require_once("notices.inc");
-		}
-		if (!$params) {
-			$toreturn = get_notices();
-		} else {
-			$toreturn = get_notices($params);
-		}
-
-		return $toreturn;
 	}
 }
 

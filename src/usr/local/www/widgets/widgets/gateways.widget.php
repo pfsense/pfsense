@@ -220,14 +220,20 @@ function compose_table_body_contents() {
 			} elseif (stristr($gateways_status[$gname]['status'], "down")) {
 				$online = gettext("Offline");
 				$bgcolor = "danger";  // lightcoral
+			} elseif (stristr($gateways_status[$gname]['status'], "highloss")) {
+				$online = gettext("Packetloss");
+				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "loss")) {
 				$online = gettext("Packetloss");
 				$bgcolor = "warning";  // khaki
+			} elseif (stristr($gateways_status[$gname]['status'], "highdelay")) {
+				$online = gettext("Latency");
+				$bgcolor = "danger";  // lightcoral
 			} elseif (stristr($gateways_status[$gname]['status'], "delay")) {
 				$online = gettext("Latency");
 				$bgcolor = "warning";  // khaki
 			} elseif ($gateways_status[$gname]['status'] == "none") {
-				if ($gateways_status[$gname]['monitorip'] == "none") {
+				if ($gateways_status[$gname]['monitor_disable'] || ($gateways_status[$gname]['monitorip'] == "none")) {
 					$online = gettext("Online <br/>(unmonitored)");
 				} else {
 					$online = gettext("Online");

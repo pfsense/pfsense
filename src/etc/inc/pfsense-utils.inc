@@ -413,13 +413,6 @@ function hardware_offloading_applyflags($iface) {
 		$flags_on |= IFCAP_LRO;
 	}
 
-	/* if the NIC supports polling *AND* it is enabled in the GUI */
-	if (!isset($config['system']['polling'])) {
-		$flags_off |= IFCAP_POLLING;
-	} else if (isset($options['caps']['polling'])) {
-		$flags_on |= IFCAP_POLLING;
-	}
-
 	pfSense_interface_capabilities($iface, -$flags_off);
 	pfSense_interface_capabilities($iface, $flags_on);
 }
@@ -461,25 +454,6 @@ function enable_hardware_offloading($interface) {
 		hardware_offloading_applyflags($realhwif[0]);
 		hardware_offloading_applyflags($int);
 	}
-}
-
-/****f* pfsense-utils/interface_supports_polling
- * NAME
- *   checks to see if an interface supports polling according to man polling
- * INPUTS
- *
- * RESULT
- *   true or false
- * NOTES
- *
- ******/
-function interface_supports_polling($iface) {
-	$opts = pfSense_get_interface_addresses($iface);
-	if (is_array($opts) && isset($opts['caps']['polling'])) {
-		return true;
-	}
-
-	return false;
 }
 
 /****f* pfsense-utils/is_alias_inuse
@@ -555,36 +529,6 @@ function is_schedule_inuse($schedule) {
 		}
 	}
 	return false;
-}
-
-/****f* pfsense-utils/setup_polling
- * NAME
- *   sets up polling
- * INPUTS
- *
- * RESULT
- *   null
- * NOTES
- *
- ******/
-function setup_polling() {
-	global $g, $config;
-
-	if (isset($config['system']['polling'])) {
-		set_single_sysctl("kern.polling.idle_poll", "1");
-	} else {
-		set_single_sysctl("kern.polling.idle_poll", "0");
-	}
-
-	if ($config['system']['polling_each_burst']) {
-		set_single_sysctl("kern.polling.each_burst", $config['system']['polling_each_burst']);
-	}
-	if ($config['system']['polling_burst_max']) {
-		set_single_sysctl("kern.polling.burst_max", $config['system']['polling_burst_max']);
-	}
-	if ($config['system']['polling_user_frac']) {
-		set_single_sysctl("kern.polling.user_frac", $config['system']['polling_user_frac']);
-	}
 }
 
 /****f* pfsense-utils/setup_microcode
@@ -1096,7 +1040,8 @@ function setup_serial_port($when = "save", $path = "") {
 	$specific_platform = system_identify_specific_platform();
 	if ($specific_platform['name'] == 'RCC-VE' ||
 	    $specific_platform['name'] == 'RCC' ||
-	    $specific_platform['name'] == 'RCC-DFF') {
+	    $specific_platform['name'] == 'RCC-DFF' ||
+	    $specific_platform['name'] == 'apu2') {
 		$serial_only = true;
 	}
 
@@ -1903,6 +1848,7 @@ function download_file($url, $destination, $verify_ssl = true, $connect_timeout 
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 	curl_setopt($ch, CURLOPT_FILE, $fp);
 	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connect_timeout);
@@ -1957,6 +1903,7 @@ function download_file_with_progress_bar($url, $destination, $verify_ssl = true,
 	 */
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl);
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 	curl_setopt($ch, CURLOPT_HEADERFUNCTION, 'read_header');
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -2978,6 +2925,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 	case 56:
 		$prefix_len = 17;
 		break;
+	case 59:
 	case 60:
 		$prefix_len = 18;
 		break;
@@ -3015,22 +2963,24 @@ function dhcpv6_pd_str_help($pdlen) {
 	case 56:
 		$result = '::xx:xxxx:xxxx:xxxx:xxxx';
 		break;
+	case 59:
 	case 60:
 		$result = '::x:xxxx:xxxx:xxxx:xxxx';
 		break;
 	/*
-	 * XXX 63, 62 and 61 should use same mask of 60 but it would
-	 * we let user chose this bit it can end up out of PD network
+	 * XXX 63, 62 and 61 should use same mask as 60 but if
+	 * we let the user choose this bit it can end up out of PD network
 	 *
-	 * Leave this with the same of 64 for now until we find a way to
-	 * let user chose it. The side-effect is users with PD with one
-	 * of these lengths will not be able to setup DHCP server range
+	 * Leave this with the same as 64 for now until we find a way to
+	 * let the user choose it. The side-effect is users with PD with one
+	 * of these lengths will not be able to setup DHCP server ranges
 	 * for full PD size, only for last /64 network
 	 */
 	case 61:
 	case 62:
 	case 63:
 	case 64:
+	default:
 		$result = '::xxxx:xxxx:xxxx:xxxx';
 		break;
 	}

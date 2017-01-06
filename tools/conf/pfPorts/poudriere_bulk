@@ -16,6 +16,7 @@ net/trafshow
 net/trafshow3
 net/vnstat
 net-mgmt/dhcp_probe
+net-mgmt/net-snmp
 sysutils/htop
 sysutils/grub2-bhyve
 sysutils/pstree
@@ -34,6 +35,7 @@ net/%%PRODUCT_NAME%%-pkg-Avahi
 sysutils/%%PRODUCT_NAME%%-pkg-Notes
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
+sysutils/%%PRODUCT_NAME%%-pkg-LCDproc
 security/%%PRODUCT_NAME%%-pkg-snort
 sysutils/%%PRODUCT_NAME%%-pkg-Shellcmd
 net/%%PRODUCT_NAME%%-pkg-routed
@@ -59,6 +61,7 @@ net-mgmt/%%PRODUCT_NAME%%-pkg-iftop
 net-mgmt/%%PRODUCT_NAME%%-pkg-nrpe
 sysutils/%%PRODUCT_NAME%%-pkg-System_Patches
 net-mgmt/%%PRODUCT_NAME%%-pkg-softflowd
+security/%%PRODUCT_NAME%%-pkg-tinc
 security/%%PRODUCT_NAME%%-pkg-sudo
 sysutils/%%PRODUCT_NAME%%-pkg-Service_Watchdog
 sysutils/%%PRODUCT_NAME%%-pkg-apcupsd

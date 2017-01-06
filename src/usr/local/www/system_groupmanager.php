@@ -27,8 +27,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-system-groupmanager
-##|*NAME=System: Group manager
-##|*DESCR=Allow access to the 'System: Group manager' page.
+##|*NAME=System: Group Manager
+##|*DESCR=Allow access to the 'System: Group Manager' page.
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 

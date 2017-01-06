@@ -4971,11 +4971,8 @@ function upgrade_154_to_155() {
 	}
 }
 
-/* Unset references to glxsb in the config. See #6755 */
 function upgrade_155_to_156() {
-	if ($config['system']['crypto_hardware'] == "glxsb") {
-		unset($config['system']['crypto_hardware']);
-	}
+	// Unused
 }
 
 function upgrade_156_to_157() {
@@ -5028,7 +5025,46 @@ function upgrade_157_to_158() {
 	}
 }
 
+/* Unset references to glxsb in the config. See #6755 */
 function upgrade_158_to_159() {
+	global $config;
+
+	if ($config['system']['crypto_hardware'] == "glxsb") {
+		unset($config['system']['crypto_hardware']);
+	}
+}
+
+/* Convert OpenVPN "protocol" to new style for OpenVPN 2.4, old udp/tcp was
+ * IPv4 only, now is dual stack, so change it to udp4/tcp4
+ */
+function upgrade_159_to_160() {
+	global $config;
+
+	if (isset($config['openvpn']) && is_array($config['openvpn'])) {
+		if (is_array($config['openvpn']['openvpn-server'])) {
+			foreach ($config['openvpn']['openvpn-server'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
+		if (is_array($config['openvpn']['openvpn-client'])) {
+			foreach ($config['openvpn']['openvpn-client'] as &$vpn) {
+				if ($vpn['protocol'] == "UDP") {
+					$vpn['protocol'] = "UDP4";
+				}
+				if ($vpn['protocol'] == "TCP") {
+					$vpn['protocol'] = "TCP4";
+				}
+			}
+		}
+	}
+}
+
+function upgrade_160_to_161() {
 	global $config;
 
 	if (is_array($config['system']['authserver'])) {

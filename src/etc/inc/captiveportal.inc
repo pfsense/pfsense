@@ -347,14 +347,9 @@ EOD;
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-error.html");
 		@unlink("{$g['varetc_path']}/captiveportal-{$cpzone}-logout.html");
 
-		captiveportal_radius_stop_all();
+		captiveportal_radius_stop_all(10); // NAS-Request
 
 		captiveportal_filterdns_configure();
-
-		/* send Accounting-Off to server */
-		if (!platform_booting()) {
-			captiveportal_send_server_accounting(true);
-		}
 
 		/* remove old information */
 		unlink_if_exists("{$g['vardb_path']}/captiveportal{$cpzone}.db");
@@ -814,7 +809,9 @@ function captiveportal_prune_old() {
 			if ($lastact && (($pruning_time - $lastact) >= $uidletimeout)) {
 				$timedout = true;
 				$term_cause = 4; // Idle-Timeout
-				$stop_time = $lastact; // Entry added to comply with WISPr
+				if (!isset($config['captiveportal'][$cpzone]['includeidletime'])) {
+					$stop_time = $lastact;
+				}
 			}
 		}
 
@@ -1080,33 +1077,75 @@ function captiveportal_disconnect_client($sessionid, $term_cause = 1, $logoutRea
 	}
 }
 
-/* send RADIUS acct stop for all current clients */
-function captiveportal_radius_stop_all() {
-	global $config, $cpzone;
+/* remove all clients */
+function captiveportal_disconnect_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+	global $g, $config, $cpzone, $cpzoneid;
 
-	if (!isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
-		return;
+	/* check if we're pruning old entries and eventually wait */
+	$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 60);
+
+	/* if we still don't have the lock, unlock forcefully and take it */
+	if (!$rcprunelock) {
+		log_error("CP zone ${cpzone}: could not obtain the lock for more than 60 seconds, lock taken forcefully to disconnect all users");
+		unlock_force("rcprunecaptiveportal{$cpzone}");
+		$rcprunelock = lock("rcprunecaptiveportal{$cpzone}", LOCK_EX);
 	}
 
-	$radiusservers = captiveportal_get_radius_servers();
-	if (!empty($radiusservers)) {
-		$cpdb = captiveportal_read_db();
-		foreach ($cpdb as $cpentry) {
-			if (empty($cpentry[11])) {
-				$cpentry[11] = 'first';
-			}
-			if (!empty($radiusservers[$cpentry[11]])) {
-				RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
-					$cpentry[4], // username
-					$cpentry[5], // sessionid
-					$cpentry[0], // start time
-					$radiusservers[$cpentry[11]],
-					$cpentry[2], // clientip
-					$cpentry[3], // clientmac
-					7); // Admin Reboot
+	$radiussrvs = captiveportal_get_radius_servers();
+	$cpdb = captiveportal_read_db();
+
+	/* remove immediately the active users from the database to avoid races */
+	$unsetindexes = array_column($cpdb,5);
+	if (!empty($unsetindexes)) {
+		captiveportal_remove_entries($unsetindexes);
+	}
+
+	foreach ($cpdb as $cpentry) {
+		if (empty($cpentry[11])) {
+			$cpentry[11] = 'first';
+		}
+		$radiusservers = $radiussrvs[$cpentry[11]];
+
+		captiveportal_disconnect($cpentry, $radiusservers, $term_cause);
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
+	}
+	unset($cpdb);
+
+	unlock($rcprunelock);
+}
+
+/* send RADIUS acct stop for all current clients */
+function captiveportal_radius_stop_all($term_cause = 6, $logoutReason = "DISCONNECT") {
+	global $g, $config, $cpzone, $cpzoneid;
+
+	$cpdb = captiveportal_read_db();
+
+	$radacct = isset($config['captiveportal'][$cpzone]['radacct_enable']) ? true : false;
+	if ($radacct) {
+		$radiusservers = captiveportal_get_radius_servers();
+	}
+
+	foreach ($cpdb as $cpentry) {
+		if ($radacct) {
+			if (!empty($radiusservers)) {
+				if (empty($cpentry[11])) {
+					$cpentry[11] = 'first';
+				}
+				if (!empty($radiusservers[$cpentry[11]])) {
+					RADIUS_ACCOUNTING_STOP($cpentry[1], // ruleno
+						$cpentry[4], // username
+						$cpentry[5], // sessionid
+						$cpentry[0], // start time
+						$radiusservers[$cpentry[11]],
+						$cpentry[2], // clientip
+						$cpentry[3], // clientmac
+						$term_cause);
+				}
 			}
 		}
+		captiveportal_logportalauth($cpentry[4], $cpentry[3], $cpentry[2], $logoutReason);
 	}
+	unset($cpdb);
 }
 
 function captiveportal_passthrumac_configure_entry($macent, $pipeinrule = false) {
@@ -2188,6 +2227,15 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 		$tod = gettimeofday();
 		$sessionid = substr(md5(mt_rand() . $tod['sec'] . $tod['usec'] . $clientip . $clientmac), 0, 16);
 
+		if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
+			$dwfaultbw_up = !empty($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
+			$dwfaultbw_down = !empty($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
+		} else {
+			$dwfaultbw_up = $dwfaultbw_down = 0;
+		}
+		$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
+		$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
+
 		if ($passthrumac) {
 			$mac = array();
 			$mac['action'] = 'pass';
@@ -2232,15 +2280,6 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 				unlock($cpdblck);
 				return;
 			}
-
-			if (isset($config['captiveportal'][$cpzone]['peruserbw'])) {
-				$dwfaultbw_up = !empty($config['captiveportal'][$cpzone]['bwdefaultup']) ? $config['captiveportal'][$cpzone]['bwdefaultup'] : 0;
-				$dwfaultbw_down = !empty($config['captiveportal'][$cpzone]['bwdefaultdn']) ? $config['captiveportal'][$cpzone]['bwdefaultdn'] : 0;
-			} else {
-				$dwfaultbw_up = $dwfaultbw_down = 0;
-			}
-			$bw_up = !empty($attributes['bw_up']) ? round(intval($attributes['bw_up'])/1000, 2) : $dwfaultbw_up;
-			$bw_down = !empty($attributes['bw_down']) ? round(intval($attributes['bw_down'])/1000, 2) : $dwfaultbw_down;
 
 			$bw_up_pipeno = $pipeno;
 			$bw_down_pipeno = $pipeno + 1;

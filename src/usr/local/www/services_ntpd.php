@@ -53,6 +53,10 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
+	if ((strlen($pconfig['ntporphan']) > 0) && (!is_numericint($pconfig['ntporphan']) || ($pconfig['ntporphan'] < 1) || ($pconfig['ntporphan'] > 15))) {
+		$input_errors[] = gettext("The supplied value for NTP Orphan Mode is invalid.");
+	}
+
 	if (!$input_errors) {
 		if (is_array($_POST['interface'])) {
 			$config['ntpd']['interface'] = implode(",", $_POST['interface']);
@@ -91,11 +95,7 @@ if ($_POST) {
 		}
 		$config['system']['timeservers'] = trim($timeservers);
 
-		if (!empty($_POST['ntporphan']) && ($_POST['ntporphan'] < 17) && ($_POST['ntporphan'] != '12')) {
-			$config['ntpd']['orphan'] = $_POST['ntporphan'];
-		} elseif (isset($config['ntpd']['orphan'])) {
-			unset($config['ntpd']['orphan']);
-		}
+		$config['ntpd']['orphan'] = trim($pconfig['ntporphan']);
 
 		if (!empty($_POST['logpeer'])) {
 			$config['ntpd']['logpeer'] = $_POST['logpeer'];
@@ -286,7 +286,8 @@ $section->addInput(new Form_Input(
 	'ntporphan',
 	'Orphan Mode',
 	'text',
-	$pconfig['ntporphan']
+	$pconfig['orphan'],
+	['placeholder' => "12"]
 ))->setHelp('Orphan mode allows the system clock to be used when no other clocks are available. ' .
 			'The number here specifies the stratum reported during orphan mode and should normally be set to a number high enough ' .
 			'to insure that any other servers available to clients are preferred over this server (default: 12).');

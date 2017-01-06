@@ -739,8 +739,8 @@ create_iso_image() {
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
-
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -784,14 +784,15 @@ create_memstick_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating memstick to ${_image_path}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
 
 	rm -f ${LOADERCONF} ${BOOTCONF} >/dev/null 2>&1
 
-	touch ${FINAL_CHROOT_DIR}/boot/loader.conf
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	cat ${LOADERCONF} > ${FINAL_CHROOT_DIR}/boot/loader.conf
 
 	create_distribution_tarball
 
@@ -823,7 +824,7 @@ create_memstick_serial_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKSERIALPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -832,7 +833,8 @@ create_memstick_serial_image() {
 	echo "-S115200 -D" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_multicons="YES"' >  ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_multicons="YES"' >> ${LOADERCONF}
 	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole,vidconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
@@ -870,7 +872,7 @@ create_memstick_adi_image() {
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo ">>> Creating serial memstick to ${MEMSTICKADIPATH}." 2>&1 | tee -a ${LOGFILE}
-	echo "kern.cam.boot_delay=10000" >> ${FINAL_CHROOT_DIR}/boot/loader.conf.local
+	echo "kern.cam.boot_delay=10000" >> ${INSTALLER_CHROOT_DIR}/boot/loader.conf.local
 
 	BOOTCONF=${INSTALLER_CHROOT_DIR}/boot.config
 	LOADERCONF=${INSTALLER_CHROOT_DIR}/boot/loader.conf
@@ -879,7 +881,8 @@ create_memstick_adi_image() {
 	echo "-S115200 -h" > ${BOOTCONF}
 
 	# Activate serial console+video console in loader.conf
-	echo 'boot_serial="YES"' > ${LOADERCONF}
+	echo 'autoboot_delay="3"' > ${LOADERCONF}
+	echo 'boot_serial="YES"' >> ${LOADERCONF}
 	echo 'console="comconsole"' >> ${LOADERCONF}
 	echo 'comconsole_speed="115200"' >> ${LOADERCONF}
 	echo 'comconsole_port="0x2F8"' >> ${LOADERCONF}
@@ -1675,7 +1678,7 @@ EOF
 
 	# Copy over pkg repo templates to pfSense-repo
 	mkdir -p /usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
-	cp -f ${BUILDER_TOOLS}/templates/pkg_repos/* \
+	cp -f ${PKG_REPO_BASE}/* \
 		/usr/local/poudriere/ports/${POUDRIERE_PORTS_NAME}/sysutils/${PRODUCT_NAME}-repo/files
 
 	for jail_arch in ${_archs}; do

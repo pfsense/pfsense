@@ -513,7 +513,7 @@ $section->addInput(new Form_Input(
 	'Hostname or IP address',
 	'text',
 	$pconfig['ldap_host']
-))->setHelp('NOTE: When using SSL, this hostname MUST match the Common Name '.
+))->setHelp('NOTE: When using SSL or STARTTLS, this hostname MUST match the Common Name '.
 	'(CN) of the LDAP server\'s SSL Certificate.');
 
 $section->addInput(new Form_Input(
@@ -548,7 +548,8 @@ else
 		'Peer Certificate Authority',
 		$pconfig['ldap_caref'],
 		$ldapCaRef
-	))->setHelp('This option is used if \'SSL Encrypted\' option is choosen. '.
+	))->setHelp('This option is used if \'SSL Encrypted\' '.
+		'or \'TCP - STARTTLS\' options are chosen. '.
 		'It must match with the CA in the AD otherwise problems will arise.');
 }
 
@@ -891,10 +892,10 @@ events.push(function() {
 	}
 
 	function set_ldap_port() {
-		if ($('#ldap_urltype').find(":selected").index() == 0)
-			$('#ldap_port').val('389');
-		else
+		if ($('#ldap_urltype').find(":selected").index() == 2)
 			$('#ldap_port').val('636');
+		else
+			$('#ldap_port').val('389');
 	}
 
 	// Hides all elements of the specified class. This will usually be a section

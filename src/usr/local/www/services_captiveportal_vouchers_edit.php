@@ -22,8 +22,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-voucher-edit
-##|*NAME=Services: Captive portal Voucher Rolls
-##|*DESCR=Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.
+##|*NAME=Services: Captive Portal Voucher Rolls
+##|*DESCR=Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page.
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
@@ -173,10 +173,6 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $form = new Form();

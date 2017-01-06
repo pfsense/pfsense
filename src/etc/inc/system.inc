@@ -822,7 +822,11 @@ function clear_all_log_files($restart = false) {
 	if ($restart) {
 		system_syslogd_start();
 		killbyname("dhcpd");
+		if (!function_exists('services_dhcpd_configure')) {
+			require_once('services.inc');
+		}
 		services_dhcpd_configure();
+		services_unbound_configure(false);
 	}
 	return;
 }
@@ -855,7 +859,7 @@ function system_syslogd_start() {
 
 	$syslogd_extra = "";
 	if (isset($syslogcfg)) {
-		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
+		$separatelogfacilities = array('ntp', 'ntpd', 'ntpdate', 'charon', 'ipsec_starter', 'openvpn', 'poes', 'l2tps', 'relayd', 'hostapd', 'dnsmasq', 'named', 'filterdns', 'unbound', 'dhcpd', 'dhcrelay', 'dhclient', 'dhcp6c', 'dpinger', 'radvd', 'routed', 'olsrd', 'zebra', 'ospfd', 'bgpd', 'miniupnpd', 'filterlog');
 		$syslogconf = "";
 		if ($config['installedpackages']['package']) {
 			foreach ($config['installedpackages']['package'] as $package) {
@@ -933,7 +937,7 @@ function system_syslogd_start() {
 			$syslogconf .= system_syslogd_get_remote_servers($syslogcfg, "*.*");
 		}
 
-		$syslogconf .= "!dnsmasq,filterdns,unbound\n";
+		$syslogconf .= "!dnsmasq,named,filterdns,unbound\n";
 		if (!isset($syslogcfg['disablelocallogging'])) {
 			$syslogconf .= "*.*								{$log_directive}{$g['varlog_path']}/resolver.log\n";
 		}
@@ -1887,7 +1891,7 @@ function system_ntp_configure() {
 
 	/* if /var/empty does not exist, create it */
 	if (!is_dir("/var/empty")) {
-		mkdir("/var/empty", 0775, true);
+		mkdir("/var/empty", 0555, true);
 	}
 
 	/* start opentpd, set time now and use /var/etc/ntpd.conf */
@@ -1914,22 +1918,29 @@ function system_reboot() {
 	mwexec("nohup /etc/rc.reboot > /dev/null 2>&1 &");
 }
 
-function system_reboot_sync() {
+function system_reboot_sync($reroot=false) {
 	global $g;
+
+	if ($reroot) {
+		$args = " -r ";
+	}
 
 	system_reboot_cleanup();
 
-	mwexec("/etc/rc.reboot > /dev/null 2>&1");
+	mwexec("/etc/rc.reboot {$args} > /dev/null 2>&1");
 }
 
 function system_reboot_cleanup() {
-	global $config, $cpzone;
+	global $config, $cpzone, $cpzoneid;
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpzone=>$cp) {
-			captiveportal_radius_stop_all();
+			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
+			$cpzoneid = $cp[zoneid];
+			captiveportal_radius_stop_all(7); // Admin-Reboot
+			/* Send Accounting-Off packet to the RADIUS server */
 			captiveportal_send_server_accounting(true);
 		}
 	}
@@ -2213,6 +2224,9 @@ function system_identify_specific_platform() {
 			break;
 		case 'SYS-5018D-FN4T':
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
+			break;
+		case 'apu2':
+			return (array('name' => 'apu2', 'descr' => 'PC Engines APU2'));
 			break;
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {

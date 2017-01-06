@@ -132,7 +132,7 @@ if ($_POST) {
 			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
 				$input_errors[] = sprintf(gettext(
 				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
-				    $pdlen, dhcpv6_pd_str_help($ifcfgsn));
+				    $pdlen, dhcpv6_pd_str_help($ifcfgsnv6));
 			}
 		}
 	}

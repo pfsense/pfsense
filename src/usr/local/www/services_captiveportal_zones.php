@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captive portal Zones
-##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
+##|*NAME=Services: Captive Portal Zones
+##|*DESCR=Allow access to the 'Services: Captive Portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
 
@@ -60,10 +60,6 @@ $pgtitle = array(gettext("Services"), gettext("Captive Portal"));
 $shortcut_section = "captiveportal";
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
 if (is_subsystem_dirty('captiveportal')) {
 	print_apply_box(gettext("The Captive Portal entry list has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
 }
@@ -72,14 +68,14 @@ if (is_subsystem_dirty('captiveportal')) {
 	<div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext('Captive Portal Zones')?></h2></div>
 		<div class="panel-body table-responsive">
-			<table class="table table-striped table-hover table-rowdblclickedit">
+			<table class="table table-striped table-hover table-rowdblclickedit sortable-theme-bootstrap" data-sortable>
 				<thead>
 					<tr>
 						<th><?=gettext('Zone')?></th>
 						<th><?=gettext('Interfaces')?></th>
 						<th><?=gettext('Number of users'); ?></th>
 						<th><?=gettext('Description'); ?></th>
-						<th><?=gettext('Actions'); ?></th>
+						<th data-sortable="false"><?=gettext('Actions'); ?></th>
 					</tr>
 				</thead>
 				<tbody>

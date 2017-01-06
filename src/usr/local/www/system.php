@@ -193,12 +193,10 @@ if ($_POST) {
 	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
 		$dnsitem = "dns{$dnscounter}";
 		$dnsgwitem = "dns{$dnscounter}gw";
-		if ($_POST[$dnsgwitem]) {
-			if (interface_has_gateway($_POST[$dnsgwitem])) {
-				foreach ($direct_networks_list as $direct_network) {
-					if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
-						$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
-					}
+		if ($_POST[$dnsgwitem] && ($_POST[$dnsgwitem] <> "none")) {
+			foreach ($direct_networks_list as $direct_network) {
+				if (ip_in_subnet($_POST[$dnsitem], $direct_network)) {
+					$input_errors[] = sprintf(gettext("A gateway can not be assigned to DNS '%s' server which is on a directly connected network."), $_POST[$dnsitem]);
 				}
 			}
 		}
@@ -393,7 +391,8 @@ for ($i=1; $i<5; $i++) {
 	))->setHelp(($i == 4) ? 'Address':null);
 
 	$help = "Enter IP addresses to be used by the system for DNS resolution. " .
-		"These are also used for the DHCP service, DNS forwarder and for PPTP VPN clients.";
+		"These are also used for the DHCP service, DNS Forwarder and DNS Resolver " .
+		"when it has DNS Query Forwarding enabled.";
 
 	if ($multiwan)	{
 		$options = array('none' => 'none');
@@ -435,18 +434,18 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dnsallowoverride']
 ))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
-	'the DNS forwarder). However, they will not be assigned to DHCP and PPTP '.
-	'VPN clients.'), $g['product_name']));
+	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
+	'clients.'), $g['product_name']));
 
 $section->addInput(new Form_Checkbox(
 	'dnslocalhost',
 	'Disable DNS Forwarder',
-	'Do not use the DNS Forwarder as a DNS server for the firewall',
+	'Do not use the DNS Forwarder/DNS Resolver as a DNS server for the firewall',
 	$pconfig['dnslocalhost']
 ))->setHelp('By default localhost (127.0.0.1) will be used as the first DNS '.
 	'server where the DNS Forwarder or DNS Resolver is enabled and set to '.
-	'listen on Localhost, so system can use the local DNS service to perform '.
-	'lookups. Checking this box omits localhost from the list of DNS servers.');
+	'listen on localhost, so system can use the local DNS service to perform '.
+	'lookups. Checking this box omits localhost from the list of DNS servers in resolv.conf.');
 
 $form->add($section);
 

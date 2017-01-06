@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficshaper-queues
-##|*NAME=Status: Traffic shaper: Queues
-##|*DESCR=Allow access to the 'Status: Traffic shaper: Queues' page.
+##|*NAME=Status: Traffic Shaper: Queues
+##|*DESCR=Allow access to the 'Status: Traffic Shaper: Queues' page.
 ##|*MATCH=status_queues.php*
 ##|-PRIV
 /*
@@ -242,7 +242,7 @@ function processQueues($altqstats, $level, $parent_name) {
 		$cpuUsage = 0;
 		print('<td>');
 		print('<div class="progress" style="height: 7px;width: 170px;">');
-		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;\"></div>');
+		print('		<div class="progress-bar" role="progressbar" id="queue' . $q['name'] . $q['interface'] . 'width" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: ' . $cpuUsage*100 . '%;"></div>');
 		print('	  </div>');
 		print('</td>');
 		print('<td><input readonly style="border:0;width:70px;text-align:right;" name="queue' . $q['name'] . $q['interface'] . 'pps"      id="queue' . $q['name'] . $q['interface'] . 'pps"      value="(' . gettext("Loading") . ')" /></td>');

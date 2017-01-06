@@ -175,7 +175,7 @@ if ($_POST) {
 		if ($_POST['key'] && strstr($_POST['key'], "ENCRYPTED")) {
 			$input_errors[] = gettext("Encrypted private keys are not yet supported.");
 		}
-		if (cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
+		if (!$input_errors && !empty($_POST['key']) && cert_get_modulus($_POST['cert'], false) != prv_get_modulus($_POST['key'], false)) {
 			$input_errors[] = gettext("The submitted private key does not match the submitted certificate data.");
 		}
 	}

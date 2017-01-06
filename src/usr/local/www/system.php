@@ -112,7 +112,7 @@ foreach ($timezonedesc as $idx => $desc) {
 
 	switch ($direction) {
 	case '-':
-		$direction_str = gettext('AHEAD');
+		$direction_str = gettext('AHEAD of');
 		break;
 	case '+':
 		$direction_str = gettext('BEHIND');
@@ -122,10 +122,10 @@ foreach ($timezonedesc as $idx => $desc) {
 	}
 
 	$hr_offset = substr($desc, 8);
-	$plural = $hr_offset == "1" ? "" : "s";
+	$hour_word = $hr_offset == "1" ? gettext("hour") : gettext("hours");
 
 	$timezonedesc[$idx] = $desc . " " . sprintf(gettext(
-	    "(%s hour%s %s GMT)"), $hr_offset, $plural, $direction_str);
+	    '(%1$s %2$s %3$s GMT)'), $hr_offset, $hour_word, $direction_str);
 }
 
 $multiwan = false;

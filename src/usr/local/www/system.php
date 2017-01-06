@@ -125,6 +125,40 @@ if ($pconfig['timezone'] <> $_POST['timezone']) {
 }
 
 $timezonelist = system_get_timezone_list();
+$timezonedesc = $timezonelist;
+
+/*
+ * Etc/GMT entries work the opposite way to what people expect.
+ * Ref: https://github.com/eggert/tz/blob/master/etcetera and Redmine issue 7089
+ * Add explanatory text to entries like:
+ * Etc/GMT+1 and Etc/GMT-1
+ * but not:
+ * Etc/GMT or Etc/GMT+0
+ */
+foreach ($timezonedesc as $idx => $desc) {
+	if (substr($desc, 0, 7) != "Etc/GMT" || substr($desc, 8, 1) == "0") {
+		continue;
+	}
+
+	$direction = substr($desc, 7, 1);
+
+	switch ($direction) {
+	case '-':
+		$direction_str = gettext('AHEAD');
+		break;
+	case '+':
+		$direction_str = gettext('BEHIND');
+		break;
+	default:
+		continue;
+	}
+
+	$hr_offset = substr($desc, 8);
+	$plural = $hr_offset == "1" ? "" : "s";
+
+	$timezonedesc[$idx] = $desc . " " . sprintf(gettext(
+	    "(%s hour%s %s GMT)"), $hr_offset, $plural, $direction_str);
+}
 
 $multiwan = false;
 $interfaces = get_configured_interface_list();
@@ -487,7 +521,7 @@ $section->addInput(new Form_Select(
 	'timezone',
 	'Timezone',
 	$pconfig['timezone'],
-	array_combine($timezonelist, $timezonelist)
+	array_combine($timezonelist, $timezonedesc)
 ))->setHelp('Select the timezone or location within the timezone to be used by this system. '.
 	'Usually choose a "Continent/City". Only choose a special or "Etc" entry if you understand why you need to use it.');
 

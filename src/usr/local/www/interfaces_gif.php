@@ -56,7 +56,7 @@ if ($_GET['act'] == "del") {
 	} else if (gif_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This gif TUNNEL cannot be deleted because it is still being used as an interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_gifs[$_GET['id']]['gifif'] . " destroy");
+		pfSense_interface_destroy($a_gifs[$_GET['id']]['gifif']);
 		unset($a_gifs[$_GET['id']]);
 
 		write_config();

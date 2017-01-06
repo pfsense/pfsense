@@ -367,8 +367,17 @@ function openvpn_port_used($prot, $interface, $port, $curvpnid = 0) {
 			continue;
 		}
 
+		/* (TCP|UDP)(4|6) does not conflict unless interface is any */
+		if (($interface != "any" && $settings['interface'] != "any") &&
+		    (strlen($prot) == 4) &&
+		    (strlen($settings['protocol']) == 4) &&
+		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
+		    substr($prot,3,1) != substr($settings['protocol'],3,1)) {
+			continue;
+		}
+
 		if ($port == $settings['local_port'] &&
-		    $prot == $settings['protocol'] &&
+		    substr($prot,0,3) == substr($settings['protocol'],0,3) &&
 		    ($interface == $settings['interface'] ||
 		    $interface == "any" || $settings['interface'] == "any")) {
 			return $settings['vpnid'];
@@ -1091,6 +1100,17 @@ function openvpn_reconfigure($mode, $settings) {
 				}
 				openvpn_add_keyfile($settings['tls'], $conf, $mode_id, $tls_directive, $tlsopt);
 			}
+
+			/* NCP support. If it is not set, assume enabled since that is OpenVPN's default. */
+			if ($settings['ncp_enable'] == "disabled") {
+				$conf .= "ncp-disable\n";
+			} else {
+				/* If the ncp-ciphers list is empty, don't specify a list so OpenVPN's default will be used. */
+				if (!empty($settings['ncp-ciphers'])) {
+					$conf .= "ncp-ciphers " . str_replace(',', ':', $settings['ncp-ciphers']) . "\n";
+				}
+			}
+
 			break;
 	}
 
@@ -1237,18 +1257,11 @@ function openvpn_restart($mode, $settings) {
 	unlock($lockhandle);
 }
 
-function openvpn_delete($mode, & $settings) {
+function openvpn_delete($mode, $settings) {
 	global $g, $config;
 
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
-
-	if (isset($settings['dev_mode'])) {
-		$tunname = "{$settings['dev_mode']}{$vpnid}";
-	} else {
-		/* defaults to tun */
-		$tunname = "tun{$vpnid}";
-	}
 
 	if ($mode == "server") {
 		$devname = "ovpns{$vpnid}";
@@ -1268,11 +1281,8 @@ function openvpn_delete($mode, & $settings) {
 		posix_kill($pid, SIGTERM);
 	}
 
-	/* remove the device from the openvpn group */
-	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " -group openvpn");
-
-	/* restore the original adapter name */
-	mwexec("/sbin/ifconfig " . escapeshellarg($devname) . " name " . escapeshellarg($tunname));
+	/* destroy the device */
+	pfSense_interface_destroy($devname);
 
 	/* remove the configuration files */
 	@array_map('unlink', glob("{$g['varetc_path']}/openvpn/{$mode_id}.*"));
@@ -1346,6 +1356,13 @@ function openvpn_resync_csc(& $settings) {
 							$csc_conf .= "ifconfig-push {$clientip} {$serverip}\n";
 						}
 					}
+
+					if (!empty($serversettings['tunnel_networkv6']) && !empty($settings['tunnel_networkv6'])) {
+						list($ipv6, $prefix) = explode('/', trim($serversettings['tunnel_networkv6']));
+						list($ipv6_1, $ipv6_2) = openvpn_get_interface_ipv6($ipv6, $prefix);
+						$csc_conf .= "ifconfig-ipv6-push {$settings['tunnel_networkv6']} {$ipv6_1}\n";
+					}
+
 					file_put_contents($csc_path, $csc_conf);
 					chown($csc_path, 'nobody');
 					chgrp($csc_path, 'nobody');

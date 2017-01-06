@@ -57,7 +57,7 @@ if ($_GET['act'] == "del") {
 	} else if (gre_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This GRE tunnel cannot be deleted because it is still being used as an interface.");
 	} else {
-		mwexec("/sbin/ifconfig " . $a_gres[$_GET['id']]['greif'] . " destroy");
+		pfSense_interface_destroy($a_gres[$_GET['id']]['greif']);
 		unset($a_gres[$_GET['id']]);
 
 		write_config();

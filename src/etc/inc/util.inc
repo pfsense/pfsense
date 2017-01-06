@@ -986,12 +986,18 @@ function is_domain($domain, $allow_wildcard=false) {
 }
 
 /* returns true if $macaddr is a valid MAC address */
-function is_macaddr($macaddr) {
+function is_macaddr($macaddr, $partial=false) {
 	$values = explode(":", $macaddr);
-	if (count($values) != 6) {
+
+	/* Verify if the MAC address has a proper amount of parts for either a partial or full match. */
+	if ($partial) {
+		if ((count($values) < 1) || (count($values) > 6)) {
+			return false;
+		}
+	} elseif (count($values) != 6) {
 		return false;
 	}
-	for ($i = 0; $i < 6; $i++) {
+	for ($i = 0; $i < count($values); $i++) {
 		if (ctype_xdigit($values[$i]) == false)
 			return false;
 		if (hexdec($values[$i]) < 0 || hexdec($values[$i]) > 255)

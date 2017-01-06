@@ -90,6 +90,8 @@ if ($_GET['act'] == "del") {
 }
 
 if ($_GET['act'] == "new") {
+	$pconfig['ncp_enable'] = "enabled";
+	$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
 	$pconfig['autokey_enable'] = "yes";
 	$pconfig['tlsauth_enable'] = "yes";
 	$pconfig['autotls_enable'] = "yes";
@@ -129,6 +131,16 @@ if ($_GET['act'] == "edit") {
 		$pconfig['description'] = $a_client[$id]['description'];
 		$pconfig['custom_options'] = $a_client[$id]['custom_options'];
 		$pconfig['ns_cert_type'] = $a_client[$id]['ns_cert_type'];
+		if (isset($a_client[$id]['ncp-ciphers'])) {
+			$pconfig['ncp-ciphers'] = $a_client[$id]['ncp-ciphers'];
+		} else {
+			$pconfig['ncp-ciphers'] = "AES-256-GCM,AES-128-GCM";
+		}
+		if (isset($a_client[$id]['ncp_enable'])) {
+			$pconfig['ncp_enable'] = $a_client[$id]['ncp_enable'];
+		} else {
+			$pconfig['ncp_enable'] = "enabled";
+		}
 		$pconfig['dev_mode'] = $a_client[$id]['dev_mode'];
 
 		if ($pconfig['mode'] != "p2p_shared_key") {
@@ -137,7 +149,7 @@ if ($_GET['act'] == "edit") {
 			if ($a_client[$id]['tls']) {
 				$pconfig['tlsauth_enable'] = "yes";
 				$pconfig['tls'] = base64_decode($a_client[$id]['tls']);
-				$pconfig['tls_type'] = $a_server[$id]['tls_type'];
+				$pconfig['tls_type'] = $a_client[$id]['tls_type'];
 			}
 		} else {
 			$pconfig['shared_key'] = base64_decode($a_client[$id]['shared_key']);
@@ -179,6 +191,11 @@ if ($_POST) {
 		$vpnid = $a_client[$id]['vpnid'];
 	} else {
 		$vpnid = 0;
+	}
+
+	$cipher_validation_list = array_keys(openvpn_get_cipherlist());
+	if (!in_array($pconfig['crypto'], $cipher_validation_list)) {
+		$input_errors[] = gettext("The selected Encryption Algorithm is not valid.");
 	}
 
 	list($iv_iface, $iv_ip) = explode ("|", $pconfig['interface']);
@@ -303,6 +320,13 @@ if ($_POST) {
 
 	/* If we are not in shared key mode, then we need the CA/Cert. */
 	if ($pconfig['mode'] != "p2p_shared_key") {
+		if (($pconfig['ncp_enable'] != "disabled") && !empty($pconfig['ncp-ciphers']) && is_array($pconfig['ncp-ciphers'])) {
+			foreach ($pconfig['ncp-ciphers'] as $ncpc) {
+				if (!in_array(trim($ncpc), $cipher_validation_list)) {
+					$input_errors[] = gettext("One or more of the selected NCP Algorithms is not valid.");
+				}
+			}
+		}
 		$reqdfields = explode(" ", "caref");
 		$reqdfieldsn = array(gettext("Certificate Authority"));
 	} elseif (!$pconfig['autokey_enable']) {
@@ -324,6 +348,15 @@ if ($_POST) {
 	if (!$input_errors) {
 
 		$client = array();
+
+		if (isset($id) && $a_client[$id] &&
+		    $pconfig['dev_mode'] <> $a_client[$id]['dev_mode']) {
+			/*
+			 * delete old interface so a new TUN or TAP interface
+			 * can be created.
+			 */
+			openvpn_delete('client', $a_client[$id]);
+		}
 
 		foreach ($simplefields as $stat) {
 			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
@@ -390,6 +423,12 @@ if ($_POST) {
 		$client['route_no_exec'] = $pconfig['route_no_exec'];
 		$client['verbosity_level'] = $pconfig['verbosity_level'];
 
+		if (!empty($pconfig['ncp-ciphers'])) {
+			$client['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
+		}
+
+		$client['ncp_enable'] = $pconfig['ncp_enable'] ? "enabled":"disabled";
+
 		if (isset($id) && $a_client[$id]) {
 			$a_client[$id] = $client;
 		} else {
@@ -401,6 +440,10 @@ if ($_POST) {
 
 		header("Location: vpn_openvpn_client.php");
 		exit;
+	}
+
+	if (!empty($pconfig['ncp-ciphers'])) {
+		$pconfig['ncp-ciphers'] = implode(",", $pconfig['ncp-ciphers']);
 	}
 }
 
@@ -664,7 +707,49 @@ if ($act=="new" || $act=="edit"):
 		'Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
-		))->setHelp('The Encryption Algorithm used for data channel packets.');
+		))->setHelp('The Encryption Algorithm used for data channel packets when Negotiable Cryptographic Parameter (NCP) support is not available.');
+
+	$section->addInput(new Form_Checkbox(
+		'ncp_enable',
+		'Enable NCP',
+		'Enable Negotiable Cryptographic Parameters',
+		($pconfig['ncp_enable'] == "enabled")
+	))->setHelp(		'Check this option to allow OpenVPN clients and servers to negotiate a compatible set of acceptable cryptographic ' .
+				'Encryption Algorithms from those selected in the NCP Algorithms list below.' .
+				'<div class="infoblock">' . sprint_info_box('When both peers support NCP and have it enabled, NCP overrides the Encryption Algorithm above.' . '<br />' .
+				'When disabled, only the selected Encryption Algorithm is allowed.', 'info', false) . '</div>');
+
+	foreach (explode(",", $pconfig['ncp-ciphers']) as $cipher) {
+		$ncp_ciphers_list[$cipher] = $cipher;
+	}
+	$group = new Form_Group('NCP Algorithms');
+
+	$group->add(new Form_Select(
+		'availciphers',
+		null,
+		array(),
+		openvpn_get_cipherlist(),
+		true
+	))->setAttribute('size', '10')
+	  ->setHelp('Available NCP Encryption Algorithms<br />Click to add or remove an algorithm from the list');
+
+	$group->add(new Form_Select(
+		'ncp-ciphers',
+		null,
+		array(),
+		$ncp_ciphers_list,
+		true
+	))->setReadonly()
+	  ->setAttribute('size', '10')
+	  ->setHelp('Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from the list');
+
+	$group->setHelp(		'The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
+					'<div class="infoblock">' . sprint_info_box(
+					'For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
+					'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.', 'info', false) .
+					'</div>');
+
+	$section->add($group);
 
 	$section->addInput(new Form_Select(
 		'digest',
@@ -796,7 +881,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_server[$id]) {
+	if (isset($id) && $a_client[$id]) {
 		$section->addInput(new Form_Input(
 			'id',
 			null,
@@ -957,6 +1042,45 @@ events.push(function() {
 	 // Auto TLS
 	$('#autotls_enable').click(function () {
 		autotls_change();
+	});
+
+	function updateCiphers(mem) {
+		var found = false;
+
+		// If the cipher exists, remove it
+		$('[id="ncp-ciphers[]"] option').each(function() {
+			if($(this).val() == mem) {
+				$(this).remove();
+				found = true;
+			}
+		});
+
+		// If not, add it
+		if (!found) {
+			$('[id="ncp-ciphers[]"]').append(new Option(mem , mem));
+		}
+
+		// Unselect all options
+		$('[id="availciphers[]"] option:selected').removeAttr("selected");
+	}
+
+	// On click, update the ciphers list
+	$('[id="availciphers[]"]').click(function () {
+		updateCiphers($(this).val());
+	});
+
+	// On click, remove the cipher from the list
+	$('[id="ncp-ciphers[]"]').click(function () {
+		if ($(this).val() != null) {
+			updateCiphers($(this).val());
+		}
+	});
+
+	// Make sure the "Available ciphers" selector is not submitted with the form,
+	// and select all of the chosen ciphers so that they are submitted
+	$('form').submit(function() {
+		$("#availciphers" ).prop( "disabled", true);
+		$('[id="ncp-ciphers[]"] option').attr("selected", "selected");
 	});
 
 	// ---------- Set initial page display state ----------------------------------------------------------------------

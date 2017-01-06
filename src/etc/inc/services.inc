@@ -263,10 +263,22 @@ function services_radvd_configure($blacklist = array()) {
 				$radvdconf .= "\tRDNSS {$dnsstring} { };\n";
 			}
 		}
+
+		$searchlist = array();
+		$domainsearchlist = explode(';', $dhcpv6ifconf['radomainsearchlist']);
+		foreach ($domainsearchlist as $sd) {
+			$sd = trim($sd);
+			if (is_hostname($sd)) {
+				$searchlist[] = $sd;
+			}
+		}
+		if (count($searchlist) > 0) {
+			$searchliststring = trim(implode(" ", $searchlist));
+		}
 		if (!empty($dhcpv6ifconf['domain'])) {
-			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} { };\n";
+			$radvdconf .= "\tDNSSL {$dhcpv6ifconf['domain']} {$searchliststring} { };\n";
 		} elseif (!empty($config['system']['domain'])) {
-			$radvdconf .= "\tDNSSL {$config['system']['domain']} { };\n";
+			$radvdconf .= "\tDNSSL {$config['system']['domain']} {$searchliststring} { };\n";
 		}
 		$radvdconf .= "};\n";
 	}
@@ -1961,6 +1973,7 @@ function services_dyndns_configure_client($conf) {
 		$dnsUser = $conf['username'],
 		$dnsPass = $conf['password'],
 		$dnsWildcard = $conf['wildcard'],
+		$dnsProxied = $conf['proxied'],
 		$dnsMX = $conf['mx'],
 		$dnsIf = "{$conf['interface']}",
 		$dnsBackMX = NULL,

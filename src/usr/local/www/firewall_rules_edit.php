@@ -1245,7 +1245,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 		)
 	));
 
-	$section->addInput(new Form_Input(
+	$form->addGlobal(new Form_Input(
 		'floating',
 		'Floating',
 		'hidden',

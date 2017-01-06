@@ -82,12 +82,14 @@ if (!$thiscrl && (($act != "") && ($act != "new"))) {
 	pfSenseHeader("system_crlmanager.php");
 	$act="";
 	$savemsg = gettext("Invalid CRL reference.");
+	$class = "danger";
 }
 
 if ($act == "del") {
 	$name = htmlspecialchars($thiscrl['descr']);
 	if (crl_in_use($id)) {
 		$savemsg = sprintf(gettext("Certificate Revocation List %s is in use and cannot be deleted."), $name);
+		$class = "danger";
 	} else {
 		foreach ($a_crl as $cid => $acrl) {
 			if ($acrl['refid'] == $thiscrl['refid']) {
@@ -96,6 +98,7 @@ if ($act == "del") {
 		}
 		write_config("Deleted CRL {$name}.");
 		$savemsg = sprintf(gettext("Certificate Revocation List %s successfully deleted."), $name);
+		$class = "success";
 	}
 }
 
@@ -177,12 +180,14 @@ if ($act == "delcert") {
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
 		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s."), $certname, $crlname);
+		$class = "success";
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		write_config($savemsg);
 	} else {
 		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s."), $certname, $crlname);
+		$class = "danger";
 	}
 	$act="edit";
 }
@@ -327,7 +332,7 @@ if ($input_errors) {
 }
 
 if ($savemsg) {
-	print_info_box($savemsg, 'success');
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();

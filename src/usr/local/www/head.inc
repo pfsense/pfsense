@@ -425,7 +425,7 @@ $allow_clear_notices = false;
 if (are_notices_pending()) {
 	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
 	$user_entry = getUserEntry($_SESSION['Username']);
-	if (userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
+	if (isAdminUID($username) || userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
 		$display_notices = true;
 		$allow_clear_notices = true;
 	} elseif (userHasPrivilege($user_entry, "user-view-notices")) {

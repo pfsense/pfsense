@@ -1104,6 +1104,7 @@ function openvpn_restart($mode, $settings) {
 	$vpnid = $settings['vpnid'];
 	$mode_id = $mode.$vpnid;
 	$lockhandle = lock("openvpnservice{$mode_id}", LOCK_EX);
+	openvpn_reconfigure($mode, $settings);
 	/* kill the process if running */
 	$pfile = $g['varrun_path']."/openvpn_{$mode_id}.pid";
 	if (file_exists($pfile)) {
@@ -1111,6 +1112,7 @@ function openvpn_restart($mode, $settings) {
 		/* read the pid file */
 		$pid = rtrim(file_get_contents($pfile));
 		unlink($pfile);
+		syslog(LOG_INFO, "OpenVPN terminate old pid: {$pid}");
 
 		/* send a term signal to the process */
 		posix_kill($pid, SIGTERM);
@@ -1152,8 +1154,24 @@ function openvpn_restart($mode, $settings) {
 	/* start the new process */
 	$fpath = $g['varetc_path']."/openvpn/{$mode_id}.conf";
 	openvpn_clear_route($mode, $settings);
-	mwexec("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
-
+	$res = mwexec("/usr/local/sbin/openvpn --config " . escapeshellarg($fpath));
+	if ($res == 0) {
+		$i = 0;
+		$pid = "--";
+		while ($i < 3000) {
+			if (file_exists($pfile) ) {
+				$pid = rtrim(file_get_contents($pfile));
+				if (is_numericint($pid)) {
+					break;
+				}
+			}
+			usleep(1000);
+			$i++;
+		}
+		syslog(LOG_INFO, "OpenVPN PID written: {$pid}");
+	} else {
+		syslog(LOG_ERR, "OpenVPN failed to start");
+	}
 	if (!platform_booting()) {
 		send_event("filter reload");
 	}
@@ -1314,7 +1332,6 @@ function openvpn_delete_csc(& $settings) {
 
 // Resync the configuration and restart the VPN
 function openvpn_resync($mode, $settings) {
-	openvpn_reconfigure($mode, $settings);
 	openvpn_restart($mode, $settings);
 }
 

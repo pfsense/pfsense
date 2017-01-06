@@ -456,7 +456,8 @@ $section->addInput(new Form_Select(
 	'Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonelist)
-))->setHelp('Select the timezone or location within the timezone to be used by this system.');
+))->setHelp('Select the timezone or location within the timezone to be used by this system. '.
+	'Usually choose a "Continent/City". Only choose a special or "Etc" entry if you understand why you need to use it.');
 
 $section->addInput(new Form_Input(
 	'timeservers',

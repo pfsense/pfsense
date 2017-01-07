@@ -492,15 +492,19 @@ function gentitle($title) {
 	}
 }
 
-function genhtmltitle($title) {
+function genhtmltitle($title, $links=array()) {
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
 	if (count($title) > 1) {
 		$bc = '<ol class="breadcrumb">';
 
-		foreach ($title as $el) {
-			$bc .= '<li>'.$el.'</li>';
+		foreach ($title as $idx => $el) {
+			if (strlen($links[$idx]) > 0) {
+				$bc .= '<li><a href="https://' . $_SERVER['SERVER_ADDR'] . '/' . $links[$idx] . '">' .$el.'</a></li>';
+			} else {
+				$bc .= '<li>'.$el.'</li>';
+			}
 		}
 
 		$bc .= '</ol>';

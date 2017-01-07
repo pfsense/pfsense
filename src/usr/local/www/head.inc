@@ -514,7 +514,7 @@ if (are_notices_pending()) {
 		print('<br />');
 		unset($notitle);
 	} else {
-		print(genhtmltitle($pgtitle));
+		print(genhtmltitle($pgtitle, $pglinks));
 	}
 ?>
 		<ul class="context-links">

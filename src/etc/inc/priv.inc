@@ -182,7 +182,7 @@ function get_user_privdesc(& $user) {
 	return $privs;
 }
 
-function isAllowed($username, $page) {
+function isAdminUID($username) {
 	global $_SESSION;
 
 	if (!isset($username)) {
@@ -199,6 +199,20 @@ function isAllowed($username, $page) {
 		}
 	}
 
+	return false;
+}
+
+function isAllowed($username, $page) {
+	global $_SESSION;
+
+	if (!isset($username)) {
+		return false;
+	}
+
+	if (isAdminUID($username)) {
+		return true;
+	}
+
 	/* user privilege access check */
 	if (cmp_page_matches($page, $_SESSION['page-match'])) {
 		return true;
@@ -206,7 +220,6 @@ function isAllowed($username, $page) {
 
 	return false;
 }
-
 
 function isAllowedPage($page) {
 	global $_SESSION;
@@ -218,14 +231,8 @@ function isAllowedPage($page) {
 		return false;
 	}
 
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
+	if (isAdminUID($username)) {
+		return true;
 	}
 
 	/* user privilege access check */

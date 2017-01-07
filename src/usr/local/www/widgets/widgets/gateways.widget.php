@@ -166,7 +166,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 				<table class="table table-striped table-hover table-condensed">
 					<thead>
 						<tr>
-							<th>Gateway</th>
+							<th><?=gettext("Gateway")?></th>
 							<th><?=gettext("Show")?></th>
 						</tr>
 					</thead>

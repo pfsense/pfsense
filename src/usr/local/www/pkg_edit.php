@@ -1532,6 +1532,10 @@ if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 
+
+$hidemsg = gettext("Show Advanced Options");
+$showmsg = gettext("Hide Advanced Options");
+
 if ($pkg['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -1552,10 +1556,10 @@ if ($pkg['fields']['field'] != "") { ?>
 
 		if (advanced_visible) {
 			$('.advancedoptions').show();
-			$("#showadv").prop('value', 'Hide advanced Options');
+			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
 		} else {
 			$('.advancedoptions').hide();
-			$("#showadv").prop('value', 'Show advanced Options');
+			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
 		}
 	});
 

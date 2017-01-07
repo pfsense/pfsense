@@ -350,6 +350,15 @@ if ($_POST) {
 
 		$client = array();
 
+		if (isset($id) && $a_client[$id] &&
+		    $pconfig['dev_mode'] <> $a_client[$id]['dev_mode']) {
+			/*
+			 * delete old interface so a new TUN or TAP interface
+			 * can be created.
+			 */
+			openvpn_delete('client', $a_client[$id]);
+		}
+
 		foreach ($simplefields as $stat) {
 			if (($stat == 'auth_pass') && ($_POST[$stat] == DMYPWD)) {
 				$client[$stat] = $a_client[$id]['auth_pass'];
@@ -809,7 +818,7 @@ if ($act=="new" || $act=="edit"):
 		$act
 	));
 
-	if (isset($id) && $a_server[$id]) {
+	if (isset($id) && $a_client[$id]) {
 		$section->addInput(new Form_Input(
 			'id',
 			null,

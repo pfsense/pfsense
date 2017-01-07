@@ -75,18 +75,16 @@ if (!is_array($config['captiveportal'][$cpzone])) {
 }
 $cpzoneid = $config['captiveportal'][$cpzone]['zoneid'];
 
-if (file_exists("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running")) {
-	$stat = stat("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
-	if (time() - $stat['mtime'] >= 120) {
-		@unlink("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
-	} else {
-		log_error("Skipping CP pruning process because previous/another instance is already running");
-		return;
-	}
+$rcprunelock = try_lock("rcprunecaptiveportal{$cpzone}", 3);
+
+if (!$rcprunelock) {
+	log_error("Skipping CP pruning process for zone {$cpzone} because previous/another instance is already running");
+	unlock_force("rcprunecaptiveportal{$cpzone}");
+	return;
 }
 
-@file_put_contents("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running", "");
 captiveportal_prune_old();
-@unlink("{$g['tmp_path']}/.rc.prunecaptiveportal.{$cpzone}.running");
+
+unlock($rcprunelock);
 
 ?>

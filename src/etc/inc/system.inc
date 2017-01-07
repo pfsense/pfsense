@@ -2233,6 +2233,11 @@ function system_identify_specific_platform() {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 			}
 			break;
+		case 'VMware Virtual Platform':
+			if ($maker[0] == "VMware, Inc.") {
+				return (array('name' => 'VMware', 'descr' => 'VMware Virtual Machine'));
+			}
+			break;
 	}
 
 	if (strpos($hw_model, "PC Engines WRAP") !== false) {

@@ -217,8 +217,9 @@ $group->add(new Form_Input(
 ));
 
 $group->setHelp('These options create an RFC 2893 compatible mechanism for IPv4 NAT encapsulation of IPv6 packets, ' .
-	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. A firewall rule to pass IPv6 packets ' .
-	'is <a href="firewall_rules.php">also necessary</a>.');
+	'that can be used to tunnel IPv6 packets over IPv4 routing infrastructures. ' .
+	'IPv6 firewall rules are <a href="firewall_rules.php">also required</a>, to control and pass encapsulated traffic.');
+
 
 $section->add($group);
 

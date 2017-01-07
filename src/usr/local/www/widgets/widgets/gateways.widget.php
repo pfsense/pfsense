@@ -135,7 +135,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 					<thead>
 						<tr>
 							<th>Gateway</th>
-							<th>Show</th>
+							<th><?=gettext("Show")?></th>
 						</tr>
 					</thead>
 					<tbody>

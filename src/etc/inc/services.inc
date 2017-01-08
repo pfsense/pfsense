@@ -2470,7 +2470,8 @@ begemotSnmpdModulePath."pf"     = "/usr/lib/snmp_pf.so"
 EOD;
 			}
 
-			if (isset($config['snmpd']['modules']['hostres'])) {
+			if (isset($config['snmpd']['modules']['hostres'])
+			    && !(($specplatform['name'] == 'VMware') && (file_exists('/dev/cd0')))) {
 				$snmpdconf .= <<<EOD
 begemotSnmpdModulePath."hostres"     = "/usr/lib/snmp_hostres.so"
 

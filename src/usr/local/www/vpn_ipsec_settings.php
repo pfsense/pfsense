@@ -33,16 +33,7 @@ require_once("shaper.inc");
 require_once("ipsec.inc");
 require_once("vpn.inc");
 
-$def_loglevel = '1';
-
-foreach (array_keys($ipsec_log_cats) as $cat) {
-	if (isset($config['ipsec']['logging'][$cat])) {
-		$pconfig[$cat] = $config['ipsec']['logging'][$cat];
-	} else {
-		$pconfig[$cat] = $def_loglevel;
-	}
-}
-
+$pconfig['logging'] = ipsec_get_loglevels();
 $pconfig['unityplugin'] = isset($config['ipsec']['unityplugin']);
 $pconfig['strictcrlpolicy'] = isset($config['ipsec']['strictcrlpolicy']);
 $pconfig['makebeforebreak'] = isset($config['ipsec']['makebeforebreak']);
@@ -59,8 +50,10 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	foreach ($ipsec_log_cats as $cat => $desc) {
-		if (!in_array(intval($pconfig[$cat]), array_keys($ipsec_log_sevs), true)) {
+		if (!in_array(intval($pconfig['logging_' . $cat]), array_keys($ipsec_log_sevs), true)) {
 			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
+		} else {
+			$pconfig['logging'][$cat] = $pconfig['logging_' . $cat];
 		}
 	}
 
@@ -79,12 +72,12 @@ if ($_POST) {
 		 * get set when we save, even if it's to the default level.
 		 */
 		foreach (array_keys($ipsec_log_cats) as $cat) {
-			if (!isset($pconfig[$cat])) {
+			if (!isset($pconfig['logging'][$cat])) {
 				continue;
 			}
-			if ($pconfig[$cat] != $config['ipsec']['logging'][$cat]) {
-				$config['ipsec']['logging'][$cat] = $pconfig[$cat];
-				vpn_update_daemon_loglevel($cat, $pconfig[$cat]);
+			if ($pconfig['logging'][$cat] != $config['ipsec']['logging'][$cat]) {
+				$config['ipsec']['logging'][$cat] = $pconfig['logging'][$cat];
+				vpn_update_daemon_loglevel($cat, $pconfig['logging'][$cat]);
 			}
 		}
 
@@ -241,9 +234,9 @@ $section = new Form_Section('IPsec Logging Controls');
 
 foreach ($ipsec_log_cats as $cat => $desc) {
 	$section->addInput(new Form_Select(
-		$cat,
+		'logging_' . $cat,
 		$desc,
-		$pconfig[$cat],
+		$pconfig['logging'][$cat],
 		$ipsec_log_sevs
 	))->setWidth(2);
 }

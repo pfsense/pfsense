@@ -2299,6 +2299,11 @@ function system_identify_specific_platform() {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
 			}
 			break;
+		case 'VMware Virtual Platform':
+			if ($maker[0] == "VMware, Inc.") {
+				return (array('name' => 'VMware', 'descr' => 'VMware Virtual Machine'));
+			}
+			break;
 	}
 
 	$_gb = exec('/bin/kenv uboot.board_name 2>/dev/null', $board);

@@ -50,7 +50,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	foreach ($ipsec_log_cats as $cat => $desc) {
-		if (!in_array(intval($pconfig['logging' . $cat]), array_keys($ipsec_log_sevs), true)) {
+		if (!in_array(intval($pconfig['logging_' . $cat]), array_keys($ipsec_log_sevs), true)) {
 			$input_errors[] = sprintf(gettext("A valid value must be specified for %s debug."), $desc);
 		} else {
 			$pconfig['logging'][$cat] = $pconfig['logging_' . $cat];

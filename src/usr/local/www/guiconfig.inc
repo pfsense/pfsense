@@ -502,11 +502,10 @@ function genhtmltitle($title, $links=array()) {
 		foreach ($title as $idx => $el) {
 			$href = $links[$idx];
 			if (strlen($href) > 0) {
+				// For convenience, if the caller specifies '@self' then make a link
+				// to the current page, including any query string.
 				if ($href == '@self') {
-					$href = $_SERVER['SCRIPT_NAME'];
-					if (strlen($_SERVER['QUERY_STRING']) > 0) {
-						$href .= '?' . $_SERVER['QUERY_STRING'];
-					}
+					$href = $_SERVER['REQUEST_URI'];
 				}
 				if (substr($href, 0, 1) != '/') {
 					$href = '/' . $href;

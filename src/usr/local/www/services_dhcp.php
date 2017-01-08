@@ -725,7 +725,7 @@ $pglinks = array("", "services_dhcp.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
-	$pglinks[] = "";
+	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp";
 

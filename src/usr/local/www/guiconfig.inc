@@ -500,10 +500,20 @@ function genhtmltitle($title, $links=array()) {
 		$bc = '<ol class="breadcrumb">';
 
 		foreach ($title as $idx => $el) {
-			if (strlen($links[$idx]) > 0) {
-				$bc .= '<li><a href="/' . $links[$idx] . '">' .$el.'</a></li>';
+			$href = $links[$idx];
+			if (strlen($href) > 0) {
+				if ($href == '@self') {
+					$href = $_SERVER['SCRIPT_NAME'];
+					if (strlen($_SERVER['QUERY_STRING']) > 0) {
+						$href .= '?' . $_SERVER['QUERY_STRING'];
+					}
+				}
+				if (substr($href, 0, 1) != '/') {
+					$href = '/' . $href;
+				}
+				$bc .= '<li><a href="' . $href . '">' . $el . '</a></li>';
 			} else {
-				$bc .= '<li>'.$el.'</li>';
+				$bc .= '<li>' . $el . '</li>';
 			}
 		}
 

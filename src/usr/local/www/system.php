@@ -524,6 +524,7 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
+gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 
 $section->addInput(new Form_Checkbox(
 	'loginshowhost',

@@ -501,7 +501,7 @@ function genhtmltitle($title, $links=array()) {
 
 		foreach ($title as $idx => $el) {
 			if (strlen($links[$idx]) > 0) {
-				$bc .= '<li><a href="https://' . $_SERVER['SERVER_ADDR'] . '/' . $links[$idx] . '">' .$el.'</a></li>';
+				$bc .= '<li><a href="/' . $links[$idx] . '">' .$el.'</a></li>';
 			} else {
 				$bc .= '<li>'.$el.'</li>';
 			}

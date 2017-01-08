@@ -266,8 +266,8 @@ if ($states == 0) {
 	if (isset($_POST['filter']) && !empty($_POST['filter'])) {
 		$errmsg = gettext('No states were found that match the current filter.');
 	} else if (!isset($_POST['filter']) && isset($config['system']['requirestatefilter'])) {
- 		$errmsg = gettext('State display suppressed without filter submission. '.
- 		'See System > General, Require State Filter.');
+		$errmsg = gettext('State display suppressed without filter submission. '.
+		'See System > General, Require State Filter.');
 	} else {
 		$errmsg = gettext('No states were found.');
 	}

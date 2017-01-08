@@ -319,6 +319,26 @@ function gen_webguileftcolumnhyper_field(&$section, $value) {
 		$value
 	))->setHelp('If selected, clicking a label in the left column will select/toggle the first item of the group.');
 }
+ 
+/****f* pfsense-utils/gen_requirestatefilter_field
+ * NAME
+ *   gen_requirestatefilter_field
+ * INPUTS
+ *   Pointer to section object
+ *   Initial value for the field
+ * RESULT
+ *   no return value, section object is updated
+ ******/
+function gen_requirestatefilter_field(&$section, $value) {
+	$section->addInput(new Form_Checkbox(
+ 		'requirestatefilter',
+ 		'Require State Filter',
+ 		'Do not display state table without a filter',
+		$pconfig['requirestatefilter']
+	))->setHelp('By default, the entire state table is displayed when entering '.
+		'Diagnostics > States. This option requires a filter to be entered '.
+		'before the states are displayed. Useful for systems with large state tables.');
+}
 
 /****f* pfsense-utils/gen_pagenamefirst_field
  * NAME

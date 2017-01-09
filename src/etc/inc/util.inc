@@ -2570,9 +2570,11 @@ function format_duid($dhcp6duid) {
 	if (count($values) == 14) {
 		array_unshift($values, "0e", "00");
 	}
-	foreach ($values as $idx => $value) {
-		$values[$idx] = str_pad($value, 2, "0", STR_PAD_LEFT);
-	}
+
+	array_walk($values, function(&$value) {
+		$value = str_pad($value, 2, '0', STR_PAD_LEFT); 
+	});
+
 	return implode(":", $values);
 }
 

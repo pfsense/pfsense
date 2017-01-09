@@ -1245,11 +1245,9 @@ function openvpn_restart($mode, $settings) {
 		$i = 0;
 		$pid = "--";
 		while ($i < 3000) {
-			if (file_exists($pfile) ) {
+			if (isvalidpid($pfile)) {
 				$pid = rtrim(file_get_contents($pfile));
-				if (is_numericint($pid)) {
-					break;
-				}
+				break;
 			}
 			usleep(1000);
 			$i++;

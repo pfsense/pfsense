@@ -56,6 +56,14 @@ if ($_POST) {
 		$input_errors[] = gettext("An IP address to NAT IPv6 packets must be specified.");
 	}
 
+	if (!empty($_POST['global-v6duid'])) {
+		$_POST['global-v6duid'] = format_duid($_POST['global-v6duid']);
+		$pconfig['global-v6duid'] = $_POST['global-v6duid'];
+		if (!is_duid($_POST['global-v6duid'])) {
+			$input_errors[] = gettext("A valid DUID must be specified");
+		}
+	}
+
 	ob_flush();
 	flush();
 	if (!$input_errors) {
@@ -85,12 +93,7 @@ if ($_POST) {
 		}
 
 		if (!empty($_POST['global-v6duid'])) {
-			$_POST['global-v6duid'] = strtolower(str_replace("-", ":", $_POST['global-v6duid']));
-			if (!is_duid($_POST['global-v6duid'])) {
-				$input_errors[] = gettext("A valid DUID must be specified");
-			} else {
-				$config['system']['global-v6duid'] = $_POST['global-v6duid'];
-			}
+			$config['system']['global-v6duid'] = $_POST['global-v6duid'];
 		} else {
 			unset($config['system']['global-v6duid']);
 		}

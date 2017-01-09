@@ -231,7 +231,7 @@ display_top_tabs($tab_array);
 	</div>
 </form>
 
-<?php if (empty(get_interface_list_to_show())): ?>
+<?php if (empty(get_interface_list_to_show()) && (!is_array($altq_list_queues) || (count($altq_list_queues) == 0))): ?>
 <div>
 	<div class="infoblock blockopen">
 		<?php print_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false); ?>

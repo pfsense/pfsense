@@ -1311,7 +1311,7 @@ foreach ($icmptypes as $type => $data) {
 		"icmptype_{$type}",
 		null,
 		$data['descrip'],
-		in_array($type, $sel) ? true : false,
+		in_array($type, $sel),
 		$type
 	);
 	// manually edit bootstrap output: it sets name = id and we don't want that (we want name to reference an array)
@@ -1326,16 +1326,12 @@ foreach ($icmptypes as $type => $data) {
 
 $buttonall = (new Form_Button(
 	'btn_icmp_selectall',
-	'Select all',
-	null,
-	''
+	'Select all'
 ))->setAttribute('type','button')->addClass('btn-sm');
 
 $buttonnone = (new Form_Button(
 	'btn_icmp_selectnone',
-	'Deselect all',
-	null,
-	''
+	'Deselect all'
 ))->setAttribute('type','button')->addClass('btn-sm');
 
 $group->add(new Form_StaticText(

@@ -68,6 +68,7 @@ $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 $pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
+$pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -176,6 +177,8 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['dashboardcolumns']);
 	}
+
+	$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -520,6 +523,7 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsfilterpanel'],
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
+gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 
 $section->addInput(new Form_Checkbox(

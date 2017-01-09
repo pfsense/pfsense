@@ -2571,9 +2571,7 @@ function format_duid($dhcp6duid) {
 		array_unshift($values, "0e", "00");
 	}
 	foreach ($values as $idx => $value) {
-		if (strlen($value) == 1) {
-			$values[$idx] = "0" . $value;
-		}
+		$values[$idx] = str_pad($value, 2, "0", STR_PAD_LEFT);
 	}
 	return implode(":", $values);
 }

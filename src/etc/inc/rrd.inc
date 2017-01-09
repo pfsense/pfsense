@@ -34,54 +34,6 @@ function dump_rrd_to_xml($rrddatabase, $xmldumpfile) {
 	return($dumpret);
 }
 
-function restore_rrd() {
-	global $g, $config;
-
-	$rrddbpath = "{$g['vardb_path']}/rrd/";
-	$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
-
-	$rrdrestore = "";
-	$rrdreturn = "";
-	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && isset($config['system']['use_mfs_tmpvar'])) {
-		foreach (glob("{$rrddbpath}/*.xml") as $xml_file) {
-			@unlink($xml_file);
-		}
-		unset($rrdrestore);
-		$_gb = exec("cd /;LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
-		if ($rrdreturn != 0) {
-			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
-			return;
-		}
-		foreach ($rrdrestore as $xml_file) {
-			$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
-			if (file_exists("{$rrd_file}")) {
-				@unlink($rrd_file);
-			}
-			file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
-			$_gb = exec("cd /;LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -T {$g['tmp_path']}/rrd_restore");
-			if (!file_exists("/{$xml_file}")) {
-				log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
-				continue;
-			}
-			$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
-			if ($status) {
-				log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
-				continue;
-			}
-			unset($output);
-			@unlink("/{$xml_file}");
-		}
-		unset($rrdrestore);
-		@unlink("{$g['tmp_path']}/rrd_restore");
-		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (!isset($config['system']['use_mfs_tmpvar'])) {
-			unlink_if_exists("{$g['cf_conf_path']}/rrd.tgz");
-		}
-		return true;
-	}
-	return false;
-}
-
 function create_new_rrd($rrdcreatecmd) {
 	$rrdcreateoutput = array();
 	$rrdcreatereturn = 0;
@@ -281,10 +233,6 @@ function enable_rrd_graphing() {
 		}
 		chown($rrddbpath, "nobody");
 
-		if (platform_booting()) {
-			restore_rrd();
-		}
-
 		/* db update script */
 		$rrdupdatesh = "#!/bin/sh\n";
 		$rrdupdatesh .= "\n";
@@ -307,14 +255,6 @@ function enable_rrd_graphing() {
 				$serverid = "ovpns" . $server['vpnid'];
 				$ifdescrs[$serverid] = "{$server['description']}";
 			}
-		}
-
-		if (platform_booting()) {
-			if (!is_dir($rrddbpath)) {
-				mkdir($rrddbpath, 0775);
-			}
-
-			@chown($rrddbpath, "nobody");
 		}
 
 		/* process all real and pseudo interfaces */

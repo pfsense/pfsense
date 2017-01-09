@@ -480,23 +480,6 @@ function services_dhcpdv4_configure() {
 		}
 	}
 
-	if (platform_booting()) {
-		/* restore the leases, if we have them */
-		if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz")) {
-			$dhcprestore = "";
-			$dhcpreturn = "";
-			exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcpleases.tgz 2>&1", $dhcprestore, $dhcpreturn);
-			$dhcprestore = implode(" ", $dhcprestore);
-			if ($dhcpreturn <> 0) {
-				log_error(sprintf(gettext('DHCP leases restore failed exited with %1$s, the error is: %2$s%3$s'), $dhcpreturn, $dhcprestore, "\n"));
-			}
-		}
-		/* If this backup is still there on a full install, but we aren't going to use ram disks, remove the archive since this is a transition. */
-		if (!isset($config['system']['use_mfs_tmpvar'])) {
-			unlink_if_exists("{$g['cf_conf_path']}/dhcpleases.tgz");
-		}
-	}
-
 	$syscfg = $config['system'];
 	if (!is_array($config['dhcpd'])) {
 		$config['dhcpd'] = array();
@@ -1275,22 +1258,6 @@ function services_dhcpdv6_configure($blacklist = array()) {
 	/* DHCP enabled on any interfaces? */
 	if (!is_dhcpv6_server_enabled()) {
 		return 0;
-	}
-
-	/* restore the leases, if we have them */
-	if (platform_booting() &&
-	    isset($config['system']['use_mfs_tmpvar']) &&
-	    file_exists("{$g['cf_conf_path']}/dhcp6leases.tgz")) {
-		$dhcprestore = "";
-		$dhcpreturn = "";
-		exec("cd /;LANG=C /usr/bin/tar -xzf {$g['cf_conf_path']}/dhcp6leases.tgz 2>&1",
-		    $dhcprestore, $dhcpreturn);
-		$dhcprestore = implode(" ", $dhcprestore);
-		if ($dhcpreturn <> 0) {
-			log_error(sprintf(gettext(
-			    'DHCP leases v6 restore failed exited with %1$s, the error is: %2$s'),
-			    $dhcpreturn, $dhcprestore));
-		}
 	}
 
 	$syscfg = $config['system'];

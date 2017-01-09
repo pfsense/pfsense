@@ -510,7 +510,7 @@ function genhtmltitle($title, $links=array()) {
 				if (substr($href, 0, 1) != '/') {
 					$href = '/' . $href;
 				}
-				$bc .= '<li><a href="' . $href . '">' . $el . '</a></li>';
+				$bc .= '<li><a href="' . htmlentities($href) . '">' . $el . '</a></li>';
 			} else {
 				$bc .= '<li>' . $el . '</li>';
 			}

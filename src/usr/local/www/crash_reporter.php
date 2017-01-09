@@ -103,8 +103,10 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 		if (count($php_errors) > 0) {
 			$crash_reports .= "\nPHP Errors:\n";
 			$crash_reports .= implode("\n", $php_errors) . "\n\n";
+		} else {
+			$crash_reports .= "\nNo PHP errors found.\n";
 		}
-		if (is_array($crash_files))	{
+		if (count($crash_files) > 0) {
 			foreach ($crash_files as $cf) {
 				if (filesize($cf) < FILE_SIZE) {
 					$crash_reports .= "\nFilename: {$cf}\n";
@@ -112,7 +114,7 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 				}
 			}
 		} else {
-			echo gettext("Could not locate any crash data.");
+			$crash_reports .= "\nNo FreeBSD crash data found.\n";
 		}
 ?>
 	<div class="panel panel-default">

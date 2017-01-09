@@ -271,6 +271,13 @@ if ($_POST) {
 				unset($config['system']['dhcpbackup']);
 			}
 		}
+		if (isset($_POST['logsbackup'])) {
+			if (($_POST['logsbackup'] > 0) && ($_POST['logsbackup'] <= 24)) {
+				$config['system']['logsbackup'] = intval($_POST['logsbackup']);
+			} else {
+				unset($config['system']['logsbackup']);
+			}
+		}
 
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
@@ -278,9 +285,11 @@ if ($_POST) {
 		if (!isset($config['system']['use_mfs_tmpvar'])) {
 			install_cron_job("/etc/rc.backup_rrd.sh", false);
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+			install_cron_job("/etc/rc.backup_logs.sh", false);
 		} else {
 			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
 			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
+			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}");
 		}
 
 		write_config();
@@ -581,6 +590,16 @@ $section->addInput(new Form_Input(
 	$config['system']['dhcpbackup'],
 	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
 ))->setHelp('This will periodically backup the DHCP leases so '.
+	'it can be restored automatically on the next boot. Keep in mind that the more '.
+	'frequent the backup, the more writes will happen to the media.');
+
+$section->addInput(new Form_Input(
+	'logsbackup',
+	'Periodic Logs Backup',
+	'number',
+	$config['system']['logsbackup'],
+	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
+))->setHelp('This will periodically backup the log directory so '.
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');
 

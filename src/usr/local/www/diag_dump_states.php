@@ -304,7 +304,7 @@ if ($states == 0) {
 		$errmsg = gettext('No states were found that match the current filter.');
 	} else if (!isset($_POST['filter']) && isset($config['system']['webgui']['requirestatefilter'])) {
 		$errmsg = gettext('State display suppressed without filter submission. '.
-		'See System > General, Require State Filter.');
+		'See System > General Setup, Require State Filter.');
 	} else {
 		$errmsg = gettext('No states were found.');
 	}

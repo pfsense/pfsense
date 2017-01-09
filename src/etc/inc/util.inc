@@ -2566,19 +2566,16 @@ function validateipaddr(&$addr, $type, $label, &$err_msg, $alias=false) {
  * This function does not validate the input. is_duid() will do validation.
 */
 function format_duid($dhcp6duid) {
-	$formatted_dhcp6duid = strtolower(str_replace("-", ":", $dhcp6duid));
-	$values = explode(":", $formatted_dhcp6duid);
+	$values = explode(":", strtolower(str_replace("-", ":", $dhcp6duid)));
 	if (count($values) == 14) {
-		$formatted_dhcp6duid = '0e:00:' . $formatted_dhcp6duid;
-		$values = explode(":", $formatted_dhcp6duid);
+		array_unshift($values, "0e", "00");
 	}
 	foreach ($values as $idx => $value) {
 		if (strlen($value) == 1) {
 			$values[$idx] = "0" . $value;
 		}
 	}
-	$formatted_dhcp6duid = implode(":", $values);
-	return $formatted_dhcp6duid;
+	return implode(":", $values);
 }
 
 /* returns true if $dhcp6duid is a valid duid entry */

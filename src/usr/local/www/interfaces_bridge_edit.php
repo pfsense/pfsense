@@ -414,6 +414,7 @@ function build_port_list($selecton) {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("Bridges"), gettext("Edit"));
+$pglinks = array("", "interfaces_bridge.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

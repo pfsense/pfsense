@@ -253,6 +253,7 @@ function build_member_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("LAGGs"), gettext("Edit"));
+$pglinks = array("", "interfaces_lagg.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

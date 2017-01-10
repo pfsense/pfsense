@@ -563,9 +563,11 @@ function build_cert_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
+$pglinks = array("", "system_usermanager.php", "system_usermanager.php");
 
 if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 include("head.inc");
 

@@ -254,6 +254,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"), gettext("Edit"));
+$pglinks = array("", "system_gateways.php", "system_routes.php", "@self");
 $shortcut_section = "routing";
 include("head.inc");
 

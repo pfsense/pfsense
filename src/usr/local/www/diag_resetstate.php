@@ -86,6 +86,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Reset States"));
+$pglinks = array("", "diag_dump_states.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

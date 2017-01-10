@@ -492,6 +492,7 @@ function print_ipsec_body() {
 }
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("Overview"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");

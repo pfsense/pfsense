@@ -103,6 +103,7 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitors"));
+$pglinks = array("", "load_balancer_pool.php", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");

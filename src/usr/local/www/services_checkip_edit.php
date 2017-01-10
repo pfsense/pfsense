@@ -138,6 +138,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Check IP Services"), gettext("Edit"));
+$pglinks = array("", "services_dyndns.php", "services_checkip.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

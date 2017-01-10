@@ -320,6 +320,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat_1to1.php", "@self");
 include("head.inc");
 
 function build_srctype_list() {

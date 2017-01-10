@@ -131,6 +131,7 @@ $confvers = get_backups();
 unset($confvers['versions']);
 
 $pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), gettext("Config History"));
+$pglinks = array("", "diag_backup.php", "@self");
 include("head.inc");
 
 if ($savemsg) {

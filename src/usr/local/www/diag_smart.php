@@ -66,6 +66,7 @@ require_once("guiconfig.inc");
 $action = (isset($_POST['action']) ? $_POST['action'] : $_GET['action']);
 
 $pgtitle = array(gettext("Diagnostics"), gettext("S.M.A.R.T. Status"));
+$pglinks = array("", "@self", "@self");
 
 if ($action != 'config') {
 	$pgtitle[] = htmlspecialchars(gettext('Information & Tests'));

@@ -24,6 +24,7 @@
 ##|*IDENT=page-system-usermanager-settings
 ##|*NAME=System: User Manager: Settings
 ##|*DESCR=Allow access to the 'System: User Manager: Settings' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 

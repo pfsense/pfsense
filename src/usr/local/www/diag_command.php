@@ -31,6 +31,7 @@
 ##|*IDENT=page-diagnostics-command
 ##|*NAME=Diagnostics: Command
 ##|*DESCR=Allow access to the 'Diagnostics: Command' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_command.php*
 ##|-PRIV
 

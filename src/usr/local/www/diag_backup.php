@@ -27,6 +27,7 @@
 ##|*IDENT=page-diagnostics-backup-restore
 ##|*NAME=Diagnostics: Backup & Restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup & Restore' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
 

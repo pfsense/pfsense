@@ -24,6 +24,7 @@
 ##|*IDENT=page-system-usermanager-addprivs
 ##|*NAME=System: User Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: User Manager: Add Privileges' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
 
@@ -110,6 +111,20 @@ function build_priv_list() {
 	return($list);
 }
 
+function get_root_priv_item_text() {
+	global $priv_list;
+
+	$priv_text = "";
+
+	foreach ($priv_list as $pname => $pdata) {
+		if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
+			$priv_text .= '<br/>' . $pdata['name'];
+		}
+	}
+
+	return($priv_text);
+}
+
 /* if ajax is calling, give them an update message */
 if (isAjax()) {
 	print_info_box($savemsg, 'success');
@@ -160,6 +175,19 @@ $section->addInput(new Form_Input(
 	'text',
 	null
 ))->setHelp('Show only the choices containing this term');
+
+$section->addInput(new Form_StaticText(
+	gettext('Privilege information'),
+	'<span class="help-block">'.
+	gettext('The following privileges effectively give the user root privilege ' .
+		' because the user gains access to execute general commands, edit system files, ' .
+		' modify users, change passwords or similar:') .
+	'<br/>' .
+	get_root_priv_item_text() .
+	'<br/><br/>' .
+	gettext('Please take care when granting these privileges.') .
+	'</span>'
+));
 
 $btnfilter = new Form_Button(
 	'btnfilter',
@@ -215,7 +243,11 @@ events.push(function() {
 			if (in_array($pname, $a_user['priv'])) {
 				continue;
 			}
-			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
+			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
+			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
+				$desc .= ' ' . gettext('(This privilege effectively gives root privilege to the user)');
+			}
+			$desc = addslashes($desc);
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";
 			$id++;
 		}

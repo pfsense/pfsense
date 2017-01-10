@@ -151,9 +151,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
+$pglinks = array("", "system_advanced_admin.php", "system_advanced_sysctl.php");
 
 if ($act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 include("head.inc");
 

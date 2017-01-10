@@ -59,6 +59,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Interfaces"), gettext("QinQs"), gettext("Edit"));
+$pglinks = array("", "interfaces_qinq.php", "@self");
 $shortcut_section = "interfaces";
 
 require_once("guiconfig.inc");

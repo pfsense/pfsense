@@ -92,6 +92,7 @@ if ($_POST['apply']) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper";
 
 $wizards = array(

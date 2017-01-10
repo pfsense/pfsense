@@ -97,6 +97,7 @@ if ($dirty) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Check IP Services"));
+$pglinks = array("", "services_dyndns.php", "@self");
 include("head.inc");
 
 $tab_array = array();

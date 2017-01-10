@@ -206,6 +206,7 @@ $actionHelp =
 					sprintf(gettext('%sRefuse Nonlocal:%s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
+$pglinks = array("", "services_unbound.php", "@self");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');

@@ -65,6 +65,7 @@ require_once("shaper.inc");
 require_once("captiveportal.inc");
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), gettext("Add Zone"));
+$pglinks = array("", "services_captiveportal_zones.php", "@self");
 $shortcut_section = "captiveportal";
 
 if (!is_array($config['captiveportal'])) {

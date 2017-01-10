@@ -581,6 +581,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"), gettext("Edit"));
+$pglinks = array("", "system_gateways.php", "system_gateways.php", "@self");
 $shortcut_section = "gateways";
 
 include("head.inc");

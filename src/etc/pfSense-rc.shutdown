@@ -50,4 +50,5 @@ if [ "${USE_MFS_TMPVAR}" = "true" ] || [ "${DISK_TYPE}" = "md" ]; then
 	/etc/rc.backup_aliastables.sh
 	/etc/rc.backup_rrd.sh
 	/etc/rc.backup_dhcpleases.sh
+	/etc/rc.backup_logs.sh
 fi

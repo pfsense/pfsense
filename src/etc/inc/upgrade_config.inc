@@ -5064,15 +5064,85 @@ function upgrade_159_to_160() {
 	}
 }
 
+/* RAM Disk Management */
 function upgrade_160_to_161() {
-	global $config;
+	global $g, $config;
 
-	if (is_array($config['system']['authserver'])) {
-		foreach ($config['system']['authserver'] as & $authserver) {
-			if (isset($authserver['type']) && $authserver['type'] == 'radius') {
-				$authserver['radius_protocol'] = 'PAP';
+	if (!isset($config['system']['use_mfs_tmpvar'])) {
+		return;
+	}
+
+	// Move existing RRD backup to the RAM Disk Store if it don't already exist there.
+	// Restore existing RRD XML dump backup.
+	if (file_exists("{$g['cf_conf_path']}/rrd.tgz") && !file_exists("{$g['cf_conf_path']}/RAM_Disk_Store/rrd.tgz")) {
+		$rrddbpath = "{$g['vardb_path']}/rrd/";
+		$rrdtool = "/usr/bin/nice -n20 /usr/local/bin/rrdtool";
+
+		$rrdrestore = "";
+		$rrdreturn = "";
+		unlink_if_exists("{$rrddbpath}/*.xml");
+
+		unset($rrdrestore);
+		$_gb = exec("LANG=C /usr/bin/tar -tf {$g['cf_conf_path']}/rrd.tgz", $rrdrestore, $rrdreturn);
+		if ($rrdreturn != 0) {
+			log_error(sprintf(gettext('RRD restore failed exited with %1$s, the error is: %2$s'), $rrdreturn, $rrdrestore));
+		} else {
+			foreach ($rrdrestore as $xml_file) {
+				$rrd_file = '/' . substr($xml_file, 0, -4) . '.rrd';
+				unlink_if_exists("{$rrd_file}"); 
+
+				file_put_contents("{$g['tmp_path']}/rrd_restore", $xml_file);
+				$_gb = exec("LANG=C /usr/bin/tar -xf {$g['cf_conf_path']}/rrd.tgz -C / -T {$g['tmp_path']}/rrd_restore");
+				if (!file_exists("/{$xml_file}")) {
+					log_error(sprintf(gettext("Could not extract %s RRD xml file from archive!"), $xml_file));
+					continue;
+				}
+				$_gb = exec("$rrdtool restore -f '/{$xml_file}' '{$rrd_file}'", $output, $status);
+				if ($status) {
+					log_error(sprintf(gettext("rrdtool restore -f '%1\$s' '%2\$s' failed returning %3\$s."), $xml_file, $rrd_file, $status));
+					continue;
+				}
+				unset($output);
+				@unlink("/{$xml_file}");
 			}
+			unset($rrdrestore);
+			@unlink("{$g['tmp_path']}/rrd_restore");
+
+			// Create a new RRD backup to the RAM Disk Store (without RRD XML dump).
+			exec("/etc/rc.backup_rrd.sh");
+			$ramds_updated = true;
+
+			// Rename previous RRD backup so it will not restore again.  Don't delete in case needed for recovery.
+			rename("{$g['cf_conf_path']}/rrd.tgz", "{$g['cf_conf_path']}/rrd.tgz.old");
 		}
 	}
+
+	// Move existing DHCP leases backup to the RAM Disk Store if it don't already exist there.
+	if (file_exists("{$g['cf_conf_path']}/dhcpleases.tgz") && ! file_exists("{$g['cf_conf_path']}/RAM_Disk_Store/dhcpleases.tgz")) {
+		rename("{$g['cf_conf_path']}/dhcpleases.tgz", "{$g['cf_conf_path']}/RAM_Disk_Store/dhcpleases.tgz");
+		$ramds_updated = true;
+	}
+
+	// Move existing alias table backups to the RAM Disk Store if they don't already exist there.
+	$dbpath = "{$g['vardb_path']}/aliastables/";
+	$files = glob("{$g['cf_conf_path']}/RAM_Disk_Store{$dbpath}*.tgz");
+	if (count($files)) {
+		foreach ($files as $file) {
+			if (! file_exists("{$g['cf_conf_path']}/RAM_Disk_Store/".basename($file))) {
+				rename($file, "{$g['cf_conf_path']}/RAM_Disk_Store/".basename($file));
+				$ramds_updated = true;
+			}
+		}
+		// Remove existing alias table backups directory if empty.
+		@rmdir("{$g['cf_conf_path']}/RAM_Disk_Store/var/db/aliastables");
+		@rmdir("{$g['cf_conf_path']}/RAM_Disk_Store/var/db/");
+		@rmdir("{$g['cf_conf_path']}/RAM_Disk_Store/var/");
+	}
+
+	// Restore RAM Disk Store if updated.
+	if ($ramds_updated) {
+		exec("/etc/rc.restore_ramdisk_store");
+	}
 }
+
 ?>

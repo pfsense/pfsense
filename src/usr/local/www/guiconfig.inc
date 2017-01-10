@@ -514,7 +514,7 @@ function genhtmltitle($title) {
 		$bc = "";
 	}
 
-	return $heading . $bc;
+	return $bc;
 }
 
 /* update the changedesc and changecount(er) variables */

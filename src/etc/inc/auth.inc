@@ -1409,8 +1409,11 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$radiusservers[0]['port'] = $authcfg['radius_auth_port'];
 		$radiusservers[0]['sharedsecret'] = $authcfg['radius_secret'];
 		$radiusservers[0]['timeout'] = $authcfg['radius_timeout'];
-
-		$radius_protocol = $authcfg['radius_protocol'];
+		if(isset($authcfg['radius_protocol'])) {
+			$radius_protocol = $authcfg['radius_protocol'];
+		} else {
+			$radius_protocol = 'PAP';
+		}
 	} else {
 		return false;
 	}

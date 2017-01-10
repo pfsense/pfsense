@@ -182,7 +182,7 @@ function get_user_privdesc(& $user) {
 	return $privs;
 }
 
-function isAllowed($username, $page) {
+function isAdminUID($username) {
 	global $_SESSION;
 
 	if (!isset($username)) {
@@ -199,6 +199,20 @@ function isAllowed($username, $page) {
 		}
 	}
 
+	return false;
+}
+
+function isAllowed($username, $page) {
+	global $_SESSION;
+
+	if (!isset($username)) {
+		return false;
+	}
+
+	if (isAdminUID($username)) {
+		return true;
+	}
+
 	/* user privilege access check */
 	if (cmp_page_matches($page, $_SESSION['page-match'])) {
 		return true;
@@ -206,7 +220,6 @@ function isAllowed($username, $page) {
 
 	return false;
 }
-
 
 function isAllowedPage($page) {
 	global $_SESSION;
@@ -218,14 +231,8 @@ function isAllowedPage($page) {
 		return false;
 	}
 
-	/* admin/root access check */
-	$user = getUserEntry($username);
-	if (isset($user)) {
-		if (isset($user['uid'])) {
-			if ($user['uid'] == 0) {
-				return true;
-			}
-		}
+	if (isAdminUID($username)) {
+		return true;
 	}
 
 	/* user privilege access check */
@@ -269,12 +276,33 @@ function getAllowedPages($username, &$attributes = array()) {
 
 	if ($_SESSION['remoteauth']) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
+		// cache auth results for a short time to ease load on auth services & logs
+		if (isset($config['system']['webgui']['auth_refresh_time'])) {
+			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
+		} else {
+			$recheck_time = 30;
+		}
 		// obtain ldap groups if we are in ldap mode
 		if ($authcfg['type'] == "ldap") {
-			$allowed_groups = @ldap_get_groups($username, $authcfg);
+			if  ( isset($_SESSION["ldap_allowed_groups"]) &&
+			    ( time() <= $_SESSION["auth_check_time"]+ $recheck_time) ) {
+				$allowed_groups = $_SESSION["ldap_allowed_groups"];
+			} else {
+				$allowed_groups = @ldap_get_groups($username, $authcfg);
+				$_SESSION["ldap_allowed_groups"] = $allowed_groups;
+				$_SESSION["auth_check_time"] = time();
+			}
 		} elseif ($authcfg['type'] == "radius") {
-			$allowed_groups = @radius_get_groups($attributes);
+			if  ( isset($_SESSION["radius_allowed_groups"]) &&
+			    (time() <= $_SESSION["auth_check_time"] + $recheck_time) ) {
+				$allowed_groups = $_SESSION["radius_allowed_groups"];
+			} else {
+				$allowed_groups = @radius_get_groups($attributes);
+				$_SESSION["radius_allowed_groups"] = $allowed_groups;
+				$_SESSION["auth_check_time"] = time();
+			}
 		}
+
 	}
 	if (!$allowed_groups) {
 		// search for a local user by name

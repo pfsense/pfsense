@@ -485,32 +485,32 @@ function ip_range_to_address_array($startip, $endip, $max_size = 5000) {
 	return $rangeaddresses;
 }
 
-/* 	Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
-	Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
-
-	Documented on pfsense dev list 19-20 May 2013. Summary:
-
-	The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
-	These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
-
-	As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
-	to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
-
-	(a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
-	represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
-	low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
-	adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
-	Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
-	low bits can now be ignored.
-
-	(b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
-	*always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
-	_always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
-	in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
-	We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
-	range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
-*/
-
+/*
+ * Convert an IPv4 or IPv6 IP range to an array of subnets which can contain the range.
+ * Algorithm and embodying code PD'ed by Stilez - enjoy as you like :-)
+ *
+ * Documented on pfsense dev list 19-20 May 2013. Summary:
+ *
+ * The algorithm looks at patterns of 0's and 1's in the least significant bit(s), whether IPv4 or IPv6.
+ * These are all that needs checking to identify a _guaranteed_ correct, minimal and optimal subnet array.
+ *
+ * As a result, string/binary pattern matching of the binary IP is very efficient. It uses just 2 pattern-matching rules
+ * to chop off increasingly larger subnets at both ends that can't be part of larger subnets, until nothing's left.
+ *
+ * (a) If any range has EITHER low bit 1 (in startip) or 0 (in endip), that end-point is _always guaranteed_ to be optimally
+ * represented by its own 'single IP' CIDR; the remaining range then shrinks by one IP up or down, causing the new end-point's
+ * low bit to change from 1->0 (startip) or 0->1 (endip). Only one edge case needs checking: if a range contains exactly 2
+ * adjacent IPs of this format, then the two IPs themselves are required to span it, and we're done.
+ * Once this rule is applied, the remaining range is _guaranteed_ to end in 0's and 1's so rule (b) can now be used, and its
+ * low bits can now be ignored.
+ *
+ * (b) If any range has BOTH startip and endip ending in some number of 0's and 1's respectively, these low bits can
+ * *always* be ignored and "bit-shifted" for subnet spanning. So provided we remember the bits we've place-shifted, we can
+ * _always_ right-shift and chop off those bits, leaving a smaller range that has EITHER startip ending in 1 or endip ending
+ * in 0 (ie can now apply (a) again) or the entire range has vanished and we're done.
+ * We then loop to redo (a) again on the remaining (place shifted) range until after a few loops, the remaining (place shifted)
+ * range 'vanishes' by meeting the exit criteria of (a) or (b), and we're done.
+ */
 function ip_range_to_subnet_array($ip1, $ip2) {
 
 	if (is_ipaddrv4($ip1) && is_ipaddrv4($ip2)) {
@@ -1790,10 +1790,11 @@ function arp_get_mac_by_ip($ip) {
 
 /* return a fieldname that is safe for xml usage */
 function xml_safe_fieldname($fieldname) {
-	$replace = array('/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-			 '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
-			 ':', ',', '.', '\'', '\\'
-		);
+	$replace = array(
+	    '/', '-', ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+	    '_', '+', '=', '{', '}', '[', ']', '|', '/', '<', '>', '?',
+	    ':', ',', '.', '\'', '\\'
+	);
 	return strtolower(str_replace($replace, "", $fieldname));
 }
 
@@ -2572,7 +2573,7 @@ function format_duid($dhcp6duid) {
 	}
 
 	array_walk($values, function(&$value) {
-		$value = str_pad($value, 2, '0', STR_PAD_LEFT); 
+		$value = str_pad($value, 2, '0', STR_PAD_LEFT);
 	});
 
 	return implode(":", $values);
@@ -2597,8 +2598,8 @@ function is_duid($dhcp6duid) {
 function write_dhcp6_duid($duidstring) {
 	// Create the hex array from the dhcp6duid config entry and write to file
 	global $g;
- 	
- 	if(!is_duid($duidstring)) {
+
+	if(!is_duid($duidstring)) {
 		log_error(gettext("Error: attempting to write DUID file - Invalid DUID detected"));
 		return false;
 	}
@@ -2614,16 +2615,15 @@ function write_dhcp6_duid($duidstring) {
 }
 
 /* returns duid string from 'vardb_path']}/dhcp6c_duid' */
-function get_duid_from_file()
-{
+function get_duid_from_file() {
 	global $g;
-	
+
 	$duid_ASCII = "";
 	$count = 0;
 	
 	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r")) {
 		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
-			$buffer = fread($fd,16);					
+			$buffer = fread($fd,16);
 			while($count < 16) {
 				$duid_ASCII .= bin2hex($buffer[$count]);
 				$count++;
@@ -2638,6 +2638,6 @@ function get_duid_from_file()
 	if(!is_duid($duid_ASCII)) {
 		return "--:--:--:--:--:--:--:--:--:--:--:--:--:--:--:--";
 	}
-	return($duid_ASCII);	
+	return($duid_ASCII);
 }
 ?>

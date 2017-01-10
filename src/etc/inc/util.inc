@@ -2620,8 +2620,9 @@ function get_duid_from_file() {
 
 	$duid_ASCII = "";
 	$count = 0;
-	
-	if ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r")) {
+
+	if (file_exists("{$g['vardb_path']}/dhcp6c_duid") &&
+	    ($fd = fopen("{$g['vardb_path']}/dhcp6c_duid", "r"))) {
 		if(filesize("{$g['vardb_path']}/dhcp6c_duid")==16) {
 			$buffer = fread($fd,16);
 			while($count < 16) {

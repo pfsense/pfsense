@@ -102,11 +102,10 @@ status_logs_common_code();
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
 include("head.inc");
 
-if (!$input_errors && $savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 	$manage_log_active = false;
 }
-
 
 // Tab Array
 tab_array_logs_common();

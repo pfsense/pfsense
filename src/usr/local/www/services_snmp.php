@@ -163,9 +163,9 @@ if ($_POST) {
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = services_snmpd_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= services_snmpd_configure();
 	}
 }
 
@@ -202,8 +202,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $form = new Form();

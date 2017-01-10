@@ -323,6 +323,27 @@ function print_apply_box($msg) {
 	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
 }
 
+// Format and print a box reporting that changes have been applied
+// $retval = status value from the functions called to apply the changes
+// 0 is good
+// non-zero is a problem
+// $extra_text = optional extra text to display after the standard message
+function print_apply_result_box($retval, $extra_text="") {
+	$result_msg = get_std_save_message($retval);
+	if ($retval === 0) {
+		// 0 is success
+		$severity = "success";
+	} else {
+		// non-zero means there was some problem
+		$severity = "warning";
+	}
+
+	if (strlen($extra_text) > 0) {
+		$result_msg .= " " . $extra_text;
+	}
+	print_info_box($result_msg, $severity);
+}
+
 /*
  * Print Bootstrap callout
  *
@@ -350,10 +371,16 @@ function print_callout($msg, $class = 'info', $heading = '') {
 	echo $callout;
 }
 
-function get_std_save_message($ok) {
+function get_std_save_message($retval) {
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
-	$to_return = gettext("The changes have been applied successfully.");
+	if ($retval === 0) {
+		// 0 is success
+		$to_return = gettext("The changes have been applied successfully.");
+	} else {
+		// non-zero means there was some problem
+		$to_return = gettext("There was a problem applying the changes. See the <a href=\"status_logs.php\">System Logs</a>.");
+	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
 			$filter_related = true;

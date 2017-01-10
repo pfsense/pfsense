@@ -167,15 +167,7 @@ if ($_POST['apply']) {
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */
-	$retval = filter_configure();
-	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") <> true) {
-		$savemsg = get_std_save_message($retval);
-		$class = 'alert-success';
-	} else {
-		$savemsg = $retval;
-		$class = 'alert-danger';
-	}
+	$retval |= filter_configure();
 
 	/* reset rrd queues */
 	system("rm -f /var/db/rrd/*queuedrops.rrd");
@@ -198,8 +190,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('shaper')) {

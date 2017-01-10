@@ -88,17 +88,11 @@ if ($_POST) {
 			}
 		}
 
-		$retval = write_config();
-		$savemsg = get_std_save_message($retval);
+		write_config();
 
 		pfSenseHeader("system_groupmanager.php?act=edit&groupid={$groupid}");
 		exit;
 	}
-}
-
-/* if ajax is calling, give them an update message */
-if (isAjax()) {
-	print_info_box($savemsg, 'success');
 }
 
 function build_priv_list() {
@@ -121,10 +115,6 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

@@ -274,14 +274,10 @@ if ($_POST) {
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
 		system_resolvconf_generate(true);
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-		} else {
-			$savemsg = gettext($retval);
-		}
+		$retval |= filter_configure();
 
 		activate_powerd();
 		load_crypto();
@@ -300,8 +296,8 @@ if ($input_errors) {
 	unset($pconfig['doreboot']);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();

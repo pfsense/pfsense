@@ -88,8 +88,8 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 
 if ($_POST) {
 	if ($_POST['apply']) {
-		$retval = services_unbound_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval = 0;
+		$retval |= services_unbound_configure();
 		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
 		}
@@ -244,8 +244,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('unbound')) {

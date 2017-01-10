@@ -68,7 +68,6 @@ if ($_POST) {
 		$retval = 0;
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
-		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('loadbalancer');
 	} else {
 		/* Keep a list of servers we find in POST variables */
@@ -108,6 +107,10 @@ if ($_POST) {
 
 if (is_subsystem_dirty('loadbalancer')) {
 	print_apply_box(gettext("The load balancer configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+}
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 /* active tabs */

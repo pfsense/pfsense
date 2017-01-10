@@ -204,6 +204,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
 if ($savemsg) {

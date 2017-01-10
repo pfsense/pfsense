@@ -1089,11 +1089,20 @@ function build_if_list() {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"));
+$pglinks = array("");
 
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
+	$pglinks[] = "firewall_rules.php?if=FloatingRules";
 	$pgtitle[] = gettext('Floating');
+	$pglinks[] = "firewall_rules.php?if=FloatingRules";
+} elseif (!empty($if)) {
+	$pglinks = array("", "firewall_rules.php?if=" . $if);
+} else {
+	$pglinks = array("", "firewall_rules.php");
 }
+
 $pgtitle[] = gettext("Edit");
+$pglinks[] = "@self";
 $shortcut_section = "firewall";
 
 $page_filename = "firewall_rules_edit.php";

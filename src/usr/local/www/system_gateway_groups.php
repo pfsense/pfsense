@@ -102,6 +102,7 @@ function gateway_exists($gwname) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateway Groups"));
+$pglinks = array("", "system_gateways.php", "@self");
 $shortcut_section = "gateway-groups";
 
 include("head.inc");

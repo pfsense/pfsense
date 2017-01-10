@@ -106,6 +106,7 @@ $pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time']
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
+$pglinks = array("", "system_usermanager.php", "@self");
 
 $save_and_test = false;
 

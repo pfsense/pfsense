@@ -278,6 +278,7 @@ function build_interface_list() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("PPPoE Server"), gettext("Edit"));
+$pglinks = array("", "services_pppoe.php", "@self");
 $shortcut_section = "pppoes";
 include("head.inc");
 

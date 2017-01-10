@@ -184,6 +184,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($savemsg) {

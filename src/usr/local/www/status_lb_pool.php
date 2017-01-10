@@ -57,6 +57,7 @@ $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Pools"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");

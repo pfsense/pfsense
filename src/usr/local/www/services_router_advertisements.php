@@ -249,11 +249,14 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+$pglinks = array("", "services_dhcpv6.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "services_dhcpv6.php?if=" . $if;
 }
 $pgtitle[] = gettext("Router Advertisements");
+$pglinks[] = "@self";
 
 include("head.inc");
 

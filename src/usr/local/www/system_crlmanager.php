@@ -256,9 +256,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificate Revocation"));
+$pglinks = array("", "system_camanager.php", "system_crlmanager.php");
 
 if ($act == "new" || $act == gettext("Save") || $input_errors || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 include("head.inc");
 ?>

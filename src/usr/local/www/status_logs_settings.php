@@ -186,6 +186,7 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"));
+$pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
 $logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .

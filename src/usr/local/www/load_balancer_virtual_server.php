@@ -105,6 +105,7 @@ function alias_idx($name, $type) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"));
+$pglinks = array("", "load_balancer_pool.php", "@self");
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");

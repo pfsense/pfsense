@@ -479,10 +479,13 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+$pglinks = array("", "services_dhcpv6.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "@self";
 	$pgtitle[] = gettext("DHCPv6 Server");
+	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp6";
 

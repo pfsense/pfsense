@@ -33,8 +33,6 @@ function admusercmp($a, $b) {
 
 require_once("guiconfig.inc");
 
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
-
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
 }
@@ -42,6 +40,9 @@ if (is_numericint($_GET['userid'])) {
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
 }
+
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
+$pglinks = array("", "system_usermanager.php", "system_usermanager.php", "system_usermanager.php?act=edit&userid=" . $userid, "@self");
 
 if (!isset($config['system']['user'][$userid]) && !is_array($config['system']['user'][$userid])) {
 	pfSenseHeader("system_usermanager.php");

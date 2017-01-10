@@ -211,6 +211,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"));
+$pglinks = array("", "system_gateways.php", "@self");
 $shortcut_section = "routing";
 
 include("head.inc");

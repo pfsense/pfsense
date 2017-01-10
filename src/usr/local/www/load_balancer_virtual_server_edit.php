@@ -157,6 +157,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Virtual Servers"), gettext("Edit"));
+$pglinks = array("", "load_balancer_pool.php", "load_balancer_virtual_server.php", "@self");
 $shortcut_section = "relayd-virtualservers";
 
 include("head.inc");

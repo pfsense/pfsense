@@ -84,6 +84,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Settings"));
+$pglinks = array("", "load_balancer_pool.php", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");

@@ -169,6 +169,7 @@ foreach ($tab_array as $dtab) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Aliases"), $bctab);
+$pglinks = array("", "firewall_aliases.php", "@self");
 $shortcut_section = "aliases";
 
 include("head.inc");

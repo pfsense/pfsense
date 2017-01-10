@@ -223,6 +223,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
 
 include("head.inc");

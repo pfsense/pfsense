@@ -94,8 +94,10 @@ if ($filtertext) {
 
 if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wireless'))) {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("System"), $allowed_logs[$logfile]["name"]);
+	$pglinks = array("", "status_logs.php", "status_logs.php", "@self");
 } else {
 	$pgtitle = array(gettext("Status"), gettext("System Logs"), $allowed_logs[$logfile]["name"]);
+	$pglinks = array("", "status_logs.php", "@self");
 }
 include("head.inc");
 

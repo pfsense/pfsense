@@ -62,6 +62,7 @@ if ($_POST['apply']) {
 $shaperIFlist = get_configured_interface_with_descr();
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper";
 
 $wizards = array(

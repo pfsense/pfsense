@@ -185,6 +185,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced Settings"));
+$pglinks = array("", "services_unbound.php", "@self");
 $shortcut_section = "resolver";
 include_once("head.inc");
 

@@ -37,6 +37,7 @@ if ($_GET['reset'] != "") {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiters"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper-limiters";
 $dfltmsg = false;
 

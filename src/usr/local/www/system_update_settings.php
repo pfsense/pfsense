@@ -75,6 +75,7 @@ $curcfg = $config['system']['firmware'];
 $gitcfg = $config['system']['gitsync'];
 
 $pgtitle = array(gettext("System"), gettext("Update"), gettext("Update Settings"));
+$pglinks = array("", "pkg_mgr_install.php?id=firmware", "@self");
 
 // Create an array of repo names and descriptions to populate the "Branch" selector
 function build_repo_list() {

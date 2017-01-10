@@ -217,6 +217,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");

@@ -347,12 +347,10 @@ function system_hosts_local_entries() {
 function system_hosts_override_entries($dnscfg) {
 	$hosts = array();
 
-	if (!is_array($dnscfg) || !isset($dnscfg['enable'])) {
+	if (!is_array($dnscfg) ||
+	    !is_array($dnscfg['hosts']) ||
+	    !isset($dnscfg['enable'])) {
 		return $hosts;
-	}
-
-	if (!is_array($dnscfg['hosts'])) {
-		$dnscfg['hosts'] = array();
 	}
 
 	foreach ($dnscfg['hosts'] as $host) {

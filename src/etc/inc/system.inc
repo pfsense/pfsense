@@ -389,6 +389,104 @@ function system_hosts_override_entries($dnscfg) {
 	return $hosts;
 }
 
+/* Read all dhcpd/dhcpdv6 staticmap entries */
+function system_hosts_dhcpd_entries() {
+	global $config;
+
+	$hosts = array();
+	$syscfg = $config['system'];
+
+	if (is_array($config['dhcpd'])) {
+		$conf_dhcpd = $config['dhcpd'];
+	} else {
+		$conf_dhcpd = array();
+	}
+
+	foreach ($conf_dhcpd as $dhcpif => $dhcpifconf) {
+		if (!is_array($dhcpifconf['staticmap']) ||
+		    !isset($dhcpifconf['enable'])) {
+			continue;
+		}
+		foreach ($dhcpifconf['staticmap'] as $host) {
+			if (!$host['ipaddr'] ||
+			    !$host['hostname']) {
+				continue;
+			}
+
+			$fqdn = $host['hostname'] . ".";
+			if ($host['domain']) {
+				$fqdn .= $host['domain'];
+			} elseif ($dhcpifconf['domain']) {
+				$fqdn .= $dhcpifconf['domain'];
+			} else {
+				$fqdn .= $syscfg['domain'];
+			}
+
+			$hosts[] = array(
+			    'ipaddr' => $host['ipaddr'],
+			    'fqdn' => $fqdn
+			);
+		}
+	}
+	unset($conf_dhcpd);
+
+	if (is_array($config['dhcpdv6'])) {
+		$conf_dhcpdv6 = $config['dhcpdv6'];
+	} else {
+		$conf_dhcpdv6 = array();
+	}
+
+	foreach ($conf_dhcpdv6 as $dhcpif => $dhcpifconf) {
+		if (!is_array($dhcpifconf['staticmap']) ||
+		    !isset($dhcpifconf['enable'])) {
+			continue;
+		}
+
+		if (isset($config['interfaces'][$dhcpif]['ipaddrv6']) &&
+		    $config['interfaces'][$dhcpif]['ipaddrv6'] ==
+		    'track6') {
+			$isdelegated = true;
+		} else {
+			$isdelegated = false;
+		}
+
+		foreach ($dhcpifconf['staticmap'] as $host) {
+			$ipaddrv6 = $host['ipaddrv6'];
+
+			if (!$ipaddrv6 || !$host['hostname']) {
+				continue;
+			}
+
+			if ($isdelegated) {
+				/*
+				 * We are always in an "end-user" subnet
+				 * here, which all are /64 for IPv6.
+				 */
+				$ipaddrv6 = merge_ipv6_delegated_prefix(
+				    get_interface_ipv6($dhcpif),
+				    $ipaddrv6, 64);
+			}
+
+			$fqdn = $host['hostname'] . ".";
+			if ($host['domain']) {
+				$fqdn .= $host['domain'];
+			} else if ($dhcpifconf['domain']) {
+				$fqdn .= $dhcpifconf['domain'];
+			} else {
+				$fqdn .= $syscfg['domain'];
+			}
+
+			$hosts[] = array(
+			    'ipaddr' => $ipaddrv6,
+			    'fqdn' => $fqdn
+			);
+		}
+	}
+	unset($conf_dhcpdv6);
+
+	return $hosts;
+}
+
 function system_hosts_generate() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -426,86 +524,14 @@ function system_hosts_generate() {
 		}
 		unset($hosts_array);
 
-		if (is_array($config['dhcpd'])) {
-			$conf_dhcpd = $config['dhcpd'];
-		} else {
-			$conf_dhcpd = array();
+		if (isset($dnsmasqcfg['regdhcpstatic'])) {
+			$hosts_array = system_hosts_dhcpd_entries();
+			foreach ($hosts_array as $host) {
+				$dhosts .= "{$host['ipaddr']}\t" .
+				    "{$host['fqdn']}\n";
+			}
+			unset($hosts_array);
 		}
-
-		foreach ($conf_dhcpd as $dhcpif => $dhcpifconf) {
-			if (!isset($dnsmasqcfg['regdhcpstatic']) ||
-			    !is_array($dhcpifconf['staticmap']) ||
-			    !isset($dhcpifconf['enable'])) {
-				continue;
-			}
-			foreach ($dhcpifconf['staticmap'] as $host) {
-				if (!$host['ipaddr'] ||
-				    !$host['hostname']) {
-					continue;
-				}
-
-				$dhosts .= $host['ipaddr'] . "\t" .
-				    $host['hostname'] . ".";
-				if ($host['domain']) {
-					$dhosts .= $host['domain'];
-				} elseif ($dhcpifconf['domain']) {
-					$dhosts .= $dhcpifconf['domain'];
-				} else {
-					$dhosts .= $syscfg['domain'];
-				}
-				$dhosts .= "\n";
-			}
-		}
-		unset($conf_dhcpd);
-
-		if (is_array($config['dhcpdv6'])) {
-			$conf_dhcpdv6 = $config['dhcpdv6'];
-		} else {
-			$conf_dhcpdv6 = array();
-		}
-
-		foreach ($conf_dhcpdv6 as $dhcpif => $dhcpifconf) {
-			if (!isset($dnsmasqcfg['regdhcpstatic']) ||
-			    !is_array($dhcpifconf['staticmap']) ||
-			    !isset($dhcpifconf['enable'])) {
-				continue;
-			}
-
-			if (isset($config['interfaces'][$dhcpif]['ipaddrv6']) &&
-			    $config['interfaces'][$dhcpif]['ipaddrv6'] ==
-			    'track6') {
-				$isdelegated = true;
-			} else {
-				$isdelegated = false;
-			}
-
-			foreach ($dhcpifconf['staticmap'] as $host) {
-				$ipaddrv6 = $host['ipaddrv6'];
-				if (!$ipaddrv6 || !$host['hostname']) {
-					continue;
-				}
-				if ($isdelegated) {
-					/*
-					 * We are always in an "end-user" subnet
-					 * here, which all are /64 for IPv6.
-					 */
-					$ipaddrv6 = merge_ipv6_delegated_prefix(
-					    get_interface_ipv6($dhcpif),
-					    $ipaddrv6, 64);
-				}
-				$dhosts .= $ipaddrv6 . "\t" .
-				    $host['hostname'] . ".";
-				if ($host['domain']) {
-					$dhosts .= $host['domain'];
-				} else if ($dhcpifconf['domain']) {
-					$dhosts .= $dhcpifconf['domain'];
-				} else {
-					$dhosts .= $syscfg['domain'];
-				}
-				$dhosts .= "\n";
-			}
-		}
-		unset($conf_dhcpdv6);
 
 		if (isset($dnsmasqcfg['dhcpfirst'])) {
 			$hosts .= $dhosts . $lhosts;

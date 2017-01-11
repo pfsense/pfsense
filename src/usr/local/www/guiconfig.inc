@@ -525,15 +525,28 @@ function gentitle($title) {
 	}
 }
 
-function genhtmltitle($title) {
+function genhtmltitle($title, $links=array()) {
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
 	if (count($title) > 1) {
 		$bc = '<ol class="breadcrumb">';
 
-		foreach ($title as $el) {
-			$bc .= '<li>'.$el.'</li>';
+		foreach ($title as $idx => $el) {
+			$href = $links[$idx];
+			if (strlen($href) > 0) {
+				// For convenience, if the caller specifies '@self' then make a link
+				// to the current page, including any query string.
+				if ($href == '@self') {
+					$href = $_SERVER['REQUEST_URI'];
+				}
+				if (substr($href, 0, 1) != '/') {
+					$href = '/' . $href;
+				}
+				$bc .= '<li><a href="' . htmlentities($href) . '">' . $el . '</a></li>';
+			} else {
+				$bc .= '<li>' . $el . '</li>';
+			}
 		}
 
 		$bc .= '</ol>';

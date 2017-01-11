@@ -720,9 +720,11 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
+$pglinks = array("", "services_dhcp.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp";
 

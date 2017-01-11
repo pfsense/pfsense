@@ -1931,13 +1931,16 @@ function system_reboot_sync($reroot=false) {
 }
 
 function system_reboot_cleanup() {
-	global $config, $cpzone;
+	global $config, $cpzone, $cpzoneid;
 
 	mwexec("/usr/local/bin/beep.sh stop");
 	require_once("captiveportal.inc");
 	if (is_array($config['captiveportal'])) {
 		foreach ($config['captiveportal'] as $cpzone=>$cp) {
-			captiveportal_radius_stop_all();
+			/* send Accounting-Stop packet for all clients, termination cause 'Admin-Reboot' */
+			$cpzoneid = $cp[zoneid];
+			captiveportal_radius_stop_all(7); // Admin-Reboot
+			/* Send Accounting-Off packet to the RADIUS server */
 			captiveportal_send_server_accounting(true);
 		}
 	}
@@ -2228,6 +2231,11 @@ function system_identify_specific_platform() {
 		case 'Virtual Machine':
 			if ($maker[0] == "Microsoft Corporation") {
 				return (array('name' => 'Hyper-V', 'descr' => 'Hyper-V Virtual Machine'));
+			}
+			break;
+		case 'VMware Virtual Platform':
+			if ($maker[0] == "VMware, Inc.") {
+				return (array('name' => 'VMware', 'descr' => 'VMware Virtual Machine'));
 			}
 			break;
 	}

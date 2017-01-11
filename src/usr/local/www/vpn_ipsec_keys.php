@@ -50,10 +50,10 @@ foreach ($config['system']['user'] as $id => $user) {
 }
 
 if (isset($_POST['apply'])) {
-	$retval = vpn_ipsec_configure();
+	vpn_ipsec_configure();
 	/* reload the filter in the background */
-	filter_configure();
-	$savemsg = get_std_save_message($retval);
+	$retval = 0;
+	$retval |= filter_configure();
 	if (is_subsystem_dirty('ipsec')) {
 		clear_subsystem_dirty('ipsec');
 	}
@@ -74,8 +74,8 @@ $shortcut_section = "ipsec";
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg);
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('ipsec')) {

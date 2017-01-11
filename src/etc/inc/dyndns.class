@@ -98,7 +98,7 @@
 	 *  SelfHost        - Last Tested: 26 December 2011
 	 *  Amazon Route 53 - Last Tested: 30 August 2016 
 	 *  DNS-O-Matic     - Last Tested: 9 September 2010
-	 *  CloudFlare      - Last Tested: 17 July 2016
+	 *  CloudFlare      - Last Tested: 05 September 2016
 	 *  CloudFlare IPv6 - Last Tested: 17 July 2016
 	 *  Eurodns         - Last Tested: 27 June 2013
 	 *  GratisDNS       - Last Tested: 15 August 2012
@@ -139,6 +139,7 @@
 		var $_FQDN;
 		var $_dnsIP;
 		var $_dnsWildcard;
+		var $_dnsProxied;
 		var $_dnsMX;
 		var $_dnsBackMX;
 		var $_dnsServer;
@@ -170,7 +171,7 @@
 		 *   - $For custom requests, $dnsUpdateURL is parsed for '%IP%', which is replaced with the new IP.
 		 */
 		function updatedns ($dnsService = '', $dnsHost = '', $dnsDomain = '', $dnsUser = '', $dnsPass = '',
-					$dnsWildcard = 'OFF', $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
+					$dnsWildcard = 'OFF', $dnsProxied = false, $dnsMX = '', $dnsIf = '', $dnsBackMX = '',
 					$dnsServer = '', $dnsPort = '', $dnsUpdateURL = '', $forceUpdate = false,
 					$dnsZoneID ='', $dnsTTL='', $dnsResultMatch = '', $dnsRequestIf = '',
 					$dnsID = '', $dnsVerboseLog = false, $curlIpresolveV4 = false, $curlSslVerifypeer = true) {
@@ -247,6 +248,7 @@
 			$this->_dnsServer = $dnsServer;
 			$this->_dnsPort = $dnsPort;
 			$this->_dnsWildcard = $dnsWildcard;
+			$this->_dnsProxied = $dnsProxied;
 			$this->_dnsMX = $dnsMX;
 			$this->_dnsZoneID = $dnsZoneID;
 			$this->_dnsTTL = $dnsTTL;
@@ -359,8 +361,7 @@
 				curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 			}
 
-			if ($this->_dnsService != 'ods' and $this->_dnsService != 'route53 ') {
-				curl_setopt($ch, CURLOPT_HEADER, 1);
+			if ($this->_dnsService != 'ods') {
 				curl_setopt($ch, CURLOPT_USERAGENT, $this->_UserAgent);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
 				curl_setopt($ch, CURLOPT_INTERFACE, 'if!' . $realparentif);
@@ -713,6 +714,7 @@
 							$hostData = array(
 								"content" => "{$this->_dnsIP}",
 								"type" => "{$recordType}",
+								"proxied" => $this->_dnsProxied,
 								"name" => "{$this->_dnsHost}"
 							);
 							$data_json = json_encode($hostData);
@@ -774,7 +776,6 @@
 					$server = 'https://api.dnsimple.com/v1/domains/';
 					$token = $this->_dnsUser . ':' . $this->_dnsPass;
 					$jsondata = '{"record":{"content":"' . $this->_dnsIP . '","ttl":"' . $this->_dnsTTL . '"}}';
-					curl_setopt($ch, CURLOPT_HEADER, 1);
 					curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
 					curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept: application/json', 'Content-Type: application/json', 'X-DNSimple-Token: ' . $token));
 					curl_setopt($ch, CURLOPT_URL, $server . $this->_dnsHost . '/records/' . $this->_dnsZoneID);
@@ -821,6 +822,7 @@
 					break;
 			}
 			if ($this->_dnsService != 'ods') {
+				curl_setopt($ch, CURLOPT_HEADER, 1);
 				$response = curl_exec($ch);
 				$header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
 				$header = substr($response, 0, $header_size);
@@ -834,7 +836,7 @@
 		 * Private Function (added 12 July 2005) [beta]
 		 *   Retrieve Update Status
 		 */
-		function _checkStatus($ch, $data) {
+		function _checkStatus($ch, $data, $header) {
 			if ($this->_dnsVerboseLog) {
 				log_error(sprintf(gettext('Dynamic DNS %1$s (%2$s): _checkStatus() starting.'), $this->_dnsService, $this->_FQDN));
 			}

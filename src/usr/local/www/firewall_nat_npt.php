@@ -69,7 +69,6 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		if ($retval == 0) {
 			clear_subsystem_dirty('natconf');
@@ -122,8 +121,8 @@ if (isset($_POST['del_x'])) {
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"));
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {

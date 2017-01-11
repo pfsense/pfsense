@@ -88,8 +88,8 @@ if (empty($a_unboundcfg['system_domain_local_zone_type'])) {
 
 if ($_POST) {
 	if ($_POST['apply']) {
-		$retval = services_unbound_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval = 0;
+		$retval |= services_unbound_configure();
 		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
 		}
@@ -128,7 +128,7 @@ if ($_POST) {
 				}
 			}
 			if ($founddns == false) {
-				$input_errors[] = gettext("At least one DNS server must be specified under System>General Setup to enable Forwarding mode.");
+				$input_errors[] = gettext("At least one DNS server must be specified under System &gt; General Setup to enable Forwarding mode.");
 			}
 		}
 
@@ -244,8 +244,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('unbound')) {
@@ -317,7 +317,9 @@ $section->addInput(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
-));
+))->setHelp(sprintf('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
+					' %sSystem &gt; General Setup%s or those obtained via DHCP/PPP on WAN'.
+					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
@@ -326,7 +328,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcp']
 ))->setHelp(sprintf('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
 					' in the DNS Resolver, so that their name can be resolved.'.
-					' The domain in %sSystem: General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
+					' The domain in %sSystem &gt; General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
@@ -334,7 +336,7 @@ $section->addInput(new Form_Checkbox(
 	'Register DHCP static mappings in the DNS Resolver',
 	$pconfig['regdhcpstatic']
 ))->setHelp(sprintf('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
-					'The domain in %sSystem: General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
+					'The domain in %sSystem &gt; General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $btnadv = new Form_Button(
 	'btnadvcustom',
@@ -555,7 +557,7 @@ endforeach;
 		" service (if enabled) will automatically serve the LAN IP".
 		" address as a DNS server to DHCP clients so they will use".
 		" the DNS Resolver. If Forwarding is enabled, the DNS Resolver will use the DNS servers".
-		" entered in %sSystem: General Setup%s".
+		" entered in %sSystem &gt; General Setup%s".
 		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
 		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
 		" is checked."), '<a href="system.php">', '</a>'), 'info', false); ?>

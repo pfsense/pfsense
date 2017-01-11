@@ -263,11 +263,12 @@ if ($_POST) {
 
 		write_config();
 
-		$retval = filter_configure();
-		$savemsg = get_std_save_message($retval);
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= filter_configure();
 
 		if ($restart_webgui) {
-			$savemsg .= sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
+			$extra_save_msg = sprintf("<br />" . gettext("One moment...redirecting to %s in 20 seconds."), $url);
 		}
 
 		setup_serial_port();
@@ -287,8 +288,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 }
 
 $tab_array = array();

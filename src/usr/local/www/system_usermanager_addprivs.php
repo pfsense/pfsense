@@ -85,8 +85,7 @@ if ($_POST) {
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
-		$retval = write_config();
-		$savemsg = get_std_save_message($retval);
+		write_config();
 
 		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 
@@ -125,19 +124,10 @@ function get_root_priv_item_text() {
 	return($priv_text);
 }
 
-/* if ajax is calling, give them an update message */
-if (isAjax()) {
-	print_info_box($savemsg, 'success');
-}
-
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

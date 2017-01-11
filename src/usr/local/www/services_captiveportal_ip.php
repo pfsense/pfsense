@@ -92,10 +92,6 @@ if ($_GET['act'] == "del" && !empty($cpzone) && isset($cpzoneid)) {
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
-
 $tab_array = array();
 $tab_array[] = array(gettext("Configuration"), false, "services_captiveportal.php?zone={$cpzone}");
 $tab_array[] = array(gettext("MACs"), false, "services_captiveportal_mac.php?zone={$cpzone}");

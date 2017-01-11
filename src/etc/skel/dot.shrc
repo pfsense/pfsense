@@ -32,6 +32,12 @@ if [ "${HTTP_PROXY_AUTH_USER}" != "" ] && [ "${HTTP_PROXY_AUTH_PASS}" != "" ]; t
 	export HTTP_PROXY_AUTH
 fi
 
+USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+if [ "${USE_MFS_TMPVAR}" = "true" ]; then
+	export PKG_DBDIR='/root/var/db/pkg'
+	export PKG_CACHEDIR='/root/var/cache/pkg'
+fi
+
 # Detect interactive logins and display the shell
 unset _interactive
 if [ -n "${SSH_TTY}" ]; then

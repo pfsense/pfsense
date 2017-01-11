@@ -42,15 +42,10 @@ $a_igmpproxy = &$config['igmpproxy']['igmpentry'];
 if ($_POST) {
 	$pconfig = $_POST;
 
+	$changes_applied = true;
 	$retval = 0;
 	/* reload all components that use igmpproxy */
-	$retval = services_igmpproxy_configure();
-
-	if (stristr($retval, "error") <> true) {
-		$savemsg = get_std_save_message($retval);
-	} else {
-		$savemsg = $retval;
-	}
+	$retval |= services_igmpproxy_configure();
 
 	clear_subsystem_dirty('igmpproxy');
 }
@@ -68,8 +63,8 @@ if ($_GET['act'] == "del") {
 $pgtitle = array(gettext("Services"), gettext("IGMP Proxy"));
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('igmpproxy')) {

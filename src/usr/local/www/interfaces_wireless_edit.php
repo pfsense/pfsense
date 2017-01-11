@@ -125,7 +125,7 @@ if ($_POST) {
 			} else {
 				if (isset($id) && $a_clones[$id]) {
 					if ($clone['if'] != $a_clones[$id]['if']) {
-						mwexec("/sbin/ifconfig " . $a_clones[$id]['cloneif'] . " destroy");
+						pfSense_interface_destroy($a_clones[$id]['cloneif']);
 					}
 					$input_errors[] = sprintf(gettext("Created with id %s"), $id);
 					$a_clones[$id] = $clone;

@@ -48,15 +48,8 @@ if ($_POST) {
 		$retval = 0;
 
 		/* reload all components that use aliases */
-		$retval = filter_configure();
+		$retval |= filter_configure();
 
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-			$class = "success";
-		} else {
-			$savemsg = $retval;
-			$class = "danger";
-		}
 		if ($retval == 0) {
 			clear_subsystem_dirty('aliases');
 		}
@@ -99,8 +92,7 @@ if ($_GET['act'] == "del") {
 		// Static routes
 		find_alias_reference(array('staticroutes', 'route'), array('network'), $alias_name, $is_alias_referenced, $referenced_by);
 		if ($is_alias_referenced == true) {
-			$savemsg = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
-			$class = "danger";
+			$delete_error = sprintf(gettext("Cannot delete alias. Currently in use by %s."), htmlspecialchars($referenced_by));
 		} else {
 			if (preg_match("/urltable/i", $a_aliases[$_GET['id']]['type'])) {
 				// this is a URL table type alias, delete its file as well
@@ -173,8 +165,11 @@ $shortcut_section = "aliases";
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($delete_error) {
+	print_info_box($delete_error, 'danger');
+}
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('aliases')) {

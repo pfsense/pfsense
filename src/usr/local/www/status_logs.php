@@ -99,8 +99,8 @@ if (in_array($logfile, array('system', 'gateways', 'routing', 'resolver', 'wirel
 }
 include("head.inc");
 
-if (!$input_errors && $savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval, $extra_save_msg);
 	$manage_log_active = false;
 }
 

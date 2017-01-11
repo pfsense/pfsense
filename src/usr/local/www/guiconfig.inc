@@ -158,6 +158,12 @@ $radius_srvcs = array(
 	'auth' => gettext("Authentication"),
 	'acct' => gettext("Accounting"));
 
+$radius_protocol = array(
+	'PAP' => "PAP",
+	'CHAP_MD5' => "MD5-CHAP",
+	'MSCHAPv1' => "MS-CHAPv1",
+	'MSCHAPv2' => "MS-CHAPv2");
+
 $netbios_nodetypes = array(
 	'0' => "none",
 	'1' => "b-node",

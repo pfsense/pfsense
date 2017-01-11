@@ -178,6 +178,7 @@ if ($act == "edit") {
 		}
 
 		if ($pconfig['type'] == "radius") {
+			$pconfig['radius_protocol'] = $a_server[$id]['radius_protocol'];
 			$pconfig['radius_host'] = $a_server[$id]['host'];
 			$pconfig['radius_auth_port'] = $a_server[$id]['radius_auth_port'];
 			$pconfig['radius_acct_port'] = $a_server[$id]['radius_acct_port'];
@@ -208,6 +209,7 @@ if ($act == "edit") {
 if ($act == "new") {
 	$pconfig['ldap_protver'] = 3;
 	$pconfig['ldap_anon'] = true;
+	$pconfig['radius_protocol'] = "MSCHAPv2";
 	$pconfig['radius_srvcs'] = "both";
 	$pconfig['radius_auth_port'] = "1812";
 	$pconfig['radius_acct_port'] = "1813";
@@ -247,10 +249,11 @@ if ($_POST) {
 	}
 
 	if ($pconfig['type'] == "radius") {
-		$reqdfields = explode(" ", "name type radius_host radius_srvcs");
+		$reqdfields = explode(" ", "name type radius_protocol radius_host radius_srvcs");
 		$reqdfieldsn = array(
 			gettext("Descriptive name"),
 			gettext("Type"),
+			gettext("Radius Protocol"),
 			gettext("Hostname or IP"),
 			gettext("Services"));
 
@@ -353,6 +356,7 @@ if ($_POST) {
 
 		if ($server['type'] == "radius") {
 
+			$server['radius_protocol'] = $pconfig['radius_protocol'];
 			$server['host'] = $pconfig['radius_host'];
 
 			if ($pconfig['radius_secret']) {
@@ -723,6 +727,13 @@ $form->add($section);
 // ==== RADIUS section ========================================================
 $section = new Form_Section('RADIUS Server Settings');
 $section->addClass('toggle-radius collapse');
+
+$section->addInput(new Form_Select(
+	'radius_protocol',
+	'Protocol',
+	$pconfig['radius_protocol'],
+	$radius_protocol
+));
 
 $section->addInput(new Form_Input(
 	'radius_host',

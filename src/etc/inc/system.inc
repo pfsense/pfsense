@@ -328,6 +328,60 @@ function get_nameservers() {
 	return $master_list;
 }
 
+/* Create localhost + local interfaces entries for /etc/hosts */
+function system_hosts_local_entries() {
+	global $config;
+
+	$syscfg = $config['system'];
+
+	$hosts = array();
+	$hosts[] = array(
+	    'ipaddr' => '127.0.0.1',
+	    'fqdn' => 'localhost',
+	    'name' => 'localhost.' . $syscfg['domain']
+	);
+	$hosts[] = array(
+	    'ipaddr' => '::1',
+	    'fqdn' => 'localhost',
+	    'name' => 'localhost.' . $syscfg['domain']
+	);
+
+	if ($config['interfaces']['lan']) {
+		$sysiflist = array('lan' => "lan");
+	} else {
+		$sysiflist = get_configured_interface_list();
+	}
+
+	$hosts_if_found = false;
+	$local_fqdn = "{$syscfg['hostname']}.{$syscfg['domain']}";
+	foreach ($sysiflist as $sysif) {
+		if ($sysif != 'lan' && interface_has_gateway($sysif)) {
+			continue;
+		}
+		$cfgip = get_interface_ip($sysif);
+		if (is_ipaddrv4($cfgip)) {
+			$hosts[] = array(
+			    'ipaddr' => $cfgip,
+			    'fqdn' => $local_fqdn
+			);
+			$hosts_if_found = true;
+		}
+		$cfgipv6 = get_interface_ipv6($sysif);
+		if (is_ipaddrv6($cfgipv6)) {
+			$hosts[] = array(
+			    'ipaddr' => $cfgipv6,
+			    'fqdn' => $local_fqdn
+			);
+			$hosts_if_found = true;
+		}
+		if ($hosts_if_found == true) {
+			break;
+		}
+	}
+
+	return $hosts;
+}
+
 function system_hosts_generate() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -335,7 +389,6 @@ function system_hosts_generate() {
 		echo "system_hosts_generate() being called $mt\n";
 	}
 
-	$syscfg = $config['system'];
 	// prefer dnsmasq for hosts generation where it's enabled. It relies
 	// on hosts for name resolution of its overrides, unbound does not.
 	if (isset($config['dnsmasq']) && isset($config['dnsmasq']['enable'])) {
@@ -344,45 +397,18 @@ function system_hosts_generate() {
 		$dnsmasqcfg = $config['unbound'];
 	}
 
-	$hosts = "127.0.0.1	localhost localhost.{$syscfg['domain']}\n";
-	$hosts .= "::1		localhost localhost.{$syscfg['domain']}\n";
+	$syscfg = $config['system'];
+	$hosts = "";
 	$lhosts = "";
 	$dhosts = "";
 
-	if ($config['interfaces']['lan']) {
-		$cfgip = get_interface_ip("lan");
-		if (is_ipaddrv4($cfgip)) {
-			$hosts .= "{$cfgip}	{$syscfg['hostname']}." .
-			    "{$syscfg['domain']}\n";
+	$hosts_array = system_hosts_local_entries();
+	foreach ($hosts_array as $host) {
+		$hosts .= "{$host['ipaddr']}\t{$host['fqdn']}";
+		if (!empty($host['name'])) {
+			$hosts .= " {$host['name']}";
 		}
-		$cfgipv6 = get_interface_ipv6("lan");
-		if (is_ipaddrv6($cfgipv6)) {
-			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}." .
-			    "{$syscfg['domain']}\n";
-		}
-	} else {
-		$sysiflist = get_configured_interface_list();
-		$hosts_if_found = false;
-		foreach ($sysiflist as $sysif) {
-			if (interface_has_gateway($sysif)) {
-				continue;
-			}
-			$cfgip = get_interface_ip($sysif);
-			if (is_ipaddrv4($cfgip)) {
-				$hosts .= "{$cfgip}	{$syscfg['hostname']}" .
-				    ".{$syscfg['domain']}\n";
-				$hosts_if_found = true;
-			}
-			$cfgipv6 = get_interface_ipv6($sysif);
-			if (is_ipaddrv6($cfgipv6)) {
-				$hosts .= "{$cfgipv6}	{$syscfg['hostname']}" .
-				    ".{$syscfg['domain']}\n";
-				$hosts_if_found = true;
-			}
-			if ($hosts_if_found == true) {
-				break;
-			}
-		}
+		$hosts .= "\n";
 	}
 
 	if (isset($dnsmasqcfg['enable'])) {

@@ -487,6 +487,26 @@ function system_hosts_dhcpd_entries() {
 	return $hosts;
 }
 
+/* Concatenate local, dnsmasq/unbound and dhcpd/dhcpdv6 hosts entries */
+function system_hosts_entries($dnscfg) {
+	$local = system_hosts_local_entries();
+
+	$dns = array();
+	$dhcpd = array();
+	if (isset($dnscfg['enable'])) {
+		$dns = system_hosts_override_entries($dnscfg);
+		if (isset($dnscfg['regdhcpstatic'])) {
+			$dhcpd = system_hosts_dhcpd_entries();
+		}
+	}
+
+	if (isset($dnscfg['dhcpfirst'])) {
+		return array_merge($local, $dns, $dhcpd);
+	} else {
+		return array_merge($local, $dhcpd, $dns);
+	}
+}
+
 function system_hosts_generate() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -507,7 +527,7 @@ function system_hosts_generate() {
 	$lhosts = "";
 	$dhosts = "";
 
-	$hosts_array = system_hosts_local_entries();
+	$hosts_array = system_hosts_entries($dnsmasqcfg);
 	foreach ($hosts_array as $host) {
 		$hosts .= "{$host['ipaddr']}\t{$host['fqdn']}";
 		if (!empty($host['name'])) {
@@ -516,29 +536,6 @@ function system_hosts_generate() {
 		$hosts .= "\n";
 	}
 	unset($hosts_array);
-
-	if (isset($dnsmasqcfg['enable'])) {
-		$hosts_array = system_hosts_override_entries($dnsmasqcfg);
-		foreach ($hosts_array as $host) {
-			$lhosts .= "{$host['ipaddr']}\t{$host['fqdn']}\n";
-		}
-		unset($hosts_array);
-
-		if (isset($dnsmasqcfg['regdhcpstatic'])) {
-			$hosts_array = system_hosts_dhcpd_entries();
-			foreach ($hosts_array as $host) {
-				$dhosts .= "{$host['ipaddr']}\t" .
-				    "{$host['fqdn']}\n";
-			}
-			unset($hosts_array);
-		}
-
-		if (isset($dnsmasqcfg['dhcpfirst'])) {
-			$hosts .= $dhosts . $lhosts;
-		} else {
-			$hosts .= $lhosts . $dhosts;
-		}
-	}
 
 	$fd = fopen("{$g['etc_path']}/hosts", "w");
 	if (!$fd) {

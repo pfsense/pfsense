@@ -1819,35 +1819,37 @@ function system_ntp_configure() {
 	if (is_array($config['ntpd']['restrictions']) && is_array($config['ntpd']['restrictions']['row'])) {
 		$networkacl = $config['ntpd']['restrictions']['row'];
 		foreach ($networkacl as $acl) {
-			$ntpcfg .= "\nrestrict ";
+			$restrict = "";
 			if (is_ipaddrv6($acl['acl_network'])) {
-				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
+				$restrict .= "{$acl['acl_network']} mask " . gen_subnet_mask_v6($acl['mask']) . " ";
 			} elseif (is_ipaddrv4($acl['acl_network'])) {
-				$ntpcfg .= "{$acl['acl_network']} mask " . gen_subnet_mask($acl['mask']) . " ";
+				$restrict .= "{$acl['acl_network']} mask " . gen_subnet_mask($acl['mask']) . " ";
 			} else {
 				continue;
 			}
 			if (!empty($acl['kod'])) {
-				$ntpcfg .= ' kod limited';
+				$restrict .= ' kod limited';
 			}
 			if (!empty($acl['nomodify'])) {
-				$ntpcfg .= ' nomodify';
+				$restrict .= ' nomodify';
 			}
 			if (!empty($acl['noquery'])) {
-				$ntpcfg .= ' noquery';
+				$restrict .= ' noquery';
 			}
 			if (!empty($acl['nopeer'])) {
-				$ntpcfg .= ' nopeer';
+				$restrict .= ' nopeer';
 			}
 			if (!empty($acl['noserve'])) {
-				$ntpcfg .= ' noserve';
+				$restrict .= ' noserve';
 			}
 			if (!empty($acl['notrap'])) {
-				$ntpcfg .= ' notrap';
+				$restrict .= ' notrap';
+			}
+			if (!empty($restrict)) {
+				$ntpcfg .= "\nrestrict {$restrict} ";
 			}
 		}
 	}
-	$ntpcfg .= "\n";
 	/* End Custom Access Restrictions */
 
 	/* A leapseconds file is really only useful if this clock is stratum 1 */

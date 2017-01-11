@@ -352,30 +352,35 @@ function system_hosts_generate() {
 	if ($config['interfaces']['lan']) {
 		$cfgip = get_interface_ip("lan");
 		if (is_ipaddrv4($cfgip)) {
-			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
+			$hosts .= "{$cfgip}	{$syscfg['hostname']}." .
+			    "{$syscfg['domain']}\n";
 		}
 		$cfgipv6 = get_interface_ipv6("lan");
 		if (is_ipaddrv6($cfgipv6)) {
-			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
+			$hosts .= "{$cfgipv6}	{$syscfg['hostname']}." .
+			    "{$syscfg['domain']}\n";
 		}
 	} else {
 		$sysiflist = get_configured_interface_list();
 		$hosts_if_found = false;
 		foreach ($sysiflist as $sysif) {
-			if (!interface_has_gateway($sysif)) {
-				$cfgip = get_interface_ip($sysif);
-				if (is_ipaddrv4($cfgip)) {
-					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
-					$hosts_if_found = true;
-				}
-				$cfgipv6 = get_interface_ipv6($sysif);
-				if (is_ipaddrv6($cfgipv6)) {
-					$hosts .= "{$cfgipv6}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
-					$hosts_if_found = true;
-				}
-				if ($hosts_if_found == true) {
-					break;
-				}
+			if (interface_has_gateway($sysif)) {
+				continue;
+			}
+			$cfgip = get_interface_ip($sysif);
+			if (is_ipaddrv4($cfgip)) {
+				$hosts .= "{$cfgip}	{$syscfg['hostname']}" .
+				    ".{$syscfg['domain']}\n";
+				$hosts_if_found = true;
+			}
+			$cfgipv6 = get_interface_ipv6($sysif);
+			if (is_ipaddrv6($cfgipv6)) {
+				$hosts .= "{$cfgipv6}	{$syscfg['hostname']}" .
+				    ".{$syscfg['domain']}\n";
+				$hosts_if_found = true;
+			}
+			if ($hosts_if_found == true) {
+				break;
 			}
 		}
 	}
@@ -386,60 +391,106 @@ function system_hosts_generate() {
 		}
 
 		foreach ($dnsmasqcfg['hosts'] as $host) {
+			$lhosts .= "{$host['ip']}\t";
 			if ($host['host'] || $host['host'] == "0") {
-				$lhosts .= "{$host['ip']}	{$host['host']}.{$host['domain']}\n";
-			} else {
-				$lhosts .= "{$host['ip']}	{$host['domain']}\n";
+				$lhosts .= "{$host['host']}.";
 			}
-			if (!is_array($host['aliases']) || !is_array($host['aliases']['item'])) {
+			$lhosts .= "{$host['domain']}\n";
+
+			if (!is_array($host['aliases']) ||
+			    !is_array($host['aliases']['item'])) {
 				continue;
 			}
+
 			foreach ($host['aliases']['item'] as $alias) {
+				$lhosts .= "{$host['ip']}\t";
 				if ($alias['host'] || $alias['host'] == "0") {
-					$lhosts .= "{$host['ip']}	{$alias['host']}.{$alias['domain']}\n";
+					$lhosts .= "{$alias['host']}.";
+				}
+				$lhosts .= "{$alias['domain']}\n";
+			}
+		}
+
+		if (is_array($config['dhcpd'])) {
+			$conf_dhcpd = $config['dhcpd'];
+		} else {
+			$conf_dhcpd = array();
+		}
+
+		foreach ($conf_dhcpd as $dhcpif => $dhcpifconf) {
+			if (!isset($dnsmasqcfg['regdhcpstatic']) ||
+			    !is_array($dhcpifconf['staticmap']) ||
+			    !isset($dhcpifconf['enable'])) {
+				continue;
+			}
+			foreach ($dhcpifconf['staticmap'] as $host) {
+				if (!$host['ipaddr'] ||
+				    !$host['hostname']) {
+					continue;
+				}
+
+				$dhosts .= $host['ipaddr'] . "\t" .
+				    $host['hostname'] . ".";
+				if ($host['domain']) {
+					$dhosts .= $host['domain'];
+				} elseif ($dhcpifconf['domain']) {
+					$dhosts .= $dhcpifconf['domain'];
 				} else {
-					$lhosts .= "{$host['ip']}	{$alias['domain']}\n";
+					$dhosts .= $syscfg['domain'];
 				}
+				$dhosts .= "\n";
 			}
 		}
-		if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpd'])) {
-			foreach ($config['dhcpd'] as $dhcpif => $dhcpifconf) {
-				if (is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable'])) {
-					foreach ($dhcpifconf['staticmap'] as $host) {
-						if ($host['ipaddr'] && $host['hostname'] && $host['domain']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$host['domain']}\n";
-						} else if ($host['ipaddr'] && $host['hostname'] && $dhcpifconf['domain']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$dhcpifconf['domain']}\n";
-						} else if ($host['ipaddr'] && $host['hostname']) {
-							$dhosts .= "{$host['ipaddr']}	{$host['hostname']}.{$syscfg['domain']}\n";
-						}
-					}
+		unset($conf_dhcpd);
+
+		if (is_array($config['dhcpdv6'])) {
+			$conf_dhcpdv6 = $config['dhcpdv6'];
+		} else {
+			$conf_dhcpdv6 = array();
+		}
+
+		foreach ($conf_dhcpdv6 as $dhcpif => $dhcpifconf) {
+			if (!isset($dnsmasqcfg['regdhcpstatic']) ||
+			    !is_array($dhcpifconf['staticmap']) ||
+			    !isset($dhcpifconf['enable'])) {
+				continue;
+			}
+
+			if (isset($config['interfaces'][$dhcpif]['ipaddrv6']) &&
+			    $config['interfaces'][$dhcpif]['ipaddrv6'] ==
+			    'track6') {
+				$isdelegated = true;
+			} else {
+				$isdelegated = false;
+			}
+
+			foreach ($dhcpifconf['staticmap'] as $host) {
+				$ipaddrv6 = $host['ipaddrv6'];
+				if (!$ipaddrv6 || !$host['hostname']) {
+					continue;
 				}
+				if ($isdelegated) {
+					/*
+					 * We are always in an "end-user" subnet
+					 * here, which all are /64 for IPv6.
+					 */
+					$ipaddrv6 = merge_ipv6_delegated_prefix(
+					    get_interface_ipv6($dhcpif),
+					    $ipaddrv6, 64);
+				}
+				$dhosts .= $ipaddrv6 . "\t" .
+				    $host['hostname'] . ".";
+				if ($host['domain']) {
+					$dhosts .= $host['domain'];
+				} else if ($dhcpifconf['domain']) {
+					$dhosts .= $dhcpifconf['domain'];
+				} else {
+					$dhosts .= $syscfg['domain'];
+				}
+				$dhosts .= "\n";
 			}
 		}
-		if (isset($dnsmasqcfg['regdhcpstatic']) && is_array($config['dhcpdv6'])) {
-			foreach ($config['dhcpdv6'] as $dhcpif => $dhcpifconf) {
-				if (is_array($dhcpifconf['staticmap']) && isset($dhcpifconf['enable'])) {
-					$isdelegated = $config['interfaces'][$dhcpif]['ipaddrv6'] == 'track6';
-					foreach ($dhcpifconf['staticmap'] as $host) {
-						$ipaddrv6 = $host['ipaddrv6'];
-						if ($ipaddrv6 && $host['hostname']) {
-							if ($isdelegated) {
-								// We are always in an "end-user" subnet here, which all are /64 for IPv6.
-								$ipaddrv6 = merge_ipv6_delegated_prefix(get_interface_ipv6($dhcpif), $ipaddrv6, 64);
-							}
-							if ($host['domain']) {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$host['domain']}\n";
-							} else if ($dhcpifconf['domain']) {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$dhcpifconf['domain']}\n";
-							} else {
-								$dhosts .= "{$ipaddrv6}	{$host['hostname']}.{$syscfg['domain']}\n";
-							}
-						}
-					}
-				}
-			}
-		}
+		unset($conf_dhcpdv6);
 
 		if (isset($dnsmasqcfg['dhcpfirst'])) {
 			$hosts .= $dhosts . $lhosts;
@@ -449,8 +500,8 @@ function system_hosts_generate() {
 	}
 
 	/*
-	 * Do not remove this because dhcpleases monitors with kqueue it needs to be
-	 * killed before writing to hosts files.
+	 * Do not remove this because dhcpleases monitors with kqueue it needs
+	 * to be killed before writing to hosts files.
 	 */
 	if (file_exists("{$g['varrun_path']}/dhcpleases.pid")) {
 		sigkillbypid("{$g['varrun_path']}/dhcpleases.pid", "TERM");
@@ -459,7 +510,9 @@ function system_hosts_generate() {
 
 	$fd = fopen("{$g['varetc_path']}/hosts", "w");
 	if (!$fd) {
-		log_error(gettext("Error: cannot open hosts file in system_hosts_generate()."));
+		log_error(gettext(
+		    "Error: cannot open hosts file in system_hosts_generate()."
+		    ));
 		return 1;
 	}
 	fwrite($fd, $hosts);

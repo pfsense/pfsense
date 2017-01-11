@@ -87,14 +87,15 @@ function get_priv_files($directory) {
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
+	if (!is_dir("/etc/inc/priv/{$file}") && substr($file, -4) == ".inc") {
 		include_once("/etc/inc/priv/{$file}");
 	}
 }
 if (is_dir("/usr/local/pkg/priv")) {
 	$dir_array = get_priv_files("/usr/local/pkg/priv");
 	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
+		if (!is_dir("/usr/local/pkg/priv/{$file}") &&
+		    substr($file, -4) == ".inc") {
 			include_once("/usr/local/pkg/priv/{$file}");
 		}
 	}

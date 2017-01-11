@@ -178,6 +178,7 @@ if ($_POST['apply']) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Queue"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper";
 
 include("head.inc");

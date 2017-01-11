@@ -274,9 +274,11 @@ function build_priv_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
+$pglinks = array("", "system_usermanager.php", "system_groupmanager.php");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 
 include("head.inc");

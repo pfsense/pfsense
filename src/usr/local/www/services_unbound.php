@@ -236,6 +236,7 @@ function build_if_list($selectedifs) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "resolver";
 
 include_once("head.inc");

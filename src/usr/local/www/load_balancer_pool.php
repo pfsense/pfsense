@@ -84,6 +84,7 @@ for ($i = 0; isset($config['load_balancer']['lbpool'][$i]); $i++) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Pools"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");

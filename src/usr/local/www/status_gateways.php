@@ -39,6 +39,7 @@ $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateways"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
 include("head.inc");
 

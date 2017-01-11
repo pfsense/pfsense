@@ -458,6 +458,7 @@ if (isset($_POST) && is_array($_POST) && count($_POST) > 0) {
 } // end if ($_POST)
 
 $pgtitle = array(gettext("Interfaces"), gettext("PPPs"), gettext("Edit"));
+$pglinks = array("", "interfaces_ppps.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

@@ -166,6 +166,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Configuration"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "l2tps";
 include("head.inc");
 

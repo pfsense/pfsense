@@ -186,6 +186,7 @@ if (empty($pconfig['interface'])) {
 	$pconfig['interface'] = explode(",", $pconfig['interface']);
 }
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Settings"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
 

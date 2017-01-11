@@ -163,6 +163,7 @@ function build_parent_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("Wireless"), gettext("Edit"));
+$pglinks = array("", "interfaces_wireless.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

@@ -159,6 +159,7 @@ if ($_POST) {
 $pconfig = &$config['ntpd'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
+$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
 

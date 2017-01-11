@@ -73,6 +73,7 @@ if (isset($_POST['filter']) && isset($_POST['killfilter'])) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("States"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 ?>
 

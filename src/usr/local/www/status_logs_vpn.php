@@ -82,6 +82,7 @@ if ($filtertext) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("VPN"), gettext($allowed_logs[$logfile]["name"]));
+$pglinks = array("", "status_logs.php", "status_logs_vpn.php", "@self");
 include("head.inc");
 
 if (!$input_errors && $savemsg) {

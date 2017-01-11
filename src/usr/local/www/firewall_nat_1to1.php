@@ -119,6 +119,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("1:1"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
 if ($_POST['apply']) {

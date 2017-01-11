@@ -36,6 +36,7 @@ require_once("pkg-utils.inc");
 // if upgrade in progress, alert user
 if (is_subsystem_dirty('packagelock')) {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"));
+	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box("Please wait while packages are reinstalled in the background.");
 	include("foot.inc");
@@ -127,6 +128,7 @@ function get_pkg_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Available Packages"));
+$pglinks = array("", "pkg_mgr_installed.php", "@self");
 include("head.inc");
 
 $tab_array = array();

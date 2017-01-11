@@ -312,7 +312,7 @@ function system_hosts_generate() {
 
 	if ($config['interfaces']['lan']) {
 		$cfgip = get_interface_ip("lan");
-		if (is_ipaddr($cfgip)) {
+		if (is_ipaddrv4($cfgip)) {
 			$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 		}
 		$cfgipv6 = get_interface_ipv6("lan");
@@ -325,7 +325,7 @@ function system_hosts_generate() {
 		foreach ($sysiflist as $sysif) {
 			if (!interface_has_gateway($sysif)) {
 				$cfgip = get_interface_ip($sysif);
-				if (is_ipaddr($cfgip)) {
+				if (is_ipaddrv4($cfgip)) {
 					$hosts .= "{$cfgip}	{$syscfg['hostname']}.{$syscfg['domain']}\n";
 					$hosts_if_found = true;
 				}

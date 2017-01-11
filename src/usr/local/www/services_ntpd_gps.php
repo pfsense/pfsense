@@ -154,8 +154,9 @@ if ($_POST) {
 
 	write_config(gettext("Updated NTP GPS Settings"));
 
-	$retval = system_ntp_configure();
-	$savemsg = get_std_save_message($retval);
+	$changes_applied = true;
+	$retval = 0;
+	$retval |= system_ntp_configure();
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -189,8 +190,13 @@ function build_nmea_list() {
 
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
+$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
+}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");

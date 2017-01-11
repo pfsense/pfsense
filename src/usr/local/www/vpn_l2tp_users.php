@@ -27,6 +27,7 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"));
+$pglinks = array("", "vpn_l2tp.php", "@self");
 $shortcut_section = "l2tps";
 
 require_once("guiconfig.inc");
@@ -44,9 +45,8 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 		if (!is_subsystem_dirty('rebootreq')) {
-			$retval = vpn_l2tp_configure();
+			$retval |= vpn_l2tp_configure();
 		}
-		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			if (is_subsystem_dirty('l2tpusers')) {
 				clear_subsystem_dirty('l2tpusers');
@@ -67,8 +67,8 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (isset($config['l2tp']['radius']['enable'])) {

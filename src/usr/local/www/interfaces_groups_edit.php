@@ -31,6 +31,7 @@ require_once("guiconfig.inc");
 require_once("functions.inc");
 
 $pgtitle = array(gettext("Interfaces"), gettext("Interface Groups"), gettext("Edit"));
+$pglinks = array("", "interfaces_groups.php", "@self");
 $shortcut_section = "interfaces";
 
 if (!is_array($config['ifgroups']['ifgroupentry'])) {

@@ -48,6 +48,7 @@ $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -505,12 +506,15 @@ if ($pkg['title'] != "") {
 
 		foreach ($title as $subtitle) {
 			$pgtitle[] = gettext($subtitle);
+			$pglinks[] = ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']);
 		}
 	} else {
 		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
+		$pglinks = array("", ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']));
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
+	$pglinks = array("", "@self");
 }
 
 // Create any required tabs
@@ -526,6 +530,7 @@ if ($pkg['tabs'] != "") {
 		if (isset($tab['active'])) {
 			$active = true;
 			$pgtitle[] = $tab['text'] ;
+			$pglinks[] = ((strlen($tab['url']) > 0) ? $tab['url'] : "@self");
 		} else {
 			$active = false;
 		}

@@ -176,6 +176,7 @@ function build_if_list() {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("NPt"), gettext("Edit"));
+$pglinks = array("", "firewall_nat.php", "firewall_nat_npt.php", "@self");
 include("head.inc");
 
 if ($input_errors) {

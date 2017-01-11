@@ -57,6 +57,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 $actsmbl = array('pass' => '<i class="fa fa-check text-success"></i>&nbsp;' . gettext("Pass"),
@@ -76,7 +77,6 @@ if ($_POST) {
 				mwexec("/sbin/ipfw {$g['tmp_path']}/passthrumac_gui");
 				@unlink("{$g['tmp_path']}/passthrumac_gui");
 			}
-			$savemsg = get_std_save_message($retval);
 			if ($retval == 0) {
 				clear_subsystem_dirty('passthrumac');
 			}
@@ -152,8 +152,8 @@ if ($_GET['act'] == "del") {
 
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('passthrumac')) {

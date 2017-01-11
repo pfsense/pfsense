@@ -113,8 +113,7 @@ domains_sort();
 if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
-		$retval = services_dnsmasq_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= services_dnsmasq_configure();
 
 		// Reload filter (we might need to sync to CARP hosts)
 		filter_configure();
@@ -232,8 +231,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('hosts')) {

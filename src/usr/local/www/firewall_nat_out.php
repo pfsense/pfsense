@@ -82,12 +82,6 @@ if ($_POST['apply']) {
 	$retval = 0;
 	$retval |= filter_configure();
 
-	if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message($retval);
-	} else {
-		$savemsg = $retval;
-	}
-
 	if ($retval == 0) {
 		clear_subsystem_dirty('natconf');
 		clear_subsystem_dirty('filter');
@@ -139,7 +133,7 @@ if ($_POST['save']) {
 				}
 			}
 		}
-		$savemsg = gettext("Default rules for each interface have been created.");
+		$default_rules_msg = gettext("Default rules for each interface have been created.");
 		unset($FilterIflist, $GatewaysList);
 	}
 
@@ -204,10 +198,15 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Outbound"));
+$pglinks = array("", "firewall_nat.php", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($default_rules_msg) {
+	print_info_box($default_rules_msg, 'success');
+}
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {

@@ -68,6 +68,7 @@ $pconfig['webguihostnamemenu'] = $config['system']['webgui']['webguihostnamemenu
 $pconfig['dnslocalhost'] = isset($config['system']['dnslocalhost']);
 $pconfig['dashboardperiod'] = isset($config['widgets']['period']) ? $config['widgets']['period']:"10";
 $pconfig['loginshowhost'] = isset($config['system']['webgui']['loginshowhost']);
+$pconfig['requirestatefilter'] = isset($config['system']['webgui']['requirestatefilter']);
 
 if (!$pconfig['timezone']) {
 	if (isset($g['default_timezone']) && !empty($g['default_timezone'])) {
@@ -176,6 +177,8 @@ if ($_POST) {
 	} else {
 		unset($config['system']['webgui']['dashboardcolumns']);
 	}
+
+	$config['system']['webgui']['requirestatefilter'] = $_POST['requirestatefilter'] ? true : false;
 
 	if ($_POST['hostname']) {
 		if (!is_hostname($_POST['hostname'])) {
@@ -346,8 +349,9 @@ if ($_POST) {
 			write_config($changedesc);
 		}
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_hostname_configure();
+		$retval |= system_hostname_configure();
 		$retval |= system_hosts_generate();
 		$retval |= system_resolvconf_generate();
 		if (isset($config['dnsmasq']['enable'])) {
@@ -364,8 +368,6 @@ if ($_POST) {
 
 		// Reload the filter - plugins might need to be run.
 		$retval |= filter_configure();
-
-		$savemsg = get_std_save_message($retval);
 	}
 
 	unset($ignore_posted_dnsgw);
@@ -378,8 +380,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 ?>
 <div id="container">
@@ -520,6 +522,7 @@ gen_associatedpanels_fields(
 	$pconfig['systemlogsfilterpanel'],
 	$pconfig['systemlogsmanagelogpanel'],
 	$pconfig['statusmonitoringsettingspanel']);
+gen_requirestatefilter_field($section, $pconfig['requirestatefilter']);
 gen_webguileftcolumnhyper_field($section, $pconfig['webguileftcolumnhyper']);
 
 $section->addInput(new Form_Checkbox(

@@ -29,6 +29,7 @@
 ##|*IDENT=page-system-groupmanager
 ##|*NAME=System: Group Manager
 ##|*DESCR=Allow access to the 'System: Group Manager' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_groupmanager.php*
 ##|-PRIV
 
@@ -234,13 +235,31 @@ function build_priv_table() {
 	$privhtml .=		'</thead>';
 	$privhtml .=		'<tbody>';
 
+	$user_has_root_priv = false;
+
 	foreach (get_user_privdesc($a_group[$id]) as $i => $priv) {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
+		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
+			$privhtml .=			' ' . gettext('(admin privilege)');
+			$user_has_root_priv = true;
+		}
+		$privhtml .=			'</td>';
 		$privhtml .=			'<td><a class="fa fa-trash" title="' . gettext('Delete Privilege') . '"	href="system_groupmanager.php?act=delpriv&amp;groupid=' . $id . '&amp;privid=' . $i . '"></a></td>';
 		$privhtml .=		'</tr>';
 
+	}
+
+	if ($user_has_root_priv) {
+		$privhtml .=		'<tr>';
+		$privhtml .=			'<td colspan="2">';
+		$privhtml .=				'<b>' . gettext('Security notice: Users in this group effectively have administrator-level access') . '</b>';
+		$privhtml .=			'</td>';
+		$privhtml .=			'<td>';
+		$privhtml .=			'</td>';
+		$privhtml .=		'</tr>';
+		
 	}
 
 	$privhtml .=		'</tbody>';
@@ -255,9 +274,11 @@ function build_priv_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Groups"));
+$pglinks = array("", "system_usermanager.php", "system_groupmanager.php");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
+	$pglinks[] = "@self";
 }
 
 include("head.inc");

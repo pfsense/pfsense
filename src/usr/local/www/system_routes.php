@@ -61,12 +61,11 @@ if ($_POST) {
 			@unlink("{$g['tmp_path']}/.system_routes.apply");
 		}
 
-		$retval = system_routing_configure();
+		$retval |= system_routing_configure();
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
 		setup_gateways_monitor();
 
-		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			clear_subsystem_dirty('staticroutes');
 		}
@@ -211,6 +210,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Static Routes"));
+$pglinks = array("", "system_gateways.php", "@self");
 $shortcut_section = "routing";
 
 include("head.inc");
@@ -218,8 +218,8 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 if (is_subsystem_dirty('staticroutes')) {
 	print_apply_box(gettext("The static route configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));

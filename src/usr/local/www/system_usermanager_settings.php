@@ -24,6 +24,7 @@
 ##|*IDENT=page-system-usermanager-settings
 ##|*NAME=System: User Manager: Settings
 ##|*DESCR=Allow access to the 'System: User Manager: Settings' page.
+##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager_settings.php*
 ##|-PRIV
 
@@ -106,6 +107,7 @@ $pconfig['auth_refresh_time'] = $config['system']['webgui']['auth_refresh_time']
 
 // Page title for main admin
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Settings"));
+$pglinks = array("", "system_usermanager.php", "@self");
 
 $save_and_test = false;
 

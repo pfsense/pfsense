@@ -586,8 +586,10 @@ function manage_log_code() {
 		return;
 	}
 
-	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $savemsg;
+	global $logfile, $specific_log, $config, $pconfig, $save_settings, $input_errors, $extra_save_msg, $retval, $changes_applied;
 
+	$changes_applied = false;
+	$extra_save_msg = "";
 	$specific_log = basename($logfile) . '_settings';
 
 	// Common to All Logs
@@ -713,28 +715,27 @@ function manage_log_code() {
 				}
 			}
 
+			$retval = 0;
+			$changes_applied = true;
 
 		// If any of the logging settings were changed then backup and sync (standard write_config).  Otherwise only write config (don't backup, don't sync).
-		if ($logging_changed) {
-			write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
-			$retval = 0;
-			$retval = system_syslogd_start();
-			$savemsg = gettext("The changes have been applied successfully.");
-		} else {
-			write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
-			$savemsg = '';
-		}
+			if ($logging_changed) {
+				write_config($desc = gettext("Log Display Settings Saved: ") . gettext($allowed_logs[$logfile]["name"]), $backup = true, $write_config_only = false);
+				system_syslogd_start();
+			} else {
+				write_config($desc = gettext("Log Display Settings Saved (no backup, no sync): ") . gettext($allowed_logs[$logfile]["name"]), $backup = false, $write_config_only = true);
+			}
 
 		// Specific to System General (main) Log
-		if ($logfile == 'system') {
-			if ($nginx_logging_changed) {
-				ob_flush();
-				flush();
-				log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
-				send_event("service restart webgui");
-				$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
+			if ($logfile == 'system') {
+				if ($nginx_logging_changed) {
+					ob_flush();
+					flush();
+					log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
+					send_event("service restart webgui");
+					$extra_save_msg = gettext("WebGUI process is restarting.");
+				}
 			}
-		}
 
 		// Specific to Firewall Log
 			if ($logfile == 'filter') {
@@ -742,8 +743,6 @@ function manage_log_code() {
 					require_once("filter.inc");
 					$retval |= filter_configure();
 					filter_pflog_start(true);
-
-					$savemsg = get_std_save_message($retval);
 				}
 			}
 		}

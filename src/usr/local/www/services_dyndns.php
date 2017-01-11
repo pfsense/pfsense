@@ -65,6 +65,7 @@ if ($_GET['act'] == "del") {
 	}
 }
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Dynamic DNS Clients"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($input_errors) {

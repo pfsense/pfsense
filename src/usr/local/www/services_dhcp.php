@@ -610,39 +610,38 @@ if (isset($_POST['save'])) {
 }
 
 if ((isset($_POST['save']) || isset($_POST['apply'])) && (!$input_errors)) {
+	$changes_applied = true;
 	$retval = 0;
 	$retvaldhcp = 0;
 	$retvaldns = 0;
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
 	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-		$retvaldns = services_dnsmasq_configure();
+		$retvaldns |= services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
-		$retvaldns = services_unbound_configure();
+		$retvaldns |= services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else {
-		$retvaldhcp = services_dhcpd_configure();
+		$retvaldhcp |= services_dhcpd_configure();
 		if ($retvaldhcp == 0) {
 			clear_subsystem_dirty('staticmaps');
 		}
 	}
 	if ($dhcpd_enable_changed) {
-		$retvalfc = filter_configure();
+		$retvalfc |= filter_configure();
 	}
 
 	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
 		$retval = 1;
 	}
-
-	$savemsg = get_std_save_message($retval);
 }
 
 if ($act == "delpool") {
@@ -721,9 +720,11 @@ function build_pooltable() {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DHCP Server"));
+$pglinks = array("", "services_dhcp.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp";
 
@@ -733,8 +734,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('staticmaps')) {

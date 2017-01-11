@@ -1418,27 +1418,66 @@ function ldap_backed($username, $passwd, $authcfg) {
 	return true;
 }
 
-function radius_backed($username, $passwd, $authcfg, &$attributes = array()) {
+function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 	global $debug, $config;
 	$ret = false;
 
 	require_once("radius.inc");
+	require_once("Crypt/CHAP.php");
 
-	$rauth = new Auth_RADIUS_PAP($username, $passwd);
 	if ($authcfg) {
 		$radiusservers = array();
 		$radiusservers[0]['ipaddr'] = $authcfg['host'];
 		$radiusservers[0]['port'] = $authcfg['radius_auth_port'];
 		$radiusservers[0]['sharedsecret'] = $authcfg['radius_secret'];
 		$radiusservers[0]['timeout'] = $authcfg['radius_timeout'];
+		if(isset($authcfg['radius_protocol'])) {
+			$radius_protocol = $authcfg['radius_protocol'];
+		} else {
+			$radius_protocol = 'PAP';
+		}
 	} else {
 		return false;
 	}
+
+	// Create our instance
+	$classname = 'Auth_RADIUS_' . $radius_protocol;
+	$rauth = new $classname($username, $password);
 
 	/* Add new servers to our instance */
 	foreach ($radiusservers as $radsrv) {
 		$timeout = (is_numeric($radsrv['timeout'])) ? $radsrv['timeout'] : 5;
 		$rauth->addServer($radsrv['ipaddr'], $radsrv['port'], $radsrv['sharedsecret'], $timeout);
+	}
+
+	// Construct data package
+	$rauth->username = $username;
+	switch ($radius_protocol) {
+		case 'CHAP_MD5':
+		case 'MSCHAPv1':
+			$classname = $radius_protocol == 'MSCHAPv1' ? 'Crypt_CHAP_MSv1' : 'Crypt_CHAP_MD5';
+			$crpt = new $classname;
+			$crpt->username = $username;
+			$crpt->password = $password;
+			$rauth->challenge = $crpt->challenge;
+			$rauth->chapid = $crpt->chapid;
+			$rauth->response = $crpt->challengeResponse();
+			$rauth->flags = 1;
+			break;
+
+		case 'MSCHAPv2':
+			$crpt = new Crypt_CHAP_MSv2;
+			$crpt->username = $username;
+			$crpt->password = $password;
+			$rauth->challenge = $crpt->authChallenge;
+			$rauth->peerChallenge = $crpt->peerChallenge;
+			$rauth->chapid = $crpt->chapid;
+			$rauth->response = $crpt->challengeResponse();
+			break;
+
+		default:
+			$rauth->password = $password;
+			break;
 	}
 
 	if (PEAR::isError($rauth->start())) {

@@ -53,7 +53,7 @@ if ($_POST) {
 
 		$retval = 0;
 
-		$retval = system_routing_configure();
+		$retval |= system_routing_configure();
 		$retval |= system_resolvconf_generate();
 		$retval |= filter_configure();
 		/* reconfigure our gateway monitor */
@@ -61,7 +61,6 @@ if ($_POST) {
 		/* Dynamic DNS on gw groups may have changed */
 		send_event("service reload dyndnsall");
 
-		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			clear_subsystem_dirty('staticroutes');
 		}
@@ -223,6 +222,7 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Routing"), gettext("Gateways"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
 
 include("head.inc");
@@ -230,8 +230,9 @@ include("head.inc");
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('staticroutes')) {

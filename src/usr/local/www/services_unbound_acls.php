@@ -99,8 +99,8 @@ if ($_POST) {
 	}
 
 	if ($_POST['apply']) {
-		$retval = services_unbound_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval = 0;
+		$retval |= services_unbound_configure();
 		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
 		}
@@ -174,6 +174,7 @@ $actionHelp =
 					sprintf(gettext('%sRefuse Nonlocal:%s Allow only authoritative local-data queries from hosts within the netblock defined below. Sends a DNS rcode REFUSED error message back to the client for messages that are disallowed.'), '<span class="text-success"><strong>', '</strong></span>');
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Access Lists"));
+$pglinks = array("", "services_unbound.php", "@self");
 
 if ($act == "new" || $act == "edit") {
 	$pgtitle[] = gettext('Edit');
@@ -185,8 +186,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('unbound')) {

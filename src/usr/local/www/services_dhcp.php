@@ -1369,6 +1369,17 @@ print($form);
 // DHCP Static Mappings table
 
 if (!is_numeric($pool) && !($act == "newpool")) {
+
+	// Decide whether display of the Client Id column is needed.
+	$got_cid = false;
+	if (is_array($a_maps)) {
+		foreach ($a_maps as $map) {
+			if (!empty($map['cid'])) {
+				$got_cid = true;
+				break;
+			}
+		}
+	}
 ?>
 
 <div class="panel panel-default">
@@ -1379,6 +1390,13 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 					<tr>
 						<th><?=gettext("Static ARP")?></th>
 						<th><?=gettext("MAC address")?></th>
+<?php
+	if ($got_cid) {
+?>
+						<th><?=gettext("Client Id")?></th>
+<?php
+	}
+?>
 						<th><?=gettext("IP address")?></th>
 						<th><?=gettext("Hostname")?></th>
 						<th><?=gettext("Description")?></th>
@@ -1402,6 +1420,15 @@ if (!is_numeric($pool) && !($act == "newpool")) {
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?=htmlspecialchars($mapent['mac'])?>
 						</td>
+<?php
+			if ($got_cid) {
+?>
+						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
+							<?=htmlspecialchars($mapent['cid'])?>
+						</td>
+<?php
+			}
+?>
 						<td ondblclick="document.location='services_dhcp_edit.php?if=<?=htmlspecialchars($if)?>&amp;id=<?=$i?>';">
 							<?=htmlspecialchars($mapent['ipaddr'])?>
 						</td>

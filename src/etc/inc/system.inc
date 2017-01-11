@@ -382,6 +382,52 @@ function system_hosts_local_entries() {
 	return $hosts;
 }
 
+/* Read host override entries from dnsmasq or unbound */
+function system_hosts_override_entries($dnscfg) {
+	$hosts = array();
+
+	if (!is_array($dnscfg) || !isset($dnscfg['enable'])) {
+		return $hosts;
+	}
+
+	if (!is_array($dnscfg['hosts'])) {
+		$dnscfg['hosts'] = array();
+	}
+
+	foreach ($dnscfg['hosts'] as $host) {
+		$fqdn = '';
+		if ($host['host'] || $host['host'] == "0") {
+			$fqdn .= "{$host['host']}.";
+		}
+		$fqdn .= $host['domain'];
+
+		$hosts[] = array(
+		    'ipaddr' => $host['ip'],
+		    'fqdn' => $fqdn
+		);
+
+		if (!is_array($host['aliases']) ||
+		    !is_array($host['aliases']['item'])) {
+			continue;
+		}
+
+		foreach ($host['aliases']['item'] as $alias) {
+			$fqdn = '';
+			if ($alias['host'] || $alias['host'] == "0") {
+				$fqdn .= "{$alias['host']}.";
+			}
+			$fqdn .= $alias['domain'];
+
+			$hosts[] = array(
+			    'ipaddr' => $host['ip'],
+			    'fqdn' => $fqdn
+			);
+		}
+	}
+
+	return $hosts;
+}
+
 function system_hosts_generate() {
 	global $config, $g;
 	if (isset($config['system']['developerspew'])) {
@@ -410,32 +456,14 @@ function system_hosts_generate() {
 		}
 		$hosts .= "\n";
 	}
+	unset($hosts_array);
 
 	if (isset($dnsmasqcfg['enable'])) {
-		if (!is_array($dnsmasqcfg['hosts'])) {
-			$dnsmasqcfg['hosts'] = array();
+		$hosts_array = system_hosts_override_entries($dnsmasqcfg);
+		foreach ($hosts_array as $host) {
+			$lhosts .= "{$host['ipaddr']}\t{$host['fqdn']}\n";
 		}
-
-		foreach ($dnsmasqcfg['hosts'] as $host) {
-			$lhosts .= "{$host['ip']}\t";
-			if ($host['host'] || $host['host'] == "0") {
-				$lhosts .= "{$host['host']}.";
-			}
-			$lhosts .= "{$host['domain']}\n";
-
-			if (!is_array($host['aliases']) ||
-			    !is_array($host['aliases']['item'])) {
-				continue;
-			}
-
-			foreach ($host['aliases']['item'] as $alias) {
-				$lhosts .= "{$host['ip']}\t";
-				if ($alias['host'] || $alias['host'] == "0") {
-					$lhosts .= "{$alias['host']}.";
-				}
-				$lhosts .= "{$alias['domain']}\n";
-			}
-		}
+		unset($hosts_array);
 
 		if (is_array($config['dhcpd'])) {
 			$conf_dhcpd = $config['dhcpd'];

@@ -548,7 +548,7 @@ function unbound_add_host_entries($cfgsubdir = "") {
 
 	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
 
-	$hosts = system_hosts_local_entries();
+	$hosts = system_hosts_entries($config['unbound']);
 	$added_ptr = array();
 	foreach ($hosts as $host) {
 		if (is_ipaddrv4($host['ipaddr'])) {

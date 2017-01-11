@@ -460,6 +460,14 @@ function system_hosts_generate() {
 		}
 	}
 
+	$fd = fopen("{$g['etc_path']}/hosts", "w");
+	if (!$fd) {
+		log_error(gettext(
+		    "Error: cannot open hosts file in system_hosts_generate()."
+		    ));
+		return 1;
+	}
+
 	/*
 	 * Do not remove this because dhcpleases monitors with kqueue it needs
 	 * to be killed before writing to hosts files.
@@ -469,13 +477,6 @@ function system_hosts_generate() {
 		@unlink("{$g['varrun_path']}/dhcpleases.pid");
 	}
 
-	$fd = fopen("{$g['etc_path']}/hosts", "w");
-	if (!$fd) {
-		log_error(gettext(
-		    "Error: cannot open hosts file in system_hosts_generate()."
-		    ));
-		return 1;
-	}
 	fwrite($fd, $hosts);
 	fclose($fd);
 

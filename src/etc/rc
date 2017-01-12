@@ -99,12 +99,12 @@ fi
 
 if [ -e /root/force_fsck ]; then
 	echo "Forcing filesystem(s) check..."
-	/sbin/fsck -y -F -t ufs
+	/sbin/fsck -y -t ufs
 fi
 
 if [ "${PLATFORM}" != "cdrom" ]; then
 	FSCK_ACTION_NEEDED=0
-	/sbin/fsck -p -F
+	/sbin/fsck -p
 	case $? in
 	0)
 		echo "Filesystems are clean, continuing..."
@@ -122,18 +122,24 @@ if [ "${PLATFORM}" != "cdrom" ]; then
 
 	if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
 		echo "WARNING: Trying to recover filesystem from inconsistency..."
-		/sbin/fsck -yF
+		/sbin/fsck -y -t ufs
 	fi
 
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
 	attempts=0
-	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-		/sbin/fsck -yF
+	while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
+		/sbin/fsck -y -t ufs
 		/sbin/mount -a 2>/dev/null
 		mount_rc=$?
 		attempts=$((attempts+1))
 	done
+
+	if [ ${mount_rc} -ne 0 ]; then
+		echo "ERROR: Impossible to mount filesystem, use interactive shell to attempt to recover it"
+		/bin/sh
+		/sbin/reboot
+	fi
 
 	if [ "${PLATFORM}" = "nanobsd" ]; then
 		# XXX This script does need all filesystems rw!!!!

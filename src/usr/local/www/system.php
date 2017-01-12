@@ -50,7 +50,8 @@ if (!isset($config['system']['webgui']['dashboardcolumns'])) {
 $dnsgw_counter = 1;
 
 while (isset($config["system"]["dns{$dnsgw_counter}gw"])) {
-	$pconfig["dns{$dnsgw_counter}gw"] = $config["system"]["dns{$dnsgw_counter}gw"];
+	$pconfig_dnsgw_counter = $dnsgw_counter - 1;
+	$pconfig["dnsgw{$pconfig_dnsgw_counter}"] = $config["system"]["dns{$dnsgw_counter}gw"];
 	$dnsgw_counter++;
 }
 
@@ -197,15 +198,15 @@ if ($_POST) {
 
 	$dnslist = $ignore_posted_dnsgw = array();
 
-	$dnscounter = 1;
+	$dnscounter = 0;
 	$dnsname="dns{$dnscounter}";
 
 	while (isset($_POST[$dnsname])) {
-		$dnsgwname="dns{$dnscounter}gw";
+		$dnsgwname="dnsgw{$dnscounter}";
 		$dnslist[] = $_POST[$dnsname];
 
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
-			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter);
+			$input_errors[] = sprintf(gettext("A valid IP address must be specified for DNS server %s."), $dnscounter+1);
 		} else {
 			if (($_POST[$dnsgwname] <> "") && ($_POST[$dnsgwname] <> "none")) {
 				// A real gateway has been selected.
@@ -235,7 +236,7 @@ if ($_POST) {
 
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
 	while (isset($_POST[$dnsname])) {
-		$dnsgwname="dns{$dnscounter}gw";
+		$dnsgwname="dnsgw{$dnscounter}";
 		if ($_POST[$dnsgwname] && ($_POST[$dnsgwname] <> "none")) {
 			foreach ($direct_networks_list as $direct_network) {
 				if (ip_in_subnet($_POST[$dnsname], $direct_network)) {
@@ -289,7 +290,7 @@ if ($_POST) {
 		$olddnsservers = $config['system']['dnsserver'];
 		unset($config['system']['dnsserver']);
 
-		$dnscounter = 1;
+		$dnscounter = 0;
 		$dnsname="dns{$dnscounter}";
 
 		while (isset($_POST[$dnsname])) {
@@ -315,12 +316,19 @@ if ($_POST) {
 		}
 
 		/* which interface should the dns servers resolve through? */
-		$dnscounter = 1;
+		$dnscounter = 0;
+		// The $_POST array key of the DNS IP (starts from 0)
 		$dnsname="dns{$dnscounter}";
 		$outdnscounter = 0;
 		while (isset($_POST[$dnsname])) {
-			$dnsgwname="dns{$dnscounter}gw";
-			$olddnsgwname = $config['system'][$dnsgwname];
+			// The $_POST array key of the corresponding gateway (starts from 0)
+			$dnsgwname = "dnsgw{$dnscounter}";
+			// The numbering of DNS GW entries in the config starts from 1
+			$dnsgwconfigcounter = $dnscounter + 1;
+			// So this is the array key of the DNS GW entry in $config['system']
+			$dnsgwconfigname = "dns{$dnsgwconfigcounter}gw";
+
+			$olddnsgwname = $config['system'][$dnsgwconfigname];
 
 			if ($ignore_posted_dnsgw[$dnsgwname]) {
 				$thisdnsgwname = "none";
@@ -329,7 +337,7 @@ if ($_POST) {
 			}
 
 			// "Blank" out the settings for this index, then we set them below using the "outdnscounter" index.
-			$config['system'][$dnsgwname] = "none";
+			$config['system'][$dnsgwconfigname] = "none";
 			$pconfig[$dnsgwname] = "none";
 			$pconfig[$dnsname] = "";
 
@@ -337,20 +345,28 @@ if ($_POST) {
 				// Only the non-blank DNS servers were put into the config above.
 				// So we similarly only add the corresponding gateways sequentially to the config (and to pconfig), as we find non-blank DNS servers.
 				// This keeps the DNS server IP and corresponding gateway "lined up" when the user blanks out a DNS server IP in the middle of the list.
-				$outdnscounter++;
+
+				// The $pconfig array key of the DNS IP (starts from 0)
 				$outdnsname="dns{$outdnscounter}";
-				$outdnsgwname="dns{$outdnscounter}gw";
+				// The $pconfig array key of the corresponding gateway (starts from 0)
+				$outdnsgwname="dnsgw{$outdnscounter}";
+				// The numbering of DNS GW entries in the config starts from 1
+				$outdnsgwconfigcounter = $outdnscounter + 1;
+				// So this is the array key of the output DNS GW entry in $config['system']
+				$outdnsgwconfigname = "dns{$outdnsgwconfigcounter}gw";
+
 				$pconfig[$outdnsname] = $_POST[$dnsname];
 				if ($_POST[$dnsgwname]) {
-					$config['system'][$outdnsgwname] = $thisdnsgwname;
+					$config['system'][$outdnsgwconfigname] = $thisdnsgwname;
 					$pconfig[$outdnsgwname] = $thisdnsgwname;
 				} else {
 					// Note: when no DNS GW name is chosen, the entry is set to "none", so actually this case never happens.
-					unset($config['system'][$outdnsgwname]);
+					unset($config['system'][$outdnsgwconfigname]);
 					$pconfig[$outdnsgwname] = "";
 				}
+				$outdnscounter++;
 			}
-			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter-1] != $_POST[$dnsname]))) {
+			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter] != $_POST[$dnsname]))) {
 				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
 				// Remove the route. Later calls will add the correct new route if needed.
 				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
@@ -361,6 +377,7 @@ if ($_POST) {
 			}
 
 			$dnscounter++;
+			// The $_POST array key of the DNS IP (starts from 0)
 			$dnsname="dns{$dnscounter}";
 		}
 
@@ -448,9 +465,8 @@ if ($dnsserver_count == 0) {
 
 foreach ($pconfig['dnsserver'] as $dnsserver) {
 
-	$dnsserver_num++;
-	$is_last_dnsserver = ($dnsserver_num == $dnsserver_count);
-	$group = new Form_Group($dnsserver_num == 1 ? 'DNS Servers':'');
+	$is_last_dnsserver = ($dnsserver_num == $dnsserver_count - 1);
+	$group = new Form_Group($dnsserver_num == 0 ? 'DNS Servers':'');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
@@ -476,9 +492,9 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 		}
 
 		$group->add(new Form_Select(
-			'dns' . $dnsserver_num . 'gw',
+			'dnsgw' . $dnsserver_num,
 			'Gateway',
-			$pconfig['dns' . $dnsserver_num . 'gw'],
+			$pconfig['dnsgw' . $dnsserver_num],
 			$options
 		))->setHelp(($is_last_dnsserver) ? $dnsgw_help:null);;
 	}
@@ -491,6 +507,7 @@ foreach ($pconfig['dnsserver'] as $dnsserver) {
 	))->addClass('btn-warning');
 
 	$section->add($group);
+	$dnsserver_num++;
 }
 
 $section->addInput(new Form_Button(

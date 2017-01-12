@@ -2819,7 +2819,7 @@ function filter_generate_user_rule($rule) {
 	$aline['dst'] = "to $dst ";
 
 	if ($rule['protocol'] == "icmp" && $rule['icmptype']) {
-		$icmptype_key = ($rule['ipprotocol'] == 'inet' ? 'icmp-type' : 'icmp6-type');
+		$icmptype_key = ($rule['ipprotocol'] == 'inet6' ? 'icmp6-type' : 'icmp-type');
 		$icmptype_text = (strpos($rule['icmptype'], ",") === false ? $rule['icmptype'] : '{ ' . $rule['icmptype'] . ' }');
 		$aline[$icmptype_key] = "{$icmptype_key} {$icmptype_text} ";
 	}

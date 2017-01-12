@@ -99,6 +99,9 @@ if ($_REQUEST['getdyndnsstatus']) {
 	exit;
 }
 
+$iflist = get_configured_interface_with_descr();
+$groupslist = return_gateway_groups_array();
+$dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(",", DYNDNS_PROVIDER_DESCRIPTIONS));
 ?>
 
 <table id="dyn_dns_status" class="table table-striped table-hover">
@@ -125,32 +128,19 @@ if ($_REQUEST['getdyndnsstatus']) {
 		} ?>
 	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 		<td>
-		<?php $iflist = get_configured_interface_with_descr();
-		foreach ($iflist as $if => $ifdesc) {
-			if ($dyndns['interface'] == $if) {
-				print($ifdesc);
-				break;
-			}
+		<?php
+		if (isset($iflist[$dyndns['interface']])) {
+			print($iflist[$dyndns['interface']]);
 		}
-		$groupslist = return_gateway_groups_array();
-		foreach ($groupslist as $if => $group) {
-			if ($dyndns['interface'] == $if) {
-				print($if);
-				break;
-			}
+
+		if (isset($groupslist[$dyndns['interface']])) {
+			print($dyndns['interface']);
 		}
 		?>
 		</td>
 		<td>
+		<?=htmlspecialchars($dyndns_providers[$dyndns['type']]);?>
 		<?php
-		$types = explode(",", DYNDNS_PROVIDER_DESCRIPTIONS);
-		$vals = explode(" ", DYNDNS_PROVIDER_VALUES);
-		for ($j = 0; $j < count($vals); $j++) {
-			if ($vals[$j] == $dyndns['type']) {
-				print(htmlspecialchars($types[$j]));
-				break;
-			}
-		}
 		if ($dyndns['type'] == '_rfc2136_') : ?>
 			RFC 2136
 		<?php endif; ?>

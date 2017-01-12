@@ -60,11 +60,38 @@ require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interfaces.inc");
 
 $ifdescrs = get_configured_interface_with_descr();
+
+if ($_POST) {
+
+	$validNames = array();
+
+	foreach ($ifdescrs as $ifdescr => $ifname) {
+		array_push($validNames, $ifdescr);
+	}
+
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets']['interfaces']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings['widgets']['interfaces']['iffilter'] = "";
+	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interfaces Filter via Dashboard."));
+	header("Location: /index.php");
+}
+
 ?>
 
-<table class="table table-striped table-hover">
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<tbody>
 <?php
+$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+
 foreach ($ifdescrs as $ifdescr => $ifname):
+	if (in_array($ifdescr, $skipinterfaces)) {
+		continue;
+	}
+
 	$ifinfo = get_interface_info($ifdescr);
 	if ($ifinfo['pppoelink'] || $ifinfo['pptplink'] || $ifinfo['l2tplink']) {
 		/* PPP link (non-cell) - looks like a modem */
@@ -129,4 +156,60 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 <?php
 endforeach;
 ?>
-</table>
+		</tbody>
+	</table>
+</div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+
+<form action="/widgets/widgets/interfaces.widget.php" method="post" class="form-horizontal">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Interface")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$skipinterfaces = explode(",", $user_settings['widgets']['interfaces']['iffilter']);
+				$idx = 0;
+
+				foreach ($ifdescrs as $ifdescr => $ifname):
+?>
+						<tr>
+							<td><?=$ifname?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skipinterfaces) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallinterfaces" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>
+
+<script>
+//<![CDATA[
+	events.push(function(){
+		$("#showallinterfaces").click(function() {
+			$("[id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
+		});
+
+	});
+//]]>
+</script>

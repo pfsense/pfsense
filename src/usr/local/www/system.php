@@ -199,10 +199,10 @@ if ($_POST) {
 	$dnslist = $ignore_posted_dnsgw = array();
 
 	$dnscounter = 0;
-	$dnsname="dns{$dnscounter}";
+	$dnsname = "dns{$dnscounter}";
 
 	while (isset($_POST[$dnsname])) {
-		$dnsgwname="dnsgw{$dnscounter}";
+		$dnsgwname = "dnsgw{$dnscounter}";
 		$dnslist[] = $_POST[$dnsname];
 
 		if (($_POST[$dnsname] && !is_ipaddr($_POST[$dnsname]))) {
@@ -224,7 +224,7 @@ if ($_POST) {
 			}
 		}
 		$dnscounter++;
-		$dnsname="dns{$dnscounter}";
+		$dnsname = "dns{$dnscounter}";
 	}
 
 	if (count(array_filter($dnslist)) != count(array_unique(array_filter($dnslist)))) {
@@ -232,11 +232,11 @@ if ($_POST) {
 	}
 
 	$dnscounter = 0;
-	$dnsname="dns{$dnscounter}";
+	$dnsname = "dns{$dnscounter}";
 
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());
 	while (isset($_POST[$dnsname])) {
-		$dnsgwname="dnsgw{$dnscounter}";
+		$dnsgwname = "dnsgw{$dnscounter}";
 		if ($_POST[$dnsgwname] && ($_POST[$dnsgwname] <> "none")) {
 			foreach ($direct_networks_list as $direct_network) {
 				if (ip_in_subnet($_POST[$dnsname], $direct_network)) {
@@ -245,7 +245,7 @@ if ($_POST) {
 			}
 		}
 		$dnscounter++;
-		$dnsname="dns{$dnscounter}";
+		$dnsname = "dns{$dnscounter}";
 	}
 
 	# it's easy to have a little too much whitespace in the field, clean it up for the user before processing.
@@ -291,14 +291,14 @@ if ($_POST) {
 		unset($config['system']['dnsserver']);
 
 		$dnscounter = 0;
-		$dnsname="dns{$dnscounter}";
+		$dnsname = "dns{$dnscounter}";
 
 		while (isset($_POST[$dnsname])) {
 			if ($_POST[$dnsname]) {
 				$config['system']['dnsserver'][] = $_POST[$dnsname];
 			}
 			$dnscounter++;
-			$dnsname="dns{$dnscounter}";
+			$dnsname = "dns{$dnscounter}";
 		}
 
 		// Remember the new list for display also.
@@ -318,7 +318,7 @@ if ($_POST) {
 		/* which interface should the dns servers resolve through? */
 		$dnscounter = 0;
 		// The $_POST array key of the DNS IP (starts from 0)
-		$dnsname="dns{$dnscounter}";
+		$dnsname = "dns{$dnscounter}";
 		$outdnscounter = 0;
 		while (isset($_POST[$dnsname])) {
 			// The $_POST array key of the corresponding gateway (starts from 0)
@@ -347,9 +347,9 @@ if ($_POST) {
 				// This keeps the DNS server IP and corresponding gateway "lined up" when the user blanks out a DNS server IP in the middle of the list.
 
 				// The $pconfig array key of the DNS IP (starts from 0)
-				$outdnsname="dns{$outdnscounter}";
+				$outdnsname = "dns{$outdnscounter}";
 				// The $pconfig array key of the corresponding gateway (starts from 0)
-				$outdnsgwname="dnsgw{$outdnscounter}";
+				$outdnsgwname = "dnsgw{$outdnscounter}";
 				// The numbering of DNS GW entries in the config starts from 1
 				$outdnsgwconfigcounter = $outdnscounter + 1;
 				// So this is the array key of the output DNS GW entry in $config['system']
@@ -369,16 +369,16 @@ if ($_POST) {
 			if (($olddnsgwname != "") && ($olddnsgwname != "none") && (($olddnsgwname != $thisdnsgwname) || ($olddnsservers[$dnscounter] != $_POST[$dnsname]))) {
 				// A previous DNS GW name was specified. It has now gone or changed, or the DNS server address has changed.
 				// Remove the route. Later calls will add the correct new route if needed.
-				if (is_ipaddrv4($olddnsservers[$dnscounter-1])) {
+				if (is_ipaddrv4($olddnsservers[$dnscounter])) {
 					mwexec("/sbin/route delete " . escapeshellarg($olddnsservers[$dnscounter-1]));
-				} else if (is_ipaddrv6($olddnsservers[$dnscounter-1])) {
+				} else if (is_ipaddrv6($olddnsservers[$dnscounter])) {
 					mwexec("/sbin/route delete -inet6 " . escapeshellarg($olddnsservers[$dnscounter-1]));
 				}
 			}
 
 			$dnscounter++;
 			// The $_POST array key of the DNS IP (starts from 0)
-			$dnsname="dns{$dnscounter}";
+			$dnsname = "dns{$dnscounter}";
 		}
 
 		if ($changecount > 0) {

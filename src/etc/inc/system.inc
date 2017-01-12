@@ -234,14 +234,12 @@ function system_resolvconf_generate($dynupdate = false) {
 	}
 
 	/* setup static routes for DNS servers. */
-	for ($dnscounter=1; $dnscounter<5; $dnscounter++) {
+	$dnscounter = 1;
+	$dnsgw = "dns{$dnscounter}gw";
+	while (isset($config['system'][$dnsgw])) {
 		/* setup static routes for dns servers */
-		$dnsgw = "dns{$dnscounter}gw";
-		if (isset($config['system'][$dnsgw])) {
-			if (empty($config['system'][$dnsgw]) ||
-			    $config['system'][$dnsgw] == "none") {
-				continue;
-			}
+		if (!(empty($config['system'][$dnsgw]) ||
+		    $config['system'][$dnsgw] == "none")) {
 			$gwname = $config['system'][$dnsgw];
 			$gatewayip = lookup_gateway_ip_by_name($gwname);
 			$inet6 = is_ipaddrv6($gatewayip) ? '-inet6 ' : '';
@@ -262,6 +260,8 @@ function system_resolvconf_generate($dynupdate = false) {
 				log_error("ROUTING debug: $mt - route {$cmd} -host {$inet6}{$dnsserver} {$gatewayip}");
 			}
 		}
+		$dnscounter++;
+		$dnsgw = "dns{$dnscounter}gw";
 	}
 
 	unlock($dnslock);

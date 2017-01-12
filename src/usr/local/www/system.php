@@ -231,7 +231,7 @@ if ($_POST) {
 		$input_errors[] = gettext('Each configured DNS server must have a unique IP address. Remove the duplicated IP.');
 	}
 
-	$dnscounter = 1;
+	$dnscounter = 0;
 	$dnsname="dns{$dnscounter}";
 
 	$direct_networks_list = explode(" ", filter_get_direct_networks_list());

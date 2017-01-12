@@ -2625,9 +2625,13 @@ EOD;
 					$upinst .= "server {$dnsupdate['server']}\n";
 				}
 
+				$cachedipv4 = '';
+				$cacheTimev4 = 0;
 				if (file_exists($cacheFile)) {
 					list($cachedipv4, $cacheTimev4) = explode("|", file_get_contents($cacheFile));
 				}
+				$cachedipv6 = '';
+				$cacheTimev6 = 0;
 				if (file_exists($cacheFilev6)) {
 					list($cachedipv6, $cacheTimev6) = explode("|", file_get_contents($cacheFilev6));
 				}

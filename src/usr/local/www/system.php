@@ -551,7 +551,7 @@ $csswarning = sprintf(gettext("%sUser-created themes are unsupported, use at you
 ?>
 </div>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 

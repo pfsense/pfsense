@@ -154,7 +154,7 @@ if (count($services) > 0) {
 	</div>
 </form>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 	events.push(function(){
 		$("#showallservices").click(function() {

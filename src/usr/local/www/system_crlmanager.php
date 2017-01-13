@@ -676,7 +676,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 }
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 

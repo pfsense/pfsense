@@ -1403,6 +1403,22 @@ function get_ppp_uptime($port) {
 	}
 }
 
+//converts subnet mask to cidr notation
+function netmask2cidr($netmask) {  
+     $long = ip2long($netmask);  
+     $base = ip2long('255.255.255.255');  
+     return 32-log(($long ^ $base)+1,2);       
+}  
+
+//fetches the physical name of the NIC, stolen from util.inc :S sorry...
+function getinterfacename($intname) {
+	$dmesg_arr = array();
+	exec("/sbin/dmesg |grep $intname | head -n1", $dmesg_arr);
+	preg_match_all("/<(.*?)>/i", $dmesg_arr[0], $dmesg);
+	$toput = $dmesg[1][0];
+	return $toput;
+}
+
 //returns interface information
 function get_interface_info($ifdescr) {
 	global $config, $g;
@@ -1423,7 +1439,9 @@ function get_interface_info($ifdescr) {
 	$ifinfo['macaddr'] = $ifinfotmp['macaddr'];
 	$ifinfo['mtu'] = $ifinfotmp['mtu'];
 	$ifinfo['ipaddr'] = $ifinfotmp['ipaddr'];
-	$ifinfo['subnet'] = $ifinfotmp['subnet'];
+	$cidr = netmask2cidr($ifinfotmp['subnet']);
+	$ifinfo['subnet'] = "${ifinfotmp['subnet']} (/${cidr})";
+	$ifinfo['NIC'] = getinterfacename($ifinfo['hwif']);
 	$ifinfo['linklocal'] = get_interface_linklocal($ifdescr);
 	$ifinfo['ipaddrv6'] = get_interface_ipv6($ifdescr);
 	$ifinfo['subnetv6'] = get_interface_subnetv6($ifdescr);
@@ -1488,6 +1506,7 @@ function get_interface_info($ifdescr) {
 			/* see if dhclient is up */
 			if (find_dhclient_process($ifinfo['if']) != 0) {
 				$ifinfo['dhcplink'] = "up";
+				$ifinfo['linktype'] = "DHCP";
 			} else {
 				$ifinfo['dhcplink'] = "down";
 			}
@@ -1495,11 +1514,14 @@ function get_interface_info($ifdescr) {
 			break;
 		/* PPPoE/PPTP/L2TP interface? -> get status from virtual interface */
 		case "pppoe":
+			$ifinfo['linktype'] = "PPPoE";
 		case "pptp":
+			$ifinfo['linktype'] = "PPTP";
 		case "l2tp":
 			if ($ifinfo['status'] == "up" && !isset($link0)) {
 				/* get PPPoE link status for dial on demand */
 				$ifinfo["{$link_type}link"] = "up";
+				$ifinfo['linktype'] = "L2TP";
 			} else {
 				$ifinfo["{$link_type}link"] = "down";
 			}
@@ -1509,6 +1531,7 @@ function get_interface_info($ifdescr) {
 		case "ppp":
 			if ($ifinfo['status'] == "up") {
 				$ifinfo['ppplink'] = "up";
+				$ifinfo['linktype'] = "PPP";
 			} else {
 				$ifinfo['ppplink'] = "down" ;
 			}
@@ -1565,6 +1588,7 @@ function get_interface_info($ifdescr) {
 			}
 			break;
 		default:
+			$ifinfo['linktype'] = "Static";
 			break;
 	}
 

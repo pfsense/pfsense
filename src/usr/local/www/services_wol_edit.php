@@ -81,6 +81,13 @@ if ($_POST) {
 		$input_errors[] = gettext("A valid MAC address must be specified.");
 	}
 
+	foreach ($a_wol as $wolidx => $wolentry) {
+		if ((!isset($id) || ($wolidx != $id)) && ($wolentry['interface'] == $_POST['interface']) && ($wolentry['mac'] == $_POST['mac'])) {
+			$input_errors[] = gettext("This interface and MAC address wake-on-LAN entry already exists.");
+			break;
+		}
+	}
+
 	if (!$input_errors) {
 		$wolent = array();
 		$wolent['interface'] = $_POST['interface'];

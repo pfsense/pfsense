@@ -150,6 +150,7 @@ $form = new Form(false);
 $section = new Form_Section('State Filter', 'secfilter', COLLAPSIBLE|SEC_OPEN);
 
 $iflist = get_configured_interface_with_descr();
+$iflist['enc0'] = "IPsec";
 $iflist['lo0'] = "lo0";
 $iflist['all'] = "all";
 if (isset($_POST['interface']))

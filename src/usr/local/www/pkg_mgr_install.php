@@ -496,7 +496,7 @@ if ($completed):
 	if ($firmwareupdate && $reboot_needed):
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	time = "<?=$guitimeout?>";
@@ -510,7 +510,7 @@ endif;
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous

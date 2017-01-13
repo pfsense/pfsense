@@ -632,7 +632,7 @@ print $form;
 
 $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Record the state of the Use Ramdisk checkbox on page load

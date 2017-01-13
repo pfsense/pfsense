@@ -139,7 +139,7 @@ $dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(
 		?>
 		</td>
 		<td>
-		<?=htmlspecialchars($dyndns_providers[$dyndns['type']]);?>
+		<?=isset($dyndns_providers[$dyndns['type']]) ? htmlspecialchars($dyndns_providers[$dyndns['type']]) : $dyndns['type'];?>
 		<?php
 		if ($dyndns['type'] == '_rfc2136_') : ?>
 			RFC 2136

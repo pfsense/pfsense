@@ -216,7 +216,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout"), "/index.php?logout");
+$system_menu[] = array(gettext("Logout") . " " . $_SESSION['Username'], "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
@@ -497,7 +497,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout">
-							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
+							<i class="fa fa-sign-out" title="<?=gettext("Log out") . " " . $_SESSION['Username']?>"></i>
 						</a>
 					</li>
 			</ul>

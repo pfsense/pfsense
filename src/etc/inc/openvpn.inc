@@ -962,7 +962,7 @@ function openvpn_reconfigure($mode, $settings) {
 		// If there is no bind option at all (ip and/or port), add "nobind" directive
 		//  Otherwise, use the local port if defined, failing that, use lport 0 to
 		//  ensure a random source port.
-		if ((empty($iface_ip)) && (!$settings['local_port'])) {
+		if ((empty($iface_ip)) && empty($iface_ipv6) && (!$settings['local_port'])) {
 			$conf .= "nobind\n";
 		} elseif ($settings['local_port']) {
 			$conf .= "lport {$settings['local_port']}\n";

@@ -1111,7 +1111,7 @@ events.push(function() {
 				disableInput('localbeginport', true);
 				disableInput('localbeginport_cust', true);
 				disableInput('dstendport_cust', false);
-				ddisableInput('localbeginport', false);
+				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
 

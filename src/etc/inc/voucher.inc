@@ -62,8 +62,8 @@ function xmlrpc_sync_voucher_disconnect($dbent, $syncip, $port, $password, $user
 	require_once('/etc/inc/captiveportal.inc');
 	require_once('/etc/inc/voucher.inc');
 	\$cpzone = "$cpzone";
-	\$radiusservers = captiveportal_get_radius_servers();
 	\$dbent = unserialize("$dbent_str");
+	\$radiusservers = captiveportal_get_radius_servers()[\$dbent[12]];
 	captiveportal_disconnect(\$dbent, \$radiusservers, $term_cause, $tmp_stop_time);
 
 EOF;

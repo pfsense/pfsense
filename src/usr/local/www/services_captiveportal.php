@@ -153,6 +153,7 @@ if ($a_cp[$cpzone]) {
 	$pconfig['auth_method'] = $a_cp[$cpzone]['auth_method'];
 	$pconfig['localauth_priv'] = isset($a_cp[$cpzone]['localauth_priv']);
 	$pconfig['radacct_enable'] = isset($a_cp[$cpzone]['radacct_enable']);
+	$pconfig['radacct_use_authsrv'] = isset($a_cp[$cpzone]['radacct_use_authsrv']);
 	$pconfig['radmac_enable'] = isset($a_cp[$cpzone]['radmac_enable']);
 	$pconfig['radmac_secret'] = $a_cp[$cpzone]['radmac_secret'];
 	$pconfig['reauthenticate'] = isset($a_cp[$cpzone]['reauthenticate']);
@@ -175,15 +176,20 @@ if ($a_cp[$cpzone]) {
 	$pconfig['radiusip2'] = $a_cp[$cpzone]['radiusip2'];
 	$pconfig['radiusip3'] = $a_cp[$cpzone]['radiusip3'];
 	$pconfig['radiusip4'] = $a_cp[$cpzone]['radiusip4'];
+	$pconfig['radacctip'] = $a_cp[$cpzone]['radacctip'];
+	$pconfig['radacctip2'] = $a_cp[$cpzone]['radacctip2'];
 	$pconfig['radiusport'] = $a_cp[$cpzone]['radiusport'];
 	$pconfig['radiusport2'] = $a_cp[$cpzone]['radiusport2'];
 	$pconfig['radiusport3'] = $a_cp[$cpzone]['radiusport3'];
 	$pconfig['radiusport4'] = $a_cp[$cpzone]['radiusport4'];
 	$pconfig['radiusacctport'] = $a_cp[$cpzone]['radiusacctport'];
+	$pconfig['radiusacctport2'] = $a_cp[$cpzone]['radiusacctport2'];
 	$pconfig['radiuskey'] = $a_cp[$cpzone]['radiuskey'];
 	$pconfig['radiuskey2'] = $a_cp[$cpzone]['radiuskey2'];
 	$pconfig['radiuskey3'] = $a_cp[$cpzone]['radiuskey3'];
 	$pconfig['radiuskey4'] = $a_cp[$cpzone]['radiuskey4'];
+	$pconfig['radacctkey'] = $a_cp[$cpzone]['radacctkey'];
+	$pconfig['radacctkey2'] = $a_cp[$cpzone]['radacctkey2'];
 	$pconfig['radiusvendor'] = $a_cp[$cpzone]['radiusvendor'];
 	$pconfig['radiussession_timeout'] = isset($a_cp[$cpzone]['radiussession_timeout']);
 	$pconfig['radiussrcip_attribute'] = $a_cp[$cpzone]['radiussrcip_attribute'];
@@ -220,6 +226,11 @@ if ($_POST) {
 			$reqdfieldsn[] = gettext("RADIUS Protocol");
 			$reqdfields[] = "radiusip";
 			$reqdfieldsn[] = gettext("Primary RADIUS server IP address");
+		}
+
+		if (isset($_POST['radacct_enable']) && !isset($_POST['radacct_use_authsrv'])) {
+			$reqdfields[] = "radacctip";
+			$reqdfieldsn[] = gettext("Primary accounting server IP address");
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -302,6 +313,14 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radiusip4']);
 	}
 
+	if (($_POST['radacctip'] && !is_ipaddr($_POST['radacctip']))) {
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radacctip']);
+	}
+
+	if (($_POST['radacctip2'] && !is_ipaddr($_POST['radacctip2']))) {
+		$input_errors[] = sprintf(gettext("A valid IP address must be specified. [%s]"), $_POST['radacctip2']);
+	}
+
 	if (($_POST['radiusport'] && !is_port($_POST['radiusport']))) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport']);
 	}
@@ -318,8 +337,18 @@ if ($_POST) {
 		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusport4']);
 	}
 
-	if (($_POST['radiusacctport'] && !is_port($_POST['radiusacctport']))) {
-		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport']);
+	if ($_POST['radacct_use_authsrv']) {
+		if (($_POST['authsrvacctport'] && !is_port($_POST['authsrvacctport']))) {
+			$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['authsrvacctport']);
+		}
+	} else {
+		if (($_POST['acctsrvacctport'] && !is_port($_POST['acctsrvacctport']))) {
+			$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['acctsrvacctport']);
+		}
+	}
+
+	if (($_POST['radiusacctport2'] && !is_port($_POST['radiusacctport2']))) {
+		$input_errors[] = sprintf(gettext("A valid port number must be specified. [%s]"), $_POST['radiusacctport2']);
 	}
 
 	if ($_POST['maxproc'] && (!is_numeric($_POST['maxproc']) || ($_POST['maxproc'] < 4) || ($_POST['maxproc'] > 100))) {
@@ -361,6 +390,7 @@ if ($_POST) {
 		$newcp['auth_method'] = $_POST['auth_method'];
 		$newcp['localauth_priv'] = isset($_POST['localauth_priv']);
 		$newcp['radacct_enable'] = $_POST['radacct_enable'] ? true : false;
+		$newcp['radacct_use_authsrv'] = $_POST['radacct_use_authsrv'] ? true : false;
 		$newcp['reauthenticate'] = $_POST['reauthenticate'] ? true : false;
 		$newcp['radmac_enable'] = $_POST['radmac_enable'] ? true : false;
 		$newcp['radmac_secret'] = $_POST['radmac_secret'] ? $_POST['radmac_secret'] : false;
@@ -411,6 +441,16 @@ if ($_POST) {
 		} else {
 			unset($newcp['radiusip4']);
 		}
+		if (isset($_POST['radacctip'])) {
+			$newcp['radacctip'] = $_POST['radacctip'];
+		} else {
+			unset($newcp['radacctip']);
+		}
+		if (isset($_POST['radacctip2'])) {
+			$newcp['radacctip2'] = $_POST['radacctip2'];
+		} else {
+			unset($newcp['radacctip2']);
+		}
 		$newcp['radiusport'] = $_POST['radiusport'];
 		$newcp['radiusport2'] = $_POST['radiusport2'];
 		if (isset($_POST['radiusport3'])) {
@@ -419,11 +459,18 @@ if ($_POST) {
 		if (isset($_POST['radiusport4'])) {
 			$newcp['radiusport4'] = $_POST['radiusport4'];
 		}
-		$newcp['radiusacctport'] = $_POST['radiusacctport'];
+		if (isset($_POST['radacct_use_authsrv'])) {
+			$newcp['radiusacctport'] = $_POST['authsrvacctport'];
+		} else {
+			$newcp['radiusacctport'] = $_POST['acctsrvacctport'];
+		}
+		$newcp['radiusacctport2'] = $_POST['radiusacctport2'];
 		$newcp['radiuskey'] = $_POST['radiuskey'];
 		$newcp['radiuskey2'] = $_POST['radiuskey2'];
 		$newcp['radiuskey3'] = $_POST['radiuskey3'];
 		$newcp['radiuskey4'] = $_POST['radiuskey4'];
+		$newcp['radacctkey'] = $_POST['radacctkey'];
+		$newcp['radacctkey2'] = $_POST['radacctkey2'];
 		$newcp['radiusvendor'] = $_POST['radiusvendor'] ? $_POST['radiusvendor'] : false;
 		$newcp['radiussession_timeout'] = $_POST['radiussession_timeout'] ? true : false;
 		$newcp['radiussrcip_attribute'] = $_POST['radiussrcip_attribute'];
@@ -866,17 +913,78 @@ $section->addClass('Accounting');
 
 $section->addInput(new Form_Checkbox(
 	'radacct_enable',
-	'RADIUS',
-	'Send RADIUS accounting packets to the primary RADIUS server.',
+	'RADIUS Accounting',
+	'Enable RADIUS accounting',
 	$pconfig['radacct_enable']
 ));
 
-$section->addInput(new Form_Input(
-	'radiusacctport',
-	'Accounting Port',
-	'text',
+$section->addInput(new Form_Checkbox(
+	'radacct_use_authsrv',
+	'Accounting server',
+	'Send RADIUS accounting packets to the primary RADIUS authentication server',
+	$pconfig['radacct_use_authsrv']
+));
+
+$group = new Form_Group('Accounting Port');
+$group->addClass('authsrvacctport');
+
+$group->add(new Form_Input(
+	'authsrvacctport',
+	null,
+	'number',
 	$pconfig['radiusacctport']
 ))->setHelp('Leave blank to use the default port (1813).');
+$section->add($group);
+
+$group = new Form_Group('Primary accounting server');
+$group->addClass('acctsrv');
+
+$group->add(new Form_IpAddress(
+	'radacctip',
+	null,
+	$pconfig['radacctip']
+));
+
+$group->add(new Form_Input(
+	'acctsrvacctport',
+	null,
+	'number',
+	$pconfig['radiusacctport']
+));
+
+$group->add(new Form_Input(
+	'radacctkey',
+	null,
+	'text',
+	$pconfig['radacctkey']
+));
+
+$section->add($group);
+
+$group = new Form_Group('Secondary accounting server');
+$group->addClass('acctsrv');
+
+$group->add(new Form_IpAddress(
+	'radacctip2',
+	null,
+	$pconfig['radacctip2']
+))->setHelp('IP address of the RADIUS server to send accounting packets to.');
+
+$group->add(new Form_Input(
+	'radiusacctport2',
+	null,
+	'number',
+	$pconfig['radiusacctport2']
+))->setHelp('RADIUS accounting port. Leave blank for default (1813)');
+
+$group->add(new Form_Input(
+	'radacctkey2',
+	null,
+	'text',
+	$pconfig['radacctkey2']
+))->setHelp('RADIUS shared secret. Leave blank to not use a shared secret (not recommended)');
+
+$section->add($group);
 
 $group = new Form_Group('Accounting updates');
 
@@ -1188,6 +1296,7 @@ events.push(function() {
 	function hideSections(hide) {
 		hideClass('Authentication', hide);
 		hideRadius();
+		hideAcctServers();
 		hideHTTPS();
 		hideClass('HTTPS', hide);
 		hideClass('HTML', hide);
@@ -1205,6 +1314,11 @@ events.push(function() {
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideClass("radiusproto", !($('input[name="auth_method"]:checked').val() == 'radius'));
+	}
+
+	function hideAcctServers() {
+		hideClass("authsrvacctport", !($('#radacct_use_authsrv').prop('checked')));
+		hideClass("acctsrv", $('#radacct_use_authsrv').prop('checked'));
 	}
 
 	function hideHTTPS() {
@@ -1245,6 +1359,9 @@ events.push(function() {
 		hideRadius();
 	});
 
+	$("#radacct_use_authsrv").click(function() {
+		hideAcctServers();
+	});
 
 	$("#httpslogin_enable").click(function() {
 		hideHTTPS(!this.checked);

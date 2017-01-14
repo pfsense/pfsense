@@ -116,7 +116,7 @@ if ($macfilter || $passthrumac) {
 }
 
 /* find out if we need RADIUS + RADIUSMAC or not */
-if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
+if ($cpcfg['auth_method'] == 'radius') {
 	$radius_enable = TRUE;
 	if (isset($cpcfg['radmac_enable'])) {
 		$radmac_enable = TRUE;
@@ -127,6 +127,13 @@ if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
 $radiusctx = 'first';
 if ($_POST['auth_user2']) {
 	$radiusctx = 'second';
+}
+
+
+/* find radius accounting context */
+$acctctx = 'acct';
+if (isset($cpcfg['radacct_use_authsrv'])) {
+	$acctctx = $radiusctx;
 }
 
 if ($_POST['logout_id']) {
@@ -158,7 +165,7 @@ EOD;
 		portal_reply_page($redirurl, "error", "This MAC address has been blocked");
 	}
 
-} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac, $clientip, $radiusctx)) {
+} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac, $clientip, $radiusctx, $acctctx)) {
 	/* radius functions handle everything so we exit here since we're done */
 
 } else if (portal_consume_passthrough_credit($clientmac)) {
@@ -201,7 +208,7 @@ EOD;
 			$user = $_POST['auth_user2'];
 			$paswd = $_POST['auth_pass2'];
 		}
-		$auth_list = radius($user, $paswd, $clientip, $clientmac, "USER LOGIN", $radiusctx);
+		$auth_list = radius($user, $paswd, $clientip, $clientmac, "USER LOGIN", $radiusctx, $acctctx);
 		$type = "error";
 		if (!empty($auth_list['url_redirection'])) {
 			$redirurl = $auth_list['url_redirection'];

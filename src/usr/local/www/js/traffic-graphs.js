@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-function draw_graph(refreshInterval, then) {
+function draw_graph(refreshInterval, then, backgroundupdate) {
 
 	d3.select("div[id^=nvtooltip-]").remove();
 	d3.select(".interface-label").remove();
@@ -28,8 +28,8 @@ function draw_graph(refreshInterval, then) {
 	then.setSeconds(then.getSeconds() - startTime);
 	var thenTime = then.getTime();
 
-	$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
-
+	$.each( window.interfaces, function( key, value ) {
+		myData[value]['interfacename'] = graph_interfacenames[value];
 		latest[value + 'in'] = 0;
 		latest[value + 'out'] = 0;
 
@@ -65,7 +65,6 @@ function draw_graph(refreshInterval, then) {
 					return d3.time.format('%M:%S')(new Date(d));
 				});
 
-			//TODO change to localStorage.getItem('sizeLabel');
 			var sizeLabel = $( "#traffic-graph-size option:selected" ).text();
 
 			d3.select('#traffic-chart-' + value + ' svg')
@@ -74,7 +73,7 @@ function draw_graph(refreshInterval, then) {
 				.attr("x", 20)             
 				.attr("y", 20)
 				.attr("font-size", 18)
-				.text(value);
+				.text(myData[value]['interfacename']);
 
 			charts[value].yAxis
 		    	.tickFormat(d3.format('.2s'))
@@ -126,16 +125,15 @@ function draw_graph(refreshInterval, then) {
 
 	});
 
-	//only update the graphs when tab is active in window to save resources and prevent build up
-	updateIds = Visibility.every(refreshInterval * 1000, function(){
-
+	var refreshGraphFunction = function(){
 		d3.json("ifstats.php")
 		.header("Content-Type", "application/x-www-form-urlencoded")
-		.post('if='+JSON.parse(localStorage.getItem('interfaces')).join('|'), function(error, json) { //TODO all ifs again
+		.post('if='+window.interfaces.join('|'), function(error, json) { //TODO all ifs again
 
 			if (error) {
 
 				Visibility.stop(updateIds);
+				clearInterval(updateTimerIds);
 				$(".traffic-widget-chart").remove();
 				$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + error);
 				return console.warn(error);
@@ -145,6 +143,7 @@ function draw_graph(refreshInterval, then) {
 			if (json.error) {
 
 				Visibility.stop(updateIds);
+				clearInterval(updateTimerIds);
 				$(".traffic-widget-chart").remove();
 				$("#traffic-chart-error").show().html('<strong>Error</strong>: ' + json.error);
 				return console.warn(json.error);
@@ -154,6 +153,8 @@ function draw_graph(refreshInterval, then) {
 			now = new Date(Date.now());
 
 			$.each(json, function( key, ifVals ) {
+				label = $('#traffic-chart-' + key + ' svg > .interface-label');
+				$(label).text(ifVals.name);
 
 				if(!myData[key][0].first) {
 
@@ -202,6 +203,12 @@ function draw_graph(refreshInterval, then) {
 
 		});
 
-	});
-
+	}
+	
+	if(backgroundupdate) {
+		updateTimerIds = setInterval(refreshGraphFunction, refreshInterval * 1000);
+	} else {
+		//only update the graphs when tab is active in window to save resources and prevent build up
+		updateIds = Visibility.every(refreshInterval * 1000, refreshGraphFunction);
+	}
 }

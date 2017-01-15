@@ -56,6 +56,7 @@ if (!is_array($config["widgets"]["trafficgraphs"])) {
 	$config["widgets"]["trafficgraphs"]["refreshinterval"] = 1;
 	$config["widgets"]["trafficgraphs"]["invert"] = "true";
 	$config["widgets"]["trafficgraphs"]["size"] = 1;
+	$config["widgets"]["trafficgraphs"]["backgroundupdate"] = "false";
 	$config["widgets"]["trafficgraphs"]["shown"] = array();
 	$config["widgets"]["trafficgraphs"]["shown"]["item"] = array();
 
@@ -81,6 +82,9 @@ if(!isset($config["widgets"]["trafficgraphs"]["invert"])) {
 	$config["widgets"]["trafficgraphs"]["invert"] = "true";
 }
 
+if(!isset($config["widgets"]["trafficgraphs"]["backgroundupdate"])) {
+	$config["widgets"]["trafficgraphs"]["backgroundupdate"] = "true";
+}
 $a_config = &$config["widgets"]["trafficgraphs"];
 
 // save new default config options that have been submitted
@@ -91,25 +95,23 @@ if ($_POST) {
 
 	// TODO check if between 1 and 10
 	if (isset($_POST["traffic-graph-interval"]) && is_numericint($_POST["traffic-graph-interval"])) {
-
 		$a_config["refreshinterval"] = $_POST["traffic-graph-interval"];
-
 	} else {
-
 		die('{ "error" : "Refresh Interval is not a valid number between 1 and 10." }');
-
 	}
 
 	if($_POST["traffic-graph-invert"] === "true" || $_POST["traffic-graph-invert"] === "false") {
-
 		$a_config["invert"] = $_POST["traffic-graph-invert"];
-
 	} else {
-
 		die('{ "error" : "Invert is not a boolean of true or false." }');
-
 	}
 
+	if($_POST["traffic-graph-backgroundupdate"] === "true" || $_POST["traffic-graph-backgroundupdate"] === "false") {
+		$a_config["backgroundupdate"] = $_POST["traffic-graph-backgroundupdate"];
+	} else {
+		die('{ "error" : "Backgroundupdate is not a boolean of true or false." }');
+	}
+	
 	//TODO validate data and throw error
 	$a_config["size"] = $_POST["traffic-graph-size"];
 
@@ -157,34 +159,45 @@ $allifs = implode("|", $ifsarray);
 	?>
 
 	<script type="text/javascript">
-
 //<![CDATA[
+var graph_interfacenames = <?php
+	foreach ($ifdescrs as $ifname => $ifdescr) {
+		$iflist[$ifname] = $ifdescr;
+	}
+	echo json_encode($iflist);
+?>;
+
 events.push(function() {
 
 	var InterfaceString = "<?=$allifs?>";
 
 	//store saved settings in a fresh localstorage
 	localStorage.clear();
-	localStorage.setItem('interfaces', JSON.stringify(InterfaceString.split("|"))); //TODO see if can be switched to interfaces
 	localStorage.setItem('interval', <?=$refreshinterval?>);
 	localStorage.setItem('invert', <?=$a_config["invert"]?>);
 	localStorage.setItem('size', <?=$a_config["size"]?>);
+	localStorage.setItem('backgroundupdate', <?=$a_config["backgroundupdate"]?>);
 
+	window.interfaces = InterfaceString.split("|");
 	window.charts = {};
     window.myData = {};
     window.updateIds = 0;
+    window.updateTimerIds = 0;
     window.latest = [];
     var refreshInterval = localStorage.getItem('interval');
+    var backgroundupdate = localStorage.getItem('backgroundupdate');
 
+    var refreshInterval = localStorage.getItem('interval');
     //TODO make it fall on a second value so it increments better
     var now = then = new Date(Date.now());
 
     var nowTime = now.getTime();
 
-	$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+	$.each(window.interfaces, function( key, value ) {
 
 		myData[value] = [];
 		updateIds = 0;
+		updateTimerIds = 0;
 
 		var itemIn = new Object();
 		var itemOut = new Object();
@@ -203,19 +216,23 @@ events.push(function() {
 
 	});
 
-	draw_graph(refreshInterval, then);
+	draw_graph(refreshInterval, then, backgroundupdate);
 
 	//re-draw graph when the page goes from inactive (in it's window) to active
 	Visibility.change(function (e, state) {
+		if($('#traffic-graph-backgroundupdate').val() === "true"){
+			return;
+		}
 		if(state === "visible") {
 
 			now = then = new Date(Date.now());
 
 			var nowTime = now.getTime();
 
-			$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+			$.each(window.interfaces, function( key, value ) {
 
 				Visibility.stop(updateIds);
+				clearInterval(updateTimerIds);
 
 				myData[value] = [];
 
@@ -236,7 +253,7 @@ events.push(function() {
 
 			});
 
-			draw_graph(refreshInterval, then);
+			draw_graph(refreshInterval, then, backgroundupdate);
 
 		}
 	});
@@ -251,6 +268,7 @@ events.push(function() {
 		refreshInterval = parseInt($( "#traffic-graph-interval" ).val());
 		var invert = $( "#traffic-graph-invert" ).val();
 		var size = $( "#traffic-graph-size" ).val();
+		var backgroundupdate = $( "#traffic-graph-backgroundupdate" ).val();
 
 		//TODO validate interfaces data and throw error
 
@@ -267,10 +285,11 @@ events.push(function() {
 		if(!error) {
 
 			var formData = {
-				'traffic-graph-interfaces' : interfaces,
-				'traffic-graph-interval'   : refreshInterval,
-				'traffic-graph-invert'     : invert,
-				'traffic-graph-size'       : size
+				'traffic-graph-interfaces'       : interfaces,
+				'traffic-graph-interval'         : refreshInterval,
+				'traffic-graph-invert'           : invert,
+				'traffic-graph-size'             : size,
+				'traffic-graph-backgroundupdate' : backgroundupdate
 			};
 
 			$.ajax({
@@ -285,14 +304,16 @@ events.push(function() {
 				if(message.success) {
 
 					Visibility.stop(updateIds);
+					clearInterval(updateTimerIds);
 
 					//remove all old graphs (divs/svgs)
 					$( ".traffic-widget-chart" ).remove();
 
-					localStorage.setItem('interfaces', JSON.stringify(interfaces));
+					window.interfaces = interfaces;
 					localStorage.setItem('interval', refreshInterval);
 					localStorage.setItem('invert', invert);
 					localStorage.setItem('size', size);
+					localStorage.setItem('backgroundupdate', backgroundupdate);
 
 					//redraw graph with new settings
 					now = then = new Date(Date.now());
@@ -325,7 +346,7 @@ events.push(function() {
 
 					});
 
-					draw_graph(refreshInterval, then);
+					draw_graph(refreshInterval, then, backgroundupdate);
 
 					$( "#traffic-graph-message" ).removeClass("text-danger").addClass("text-success");
 					$( "#traffic-graph-message" ).text(message.success);
@@ -433,6 +454,22 @@ events.push(function() {
 			</div>
 		</div>
 
+		<div class="form-group">
+			<label for="traffic-graph-backgroundupdate" class="col-sm-3 control-label"><?=gettext('Background updates')?></label>
+			<div class="col-sm-9">
+				<select class="form-control" id="traffic-graph-backgroundupdate" name="traffic-graph-backgroundupdate">
+				<?php
+					if($a_config["backgroundupdate"] === "true") {
+						echo '<option value="true" selected>Keep graphs updated on inactive tab. (increases cpu usage)</option>';
+						echo '<option value="false">Clear graphs when not visible.</option>';
+					} else {
+						echo '<option value="true">Keep graphs updated on inactive tab. (increases cpu usage)</option>';
+						echo '<option value="false" selected>Clear graphs when not visible.</option>';
+					}
+				?>
+				</select>
+			</div>
+		</div>
 		<div class="form-group">
 			<div class="col-sm-3 text-right">
 				<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>

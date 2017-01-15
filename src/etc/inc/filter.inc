@@ -2120,7 +2120,7 @@ function filter_nat_rules_generate() {
 	$xinetd_fd = fopen("{$g['varetc_path']}/xinetd.conf", "w");
 
 	if (!empty($config['system']['tftpinterface'])) {
-		/* add tftp protocol helper */
+		/* add tftp helper */
 		$ftp_proxy_entry = array(
 			'port' => 6969,
 			'socket_type' => 'dgram',

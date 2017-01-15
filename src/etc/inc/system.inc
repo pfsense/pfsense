@@ -937,6 +937,10 @@ function clear_log_file($logfile = "/var/log/system.log", $restart_syslogd = tru
 	if ($restart_syslogd) {
 		system_syslogd_start();
 	}
+	// Bug #6915
+	if ($logfile == "/var/log/resolver.log") {
+		services_unbound_configure(true);
+	}
 }
 
 function clear_all_log_files($restart = false) {
@@ -958,6 +962,7 @@ function clear_all_log_files($restart = false) {
 			require_once('services.inc');
 		}
 		services_dhcpd_configure();
+		// Bug #6915
 		services_unbound_configure(false);
 	}
 	return;

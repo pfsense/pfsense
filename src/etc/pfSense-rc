@@ -251,6 +251,8 @@ fi
 if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
+# Make sure our /var/tmp is 777 + Sticky
+/bin/chmod 1777 /tmp
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3

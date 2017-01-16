@@ -171,15 +171,25 @@ function get_dyndns_service_text($dyndns_type) {
 	</tr>
 	</thead>
 	<tbody>
-	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
+	<?php $dyndnsid = -1; $rfc2136id = -1; $rowid = -1; foreach ($all_dyndns as $dyndns):
+		if ($dyndns['type'] == '_rfc2136_') {
+			$dblclick_location = 'services_rfc2136_edit.php';
+			$rfc2136id++;
+			$locationid = $rfc2136id;
+		} else {
+			$dblclick_location = 'services_dyndns_edit.php';
+			$dyndnsid++;
+			$locationid = $dyndnsid;
+		}
 
 		if (in_array(get_dyndnsent_key($dyndns), $skipdyndns)) {
-			$dyndnsid++;
 			continue;
 		}
 
+		$rowid++;
+
 	?>
-	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
+	<tr ondblclick="document.location='<?=$dblclick_location;?>?id=<?=$locationid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 		<td>
 		<?=get_dyndns_interface_text($dyndns['interface']);?>
 		</td>
@@ -190,10 +200,10 @@ function get_dyndns_service_text($dyndns_type) {
 		<?=htmlspecialchars(get_dyndns_hostname_text($dyndns));?>
 		</td>
 		<td>
-		<div id="dyndnsstatus<?= $dyndnsid;?>"><?= gettext("Checking ...");?></div>
+		<div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div>
 		</td>
 	</tr>
-	<?php $dyndnsid++; endforeach;?>
+	<?php endforeach;?>
 	</tbody>
 </table>
 </div>

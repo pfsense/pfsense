@@ -66,8 +66,8 @@ require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("filter.inc");
 
-if ($_POST['if'] && $_POST['submit']) {
-	$interface = $_POST['if'];
+if ($_POST['ifdescr'] && $_POST['submit']) {
+	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
 		interface_bring_down($interface);
 	} else {
@@ -78,7 +78,7 @@ if ($_POST['if'] && $_POST['submit']) {
 }
 
 $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' .
-					'<input type="hidden" name="if" value="%s" />' .
+					'<input type="hidden" name="ifdescr" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
 					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
@@ -96,13 +96,13 @@ function showDef($show, $term, $def) {
 }
 
 // Display a term/definition pair with a button
-function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
+function showDefBtn($show, $term, $def, $ifdescr, $btnlbl) {
 	global $formtemplate;
 
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl);
+		printf($formtemplate, $term, $ifdescr, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl);
 		print('</dd>');
 	}
 }

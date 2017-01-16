@@ -3,7 +3,7 @@
  * wake_on_lan.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
+ * Copyright (c) 2004-2017 Rubicon Communications, LLC (Netgate)
  * Copyright (c)  2010 Yehuda Katz
  * All rights reserved.
  *
@@ -141,7 +141,20 @@ endif;
 ?>
 	</tbody>
 </table>
-<p class="text-center"><a href="status_dhcp_leases.php" class="navlink"><?=gettext('DHCP Leases Status')?></a></p>
+<?php
+$dhcpd_enabled = false;
+if (is_array($config['dhcpd'])) {
+	foreach ($config['dhcpd'] as $dhcpif => $dhcp) {
+		if (isset($dhcp['enable']) && isset($config['interfaces'][$dhcpif]['enable'])) {
+			$dhcpd_enabled = true;
+			break;
+		}
+	}
+}
+?>
+<?php if ($dhcpd_enabled): ?>
+	<p class="text-center"><a href="status_dhcp_leases.php" class="navlink"><?=gettext('DHCP Leases Status')?></a></p>
+<?php endif; ?>
 </div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">

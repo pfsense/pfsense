@@ -114,7 +114,7 @@ $dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(
 	</tr>
 	</thead>
 	<tbody>
-	<?php $dyndnsid = 0; foreach ($all_dyndns as $dyndns):
+	<?php $dyndnsid = -1; $rfc2136id = -1; $rowid = -1; foreach ($all_dyndns as $dyndns):
 
 		if (in_array($dyndns['type'], $dyndns_split_domain_types)) {
 			$hostname = $dyndns['host'] . "." . $dyndns['domainname'];
@@ -125,8 +125,21 @@ $dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(
 			$hostname = $dyndns['host'];
 		} else {
 			$hostname = $dyndns['host'];
-		} ?>
-	<tr ondblclick="document.location='services_dyndns_edit.php?id=<?=$dyndnsid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
+		}
+
+		if ($dyndns['type'] == '_rfc2136_') {
+			$dblclick_location = 'services_rfc2136_edit.php';
+			$rfc2136id++;
+			$locationid = $rfc2136id;
+		} else {
+			$dblclick_location = 'services_dyndns_edit.php';
+			$dyndnsid++;
+			$locationid = $dyndnsid;
+		}
+
+		$rowid++;
+	?>
+	<tr ondblclick="document.location='<?=$dblclick_location;?>?id=<?=$locationid;?>'"<?=!isset($dyndns['enable'])?' class="disabled"':''?>>
 		<td>
 		<?php
 		if (isset($iflist[$dyndns['interface']])) {
@@ -149,10 +162,10 @@ $dyndns_providers = array_combine(explode(" ", DYNDNS_PROVIDER_VALUES), explode(
 		<?=htmlspecialchars($hostname);?>
 		</td>
 		<td>
-		<div id="dyndnsstatus<?= $dyndnsid;?>"><?= gettext("Checking ...");?></div>
+		<div id="dyndnsstatus<?= $rowid;?>"><?= gettext("Checking ...");?></div>
 		</td>
 	</tr>
-	<?php $dyndnsid++; endforeach;?>
+	<?php endforeach;?>
 	</tbody>
 </table>
 

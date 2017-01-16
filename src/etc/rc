@@ -364,6 +364,7 @@ fi
 if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
+/bin/chmod 1777 /var/tmp
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3

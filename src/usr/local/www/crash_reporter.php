@@ -82,12 +82,15 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 		flush();
 		if (is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
-			array_map('unlink', glob("/var/crash/*"));
-			// Erase the contents of the PHP error log
-			fclose(fopen("/tmp/PHP_errors.log", 'w'));
 			echo "<br/>";
 			print_r($resp);
-			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.") . "</p>";
+			if (preg_match('/Upload received OK./i', $resp)) {
+				array_map('unlink', glob("/var/crash/*"));
+				// Erase the contents of the PHP error log
+				fclose(fopen("/tmp/PHP_errors.log", 'w'));
+				echo "<br/>" . gettext("Deleted crash report files from local disk.");
+			}
+			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . "</p>";
 		} else {
 			echo gettext("Could not find any crash files.");
 		}

@@ -766,6 +766,12 @@ function openvpn_reconfigure($mode, $settings) {
 		}
 	}
 
+	/*
+	 * When binding specific address, wait cases where interface is in
+	 * tentative state otherwise it will fail
+	 */
+	$wait_tentative = false;
+
 	/* Determine the local IP to use - and make sure it matches with the selected protocol. */
 	switch ($settings['protocol']) {
 		case 'UDP':
@@ -785,6 +791,7 @@ function openvpn_reconfigure($mode, $settings) {
 		case 'TCP6':
 			if (is_ipaddrv6($iface_ipv6)) {
 				$conf .= "local {$iface_ipv6}\n";
+				$wait_tentative = true;
 			}
 			if ($settings['interface'] == "any") {
 				$conf .= "multihome\n";
@@ -1188,6 +1195,10 @@ function openvpn_reconfigure($mode, $settings) {
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.key", 0600);
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.tls-auth", 0600);
 	@chmod("{$g['varetc_path']}/openvpn/{$mode_id}.conf", 0600);
+
+	if ($wait_tentative) {
+		interface_wait_tentative($interface);
+	}
 }
 
 function openvpn_restart($mode, $settings) {

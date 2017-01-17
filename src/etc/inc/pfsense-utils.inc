@@ -2140,7 +2140,7 @@ function update_alias_names_upon_change($section, $field, $new_alias_name, $orig
 
 }
 
-function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = false) {
+function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = false, $exclude_private_networks = false, $exclude_local_identification_networks = false) {
 	/*
 	 * $filename = file to process for example blocklist like DROP:  http://www.spamhaus.org/drop/drop.txt
 	 * $type = if set to 'url' then subnets and ips will be returned,
@@ -2159,6 +2159,11 @@ function parse_aliases_file($filename, $type = "url", $max_items = -1, $kflc = f
 		log_error(sprintf(gettext("Could not process empty file from alias: %s"), $filename));
 		return null;
 	}
+
+	if ( ($exclude_private_networks) || ($exclude_local_identification_networks) ) {
+		remove_reserved_networks($filename, $exclude_private_networks, $exclude_local_identification_networks);
+	}
+
 	$fd = @fopen($filename, 'r');
 	if (!$fd) {
 		log_error(sprintf(gettext("Could not process aliases from alias: %s"), $filename));
@@ -2229,7 +2234,7 @@ function update_alias_url_data() {
 					}
 				}
 				if (file_exists("{$temp_filename}/aliases")) {
-					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 5000);
+					$address = parse_aliases_file("{$temp_filename}/aliases", $alias['type'], 5000, $kflc = true, isset($alias['exclude_private_networks']), isset($alias['exclude_local_identification_networks']));
 					mwexec("/bin/rm -rf {$temp_filename}");
 				}
 			}
@@ -2376,7 +2381,7 @@ function pfs_version_compare($cur_time, $cur_text, $remote) {
 	}
 	return $v;
 }
-function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $validateonly=false) {
+function process_alias_urltable($name, $type, $url, $freq, $forceupdate = false, $validateonly = false, $exclude_private_networks = false, $exclude_local_identification_networks = false) {
 	global $g, $config;
 
 	$urltable_prefix = "/var/db/aliastables/";
@@ -2405,7 +2410,7 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 
 			$type = ($type) ? $type : alias_get_type($name);	// If empty type passed, try to get it from config.
 
-			$parsed_contents = parse_aliases_file($tmp_urltable_filename, $type, "-1", true);
+			$parsed_contents = parse_aliases_file($tmp_urltable_filename, $type, "-1", $kflc = true, $exclude_private_networks, $exclude_local_identification_networks);
 			if ($type == "urltable_ports") {
 				$parsed_contents = group_ports($parsed_contents, true);
 			}
@@ -2433,6 +2438,42 @@ function process_alias_urltable($name, $type, $url, $freq, $forceupdate=false, $
 		// File exists, and it doesn't need to be updated.
 		return -1;
 	}
+}
+function remove_reserved_networks($filename, $exclude_private_networks = false, $exclude_local_identification_networks = false) {
+
+	# Remove private networks space so alias can be utilized on interfaces with private IP address.
+	$private_networks_delete_regex = "^192.168.0.0\\/16|^172.16.0.0\\/12|^10.0.0.0\\/8|^[fF][cC]00\\:\\:\\/7";
+
+	# Remove local identification networks space so alias can be utilized on interfaces serving DHCP.
+	$local_identification_networks_delete_regex = "^0.0.0.0\\/8";
+
+	$regex_or = '';
+	$delete_networks_regex = '';
+	$sed_regex_delimiter='';
+	$sed_command='';
+
+	if ($exclude_private_networks) {
+		$delete_networks_regex = $delete_networks_regex . $regex_or . $private_networks_delete_regex;
+		$regex_or = '|';
+	}
+
+	if ($exclude_local_identification_networks) {
+		$delete_networks_regex = $delete_networks_regex . $regex_or . $local_identification_networks_delete_regex;
+		$regex_or = '|';
+	}
+
+	if ($regex_or == '|') {
+		$sed_regex_delimiter='/';
+		$sed_command='d;';
+		$delete_networks_regex = $sed_regex_delimiter . $delete_networks_regex . $sed_regex_delimiter . $sed_command;
+	}
+	else {
+		$delete_networks_regex = "";
+	}
+
+	mwexec("mv " . escapeshellarg($filename) . " " . escapeshellarg($filename . ".tmp"));
+	mwexec("/usr/bin/sed -E '$delete_networks_regex' ". escapeshellarg($filename . ".tmp") . " > " . escapeshellarg($filename));
+	unlink_if_exists($filename . ".tmp");
 }
 
 function get_include_contents($filename) {

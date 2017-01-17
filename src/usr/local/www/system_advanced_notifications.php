@@ -171,7 +171,10 @@ if ($_POST) {
 			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
 				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 			} else {
-				$input_errors[] = gettext("SMTP passwords must match");
+				if ($_POST['disable_smtp'] != "yes") {
+					// Bug #7129 - do not nag people about passwords mismatch when SMTP notifications are disabled
+					$input_errors[] = gettext("SMTP passwords must match");
+				}
 			}
 		}
 

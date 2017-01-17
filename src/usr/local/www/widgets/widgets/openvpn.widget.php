@@ -24,6 +24,11 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
+// Constructs a unique key that will identify an OpenVPN entry in the filter list.
+function get_openvpnent_key($ovpn) {
+	return $ovpn['vpnid'];
+}
+
 /* Handle AJAX */
 if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
@@ -43,19 +48,51 @@ if ($_GET['action']) {
 if ($_REQUEST && $_REQUEST['ajax']) {
 	printPanel();
 	exit;
+} else if ($_POST) {
+
+	$validNames = array();
+	$servers = openvpn_get_active_servers();
+	$sk_servers = openvpn_get_active_servers("p2p");
+	$clients = openvpn_get_active_clients();
+
+	foreach ($servers as $server) {
+		array_push($validNames, get_openvpnent_key($server));
+	}
+
+	foreach ($sk_servers as $sk_server) {
+		array_push($validNames, get_openvpnent_key($sk_server));
+	}
+
+	foreach ($clients as $client) {
+		array_push($validNames, get_openvpnent_key($client));
+	}
+
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets']['openvpn']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings['widgets']['openvpn']['filter'] = "";
+	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved OpenVPN Filter via Dashboard."));
+	header("Location: /index.php");
 }
 
 // Output the widget panel from this function so that it can be called from the AJAX handler as well as
 // when first rendering the page
 function printPanel() {
+	global $user_settings;
 
 	$servers = openvpn_get_active_servers();
 	$sk_servers = openvpn_get_active_servers("p2p");
 	$clients = openvpn_get_active_clients();
+	$skipovpns = explode(",", $user_settings['widgets']['openvpn']['filter']);
 
 	$opstring = "";
 
 	foreach ($servers as $server):
+		if (in_array(get_openvpnent_key($server), $skipovpns)) {
+			continue;
+		}
 
 	$opstring .= "<div class=\"widget panel panel-default\">";
 	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . htmlspecialchars($server['name']) . "</h2></div>";
@@ -116,7 +153,18 @@ function printPanel() {
 
 	print($opstring);
 
+	$got_sk_server = false;
+
 	if (!empty($sk_servers)):
+		foreach ($sk_servers as $sk_server):
+			if (!in_array(get_openvpnent_key($sk_server), $skipovpns)) {
+				$got_sk_server = true;
+				break;
+			}
+		endforeach;
+	endif;
+
+	if ($got_sk_server):
 
 	$opstring = "";
 	$opstring .= "<div class=\"widget panel panel-default\">";
@@ -133,6 +181,9 @@ function printPanel() {
 	$opstring .=			"<tbody>";
 
 				foreach ($sk_servers as $sk_server):
+					if (in_array(get_openvpnent_key($sk_server), $skipovpns)) {
+						continue;
+					}
 
 	$opstring .=				"<tr name=\"r:" . $sk_server['port'] . ":" . $sk_server['remote_host'] . "\">";
 	$opstring .=					"<td>";
@@ -178,8 +229,20 @@ function printPanel() {
 
 	endif;
 
+	$got_ovpn_client = false;
+
 	if (!empty($clients)):
-		$opstring = "";
+		foreach ($clients as $client):
+			if (!in_array(get_openvpnent_key($client), $skipovpns)) {
+				$got_ovpn_client = true;
+				break;
+			}
+		endforeach;
+	endif;
+
+	if ($got_ovpn_client):
+
+	$opstring = "";
 
 	$opstring .= "<div class=\"widget panel panel-default\">";
 	$opstring .=	"<div class=\"panel-heading\"><h2 class=\"panel-title\">" . gettext("Client Instance Statistics") . "</h2></div>";
@@ -195,6 +258,9 @@ function printPanel() {
 	$opstring .=			"<tbody>";
 
 				foreach ($clients as $client):
+					if (in_array(get_openvpnent_key($client), $skipovpns)) {
+						continue;
+					}
 
 	$opstring .=				"<tr name=\"r:" . $client['port'] . ":" . $client['remote_host'] . "\">";
 	$opstring .=					"<td>";
@@ -292,6 +358,12 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
+		$("#showallovpns").click(function() {
+			$("[id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
+		});
+
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
 		setTimeout(get_update, Math.floor((Math.random() * 10000) + 1000));
@@ -304,4 +376,61 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	printPanel();
 ?>
 </div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
+<form action="/widgets/widgets/openvpn.widget.php" method="post" class="form-horizontal">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Name")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$servers = openvpn_get_active_servers();
+				$sk_servers = openvpn_get_active_servers("p2p");
+				$clients = openvpn_get_active_clients();
+				$skipovpns = explode(",", $user_settings['widgets']['openvpn']['filter']);
+				foreach ($servers as $server):
+?>
+						<tr>
+							<td><?=htmlspecialchars($server['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($server)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($server), $skipovpns) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+				foreach ($sk_servers as $sk_server):
+?>
+						<tr>
+							<td><?=htmlspecialchars($sk_server['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($sk_server)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($sk_server), $skipovpns) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+				foreach ($clients as $client):
+?>
+						<tr>
+							<td><?=htmlspecialchars($client['name'])?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($client)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($client), $skipovpns) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallovpns" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>

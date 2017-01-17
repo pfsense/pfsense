@@ -129,11 +129,13 @@ if ($_POST['auth_user2']) {
 	$radiusctx = 'second';
 }
 
-
 /* find radius accounting context */
-$acctctx = 'acct';
-if (isset($cpcfg['radacct_use_authsrv'])) {
-	$acctctx = $radiusctx;
+$acctctx = 'none';
+if (isset($cpcfg['radacct_enable'])) {
+	$acctctx = 'acct';
+	if (isset($cpcfg['radacct_use_authsrv'])) {
+		$acctctx = $radiusctx;
+	}
 }
 
 if ($_POST['logout_id']) {
@@ -171,7 +173,7 @@ EOD;
 } else if (portal_consume_passthrough_credit($clientmac)) {
 	/* allow the client through if it had a pass-through credit for its MAC */
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	portal_allow($clientip, $clientmac, "unauthenticated", null, null, null, 'passthrough', $acctctx);
 
 } else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 	$voucher = trim($_POST['auth_voucher']);
@@ -185,7 +187,7 @@ EOD;
 			'voucher' => 1,
 			'session_timeout' => $timecredit*60,
 			'session_terminate_time' => 0);
-		if (portal_allow($clientip, $clientmac, $voucher, null, $attr)) {
+		if (portal_allow($clientip, $clientmac, $voucher, null, $attr, null, 'voucher', $acctctx)) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
@@ -245,7 +247,7 @@ EOD;
 
 		if ($loginok) {
 			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "LOGIN");
-			portal_allow($clientip, $clientmac, $_POST['auth_user']);
+			portal_allow($clientip, $clientmac, $_POST['auth_user'], null, null, null, 'local', $acctctx);
 		} else {
 			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "FAILURE");
 			portal_reply_page($redirurl, "error", $errormsg);
@@ -256,7 +258,7 @@ EOD;
 
 } else if ($_POST['accept'] && $clientip && $cpcfg['auth_method'] == "none") {
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	portal_allow($clientip, $clientmac, "unauthenticated", null, null, null, 'none', $acctctx);
 
 } else {
 	/* display captive portal page */

@@ -1410,9 +1410,8 @@ function captiveportal_init_radius_servers() {
 	global $config, $g, $cpzone;
 
 	/* generate radius server database */
-	if ($config['captiveportal'][$cpzone]['radiusip'] &&
-	    (!isset($config['captiveportal'][$cpzone]['auth_method']) || $config['captiveportal'][$cpzone]['auth_method'] == "radius")) {
-		$radiusip = $config['captiveportal'][$cpzone]['radiusip'];
+	if ($config['captiveportal'][$cpzone]['auth_method'] == "radius" || isset($config['captiveportal'][$cpzone]['radacct_enable'])) {
+		$radiusip = ($config['captiveportal'][$cpzone]['radiusip']) ? $config['captiveportal'][$cpzone]['radiusip'] : null;
 		$radiusip2 = ($config['captiveportal'][$cpzone]['radiusip2']) ? $config['captiveportal'][$cpzone]['radiusip2'] : null;
 		$radiusip3 = ($config['captiveportal'][$cpzone]['radiusip3']) ? $config['captiveportal'][$cpzone]['radiusip3'] : null;
 		$radiusip4 = ($config['captiveportal'][$cpzone]['radiusip4']) ? $config['captiveportal'][$cpzone]['radiusip4'] : null;
@@ -2134,9 +2133,6 @@ function portal_allow($clientip, $clientmac, $username, $password = null, $attri
 
 	if ($attributes['voucher']) {
 		$remaining_time = $attributes['session_timeout'];
-	// Set RADIUS-Attribute to Voucher to prevent ReAuth-Reqeuest for Vouchers Bug: #2155
-		$radiusctx="voucher";
-		$acctctx="voucher";
 	}
 
 	$writecfg = false;

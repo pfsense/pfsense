@@ -228,9 +228,14 @@ if ($_POST) {
 			$reqdfieldsn[] = gettext("Primary RADIUS server IP address");
 		}
 
-		if (isset($_POST['radacct_enable']) && !isset($_POST['radacct_use_authsrv'])) {
-			$reqdfields[] = "radacctip";
-			$reqdfieldsn[] = gettext("Primary accounting server IP address");
+		if (isset($_POST['radacct_enable'])) {
+			if (isset($_POST['radacct_use_authsrv'])) {
+				$reqdfields[] = "radiusip";
+				$reqdfieldsn[] = gettext("Primary RADIUS server IP address");
+			} else {
+				$reqdfields[] = "radacctip";
+				$reqdfieldsn[] = gettext("Primary accounting server IP address");
+			}
 		}
 
 		do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
@@ -987,6 +992,7 @@ $group->add(new Form_Input(
 $section->add($group);
 
 $group = new Form_Group('Accounting updates');
+$group->addClass('acctupdates');
 
 $group->add(new Form_Checkbox(
 	'reauthenticateacct',
@@ -1028,6 +1034,13 @@ $section = new Form_Section('RADIUS Options');
 $section->addClass('Radius');
 
 $section->addInput(new Form_Checkbox(
+	'radiussession_timeout',
+	'Session timeout',
+	'Use RADIUS Session-Timeout attributes',
+	$pconfig['radiussession_timeout']
+))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
+
+$section->addInput(new Form_Checkbox(
 	'reauthenticate',
 	'Reauthentication',
 	'Reauthenticate connected users every minute',
@@ -1052,17 +1065,17 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'radiussrcip_attribute',
-	'RADIUS NAS IP Attribute',
+	'NAS IP Attribute',
 	$pconfig['radiussrcip_attribute'],
 	build_radiusnas_list()
 ))->setHelp('Choose the IP to use for calling station attribute.');
 
-$section->addInput(new Form_Checkbox(
-	'radiussession_timeout',
-	'Session timeout',
-	'Use RADIUS Session-Timeout attributes',
-	$pconfig['radiussession_timeout']
-))->setHelp('When enabled, clients will be disconnected after the amount of time retrieved from the RADIUS Session-Timeout attribute.');
+$section->addInput(new Form_Input(
+	'radiusnasid',
+	'NAS Identifier',
+	'text',
+	$pconfig['radiusnasid']
+))->setHelp('Specify a NAS identifier to override the default value (pfSense.localdomain)');
 
 $section->addInput(new Form_Select(
 	'radiusvendor',
@@ -1089,13 +1102,6 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp('When enabled, if a client is disconnected for exceeding the idle timeout the time spent idle is included in the total session time. ' .
 			'Otherwise the session time reported to the RADIUS server is the time between when the session started and when the last ' .
 			'activity was recorded.');
-
-$section->addInput(new Form_Input(
-	'radiusnasid',
-	'NAS Identifier',
-	'text',
-	$pconfig['radiusnasid']
-))->setHelp('Specify a NAS identifier to override the default value (pfSense.localdomain)');
 
 $section->addInput(new Form_Select(
 	'radmac_format',
@@ -1295,8 +1301,8 @@ events.push(function() {
 	// ------- Show/hide sections based on checkbox settings --------------------------------------
 	function hideSections(hide) {
 		hideClass('Authentication', hide);
+		hideClass('Accounting', hide);
 		hideRadius();
-		hideAcctServers();
 		hideHTTPS();
 		hideClass('HTTPS', hide);
 		hideClass('HTML', hide);
@@ -1304,21 +1310,37 @@ events.push(function() {
 	}
 
 	function hideRadius() {
-		hide = (!$('#enable').prop('checked') || (!($('input[name="auth_method"]:checked').val() == 'radius')));
+		hideAll = (!($('#enable').prop('checked')));
+		hideAuth = (!($('input[name="auth_method"]:checked').val() == 'radius'));
+		hideAcct = (!($('#radacct_enable').prop('checked')));
 
-		hideClass('Primary', hide);
-		hideClass('Secondary', hide);
-		hideClass('Accounting', hide);
-		hideClass('Radius', hide);
+		hideClass('Radius', (hideAll || (hideAuth && hideAcct)));
 
 		disableInput('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
 		hideCheckbox('localauth_priv', !($('input[name="auth_method"]:checked').val() == 'local'));
-		hideClass("radiusproto", !($('input[name="auth_method"]:checked').val() == 'radius'));
-	}
 
-	function hideAcctServers() {
-		hideClass("authsrvacctport", !($('#radacct_use_authsrv').prop('checked')));
-		hideClass("acctsrv", $('#radacct_use_authsrv').prop('checked'));
+		hideClass('Primary', (hideAll || hideAuth));
+		hideClass('Secondary', (hideAll || hideAuth));
+
+		hideClass('radiusproto', hideAuth);
+		hideCheckbox('reauthenticate', hideAuth);
+		hideCheckbox('radmac_enable', hideAuth);
+		hideInput('radmac_secret', hideAuth);
+		hideCheckbox('radiussession_timeout', hideAuth);
+
+		if (hideAcct || hideAuth )
+			$('#radacct_use_authsrv').prop('checked', false);
+		hideCheckbox('radacct_use_authsrv', (hideAcct || hideAuth));
+		hideCheckbox('reverseacct', hideAcct);
+		hideCheckbox('includeidletime', hideAcct);
+		hideClass('authsrvacctport', hideAcct);
+		hideClass('acctsrv', hideAcct);
+		hideClass('acctupdates', hideAcct);
+
+		useAuth = $('#radacct_use_authsrv').prop('checked');
+
+		hideClass('authsrvacctport', (hideAcct || !useAuth));
+		hideClass('acctsrv', (hideAcct || useAuth));
 	}
 
 	function hideHTTPS() {
@@ -1359,8 +1381,12 @@ events.push(function() {
 		hideRadius();
 	});
 
+	$("#radacct_enable").click(function() {
+		hideRadius();
+	});
+
 	$("#radacct_use_authsrv").click(function() {
-		hideAcctServers();
+		hideRadius();
 	});
 
 	$("#httpslogin_enable").click(function() {

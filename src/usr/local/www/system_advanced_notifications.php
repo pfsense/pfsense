@@ -96,7 +96,10 @@ if ($_POST) {
 			if ($_POST['password'] == $_POST['password_confirm']) {
 				$config['notifications']['growl']['password'] = $_POST['password'];
 			} else {
-				$input_errors[] = gettext("Growl passwords must match");
+				// Bug #7129 - do not nag people about passwords mismatch when growl is disabled
+				if ($_POST['disable_growl'] != "yes") {
+					$input_errors[] = gettext("Growl passwords must match");
+				}
 			}
 		}
 
@@ -126,7 +129,10 @@ if ($_POST) {
 			if ($_POST['smtppassword'] == $_POST['smtppassword_confirm']) {
 				$config['notifications']['smtp']['password'] = $_POST['smtppassword'];
 			} else {
-				$input_errors[] = gettext("SMTP passwords must match");
+				if ($_POST['disable_smtp'] != "yes") {
+					// Bug #7129 - do not nag people about passwords mismatch when SMTP notifications are disabled
+					$input_errors[] = gettext("SMTP passwords must match");
+				}
 			}
 		}
 

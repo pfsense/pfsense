@@ -726,19 +726,14 @@ function openvpn_reconfigure($mode, $settings) {
 	// If "any" interface was selected, local directive will be omitted.
 	if (is_ipaddrv4($ipaddr)) {
 		$iface_ip = $ipaddr;
-	} else {
-		if ((!empty($interface)) && (strcmp($interface, "any"))) {
-			$iface_ip=get_interface_ip($interface);
-		}
+	} elseif (!empty($interface) && strcmp($interface, "any")) {
+		$iface_ip=get_interface_ip($interface);
 	}
 	if (is_ipaddrv6($ipaddr)) {
 		$iface_ipv6 = $ipaddr;
-	} else {
-		if ((!empty($interface)) && (strcmp($interface, "any"))) {
-			$iface_ipv6=get_interface_ipv6($interface);
-		}
+	} elseif (!empty($interface) && strcmp($interface, "any")) {
+		$iface_ipv6=get_interface_ipv6($interface);
 	}
-
 
 	$conf = "dev {$devname}\n";
 	if (isset($settings['verbosity_level'])) {

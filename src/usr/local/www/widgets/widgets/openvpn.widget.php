@@ -56,11 +56,6 @@ $nocsrf = true;
 require_once("guiconfig.inc");
 require_once("openvpn.inc");
 
-// Constructs a unique key that will identify an OpenVPN entry in the filter list.
-function get_openvpnent_key($ovpn) {
-	return $ovpn['vpnid'];
-}
-
 /* Handle AJAX */
 if ($_GET['action']) {
 	if ($_GET['action'] == "kill") {
@@ -88,15 +83,15 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	$clients = openvpn_get_active_clients();
 
 	foreach ($servers as $server) {
-		array_push($validNames, get_openvpnent_key($server));
+		array_push($validNames, $server['vpnid']);
 	}
 
 	foreach ($sk_servers as $sk_server) {
-		array_push($validNames, get_openvpnent_key($sk_server));
+		array_push($validNames, $sk_server['vpnid']);
 	}
 
 	foreach ($clients as $client) {
-		array_push($validNames, get_openvpnent_key($client));
+		array_push($validNames, $client['vpnid']);
 	}
 
 	if (is_array($_POST['show'])) {
@@ -122,7 +117,7 @@ function printPanel() {
 	$opstring = "";
 
 	foreach ($servers as $server):
-		if (in_array(get_openvpnent_key($server), $skipovpns)) {
+		if (in_array($server['vpnid'], $skipovpns)) {
 			continue;
 		}
 
@@ -185,7 +180,7 @@ function printPanel() {
 
 	if (!empty($sk_servers)):
 		foreach ($sk_servers as $sk_server):
-			if (!in_array(get_openvpnent_key($sk_server), $skipovpns)) {
+			if (!in_array($sk_server['vpnid'], $skipovpns)) {
 				$got_sk_server = true;
 				break;
 			}
@@ -209,7 +204,7 @@ function printPanel() {
 	$opstring .=			"<tbody>";
 
 				foreach ($sk_servers as $sk_server):
-					if (in_array(get_openvpnent_key($sk_server), $skipovpns)) {
+					if (in_array($sk_server['vpnid'], $skipovpns)) {
 						continue;
 					}
 
@@ -257,7 +252,7 @@ function printPanel() {
 
 	if (!empty($clients)):
 		foreach ($clients as $client):
-			if (!in_array(get_openvpnent_key($client), $skipovpns)) {
+			if (!in_array($client['vpnid'], $skipovpns)) {
 				$got_ovpn_client = true;
 				break;
 			}
@@ -282,7 +277,7 @@ function printPanel() {
 	$opstring .=			"<tbody>";
 
 				foreach ($clients as $client):
-					if (in_array(get_openvpnent_key($client), $skipovpns)) {
+					if (in_array($client['vpnid'], $skipovpns)) {
 						continue;
 					}
 
@@ -420,7 +415,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 ?>
 						<tr>
 							<td><?=htmlspecialchars($server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($server)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($server), $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$server['vpnid']?>" type="checkbox" <?=(!in_array($server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -428,7 +423,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 ?>
 						<tr>
 							<td><?=htmlspecialchars($sk_server['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($sk_server)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($sk_server), $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sk_server['vpnid']?>" type="checkbox" <?=(!in_array($sk_server['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;
@@ -436,7 +431,7 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 ?>
 						<tr>
 							<td><?=htmlspecialchars($client['name'])?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=get_openvpnent_key($client)?>" type="checkbox" <?=(!in_array(get_openvpnent_key($client), $skipovpns) ? 'checked':'')?>></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$client['vpnid']?>" type="checkbox" <?=(!in_array($client['vpnid'], $skipovpns) ? 'checked':'')?>></td>
 						</tr>
 <?php
 				endforeach;

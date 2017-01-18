@@ -1434,6 +1434,24 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 	}
 }
 
+function interface_wait_tentative($interface, $timeout = 10) {
+	if (!does_interface_exist($interface)) {
+		return false;
+	}
+
+	$time = 0;
+	while ($time <= $timeout) {
+		$if = pfSense_get_interface_addresses($interface);
+		if (!isset($if['tentative'])) {
+			return true;
+		}
+		sleep(1);
+		$time++;
+	}
+
+	return false;
+}
+
 function interface_isppp_type($interface) {
 	global $config;
 

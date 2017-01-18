@@ -79,6 +79,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	);
 
 	$ifdescrs = get_configured_interface_with_descr();
+	if (!is_array($ifdescrs)) {
+		$ifdescrs = array();
+	}
 	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
 
 	print("<thead>");
@@ -124,6 +127,9 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 } else if ($_POST) {
 
 	$ifdescrs = get_configured_interface_with_descr();
+	if (!is_array($ifdescrs)) {
+		$ifdescrs = array();
+	}
 	$validNames = array();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {

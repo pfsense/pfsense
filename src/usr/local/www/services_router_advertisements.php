@@ -339,7 +339,7 @@ if (count($carplist) > 0) {
 if (count($carplistif) > 0) {
 	$iflist = array();
 
-	$iflist['interface'] = strtoupper($if);
+	$iflist['interface'] = convert_friendly_interface_to_friendly_descr($if);
 	foreach ($carplistif as $ifname => $vip) {
 		$iflist[$ifname] = get_vip_descr($vip) . " - " . $vip;
 	}

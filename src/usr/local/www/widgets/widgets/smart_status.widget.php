@@ -61,9 +61,35 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/smart_status.inc");
 $specplatform = system_identify_specific_platform();
+
+$devs = array();
+## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
+if ($specplatform['name'] != "Hyper-V") {
+	$devs = get_smart_drive_list();
+}
+
+if ($_POST) {
+
+	$validNames = array();
+
+	foreach ($devs as $dev) {
+		array_push($validNames, $dev);
+	}
+
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets']['smart_status']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings['widgets']['smart_status']['filter'] = "";
+	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved SMART Status Filter via Dashboard."));
+	header("Location: /index.php");
+}
+
 ?>
 
-<table class="table table-striped table-hover">
+<div class="table-responsive">
+<table class="table table-hover table-striped table-condensed">
 	<thead>
 		<tr>
 			<th></th>
@@ -74,14 +100,14 @@ $specplatform = system_identify_specific_platform();
 	</thead>
 	<tbody>
 <?php
-$devs = array();
-## Get all adX, daX, and adaX (IDE, SCSI, and AHCI) devices currently installed
-if ($specplatform['name'] != "Hyper-V") {
-	$devs = get_smart_drive_list();
-}
+$skipsmart = explode(",", $user_settings['widgets']['smart_status']['filter']);
 
 if (count($devs) > 0)  {
 	foreach ($devs as $dev)  { ## for each found drive do
+		if (in_array($dev, $skipsmart)) {
+			continue;
+		}
+
 		$dev_ident = exec("diskinfo -v /dev/$dev | grep ident   | awk '{print $1}'"); ## get identifier from drive
 		$dev_state = trim(exec("smartctl -H /dev/$dev | awk -F: '/^SMART overall-health self-assessment test result/ {print $2;exit}
 /^SMART Health Status/ {print $2;exit}'")); ## get SMART state from drive
@@ -114,3 +140,54 @@ if (count($devs) > 0)  {
 ?>
 	</tbody>
 </table>
+</div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+
+<form action="/widgets/widgets/smart_status.widget.php" method="post" class="form-horizontal">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Drive")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				foreach ($devs as $dev):
+?>
+						<tr>
+							<td><?=htmlspecialchars($dev)?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$dev?>" type="checkbox" <?=(!in_array($dev, $skipsmart) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallsmartdrives" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+//<![CDATA[
+	events.push(function(){
+		$("#showallsmartdrives").click(function() {
+			$("[id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
+		});
+
+	});
+//]]>
+</script>

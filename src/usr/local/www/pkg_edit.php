@@ -726,6 +726,12 @@ foreach ($pkg['fields']['field'] as $pkga) {
 		$section = new Form_Section('General Options');
 	}
 
+	// If this is a required field, pre-pend a "*" to the field description
+	// This tells the system to add "element-required" class text decoration to the field label
+	if (isset($pkga['required'])) {
+		$pkga['fielddescr'] = "*" . $pkga['fielddescr'];
+	}
+
 	switch ($pkga['type']) {
 		// Create an input element. The format is slightly different depending on whether we are composing a group,
 		// section, or advanced section. This is true for every element type

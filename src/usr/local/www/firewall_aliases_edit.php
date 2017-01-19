@@ -646,9 +646,11 @@ if (isset($id) && $a_aliases[$id]) {
 
 $section = new Form_Section('Properties');
 
+// Experiment: Pre-pending the input title/label with '*' causes the element-required class to be added to the label
+// which adds text decoration to indicate this is a required field. See pfSense.css
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.

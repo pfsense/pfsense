@@ -28,11 +28,12 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
+$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if ($user_settings['webgui']['pagenamefirst']) {
-	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
 } else {
-	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
+	$tabtitle = htmlspecialchars($system_url) . " - " . $pagetitle;
 }
 
 $cssfile = "/css/pfSense.css";
@@ -183,9 +184,13 @@ function return_ext_menu($section) {
 }
 
 function output_menu($arrayitem, $target = null, $section = "") {
+	$output = "";
+
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" ||
+		    (($section == "Help") && isAllowedPage("help.php")) ||
+		    (substr($item[1], 0, 8) == "https://")) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -200,12 +205,14 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			}
 
 			if ($item[0] == '-DIVIDER-') {
-				print(' <li class="divider"></li>');
+				$output .= ' <li class="divider"></li>';
 			} else {
-				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+				$output .= "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]) . "</li>\n";
 			}
 		}
 	}
+
+	return $output;
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
@@ -216,7 +223,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout"), "/index.php?logout");
+$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
@@ -445,7 +452,7 @@ if (are_notices_pending()) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$config['system']['hostname'] . '.' . $config['system']['domain']?>"/></a>
+			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$system_url?>"/></a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
@@ -454,7 +461,7 @@ if (are_notices_pending()) {
                     $help_menu_title = htmlspecialchars($config['system']['hostname']);
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+                    $help_menu_title = htmlspecialchars($system_url);
                 }
                 else {
                     $help_menu_title = 'Help';
@@ -473,16 +480,21 @@ if (are_notices_pending()) {
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
 					}
+
+					$menu_output = output_menu($item['menu'], $item['href'], $item['name']);
+
+					if (strlen($menu_output) > 0):
 ?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
+					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
 				</li>
 
 <?php
+					endif;
 			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
@@ -499,7 +511,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout">
-							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
+							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -615,7 +627,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 }
 
 ?>
-	<?php if (!$g['disablehelpicon']): ?>
+	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>

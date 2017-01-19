@@ -34,9 +34,12 @@ require_once("guiconfig.inc");
 require_once("shaper.inc");
 require_once("filter.inc");
 
-if ($_POST['if'] && $_POST['submit']) {
-	$interface = $_POST['if'];
+if ($_POST['ifdescr'] && $_POST['submit']) {
+	$interface = $_POST['ifdescr'];
 	if ($_POST['status'] == "up") {
+		if ($_POST['relinquish_lease']) {
+			dhcp_relinquish_lease($_POST['if'], $_POST['ifdescr'], $_POST['ipv']);
+		}
 		interface_bring_down($interface);
 	} else {
 		interface_configure($interface);
@@ -46,13 +49,14 @@ if ($_POST['if'] && $_POST['submit']) {
 }
 
 $formtemplate = '<form name="%s" action="status_interfaces.php" method="post">' .
-					'<input type="hidden" name="if" value="%s" />' .
+					'<input type="hidden" name="ifdescr" value="%s" />' .
 					'<input type="hidden" name="status" value="%s" />' .
 					'%s' .
 					'<button type="submit" name="submit" class="btn btn-warning btn-xs" value="%s">' .
 					'<i class="fa fa-refresh icon-embed-btn"></i>' .
 					'%s' .
 					'</button>' .
+					'%s' .
 					'</form>';
 
 // Display a term/definition pair
@@ -64,14 +68,25 @@ function showDef($show, $term, $def) {
 }
 
 // Display a term/definition pair with a button
-function showDefBtn($show, $term, $def, $ifval, $btnlbl) {
+function showDefBtn($show, $term, $def, $ifdescr, $btnlbl, $chkbox_relinquish_lease) {
 	global $formtemplate;
 
 	if ($show) {
 		print('<dt>' . $term . '</dt>');
 		print('<dd>');
-		printf($formtemplate, $term, $ifval, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl);
+		printf($formtemplate, $term, $ifdescr, $show, htmlspecialchars($def)	. ' ', $btnlbl, $btnlbl, $chkbox_relinquish_lease);
 		print('</dd>');
+	}
+}
+
+// Relinquish the DHCP lease from the server.
+function dhcp_relinquish_lease($if, $ifdescr, $ipv) {
+	$leases_db = '/var/db/dhclient.leases.' . $if;
+	$conf_file = '/var/etc/dhclient_'.$ifdescr.'.conf';
+	$script_file = '/usr/local/sbin/pfSense-dhclient-script';
+
+	if (file_exists($leases_db) && file_exists($script_file)) {
+		mwexec('/usr/local/sbin/dhclient -'.$ipv.' -d -r -lf '.$leases_db.' -cf '.$conf_file.' -sf '.$script_file);
 	}
 }
 
@@ -84,6 +99,12 @@ $ifdescrs = get_configured_interface_with_descr(false, true);
 foreach ($ifdescrs as $ifdescr => $ifname):
 	$ifinfo = get_interface_info($ifdescr);
 	$mac_man = load_mac_manufacturer_table();
+
+	$chkbox_relinquish_lease = 	'&nbsp;&nbsp;&nbsp;' .
+								'<input type="checkbox" name="relinquish_lease" value="true" title="Send a gratuitous DHCP release packet to the server." /> ' . gettext("Relinquish Lease") .
+								'<input type="hidden" name="if" value='.$ifinfo['if'].' />';
+	$chkbox_relinquish_lease_v4 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=4 />';
+	$chkbox_relinquish_lease_v6 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=6 />';
 ?>
 
 <div class="panel panel-default">
@@ -92,12 +113,12 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 		<dl class="dl-horizontal">
 <?php
 		showDef(true, gettext("Status"), $ifinfo['status']);
-		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"));
-		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"));
-		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"));
-		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"));
+		showDefBtn($ifinfo['dhcplink'], 'DHCP', $ifinfo['dhcplink'], $ifdescr, $ifinfo['dhcplink'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcplink'] == "up" ? $chkbox_relinquish_lease_v4 : '');
+		showDefBtn($ifinfo['dhcp6link'], 'DHCP6', $ifinfo['dhcp6link'], $ifdescr, $ifinfo['dhcp6link'] == "up" ? gettext("Release") : gettext("Renew"), $ifinfo['dhcp6link'] == "up" ? $chkbox_relinquish_lease_v6 : '');
+		showDefBtn($ifinfo['pppoelink'], 'PPPoE', $ifinfo['pppoelink'], $ifdescr, $ifinfo['pppoelink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['pptplink'], 'PPTP', $ifinfo['pptplink'], $ifdescr, $ifinfo['pptplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['l2tplink'], 'L2TP', $ifinfo['l2tplink'], $ifdescr, $ifinfo['l2tplink'] == "up" ? gettext("Disconnect") : gettext("Connect"), '');
+		showDefBtn($ifinfo['ppplink'], 'PPP', $ifinfo['ppplink'], $ifdescr, ($ifinfo['ppplink'] == "up" && !$ifinfo['nodevice']) ? gettext("Disconnect") : gettext("Connect"), '');
 		showDef($ifinfo['ppp_uptime'] || $ifinfo['ppp_uptime_accumulated'], gettext("Uptime") . ' ' . ($ifinfo['ppp_uptime_accumulated'] ? '(historical)':''), $ifinfo['ppp_uptime'] . $ifinfo['ppp_uptime_accumulated']);
 		showDef($ifinfo['cell_rssi'], gettext("Cell Signal (RSSI)"), $ifinfo['cell_rssi']);
 		showDef($ifinfo['cell_mode'], gettext("Cell Mode"), $ifinfo['cell_mode']);

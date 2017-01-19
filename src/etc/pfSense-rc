@@ -112,16 +112,18 @@ if [ ${mount_rc} -ne 0 ]; then
 fi
 
 # Handle ZFS read-only case
-/sbin/kldstat -qm zfs
-if [ $? -eq 0 ]; then
+unset USE_ZFS
+if /sbin/kldstat -qm zfs; then
 	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
 	if [ $ZFSFSAVAILABLE -eq 0 ]; then
 		/sbin/kldunload zfs
-	elif [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
+	else
+		USE_ZFS=1
+		ZFSROOT=$(/sbin/zfs mount | /usr/bin/awk '$2 == "/" {print $1}')
+		if [ -n "$ZFSROOT" ]; then
 			/sbin/zfs set readonly=off $ZFSROOT
 		fi
+		/sbin/zfs mount -a
 	fi
 fi
 
@@ -136,6 +138,18 @@ if [ -d "/conf" ]; then
 fi
 
 USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+
+# Mount /var and /tmp on ZFS filesystems when it's necessary
+if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" != "true" ]; then
+	zfs list -H -o name,mountpoint,canmount |
+	    while read volume mountpoint canmount; do
+		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
+			&& continue
+
+		/sbin/zfs mount ${volume}
+	done
+fi
+
 unset MOVE_PKG_DATA
 # If use MFS var is disabled, move files back to place
 if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then

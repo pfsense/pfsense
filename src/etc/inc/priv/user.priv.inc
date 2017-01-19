@@ -14,7 +14,7 @@ $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = gettext("WebCfg - Help pages");
 $priv_list['page-help-all']['descr'] = gettext("Show all items on help menu and allow access to Help shortcut links");
 $priv_list['page-help-all']['match'] = array();
-$priv_list['page-help-all']['match'][] = "*help.php";
+$priv_list['page-help-all']['match'][] = "help.php*";
 
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");
@@ -149,5 +149,11 @@ $priv_list['page-status-systemlogs-wireless']['name'] = gettext("WebCfg - Status
 $priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Wireless' page.");
 $priv_list['page-status-systemlogs-wireless']['match'] = array();
 $priv_list['page-status-systemlogs-wireless']['match'][] = "status_logs.php?logfile=wireless";
+
+$priv_list['page-services-upnp'] = array();
+$priv_list['page-services-upnp']['name'] = gettext("WebCfg - Services: UPnP");
+$priv_list['page-services-upnp']['descr'] = gettext("Allow access to the 'Services: UPnP' page.");
+$priv_list['page-services-upnp']['match'] = array();
+$priv_list['page-services-upnp']['match'][] = "pkg_edit.php?xml=miniupnpd.xml";
 
 ?>

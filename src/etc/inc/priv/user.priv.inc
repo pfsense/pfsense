@@ -16,6 +16,10 @@ $priv_list['page-help-all']['descr'] = gettext("Show all items on help menu and 
 $priv_list['page-help-all']['match'] = array();
 $priv_list['page-help-all']['match'][] = "help.php*";
 
+$priv_list['page-gold-all'] = array();
+$priv_list['page-gold-all']['name'] = gettext("WebCfg - Gold pages");
+$priv_list['page-gold-all']['descr'] = gettext("Show all items on the Gold menu");
+
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");
 $priv_list['page-dashboard-all']['descr'] = gettext("Allow access to all pages required for the dashboard.");

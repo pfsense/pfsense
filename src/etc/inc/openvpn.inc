@@ -1131,7 +1131,7 @@ function openvpn_restart($mode, $settings) {
 	}
 
 	/* Do not start an instance if we are not CARP master on this vip! */
-	if (strstr($settings['interface'], "_vip") && get_carp_interface_status($settings['interface']) != "MASTER") {
+	if (strstr($settings['interface'], "_vip") && !in_array(get_carp_interface_status($settings['interface']), array("MASTER", ""))) {
 		unlock($lockhandle);
 		return;
 	}
@@ -1140,7 +1140,7 @@ function openvpn_restart($mode, $settings) {
 	$a_groups = return_gateway_groups_array();
 	if (is_array($a_groups[$settings['interface']])) {
 		/* the interface is a gateway group. If a vip is defined and its a CARP backup then do not start */
-		if (($a_groups[$settings['interface']][0]['vip'] <> "") && (get_carp_interface_status($a_groups[$settings['interface']][0]['vip']) != "MASTER")) {
+		if (($a_groups[$settings['interface']][0]['vip'] <> "") && (!in_array(get_carp_interface_status($a_groups[$settings['interface']][0]['vip']), array("MASTER", "")))) {
 			unlock($lockhandle);
 			return;
 		}

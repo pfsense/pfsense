@@ -14,7 +14,7 @@ $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = gettext("WebCfg - Help pages");
 $priv_list['page-help-all']['descr'] = gettext("Show all items on help menu and allow access to Help shortcut links");
 $priv_list['page-help-all']['match'] = array();
-$priv_list['page-help-all']['match'][] = "*help.php";
+$priv_list['page-help-all']['match'][] = "help.php*";
 
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");

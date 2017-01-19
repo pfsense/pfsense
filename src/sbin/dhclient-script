@@ -352,7 +352,7 @@ BOUND|RENEW|REBIND|REBOOT)
 	fi
 	;;
 
-EXPIRE|FAIL)
+EXPIRE|FAIL|RELEASE)
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address

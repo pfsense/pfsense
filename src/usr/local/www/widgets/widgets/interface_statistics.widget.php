@@ -65,6 +65,8 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
+$ifdescrs = get_configured_interface_with_descr();
+
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
@@ -78,10 +80,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		'collisions' => gettext('Collisions'),
 	);
 
-	$ifdescrs = get_configured_interface_with_descr();
-	if (!is_array($ifdescrs)) {
-		$ifdescrs = array();
-	}
 	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
 
 	print("<thead>");
@@ -126,10 +124,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	exit;
 } else if ($_POST) {
 
-	$ifdescrs = get_configured_interface_with_descr();
-	if (!is_array($ifdescrs)) {
-		$ifdescrs = array();
-	}
 	$validNames = array();
 
 	foreach ($ifdescrs as $ifdescr => $ifname) {

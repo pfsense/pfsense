@@ -185,7 +185,10 @@ function return_ext_menu($section) {
 function output_menu($arrayitem, $target = null, $section = "") {
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
+		if (isAllowedPage($item[1]) ||
+		    $item[1] == "/index.php?logout" ||
+		    (($section == "Help") && isAllowedPage("help.php")) ||
+		    (($section == "Gold") && userHasPrivilege(getUserEntry($_SESSION['Username']), "page-gold-all"))) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));

@@ -183,6 +183,8 @@ function return_ext_menu($section) {
 }
 
 function output_menu($arrayitem, $target = null, $section = "") {
+	$output = "";
+
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
 		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
@@ -200,12 +202,14 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			}
 
 			if ($item[0] == '-DIVIDER-') {
-				print(' <li class="divider"></li>');
+				$output .= ' <li class="divider"></li>';
 			} else {
-				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
+				$output .= "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]) . "</li>\n";
 			}
 		}
 	}
+
+	return $output;
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
@@ -471,16 +475,21 @@ if (are_notices_pending()) {
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
 					}
+
+					$menu_output = output_menu($item['menu'], $item['href'], $item['name']);
+
+					if (strlen($menu_output) > 0):
 ?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
+					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
 				</li>
 
 <?php
+					endif;
 			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
@@ -613,7 +622,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 }
 
 ?>
-	<?php if (!$g['disablehelpicon']): ?>
+	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>

@@ -1,6 +1,6 @@
 <?php
 /*
- * gmirror_status.widget.php
+ * ipsec.widget.php
  *
  * part of pfSense (https://www.pfsense.org)
  * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)

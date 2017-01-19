@@ -28,11 +28,12 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
+$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if ($user_settings['webgui']['pagenamefirst']) {
-	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
 } else {
-	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
+	$tabtitle = htmlspecialchars($system_url) . " - " . $pagetitle;
 }
 
 $cssfile = "/css/pfSense.css";
@@ -216,7 +217,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout"), "/index.php?logout");
+$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
@@ -443,7 +444,7 @@ if (are_notices_pending()) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$config['system']['hostname'] . '.' . $config['system']['domain']?>"/></a>
+			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$system_url?>"/></a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
@@ -452,7 +453,7 @@ if (are_notices_pending()) {
                     $help_menu_title = htmlspecialchars($config['system']['hostname']);
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
-                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
+                    $help_menu_title = htmlspecialchars($system_url);
                 }
                 else {
                     $help_menu_title = 'Help';
@@ -497,7 +498,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout">
-							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
+							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
 						</a>
 					</li>
 			</ul>

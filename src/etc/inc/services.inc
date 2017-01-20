@@ -2817,11 +2817,12 @@ function upnp_start() {
 	}
 }
 
-function install_cron_job($command, $active = false, $minute = "0", $hour = "*", $monthday = "*", $month = "*", $weekday = "*", $who = "root") {
+function install_cron_job($command, $active = false, $minute = "0", $hour = "*", $monthday = "*", $month = "*", $weekday = "*", $who = "root", $write_config = true) {
 	global $config, $g;
 
 	$is_installed = false;
 	$cron_changed = true;
+	$change_message = "";
 
 	if (!is_array($config['cron'])) {
 		$config['cron'] = array();
@@ -2850,24 +2851,30 @@ function install_cron_job($command, $active = false, $minute = "0", $hour = "*",
 		$cron_item['command'] = $command;
 		if (!$is_installed) {
 			$config['cron']['item'][] = $cron_item;
-			write_config(sprintf(gettext("Installed cron job for %s"), $command));
+			$change_message = "Installed cron job for %s";
 		} else {
 			if ($config['cron']['item'][$x] == $cron_item) {
 				$cron_changed = false;
-				log_error(sprintf(gettext("Checked cron job for %s, no change needed"), $command));
 			} else {
 				$config['cron']['item'][$x] = $cron_item;
-				write_config(sprintf(gettext("Updated cron job for %s"), $command));
+				$change_message = "Updated cron job for %s";
 			}
 		}
 	} else {
 		if ($is_installed == true) {
 			unset($config['cron']['item'][$x]);
-			write_config(sprintf(gettext("Removed cron job for %s"), $command));
+			$change_message = "Removed cron job for %s";
 		}
 	}
 
 	if ($cron_changed) {
+		/* Optionally write the configuration if this function made changes.
+		 * Performing a write_config() in this way can have unintended side effects. See #7146
+		 * Base system instances of this function do not need to write, packages may.
+		 */
+		if ($write_config) {
+			write_config(sprintf(gettext($change_message), $command));
+		}
 		configure_cron();
 	}
 }

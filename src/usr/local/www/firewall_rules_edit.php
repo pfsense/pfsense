@@ -1248,27 +1248,40 @@ $section->addInput(new Form_Select(
 	)
 ))->setHelp('Select the Internet Protocol version this rule applies to.');
 
+$protolines = file('/etc/protocols', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$protocols = array(
+	'tcp' => 'TCP',
+	'udp' => 'UDP',
+	'tcp/udp' => 'TCP/UDP',
+	'icmp' => 'ICMP',
+	'esp' => 'ESP',
+	'ah' => 'AH',
+	'gre' => 'GRE',
+	'ipv6' => 'IPV6',
+	'igmp' => 'IGMP',
+	'pim' => 'PIM',
+	'ospf' => 'OSPF',
+	'sctp' => 'SCTP',
+	'any' =>  gettext('any'),
+	'carp' => 'CARP',
+	'pfsync' => 'PFSYNC',
+);
+foreach ($protolines as $line) {
+	// remove comments
+	$line = chop(preg_replace('/#.*$/', '', $line));
+	$pieces = preg_split('/\s+/', $line);
+	if (count($pieces) == 3) {
+		if (!array_key_exists($pieces[0], $protocols)) {
+			$protocols[$pieces[0]] = "$pieces[2] ($pieces[1])";
+		}
+	}
+}
+
 $section->addInput(new Form_Select(
 	'proto',
 	'Protocol',
 	$pconfig['proto'],
-	array(
-		'tcp' => 'TCP',
-		'udp' => 'UDP',
-		'tcp/udp' => 'TCP/UDP',
-		'icmp' => 'ICMP',
-		'esp' => 'ESP',
-		'ah' => 'AH',
-		'gre' => 'GRE',
-		'ipv6' => 'IPV6',
-		'igmp' => 'IGMP',
-		'pim' => 'PIM',
-		'ospf' => 'OSPF',
-		'sctp' => 'SCTP',
-		'any' => gettext('any'),
-		'carp' => 'CARP',
-		'pfsync' => 'PFSYNC',
-	)
+	$protocols
 ))->setHelp('Choose which IP protocol this rule should match.');
 
 $section->addInput(new Form_Select(

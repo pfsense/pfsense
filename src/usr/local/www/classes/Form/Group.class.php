@@ -154,7 +154,9 @@ EOT;
 			// 'element-required'. Text decoration can then be added in the CSS to indicate that this is a
 			// required field
 			if (substr($title, 0, 1 ) === "*" ) {
-				 $title = '<span class="element-required">' . substr($title, 1) . '</span>';
+				$title = '<span class="element-required">' . substr($title, 1) . '</span>';
+			} else {
+				$title = '<span>' . $title . '</span>';
 			}
 		}
 

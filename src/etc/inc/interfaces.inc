@@ -3051,7 +3051,7 @@ function kill_dhcp6client_process($interface,$norelease) {
 		/* relase sent then it needs to be -15, this then allows dhcp6c */
 		/* to send the release, it will also clean up after itself */
 		// Debug - next line remove if not required
-		mwexec("/usr/bin/logger -t info 'shutting down dhcp6c process'");
+		log_error("shutting down dhcp6c process");
 		$killtype = isset($norelease) ? "-9" : "-15";
 		mwexec("kill {$killtype} {$pid}"); 
 		if(!isset($norelease)) {
@@ -3070,13 +3070,13 @@ function run_dhcp6client_process($interface, $wancfg) {
 	$noreleaseOption = isset($wancfg['dhcp6norelease']) ? "-n" : "";
 	// Only run this if the lock does not exist. In theory the lock being there in this mode means the user has selected dhcp6withoutRA while a session is active in the other mode
 	// It should not happen as the process should have been killed and the lock deleted.
-	if(!file_exists("/tmp/dhcp6c_{$interface}_lock"))
-	{
+	if(!file_exists("/tmp/dhcp6c_{$interface}_lock")) {
+		
 		kill_dhcp6client_process($interface,isset($wancfg['dhcp6norelease'])); //Should not be required, but belts an
 
 		touch("/tmp/dhcp6c_{$interface}_lock"); // Lock it, only one run please.
 		mwexec("/usr/local/sbin/dhcp6c {$debugOption} {$noreleaseOption} -c {$g['varetc_path']}/dhcp6c_wan.conf -p {$g['varrun_path']}/dhcp6c_{$interface}.pid {$interface}"); 
-		mwexec("/usr/bin/logger -t info 'Starting dhcp6 client for interface wan({$wanif} in DHCP6 without RA mode)'");
+		log_error(sprintf(gettext("Starting dhcp6 client for interface wan %s in DHCP6 without RA mode"), $wanif));
 	}
 }
 

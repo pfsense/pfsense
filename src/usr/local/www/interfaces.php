@@ -2579,14 +2579,14 @@ $section->addClass('pppoe');
 
 $section->addInput(new Form_Input(
 	'pppoe_username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['pppoe_username']
 ));
 
 $section->addPassword(new Form_Input(
 	'pppoe_password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['pppoe_password']
 ));
@@ -3598,6 +3598,16 @@ events.push(function() {
 		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
 	}
 
+	function setDialOnDemandItems() {
+		var dod = $('#pppoe_dialondemand').prop('checked');
+
+		if (dod) {
+			$("#pfgui-label-span-pppoe_idletimeout").addClass('element-required');
+		} else {
+			$("#pfgui-label-span-pppoe_idletimeout").removeClass('element-required');
+		}
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	updateType($('#type').val());
@@ -3606,7 +3616,8 @@ events.push(function() {
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
-	setDHCPoptions()
+	setDHCPoptions();
+	setDialOnDemandItems();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3678,6 +3689,10 @@ events.push(function() {
 	});
 
 	// On click . .
+	$('#pppoe_dialondemand').click(function () {
+		setDialOnDemandItems();
+	});
+
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});

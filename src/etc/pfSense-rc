@@ -139,17 +139,6 @@ fi
 
 USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
 
-# Mount /var and /tmp on ZFS filesystems when it's necessary
-if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" != "true" ]; then
-	zfs list -H -o name,mountpoint,canmount |
-	    while read volume mountpoint canmount; do
-		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
-			&& continue
-
-		/sbin/zfs mount ${volume}
-	done
-fi
-
 unset MOVE_PKG_DATA
 # If use MFS var is disabled, move files back to place
 if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
@@ -166,6 +155,17 @@ elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
 	/bin/mkdir -p /root/var/db /root/var/cache
 	mv -f /var/db/pkg /root/var/db
 	mv -f /var/cache/pkg /root/var/cache
+fi
+
+# Mount /var and /tmp on ZFS filesystems when it's necessary
+if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" = "true" ]; then
+	zfs list -H -o name,mountpoint |
+	    while read volume mountpoint; do
+		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
+			&& continue
+
+		/sbin/zfs umount ${volume}
+	done
 fi
 
 if [ "${USE_MFS_TMPVAR}" = "true" ]; then

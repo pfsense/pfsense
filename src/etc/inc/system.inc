@@ -2356,8 +2356,17 @@ function system_identify_specific_platform() {
 			break;
 		case 'SYS-5018A-FTN4':
 		case 'A1SAi':
-			return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
-			break;
+      if (strpos($hw_model, "C2558") !== false) {
+        return (array('name' => 'C2558', 'descr' => 'Super Micro C2558'));
+      } elseif (strpos($hw_model, "C2758") !== false) {
+        return (array('name' => 'C2758', 'descr' => 'Super Micro C2758'));
+      } elseif (strpos($hw_model, "C2550") !== false) {
+        return (array('name' => 'C2550', 'descr' => 'Super Micro C2550'));
+      } elseif (strpos($hw_model, "C2750") !== false) {
+        return (array('name' => 'C2750', 'descr' => 'Super Micro C2750'));
+      }
+      return $result;
+      break;
 		case 'SYS-5018D-FN4T':
 			return (array('name' => 'XG-1540', 'descr' => 'Super Micro XG-1540'));
 			break;

@@ -1484,14 +1484,14 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
+			$ipaddrv6 = text_to_compressed_ip6(get_interface_ipv6($int, false, $linklocal_fallback));
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}
 	$interfaces = get_configured_vip_list('inet6');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddrv6) {
-			$ipv6_array[$int] = $ipaddrv6;
+			$ipv6_array[$int] = text_to_compressed_ip6($ipaddrv6);
 		}
 	}
 	return $ipv6_array;

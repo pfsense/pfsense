@@ -518,36 +518,43 @@ if ($_POST['apply']) {
 		unset($_POST['pppoe_resetdate']);
 		unset($_POST['pppoe_pr_preset_val']);
 	}
-	/* description unique? */
-	foreach ($ifdescrs as $ifent => $ifdescr) {
-		if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
-			$input_errors[] = gettext("An interface with the specified description already exists.");
-			break;
-		}
-	}
-
-	/* Is the description already used as an alias name? */
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
-			}
-		}
-	}
-
-	/* Is the description already used as an interface group name? */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $wancfg['descr']);
-			}
-		}
-	}
-
-	if (is_numeric($_POST['descr'])) {
-		$input_errors[] = gettext("The interface description cannot contain only numbers.");
-	}
 	/* input validation */
+	$reqdfields = explode(" ", "descr");
+	$reqdfieldsn = array(gettext("Description"));
+	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!$input_errors) {
+		/* description unique? */
+		foreach ($ifdescrs as $ifent => $ifdescr) {
+			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
+				$input_errors[] = gettext("An interface with the specified description already exists.");
+				break;
+			}
+		}
+
+		/* Is the description already used as an alias name? */
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+				}
+			}
+		}
+
+		/* Is the description already used as an interface group name? */
+		if (is_array($config['ifgroups']['ifgroupentry'])) {
+			foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+				if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $wancfg['descr']);
+				}
+			}
+		}
+
+		if (is_numeric($_POST['descr'])) {
+			$input_errors[] = gettext("The interface description cannot contain only numbers.");
+		}
+	}
+
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
 		if (!preg_match("/^staticv4/", $_POST['type'])) {
 			$input_errors[] = gettext("The DHCP Server is active " .

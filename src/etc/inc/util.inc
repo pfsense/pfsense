@@ -1434,7 +1434,7 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
+			$ipaddrv6 = Net_IPv6::compress(get_interface_ipv6($int, false, $linklocal_fallback));
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}

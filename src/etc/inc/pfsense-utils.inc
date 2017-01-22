@@ -2728,6 +2728,10 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
+	if ($isipv6) {
+		$ipaddr = Net_IPv6::compress($ipaddr);
+	}
+
 	if ($check_subnets) {
 		$cidrprefix = intval($cidrprefix);
 		if ($isipv6) {
@@ -2786,7 +2790,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	}
 
 	if ($check_localip) {
-		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
+		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, Net_IPv6::compress($config['l2tp']['localip'])) == 0)) {
 			$where_entry = array();
 			$where_entry['if'] = 'l2tp';
 			$where_entry['ip_or_subnet'] = $config['l2tp']['localip'];

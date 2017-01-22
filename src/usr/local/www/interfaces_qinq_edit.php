@@ -105,32 +105,48 @@ if ($_POST) {
 	}
 
 	$members = "";
-	$isfirst = 0;
 
 	// Read the POSTed member array into a space separated list translating any ranges
 	// into their included values
-	foreach ($_POST['members'] as $memb) {
+	$membercounter = 0;
+	$membername = "member{$membercounter}";
+	$valid_members = array();
+
+	while (isset($_POST[$membername])) {
 		// Might be a range
-		$member = explode("-", $memb);
+		$member = explode("-", $_POST[$membername]);
 
 		if (count($member) > 1) {
 			if (preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match)) {
 				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
 			}
 
-			for ($i = $member[0]; $i <= $member[1]; $i++) {
-				$members .= ($isfirst == 0 ? '':' ') . $i;
-				$isfirst++;
+			if ($member[0] <= $member[1]) {
+				for ($i = $member[0]; $i <= $member[1]; $i++) {
+					$valid_members[] = $i;
+				}
+			} else {
+				$input_errors[] = gettext("Tag ranges must be entered with the lower number first.");
 			}
 		} else { // Just a single number
-			if (preg_match("/([^0-9])+/", $memb, $match)) {
+			if (preg_match("/([^0-9])+/", $member[0], $match)) {
 				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
 			} else {
-				$members .= ($isfirst == 0 ? '':' ') . $memb;
-				$isfirst++;
+				if ($member[0]) {
+					$valid_members[] = $member[0];
+				}
 			}
 		}
+
+		// Remember the POSTed values so they can be redisplayed if there were errors.
+		$posted_members .= ($membercounter == 0 ? '':' ') . $_POST[$membername];
+
+		$membercounter++;
+		$membername = "member{$membercounter}";
 	}
+
+	// Just use the unique valid members. There could have been overlap in the ranges or repeat of numbers entered.
+	$members = implode(" ", array_unique($valid_members));
 
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
@@ -199,7 +215,7 @@ if ($_POST) {
 	} else {
 		$pconfig['descr'] = $_POST['descr'];
 		$pconfig['tag'] = $_POST['tag'];
-		$pconfig['members'] = $members;
+		$pconfig['members'] = $posted_members;
 	}
 }
 
@@ -259,7 +275,7 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_StaticText(
 	'Member(s)',
 	'Ranges can be specified in the inputs below. Enter a range (2-3) or individual numbers.' . '<br />' .
-	'Click "Duplicate" as many times as needed to add new inputs.'
+	'Click "Add Tag" as many times as needed to add new inputs.'
 ));
 
 if (isset($id) && $a_qinqs[$id]) {
@@ -282,13 +298,12 @@ if ($members != "") {
 }
 
 foreach ($item as $ww) {
-	$member = $item[$counter];
 
 	$group = new Form_Group($counter == 0 ? 'Tag(s)':'');
 	$group->addClass('repeatable');
 
 	$group->add(new Form_Input(
-		'members[]',
+		'member' . $counter,
 		null,
 		'text',
 		$ww
@@ -317,4 +332,19 @@ $form->add($section);
 
 print($form);
 
+?>
+
+<script type="text/javascript">
+//<![CDATA[
+
+events.push(function() {
+
+	// Suppress "Delete row" button if there are fewer than two rows
+	checkLastRow();
+
+});
+//]]>
+</script>
+
+<?php
 include("foot.inc");

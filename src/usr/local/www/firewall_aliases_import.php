@@ -264,7 +264,7 @@ $section = new Form_Section($sectiontext);
 
 $section->addInput(new Form_Input(
 	'name',
-	'Alias Name',
+	'*Alias Name',
 	'text',
 	$_POST['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.
@@ -279,7 +279,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Textarea(
 	'aliasimport',
-	'Aliases to import',
+	'*Aliases to import',
 	$_POST["aliasimport"]
 ))->setHelp($helptext);
 

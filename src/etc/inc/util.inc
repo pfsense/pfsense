@@ -373,7 +373,7 @@ function gen_subnetv4($ipaddr, $bits) {
 /* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+		return text_to_compressed_ip6(Net_IPv6::getNetmask($ipaddr, $bits));
 	}
 	return "";
 }
@@ -448,6 +448,21 @@ function ip2long32($ip) {
    Returns '' if not valid IPv4. */
 function ip2ulong($ip) {
 	return sprintf("%u", ip2long32($ip));
+}
+
+/*
+ * Convert textual IPv6 address string to compressed address
+ */
+function text_to_compressed_ip6($text) {
+	// Force re-compression by passing parameter 2 (force) true.
+	// This ensures that supposedly-compressed formats are uncompressed
+	// first then re-compressed into strictly correct form.
+	// e.g. 2001:0:0:4:0:0:0:1
+	// 2001::4:0:0:0:1 is a strictly-incorrect compression,
+	// but maybe the user entered it like that.
+	// The "force" parameter will ensure it is returned as:
+	// 2001:0:0:4::1
+	return Net_IPv6::compress($text, true);
 }
 
 /* Find out how many IPs are contained within a given IP range

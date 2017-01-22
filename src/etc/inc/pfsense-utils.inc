@@ -3135,7 +3135,7 @@ function convert_128bit_to_ipv6($ip6bin) {
 	foreach ($ip6binarr as $binpart) {
 		$ip6arr[] = dechex(bindec($binpart));
 	}
-	$ip6addr = Net_IPv6::compress(implode(":", $ip6arr));
+	$ip6addr = text_to_compressed_ip6(implode(":", $ip6arr));
 
 	return($ip6addr);
 }
@@ -3217,7 +3217,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 		break;
 	}
 
-	return Net_IPv6::compress(substr($prefix, 0, $prefix_len) .
+	return text_to_compressed_ip6(substr($prefix, 0, $prefix_len) .
 	    substr($suffix, $prefix_len));
 }
 

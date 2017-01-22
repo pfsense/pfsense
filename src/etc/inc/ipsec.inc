@@ -746,7 +746,7 @@ function ipsec_get_phase1($ikeid) {
 
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr)) {
-		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
+		return text_to_compressed_ip6($ipaddr);
 	} else {
 		return $ipaddr;
 	}

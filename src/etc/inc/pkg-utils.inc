@@ -337,11 +337,13 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $only_local = false) {
+function get_pkg_info($pkgs = 'all', $local_only = false, $installed_only = false) {
+
 	global $g, $input_errors;
 
 	$out = '';
 	$err = '';
+	$rc = 0;
 
 	unset($pkg_filter);
 	if (is_array($pkgs)) {
@@ -350,7 +352,7 @@ function get_pkg_info($pkgs = 'all', $only_local = false) {
 	}
 
 	if ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'];
+		$pkgs = $g['pkg_prefix'] . '*'; // Allows same prefix to work with both pkg search + pkg info
 	}
 
 	if (!function_exists('is_subsystem_dirty')) {
@@ -359,21 +361,46 @@ function get_pkg_info($pkgs = 'all', $only_local = false) {
 
 	/* Do not run remote operations if pkg has a lock */
 	if (is_subsystem_dirty('pkg')) {
-		$only_local = true;
+		$local_only = true;
 		$lock = false;
 	} else {
 		$lock = true;
 	}
 
 	$extra_param = "";
-	if ($only_local) {
+	if ($local_only) {
 		$extra_param = "-U ";
 	}
 
 	if ($lock) {
 		mark_subsystem_dirty('pkg');
 	}
-	$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
+
+	if (!$installed_only) {
+		// repo catalog search (either remote or local_only)
+		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
+	}
+	if ($installed_only || ($local_only && $rc != 0)) {
+		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed.
+		 *
+		 * The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the
+		 * remote repo catalog.
+		 *
+		 * If the calling code would have accepted local copy info (which isn't assumed up to date) then it
+		 * makes sense to fall back on pkg info to at least return the known info about installed pkgs (pkg
+		 * info should still work), instead of failing and returning no info at all. For example, this
+		 * enables offline view + management of installed pkgs.
+		 */
+
+		// pkg info errors if none match, unlike pkg search, so test it will work beforehand...
+		$tmp1 = $tmp2 = '';
+		$tmprc = pkg_exec("info -e -R --raw-format json-compact " . $pkgs, $tmp1, $tmp2);
+		
+		if ($tmprc == 0) {
+			// ok, packages match, so pkg info can be safely called
+			$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);
+		} // else we already have empty values for $out etc which are correct if none matched
+	}
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}
@@ -453,7 +480,8 @@ function get_pkg_info($pkgs = 'all', $only_local = false) {
 function register_all_installed_packages() {
 	global $g, $config, $pkg_interface;
 
-	$pkg_info = get_pkg_info('all', true);
+	$pkg_info = get_pkg_info('all', true, true);
+
 
 	foreach ($pkg_info as $pkg) {
 		if (!isset($pkg['installed'])) {

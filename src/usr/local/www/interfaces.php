@@ -492,7 +492,7 @@ if ($_POST['apply']) {
 	/* input validation */
 	$reqdfields = explode(" ", "descr");
 	$reqdfieldsn = array(gettext("Description"));
-	do_input_validation($_REQUEST, $reqdfields, $reqdfieldsn, $input_errors);
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
 		/* description unique? */

@@ -2728,6 +2728,10 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
+	if ($isipv6) {
+		$ipaddr = text_to_compressed_ip6($ipaddr);
+	}
+
 	if ($check_subnets) {
 		$cidrprefix = intval($cidrprefix);
 		if ($isipv6) {

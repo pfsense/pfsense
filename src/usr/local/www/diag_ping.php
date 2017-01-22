@@ -160,7 +160,7 @@ $section = new Form_Section('Ping');
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$host,
 	['placeholder' => 'Hostname to ping']

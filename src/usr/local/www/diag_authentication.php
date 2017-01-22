@@ -127,7 +127,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['username'],
 	['placeholder' => 'Username']
@@ -135,7 +135,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['password'],
 	['placeholder' => 'Password']

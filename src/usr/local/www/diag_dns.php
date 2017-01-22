@@ -251,7 +251,7 @@ $section = new Form_Section('DNS Lookup');
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$host,
 	['placeholder' => 'Hostname to look up.']

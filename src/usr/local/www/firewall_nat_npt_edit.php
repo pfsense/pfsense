@@ -211,7 +211,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'src',
-	'Address',
+	'*Address',
 	$pconfig['src'],
 	'V6'
 ))->addMask('srcmask', $pconfig['srcmask'])->setHelp('Internal (LAN) ULA IPv6 Prefix for the Network Prefix translation. ' .
@@ -226,7 +226,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'dst',
-	'Address',
+	'*Address',
 	$pconfig['dst'],
 	'V6'
 ))->addMask('dstmask', $pconfig['dstmask'])->setHelp('Global Unicast routable IPv6 prefix');

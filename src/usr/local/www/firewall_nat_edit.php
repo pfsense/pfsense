@@ -788,7 +788,7 @@ $group->setHelp('Specify the source port or port range for this rule. This is us
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Checkbox(
 	'dstnot',
@@ -813,7 +813,7 @@ $group->add(new Form_IpAddress(
 
 $section->add($group);
 
-$group = new Form_Group('Destination port range');
+$group = new Form_Group('*Destination port range');
 $group->addClass('dstportrange');
 
 $group->add(new Form_Select(
@@ -851,13 +851,13 @@ $section->add($group);
 
 $section->addInput(new Form_IpAddress(
 	'localip',
-	'Redirect target IP',
+	'*Redirect target IP',
 	$pconfig['localip'],
 	'ALIASV4V6'
 ))->setHelp('Enter the internal IP address of the server on which to map the ports.' . '<br />' .
 			'e.g.: 192.168.1.12');
 
-$group = new Form_Group('Redirect target port');
+$group = new Form_Group('*Redirect target port');
 $group->addClass('lclportrange');
 
 $group->add(new Form_Select(

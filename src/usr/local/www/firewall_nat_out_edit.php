@@ -518,7 +518,7 @@ $section->addInput(new Form_Select(
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "any" is specified.');
 
-$group = new Form_Group('Source');
+$group = new Form_Group('*Source');
 
 $group->add(new Form_Select(
 	'source_type',

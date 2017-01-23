@@ -92,7 +92,7 @@ if ($_POST) {
 	}
 
 	foreach ($interface_list_disabled as $gif => $gdescr) {
-		if ($gdescr == $_POST['ifname'] || $gif == $_POST['ifname']) {
+		if ((strcasecmp($gdescr, $_POST['ifname']) == 0) || (strcasecmp($gif, $_POST['ifname']) == 0)) {
 			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
 		}
 	}

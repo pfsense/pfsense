@@ -114,7 +114,7 @@ function config_unlock() {
 
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to lock() function."));
 	}
@@ -122,7 +122,6 @@ function lock($lock, $op = LOCK_SH) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		if (flock($fp, $op)) {
 			return $fp;
@@ -133,7 +132,7 @@ function lock($lock, $op = LOCK_SH) {
 }
 
 function try_lock($lock, $timeout = 5) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to try_lock() function."));
 	}
@@ -141,7 +140,6 @@ function try_lock($lock, $timeout = 5) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		$trycounter = 0;
 		while (!flock($fp, LOCK_EX | LOCK_NB)) {
@@ -161,7 +159,7 @@ function try_lock($lock, $timeout = 5) {
 
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	flock($cfglckkey, LOCK_UN);
 	fclose($cfglckkey);
 	return;
@@ -268,7 +266,7 @@ function gen_subnetv4($ipaddr, $bits) {
 /* same as gen_subnet() but accepts IPv6 only */
 function gen_subnetv6($ipaddr, $bits) {
 	if (is_ipaddrv6($ipaddr) && is_numericint($bits) && $bits <= 128) {
-		return Net_IPv6::compress(Net_IPv6::getNetmask($ipaddr, $bits));
+		return text_to_compressed_ip6(Net_IPv6::getNetmask($ipaddr, $bits));
 	}
 	return "";
 }
@@ -396,7 +394,22 @@ function bin_to_ip6($bin) {
  * Convert IPv6 binary to compressed address
  */
 function bin_to_compressed_ip6($bin) {
-	return Net_IPv6::compress(bin_to_ip6($bin));
+	return text_to_compressed_ip6(bin_to_ip6($bin));
+}
+
+/*
+ * Convert textual IPv6 address string to compressed address
+ */
+function text_to_compressed_ip6($text) {
+	// Force re-compression by passing parameter 2 (force) true.
+	// This ensures that supposedly-compressed formats are uncompressed
+	// first then re-compressed into strictly correct form.
+	// e.g. 2001:0:0:4:0:0:0:1
+	// 2001::4:0:0:0:1 is a strictly-incorrect compression,
+	// but maybe the user entered it like that.
+	// The "force" parameter will ensure it is returned as:
+	// 2001:0:0:4::1
+	return Net_IPv6::compress($text, true);
 }
 
 /* Find out how many IPs are contained within a given IP range
@@ -1434,14 +1447,14 @@ function get_configured_ipv6_addresses($linklocal_fallback = false) {
 	$interfaces = get_configured_interface_list();
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int) {
-			$ipaddrv6 = get_interface_ipv6($int, false, $linklocal_fallback);
+			$ipaddrv6 = text_to_compressed_ip6(get_interface_ipv6($int, false, $linklocal_fallback));
 			$ipv6_array[$int] = $ipaddrv6;
 		}
 	}
 	$interfaces = get_configured_vip_list('inet6');
 	if (is_array($interfaces)) {
 		foreach ($interfaces as $int => $ipaddrv6) {
-			$ipv6_array[$int] = $ipaddrv6;
+			$ipv6_array[$int] = text_to_compressed_ip6($ipaddrv6);
 		}
 	}
 	return $ipv6_array;

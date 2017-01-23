@@ -978,7 +978,7 @@ svg {
     background-color: #eeeeee;
 }
 
-/* Checkboxes in groups need to be aligned with text (or other) inputs in teh same group */
+/* Checkboxes in groups need to be aligned with text (or other) inputs in the same group */
 .form-group .checkbox {
     top: -6px;
 }

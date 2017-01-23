@@ -490,7 +490,7 @@ if ($_POST['apply']) {
 	}
 	/* description unique? */
 	foreach ($ifdescrs as $ifent => $ifdescr) {
-		if ($if != $ifent && $ifdescr == $_POST['descr']) {
+		if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
 			$input_errors[] = gettext("An interface with the specified description already exists.");
 			break;
 		}
@@ -499,7 +499,7 @@ if ($_POST['apply']) {
 	/* Is the description already used as an alias name? */
 	if (is_array($config['aliases']['alias'])) {
 		foreach ($config['aliases']['alias'] as $alias) {
-			if ($alias['name'] == $_POST['descr']) {
+			if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
 				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
 			}
 		}
@@ -508,7 +508,7 @@ if ($_POST['apply']) {
 	/* Is the description already used as an interface group name? */
 	if (is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if ($ifgroupentry['ifname'] == $_POST['descr']) {
+			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
 				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
 			}
 		}
@@ -621,7 +621,7 @@ if ($_POST['apply']) {
 				}
 			}
 			if (!is_ipaddrv4($_POST['gateway-6rd'])) {
-				$input_errors[] = gettext("6RD Border Gateway must be an IPv4 address.");
+				$input_errors[] = gettext("6RD Border Relay must be an IPv4 address.");
 			}
 			if (in_array($wancfg['ipaddrv6'], array())) {
 				$input_errors[] = sprintf(gettext("The interface must be reassigned to configure as %s."), $_POST['type6']);

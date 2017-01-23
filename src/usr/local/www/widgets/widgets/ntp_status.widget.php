@@ -83,58 +83,64 @@ if ($_REQUEST['updateme']) {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok	= ($gps_vars[2] == "A");
 				$gps_lat_deg = substr($gps_vars[3], 0, 2);
-				$gps_lat_min = substr($gps_vars[3], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[3], 2);
 				$gps_lon_deg = substr($gps_vars[5], 0, 3);
-				$gps_lon_min = substr($gps_vars[5], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[5], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[4] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[6] == "E") ? 1 : -1);
-				$gps_la = $gps_vars[4];
-				$gps_lo = $gps_vars[6];
+				$gps_lat_dir = $gps_vars[4];
+				$gps_lon_dir = $gps_vars[6];
 			} elseif (substr($tmp, 0, 6) == '$GPGGA') {
 				$gps_vars = explode(",", $tmp);
 				$gps_ok	= $gps_vars[6];
 				$gps_lat_deg = substr($gps_vars[2], 0, 2);
-				$gps_lat_min = substr($gps_vars[2], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[2], 2);
 				$gps_lon_deg = substr($gps_vars[4], 0, 3);
-				$gps_lon_min = substr($gps_vars[4], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[4], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[3] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[5] == "E") ? 1 : -1);
 				$gps_alt = $gps_vars[9];
 				$gps_alt_unit = $gps_vars[10];
 				$gps_sat = (int)$gps_vars[7];
-				$gps_la = $gps_vars[3];
-				$gps_lo = $gps_vars[5];
+				$gps_lat_dir = $gps_vars[3];
+				$gps_lon_dir = $gps_vars[5];
 			} elseif (substr($tmp, 0, 6) == '$GPGLL') {
 				$gps_vars = preg_split('/[,\*]+/', $tmp);
 				$gps_ok	= ($gps_vars[6] == "A");
 				$gps_lat_deg = substr($gps_vars[1], 0, 2);
-				$gps_lat_min = substr($gps_vars[1], 2) / 60.0;
+				$gps_lat_min = substr($gps_vars[1], 2);
 				$gps_lon_deg = substr($gps_vars[3], 0, 3);
-				$gps_lon_min = substr($gps_vars[3], 3) / 60.0;
-				$gps_lat = $gps_lat_deg + $gps_lat_min;
+				$gps_lon_min = substr($gps_vars[3], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
 				$gps_lat = $gps_lat * (($gps_vars[2] == "N") ? 1 : -1);
-				$gps_lon = $gps_lon_deg + $gps_lon_min;
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
-				$gps_la = $gps_vars[2];
-				$gps_lo = $gps_vars[4];
+				$gps_lat_dir = $gps_vars[2];
+				$gps_lon_dir = $gps_vars[4];
 			}
 		}
 	}
 
-	if (isset($config['ntpd']['gps']['type']) && ($config['ntpd']['gps']['type'] == 'SureGPS') && (isset($gps_ok))) {
-		//GSV message is only enabled by init commands in services_ntpd_gps.php for SureGPS board
-		$gpsport = fopen("/dev/gps0", "r+");
-		while ($gpsport) {
+	if (isset($gps_ok) && isset($config['ntpd']['gps']['extstatus']) && ($config['ntpd']['gps']['nmeaset']['gpgsv'] || $config['ntpd']['gps']['nmeaset']['gpgga'])) {
+		$lookfor['GPGSV'] = $config['ntpd']['gps']['nmeaset']['gpgsv'];
+		$lookfor['GPGGA'] = !isset($gps_sat) && $config['ntpd']['gps']['nmeaset']['gpgga'];
+		$gpsport = fopen('/dev/gps0', 'r+');
+		while ($gpsport && ($lookfor['GPGSV'] || $lookfor['GPGGA'])) {
 			$buffer = fgets($gpsport);
-			if (substr($buffer, 0, 6) == '$GPGSV') {
-				//echo $buffer."\n";
+			if ($lookfor['GPGSV'] && substr($buffer, 0, 6) == '$GPGSV') {
 				$gpgsv = explode(',', $buffer);
-				$gps_satview = $gpgsv[3];
-				break;
+				$gps_satview = (int)$gpgsv[3];
+				$lookfor['GPGSV'] = 0;
+			} elseif ($lookfor['GPGGA'] && substr($buffer, 0, 6) == '$GPGGA') {
+				$gpgga = explode(',', $buffer);
+				$gps_sat = (int)$gpgga[7];
+				$gps_alt = $gpgga[9];
+				$gps_alt_unit = $gpgga[10];
+				$lookfor['GPGGA'] = 0;
 			}
 		}
 	}
@@ -169,7 +175,7 @@ if ($_REQUEST['updateme']) {
 			<td>
 				<a target="_gmaps" href="http://maps.google.com/?q=<?=$gps_lat;?>,<?=$gps_lon;?>">
 				<?php
-				echo sprintf("%.5f", $gps_lat) . " " . $gps_la . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lo; ?>
+				echo sprintf("%.5f", $gps_lat) . " " . $gps_lat_dir . ", " . sprintf("%.5f", $gps_lon) . " " . $gps_lon_dir; ?>
 				</a>
 				<?php if (isset($gps_alt)) {echo " (" . $gps_alt . " " . $gps_alt_unit . " alt.)";} ?>
 			</td>

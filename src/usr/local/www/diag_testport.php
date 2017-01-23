@@ -218,7 +218,7 @@ $section = new Form_Section('Test Port');
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$host,
 	['placeholder' => 'Hostname to look up.']
@@ -226,7 +226,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'port',
-	'Port',
+	'*Port',
 	'text',
 	$port,
 	['placeholder' => 'Port to test.']

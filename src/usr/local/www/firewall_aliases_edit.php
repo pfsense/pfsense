@@ -175,7 +175,7 @@ if ($_POST) {
 
 	/* check for name interface description conflicts */
 	foreach ($config['interfaces'] as $interface) {
-		if ($interface['descr'] == $_POST['name']) {
+		if (strcasecmp($interface['descr'], $_POST['name']) == 0) {
 			$input_errors[] = gettext("An interface description with this name already exists.");
 			break;
 		}

@@ -251,28 +251,35 @@ if ($_POST) {
 				unset($config['system']['dhcpbackup']);
 			}
 		}
+		if (isset($_POST['logsbackup'])) {
+			if (($_POST['logsbackup'] > 0) && ($_POST['logsbackup'] <= 24)) {
+				$config['system']['logsbackup'] = intval($_POST['logsbackup']);
+			} else {
+				unset($config['system']['logsbackup']);
+			}
+		}
 
 		// Add/Remove RAM disk periodic backup cron jobs according to settings and installation type.
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
 		if (!isset($config['system']['use_mfs_tmpvar'])) {
-			install_cron_job("/etc/rc.backup_rrd.sh", false);
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", false, null, null, null, null, null, null, false);
 		} else {
-			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", null, null, null, null, false);
 		}
 
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
 		system_resolvconf_generate(true);
-		$retval = filter_configure();
-		if (stristr($retval, "error") <> true) {
-			$savemsg = get_std_save_message(gettext($retval));
-		} else {
-			$savemsg = gettext($retval);
-		}
+		$retval |= filter_configure();
 
 		activate_powerd();
 		load_crypto();
@@ -284,6 +291,7 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("Miscellaneous"));
+$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
@@ -291,8 +299,8 @@ if ($input_errors) {
 	unset($pconfig['doreboot']);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();
@@ -541,6 +549,16 @@ $section->addInput(new Form_Input(
 	'it can be restored automatically on the next boot. Keep in mind that the more '.
 	'frequent the backup, the more writes will happen to the media.');
 
+$section->addInput(new Form_Input(
+	'logsbackup',
+	'Periodic Logs Backup',
+	'number',
+	$config['system']['logsbackup'],
+	['min' => 0, 'max' => 24, 'placeholder' => 'Period between 1 and 24 hours']
+))->setHelp('This will periodically backup the log directory so '.
+	'it can be restored automatically on the next boot. Keep in mind that the more '.
+	'frequent the backup, the more writes will happen to the media.');
+
 $form->add($section);
 
 $section = new Form_Section('Hardware Settings');
@@ -573,7 +591,7 @@ print $form;
 
 $ramdisk_msg = gettext('The \"Use Ramdisk\" setting has been changed. This will cause the firewall\nto reboot immediately after the new setting is saved.\n\nPlease confirm.');?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	// Record the state of the Use Ramdisk checkbox on page load
@@ -590,7 +608,7 @@ events.push(function() {
 		}
 	});
 
-    drb = "<?=$pconfig['doreboot']?>";
+	drb = "<?=$pconfig['doreboot']?>";
 
 	if (drb == "yes") {
 		$('form').append("<input type=\"hidden\" name=\"override\" value=\"yes\" />");

@@ -167,15 +167,7 @@ if ($_POST['apply']) {
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */
-	$retval = filter_configure();
-	$savemsg = get_std_save_message($retval);
-	if (stristr($retval, "error") <> true) {
-		$savemsg = get_std_save_message($retval);
-		$class = 'alert-success';
-	} else {
-		$savemsg = $retval;
-		$class = 'alert-danger';
-	}
+	$retval |= filter_configure();
 
 	/* reset rrd queues */
 	system("rm -f /var/db/rrd/*queuedrops.rrd");
@@ -186,6 +178,7 @@ if ($_POST['apply']) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("By Queue"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper";
 
 include("head.inc");
@@ -198,8 +191,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('shaper')) {
@@ -231,7 +224,7 @@ display_top_tabs($tab_array);
 	</div>
 </form>
 
-<?php if (empty(get_interface_list_to_show())): ?>
+<?php if (empty(get_interface_list_to_show()) && (!is_array($altq_list_queues) || (count($altq_list_queues) == 0))): ?>
 <div>
 	<div class="infoblock blockopen">
 		<?php print_info_box(gettext("This firewall does not have any interfaces assigned that are capable of using ALTQ traffic shaping."), 'danger', false); ?>

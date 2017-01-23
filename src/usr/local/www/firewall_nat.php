@@ -86,7 +86,6 @@ if ($_POST) {
 		$retval = 0;
 
 		$retval |= filter_configure();
-		$savemsg = get_std_save_message($retval);
 
 		pfSense_handle_custom_code("/usr/local/pkg/firewall_nat/apply");
 
@@ -184,10 +183,11 @@ if (isset($_POST['del_x'])) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("NAT"), gettext("Port Forward"));
+$pglinks = array("", "@self", "@self");
 include("head.inc");
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('natconf')) {

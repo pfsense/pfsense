@@ -39,6 +39,7 @@ $now = time();
 $year = date("Y");
 
 $pgtitle = array(gettext("Status"), gettext("Gateways"), gettext("Gateways"));
+$pglinks = array("", "@self", "@self");
 $shortcut_section = "gateways";
 include("head.inc");
 
@@ -140,11 +141,17 @@ display_top_tabs($tab_array);
 						$online = gettext("Warning, Latency") . ': ' . $status['delay'];
 						$bgcolor = "bg-warning";
 					} elseif ($status['status'] == "none") {
-						$online = gettext("Online");
+						if ($status['monitor_disable'] || ($status['monitorip'] == "none")) {
+							$online = gettext("Online (unmonitored)");
+						} else {
+							$online = gettext("Online");
+						}
 						$bgcolor = "bg-success";
 					}
 				} else if (isset($gateway['monitor_disable'])) {
-						$online = gettext("Online");
+					// Note: return_gateways_status() always returns an array entry for all gateways,
+					//       so this "else if" never happens.
+						$online = gettext("Online (unmonitored)");
 						$bgcolor = "bg-success";
 				} else {
 					$online = gettext("Pending");

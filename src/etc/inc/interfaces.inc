@@ -1414,6 +1414,24 @@ function interfaces_carp_set_maintenancemode($carp_maintenancemode) {
 	}
 }
 
+function interface_wait_tentative($interface, $timeout = 10) {
+	if (!does_interface_exist($interface)) {
+		return false;
+	}
+
+	$time = 0;
+	while ($time <= $timeout) {
+		$if = pfSense_get_interface_addresses($interface);
+		if (!isset($if['tentative'])) {
+			return true;
+		}
+		sleep(1);
+		$time++;
+	}
+
+	return false;
+}
+
 function interface_isppp_type($interface) {
 	global $config;
 
@@ -3868,6 +3886,13 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$wanif = get_real_interface($interface, "inet6");
 	$dhcp6cconf = "";
 
+	if (!empty($config['system']['global-v6duid'])) {
+		// Write the DUID file
+		if(!write_dhcp6_duid($config['system']['global-v6duid'])) {
+		    log_error(gettext("Failed to write user DUID file!"));
+		}
+	}
+	
 	if ($wancfg['adv_dhcp6_config_file_override']) {
 		// DHCP6 Config File Override
 		$dhcp6cconf = DHCP6_Config_File_Override($wancfg, $wanif);
@@ -5228,9 +5253,23 @@ function find_interface_ip($interface, $flush = false) {
 
 	/* Setup IP cache */
 	if (!isset($interface_ip_arr_cache[$interface]) or $flush) {
-		$ifinfo = pfSense_get_interface_addresses($interface);
-		$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
-		$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		if (file_exists("/var/db/${interface}_ip")) {
+			$ifip = chop(file_get_contents("/var/db/${interface}_ip"));
+			$ifaddrs = pfSense_getall_interface_addresses($interface);
+			foreach ($ifaddrs as $ifaddr) {
+				list($ip, $mask) = explode("/", $ifaddr);
+				if ($ip == $ifip) {
+					$interface_ip_arr_cache[$interface] = $ip;
+					$interface_sn_arr_cache[$interface] = $mask;
+					break;
+				}
+			}
+		}
+		if (!isset($interface_ip_arr_cache[$interface])) {
+			$ifinfo = pfSense_get_interface_addresses($interface);
+			$interface_ip_arr_cache[$interface] = $ifinfo['ipaddr'];
+			$interface_sn_arr_cache[$interface] = $ifinfo['subnetbits'];
+		}
 	}
 
 	return $interface_ip_arr_cache[$interface];

@@ -157,6 +157,7 @@ function build_parent_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("GREs"), gettext("Edit"));
+$pglinks = array("", "interfaces_gre.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

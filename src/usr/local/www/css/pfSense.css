@@ -70,7 +70,7 @@ h1 a:hover, h1 a:active {
 }
 
 /* Zero-width optional linebreaks can help the browser to linebreak at 'good' places.
-   Unfortunately the two most compatible options aren't consistently supported. 
+   Unfortunately the two most compatible options aren't consistently supported.
    "\00200B" or #8203; is part of unicode and widely implemented; and <wbr> is widely
    supported even on old browsers but not IE<5.5 and IE>7.
    http://stackoverflow.com/a/23759279/2238378 suggests a neat "80%" solution for broad
@@ -976,4 +976,12 @@ svg {
 
 .colspanth {
     background-color: #eeeeee;
+}
+
+/* Required input elements have a title that begins with "*". This causes
+Group.class.php to add <span class="element-required" to the title, which
+can then be used to style required input here. Example below uses a custom
+text underline, but text-color, background, font etc. could also be used */
+.element-required {
+    box-shadow: inset 0 0px 0 white, inset 0 -1px 0 black
 }

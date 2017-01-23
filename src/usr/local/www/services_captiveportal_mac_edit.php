@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editmacaddresses
-##|*NAME=Services: Captive portal: Edit MAC Addresses
-##|*DESCR=Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.
+##|*NAME=Services: Captive Portal: Edit MAC Addresses
+##|*DESCR=Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page.
 ##|*MATCH=services_captiveportal_mac_edit.php*
 ##|-PRIV
 
@@ -67,6 +67,7 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("MACs"), gettext("Edit"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_mac.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 if (is_numericint($_GET['id'])) {

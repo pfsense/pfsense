@@ -37,6 +37,7 @@ if ($_GET['reset'] != "") {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Limiters"));
+$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper-limiters";
 $dfltmsg = false;
 
@@ -134,20 +135,11 @@ if ($_GET) {
 				}
 			}
 			if (write_config()) {
+				$changes_applied = true;
 				$retval = 0;
-				$retval = filter_configure();
-
-				if (stristr($retval, "error") != true) {
-					$savemsg = get_std_save_message($retval);
-					$class = 'success';
-				} else {
-					$savemsg = $retval;
-					$class = 'danger';
-				}
-
+				$retval |= filter_configure();
 			} else {
-				$savemsg = gettext("Unable to write config.xml (Access Denied?).");
-				$class = 'danger';
+				$no_write_config_msg = gettext("Unable to write config.xml (Access Denied?).");
 			}
 
 			$dfltmsg = true;
@@ -271,16 +263,9 @@ if ($_POST) {
 	} else if ($_POST['apply']) {
 		write_config();
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = filter_configure();
-
-		if (stristr($retval, "error") != true) {
-			$savemsg = get_std_save_message($retval);
-			$class = 'success';
-		} else {
-			$savemsg = $retval;
-			$class = 'danger';
-		}
+		$retval |= filter_configure();
 
 		/* XXX: TODO Make dummynet pretty graphs */
 		//	enable_rrd_graphing();
@@ -369,8 +354,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, $class);
+if ($no_write_config_msg) {
+	print_info_box($no_write_config_msg, 'danger');
+}
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('shaper')) {

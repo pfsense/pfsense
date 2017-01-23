@@ -164,6 +164,12 @@ function start_dpinger($gateway) {
 	/* Make sure we don't end up with 2 process for the same GW */
 	stop_dpinger($gateway['name']);
 
+	/* Do not try to bind IPv6 where interface is in tentative state */
+	if (is_ipaddrv6($gateway['gwifip'])) {
+		interface_wait_tentative(get_real_interface(
+		    $gateway['interface']));
+	}
+
 	/* Redirect stdout to /dev/null to avoid exec() to wait for dpinger */
 	return mwexec("/usr/local/bin/dpinger {$params} {$gateway['monitor']} >/dev/null");
 }
@@ -466,6 +472,8 @@ function return_gateways_status($byname = false) {
 			$status[$target]['loss'] = "";
 			$status[$target]['status'] = "none";
 		}
+
+		$status[$target]['monitor_disable'] = true;
 	}
 	return($status);
 }

@@ -56,8 +56,8 @@ if ($_POST) {
 		array_push($validNames, $service['dispname']);
 	}
 
-	if (isset($_POST['servicestatusfilter'])) {
-		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_intersect($validNames, $_POST['servicestatusfilter']));
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets']['servicestatusfilter'] = implode(',', array_diff($validNames, $_POST['show']));
 	} else {
 		$user_settings['widgets']['servicestatusfilter'] = "";
 	}
@@ -67,16 +67,17 @@ if ($_POST) {
 }
 
 ?>
-<table class="table table-striped table-hover">
-<thead>
-	<tr>
-		<th></th>
-		<th><?=gettext('Service')?></th>
-		<th><?=gettext('Description')?></th>
-		<th><?=gettext('Action')?></th>
-	</tr>
-</thead>
-<tbody>
+<div class="table-responsive">
+	<table class="table table-striped table-hover table-condensed">
+		<thead>
+			<tr>
+				<th></th>
+				<th><?=gettext('Service')?></th>
+				<th><?=gettext('Description')?></th>
+				<th><?=gettext('Action')?></th>
+			</tr>
+		</thead>
+		<tbody>
 <?php
 $skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
 
@@ -94,67 +95,74 @@ if (count($services) > 0) {
 
 		$service_desc = explode(".",$service['description']);
 ?>
-		<tr>
-			<td><?=get_service_status_icon($service, false, true, false, "state")?></td>
-			<td><?=$service['dispname']?></td>
-			<td><?=$service_desc[0]?></td>
-			<td><?=get_service_control_links($service)?></td>
-		</tr>
+			<tr>
+				<td><?=get_service_status_icon($service, false, true, false, "state")?></td>
+				<td><?=$service['dispname']?></td>
+				<td><?=$service_desc[0]?></td>
+				<td><?=get_service_control_links($service)?></td>
+			</tr>
 <?php
 	}
 } else {
 	echo "<tr><td colspan=\"3\" class=\"text-center\">" . gettext("No services found") . ". </td></tr>\n";
 }
 ?>
-</tbody>
-</table>
-
+		</tbody>
+	</table>
+</div>
 <!-- close the body we're wrapped in and add a configuration-panel -->
 </div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
 
 <form action="/widgets/widgets/services_status.widget.php" method="post" class="form-horizontal">
-	<div class="form-group">
-		<label class="col-sm-3 control-label"><?=gettext('Hidden services')?></label>
-		<div class="col-sm-6">
-			<select multiple id="servicestatusfilter" name="servicestatusfilter[]" class="form-control">
-			<?php
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Service")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				$skipservices = explode(",", $user_settings['widgets']['servicestatusfilter']);
+				$idx = 0;
+
 				foreach ($services as $service):
 					if (!empty(trim($service['dispname'])) || is_numeric($service['dispname'])) {
-			?>
-				<option <?=(in_array($service['dispname'], $skipservices)?'selected':'')?>><?=$service['dispname']?></option>
-			<?php
+?>
+						<tr>
+							<td><?=$service['dispname']?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$service['dispname']?>" type="checkbox" <?=(!in_array($service['dispname'], $skipservices) ? 'checked':'')?>></td>
+						</tr>
+<?php
 					}
 				endforeach;
-			?>
-			</select>
+?>
+					</tbody>
+				</table>
+			</div>
 		</div>
 	</div>
 
 	<div class="form-group">
 		<div class="col-sm-offset-3 col-sm-6">
 			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="clearall" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('Clear')?></button>
+			<button id="showallservices" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
 		</div>
 	</div>
 </form>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
-events.push(function(){
-	$("select[multiple] option").mousedown(function(){
-	   var $self = $(this);
+	events.push(function(){
+		$("#showallservices").click(function() {
+			$("[id^=show]").each(function() {
+				$(this).prop("checked", true);
+			});
+		});
 
-	   if ($self.prop("selected"))
-	          $self.prop("selected", false);
-	   else
-	       $self.prop("selected", true);
-
-	   return false;
 	});
-
-    $("#clearall").click(function() {
-        $('select#servicestatusfilter option').removeAttr("selected");
-    });
-});
 //]]>
 </script>

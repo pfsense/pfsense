@@ -417,35 +417,6 @@ EOF;
 	}
 }
 
-// Read /etc/hosts
-function read_hosts() {
-
-	/* Open /etc/hosts and extract the only dhcpleases info
-	 * XXX - to convert to an unbound C library which reads /etc/hosts automatically
-	 */
-	$etc_hosts = array();
-	foreach (file('/etc/hosts') as $line) {
-		if (strpos($line, "dhcpleases automatically entered")) {
-			break;
-		}
-		$d = preg_split('/\s+/', $line, -1, PREG_SPLIT_NO_EMPTY);
-		if (empty($d) || substr(reset($d), 0, 1) == "#") {
-			continue;
-		}
-		$ip = array_shift($d);
-		$fqdn = array_shift($d);
-		$name = array_shift($d);
-		if (!empty($fqdn) && $fqdn != "empty") {
-			if (!empty($name) && $name != "empty") {
-				array_push($etc_hosts, array(ipaddr => "$ip", fqdn => "$fqdn", name => "$name"));
-			} else {
-				array_push($etc_hosts, array(ipaddr => "$ip", fqdn => "$fqdn"));
-			}
-		}
-	}
-	return $etc_hosts;
-}
-
 function sync_unbound_service() {
 	global $config, $g;
 
@@ -577,7 +548,7 @@ function unbound_add_host_entries($cfgsubdir = "") {
 
 	$unbound_entries = "local-zone: \"{$config['system']['domain']}\" {$system_domain_local_zone_type}\n";
 
-	$hosts = read_hosts();
+	$hosts = system_hosts_entries($config['unbound']);
 	$added_ptr = array();
 	foreach ($hosts as $host) {
 		if (is_ipaddrv4($host['ipaddr'])) {

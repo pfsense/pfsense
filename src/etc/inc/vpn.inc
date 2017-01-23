@@ -47,10 +47,11 @@ function vpn_logging_cfgtxt() {
 	global $config, $ipsec_log_cats, $ipsec_log_sevs;
 
 	$cfgtext = array();
+	$log_levels = ipsec_get_loglevels();
 	foreach (array_keys($ipsec_log_cats) as $cat) {
-		if (is_numeric($config['ipsec']['logging'][$cat]) &&
-		    in_array(intval($config['ipsec']['logging'][$cat]), array_keys($ipsec_log_sevs), true)) {
-			$cfgtext[] = "${cat} = {$config['ipsec']['logging'][$cat]}";
+		if (is_numeric($log_levels[$cat]) &&
+		    in_array(intval($log_levels[$cat]), array_keys($ipsec_log_sevs), true)) {
+			$cfgtext[] = "${cat} = {$log_levels[$cat]}";
 		}
 	}
 

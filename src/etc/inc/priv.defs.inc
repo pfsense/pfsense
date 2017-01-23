@@ -16,6 +16,7 @@ $priv_list = array();
 $priv_list['page-all'] = array();
 $priv_list['page-all']['name'] = gettext("WebCfg - All pages");
 $priv_list['page-all']['descr'] = gettext("Allow access to all pages");
+$priv_list['page-all']['warn'] = "standard-warning-root";
 $priv_list['page-all']['match'] = array();
 $priv_list['page-all']['match'][] = "*";
 
@@ -40,12 +41,14 @@ $priv_list['page-diagnostics-authentication']['match'][] = "diag_authentication.
 $priv_list['page-diagnostics-backup-restore'] = array();
 $priv_list['page-diagnostics-backup-restore']['name'] = gettext("WebCfg - Diagnostics: Backup & Restore");
 $priv_list['page-diagnostics-backup-restore']['descr'] = gettext("Allow access to the 'Diagnostics: Backup & Restore' page.");
+$priv_list['page-diagnostics-backup-restore']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-backup-restore']['match'] = array();
 $priv_list['page-diagnostics-backup-restore']['match'][] = "diag_backup.php*";
 
 $priv_list['page-diagnostics-command'] = array();
 $priv_list['page-diagnostics-command']['name'] = gettext("WebCfg - Diagnostics: Command");
 $priv_list['page-diagnostics-command']['descr'] = gettext("Allow access to the 'Diagnostics: Command' page.");
+$priv_list['page-diagnostics-command']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-command']['match'] = array();
 $priv_list['page-diagnostics-command']['match'][] = "diag_command.php*";
 
@@ -58,6 +61,7 @@ $priv_list['page-diagnostics-configurationhistory']['match'][] = "diag_confbak.p
 $priv_list['page-diagnostics-factorydefaults'] = array();
 $priv_list['page-diagnostics-factorydefaults']['name'] = gettext("WebCfg - Diagnostics: Factory defaults");
 $priv_list['page-diagnostics-factorydefaults']['descr'] = gettext("Allow access to the 'Diagnostics: Factory defaults' page.");
+$priv_list['page-diagnostics-factorydefaults']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-factorydefaults']['match'] = array();
 $priv_list['page-diagnostics-factorydefaults']['match'][] = "diag_defaults.php*";
 
@@ -82,6 +86,7 @@ $priv_list['page-diagnostics-sourcetracking']['match'][] = "diag_dump_states_sou
 $priv_list['page-diagnostics-edit'] = array();
 $priv_list['page-diagnostics-edit']['name'] = gettext("WebCfg - Diagnostics: Edit File");
 $priv_list['page-diagnostics-edit']['descr'] = gettext("Allow access to the 'Diagnostics: Edit File' page.");
+$priv_list['page-diagnostics-edit']['warn'] = "standard-warning-root";
 $priv_list['page-diagnostics-edit']['match'] = array();
 $priv_list['page-diagnostics-edit']['match'][] = "diag_edit.php*";
 $priv_list['page-diagnostics-edit']['match'][] = "browser.php*";
@@ -563,74 +568,74 @@ $priv_list['page-system-packagemanager-installed']['match'] = array();
 $priv_list['page-system-packagemanager-installed']['match'][] = "pkg_mgr_installed.php*";
 
 $priv_list['page-services-captiveportal'] = array();
-$priv_list['page-services-captiveportal']['name'] = gettext("WebCfg - Services: Captive portal");
-$priv_list['page-services-captiveportal']['descr'] = gettext("Allow access to the 'Services: Captive portal' page.");
+$priv_list['page-services-captiveportal']['name'] = gettext("WebCfg - Services: Captive Portal");
+$priv_list['page-services-captiveportal']['descr'] = gettext("Allow access to the 'Services: Captive Portal' page.");
 $priv_list['page-services-captiveportal']['match'] = array();
 $priv_list['page-services-captiveportal']['match'][] = "services_captiveportal.php*";
 
 $priv_list['page-services-captiveportal-filemanager'] = array();
-$priv_list['page-services-captiveportal-filemanager']['name'] = gettext("WebCfg - Services: Captive portal: File Manager");
-$priv_list['page-services-captiveportal-filemanager']['descr'] = gettext("Allow access to the 'Services: Captive portal: File Manager' page.");
+$priv_list['page-services-captiveportal-filemanager']['name'] = gettext("WebCfg - Services: Captive Portal: File Manager");
+$priv_list['page-services-captiveportal-filemanager']['descr'] = gettext("Allow access to the 'Services: Captive Portal: File Manager' page.");
 $priv_list['page-services-captiveportal-filemanager']['match'] = array();
 $priv_list['page-services-captiveportal-filemanager']['match'][] = "services_captiveportal_filemanager.php*";
 
 $priv_list['page-services-captiveportal-allowedhostnames'] = array();
-$priv_list['page-services-captiveportal-allowedhostnames']['name'] = gettext("WebCfg - Services: Captive portal: Allowed Hostnames");
-$priv_list['page-services-captiveportal-allowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive portal: Allowed Hostnames' page.");
+$priv_list['page-services-captiveportal-allowedhostnames']['name'] = gettext("WebCfg - Services: Captive Portal: Allowed Hostnames");
+$priv_list['page-services-captiveportal-allowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Allowed Hostnames' page.");
 $priv_list['page-services-captiveportal-allowedhostnames']['match'] = array();
 $priv_list['page-services-captiveportal-allowedhostnames']['match'][] = "services_captiveportal_hostname.php*";
 
 $priv_list['page-services-captiveportal-editallowedhostnames'] = array();
-$priv_list['page-services-captiveportal-editallowedhostnames']['name'] = gettext("WebCfg - Services: Captive portal: Edit Allowed Hostnames");
-$priv_list['page-services-captiveportal-editallowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit Allowed Hostnames' page.");
+$priv_list['page-services-captiveportal-editallowedhostnames']['name'] = gettext("WebCfg - Services: Captive Portal: Edit Allowed Hostnames");
+$priv_list['page-services-captiveportal-editallowedhostnames']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page.");
 $priv_list['page-services-captiveportal-editallowedhostnames']['match'] = array();
 $priv_list['page-services-captiveportal-editallowedhostnames']['match'][] = "services_captiveportal_hostname_edit.php*";
 
 $priv_list['page-services-captiveportal-allowedips'] = array();
-$priv_list['page-services-captiveportal-allowedips']['name'] = gettext("WebCfg - Services: Captive portal: Allowed IPs");
-$priv_list['page-services-captiveportal-allowedips']['descr'] = gettext("Allow access to the 'Services: Captive portal: Allowed IPs' page.");
+$priv_list['page-services-captiveportal-allowedips']['name'] = gettext("WebCfg - Services: Captive Portal: Allowed IPs");
+$priv_list['page-services-captiveportal-allowedips']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Allowed IPs' page.");
 $priv_list['page-services-captiveportal-allowedips']['match'] = array();
 $priv_list['page-services-captiveportal-allowedips']['match'][] = "services_captiveportal_ip.php*";
 
 $priv_list['page-services-captiveportal-editallowedips'] = array();
-$priv_list['page-services-captiveportal-editallowedips']['name'] = gettext("WebCfg - Services: Captive portal: Edit Allowed IPs");
-$priv_list['page-services-captiveportal-editallowedips']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit Allowed IPs' page.");
+$priv_list['page-services-captiveportal-editallowedips']['name'] = gettext("WebCfg - Services: Captive Portal: Edit Allowed IPs");
+$priv_list['page-services-captiveportal-editallowedips']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Edit Allowed IPs' page.");
 $priv_list['page-services-captiveportal-editallowedips']['match'] = array();
 $priv_list['page-services-captiveportal-editallowedips']['match'][] = "services_captiveportal_ip_edit.php*";
 
 $priv_list['page-services-captiveportal-macaddresses'] = array();
-$priv_list['page-services-captiveportal-macaddresses']['name'] = gettext("WebCfg - Services: Captive portal: Mac Addresses");
-$priv_list['page-services-captiveportal-macaddresses']['descr'] = gettext("Allow access to the 'Services: Captive portal: Mac Addresses' page.");
+$priv_list['page-services-captiveportal-macaddresses']['name'] = gettext("WebCfg - Services: Captive Portal: Mac Addresses");
+$priv_list['page-services-captiveportal-macaddresses']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Mac Addresses' page.");
 $priv_list['page-services-captiveportal-macaddresses']['match'] = array();
 $priv_list['page-services-captiveportal-macaddresses']['match'][] = "services_captiveportal_mac.php*";
 
 $priv_list['page-services-captiveportal-editmacaddresses'] = array();
-$priv_list['page-services-captiveportal-editmacaddresses']['name'] = gettext("WebCfg - Services: Captive portal: Edit MAC Addresses");
-$priv_list['page-services-captiveportal-editmacaddresses']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit MAC Addresses' page.");
+$priv_list['page-services-captiveportal-editmacaddresses']['name'] = gettext("WebCfg - Services: Captive Portal: Edit MAC Addresses");
+$priv_list['page-services-captiveportal-editmacaddresses']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Edit MAC Addresses' page.");
 $priv_list['page-services-captiveportal-editmacaddresses']['match'] = array();
 $priv_list['page-services-captiveportal-editmacaddresses']['match'][] = "services_captiveportal_mac_edit.php*";
 
 $priv_list['page-services-captiveportal-vouchers'] = array();
-$priv_list['page-services-captiveportal-vouchers']['name'] = gettext("WebCfg - Services: Captive portal Vouchers");
-$priv_list['page-services-captiveportal-vouchers']['descr'] = gettext("Allow access to the 'Services: Captive portal Vouchers' page.");
+$priv_list['page-services-captiveportal-vouchers']['name'] = gettext("WebCfg - Services: Captive Portal Vouchers");
+$priv_list['page-services-captiveportal-vouchers']['descr'] = gettext("Allow access to the 'Services: Captive Portal Vouchers' page.");
 $priv_list['page-services-captiveportal-vouchers']['match'] = array();
 $priv_list['page-services-captiveportal-vouchers']['match'][] = "services_captiveportal_vouchers.php*";
 
 $priv_list['page-services-captiveportal-voucher-edit'] = array();
-$priv_list['page-services-captiveportal-voucher-edit']['name'] = gettext("WebCfg - Services: Captive portal Voucher Rolls");
-$priv_list['page-services-captiveportal-voucher-edit']['descr'] = gettext("Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.");
+$priv_list['page-services-captiveportal-voucher-edit']['name'] = gettext("WebCfg - Services: Captive Portal Voucher Rolls");
+$priv_list['page-services-captiveportal-voucher-edit']['descr'] = gettext("Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page.");
 $priv_list['page-services-captiveportal-voucher-edit']['match'] = array();
 $priv_list['page-services-captiveportal-voucher-edit']['match'][] = "services_captiveportal_vouchers_edit.php*";
 
 $priv_list['page-services-captiveportal-zones'] = array();
-$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captive portal Zones");
-$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: Captive portal Zones' page.");
+$priv_list['page-services-captiveportal-zones']['name'] = gettext("WebCfg - Services: Captive Portal Zones");
+$priv_list['page-services-captiveportal-zones']['descr'] = gettext("Allow access to the 'Services: Captive Portal Zones' page.");
 $priv_list['page-services-captiveportal-zones']['match'] = array();
 $priv_list['page-services-captiveportal-zones']['match'][] = "services_captiveportal_zones.php*";
 
 $priv_list['page-services-captiveportal-editzones'] = array();
-$priv_list['page-services-captiveportal-editzones']['name'] = gettext("WebCfg - Services: Captive portal: Edit Zones");
-$priv_list['page-services-captiveportal-editzones']['descr'] = gettext("Allow access to the 'Services: Captive portal: Edit Zones' page.");
+$priv_list['page-services-captiveportal-editzones']['name'] = gettext("WebCfg - Services: Captive Portal: Edit Zones");
+$priv_list['page-services-captiveportal-editzones']['descr'] = gettext("Allow access to the 'Services: Captive Portal: Edit Zones' page.");
 $priv_list['page-services-captiveportal-editzones']['match'] = array();
 $priv_list['page-services-captiveportal-editzones']['match'][] = "services_captiveportal_zones_edit.php*";
 
@@ -665,8 +670,8 @@ $priv_list['page-services-dhcprelay']['match'] = array();
 $priv_list['page-services-dhcprelay']['match'][] = "services_dhcp_relay.php*";
 
 $priv_list['page-services-dhcpv6server'] = array();
-$priv_list['page-services-dhcpv6server']['name'] = gettext("WebCfg - Services: DHCPv6 server");
-$priv_list['page-services-dhcpv6server']['descr'] = gettext("Allow access to the 'Services: DHCPv6 server' page.");
+$priv_list['page-services-dhcpv6server']['name'] = gettext("WebCfg - Services: DHCPv6 Server");
+$priv_list['page-services-dhcpv6server']['descr'] = gettext("Allow access to the 'Services: DHCPv6 Server' page.");
 $priv_list['page-services-dhcpv6server']['match'] = array();
 $priv_list['page-services-dhcpv6server']['match'][] = "services_dhcpv6.php*";
 
@@ -833,8 +838,8 @@ $priv_list['page-hidden-detailedstatus']['match'] = array();
 $priv_list['page-hidden-detailedstatus']['match'][] = "status.php*";
 
 $priv_list['page-status-captiveportal'] = array();
-$priv_list['page-status-captiveportal']['name'] = gettext("WebCfg - Status: Captive portal");
-$priv_list['page-status-captiveportal']['descr'] = gettext("Allow access to the 'Status: Captive portal' page.");
+$priv_list['page-status-captiveportal']['name'] = gettext("WebCfg - Status: Captive Portal");
+$priv_list['page-status-captiveportal']['descr'] = gettext("Allow access to the 'Status: Captive Portal' page.");
 $priv_list['page-status-captiveportal']['match'] = array();
 $priv_list['page-status-captiveportal']['match'][] = "status_captiveportal.php*";
 
@@ -851,14 +856,14 @@ $priv_list['page-status-captiveportal-test']['match'] = array();
 $priv_list['page-status-captiveportal-test']['match'][] = "status_captiveportal_test.php*";
 
 $priv_list['page-status-captiveportal-voucher-rolls'] = array();
-$priv_list['page-status-captiveportal-voucher-rolls']['name'] = gettext("WebCfg - Status: Captive portal Voucher Rolls");
-$priv_list['page-status-captiveportal-voucher-rolls']['descr'] = gettext("Allow access to the 'Status: Captive portal Voucher Rolls' page.");
+$priv_list['page-status-captiveportal-voucher-rolls']['name'] = gettext("WebCfg - Status: Captive Portal Voucher Rolls");
+$priv_list['page-status-captiveportal-voucher-rolls']['descr'] = gettext("Allow access to the 'Status: Captive Portal Voucher Rolls' page.");
 $priv_list['page-status-captiveportal-voucher-rolls']['match'] = array();
 $priv_list['page-status-captiveportal-voucher-rolls']['match'][] = "status_captiveportal_voucher_rolls.php*";
 
 $priv_list['page-status-captiveportal-vouchers'] = array();
-$priv_list['page-status-captiveportal-vouchers']['name'] = gettext("WebCfg - Status: Captive portal Vouchers");
-$priv_list['page-status-captiveportal-vouchers']['descr'] = gettext("Allow access to the 'Status: Captive portal Vouchers' page.");
+$priv_list['page-status-captiveportal-vouchers']['name'] = gettext("WebCfg - Status: Captive Portal Vouchers");
+$priv_list['page-status-captiveportal-vouchers']['descr'] = gettext("Allow access to the 'Status: Captive Portal Vouchers' page.");
 $priv_list['page-status-captiveportal-vouchers']['match'] = array();
 $priv_list['page-status-captiveportal-vouchers']['match'][] = "status_captiveportal_vouchers.php*";
 
@@ -1010,8 +1015,8 @@ $priv_list['page-status-packagelogs']['match'] = array();
 $priv_list['page-status-packagelogs']['match'][] = "status_pkglogs.php*";
 
 $priv_list['page-status-trafficshaper-queues'] = array();
-$priv_list['page-status-trafficshaper-queues']['name'] = gettext("WebCfg - Status: Traffic shaper: Queues");
-$priv_list['page-status-trafficshaper-queues']['descr'] = gettext("Allow access to the 'Status: Traffic shaper: Queues' page.");
+$priv_list['page-status-trafficshaper-queues']['name'] = gettext("WebCfg - Status: Traffic Shaper: Queues");
+$priv_list['page-status-trafficshaper-queues']['descr'] = gettext("Allow access to the 'Status: Traffic Shaper: Queues' page.");
 $priv_list['page-status-trafficshaper-queues']['match'] = array();
 $priv_list['page-status-trafficshaper-queues']['match'][] = "status_queues.php*";
 
@@ -1078,6 +1083,7 @@ $priv_list['page-system-advanced-sysctl']['match'][] = "system_advanced_sysctl.p
 $priv_list['page-system-authservers'] = array();
 $priv_list['page-system-authservers']['name'] = gettext("WebCfg - System: Authentication Servers");
 $priv_list['page-system-authservers']['descr'] = gettext("Allow access to the 'System: Authentication Servers' page.");
+$priv_list['page-system-authservers']['warn'] = "standard-warning-root";
 $priv_list['page-system-authservers']['match'] = array();
 $priv_list['page-system-authservers']['match'][] = "system_authservers.php*";
 
@@ -1124,14 +1130,16 @@ $priv_list['page-system-gateways-editgateway']['match'] = array();
 $priv_list['page-system-gateways-editgateway']['match'][] = "system_gateways_edit.php*";
 
 $priv_list['page-system-groupmanager'] = array();
-$priv_list['page-system-groupmanager']['name'] = gettext("WebCfg - System: Group manager");
-$priv_list['page-system-groupmanager']['descr'] = gettext("Allow access to the 'System: Group manager' page.");
+$priv_list['page-system-groupmanager']['name'] = gettext("WebCfg - System: Group Manager");
+$priv_list['page-system-groupmanager']['descr'] = gettext("Allow access to the 'System: Group Manager' page.");
+$priv_list['page-system-groupmanager']['warn'] = "standard-warning-root";
 $priv_list['page-system-groupmanager']['match'] = array();
 $priv_list['page-system-groupmanager']['match'][] = "system_groupmanager.php*";
 
 $priv_list['page-system-groupmanager-addprivs'] = array();
 $priv_list['page-system-groupmanager-addprivs']['name'] = gettext("WebCfg - System: Group Manager: Add Privileges");
 $priv_list['page-system-groupmanager-addprivs']['descr'] = gettext("Allow access to the 'System: Group Manager: Add Privileges' page.");
+$priv_list['page-system-groupmanager-addprivs']['warn'] = "standard-warning-root";
 $priv_list['page-system-groupmanager-addprivs']['match'] = array();
 $priv_list['page-system-groupmanager-addprivs']['match'][] = "system_groupmanager_addprivs.php*";
 
@@ -1168,12 +1176,14 @@ $priv_list['page-system-user-settings']['match'][] = "system_user_settings.php*"
 $priv_list['page-system-usermanager'] = array();
 $priv_list['page-system-usermanager']['name'] = gettext("WebCfg - System: User Manager");
 $priv_list['page-system-usermanager']['descr'] = gettext("Allow access to the 'System: User Manager' page.");
+$priv_list['page-system-usermanager']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager']['match'] = array();
 $priv_list['page-system-usermanager']['match'][] = "system_usermanager.php*";
 
 $priv_list['page-system-usermanager-addprivs'] = array();
 $priv_list['page-system-usermanager-addprivs']['name'] = gettext("WebCfg - System: User Manager: Add Privileges");
 $priv_list['page-system-usermanager-addprivs']['descr'] = gettext("Allow access to the 'System: User Manager: Add Privileges' page.");
+$priv_list['page-system-usermanager-addprivs']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager-addprivs']['match'] = array();
 $priv_list['page-system-usermanager-addprivs']['match'][] = "system_usermanager_addprivs.php*";
 
@@ -1186,6 +1196,7 @@ $priv_list['page-system-usermanager-passwordmg']['match'][] = "system_usermanage
 $priv_list['page-system-usermanager-settings'] = array();
 $priv_list['page-system-usermanager-settings']['name'] = gettext("WebCfg - System: User Manager: Settings");
 $priv_list['page-system-usermanager-settings']['descr'] = gettext("Allow access to the 'System: User Manager: Settings' page.");
+$priv_list['page-system-usermanager-settings']['warn'] = "standard-warning-root";
 $priv_list['page-system-usermanager-settings']['match'] = array();
 $priv_list['page-system-usermanager-settings']['match'][] = "system_usermanager_settings.php*";
 

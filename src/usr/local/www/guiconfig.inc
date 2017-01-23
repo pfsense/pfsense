@@ -158,6 +158,12 @@ $radius_srvcs = array(
 	'auth' => gettext("Authentication"),
 	'acct' => gettext("Accounting"));
 
+$radius_protocol = array(
+	'PAP' => "PAP",
+	'CHAP_MD5' => "MD5-CHAP",
+	'MSCHAPv1' => "MS-CHAPv1",
+	'MSCHAPv2' => "MS-CHAPv2");
+
 $netbios_nodetypes = array(
 	'0' => "none",
 	'1' => "b-node",
@@ -323,6 +329,27 @@ function print_apply_box($msg) {
 	print_info_box($msg, "warning", "apply", gettext("Apply Changes"), 'fa-check', 'success');
 }
 
+// Format and print a box reporting that changes have been applied
+// $retval = status value from the functions called to apply the changes
+// 0 is good
+// non-zero is a problem
+// $extra_text = optional extra text to display after the standard message
+function print_apply_result_box($retval, $extra_text="") {
+	$result_msg = get_std_save_message($retval);
+	if ($retval === 0) {
+		// 0 is success
+		$severity = "success";
+	} else {
+		// non-zero means there was some problem
+		$severity = "warning";
+	}
+
+	if (strlen($extra_text) > 0) {
+		$result_msg .= " " . $extra_text;
+	}
+	print_info_box($result_msg, $severity);
+}
+
 /*
  * Print Bootstrap callout
  *
@@ -350,10 +377,16 @@ function print_callout($msg, $class = 'info', $heading = '') {
 	echo $callout;
 }
 
-function get_std_save_message($ok) {
+function get_std_save_message($retval) {
 	$filter_related = false;
 	$filter_pages = array("nat", "filter");
-	$to_return = gettext("The changes have been applied successfully.");
+	if ($retval === 0) {
+		// 0 is success
+		$to_return = gettext("The changes have been applied successfully.");
+	} else {
+		// non-zero means there was some problem
+		$to_return = gettext("There was a problem applying the changes. See the <a href=\"status_logs.php\">System Logs</a>.");
+	}
 	foreach ($filter_pages as $fp) {
 		if (stristr($_SERVER['SCRIPT_FILENAME'], $fp)) {
 			$filter_related = true;
@@ -492,15 +525,39 @@ function gentitle($title) {
 	}
 }
 
-function genhtmltitle($title) {
+function genhtmltitle($title, $links=true) {
+
+	$num_crumbs = count($title);
 
 	// If the array contains only one element, there are no breadcrumbs, so don't
 	// add anything else
-	if (count($title) > 1) {
+	if ($num_crumbs > 1) {
 		$bc = '<ol class="breadcrumb">';
 
-		foreach ($title as $el) {
-			$bc .= '<li>'.$el.'</li>';
+		if (!is_array($links)) {
+			$gen_default = ($links === true);
+			$links = array_fill(0, $num_crumbs, '');
+			// If no links passed, then default to a link to self on the last entry.
+			if ($gen_default) {
+				$links[$num_crumbs-1] = '@self';
+			}
+		}
+
+		foreach ($title as $idx => $el) {
+			$href = $links[$idx];
+			if (strlen($href) > 0) {
+				// For convenience, if the caller specifies '@self' then make a link
+				// to the current page, including any query string.
+				if ($href == '@self') {
+					$href = $_SERVER['REQUEST_URI'];
+				}
+				if (substr($href, 0, 1) != '/') {
+					$href = '/' . $href;
+				}
+				$bc .= '<li><a href="' . htmlentities($href) . '">' . $el . '</a></li>';
+			} else {
+				$bc .= '<li>' . $el . '</li>';
+			}
 		}
 
 		$bc .= '</ol>';
@@ -508,7 +565,7 @@ function genhtmltitle($title) {
 		$bc = "";
 	}
 
-	return $heading . $bc;
+	return $bc;
 }
 
 /* update the changedesc and changecount(er) variables */

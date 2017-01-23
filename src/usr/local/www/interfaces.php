@@ -407,11 +407,14 @@ if (isset($wancfg['wireless'])) {
 
 }
 
+$changes_applied = false;
+
 if ($_POST['apply']) {
 	unset($input_errors);
 	if (!is_subsystem_dirty('interfaces')) {
 		$input_errors[] = gettext("The settings have already been applied!");
 	} else {
+		$retval = 0;
 		unlink_if_exists("{$g['tmp_path']}/config.cache");
 		clear_subsystem_dirty('interfaces');
 
@@ -440,24 +443,24 @@ if ($_POST['apply']) {
 			}
 		}
 		/* restart snmp so that it binds to correct address */
-		services_snmpd_configure();
+		$retval |= services_snmpd_configure();
 
 		/* sync filter configuration */
 		setup_gateways_monitor();
 
 		clear_subsystem_dirty('interfaces');
 
-		filter_configure();
+		$retval |= filter_configure();
 
 		enable_rrd_graphing();
+
+		$changes_applied = true;
 
 		if (is_subsystem_dirty('staticroutes') && (system_routing_configure() == 0)) {
 			clear_subsystem_dirty('staticroutes');
 		}
 	}
 	@unlink("{$g['tmp_path']}/.interfaces.apply");
-	header("Location: interfaces.php?if={$if}");
-	exit;
 } else if ($_POST) {
 
 	unset($input_errors);
@@ -1611,7 +1614,7 @@ function check_wireless_mode() {
 		if (!interface_wireless_clone("{$wlanif}_", $wancfg)) {
 			$input_errors[] = sprintf(gettext("Unable to change mode to %s. The maximum number of wireless clones supported in this mode may have been reached."), $wlan_modes[$wancfg['wireless']['mode']]);
 		} else {
-			mwexec("/sbin/ifconfig " . escapeshellarg($wlanif) . "_ destroy");
+			pfSense_interface_destroy("{$wlanif}_");
 		}
 		$wancfg['wireless']['mode'] = $old_wireless_mode;
 	}
@@ -1695,10 +1698,9 @@ if (is_subsystem_dirty('interfaces')) {
 					gettext("Don't forget to adjust the DHCP Server range if needed after applying."));
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
-
 
 $form = new Form();
 
@@ -2577,14 +2579,14 @@ $section->addClass('pppoe');
 
 $section->addInput(new Form_Input(
 	'pppoe_username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['pppoe_username']
 ));
 
 $section->addPassword(new Form_Input(
 	'pppoe_password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['pppoe_password']
 ));
@@ -3596,6 +3598,10 @@ events.push(function() {
 		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
 	}
 
+	function setDialOnDemandItems() {
+		setRequired('pppoe_idletimeout', $('#pppoe_dialondemand').prop('checked'));
+	}
+
 	// ---------- On initial page load ------------------------------------------------------------
 
 	updateType($('#type').val());
@@ -3604,7 +3610,8 @@ events.push(function() {
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
-	setDHCPoptions()
+	setDHCPoptions();
+	setDialOnDemandItems();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3676,6 +3683,10 @@ events.push(function() {
 	});
 
 	// On click . .
+	$('#pppoe_dialondemand').click(function () {
+		setDialOnDemandItems();
+	});
+
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
 	});

@@ -242,10 +242,12 @@ $tab_array = array();
 
 if ($firmwareupdate) {
 	$pgtitle = array(gettext("System"), gettext("Update"), gettext("System Update"));
+	$pglinks = array("", "@self", "@self");
 	$tab_array[] = array(gettext("System Update"), true, "pkg_mgr_install.php?id=firmware");
 	$tab_array[] = array(gettext("Update Settings"), false, "system_update_settings.php");
 } else {
 	$pgtitle = array(gettext("System"), gettext("Package Manager"), gettext("Package Installer"));
+	$pglinks = array("", "pkg_mgr_installed.php", "@self");
 	$tab_array[] = array(gettext("Installed Packages"), false, "pkg_mgr_installed.php");
 	$tab_array[] = array(gettext("Available Packages"), false, "pkg_mgr.php");
 	$tab_array[] = array(gettext("Package Installer"), true, "");
@@ -494,7 +496,7 @@ if ($completed):
 	if ($firmwareupdate && $reboot_needed):
 
 ?>
-<script>
+<script type="text/javascript">
 //<![CDATA[
 events.push(function() {
 	time = "<?=$guitimeout?>";
@@ -508,7 +510,7 @@ endif;
 
 ?>
 
-<script>
+<script type="text/javascript">
 //<![CDATA[
 // Update the progress indicator
 // transition = true allows the bar to move at default speed, false = instantaneous

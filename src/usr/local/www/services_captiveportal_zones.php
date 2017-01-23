@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-zones
-##|*NAME=Services: Captive portal Zones
-##|*DESCR=Allow access to the 'Services: Captive portal Zones' page.
+##|*NAME=Services: Captive Portal Zones
+##|*DESCR=Allow access to the 'Services: Captive Portal Zones' page.
 ##|*MATCH=services_captiveportal_zones.php*
 ##|-PRIV
 
@@ -59,10 +59,6 @@ if ($_GET['act'] == "del" && !empty($_GET['zone'])) {
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"));
 $shortcut_section = "captiveportal";
 include("head.inc");
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
-}
 
 if (is_subsystem_dirty('captiveportal')) {
 	print_apply_box(gettext("The Captive Portal entry list has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));

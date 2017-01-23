@@ -14,7 +14,7 @@ $priv_list['page-help-all'] = array();
 $priv_list['page-help-all']['name'] = gettext("WebCfg - Help pages");
 $priv_list['page-help-all']['descr'] = gettext("Show all items on help menu and allow access to Help shortcut links");
 $priv_list['page-help-all']['match'] = array();
-$priv_list['page-help-all']['match'][] = "*help.php";
+$priv_list['page-help-all']['match'][] = "help.php*";
 
 $priv_list['page-dashboard-all'] = array();
 $priv_list['page-dashboard-all']['name'] = gettext("WebCfg - Dashboard (all)");
@@ -38,13 +38,23 @@ $priv_list['user-config-readonly'] = array();
 $priv_list['user-config-readonly']['name']  = gettext("User - Config: Deny Config Write");
 $priv_list['user-config-readonly']['descr'] = gettext("If present, ignores requests from this user to write config.xml.");
 
+$priv_list['user-view-notices'] = array();
+$priv_list['user-view-notices']['name']  = gettext("User - Notices: View");
+$priv_list['user-view-notices']['descr'] = gettext("This user can view system notices.");
+
+$priv_list['user-view-clear-notices'] = array();
+$priv_list['user-view-clear-notices']['name']  = gettext("User - Notices: View and Clear");
+$priv_list['user-view-clear-notices']['descr'] = gettext("This user can view and clear system notices.");
+
 $priv_list['user-shell-access'] = array();
 $priv_list['user-shell-access']['name']  = gettext("User - System: Shell account access");
 $priv_list['user-shell-access']['descr'] = gettext("Indicates whether the user is able to login for example via SSH.");
+$priv_list['user-shell-access']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files'] = array();
 $priv_list['user-copy-files']['name']  = gettext("User - System: Copy files (scp)");
 $priv_list['user-copy-files']['descr'] = gettext("Indicates whether this user is allowed to copy files onto the {$g['product_name']} appliance via SCP/SFTP.");
+$priv_list['user-copy-files']['warn'] = "standard-warning-root";
 
 $priv_list['user-copy-files-chroot'] = array();
 $priv_list['user-copy-files-chroot']['name']  = gettext("User - System: Copy files to home directory (chrooted scp)");
@@ -139,5 +149,11 @@ $priv_list['page-status-systemlogs-wireless']['name'] = gettext("WebCfg - Status
 $priv_list['page-status-systemlogs-wireless']['descr'] = gettext("Allow access to the 'Status: System Logs: System: Wireless' page.");
 $priv_list['page-status-systemlogs-wireless']['match'] = array();
 $priv_list['page-status-systemlogs-wireless']['match'][] = "status_logs.php?logfile=wireless";
+
+$priv_list['page-services-upnp'] = array();
+$priv_list['page-services-upnp']['name'] = gettext("WebCfg - Services: UPnP");
+$priv_list['page-services-upnp']['descr'] = gettext("Allow access to the 'Services: UPnP' page.");
+$priv_list['page-services-upnp']['match'] = array();
+$priv_list['page-services-upnp']['match'][] = "pkg_edit.php?xml=miniupnpd.xml";
 
 ?>

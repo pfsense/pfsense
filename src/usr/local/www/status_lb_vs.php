@@ -43,6 +43,7 @@ $a_pool = &$config['load_balancer']['lbpool'];
 $rdr_a = get_lb_redirects();
 
 $pgtitle = array(gettext("Status"), gettext("Load Balancer"), gettext("Virtual Servers"));
+$pglinks = array("", "status_lb_pool.php", "@self");
 include("head.inc");
 
 /* active tabs */

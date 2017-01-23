@@ -819,4 +819,21 @@ function ipsec_new_reqid() {
 	return $keyid;
 }
 
+function ipsec_get_loglevels() {
+	global $config, $ipsec_log_cats;
+	$def_loglevel = '1';
+
+	$levels = array();
+
+	foreach (array_keys($ipsec_log_cats) as $cat) {
+		if (isset($config['ipsec']['logging'][$cat])) {
+			$levels[$cat] = $config['ipsec']['logging'][$cat];
+		} elseif (in_array($cat, array('ike', 'chd', 'cfg'))) {
+			$levels[$cat] = "2";
+		} else {
+			$levels[$cat] = $def_loglevel;
+		}
+	}
+	return $levels;
+}
 ?>

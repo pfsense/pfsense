@@ -104,14 +104,11 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("Check IP Services"), gettext("Edit"));
+$pglinks = array("", "services_dyndns.php", "services_checkip.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
-}
-
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
 }
 
 $form = new Form;

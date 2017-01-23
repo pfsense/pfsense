@@ -150,23 +150,25 @@ if ($_POST) {
 
 		write_config("Updated NTP ACL Settings");
 
+		$changes_applied = true;
 		$retval = 0;
-		$retval = system_ntp_configure();
-		$savemsg = get_std_save_message($retval);
+		$retval |= system_ntp_configure();
 	}
 }
 
 $pconfig = &$config['ntpd'];
 
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("ACLs"));
+$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+
+if ($changes_applied) {
+	print_apply_result_box($retval);
 }
 
 $tab_array = array();

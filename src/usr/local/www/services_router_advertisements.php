@@ -54,7 +54,7 @@ if ($config['installedpackages']['olsrd']) {
 }
 
 if (!$_GET['if']) {
-	$savemsg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
+	$info_msg = gettext("The DHCPv6 Server can only be enabled on interfaces configured with static, non unique local IP addresses.") . "<br />" .
 	    gettext("Only interfaces configured with a static IP will be shown.");
 }
 
@@ -243,17 +243,21 @@ if ($_POST) {
 		}
 
 		write_config();
-		$retval = services_radvd_configure();
-		$savemsg = get_std_save_message($retval);
+		$changes_applied = true;
+		$retval = 0;
+		$retval |= services_radvd_configure();
 	}
 }
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
+$pglinks = array("", "services_dhcpv6.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
+	$pglinks[] = "services_dhcpv6.php?if=" . $if;
 }
 $pgtitle[] = gettext("Router Advertisements");
+$pglinks[] = "@self";
 
 include("head.inc");
 
@@ -261,8 +265,12 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($savemsg) {
-	print_info_box($savemsg, 'success');
+if ($changes_applied) {
+	print_apply_result_box($retval);
+}
+
+if ($info_msg) {
+	print_info_box($info_msg, 'success');
 }
 
 /* active tabs */
@@ -331,7 +339,7 @@ if (count($carplist) > 0) {
 if (count($carplistif) > 0) {
 	$iflist = array();
 
-	$iflist['interface'] = strtoupper($if);
+	$iflist['interface'] = convert_friendly_interface_to_friendly_descr($if);
 	foreach ($carplistif as $ifname => $vip) {
 		$iflist[$ifname] = get_vip_descr($vip) . " - " . $vip;
 	}

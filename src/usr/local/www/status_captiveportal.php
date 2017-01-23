@@ -25,8 +25,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-captiveportal
-##|*NAME=Status: Captive portal
-##|*DESCR=Allow access to the 'Status: Captive portal' page.
+##|*NAME=Status: Captive Portal
+##|*DESCR=Allow access to the 'Status: Captive Portal' page.
 ##|*MATCH=status_captiveportal.php*
 ##|-PRIV
 
@@ -128,14 +128,17 @@ if ($_GET['deleteall'] && !empty($cpzone) && isset($cpzoneid)) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("Captive Portal"));
+$pglinks = array("", "status_captiveportal.php");
 
 if (!empty($cpzone)) {
 	$cpdb = captiveportal_read_db();
 
 	$pgtitle[] = htmlspecialchars($a_cp[$cpzone]['zone']);
+	$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 
 	if (isset($config['voucher'][$cpzone]['enable'])) {
 		$pgtitle[] = gettext("Active Users");
+		$pglinks[] = "status_captiveportal.php?zone=" . $cpzone;
 	}
 }
 $shortcut_section = "captiveportal";

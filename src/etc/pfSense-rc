@@ -64,7 +64,7 @@ fsck_forced_iterations=`/bin/kenv -q pfsense.fsck.force`
 if [ ! -z "${fsck_forced_iterations}" ]; then
 	echo "Forcing filesystem check (${fsck_forced_iterations} times)..."
 	while [ ${fsck_forced_iterations} -gt 0 ]; do
-		/sbin/fsck -y -F -t ufs
+		/sbin/fsck -y -t ufs
 		fsck_forced_iterations=$((fsck_forced_iterations - 1))
 	done
 fi
@@ -74,7 +74,7 @@ if [ -e /root/force_growfs ]; then
 fi
 
 FSCK_ACTION_NEEDED=0
-/sbin/fsck -p -F
+/sbin/fsck -p
 case $? in
 0)
 	echo "Filesystems are clean, continuing..."
@@ -92,18 +92,40 @@ esac
 
 if [ ${FSCK_ACTION_NEEDED} = 1 ]; then
 	echo "WARNING: Trying to recover filesystem from inconsistency..."
-	/sbin/fsck -yF
+	/sbin/fsck -y -t ufs
 fi
 
 /sbin/mount -a 2>/dev/null
 mount_rc=$?
 attempts=0
-while [ ${mount_rc} -ne 0 -a ${attempts} -lt 3 ]; do
-	/sbin/fsck -yF
+while [ ${mount_rc} -ne 0 -a ${attempts} -lt 10 ]; do
+	/sbin/fsck -y -t ufs
 	/sbin/mount -a 2>/dev/null
 	mount_rc=$?
 	attempts=$((attempts+1))
 done
+
+if [ ${mount_rc} -ne 0 ]; then
+	echo "ERROR: Impossible to mount filesystem, use interactive shell to attempt to recover it"
+	/bin/sh
+	/sbin/reboot
+fi
+
+# Handle ZFS read-only case
+unset USE_ZFS
+if /sbin/kldstat -qm zfs; then
+	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
+	if [ $ZFSFSAVAILABLE -eq 0 ]; then
+		/sbin/kldunload zfs
+	else
+		USE_ZFS=1
+		ZFSROOT=$(/sbin/zfs mount | /usr/bin/awk '$2 == "/" {print $1}')
+		if [ -n "$ZFSROOT" ]; then
+			/sbin/zfs set readonly=off $ZFSROOT
+		fi
+		/sbin/zfs mount -a
+	fi
+fi
 
 # If /conf is a directory, convert it to a symlink to /cf/conf
 if [ -d "/conf" ]; then
@@ -116,20 +138,34 @@ if [ -d "/conf" ]; then
 fi
 
 USE_MFS_TMPVAR=$(/usr/local/sbin/read_xml_tag.sh boolean system/use_mfs_tmpvar)
+
 unset MOVE_PKG_DATA
 # If use MFS var is disabled, move files back to place
 if [ "${USE_MFS_TMPVAR}" != "true" -a -f /root/var/db/pkg/local.sqlite ]; then
 	MOVE_PKG_DATA=1
 	rm -rf /var/db/pkg 2>/dev/null
 	rm -rf /var/cache/pkg 2>/dev/null
-	mv /root/var/db/pkg /var/db
-	mv /root/var/cache/pkg /var/cache
+	mv -f /root/var/db/pkg /var/db
+	mv -f /root/var/cache/pkg /var/cache
 # If use MFS var is enabled, move files to a safe place
 elif [ "${USE_MFS_TMPVAR}" = "true" -a -f /var/db/pkg/local.sqlite ]; then
 	MOVE_PKG_DATA=1
+	rm -rf /root/var/db/pkg 2>/dev/null
+	rm -rf /root/var/cache/pkg 2>/dev/null
 	/bin/mkdir -p /root/var/db /root/var/cache
-	mv /var/db/pkg /root/var/db
-	mv /var/cache/pkg /root/var/cache
+	mv -f /var/db/pkg /root/var/db
+	mv -f /var/cache/pkg /root/var/cache
+fi
+
+# Mount /var and /tmp on ZFS filesystems when it's necessary
+if [ -n "${USE_ZFS}" -a "${USE_MFS_TMPVAR}" = "true" ]; then
+	zfs list -H -o name,mountpoint |
+	    while read volume mountpoint; do
+		[ "${mountpoint}" != "/var" -a "${mountpoint}" != "/tmp" ] \
+			&& continue
+
+		/sbin/zfs umount ${volume}
+	done
 fi
 
 if [ "${USE_MFS_TMPVAR}" = "true" ]; then
@@ -142,6 +178,9 @@ if [ -n "${MOVE_PKG_DATA}" -o "${USE_MFS_TMPVAR}" = "true" ]; then
 	ln -sf ../../root/var/cache/pkg /var/cache/pkg
 fi
 
+# Restore contents of the RAM disk store
+/etc/rc.restore_ramdisk_store
+
 # Make sure /home exists
 [ -d /home ] \
 	|| mkdir /home
@@ -149,20 +188,6 @@ fi
 /bin/rm -f /root/force_fsck
 /bin/rm -f /root/TRIM_set
 /bin/rm -f /root/TRIM_unset
-
-# Handle ZFS read-only case
-/sbin/kldstat -qm zfs
-if [ $? -eq 0 ]; then
-	ZFSFSAVAILABLE=$(/sbin/zfs mount 2>/dev/null | wc -l)
-	if [ $ZFSFSAVAILABLE -eq 0 ]; then
-		/sbin/kldunload zfs
-	elif [ -f /usr/bin/grep ]; then
-		ZFSROOT=`/sbin/zfs mount | /usr/bin/grep ' /$' | /usr/bin/cut -d ' ' -f 1`
-		if [ "$ZFSROOT" != "" ]; then
-			/sbin/zfs set readonly=off $ZFSROOT
-		fi
-	fi
-fi
 
 # Disable APM on ATA drives. Leaving this on will kill drives long-term, especially laptop drives, by generating excessive Load Cycles.
 if [ -f /etc/rc.disable_hdd_apm ]; then
@@ -240,6 +265,8 @@ fi
 if [ ! -d /var/tmp ]; then
 	/bin/mkdir -p /var/tmp
 fi
+# Make sure our /var/tmp is 777 + Sticky
+/bin/chmod 1777 /tmp
 
 set -T
 trap "echo 'Reboot interrupted'; exit 1" 3

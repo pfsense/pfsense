@@ -69,9 +69,11 @@ if (!$apkg) { // If we aren't looking for a specific package, locate the first p
 }
 
 $pgtitle = array(gettext("Status"), gettext("Package Logs"));
+$pglinks = array("", "status_pkglogs.php");
 
 if ($pkgwithlogging && !empty($apkg)) {
 	$pgtitle[] = $apkg;
+	$pglinks[] = "@self";
 }
 include("head.inc");
 

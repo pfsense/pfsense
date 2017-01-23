@@ -22,8 +22,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-vouchers
-##|*NAME=Services: Captive portal Vouchers
-##|*DESCR=Allow access to the 'Services: Captive portal Vouchers' page.
+##|*NAME=Services: Captive Portal Vouchers
+##|*DESCR=Allow access to the 'Services: Captive Portal Vouchers' page.
 ##|*MATCH=services_captiveportal_vouchers.php*
 ##|-PRIV
 
@@ -76,6 +76,7 @@ if (empty($a_cp[$cpzone])) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"));
+$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'][$cpzone]['roll'])) {

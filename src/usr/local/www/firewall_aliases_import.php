@@ -60,9 +60,9 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST['aliasimport'] != "") {
+if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Aliases to import"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 

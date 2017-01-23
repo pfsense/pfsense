@@ -283,13 +283,15 @@ if ($_POST) {
 		// Remove the cron jobs on full install if not using RAM disk.
 		// Add the cron jobs on all others if the periodic backup option is set.  Otherwise the cron job is removed.
 		if (!isset($config['system']['use_mfs_tmpvar'])) {
-			install_cron_job("/etc/rc.backup_rrd.sh", false);
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
-			install_cron_job("/etc/rc.backup_logs.sh", false);
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", false, null, null, null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", false, null, null, null, null, null, null, false);
 		} else {
-			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}");
-			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}");
-			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}");
+			/* See #7146 for detail on why the extra parameters are needed for the time being. */
+			install_cron_job("/etc/rc.backup_rrd.sh", ($config['system']['rrdbackup'] > 0), $minute="0", "*/{$config['system']['rrdbackup']}", null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_dhcpleases.sh", ($config['system']['dhcpbackup'] > 0), $minute="0", "*/{$config['system']['dhcpbackup']}", null, null, null, null, false);
+			install_cron_job("/etc/rc.backup_logs.sh", ($config['system']['logsbackup'] > 0), $minute="0", "*/{$config['system']['logsbackup']}", null, null, null, null, false);
 		}
 
 		write_config();

@@ -101,7 +101,7 @@ foreach ($ifdescrs as $ifdescr => $ifname):
 	$mac_man = load_mac_manufacturer_table();
 
 	$chkbox_relinquish_lease = 	'&nbsp;&nbsp;&nbsp;' .
-								'<input type="checkbox" name="relinquish_lease" value="true" title="Send a gratuitous DHCP release packet to the server." /> ' . gettext("Relinquish Lease") .
+								'<input type="checkbox" name="relinquish_lease" value="true" title="' . gettext("Send a gratuitous DHCP release packet to the server.") . '" /> ' . gettext("Relinquish Lease") .
 								'<input type="hidden" name="if" value='.$ifinfo['if'].' />';
 	$chkbox_relinquish_lease_v4 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=4 />';
 	$chkbox_relinquish_lease_v6 = $chkbox_relinquish_lease . '<input type="hidden" name="ipv" value=6 />';

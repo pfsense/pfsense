@@ -3320,7 +3320,8 @@ function upgrade_098_to_099() {
 
 function upgrade_099_to_100() {
 	require_once("/etc/inc/services.inc");
-	install_cron_job("/usr/bin/nice -n20 newsyslog", false);
+	/* See #7146 for detail on why the extra parameters are needed for the time being. */
+	install_cron_job("/usr/bin/nice -n20 newsyslog", false, null, null, null, null, null, null, false);
 }
 
 function upgrade_100_to_101() {
@@ -4867,8 +4868,9 @@ function upgrade_151_to_152() {
 
 	// Remove these cron jobs on full install if not using ramdisk.
 	if (!isset($config['system']['use_mfs_tmpvar'])) {
-		install_cron_job("/etc/rc.backup_rrd.sh", false);
-		install_cron_job("/etc/rc.backup_dhcpleases.sh", false);
+		/* See #7146 for detail on why the extra parameters are needed for the time being. */
+		install_cron_job("/etc/rc.backup_rrd.sh", false, null, null, null, null, null, null, false);
+		install_cron_job("/etc/rc.backup_dhcpleases.sh", false, null, null, null, null, null, null, false);
 	}
 }
 

@@ -346,9 +346,11 @@ if (empty($pagename)) {
 		$pagename = $uri_split[1];
 	}
 
-	/* If the page name is still empty, the user must have requested / (index.php) */
-	if (empty($pagename)) {
-		$pagename = "index.php";
+	/* If the referrer was index.php then this was a redirect to help.php
+	   because help.php was the first page the user has priv to.
+	   In that case we do not want to redirect off to the dashboard help. */
+	if ($pagename == "index.php") {
+		$pagename = "";
 	}
 
 	/* If the filename is pkg_edit.php or wizard.php, reparse looking
@@ -365,18 +367,31 @@ if (empty($pagename)) {
 }
 
 /* Using the derived page name, attempt to find in the URL mapping hash */
-if (array_key_exists($pagename, $helppages)) {
-	$helppage = $helppages[$pagename];
+if (strlen($pagename) > 0) {
+	if (array_key_exists($pagename, $helppages)) {
+		$helppage = $helppages[$pagename];
+	} else {
+		// If no specific page was found, use a generic help page
+		$helppage = 'https://doc.pfsense.org/index.php/No_Help_Found';
+	}
+
+	/* Redirect to help page. */
+	header("Location: {$helppage}");
 }
 
-/* If we haven't determined a proper page, use a generic help page
-	 stating that a given page does not have help yet. */
+// No page name was determined, so show a message.
+$pgtitle = array(gettext("Help"), gettext("About this Page"));
+require_once("head.inc");
 
-if (empty($helppage)) {
-	$helppage = 'https://doc.pfsense.org/index.php/No_Help_Found';
+if (is_array($allowedpages) && str_replace('*', '', $allowedpages[0]) == "help.php") {
+	if (count($allowedpages) == 1) {
+		print_info_box(gettext("The Help page is the only page this user has privilege for."));
+	} else {
+		print_info_box(gettext("Displaying the Help page because it is the first page this user has privilege for."));
+	}
+} else {
+	print_info_box(gettext("Help page accessed directly without any page parameter."));
 }
 
-/* Redirect to help page. */
-header("Location: {$helppage}");
-
+include("foot.inc");
 ?>

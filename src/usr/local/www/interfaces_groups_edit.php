@@ -56,6 +56,7 @@ if (isset($id) && $a_ifgroups[$id]) {
 $interface_list = get_configured_interface_with_descr();
 $interface_list_disabled = get_configured_interface_with_descr(false, true);
 $ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9), '-' and '_' are allowed.");
+$ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
 
 if ($_POST) {
@@ -79,7 +80,7 @@ if ($_POST) {
 	}
 
 	if (preg_match("/[0-9]$/", $_POST['ifname'])) {
-		$input_errors[] = gettext("Group name cannot end with digit.");
+		$input_errors[] = $ifname_no_digit_text;
 	}
 
 	/*
@@ -209,7 +210,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['ifname'],
 	['placeholder' => 'Group Name', 'maxlength' => "16"]
-))->setWidth(6)->setHelp($ifname_allowed_chars_text);
+))->setWidth(6)->setHelp($ifname_allowed_chars_text . " " . $ifname_no_digit_text);
 
 $section->addInput(new Form_Input(
 	'descr',

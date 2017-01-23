@@ -114,7 +114,7 @@ function config_unlock() {
 
 /* lock configuration file */
 function lock($lock, $op = LOCK_SH) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to lock() function."));
 	}
@@ -122,7 +122,6 @@ function lock($lock, $op = LOCK_SH) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		if (flock($fp, $op)) {
 			return $fp;
@@ -133,7 +132,7 @@ function lock($lock, $op = LOCK_SH) {
 }
 
 function try_lock($lock, $timeout = 5) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	if (!$lock) {
 		die(gettext("WARNING: A name must be given as parameter to try_lock() function."));
 	}
@@ -141,7 +140,6 @@ function try_lock($lock, $timeout = 5) {
 		@touch("{$g['tmp_path']}/{$lock}.lock");
 		@chmod("{$g['tmp_path']}/{$lock}.lock", 0666);
 	}
-	$cfglckkeyconsumers++;
 	if ($fp = fopen("{$g['tmp_path']}/{$lock}.lock", "w")) {
 		$trycounter = 0;
 		while (!flock($fp, LOCK_EX | LOCK_NB)) {
@@ -161,7 +159,7 @@ function try_lock($lock, $timeout = 5) {
 
 /* unlock configuration file */
 function unlock($cfglckkey = 0) {
-	global $g, $cfglckkeyconsumers;
+	global $g;
 	flock($cfglckkey, LOCK_UN);
 	fclose($cfglckkey);
 	return;

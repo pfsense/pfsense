@@ -509,7 +509,7 @@ if ($_POST['apply']) {
 	if (is_array($config['ifgroups']['ifgroupentry'])) {
 		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
 			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $wancfg['descr']);
+				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
 			}
 		}
 	}

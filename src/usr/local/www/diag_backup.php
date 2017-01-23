@@ -27,7 +27,6 @@
 ##|*IDENT=page-diagnostics-backup-restore
 ##|*NAME=Diagnostics: Backup & Restore
 ##|*DESCR=Allow access to the 'Diagnostics: Backup & Restore' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=diag_backup.php*
 ##|-PRIV
 
@@ -517,7 +516,6 @@ function build_area_list($showall) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), htmlspecialchars(gettext("Backup & Restore")), htmlspecialchars(gettext("Backup & Restore")));
-$pglinks = array("", "@self", "@self");
 include("head.inc");
 
 if ($input_errors) {

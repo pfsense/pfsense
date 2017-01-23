@@ -401,11 +401,9 @@ if ($_POST) {
 
 if ($pconfig['mobile']) {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"), gettext("Edit Phase 2"));
-	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec_mobile.php", "@self");
 	$editing_mobile = true;
 } else {
 	$pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"), gettext("Edit Phase 2"));
-	$pglinks = array("", "vpn_ipsec.php", "vpn_ipsec.php", "@self");
 	$editing_mobile = false;
 }
 $shortcut_section = "ipsec";

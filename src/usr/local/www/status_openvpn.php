@@ -104,7 +104,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Real Address")?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Bytes Sent/Received")?></th>
+						<th><?=gettext("Bytes Sent")?></th>
+						<th><?=gettext("Bytes Received")?></th>
 						<th><!-- Icons --></th>
 					</tr>
 				</thead>
@@ -114,25 +115,12 @@ include("head.inc"); ?>
 							foreach ($server['conns'] as $conn):
 					?>
 					<tr id="<?php echo "r:{$server['mgmt']}:{$conn['remote_host']}"; ?>">
-						<td>
-							<?=$conn['common_name'];?>
-					<?php if (!empty($conn['common_name']) && !empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
-							<br />
-					<?php endif; ?>
-					<?php if (!empty($conn['user_name']) && ($conn['user_name'] != "UNDEF")): ?>
-							<?=$conn['user_name'];?>
-					<?php endif; ?>
-						</td>
+						<td><?=$conn['common_name'];?></td>
 						<td><?=$conn['remote_host'];?></td>
-						<td>
-							<?=$conn['virtual_addr'];?>
-					<?php if (!empty($conn['virtual_addr']) && !empty($conn['virtual_addr6'])): ?>
-							<br />
-					<?php endif; ?>
-							<?=$conn['virtual_addr6'];?>
-						</td>
+						<td><?=$conn['virtual_addr'];?></td>
 						<td><?=$conn['connect_time'];?></td>
-						<td><?=format_bytes($conn['bytes_sent']);?> / <?=format_bytes($conn['bytes_recv']);?></td>
+						<td><?=format_bytes($conn['bytes_sent']);?></td>
+						<td><?=format_bytes($conn['bytes_recv']);?></td>
 						<td>
 							<a
 							   onclick="killClient('<?=$server['mgmt'];?>', '<?=$conn['remote_host'];?>');" style="cursor:pointer;"
@@ -238,7 +226,8 @@ include("head.inc"); ?>
 						<th><?=gettext("Connected Since"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent / Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -251,15 +240,10 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($sk_server['name']);?></td>
 						<td><?=$sk_server['status'];?></td>
 						<td><?=$sk_server['connect_time'];?></td>
-						<td>
-							<?=$sk_server['virtual_addr'];?>
-					<?php if (!empty($sk_server['virtual_addr']) && !empty($sk_server['virtual_addr6'])): ?>
-							<br />
-					<?php endif; ?>
-							<?=$sk_server['virtual_addr6'];?>
-						</td>
+						<td><?=$sk_server['virtual_addr'];?></td>
 						<td><?=$sk_server['remote_host'];?></td>
-						<td><?=format_bytes($sk_server['bytes_sent']);?> / <?=format_bytes($sk_server['bytes_recv']);?></td>
+						<td><?=format_bytes($sk_server['bytes_sent']);?></td>
+						<td><?=format_bytes($sk_server['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>
@@ -296,10 +280,10 @@ include("head.inc"); ?>
 						<th><?=gettext("Name"); ?></th>
 						<th><?=gettext("Status"); ?></th>
 						<th><?=gettext("Connected Since"); ?></th>
-						<th><?=gettext("Local Address"); ?></th>
 						<th><?=gettext("Virtual Address"); ?></th>
 						<th><?=gettext("Remote Host"); ?></th>
-						<th><?=gettext("Bytes Sent/Received"); ?></th>
+						<th><?=gettext("Bytes Sent"); ?></th>
+						<th><?=gettext("Bytes Received"); ?></th>
 						<th><?=gettext("Service"); ?></th>
 					</tr>
 				</thead>
@@ -312,28 +296,10 @@ include("head.inc"); ?>
 						<td><?=htmlspecialchars($client['name']);?></td>
 						<td><?=$client['status'];?></td>
 						<td><?=$client['connect_time'];?></td>
-						<td>
-					<?php if (empty($client['local_host']) && empty($client['local_port'])): ?>
-							(pending)
-					<?php else: ?>
-							<?=$client['local_host'];?>:<?=$client['local_port'];?>
-					<?php endif; ?>
-						</td>
-						<td>
-							<?=$client['virtual_addr'];?>
-					<?php if (!empty($client['virtual_addr']) && !empty($client['virtual_addr6'])): ?>
-							<br />
-					<?php endif; ?>
-							<?=$client['virtual_addr6'];?>
-						</td>
-						<td>
-					<?php if (empty($client['remote_host']) && empty($client['remote_port'])): ?>
-							(pending)
-					<?php else: ?>
-							<?=$client['remote_host'];?>:<?=$client['remote_port'];?>
-					<?php endif; ?>
-						</td>
-						<td><?=format_bytes($client['bytes_sent']);?> / <?=format_bytes($client['bytes_recv']);?></td>
+						<td><?=$client['virtual_addr'];?></td>
+						<td><?=$client['remote_host'];?></td>
+						<td><?=format_bytes($client['bytes_sent']);?></td>
+						<td><?=format_bytes($client['bytes_recv']);?></td>
 						<td>
 							<table>
 								<tr>

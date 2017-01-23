@@ -31,7 +31,6 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("Services"), gettext("IGMP Proxy"), gettext("Edit"));
-$pglinks = array("", "services_igmpproxy.php", "@self");
 
 require_once("guiconfig.inc");
 

@@ -244,7 +244,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 
 		write_config();
 
-		$action_msg = gettext("Interface has been added.");
+		$savemsg = gettext("Interface has been added.");
 		$class = "success";
 	}
 
@@ -255,9 +255,15 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 	} else {
 		write_config();
 
-		$changes_applied = true;
-		$retval = 0;
-		$retval |= filter_configure();
+		$retval = filter_configure();
+
+		if (stristr($retval, "error") <> true) {
+			$savemsg = get_std_save_message($retval);
+			$class = "success";
+		} else {
+			$savemsg = $retval;
+			$class = "danger";
+		}
 	}
 
 } else if (isset($_POST['Submit'])) {
@@ -432,7 +438,7 @@ if (isset($_POST['add']) && isset($_POST['if_add'])) {
 
 			link_interface_to_vlans($realid, "update");
 
-			$action_msg = gettext("Interface has been deleted.");
+			$savemsg = gettext("Interface has been deleted.");
 			$class = "success";
 		}
 	}
@@ -458,14 +464,14 @@ include("head.inc");
 if (file_exists("/var/run/interface_mismatch_reboot_needed")) {
 	if ($_POST) {
 		if ($rebootingnow) {
-			$action_msg = gettext("The system is now rebooting. Please wait.");
+			$savemsg = gettext("The system is now rebooting. Please wait.");
 			$class = "success";
 		} else {
 			$applymsg = gettext("Reboot is needed. Please apply the settings in order to reboot.");
 			$class = "warning";
 		}
 	} else {
-		$action_msg = gettext("Interface mismatch detected. Please resolve the mismatch, save and then click 'Apply Changes'. The firewall will reboot afterwards.");
+		$savemsg = gettext("Interface mismatch detected. Please resolve the mismatch, save and then click 'Apply Changes'. The firewall will reboot afterwards.");
 		$class = "warning";
 	}
 }
@@ -476,10 +482,8 @@ if (file_exists("/tmp/reload_interfaces")) {
 	echo "<br /></p>\n";
 } elseif ($applymsg) {
 	print_apply_box($applymsg);
-} elseif ($action_msg) {
-	print_info_box($action_msg, $class);
-} elseif ($changes_applied) {
-	print_apply_result_box($retval);
+} elseif ($savemsg) {
+	print_info_box($savemsg, $class);
 }
 
 pfSense_handle_custom_code("/usr/local/pkg/interfaces_assign/pre_input_errors");

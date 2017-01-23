@@ -26,8 +26,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-dhcpv6server
-##|*NAME=Services: DHCPv6 Server
-##|*DESCR=Allow access to the 'Services: DHCPv6 Server' page.
+##|*NAME=Services: DHCPv6 server
+##|*DESCR=Allow access to the 'Services: DHCPv6 server' page.
 ##|*MATCH=services_dhcpv6.php*
 ##|-PRIV
 
@@ -44,30 +44,30 @@ function dhcpv6_apply_changes($dhcpdv6_enable_changed) {
 	/* dnsmasq_configure calls dhcpd_configure */
 	/* no need to restart dhcpd twice */
 	if (isset($config['dnsmasq']['enable']) && isset($config['dnsmasq']['regdhcpstatic']))	{
-		$retvaldns |= services_dnsmasq_configure();
+		$retvaldns = services_dnsmasq_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('hosts');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else if (isset($config['unbound']['enable']) && isset($config['unbound']['regdhcpstatic'])) {
-		$retvaldns |= services_unbound_configure();
+		$retvaldns = services_unbound_configure();
 		if ($retvaldns == 0) {
 			clear_subsystem_dirty('unbound');
 			clear_subsystem_dirty('staticmaps');
 		}
 	} else {
-		$retvaldhcp |= services_dhcpd_configure();
+		$retvaldhcp = services_dhcpd_configure();
 		if ($retvaldhcp == 0) {
 			clear_subsystem_dirty('staticmaps');
 		}
 	}
 	if ($dhcpdv6_enable_changed) {
-		$retvalfc |= filter_configure();
+		$retvalfc = filter_configure();
 	}
 	if ($retvaldhcp == 1 || $retvaldns == 1 || $retvalfc == 1) {
 		$retval = 1;
 	}
-	return $retval;
+	return get_std_save_message($retval);
 }
 
 if (!$g['services_dhcp_server_enable']) {
@@ -184,8 +184,7 @@ if (is_array($dhcrelaycfg) && isset($dhcrelaycfg['enable']) && isset($dhcrelaycf
 }
 
 if (isset($_POST['apply'])) {
-	$changes_applied = true;
-	$retval = dhcpv6_apply_changes(false);
+	$savemsg = dhcpv6_apply_changes(false);
 } elseif (isset($_POST['save'])) {
 	unset($input_errors);
 
@@ -460,8 +459,7 @@ if (isset($_POST['apply'])) {
 
 		write_config();
 
-		$changes_applied = true;
-		$retval = dhcpv6_apply_changes($dhcpdv6_enable_changed);
+		$savemsg = dhcpv6_apply_changes($dhcpdv6_enable_changed);
 	}
 }
 
@@ -481,13 +479,10 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")));
-$pglinks = array("", "services_dhcpv6.php");
 
 if (!empty($if) && isset($iflist[$if])) {
 	$pgtitle[] = $iflist[$if];
-	$pglinks[] = "@self";
 	$pgtitle[] = gettext("DHCPv6 Server");
-	$pglinks[] = "@self";
 }
 $shortcut_section = "dhcp6";
 
@@ -497,8 +492,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($changes_applied) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('staticmaps')) {

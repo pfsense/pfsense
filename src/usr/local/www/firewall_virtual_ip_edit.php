@@ -287,7 +287,6 @@ $ipaliashelp = gettext('The mask must be the network\'s subnet mask. It does not
 $proxyarphelp = gettext('Enter a CIDR block of proxy ARP addresses.');
 
 $pgtitle = array(gettext("Firewall"), gettext("Virtual IPs"), gettext("Edit"));
-$pglinks = array("", "firewall_virtual_ip.php", "@self");
 include("head.inc");
 
 function build_if_list() {

@@ -170,7 +170,6 @@ function build_interfaces_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("VLANs"), gettext("Edit"));
-$pglinks = array("", "interfaces_vlan.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

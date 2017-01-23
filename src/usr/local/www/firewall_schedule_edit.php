@@ -50,7 +50,6 @@ require_once("filter.inc");
 require_once("shaper.inc");
 
 $pgtitle = array(gettext("Firewall"), gettext("Schedules"), gettext("Edit"));
-$pglinks = array("", "firewall_schedule.php", "@self");
 
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_schedule.php');
 

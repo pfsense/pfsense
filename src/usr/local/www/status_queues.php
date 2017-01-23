@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-status-trafficshaper-queues
-##|*NAME=Status: Traffic Shaper: Queues
-##|*DESCR=Allow access to the 'Status: Traffic Shaper: Queues' page.
+##|*NAME=Status: Traffic shaper: Queues
+##|*DESCR=Allow access to the 'Status: Traffic shaper: Queues' page.
 ##|*MATCH=status_queues.php*
 ##|-PRIV
 /*

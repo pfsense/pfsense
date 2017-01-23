@@ -20,14 +20,6 @@
 
 // These helper functions are used on many/most UI pages to hide/show/disable/enable form elements where required
 
-// Cause the input to be displayed as a required field by adding the element-required class to the label
-function setRequired(id, req) {
-	if (req)
-		$('#' + id).parent().parent('div').find('span:first').addClass('element-required');
-	else
-		$('#' + id).parent().parent('div').find('span:first').removeClass('element-required');
-}
-
 // Hides the <div> in which the specified input element lives so that the input, its label and help text are hidden
 function hideInput(id, hide) {
 	if (hide)
@@ -361,9 +353,9 @@ function add_row() {
 	$('[id^=delete]').click(function(event) {
 		if ($('.repeatable').length > 1) {
 			if ((typeof retainhelp) == "undefined")
-				moveHelpText($(this).attr("id"));
+				moveHelpText(event.target.id);
 
-			delete_row($(this).attr("id"));
+			delete_row(event.target.id);
 		} else {
 			alert('The last row may not be deleted.');
 		}
@@ -383,9 +375,9 @@ $('[id^=addrow]').click(function() {
 $('[id^=delete]').click(function(event) {
 	if ($('.repeatable').length > 1) {
 		if ((typeof retainhelp) == "undefined")
-			moveHelpText($(this).attr("id"));
+			moveHelpText(event.target.id);
 
-		delete_row($(this).attr("id"));
+		delete_row(event.target.id);
 	} else {
 		alert('The last row may not be deleted.');
 	}

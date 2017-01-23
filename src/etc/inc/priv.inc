@@ -55,15 +55,14 @@ function get_priv_files($directory) {
 // Load and sort privs
 $dir_array = get_priv_files("/etc/inc/priv");
 foreach ($dir_array as $file) {
-	if (!is_dir("/etc/inc/priv/{$file}") && substr($file, -4) == ".inc") {
+	if (!is_dir("/etc/inc/priv/{$file}") && stristr($file, ".inc")) {
 		include_once("/etc/inc/priv/{$file}");
 	}
 }
 if (is_dir("/usr/local/pkg/priv")) {
 	$dir_array = get_priv_files("/usr/local/pkg/priv");
 	foreach ($dir_array as $file) {
-		if (!is_dir("/usr/local/pkg/priv/{$file}") &&
-		    substr($file, -4) == ".inc") {
+		if (!is_dir("/usr/local/pkg/priv/{$file}") && stristr($file, ".inc")) {
 			include_once("/usr/local/pkg/priv/{$file}");
 		}
 	}
@@ -183,7 +182,7 @@ function get_user_privdesc(& $user) {
 	return $privs;
 }
 
-function isAdminUID($username) {
+function isAllowed($username, $page) {
 	global $_SESSION;
 
 	if (!isset($username)) {
@@ -200,20 +199,6 @@ function isAdminUID($username) {
 		}
 	}
 
-	return false;
-}
-
-function isAllowed($username, $page) {
-	global $_SESSION;
-
-	if (!isset($username)) {
-		return false;
-	}
-
-	if (isAdminUID($username)) {
-		return true;
-	}
-
 	/* user privilege access check */
 	if (cmp_page_matches($page, $_SESSION['page-match'])) {
 		return true;
@@ -221,6 +206,7 @@ function isAllowed($username, $page) {
 
 	return false;
 }
+
 
 function isAllowedPage($page) {
 	global $_SESSION;
@@ -232,8 +218,14 @@ function isAllowedPage($page) {
 		return false;
 	}
 
-	if (isAdminUID($username)) {
-		return true;
+	/* admin/root access check */
+	$user = getUserEntry($username);
+	if (isset($user)) {
+		if (isset($user['uid'])) {
+			if ($user['uid'] == 0) {
+				return true;
+			}
+		}
 	}
 
 	/* user privilege access check */
@@ -277,33 +269,12 @@ function getAllowedPages($username, &$attributes = array()) {
 
 	if ($_SESSION['remoteauth']) {
 		$authcfg = auth_get_authserver($config['system']['webgui']['authmode']);
-		// cache auth results for a short time to ease load on auth services & logs
-		if (isset($config['system']['webgui']['auth_refresh_time'])) {
-			$recheck_time = $config['system']['webgui']['auth_refresh_time'];
-		} else {
-			$recheck_time = 30;
-		}
 		// obtain ldap groups if we are in ldap mode
 		if ($authcfg['type'] == "ldap") {
-			if  ( isset($_SESSION["ldap_allowed_groups"]) &&
-			    ( time() <= $_SESSION["auth_check_time"]+ $recheck_time) ) {
-				$allowed_groups = $_SESSION["ldap_allowed_groups"];
-			} else {
-				$allowed_groups = @ldap_get_groups($username, $authcfg);
-				$_SESSION["ldap_allowed_groups"] = $allowed_groups;
-				$_SESSION["auth_check_time"] = time();
-			}
+			$allowed_groups = @ldap_get_groups($username, $authcfg);
 		} elseif ($authcfg['type'] == "radius") {
-			if  ( isset($_SESSION["radius_allowed_groups"]) &&
-			    (time() <= $_SESSION["auth_check_time"] + $recheck_time) ) {
-				$allowed_groups = $_SESSION["radius_allowed_groups"];
-			} else {
-				$allowed_groups = @radius_get_groups($attributes);
-				$_SESSION["radius_allowed_groups"] = $allowed_groups;
-				$_SESSION["auth_check_time"] = time();
-			}
+			$allowed_groups = @radius_get_groups($attributes);
 		}
-
 	}
 	if (!$allowed_groups) {
 		// search for a local user by name

@@ -80,7 +80,7 @@ function is_valid_syslog_server($target) {
 
 if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 	clear_all_log_files(true);
-	$reset_msg = gettext("The log files have been reset.");
+	$savemsg .= gettext("The log files have been reset.");
 } elseif ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
@@ -162,9 +162,8 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 
 		write_config();
 
-		$changes_applied = true;
 		$retval = 0;
-		system_syslogd_start();
+		$retval = system_syslogd_start();
 		if (($oldnologdefaultblock !== isset($config['syslog']['nologdefaultblock'])) ||
 		    ($oldnologdefaultpass !== isset($config['syslog']['nologdefaultpass'])) ||
 		    ($oldnologbogons !== isset($config['syslog']['nologbogons'])) ||
@@ -172,12 +171,14 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 			$retval |= filter_configure();
 		}
 
+		$savemsg = get_std_save_message($retval);
+
 		if ($oldnolognginx !== isset($config['syslog']['nolognginx'])) {
 			ob_flush();
 			flush();
 			log_error(gettext("webConfigurator configuration has changed. Restarting webConfigurator."));
 			send_event("service restart webgui");
-			$extra_save_msg = gettext("WebGUI process is restarting.");
+			$savemsg .= "<br />" . gettext("WebGUI process is restarting.");
 		}
 
 		filter_pflog_start(true);
@@ -185,7 +186,6 @@ if ($_POST['resetlogs'] == gettext("Reset Log Files")) {
 }
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext("Settings"));
-$pglinks = array("", "status_logs.php", "@self");
 include("head.inc");
 
 $logfilesizeHelp =	gettext("Logs are held in constant-size circular log files. This field controls how large each log file is, and thus how many entries may exist inside the log. By default this is approximately 500KB per log file, and there are nearly 20 such log files.") .
@@ -204,12 +204,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($reset_msg) {
-	print_info_box($reset_msg, 'success');
-}
-
-if ($changes_applied) {
-	print_apply_result_box($retval, $extra_save_msg);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

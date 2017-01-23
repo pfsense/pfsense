@@ -198,7 +198,6 @@ if ($_GET['act'] == "addopt") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("General Settings"), gettext("Edit Host Override"));
-$pglinks = array("", "services_unbound.php", "services_unbound.php", "@self");
 $shortcut_section = "resolver";
 include("head.inc");
 

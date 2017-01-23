@@ -74,7 +74,6 @@ if ($_GET['act'] == "edit") {
 		$pconfig['description'] = $a_csc[$id]['description'];
 
 		$pconfig['tunnel_network'] = $a_csc[$id]['tunnel_network'];
-		$pconfig['tunnel_networkv6'] = $a_csc[$id]['tunnel_networkv6'];
 		$pconfig['local_network'] = $a_csc[$id]['local_network'];
 		$pconfig['local_networkv6'] = $a_csc[$id]['local_networkv6'];
 		$pconfig['remote_network'] = $a_csc[$id]['remote_network'];
@@ -133,10 +132,7 @@ if ($_POST) {
 	$pconfig = $_POST;
 
 	/* input validation */
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'IPv4 Tunnel Network')) {
-		$input_errors[] = $result;
-	}
-	if ($result = openvpn_validate_cidr($pconfig['tunnel_networkv6'], 'IPv6 Tunnel Network', false, "ipv6")) {
+	if ($result = openvpn_validate_cidr($pconfig['tunnel_network'], 'Tunnel network')) {
 		$input_errors[] = $result;
 	}
 
@@ -223,7 +219,6 @@ if ($_POST) {
 		$csc['block'] = $pconfig['block'];
 		$csc['description'] = $pconfig['description'];
 		$csc['tunnel_network'] = $pconfig['tunnel_network'];
-		$csc['tunnel_networkv6'] = $pconfig['tunnel_networkv6'];
 		$csc['local_network'] = $pconfig['local_network'];
 		$csc['local_networkv6'] = $pconfig['local_networkv6'];
 		$csc['remote_network'] = $pconfig['remote_network'];
@@ -281,11 +276,9 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("OpenVPN"), gettext("Client Specific Overrides"));
-$pglinks = array("", "vpn_openvpn_server.php", "vpn_openvpn_csc.php");
 
 if ($act=="new" || $act=="edit") {
 	$pgtitle[] = gettext('Edit');
-	$pglinks[] = "@self";
 }
 $shortcut_section = "openvpn";
 
@@ -327,7 +320,7 @@ if ($act == "new" || $act == "edit"):
 		$pconfig['server_list'],
 		$serveroptionlist,
 		true
-		))->setHelp('Select the servers that will utilize this override. When no servers are selected, the override will apply to all servers.');
+		))->setHelp('Select the servers for which the override will apply. Selecting no servers will also apply the override to all servers.');
 
 
 	$section->addInput(new Form_Checkbox(
@@ -339,24 +332,24 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'common_name',
-		'Common Name',
+		'Common name',
 		'text',
 		$pconfig['common_name']
-	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive.');
+	))->setHelp('Enter the client\'s X.509 common name.');
 
 	$section->addInput(new Form_Input(
 		'description',
 		'Description',
 		'text',
 		$pconfig['description']
-	))->setHelp('A description for administrative reference (not parsed).');
+	))->setHelp('A description may be entered here for administrative reference (not parsed). ');
 
 	$section->addInput(new Form_Checkbox(
 		'block',
 		'Connection blocking',
-		'Block this client connection based on its common name.',
+		'Block this client connection based on its common name. ',
 		$pconfig['block']
-	))->setHelp('Prevents the client from connecting to this server. Do not use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead.');
+	))->setHelp('Don\'t use this option to permanently disable a client due to a compromised key or password. Use a CRL (certificate revocation list) instead. ');
 
 	$form->add($section);
 
@@ -364,57 +357,45 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'tunnel_network',
-		'IPv4 Tunnel Network',
+		'Tunnel Network',
 		'text',
 		$pconfig['tunnel_network']
-	))->setHelp('The virtual IPv4 network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.5/24). ' .
-		    '<br />' .
-		    'With subnet topology, enter the client IP address and the subnet mask must match the IPv4 Tunnel Network on the server. ' .
-		    '<br />' .
-		    'With net30 topology, the first network address of the /30 is assumed to be the server address and the second network address will be assigned to the client.');
-
-	$section->addInput(new Form_Input(
-		'tunnel_networkv6',
-		'IPv6 Tunnel Network',
-		'text',
-		$pconfig['tunnel_networkv6']
-	))->setHelp('The virtual IPv6 network used for private communications between this client and the server expressed using prefix (e.g. 2001:db9:1:1::100/64). ' .
-		    '<br />' .
-		    'Enter the client IPv6 address and prefix. The prefix must match the IPv6 Tunnel Network prefix on the server. ');
+	))->setHelp('This is the virtual network used for private communications between this client and the server expressed using CIDR (e.g. 10.0.8.0/24). ' .
+				'The first network address is assumed to be the server address and the second network address will be assigned to the client virtual interface. ');
 
 	$section->addInput(new Form_Input(
 		'local_network',
 		'IPv4 Local Network/s',
 		'text',
 		$pconfig['local_network']
-	))->setHelp('These are the IPv4 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR networks. ' . '<br />' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more CIDR ranges. ' . '<br />' .
+				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
 
 	$section->addInput(new Form_Input(
 		'local_networkv6',
 		'IPv6 Local Network/s',
 		'text',
 		$pconfig['local_networkv6']
-	))->setHelp('These are the IPv6 server-side networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.' . '<br />' .
-		    'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
+	))->setHelp('These are the IPv4 networks that will be accessible from this particular client. Expressed as a comma-separated list of one or more IP/PREFIX networks.' . '<br />' .
+				'NOTE: Networks do not need to be specified here if they have already been defined on the main server configuration.');
 
 	$section->addInput(new Form_Input(
 		'remote_network',
 		'IPv4 Remote Network/s',
 		'text',
 		$pconfig['remote_network']
-	))->setHelp('These are the IPv4 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-		    'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.');
+	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
+				'Expressed as a comma-separated list of one or more CIDR ranges. May be left blank if there are no client-side networks to be routed.' . '<br />' .
+				'NOTE: Remember to add these subnets to the IPv4 Remote Networks list on the corresponding OpenVPN server settings.');
 
 	$section->addInput(new Form_Input(
 		'remote_networkv6',
 		'IPv6 Remote Network/s',
 		'text',
 		$pconfig['remote_networkv6']
-	))->setHelp('These are the IPv6 client-side networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
-		    'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
-		    'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
+	))->setHelp('These are the IPv4 networks that will be routed to this client specifically using iroute, so that a site-to-site VPN can be established. ' .
+				'Expressed as a comma-separated list of one or more IP/PREFIX networks. May be left blank if there are no client-side networks to be routed.' . '<br />' .
+				'NOTE: Remember to add these subnets to the IPv6 Remote Networks list on the corresponding OpenVPN server settings.');
 
 	$section->addInput(new Form_Checkbox(
 		'gwredir',

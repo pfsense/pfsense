@@ -82,15 +82,12 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 		flush();
 		if (is_array($files_to_upload)) {
 			$resp = upload_crash_report($files_to_upload);
+			array_map('unlink', glob("/var/crash/*"));
+			// Erase the contents of the PHP error log
+			fclose(fopen("/tmp/PHP_errors.log", 'w'));
 			echo "<br/>";
 			print_r($resp);
-			if (preg_match('/Upload received OK./i', $resp)) {
-				array_map('unlink', glob("/var/crash/*"));
-				// Erase the contents of the PHP error log
-				fclose(fopen("/tmp/PHP_errors.log", 'w'));
-				echo "<br/>" . gettext("Deleted crash report files from local disk.");
-			}
-			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . "</p>";
+			echo "<p><a href=\"/\">" . gettext("Continue") . "</a>" . gettext(" and delete crash report files from local disk.") . "</p>";
 		} else {
 			echo gettext("Could not find any crash files.");
 		}
@@ -106,10 +103,8 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 		if (count($php_errors) > 0) {
 			$crash_reports .= "\nPHP Errors:\n";
 			$crash_reports .= implode("\n", $php_errors) . "\n\n";
-		} else {
-			$crash_reports .= "\nNo PHP errors found.\n";
 		}
-		if (count($crash_files) > 0) {
+		if (is_array($crash_files))	{
 			foreach ($crash_files as $cf) {
 				if (filesize($cf) < FILE_SIZE) {
 					$crash_reports .= "\nFilename: {$cf}\n";
@@ -117,7 +112,7 @@ exec("/bin/cat /tmp/PHP_errors.log", $php_errors);
 				}
 			}
 		} else {
-			$crash_reports .= "\nNo FreeBSD crash data found.\n";
+			echo gettext("Could not locate any crash data.");
 		}
 ?>
 	<div class="panel panel-default">

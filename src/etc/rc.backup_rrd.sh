@@ -1,21 +1,25 @@
 #!/bin/sh
 
-: ${DBPATH:=/var/db/rrd}
+: ${RRDDBPATH:=/var/db/rrd}
 : ${CF_CONF_PATH:=/cf/conf}
 
-: ${RAM_Disk_Store:=${CF_CONF_PATH}/RAM_Disk_Store}
+# Save the rrd databases to the config path.
+if [ -d "${RRDDBPATH}" ]; then
+	[ -f "${CF_CONF_PATH}/rrd.tgz" ] && /bin/rm -f "${CF_CONF_PATH}"/rrd.tgz
 
-# Save the rrd databases to the RAM disk store.
-if [ -d "${DBPATH}" ]; then
-	echo -n "Saving RRD to RAM disk store...";
+	tgzlist=""
 
-	[ -f "${RAM_Disk_Store}/rrd.tgz" ] && /bin/rm -f "${RAM_Disk_Store}/rrd.tgz"
-
-	if [ ! -d "${RAM_Disk_Store}" ]; then
-		mkdir -p "${RAM_Disk_Store}"
+	for rrdfile in "${RRDDBPATH}"/*.rrd ; do
+		xmlfile="${rrdfile%.rrd}.xml"
+		tgzfile="${rrdfile%.rrd}.tgz"
+		/usr/bin/nice -n20 /usr/local/bin/rrdtool dump "$rrdfile" "$xmlfile"
+		cd / && /usr/bin/tar -czf "${tgzfile}" -C / "${RRDDBPATH#/}"/*.xml
+		/bin/rm -f "${RRDDBPATH}"/*.xml
+		tgzlist="${tgzlist} @${tgzfile}"
+	done
+	if [ -n "${tgzlist}" ]; then
+		cd / && /usr/bin/tar -czf "${CF_CONF_PATH}/rrd.tgz" ${tgzlist}
+		/bin/rm -f "${RRDDBPATH}"/*.tgz
 	fi
-
-	/usr/bin/tar -czf "${RAM_Disk_Store}/rrd.tgz" -C / "${DBPATH#/}/"
-
-	echo "done.";
 fi
+

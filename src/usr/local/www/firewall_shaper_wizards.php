@@ -42,7 +42,14 @@ if ($_POST['apply']) {
 
 	$retval = 0;
 	/* Setup pf rules since the user may have changed the optimization value */
-	$retval |= filter_configure();
+	$retval = filter_configure();
+	if (stristr($retval, "error") <> true) {
+		$savemsg = get_std_save_message($retval);
+		$class = 'success';
+	} else {
+		$savemsg = $retval;
+		$class = 'warning';
+	}
 
 	/* reset rrd queues */
 	unlink_if_exists("/var/db/rrd/*queuedrops.rrd");
@@ -55,7 +62,6 @@ if ($_POST['apply']) {
 $shaperIFlist = get_configured_interface_with_descr();
 
 $pgtitle = array(gettext("Firewall"), gettext("Traffic Shaper"), gettext("Wizards"));
-$pglinks = array("", "firewall_shaper.php", "@self");
 $shortcut_section = "trafficshaper";
 
 $wizards = array(
@@ -76,8 +82,8 @@ $tab_array[] = array(gettext("Limiters"), false, "firewall_shaper_vinterface.php
 $tab_array[] = array(gettext("Wizards"), true, "firewall_shaper_wizards.php");
 display_top_tabs($tab_array);
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, $class);
 }
 
 if (is_subsystem_dirty('shaper')) {

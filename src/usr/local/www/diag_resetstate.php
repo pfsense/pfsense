@@ -54,7 +54,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Diagnostics"), gettext("States"), gettext("Reset States"));
-$pglinks = array("", "diag_dump_states.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
@@ -95,7 +94,7 @@ $section->addInput(new Form_Checkbox(
 	'statetable',
 	'State Table',
 	'Reset the firewall state table',
-	false
+	true
 ))->setHelp($statetablehelp);
 
 if (isset($config['system']['lb_use_sticky'])) {
@@ -103,7 +102,7 @@ if (isset($config['system']['lb_use_sticky'])) {
 		'sourcetracking',
 		'Source Tracking',
 		'Reset firewall source tracking',
-		false
+		true
 	))->setHelp($sourcetablehelp);
 }
 

@@ -50,10 +50,10 @@ foreach ($config['system']['user'] as $id => $user) {
 }
 
 if (isset($_POST['apply'])) {
-	vpn_ipsec_configure();
+	$retval = vpn_ipsec_configure();
 	/* reload the filter in the background */
-	$retval = 0;
-	$retval |= filter_configure();
+	filter_configure();
+	$savemsg = get_std_save_message($retval);
 	if (is_subsystem_dirty('ipsec')) {
 		clear_subsystem_dirty('ipsec');
 	}
@@ -70,13 +70,12 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Pre-Shared Keys"));
-$pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg);
 }
 
 if (is_subsystem_dirty('ipsec')) {

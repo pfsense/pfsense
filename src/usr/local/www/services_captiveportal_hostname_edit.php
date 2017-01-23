@@ -21,8 +21,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-editallowedhostnames
-##|*NAME=Services: Captive Portal: Edit Allowed Hostnames
-##|*DESCR=Allow access to the 'Services: Captive Portal: Edit Allowed Hostnames' page.
+##|*NAME=Services: Captive portal: Edit Allowed Hostnames
+##|*DESCR=Allow access to the 'Services: Captive portal: Edit Allowed Hostnames' page.
 ##|*MATCH=services_captiveportal_hostname_edit.php*
 ##|-PRIV
 
@@ -62,7 +62,6 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Allowed Hostnames"), gettext("Edit"));
-$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_hostname.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal";
 
 if (is_numericint($_GET['id'])) {

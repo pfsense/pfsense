@@ -37,7 +37,6 @@ $xml = $_REQUEST['xml'];
 
 if ($xml == "") {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
-	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -164,15 +163,12 @@ if ($pkg['title'] != "") {
 
 		foreach ($title as $subtitle) {
 			$pgtitle[] = gettext($subtitle);
-			$pglinks[] = "@self";
 		}
 	} else {
 		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
-		$pglinks = array("", "@self");
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
-	$pglinks = array("", "@self");
 }
 
 if ($pkg['tabs'] != "") {
@@ -186,7 +182,6 @@ if ($pkg['tabs'] != "") {
 		if (isset($tab['active'])) {
 			$active = true;
 			$pgtitle[] = $tab['text'];
-			$pglinks[] = "@self";
 		} else {
 			$active = false;
 		}

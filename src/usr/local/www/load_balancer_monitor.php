@@ -43,6 +43,7 @@ if ($_POST) {
 		$retval |= filter_configure();
 		$retval |= relayd_configure();
 
+		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('loadbalancer');
 	}
 }
@@ -70,7 +71,6 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitors"));
-$pglinks = array("", "load_balancer_pool.php", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");
@@ -79,8 +79,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('loadbalancer')) {

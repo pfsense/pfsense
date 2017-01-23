@@ -59,6 +59,7 @@ if ($_POST) {
 		}
 		$retval = 0;
 		$retval |= filter_configure();
+		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('vpnpppoe');
 	}
 }
@@ -82,8 +83,8 @@ $pgtitle = array(gettext("Services"), gettext("PPPoE Server"));
 $shortcut_section = "pppoes";
 include("head.inc");
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('vpnpppoe')) {

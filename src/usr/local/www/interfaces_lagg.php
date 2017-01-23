@@ -63,7 +63,7 @@ if ($_GET['act'] == "del") {
 	} else if (lagg_inuse($_GET['id'])) {
 		$input_errors[] = gettext("This LAGG interface cannot be deleted because it is still being used.");
 	} else {
-		pfSense_interface_destroy($a_laggs[$_GET['id']]['laggif']);
+		mwexec_bg("/sbin/ifconfig " . $a_laggs[$_GET['id']]['laggif'] . " destroy");
 		unset($a_laggs[$_GET['id']]);
 
 		write_config();

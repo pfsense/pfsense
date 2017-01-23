@@ -129,8 +129,9 @@ if ($_POST['create']) {
 if ($_POST['apply']) {
 	$retval = 0;
 	/* NOTE: #4353 Always restart ipsec when mobile clients settings change */
-	$ipsec_dynamic_hosts = vpn_ipsec_configure(true);
-	if ($ipsec_dynamic_hosts >= 0) {
+	$retval = vpn_ipsec_configure(true);
+	$savemsg = get_std_save_message($retval);
+	if ($retval >= 0) {
 		if (is_subsystem_dirty('ipsec')) {
 			clear_subsystem_dirty('ipsec');
 		}
@@ -303,7 +304,6 @@ if ($_POST['save']) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Mobile Clients"));
-$pglinks = array("", "vpn_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -400,8 +400,8 @@ include("head.inc");
 	</script>
 
 <?php
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 if (is_subsystem_dirty('ipsec')) {
 	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));

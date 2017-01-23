@@ -103,6 +103,15 @@ add_new_address() {
 		broadcast $new_broadcast_address \
 		$medium
 
+	# Disable this for now, setfirst support is not present and this
+	# causes a bogus interface address. See https://redmine.pfsense.org/issues/7042
+	#
+	# $IFCONFIG $interface setfirst $new_ip_address
+	#
+	# Simply add the v4 address until the setfirst feature is sorted out.
+
+	$IFCONFIG $interface inet $new_ip_address
+
 	$LOGGER "New IP Address ($interface): $new_ip_address"
 	$LOGGER "New Subnet Mask ($interface): $new_subnet_mask"
 	$LOGGER "New Broadcast Address ($interface): $new_broadcast_address"
@@ -351,7 +360,7 @@ BOUND|RENEW|REBIND|REBOOT)
 	fi
 	;;
 
-EXPIRE|FAIL|RELEASE)
+EXPIRE|FAIL)
 	delete_old_alias
 	if [ -n "$old_ip_address" ]; then
 		delete_old_address

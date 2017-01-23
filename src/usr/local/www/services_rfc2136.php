@@ -56,7 +56,6 @@ if ($_GET['act'] == "del") {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Dynamic DNS"), gettext("RFC 2136 Clients"));
-$pglinks = array("", "services_dyndns.php", "@self");
 include("head.inc");
 
 $tab_array = array();

@@ -35,6 +35,8 @@ require_once("util.inc");
 require_once("filter.inc");
 require_once("shaper.inc");
 
+$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
+
 $referer = (isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/firewall_aliases.php');
 
 // Add all Load balance names to reserved_keywords
@@ -51,9 +53,6 @@ $tab = $_REQUEST['tab'];
 if (empty($tab)) {
 	$tab = 'ip';
 }
-
-$pgtitle = array(gettext("Firewall"), gettext("Aliases"), gettext("Bulk import"));
-$pglinks = array("", "firewall_aliases.php?tab=" . $tab, "@self");
 
 if (!is_array($config['aliases']['alias'])) {
 	$config['aliases']['alias'] = array();

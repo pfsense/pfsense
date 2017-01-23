@@ -65,13 +65,13 @@ status_logs_common_code();
 
 
 $pgtitle = array(gettext("Status"), gettext("System Logs"), gettext($allowed_logs[$logfile]["name"]), $view_title);
-$pglinks = array("", "status_logs.php", "status_logs_filter.php", "@self");
 include("head.inc");
 
-if ($changes_applied) {
-	print_apply_result_box($retval, $extra_save_msg);
+if (!$input_errors && $savemsg) {
+	print_info_box($savemsg, 'success');
 	$manage_log_active = false;
 }
+
 
 // Tab Array
 tab_array_logs_common();

@@ -34,7 +34,6 @@ require_once("guiconfig.inc");
 require_once("ipsec.inc");
 
 $pgtitle = array(gettext("Status"), gettext("IPsec"), gettext("SADs"));
-$pglinks = array("", "status_ipsec.php", "@self");
 $shortcut_section = "ipsec";
 include("head.inc");
 

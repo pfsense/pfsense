@@ -87,6 +87,7 @@ if ($_POST) {
 	if ($_POST['apply']) {
 		$retval = 0;
 		system_setup_sysctl();
+		$savemsg = get_std_save_message($retval);
 		clear_subsystem_dirty('sysctl');
 	}
 
@@ -118,11 +119,9 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), gettext("System Tunables"));
-$pglinks = array("", "system_advanced_admin.php", "system_advanced_sysctl.php");
 
 if ($act == "edit") {
 	$pgtitle[] = gettext('Edit');
-	$pglinks[] = "@self";
 }
 include("head.inc");
 
@@ -130,8 +129,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('sysctl') && ($act != "edit" )) {

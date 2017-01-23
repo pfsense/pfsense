@@ -50,11 +50,11 @@ $a_phase2 = &$config['ipsec']['phase2'];
 
 if ($_POST) {
 	if ($_POST['apply']) {
-		$ipsec_dynamic_hosts = vpn_ipsec_configure();
+		$retval = vpn_ipsec_configure();
 		/* reload the filter in the background */
-		$retval = 0;
-		$retval |= filter_configure();
-		if ($ipsec_dynamic_hosts >= 0) {
+		filter_configure();
+		$savemsg = get_std_save_message($retval);
+		if ($retval >= 0) {
 			if (is_subsystem_dirty('ipsec')) {
 				clear_subsystem_dirty('ipsec');
 			}
@@ -217,7 +217,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("VPN"), gettext("IPsec"), gettext("Tunnels"));
-$pglinks = array("", "@self", "@self");
 $shortcut_section = "ipsec";
 
 include("head.inc");
@@ -229,13 +228,13 @@ $tab_array[] = array(gettext("Pre-Shared Keys"), false, "vpn_ipsec_keys.php");
 $tab_array[] = array(gettext("Advanced Settings"), false, "vpn_ipsec_settings.php");
 display_top_tabs($tab_array);
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
-}
+	if ($savemsg) {
+		print_info_box($savemsg, 'success');
+	}
 
-if (is_subsystem_dirty('ipsec')) {
-	print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
-}
+	if (is_subsystem_dirty('ipsec')) {
+		print_apply_box(gettext("The IPsec tunnel configuration has been changed.") . "<br />" . gettext("The changes must be applied for them to take effect."));
+	}
 ?>
 
 <form name="mainform" method="post">

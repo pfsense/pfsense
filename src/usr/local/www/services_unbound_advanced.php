@@ -77,8 +77,8 @@ if (isset($config['unbound']['use_caps'])) {
 
 if ($_POST) {
 	if ($_POST['apply']) {
-		$retval = 0;
-		$retval |= services_unbound_configure();
+		$retval = services_unbound_configure();
+		$savemsg = get_std_save_message($retval);
 		if ($retval == 0) {
 			clear_subsystem_dirty('unbound');
 		}
@@ -185,7 +185,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Resolver"), gettext("Advanced Settings"));
-$pglinks = array("", "services_unbound.php", "@self");
 $shortcut_section = "resolver";
 include_once("head.inc");
 
@@ -193,8 +192,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($_POST['apply']) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 if (is_subsystem_dirty('unbound')) {

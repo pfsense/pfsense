@@ -24,7 +24,6 @@
 ##|*IDENT=page-system-usermanager-addprivs
 ##|*NAME=System: User Manager: Add Privileges
 ##|*DESCR=Allow access to the 'System: User Manager: Add Privileges' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager_addprivs.php*
 ##|-PRIV
 
@@ -34,6 +33,8 @@ function admusercmp($a, $b) {
 
 require_once("guiconfig.inc");
 
+$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
+
 if (is_numericint($_GET['userid'])) {
 	$userid = $_GET['userid'];
 }
@@ -41,9 +42,6 @@ if (is_numericint($_GET['userid'])) {
 if (isset($_POST['userid']) && is_numericint($_POST['userid'])) {
 	$userid = $_POST['userid'];
 }
-
-$pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"), gettext("Edit"), gettext("Add Privileges"));
-$pglinks = array("", "system_usermanager.php", "system_usermanager.php", "system_usermanager.php?act=edit&userid=" . $userid, "@self");
 
 if (!isset($config['system']['user'][$userid]) && !is_array($config['system']['user'][$userid])) {
 	pfSenseHeader("system_usermanager.php");
@@ -86,7 +84,8 @@ if ($_POST) {
 
 		$a_user['priv'] = sort_user_privs($a_user['priv']);
 		local_user_set($a_user);
-		write_config();
+		$retval = write_config();
+		$savemsg = get_std_save_message($retval);
 
 		post_redirect("system_usermanager.php", array('act' => 'edit', 'userid' => $userid));
 
@@ -111,24 +110,19 @@ function build_priv_list() {
 	return($list);
 }
 
-function get_root_priv_item_text() {
-	global $priv_list;
-
-	$priv_text = "";
-
-	foreach ($priv_list as $pname => $pdata) {
-		if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
-			$priv_text .= '<br/>' . $pdata['name'];
-		}
-	}
-
-	return($priv_text);
+/* if ajax is calling, give them an update message */
+if (isAjax()) {
+	print_info_box($savemsg, 'success');
 }
 
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();
@@ -166,19 +160,6 @@ $section->addInput(new Form_Input(
 	'text',
 	null
 ))->setHelp('Show only the choices containing this term');
-
-$section->addInput(new Form_StaticText(
-	gettext('Privilege information'),
-	'<span class="help-block">'.
-	gettext('The following privileges effectively give the user administrator-level access ' .
-		' because the user gains access to execute general commands, edit system files, ' .
-		' modify users, change passwords or similar:') .
-	'<br/>' .
-	get_root_priv_item_text() .
-	'<br/><br/>' .
-	gettext('Please take care when granting these privileges.') .
-	'</span>'
-));
 
 $btnfilter = new Form_Button(
 	'btnfilter',
@@ -234,11 +215,7 @@ events.push(function() {
 			if (in_array($pname, $a_user['priv'])) {
 				continue;
 			}
-			$desc = preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']);
-			if (isset($pdata['warn']) && ($pdata['warn'] == 'standard-warning-root')) {
-				$desc .= ' ' . gettext('(This privilege effectively gives administrator-level access to the user)');
-			}
-			$desc = addslashes($desc);
+			$desc = addslashes(preg_replace("/pfSense/i", $g['product_name'], $pdata['descr']));
 			$jdescs .= "descs[{$id}] = '{$desc}';\n";
 			$id++;
 		}

@@ -519,11 +519,9 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("System"), gettext("Certificate Manager"), gettext("Certificates"));
-$pglinks = array("", "system_camanager.php", "system_certmanager.php");
 
 if (($act == "new" || ($_POST['save'] == gettext("Save") && $input_errors)) || ($act == "csr" || ($_POST['save'] == gettext("Update") && $input_errors))) {
 	$pgtitle[] = gettext('Edit');
-	$pglinks[] = "@self";
 }
 include("head.inc");
 

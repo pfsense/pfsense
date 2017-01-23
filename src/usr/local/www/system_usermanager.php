@@ -29,7 +29,6 @@
 ##|*IDENT=page-system-usermanager
 ##|*NAME=System: User Manager
 ##|*DESCR=Allow access to the 'System: User Manager' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=system_usermanager.php*
 ##|-PRIV
 
@@ -444,7 +443,6 @@ function build_priv_table() {
 	$privhtml .=		'<tbody>';
 
 	$i = 0;
-	$user_has_root_priv = false;
 
 	foreach (get_user_privdesc($a_user[$id]) as $priv) {
 		$group = false;
@@ -455,12 +453,7 @@ function build_priv_table() {
 		$privhtml .=		'<tr>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['group']) . '</td>';
 		$privhtml .=			'<td>' . htmlspecialchars($priv['name']) . '</td>';
-		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']);
-		if (isset($priv['warn']) && ($priv['warn'] == 'standard-warning-root')) {
-			$privhtml .=			' ' . gettext('(admin privilege)');
-			$user_has_root_priv = true;
-		}
-		$privhtml .=			'</td>';
+		$privhtml .=			'<td>' . htmlspecialchars($priv['descr']) . '</td>';
 		$privhtml .=			'<td>';
 		if (!$group) {
 			$privhtml .=			'<a class="fa fa-trash no-confirm icon-pointer" title="' . gettext('Delete Privilege') . '" id="delprivid' . $i . '"></a>';
@@ -472,17 +465,6 @@ function build_priv_table() {
 		if (!$group) {
 			$i++;
 		}
-	}
-
-	if ($user_has_root_priv) {
-		$privhtml .=		'<tr>';
-		$privhtml .=			'<td colspan="3">';
-		$privhtml .=				'<b>' . gettext('Security notice: This user effectively has administrator-level access') . '</b>';
-		$privhtml .=			'</td>';
-		$privhtml .=			'<td>';
-		$privhtml .=			'</td>';
-		$privhtml .=		'</tr>';
-		
 	}
 
 	$privhtml .=		'</tbody>';
@@ -543,11 +525,9 @@ function build_cert_table() {
 }
 
 $pgtitle = array(gettext("System"), gettext("User Manager"), gettext("Users"));
-$pglinks = array("", "system_usermanager.php", "system_usermanager.php");
 
 if ($act == "new" || $act == "edit" || $input_errors) {
 	$pgtitle[] = gettext('Edit');
-	$pglinks[] = "@self";
 }
 include("head.inc");
 

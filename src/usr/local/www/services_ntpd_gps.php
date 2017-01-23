@@ -52,76 +52,6 @@ function set_default_gps() {
 	write_config(gettext("Setting default NTPd settings"));
 }
 
-function parse_ublox(&$nmeaset, $splitline) {
-	$id_idx = 1;
-	$msg_idx = 2;
-	$ddc_idx = 3;
-	if ($splitline[$id_idx] == '40' && $splitline[$ddc_idx]) {
-		$nmeaset['GP' . $splitline[$msg_idx]] = 1;
-	}
-}
-
-function parse_garmin(&$nmeaset, $splitline) {
-	$msg_idx = 1;
-	$mode_idx = 2;
-	if ($splitline[$mode_idx] == '1') {
-		$nmeaset[$splitline[$msg_idx]] = 1;
-	}
-}
-
-function parse_mtk(&$nmeaset, $splitline) {
-	$nmeamap = [
-		1 => 'GPGLL',
-		2 => 'GPRMC',
-		3 => 'GPVTG',
-		4 => 'GPGGA',
-		5 => 'GPGSA',
-		6 => 'GPGSV',
-		7 => 'GPGRS',
-		8 => 'GPGST',
-	];
-	for ($x = 1; $x < 9; $x++) {
-		if($splitline[$x]) {
-			$nmeaset[$nmeamap[$x]] = 1;
-		}
-	}
-}
-
-function parse_sirf(&$nmeaset, $splitline) {
-	$msg_idx = 1;
-	$mode_idx = 2;
-	$rate_idx = 3;
-	$nmeamap = [
-		0 => 'GPGGA',
-		1 => 'GPGLL',
-		2 => 'GPGSA',
-		3 => 'GPGSV',
-		4 => 'GPRMC',
-		5 => 'GPVTG',
-	];
-	if (!(int)$splitline[$mode_idx] && (int)$splitline[$rate_idx]) {
-		$nmeaset[$nmeamap[(int)$splitline[$msg_idx]]] = 1;
-	}
-}
-
-function parse_initcmd(&$nmeaset, $initcmd) {
-	$type_idx = 0;
-	$nmeaset = [];
-	$split_initcmd = preg_split('/[\s]+/', $initcmd);
-    foreach ($split_initcmd as $line) {
-        $splitline = preg_split('/[,\*]+/', $line);
-		if ($splitline[$type_idx] == '$PUBX') {
-			parse_ublox($nmeaset, $splitline);
-        } elseif ($splitline[$type_idx] == '$PGRMO') {
-			parse_garmin($nmeaset, $splitline);
-        } elseif ($splitline[$type_idx] == '$PMTK314') {
-			parse_mtk($nmeaset, $splitline);
-		} elseif ($splitline[$type_idx] == '$PSRF103') {
-			parse_sirf($nmeaset, $splitline);
-		}
-	}
-}
-
 if ($_POST) {
 	unset($input_errors);
 
@@ -216,25 +146,16 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['refid']);
 	}
 
-	if (!empty($_POST['extstatus'])) {
-        $config['ntpd']['gps']['extstatus'] = $_POST['extstatus'];
-	} elseif (isset($config['ntpd']['gps']['extstatus'])) {
-		unset($config['ntpd']['gps']['extstatus']);
-	}
-
 	if (!empty($_POST['gpsinitcmd'])) {
 		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
-		parse_initcmd($config['ntpd']['gps']['nmeaset'], $_POST['gpsinitcmd']);
 	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
 		unset($config['ntpd']['gps']['initcmd']);
-		unset($config['ntpd']['gps']['nmeaset']);
 	}
 
 	write_config(gettext("Updated NTP GPS Settings"));
 
-	$changes_applied = true;
-	$retval = 0;
-	$retval |= system_ntp_configure();
+	$retval = system_ntp_configure();
+	$savemsg = get_std_save_message($retval);
 } else {
 	/* set defaults if they do not already exist */
 	if (!is_array($config['ntpd']) || !is_array($config['ntpd']['gps']) || empty($config['ntpd']['gps']['type'])) {
@@ -268,13 +189,8 @@ function build_nmea_list() {
 
 $pconfig = &$config['ntpd']['gps'];
 $pgtitle = array(gettext("Services"), gettext("NTP"), gettext("Serial GPS"));
-$pglinks = array("", "services_ntpd.php", "@self");
 $shortcut_section = "ntp";
 include("head.inc");
-
-if ($changes_applied) {
-	print_apply_result_box($retval);
-}
 
 $tab_array = array();
 $tab_array[] = array(gettext("Settings"), false, "services_ntpd.php");
@@ -412,13 +328,6 @@ $section->addInput(new Form_Checkbox(
 	'Log the sub-second fraction of the received time stamp (default: unchecked, not logged).',
 	$pconfig['subsec']
 ))->setHelp('Enabling this will rapidly fill the log, but is useful for tuning Fudge time 2.');
-
-$section->addInput(new Form_Checkbox(
-	'extstatus',
-	null,
-	'Display extended GPS status (default: checked).',
-	$pconfig['extstatus']
-))->setHelp('Enable extended GPS status if GPGSV or GPGGA are explicitly enabled by GPS initialization commands.');
 
 $section->addInput(new Form_Input(
 	'gpsrefid',
@@ -594,7 +503,6 @@ events.push(function() {
 		$('#gpsflag3').prop('checked', true);
 		$('#gpsflag4').prop('checked', false);
 		$('#gpssubsec').prop('checked', false);
-		$('#extstatus').prop('checked', true);
 	}
 
 	// Show advanced GPS options ==============================================

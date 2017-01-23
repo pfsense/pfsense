@@ -163,7 +163,6 @@ function build_parent_list() {
 }
 
 $pgtitle = array(gettext("Interfaces"), gettext("GIFs"), gettext("Edit"));
-$pglinks = array("", "interfaces_gif.php", "@self");
 $shortcut_section = "interfaces";
 include("head.inc");
 

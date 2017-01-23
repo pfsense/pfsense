@@ -335,15 +335,15 @@ if ($_POST) {
 		if ($_POST['bogonsinterval'] != $config['system']['bogons']['interval']) {
 			switch ($_POST['bogonsinterval']) {
 				case 'daily':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*", "root", false);
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "*");
 					break;
 				case 'weekly':
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "0", "root", false);
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "*", "*", "0");
 					break;
 				case 'monthly':
 					// fall through
 				default:
-					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*", "root", false);
+					install_cron_job("/usr/bin/nice -n20 /etc/rc.update_bogons.sh", true, "1", "3", "1", "*", "*");
 			}
 			$config['system']['bogons']['interval'] = $_POST['bogonsinterval'];
 		}
@@ -356,22 +356,26 @@ if ($_POST) {
 			killbypid("{$g['varrun_path']}/filterdns.pid");
 		}
 
-		$changes_applied = true;
 		$retval = 0;
-		$retval |= filter_configure();
+		$retval = filter_configure();
+		if (stristr($retval, "error") <> true) {
+			$savemsg = get_std_save_message($retval);
+			$class = 'success';
+		} else {
+			$savemsg = $retval;
+			$class = 'warning';
+		}
 	}
 }
 
 $pgtitle = array(gettext("System"), gettext("Advanced"), htmlspecialchars(gettext("Firewall & NAT")));
-$pglinks = array("", "system_advanced_admin.php", "@self");
 include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
 }
-
-if ($changes_applied) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, $class);
 }
 
 $tab_array = array();

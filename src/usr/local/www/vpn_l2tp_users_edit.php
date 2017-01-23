@@ -27,7 +27,6 @@
 ##|-PRIV
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Users"), gettext("Edit"));
-$pglinks = array("", "vpn_l2tp.php", "vpn_l2tp_users.php", "@self");
 $shortcut_section = "l2tps";
 
 function l2tpusercmp($a, $b) {

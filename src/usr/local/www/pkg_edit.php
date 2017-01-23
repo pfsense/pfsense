@@ -48,7 +48,6 @@ $xml_fullpath = realpath('/usr/local/pkg/' . $xml);
 
 if ($xml == "" || $xml_fullpath === false || substr($xml_fullpath, 0, strlen('/usr/local/pkg/')) != '/usr/local/pkg/') {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
-	$pglinks = array("", "@self");
 	include("head.inc");
 	print_info_box(gettext("No valid package defined."), 'danger', false);
 	include("foot.inc");
@@ -506,15 +505,12 @@ if ($pkg['title'] != "") {
 
 		foreach ($title as $subtitle) {
 			$pgtitle[] = gettext($subtitle);
-			$pglinks[] = ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']);
 		}
 	} else {
 		$pgtitle = array(gettext("Package"), gettext($pkg['title']));
-		$pglinks = array("", ((($subtitle == "Edit") || (strlen($pkg['menu'][0]['url']) == 0)) ? "@self" : $pkg['menu'][0]['url']));
 	}
 } else {
 	$pgtitle = array(gettext("Package"), gettext("Editor"));
-	$pglinks = array("", "@self");
 }
 
 // Create any required tabs
@@ -530,7 +526,6 @@ if ($pkg['tabs'] != "") {
 		if (isset($tab['active'])) {
 			$active = true;
 			$pgtitle[] = $tab['text'] ;
-			$pglinks[] = ((strlen($tab['url']) > 0) ? $tab['url'] : "@self");
 		} else {
 			$active = false;
 		}
@@ -724,12 +719,6 @@ foreach ($pkg['fields']['field'] as $pkga) {
 	// We can create a section with a generic name to fix that
 	if (!$section) {
 		$section = new Form_Section('General Options');
-	}
-
-	// If this is a required field, pre-pend a "*" to the field description
-	// This tells the system to add "element-required" class text decoration to the field label
-	if (isset($pkga['required'])) {
-		$pkga['fielddescr'] = "*" . $pkga['fielddescr'];
 	}
 
 	switch ($pkga['type']) {
@@ -1511,10 +1500,6 @@ if ($pkg['custom_php_after_form_command']) {
 	eval($pkg['custom_php_after_form_command']);
 }
 
-
-$hidemsg = gettext("Show Advanced Options");
-$showmsg = gettext("Hide Advanced Options");
-
 if ($pkg['fields']['field'] != "") { ?>
 <script type="text/javascript">
 //<![CDATA[
@@ -1535,10 +1520,10 @@ if ($pkg['fields']['field'] != "") { ?>
 
 		if (advanced_visible) {
 			$('.advancedoptions').show();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$showmsg?>");
+			$("#showadv").prop('value', 'Hide advanced Options');
 		} else {
 			$('.advancedoptions').hide();
-			$("#showadv").html('<i class="fa fa-cog icon-embed-btn"></i>' + "<?=$hidemsg?>");
+			$("#showadv").prop('value', 'Show advanced Options');
 		}
 	});
 

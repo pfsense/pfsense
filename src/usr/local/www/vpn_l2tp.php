@@ -159,14 +159,18 @@ if ($_POST) {
 
 		write_config();
 
-		$changes_applied = true;
 		$retval = 0;
-		$retval |= vpn_l2tp_configure();
+		$retval = vpn_l2tp_configure();
+		$savemsg = get_std_save_message($retval);
+
+		/* if ajax is calling, give them an update message */
+		if (isAjax()) {
+			print_info_box($savemsg, 'success');
+		}
 	}
 }
 
 $pgtitle = array(gettext("VPN"), gettext("L2TP"), gettext("Configuration"));
-$pglinks = array("", "@self", "@self");
 $shortcut_section = "l2tps";
 include("head.inc");
 
@@ -174,8 +178,8 @@ if ($input_errors) {
 	print_input_errors($input_errors);
 }
 
-if ($changes_applied) {
-	print_apply_result_box($retval);
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $tab_array = array();

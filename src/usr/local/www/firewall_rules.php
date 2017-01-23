@@ -39,6 +39,7 @@ require_once("shaper.inc");
 $XmoveTitle = gettext("Move checked rules above this one. Shift+Click to move checked rules below.");
 $ShXmoveTitle = gettext("Move checked rules below this one. Release shift to move checked rules above.");
 
+$pgtitle = array(gettext("Firewall"), gettext("Rules"));
 $shortcut_section = "firewall";
 
 function get_pf_rules($rules, $tracker) {
@@ -321,7 +322,6 @@ foreach ($tab_array as $dtab) {
 }
 
 $pgtitle = array(gettext("Firewall"), gettext("Rules"), $bctab);
-$pglinks = array("", "firewall_rules.php", "@self");
 $shortcut_section = "firewall";
 
 include("head.inc");
@@ -688,21 +688,14 @@ foreach ($a_filter as $filteri => $filterent):
 			echo strtoupper($filterent['protocol']);
 
 			if (strtoupper($filterent['protocol']) == "ICMP" && !empty($filterent['icmptype'])) {
-				// replace each comma-separated icmptype item by its (localised) full description
-				$t = 	implode(', ',
-						array_map(
-						        function($type) {
-								global $icmptypes;
-								return $icmptypes[$type]['descrip'];
-							},
-							explode(',', $filterent['icmptype'])
-						)
-					);
-				echo sprintf('<br /><div style="cursor:help;padding:1px;line-height:1.1em;max-height:2.5em;max-width:180px;overflow-y:auto;overflow-x:hidden" title="%s:%s%s"><small><u>%s</u></small></div>', gettext('ICMP subtypes'), chr(13), $t, str_replace(',', '</u>, <u>',$filterent['icmptype']));
+				echo ' <span style="cursor: help;" title="' . gettext('ICMP type') . ': ' .
+					($filterent['ipprotocol'] == "inet6" ? $icmp6types[$filterent['icmptype']] : $icmptypes[$filterent['icmptype']]) .
+					'"><u>';
+				echo $filterent['icmptype'];
+				echo '</u></span>';
 			}
-		} else {
-			echo " *";
-		}
+		} else echo "*";
+
 	?>
 						</td>
 						<td>

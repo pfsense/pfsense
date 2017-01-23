@@ -118,7 +118,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("DNS Forwarder"), gettext("Edit Domain Override"));
-$pglinks = array("", "services_dnsmasq.php", "@self");
 $shortcut_section = "forwarder";
 include("head.inc");
 

@@ -22,8 +22,8 @@
 
 ##|+PRIV
 ##|*IDENT=page-services-captiveportal-voucher-edit
-##|*NAME=Services: Captive Portal Voucher Rolls
-##|*DESCR=Allow access to the 'Services: Captive Portal Edit Voucher Rolls' page.
+##|*NAME=Services: Captive portal Voucher Rolls
+##|*DESCR=Allow access to the 'Services: Captive portal Edit Voucher Rolls' page.
 ##|*MATCH=services_captiveportal_vouchers_edit.php*
 ##|-PRIV
 
@@ -51,7 +51,6 @@ if (!is_array($config['captiveportal'])) {
 $a_cp =& $config['captiveportal'];
 
 $pgtitle = array(gettext("Services"), gettext("Captive Portal"), $a_cp[$cpzone]['zone'], gettext("Vouchers"), gettext("Edit"));
-$pglinks = array("", "services_captiveportal_zones.php", "services_captiveportal.php?zone=" . $cpzone, "services_captiveportal_vouchers.php?zone=" . $cpzone, "@self");
 $shortcut_section = "captiveportal-vouchers";
 
 if (!is_array($config['voucher'])) {
@@ -174,6 +173,10 @@ include("head.inc");
 
 if ($input_errors) {
 	print_input_errors($input_errors);
+}
+
+if ($savemsg) {
+	print_info_box($savemsg, 'success');
 }
 
 $form = new Form();

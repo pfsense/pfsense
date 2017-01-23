@@ -27,7 +27,6 @@
 ##|*IDENT=page-diagnostics-factorydefaults
 ##|*NAME=Diagnostics: Factory defaults
 ##|*DESCR=Allow access to the 'Diagnostics: Factory defaults' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=diag_defaults.php*
 ##|-PRIV
 

@@ -60,7 +60,7 @@ if ($_GET['act'] == "del") {
 		if (!does_interface_exist($a_bridges[$_GET['id']]['bridgeif'])) {
 			log_error("Bridge interface does not exist, skipping ifconfig destroy.");
 		} else {
-			pfSense_interface_destroy($a_bridges[$_GET['id']]['bridgeif']);
+			mwexec("/sbin/ifconfig " . $a_bridges[$_GET['id']]['bridgeif'] . " destroy");
 		}
 
 		unset($a_bridges[$_GET['id']]);

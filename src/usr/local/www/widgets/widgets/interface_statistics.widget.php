@@ -33,8 +33,6 @@ require_once("pfsense-utils.inc");
 require_once("functions.inc");
 require_once("/usr/local/www/widgets/include/interface_statistics.inc");
 
-$ifdescrs = get_configured_interface_with_descr();
-
 // Compose the table contents and pass it back to the ajax caller
 if ($_REQUEST && $_REQUEST['ajax']) {
 
@@ -48,16 +46,14 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		'collisions' => gettext('Collisions'),
 	);
 
-	$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
+	$ifdescrs = get_configured_interface_with_descr();
 
 	print("<thead>");
 	print(	"<tr>");
 	print(		"<th></th>");
 
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		if (!in_array($ifdescr, $skipinterfaces)) {
-			print(		"<th>" . $ifname . "</th>");
-		}
+	foreach ($ifdescrs as $ifname) {
+		print(		"<th>" . $ifname . "</th>");
 	}
 
 	print(		"</tr>");
@@ -69,10 +65,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 		print(	"<td><b>" . $name . "</b></td>");
 
 		foreach ($ifdescrs as $ifdescr => $ifname) {
-			if (in_array($ifdescr, $skipinterfaces)) {
-				continue;
-			}
-
 			$ifinfo = get_interface_info($ifdescr);
 
 			if ($ifinfo['status'] == "down") {
@@ -90,22 +82,6 @@ if ($_REQUEST && $_REQUEST['ajax']) {
 	}
 	print(	"</tbody>");
 	exit;
-} else if ($_POST) {
-
-	$validNames = array();
-
-	foreach ($ifdescrs as $ifdescr => $ifname) {
-		array_push($validNames, $ifdescr);
-	}
-
-	if (is_array($_POST['show'])) {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = implode(',', array_diff($validNames, $_POST['show']));
-	} else {
-		$user_settings['widgets']['interface_statistics']['iffilter'] = "";
-	}
-
-	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved Interface Statistics Filter via Dashboard."));
-	header("Location: /index.php");
 }
 
 $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period'] * 1000 : 10000;
@@ -114,48 +90,6 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 <table id="iftbl" class="table table-striped table-hover">
 	<tr><td><?=gettext("Retrieving interface data")?></td></tr>
 </table>
-
-<!-- close the body we're wrapped in and add a configuration-panel -->
-</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
-
-<form action="/widgets/widgets/interface_statistics.widget.php" method="post" class="form-horizontal">
-    <div class="panel panel-default col-sm-10">
-		<div class="panel-body">
-			<div class="table responsive">
-				<table class="table table-striped table-hover table-condensed">
-					<thead>
-						<tr>
-							<th><?=gettext("Interface")?></th>
-							<th><?=gettext("Show")?></th>
-						</tr>
-					</thead>
-					<tbody>
-<?php
-				$skipinterfaces = explode(",", $user_settings['widgets']['interface_statistics']['iffilter']);
-				$idx = 0;
-
-				foreach ($ifdescrs as $ifdescr => $ifname):
-?>
-						<tr>
-							<td><?=$ifname?></td>
-							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$ifdescr?>" type="checkbox" <?=(!in_array($ifdescr, $skipinterfaces) ? 'checked':'')?>></td>
-						</tr>
-<?php
-				endforeach;
-?>
-					</tbody>
-				</table>
-			</div>
-		</div>
-	</div>
-
-	<div class="form-group">
-		<div class="col-sm-offset-3 col-sm-6">
-			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
-			<button id="showallinterfacesforstats" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
-		</div>
-	</div>
-</form>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -179,12 +113,6 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 	}
 
 	events.push(function(){
-		$("#showallinterfacesforstats").click(function() {
-			$("[id^=show]").each(function() {
-				$(this).prop("checked", true);
-			});
-		});
-
 		// Start polling for updates some small random number of seconds from now (so that all the widgets don't
 		// hit the server at exactly the same time)
 		setTimeout(get_if_stats, Math.floor((Math.random() * 10000) + 1000));

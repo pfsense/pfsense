@@ -23,7 +23,6 @@
 ##|*IDENT=page-diagnostics-edit
 ##|*NAME=Diagnostics: Edit File
 ##|*DESCR=Allow access to the 'Diagnostics: Edit File' page.
-##|*WARN=standard-warning-root
 ##|*MATCH=diag_edit.php*
 ##|*MATCH=browser.php*
 ##|*MATCH=vendor/filebrowser/browser.php*

@@ -55,7 +55,6 @@ POT=$ROOT/src/usr/local/share/locale/en/LC_MESSAGES/pfSense.pot
 		-f $FILES \
 		-o $POT \
 		-L php \
-		--from-code UTF-8 \
 		-ksetHelp \
 		-kForm_Section \
 		-kForm_Group \
@@ -78,7 +77,6 @@ POT=$ROOT/src/usr/local/share/locale/en/LC_MESSAGES/pfSense.pot
 		-o $POT \
 		-L php \
 		-j \
-		--from-code UTF-8 \
 		-kForm_Checkbox:3 \
 		-kForm_StaticText:2 \
 		-kForm_MultiCheckbox:3 \

@@ -28,12 +28,11 @@ require_once('notices.inc');
 header('Content-Type: text/html; charset=utf-8');
 
 $pagetitle = gentitle($pgtitle);
-$system_url = $config['system']['hostname'] . "." . $config['system']['domain'];
 
 if ($user_settings['webgui']['pagenamefirst']) {
-	$tabtitle = $pagetitle . " - " . htmlspecialchars($system_url);
+	$tabtitle = $pagetitle . " - " . htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
 } else {
-	$tabtitle = htmlspecialchars($system_url) . " - " . $pagetitle;
+	$tabtitle = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']) . " - " . $pagetitle;
 }
 
 $cssfile = "/css/pfSense.css";
@@ -184,13 +183,9 @@ function return_ext_menu($section) {
 }
 
 function output_menu($arrayitem, $target = null, $section = "") {
-	$output = "";
-
 	foreach ($arrayitem as $item) {
 		/* If the user has access to help pages, also show the full help menu. See #5909 */
-		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" ||
-		    (($section == "Help") && isAllowedPage("help.php")) ||
-		    (substr($item[1], 0, 8) == "https://")) {
+		if (isAllowedPage($item[1]) || $item[1] == "/index.php?logout" || (($section == "Help") && isAllowedPage("help.php"))) {
 			$attr = sprintf("href=\"%s\"", htmlentities($item[1]));
 			if ($target) {
 				$attr .= sprintf(" target=\"%s\"", htmlentities($target));
@@ -205,14 +200,12 @@ function output_menu($arrayitem, $target = null, $section = "") {
 			}
 
 			if ($item[0] == '-DIVIDER-') {
-				$output .= ' <li class="divider"></li>';
+				print(' <li class="divider"></li>');
 			} else {
-				$output .= "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]) . "</li>\n";
+				echo "<li>". sprintf("<a %s>%s</a>", $attr, $item[0]). "</li>\n";
 			}
 		}
 	}
-
-	return $output;
 }
 
 $ext_menu_path_data = read_ext_menu_path_data();
@@ -223,7 +216,7 @@ $ext_menu_path_data = read_ext_menu_path_data();
 
 // System
 $system_menu = array();
-$system_menu[] = array(gettext("Logout") . " (" . $_SESSION['Username'] . ")", "/index.php?logout");
+$system_menu[] = array(gettext("Logout"), "/index.php?logout");
 $system_menu[] = array(gettext("Advanced"), "/system_advanced_admin.php");
 $system_menu[] = array(gettext("Update"), "/pkg_mgr_install.php?id=firmware");
 $system_menu[] = array(gettext("General Setup"), "/system.php");
@@ -425,20 +418,6 @@ $numColumns = $user_settings['webgui']['dashboardcolumns'];
 if (($pagename === "index.php") && ($numColumns > 2)) {
 	$columnsContainer = 'style="max-width: ' . 585*$numColumns . 'px;width: 100%"';
 }
-
-$display_notices = false;
-$allow_clear_notices = false;
-
-if (are_notices_pending()) {
-	// Evaluate user privs to determine if notices should be displayed, and if the user can clear them.
-	$user_entry = getUserEntry($_SESSION['Username']);
-	if (isAdminUID($_SESSION['Username']) || userHasPrivilege($user_entry, "user-view-clear-notices") || userHasPrivilege($user_entry, "page-all")) {
-		$display_notices = true;
-		$allow_clear_notices = true;
-	} elseif (userHasPrivilege($user_entry, "user-view-notices")) {
-		$display_notices = true;
-	}
-}
 ?>
 <body id="<?=$numColumns?>">
 <nav id="topmenu" class="navbar navbar-<?=$menuclass?>-top navbar-inverse">
@@ -450,7 +429,7 @@ if (are_notices_pending()) {
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$system_url?>"/></a>
+			<a class="navbar-brand" href="/"><img src="/logo.png" alt="pfSense" title="<?=$config['system']['hostname'] . '.' . $config['system']['domain']?>"/></a>
 		</div>
 		<div class="collapse navbar-collapse" id="pf-navbar">
 			<ul class="nav navbar-nav">
@@ -459,7 +438,7 @@ if (are_notices_pending()) {
                     $help_menu_title = htmlspecialchars($config['system']['hostname']);
                 }
                 elseif ($user_settings['webgui']['webguihostnamemenu'] == 'fqdn') {
-                    $help_menu_title = htmlspecialchars($system_url);
+                    $help_menu_title = htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']);
                 }
                 else {
                     $help_menu_title = 'Help';
@@ -478,25 +457,20 @@ if (are_notices_pending()) {
 					if ($item['name'] == 'Help' && $g['disablehelpmenu']) {
 						continue;
 					}
-
-					$menu_output = output_menu($item['menu'], $item['href'], $item['name']);
-
-					if (strlen($menu_output) > 0):
 ?>
 				<li class="dropdown">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
 						<?=gettext($item['name'])?>
 						<span class="caret"></span>
 					</a>
-					<ul class="dropdown-menu" role="menu"><?=$menu_output?></ul>
+					<ul class="dropdown-menu" role="menu"><?=output_menu($item['menu'], $item['href'], $item['name'])?></ul>
 				</li>
 
 <?php
-					endif;
 			 	endforeach?>
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
-				<?php if ($display_notices):?>
+				<?php if (are_notices_pending()):?>
 					<?php $notices = get_notices()?>
 					<li class="dropdown">
 						<a href="#" data-toggle="modal" data-target="#notices" role="button" aria-expanded="false">
@@ -509,7 +483,7 @@ if (are_notices_pending()) {
 				?>
 					<li class="dropdown">
 						<a href="/index.php?logout">
-							<i class="fa fa-sign-out" title="<?=gettext("Logout") . " (" . $_SESSION['Username'] . "@" . htmlspecialchars($system_url) . ")"?>"></i>
+							<i class="fa fa-sign-out" title="<?=gettext("Log out")?>"></i>
 						</a>
 					</li>
 			</ul>
@@ -526,11 +500,7 @@ if (are_notices_pending()) {
 		print('<br />');
 		unset($notitle);
 	} else {
-		if (isset($pglinks)) {
-			print(genhtmltitle($pgtitle, $pglinks));	
-		} else {
-			print(genhtmltitle($pgtitle));
-		}
+		print(genhtmltitle($pgtitle));
 	}
 ?>
 		<ul class="context-links">
@@ -625,7 +595,7 @@ if (('' != ($link = get_shortcut_log_link($shortcut_section, false))) && (isAllo
 }
 
 ?>
-	<?php if (!$g['disablehelpicon'] && isAllowedPage("help.php")): ?>
+	<?php if (!$g['disablehelpicon']): ?>
 		<li>
 			<a href="<?=$helpurl?>" target="_blank" title="<?=gettext("Help for items on this page")?>">
 				<i class="fa fa-question-circle"></i>
@@ -661,8 +631,7 @@ if ($config['remote_managed_pages']['item']) {
 
 // Modal notices window
 // The notices modal needs to be outside of the page display div or things get messy
-if ($display_notices):
-?>
+if (are_notices_pending()):?>
 
 <div id="notices" class="modal fade" role="dialog">
 	<div class="modal-dialog">
@@ -712,7 +681,7 @@ if ($display_notices):
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-info" data-dismiss="modal"><i class="fa fa-times icon-embed-btn"></i><?=gettext("Close")?></button>
-<?php if ($allow_clear_notices && isAllowedPage("/index.php")):?>
+<?php if (isAllowedPage("/index.php")):?>
 				<button type="button" id="clearallnotices" class="btn btn-primary"><i class="fa fa-trash-o icon-embed-btn"></i><?=gettext("Mark All as Read")?></button>
 <?php endif;?>
 			</div>
@@ -740,8 +709,7 @@ if ($display_notices):
 //]]>
 </script>
 
-<?php
-endif; // ($display_notices)
+<?php endif;
 
 // Get the flash Messages
 get_flash_message();

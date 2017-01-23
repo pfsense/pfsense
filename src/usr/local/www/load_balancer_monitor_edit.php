@@ -200,7 +200,6 @@ if ($_POST) {
 }
 
 $pgtitle = array(gettext("Services"), gettext("Load Balancer"), gettext("Monitors"), gettext("Edit"));
-$pglinks = array("", "load_balancer_pool.php", "load_balancer_monitor.php", "@self");
 $shortcut_section = "relayd";
 
 include("head.inc");

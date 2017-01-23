@@ -429,7 +429,7 @@ $memberslist = build_port_list($pconfig['members']);
 
 $section->addInput(new Form_Select(
 	'members',
-	'Member Interfaces',
+	'*Member Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples

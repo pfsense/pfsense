@@ -215,19 +215,19 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_IpAddress(
 	'remote-addr',
-	'GIF Remote Address',
+	'*GIF Remote Address',
 	$pconfig['remote-addr']
 ))->setHelp('Peer address where encapsulated gif packets will be sent.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-local-addr',
-	'GIF tunnel local address',
+	'*GIF tunnel local address',
 	$pconfig['tunnel-local-addr']
 ))->setHelp('Local gif tunnel endpoint.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-remote-addr',
-	'GIF tunnel remote address',
+	'*GIF tunnel remote address',
 	$pconfig['tunnel-remote-addr']
 ))->setHelp('Remote GIF address endpoint.');
 

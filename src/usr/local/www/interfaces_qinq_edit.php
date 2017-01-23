@@ -281,7 +281,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'tag',
-	'First level tag',
+	'*First level tag',
 	'number',
 	$pconfig['tag'],
 	['max' => '4094', 'min' => '1']

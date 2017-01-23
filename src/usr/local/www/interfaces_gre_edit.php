@@ -209,19 +209,19 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_IpAddress(
 	'remote-addr',
-	'GRE Remote Address',
+	'*GRE Remote Address',
 	$pconfig['remote-addr']
 ))->setHelp('Peer address where encapsulated GRE packets will be sent.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-local-addr',
-	'GRE tunnel local address',
+	'*GRE tunnel local address',
 	$pconfig['tunnel-local-addr']
 ))->setHelp('Local GRE tunnel endpoint.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-remote-addr',
-	'GRE tunnel remote address',
+	'*GRE tunnel remote address',
 	$pconfig['tunnel-remote-addr']
 ))->setHelp('Remote GRE address endpoint.');
 

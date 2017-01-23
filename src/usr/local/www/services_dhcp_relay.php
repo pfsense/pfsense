@@ -148,7 +148,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable',
 	'Enable DHCP relay on interface',
 	$pconfig['enable']
-))->toggles('.form-group:not(:first-child)');
+));
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -166,8 +166,7 @@ $section->addInput(new Form_Checkbox(
 ))->setHelp(
 	'If this is checked, the DHCP relay will append the circuit ID (%s interface number) and the agent ID to the DHCP request.',
 	[$g['product_name']]
-);
-
+	);
 
 $counter = 0;
 foreach (explode(',', $pconfig['server']) as $server) {
@@ -207,6 +206,24 @@ print $form;
 <script type="text/javascript">
 //<![CDATA[
 	events.push(function() {
+
+		function updateSection(hide) {
+			if (hide) {
+				$('[name="interface[]"]').parent().parent('div').addClass('hidden');
+			} else {
+				$('[name="interface[]"]').parent().parent('div').removeClass('hidden');
+			}
+
+			hideCheckbox('agentoption', hide);
+			hideClass('repeatable', hide);
+		}
+
+		$('#enable').click(function () {
+			updateSection(!this.checked);
+    	});
+
+    	updateSection(!$('#enable').prop('checked'));
+
 		// Suppress "Delete row" button if there are fewer than two rows
 		checkLastRow();
 	});

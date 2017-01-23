@@ -237,7 +237,7 @@ $memberslist = build_member_list();
 
 $section->addInput(new Form_Select(
 	'members',
-	'Parent Interfaces',
+	'*Parent Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples

@@ -203,7 +203,7 @@ $section = new Form_Section('Interface Group Configuration');
 
 $section->addInput(new Form_Input(
 	'ifname',
-	'Group Name',
+	'*Group Name',
 	'text',
 	$pconfig['ifname'],
 	['placeholder' => 'Group Name', 'maxlength' => "16"]

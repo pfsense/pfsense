@@ -190,7 +190,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'tag',
-	'VLAN Tag',
+	'*VLAN Tag',
 	'text',
 	$pconfig['tag'],
 	['placeholder' => '1']

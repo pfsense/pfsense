@@ -174,7 +174,7 @@ $section = new Form_Section('Edit Load Balancer - Virtual Server Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ));
@@ -188,7 +188,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ipaddr',
-	'IP Address',
+	'*IP Address',
 	'text',
 	$pconfig['ipaddr']
 ))->setHelp('This is normally the WAN IP address for the server to listen on. ' .

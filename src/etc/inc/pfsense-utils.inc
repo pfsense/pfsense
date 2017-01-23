@@ -2728,6 +2728,10 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 
 	$isipv6 = is_ipaddrv6($ipaddr);
 
+	if ($isipv6) {
+		$ipaddr = text_to_compressed_ip6($ipaddr);
+	}
+
 	if ($check_subnets) {
 		$cidrprefix = intval($cidrprefix);
 		if ($isipv6) {
@@ -2786,7 +2790,7 @@ function where_is_ipaddr_configured($ipaddr, $ignore_if = "", $check_localip = f
 	}
 
 	if ($check_localip) {
-		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, $config['l2tp']['localip']) == 0)) {
+		if (!is_array($config['l2tp']) && !empty($config['l2tp']['localip']) && (strcasecmp($ipaddr, text_to_compressed_ip6($config['l2tp']['localip'])) == 0)) {
 			$where_entry = array();
 			$where_entry['if'] = 'l2tp';
 			$where_entry['ip_or_subnet'] = $config['l2tp']['localip'];
@@ -2883,7 +2887,7 @@ function convert_128bit_to_ipv6($ip6bin) {
 	foreach ($ip6binarr as $binpart) {
 		$ip6arr[] = dechex(bindec($binpart));
 	}
-	$ip6addr = Net_IPv6::compress(implode(":", $ip6arr));
+	$ip6addr = text_to_compressed_ip6(implode(":", $ip6arr));
 
 	return($ip6addr);
 }
@@ -2965,7 +2969,7 @@ function merge_ipv6_delegated_prefix($prefix, $suffix, $len = 64) {
 		break;
 	}
 
-	return Net_IPv6::compress(substr($prefix, 0, $prefix_len) .
+	return text_to_compressed_ip6(substr($prefix, 0, $prefix_len) .
 	    substr($suffix, $prefix_len));
 }
 

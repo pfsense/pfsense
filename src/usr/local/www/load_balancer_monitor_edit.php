@@ -299,14 +299,14 @@ $section = new Form_Section('Edit Load Balancer - Monitor Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ));
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	'*Description',
 	'text',
 	$pconfig['descr']
 ));

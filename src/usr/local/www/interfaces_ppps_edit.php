@@ -617,8 +617,8 @@ $section->addInput(new Form_Select(
 	[]
 ))->setHelp('Select to fill in service provider data.');
 
-$username_label = 'Username';
-$password_label = 'Password';
+$username_label = gettext('Username');
+$password_label = gettext('Password');
 
 if ($pconfig['type'] != 'ppp') {
 	// Username and Password fields are required for types other than ppp.

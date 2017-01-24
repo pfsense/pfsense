@@ -35,6 +35,7 @@ sysutils/%%PRODUCT_NAME%%-pkg-Notes
 sysutils/%%PRODUCT_NAME%%-pkg-Backup
 sysutils/%%PRODUCT_NAME%%-pkg-Cron
 security/%%PRODUCT_NAME%%-pkg-snort
+security/%%PRODUCT_NAME%%-pkg-acme
 sysutils/%%PRODUCT_NAME%%-pkg-Shellcmd
 net/%%PRODUCT_NAME%%-pkg-routed
 net/%%PRODUCT_NAME%%-pkg-siproxd

@@ -1162,7 +1162,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 
 $section->addInput(new Form_Select(
 	'type',
-	'Action',
+	'*Action',
 	$pconfig['type'],
 	$values
 ))->setHelp('Choose what to do with packets that match the criteria specified '.
@@ -1228,7 +1228,7 @@ if ($edit_disabled) {
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput($input = new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
 		build_if_list(),
 		true
@@ -1236,7 +1236,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 } else {
 	$section->addInput($input = new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
 		build_if_list()
 	))->setHelp('Choose the interface from which packets must come to match this rule.');
@@ -1245,7 +1245,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 	$section->addInput(new Form_Select(
 		'direction',
-		'Direction',
+		'*Direction',
 		$pconfig['direction'],
 		array(
 			'any' => gettext('any'),
@@ -1264,7 +1264,7 @@ if ($if == "FloatingRules" || isset($pconfig['floating'])) {
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
-	'Address Family',
+	'*Address Family',
 	$pconfig['ipprotocol'],
 	array(
 		'inet' => 'IPv4',
@@ -1275,7 +1275,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$pconfig['proto'],
 	array(
 		'any' => gettext('Any'),
@@ -1315,7 +1315,7 @@ $form->add($section);
 foreach (['src' => 'Source', 'dst' => 'Destination'] as $type => $name) {
 	$section = new Form_Section($name);
 
-	$group = new Form_Group($name);
+	$group = new Form_Group('*' . $name);
 	$group->add(new Form_Checkbox(
 		$type .'not',
 		$name .' not',

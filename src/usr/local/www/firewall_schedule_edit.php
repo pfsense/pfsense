@@ -353,7 +353,7 @@ $section = new Form_Section('Schedule Information');
 
 $input = new Form_Input(
 	'name',
-	'Schedule Name',
+	'*Schedule Name',
 	'text',
 	$pconfig['name']
 );
@@ -382,11 +382,11 @@ $section->addInput(new Form_Select(
 ));
 
 $section->addInput(new Form_StaticText(
-	'Date',
+	'*Date',
 	 build_date_table()
 ));
 
-$group = new Form_Group('Time');
+$group = new Form_Group('*Time');
 
 $group->add(new Form_Select(
 	'starttimehour',

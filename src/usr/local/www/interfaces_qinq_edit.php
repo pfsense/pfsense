@@ -137,9 +137,7 @@ if ($_POST) {
 
 	$tag_min = 1;
 	$tag_max = 4094;
-	$tag_char_error = false;
-	$tag_value_error = false;
-	$tag_order_error = false;
+	$tag_format_error = false;
 	$members = "";
 
 	// Read the POSTed member array into a space separated list translating any ranges
@@ -149,33 +147,17 @@ if ($_POST) {
 	$valid_members = array();
 
 	while (isset($_POST[$membername])) {
-		// Might be a range
-		$member = explode("-", $_POST[$membername]);
-
-		if (count($member) > 1) {
-			if (($member[0] == "") || ($member[1] == "") ||
-			    preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match)) {
-				$tag_char_error = true;
-			} elseif (($member[0] < $tag_min) || ($member[0] > $tag_max) || ($member[1] < $tag_min) || ($member[1] > $tag_max)) {
-				$tag_value_error = true;
-			} else if ($member[0] > $member[1]) {
-				$tag_order_error = true;
-			} else {
-				for ($i = $member[0]; $i <= $member[1]; $i++) {
-					$valid_members[] = $i;
-				}
+		if (is_intrange($_POST[$membername], $tag_min, $tag_max)) {
+			$sep = (strpos($_POST[$membername], ":") === false) ? "-" : ":";
+			$member = explode($sep, $_POST[$membername]);
+			for ($i = intval($member[0]); $i <= intval($member[1]); $i++) {
+				$valid_members[] = $i;
 			}
-		} else { // Just a single number
-			if (preg_match("/([^0-9])+/", $member[0], $match)) {
-				$tag_char_error = true;
-			} elseif ($member[0] != "") {
-				if (($member[0] < $tag_min) || ($member[0] > $tag_max)) {
-					$tag_value_error = true;
-				} else {
-					$valid_members[] = $member[0];
-				}
-			} // else ignore empty rows
-		}
+		} elseif (is_numericint($_POST[$membername]) && ($_POST[$membername] >= $tag_min) && ($_POST[$membername] <= $tag_max)) {
+			$valid_members[] = intval($_POST[$membername]);
+		} elseif ($_POST[$membername] != "") {
+			$tag_format_error = true;
+		} // else ignore empty rows
 
 		// Remember the POSTed values so they can be redisplayed if there were errors.
 		$posted_members .= ($membercounter == 0 ? '':' ') . $_POST[$membername];
@@ -184,16 +166,8 @@ if ($_POST) {
 		$membername = "member{$membercounter}";
 	}
 
-	if ($tag_char_error) {
-		$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
-	}
-
-	if ($tag_value_error) {
-		$input_errors[] = sprintf(gettext('Tag values must be from %1$s to %2$s.'), $tag_min, $tag_max);
-	}
-
-	if ($tag_order_error) {
-		$input_errors[] = gettext("Tag ranges must be entered with the lower number first.");
+	if ($tag_format_error) {
+		$input_errors[] = sprintf(gettext('Tags can contain only numbers or a range  (in format #-#) from %1$s to %2$s.'), $tag_min, $tag_max);
 	}
 
 	// Just use the unique valid members. There could have been overlap in the ranges or repeat of numbers entered.

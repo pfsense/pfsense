@@ -486,9 +486,9 @@ $section->addInput(new Form_Textarea(
 $section->addInput(new Form_Checkbox(
 	'autocorrect_initcmd',
 	null,
-	'Auto correct malformed initialization commands. (default: checked).',
+	'Auto correct malformed initialization commands. (default: unchecked).',
 	$pconfig['autocorrect_initcmd']
-))->setHelp('Calculates and appends checksum and missing special characters "$" and "*". Disable if causing errors.');
+))->setHelp('Calculates and appends checksum and missing special characters "$" and "*". May not work with some GPS models.');
 
 $group = new Form_Group('NMEA Checksum Calculator');
 
@@ -636,7 +636,7 @@ events.push(function() {
 		$('#gpsflag4').prop('checked', false);
 		$('#gpssubsec').prop('checked', false);
 		$('#extstatus').prop('checked', true);
-		$('#autocorrect_initcmd').prop('checked', true);
+		$('#autocorrect_initcmd').prop('checked', false);
 	}
 
 	// Show advanced GPS options ==============================================

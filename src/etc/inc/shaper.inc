@@ -834,7 +834,7 @@ class altq_root_queue {
 		));
 
 		$section->addInput(new Form_StaticText(
-			'Name',
+			'*Name',
 			$this->GetQname()
 		));
 
@@ -1443,7 +1443,7 @@ class priq_queue {
 
 		$section->addInput(new Form_Input(
 			'newname',
-			'Name',
+			'*Name',
 			'text',
 			$this->GetQname()
 		))->setHelp('Enter the name of the queue here. Do not use spaces and limit the size to 15 characters.');
@@ -3858,7 +3858,7 @@ EOD;
 
 		$section->addInput(new Form_Input(
 			'newname',
-			'Name',
+			'*Name',
 			'text',
 			$this->GetQname()
 		));
@@ -4171,7 +4171,7 @@ class dnqueue_class extends dummynet_class {
 
 		$section->addInput(new Form_Input(
 			'newname',
-			'Name',
+			'*Name',
 			'text',
 			$this->GetQname()
 		));

@@ -1077,6 +1077,35 @@ function invalidaliasnamemsg($name, $object = "alias") {
 	return is_validaliasname($name, true, $object);
 }
 
+/*
+ * returns true if $range is a valid integer range between $min and $max
+ * range delimiter can be ':' or '-'
+ */
+function is_intrange($range, $min, $max) {
+	$values = preg_split("/[:-]/", $range);
+
+	if (!is_array($values) || count($values) != 2) {
+		return false;
+	}
+
+	if (!ctype_digit($values[0]) || !ctype_digit($values[1])) {
+		return false;
+	}
+
+	$values[0] = intval($values[0]);
+	$values[1] = intval($values[1]);
+
+	if ($values[0] >= $values[1]) {
+		return false;
+	}
+
+	if ($values[0] < $min || $values[1] > $max) {
+		return false;
+	}
+
+	return true;
+}
+
 /* returns true if $port is a valid TCP/UDP port */
 function is_port($port) {
 	if (ctype_digit($port) && ((intval($port) >= 1) && (intval($port) <= 65535))) {

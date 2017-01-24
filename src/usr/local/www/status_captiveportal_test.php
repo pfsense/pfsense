@@ -122,7 +122,7 @@ $section = new Form_Section('Test Vouchers');
 
 $section->addInput(new Form_Textarea(
 	'vouchers',
-	'Vouchers',
+	'*Vouchers',
 	$_POST['vouchers']
 ))->setHelp('Enter multiple vouchers separated by space or newline. The remaining time, if valid, will be shown for each voucher.');
 

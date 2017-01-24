@@ -308,7 +308,7 @@ $section = new Form_Section('Packet Capture Options');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$selectedif,
 	$interfaces
 ))->setHelp('Select the interface on which to capture traffic. ');
@@ -325,7 +325,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'fam',
-	'Address Family',
+	'*Address Family',
 	$fam,
 	array('' => 'Any',
 		  'ip' => gettext('IPv4 Only'),
@@ -335,7 +335,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$proto,
 	$protocollist
 ))->setHelp('Select the protocol to capture, or "Any". ');

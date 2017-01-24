@@ -281,14 +281,14 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'sourceip',
-	'Source Address',
+	'*Source Address',
 	$sourceip,
 	['' => 'Any'] + get_possible_traffic_source_addresses(true)
 ))->setHelp('Select source address for the trace.');
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
-	'IP Protocol',
+	'*IP Protocol',
 	$ipprotocol,
 	array('ipv4' => 'IPv4', 'ipv6' => 'IPv6')
 ))->setHelp("If IPv4 or IPv6 is forced and a hostname is used that does not contain a result using that protocol, it will result in an error." .

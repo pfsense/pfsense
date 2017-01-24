@@ -120,7 +120,7 @@ foreach (auth_get_authserver_list() as $auth_server) {
 
 $section->addInput(new Form_Select(
 	'authmode',
-	'Authentication Server',
+	'*Authentication Server',
 	$pconfig['authmode'],
 	$serverlist
 ))->setHelp('Select the authentication server to test against.');

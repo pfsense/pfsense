@@ -173,6 +173,10 @@ if ($_POST) {
 	// Just use the unique valid members. There could have been overlap in the ranges or repeat of numbers entered.
 	$members = implode(" ", array_unique($valid_members));
 
+	if ($members == "") {
+		$input_errors[] = gettext("At least one tag must be entered.");
+	}
+
 	if (!$input_errors) {
 		$qinqentry['members'] = $members;
 		$qinqentry['descr'] = $_POST['descr'];

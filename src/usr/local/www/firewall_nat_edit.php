@@ -723,7 +723,7 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$interfaces
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
@@ -732,7 +732,7 @@ $protocols = "TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP PIM OSPF";
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$pconfig['proto'],
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "TCP" is specified.');

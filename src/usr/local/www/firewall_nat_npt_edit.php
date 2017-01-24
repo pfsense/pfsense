@@ -227,7 +227,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	build_if_list()
 ))->setHelp('Choose which interface this rule applies to.' . '<br />' .

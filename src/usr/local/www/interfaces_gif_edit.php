@@ -177,32 +177,32 @@ $section = new Form_Section('GIF Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent Interface',
+	'*Parent Interface',
 	$pconfig['if'],
 	build_parent_list()
 ))->setHelp('This interface serves as the local address to be used for the GIF tunnel.');
 
 $section->addInput(new Form_IpAddress(
 	'remote-addr',
-	'GIF Remote Address',
+	'*GIF Remote Address',
 	$pconfig['remote-addr']
 ))->setHelp('Peer address where encapsulated gif packets will be sent.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-local-addr',
-	'GIF tunnel local address',
+	'*GIF tunnel local address',
 	$pconfig['tunnel-local-addr']
 ))->setHelp('Local gif tunnel endpoint.');
 
 $section->addInput(new Form_IpAddress(
 	'tunnel-remote-addr',
-	'GIF tunnel remote address',
+	'*GIF tunnel remote address',
 	$pconfig['tunnel-remote-addr']
 ))->setHelp('Remote GIF address endpoint.');
 
 $section->addInput(new Form_Select(
 	'tunnel-remote-net',
-	'GIF tunnel subnet',
+	'*GIF tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
 ))->setHelp('The subnet is used for determining the network that is tunnelled.');

@@ -574,7 +574,7 @@ $section = new Form_Section('PPP Configuration');
 
 $section->addInput(new Form_Select(
 	'type',
-	'Link Type',
+	'*Link Type',
 	$pconfig['type'],
 	$types
 ));
@@ -583,7 +583,7 @@ $linklist = build_link_list();
 
 $section->addInput(new Form_Select(
 	'interfaces',
-	'Link Interface(s)',
+	'*Link Interface(s)',
 	$linklist['selected'],
 	$linklist['list'],
 	true // Allow multiples
@@ -617,16 +617,25 @@ $section->addInput(new Form_Select(
 	[]
 ))->setHelp('Select to fill in service provider data.');
 
+$username_label = gettext('Username');
+$password_label = gettext('Password');
+
+if ($pconfig['type'] != 'ppp') {
+	// Username and Password fields are required for types other than ppp.
+	$username_label = "*" . $username_label;
+	$password_label = "*" . $password_label;
+}
+
 $section->addInput(new Form_Input(
 	'username',
-	'Username',
+	$username_label,
 	'text',
 	$pconfig['username']
 ));
 
 $section->addPassword(new Form_Input(
 	'passwordfld',
-	'Password',
+	$password_label,
 	'password',
 	$pconfig['password']
 ));
@@ -661,7 +670,7 @@ if ($pconfig['type'] == 'pptp' || $pconfig['type'] == 'l2tp') {
 if ($pconfig['type'] == 'ppp') {
 	$section->addInput(new Form_Input(
 		'phone',
-		'Phone number',
+		'*Phone number',
 		'text',
 		$pconfig['phone']
 	))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks');
@@ -1155,6 +1164,10 @@ events.push(function() {
 		});
 	}
 
+	function setDialOnDemandItems() {
+		setRequired('idletimeout', $('#ondemand').prop('checked'));
+	}
+
 	$('#pppoe-reset-type').on('change', function() {
 		hideResetDisplay(false);
 	});
@@ -1184,6 +1197,10 @@ events.push(function() {
 		prefill_provider();
 	});
 
+	$('#ondemand').click(function () {
+		setDialOnDemandItems();
+	});
+
 	// Set element visibility on initial page load
 	show_advopts(true);
 
@@ -1204,6 +1221,8 @@ events.push(function() {
 		providers_list();
 		hideInput('provider', false);
 	}
+
+	setDialOnDemandItems();
 });
 //]]>
 

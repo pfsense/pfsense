@@ -183,14 +183,14 @@ $section = new Form_Section('VLAN Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent Interface',
+	'*Parent Interface',
 	$pconfig['if'],
 	build_interfaces_list()
 ))->setWidth(6)->setHelp('Only VLAN capable interfaces will be shown.');
 
 $section->addInput(new Form_Input(
 	'tag',
-	'VLAN Tag',
+	'*VLAN Tag',
 	'text',
 	$pconfig['tag'],
 	['placeholder' => '1']

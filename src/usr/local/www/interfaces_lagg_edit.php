@@ -237,7 +237,7 @@ $memberslist = build_member_list();
 
 $section->addInput(new Form_Select(
 	'members',
-	'Parent Interfaces',
+	'*Parent Interfaces',
 	$memberslist['selected'],
 	$memberslist['list'],
 	true // Allow multiples
@@ -245,7 +245,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'proto',
-	'LAGG Protocol',
+	'*LAGG Protocol',
 	$pconfig['proto'],
 	array_combine($laggprotos, $laggprotosuc)
 ))->setHelp($protohelp);

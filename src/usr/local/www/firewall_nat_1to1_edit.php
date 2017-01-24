@@ -459,7 +459,7 @@ if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$interfaces
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
@@ -498,7 +498,7 @@ $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Checkbox(
 	'dstnot',

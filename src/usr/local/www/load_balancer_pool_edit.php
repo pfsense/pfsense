@@ -303,7 +303,7 @@ $section = new Form_Section('Add/Edit Load Balancer - Pool Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ));
@@ -327,7 +327,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'port',
-	'Port',
+	'*Port',
 	'text',
 	$pconfig['port']
 ))->setHelp('This is the port the servers are listening on. A port alias listed in Firewall -> Aliases may also be specified here.');
@@ -385,7 +385,7 @@ $form->add($section);
 
 $section = new Form_Section('Current Pool Members');
 
-$group = new Form_Group('Members');
+$group = new Form_Group('*Members');
 
 $list = array();
 

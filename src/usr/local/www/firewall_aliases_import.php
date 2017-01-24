@@ -60,9 +60,9 @@ if (!is_array($config['aliases']['alias'])) {
 }
 $a_aliases = &$config['aliases']['alias'];
 
-if ($_POST['aliasimport'] != "") {
+if ($_POST) {
 	$reqdfields = explode(" ", "name aliasimport");
-	$reqdfieldsn = array(gettext("Name"), gettext("Aliases"));
+	$reqdfieldsn = array(gettext("Name"), gettext("Aliases to import"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -233,7 +233,7 @@ $section = new Form_Section($sectiontext);
 
 $section->addInput(new Form_Input(
 	'name',
-	'Alias Name',
+	'*Alias Name',
 	'text',
 	$_POST['name']
 ))->setPattern('[a-zA-Z0-9_]+')->setHelp('The name of the alias may only consist '.
@@ -248,7 +248,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Textarea(
 	'aliasimport',
-	'Aliases to import',
+	'*Aliases to import',
 	$_POST["aliasimport"]
 ))->setHelp($helptext);
 

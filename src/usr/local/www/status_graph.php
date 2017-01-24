@@ -104,6 +104,11 @@ if ($_POST['hostipformat']) {
 } else {
 	$curhostipformat = "";
 }
+if ($_POST['backgroundupdate']) {
+	$curbackgroundupdate = $_POST['backgroundupdate'];
+} else {
+	$curbackgroundupdate = "";
+}
 
 function iflist() {
 	global $ifdescrs;
@@ -168,6 +173,16 @@ $group->add(new Form_Select(
 	)
 ))->setHelp('Display');
 
+$group->add(new Form_Select(
+	'backgroundupdate',
+	null,
+	$curbackgroundupdate,
+	array (
+		'false'	=> gettext('Clear graphs when not visible.'),
+		'true'	=> gettext('Keep graphs updated on inactive tab. (increases cpu usage)'),
+	)
+))->setHelp('Background updates');
+
 $section->add($group);
 
 $form->add($section);
@@ -190,14 +205,14 @@ events.push(function() {
 
 	//store saved settings in a fresh localstorage
 	localStorage.clear();
-	localStorage.setItem('interfaces', JSON.stringify(InterfaceString.split("|"))); //TODO see if can be switched to interfaces
 	localStorage.setItem('interval', 1);
 	localStorage.setItem('invert', "true");
 	localStorage.setItem('size', 1);
-
+	window.interfaces = InterfaceString.split("|");
 	window.charts = {};
     window.myData = {};
     window.updateIds = 0;
+    window.updateTimerIds = 0;
     window.latest = [];
     var refreshInterval = localStorage.getItem('interval');
 
@@ -206,10 +221,11 @@ events.push(function() {
 
     var nowTime = now.getTime();
 
-	$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+	$.each( window.interfaces, function( key, value ) {
 
 		myData[value] = [];
 		updateIds = 0;
+		updateTimerIds = 0;
 
 		var itemIn = new Object();
 		var itemOut = new Object();
@@ -228,19 +244,24 @@ events.push(function() {
 
 	});
 
-	draw_graph(refreshInterval, then);
+    var backgroundupdate = $('#backgroundupdate').val() === "true";
+	draw_graph(refreshInterval, then, backgroundupdate);
 
 	//re-draw graph when the page goes from inactive (in it's window) to active
 	Visibility.change(function (e, state) {
+		if($('#backgroundupdate').val() === "true"){
+			return;
+		}
 		if(state === "visible") {
 
 			now = then = new Date(Date.now());
 
 			var nowTime = now.getTime();
 
-			$.each( JSON.parse(localStorage.getItem('interfaces')), function( key, value ) {
+			$.each( window.interfaces, function( key, value ) {
 
 				Visibility.stop(updateIds);
+				clearInterval(updateTimerIds);
 
 				myData[value] = [];
 
@@ -261,132 +282,10 @@ events.push(function() {
 
 			});
 
-			draw_graph(refreshInterval, then);
+			draw_graph(refreshInterval, then, false);
 
 		}
 	});
-
-	// save new config defaults
-    $( '#traffic-graph-form' ).submit(function(event) {
-
-		var error = false;
-		$("#traffic-chart-error").hide();
-
-		var interfaces = $( "#traffic-graph-interfaces" ).val();
-		refreshInterval = parseInt($( "#traffic-graph-interval" ).val());
-		var invert = $( "#traffic-graph-invert" ).val();
-		var size = $( "#traffic-graph-size" ).val();
-
-		//TODO validate interfaces data and throw error
-
-		if(!Number.isInteger(refreshInterval) || refreshInterval < 1 || refreshInterval > 10) {
-			error = 'Refresh Interval is not a valid number between 1 and 10.';
-		}
-
-		if(invert != "true" && invert != "false") {
-
-			error = 'Invert is not a boolean of true or false.';
-
-		}
-
-		if(!error) {
-
-			var formData = {
-				'traffic-graph-interfaces' : interfaces,
-				'traffic-graph-interval'   : refreshInterval,
-				'traffic-graph-invert'     : invert,
-				'traffic-graph-size'       : size
-			};
-
-			$.ajax({
-				type        : 'POST',
-				url         : '/widgets/widgets/traffic_graphs.widget.php',
-				data        : formData,
-				dataType    : 'json',
-				encode      : true
-			})
-			.done(function(message) {
-
-				if(message.success) {
-
-					Visibility.stop(updateIds);
-
-					//remove all old graphs (divs/svgs)
-					$( ".traffic-widget-chart" ).remove();
-
-					localStorage.setItem('interfaces', JSON.stringify(interfaces));
-					localStorage.setItem('interval', refreshInterval);
-					localStorage.setItem('invert', invert);
-					localStorage.setItem('size', size);
-
-					//redraw graph with new settings
-					now = then = new Date(Date.now());
-
-					var freshData = [];
-
-					var nowTime = now.getTime();
-
-					$.each( interfaces, function( key, value ) {
-
-						//create new graphs (divs/svgs)
-						$("#widget-traffic_graphs_panel-body").append('<div id="traffic-chart-' + value + '" class="d3-chart traffic-widget-chart"><svg></svg></div>');
-
-						myData[value] = [];
-
-						var itemIn = new Object();
-						var itemOut = new Object();
-
-						itemIn.key = value + " (in)";
-						if(localStorage.getItem('invert') === "true") { itemIn.area = true; }
-						itemIn.first = true;
-						itemIn.values = [{x: nowTime, y: 0}];
-						myData[value].push(itemIn);
-
-						itemOut.key = value + " (out)";
-						if(localStorage.getItem('invert') === "true") { itemOut.area = true; }
-						itemOut.first = true;
-						itemOut.values = [{x: nowTime, y: 0}];
-						myData[value].push(itemOut);
-
-					});
-
-					draw_graph(refreshInterval, then);
-
-					$( "#traffic-graph-message" ).removeClass("text-danger").addClass("text-success");
-					$( "#traffic-graph-message" ).text(message.success);
-
-					setTimeout(function() {
-						$( "#traffic-graph-message" ).empty();
-						$( "#traffic-graph-message" ).removeClass("text-success");
-					}, 5000);
-
-				} else {
-
-					$( "#traffic-graph-message" ).addClass("text-danger");
-					$( "#traffic-graph-message" ).text(message.error);
-
-					console.warn(message.error);
-
-				}
-
-	        })
-	        .fail(function() {
-
-			    console.warn( "The Traffic Graphs widget AJAX request failed." );
-
-			});
-
-	    } else {
-
-			$( "#traffic-graph-message" ).addClass("text-danger");
-			$( "#traffic-graph-message" ).text(error);
-
-			console.warn(error);
-
-	    }
-
-        event.preventDefault();
-    });
 
 });
 //]]>
@@ -397,6 +296,12 @@ events.push(function() {
 <script type="text/javascript">
 //<![CDATA[
 
+var graph_interfacenames = <?php
+	foreach ($ifdescrs as $ifname => $ifdescr) {
+		$iflist[$ifname] = $ifdescr;
+	}
+	echo json_encode($iflist);
+?>;
 function updateBandwidth() {
 	$.ajax(
 		'/bandwidth_by_ip.php',

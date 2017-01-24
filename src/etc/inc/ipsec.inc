@@ -206,6 +206,9 @@ $p2_pfskeygroups = array(
 	19 => gettext('19 (nist ecp256)'),
 	20 => gettext('20 (nist ecp384)'),
 	21 => gettext('21 (nist ecp521)'),
+	22 => gettext('22 (1024(sub 160) bit)'),
+	23 => gettext('23 (2048(sub 224) bit)'),
+	24 => gettext('24 (2048(sub 256) bit)'),
 	28 => gettext('28 (brainpool ecp256)'),
 	29 => gettext('29 (brainpool ecp384)'),
 	30 => gettext('30 (brainpool ecp512)')
@@ -602,7 +605,7 @@ function ipsec_dump_mobile() {
 	if(!isset($config['ipsec']['client']['enable'])) {
 		return array();
 	}
-	
+
 	$_gb = exec("/usr/local/sbin/ipsec leases 2>/dev/null", $output, $rc);
 
 	if ($rc != 0) {
@@ -714,7 +717,7 @@ function ipsec_get_phase1($ikeid) {
 
 function ipsec_fixup_ip($ipaddr) {
 	if (is_ipaddrv6($ipaddr) || is_subnetv6($ipaddr)) {
-		return Net_IPv6::compress(Net_IPv6::uncompress($ipaddr));
+		return text_to_compressed_ip6($ipaddr);
 	} else {
 		return $ipaddr;
 	}

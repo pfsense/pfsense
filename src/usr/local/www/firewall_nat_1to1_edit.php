@@ -459,19 +459,19 @@ if	($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$interfaces
 ))->setHelp('Choose which interface this rule applies to. In most cases "WAN" is specified.');
 
 $section->addInput(new Form_IpAddress(
 	'external',
-	'External subnet IP',
+	'*External subnet IP',
 	$pconfig['external']
 ))->setHelp('Enter the external (usually on a WAN) subnet\'s starting address for the 1:1 mapping. ' .
 			'The subnet mask from the internal address below will be applied to this IP address.');
 
-$group = new Form_Group('Internal IP');
+$group = new Form_Group('*Internal IP');
 
 $group->add(new Form_Checkbox(
 	'srcnot',
@@ -498,7 +498,7 @@ $group->setHelp('Enter the internal (LAN) subnet for the 1:1 mapping. ' .
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Checkbox(
 	'dstnot',

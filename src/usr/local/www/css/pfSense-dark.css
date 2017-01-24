@@ -313,6 +313,24 @@ caption {
     background-color: #303030;
 }
 
+.table-striped>tbody>tr.disabled:nth-of-type(odd) {
+    background-color: rgba(48, 48, 48, .5);
+    color: rgba(255,255,255,.5);
+}
+
+.table-striped>tbody>tr.disabled:nth-of-type(even) {
+    background-color: rgba(66, 66, 66, .5);
+    color: rgba(255,255,255,.5);
+}
+
+.table-hover>tbody>tr.disabled:hover, .table-striped>tbody>tr.disabled:nth-of-type(odd):hover, .table-striped>tbody>tr.disabled:nth-of-type(even):hover {
+    background-color: rgba(117, 117, 117, .5);
+}
+
+tr.disabled a {
+    color: rgba(0, 150, 136,.5);
+}
+
 .table-bordered {
     border: 1px solid #303030;
 }

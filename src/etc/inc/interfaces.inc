@@ -3052,8 +3052,8 @@ function kill_dhcp6client_process($interface,$norelease) {
 		/* to send the release, it will also clean up after itself */
 		// Debug - next line remove if not required
 		log_error("shutting down dhcp6c process");
-		$killtype = isset($norelease) ? "-9" : "-15";
-		mwexec("kill {$killtype} {$pid}"); 
+		$sig = (isset($norelease) ? SIGKILL : SIGTERM);
+		posix_kill($pid,$sig); 
 		if(!isset($norelease)) {
 			sleep(2); //Allow dhcp6c to send releae and exit gracefully if needed.
 		}

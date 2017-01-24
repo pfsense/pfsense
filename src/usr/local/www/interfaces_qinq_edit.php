@@ -229,7 +229,7 @@ $section = new Form_Section('QinQ Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent interface',
+	'*Parent interface',
 	$pconfig['if'],
 	build_parent_list()
 ))->setHelp('Only QinQ capable interfaces will be shown.');

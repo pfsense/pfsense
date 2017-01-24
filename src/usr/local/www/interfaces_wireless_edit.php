@@ -176,14 +176,14 @@ $section = new Form_Section('Wireless Interface Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent Interface',
+	'*Parent Interface',
 	$pconfig['if'],
 	build_parent_list()
 ));
 
 $section->addInput(new Form_Select(
 	'mode',
-	'Mode',
+	'*Mode',
 	$pconfig['mode'],
 	array(
 		'bss' => gettext('Infrastructure (BSS)'),

@@ -171,7 +171,7 @@ $section = new Form_Section('GRE Configuration');
 
 $section->addInput(new Form_Select(
 	'if',
-	'Parent Interface',
+	'*Parent Interface',
 	$pconfig['if'],
 	build_parent_list()
 ))->setHelp('This interface serves as the local address to be used for the GRE tunnel.');
@@ -196,7 +196,7 @@ $section->addInput(new Form_IpAddress(
 
 $section->addInput(new Form_Select(
 	'tunnel-remote-net',
-	'GRE tunnel subnet',
+	'*GRE tunnel subnet',
 	$pconfig['tunnel-remote-net'],
 	array_combine(range(128, 1, -1), range(128, 1, -1))
 ))->setHelp('The subnet is used for determining the network that is tunnelled.');

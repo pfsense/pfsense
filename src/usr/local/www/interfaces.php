@@ -3598,8 +3598,12 @@ events.push(function() {
 		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
 	}
 
-	function setDialOnDemandItems() {
+	function setPPPoEDialOnDemandItems() {
 		setRequired('pppoe_idletimeout', $('#pppoe_dialondemand').prop('checked'));
+	}
+
+	function setPPTPDialOnDemandItems() {
+		setRequired('pptp_idletimeout', $('#pptp_dialondemand').prop('checked'));
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------
@@ -3611,7 +3615,8 @@ events.push(function() {
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
 	setDHCPoptions();
-	setDialOnDemandItems();
+	setPPPoEDialOnDemandItems();
+	setPPTPDialOnDemandItems();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3684,7 +3689,11 @@ events.push(function() {
 
 	// On click . .
 	$('#pppoe_dialondemand').click(function () {
-		setDialOnDemandItems();
+		setPPPoEDialOnDemandItems();
+	});
+
+	$('#pptp_dialondemand').click(function () {
+		setPPTPDialOnDemandItems();
 	});
 
 	$('[name=adv_dhcp_pt_values]').click(function () {

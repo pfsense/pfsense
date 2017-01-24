@@ -135,6 +135,11 @@ if ($_POST) {
 		$qinqentry['autogroup'] = true;
 	}
 
+	$tag_min = 1;
+	$tag_max = 4094;
+	$tag_char_error = false;
+	$tag_value_error = false;
+	$tag_order_error = false;
 	$members = "";
 
 	// Read the POSTed member array into a space separated list translating any ranges
@@ -150,9 +155,11 @@ if ($_POST) {
 		if (count($member) > 1) {
 			if (($member[0] == "") || ($member[1] == "") ||
 			    preg_match("/([^0-9])+/", $member[0], $match)  || preg_match("/([^0-9])+/", $member[1], $match)) {
-				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+				$tag_char_error = true;
+			} elseif (($member[0] < $tag_min) || ($member[0] > $tag_max) || ($member[1] < $tag_min) || ($member[1] > $tag_max)) {
+				$tag_value_error = true;
 			} else if ($member[0] > $member[1]) {
-				$input_errors[] = gettext("Tag ranges must be entered with the lower number first.");
+				$tag_order_error = true;
 			} else {
 				for ($i = $member[0]; $i <= $member[1]; $i++) {
 					$valid_members[] = $i;
@@ -160,13 +167,14 @@ if ($_POST) {
 			}
 		} else { // Just a single number
 			if (preg_match("/([^0-9])+/", $member[0], $match)) {
-				$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
-			} else {
-				// Ignore empty rows
-				if ($member[0] != "") {
+				$tag_char_error = true;
+			} elseif ($member[0] != "") {
+				if (($member[0] < $tag_min) || ($member[0] > $tag_max)) {
+					$tag_value_error = true;
+				} else {
 					$valid_members[] = $member[0];
 				}
-			}
+			} // else ignore empty rows
 		}
 
 		// Remember the POSTed values so they can be redisplayed if there were errors.
@@ -174,6 +182,18 @@ if ($_POST) {
 
 		$membercounter++;
 		$membername = "member{$membercounter}";
+	}
+
+	if ($tag_char_error) {
+		$input_errors[] = gettext("Tags can contain only numbers or a range in format #-#.");
+	}
+
+	if ($tag_value_error) {
+		$input_errors[] = sprintf(gettext('Tag values must be from %1$s to %2$s.'), $tag_min, $tag_max);
+	}
+
+	if ($tag_order_error) {
+		$input_errors[] = gettext("Tag ranges must be entered with the lower number first.");
 	}
 
 	// Just use the unique valid members. There could have been overlap in the ranges or repeat of numbers entered.

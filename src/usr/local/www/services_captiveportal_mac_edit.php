@@ -200,7 +200,7 @@ $section = new Form_Section('Edit MAC Address Rules');
 
 $section->addInput(new Form_Select(
 	'action',
-	'Action',
+	'*Action',
 	strtolower($pconfig['action']),
 	array('pass' => gettext('Pass'), 'block' => gettext('Block'))
 ))->setHelp('Choose what to do with packets coming from this MAC address.');
@@ -222,7 +222,7 @@ $btnmymac = new Form_Button(
 
 $btnmymac->setAttribute('type','button')->removeClass('btn-primary')->addClass('btn-success btn-sm');
 
-$group = new Form_Group('MAC Address');
+$group = new Form_Group('*MAC Address');
 $group->add($macaddress);
 $group->add($btnmymac);
 $group->setHelp('6 hex octets separated by colons');

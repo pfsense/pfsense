@@ -221,7 +221,7 @@ $section = new Form_Section('Edit Captive Portal IP Rule');
 
 $section->addInput(new Form_IpAddress(
 	'ip',
-	'IP Address',
+	'*IP Address',
 	$pconfig['ip']
 ))->addMask(sn, $pconfig['sn'], 32);
 
@@ -234,7 +234,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'dir',
-	'Direction',
+	'*Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
 ))->setHelp('Use "From" to always allow access to an address through the captive portal (without authentication). ' .

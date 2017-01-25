@@ -231,7 +231,7 @@ if (!empty($if) && isset($iflist[$if])) {
 	$ifname = $iflist[$if];
 }
 $pgtitle = array(gettext("Services"), htmlspecialchars(gettext("DHCPv6 Server & RA")), $ifname, gettext("DHCPv6 Server"), gettext("Edit Static Mapping"));
-$pglinks = array("", "services_dhcp.php", "services_dhcp.php?if={$if}", "services_dhcp.php?if={$if}", "@self");
+$pglinks = array("", "services_dhcpv6.php", "services_dhcpv6.php?if={$if}", "services_dhcpv6.php?if={$if}", "@self");
 $shortcut_section = "dhcp6";
 
 include("head.inc");

@@ -174,12 +174,9 @@ if ($_POST) {
 
 	if ($_POST['apply']) {
 		$retval = 0;
-		$retval = filter_configure();
+		$retval |= filter_configure();
 
 		clear_subsystem_dirty('filter');
-
-		$savemsg = sprintf(gettext("The settings have been applied. The firewall rules are now reloading in the background.<br />%s Monitor %s the reload progress."),
-									"<a href='status_filter_reload.php'>", "</a>");
 	}
 }
 
@@ -329,6 +326,10 @@ $nrules = 0;
 
 if ($savemsg) {
 	print_info_box($savemsg, 'success');
+}
+
+if ($_POST['apply']) {
+	print_apply_result_box($retval);
 }
 
 if (is_subsystem_dirty('filter')) {

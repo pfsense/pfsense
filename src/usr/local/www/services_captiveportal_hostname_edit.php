@@ -205,7 +205,7 @@ $section = new Form_Section('Captive Portal Hostname Settings');
 
 $section->addInput(new Form_Select(
 	'dir',
-	'Direction',
+	'*Direction',
 	strtolower($pconfig['dir']),
 	build_dir_list()
 ))->setHelp('Use "From" to always allow a Hostname through the captive portal (without authentication). ' .
@@ -213,7 +213,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'hostname',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$pconfig['hostname']
 ));

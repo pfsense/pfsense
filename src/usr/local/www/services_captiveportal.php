@@ -583,7 +583,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'cinterface',
-	'Interfaces',
+	'*Interfaces',
 	explode(",", $pconfig['cinterface']),
 	get_configured_interface_with_descr(),
 	true
@@ -729,7 +729,7 @@ $form->add($section);
 $section = new Form_Section('Authentication');
 $section->addClass('Authentication');
 
-$group = new Form_Group('Authentication method');
+$group = new Form_Group('*Authentication method');
 
 $group->add(new Form_Checkbox(
 	'auth_method',
@@ -764,7 +764,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['localauth_priv']
 ));
 
-$group = new Form_Group('RADIUS protocol');
+$group = new Form_Group('*RADIUS protocol');
 $group->addClass("radiusproto");
 
 $group->add(new Form_Checkbox(
@@ -806,7 +806,7 @@ $form->add($section);
 $section = new Form_Section('Primary Authentication Source');
 $section->addClass('Primary');
 
-$group = new Form_Group('Primary RADIUS server');
+$group = new Form_Group('*Primary RADIUS server');
 
 $group->add(new Form_IpAddress(
 	'radiusip',
@@ -1064,7 +1064,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'httpsname',
-	'HTTPS server name',
+	'*HTTPS server name',
 	'text',
 	$pconfig['httpsname']
 ))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in the certificate ' .
@@ -1073,7 +1073,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'SSL Certificate',
+	'*SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('If no certificates are defined, one may be defined here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');

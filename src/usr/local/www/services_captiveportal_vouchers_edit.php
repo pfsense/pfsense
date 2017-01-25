@@ -120,7 +120,7 @@ if ($_POST) {
 
 	/* input validation */
 	$reqdfields = explode(" ", "number count minutes");
-	$reqdfieldsn = array(gettext("Number"), gettext("Count"), gettext("minutes"));
+	$reqdfieldsn = array(gettext("Roll #"), gettext("Count"), gettext("Minutes per ticket"));
 
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
@@ -213,21 +213,21 @@ $section = new Form_Section('Voucher Rolls');
 
 $section->addInput(new Form_Input(
 	'number',
-	'Roll #',
+	'*Roll #',
 	'text',
 	$pconfig['number']
 ))->setHelp('Enter the Roll# (0..%d) found on top of the generated/printed vouchers', [$maxnumber]);
 
 $section->addInput(new Form_Input(
 	'minutes',
-	'Minutes per ticket',
+	'*Minutes per ticket',
 	'text',
 	$pconfig['minutes']
 ))->setHelp('Defines the time in minutes that a user is allowed access. The clock starts ticking the first time a voucher is used for authentication.');
 
 $section->addInput(new Form_Input(
 	'count',
-	'Count',
+	'*Count',
 	'text',
 	$pconfig['count']
 ))->setHelp('Enter the number of vouchers (1..%d) found on top of the generated/printed vouchers. WARNING: Changing this number for an existing Roll will mark all vouchers as unused again', [$maxcount]);

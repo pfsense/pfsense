@@ -379,7 +379,7 @@ function print_callout($msg, $class = 'info', $heading = '') {
 
 function get_std_save_message($retval) {
 	$filter_related = false;
-	$filter_pages = array("nat", "filter");
+	$filter_pages = array("firewall_aliases", "firewall_nat", "firewall_rules", "status_logs_filter");
 	if ($retval === 0) {
 		// 0 is success
 		$to_return = gettext("The changes have been applied successfully.");
@@ -393,7 +393,8 @@ function get_std_save_message($retval) {
 		}
 	}
 	if ($filter_related) {
-		$to_return .= "<br />" . gettext("<a href=\"status_filter_reload.php\">Monitor</a> the filter reload progress.");
+		$to_return .= " " . gettext("The firewall rules are now reloading in the background.") . "<br />" .
+		    sprintf(gettext("%sMonitor%s the filter reload progress."), "<a href='status_filter_reload.php'>", "</a>");
 	}
 	return $to_return;
 }

@@ -212,8 +212,8 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "zone cinterface");
-		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
+		$reqdfields = explode(" ", "zone cinterface auth_method");
+		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"), gettext("Authentication method"));
 
 		if (isset($_POST['auth_method']) && $_POST['auth_method'] == "radius") {
 			$reqdfields[] = "radius_protocol";
@@ -238,6 +238,10 @@ if ($_POST) {
 					}
 				}
 			}
+		}
+
+		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'local', 'radius'))) {
+			$input_errors[] = sprintf(gettext("Authentication method %s is invalid."), $_POST['auth_method']);
 		}
 
 		if ($_POST['httpslogin_enable']) {

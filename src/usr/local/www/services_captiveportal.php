@@ -1036,7 +1036,7 @@ $section->addInput(new Form_Checkbox(
 	'HTTPS Forwards',
 	'Disable HTTPS Forwards',
 	$pconfig['nohttpsforwards']
-))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal' .
+))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
 			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
 			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
 			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');

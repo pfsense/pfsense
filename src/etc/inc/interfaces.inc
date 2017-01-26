@@ -4011,8 +4011,8 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 	$dhcp6cscriptwithoutra .= "dmips=\${new_domain_name_servers}\n";
 	$dhcp6cscriptwithoutra .= "dmnames=\${new_domain_name}\n";
 	// Need to pass params to  the final script
-	$dhcp6cscriptwithoutra .= "echo $dmips > /tmp/{$wanif}_domain_name_servers\n";
-	$dhcp6cscriptwithoutra .= "echo $dmnames > /tmp/{$wanif}_new_domain_name\n";
+	$dhcp6cscriptwithoutra .= "echo \$dmips > /tmp/{$wanif}_domain_name_servers\n";
+	$dhcp6cscriptwithoutra .= "echo \$dmnames > /tmp/{$wanif}_new_domain_name\n";
 	$dhcp6cscriptwithoutra .= "/usr/sbin/rtsold -1 -p {$g['varrun_path']}/rtsold_{$wanif}.pid -O {$g['varetc_path']}/rtsold_{$wanif}_script.sh {$wanif}\n";
 
 	if (!@file_put_contents("{$g['varetc_path']}/dhcp6c_{$interface}_dhcp6withoutra_script.sh", $dhcp6cscriptwithoutra)) {
@@ -4032,8 +4032,8 @@ function interface_dhcpv6_configure($interface = "wan", $wancfg) {
 		$dhcp6cscript .= "dmnames=\${new_domain_name}\n";
 	} else {
 		// Need to get the paramaters from the dhcp6cwithoutRA run
-		$dhcp6cscript .= "dmips=$(cat \"/tmp/{$wanif}_domain_name_servers\")\n";
-		$dhcp6cscript .= "dmnames=$(cat \"/tmp/{$wanif}_new_domain_name\")\n";
+		$dhcp6cscript .= "dmips=\$(cat \"/tmp/{$wanif}_domain_name_servers\")\n";
+		$dhcp6cscript .= "dmnames=\$(cat \"/tmp/{$wanif}_new_domain_name\")\n";
 	}
 	$dhcp6cscript .= "/usr/local/sbin/fcgicli -f /etc/rc.newwanipv6 -d \"interface={$wanif}&dmnames=\${dmnames}&dmips=\${dmips}\"\n";
 	/* Add wide-dhcp6c shell script here. Because we can not pass a argument to it. */

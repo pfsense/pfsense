@@ -252,9 +252,9 @@ $timeservers = explode(' ', $config['system']['timeservers']);
 $maxrows = max(count($timeservers), 1);
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
-    $group->addClass('repeatable');
-    $group->setAttribute('max_repeats', NUMTIMESERVERS);
-    $group->setAttribute('max_repeats_alert', sprintf(gettext('%d is the maximum number of configured servers.'), NUMTIMESERVERS));
+	$group->addClass('repeatable');
+	$group->setAttribute('max_repeats', NUMTIMESERVERS);
+	$group->setAttribute('max_repeats_alert', sprintf(gettext('%d is the maximum number of configured servers.'), NUMTIMESERVERS));
 
 	$group->add(new Form_Input(
 		'server' . $counter,

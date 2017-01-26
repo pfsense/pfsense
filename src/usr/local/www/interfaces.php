@@ -3,7 +3,7 @@
  * interfaces.php
  *
  * part of pfSense (https://www.pfsense.org)
- * Copyright (c) 2004-2016 Electric Sheep Fencing, LLC
+ * Copyright (c) 2004-2016 Rubicon Communications, LLC (Netgate)
  * Copyright (c) 2006 Daniel S. Haischt
  * All rights reserved.
  *
@@ -72,6 +72,7 @@ require_once("shaper.inc");
 require_once("rrd.inc");
 require_once("vpn.inc");
 require_once("xmlparse_attr.inc");
+require_once("interfaces.inc");
 
 define("ANTENNAS", false);
 
@@ -230,6 +231,7 @@ $pconfig['adv_dhcp_pt_backoff_cutoff'] = $wancfg['adv_dhcp_pt_backoff_cutoff'];
 $pconfig['adv_dhcp_pt_initial_interval'] = $wancfg['adv_dhcp_pt_initial_interval'];
 
 $pconfig['adv_dhcp_pt_values'] = $wancfg['adv_dhcp_pt_values'];
+$pconfig['dhcp6c_or_dibbler_value'] = $wancfg['dhcp6c_or_dibbler_value'];
 
 $pconfig['adv_dhcp_send_options'] = $wancfg['adv_dhcp_send_options'];
 $pconfig['adv_dhcp_request_options'] = $wancfg['adv_dhcp_request_options'];
@@ -316,6 +318,8 @@ switch ($wancfg['ipaddrv6']) {
 		$pconfig['dhcp6prefixonly'] = isset($wancfg['dhcp6prefixonly']);
 		$pconfig['dhcp6usev4iface'] = isset($wancfg['dhcp6usev4iface']);
 		$pconfig['dhcp6debug'] = isset($wancfg['dhcp6debug']);
+		$pconfig['dhcp6withoutra'] = isset($wancfg['dhcp6withoutra']);
+		$pconfig['dhcp6norelease'] = isset($wancfg['dhcp6norelease']);
 		break;
 	case "6to4":
 		$pconfig['type6'] = "6to4";
@@ -546,8 +550,20 @@ if ($_POST['apply']) {
 		$input_errors[] = gettext("The interface description cannot contain only numbers.");
 	}
 	/* input validation */
-	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable']) && (!preg_match("/^staticv4/", $_POST['type']))) {
-		$input_errors[] = gettext("The DHCP Server is active on this interface and it can be used only with a static IP configuration. Please disable the DHCP Server service on this interface first, then change the interface configuration.");
+	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
+		if (!preg_match("/^staticv4/", $_POST['type'])) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "a static IP configuration. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		} elseif (!empty($_POST['subnet']) && $_POST['subnet'] >= 31) {
+			$input_errors[] = gettext("The DHCP Server is active " .
+			    "on this interface and it can be used only with " .
+			    "IPv4 subnet < 31. Please disable the " .
+			    "DHCP Server service on this interface first, " .
+			    "then change the interface configuration.");
+		}
 	}
 	if (isset($config['dhcpdv6']) && isset($config['dhcpdv6'][$if]['enable']) && ($_POST['type6'] != "staticv6" && $_POST['type6'] != "track6")) {
 		$input_errors[] = gettext("The DHCP6 Server is active on this interface and it can be used only with a static IPv6 configuration. Please disable the DHCPv6 Server service on this interface first, then change the interface configuration.");
@@ -723,6 +739,8 @@ if ($_POST['apply']) {
 		}
 	}
 	if ($_POST['ipaddrv6']) {
+		$_POST['ipaddrv6'] = addrtolower($_POST['ipaddrv6']);
+
 		if (!is_ipaddrv6($_POST['ipaddrv6'])) {
 			$input_errors[] = gettext("A valid IPv6 address must be specified.");
 		} else {
@@ -1010,6 +1028,8 @@ if ($_POST['apply']) {
 		unset($wancfg['dhcp6debug']);
 		unset($wancfg['track6-interface']);
 		unset($wancfg['track6-prefix-id']);
+		unset($wancfg['dhcp6withoutra']);
+		unset($wancfg['dhcp6norelease']);
 		unset($wancfg['prefix-6rd']);
 		unset($wancfg['prefix-6rd-v4plen']);
 		unset($wancfg['gateway-6rd']);
@@ -1022,6 +1042,7 @@ if ($_POST['apply']) {
 		unset($wancfg['adv_dhcp_pt_initial_interval']);
 
 		unset($wancfg['adv_dhcp_pt_values']);
+		unset($wancfg['dhcp6c_or_dibbler_value']);
 
 		unset($wancfg['adv_dhcp_send_options']);
 		unset($wancfg['adv_dhcp_request_options']);
@@ -1126,6 +1147,7 @@ if ($_POST['apply']) {
 				$wancfg['adv_dhcp_pt_initial_interval'] = $_POST['adv_dhcp_pt_initial_interval'];
 
 				$wancfg['adv_dhcp_pt_values'] = $_POST['adv_dhcp_pt_values'];
+				$wancfg['dhcp6c_or_dibbler_value'] = $_POST['dhcp6c_or_dibbler_value'];
 
 				$wancfg['adv_dhcp_send_options'] = $_POST['adv_dhcp_send_options'];
 				$wancfg['adv_dhcp_request_options'] = $_POST['adv_dhcp_request_options'];
@@ -1257,6 +1279,12 @@ if ($_POST['apply']) {
 					$wancfg['dhcp6debug'] = true;
 				}
 
+				if ($_POST['dhcp6withoutra'] == "yes") {
+					$wancfg['dhcp6withoutra'] = true;
+				}
+				if ($_POST['dhcp6norelease'] == "yes") {
+					$wancfg['dhcp6norelease'] = true;
+				}
 				if (!empty($_POST['adv_dhcp6_interface_statement_send_options'])) {
 					$wancfg['adv_dhcp6_interface_statement_send_options'] = $_POST['adv_dhcp6_interface_statement_send_options'];
 				}
@@ -1801,7 +1829,8 @@ $section->addClass('staticv4');
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
 	'IPv4 Address',
-	$pconfig['ipaddr']
+	$pconfig['ipaddr'],
+	'V4'
 ))->addMask('subnet', $pconfig['subnet'], 32);
 
 $group = new Form_Group('IPv4 Upstream gateway');
@@ -1834,7 +1863,8 @@ $section->addClass('staticv6');
 $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
 	'IPv6 address',
-	$pconfig['ipaddrv6']
+	$pconfig['ipaddrv6'],
+	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
 
 $group = new Form_Group('IPv6 Upstream gateway');
@@ -1879,7 +1909,8 @@ $modal->addInput(new Form_Input(
 $modal->addInput(new Form_IpAddress(
 	'gatewayip6',
 	'Gateway IPv6',
-	null
+	null,
+	'V6'
 ));
 
 $modal->addInput(new Form_Input(
@@ -1946,7 +1977,8 @@ $section->addInput(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'alias-address',
 	'Alias IPv4 address',
-	$pconfig['alias-address']
+	$pconfig['alias-address'],
+	'V4'
 ))->addMask('alias-subnet', $pconfig['alias-subnet'], 32)->setHelp('The value in this field is used as a fixed alias IPv4 address by the DHCP client.');
 
 $section->addInput(new Form_Input(
@@ -2101,6 +2133,25 @@ $form->add($section);
 $section = new Form_Section('DHCP6 Client Configuration');
 $section->addClass('dhcp6');
 
+$group = new Form_Group('Select dhcp6 client');
+
+$group->add(new Form_Checkbox(
+	'dhcp6c_or_dibbler_value',
+	null,
+	'dhcp6c',
+	null,
+	'dhcp6c'
+))->displayAsRadio();
+
+$group->add(new Form_Checkbox(
+	'dhcp6c_or_dibbler_value',
+	null,
+	'dibbler',
+	null,
+	'dibbler'
+))->displayAsRadio();
+$section->add($group);
+
 $group = new Form_Group('Options');
 
 $group->add(new Form_Checkbox(
@@ -2137,7 +2188,7 @@ $section->addInput(new Form_Select(
 	'dhcp6-ia-pd-len',
 	'DHCPv6 Prefix Delegation size',
 	$pconfig['dhcp6-ia-pd-len'],
-	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
+	array("none" => "None", 16 => "48", 12 => "52", 8 => "56", 5 => "59", 4 => "60", 3 => "61",  2 => "62", 1 => "63", 0 => "64")
 ))->setHelp('The value in this field is the delegated prefix length provided by the DHCPv6 server. Normally specified by the ISP.');
 
 $section->addInput(new Form_Checkbox(
@@ -2154,6 +2205,18 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['dhcp6debug']
 ));
 
+$section->addInput(new Form_Checkbox(
+	'dhcp6withoutra',
+	'Do not wait for a RA',
+	'Required by some ISPs, especially those not using PPPoE',
+	$pconfig['dhcp6withoutra']
+));
+$section->addInput(new Form_Checkbox(
+	'dhcp6norelease',
+	'Do not allow PD/Address release',
+	'dhcp6c will send a release to the ISP on exit, some ISPs then release the allocated address or prefix. This option prevents that signal ever being sent',
+	$pconfig['dhcp6norelease']
+));
 $section->addInput(new Form_Input(
 	'adv_dhcp6_config_file_override_path',
 	'Configuration File Override',
@@ -2225,7 +2288,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_address',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_address']
+	$pconfig['adv_dhcp6_id_assoc_statement_address'],
+	'V6'
 ))->sethelp('IPv6 address');
 
 $group->add(new Form_Input(
@@ -2265,7 +2329,8 @@ $group->add(new Form_Input(
 $group->add(new Form_IpAddress(
 	'adv_dhcp6_id_assoc_statement_prefix',
 	null,
-	$pconfig['adv_dhcp6_id_assoc_statement_prefix']
+	$pconfig['adv_dhcp6_id_assoc_statement_prefix'],
+	'V6'
 ))->sethelp('IPv6 prefix');
 
 $group->add(new Form_Input(
@@ -2710,13 +2775,15 @@ $section->addPassword(new Form_Input(
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
 	'Local IP address',
-	$pconfig['pptp_localip'][0]
+	$pconfig['pptp_localip'][0],
+	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
 	'Remote IP address',
-	$pconfig['pptp_remote'][0]
+	$pconfig['pptp_remote'][0],
+	'HOSTV4'
 ));
 
 $section->addInput(new Form_Checkbox(
@@ -3185,7 +3252,8 @@ $modal->addInput(new Form_Input(
 $modal->addInput(new Form_IpAddress(
 	'gatewayip',
 	'Gateway IPv4',
-	null
+	null,
+	'V4'
 ));
 
 $modal->addInput(new Form_Input(
@@ -3372,7 +3440,8 @@ events.push(function() {
 	}
 
 	function report_failure(request, textStatus, errorThrown) {
-		if (textStatus === "error" && request.getResponseHeader("Content-Type") === "text/plain") {
+		contenttype = ";"+request.getResponseHeader("Content-Type")+";";
+		if (textStatus === "error" && contenttype.indexOf(";text/plain;") !== -1) {
 			alert(request.responseText);
 		} else {
 			alert("The IPv4 gateway could not be created.");
@@ -3566,6 +3635,52 @@ events.push(function() {
 		}
 	}
 
+	function show_dibbler(val) {
+		if (val == "dibbler") {
+			hideCheckbox('dhcp6usev4iface', true);
+			hideCheckbox('dhcp6prefixonly', true);
+			hideInput('dhcp6-ia-pd-len', true);
+			hideCheckbox('dhcp6-ia-pd-send-hint', true);
+			hideCheckbox('dhcp6debug', true);
+			hideCheckbox('dhcp6withoutra',true);
+			hideCheckbox('dhcp6norelease',true);
+			hideInput('adv_dhcp6_config_file_override_path', true);
+			hideCheckbox('adv_dhcp6_config_advanced',true)
+			hideCheckbox('adv_dhcp6_config_file_override',true)
+			hideClass('dhcp6advanced',true);
+
+			} else {
+				var adv = $('#adv_dhcp_config_advanced').prop('checked');
+				var ovr = $('#adv_dhcp_config_file_override').prop('checked');
+				
+				hideCheckbox('dhcp6usev4iface', false);
+				hideCheckbox('dhcp6prefixonly', false);
+				hideInput('dhcp6-ia-pd-len', false);
+				hideCheckbox('dhcp6-ia-pd-send-hint', false);
+				hideCheckbox('dhcp6debug', false);
+				hideCheckbox('dhcp6withoutra',false);
+				hideCheckbox('dhcp6norelease',false);
+				hideInput('adv_dhcp6_config_file_override_path', false);
+				hideCheckbox('adv_dhcp6_config_advanced',false)
+				hideCheckbox('adv_dhcp6_config_file_override',false)
+				hideClass('dhcp6advanced',false);
+			
+				if (ovr) {
+				hideInput('dhcphostname', true);
+				hideIpAddress('alias-address', true);
+				hideInput('dhcprejectfrom', true);
+				hideInput('adv_dhcp_config_file_override_path', false);
+				hideClass('dhcpadvanced', true);
+				} else {
+				hideInput('dhcphostname', false);
+				hideIpAddress('alias-address', false);
+				hideInput('dhcprejectfrom', false);
+				hideInput('adv_dhcp_config_file_override_path', true);
+				hideClass('dhcpadvanced', !adv);
+			}
+		}
+
+	}
 	// DHCP preset actions
 	// Set presets from value of radio buttons
 	function setPresets(val) {
@@ -3593,7 +3708,7 @@ events.push(function() {
 	hideClass('dhcp6advanced', true);
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
-	setDHCPoptions()
+	setDHCPoptions();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3605,6 +3720,15 @@ events.push(function() {
 
 	// Set preset from value
 	setPresets(sv);
+
+	// Show dibbler if selected
+	
+	var dv = "<?=htmlspecialchars($pconfig['dhcp6c_or_dibbler_value']);?>";
+	if (dv == "") {
+		$("input[name=dhcp6c_or_dibbler_value][value='dhcp6c']").prop('checked', true);
+	} else {
+		$("input[name=dhcp6c_or_dibbler_value][value="+dv+"]").prop('checked', true);
+	} 
 
 	// ---------- Click checkbox handlers ---------------------------------------------------------
 
@@ -3667,6 +3791,12 @@ events.push(function() {
 	// On click . .
 	$('[name=adv_dhcp_pt_values]').click(function () {
 	   setPresets($('input[name=adv_dhcp_pt_values]:checked').val());
+	});
+
+	$('[name=dhcp6c_or_dibbler_value]').click(function () {
+		
+		show_dibbler($('input[name=dhcp6c_or_dibbler_value]:checked').val());
+		  
 	});
 
 	$('#pppoe_resetdate').datepicker();

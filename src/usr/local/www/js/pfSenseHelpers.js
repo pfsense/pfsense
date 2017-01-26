@@ -290,7 +290,16 @@ function checkLastRow() {
 
 function add_row() {
 	// Find the last repeatable group
-	var lastRepeatableGroup = $('.repeatable:last');
+    var lastRepeatableGroup = $('.repeatable:last');
+
+    // If the number of repeats exceeds the maximum, do not add another clone
+    if ($('.repeatable').length >= lastRepeatableGroup.attr('max_repeats')) {
+        // Alert user if alert message is specified
+        if (typeof lastRepeatableGroup.attr('max_repeats_alert') !== 'undefined') {
+            alert(lastRepeatableGroup.attr('max_repeats_alert'));
+        }
+        return;
+    }
 
 	// Clone it
 	var newGroup = lastRepeatableGroup.clone();

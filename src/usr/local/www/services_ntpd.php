@@ -227,7 +227,9 @@ $maxrows = max(count($timeservers), 1);
 $auto_pool_suffix = "pool.ntp.org";
 for ($counter=0; $counter < $maxrows; $counter++) {
 	$group = new Form_Group($counter == 0 ? 'Time Servers':'');
-	$group->addClass('repeatable');
+    $group->addClass('repeatable');
+    $group->setAttribute('max_repeats', NUMTIMESERVERS);
+    $group->setAttribute('max_repeats_alert', NUMTIMESERVERS . ' is the maximum number of configured servers.');
 
 	$group->add(new Form_Input(
 		'server' . $counter,

@@ -163,7 +163,7 @@ if ($_POST) {
 			$input_errors[] = gettext("User Max Logins must be between 1 and 255");
 		}
 		if (!is_numericint($_POST['pppoe_subnet']) || $_POST['pppoe_subnet'] > 32) {
-			$input_errors[] = gettext("Subnet mask must be an interger between 0 and 32");
+			$input_errors[] = gettext("Subnet mask must be an integer between 0 and 32");
 		}
 
 		$_POST['remoteip'] = $pconfig['remoteip'] = gen_subnet($_POST['remoteip'], $_POST['pppoe_subnet']);

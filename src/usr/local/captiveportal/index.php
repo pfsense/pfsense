@@ -116,7 +116,7 @@ if ($macfilter || $passthrumac) {
 }
 
 /* find out if we need RADIUS + RADIUSMAC or not */
-if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
+if ($cpcfg['auth_method'] == 'radius') {
 	$radius_enable = TRUE;
 	if (isset($cpcfg['radmac_enable'])) {
 		$radmac_enable = TRUE;
@@ -127,6 +127,15 @@ if (file_exists("{$g['vardb_path']}/captiveportal_radius_{$cpzone}.db")) {
 $radiusctx = 'first';
 if ($_POST['auth_user2']) {
 	$radiusctx = 'second';
+}
+
+/* find radius accounting context */
+$acctctx = 'none';
+if (isset($cpcfg['radacct_enable'])) {
+	$acctctx = 'acct';
+	if (isset($cpcfg['radacct_use_authsrv'])) {
+		$acctctx = $radiusctx;
+	}
 }
 
 if ($_POST['logout_id']) {
@@ -158,13 +167,13 @@ EOD;
 		portal_reply_page($redirurl, "error", "This MAC address has been blocked");
 	}
 
-} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac, $clientip, $radiusctx)) {
+} else if ($clientmac && $radmac_enable && portal_mac_radius($clientmac, $clientip, $radiusctx, $acctctx)) {
 	/* radius functions handle everything so we exit here since we're done */
 
 } else if (portal_consume_passthrough_credit($clientmac)) {
 	/* allow the client through if it had a pass-through credit for its MAC */
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	portal_allow($clientip, $clientmac, "unauthenticated", null, null, null, 'passthrough', $acctctx);
 
 } else if (isset($config['voucher'][$cpzone]['enable']) && $_POST['accept'] && $_POST['auth_voucher']) {
 	$voucher = trim($_POST['auth_voucher']);
@@ -178,7 +187,7 @@ EOD;
 			'voucher' => 1,
 			'session_timeout' => $timecredit*60,
 			'session_terminate_time' => 0);
-		if (portal_allow($clientip, $clientmac, $voucher, null, $attr)) {
+		if (portal_allow($clientip, $clientmac, $voucher, null, $attr, null, 'voucher', $acctctx)) {
 			// YES: user is good for $timecredit minutes.
 			captiveportal_logportalauth($voucher, $clientmac, $clientip, "Voucher login good for $timecredit min.");
 		} else {
@@ -201,7 +210,7 @@ EOD;
 			$user = $_POST['auth_user2'];
 			$paswd = $_POST['auth_pass2'];
 		}
-		$auth_list = radius($user, $paswd, $clientip, $clientmac, "USER LOGIN", $radiusctx);
+		$auth_list = radius($user, $paswd, $clientip, $clientmac, "USER LOGIN", $radiusctx, $acctctx);
 		$type = "error";
 		if (!empty($auth_list['url_redirection'])) {
 			$redirurl = $auth_list['url_redirection'];
@@ -238,7 +247,7 @@ EOD;
 
 		if ($loginok) {
 			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "LOGIN");
-			portal_allow($clientip, $clientmac, $_POST['auth_user']);
+			portal_allow($clientip, $clientmac, $_POST['auth_user'], null, null, null, 'local', $acctctx);
 		} else {
 			captiveportal_logportalauth($_POST['auth_user'], $clientmac, $clientip, "FAILURE");
 			portal_reply_page($redirurl, "error", $errormsg);
@@ -249,7 +258,7 @@ EOD;
 
 } else if ($_POST['accept'] && $clientip && $cpcfg['auth_method'] == "none") {
 	captiveportal_logportalauth("unauthenticated", $clientmac, $clientip, "ACCEPT");
-	portal_allow($clientip, $clientmac, "unauthenticated");
+	portal_allow($clientip, $clientmac, "unauthenticated", null, null, null, 'none', $acctctx);
 
 } else {
 	/* display captive portal page */

@@ -5147,4 +5147,17 @@ function upgrade_160_to_161() {
 	}
 }
 
+function upgrade_161_to_162() {
+	global $config;
+
+	/* preserve the old behaviour if RADIUS accounting was enabled */
+	if (is_array($config['captiveportal'])) {
+		foreach ($config['captiveportal'] as $cpzone => $cpcfg) {
+			if (isset($cpcfg['radacct_enable'])) {
+				$config['captiveportal'][$cpzone]['radacct_use_authsrv'] = true;
+			}
+		}
+	}
+}
+
 ?>

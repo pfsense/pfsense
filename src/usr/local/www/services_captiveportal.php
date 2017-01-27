@@ -212,8 +212,8 @@ if ($_POST) {
 
 	/* input validation */
 	if ($_POST['enable']) {
-		$reqdfields = explode(" ", "zone cinterface");
-		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"));
+		$reqdfields = explode(" ", "zone cinterface auth_method");
+		$reqdfieldsn = array(gettext("Zone name"), gettext("Interface"), gettext("Authentication method"));
 
 		if (isset($_POST['auth_method']) && $_POST['auth_method'] == "radius") {
 			$reqdfields[] = "radius_protocol";
@@ -238,6 +238,10 @@ if ($_POST) {
 					}
 				}
 			}
+		}
+
+		if ($_POST['auth_method'] && !in_array($_POST['auth_method'], array('none', 'local', 'radius'))) {
+			$input_errors[] = sprintf(gettext("Authentication method %s is invalid."), $_POST['auth_method']);
 		}
 
 		if ($_POST['httpslogin_enable']) {
@@ -536,7 +540,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'cinterface',
-	'Interfaces',
+	'*Interfaces',
 	explode(",", $pconfig['cinterface']),
 	get_configured_interface_with_descr(),
 	true
@@ -682,7 +686,7 @@ $form->add($section);
 $section = new Form_Section('Authentication');
 $section->addClass('Authentication');
 
-$group = new Form_Group('Authentication method');
+$group = new Form_Group('*Authentication method');
 
 $group->add(new Form_Checkbox(
 	'auth_method',
@@ -717,7 +721,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['localauth_priv']
 ));
 
-$group = new Form_Group('RADIUS protocol');
+$group = new Form_Group('*RADIUS protocol');
 $group->addClass("radiusproto");
 
 $group->add(new Form_Checkbox(
@@ -759,7 +763,7 @@ $form->add($section);
 $section = new Form_Section('Primary Authentication Source');
 $section->addClass('Primary');
 
-$group = new Form_Group('Primary RADIUS server');
+$group = new Form_Group('*Primary RADIUS server');
 
 $group->add(new Form_IpAddress(
 	'radiusip',
@@ -1017,7 +1021,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'httpsname',
-	'HTTPS server name',
+	'*HTTPS server name',
 	'text',
 	$pconfig['httpsname']
 ))->setHelp('This name will be used in the form action for the HTTPS POST and should match the Common Name (CN) in the certificate ' .
@@ -1026,7 +1030,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'certref',
-	'SSL Certificate',
+	'*SSL Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('If no certificates are defined, one may be defined here: ' . '<a href="system_certmanager.php">System &gt; Cert. Manager</a>');
@@ -1036,7 +1040,7 @@ $section->addInput(new Form_Checkbox(
 	'HTTPS Forwards',
 	'Disable HTTPS Forwards',
 	$pconfig['nohttpsforwards']
-))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal' .
+))->setHelp('If this option is set, attempts to connect to SSL/HTTPS (Port 443) sites will not be forwarded to the captive portal. ' .
 			'This prevents certificate errors from being presented to the user even if HTTPS logins are enabled. ' .
 			'Users must attempt a connecton to an HTTP (Port 80) site to get forwarded to the captive portal. ' .
 			'If HTTPS logins are enabled, the user will be redirected to the HTTPS login page.');

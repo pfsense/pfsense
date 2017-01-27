@@ -122,6 +122,30 @@ function parse_initcmd(&$nmeaset, $initcmd) {
 	}
 }
 
+function NMEAChecksum($cmd) {
+	$checksum = 0;
+	for ($i=0; $i<strlen($cmd); $i++) {
+		$checksum = ($checksum ^ ord($cmd[$i]));
+	}
+	return strtoupper(str_pad(dechex($checksum), 2, '0', STR_PAD_LEFT));
+}
+
+function autocorrect_initcmd($initcmd) {
+	$cmds = '';
+	$split_initcmd = preg_split('/[\s]+/', $initcmd);
+	foreach ($split_initcmd as $line) {
+		if (!strlen($line)) {
+			continue;
+		}
+		$begin = ($line[0] == '$') ? 1 : 0;
+		$astpos = strrpos($line, '*');
+		$end = ($astpos !== false) ? $astpos : strlen($line);
+		$trimline = substr($line, $begin, $end-$begin);
+		$cmds = $cmds . '$' . $trimline . '*' . NMEAChecksum($trimline) . "\r\n";
+	}
+	return $cmds;
+}
+
 if ($_POST) {
 	unset($input_errors);
 
@@ -222,9 +246,19 @@ if ($_POST) {
 		unset($config['ntpd']['gps']['extstatus']);
 	}
 
+	if (!empty($_POST['autocorrect_initcmd'])) {
+		$config['ntpd']['gps']['autocorrect_initcmd'] = $_POST['autocorrect_initcmd'];
+	} elseif (isset($config['ntpd']['gps']['autocorrect_initcmd'])) {
+		unset($config['ntpd']['gps']['autocorrect_initcmd']);
+	}
+
 	if (!empty($_POST['gpsinitcmd'])) {
-		$config['ntpd']['gps']['initcmd'] = base64_encode($_POST['gpsinitcmd']);
-		parse_initcmd($config['ntpd']['gps']['nmeaset'], $_POST['gpsinitcmd']);
+		$initcmd = $_POST['gpsinitcmd'];
+		if ($config['ntpd']['gps']['autocorrect_initcmd']) {
+			$initcmd = autocorrect_initcmd($initcmd);
+		}
+		$config['ntpd']['gps']['initcmd'] = base64_encode($initcmd);
+		parse_initcmd($config['ntpd']['gps']['nmeaset'], $initcmd);
 	} elseif (isset($config['ntpd']['gps']['initcmd'])) {
 		unset($config['ntpd']['gps']['initcmd']);
 		unset($config['ntpd']['gps']['nmeaset']);
@@ -449,6 +483,13 @@ $section->addInput(new Form_Textarea(
 	base64_decode($pconfig['initcmd'])
 ))->setHelp('Commands entered here will be sent to the GPS during initialization. Please read and understand the GPS documentation before making any changes here.');
 
+$section->addInput(new Form_Checkbox(
+	'autocorrect_initcmd',
+	null,
+	'Auto correct malformed initialization commands. (default: unchecked).',
+	$pconfig['autocorrect_initcmd']
+))->setHelp('Calculates and appends checksum and missing special characters "$" and "*". May not work with some GPS models.');
+
 $group = new Form_Group('NMEA Checksum Calculator');
 
 $group->add(new Form_Input(
@@ -595,6 +636,7 @@ events.push(function() {
 		$('#gpsflag4').prop('checked', false);
 		$('#gpssubsec').prop('checked', false);
 		$('#extstatus').prop('checked', true);
+		$('#autocorrect_initcmd').prop('checked', false);
 	}
 
 	// Show advanced GPS options ==============================================
@@ -618,6 +660,7 @@ events.push(function() {
 		}
 
 		hideInput('gpsinitcmd', !showadvgps);
+		hideInput('autocorrect_initcmd', !showadvgps);
 		hideClass('calculator', !showadvgps);
 
 		if (showadvgps) {

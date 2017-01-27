@@ -471,7 +471,7 @@ if ($config['openvpn']["openvpn-server"] || $config['openvpn']["openvpn-client"]
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$interfaces
 ))->setHelp('The interface on which traffic is matched as it exits the firewall. In most cases this is "WAN" or another externally-connected interface.');
@@ -480,12 +480,12 @@ $protocols = "any TCP UDP TCP/UDP ICMP ESP AH GRE IPV6 IGMP carp pfsync";
 
 $section->addInput(new Form_Select(
 	'protocol',
-	'Protocol',
+	'*Protocol',
 	$pconfig['protocol'],
 	array_combine(explode(" ", strtolower($protocols)), explode(" ", $protocols))
 ))->setHelp('Choose which protocol this rule should match. In most cases "any" is specified.');
 
-$group = new Form_Group('Source');
+$group = new Form_Group('*Source');
 
 $group->add(new Form_Select(
 	'source_type',
@@ -510,7 +510,7 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$group = new Form_Group('Destination');
+$group = new Form_Group('*Destination');
 
 $group->add(new Form_Select(
 	'destination_type',
@@ -549,7 +549,7 @@ $section->addClass('translation');
 
 $section->addInput(new Form_Select(
 	'target',
-	'Address',
+	'*Address',
 	$pconfig['target'],
 	build_target_list()
 ))->setHelp(	'Connections matching this rule will be mapped to the specified <b>Address</b>.' . '<br />' .

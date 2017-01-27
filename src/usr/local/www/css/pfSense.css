@@ -92,9 +92,26 @@ wbr:after {
     font-family: Roboto, sans-serif;
 }
 
-tr.disabled td,
-tr.disabled th {
+.table-striped>tbody>tr.disabled:nth-of-type(odd) {
+    background-color: rgba(249, 249, 249, .5);
+    color: rgba(51,51,51,.5);
+}
+
+.table-striped>tbody>tr.disabled:nth-of-type(even) {
+    background-color: rgba(255, 255, 255, .5);
+    color: rgba(51,51,51,.5);
+}
+
+.table-hover>tbody>tr.disabled:hover {
+    background-color: rgba(245, 245, 245, .5);
+}
+
+tr.disabled i.fa {
     opacity: .5;
+}
+
+tr.disabled a {
+    color: rgba(51, 122, 183, .5)
 }
 
 .contains-table table {
@@ -976,11 +993,6 @@ svg {
 
 .colspanth {
     background-color: #eeeeee;
-}
-
-/* Checkboxes in groups need to be aligned with text (or other) inputs in the same group */
-.form-group .checkbox {
-    top: -6px;
 }
 
 /* Required input elements have a title that begins with "*". This causes

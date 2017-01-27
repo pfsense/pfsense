@@ -136,14 +136,14 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'ipproto',
-	'IP Protocol',
+	'*IP Protocol',
 	$ipproto,
 	['ipv4' => 'IPv4', 'ipv6' => 'IPv6']
 ));
 
 $section->addInput(new Form_Select(
 	'sourceip',
-	'Source address',
+	'*Source address',
 	$sourceip,
 	array('' => gettext('Automatically selected (default)')) + get_possible_traffic_source_addresses(true)
 ))->setHelp('Select source address for the ping.');

@@ -488,36 +488,44 @@ if ($_POST['apply']) {
 		unset($_POST['pppoe_resetdate']);
 		unset($_POST['pppoe_pr_preset_val']);
 	}
-	/* description unique? */
-	foreach ($ifdescrs as $ifent => $ifdescr) {
-		if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
-			$input_errors[] = gettext("An interface with the specified description already exists.");
-			break;
-		}
-	}
 
-	/* Is the description already used as an alias name? */
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
-			}
-		}
-	}
-
-	/* Is the description already used as an interface group name? */
-	if (is_array($config['ifgroups']['ifgroupentry'])) {
-		foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
-			if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
-				$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
-			}
-		}
-	}
-
-	if (is_numeric($_POST['descr'])) {
-		$input_errors[] = gettext("The interface description cannot contain only numbers.");
-	}
 	/* input validation */
+	$reqdfields = explode(" ", "descr");
+	$reqdfieldsn = array(gettext("Description"));
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!$input_errors) {
+		/* description unique? */
+		foreach ($ifdescrs as $ifent => $ifdescr) {
+			if ($if != $ifent && (strcasecmp($ifdescr, $_POST['descr']) == 0)) {
+				$input_errors[] = gettext("An interface with the specified description already exists.");
+				break;
+			}
+		}
+
+		/* Is the description already used as an alias name? */
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if (strcasecmp($alias['name'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an alias with the name %s already exists."), $_POST['descr']);
+				}
+			}
+		}
+
+		/* Is the description already used as an interface group name? */
+		if (is_array($config['ifgroups']['ifgroupentry'])) {
+			foreach ($config['ifgroups']['ifgroupentry'] as $ifgroupentry) {
+				if (strcasecmp($ifgroupentry['ifname'], $_POST['descr']) == 0) {
+					$input_errors[] = sprintf(gettext("Sorry, an interface group with the name %s already exists."), $_POST['descr']);
+				}
+			}
+		}
+
+		if (is_numeric($_POST['descr'])) {
+			$input_errors[] = gettext("The interface description cannot contain only numbers.");
+		}
+	}
+
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {
 		if (!preg_match("/^staticv4/", $_POST['type'])) {
 			$input_errors[] = gettext("The DHCP Server is active " .
@@ -1716,7 +1724,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Description',
+	'*Description',
 	'text',
 	$pconfig['descr']
 ))->setHelp('Enter a description (name) for the interface here.');
@@ -1792,7 +1800,7 @@ $section->addClass('staticv4');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddr',
-	'IPv4 Address',
+	'*IPv4 Address',
 	$pconfig['ipaddr'],
 	'V4'
 ))->addMask('subnet', $pconfig['subnet'], 32);
@@ -1826,7 +1834,7 @@ $section->addClass('staticv6');
 
 $section->addInput(new Form_IpAddress(
 	'ipaddrv6',
-	'IPv6 address',
+	'*IPv6 address',
 	$pconfig['ipaddrv6'],
 	'V6'
 ))->addMask('subnetv6', $pconfig['subnetv6'], 128);
@@ -2402,7 +2410,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'gateway-6rd',
-	'6RD Border relay',
+	'*6RD Border relay',
 	'text',
 	$pconfig['gateway-6rd']
 ))->sethelp('6RD IPv4 gateway address assigned by the ISP');
@@ -2459,7 +2467,7 @@ function build_ipv6interface_list() {
 
 $section->addInput(new Form_Select(
 	'track6-interface',
-	'IPv6 Interface',
+	'*IPv6 Interface',
 	$pconfig['track6-interface'],
 	build_ipv6interface_list()
 ))->setHelp('Selects the dynamic IPv6 WAN interface to track for configuration.');
@@ -2526,7 +2534,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'phone',
-	'Phone number',
+	'*Phone number',
 	'text',
 	$pconfig['phone']
 ))->setHelp('Typically *99# for GSM networks and #777 for CDMA networks.');
@@ -2559,7 +2567,7 @@ function build_port_list() {
 
 $section->addInput(new Form_Select(
 	'port',
-	"Modem port",
+	"*Modem port",
 	$pconfig['port'],
 	build_port_list()
 ));
@@ -2704,28 +2712,28 @@ $section->addClass('pptp');
 
 $section->addInput(new Form_Input(
 	'pptp_username',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['pptp_username']
 ));
 
 $section->addPassword(new Form_Input(
 	'pptp_password',
-	'Password',
+	'*Password',
 	'password',
 	$pconfig['pptp_password']
 ));
 
 $section->addInput(new Form_IpAddress(
 	'pptp_local0',
-	'Local IP address',
+	'*Local IP address',
 	$pconfig['pptp_localip'][0],
 	'V4'
 ))->addMask('pptp_subnet0', $pconfig['pptp_subnet'][0]);
 
 $section->addInput(new Form_IpAddress(
 	'pptp_remote0',
-	'Remote IP address',
+	'*Remote IP address',
 	$pconfig['pptp_remote'][0],
 	'HOSTV4'
 ));
@@ -3598,8 +3606,12 @@ events.push(function() {
 		$('#adv_dhcp_pt_initial_interval').val(initialinterval);
 	}
 
-	function setDialOnDemandItems() {
+	function setPPPoEDialOnDemandItems() {
 		setRequired('pppoe_idletimeout', $('#pppoe_dialondemand').prop('checked'));
+	}
+
+	function setPPTPDialOnDemandItems() {
+		setRequired('pptp_idletimeout', $('#pptp_dialondemand').prop('checked'));
 	}
 
 	// ---------- On initial page load ------------------------------------------------------------
@@ -3611,7 +3623,8 @@ events.push(function() {
 	hideClass('dhcpadvanced', true);
 	show_dhcp6adv();
 	setDHCPoptions();
-	setDialOnDemandItems();
+	setPPPoEDialOnDemandItems();
+	setPPTPDialOnDemandItems();
 
 	// Set preset buttons on page load
 	var sv = "<?=htmlspecialchars($pconfig['adv_dhcp_pt_values']);?>";
@@ -3684,7 +3697,11 @@ events.push(function() {
 
 	// On click . .
 	$('#pppoe_dialondemand').click(function () {
-		setDialOnDemandItems();
+		setPPPoEDialOnDemandItems();
+	});
+
+	$('#pptp_dialondemand').click(function () {
+		setPPTPDialOnDemandItems();
 	});
 
 	$('[name=adv_dhcp_pt_values]').click(function () {

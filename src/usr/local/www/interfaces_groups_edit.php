@@ -63,45 +63,52 @@ if ($_POST) {
 	unset($input_errors);
 	$pconfig = $_POST;
 
-	if (!isset($id)) {
-		foreach ($a_ifgroups as $groupentry) {
-			if ($groupentry['ifname'] == $_POST['ifname']) {
-				$input_errors[] = gettext("Group name already exists!");
+	/* input validation */
+	$reqdfields = explode(" ", "ifname");
+	$reqdfieldsn = array(gettext("Group Name"));
+	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
+
+	if (!$input_errors) {
+		if (!isset($id)) {
+			foreach ($a_ifgroups as $groupentry) {
+				if ($groupentry['ifname'] == $_POST['ifname']) {
+					$input_errors[] = gettext("Group name already exists!");
+				}
 			}
 		}
-	}
 
-	if (strlen($_POST['ifname']) > 16) {
-		$input_errors[] = gettext("Group name cannot have more than 16 characters.");
-	}
-
-	if (preg_match("/([^a-zA-Z0-9-_])+/", $_POST['ifname'])) {
-		$input_errors[] = $ifname_allowed_chars_text . " " . gettext("Please choose another group name.");
-	}
-
-	if (preg_match("/[0-9]$/", $_POST['ifname'])) {
-		$input_errors[] = $ifname_no_digit_text;
-	}
-
-	/*
-	 * Packages (e.g. tinc) creates interface groups, reserve this
-	 * namespace pkg- for them
-	 */
-	if (substr($_POST['ifname'], 0, 4) == 'pkg-') {
-		$input_errors[] = gettext("Group name cannot start with pkg-");
-	}
-
-	foreach ($interface_list_disabled as $gif => $gdescr) {
-		if ((strcasecmp($gdescr, $_POST['ifname']) == 0) || (strcasecmp($gif, $_POST['ifname']) == 0)) {
-			$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+		if (strlen($_POST['ifname']) > 16) {
+			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
 		}
-	}
 
-	/* Is the description already used as an alias name? */
-	if (is_array($config['aliases']['alias'])) {
-		foreach ($config['aliases']['alias'] as $alias) {
-			if ($alias['name'] == $_POST['ifname']) {
-				$input_errors[] = gettext("An alias with this name already exists.");
+		if (preg_match("/([^a-zA-Z0-9-_])+/", $_POST['ifname'])) {
+			$input_errors[] = $ifname_allowed_chars_text . " " . gettext("Please choose another group name.");
+		}
+
+		if (preg_match("/[0-9]$/", $_POST['ifname'])) {
+			$input_errors[] = $ifname_no_digit_text;
+		}
+
+		/*
+		 * Packages (e.g. tinc) creates interface groups, reserve this
+		 * namespace pkg- for them
+		 */
+		if (substr($_POST['ifname'], 0, 4) == 'pkg-') {
+			$input_errors[] = gettext("Group name cannot start with pkg-");
+		}
+
+		foreach ($interface_list_disabled as $gif => $gdescr) {
+			if ((strcasecmp($gdescr, $_POST['ifname']) == 0) || (strcasecmp($gif, $_POST['ifname']) == 0)) {
+				$input_errors[] = "The specified group name is already used by an interface. Please choose another name.";
+			}
+		}
+
+		/* Is the description already used as an alias name? */
+		if (is_array($config['aliases']['alias'])) {
+			foreach ($config['aliases']['alias'] as $alias) {
+				if ($alias['name'] == $_POST['ifname']) {
+					$input_errors[] = gettext("An alias with this name already exists.");
+				}
 			}
 		}
 	}
@@ -206,7 +213,7 @@ $section = new Form_Section('Interface Group Configuration');
 
 $section->addInput(new Form_Input(
 	'ifname',
-	'Group Name',
+	'*Group Name',
 	'text',
 	$pconfig['ifname'],
 	['placeholder' => 'Group Name', 'maxlength' => "16"]

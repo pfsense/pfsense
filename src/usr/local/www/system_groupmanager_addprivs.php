@@ -180,7 +180,7 @@ $section = new Form_Section('Add Privileges for '. $a_group['name']);
 
 $section->addInput(new Form_Select(
 	'sysprivs',
-	'Assigned privileges',
+	'*Assigned privileges',
 	$a_group['priv'],
 	build_priv_list(),
 	true

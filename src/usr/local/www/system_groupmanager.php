@@ -405,7 +405,7 @@ $section = new Form_Section('Group Properties');
 
 $section->addInput($input = new Form_Input(
 	'groupname',
-	'Group name',
+	'*Group name',
 	'text',
 	$pconfig['name']
 ));
@@ -415,14 +415,14 @@ if ($pconfig['gtype'] == "system") {
 
 	$section->addInput(new Form_Input(
 		'gtype',
-		'Scope',
+		'*Scope',
 		'text',
 		$pconfig['gtype']
 	))->setReadonly();
 } else {
 	$section->addInput(new Form_Select(
 		'gtype',
-		'Scope',
+		'*Scope',
 		$pconfig['gtype'],
 		["local" => gettext("Local"), "remote" => gettext("Remote")]
 	));

@@ -515,14 +515,14 @@ $section = new Form_Section('Server Settings');
 
 $section->addInput($input = new Form_Input(
 	'name',
-	'Descriptive name',
+	'*Descriptive name',
 	'text',
 	$pconfig['name']
 ));
 
 $section->addInput($input = new Form_Select(
 	'type',
-	'Type',
+	'*Type',
 	$pconfig['type'],
 	$auth_server_types
 ))->toggles();
@@ -538,7 +538,7 @@ if (!isset($pconfig['type']) || $pconfig['type'] == 'ldap')
 
 $section->addInput(new Form_Input(
 	'ldap_host',
-	'Hostname or IP address',
+	'*Hostname or IP address',
 	'text',
 	$pconfig['ldap_host']
 ))->setHelp('NOTE: When using SSL or STARTTLS, this hostname MUST match the Common Name '.
@@ -546,14 +546,14 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'ldap_port',
-	'Port value',
+	'*Port value',
 	'number',
 	$pconfig['ldap_port']
 ));
 
 $section->addInput(new Form_Select(
 	'ldap_urltype',
-	'Transport',
+	'*Transport',
 	$pconfig['ldap_urltype'],
 	array_combine(array_keys($ldap_urltypes), array_keys($ldap_urltypes))
 ));
@@ -583,7 +583,7 @@ else
 
 $section->addInput(new Form_Select(
 	'ldap_protver',
-	'Protocol version',
+	'*Protocol version',
 	$pconfig['ldap_protver'],
 	array_combine($ldap_protvers, $ldap_protvers)
 ));
@@ -600,7 +600,7 @@ $group = new Form_Group('Search scope');
 
 $SSF = new Form_Select(
 	'ldap_scope',
-	'Level',
+	'*Level',
 	$pconfig['ldap_scope'],
 	$ldap_scopes
 );
@@ -621,7 +621,7 @@ $section->addInput(new Form_StaticText(
 $group = new Form_Group('Authentication containers');
 $group->add(new Form_Input(
 	'ldapauthcontainers',
-	'Containers',
+	'*Containers',
 	'text',
 	$pconfig['ldap_authcn']
 ))->setHelp('Note: Semi-Colon separated. This will be prepended to the search '.
@@ -663,7 +663,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['ldap_anon']
 ));
 
-$group = new Form_Group('Bind credentials');
+$group = new Form_Group('*Bind credentials');
 $group->addClass('ldapanon');
 
 $group->add(new Form_Input(
@@ -698,21 +698,21 @@ if (!isset($id)) {
 
 $section->addInput(new Form_Input(
 	'ldap_attr_user',
-	'User naming attribute',
+	'*User naming attribute',
 	'text',
 	$pconfig['ldap_attr_user']
 ));
 
 $section->addInput(new Form_Input(
 	'ldap_attr_group',
-	'Group naming attribute',
+	'*Group naming attribute',
 	'text',
 	$pconfig['ldap_attr_group']
 ));
 
 $section->addInput(new Form_Input(
 	'ldap_attr_member',
-	'Group member attribute',
+	'*Group member attribute',
 	'text',
 	$pconfig['ldap_attr_member']
 ));
@@ -758,21 +758,21 @@ $section->addClass('toggle-radius collapse');
 
 $section->addInput(new Form_Input(
 	'radius_host',
-	'Hostname or IP address',
+	'*Hostname or IP address',
 	'text',
 	$pconfig['radius_host']
 ));
 
 $section->addInput(new Form_Input(
 	'radius_secret',
-	'Shared Secret',
+	'*Shared Secret',
 	'password',
 	$pconfig['radius_secret']
 ));
 
 $section->addInput(new Form_Select(
 	'radius_srvcs',
-	'Services offered',
+	'*Services offered',
 	$pconfig['radius_srvcs'],
 	$radius_srvcs
 ));
@@ -919,6 +919,19 @@ events.push(function() {
 			$('#ldap_port').val('389');
 	}
 
+	function set_required_port_fields() {
+		if (document.getElementById("radius_srvcs").value == 'auth') {
+			setRequired('radius_auth_port', true);
+			setRequired('radius_acct_port', false);
+		} else if (document.getElementById("radius_srvcs").value == 'acct') {
+			setRequired('radius_auth_port', false);
+			setRequired('radius_acct_port', true);
+		} else { // both
+			setRequired('radius_auth_port', true);
+			setRequired('radius_acct_port', true);
+		}
+	}
+
 	// Hides all elements of the specified class. This will usually be a section
 	function hideClass(s_class, hide) {
 		if (hide)
@@ -953,6 +966,7 @@ events.push(function() {
 
 	hideClass('ldapanon', $('#ldap_anon').prop('checked'));
 	hideClass('extended', !$('#ldap_extended_enabled').prop('checked'));
+	set_required_port_fields();
 
 	if ($('#ldap_port').val() == "")
 		set_ldap_port();
@@ -992,6 +1006,10 @@ events.push(function() {
 
 	$('#ldap_extended_enabled').click(function () {
 		hideClass('extended', !this.checked);
+	});
+
+	$('#radius_srvcs').on('change', function() {
+		set_required_port_fields();
 	});
 
 });

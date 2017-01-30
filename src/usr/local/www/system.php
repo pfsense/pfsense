@@ -460,7 +460,7 @@ $form = new Form;
 $section = new Form_Section('System');
 $section->addInput(new Form_Input(
 	'hostname',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$pconfig['hostname'],
 	['placeholder' => 'pfSense']
@@ -468,7 +468,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain',
+	'*Domain',
 	'text',
 	$pconfig['domain'],
 	['placeholder' => 'mycorp.com, home, office, private, etc.']
@@ -576,7 +576,7 @@ $section = new Form_Section('Localization');
 
 $section->addInput(new Form_Select(
 	'timezone',
-	'Timezone',
+	'*Timezone',
 	$pconfig['timezone'],
 	array_combine($timezonelist, $timezonedesc)
 ))->setHelp('Select the timezone or location within the timezone to be used by this system. '.
@@ -592,7 +592,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'language',
-	'Language',
+	'*Language',
 	$pconfig['language'],
 	get_locale_list()
 ))->setHelp('Choose a language for the webConfigurator');

@@ -173,7 +173,7 @@ $section = new Form_Section('User Privileges');
 
 $section->addInput(new Form_Select(
 	'sysprivs',
-	'Assigned privileges',
+	'*Assigned privileges',
 	null,
 	build_priv_list(),
 	true

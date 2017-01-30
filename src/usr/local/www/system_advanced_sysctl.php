@@ -233,14 +233,14 @@ if ($act != "edit"): ?>
 
 	$section->addInput(new Form_Input(
 		'tunable',
-		'Tunable',
+		'*Tunable',
 		'text',
 		$pconfig['tunable']
 	))->setWidth(4);
 
 	$section->addInput(new Form_Input(
 		'value',
-		'Value',
+		'*Value',
 		'text',
 		$pconfig['value']
 	))->setWidth(4);

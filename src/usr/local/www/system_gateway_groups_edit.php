@@ -237,7 +237,7 @@ $section = new Form_Section('Edit Gateway Group Entry');
 
 $section->addInput(new Form_Input(
 	'name',
-	'Group Name',
+	'*Group Name',
 	'text',
 	$pconfig['name']
 ));
@@ -245,14 +245,14 @@ $section->addInput(new Form_Input(
 $row = 0;
 $numrows = count($a_gateways) - 1;
 
-$group = new Form_Group('Gateway Priority');
+$group = new Form_Group('*Gateway Priority');
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setReadonly();
 $group->add(new Form_StaticText('', ''))->setWidth(3)->setReadonly();
 $section->add($group);
 
-// Determine the protocol familily this group pertains to. We loop through every item
+// Determine the protocol family this group pertains to. We loop through every item
 // just in case any have been removed and so have no family (orphans?)
 
 if (is_array($pconfig['item'])) {
@@ -354,7 +354,7 @@ $section->addInput(new Form_StaticText(
 
 $section->addInput(new Form_Select(
 	'trigger',
-	'Trigger Level',
+	'*Trigger Level',
 	$pconfig['trigger'],
 	array(
 		'0' => gettext('Member down'),

@@ -606,7 +606,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 	if (!isset($id)) {
 		$section->addInput(new Form_Select(
 			'method',
-			'Method',
+			'*Method',
 			$pconfig['method'],
 			$cert_methods
 		))->toggles();
@@ -614,7 +614,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		($a_user && empty($pconfig['descr'])) ? $a_user[$userid]['name'] : $pconfig['descr']
 	))->addClass('toggle-existing');
@@ -625,13 +625,13 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Textarea(
 		'cert',
-		'Certificate data',
+		'*Certificate data',
 		$pconfig['cert']
 	))->setHelp('Paste a certificate in X.509 PEM format here.');
 
 	$section->addInput(new Form_Textarea(
 		'key',
-		'Private key data',
+		'*Private key data',
 		$pconfig['key']
 	))->setHelp('Paste a private key in X.509 PEM format here.');
 
@@ -641,7 +641,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	if (!$internal_ca_count) {
 		$section->addInput(new Form_StaticText(
-			'Certificate authority',
+			'*Certificate authority',
 			gettext('No internal Certificate Authorities have been defined. ').
 			gettext('An internal CA must be defined in order to create an internal certificate. ').
 			'<a href="system_camanager.php?act=new&amp;method=internal"> '. gettext("Create") .'</a>'.
@@ -659,7 +659,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 		$section->addInput(new Form_Select(
 			'caref',
-			'Certificate authority',
+			'*Certificate authority',
 			$pconfig['caref'],
 			$allCas
 		));
@@ -667,14 +667,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'keylen',
-		'Key length',
+		'*Key length',
 		$pconfig['keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
 
 	$section->addInput(new Form_Select(
 		'digest_alg',
-		'Digest Algorithm',
+		'*Digest Algorithm',
 		$pconfig['digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
@@ -682,7 +682,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'type',
-		'Certificate Type',
+		'*Certificate Type',
 		$pconfig['type'],
 		$cert_types
 	))->setHelp('Type of certificate to generate. Used for placing '.
@@ -690,21 +690,21 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'lifetime',
-		'Lifetime (days)',
+		'*Lifetime (days)',
 		'number',
 		$pconfig['lifetime']
 	));
 
 	$section->addInput(new Form_Select(
 		'dn_country',
-		'Country Code',
+		'*Country Code',
 		$pconfig['dn_country'],
 		$dn_cc
 	));
 
 	$section->addInput(new Form_Input(
 		'dn_state',
-		'State or Province',
+		'*State or Province',
 		'text',
 		$pconfig['dn_state'],
 		['placeholder' => 'e.g. Texas']
@@ -712,7 +712,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_city',
-		'City',
+		'*City',
 		'text',
 		$pconfig['dn_city'],
 		['placeholder' => 'e.g. Austin']
@@ -720,7 +720,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_organization',
-		'Organization',
+		'*Organization',
 		'text',
 		$pconfig['dn_organization'],
 		['placeholder' => 'e.g. My Company Inc']
@@ -736,7 +736,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_email',
-		'Email Address',
+		'*Email Address',
 		'text',
 		$pconfig['dn_email'],
 		['placeholder' => 'e.g. admin@mycompany.com']
@@ -744,7 +744,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'dn_commonname',
-		'Common Name',
+		'*Common Name',
 		'text',
 		$pconfig['dn_commonname'],
 		['placeholder' => 'e.g. www.example.com']
@@ -809,14 +809,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'csr_keylen',
-		'Key length',
+		'*Key length',
 		$pconfig['csr_keylen'],
 		array_combine($cert_keylens, $cert_keylens)
 	));
 
 	$section->addInput(new Form_Select(
 		'csr_digest_alg',
-		'Digest Algorithm',
+		'*Digest Algorithm',
 		$pconfig['csr_digest_alg'],
 		array_combine($openssl_digest_algs, $openssl_digest_algs)
 	))->setHelp('NOTE: It is recommended to use an algorithm stronger than '.
@@ -824,14 +824,14 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'csr_dn_country',
-		'Country Code',
+		'*Country Code',
 		$pconfig['csr_dn_country'],
 		$dn_cc
 	));
 
 	$section->addInput(new Form_Input(
 		'csr_dn_state',
-		'State or Province',
+		'*State or Province',
 		'text',
 		$pconfig['csr_dn_state'],
 		['placeholder' => 'e.g. Texas']
@@ -839,7 +839,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_city',
-		'City',
+		'*City',
 		'text',
 		$pconfig['csr_dn_city'],
 		['placeholder' => 'e.g. Austin']
@@ -847,7 +847,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_organization',
-		'Organization',
+		'*Organization',
 		'text',
 		$pconfig['csr_dn_organization'],
 		['placeholder' => 'e.g. My Company Inc']
@@ -863,7 +863,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_email',
-		'Email Address',
+		'*Email Address',
 		'text',
 		$pconfig['csr_dn_email'],
 		['placeholder' => 'e.g. admin@mycompany.com']
@@ -871,7 +871,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'csr_dn_commonname',
-		'Common Name',
+		'*Common Name',
 		'text',
 		$pconfig['csr_dn_commonname'],
 		['placeholder' => 'e.g. internal-ca']
@@ -907,7 +907,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Select(
 		'certref',
-		'Existing Certificates',
+		'*Existing Certificates',
 		$pconfig['certref'],
 		$existCerts
 	));
@@ -923,7 +923,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
@@ -938,7 +938,7 @@ if ($act == "new" || (($_POST['save'] == gettext("Save")) && $input_errors)) {
 
 	$section->addInput(new Form_Textarea(
 		'cert',
-		'Final certificate data',
+		'*Final certificate data',
 		$pconfig['cert']
 	))->setWidth(7)
 	  ->setHelp('Paste the certificate received from the certificate authority here.');

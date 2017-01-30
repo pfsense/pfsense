@@ -337,70 +337,70 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $local_only = false, $installed_only = false) {
+function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $installed_pkgs_only = false) {
 
 	global $g, $input_errors;
 
-	$out = '';
-	$err = '';
+	$out = $err = $extra_param = '';
 	$rc = 0;
 
 	unset($pkg_filter);
+
 	if (is_array($pkgs)) {
 		$pkg_filter = $pkgs;
-		$pkgs = 'all';
+		$pkgs = $g['pkg_prefix'] . '*';
+	} elseif ($pkgs == 'all') {
+		$pkgs = $g['pkg_prefix'] . '*';
 	}
 
-	if ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'] . '*'; // Allows same prefix to work with both pkg search + pkg info
-	}
-
+	
 	if (!function_exists('is_subsystem_dirty')) {
 		require_once("util.inc");
 	}
 
 	/* Do not run remote operations if pkg has a lock */
 	if (is_subsystem_dirty('pkg')) {
-		$local_only = true;
+		$remote_repo_usage_disabled = true;
 		$lock = false;
 	} else {
 		$lock = true;
-	}
-
-	$extra_param = "";
-	if ($local_only) {
-		$extra_param = "-U ";
 	}
 
 	if ($lock) {
 		mark_subsystem_dirty('pkg');
 	}
 
-	if (!$installed_only) {
-		// repo catalog search (either remote or local_only)
+	if ($remote_repo_usage_disabled) {
+		$extra_param = "-U ";
+	}
+
+	if (!$installed_pkgs_only) {
 		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
 	}
-	if ($installed_only || ($local_only && $rc != 0)) {
-		/* use pkg info if (1) installed pkg search or (2) local catalog copy search requested + failed.
+	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled)) && is_package_installed($pkgs)) {
+		/* Fall back on pkg info to return locally installed matching pkgs instead, if 
 		 *
-		 * The local repo catalog copy may be cleared if a previous call to pkg search couldn't get the
-		 * remote repo catalog.
+		 *   (1) only installed pkgs needed, or
+		 *       we tried to check the local catalog copy (implying that we would have accepted incomplete/outdated pkg info)
+		 *       but it didn't have any contents, or for other reasons returned an error. 
+		 *   AND
+		 *   (2) at least some pkgs matching <pattern> are installed
 		 *
-		 * If the calling code would have accepted local copy info (which isn't assumed up to date) then it
-		 * makes sense to fall back on pkg info to at least return the known info about installed pkgs (pkg
-		 * info should still work), instead of failing and returning no info at all. For example, this
-		 * enables offline view + management of installed pkgs.
-		 */
-
-		// pkg info errors if none match, unlike pkg search, so test it will work beforehand  
-		// is_package_installed() is a wrapper for pkg info -e <pattern> which is what we need here.  
-
-		if (is_package_installed($pkgs)) {  
-			// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
-			$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);  
- 		} // else we already have empty values for $out etc which are correct if none matched  
-
+		 * Following an unsuccessful attempt to access a remote repo catalog, the local copy is wiped clear. Thereafter any
+		 * "pkg search" will return an error until online+updated again. If the calling code would have accepted local copy info
+		 * (which could be incomplete/out of date), then it makes sense to fall back on pkg info to at least return the known
+		 * info about installed pkgs (pkg info should still work), instead of failing and returning no info at all. 
+		 * For example, this at least enables offline view + management of installed pkgs in GUI/console.
+		 *
+		 * We skip this step if no matching pkgs are installed, because then pkg info would return a "no matching pkgs"
+		 * RC code, even though this wouldn't be considered an "error" (and $out+$err would be correct empty strings if none match).
+		 * Note that is_package_installed() is a wrapper for pkg info -e <pattern> which is what we need here.
+		*/
+		
+		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
+		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);  
 	}
+
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}

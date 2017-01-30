@@ -351,7 +351,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$section->addInput(new Form_Select(
 			'method',
-			'Method',
+			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
@@ -360,14 +360,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Select(
 		'caref',
-		'Certificate Authority',
+		'*Certificate Authority',
 		$pconfig['caref'],
 		build_ca_list()
 	));
@@ -379,7 +379,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 		))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
@@ -425,14 +425,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 

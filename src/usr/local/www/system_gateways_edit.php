@@ -598,14 +598,14 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['friendlyiface'],
 	get_configured_interface_with_descr(false, true)
 ))->setHelp('Choose which interface this gateway applies to.');
 
 $section->addInput(new Form_Select(
 	'ipprotocol',
-	'Address Family',
+	'*Address Family',
 	$pconfig['ipprotocol'],
 	array(
 		"inet" => "IPv4",
@@ -615,7 +615,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ))->setHelp('Gateway name');

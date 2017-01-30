@@ -708,7 +708,7 @@ if ($act == "new" || $act == "edit" || $input_errors):
 
 	$section->addInput($input = new Form_Input(
 		'usernamefld',
-		'Username',
+		'*Username',
 		'text',
 		$pconfig['usernamefld']
 	));
@@ -724,7 +724,13 @@ if ($act == "new" || $act == "edit" || $input_errors):
 		$pconfig['usernamefld']
 	));
 
-	$group = new Form_Group('Password');
+	if ($act == "edit") {
+		$pwd_required = "";
+	} else {
+		$pwd_required = "*";
+	}
+
+	$group = new Form_Group($pwd_required . 'Password');
 	$group->add(new Form_Input(
 		'passwordfld1',
 		'Password',

@@ -245,7 +245,7 @@ $section = new Form_Section('Edit Route Entry');
 
 $section->addInput(new Form_IpAddress(
 	'network',
-	'Destination network',
+	'*Destination network',
 	$pconfig['network'],
 	'ALIASV4V6'
 ))->addMask('network_subnet', $pconfig['network_subnet'])->setHelp('Destination network for this static route');
@@ -256,7 +256,7 @@ $allGateways = array_combine(
 );
 $section->addInput(new Form_Select(
 	'gateway',
-	'Gateway',
+	'*Gateway',
 	$pconfig['gateway'],
 	$allGateways
 ))->setHelp('Choose which gateway this route applies to or <a href="'.

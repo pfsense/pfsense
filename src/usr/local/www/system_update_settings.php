@@ -154,7 +154,7 @@ $section = new Form_Section('Firmware Branch');
 
 $section->addInput(new Form_Select(
 	fwbranch,
-	'Branch',
+	'*Branch',
 	get_repo_name($config['system']['pkg_repo_conf_path']),
 	build_repo_list()
 ))->setHelp('Please select the stable, or the development branch from which to update the system firmware. ' . ' <br />' .

@@ -327,7 +327,7 @@ $iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interfaces',
+	'*Interfaces',
 	$iflist['selected'],
 	$iflist['options'],
 	true

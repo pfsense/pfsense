@@ -124,14 +124,14 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Input(
 	'name',
-	'Name',
+	'*Name',
 	'text',
 	$pconfig['name']
 ))->setHelp('The name of the service may only consist of the characters "a-z, A-Z, 0-9 and _".');
 
 $section->addInput(new Form_Input(
 	'url',
-	'URL',
+	'*URL',
 	'text',
 	$pconfig['url']
 ));

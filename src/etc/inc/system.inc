@@ -2218,7 +2218,7 @@ function system_setup_sysctl() {
 	$platform = system_identify_specific_platform();
 	if ($platform['name'] == "uFW") {
 		set_sysctl(array(
-			"hw.intr_storm_threshold" => "40000",
+			"hw.intr_storm_threshold" => "0",
 			"kern.random.harvest.mask" => "351",
 		));
 	}

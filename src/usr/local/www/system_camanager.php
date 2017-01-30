@@ -482,7 +482,7 @@ $section = new Form_Section('Create / Edit CA');
 
 $section->addInput(new Form_Input(
 	'descr',
-	'Descriptive name',
+	'*Descriptive name',
 	'text',
 	$pconfig['descr']
 ));
@@ -490,7 +490,7 @@ $section->addInput(new Form_Input(
 if (!isset($id) || $act == "edit") {
 	$section->addInput(new Form_Select(
 		'method',
-		'Method',
+		'*Method',
 		$pconfig['method'],
 		$ca_methods
 	))->toggles();
@@ -503,7 +503,7 @@ $section->addClass('toggle-existing collapse');
 
 $section->addInput(new Form_Textarea(
 	'cert',
-	'Certificate data',
+	'*Certificate data',
 	$pconfig['cert']
 ))->setHelp('Paste a certificate in X.509 PEM format here.');
 
@@ -537,7 +537,7 @@ foreach ($a_ca as $ca) {
 	$allCas[ $ca['refid'] ] = $ca['descr'];
 }
 
-$group = new Form_Group('Signing Certificate Authority');
+$group = new Form_Group('*Signing Certificate Authority');
 $group->addClass('toggle-intermediate', 'collapse');
 $group->add(new Form_Select(
 	'caref',
@@ -549,14 +549,14 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'keylen',
-	'Key length (bits)',
+	'*Key length (bits)',
 	$pconfig['keylen'],
 	array_combine($ca_keylens, $ca_keylens)
 ));
 
 $section->addInput(new Form_Select(
 	'digest_alg',
-	'Digest Algorithm',
+	'*Digest Algorithm',
 	$pconfig['digest_alg'],
 	array_combine($openssl_digest_algs, $openssl_digest_algs)
 ))->setHelp('NOTE: It is recommended to use an algorithm stronger than SHA1 '.
@@ -564,21 +564,21 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Input(
 	'lifetime',
-	'Lifetime (days)',
+	'*Lifetime (days)',
 	'number',
 	$pconfig['lifetime']
 ));
 
 $section->addInput(new Form_Select(
 	'dn_country',
-	'Country Code',
+	'*Country Code',
 	$pconfig['dn_country'],
 	$dn_cc
 ));
 
 $section->addInput(new Form_Input(
 	'dn_state',
-	'State or Province',
+	'*State or Province',
 	'text',
 	$pconfig['dn_state'],
 	['placeholder' => 'e.g. Texas']
@@ -586,7 +586,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_city',
-	'City',
+	'*City',
 	'text',
 	$pconfig['dn_city'],
 	['placeholder' => 'e.g. Austin']
@@ -594,7 +594,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_organization',
-	'Organization',
+	'*Organization',
 	'text',
 	$pconfig['dn_organization'],
 	['placeholder' => 'e.g. My Company Inc']
@@ -610,7 +610,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_email',
-	'Email Address',
+	'*Email Address',
 	'email',
 	$pconfig['dn_email'],
 	['placeholder' => 'e.g. admin@mycompany.com']
@@ -618,7 +618,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'dn_commonname',
-	'Common Name',
+	'*Common Name',
 	'text',
 	$pconfig['dn_commonname'],
 	['placeholder' => 'e.g. internal-ca']

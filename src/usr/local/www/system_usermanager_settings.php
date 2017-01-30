@@ -211,7 +211,7 @@ foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
 
 $section->addInput(new Form_Select(
 	'authmode',
-	'Authentication Server',
+	'*Authentication Server',
 	$pconfig['authmode'],
 	$auth_servers
 ));

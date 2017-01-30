@@ -162,14 +162,14 @@ $section = new Form_Section('Edit WOL Entry');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	(link_interface_to_bridge($pconfig['interface']) ? null : $pconfig['interface']),
 	get_configured_interface_with_descr()
 ))->setHelp('Choose which interface this host is connected to.');
 
 $section->addInput(new Form_Input(
 	'mac',
-	'MAC address',
+	'*MAC address',
 	'text',
 	$pconfig['mac']
 ))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));

@@ -236,7 +236,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain',
+	'*Domain',
 	'text',
 	$pconfig['domain']
 ))->setHelp('Domain of the host' . '<br />' .
@@ -244,7 +244,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_IpAddress(
 	'ip',
-	'IP Address',
+	'*IP Address',
 	$pconfig['ip']
 ))->setHelp('IP address of the host' . '<br />' .
 			'e.g.: 192.168.100.100 or fd00:abcd::1');

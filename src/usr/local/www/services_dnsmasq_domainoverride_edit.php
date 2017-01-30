@@ -163,7 +163,7 @@ $section = new Form_Section('Domain Override Options');
 
 $section->addInput(new Form_Input(
 	'domain',
-	'Domain',
+	'*Domain',
 	'text',
 	$pconfig['domain']
 ))->setHelp('Domain to override (NOTE: this does not have to be a valid TLD!)' . '<br />' .
@@ -171,7 +171,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_IpAddress(
 	'ip',
-	'IP Address',
+	'*IP Address',
 	$pconfig['ip']
 ))->setPattern('[a-f0-9:.#!]*')
   ->setHelp('IP address of the authoritative DNS server for this domain' . '<br />' .

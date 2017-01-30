@@ -260,7 +260,7 @@ if ($act == "new" || $act == "edit") {
 
 	$section->addInput(new Form_Select(
 		'aclaction',
-		'Action',
+		'*Action',
 		strtolower($pconfig['aclaction']),
 		array('allow' => gettext('Allow'), 'deny' => gettext('Deny'), 'refuse' => gettext('Refuse'), 'allow snoop' => gettext('Allow Snoop'), 'deny nonlocal' => gettext('Deny Nonlocal'), 'refuse nonlocal' => gettext('Refuse Nonlocal'))
 	))->setHelp($actionHelp);
@@ -280,7 +280,7 @@ if ($act == "new" || $act == "edit") {
 		$cidr = $item['mask'];
 		$description = $item['description'];
 
-		$group = new Form_Group($counter == 0 ? 'Networks':'');
+		$group = new Form_Group($counter == 0 ? '*Networks':'');
 
 		$group->add(new Form_IpAddress(
 			'acl_network'.$counter,

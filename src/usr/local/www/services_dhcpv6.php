@@ -662,7 +662,7 @@ $f2 = new Form_Input(
 
 $f2->setHelp('To');
 
-$group = new Form_Group('Range');
+$group = new Form_Group('*Range');
 
 $group->add($f1);
 $group->add($f2);

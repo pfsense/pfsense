@@ -313,7 +313,7 @@ $activeiflist = build_if_list($pconfig['active_interface']);
 
 $section->addInput(new Form_Select(
 	'active_interface',
-	'Network Interfaces',
+	'*Network Interfaces',
 	$activeiflist['selected'],
 	$activeiflist['options'],
 	true
@@ -324,7 +324,7 @@ $outiflist = build_if_list($pconfig['outgoing_interface']);
 
 $section->addInput(new Form_Select(
 	'outgoing_interface',
-	'Outgoing Network Interfaces',
+	'*Outgoing Network Interfaces',
 	$outiflist['selected'],
 	$outiflist['options'],
 	true
@@ -332,7 +332,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
-	'System Domain Local Zone Type',
+	'*System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
 	unbound_local_zone_types()
 ))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');

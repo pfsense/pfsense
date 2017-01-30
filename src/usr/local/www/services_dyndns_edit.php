@@ -293,7 +293,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'type',
-	'Service Type',
+	'*Service Type',
 	$pconfig['type'],
 	build_type_list()
 ));
@@ -302,19 +302,19 @@ $interfacelist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface to monitor',
+	'*Interface to monitor',
 	$pconfig['interface'],
 	$interfacelist
 ));
 
 $section->addInput(new Form_Select(
 	'requestif',
-	'Interface to send update from',
+	'*Interface to send update from',
 	$pconfig['requestif'],
 	$interfacelist
 ))->setHelp('This is almost always the same as the Interface to Monitor. ');
 
-$group = new Form_Group('Hostname');
+$group = new Form_Group('*Hostname');
 
 $group->add(new Form_Input(
 	'host',

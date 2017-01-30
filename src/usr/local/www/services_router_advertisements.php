@@ -336,14 +336,14 @@ $section = new Form_Section('Advertisements');
 
 $section->addInput(new Form_Select(
 	'ramode',
-	'Router mode',
+	'*Router mode',
 	$pconfig['ramode'],
 	$advertise_modes
 ))->setHelp($ramode_help);
 
 $section->addInput(new Form_Select(
 	'rapriority',
-	'Router priority',
+	'*Router priority',
 	$pconfig['rapriority'],
 	$priority_modes
 ))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');

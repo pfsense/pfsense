@@ -201,33 +201,33 @@ $iflist = build_if_list();
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$iflist
 ));
 
 $section->addInput(new Form_Input(
 	'host',
-	'Hostname',
+	'*Hostname',
 	'text',
 	$pconfig['host']
 ))->setHelp('Fully qualified hostname of the host to be updated.');
 
 $section->addInput(new Form_Input(
 	'ttl',
-	'TTL (seconds)',
+	'*TTL (seconds)',
 	'number',
 	$pconfig['ttl']
 ));
 
 $section->addInput(new Form_Input(
 	'keyname',
-	'Key name',
+	'*Key name',
 	'text',
 	$pconfig['keyname']
 ))->setHelp('This must match the setting on the DNS server.');
 
-$group = new Form_Group('Key Type');
+$group = new Form_Group('*Key Type');
 
 $group->add(new Form_Checkbox(
 	'keytype',
@@ -257,7 +257,7 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'keydata',
-	'Key',
+	'*Key',
 	'text',
 	$pconfig['keydata']
 ))->setHelp('Paste an HMAC-MD5 key here.');
@@ -283,7 +283,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['usepublicip']
 ));
 
-$group = new Form_Group('Record Type');
+$group = new Form_Group('*Record Type');
 
 $group->add(new Form_Checkbox(
 	'recordtype',

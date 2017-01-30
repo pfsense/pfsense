@@ -887,7 +887,7 @@ if ($is_olsr_enabled) {
 	));
 }
 
-$group = new Form_Group('Range');
+$group = new Form_Group('*Range');
 
 $group->add(new Form_IpAddress(
 	'range_from',

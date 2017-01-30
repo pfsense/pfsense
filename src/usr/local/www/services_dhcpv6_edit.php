@@ -214,7 +214,7 @@ $section = new Form_Section('Static DHCPv6 Mapping');
 
 $section->addInput(new Form_Input(
 	'duid',
-	'DUID',
+	'*DUID',
 	'text',
 	$pconfig['duid'],
 	['placeholder' => 'DUID-LLT - ETH -- TIME --- ---- address ---- xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx']

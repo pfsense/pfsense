@@ -152,7 +152,7 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface(s)',
+	'*Interface(s)',
 	$pconfig['interface'],
 	$iflist,
 	true
@@ -170,7 +170,7 @@ $section->addInput(new Form_Checkbox(
 );
 
 function createDestinationServerInputGroup($value = null) {
-	$group = new Form_Group('Destination server');
+	$group = new Form_Group('*Destination server');
 
 	$group->add(new Form_IpAddress(
 		'server',

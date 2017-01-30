@@ -378,7 +378,20 @@ events.push(function() {
 	noMibii = false;
 
 	$('#junk').hide();
+	enableChange();
+	trapenableChange();
 	hostresChange();
+
+	function enableChange() {
+		setRequired('pollport', $('#enable').prop('checked'));
+		setRequired('rocommunity', $('#enable').prop('checked'));
+	}
+
+	function trapenableChange() {
+		setRequired('trapserver', $('#trapenable').prop('checked'));
+		setRequired('trapserverport', $('#trapenable').prop('checked'));
+		setRequired('trapstring', $('#trapenable').prop('checked'));
+	}
 
 	function hostresChange() {
 		if ($('#hostres').prop('checked')) {
@@ -389,10 +402,17 @@ events.push(function() {
 		}
 	}
 
+	$('#enable').change(function() {
+		enableChange();
+	});
+
+	$('#trapenable').change(function() {
+		trapenableChange();
+	});
+
 	$('#hostres').change(function() {
 		hostresChange();
 	});
-
 
 	$('#mibii').change(function() {
 		if (noMibii) {

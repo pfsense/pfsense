@@ -13,3 +13,4 @@ upload.sh
 # PhpStorm
 .idea
 *.php-e
+.zanata-cache

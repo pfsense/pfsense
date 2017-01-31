@@ -47,7 +47,7 @@ trap "rm -f $FILES" 1 2 15 EXIT
        find src -type f -name '*.inc' -or -name '*.class' -or -name '*.php' \
 ) > $FILES
 
-POT=$ROOT/src/usr/local/share/locale/en/LC_MESSAGES/pfSense.pot
+POT=$ROOT/src/usr/local/share/locale/pot/pfSense.pot
 
 ( \
 	cd $ROOT && \

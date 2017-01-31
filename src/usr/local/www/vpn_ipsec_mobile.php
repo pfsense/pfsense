@@ -448,7 +448,7 @@ foreach (auth_get_authserver_list() as $authServer) {
 
 $section->addInput(new Form_Select(
 	'user_source',
-	'User Authentication',
+	'*User Authentication',
 	explode(",", $pconfig['user_source']),
 	$authServers,
 	true
@@ -456,7 +456,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'group_source',
-	'Group Authentication',
+	'*Group Authentication',
 	$pconfig['group_source'],
 	array(
 		'none' => gettext('none'),

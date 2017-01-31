@@ -109,8 +109,8 @@ if ($_POST) {
 			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
 		}
 
-		if (preg_match("/([^a-zA-Z0-9-_])+/", $_POST['ifname'])) {
-			$input_errors[] = gettext("Only letters (A-Z), digits (0-9), '-' and '_' are allowed as the group name.");
+		if (preg_match("/([^a-zA-Z0-9_])+/", $_POST['ifname'])) {
+			$input_errors[] = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed as the group name.");
 		}
 
 		if (preg_match("/[0-9]$/", $_POST['ifname'])) {

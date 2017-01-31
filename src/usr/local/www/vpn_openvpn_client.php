@@ -850,7 +850,7 @@ else:
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
-				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
+				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
 					</td>

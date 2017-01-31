@@ -818,53 +818,6 @@ function merge_config_section($section_name, $new_contents) {
 }
 
 /*
- *  php_check_syntax($code_tocheck, $errormessage): checks $code_to_check for errors
- */
-if (!function_exists('php_check_syntax')) {
-	global $g;
-	function php_check_syntax($code_to_check, &$errormessage) {
-		return false;
-		$fout = fopen("{$g['tmp_path']}/codetocheck.php", "w");
-		$code = $_POST['content'];
-		$code = str_replace("<?php", "", $code);
-		$code = str_replace("?>", "", $code);
-		fwrite($fout, "<?php\n\n");
-		fwrite($fout, $code_to_check);
-		fwrite($fout, "\n\n?>\n");
-		fclose($fout);
-		$command = "/usr/local/bin/php-cgi -l {$g['tmp_path']}/codetocheck.php";
-		$output = exec_command($command);
-		if (stristr($output, "Errors parsing") == false) {
-			echo "false\n";
-			$errormessage = '';
-			return(false);
-		} else {
-			$errormessage = $output;
-			return(true);
-		}
-	}
-}
-
-/*
- *  php_check_filename_syntax($filename, $errormessage): checks the file $filename for errors
- */
-if (!function_exists('php_check_syntax')) {
-	function php_check_syntax($code_to_check, &$errormessage) {
-		return false;
-		$command = "/usr/local/bin/php-cgi -l " . escapeshellarg($code_to_check);
-		$output = exec_command($command);
-		if (stristr($output, "Errors parsing") == false) {
-			echo "false\n";
-			$errormessage = '';
-			return(false);
-		} else {
-			$errormessage = $output;
-			return(true);
-		}
-	}
-}
-
-/*
  * rmdir_recursive($path, $follow_links=false)
  * Recursively remove a directory tree (rm -rf path)
  * This is for directories _only_

@@ -364,7 +364,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'common_name',
-		'Common name',
+		'*Common name',
 		'text',
 		$pconfig['common_name']
 	))->setHelp('Enter the client\'s X.509 common name.');

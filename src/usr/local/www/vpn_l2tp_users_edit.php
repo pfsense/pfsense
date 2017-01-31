@@ -93,6 +93,9 @@ if (isset($_POST['id']) && is_numericint($_POST['id'])) {
 if (isset($id) && $a_secret[$id]) {
 	$pconfig['usernamefld'] = $a_secret[$id]['name'];
 	$pconfig['ip'] = $a_secret[$id]['ip'];
+	$pwd_required = "";
+} else {
+	$pwd_required = "*";
 }
 
 if ($_POST) {
@@ -178,14 +181,14 @@ $section = new Form_Section("User");
 
 $section->addInput(new Form_Input(
 	'usernamefld',
-	'Username',
+	'*Username',
 	'text',
 	$pconfig['usernamefld']
 ));
 
 $pwd = new Form_Input(
 	'passwordfld',
-	'Password',
+	$pwd_required . 'Password',
 	'text',
 	$pconfig['passwordfld']
 );

@@ -244,14 +244,14 @@ $section->addClass('toggle-l2tp-enable');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	$iflist
 ));
 
 $section->addInput(new Form_Input(
 	'localip',
-	'Server address',
+	'*Server address',
 	'text',
 	$pconfig['localip']
 ))->setHelp('Enter the IP address the L2TP server should give to clients for use as their "gateway". ' . '<br />' .
@@ -260,14 +260,14 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_IpAddress(
 	'remoteip',
-	'Remote address range',
+	'*Remote address range',
 	$pconfig['remoteip']
 ))->addMask(l2tp_subnet, $pconfig['l2tp_subnet'])
   ->setHelp('Specify the starting address for the client IP address subnet.');
 
 $section->addInput(new Form_Select(
 	'n_l2tp_units',
-	'Number of L2TP users',
+	'*Number of L2TP users',
 	$pconfig['n_l2tp_units'],
 	array_combine(range(1, 255, 1), range(1, 255, 1))
 ));
@@ -281,7 +281,7 @@ $section->addPassword(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'paporchap',
-	'Authentication type',
+	'*Authentication type',
 	$pconfig['paporchap'],
 	array(
 		'chap' => 'CHAP',
@@ -325,13 +325,13 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_IpAddress(
 	'radiusserver',
-	'Server',
+	'*Server',
 	$pconfig['radiusserver']
 ))->setHelp('Enter the IP address of the RADIUS server.');
 
 $section->addPassword(new Form_Input(
 	'radiussecret',
-	'Secret',
+	'*Secret',
 	'password',
 	$pconfig['radiussecret']
 ))->setHelp('Enter the shared secret that will be used to authenticate to the RADIUS server.');

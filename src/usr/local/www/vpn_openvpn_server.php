@@ -650,7 +650,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'mode',
-		'Server mode',
+		'*Server mode',
 		$pconfig['mode'],
 		openvpn_build_mode_list()
 		));
@@ -671,7 +671,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'authmode',
-		'Backend for authentication',
+		'*Backend for authentication',
 		$authmodes,
 		$options,
 		true
@@ -679,28 +679,28 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'protocol',
-		'Protocol',
+		'*Protocol',
 		$pconfig['protocol'],
 		array_combine($openvpn_prots, $openvpn_prots)
 		));
 
 	$section->addInput(new Form_Select(
 		'dev_mode',
-		'Device mode',
+		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		array_combine($openvpn_dev_mode, $openvpn_dev_mode)
 		));
 
 	$section->addInput(new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
 		openvpn_build_if_list()
 		));
 
 	$section->addInput(new Form_Input(
 		'local_port',
-		'Local port',
+		'*Local port',
 		'number',
 		$pconfig['local_port'],
 		['min' => '0']
@@ -735,8 +735,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Textarea(
 		'tls',
-		'Key',
-		$pconfig['tls']
+		'*Key',
 	))->setHelp('Paste the shared key here');
 
 	if (count($a_ca)) {
@@ -748,13 +747,13 @@ if ($act=="new" || $act=="edit"):
 
 		$section->addInput(new Form_Select(
 			'caref',
-			'Peer Certificate Authority',
+			'*Peer Certificate Authority',
 			$pconfig['caref'],
 			$list
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
-			'Peer Certificate Authority',
+			'*Peer Certificate Authority',
 			sprintf('No Certificate Authorities defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
@@ -793,14 +792,14 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'certref',
-		'Server certificate',
+		'*Server certificate',
 		$pconfig['certref'],
 		$cl['server'] + $cl['non-server']
 		))->setHelp($certhelp);
 
 	$section->addInput(new Form_Select(
 		'dh_length',
-		'DH Parameter length (bits)',
+		'*DH Parameter length (bits)',
 		$pconfig['dh_length'],
 		array_combine($openvpn_dh_lengths, $openvpn_dh_lengths)
 		))->setHelp(count($a_cert) ? '':sprintf('No Certificates defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>'));
@@ -816,20 +815,20 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Textarea(
 		'shared_key',
-		'Shared Key',
+		'*Shared Key',
 		$pconfig['shared_key']
 	))->setHelp('Paste the shared key here');
 
 	$section->addInput(new Form_Select(
 		'crypto',
-		'Encryption Algorithm',
+		'*Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
 		));
 
 	$section->addInput(new Form_Select(
 		'digest',
-		'Auth digest algorithm',
+		'*Auth digest algorithm',
 		$pconfig['digest'],
 		openvpn_get_digestlist()
 		))->setHelp('Leave this set to SHA1 unless all clients are set to match. SHA1 is the default for OpenVPN. ');
@@ -843,7 +842,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'cert_depth',
-		'Certificate Depth',
+		'*Certificate Depth',
 		$pconfig['cert_depth'],
 		["" => gettext("Do Not Check")] + $openvpn_cert_depths
 		))->setHelp('When a certificate-based client logs in, do not accept certificates below this depth. ' .
@@ -1519,6 +1518,7 @@ events.push(function() {
 				hideInput('serverbridge_interface', true);
 				hideInput('serverbridge_dhcp_start', true);
 				hideInput('serverbridge_dhcp_end', true);
+				setRequired('tunnel_network', true);
 				if (sharedkey) {
 					hideInput('local_network', true);
 					hideInput('local_networkv6', true);
@@ -1535,6 +1535,7 @@ events.push(function() {
 			case "tap":
 				hideCheckbox('no_tun_ipv6', true);
 				hideInput('tunnel_network', false);
+				setRequired('tunnel_network', false);
 
 				if (!p2p) {
 					hideCheckbox('serverbridge_dhcp', false);

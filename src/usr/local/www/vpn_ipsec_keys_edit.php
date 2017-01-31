@@ -165,21 +165,21 @@ $section = new Form_Section('Edit Pre-Shared-Secret');
 
 $section->addInput(new Form_Input(
 	'ident',
-	'Identifier',
+	'*Identifier',
 	'text',
 	$pconfig['ident']
 ))->setHelp('This can be either an IP address, fully qualified domain name or an e-mail address.');
 
 $section->addInput(new Form_Select(
 	'type',
-	'Secret type',
+	'*Secret type',
 	$pconfig['type'],
 	$ipsec_preshared_key_type
 ))->setWidth(2);
 
 $section->addInput(new Form_Input(
 	'psk',
-	'Pre-Shared Key',
+	'*Pre-Shared Key',
 	'text',
 	$pconfig['psk']
 ));

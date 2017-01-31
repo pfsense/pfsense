@@ -540,12 +540,12 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'mode',
-	'Mode',
+	'*Mode',
 	$pconfig['mode'],
 	$p2_modes
 ));
 
-$group = new Form_Group('Local Network');
+$group = new Form_Group('*Local Network');
 $group->addClass('opt_localid');
 
 $subnetarray = get_configured_interface_with_descr();
@@ -596,7 +596,7 @@ $group->setHelp('If NAT/BINAT is required on this network specify the address to
 $section->add($group);
 
 if (!isset($pconfig['mobile'])) {
-	$group = new Form_Group('Remote Network');
+	$group = new Form_Group('*Remote Network');
 	$group->addClass('opt_remoteid');
 
 	$group->add(new Form_Select(
@@ -628,7 +628,7 @@ $section = new Form_Section('Phase 2 Proposal (SA/Key Exchange)');
 
 $section->addInput(new Form_Select(
 	'proto',
-	'Protocol',
+	'*Protocol',
 	$pconfig['proto'],
 	$p2_protos
 ))->setHelp('ESP is encryption, AH is authentication only.');
@@ -637,7 +637,7 @@ $i = 0;
 $rows = count($p2_ealgos) - 1;
 
 foreach ($p2_ealgos as $algo => $algodata) {
-	$group = new Form_Group($i == 0 ? 'Encryption Algorithms':'');
+	$group = new Form_Group($i == 0 ? '*Encryption Algorithms':'');
 	$group->addClass('encalg');
 
 	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.
@@ -675,7 +675,7 @@ foreach ($p2_ealgos as $algo => $algodata) {
 	$section->add($group);
 }
 
-$group = new Form_Group('Hash Algorithms');
+$group = new Form_Group('*Hash Algorithms');
 
 foreach ($p2_halgos as $algo => $algoname) {
 	// Note: ID attribute of each element created is to be unique.  Not being used, suppressing it.

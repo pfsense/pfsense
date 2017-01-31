@@ -37,3 +37,4 @@
 ./usr/local/share/%%PRODUCT_NAME%%/base.txz
 ./usr/local/share/%%PRODUCT_NAME%%/pkg
 ./var/db/pkg
+./zanata.xml

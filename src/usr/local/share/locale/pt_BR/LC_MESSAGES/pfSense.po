@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-01-31 07:35-0500\n"
-"Last-Translator: Renato Pereira de Aquino <renato.aquino@gmail.com>\n"
+"PO-Revision-Date: 2017-01-31 08:38-0500\n"
+"Last-Translator: Silvio Ap Silva <alvolivre@live.com>\n"
 "Language-Team: Powered By: TrustUX Network <www.trustux.com>\n"
 "Language: pt-BR\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
@@ -824,22 +824,22 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:877
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "O hostname foi bloqueado por abuso nas atualizações."
 
 #: src/etc/inc/dyndns.class:882
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "Erro de DNS encontrado. Atualização parada por 30 minutos."
 
 #: src/etc/inc/dyndns.class:891 src/etc/inc/dyndns.class:911
 #: src/etc/inc/dyndns.class:928 src/etc/inc/dyndns.class:945
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "Não é um FQDN!"
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
-msgstr ""
+msgstr "Sem host"
 
 #: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
@@ -848,7 +848,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
 #: src/etc/inc/dyndns.class:1456
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "Sem mudanças no endereço IP"
 
 #: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
 #: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
@@ -856,19 +856,19 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
 #: src/etc/inc/dyndns.class:1462
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Autorização de usuario falhou"
 
 #: src/etc/inc/dyndns.class:967
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "Endereço IP é o mesmo, atualização não aplicada."
 
 #: src/etc/inc/dyndns.class:971
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "Nome do hosts DNS atualizado com sucesso."
 
 #: src/etc/inc/dyndns.class:975
 msgid "Hostname supplied does not exist."
-msgstr ""
+msgstr "Hostname especificado não existe."
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
@@ -1018,37 +1018,37 @@ msgstr "Hostname especificado existe, mas não pertence ao usuário informado."
 
 #: src/etc/inc/dyndns.class:1147
 msgid "Updating too frequently, considered abuse."
-msgstr ""
+msgstr "Atualizações muito frequentes, considerado abuso."
 
 #: src/etc/inc/dyndns.class:1156 src/etc/inc/dyndns.class:1220
 msgid "Bad Request - The IP provided was invalid."
-msgstr ""
+msgstr "Requisição falhou - Endereço IP invalido."
 
 #: src/etc/inc/dyndns.class:1158
 msgid "Bad Request - Required parameters were not provided."
-msgstr ""
+msgstr "Requisição falhou - Parametros requeridos faltando."
 
 #: src/etc/inc/dyndns.class:1160
 msgid ""
 "Bad Request - Illegal characters in either the username or the password."
-msgstr ""
+msgstr "Requisição falhou - Caracteres ilegais no nome de usuario ou senha."
 
 #: src/etc/inc/dyndns.class:1162
 msgid "Invalid password."
-msgstr ""
+msgstr "Senha inválida."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "This account has been administratively locked."
-msgstr ""
+msgstr "Sua conta está bloqueada."
 
 #: src/etc/inc/dyndns.class:1166
 msgid "Updating too frequently."
-msgstr ""
+msgstr "Atualização com frequencia."
 
 #: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1182
 #: src/etc/inc/dyndns.class:1200
 msgid "Server side error."
-msgstr ""
+msgstr "Erro do lado do servidor."
 
 #: src/etc/inc/dyndns.class:1184
 msgid "Badly Formed Request (check the settings)."

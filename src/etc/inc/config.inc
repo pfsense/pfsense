@@ -102,7 +102,7 @@ if (platform_booting(true)) {
 						$cfgdevice = $mountdisk;
 						$cfgpartition = $cfgdevice . "a";
 						$cfgfstype = "ufs";
-						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
+						printf(gettext('Found configuration on %1$s.%2$s'), $cfgdevice, "\n");
 					}
 
 					mwexec("/sbin/umount -f {$g['cf_path']}");
@@ -120,7 +120,7 @@ if (platform_booting(true)) {
 						$cfgdevice = $mountdisk;
 						$cfgpartition = $cfgdevice . "d";
 						$cfgfstype = "ufs";
-						printf(gettext("Found configuration on %s.%s"), $cfgdevice, "\n");
+						printf(gettext('Found configuration on %1$s.%2$s'), $cfgdevice, "\n");
 					}
 
 					mwexec("/sbin/umount -f {$g['cf_path']}");

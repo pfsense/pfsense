@@ -221,9 +221,9 @@ if (isset($user_settings['webgui']['webguicss'])) {
 }
 
 if (isset($config['system']['webgui']['loginshowhost'])) {
-$hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
+	$loginbannerstr = sprintf(gettext('Login to %1$s on %2$s.%3$s'), $g['product_name'], htmlspecialchars($config['system']['hostname']), htmlspecialchars($config['system']['domain']));
 } else {
-	$hoststr = "";
+	$loginbannerstr = sprintf(gettext('Login to %1$s'), $g['product_name']);
 }
 
 ?>
@@ -254,7 +254,7 @@ $hoststr = sprintf(gettext(" on %s.%s"), htmlspecialchars($config['system']['hos
 
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h2 class="panel-title"><?=sprintf(gettext("Login to %s %s"), $g['product_name'], $hoststr)?></h2>
+						<h2 class="panel-title"><?=$loginbannerstr?></h2>
 					</div>
 
 					<div class="panel-body">

@@ -104,7 +104,7 @@ $statetablehelp = sprintf(gettext('Resetting the state tables will remove all en
 					'Simply refresh the page to continue.'), "<br /><br />", "<br /><br />", "<strong>", "</strong>");
 
 $sourcetablehelp = sprintf(gettext('Resetting the source tracking table will remove all source/destination associations. ' .
-					'This means that the \"sticky\" source/destination association ' .
+					'This means that the "sticky" source/destination association ' .
 					'will be cleared for all clients.%s' .
 					'This does not clear active connection states, only source tracking.'), "<br /><br />");
 

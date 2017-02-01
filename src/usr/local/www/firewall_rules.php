@@ -871,8 +871,8 @@ if ($seprows[$nrules]) {
 			"chosen. If no rule here matches, the per-interface or default rules are used. "));
 	}
 
-	printf(gettext("%sClick the anchor icon %s to move checked rules before the clicked row. Hold down " .
-			"the shift key and click to move the rules after the clicked row."), '<br /><br />', '<i class="fa fa-anchor"></i>')
+	printf(gettext('%1$sClick the anchor icon %2$s to move checked rules before the clicked row. Hold down ' .
+			'the shift key and click to move the rules after the clicked row.'), '<br /><br />', '<i class="fa fa-anchor"></i>')
 ?>
 	</div>
 	</div>

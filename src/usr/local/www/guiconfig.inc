@@ -394,7 +394,7 @@ function get_std_save_message($retval) {
 	}
 	if ($filter_related) {
 		$to_return .= " " . gettext("The firewall rules are now reloading in the background.") . "<br />" .
-		    sprintf(gettext("%sMonitor%s the filter reload progress."), "<a href='status_filter_reload.php'>", "</a>");
+		    sprintf(gettext('%1$sMonitor%2$s the filter reload progress.'), "<a href='status_filter_reload.php'>", "</a>");
 	}
 	return $to_return;
 }

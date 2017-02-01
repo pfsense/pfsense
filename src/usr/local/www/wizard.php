@@ -73,7 +73,7 @@ if (empty($xml)) {
 }
 
 if (!is_array($pkg)) {
-	print_info_box(sprintf(gettext("Could not parse %s/wizards/%s file."), $g['www_path'], $xml), 'danger');
+	print_info_box(sprintf(gettext('Could not parse %1$s/wizards/%2$s file.'), $g['www_path'], $xml), 'danger');
 	die;
 }
 

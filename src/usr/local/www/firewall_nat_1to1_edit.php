@@ -190,7 +190,7 @@ if ($_POST) {
 				// Check that the address family matches the other IP addresses entered.
 				if ($extipaddrtype && ($srcipaddrtype != $extipaddrtype)) {
 					$input_errors[] = sprintf(
-						gettext("The external IP address (%s) and internal IP address (%s) are of different address families.") .
+						gettext('The external IP address (%1$s) and internal IP address (%2$s) are of different address families.') .
 							get_must_be_both_text(),
 						$_POST['external'],
 						$_POST['src']);
@@ -216,14 +216,14 @@ if ($_POST) {
 				// Check that the address family matches the other IP addresses entered.
 				if ($extipaddrtype && ($dstipaddrtype != $extipaddrtype)) {
 					$input_errors[] = sprintf(
-						gettext("The external IP address (%s) and destination IP address (%s) are of different address families.") .
+						gettext('The external IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
 							get_must_be_both_text(),
 						$_POST['external'],
 						$_POST['dst']);
 				}
 				if ($srcipaddrtype && ($dstipaddrtype != $srcipaddrtype)) {
 					$input_errors[] = sprintf(
-						gettext("The internal IP address (%s) and destination IP address (%s) are of different address families.") .
+						gettext('The internal IP address (%1$s) and destination IP address (%2$s) are of different address families.') .
 							get_must_be_both_text(),
 						$_POST['src'],
 						$_POST['dst']);

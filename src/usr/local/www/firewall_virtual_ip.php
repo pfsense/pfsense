@@ -110,7 +110,7 @@ if ($_GET['act'] == "del") {
 							} else {
 								$openvpn_desc = $openvpn['ipaddr'] . ":" . $openvpn['local_port'];
 							}
-							$input_errors[] = sprintf(gettext("This entry cannot be deleted because it is still referenced by OpenVPN %s %s."), $openvpn_type_text, $openvpn_desc);
+							$input_errors[] = sprintf(gettext('This entry cannot be deleted because it is still referenced by OpenVPN %1$s %2$s.'), $openvpn_type_text, $openvpn_desc);
 							break;
 						}
 					}

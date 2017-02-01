@@ -698,7 +698,7 @@ function checkonline() {
 function startCountdown() {
 	setInterval(function() {
 		if (time == "<?=$guitimeout?>") {
-			$('#countdown').html('<h4><?=sprintf(gettext("Rebooting%sPage will automatically reload in %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+			$('#countdown').html('<h4><?=sprintf(gettext('Rebooting%1$sPage will automatically reload in %2$s seconds'), "<br />", "<span id=\"secs\"></span>");?></h4>');
 		}
 
 		if (time > 0) {
@@ -706,7 +706,7 @@ function startCountdown() {
 			time--;
 		} else {
 			time = "<?=$guiretry?>";
-			$('#countdown').html('<h4><?=sprintf(gettext("Not yet ready%s Retrying in another %s seconds"), "<br />", "<span id=\"secs\"></span>");?></h4>');
+			$('#countdown').html('<h4><?=sprintf(gettext('Not yet ready%1$s Retrying in another %2$s seconds'), "<br />", "<span id=\"secs\"></span>");?></h4>');
 			$('#secs').html(time);
 			checkonline();
 		}

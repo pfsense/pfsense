@@ -829,7 +829,7 @@ if ($act=="new" || $act=="edit"):
 			}
 		}
 	} else {
-		$certhelp = sprintf('%s%s%s$s', '<span id="certtype">', gettext('No Certificates defined. One may be created here: '), '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
+		$certhelp = sprintf(gettext('No Certificates defined. One may be created here: %1$s%2$s%3$s'), '<span id="certtype">', '<a href="system_camanager.php">' . gettext("System &gt; Cert. Manager") . '</a>', '</span>');
 	}
 
 	$cl = openvpn_build_cert_list(false, true);
@@ -1354,7 +1354,7 @@ else:
 						<?=htmlspecialchars($server['tunnel_networkv6'])?>
 					</td>
 					<td>
-						<?=sprintf("Crypto: %s/%s", $server['crypto'], $server['digest']);?>
+						<?=sprintf('Crypto: %1$s/%2$s', $server['crypto'], $server['digest']);?>
 					<?php if (is_numeric($server['dh_length'])): ?>
 						<?=sprintf("<br/>D-H Params: %d bits", $server['dh_length']);?>
 					<?php elseif ($server['dh_length'] == "none"): ?>
@@ -1362,7 +1362,7 @@ else:
 					<?php endif; ?>
 					</td>
 					<td>
-						<?=htmlspecialchars(sprintf('%s (%s)', $server['description'], $server['dev_mode']))?>
+						<?=htmlspecialchars(sprintf('%1$s (%2$s)', $server['description'], $server['dev_mode']))?>
 					</td>
 					<td>
 						<a class="fa fa-pencil"	title="<?=gettext('Edit server')?>" href="vpn_openvpn_server.php?act=edit&amp;id=<?=$i?>"></a>

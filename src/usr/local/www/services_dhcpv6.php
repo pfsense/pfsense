@@ -258,7 +258,7 @@ if (isset($_POST['apply'])) {
 		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
 			!Net_IPv6::isInNetmask($_POST['range_from'], '::', $ifcfgsn)) {
 			$input_errors[] = sprintf(gettext(
-				"The prefix (upper %s bits) must be zero.  Use the form %s"),
+				'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
 				$ifcfgsn, $str_help_mask);
 			$range_from_to_ok = false;
 		}
@@ -270,7 +270,7 @@ if (isset($_POST['apply'])) {
 		} elseif ($config['interfaces'][$if]['ipaddrv6'] == 'track6' &&
 			!Net_IPv6::isInNetmask($_POST['range_to'], '::', $ifcfgsn)) {
 			$input_errors[] = sprintf(gettext(
-				"The prefix (upper %s bits) must be zero.  Use the form %s"),
+				'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
 				$ifcfgsn, $str_help_mask);
 			$range_from_to_ok = false;
 		}

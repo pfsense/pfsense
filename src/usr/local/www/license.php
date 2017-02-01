@@ -32,7 +32,7 @@ include("head.inc");
 <div class="panel panel-default">
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("License")?></h2></div>
 	<div class="panel-body content">
-		<p><strong><?php printf(gettext("%s is Copyright &copy; %s %s. All rights reserved."), $g['product_name'], $g['product_copyright_years'], $g['product_copyright'])?></strong></p>
+		<p><strong><?php printf(gettext('%1$s is Copyright &copy; %2$s %3$s. All rights reserved.'), $g['product_name'], $g['product_copyright_years'], $g['product_copyright'])?></strong></p>
 		<p><?=gettext("m0n0wall is Copyright &copy; 2002-2015 by Manuel Kasper (mk@neon1.net). All rights reserved.")?></p>
 		<p><?=gettext("Licensed under the Apache License, Version 2.0 (the \"License\");<br />you may not use this file except in compliance with the License.<br />You may obtain a copy of the License at")?></p>
 		<p><a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></p>
@@ -43,7 +43,7 @@ include("head.inc");
 	<div class="panel-heading"><h2 class="panel-title"><?=gettext("Third Party Credits")?></h2></div>
 	<div class="panel-body content">
 		<p>
-			<?php printf(gettext("%s is based upon/includes various free software packages, listed below. The authors of %s would like to thank the authors of these software packages for their efforts."), $g['product_name'], $g['product_name'])?><br />
+			<?php printf(gettext('%1$s is based upon/includes various free software packages, listed below. The authors of %1$s would like to thank the authors of these software packages for their efforts.'), $g['product_name'])?><br />
 		</p>
 		<ul class="list-group">
 			<li class="list-group-item">

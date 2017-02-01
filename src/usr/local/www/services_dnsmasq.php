@@ -255,11 +255,11 @@ $section->addInput(new Form_Checkbox(
 	'DHCP Registration',
 	'Register DHCP leases in DNS forwarder',
 	$pconfig['regdhcp']
-))->setHelp(sprintf("If this option is set, then machines that specify".
-			" their hostname when requesting a DHCP lease will be registered".
-			" in the DNS forwarder, so that their name can be resolved.".
-			" The domain in %sSystem: General Setup%s should also".
-			" be set to the proper value.",'<a href="system.php">','</a>'))
+))->setHelp(sprintf('If this option is set, then machines that specify'.
+			' their hostname when requesting a DHCP lease will be registered'.
+			' in the DNS forwarder, so that their name can be resolved.'.
+			' The domain in %1$sSystem: General Setup%2$s should also'.
+			' be set to the proper value.','<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(
@@ -267,10 +267,10 @@ $section->addInput(new Form_Checkbox(
 	'Static DHCP',
 	'Register DHCP static mappings in DNS forwarder',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf("If this option is set, then DHCP static mappings will ".
-					"be registered in the DNS forwarder, so that their name can be ".
-					"resolved. The domain in %sSystem: General Setup%s should also ".
-					"be set to the proper value.",'<a href="system.php">','</a>'))
+))->setHelp(sprintf('If this option is set, then DHCP static mappings will '.
+					'be registered in the DNS forwarder, so that their name can be '.
+					'resolved. The domain in %1$sSystem: General Setup%2$s should also '.
+					'be set to the proper value.','<a href="system.php">','</a>'))
 	->addClass('toggle-dhcp');
 
 $section->addInput(new Form_Checkbox(

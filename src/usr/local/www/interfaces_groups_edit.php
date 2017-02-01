@@ -88,11 +88,11 @@ if ($_POST) {
 		}
 
 		/*
-		 * Packages (e.g. tinc) creates interface groups, reserve this
-		 * namespace pkg- for them
+		 * Packages (e.g. tinc) create interface groups, reserve this
+		 * namespace pkg_ for them
 		 */
-		if (substr($_POST['ifname'], 0, 4) == 'pkg-') {
-			$input_errors[] = gettext("Group name cannot start with pkg-");
+		if (substr($_POST['ifname'], 0, 4) == 'pkg_') {
+			$input_errors[] = gettext("Group name cannot start with pkg_");
 		}
 
 		foreach ($interface_list_disabled as $gif => $gdescr) {

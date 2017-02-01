@@ -524,6 +524,15 @@ if ($_POST['apply']) {
 		if (is_numeric($_POST['descr'])) {
 			$input_errors[] = gettext("The interface description cannot contain only numbers.");
 		}
+
+		/*
+		 * Packages (e.g. tinc) create interface groups, reserve this
+		 * namespace pkg_ for them.
+		 * One namespace is shared by Interfaces, Interface Groups and Aliases.
+		 */
+		if (substr($_POST['descr'], 0, 4) == 'pkg_') {
+			$input_errors[] = gettext("The interface description cannot start with pkg_");
+		}
 	}
 
 	if (isset($config['dhcpd']) && isset($config['dhcpd'][$if]['enable'])) {

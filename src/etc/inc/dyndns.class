@@ -1070,7 +1070,7 @@
 					} else if (preg_match('/403/i', $data)) {
 						$status = $status_intro . $error_str . gettext("Database Error - There was a server-sided database error.");
 					} else if (preg_match('/405/i', $data)) {
-						$status = $status_intro . $error_str . sprintf(gettext("Hostname Error - The hostname (%s) doesn't belong to user (%s)."), $this->_dnsHost, $this->_dnsUser);
+						$status = $status_intro . $error_str . sprintf(gettext('Hostname Error - The hostname (%1$s) doesn\'t belong to user (%2$s).'), $this->_dnsHost, $this->_dnsUser);
 					} else if (preg_match('/200/i', $data)) {
 						$status = $status_intro . $success_str . gettext("IP Address Updated Successfully!");
 						$successful_update = true;
@@ -1497,7 +1497,7 @@
 				}
 				if ($this->_useIPv6 == true && $wan_ip > 0) {
 					$currentTime = time();
-					notify_all_remote(sprintf(gettext("DynDNS updated IPv6 Address on %s (%s) to %s"), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
+					notify_all_remote(sprintf(gettext('DynDNS updated IPv6 Address on %1$s (%2$s) to %3$s'), convert_real_interface_to_friendly_descr($this->_if), $this->_if, $wan_ip));
 					log_error(sprintf(gettext('phpDynDNS: updating cache file %1$s: %2$s'), $this->_cacheFile_v6, $wan_ip));
 					@file_put_contents($this->_cacheFile_v6, "{$wan_ip}|{$currentTime}");
 				} else {

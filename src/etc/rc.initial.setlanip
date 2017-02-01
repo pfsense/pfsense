@@ -101,7 +101,7 @@ function prompt_for_enable_dhcp_server($version = 4) {
 
 	$label_DHCP = ($version === 6) ? "DHCP6" : "DHCP";
 	$upperifname = strtoupper($interface);
-	return console_prompt_for_yn (sprintf(gettext("Do you want to enable the %s server on %s?"), $label_DHCP, $upperifname));
+	return console_prompt_for_yn (sprintf(gettext('Do you want to enable the %1$s server on %2$s?'), $label_DHCP, $upperifname));
 }
 
 function get_interface_config_description($iface) {
@@ -251,7 +251,7 @@ function console_configure_ip_address($version) {
 	$upperifname = strtoupper($interface);
 
 	if ($interface == "wan") {
-		if (console_prompt_for_yn (sprintf(gettext("Configure %s address %s interface via %s?"), $label_IPvX, $upperifname, $label_DHCP))) {
+		if (console_prompt_for_yn (sprintf(gettext('Configure %1$s address %2$s interface via %3$s?'), $label_IPvX, $upperifname, $label_DHCP))) {
 			$ifppp = console_get_interface_from_ppp(get_real_interface("wan"));
 			if (!empty($ifppp)) {
 				$ifaceassigned = $ifppp;
@@ -266,7 +266,7 @@ function console_configure_ip_address($version) {
 	if ($isintdhcp == false or $interface <> "wan") {
 		while (true) {
 			do {
-				echo "\n" . sprintf(gettext("Enter the new %s %s address.  Press <ENTER> for none:"),
+				echo "\n" . sprintf(gettext('Enter the new %1$s %2$s address.  Press <ENTER> for none:'),
 							$upperifname, $label_IPvX) . "\n> ";
 				$intip = chop(fgets($fp));
 				$is_ipaddr = ($version === 6) ? is_ipaddrv6($intip) : is_ipaddrv4($intip);
@@ -293,7 +293,7 @@ function console_configure_ip_address($version) {
 				}
 				do {
 					$upperifname = strtoupper($interface);
-					echo "\n" . sprintf(gettext("Enter the new %s %s subnet bit count (1 to %s):"),
+					echo "\n" . sprintf(gettext('Enter the new %1$s %2$s subnet bit count (1 to %3$s):'),
 								$upperifname, $label_IPvX, $maxbits) . "\n> ";
 					$intbits = chop(fgets($fp));
 					$intbits_ok = is_numeric($intbits) && (($intbits >= 1) && ($intbits <= $maxbits));
@@ -318,7 +318,7 @@ function console_configure_ip_address($version) {
 					$subnet = gen_subnet($intip, $intbits);
 				}
 				do {
-					echo "\n" . sprintf(gettext("For a WAN, enter the new %s %s upstream gateway address."), $upperifname, $label_IPvX) . "\n" .
+					echo "\n" . sprintf(gettext('For a WAN, enter the new %1$s %2$s upstream gateway address.'), $upperifname, $label_IPvX) . "\n" .
 								gettext("For a LAN, press <ENTER> for none:") . "\n> ";
 					$gwip = chop(fgets($fp));
 					$is_ipaddr = ($version === 6) ? is_ipaddrv6($gwip) : is_ipaddrv4($gwip);
@@ -491,21 +491,19 @@ if (!$dry_run) {
 
 if ($intip != '') {
 	if (is_ipaddr($intip)) {
-		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
-							  $upperifname, "{$intip}/{$intbits}") . "\n";
+		$intipstr = "{$intip}/{$intbits}";
 	} else {
-		echo "\n\n" . sprintf(gettext("The IPv4 %s address has been set to %s"),
-							  $upperifname, $intip) . "\n";
+		$intipstr = $intip;
 	}
+	echo "\n\n" . sprintf(gettext('The IPv4 %1$s address has been set to %2$s'), $upperifname, $intipstr) . "\n";
 }
 if ($intip6 != '') {
 	if (is_ipaddr($intip6)) {
-		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
-							  $upperifname, "${intip6}/${intbits6}") . "\n";
+		$intip6str = "${intip6}/${intbits6}";
 	} else {
-		echo "\n\n" . sprintf(gettext("The IPv6 %s address has been set to %s"),
-							  $upperifname, $intip6) . "\n";
+		$intip6str = $intip6;
 	}
+	echo "\n\n" . sprintf(gettext('The IPv6 %1$s address has been set to %2$s'), $upperifname, $intip6str) . "\n";
 }
 
 if ($intip != '' || $intip6 != '') {

@@ -295,6 +295,7 @@ if (isset($id) && $a_filter[$id]) {
 	if ($_GET['if']) {
 		$pconfig['interface'] = $_GET['if'];
 	}
+	$pconfig['ipprotocol'] = "inet"; // other things depend on this, set a sensible default
 	$pconfig['type'] = "pass";
 	$pconfig['proto'] = "tcp"; // for new blank rules, default=tcp, also ensures ports fields are visible
 	$pconfig['src'] = "any";
@@ -319,6 +320,19 @@ if ($_POST) {
 
 	if (!array_key_exists($_POST['ipprotocol'], $icmplookup)) {
 		$input_errors[] = gettext("The IP protocol is not recognized.");
+		unset($_POST['ipprotocol']);
+	}
+
+	// add validation + input error for $_POST['interface']
+
+	$valid = ($_POST['interface'] == "FloatingRules" || isset($_POST['floating'])) ? ['pass','block','reject', 'match'] : ['pass','block','reject'];
+	if (!(is_string($_POST['type'])  && in_array($_POST['type'], $valid))) {
+		$input_errors[] = gettext("A valid rule type is not selected.");
+		unset($_POST['type']);
+	}		
+
+	if (isset($_POST['tracker']) && !is_numericint($_POST['tracker'])) {
+		unset($_POST['tracker']);	// silently unset hidden input if invalid
 	}
 
 	if (isset($a_filter[$id]['associated-rule-id'])) {
@@ -328,7 +342,7 @@ if ($_POST) {
 		}
 	}
 
-	if (($_POST['ipprotocol'] <> "") && ($_POST['gateway'] <> "")) {
+	if (isset($_POST['ipprotocol']) && $_POST['gateway'] <> '') {
 		if (is_array($config['gateways']['gateway_group'])) {
 			foreach ($config['gateways']['gateway_group'] as $gw_group) {
 				if ($gw_group['name'] == $_POST['gateway'] && $_POST['ipprotocol'] != $a_gatewaygroups[$_POST['gateway']]['ipprotocol']) {
@@ -422,6 +436,11 @@ if ($_POST) {
 	}
 
 	$pconfig = $_POST;
+
+	if (!isset($pconfig['ipprotocol'])) {
+		// other things depend on this, so ensure a valid value if none provided
+		$pconfig['ipprotocol'] = "inet";
+	}
 
 	if (($_POST['proto'] == "icmp") && count($_POST['icmptype'])) {
 		$pconfig['icmptype'] = implode(',', $_POST['icmptype']);
@@ -554,14 +573,14 @@ if ($_POST) {
 		}
 	}
 	if ((is_ipaddrv6($_POST['src']) || is_ipaddrv6($_POST['dst'])) && ($_POST['ipprotocol'] == "inet")) {
-		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules.");
+		$input_errors[] = gettext("IPv6 addresses cannot be used in IPv4 rules (except within an alias).");
 	}
 	if ((is_ipaddrv4($_POST['src']) || is_ipaddrv4($_POST['dst'])) && ($_POST['ipprotocol'] == "inet6")) {
-		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules.");
+		$input_errors[] = gettext("IPv4 addresses can not be used in IPv6 rules (except within an alias).");
 	}
 
 	if ((is_ipaddr($_POST['src']) || is_ipaddr($_POST['dst'])) && ($_POST['ipprotocol'] == "inet46")) {
-		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6.");
+		$input_errors[] = gettext("IPv4 and IPv6 addresses can not be used in rules that apply to both IPv4 and IPv6 (except within an alias).");
 	}
 
 	if ($_POST['srcbeginport'] > $_POST['srcendport']) {
@@ -593,8 +612,8 @@ if ($_POST) {
 		} elseif (!isset($t) || count($t) == 0) {
 			// not specified or none selected
 			unset($_POST['icmptype']);
-		} else {
-			// check data
+		} elseif (isset($_POST['ipprotocol'])) {
+			// check data; if ipprotocol invalid then safe to skip this (we can't determine valid icmptypes, but input error already raised for ipprotocol)
 			$bad_types = array();
 			if ((count($t) == 1 && !isset($t['any'])) || count($t) > 1) {
 				// Only need to check valid if just one selected != "any", or >1 selected
@@ -642,7 +661,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Please select a gateway, normally the interface selected gateway, so the limiters work correctly");
 		}
 	}
-	if (!empty($_POST['ruleid']) && !ctype_digit($_POST['ruleid'])) {
+	if (!empty($_POST['ruleid']) && !is_numericint($_POST['ruleid'])) {
 		$input_errors[] = gettext('ID must be an integer');
 	}
 
@@ -755,13 +774,12 @@ if ($_POST) {
 		$filterent['tracker'] = empty($_POST['tracker']) ? (int)microtime(true) : $_POST['tracker'];
 
 		$filterent['type'] = $_POST['type'];
+
 		if (isset($_POST['interface'])) {
 			$filterent['interface'] = $_POST['interface'];
-		}
+		} // FIXME: can $_POST['interface'] be unset at this point, if so then what?
 
-		if (isset($_POST['ipprotocol'])) {
-			$filterent['ipprotocol'] = $_POST['ipprotocol'];
-		}
+		$filterent['ipprotocol'] = $_POST['ipprotocol'];
 
 		if ($_POST['tcpflags_any']) {
 			$filterent['tcpflags_any'] = true;

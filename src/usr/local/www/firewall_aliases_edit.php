@@ -194,6 +194,15 @@ if ($_POST) {
 		}
 	}
 
+	/*
+	 * Packages (e.g. tinc) create interface groups, reserve this
+	 * namespace pkg_ for them.
+	 * One namespace is shared by Interfaces, Interface Groups and Aliases.
+	 */
+	if (substr($_POST['name'], 0, 4) == 'pkg_') {
+		$input_errors[] = gettext("The alias name cannot start with pkg_");
+	}
+
 	/* check for name interface description conflicts */
 	foreach ($config['interfaces'] as $interface) {
 		if (strcasecmp($interface['descr'], $_POST['name']) == 0) {

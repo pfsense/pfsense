@@ -97,11 +97,9 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		if (!isset($id)) {
-			foreach ($a_ifgroups as $groupentry) {
-				if ($groupentry['ifname'] == $_POST['ifname']) {
-					$input_errors[] = gettext("Group name already exists!");
-				}
+		foreach ($a_ifgroups as $groupid => $groupentry) {
+			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
+				$input_errors[] = gettext("Group name already exists!");
 			}
 		}
 

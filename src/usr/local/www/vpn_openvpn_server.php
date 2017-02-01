@@ -736,6 +736,7 @@ if ($act=="new" || $act=="edit"):
 	$section->addInput(new Form_Textarea(
 		'tls',
 		'*Key',
+		$pconfig['tls']
 	))->setHelp('Paste the shared key here');
 
 	if (count($a_ca)) {

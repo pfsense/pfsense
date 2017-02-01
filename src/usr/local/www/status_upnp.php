@@ -52,7 +52,7 @@ if (!$config['installedpackages'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['iface_array'] ||
     !$config['installedpackages']['miniupnpd']['config'][0]['enable']) {
 
-	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %s%s%s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
+	print_info_box(sprintf(gettext('UPnP is currently disabled. It can be enabled here: %1$s%2$s%3$s.'), '<a href="pkg_edit.php?xml=miniupnpd.xml">', gettext('Services &gt; UPnP &amp; NAT-PMP'), '</a>'), 'danger');
 	include("foot.inc");
 	exit;
 }

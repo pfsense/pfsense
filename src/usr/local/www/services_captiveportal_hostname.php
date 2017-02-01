@@ -141,9 +141,9 @@ $i++;
 endforeach; ?>
 		<tbody>
 	</table>
-	<?=$directionicons['to'] . ' = ' . sprintf(gettext('All connections %sto%s the hostname are allowed'), '<u>', '</u>') . ', '?>
-	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %sfrom%s the hostname are allowed'), '<u>', '</u>') . ', '?>
-	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %sto or from%s are allowed'), '<u>', '</u>')?>
+	<?=$directionicons['to'] . ' = ' . sprintf(gettext('All connections %1$sto%2$s the hostname are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['from'] . ' = ' . sprintf(gettext('All connections %1$sfrom%2$s the hostname are allowed'), '<u>', '</u>') . ', '?>
+	<?=$directionicons['both'] . ' = ' . sprintf(gettext('All connections %1$sto or from%2$s are allowed'), '<u>', '</u>')?>
 <?php
 else:
 ?>

@@ -67,9 +67,9 @@ if ($savemsg) {
 
 $statetablehelp = sprintf(gettext('Resetting the state tables will remove all entries from the corresponding tables. This means that all open connections ' .
 					'will be broken and will have to be re-established. This may be necessary after making substantial changes to the ' .
-					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.%s' .
-					'The firewall will normally leave the state tables intact when changing rules.%s' .
-					'%sNOTE:%s Resetting the firewall state table may cause the browser session to appear hung after clicking &quot;Reset&quot;. ' .
+					'firewall and/or NAT rules, especially if there are IP protocol mappings (e.g. for PPTP or IPv6) with open connections.%1$s' .
+					'The firewall will normally leave the state tables intact when changing rules.%2$s' .
+					'%3$sNOTE:%4$s Resetting the firewall state table may cause the browser session to appear hung after clicking &quot;Reset&quot;. ' .
 					'Simply refresh the page to continue.'), "<br /><br />", "<br /><br />", "<strong>", "</strong>");
 
 $sourcetablehelp = sprintf(gettext('Resetting the source tracking table will remove all source/destination associations. ' .

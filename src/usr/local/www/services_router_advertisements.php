@@ -160,7 +160,7 @@ if ($_POST) {
 		} else {
 			$pconfig['subnets'][] = $address . "/" . $bits;
 			if (!is_ipaddrv6($address)) {
-				$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
+				$input_errors[] = sprintf(gettext('An invalid subnet or alias was specified. [%1$s/%2$s]'), $address, $bits);
 			}
 		}
 	}

@@ -131,7 +131,7 @@ if ($_POST) {
 			$pdlen = 64 - $trackcfg['dhcp6-ia-pd-len'];
 			if (!Net_IPv6::isInNetmask($_POST['ipaddrv6'], '::', $pdlen)) {
 				$input_errors[] = sprintf(gettext(
-				    "The prefix (upper %s bits) must be zero.  Use the form %s"),
+				    'The prefix (upper %1$s bits) must be zero.  Use the form %2$s'),
 				    $pdlen, dhcpv6_pd_str_help($ifcfgsnv6));
 			}
 		}

@@ -102,7 +102,7 @@ EOF;
 
 	if (is_array($resp['voucher']['roll'])) {
 		$config['voucher'][$cpzone]['roll'] = $resp['voucher']['roll'];
-		write_config(sprintf(gettext("Captive Portal Voucher database synchronized with %s:%s"), $syncip, $port));
+		write_config(sprintf(gettext('Captive Portal Voucher database synchronized with %1$s:%2$s'), $syncip, $port));
 		voucher_configure_zone(true);
 		unset($resp['voucher']);
 	} else if (!isset($resp['timeleft'])) {

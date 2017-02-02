@@ -659,21 +659,21 @@ $section->addInput(new Form_Checkbox(
 
 $section->addInput(new Form_Select(
 	'iketype',
-	'Key Exchange version',
+	'*Key Exchange version',
 	$pconfig['iketype'],
 	array("ikev1" => "IKEv1", "ikev2" => "IKEv2", "auto" => gettext("Auto"))
 ))->setHelp('Select the Internet Key Exchange protocol version to be used. Auto uses IKEv2 when initiator, and accepts either IKEv1 or IKEv2 as responder.');
 
 $section->addInput(new Form_Select(
 	'protocol',
-	'Internet Protocol',
+	'*Internet Protocol',
 	$pconfig['protocol'],
 	array("inet" => "IPv4", "inet6" => "IPv6")
 ))->setHelp('Select the Internet Protocol family.');
 
 $section->addInput(new Form_Select(
 	'interface',
-	'Interface',
+	'*Interface',
 	$pconfig['interface'],
 	build_interface_list()
 ))->setHelp('Select the interface for the local endpoint of this phase1 entry.');
@@ -681,7 +681,7 @@ $section->addInput(new Form_Select(
 if (!$pconfig['mobile']) {
 	$section->addInput(new Form_Input(
 		'remotegw',
-		'Remote Gateway',
+		'*Remote Gateway',
 		'text',
 		$pconfig['remotegw']
 	))->setHelp('Enter the public IP address or host name of the remote gateway.');
@@ -700,19 +700,19 @@ $section = new Form_Section('Phase 1 Proposal (Authentication)');
 
 $section->addInput(new Form_Select(
 	'authentication_method',
-	'Authentication Method',
+	'*Authentication Method',
 	$pconfig['authentication_method'],
 	build_auth_method_list()
 ))->setHelp('Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Select(
 	'mode',
-	'Negotiation mode',
+	'*Negotiation mode',
 	$pconfig['mode'],
 	array("main" => gettext("Main"), "aggressive" => gettext("Aggressive"))
 ))->setHelp('Aggressive is more flexible, but less secure.');
 
-$group = new Form_Group('My identifier');
+$group = new Form_Group('*My identifier');
 
 $group->add(new Form_Select(
 	'myid_type',
@@ -730,7 +730,7 @@ $group->add(new Form_Input(
 
 $section->add($group);
 
-$group = new Form_Group('Peer identifier');
+$group = new Form_Group('*Peer identifier');
 $group->addClass('peeridgroup');
 
 $group->add(new Form_Select(
@@ -755,21 +755,21 @@ $section->add($group);
 
 $section->addInput(new Form_Input(
 	'pskey',
-	'Pre-Shared Key',
+	'*Pre-Shared Key',
 	'text',
 	$pconfig['pskey']
 ))->setHelp('Enter the Pre-Shared Key string.');
 
 $section->addInput(new Form_Select(
 	'certref',
-	'My Certificate',
+	'*My Certificate',
 	$pconfig['certref'],
 	build_cert_list()
 ))->setHelp('Select a certificate previously configured in the Certificate Manager.');
 
 $section->addInput(new Form_Select(
 	'caref',
-	'Peer Certificate Authority',
+	'*Peer Certificate Authority',
 	$pconfig['caref'],
 	build_ca_list()
 ))->setHelp('Select a certificate authority previously configured in the Certificate Manager.');
@@ -778,7 +778,7 @@ $form->add($section);
 
 $section = new Form_Section('Phase 1 Proposal (Algorithms)');
 
-$group = new Form_Group('Encryption Algorithm');
+$group = new Form_Group('*Encryption Algorithm');
 
 $group->add(new Form_Select(
 	'ealgo',
@@ -798,21 +798,21 @@ $section->add($group);
 
 $section->addInput(new Form_Select(
 	'halgo',
-	'Hash Algorithm',
+	'*Hash Algorithm',
 	$pconfig['halgo'],
 	$p1_halgos
 ))->setHelp('Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Select(
 	'dhgroup',
-	'DH Group',
+	'*DH Group',
 	$pconfig['dhgroup'],
 	$p1_dhgroups
 ))->setHelp('Must match the setting chosen on the remote side.');
 
 $section->addInput(new Form_Input(
 	'lifetime',
-	'Lifetime (Seconds)',
+	'*Lifetime (Seconds)',
 	'number',
 	$pconfig['lifetime']
 ));

@@ -456,7 +456,7 @@ $section->addInput(new Form_Select(
 	true
 ))->setHelp('Add the interface named by interface as a span port on the bridge. Span ports transmit a copy of every frame received by the bridge. ' .
 			'This is most useful for snooping a bridged network passively on another host connected to one of the span ports of the bridge. <br />' .
-			'%sThe span interface cannot be part of the bridge member interfaces.%s', ['<strong>', '</strong>']);
+			'%1$sThe span interface cannot be part of the bridge member interfaces.%2$s', ['<strong>', '</strong>']);
 
 $edgelist = build_port_list($pconfig['edge']);
 
@@ -477,7 +477,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Allow interface to automatically detect edge status. This is the default for all interfaces added to a bridge.' .
-			'%sThis will disable the autoedge status of interfaces. %s', ['<strong>', '</strong>']);
+			'%1$sThis will disable the autoedge status of interfaces. %2$s', ['<strong>', '</strong>']);
 
 $edgelist = build_port_list($pconfig['ptp']);
 
@@ -498,7 +498,7 @@ $section->addInput(new Form_Select(
 	$edgelist['list'],
 	true
 ))->setHelp('Automatically detect the point-to-point status on interface by checking the full duplex link status. This is the default for interfaces added to the bridge.' .
-			'%sThe interfaces selected here will be removed from default autoedge status. %s', ['<strong>', '</strong>']);
+			'%1$sThe interfaces selected here will be removed from default autoedge status. %2$s', ['<strong>', '</strong>']);
 
 $edgelist = build_port_list($pconfig['static']);
 

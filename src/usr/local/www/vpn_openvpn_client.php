@@ -492,21 +492,21 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'mode',
-		'Server mode',
+		'*Server mode',
 		$pconfig['mode'],
 		$openvpn_client_modes
 		));
 
 	$section->addInput(new Form_Select(
 		'protocol',
-		'Protocol',
+		'*Protocol',
 		$pconfig['protocol'],
 		$openvpn_prots
 		));
 
 	$section->addInput(new Form_Select(
 		'dev_mode',
-		'Device mode',
+		'*Device mode',
 		empty($pconfig['dev_mode']) ? 'tun':$pconfig['dev_mode'],
 		$openvpn_dev_mode
 		))->setHelp("\"tun\" mode carries IPv4 and IPv6 (OSI layer 3) and is the most common and compatible mode across all platforms." .
@@ -514,7 +514,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'interface',
-		'Interface',
+		'*Interface',
 		$pconfig['interface'],
 		openvpn_build_if_list()
 		))->setHelp("The interface used by the firewall to originate this OpenVPN client connection");
@@ -529,7 +529,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Input(
 		'server_addr',
-		'Server host or address',
+		'*Server host or address',
 		'text',
 		$pconfig['server_addr']
 	))->setHelp("The IP address or hostname of the OpenVPN server.");
@@ -544,7 +544,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Input(
 		'server_port',
-		'Server port',
+		'*Server port',
 		'number',
 		$pconfig['server_port']
 	))->setHelp("The port used by the server to receive client connections.");
@@ -634,7 +634,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Textarea(
 		'tls',
-		'TLS Key',
+		'*TLS Key',
 		$pconfig['tls']
 	))->setHelp("Paste the TLS key here." .
 	    "<br/>" .
@@ -642,7 +642,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'tls_type',
-		'TLS Key Usage Mode',
+		'*TLS Key Usage Mode',
 		empty($pconfig['tls_type']) ? 'auth':$pconfig['tls_type'],
 		$openvpn_tls_modes
 		))->setHelp("In Authentication mode the TLS key is used only as HMAC authentication for the control channel, protecting the peers from unauthorized connections. " .
@@ -657,13 +657,13 @@ if ($act=="new" || $act=="edit"):
 
 		$section->addInput(new Form_Select(
 			'caref',
-			'Peer Certificate Authority',
+			'*Peer Certificate Authority',
 			$pconfig['caref'],
 			$list
 		));
 	} else {
 		$section->addInput(new Form_StaticText(
-			'Peer Certificate Authority',
+			'*Peer Certificate Authority',
 			sprintf('No Certificate Authorities defined. One may be created here: %s', '<a href="system_camanager.php">System &gt; Cert. Manager</a>')
 		));
 	}
@@ -691,7 +691,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Textarea(
 		'shared_key',
-		'Shared Key',
+		'*Shared Key',
 		$pconfig['shared_key']
 	))->setHelp('Paste the shared key here');
 
@@ -706,7 +706,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'crypto',
-		'Encryption Algorithm',
+		'*Encryption Algorithm',
 		$pconfig['crypto'],
 		openvpn_get_cipherlist()
 		))->setHelp('The Encryption Algorithm used for data channel packets when Negotiable Cryptographic Parameter (NCP) support is not available.');
@@ -745,7 +745,7 @@ if ($act=="new" || $act=="edit"):
 	  ->setAttribute('size', '10')
 	  ->setHelp('Allowed NCP Encryption Algorithms. Click an algorithm name to remove it from the list');
 
-	$group->setHelp(		'The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
+	$group->setHelp('The order of the selected NCP Encryption Algorithms is respected by OpenVPN.' .
 					'<div class="infoblock">' . sprint_info_box(
 					'For backward compatibility, when an older peer connects that does not support NCP, OpenVPN will use the Encryption Algorithm ' .
 					'requested by the peer so long as it is selected in this list or chosen as the Encryption Algorithm.', 'info', false) .
@@ -755,7 +755,7 @@ if ($act=="new" || $act=="edit"):
 
 	$section->addInput(new Form_Select(
 		'digest',
-		'Auth digest algorithm',
+		'*Auth digest algorithm',
 		$pconfig['digest'],
 		openvpn_get_digestlist()
 		))->setHelp('The algorithm used to authenticate data channel packets, and control channel packets if a TLS Key is present.' .
@@ -915,7 +915,7 @@ else:
 	foreach ($a_client as $client):
 		$server = "{$client['server_addr']}:{$client['server_port']}";
 ?>
-				<tr <?=isset($server['disable']) ? 'class="disabled"':''?>>
+				<tr <?=isset($client['disable']) ? 'class="disabled"':''?>>
 					<td>
 						<?=htmlspecialchars($client['protocol'])?>
 					</td>

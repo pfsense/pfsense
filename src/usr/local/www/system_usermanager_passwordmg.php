@@ -98,13 +98,13 @@ $section = new Form_Section('Update Password');
 
 $section->addInput(new Form_Input(
 	'passwordfld1',
-	'Password',
+	'*Password',
 	'password'
 ));
 
 $section->addInput(new Form_Input(
 	'passwordfld2',
-	'Confirmation',
+	'*Confirmation',
 	'password'
 ))->setHelp('Select a new password');
 

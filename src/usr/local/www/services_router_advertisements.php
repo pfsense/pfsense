@@ -160,7 +160,7 @@ if ($_POST) {
 		} else {
 			$pconfig['subnets'][] = $address . "/" . $bits;
 			if (!is_ipaddrv6($address)) {
-				$input_errors[] = sprintf(gettext("An invalid subnet or alias was specified. [%s/%s]"), $address, $bits);
+				$input_errors[] = sprintf(gettext('An invalid subnet or alias was specified. [%1$s/%2$s]'), $address, $bits);
 			}
 		}
 	}
@@ -312,14 +312,14 @@ $section = new Form_Section('Advertisements');
 
 $section->addInput(new Form_Select(
 	'ramode',
-	'Router mode',
+	'*Router mode',
 	$pconfig['ramode'],
 	$advertise_modes
 ))->setHelp($ramode_help);
 
 $section->addInput(new Form_Select(
 	'rapriority',
-	'Router priority',
+	'*Router priority',
 	$pconfig['rapriority'],
 	$priority_modes
 ))->setHelp('Select the Priority for the Router Advertisement (RA) Daemon.');

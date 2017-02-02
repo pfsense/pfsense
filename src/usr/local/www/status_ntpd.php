@@ -185,13 +185,13 @@ function print_status() {
 
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
-		printf(gettext("Statistics unavailable because ntpq and ntpdc queries are disabled in the %sNTP service settings%s"), '<a href="services_ntpd.php">', '</a>');
+		printf(gettext('Statistics unavailable because ntpq and ntpdc queries are disabled in the %1$sNTP service settings%2$s'), '<a href="services_ntpd.php">', '</a>');
 		print("</td>\n");
 		print("</tr>\n");
 	elseif (count($ntpq_servers) == 0):
 		print("<tr>\n");
 		print('<td class="warning" colspan="11">');
-		printf(gettext("No peers found, %sis the ntp service running?%s"), '<a href="status_services.php">', '</a>');
+		printf(gettext('No peers found, %1$sis the ntp service running?%2$s'), '<a href="status_services.php">', '</a>');
 		print("</td>\n");
 		print("</tr>\n");
 	else:

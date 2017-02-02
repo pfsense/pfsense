@@ -1563,7 +1563,7 @@ EOD;
 
 	$fd = fopen("{$filename}", "w");
 	if (!$fd) {
-		printf(gettext("Error: cannot open %s in system_generate_nginx_config().%s"), $filename, "\n");
+		printf(gettext('Error: cannot open %1$s in system_generate_nginx_config().%2$s'), $filename, "\n");
 		return 1;
 	}
 	fwrite($fd, $nginx_config);

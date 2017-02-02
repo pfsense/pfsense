@@ -1072,49 +1072,14 @@ events.push(function() {
 	function check_for_aliases() {
 		//	if External port range is an alias, then disallow
 		//	entry of Local port
-		//
 		for (i = 0; i < customarray.length; i++) {
-			if ($('#dstbeginport_cust').val() == customarray[i]) {
+			if (($('#dstbeginport_cust').val() == customarray[i]) || ($('#dstendport_cust').val() == customarray[i])) {
 				$('#dstendport_cust').val(customarray[i]);
 				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
 				disableInput('dstendport_cust', false);
 				disableInput('localbeginport', false);
 				disableInput('localbeginport_cust', false);
 			}
-			if ($('#dstbeginport').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				disableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-			if ($('#dstendport_cust').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				disableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-			if ($('#dstendport').val() == customarray[i]) {
-				$('#dstendport_cust').val(customarray[i]);
-				$('#localbeginport_cust').val(customarray[i]);
-				disableInput('dstendport_cust', true);
-				disableInput('localbeginport', true);
-				disableInput('localbeginport_cust', true);
-				disableInput('dstendport_cust', false);
-				disableInput('localbeginport', false);
-				disableInput('localbeginport_cust', false);
-			}
-
 		}
 	}
 

@@ -142,15 +142,15 @@ function system_log_table_panel_title() {
 
 	if ($rawfilter) {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rtnstr .= sprintf(gettext("%s Matched %s Log Entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('%1$s Matched %2$s Log Entries.'), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
 		} else {
-			$rtnstr .= sprintf(gettext("Last %s %s Log Entries."), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('Last %1$s %2$s Log Entries.'), "<span id='count'>_ _</span>", gettext($allowed_logs[$logfile]["name"]));
 		}
 	} else {
 		if (($filtersubmit) || ($filterlogentries_submit)) {
-			$rtnstr .= sprintf(gettext("%d Matched %s Log Entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('%1$d Matched %2$s Log Entries.'), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 		} else {
-			$rtnstr .= sprintf(gettext("Last %d %s Log Entries."), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
+			$rtnstr .= sprintf(gettext('Last %1$d %2$s Log Entries.'), count($filterlog), gettext($allowed_logs[$logfile]["name"]));
 		}
 	}
 

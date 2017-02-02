@@ -282,7 +282,7 @@ $activeiflist = build_if_list($pconfig['active_interface']);
 
 $section->addInput(new Form_Select(
 	'active_interface',
-	'Network Interfaces',
+	'*Network Interfaces',
 	$activeiflist['selected'],
 	$activeiflist['options'],
 	true
@@ -293,7 +293,7 @@ $outiflist = build_if_list($pconfig['outgoing_interface']);
 
 $section->addInput(new Form_Select(
 	'outgoing_interface',
-	'Outgoing Network Interfaces',
+	'*Outgoing Network Interfaces',
 	$outiflist['selected'],
 	$outiflist['options'],
 	true
@@ -301,7 +301,7 @@ $section->addInput(new Form_Select(
 
 $section->addInput(new Form_Select(
 	'system_domain_local_zone_type',
-	'System Domain Local Zone Type',
+	'*System Domain Local Zone Type',
 	$pconfig['system_domain_local_zone_type'],
 	unbound_local_zone_types()
 ))->setHelp('The local-zone type used for the pfSense system domain (System | General Setup | Domain).  Transparent is the default.  Local-Zone type descriptions are available in the unbound.conf(5) manual pages.');
@@ -319,7 +319,7 @@ $section->addInput(new Form_Checkbox(
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
 ))->setHelp(sprintf('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
-					' %sSystem &gt; General Setup%s or those obtained via DHCP/PPP on WAN'.
+					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
 					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
@@ -329,7 +329,7 @@ $section->addInput(new Form_Checkbox(
 	$pconfig['regdhcp']
 ))->setHelp(sprintf('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
 					' in the DNS Resolver, so that their name can be resolved.'.
-					' The domain in %sSystem &gt; General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
+					' The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
@@ -337,7 +337,7 @@ $section->addInput(new Form_Checkbox(
 	'Register DHCP static mappings in the DNS Resolver',
 	$pconfig['regdhcpstatic']
 ))->setHelp(sprintf('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
-					'The domain in %sSystem &gt; General Setup%s should also be set to the proper value.','<a href="system.php">','</a>'));
+					'The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>'));
 
 $btnadv = new Form_Button(
 	'btnadvcustom',
@@ -554,14 +554,14 @@ endforeach;
 </nav>
 
 <div class="infoblock">
-	<?php print_info_box(sprintf(gettext("If the DNS Resolver is enabled, the DHCP".
-		" service (if enabled) will automatically serve the LAN IP".
-		" address as a DNS server to DHCP clients so they will use".
-		" the DNS Resolver. If Forwarding is enabled, the DNS Resolver will use the DNS servers".
-		" entered in %sSystem &gt; General Setup%s".
-		" or those obtained via DHCP or PPP on WAN if &quot;Allow".
-		" DNS server list to be overridden by DHCP/PPP on WAN&quot;".
-		" is checked."), '<a href="system.php">', '</a>'), 'info', false); ?>
+	<?php print_info_box(sprintf(gettext('If the DNS Resolver is enabled, the DHCP'.
+		' service (if enabled) will automatically serve the LAN IP'.
+		' address as a DNS server to DHCP clients so they will use'.
+		' the DNS Resolver. If Forwarding is enabled, the DNS Resolver will use the DNS servers'.
+		' entered in %1$sSystem &gt; General Setup%2$s'.
+		' or those obtained via DHCP or PPP on WAN if &quot;Allow'.
+		' DNS server list to be overridden by DHCP/PPP on WAN&quot;'.
+		' is checked.'), '<a href="system.php">', '</a>'), 'info', false); ?>
 </div>
 
 <?php include("foot.inc");

@@ -55,7 +55,7 @@ if (isset($id) && $a_ifgroups[$id]) {
 
 $interface_list = get_configured_interface_with_descr();
 $interface_list_disabled = get_configured_interface_with_descr(false, true);
-$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9), '-' and '_' are allowed.");
+$ifname_allowed_chars_text = gettext("Only letters (A-Z), digits (0-9) and '_' are allowed.");
 $ifname_no_digit_text = gettext("The group name cannot end with a digit.");
 
 
@@ -69,11 +69,9 @@ if ($_POST) {
 	do_input_validation($_POST, $reqdfields, $reqdfieldsn, $input_errors);
 
 	if (!$input_errors) {
-		if (!isset($id)) {
-			foreach ($a_ifgroups as $groupentry) {
-				if ($groupentry['ifname'] == $_POST['ifname']) {
-					$input_errors[] = gettext("Group name already exists!");
-				}
+		foreach ($a_ifgroups as $groupid => $groupentry) {
+			if ((!isset($id) || ($groupid != $id)) && ($groupentry['ifname'] == $_POST['ifname'])) {
+				$input_errors[] = gettext("Group name already exists!");
 			}
 		}
 
@@ -81,7 +79,7 @@ if ($_POST) {
 			$input_errors[] = gettext("Group name cannot have more than 16 characters.");
 		}
 
-		if (preg_match("/([^a-zA-Z0-9-_])+/", $_POST['ifname'])) {
+		if (preg_match("/([^a-zA-Z0-9_])+/", $_POST['ifname'])) {
 			$input_errors[] = $ifname_allowed_chars_text . " " . gettext("Please choose another group name.");
 		}
 
@@ -90,11 +88,11 @@ if ($_POST) {
 		}
 
 		/*
-		 * Packages (e.g. tinc) creates interface groups, reserve this
-		 * namespace pkg- for them
+		 * Packages (e.g. tinc) create interface groups, reserve this
+		 * namespace pkg_ for them
 		 */
-		if (substr($_POST['ifname'], 0, 4) == 'pkg-') {
-			$input_errors[] = gettext("Group name cannot start with pkg-");
+		if (substr($_POST['ifname'], 0, 4) == 'pkg_') {
+			$input_errors[] = gettext("Group name cannot start with pkg_");
 		}
 
 		foreach ($interface_list_disabled as $gif => $gdescr) {

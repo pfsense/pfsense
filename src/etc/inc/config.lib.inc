@@ -474,7 +474,7 @@ function write_config($desc="Unknown", $backup = true, $write_config_only = fals
 	if (!safe_write_file("{$g['cf_conf_path']}/config.xml", $xmlconfig)) {
 		log_error(gettext("WARNING: Config contents could not be saved. Could not open file!"));
 		unlock($lockkey);
-		file_notice("config.xml", sprintf(gettext("Unable to open %s/config.xml for writing in write_config()%s"), $g['cf_conf_path'], "\n"));
+		file_notice("config.xml", sprintf(gettext('Unable to open %1$s/config.xml for writing in write_config()%2$s'), $g['cf_conf_path'], "\n"));
 		return -1;
 	}
 

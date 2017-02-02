@@ -41,22 +41,22 @@ if ($_REQUEST['ajax']) {
 	}
 
 	if (!$authcfg) {
-		printf(gettext("%sError: Could not find settings for %s%s"), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
+		printf(gettext('%1$sError: Could not find settings for %2$s%3$s'), '<span class="text-danger">', htmlspecialchars($authserver), "</span>");
 		exit;
 	} else {
 		print("<pre>");
 
 		print('<table class="table table-hover table-striped table-condensed">');
 
-		print("<tr><td>" . sprintf(gettext("Attempting connection to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+		print("<tr><td>" . sprintf(gettext('Attempting connection to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
 		if (ldap_test_connection($authcfg)) {
 			print("<td><span class=\"text-center text-success\">" . gettext("OK") . "</span></td></tr>");
 
-			print("<tr><td>" . sprintf(gettext("Attempting bind to %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+			print("<tr><td>" . sprintf(gettext('Attempting bind to %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
 			if (ldap_test_bind($authcfg)) {
 				print('<td><span class="text-center text-success">' . gettext("OK") . "</span></td></tr>");
 
-				print("<tr><td>" . sprintf(gettext("Attempting to fetch Organizational Units from %s%s%s"), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
+				print("<tr><td>" . sprintf(gettext('Attempting to fetch Organizational Units from %1$s%2$s%3$s'), "<td><center>", htmlspecialchars($auth_server), "</center></td>"));
 				$ous = ldap_get_user_ous(true, $authcfg);
 
 				if (count($ous)>1) {
@@ -211,7 +211,7 @@ foreach (auth_get_authserver_list() as $idx_authserver => $auth_server) {
 
 $section->addInput(new Form_Select(
 	'authmode',
-	'Authentication Server',
+	'*Authentication Server',
 	$pconfig['authmode'],
 	$auth_servers
 ));

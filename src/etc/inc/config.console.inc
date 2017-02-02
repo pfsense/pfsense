@@ -38,8 +38,8 @@ function set_networking_interfaces_ports() {
 	if ($physmem < $g['minimum_ram_warning']) {
 		echo "\n\n\n";
 		echo gettext("DANGER!  WARNING!  ACHTUNG!") . "\n\n";
-		printf(gettext("%s requires *AT LEAST* %s RAM to function correctly.%s"), $g['product_name'], $g['minimum_ram_warning_text'], "\n");
-		printf(gettext("Only (%s) MB RAM has been detected, with (%s) available to %s.%s"), $realmem, $physmem, $g['product_name'], "\n");
+		printf(gettext('%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s'), $g['product_name'], $g['minimum_ram_warning_text'], "\n");
+		printf(gettext('Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s'), $realmem, $physmem, $g['product_name'], "\n");
 		echo "\n" . gettext("Press ENTER to continue.") . " ";
 		fgets($fp);
 		echo "\n";
@@ -114,7 +114,7 @@ EOD;
 
 	do {
 		echo "\n" . gettext("Enter the WAN interface name or 'a' for auto-detection") . " ";
-		printf(gettext("%s(%s or a): "), "\n", trim($ifsmallist));
+		printf(gettext('%1$s(%2$s or a): '), "\n", trim($ifsmallist));
 		$wanif = chop(fgets($fp));
 		if ($wanif === "") {
 			return;
@@ -122,7 +122,7 @@ EOD;
 		if ($wanif === "a") {
 			$wanif = autodetect_interface("WAN", $fp);
 		} else if (!array_key_exists($wanif, $iflist)) {
-			printf(gettext("%sInvalid interface name '%s'%s"), "\n", $wanif, "\n");
+			printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $wanif, "\n");
 			unset($wanif);
 			continue;
 		}
@@ -130,9 +130,9 @@ EOD;
 	} while (!$wanif);
 
 	do {
-		printf(gettext("%sEnter the LAN interface name or 'a' for auto-detection %s" .
-			"NOTE: this enables full Firewalling/NAT mode.%s" .
-			"(%s a or nothing if finished):%s"), "\n", "\n", "\n", trim($ifsmallist), " ");
+		printf(gettext('%1$sEnter the LAN interface name or \'a\' for auto-detection %2$s' .
+			'NOTE: this enables full Firewalling/NAT mode.%3$s' .
+			'(%4$s a or nothing if finished):%5$s'), "\n", "\n", "\n", trim($ifsmallist), " ");
 
 		$lanif = chop(fgets($fp));
 
@@ -148,7 +148,7 @@ EOD;
 		if ($lanif === "a") {
 			$lanif = autodetect_interface("LAN", $fp);
 		} else if (!array_key_exists($lanif, $iflist)) {
-			printf(gettext("%sInvalid interface name '%s'%s"), "\n", $lanif, "\n");
+			printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $lanif, "\n");
 			unset($lanif);
 			continue;
 		}
@@ -167,11 +167,11 @@ EOD;
 			$io = $i + 1;
 
 			if ($config['interfaces']['opt' . $io]['descr']) {
-				printf(gettext("%sOptional interface %s description found: %s"), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
+				printf(gettext('%1$sOptional interface %2$s description found: %3$s'), "\n", $io, $config['interfaces']['opt' . $io]['descr']);
 			}
 
-			printf(gettext("%sEnter the Optional %s interface name or 'a' for auto-detection%s" .
-				"(%s a or nothing if finished):%s"), "\n", $io, "\n", trim($ifsmallist), " ");
+			printf(gettext('%1$sEnter the Optional %2$s interface name or \'a\' for auto-detection%3$s' .
+				'(%4$s a or nothing if finished):%5$s'), "\n", $io, "\n", trim($ifsmallist), " ");
 
 			$optif[$i] = chop(fgets($fp));
 
@@ -184,7 +184,7 @@ EOD;
 						unset($optif[$i]);
 					}
 				} else if (!array_key_exists($optif[$i], $iflist)) {
-					printf(gettext("%sInvalid interface name '%s'%s"), "\n", $optif[$i], "\n");
+					printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $optif[$i], "\n");
 					unset($optif[$i]);
 					continue;
 				}
@@ -393,7 +393,7 @@ EOD;
 
 	foreach ($iflist_prev as $ifn => $ifa) {
 		if (!$ifa['up'] && $iflist[$ifn]['up']) {
-			printf(gettext("Detected link-up on interface %s.%s"), $ifn, "\n");
+			printf(gettext('Detected link-up on interface %1$s.%2$s'), $ifn, "\n");
 			return $ifn;
 		}
 	}
@@ -456,7 +456,7 @@ function vlan_setup() {
 		if ($vlan['if']) {
 			if (!array_key_exists($vlan['if'], $iflist) || 
 			    !is_jumbo_capable($vlan['if'])) {
-				printf(gettext("%sInvalid interface name '%s'%s"), "\n", $vlan['if'], "\n");
+				printf(gettext('%1$sInvalid interface name \'%2$s\'%3$s'), "\n", $vlan['if'], "\n");
 				continue;
 			}
 		} else {
@@ -467,7 +467,7 @@ function vlan_setup() {
 		$vlan['tag'] = chop(fgets($fp));
 		$vlan['vlanif'] = "{$vlan['if']}_vlan{$vlan['tag']}";
 		if (!is_numericint($vlan['tag']) || ($vlan['tag'] < 1) || ($vlan['tag'] > 4094)) {
-			printf(gettext("%sInvalid VLAN tag '%s'%s"), "\n", $vlan['tag'], "\n");
+			printf(gettext('%1$sInvalid VLAN tag \'%2$s\'%3$s'), "\n", $vlan['tag'], "\n");
 			continue;
 		}
 

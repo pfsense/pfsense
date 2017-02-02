@@ -113,7 +113,7 @@ if ($_POST) {
 				}
 			}
 		} else {
-			$input_errors[] = sprintf("%s. [%s]", gettext("A valid MAC address must be specified"), $_POST['mac']);
+			$input_errors[] = sprintf(gettext('A valid MAC address must be specified. [%s]'), $_POST['mac']);
 		}
 	}
 	if ($_POST['bw_up'] && !is_numeric($_POST['bw_up'])) {
@@ -135,7 +135,7 @@ if ($_POST) {
 		}
 
 		if ($macent['mac'] == $_POST['mac']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['mac'], gettext("already exists"));
+			$input_errors[] = sprintf(gettext('[%s] already exists.'), $_POST['mac']);
 			break;
 		}
 	}

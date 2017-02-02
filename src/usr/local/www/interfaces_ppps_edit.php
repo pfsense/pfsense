@@ -724,7 +724,7 @@ $section->addInput(new Form_Checkbox(
 	'Uptime logging',
 	'Enable persistent logging of connection uptime. ',
 	isset($pconfig['uptime'])
-))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %sStatus->Interfaces%s page.', '<a href="status_interfaces.php">', '</a>'));
+))->setHelp(sprintf('Causes cumulative uptime to be recorded and displayed on the %1$sStatus->Interfaces%2$s page.', '<a href="status_interfaces.php">', '</a>'));
 
 if ($pconfig['type'] == 'pppoe') {
 	$group = new Form_Group('Service name');

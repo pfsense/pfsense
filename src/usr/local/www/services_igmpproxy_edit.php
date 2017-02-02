@@ -153,7 +153,7 @@ foreach ($iflist as $ifnam => $ifdescr) {
 
 $section->addInput(new Form_Select(
 	'ifname',
-	'Interface',
+	'*Interface',
 	$pconfig['ifname'],
 	$optionlist
 ));
@@ -167,7 +167,7 @@ $section->addInput(new Form_Input(
 
 $section->addInput(new Form_Select(
 	'type',
-	'Type',
+	'*Type',
 	$pconfig['type'],
 	['upstream' => gettext('Upstream Interface'), 'downstream' => gettext('Downstream Interface')]
 ))->setHelp('The upstream network interface is the outgoing interface which is responsible for communicating to available multicast data sources. ' .

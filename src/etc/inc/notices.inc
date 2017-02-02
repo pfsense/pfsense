@@ -380,7 +380,7 @@ function notify_via_growl($message, $force=false) {
 	try {
 		$growl = Net_Growl::singleton($name, null, $password, $options);
 		//$name = 'GROWL_NOTIFY_STATUS';
-		$title = sprintf(gettext("%s (%s) - Notification"), $g['product_name'], $hostname);
+		$title = sprintf(gettext('%1$s (%2$s) - Notification'), $g['product_name'], $hostname);
 		$growl->publish($name, $title, $message);
 	} catch (Net_Growl_Exception $e) {
 		$err_msg = sprintf(gettext(

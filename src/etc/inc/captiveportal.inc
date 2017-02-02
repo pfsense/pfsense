@@ -1746,7 +1746,7 @@ function captiveportal_write_elements() {
 				unlink_if_exists("{$g['captiveportal_element_path']}/{$data['name']}");
 				touch("{$g['captiveportal_element_path']}/{$data['name']}");
 			} elseif (!@file_put_contents("{$g['captiveportal_element_path']}/{$data['name']}", base64_decode($data['content']))) {
-				printf(gettext("Error: cannot open '%s' in captiveportal_write_elements()%s"), $data['name'], "\n");
+				printf(gettext('Error: cannot open \'%1$s\' in captiveportal_write_elements()%2$s'), $data['name'], "\n");
 				return 1;
 			}
 			if (!file_exists("{$g['captiveportal_path']}/{$data['name']}")) {

@@ -339,7 +339,7 @@ if ($act == "new" || $act == "edit"):
 
 	$section->addInput(new Form_Input(
 		'common_name',
-		'Common Name',
+		'*Common Name',
 		'text',
 		$pconfig['common_name']
 	))->setHelp('Enter the X.509 common name for the client certificate, or the username for VPNs utilizing password authentication. This match is case sensitive.');

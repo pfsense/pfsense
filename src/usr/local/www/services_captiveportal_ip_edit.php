@@ -128,7 +128,7 @@ if ($_POST) {
 		}
 
 		if ($ipent['ip'] == $_POST['ip']) {
-			$input_errors[] = sprintf("[%s] %s.", $_POST['ip'], gettext("already allowed")) ;
+			$input_errors[] = sprintf(gettext('[%s] already allowed.'), $_POST['ip']);
 			break ;
 		}
 	}

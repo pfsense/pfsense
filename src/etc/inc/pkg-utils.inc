@@ -337,43 +337,70 @@ function get_package_internal_name($package_data) {
 }
 
 // Get information about packages.
-function get_pkg_info($pkgs = 'all', $only_local = false) {
+function get_pkg_info($pkgs = 'all', $remote_repo_usage_disabled = false, $installed_pkgs_only = false) {
+
 	global $g, $input_errors;
 
-	$out = '';
-	$err = '';
+	$out = $err = $extra_param = '';
+	$rc = 0;
 
 	unset($pkg_filter);
+
 	if (is_array($pkgs)) {
 		$pkg_filter = $pkgs;
-		$pkgs = 'all';
+		$pkgs = $g['pkg_prefix'] . '*';
+	} elseif ($pkgs == 'all') {
+		$pkgs = $g['pkg_prefix'] . '*';
 	}
 
-	if ($pkgs == 'all') {
-		$pkgs = $g['pkg_prefix'];
-	}
-
+	
 	if (!function_exists('is_subsystem_dirty')) {
 		require_once("util.inc");
 	}
 
 	/* Do not run remote operations if pkg has a lock */
 	if (is_subsystem_dirty('pkg')) {
-		$only_local = true;
+		$remote_repo_usage_disabled = true;
 		$lock = false;
 	} else {
 		$lock = true;
 	}
 
-	$extra_param = "";
-	if ($only_local) {
-		$extra_param = "-U ";
-	}
-
 	if ($lock) {
 		mark_subsystem_dirty('pkg');
 	}
-	$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
+
+	if ($remote_repo_usage_disabled) {
+		$extra_param = "-U ";
+	}
+
+	if (!$installed_pkgs_only) {
+		$rc = pkg_exec("search {$extra_param}-R --raw-format json-compact " . $pkgs, $out, $err);
+	}
+	if (($installed_pkgs_only || ($rc != 0 && $remote_repo_usage_disabled)) && is_package_installed($pkgs)) {
+		/* Fall back on pkg info to return locally installed matching pkgs instead, if 
+		 *
+		 *   (1) only installed pkgs needed, or
+		 *       we tried to check the local catalog copy (implying that we would have accepted incomplete/outdated pkg info)
+		 *       but it didn't have any contents, or for other reasons returned an error. 
+		 *   AND
+		 *   (2) at least some pkgs matching <pattern> are installed
+		 *
+		 * Following an unsuccessful attempt to access a remote repo catalog, the local copy is wiped clear. Thereafter any
+		 * "pkg search" will return an error until online+updated again. If the calling code would have accepted local copy info
+		 * (which could be incomplete/out of date), then it makes sense to fall back on pkg info to at least return the known
+		 * info about installed pkgs (pkg info should still work), instead of failing and returning no info at all. 
+		 * For example, this at least enables offline view + management of installed pkgs in GUI/console.
+		 *
+		 * We skip this step if no matching pkgs are installed, because then pkg info would return a "no matching pkgs"
+		 * RC code, even though this wouldn't be considered an "error" (and $out+$err would be correct empty strings if none match).
+		 * Note that is_package_installed() is a wrapper for pkg info -e <pattern> which is what we need here.
+		*/
+		
+		// ok, 1 or more packages match, so pkg info can be safely called to get the pkg list  
+		$rc = pkg_exec("info -R --raw-format json-compact " . $pkgs, $out, $err);  
+	}
+
 	if ($lock) {
 		clear_subsystem_dirty('pkg');
 	}
@@ -453,7 +480,8 @@ function get_pkg_info($pkgs = 'all', $only_local = false) {
 function register_all_installed_packages() {
 	global $g, $config, $pkg_interface;
 
-	$pkg_info = get_pkg_info('all', true);
+	$pkg_info = get_pkg_info('all', true, true);
+
 
 	foreach ($pkg_info as $pkg) {
 		if (!isset($pkg['installed'])) {
@@ -689,7 +717,7 @@ function install_package_xml($package_name) {
 	update_status($to_output);
 
 	if (($pkgid = get_package_id($package_name)) == -1) {
-		update_status(sprintf(gettext("The %s package is not installed.%sInstallation aborted."), $package_name, "\n\n"));
+		update_status(sprintf(gettext('The %1$s package is not installed.%2$sInstallation aborted.'), $package_name, "\n\n"));
 
 		uninstall_package($package_name);
 		write_config($changedesc);
@@ -818,7 +846,7 @@ function delete_package_xml($package_name, $when = "post-deinstall") {
 
 	$pkgid = get_package_id($package_name);
 	if ($pkgid == -1) {
-		update_status(sprintf(gettext("The %s package is not installed.%sDeletion aborted."), $package_name, "\n\n"));
+		update_status(sprintf(gettext('The %1$s package is not installed.%2$sDeletion aborted.'), $package_name, "\n\n"));
 		ob_flush();
 		sleep(1);
 		return;

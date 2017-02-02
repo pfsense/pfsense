@@ -179,14 +179,14 @@ if ($act == "delcert") {
 	$certname = htmlspecialchars($thiscert['descr']);
 	$crlname = htmlspecialchars($thiscrl['descr']);
 	if (cert_unrevoke($thiscert, $thiscrl)) {
-		$savemsg = sprintf(gettext("Deleted Certificate %s from CRL %s."), $certname, $crlname);
+		$savemsg = sprintf(gettext('Deleted Certificate %1$s from CRL %2$s.'), $certname, $crlname);
 		$class = "success";
 		// refresh IPsec and OpenVPN CRLs
 		openvpn_refresh_crls();
 		vpn_ipsec_configure();
 		write_config($savemsg);
 	} else {
-		$savemsg = sprintf(gettext("Failed to delete Certificate %s from CRL %s."), $certname, $crlname);
+		$savemsg = sprintf(gettext('Failed to delete Certificate %1$s from CRL %2$s.'), $certname, $crlname);
 		$class = "danger";
 	}
 	$act="edit";
@@ -351,7 +351,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 		$section->addInput(new Form_Select(
 			'method',
-			'Method',
+			'*Method',
 			$pconfig['method'],
 			build_method_list()
 		));
@@ -360,14 +360,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Select(
 		'caref',
-		'Certificate Authority',
+		'*Certificate Authority',
 		$pconfig['caref'],
 		build_ca_list()
 	));
@@ -379,7 +379,7 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 		))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 
@@ -425,14 +425,14 @@ if ($act == "new" || $act == gettext("Save") || $input_errors) {
 
 	$section->addInput(new Form_Input(
 		'descr',
-		'Descriptive name',
+		'*Descriptive name',
 		'text',
 		$pconfig['descr']
 	));
 
 	$section->addInput(new Form_Textarea(
 		'crltext',
-		'CRL data',
+		'*CRL data',
 		$pconfig['crltext']
 	))->setHelp('Paste a Certificate Revocation List in X.509 CRL format here.');
 

@@ -1775,6 +1775,9 @@ function system_ntp_configure() {
 			if (!empty($config['ntpd']['gps']['subsec'])) {
 				$ntpmode += 128;
 			}
+			if (!empty($config['ntpd']['gps']['processpgrmf'])) {
+				$ntpmode += 256;
+			}
 			$ntpcfg .= (string) $ntpmode;
 		} else {
 			$ntpcfg .= '0';

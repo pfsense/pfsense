@@ -62,6 +62,27 @@ require_once('notices.inc');
 require_once('system.inc');
 include_once("includes/functions.inc.php");
 
+$sysinfo_items = array(
+	'name' => 'Name',
+	'system' => 'System', 'version' => 'Version',
+	'version' => 'Version',
+	'platform' => 'Platform',
+	'cpu_type' => 'CPU Type',
+	'hwcrypto' => 'Hardware Crypto',
+	'uptime' => 'Uptime',
+	'current_datetime' => 'Current Date/Time',
+	'dns_servers' => 'DNS Server(s)',
+	'last_config_change' => 'Last Config Change',
+	'state_table_size' => 'State Table Size',
+	'mbuf_usage' => 'MBUF Usage',
+	'temperature' => 'Temperature',
+	'load_average' => 'Load Average',
+	'cpu_usage' => 'CPU Usage',
+	'memory_usage' => 'Memory Usage',
+	'swap_usage' => 'Swap Usage',
+	'disk_usage' => 'Disk Usage'
+	);
+
 if ($_REQUEST['getupdatestatus']) {
 	require_once("pkg-utils.inc");
 
@@ -108,6 +129,22 @@ if ($_REQUEST['getupdatestatus']) {
 	}
 
 	exit;
+} elseif ($_POST) {
+
+	$validNames = array();
+
+	foreach ($sysinfo_items as $sysinfo_item_key => $sysinfo_item_name) {
+		array_push($validNames, $sysinfo_item_key);
+	}
+
+	if (is_array($_POST['show'])) {
+		$user_settings['widgets']['system_information']['filter'] = implode(',', array_diff($validNames, $_POST['show']));
+	} else {
+		$user_settings['widgets']['system_information']['filter'] = "";
+	}
+
+	save_widget_settings($_SESSION['Username'], $user_settings["widgets"], gettext("Saved System Information Widget Filter via Dashboard."));
+	header("Location: /index.php");
 }
 
 /*   Adding one second to the system widet update period
@@ -117,14 +154,24 @@ $widgetperiod = isset($config['widgets']['period']) ? $config['widgets']['period
 $widgetperiod += 1000;
 
 $filesystems = get_mounted_filesystems();
+
+$skipsysinfoitems = explode(",", $user_settings['widgets']['system_information']['filter']);
 ?>
 
-<table class="table table-striped table-hover">
+<div class="table-responsive">
+<table class="table table-hover table-striped table-condensed">
 	<tbody>
+<?php
+	if (!in_array('name', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Name");?></th>
 			<td><?php echo htmlspecialchars($config['system']['hostname'] . "." . $config['system']['domain']); ?></td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('system', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("System");?></th>
 			<td>
@@ -140,6 +187,10 @@ $filesystems = get_mounted_filesystems();
 			<?=gettext("Serial: ");?><strong><?=system_get_serial();?></strong>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('version', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Version");?></th>
 			<td>
@@ -157,6 +208,10 @@ $filesystems = get_mounted_filesystems();
 			<?php endif; ?>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('platform', $skipsysinfoitems)):
+?>
 		<?php if (!$g['hideplatform']): ?>
 		<tr>
 			<th><?=gettext("Platform");?></th>
@@ -187,6 +242,10 @@ $filesystems = get_mounted_filesystems();
 			</td>
 		</tr>
 		<?php endif; ?>
+<?php
+	endif;
+	if (!in_array('cpu_type', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("CPU Type");?></th>
 			<td><?=htmlspecialchars(get_single_sysctl("hw.model"))?>
@@ -200,20 +259,36 @@ $filesystems = get_mounted_filesystems();
 		<?php endif; ?>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('hwcrypto', $skipsysinfoitems)):
+?>
 		<?php if ($hwcrypto): ?>
 		<tr>
 			<th><?=gettext("Hardware crypto");?></th>
 			<td><?=htmlspecialchars($hwcrypto);?></td>
 		</tr>
 		<?php endif; ?>
+<?php
+	endif;
+	if (!in_array('uptime', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Uptime");?></th>
 			<td id="uptime"><?= htmlspecialchars(get_uptime()); ?></td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('current_datetime', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Current date/time");?></th>
 			<td><div id="datetime"><?= date("D M j G:i:s T Y"); ?></div></td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('dns_servers', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("DNS server(s)");?></th>
 			<td>
@@ -225,14 +300,22 @@ $filesystems = get_mounted_filesystems();
 					}
 				?>
 				</ul>
-		</td>
+			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('last_config_change', $skipsysinfoitems)):
+?>
 		<?php if ($config['revision']): ?>
 		<tr>
 			<th><?=gettext("Last config change");?></th>
 			<td><?= htmlspecialchars(date("D M j G:i:s T Y", intval($config['revision']['time'])));?></td>
 		</tr>
 		<?php endif; ?>
+<?php
+	endif;
+	if (!in_array('state_table_size', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("State table size");?></th>
 			<td>
@@ -247,6 +330,10 @@ $filesystems = get_mounted_filesystems();
 				<span id="pfstateusagemeter"><?=$pfstateusage?>%</span>&nbsp;<span id="pfstate">(<?= htmlspecialchars($pfstatetext)?>)</span>&nbsp;<span><a href="diag_dump_states.php"><?=gettext("Show states");?></a></span>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('mbuf_usage', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("MBUF Usage");?></th>
 			<td>
@@ -261,6 +348,10 @@ $filesystems = get_mounted_filesystems();
 				<span id="mbufusagemeter"><?=$mbufusage?>%</span>&nbsp;<span id="mbuf">(<?= htmlspecialchars($mbufstext)?>)</span>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('temperature', $skipsysinfoitems)):
+?>
 		<?php if (get_temp() != ""): ?>
 		<tr>
 			<th><?=gettext("Temperature");?></th>
@@ -274,12 +365,20 @@ $filesystems = get_mounted_filesystems();
 			</td>
 		</tr>
 		<?php endif; ?>
+<?php
+	endif;
+	if (!in_array('load_average', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Load average");?></th>
 			<td>
 				<div id="load_average" title="<?=gettext('Last 1, 5 and 15 minutes')?>"><?= get_load_average(); ?></div>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('cpu_usage', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("CPU usage");?></th>
 			<td>
@@ -291,6 +390,10 @@ $filesystems = get_mounted_filesystems();
 				<span id="cpumeter"><?=sprintf(gettext("Updating in %s seconds"), $update_period)?></span>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('memory_usage', $skipsysinfoitems)):
+?>
 		<tr>
 			<th><?=gettext("Memory usage");?></th>
 			<td>
@@ -303,6 +406,10 @@ $filesystems = get_mounted_filesystems();
 				<span id="memusagemeter"><?=$memUsage?></span><span>% of <?= sprintf("%.0f", get_single_sysctl('hw.physmem') / (1024*1024)) ?> MiB</span>
 			</td>
 		</tr>
+<?php
+	endif;
+	if (!in_array('swap_usage', $skipsysinfoitems)):
+?>
 		<?php if ($showswap == true): ?>
 		<tr>
 			<th><?=gettext("SWAP usage");?></th>
@@ -317,7 +424,12 @@ $filesystems = get_mounted_filesystems();
 		</tr>
 		<?php endif; ?>
 
-<?php $diskidx = 0; foreach ($filesystems as $fs): ?>
+<?php
+	endif;
+	if (!in_array('disk_usage', $skipsysinfoitems)):
+		$diskidx = 0;
+		foreach ($filesystems as $fs):
+?>
 		<tr>
 			<th><?=gettext("Disk usage");?>&nbsp;( <?=$fs['mountpoint']?> )</th>
 			<td>
@@ -328,10 +440,53 @@ $filesystems = get_mounted_filesystems();
 				<span><?=$fs['percent_used']?>%<?=gettext(" of ")?><?=$fs['total_size']?>iB - <?=$fs['type'] . ("md" == substr(basename($fs['device']), 0, 2) ? " " . gettext("in RAM") : "")?></span>
 			</td>
 		</tr>
-<?php $diskidx++; endforeach; ?>
+<?php
+			$diskidx++;
+		endforeach;
+	endif;
+?>
 
 	</tbody>
 </table>
+</div>
+<!-- close the body we're wrapped in and add a configuration-panel -->
+</div><div id="widget-<?=$widgetname?>_panel-footer" class="panel-footer collapse">
+
+<form action="/widgets/widgets/system_information.widget.php" method="post" class="form-horizontal">
+    <div class="panel panel-default col-sm-10">
+		<div class="panel-body">
+			<div class="table responsive">
+				<table class="table table-striped table-hover table-condensed">
+					<thead>
+						<tr>
+							<th><?=gettext("Item")?></th>
+							<th><?=gettext("Show")?></th>
+						</tr>
+					</thead>
+					<tbody>
+<?php
+				foreach ($sysinfo_items as $sysinfo_item_key => $sysinfo_item_name):
+?>
+						<tr>
+							<td><?=gettext($sysinfo_item_name)?></td>
+							<td class="col-sm-2"><input id="show[]" name ="show[]" value="<?=$sysinfo_item_key?>" type="checkbox" <?=(!in_array($sysinfo_item_key, $skipsysinfoitems) ? 'checked':'')?>></td>
+						</tr>
+<?php
+				endforeach;
+?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<div class="form-group">
+		<div class="col-sm-offset-3 col-sm-6">
+			<button type="submit" class="btn btn-primary"><i class="fa fa-save icon-embed-btn"></i><?=gettext('Save')?></button>
+			<button id="showallsysinfoitems" type="button" class="btn btn-info"><i class="fa fa-undo icon-embed-btn"></i><?=gettext('All')?></button>
+		</div>
+	</div>
+</form>
 
 <script type="text/javascript">
 //<![CDATA[
@@ -371,6 +526,12 @@ function updateMeters() {
 
 <?php if (!isset($config['system']['firmware']['disablecheck'])): ?>
 events.push(function(){
+	$("#showallsysinfoitems").click(function() {
+		$("[id^=show]").each(function() {
+			$(this).prop("checked", true);
+		});
+	});
+
 	setTimeout('systemStatusGetUpdateStatus()', 4000);
 });
 <?php endif; ?>

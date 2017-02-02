@@ -2439,6 +2439,65 @@ function filter_generate_user_rule($rule) {
 					$aline['flags'] .= " ) ";
 				}
 	}
+	if(in_array($rule['protocol'], array("icmp","udp","tcp/udp")) && ($type == "pass")) {
+		/*
+		 *	# keep state
+		 *		works with TCP, UDP, and ICMP.
+		 *	# modulate state
+		 *		works only with TCP. pfSense will generate strong Initial Sequence Numbers (ISNs)
+		 *		for packets matching this rule.
+		 *	# synproxy state
+		 *		proxies incoming TCP connections to help protect servers from spoofed TCP SYN floods.
+		 *		This option includes the functionality of keep state and modulate state combined.
+		 *	# none
+		 *		do not use state mechanisms to keep track. this is only useful if your doing advanced
+		 *		queueing in certain situations. please check the faq.
+		 */
+		$noadvoptions = false;
+		if(isset($rule['statetype']) && $rule['statetype'] <> "") {
+			switch($rule['statetype']) {
+				case "none":
+					$noadvoptions = true;
+					$aline['flags'] .= " no state ";
+					break;
+				case "sloppy state":
+					$aline['flags'] .= "keep state ";
+					$rule['sloppy'] = true;
+					break;
+				default:
+					$aline['flags'] .= "{$rule['statetype']} ";
+					break;
+			}
+		} else
+			$aline['flags'] .= "keep state ";
+
+		if($noadvoptions == false || $l7_present)
+			if( (isset($rule['source-track']) and $rule['source-track'] <> "") or
+			    (isset($rule['max']) and $rule['max'] <> "") or
+			    (isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "") or
+			    (isset($rule['max-src-states']) and $rule['max-src-states'] <> "") or
+			    (isset($rule['statetimeout']) and $rule['statetimeout'] <> "") or
+			    isset($rule['sloppy']) or $l7_present) {
+					$aline['flags'] .= "( ";
+					if (isset($rule['sloppy']))
+						$aline['flags'] .= "sloppy ";
+					if(isset($rule['source-track']) and $rule['source-track'] <> "")
+						$aline['flags'] .= "source-track rule ";
+					if(isset($rule['max']) and $rule['max'] <> "")
+						$aline['flags'] .= "max " . $rule['max'] . " ";
+					if(isset($rule['max-src-nodes']) and $rule['max-src-nodes'] <> "")
+						$aline['flags'] .= "max-src-nodes " . $rule['max-src-nodes'] . " ";
+					if(isset($rule['max-src-states']) and $rule['max-src-states'] <> "")
+						$aline['flags'] .= "max-src-states " . $rule['max-src-states'] . " ";
+					if(isset($rule['statetimeout']) and $rule['statetimeout'] <> "")
+						$aline['flags'] .= "tcp.established " . $rule['statetimeout'] . " ";
+
+					if(!empty($aline['divert']))
+						$aline['flags'] .= "max-packets 8 ";
+
+					$aline['flags'] .= " ) ";
+				}
+	}
 	if($rule['defaultqueue'] <> "") {
 		$aline['queue'] = " queue (".$rule['defaultqueue'];
 		if($rule['ackqueue'] <> "")

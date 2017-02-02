@@ -158,11 +158,32 @@ endforeach; ?>
 </nav>
 
 <div class="infoblock">
-	<?php print_info_box(gettext(
+	<?php print_info_box(gettext('The server must return the client IP address ' .
+	'as a string in the following format: ') .
+	'<pre>Current IP Address: x.x.x.x</pre>' .
+	gettext(
 	'The first (highest in list) enabled check ip service will be used to ' . 
 	'check IP addresses for Dynamic DNS services, and ' .
-	'RFC 2136 entries that have the "Use public IP" option enabled.'
-	), 'info', false); ?>
+	'RFC 2136 entries that have the "Use public IP" option enabled.') .
+	'<br/><br/>'
+	, 'info', false);
+
+	print_info_box(gettext('Sample Server Configurations') .
+	'<br/>' .
+	gettext('nginx with LUA') . ':' .
+	'<pre> location = /ip {
+	default_type text/html;
+	content_by_lua \'
+		ngx.say("' . htmlspecialchars('<html><head><title>Current IP Check</title></head><body>') . 'Current IP Address: ")
+		ngx.say(ngx.var.remote_addr)
+		ngx.say("' . htmlspecialchars('</body></html>') . '")
+	\';
+	}</pre>' .
+	gettext('PHP') .
+	'<pre>' .
+	htmlspecialchars('<html><head><title>Current IP Check</title></head><body>Current IP Address: <?=$_SERVER[\'REMOTE_ADDR\']?></body></html>') .
+	'</pre>'
+	, 'info', false); ?>
 </div>
 
 <?php include("foot.inc");

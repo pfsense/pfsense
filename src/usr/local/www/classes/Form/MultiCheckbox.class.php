@@ -22,7 +22,7 @@
 
 class Form_MultiCheckbox extends Form_Checkbox
 {
-	public function setHelp($help, array $params = array())
+	public function setHelp()
 	{
 		throw new Exception('MultiCheckboxes do not support help-texts, please use $group->setHelp instead');
 	}

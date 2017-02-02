@@ -522,10 +522,10 @@ $section->addInput(new Form_Checkbox(
 	'DNS Server Override',
 	'Allow DNS server list to be overridden by DHCP/PPP on WAN',
 	$pconfig['dnsallowoverride']
-))->setHelp(sprintf(gettext('If this option is set, %s will use DNS servers '.
+))->setHelp(gettext('If this option is set, %s will use DNS servers '.
 	'assigned by a DHCP/PPP server on WAN for its own purposes (including '.
 	'the DNS Forwarder/DNS Resolver). However, they will not be assigned to DHCP '.
-	'clients.'), $g['product_name']));
+	'clients.'), $g['product_name']);
 
 $section->addInput(new Form_Checkbox(
 	'dnslocalhost',

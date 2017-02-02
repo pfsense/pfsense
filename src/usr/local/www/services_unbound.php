@@ -318,26 +318,26 @@ $section->addInput(new Form_Checkbox(
 	'DNS Query Forwarding',
 	'Enable Forwarding Mode',
 	$pconfig['forwarding']
-))->setHelp(sprintf('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
+))->setHelp('If this option is set, DNS queries will be forwarded to the upstream DNS servers defined under'.
 					' %1$sSystem &gt; General Setup%2$s or those obtained via DHCP/PPP on WAN'.
-					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>'));
+					' (if DNS Server Override is enabled there).','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcp',
 	'DHCP Registration',
 	'Register DHCP leases in the DNS Resolver',
 	$pconfig['regdhcp']
-))->setHelp(sprintf('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
+))->setHelp('If this option is set, then machines that specify their hostname when requesting a DHCP lease will be registered'.
 					' in the DNS Resolver, so that their name can be resolved.'.
-					' The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>'));
+					' The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
 
 $section->addInput(new Form_Checkbox(
 	'regdhcpstatic',
 	'Static DHCP',
 	'Register DHCP static mappings in the DNS Resolver',
 	$pconfig['regdhcpstatic']
-))->setHelp(sprintf('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
-					'The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>'));
+))->setHelp('If this option is set, then DHCP static mappings will be registered in the DNS Resolver, so that their name can be resolved. '.
+					'The domain in %1$sSystem &gt; General Setup%2$s should also be set to the proper value.','<a href="system.php">','</a>');
 
 $btnadv = new Form_Button(
 	'btnadvcustom',

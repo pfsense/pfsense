@@ -1370,6 +1370,8 @@ create_distribution_tarball() {
 }
 
 create_iso_image() {
+	local _variant="$1"
+
 	LOGFILE=${BUILDER_LOGS}/isoimage.${TARGET}
 	echo ">>> Building bootable ISO image for ${TARGET}" | tee -a ${LOGFILE}
 	if [ -z "${DEFAULT_KERNEL}" ]; then
@@ -1377,7 +1379,14 @@ create_iso_image() {
 		print_error_pfS
 	fi
 
-	customize_stagearea_for_image "iso"
+	local _image_path=${ISOPATH}
+	if [ -n "${_variant}" ]; then
+		_image_path=$(echo "$_image_path" | \
+			sed "s/${PRODUCT_NAME_SUFFIX}-/&${_variant}-/")
+		VARIANTIMAGES="${VARIANTIMAGES}${VARIANTIMAGES:+ }${_image_path}"
+	fi
+
+	customize_stagearea_for_image "iso" "" $_variant
 	install_default_kernel ${DEFAULT_KERNEL}
 
 	echo cdrom > $FINAL_CHROOT_DIR/etc/platform
@@ -1387,7 +1396,7 @@ create_iso_image() {
 
 	# This check is for supporting create memstick/ova images
 	echo -n ">>> Running command: script -aq $LOGFILE makefs -t cd9660 -o bootimage=\"i386;${FINAL_CHROOT_DIR}/boot/cdboot \"-o no-emul-boot -o rockridge " | tee -a ${LOGFILE}
-	echo "-o label=${FSLABEL} -o publisher=\"${PRODUCT_NAME} project.\" $ISOPATH ${FINAL_CHROOT_DIR}" | tee -a ${LOGFILE}
+	echo "-o label=${FSLABEL} -o publisher=\"${PRODUCT_NAME} project.\" $_image_path ${FINAL_CHROOT_DIR}" | tee -a ${LOGFILE}
 
 	create_distribution_tarball
 
@@ -1395,15 +1404,15 @@ create_iso_image() {
 	rm -rf ${FINAL_CHROOT_DIR}/rescue
 
 	makefs -t cd9660 -o bootimage="i386;${FINAL_CHROOT_DIR}/boot/cdboot" -o no-emul-boot -o rockridge \
-		-o label=${FSLABEL} -o publisher="${PRODUCT_NAME} project." $ISOPATH ${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
-	if [ $? -ne 0 -o ! -f $ISOPATH ]; then
-		if [ -f ${ISOPATH} ]; then
-			rm -f $ISOPATH
+		-o label=${FSLABEL} -o publisher="${PRODUCT_NAME} project." $_image_path ${FINAL_CHROOT_DIR} 2>&1 >> ${LOGFILE}
+	if [ $? -ne 0 -o ! -f $_image_path ]; then
+		if [ -f ${_image_path} ]; then
+			rm -f $_image_path
 		fi
 		echo ">>> ERROR: Something wrong happened during ISO image creation. STOPPING!" | tee -a ${LOGFILE}
 		print_error_pfS
 	fi
-	gzip -qf $ISOPATH &
+	gzip -qf $_image_path &
 	_bg_pids="${_bg_pids}${_bg_pids:+ }$!"
 
 	echo ">>> ISO created: $(LC_ALL=C date)" | tee -a ${LOGFILE}

@@ -435,7 +435,13 @@ for _IMGTOBUILD in $_IMAGESTOBUILD; do
 
 	case "${_IMGTOBUILD}" in
 		iso)
-			create_iso_image
+			if [ -n "${ISO_VARIANTS}" ]; then
+				for _variant in ${ISO_VARIANTS}; do
+					create_iso_image ${_variant}
+				done
+			else
+				create_iso_image
+			fi
 			;;
 		memstick)
 			if [ -n "${MEMSTICK_VARIANTS}" ]; then

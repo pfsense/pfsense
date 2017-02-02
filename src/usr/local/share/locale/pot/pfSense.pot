@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-01 09:10-0200\n"
+"POT-Creation-Date: 2017-02-02 18:38-0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -12671,6 +12671,13 @@ msgstr ""
 msgid "To"
 msgstr ""
 
+#: src/usr/local/www/firewall_rules_edit.php:1438
+#, php-format
+msgid ""
+"Specify the %s port or port range for this rule. The \"To\" field may be "
+"left empty if only filtering a single port."
+msgstr ""
+
 #: src/usr/local/www/firewall_rules_edit.php:1445
 msgid "Extra Options"
 msgstr ""
@@ -16647,6 +16654,13 @@ msgstr ""
 msgid "Uptime logging"
 msgstr ""
 
+#: src/usr/local/www/interfaces_ppps_edit.php:727
+#, php-format
+msgid ""
+"Causes cumulative uptime to be recorded and displayed on the %1$sStatus-"
+">Interfaces%2$s page."
+msgstr ""
+
 #: src/usr/local/www/interfaces_ppps_edit.php:747
 msgid ""
 "This field can usually be left empty. Service name will not be configured if "
@@ -18416,6 +18430,17 @@ msgstr ""
 msgid "Pass-through MAC Auto Entry"
 msgstr ""
 
+#: src/usr/local/www/services_captiveportal.php:648
+#, php-format
+msgid ""
+"When enabled, a MAC passthrough entry is automatically added after the user "
+"has successfully authenticated. Users of that MAC address will never have to "
+"authenticate again. To remove the passthrough MAC entry either log in and "
+"remove it manually from the %s or send a POST from another system. If this "
+"is enabled, RADIUS MAC authentication cannot be used. Also, the logout "
+"window will not be shown."
+msgstr ""
+
 #: src/usr/local/www/services_captiveportal.php:664
 msgid "Per-user bandwidth restriction"
 msgstr ""
@@ -19550,11 +19575,29 @@ msgstr ""
 msgid "Delete service"
 msgstr ""
 
-#: src/usr/local/www/services_checkip.php:162
+#: src/usr/local/www/services_checkip.php:161
+msgid ""
+"The server must return the client IP address as a string in the following "
+"format: "
+msgstr ""
+
+#: src/usr/local/www/services_checkip.php:165
 msgid ""
 "The first (highest in list) enabled check ip service will be used to check "
 "IP addresses for Dynamic DNS services, and RFC 2136 entries that have the "
 "\"Use public IP\" option enabled."
+msgstr ""
+
+#: src/usr/local/www/services_checkip.php:171
+msgid "Sample Server Configurations"
+msgstr ""
+
+#: src/usr/local/www/services_checkip.php:173
+msgid "nginx with LUA"
+msgstr ""
+
+#: src/usr/local/www/services_checkip.php:182
+msgid "PHP"
 msgstr ""
 
 #: src/usr/local/www/services_checkip_edit.php:68
@@ -20916,19 +20959,70 @@ msgstr ""
 msgid "General DNS Forwarder Options"
 msgstr ""
 
+#: src/usr/local/www/services_dnsmasq.php:258
+#, php-format
+msgid ""
+"If this option is set machines that specify their hostname when requesting a "
+"DHCP lease will be registered in the DNS forwarder, so that their name can "
+"be resolved. The domain in %1$sSystem: General Setup%2$s should also be set "
+"to the proper value."
+msgstr ""
+
 #: src/usr/local/www/services_dnsmasq.php:267
 #: src/usr/local/www/services_unbound.php:336
 msgid "Static DHCP"
+msgstr ""
+
+#: src/usr/local/www/services_dnsmasq.php:270
+#, php-format
+msgid ""
+"If this option is set, DHCP static mappings will be registered in the DNS "
+"forwarder, so that their name can be resolved. The domain in %1$sSystem: "
+"General Setup%2$s should also be set to the proper value."
 msgstr ""
 
 #: src/usr/local/www/services_dnsmasq.php:278
 msgid "Prefer DHCP"
 msgstr ""
 
+#: src/usr/local/www/services_dnsmasq.php:281
+msgid ""
+"If this option is set DHCP mappings will be resolved before the manual list "
+"of names below. This only affects the name given for a reverse lookup (PTR)."
+msgstr ""
+
 #: src/usr/local/www/services_dnsmasq.php:286
 #: src/usr/local/www/services_dnsmasq.php:290
 #: src/usr/local/www/services_unbound.php:318
 msgid "DNS Query Forwarding"
+msgstr ""
+
+#: src/usr/local/www/services_dnsmasq.php:293
+#, php-format
+msgid ""
+"If this option is set %s DNS Forwarder (dnsmasq) will query the DNS servers "
+"sequentially in the order specified (<i>System - General Setup - DNS "
+"Servers</i>), rather than all at once in parallel. "
+msgstr ""
+
+#: src/usr/local/www/services_dnsmasq.php:302
+#, php-format
+msgid ""
+"If this option is set %s DNS Forwarder (dnsmasq) will not forward A or AAAA "
+"queries for plain names, without dots or domain parts, to upstream name "
+"servers.\t If the name is not known from /etc/hosts or DHCP then a \"not "
+"found\" answer is returned. "
+msgstr ""
+
+#: src/usr/local/www/services_dnsmasq.php:311
+#, php-format
+msgid ""
+"If this option is set %s DNS Forwarder (dnsmasq) will not forward reverse "
+"DNS lookups (PTR) for private addresses (RFC 1918) to upstream name "
+"servers.  Any entries in the Domain Overrides section forwarding private \"n."
+"n.n.in-addr.arpa\" names to a specific server are still forwarded. If the IP "
+"to name is not known from /etc/hosts, DHCP or a specific domain override "
+"then a \"not found\" answer is immediately returned. "
 msgstr ""
 
 #: src/usr/local/www/services_dnsmasq.php:320
@@ -22601,6 +22695,31 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:311
 msgid "DNSSEC"
+msgstr ""
+
+#: src/usr/local/www/services_unbound.php:321
+#, php-format
+msgid ""
+"If this option is set, DNS queries will be forwarded to the upstream DNS "
+"servers defined under %1$sSystem &gt; General Setup%2$s or those obtained "
+"via DHCP/PPP on WAN (if DNS Server Override is enabled there)."
+msgstr ""
+
+#: src/usr/local/www/services_unbound.php:330
+#, php-format
+msgid ""
+"If this option is set, then machines that specify their hostname when "
+"requesting a DHCP lease will be registered in the DNS Resolver, so that "
+"their name can be resolved. The domain in %1$sSystem &gt; General Setup%2$s "
+"should also be set to the proper value."
+msgstr ""
+
+#: src/usr/local/www/services_unbound.php:339
+#, php-format
+msgid ""
+"If this option is set, then DHCP static mappings will be registered in the "
+"DNS Resolver, so that their name can be resolved. The domain in %1$sSystem "
+"&gt; General Setup%2$s should also be set to the proper value."
 msgstr ""
 
 #: src/usr/local/www/services_unbound.php:352

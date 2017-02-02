@@ -1,6 +1,4 @@
-# Maxim Lebedev <maxim@netgate.com>, 2017. #zanata
-# Stephen Beaver <sbeaver@netgate.com>, 2017. #zanata
-# Vladimir Lind <vlind@netgate.com>, 2017. #zanata
+# DerliangHuang <derliang@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,13 +7,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-02 10:10-0500\n"
-"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
-"Language-Team: Russian\n"
-"Language: ru\n"
+"PO-Revision-Date: 2017-02-02 11:43-0500\n"
+"Last-Translator: DerliangHuang <derliang@gmail.com>\n"
+"Language-Team: Chinese (Taiwan)\n"
+"Language: zh-TW\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 
 #: src/etc/inc/auth.inc:95
 msgid ""
@@ -26,24 +23,24 @@ msgstr ""
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Перенаправление..."
+msgstr "重新導向中..."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Перенаправление на приборную панель"
+msgstr "正重新導向至儀表板..."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Выполняется: %s"
+msgstr "執行中:%s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "ERROR! Не удалось подключиться к серверу %s"
+msgstr "錯誤!  無法連接至伺服器 %s."
 
 #: src/etc/inc/auth.inc:838
 #, php-format
@@ -54,14 +51,12 @@ msgstr ""
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr ""
-"Ошибка! ldap_test_bind()  не смог инициализировать STARTTLS с сервером %s"
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"ОШИБКА! Для  ldap_get_user_ous()  не определён сервер аутентификации LDAP"
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
@@ -76,12 +71,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "ERROR! ldap_get_user_ous() не может связаться с сервером %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "ERROR! ldap_get_groups() Не может подключиться к серверу %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
@@ -103,10 +98,6 @@ msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"ОШИБКА! в вызове ldap_backed()  не был определён сервер аутентификации LDAP. "
-"По умолчанию будет использоваться\n"
-"локальная база пользователей, определённых в Система -> Менеджер "
-"пользователей"
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
@@ -146,8 +137,6 @@ msgstr ""
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
 msgstr ""
-"ERROR! Не удалось подключиться к серверу %1$s так как пользователь %2$s: "
-"%3$s"
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
@@ -167,30 +156,30 @@ msgstr ""
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Авторизация успешна"
+msgstr "RADIUS 授權成功"
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Авторизация отклонена "
+msgstr "RADIUS 授權遭拒"
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Виджет конфигурации был изменен."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Пользователь %s)"
+msgstr "(使用者 %s)"
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Локальная База данных"
+msgstr "本機資料庫"
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Успешный вход пользователь '%1$s' с: %2$s"
+msgstr ""
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
@@ -213,16 +202,16 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr ""
+msgstr "錯誤:不被允許的操作"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr ""
+msgstr "未知的原因"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "無效登入 (%s)."
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
@@ -232,17 +221,17 @@ msgstr ""
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "登入至 %1$s 在 %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "登入至 %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr ""
+msgstr "登入"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -254,7 +243,7 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "瀏覽器必須支援 cookies 以登入."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -277,11 +266,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr ""
+msgstr "使用者名稱"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr ""
+msgstr "請輸入您的使用者名稱"
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:582
 #: src/usr/local/www/diag_backup.php:629 src/usr/local/www/interfaces.php:2539
@@ -306,11 +295,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr ""
+msgstr "密碼"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr ""
+msgstr "請輸入您的密碼"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
@@ -324,32 +313,32 @@ msgstr ""
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr ""
+msgstr "使用者名稱:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr ""
+msgstr "密碼:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "請輸入憑證碼:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr ""
+msgstr "繼續"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "正重新導向至"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr ""
+msgstr "登出"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "按底下的按鈕以離線"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
@@ -358,7 +347,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "危險!  警告!  注意!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
@@ -373,7 +362,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "請按下Enter鍵以繼續"
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
@@ -396,7 +385,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "VLAN 網路介面"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
@@ -442,7 +431,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "您確定要繼續處理嗎 [y|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
@@ -457,7 +446,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr ""
+msgstr "%s正寫入組態中..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
@@ -466,7 +455,7 @@ msgstr ""
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "已處理.%s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
@@ -474,7 +463,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr "已完成!"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
@@ -488,7 +477,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
-msgstr ""
+msgstr "警告: 如果您繼續操作，所有已存在之VLAN將會被清除!"
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
@@ -505,7 +494,7 @@ msgstr ""
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "請輸入 VLAN tag (1-4094):"
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
@@ -543,11 +532,11 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "Config.xml 未鎖定."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "輸入的密碼不正確.請重新輸入."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -559,7 +548,7 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "無法從 config.xml還原."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
@@ -616,15 +605,15 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr ""
+msgstr "安裝組態中..."
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "安裝組態中..."
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "XML error: 無法開啟檔案"
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
@@ -677,7 +666,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "正送出請求至: %s"
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
@@ -686,12 +675,12 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "成功"
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr ""
+msgstr "錯誤"
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
@@ -706,7 +695,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "已成功變更IP位址!"
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -723,7 +712,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr ""
+msgstr "未知的回應"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -800,7 +789,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
 #: src/etc/inc/dyndns.class:1462
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "使用者認證錯誤"
 
 #: src/etc/inc/dyndns.class:967
 msgid "IP address is current, no update performed."
@@ -808,7 +797,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:971
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "DNS 主機名稱更新成功."
 
 #: src/etc/inc/dyndns.class:975
 msgid "Hostname supplied does not exist."
@@ -816,11 +805,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
-msgstr ""
+msgstr "使用者名稱無效"
 
 #: src/etc/inc/dyndns.class:981
 msgid "Invalid Password."
-msgstr ""
+msgstr "密碼錯誤."
 
 #: src/etc/inc/dyndns.class:984
 msgid "Too many updates sent."
@@ -838,7 +827,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:993
 msgid "Disabled / Locked Hostname."
-msgstr ""
+msgstr "已停用 / 已鎖定 主機名稱."
 
 #: src/etc/inc/dyndns.class:996
 msgid ""
@@ -851,7 +840,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1002
 msgid "DNS group update is successful."
-msgstr ""
+msgstr "DNS group 已成功更新."
 
 #: src/etc/inc/dyndns.class:1006
 msgid "DNS group is current, no update performed."
@@ -873,7 +862,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1023
 msgid "Unknown Response:"
-msgstr ""
+msgstr "未知的回應:"
 
 #: src/etc/inc/dyndns.class:1029
 msgid "Authentication Failed: Username and/or Password was Incorrect."
@@ -893,19 +882,19 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1037
 msgid "IP Updated Successfully!"
-msgstr ""
+msgstr "IP 已成功更新!"
 
 #: src/etc/inc/dyndns.class:1050
 msgid "Error 799"
-msgstr ""
+msgstr "Error 799"
 
 #: src/etc/inc/dyndns.class:1050 src/etc/inc/dyndns.class:1052
 msgid "Update Failed!"
-msgstr ""
+msgstr "更新錯誤!"
 
 #: src/etc/inc/dyndns.class:1052
 msgid "Error 700"
-msgstr ""
+msgstr "Error 700"
 
 #: src/etc/inc/dyndns.class:1054 src/etc/inc/dyndns.class:1057
 #: src/etc/inc/dyndns.class:1075 src/etc/inc/dyndns.class:1085
@@ -914,7 +903,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1253 src/etc/inc/dyndns.class:1308
 #: src/etc/inc/dyndns.class:1355 src/etc/inc/dyndns.class:1369
 msgid "IP Address Updated Successfully!"
-msgstr ""
+msgstr "IP Address 已成功更新!"
 
 #: src/etc/inc/dyndns.class:1067
 msgid ""
@@ -965,7 +954,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1162
 msgid "Invalid password."
-msgstr ""
+msgstr "密碼錯誤."
 
 #: src/etc/inc/dyndns.class:1164
 msgid "This account has been administratively locked."
@@ -973,12 +962,12 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1166
 msgid "Updating too frequently."
-msgstr ""
+msgstr "更新太頻繁."
 
 #: src/etc/inc/dyndns.class:1168 src/etc/inc/dyndns.class:1182
 #: src/etc/inc/dyndns.class:1200
 msgid "Server side error."
-msgstr ""
+msgstr "伺服器端錯誤."
 
 #: src/etc/inc/dyndns.class:1184
 msgid "Badly Formed Request (check the settings)."
@@ -991,32 +980,32 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1204 src/etc/inc/dyndns.class:1224
 #: src/etc/inc/dyndns.class:1251
 msgid "Invalid username or password."
-msgstr ""
+msgstr "無效的使用者名稱或密碼."
 
 #: src/etc/inc/dyndns.class:1209 src/etc/inc/dyndns.class:1229
 #: src/etc/inc/dyndns.class:1256 src/etc/inc/dyndns.class:1268
 msgid "No Change In IP Address."
-msgstr ""
+msgstr "IP 位置未改變."
 
 #: src/etc/inc/dyndns.class:1247
 msgid "Bad Request - Missing/Invalid Parameters."
-msgstr ""
+msgstr "錯誤的請求 - 遺失/不正確  參數."
 
 #: src/etc/inc/dyndns.class:1249
 msgid "Bad Request - Invalid Tunnel ID."
-msgstr ""
+msgstr "錯誤的請求:錯誤的Tunnel ID."
 
 #: src/etc/inc/dyndns.class:1283
 msgid "Route53 API call failed"
-msgstr ""
+msgstr "Route53 API 呼叫錯誤"
 
 #: src/etc/inc/dyndns.class:1287
 msgid "IP address changed successfully"
-msgstr ""
+msgstr "IP 位址更新成功"
 
 #: src/etc/inc/dyndns.class:1310 src/etc/inc/dyndns.class:1474
 msgid "Result did not match."
-msgstr ""
+msgstr "結果不吻合."
 
 #: src/etc/inc/dyndns.class:1317
 #, php-format
@@ -1035,7 +1024,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1324
 msgid "UNKNOWN ERROR"
-msgstr ""
+msgstr "未知的錯誤"
 
 #: src/etc/inc/dyndns.class:1347
 msgid "Wrong values - Update could not be completed."
@@ -1043,7 +1032,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1349
 msgid "Unknown username - User does not exist."
-msgstr ""
+msgstr "未知的使用者名稱 - 使用者不存在."
 
 #: src/etc/inc/dyndns.class:1351
 msgid "Wrong password - Remember password is case sensitive."
@@ -1055,19 +1044,19 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1388
 msgid "Not A FQDN"
-msgstr ""
+msgstr "不是正確的FQDN"
 
 #: src/etc/inc/dyndns.class:1398
 msgid "Hostname does not exist or DynDNS not enabled"
-msgstr ""
+msgstr "主機名稱不存在或DynDNS未啟用"
 
 #: src/etc/inc/dyndns.class:1400
 msgid "Bad request"
-msgstr ""
+msgstr "錯誤的請求"
 
 #: src/etc/inc/dyndns.class:1402
 msgid "Dynamic DNS access has been blocked!"
-msgstr ""
+msgstr "Dynamic DNS 存取已被封鎖!"
 
 #: src/etc/inc/dyndns.class:1404
 msgid "Error on Google's end, retry in 5 minutes"
@@ -1075,7 +1064,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
 msgid "Invalid username or password"
-msgstr ""
+msgstr "使用者名稱或密碼不正確"
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Account suspended"
@@ -1119,7 +1108,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1516
 msgid "ERROR!"
-msgstr ""
+msgstr "錯誤!"
 
 #: src/etc/inc/dyndns.class:1522
 msgid "No Dynamic DNS Service provider was selected."
@@ -1147,11 +1136,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1540
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "錯誤的 ZoneID"
 
 #: src/etc/inc/dyndns.class:1543
 msgid "Invalid TTL"
-msgstr ""
+msgstr "TTL值無效"
 
 #: src/etc/inc/dyndns.class:1546
 #, php-format
@@ -1162,7 +1151,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1549
 msgid "Unknown Response."
-msgstr ""
+msgstr "未知的回應."
 
 #: src/etc/inc/dyndns.class:1568
 #, php-format
@@ -1215,7 +1204,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1631
 msgid "Initial update."
-msgstr ""
+msgstr "起始更新."
 
 #: src/etc/inc/dyndns.class:1668
 #, php-format
@@ -1250,7 +1239,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:204 src/etc/inc/easyrule.inc:216
 msgid "Entry added"
-msgstr ""
+msgstr "項目已增加"
 
 #: src/etc/inc/easyrule.inc:213
 msgid "Hosts blocked from Firewall Log view"
@@ -1262,16 +1251,16 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:354
 msgid "Tried to block invalid IP:"
-msgstr ""
+msgstr "嘗試封鎖無效的 IP:"
 
 #: src/etc/inc/easyrule.inc:358 src/etc/inc/easyrule.inc:381
 #: src/etc/inc/easyrule.inc:438
 msgid "Invalid interface for block rule:"
-msgstr ""
+msgstr "block規則的網路介面不正確"
 
 #: src/etc/inc/easyrule.inc:361
 msgid "Host added successfully"
-msgstr ""
+msgstr "主機已成功增加"
 
 #: src/etc/inc/easyrule.inc:363
 msgid "Failed to create block rule, alias, or add host."
@@ -1287,7 +1276,7 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:377
 msgid "Tried to unblock invalid IP:"
-msgstr ""
+msgstr "嘗試解除封鎖無效的 IP:"
 
 #: src/etc/inc/easyrule.inc:387 src/etc/inc/easyrule.inc:445
 msgid "No block rules set on interface:"
@@ -1307,179 +1296,179 @@ msgstr ""
 
 #: src/etc/inc/easyrule.inc:460
 msgid "Invalid interface for pass rule:"
-msgstr ""
+msgstr "pass規則的網路介面不正確"
 
 #: src/etc/inc/easyrule.inc:463
 msgid "Invalid protocol for pass rule:"
-msgstr ""
+msgstr "pass規則的通訊協定不正確"
 
 #: src/etc/inc/easyrule.inc:466
 msgid "Tried to pass invalid source IP:"
-msgstr ""
+msgstr "嘗試略過不正確的來源IP:"
 
 #: src/etc/inc/easyrule.inc:469
 msgid "Tried to pass invalid destination IP:"
-msgstr ""
+msgstr "嘗試略過不正確的目的IP:"
 
 #: src/etc/inc/easyrule.inc:473
 msgid "Missing destination port:"
-msgstr ""
+msgstr "找不到目的通訊port:"
 
 #: src/etc/inc/easyrule.inc:476
 msgid "Tried to pass invalid destination port:"
-msgstr ""
+msgstr "嘗試略過不正確的目的通訊Port:"
 
 #: src/etc/inc/easyrule.inc:483
 msgid "Successfully added pass rule!"
-msgstr ""
+msgstr "已成功增加pass規則"
 
 #: src/etc/inc/easyrule.inc:485
 msgid "Failed to add pass rule."
-msgstr ""
+msgstr "增加pass規則時出現錯誤"
 
 #: src/etc/inc/easyrule.inc:488
 msgid "Missing parameters for pass rule."
-msgstr ""
+msgstr "Missing parameters for pass rule."
 
 #: src/etc/inc/easyrule.inc:490
 msgid "Unknown pass error."
-msgstr ""
+msgstr "Unknown pass error."
 
 #: src/etc/inc/filter.inc:48
 msgid "Alternate Host"
-msgstr ""
+msgstr "Alternate Host"
 
 #: src/etc/inc/filter.inc:49
 msgid "Datagram conversion error"
-msgstr ""
+msgstr "Datagram conversion error"
 
 #: src/etc/inc/filter.inc:50
 msgid "Echo reply"
-msgstr ""
+msgstr "Echo reply"
 
 #: src/etc/inc/filter.inc:51
 msgid "Echo request"
-msgstr ""
+msgstr "Echo request"
 
 #: src/etc/inc/filter.inc:52
 msgid "FQDN reply"
-msgstr ""
+msgstr "FQDN reply"
 
 #: src/etc/inc/filter.inc:53
 msgid "FQDN query"
-msgstr ""
+msgstr "FQDN query"
 
 #: src/etc/inc/filter.inc:54
 msgid "Group membership query"
-msgstr ""
+msgstr "Group membership query"
 
 #: src/etc/inc/filter.inc:55
 msgid "Group membership report"
-msgstr ""
+msgstr "Group membership report"
 
 #: src/etc/inc/filter.inc:56
 msgid "Group membership termination"
-msgstr ""
+msgstr "Group membership termination"
 
 #: src/etc/inc/filter.inc:57
 msgid "Information reply"
-msgstr ""
+msgstr "Information reply"
 
 #: src/etc/inc/filter.inc:58
 msgid "Information request"
-msgstr ""
+msgstr "Information request"
 
 #: src/etc/inc/filter.inc:59
 msgid "IPv6 I-am-here"
-msgstr ""
+msgstr "IPv6 I-am-here"
 
 #: src/etc/inc/filter.inc:60
 msgid "IPv6 where-are-you"
-msgstr ""
+msgstr "IPv6 where-are-you"
 
 #: src/etc/inc/filter.inc:61
 msgid "Multicast listener done"
-msgstr ""
+msgstr "Multicast listener done"
 
 #: src/etc/inc/filter.inc:62
 msgid "Multicast listener report"
-msgstr ""
+msgstr "Multicast listener report"
 
 #: src/etc/inc/filter.inc:63
 msgid "Multicast listener query"
-msgstr ""
+msgstr "Multicast listener query"
 
 #: src/etc/inc/filter.inc:64
 msgid "Address mask reply"
-msgstr ""
+msgstr "Address mask reply"
 
 #: src/etc/inc/filter.inc:65
 msgid "Address mask request"
-msgstr ""
+msgstr "Address mask request"
 
 #: src/etc/inc/filter.inc:66
 msgid "Mobile host redirect"
-msgstr ""
+msgstr "Mobile host redirect"
 
 #: src/etc/inc/filter.inc:67
 msgid "Mobile registration reply"
-msgstr ""
+msgstr "Mobile registration reply"
 
 #: src/etc/inc/filter.inc:68
 msgid "Mobile registration request"
-msgstr ""
+msgstr "Mobile registration request"
 
 #: src/etc/inc/filter.inc:69
 msgid "mtrace messages"
-msgstr ""
+msgstr "mtrace messages"
 
 #: src/etc/inc/filter.inc:70
 msgid "mtrace resp"
-msgstr ""
+msgstr "mtrace resp"
 
 #: src/etc/inc/filter.inc:71
 msgid "Neighbor advertisement"
-msgstr ""
+msgstr "Neighbor advertisement"
 
 #: src/etc/inc/filter.inc:72
 msgid "Neighbor solicitation"
-msgstr ""
+msgstr "Neighbor solicitation"
 
 #: src/etc/inc/filter.inc:73
 msgid "Node information request"
-msgstr ""
+msgstr "Node information request"
 
 #: src/etc/inc/filter.inc:74
 msgid "Node information reply"
-msgstr ""
+msgstr "Node information reply"
 
 #: src/etc/inc/filter.inc:75
 msgid "Parameter problem (invalid IP header)"
-msgstr ""
+msgstr "Parameter problem (invalid IP header)"
 
 #: src/etc/inc/filter.inc:76
 msgid "Photuris"
-msgstr ""
+msgstr "Photuris"
 
 #: src/etc/inc/filter.inc:77 src/etc/inc/unbound.inc:746
 msgid "Redirect"
-msgstr ""
+msgstr "Redirect"
 
 #: src/etc/inc/filter.inc:78
 msgid "Router advertisement"
-msgstr ""
+msgstr "Router advertisement"
 
 #: src/etc/inc/filter.inc:79
 msgid "Router solicitation"
-msgstr ""
+msgstr "Router solicitation"
 
 #: src/etc/inc/filter.inc:80
 msgid "Router renumbering"
-msgstr ""
+msgstr "Router renumbering"
 
 #: src/etc/inc/filter.inc:81
 msgid "SKIP"
-msgstr ""
+msgstr "SKIP"
 
 #: src/etc/inc/filter.inc:82
 msgid "Source quench"
@@ -1665,11 +1654,11 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1555
 msgid "localhost"
-msgstr ""
+msgstr "localhost"
 
 #: src/etc/inc/filter.inc:1564
 msgid "static route"
-msgstr ""
+msgstr "靜態路由"
 
 #: src/etc/inc/filter.inc:1576
 msgid "DHCP alias address"
@@ -1677,23 +1666,23 @@ msgstr ""
 
 #: src/etc/inc/filter.inc:1610
 msgid "PPPoE server"
-msgstr ""
+msgstr "PPPoE server"
 
 #: src/etc/inc/filter.inc:1621
 msgid "L2TP server"
-msgstr ""
+msgstr "L2TP server"
 
 #: src/etc/inc/filter.inc:1630
 msgid "OpenVPN server"
-msgstr ""
+msgstr "OpenVPN server"
 
 #: src/etc/inc/filter.inc:1639
 msgid "OpenVPN client"
-msgstr ""
+msgstr "OpenVPN client"
 
 #: src/etc/inc/filter.inc:1649
 msgid "IPsec client"
-msgstr ""
+msgstr "IPsec client"
 
 #: src/etc/inc/filter.inc:1685
 msgid "Auto created rule for ISAKMP"
@@ -1904,7 +1893,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/openvpn.widget.php:384
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:93
 msgid "Name"
-msgstr ""
+msgstr "名稱"
 
 #: src/etc/inc/gmirror.inc:74 src/usr/local/www/diag_arp.php:336
 #: src/usr/local/www/diag_gmirror.php:222 src/usr/local/www/easyrule.php:78
@@ -1957,7 +1946,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:223
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:64
 msgid "Status"
-msgstr ""
+msgstr "狀態"
 
 #: src/etc/inc/gmirror.inc:75 src/usr/local/www/diag_gmirror.php:223
 msgid "Component"
@@ -2339,7 +2328,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_server.php:633
 #: src/usr/local/www/widgets/include/openvpn.inc:22
 msgid "OpenVPN"
-msgstr ""
+msgstr "OpenVPN"
 
 #: src/etc/inc/ipsec.inc:26 src/etc/inc/ipsec.inc:56
 msgid "Daemon"
@@ -2452,7 +2441,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:96
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:82
 msgid "IP address"
-msgstr ""
+msgstr "IP 位址"
 
 #: src/etc/inc/ipsec.inc:78 src/etc/inc/ipsec.inc:90
 msgid "Distinguished name"
@@ -2535,11 +2524,11 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:184
 msgid "Tunnel IPv4"
-msgstr ""
+msgstr "IPv4通道"
 
 #: src/etc/inc/ipsec.inc:185
 msgid "Tunnel IPv6"
-msgstr ""
+msgstr "IPv6通道"
 
 #: src/etc/inc/ipsec.inc:186 src/usr/local/www/system_authservers.php:236
 msgid "Transport"
@@ -2551,59 +2540,59 @@ msgstr ""
 
 #: src/etc/inc/ipsec.inc:198
 msgid "1 (768 bit)"
-msgstr ""
+msgstr "1 (768 bit)"
 
 #: src/etc/inc/ipsec.inc:199
 msgid "2 (1024 bit)"
-msgstr ""
+msgstr "2 (1024 bit)"
 
 #: src/etc/inc/ipsec.inc:200
 msgid "5 (1536 bit)"
-msgstr ""
+msgstr "5 (1536 bit)"
 
 #: src/etc/inc/ipsec.inc:201
 msgid "14 (2048 bit)"
-msgstr ""
+msgstr "14 (2048 bit)"
 
 #: src/etc/inc/ipsec.inc:202
 msgid "15 (3072 bit)"
-msgstr ""
+msgstr "15 (3072 bit)"
 
 #: src/etc/inc/ipsec.inc:203
 msgid "16 (4096 bit)"
-msgstr ""
+msgstr "16 (4096 bit)"
 
 #: src/etc/inc/ipsec.inc:204
 msgid "17 (6144 bit)"
-msgstr ""
+msgstr "17 (6144 bit)"
 
 #: src/etc/inc/ipsec.inc:205
 msgid "18 (8192 bit)"
-msgstr ""
+msgstr "18 (8192 bit)"
 
 #: src/etc/inc/ipsec.inc:206
 msgid "19 (nist ecp256)"
-msgstr ""
+msgstr "19 (nist ecp256)"
 
 #: src/etc/inc/ipsec.inc:207
 msgid "20 (nist ecp384)"
-msgstr ""
+msgstr "20 (nist ecp384)"
 
 #: src/etc/inc/ipsec.inc:208
 msgid "21 (nist ecp521)"
-msgstr ""
+msgstr "21 (nist ecp521)"
 
 #: src/etc/inc/ipsec.inc:209
 msgid "22 (1024(sub 160) bit)"
-msgstr ""
+msgstr "22 (1024(sub 160) bit)"
 
 #: src/etc/inc/ipsec.inc:210
 msgid "23 (2048(sub 224) bit)"
-msgstr ""
+msgstr "23 (2048(sub 224) bit)"
 
 #: src/etc/inc/ipsec.inc:211
 msgid "24 (2048(sub 256) bit)"
-msgstr ""
+msgstr "24 (2048(sub 256) bit)"
 
 #: src/etc/inc/ipsec.inc:212
 msgid "28 (brainpool ecp256)"
@@ -2754,23 +2743,23 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:109 src/etc/inc/openvpn.inc:120
 msgid "Peer to Peer ( SSL/TLS )"
-msgstr ""
+msgstr "點對點 ( SSL/TLS )"
 
 #: src/etc/inc/openvpn.inc:110 src/etc/inc/openvpn.inc:121
 msgid "Peer to Peer ( Shared Key )"
-msgstr ""
+msgstr "點對點 ( Shared Key )"
 
 #: src/etc/inc/openvpn.inc:111
 msgid "Remote Access ( SSL/TLS )"
-msgstr ""
+msgstr "遠端存取 ( SSL/TLS )"
 
 #: src/etc/inc/openvpn.inc:112
 msgid "Remote Access ( User Auth )"
-msgstr ""
+msgstr "遠端存取 ( User Auth )"
 
 #: src/etc/inc/openvpn.inc:113
 msgid "Remote Access ( SSL/TLS + User Auth )"
-msgstr ""
+msgstr "遠端存取 ( SSL/TLS + User Auth )"
 
 #: src/etc/inc/openvpn.inc:125
 msgid "Omit Preference (Use OpenVPN Default)"
@@ -2868,7 +2857,7 @@ msgstr ""
 
 #: src/etc/inc/openvpn.inc:420
 msgid "Use Default"
-msgstr ""
+msgstr "使用預設值"
 
 #: src/etc/inc/openvpn.inc:446
 msgid "None (No Authentication)"
@@ -2945,7 +2934,7 @@ msgstr ""
 #: src/etc/inc/pfsense-utils.inc:190
 #: src/usr/local/www/system_user_settings.php:62
 msgid "Theme"
-msgstr ""
+msgstr "主題"
 
 #: src/etc/inc/pfsense-utils.inc:193
 #, php-format
@@ -3184,15 +3173,15 @@ msgstr ""
 
 #: src/etc/inc/pfsense-utils.inc:2798
 msgid "English"
-msgstr ""
+msgstr "English"
 
 #: src/etc/inc/pfsense-utils.inc:2799
 msgid "Portuguese (Brazil)"
-msgstr ""
+msgstr "Portuguese (Brazil)"
 
 #: src/etc/inc/pfsense-utils.inc:2800
 msgid "Turkish"
-msgstr ""
+msgstr "Turkish"
 
 #: src/etc/inc/pfsense-utils.inc:2989 src/etc/inc/pfsense-utils.inc:3004
 #: src/etc/inc/pfsense-utils.inc:3029
@@ -3320,11 +3309,11 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:533
 msgid "Syncing packages..."
-msgstr ""
+msgstr "同步套件中..."
 
 #: src/etc/inc/pkg-utils.inc:555
 msgid "Removing package..."
-msgstr ""
+msgstr "套件移除中..."
 
 #: src/etc/inc/pkg-utils.inc:588
 #, php-format
@@ -3358,7 +3347,7 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:708
 #, php-format
 msgid "Installed %s package."
-msgstr ""
+msgstr "套件%s已安裝."
 
 #: src/etc/inc/pkg-utils.inc:712
 #, php-format
@@ -3409,7 +3398,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:763
 msgid "Custom commands..."
-msgstr ""
+msgstr "自訂命令..."
 
 #: src/etc/inc/pkg-utils.inc:766
 msgid "Executing custom_php_global_functions()..."
@@ -3445,12 +3434,12 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:832
 msgid "Writing configuration... "
-msgstr ""
+msgstr "寫入組態中..."
 
 #: src/etc/inc/pkg-utils.inc:834
 #, php-format
 msgid "Successfully installed package: %s."
-msgstr ""
+msgstr "已成功安裝套件:%s."
 
 #: src/etc/inc/pkg-utils.inc:849
 #, php-format
@@ -3460,12 +3449,12 @@ msgstr ""
 #: src/etc/inc/pkg-utils.inc:854
 #, php-format
 msgid "Removing %s package... "
-msgstr ""
+msgstr "移除 %s 套件中... "
 
 #: src/etc/inc/pkg-utils.inc:855
 #, php-format
 msgid "Removing %s components..."
-msgstr ""
+msgstr "移除 %s 元件中..."
 
 #: src/etc/inc/pkg-utils.inc:908
 #, php-format
@@ -3491,12 +3480,12 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:962
 msgid "Configuration... "
-msgstr ""
+msgstr "設定組態中..."
 
 #: src/etc/inc/pkg-utils.inc:965
 #, php-format
 msgid "Removed %s package."
-msgstr ""
+msgstr " %s 套件已移除."
 
 #: src/etc/inc/pkg-utils.inc:992
 msgid ""
@@ -3506,7 +3495,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1005 src/etc/inc/pkg-utils.inc:1044
 msgid "Package reinstall"
-msgstr ""
+msgstr "重新安裝套件"
 
 #: src/etc/inc/pkg-utils.inc:1006
 msgid ""
@@ -3521,7 +3510,7 @@ msgstr ""
 
 #: src/etc/inc/pkg-utils.inc:1066
 msgid "Stopping all packages."
-msgstr ""
+msgstr "正停用所有套件."
 
 #: src/etc/inc/priv/user.priv.inc:6
 msgid "System - HA node sync"
@@ -3636,7 +3625,7 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:80
 msgid "User - VPN: L2TP Dialin"
-msgstr ""
+msgstr "User - VPN: L2TP 撥入"
 
 #: src/etc/inc/priv/user.priv.inc:81
 msgid "Indicates whether the user is allowed to dial in via L2TP"
@@ -3644,7 +3633,7 @@ msgstr ""
 
 #: src/etc/inc/priv/user.priv.inc:84
 msgid "User - VPN: PPPOE Dialin"
-msgstr ""
+msgstr "User - VPN: PPPOE 撥入"
 
 #: src/etc/inc/priv/user.priv.inc:85
 msgid "Indicates whether the user is allowed to dial in via PPPOE"
@@ -5268,7 +5257,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1171
 msgid "WebCfg - System: User Settings"
-msgstr ""
+msgstr "WebCfg - 系統: 使用者設定"
 
 #: src/etc/inc/priv.defs.inc:1172
 msgid "Allow access to the 'System: User Settings' page."
@@ -5276,7 +5265,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1177
 msgid "WebCfg - System: User Manager"
-msgstr ""
+msgstr "WebCfg - 系統: 使用者管理"
 
 #: src/etc/inc/priv.defs.inc:1178
 msgid "Allow access to the 'System: User Manager' page."
@@ -5300,7 +5289,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1197
 msgid "WebCfg - System: User Manager: Settings"
-msgstr ""
+msgstr "WebCfg - 系統: 使用者管理: 設定"
 
 #: src/etc/inc/priv.defs.inc:1198
 msgid "Allow access to the 'System: User Manager: Settings' page."
@@ -5380,7 +5369,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1258
 msgid "WebCfg - VPN: L2TP: Users"
-msgstr ""
+msgstr "WebCfg - VPN: L2TP: 使用者"
 
 #: src/etc/inc/priv.defs.inc:1259
 msgid "Allow access to the 'VPN: L2TP: Users' page."
@@ -5388,7 +5377,7 @@ msgstr ""
 
 #: src/etc/inc/priv.defs.inc:1264
 msgid "WebCfg - VPN: L2TP: Users: Edit"
-msgstr ""
+msgstr "WebCfg - VPN: L2TP:使用者: 編輯"
 
 #: src/etc/inc/priv.defs.inc:1265
 msgid "Allow access to the 'VPN: L2TP: Users: Edit' page."
@@ -5533,16 +5522,16 @@ msgstr ""
 #: src/etc/inc/service-utils.inc:288 src/usr/local/www/head.inc:293
 #: src/usr/local/www/services_dhcp_relay.php:124
 msgid "DHCP Relay"
-msgstr ""
+msgstr "DHCP Relay"
 
 #: src/etc/inc/service-utils.inc:295 src/usr/local/www/head.inc:294
 #: src/usr/local/www/services_dhcpv6_relay.php:124
 msgid "DHCPv6 Relay"
-msgstr ""
+msgstr "DHCPv6 Relay"
 
 #: src/etc/inc/service-utils.inc:302
 msgid "DHCP Service"
-msgstr ""
+msgstr "DHCP Service"
 
 #: src/etc/inc/service-utils.inc:310
 msgid "Gateway Monitoring Daemon"
@@ -5550,19 +5539,19 @@ msgstr ""
 
 #: src/etc/inc/service-utils.inc:317
 msgid "SNMP Service"
-msgstr ""
+msgstr "SNMP Service"
 
 #: src/etc/inc/service-utils.inc:324
 msgid "IGMP proxy"
-msgstr ""
+msgstr "IGMP proxy"
 
 #: src/etc/inc/service-utils.inc:331
 msgid "UPnP Service"
-msgstr ""
+msgstr "UPnP Service"
 
 #: src/etc/inc/service-utils.inc:338
 msgid "IPsec VPN"
-msgstr ""
+msgstr "IPsec VPN"
 
 #: src/etc/inc/service-utils.inc:345
 msgid "Secure Shell Daemon"
@@ -5578,11 +5567,11 @@ msgstr ""
 
 #: src/etc/inc/service-utils.inc:461
 msgid "Running"
-msgstr ""
+msgstr "執行中"
 
 #: src/etc/inc/service-utils.inc:468
 msgid "Stopped"
-msgstr ""
+msgstr "已停止"
 
 #: src/etc/inc/service-utils.inc:472
 #: src/usr/local/www/firewall_nat_1to1_edit.php:420
@@ -5605,7 +5594,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:658
 #: src/usr/local/www/vpn_openvpn_server.php:673
 msgid "Disabled"
-msgstr ""
+msgstr "停用"
 
 #: src/etc/inc/service-utils.inc:485 src/etc/inc/service-utils.inc:487
 #, php-format
@@ -5620,32 +5609,32 @@ msgstr ""
 #: src/etc/inc/service-utils.inc:532
 #, php-format
 msgid "Restart %sService"
-msgstr ""
+msgstr "重新啟用 %s服務"
 
 #: src/etc/inc/service-utils.inc:545
 #, php-format
 msgid "Stop %sService"
-msgstr ""
+msgstr "停用 %s服務"
 
 #: src/etc/inc/service-utils.inc:551
 #, php-format
 msgid "Start %sService"
-msgstr ""
+msgstr "啟用 %s服務"
 
 #: src/etc/inc/service-utils.inc:623
 #, php-format
 msgid "%s has been started."
-msgstr ""
+msgstr "%s 已啟用."
 
 #: src/etc/inc/service-utils.inc:693
 #, php-format
 msgid "%s has been stopped."
-msgstr ""
+msgstr "%s 已停用."
 
 #: src/etc/inc/service-utils.inc:762
 #, php-format
 msgid "%s has been restarted."
-msgstr ""
+msgstr "%s 已重新啟用."
 
 #: src/etc/inc/services.inc:382
 msgid "Error: cannot open radvd.conf in services_radvd_configure()."
@@ -5772,7 +5761,7 @@ msgstr ""
 
 #: src/etc/inc/services.inc:2813
 msgid "Starting UPnP service... "
-msgstr ""
+msgstr "正啟用 UPnP 服務... "
 
 #: src/etc/inc/shaper.inc:263 src/usr/local/www/system_camanager.php:231
 #: src/usr/local/www/system_certmanager.php:347
@@ -5793,13 +5782,13 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:163
 #: src/usr/local/www/status_queues.php:167
 msgid "Bandwidth"
-msgstr ""
+msgstr "頻寬"
 
 #: src/etc/inc/shaper.inc:438 src/etc/inc/shaper.inc:1903
 #: src/etc/inc/shaper.inc:2651 src/etc/inc/shaper.inc:2933
 #: src/etc/inc/shaper.inc:3280
 msgid "Bandwidthtype"
-msgstr ""
+msgstr "頻寬類型"
 
 #: src/etc/inc/shaper.inc:443
 msgid "Bandwidth must be set.  This is usually the interface speed."
@@ -5851,7 +5840,7 @@ msgstr ""
 
 #: src/etc/inc/shaper.inc:798 src/etc/inc/shaper.inc:1406
 msgid "Enable/Disable"
-msgstr ""
+msgstr "啟用/停用"
 
 #: src/etc/inc/shaper.inc:805 src/etc/inc/shaper.inc:1414
 #: src/etc/inc/shaper.inc:3829 src/etc/inc/shaper.inc:4142
@@ -6340,7 +6329,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:192 src/usr/local/www/vpn_l2tp.php:278
 #: src/usr/local/www/diag_routes.php:82
 msgid "Enable"
-msgstr ""
+msgstr "啟用"
 
 #: src/etc/inc/shaper.inc:3865 src/etc/inc/shaper.inc:4169
 msgid "Source addresses"
@@ -6413,7 +6402,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_bridge_edit.php:425
 #: src/usr/local/www/vpn_ipsec_phase1.php:822
 msgid "Advanced Options"
-msgstr ""
+msgstr "進階選項"
 
 #: src/etc/inc/shaper.inc:3901
 msgid "Delay (ms)"
@@ -6576,7 +6565,7 @@ msgstr ""
 #: src/etc/inc/system.inc:1313 src/etc/inc/system.inc:2186
 #: src/etc/inc/system.inc:2189
 msgid "failed!"
-msgstr ""
+msgstr "錯誤!"
 
 #: src/etc/inc/system.inc:1515
 #, php-format
@@ -6595,7 +6584,7 @@ msgstr ""
 
 #: src/etc/inc/system.inc:1604
 msgid "Setting timezone..."
-msgstr ""
+msgstr "設定時區中..."
 
 #: src/etc/inc/system.inc:2018
 #, php-format
@@ -6650,7 +6639,7 @@ msgstr ""
 
 #: src/etc/inc/unbound.inc:749
 msgid "No Default"
-msgstr ""
+msgstr "無預設值"
 
 #: src/etc/inc/upgrade_config.inc:102
 #, php-format
@@ -6703,7 +6692,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:598
 msgid "System Administrators"
-msgstr ""
+msgstr "系統管理者"
 
 #: src/etc/inc/upgrade_config.inc:617
 msgid ""
@@ -6765,11 +6754,11 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:676
 msgid "Maximum incoming TCP datagram size"
-msgstr ""
+msgstr "Maximum incoming TCP datagram size"
 
 #: src/etc/inc/upgrade_config.inc:680
 msgid "Maximum outgoing TCP datagram size"
-msgstr ""
+msgstr "Maximum outgoing TCP datagram size"
 
 #: src/etc/inc/upgrade_config.inc:684
 msgid "Do not delay ACK to try and piggyback it onto a data packet"
@@ -6802,11 +6791,11 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:708
 msgid "Set ICMP Limits"
-msgstr ""
+msgstr "Set ICMP Limits"
 
 #: src/etc/inc/upgrade_config.inc:712
 msgid "TCP Offload engine"
-msgstr ""
+msgstr "TCP Offload engine"
 
 #: src/etc/inc/upgrade_config.inc:755
 #, php-format
@@ -6840,7 +6829,7 @@ msgstr ""
 
 #: src/etc/inc/upgrade_config.inc:1377
 msgid "All Users"
-msgstr ""
+msgstr "所有使用者"
 
 #: src/etc/inc/upgrade_config.inc:1520
 #, php-format
@@ -7297,19 +7286,19 @@ msgstr ""
 
 #: src/usr/local/www/crash_reporter.php:56
 msgid "Crash Reporter"
-msgstr ""
+msgstr "錯誤報告"
 
 #: src/usr/local/www/crash_reporter.php:68
 msgid "Processing..."
-msgstr ""
+msgstr "處理中..."
 
 #: src/usr/local/www/crash_reporter.php:80
 msgid "Uploading..."
-msgstr ""
+msgstr "上傳中..."
 
 #: src/usr/local/www/crash_reporter.php:91
 msgid "Deleted crash report files from local disk."
-msgstr ""
+msgstr "錯誤報告已重本機磁碟刪除."
 
 #: src/usr/local/www/crash_reporter.php:95
 msgid "Could not find any crash files."
@@ -7335,7 +7324,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:45
 #: src/usr/local/www/diag_defaults.php:73 src/usr/local/www/pkg.php:484
 msgid "Yes"
-msgstr ""
+msgstr "是"
 
 #: src/usr/local/www/crash_reporter.php:138
 msgid "Submit this to the developers for inspection"
@@ -7346,7 +7335,7 @@ msgstr ""
 #: src/usr/local/www/diag_defaults.php:77 src/usr/local/www/diag_pf_info.php:33
 #: src/usr/local/www/pkg.php:482
 msgid "No"
-msgstr ""
+msgstr "否"
 
 #: src/usr/local/www/crash_reporter.php:142
 msgid "Just delete the crash report and return to the Dashboard"
@@ -7453,7 +7442,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:169
 #: src/usr/local/www/widgets/widgets/dyn_dns_status.widget.php:222
 msgid "Hostname"
-msgstr ""
+msgstr "主機名稱"
 
 #: src/usr/local/www/diag_arp.php:337
 msgid "Link Type"
@@ -7533,7 +7522,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_arp.php:385
 msgid "NDP"
-msgstr ""
+msgstr "NDP"
 
 #: src/usr/local/www/diag_arp.php:385
 msgid " instead of ARP."
@@ -7571,11 +7560,11 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:221
 #: src/usr/local/www/services_rfc2136_edit.php:220
 msgid "User"
-msgstr ""
+msgstr "使用者"
 
 #: src/usr/local/www/diag_authentication.php:48
 msgid "authenticated successfully."
-msgstr ""
+msgstr "驗證成功."
 
 #: src/usr/local/www/diag_authentication.php:50
 msgid "This user is a member of groups"
@@ -7583,13 +7572,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_authentication.php:58
 msgid "Authentication failed."
-msgstr ""
+msgstr "驗證錯誤."
 
 #: src/usr/local/www/diag_authentication.php:69
 #: src/usr/local/www/guiconfig.inc:158 src/usr/local/www/head.inc:367
 #: src/usr/local/www/services_captiveportal.php:686
 msgid "Authentication"
-msgstr ""
+msgstr "驗證"
 
 #: src/usr/local/www/diag_authentication.php:83
 msgid "Authentication Test"
@@ -7598,7 +7587,7 @@ msgstr ""
 #: src/usr/local/www/diag_authentication.php:91
 #: src/usr/local/www/system_usermanager_settings.php:214
 msgid "*Authentication Server"
-msgstr ""
+msgstr "驗證伺服器"
 
 #: src/usr/local/www/diag_authentication.php:94
 msgid "Select the authentication server to test against."
@@ -7609,13 +7598,13 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:711
 #: src/usr/local/www/vpn_l2tp_users_edit.php:153
 msgid "*Username"
-msgstr ""
+msgstr "使用者名稱"
 
 #: src/usr/local/www/diag_authentication.php:106
 #: src/usr/local/www/interfaces.php:2606 src/usr/local/www/interfaces.php:2731
 #: src/usr/local/www/system_usermanager_passwordmg.php:101
 msgid "*Password"
-msgstr ""
+msgstr "密碼"
 
 #: src/usr/local/www/diag_authentication.php:116
 #: src/usr/local/www/diag_smart.php:279 src/usr/local/www/diag_testport.php:269
@@ -7749,7 +7738,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:722
 #: src/usr/local/www/services_dhcp_edit.php:397
 msgid "DHCP Server"
-msgstr ""
+msgstr "DHCP Server"
 
 #: src/usr/local/www/diag_backup.php:485
 #: src/usr/local/www/services_dhcpv6.php:489
@@ -7759,11 +7748,11 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6_edit.php:201
 #: src/usr/local/www/services_router_advertisements.php:305
 msgid "DHCPv6 Server"
-msgstr ""
+msgstr "DHCPv6 Server"
 
 #: src/usr/local/www/diag_backup.php:486
 msgid "Firewall Rules"
-msgstr ""
+msgstr "防火牆規則"
 
 #: src/usr/local/www/diag_backup.php:487 src/usr/local/www/head.inc:335
 #: src/usr/local/www/interfaces.php:1655
@@ -7791,11 +7780,11 @@ msgstr ""
 #: src/usr/local/www/status_logs_filter_summary.php:84
 #: src/usr/local/www/widgets/include/interfaces.inc:23
 msgid "Interfaces"
-msgstr ""
+msgstr "網路介面"
 
 #: src/usr/local/www/diag_backup.php:488
 msgid "IPSEC"
-msgstr ""
+msgstr "IPSEC"
 
 #: src/usr/local/www/diag_backup.php:489 src/usr/local/www/firewall_nat.php:185
 #: src/usr/local/www/firewall_nat_1to1.php:121
@@ -7807,7 +7796,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:378
 #: src/usr/local/www/head.inc:281
 msgid "NAT"
-msgstr ""
+msgstr "NAT"
 
 #: src/usr/local/www/diag_backup.php:491 src/usr/local/www/head.inc:231
 #: src/usr/local/www/head.inc:643 src/usr/local/www/pkg_mgr.php:38
@@ -7815,19 +7804,19 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:34
 #: src/usr/local/www/pkg_mgr_installed.php:204
 msgid "Package Manager"
-msgstr ""
+msgstr "套件管理員"
 
 #: src/usr/local/www/diag_backup.php:492
 msgid "RRD Data"
-msgstr ""
+msgstr "RRD Data"
 
 #: src/usr/local/www/diag_backup.php:493
 msgid "Scheduled Tasks"
-msgstr ""
+msgstr "排程任務"
 
 #: src/usr/local/www/diag_backup.php:494
 msgid "Syslog"
-msgstr ""
+msgstr "Syslog"
 
 #: src/usr/local/www/diag_backup.php:495 src/usr/local/www/head.inc:643
 #: src/usr/local/www/pkg_mgr.php:38 src/usr/local/www/pkg_mgr.php:130
@@ -7869,7 +7858,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:97
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "System"
-msgstr ""
+msgstr "System"
 
 #: src/usr/local/www/diag_backup.php:496
 msgid "Static routes"
@@ -7943,31 +7932,31 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:550
 msgid "Backup Configuration"
-msgstr ""
+msgstr "備份組態檔"
 
 #: src/usr/local/www/diag_backup.php:554
 msgid "Backup area"
-msgstr ""
+msgstr "備份區"
 
 #: src/usr/local/www/diag_backup.php:561
 msgid "Skip packages"
-msgstr ""
+msgstr "略過套件"
 
 #: src/usr/local/www/diag_backup.php:568
 msgid "Skip RRD data"
-msgstr ""
+msgstr "略過 RRD data"
 
 #: src/usr/local/www/diag_backup.php:575 src/usr/local/www/diag_backup.php:622
 msgid "Encryption"
-msgstr ""
+msgstr "加密"
 
 #: src/usr/local/www/diag_backup.php:591
 msgid "Download configuration as XML"
-msgstr ""
+msgstr "以  XML格式下載組態檔"
 
 #: src/usr/local/www/diag_backup.php:599
 msgid "Restore Backup"
-msgstr ""
+msgstr "自備份還原"
 
 #: src/usr/local/www/diag_backup.php:603
 #, php-format
@@ -7978,15 +7967,15 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:608
 msgid "Restore area"
-msgstr ""
+msgstr "還原區域"
 
 #: src/usr/local/www/diag_backup.php:615
 msgid "Configuration file"
-msgstr ""
+msgstr "組態檔"
 
 #: src/usr/local/www/diag_backup.php:639
 msgid "Restore Configuration"
-msgstr ""
+msgstr "還原組態"
 
 #: src/usr/local/www/diag_backup.php:642
 msgid "The firewall will reboot after restoring the configuration."
@@ -7994,11 +7983,11 @@ msgstr ""
 
 #: src/usr/local/www/diag_backup.php:649
 msgid "Package Functions"
-msgstr ""
+msgstr "套件功能"
 
 #: src/usr/local/www/diag_backup.php:656
 msgid "Reinstall Packages"
-msgstr ""
+msgstr "重新安裝套件"
 
 #: src/usr/local/www/diag_backup.php:659
 msgid ""
@@ -8018,7 +8007,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:91 src/usr/local/www/head.inc:369
 msgid "Command Prompt"
-msgstr ""
+msgstr "命令列"
 
 #: src/usr/local/www/diag_command.php:152
 msgid "Nothing to recall"
@@ -8032,7 +8021,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:187 src/usr/local/www/diag_edit.php:98
 msgid "Advanced Users Only"
-msgstr ""
+msgstr "僅限進階使用者"
 
 #: src/usr/local/www/diag_command.php:192
 #, php-format
@@ -8041,7 +8030,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_command.php:211
 msgid "Execute Shell Command"
-msgstr ""
+msgstr "Execute Shell Command"
 
 #: src/usr/local/www/diag_command.php:219
 msgid "Recall Previous Command"
@@ -8142,7 +8131,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:158
 msgid "Backup Count"
-msgstr ""
+msgstr "備份次數"
 
 #: src/usr/local/www/diag_confbak.php:161
 msgid ""
@@ -8172,20 +8161,20 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:211
 msgid "Date"
-msgstr ""
+msgstr "日期"
 
 #: src/usr/local/www/diag_confbak.php:212 src/usr/local/www/pkg_mgr.php:67
 #: src/usr/local/www/pkg_mgr_installed.php:78
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:51
 #: src/usr/local/www/widgets/widgets/system_information.widget.php:112
 msgid "Version"
-msgstr ""
+msgstr "版本"
 
 #: src/usr/local/www/diag_confbak.php:213
 #: src/usr/local/www/diag_gmirror.php:303 src/usr/local/www/diag_pftop.php:125
 #: src/usr/local/www/services_captiveportal_filemanager.php:190
 msgid "Size"
-msgstr ""
+msgstr "大小"
 
 #: src/usr/local/www/diag_confbak.php:214
 msgid "Configuration Change"
@@ -8211,7 +8200,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:96
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:89
 msgid "Unknown"
-msgstr ""
+msgstr "未知"
 
 #: src/usr/local/www/diag_confbak.php:260
 msgid "Revert config"
@@ -8224,19 +8213,19 @@ msgstr ""
 
 #: src/usr/local/www/diag_confbak.php:261
 msgid "Download config"
-msgstr ""
+msgstr "下載設定"
 
 #: src/usr/local/www/diag_confbak.php:262
 msgid "Delete config"
-msgstr ""
+msgstr "刪除設定"
 
 #: src/usr/local/www/diag_confbak.php:279
 msgid "No backups found."
-msgstr ""
+msgstr "找不到備份檔."
 
 #: src/usr/local/www/diag_defaults.php:41 src/usr/local/www/head.inc:372
 msgid "Factory Defaults"
-msgstr ""
+msgstr "出廠預設值"
 
 #: src/usr/local/www/diag_defaults.php:46
 msgid ""
@@ -8246,7 +8235,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:56
 msgid "Factory Defaults Reset"
-msgstr ""
+msgstr "重設為出廠預設值"
 
 #: src/usr/local/www/diag_defaults.php:61
 msgid ""
@@ -8256,7 +8245,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_defaults.php:63
 msgid "Reset to factory defaults"
-msgstr ""
+msgstr "重設為出廠預設值"
 
 #: src/usr/local/www/diag_defaults.php:64
 msgid "LAN IP address will be reset to 192.168.1.1"
@@ -8309,7 +8298,7 @@ msgstr ""
 #: src/usr/local/www/diag_dns.php:29 src/usr/local/www/diag_dns.php:218
 #: src/usr/local/www/head.inc:370
 msgid "DNS Lookup"
-msgstr ""
+msgstr "DNS Lookup"
 
 #: src/usr/local/www/diag_dns.php:114
 msgid "Created from Diagnostics-> DNS Lookup"
@@ -8321,7 +8310,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:143
 msgid "No response"
-msgstr ""
+msgstr "無回應"
 
 #: src/usr/local/www/diag_dns.php:184 src/usr/local/www/diag_tables.php:261
 #: src/usr/local/www/interfaces.php:3093 src/usr/local/www/interfaces.php:3117
@@ -8341,12 +8330,12 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users_edit.php:173
 #: src/usr/local/www/widgets/widgets/carp_status.widget.php:38
 msgid "IP Address"
-msgstr ""
+msgstr "IP 位址"
 
 #: src/usr/local/www/diag_dns.php:185 src/usr/local/www/status_graph.php:170
 #: src/usr/local/www/system_authservers.php:444
 msgid "Host Name"
-msgstr ""
+msgstr "主機名稱"
 
 #: src/usr/local/www/diag_dns.php:188 src/usr/local/www/services_rfc2136.php:82
 #: src/usr/local/www/services_rfc2136_edit.php:236
@@ -8355,11 +8344,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:906
 #: src/usr/local/www/widgets/widgets/load_balancer_status.widget.php:60
 msgid "Server"
-msgstr ""
+msgstr "伺服器"
 
 #: src/usr/local/www/diag_dns.php:188
 msgid "Query Time"
-msgstr ""
+msgstr "Query Time"
 
 #: src/usr/local/www/diag_dns.php:206
 #, php-format
@@ -8382,7 +8371,7 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136_edit.php:180
 #: src/usr/local/www/system.php:430
 msgid "*Hostname"
-msgstr ""
+msgstr "*主機名稱"
 
 #: src/usr/local/www/diag_dns.php:232
 #: src/usr/local/www/status_logs_filter_summary.php:176
@@ -8424,13 +8413,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_dns.php:304
 msgid "More Information"
-msgstr ""
+msgstr "更多資訊"
 
 #: src/usr/local/www/diag_dns.php:307 src/usr/local/www/diag_ping.php:35
 #: src/usr/local/www/diag_ping.php:127 src/usr/local/www/diag_ping.php:162
 #: src/usr/local/www/head.inc:382
 msgid "Ping"
-msgstr ""
+msgstr "Ping"
 
 #: src/usr/local/www/diag_dns.php:310
 msgid ""
@@ -8535,7 +8524,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_admin.php:321
 #: src/usr/local/www/vpn_openvpn_client.php:905
 msgid "Protocol"
-msgstr ""
+msgstr "通訊協定"
 
 #: src/usr/local/www/diag_dump_states.php:183
 msgid "Source (Original Source) -> Destination (Original Destination)"
@@ -8544,16 +8533,16 @@ msgstr ""
 #: src/usr/local/www/diag_dump_states.php:184
 #: src/usr/local/www/status_dhcpv6_leases.php:539
 msgid "State"
-msgstr ""
+msgstr "狀態"
 
 #: src/usr/local/www/diag_dump_states.php:185
 msgid "Packets"
-msgstr ""
+msgstr "封包"
 
 #: src/usr/local/www/diag_dump_states.php:186
 #: src/usr/local/www/diag_pftop.php:118
 msgid "Bytes"
-msgstr ""
+msgstr "Bytes"
 
 #: src/usr/local/www/diag_dump_states.php:254
 #, php-format
@@ -8613,7 +8602,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:194
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:117
 msgid "Remove"
-msgstr ""
+msgstr "移除"
 
 #: src/usr/local/www/diag_dump_states_sources.php:168
 msgid "No source tracking entries were found."
@@ -8621,7 +8610,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:32 src/usr/local/www/head.inc:371
 msgid "Edit File"
-msgstr ""
+msgstr "編輯檔案"
 
 #: src/usr/local/www/diag_edit.php:40 src/usr/local/www/diag_edit.php:66
 msgid "No file name specified."
@@ -8665,7 +8654,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_edit.php:118 src/usr/local/www/diag_edit.php:120
 msgid "Browse"
-msgstr ""
+msgstr "瀏覽"
 
 #: src/usr/local/www/diag_edit.php:129
 msgid "GoTo Line #"
@@ -8788,7 +8777,7 @@ msgstr ""
 #: src/usr/local/www/diag_gmirror.php:248
 #: src/usr/local/www/diag_gmirror.php:266
 msgid "Rebuild"
-msgstr ""
+msgstr "重新建立"
 
 #: src/usr/local/www/diag_gmirror.php:249
 #: src/usr/local/www/diag_gmirror.php:267
@@ -8839,7 +8828,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_halt.php:45 src/usr/local/www/head.inc:378
 msgid "Halt System"
-msgstr ""
+msgstr "關機"
 
 #: src/usr/local/www/diag_halt.php:52
 msgid "The system is halting now. This may take one minute or so."
@@ -8852,7 +8841,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_halt.php:66
 msgid "System Halt Confirmation"
-msgstr ""
+msgstr "系統確認關機"
 
 #: src/usr/local/www/diag_halt.php:70
 msgid ""
@@ -8867,14 +8856,14 @@ msgstr ""
 
 #: src/usr/local/www/diag_halt.php:72
 msgid "Halt the system and power off"
-msgstr ""
+msgstr "系統關機並關閉電源"
 
 #: src/usr/local/www/diag_halt.php:78 src/usr/local/www/diag_reboot.php:119
 #: src/usr/local/www/firewall_nat.php:488
 #: src/usr/local/www/firewall_rules.php:886
 #: src/usr/local/www/interfaces.php:1914 src/usr/local/www/interfaces.php:3237
 msgid "Cancel"
-msgstr ""
+msgstr "取消"
 
 #: src/usr/local/www/diag_limiter_info.php:31 src/usr/local/www/head.inc:379
 msgid "Limiter Info"
@@ -8920,7 +8909,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_packet_capture.php:86 src/usr/local/www/head.inc:394
 msgid "Packet Capture"
-msgstr ""
+msgstr "捕捉封包"
 
 #: src/usr/local/www/diag_packet_capture.php:129
 msgid "Invalid interface."
@@ -9347,7 +9336,7 @@ msgstr ""
 #: src/usr/local/www/diag_reboot.php:115 src/usr/local/www/head.inc:386
 #: src/usr/local/www/interfaces.php:2003
 msgid "Reboot"
-msgstr ""
+msgstr "重開機"
 
 #: src/usr/local/www/diag_reboot.php:49
 msgid "Not actually rebooting (DEBUG is set true)."
@@ -9378,7 +9367,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_reboot.php:113
 msgid "Reboot the system"
-msgstr ""
+msgstr "系統重開機"
 
 #: src/usr/local/www/diag_resetstate.php:44
 msgid "The state table has been flushed successfully."
@@ -9422,7 +9411,7 @@ msgstr ""
 #: src/usr/local/www/status_lb_pool.php:249
 #: src/usr/local/www/status_lb_pool.php:251
 msgid "Reset"
-msgstr ""
+msgstr "重設"
 
 #: src/usr/local/www/diag_resetstate.php:121
 msgid "Please select at least one reset option"
@@ -9468,11 +9457,11 @@ msgstr ""
 #: src/usr/local/www/system_update_settings.php:107
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:120
 msgid "Update"
-msgstr ""
+msgstr "更新"
 
 #: src/usr/local/www/diag_routes.php:191
 msgid "IPv4 Routes"
-msgstr ""
+msgstr "IPv4 Routes"
 
 #: src/usr/local/www/diag_routes.php:201 src/usr/local/www/diag_routes.php:219
 msgid "Gathering data, please wait..."
@@ -9480,13 +9469,13 @@ msgstr ""
 
 #: src/usr/local/www/diag_routes.php:209
 msgid "IPv6 Routes"
-msgstr ""
+msgstr "IPv6 Routes"
 
 #: src/usr/local/www/diag_smart.php:36 src/usr/local/www/head.inc:388
 #: src/usr/local/www/widgets/include/smart_status.inc:23
 #: src/usr/local/www/widgets/widgets/smart_status.widget.php:66
 msgid "S.M.A.R.T. Status"
-msgstr ""
+msgstr "S.M.A.R.T. 狀態"
 
 #: src/usr/local/www/diag_smart.php:40
 msgid "Information & Tests"
@@ -9506,7 +9495,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:60
 msgid "Warning"
-msgstr ""
+msgstr "警告"
 
 #: src/usr/local/www/diag_smart.php:69
 msgid "Device does not exist, bailing."
@@ -9528,11 +9517,11 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:103 src/usr/local/www/diag_smart.php:181
 #: src/usr/local/www/diag_smart.php:406 src/usr/local/www/diag_smart.php:415
 msgid "Abort"
-msgstr ""
+msgstr "中止"
 
 #: src/usr/local/www/diag_smart.php:105
 msgid "Abort Test"
-msgstr ""
+msgstr "中止測試"
 
 #: src/usr/local/www/diag_smart.php:109 src/usr/local/www/diag_smart.php:140
 #: src/usr/local/www/diag_smart.php:168
@@ -9546,7 +9535,7 @@ msgstr ""
 #: src/usr/local/www/diag_smart.php:131 src/usr/local/www/diag_smart.php:206
 #: src/usr/local/www/pkg_mgr_installed.php:195
 msgid "Information"
-msgstr ""
+msgstr "資訊"
 
 #: src/usr/local/www/diag_smart.php:152
 msgid "Invalid log type, bailing."
@@ -9554,7 +9543,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_smart.php:159
 msgid "Logs"
-msgstr ""
+msgstr "Logs"
 
 #: src/usr/local/www/diag_smart.php:215
 msgid "Info type"
@@ -9632,18 +9621,18 @@ msgstr ""
 #: src/usr/local/www/services_unbound.php:514
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:222
 msgid "IP"
-msgstr ""
+msgstr "IP"
 
 #: src/usr/local/www/diag_states_summary.php:155
 #: src/usr/local/www/firewall_nat.php:229
 #: src/usr/local/www/status_logs_filter_summary.php:88
 msgid "Source Ports"
-msgstr ""
+msgstr "來源通訊Port"
 
 #: src/usr/local/www/diag_states_summary.php:156
 #: src/usr/local/www/firewall_nat.php:231
 msgid "Dest. Ports"
-msgstr ""
+msgstr "目的通訊Port"
 
 #: src/usr/local/www/diag_states_summary.php:192 src/usr/local/www/head.inc:391
 msgid "States Summary"
@@ -9848,7 +9837,7 @@ msgstr ""
 
 #: src/usr/local/www/diag_traceroute.php:58
 msgid "ttl"
-msgstr ""
+msgstr "ttl"
 
 #: src/usr/local/www/diag_traceroute.php:62
 #, php-format
@@ -9902,7 +9891,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:276
 #: src/usr/local/www/status_logs_filter.php:299
 msgid "Message"
-msgstr ""
+msgstr "訊息"
 
 #: src/usr/local/www/easyrule.php:74
 msgid ""
@@ -9930,7 +9919,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_settings.php:187
 #: src/usr/local/www/status_logs_vpn.php:84
 msgid "System Logs"
-msgstr ""
+msgstr "System Logs"
 
 #: src/usr/local/www/easyrule.php:78
 msgid "Firewall Tab"
@@ -9943,11 +9932,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases.php:152
 msgid "Ports"
-msgstr ""
+msgstr "Ports"
 
 #: src/usr/local/www/firewall_aliases.php:153
 msgid "URLs"
-msgstr ""
+msgstr "URLs"
 
 #: src/usr/local/www/firewall_aliases.php:163
 #: src/usr/local/www/firewall_aliases_edit.php:142
@@ -9973,7 +9962,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:89
 #: src/usr/local/www/status_logs_settings.php:217
 msgid "Firewall"
-msgstr ""
+msgstr "防火牆"
 
 #: src/usr/local/www/firewall_aliases.php:177
 msgid "The alias list has been changed."
@@ -10023,7 +10012,7 @@ msgstr ""
 #: src/usr/local/www/firewall_aliases.php:193
 #: src/usr/local/www/services_igmpproxy.php:85
 msgid "Values"
-msgstr ""
+msgstr "值"
 
 #: src/usr/local/www/firewall_aliases.php:257
 msgid "Edit alias"
@@ -10104,11 +10093,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:697
 #: src/usr/local/www/vpn_openvpn_server.php:1384
 msgid "Add"
-msgstr ""
+msgstr "新增"
 
 #: src/usr/local/www/firewall_aliases.php:280
 msgid "Import"
-msgstr ""
+msgstr "匯入"
 
 #: src/usr/local/www/firewall_aliases.php:291
 msgid ""
@@ -10123,7 +10112,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:73
 msgid "host"
-msgstr ""
+msgstr "主機"
 
 #: src/usr/local/www/firewall_aliases_edit.php:74
 msgid "network"
@@ -10363,16 +10352,16 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:569
 msgid "Add Host"
-msgstr ""
+msgstr "新增主機"
 
 #: src/usr/local/www/firewall_aliases_edit.php:570
 msgid "Add Port"
-msgstr ""
+msgstr "新增通訊Port"
 
 #: src/usr/local/www/firewall_aliases_edit.php:571
 #: src/usr/local/www/firewall_aliases_edit.php:572
 msgid "Add URL"
-msgstr ""
+msgstr "新增URL"
 
 #: src/usr/local/www/firewall_aliases_edit.php:573
 #: src/usr/local/www/firewall_aliases_edit.php:574
@@ -10381,11 +10370,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:578
 msgid "Network or FQDN"
-msgstr ""
+msgstr "Network 或 FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:579
 msgid "IP or FQDN"
-msgstr ""
+msgstr "IP 或 FQDN"
 
 #: src/usr/local/www/firewall_aliases_edit.php:587
 msgid "The value after the \"/\" is the update frequency in days."
@@ -10447,7 +10436,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_aliases_edit.php:656
 msgid "Properties"
-msgstr ""
+msgstr "屬性"
 
 #: src/usr/local/www/firewall_aliases_edit.php:665
 #: src/usr/local/www/firewall_aliases_import.php:239
@@ -10582,7 +10571,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_npt.php:136
 #: src/usr/local/www/firewall_nat_out.php:219
 msgid "1:1"
-msgstr ""
+msgstr "1:1"
 
 #: src/usr/local/www/firewall_nat.php:201
 #: src/usr/local/www/firewall_nat_1to1.php:137
@@ -10607,11 +10596,11 @@ msgstr ""
 #: src/usr/local/www/firewall_rules_edit.php:1091
 #: src/usr/local/www/head.inc:282
 msgid "Rules"
-msgstr ""
+msgstr "規則"
 
 #: src/usr/local/www/firewall_nat.php:230
 msgid "Dest. Address"
-msgstr ""
+msgstr "目的位址"
 
 #: src/usr/local/www/firewall_nat.php:232
 msgid "NAT IP"
@@ -10658,7 +10647,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:439
 msgid "Edit rule"
-msgstr ""
+msgstr "編輯規則"
 
 #: src/usr/local/www/firewall_nat.php:440
 msgid "Add a new NAT based on this one"
@@ -10666,32 +10655,32 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat.php:441
 msgid "Delete rule"
-msgstr ""
+msgstr "刪除規則"
 
 #: src/usr/local/www/firewall_nat.php:461
 #: src/usr/local/www/firewall_rules.php:822
 msgid "Add rule to the top of the list"
-msgstr ""
+msgstr "新增規則至最前方"
 
 #: src/usr/local/www/firewall_nat.php:465
 #: src/usr/local/www/firewall_rules.php:826
 msgid "Add rule to the end of the list"
-msgstr ""
+msgstr "新增規則至最後方"
 
 #: src/usr/local/www/firewall_nat.php:469
 #: src/usr/local/www/firewall_rules.php:830
 msgid "Delete selected rules"
-msgstr ""
+msgstr "刪除選定的規則"
 
 #: src/usr/local/www/firewall_nat.php:473
 #: src/usr/local/www/firewall_rules.php:834
 msgid "Save rule order"
-msgstr ""
+msgstr "儲存規則順序"
 
 #: src/usr/local/www/firewall_nat.php:477
 #: src/usr/local/www/firewall_rules.php:838
 msgid "Add separator"
-msgstr ""
+msgstr "新增分隔線"
 
 #: src/usr/local/www/firewall_nat.php:479
 #: src/usr/local/www/firewall_rules.php:840
@@ -10749,7 +10738,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1.php:153
 msgid "Destination IP"
-msgstr ""
+msgstr "目的IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:219
 #: src/usr/local/www/firewall_nat_npt.php:209
@@ -10804,7 +10793,7 @@ msgstr ""
 #: src/usr/local/www/system_gateway_groups_edit.php:308
 #: src/usr/local/www/system_gateway_groups_edit.php:320
 msgid "Virtual IP"
-msgstr ""
+msgstr "虛擬IP"
 
 #: src/usr/local/www/firewall_nat_1to1.php:257
 msgid ""
@@ -10838,12 +10827,12 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:130
 #: src/usr/local/www/firewall_nat_edit.php:220
 msgid "Source address"
-msgstr ""
+msgstr "來源位址"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:135
 #: src/usr/local/www/firewall_nat_edit.php:225
 msgid "Destination address"
-msgstr ""
+msgstr "目的位址"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:181
 #: src/usr/local/www/firewall_nat_edit.php:283
@@ -10884,7 +10873,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 msgid "Single host"
-msgstr ""
+msgstr "單一主機"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:297
 #: src/usr/local/www/firewall_nat_1to1_edit.php:344
@@ -10949,7 +10938,7 @@ msgstr ""
 #: src/usr/local/www/firewall_rules.php:142
 #: src/usr/local/www/firewall_rules_edit.php:1071
 msgid "L2TP VPN"
-msgstr ""
+msgstr "L2TP VPN"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:447
 #: src/usr/local/www/firewall_nat_edit.php:679
@@ -10960,7 +10949,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe.php:95
 #: src/usr/local/www/services_pppoe_edit.php:280
 msgid "PPPoE Server"
-msgstr ""
+msgstr "PPPoE Server"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:452
 #: src/usr/local/www/firewall_nat_edit.php:684
@@ -10986,7 +10975,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/widgets/include/ipsec.inc:22
 msgid "IPsec"
-msgstr ""
+msgstr "IPsec"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:465
 #: src/usr/local/www/firewall_nat_edit.php:697
@@ -11020,7 +11009,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:744
 #: src/usr/local/www/firewall_nat_edit.php:812
 msgid "Address/mask"
-msgstr ""
+msgstr "位址/子網路遮罩"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:496
 msgid ""
@@ -11032,7 +11021,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_edit.php:791
 #: src/usr/local/www/firewall_nat_out_edit.php:513
 msgid "*Destination"
-msgstr ""
+msgstr "目的地"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:524
 msgid ""
@@ -11043,7 +11032,7 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_1to1_edit.php:540
 #: src/usr/local/www/firewall_nat_edit.php:904
 msgid "Use system default"
-msgstr ""
+msgstr "使用系統預設值"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:542
 #: src/usr/local/www/firewall_nat_edit.php:907
@@ -11052,7 +11041,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_phase1.php:857
 #: src/usr/local/www/vpn_openvpn_csc.php:335
 msgid "Disable"
-msgstr ""
+msgstr "停用"
 
 #: src/usr/local/www/firewall_nat_1to1_edit.php:537
 #: src/usr/local/www/firewall_nat_edit.php:901
@@ -11068,15 +11057,15 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:212
 msgid "Destination port from"
-msgstr ""
+msgstr "目的地通訊Port從"
 
 #: src/usr/local/www/firewall_nat_edit.php:212
 msgid "Destination port to"
-msgstr ""
+msgstr "目的地通訊Port至"
 
 #: src/usr/local/www/firewall_nat_edit.php:230
 msgid "Redirect target IP"
-msgstr ""
+msgstr "重新導向目標IP"
 
 #: src/usr/local/www/firewall_nat_edit.php:256
 #, php-format
@@ -11241,7 +11230,7 @@ msgstr ""
 #: src/usr/local/www/system_gateways_edit.php:693
 #: src/usr/local/www/system_gateways_edit.php:896
 msgid "Display Advanced"
-msgstr ""
+msgstr "顯示進階選項"
 
 #: src/usr/local/www/firewall_nat_edit.php:718
 #: src/usr/local/www/firewall_nat_edit.php:722
@@ -11259,7 +11248,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/ipsec.widget.php:204
 #: src/usr/local/www/widgets/widgets/log.widget.php:104
 msgid "Source"
-msgstr ""
+msgstr "來源"
 
 #: src/usr/local/www/firewall_nat_edit.php:727
 msgid "Source not"
@@ -11273,12 +11262,12 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:754
 msgid "Source port range"
-msgstr ""
+msgstr "來源通訊port範圍"
 
 #: src/usr/local/www/firewall_nat_edit.php:762
 #: src/usr/local/www/firewall_nat_edit.php:824
 msgid "From port"
-msgstr ""
+msgstr "從通訊port"
 
 #: src/usr/local/www/firewall_nat_edit.php:769
 #: src/usr/local/www/firewall_nat_edit.php:783
@@ -11291,12 +11280,12 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:759
 #: src/usr/local/www/services_ntpd_gps.php:333
 msgid "Custom"
-msgstr ""
+msgstr "使用者自訂"
 
 #: src/usr/local/www/firewall_nat_edit.php:776
 #: src/usr/local/www/firewall_nat_edit.php:838
 msgid "To port"
-msgstr ""
+msgstr "至通訊port"
 
 #: src/usr/local/www/firewall_nat_edit.php:785
 msgid ""
@@ -11355,11 +11344,11 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_edit.php:905
 msgid "Enable (NAT + Proxy)"
-msgstr ""
+msgstr "啟用(NAT + Proxy)"
 
 #: src/usr/local/www/firewall_nat_edit.php:906
 msgid "Enable (Pure NAT)"
-msgstr ""
+msgstr "啟用 (Pure NAT)"
 
 #: src/usr/local/www/firewall_nat_edit.php:921
 #, php-format
@@ -11412,13 +11401,13 @@ msgstr ""
 #: src/usr/local/www/firewall_nat_out_edit.php:663
 #: src/usr/local/www/firewall_rules_edit.php:1738
 msgid "Created"
-msgstr ""
+msgstr "已建立"
 
 #: src/usr/local/www/firewall_nat_edit.php:971
 #: src/usr/local/www/firewall_nat_out_edit.php:670
 #: src/usr/local/www/firewall_rules_edit.php:1745
 msgid "Updated"
-msgstr ""
+msgstr "已更新"
 
 #: src/usr/local/www/firewall_nat_edit.php:1166
 #: src/usr/local/www/firewall_rules_edit.php:1782
@@ -11445,7 +11434,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:667
 #: src/usr/local/www/system_gateways_edit.php:894
 msgid "Hide Advanced"
-msgstr ""
+msgstr "隱藏進階選項"
 
 #: src/usr/local/www/firewall_nat_npt.php:113
 msgid "Firewall: NAT: NPt, enable/disable NAT rule"
@@ -11616,7 +11605,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out.php:524
 msgid "Automatic Rules:"
-msgstr ""
+msgstr "自動規則:"
 
 #: src/usr/local/www/firewall_nat_out.php:548
 msgid "automatic outbound nat"
@@ -11725,7 +11714,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:439
 msgid "Do not NAT"
-msgstr ""
+msgstr "不使用NAT"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:442
 msgid "In most cases this option is not required."
@@ -11792,7 +11781,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:2946 src/usr/local/www/interfaces.php:3201
 #: src/usr/local/www/services_ntpd_gps.php:333
 msgid "Default"
-msgstr ""
+msgstr "預設值"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:573
 msgid "Round Robin"
@@ -11858,7 +11847,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_nat_out_edit.php:619
 msgid "Misc"
-msgstr ""
+msgstr "其他"
 
 #: src/usr/local/www/firewall_nat_out_edit.php:627
 msgid ""
@@ -11966,7 +11955,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:430
 msgid "RFC 1918 networks"
-msgstr ""
+msgstr "RFC 1918 networks"
 
 #: src/usr/local/www/firewall_rules.php:437
 msgid "Block private networks"
@@ -11997,7 +11986,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules.php:513
 msgid "advanced setting"
-msgstr ""
+msgstr "進階設定"
 
 #: src/usr/local/www/firewall_rules.php:517
 msgid "traffic is logged"
@@ -12008,119 +11997,119 @@ msgstr ""
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:256
 msgid "Mon"
-msgstr ""
+msgstr "星期一"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Tues"
-msgstr ""
+msgstr "星期二"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:258
 msgid "Wed"
-msgstr ""
+msgstr "星期三"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 msgid "Thur"
-msgstr ""
+msgstr "星期四"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:260
 msgid "Fri"
-msgstr ""
+msgstr "星期五"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:261
 msgid "Sat"
-msgstr ""
+msgstr "星期六"
 
 #: src/usr/local/www/firewall_rules.php:536
 #: src/usr/local/www/firewall_schedule.php:35
 #: src/usr/local/www/firewall_schedule_edit.php:57
 #: src/usr/local/www/firewall_schedule_edit.php:262
 msgid "Sun"
-msgstr ""
+msgstr "星期日"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "January"
-msgstr ""
+msgstr "一月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "February"
-msgstr ""
+msgstr "二月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "March"
-msgstr ""
+msgstr "三月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "April"
-msgstr ""
+msgstr "四月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "May"
-msgstr ""
+msgstr "五月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "June"
-msgstr ""
+msgstr "六月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "July"
-msgstr ""
+msgstr "七月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "August"
-msgstr ""
+msgstr "八月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "September"
-msgstr ""
+msgstr "九月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "October"
-msgstr ""
+msgstr "十月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "November"
-msgstr ""
+msgstr "十一月"
 
 #: src/usr/local/www/firewall_rules.php:537
 #: src/usr/local/www/firewall_schedule.php:36
 #: src/usr/local/www/firewall_schedule_edit.php:58
 msgid "December"
-msgstr ""
+msgstr "十二月"
 
 #: src/usr/local/www/firewall_rules.php:650
 msgid "Traffic matching this rule is currently being denied"
@@ -12592,17 +12581,17 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1252
 msgid "in"
-msgstr ""
+msgstr "進"
 
 #: src/usr/local/www/firewall_rules_edit.php:1253
 msgid "out"
-msgstr ""
+msgstr "出"
 
 #: src/usr/local/www/firewall_rules_edit.php:1248
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:177
 #: src/usr/local/www/services_captiveportal_ip_edit.php:237
 msgid "*Direction"
-msgstr ""
+msgstr "方向"
 
 #: src/usr/local/www/firewall_rules_edit.php:1274
 msgid "Select the Internet Protocol version this rule applies to."
@@ -12694,7 +12683,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1445
 msgid "Extra Options"
-msgstr ""
+msgstr "其他選項"
 
 #: src/usr/local/www/firewall_rules_edit.php:1451
 msgid ""
@@ -12711,7 +12700,7 @@ msgstr ""
 
 #: src/usr/local/www/firewall_rules_edit.php:1484
 msgid "Source OS"
-msgstr ""
+msgstr "來源作業系統"
 
 #: src/usr/local/www/firewall_rules_edit.php:1487
 msgid ""
@@ -13017,31 +13006,31 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:379
 msgid "Month"
-msgstr ""
+msgstr "月"
 
 #: src/usr/local/www/firewall_schedule_edit.php:385
 msgid "*Date"
-msgstr ""
+msgstr "日期"
 
 #: src/usr/local/www/firewall_schedule_edit.php:389
 msgid "*Time"
-msgstr ""
+msgstr "時間"
 
 #: src/usr/local/www/firewall_schedule_edit.php:396
 msgid "Start Hrs"
-msgstr ""
+msgstr "開始小時"
 
 #: src/usr/local/www/firewall_schedule_edit.php:403
 msgid "Start Mins"
-msgstr ""
+msgstr "開始分"
 
 #: src/usr/local/www/firewall_schedule_edit.php:410
 msgid "Stop Hrs"
-msgstr ""
+msgstr "停止小時"
 
 #: src/usr/local/www/firewall_schedule_edit.php:417
 msgid "Stop Mins"
-msgstr ""
+msgstr "停止分"
 
 #: src/usr/local/www/firewall_schedule_edit.php:419
 msgid ""
@@ -13067,15 +13056,15 @@ msgstr ""
 
 #: src/usr/local/www/firewall_schedule_edit.php:595
 msgid "Day(s)"
-msgstr ""
+msgstr "日"
 
 #: src/usr/local/www/firewall_schedule_edit.php:602
 msgid "Start time"
-msgstr ""
+msgstr "開始時間"
 
 #: src/usr/local/www/firewall_schedule_edit.php:609
 msgid "Stop time"
-msgstr ""
+msgstr "停止時間"
 
 #: src/usr/local/www/firewall_shaper.php:41
 #: src/usr/local/www/firewall_shaper.php:370
@@ -13244,13 +13233,13 @@ msgstr ""
 #: src/usr/local/www/firewall_virtual_ip.php:231
 #: src/usr/local/www/firewall_virtual_ip_edit.php:345
 msgid "Proxy ARP"
-msgstr ""
+msgstr "Proxy ARP"
 
 #: src/usr/local/www/firewall_virtual_ip.php:232
 #: src/usr/local/www/status_carp.php:106
 #: src/usr/local/www/firewall_virtual_ip_edit.php:337
 msgid "CARP"
-msgstr ""
+msgstr "CARP"
 
 #: src/usr/local/www/firewall_virtual_ip.php:234
 #: src/usr/local/www/firewall_virtual_ip_edit.php:329
@@ -13449,15 +13438,15 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:105
 msgid "In"
-msgstr ""
+msgstr "進"
 
 #: src/usr/local/www/graph.php:106
 msgid "Out"
-msgstr ""
+msgstr "出"
 
 #: src/usr/local/www/graph.php:110
 msgid "Switch to bytes/s"
-msgstr ""
+msgstr "切換為 bytes/s"
 
 #: src/usr/local/www/graph.php:111
 msgid "AutoScale"
@@ -13486,7 +13475,7 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:191
 msgid "Switch to"
-msgstr ""
+msgstr "切換至"
 
 #: src/usr/local/www/graph.php:196
 msgid "follow"
@@ -13494,27 +13483,27 @@ msgstr ""
 
 #: src/usr/local/www/graph.php:367
 msgid "Kbps"
-msgstr ""
+msgstr "Kbps"
 
 #: src/usr/local/www/graph.php:370
 msgid "Mbps"
-msgstr ""
+msgstr "Mbps"
 
 #: src/usr/local/www/graph.php:373
 msgid "Gbps"
-msgstr ""
+msgstr "Gbps"
 
 #: src/usr/local/www/graph.php:379
 msgid "KB/s"
-msgstr ""
+msgstr "KB/s"
 
 #: src/usr/local/www/graph.php:382
 msgid "MB/s"
-msgstr ""
+msgstr "MB/s"
 
 #: src/usr/local/www/graph.php:385
 msgid "GB/s"
-msgstr ""
+msgstr "GB/s"
 
 #: src/usr/local/www/graph_cpu.php:76
 msgid "Cannot get CPU load"
@@ -13593,7 +13582,7 @@ msgstr ""
 
 #: src/usr/local/www/guiconfig.inc:329
 msgid "Apply Changes"
-msgstr ""
+msgstr "套用變更"
 
 #: src/usr/local/www/guiconfig.inc:385
 msgid "The changes have been applied successfully."
@@ -13637,7 +13626,7 @@ msgstr ""
 #: src/usr/local/www/system_advanced_sysctl.php:163
 #: src/usr/local/www/system_certmanager.php:756
 msgid "Value"
-msgstr ""
+msgstr "值"
 
 #: src/usr/local/www/head.inc:227
 #: src/usr/local/www/system_advanced_admin.php:284
@@ -13650,19 +13639,19 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:579
 #: src/usr/local/www/widgets/widgets/thermal_sensors.widget.php:246
 msgid "Advanced"
-msgstr ""
+msgstr "進階"
 
 #: src/usr/local/www/head.inc:229 src/usr/local/www/system.php:412
 msgid "General Setup"
-msgstr ""
+msgstr "一般設定"
 
 #: src/usr/local/www/head.inc:230
 msgid "High Avail. Sync"
-msgstr ""
+msgstr "High Avail. Sync"
 
 #: src/usr/local/www/head.inc:232
 msgid "Setup Wizard"
-msgstr ""
+msgstr "設定精靈"
 
 #: src/usr/local/www/head.inc:233 src/usr/local/www/status_logs.php:59
 #: src/usr/local/www/status_logs_common.inc:105
@@ -13677,7 +13666,7 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:234
 msgid "Cert. Manager"
-msgstr ""
+msgstr "憑證管理"
 
 #: src/usr/local/www/head.inc:236 src/usr/local/www/head.inc:238
 #: src/usr/local/www/system_authservers.php:408
@@ -13687,11 +13676,11 @@ msgstr ""
 #: src/usr/local/www/system_usermanager_addprivs.php:45
 #: src/usr/local/www/system_usermanager_settings.php:109
 msgid "User Manager"
-msgstr ""
+msgstr "使用者管理"
 
 #: src/usr/local/www/head.inc:242 src/usr/local/www/system_user_settings.php:32
 msgid "User Settings"
-msgstr ""
+msgstr "使用者設定"
 
 #: src/usr/local/www/head.inc:252
 msgid "Assignments"
@@ -13716,7 +13705,7 @@ msgstr ""
 #: src/usr/local/www/services_igmpproxy_edit.php:33
 #: src/usr/local/www/status_logs_settings.php:300
 msgid "IGMP Proxy"
-msgstr ""
+msgstr "IGMP Proxy"
 
 #: src/usr/local/www/head.inc:303 src/usr/local/www/head.inc:337
 #: src/usr/local/www/load_balancer_monitor.php:72
@@ -13886,11 +13875,11 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:107
 #: src/usr/local/www/status_wireless.php:31
 msgid "Wireless"
-msgstr ""
+msgstr "無線網路"
 
 #: src/usr/local/www/head.inc:399
 msgid "pfSense Gold"
-msgstr ""
+msgstr "pfSense Gold"
 
 #: src/usr/local/www/head.inc:404 src/usr/local/www/help.php:383
 msgid "About this Page"
@@ -13902,23 +13891,23 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:409
 msgid "User Forum"
-msgstr ""
+msgstr "使用者論壇"
 
 #: src/usr/local/www/head.inc:410
 msgid "Documentation"
-msgstr ""
+msgstr "文件"
 
 #: src/usr/local/www/head.inc:411
 msgid "Paid Support"
-msgstr ""
+msgstr "付費支援"
 
 #: src/usr/local/www/head.inc:412
 msgid "pfSense Book"
-msgstr ""
+msgstr "pfSense 參考書"
 
 #: src/usr/local/www/head.inc:413
 msgid "FreeBSD Handbook"
-msgstr ""
+msgstr "FreeBSD 手冊"
 
 #: src/usr/local/www/head.inc:503 src/usr/local/www/head.inc:675
 msgid "Notices"
@@ -13926,11 +13915,11 @@ msgstr ""
 
 #: src/usr/local/www/head.inc:540
 msgid "Save dashboard layout"
-msgstr ""
+msgstr "儲存儀表板排列"
 
 #: src/usr/local/www/head.inc:548
 msgid "Available widgets"
-msgstr ""
+msgstr "可用的小工具"
 
 #: src/usr/local/www/head.inc:556
 msgid "Log filter"
@@ -14021,7 +14010,7 @@ msgstr ""
 #: src/usr/local/www/index.php:191
 #, php-format
 msgid "Welcome to %s!\n"
-msgstr ""
+msgstr "歡迎至 %s!\n"
 
 #: src/usr/local/www/index.php:192
 msgid "One moment while the initial setup wizard starts."
@@ -14040,7 +14029,7 @@ msgstr ""
 
 #: src/usr/local/www/index.php:307 src/etc/inc/pfsense-utils.inc:274
 msgid "Available Widgets"
-msgstr ""
+msgstr "可用的小工具"
 
 #: src/usr/local/www/index.php:486
 msgid "One or more widgets have been moved but have not yet been saved"
@@ -14048,7 +14037,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:415
 msgid "The settings have already been applied!"
-msgstr ""
+msgstr "已套用設定!"
 
 #: src/usr/local/www/interfaces.php:501
 msgid "An interface with the specified description already exists."
@@ -14118,11 +14107,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE username"
-msgstr ""
+msgstr "PPPoE 使用者名稱"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:583
 msgid "PPPoE password"
-msgstr ""
+msgstr "PPPoE 密碼"
 
 #: src/usr/local/www/interfaces.php:580 src/usr/local/www/interfaces.php:590
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:2620
@@ -14141,7 +14130,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP username"
-msgstr ""
+msgstr "PPTP 使用者名稱"
 
 #: src/usr/local/www/interfaces.php:590 src/usr/local/www/interfaces.php:593
 msgid "PPTP password"
@@ -14161,7 +14150,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP username"
-msgstr ""
+msgstr "L2TP 使用者"
 
 #: src/usr/local/www/interfaces.php:600 src/usr/local/www/interfaces.php:603
 msgid "L2TP password"
@@ -14344,7 +14333,7 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:878 src/usr/local/www/interfaces.php:2966
 #: src/usr/local/www/status_interfaces.php:163
 msgid "SSID"
-msgstr ""
+msgstr "SSID"
 
 #: src/usr/local/www/interfaces.php:881
 msgid "A specific channel, not auto, must be selected for Access Point mode."
@@ -14444,7 +14433,7 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:90
 #: src/usr/local/www/status_logs_settings.php:218
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
@@ -14452,17 +14441,17 @@ msgstr ""
 #: src/usr/local/www/status_logs_common.inc:93
 #: src/usr/local/www/status_logs_settings.php:221
 msgid "PPP"
-msgstr ""
+msgstr "PPP"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 msgid "PPPoE"
-msgstr ""
+msgstr "PPPoE"
 
 #: src/usr/local/www/interfaces.php:1658
 #: src/usr/local/www/interfaces_ppps_edit.php:465
 msgid "PPTP"
-msgstr ""
+msgstr "PPTP"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "Static IPv6"
@@ -14470,19 +14459,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "DHCP6"
-msgstr ""
+msgstr "DHCP6"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "SLAAC"
-msgstr ""
+msgstr "SLAAC"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "6rd Tunnel"
-msgstr ""
+msgstr "6rd Tunnel"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "6to4 Tunnel"
-msgstr ""
+msgstr "6to4 Tunnel"
 
 #: src/usr/local/www/interfaces.php:1659
 msgid "Track Interface"
@@ -14555,7 +14544,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_ppps_edit.php:927
 #: src/usr/local/www/status_interfaces.php:158
 msgid "MTU"
-msgstr ""
+msgstr "MTU"
 
 #: src/usr/local/www/interfaces.php:1784
 msgid ""
@@ -14565,7 +14554,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1789
 msgid "MSS"
-msgstr ""
+msgstr "MSS"
 
 #: src/usr/local/www/interfaces.php:1792
 msgid ""
@@ -14662,7 +14651,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:1933 src/usr/local/www/interfaces.php:2117
 msgid "Options"
-msgstr ""
+msgstr "選項"
 
 #: src/usr/local/www/interfaces.php:1940
 msgid "Use advanced DHCP configuration options."
@@ -14708,12 +14697,12 @@ msgstr ""
 #: src/usr/local/www/interfaces.php:1981
 #: src/usr/local/www/load_balancer_setting.php:117
 msgid "Timeout"
-msgstr ""
+msgstr "逾時"
 
 #: src/usr/local/www/interfaces.php:1988
 #: src/usr/local/www/load_balancer_pool_edit.php:337
 msgid "Retry"
-msgstr ""
+msgstr "重試"
 
 #: src/usr/local/www/interfaces.php:1996
 msgid "Select timeout"
@@ -14996,15 +14985,15 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2651
 msgid "Hour (0-23)"
-msgstr ""
+msgstr "小時 (0-23)"
 
 #: src/usr/local/www/interfaces.php:2659
 msgid "Minutes (0-59)"
-msgstr ""
+msgstr "分 (0-59)"
 
 #: src/usr/local/www/interfaces.php:2666
 msgid "Specific date (mm/dd/yyyy)"
-msgstr ""
+msgstr "指定日期 (mm/dd/yyyy)"
 
 #: src/usr/local/www/interfaces.php:2668
 msgid ""
@@ -15083,7 +15072,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2820
 msgid "RTS and CTS"
-msgstr ""
+msgstr "RTS and CTS"
 
 #: src/usr/local/www/interfaces.php:2818
 msgid "802.11g OFDM Protection Mode"
@@ -15213,11 +15202,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11g"
-msgstr ""
+msgstr "802.11g"
 
 #: src/usr/local/www/interfaces.php:2976
 msgid "802.11n"
-msgstr ""
+msgstr "802.11n"
 
 #: src/usr/local/www/interfaces.php:2974
 msgid "Minimum wireless standard"
@@ -15252,19 +15241,19 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:2998
 msgid "Enable WME"
-msgstr ""
+msgstr "啟用 WME"
 
 #: src/usr/local/www/interfaces.php:3006
 msgid "Hide SSID"
-msgstr ""
+msgstr "隱藏 SSID"
 
 #: src/usr/local/www/interfaces.php:3015 src/usr/local/www/interfaces.php:3036
 msgid "WPA"
-msgstr ""
+msgstr "WPA"
 
 #: src/usr/local/www/interfaces.php:3027
 msgid "WPA Pre-Shared Key"
-msgstr ""
+msgstr "WPA Pre-Shared Key"
 
 #: src/usr/local/www/interfaces.php:3030
 msgid "WPA Passphrase must be between 8 and 63 characters long"
@@ -15272,7 +15261,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3036
 msgid "WPA2"
-msgstr ""
+msgstr "WPA2"
 
 #: src/usr/local/www/interfaces.php:3036 src/usr/local/www/interfaces.php:3043
 #: src/usr/local/www/interfaces.php:3050 src/usr/local/www/pkg_mgr.php:160
@@ -15285,14 +15274,14 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3034
 msgid "WPA mode"
-msgstr ""
+msgstr "WPA mode"
 
 #: src/usr/local/www/interfaces.php:3043
 #: src/usr/local/www/vpn_ipsec_keys.php:103
 #: src/usr/local/www/vpn_ipsec_keys_edit.php:68
 #: src/usr/local/www/vpn_ipsec_phase1.php:213
 msgid "Pre-Shared Key"
-msgstr ""
+msgstr "Pre-Shared Key"
 
 #: src/usr/local/www/interfaces.php:3043
 msgid "Extensible Authentication Protocol"
@@ -15340,11 +15329,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3079
 msgid "802.1x RADIUS Options"
-msgstr ""
+msgstr "802.1x RADIUS Options"
 
 #: src/usr/local/www/interfaces.php:3083
 msgid "IEEE802.1X"
-msgstr ""
+msgstr "IEEE802.1X"
 
 #: src/usr/local/www/interfaces.php:3087
 msgid "This option requires that the \"Enable WPA box\" is checked"
@@ -15352,7 +15341,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3089
 msgid "Primary 802.1X server"
-msgstr ""
+msgstr "主要 802.1X server"
 
 #: src/usr/local/www/interfaces.php:3095 src/usr/local/www/interfaces.php:3119
 msgid "IP address of the RADIUS server"
@@ -15537,7 +15526,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan_edit.php:172
 #: src/usr/local/www/interfaces_wireless.php:83
 msgid "VLANs"
-msgstr ""
+msgstr "VLANs"
 
 #: src/usr/local/www/interfaces_assign.php:496
 #: src/usr/local/www/interfaces_bridge.php:87
@@ -15552,7 +15541,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:87
 #: src/usr/local/www/interfaces_wireless.php:84
 msgid "QinQs"
-msgstr ""
+msgstr "QinQs"
 
 #: src/usr/local/www/interfaces_assign.php:497
 #: src/usr/local/www/interfaces_bridge.php:88
@@ -15567,7 +15556,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:88
 #: src/usr/local/www/interfaces_wireless.php:85
 msgid "PPPs"
-msgstr ""
+msgstr "PPPs"
 
 #: src/usr/local/www/interfaces_assign.php:498
 #: src/usr/local/www/interfaces_bridge.php:89
@@ -15582,7 +15571,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:89
 #: src/usr/local/www/interfaces_wireless.php:86
 msgid "GREs"
-msgstr ""
+msgstr "GREs"
 
 #: src/usr/local/www/interfaces_assign.php:499
 #: src/usr/local/www/interfaces_bridge.php:90
@@ -15597,7 +15586,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:90
 #: src/usr/local/www/interfaces_wireless.php:87
 msgid "GIFs"
-msgstr ""
+msgstr "GIFs"
 
 #: src/usr/local/www/interfaces_assign.php:500
 #: src/usr/local/www/interfaces_bridge.php:75
@@ -15612,7 +15601,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:91
 #: src/usr/local/www/interfaces_wireless.php:88
 msgid "Bridges"
-msgstr ""
+msgstr "Bridges"
 
 #: src/usr/local/www/interfaces_assign.php:501
 #: src/usr/local/www/interfaces_bridge.php:92
@@ -15627,7 +15616,7 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:92
 #: src/usr/local/www/interfaces_wireless.php:89
 msgid "LAGGs"
-msgstr ""
+msgstr "LAGGs"
 
 #: src/usr/local/www/interfaces_assign.php:510
 msgid "Network port"
@@ -15897,11 +15886,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_bridge_edit.php:528
 msgid "Enable RSTP/STP"
-msgstr ""
+msgstr "啟用 RSTP/STP"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:535
 msgid "RSTP/STP"
-msgstr ""
+msgstr "RSTP/STP"
 
 #: src/usr/local/www/interfaces_bridge_edit.php:544
 msgid "Protocol used for spanning tree."
@@ -16353,7 +16342,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "LACP"
-msgstr ""
+msgstr "LACP"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "FAILOVER"
@@ -16365,7 +16354,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "LOADBALANCE"
-msgstr ""
+msgstr "負載平衡"
 
 #: src/usr/local/www/interfaces_lagg_edit.php:39
 msgid "ROUNDROBIN"
@@ -16500,7 +16489,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:851
 #: src/usr/local/www/services_dhcpv6.php:596
 msgid "Subnet"
-msgstr ""
+msgstr "子網路"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:221
 #: src/usr/local/www/interfaces_ppps_edit.php:224
@@ -16640,7 +16629,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:695
 msgid "SIM PIN"
-msgstr ""
+msgstr "SIM PIN"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:702
 msgid "SIM PIN wait"
@@ -16704,11 +16693,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:772
 msgid "Hour"
-msgstr ""
+msgstr "時"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:779
 msgid "Minute"
-msgstr ""
+msgstr "分"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:787
 msgid "Specific date"
@@ -16726,7 +16715,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:840
 msgid "Advanced options"
-msgstr ""
+msgstr "進階選項"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:851
 msgid "Dial On Demand"
@@ -16824,11 +16813,11 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_ppps_edit.php:934
 msgid "MRU"
-msgstr ""
+msgstr "MRU"
 
 #: src/usr/local/www/interfaces_ppps_edit.php:941
 msgid "MRRU"
-msgstr ""
+msgstr "MRRU"
 
 #: src/usr/local/www/interfaces_qinq.php:56
 msgid ""
@@ -16954,15 +16943,15 @@ msgstr ""
 #: src/usr/local/www/interfaces_vlan.php:108
 #: src/usr/local/www/interfaces_vlan_edit.php:72
 msgid "VLAN tag"
-msgstr ""
+msgstr "VLAN tag"
 
 #: src/usr/local/www/interfaces_vlan.php:132
 msgid "Edit VLAN"
-msgstr ""
+msgstr "編輯 VLAN"
 
 #: src/usr/local/www/interfaces_vlan.php:134
 msgid "Delete VLAN"
-msgstr ""
+msgstr "刪除 VLAN"
 
 #: src/usr/local/www/interfaces_vlan.php:157
 #, php-format
@@ -17007,7 +16996,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_vlan_edit.php:182
 msgid "VLAN Configuration"
-msgstr ""
+msgstr "VLAN 組態"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:189
 msgid "Only VLAN capable interfaces will be shown."
@@ -17015,7 +17004,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces_vlan_edit.php:193
 msgid "*VLAN Tag"
-msgstr ""
+msgstr "*VLAN Tag"
 
 #: src/usr/local/www/interfaces_vlan_edit.php:197
 msgid "802.1Q VLAN tag (between 1 and 4094)."
@@ -17152,7 +17141,7 @@ msgstr ""
 #: src/usr/local/www/license.php:181 src/usr/local/www/license.php:189
 #: src/usr/local/www/license.php:193
 msgid "Copyright"
-msgstr ""
+msgstr "版權"
 
 #: src/usr/local/www/license.php:51
 msgid "1992-2016 The FreeBSD Project. All rights reserved."
@@ -17168,15 +17157,15 @@ msgstr ""
 
 #: src/usr/local/www/license.php:55
 msgid "1999-2016 The PHP Group. All rights reserved."
-msgstr ""
+msgstr "1999-2016 The PHP Group. All rights reserved."
 
 #: src/usr/local/www/license.php:112
 msgid "2004-2013 Internet Software Consortium, Inc."
-msgstr ""
+msgstr "2004-2013 Internet Software Consortium, Inc."
 
 #: src/usr/local/www/license.php:113
 msgid "1995-2003 Internet Software Consortium"
-msgstr ""
+msgstr "1995-2003 Internet Software Consortium"
 
 #: src/usr/local/www/license.php:122 src/usr/local/www/license.php:127
 msgid "All rights reserved."
@@ -17196,11 +17185,11 @@ msgstr ""
 
 #: src/usr/local/www/license.php:136
 msgid "2005-2016 University of Applied Sciences Rapperswil"
-msgstr ""
+msgstr "2005-2016 University of Applied Sciences Rapperswil"
 
 #: src/usr/local/www/license.php:148
 msgid "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
-msgstr ""
+msgstr "Copyright (C) 2002-2016 OpenVPN Solutions LLC "
 
 #: src/usr/local/www/license.php:185
 msgid "Public Domain"
@@ -17315,21 +17304,21 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "ICMP"
-msgstr ""
+msgstr "ICMP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "TCP"
-msgstr ""
+msgstr "TCP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:314
 msgid "HTTP"
-msgstr ""
+msgstr "HTTP"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 #: src/usr/local/www/system_advanced_admin.php:322
 msgid "HTTPS"
-msgstr ""
+msgstr "HTTPS"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:207
 msgid "Send/Expect"
@@ -17364,7 +17353,7 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:337
 msgid "HTTPS Code"
-msgstr ""
+msgstr "HTTPS Code"
 
 #: src/usr/local/www/load_balancer_monitor_edit.php:344
 msgid "Send/Expect Options"
@@ -17529,7 +17518,7 @@ msgstr ""
 
 #: src/usr/local/www/load_balancer_pool_edit.php:414
 msgid "Enabled (Default)"
-msgstr ""
+msgstr "啟用 (預設值)"
 
 #: src/usr/local/www/load_balancer_pool_edit.php:440
 msgid "Move to enabled list"
@@ -17710,12 +17699,12 @@ msgstr ""
 #: src/usr/local/www/pkg.php:174 src/usr/local/www/pkg_edit.php:50
 #: src/usr/local/www/pkg_edit.php:512 src/usr/local/www/pkg_edit.php:516
 msgid "Package"
-msgstr ""
+msgstr "套件"
 
 #: src/usr/local/www/pkg.php:39 src/usr/local/www/pkg.php:174
 #: src/usr/local/www/pkg_edit.php:50 src/usr/local/www/pkg_edit.php:516
 msgid "Editor"
-msgstr ""
+msgstr "編輯器"
 
 #: src/usr/local/www/pkg.php:42 src/usr/local/www/pkg_edit.php:53
 msgid "No valid package defined."
@@ -17724,7 +17713,7 @@ msgstr ""
 #: src/usr/local/www/pkg.php:50
 #, php-format
 msgid "Package path %s not found."
-msgstr ""
+msgstr "找不到套件路徑%s"
 
 #: src/usr/local/www/pkg.php:52
 #, php-format
@@ -17771,31 +17760,31 @@ msgstr ""
 
 #: src/usr/local/www/pkg.php:518
 msgid "Edit this item"
-msgstr ""
+msgstr "編輯此項目"
 
 #: src/usr/local/www/pkg.php:523
 msgid "Delete this item"
-msgstr ""
+msgstr "刪除此項目"
 
 #: src/usr/local/www/pkg.php:547
 msgid "Previous page"
-msgstr ""
+msgstr "前一頁"
 
 #: src/usr/local/www/pkg.php:560
 msgid "Next page"
-msgstr ""
+msgstr "下一頁"
 
 #: src/usr/local/www/pkg.php:578
 msgid "Add a new item"
-msgstr ""
+msgstr "新增項目"
 
 #: src/usr/local/www/pkg_edit.php:645
 msgid "Advanced Features"
-msgstr ""
+msgstr "進階功能"
 
 #: src/usr/local/www/pkg_edit.php:726 src/usr/local/www/services_dhcp.php:790
 msgid "General Options"
-msgstr ""
+msgstr "一般選項"
 
 #: src/usr/local/www/pkg_edit.php:1191
 msgid "Listen on All interfaces/ip addresses "
@@ -17811,7 +17800,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_edit.php:1516
 msgid "Hide Advanced Options"
-msgstr ""
+msgstr "隱藏進階選項"
 
 #: src/usr/local/www/pkg_mgr.php:83
 msgid "Visit official website"
@@ -17820,7 +17809,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr.php:92 src/usr/local/www/pkg_mgr_installed.php:145
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:106
 msgid "View changelog"
-msgstr ""
+msgstr "顯示更新紀錄"
 
 #: src/usr/local/www/pkg_mgr.php:103
 #: src/usr/local/www/pkg_mgr_installed.php:156
@@ -17829,19 +17818,19 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr.php:114
 msgid "Click to install"
-msgstr ""
+msgstr "安裝"
 
 #: src/usr/local/www/pkg_mgr.php:117
 #: src/usr/local/www/pkg_mgr_installed.php:176
 #: src/usr/local/www/widgets/widgets/installed_packages.widget.php:126
 msgid "View more information"
-msgstr ""
+msgstr "顯示更多資訊"
 
 #: src/usr/local/www/pkg_mgr.php:130 src/usr/local/www/pkg_mgr.php:136
 #: src/usr/local/www/pkg_mgr_install.php:252
 #: src/usr/local/www/pkg_mgr_installed.php:210
 msgid "Available Packages"
-msgstr ""
+msgstr "可用套件"
 
 #: src/usr/local/www/pkg_mgr.php:135 src/usr/local/www/pkg_mgr_install.php:251
 #: src/usr/local/www/pkg_mgr_installed.php:204
@@ -17849,11 +17838,11 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:216
 #: src/usr/local/www/widgets/include/installed_packages.inc:24
 msgid "Installed Packages"
-msgstr ""
+msgstr "已安裝套件"
 
 #: src/usr/local/www/pkg_mgr.php:142 src/usr/local/www/pkg_mgr.php:164
 msgid "Search"
-msgstr ""
+msgstr "搜尋"
 
 #: src/usr/local/www/pkg_mgr.php:153
 msgid "Search term"
@@ -17948,50 +17937,50 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:379
 msgid "Updating System"
-msgstr ""
+msgstr "更新系統中"
 
 #: src/usr/local/www/pkg_mgr_install.php:380
 msgid "System update successfully completed."
-msgstr ""
+msgstr "系統已成功完成更新"
 
 #: src/usr/local/www/pkg_mgr_install.php:381
 msgid "System update failed!"
-msgstr ""
+msgstr "系統更新錯誤!"
 
 #: src/usr/local/www/pkg_mgr_install.php:382
 msgid "Please wait while the system update completes."
-msgstr ""
+msgstr "請等待至系統更新完成."
 
 #: src/usr/local/www/pkg_mgr_install.php:384
 msgid "Package Removal"
-msgstr ""
+msgstr "移除套件"
 
 #: src/usr/local/www/pkg_mgr_install.php:385
 #, php-format
 msgid "<b>%1$s</b> removal successfully completed."
-msgstr ""
+msgstr "<b>%1$s</b> 已成功移除."
 
 #: src/usr/local/www/pkg_mgr_install.php:386
 #, php-format
 msgid "<b>%1$s</b> removal failed!"
-msgstr ""
+msgstr "<b>%1$s</b> 移除錯誤!"
 
 #: src/usr/local/www/pkg_mgr_install.php:387
 #, php-format
 msgid "Please wait while the removal of <b>%1$s</b> completes."
-msgstr ""
+msgstr "請等待 <b>%1$s</b> 移除完成."
 
 #: src/usr/local/www/pkg_mgr_install.php:389
 msgid "Packages Reinstallation"
-msgstr ""
+msgstr "重新安裝套件"
 
 #: src/usr/local/www/pkg_mgr_install.php:390
 msgid "All packages reinstallation successfully completed."
-msgstr ""
+msgstr "所有套件已成功重新安裝."
 
 #: src/usr/local/www/pkg_mgr_install.php:391
 msgid "All packages reinstallation failed!"
-msgstr ""
+msgstr "所有套件重新安裝時出現錯誤!"
 
 #: src/usr/local/www/pkg_mgr_install.php:392
 #: src/usr/local/www/pkg_mgr_install.php:557
@@ -18000,7 +17989,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:394
 msgid "Package Reinstallation"
-msgstr ""
+msgstr "重新安裝套件"
 
 #: src/usr/local/www/pkg_mgr_install.php:395
 #, php-format
@@ -18010,7 +17999,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_install.php:396
 #, php-format
 msgid "<b>%1$s</b> reinstallation failed!"
-msgstr ""
+msgstr "<b>%1$s</b>重新安裝出現錯誤!"
 
 #: src/usr/local/www/pkg_mgr_install.php:397
 #, php-format
@@ -18019,17 +18008,17 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_install.php:399
 msgid "Package Installation"
-msgstr ""
+msgstr "重新安裝套件"
 
 #: src/usr/local/www/pkg_mgr_install.php:400
 #, php-format
 msgid "<b>%1$s</b> installation successfully completed."
-msgstr ""
+msgstr "<b>%1$s</b>已成功安裝."
 
 #: src/usr/local/www/pkg_mgr_install.php:401
 #, php-format
 msgid "<b>%1$s</b> installation failed!"
-msgstr ""
+msgstr "<b>%1$s</b> 安裝出現錯誤!"
 
 #: src/usr/local/www/pkg_mgr_install.php:402
 #, php-format
@@ -18111,7 +18100,7 @@ msgstr ""
 #: src/usr/local/www/pkg_mgr_installed.php:171
 #, php-format
 msgid "Reinstall package %s"
-msgstr ""
+msgstr "重新安裝套件 %s"
 
 #: src/usr/local/www/pkg_mgr_installed.php:191
 msgid "Current"
@@ -18119,7 +18108,7 @@ msgstr ""
 
 #: src/usr/local/www/pkg_mgr_installed.php:198
 msgid "Newer version available"
-msgstr ""
+msgstr "有新版本"
 
 #: src/usr/local/www/pkg_mgr_installed.php:199
 msgid "Package is configured but not (fully) installed"
@@ -18139,7 +18128,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp.php:168 src/usr/local/www/vpn_l2tp.php:182
 #: src/usr/local/www/vpn_l2tp.php:206 src/usr/local/www/vpn_l2tp_users.php:84
 msgid "Configuration"
-msgstr ""
+msgstr "組態"
 
 #: src/usr/local/www/services_captiveportal.php:85
 #, php-format
@@ -18167,7 +18156,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:220
 msgid "RADIUS Protocol"
-msgstr ""
+msgstr "RADIUS Protocol"
 
 #: src/usr/local/www/services_captiveportal.php:222
 msgid "Primary RADIUS server IP address"
@@ -18284,7 +18273,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac.php:167
 #: src/usr/local/www/services_captiveportal_vouchers.php:378
 msgid "Allowed Hostnames"
-msgstr ""
+msgstr "允許的主機名稱"
 
 #: src/usr/local/www/services_captiveportal.php:525
 #: src/usr/local/www/services_captiveportal_filemanager.php:143
@@ -18305,7 +18294,7 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac.php:169
 #: src/usr/local/www/services_captiveportal_vouchers.php:380
 msgid "File Manager"
-msgstr ""
+msgstr "檔案管理"
 
 #: src/usr/local/www/services_captiveportal.php:532
 msgid "Captive Portal Configuration"
@@ -18487,11 +18476,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:689
 msgid "*Authentication method"
-msgstr ""
+msgstr "*驗證方法"
 
 #: src/usr/local/www/services_captiveportal.php:724
 msgid "*RADIUS protocol"
-msgstr ""
+msgstr "*RADIUS protocol"
 
 #: src/usr/local/www/services_captiveportal.php:763
 msgid "Primary Authentication Source"
@@ -18499,12 +18488,12 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:766
 msgid "*Primary RADIUS server"
-msgstr ""
+msgstr "*Primary RADIUS server"
 
 #: src/usr/local/www/services_captiveportal.php:790
 #: src/usr/local/www/services_captiveportal.php:843
 msgid "Secondary RADIUS server"
-msgstr ""
+msgstr "Secondary RADIUS server"
 
 #: src/usr/local/www/services_captiveportal.php:796
 #: src/usr/local/www/services_captiveportal.php:849
@@ -18535,7 +18524,7 @@ msgstr ""
 #: src/usr/local/www/services_pppoe_edit.php:366
 #: src/usr/local/www/vpn_l2tp.php:273
 msgid "RADIUS"
-msgstr ""
+msgstr "RADIUS"
 
 #: src/usr/local/www/services_captiveportal.php:880
 msgid "Accounting Port"
@@ -18551,7 +18540,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:923
 msgid "RADIUS Options"
-msgstr ""
+msgstr "RADIUS 選項"
 
 #: src/usr/local/www/services_captiveportal.php:928
 msgid "Reauthentication"
@@ -18682,7 +18671,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1033
 msgid "*SSL Certificate"
-msgstr ""
+msgstr "*SSL 憑證"
 
 #: src/usr/local/www/services_captiveportal.php:1036
 msgid ""
@@ -18796,19 +18785,19 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:153
 msgid "Upload a New File"
-msgstr ""
+msgstr "上傳新檔案"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:164
 msgid "File"
-msgstr ""
+msgstr "檔案"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:183
 msgid "Installed Files"
-msgstr ""
+msgstr "已安裝檔案"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:203
 msgid "Delete file"
-msgstr ""
+msgstr "刪除檔案"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:214
 msgid "Total"
@@ -18818,7 +18807,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:325
 #: src/usr/local/www/services_ntpd_pps.php:127
 msgid "Notes"
-msgstr ""
+msgstr "備註"
 
 #: src/usr/local/www/services_captiveportal_filemanager.php:246
 msgid ""
@@ -18858,11 +18847,11 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_hostname.php:135
 msgid "Edit hostname"
-msgstr ""
+msgstr "編輯主機名稱"
 
 #: src/usr/local/www/services_captiveportal_hostname.php:136
 msgid "Delete hostname"
-msgstr ""
+msgstr "刪除主機名稱"
 
 #: src/usr/local/www/services_captiveportal_hostname.php:144
 #, php-format
@@ -18882,7 +18871,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:96
 msgid "Allowed Hostname"
-msgstr ""
+msgstr "允許的主機名稱"
 
 #: src/usr/local/www/services_captiveportal_hostname_edit.php:101
 #, php-format
@@ -18939,15 +18928,15 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip.php:110
 msgid "IP Addresses"
-msgstr ""
+msgstr "IP位址"
 
 #: src/usr/local/www/services_captiveportal_ip.php:131
 msgid "Edit IP"
-msgstr ""
+msgstr "編輯IP"
 
 #: src/usr/local/www/services_captiveportal_ip.php:132
 msgid "Delete IP"
-msgstr ""
+msgstr "刪除IP"
 
 #: src/usr/local/www/services_captiveportal_ip.php:141
 #, php-format
@@ -18969,13 +18958,13 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:97
 msgid "Allowed IP address"
-msgstr ""
+msgstr "允許的IP位址"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:97
 #: src/usr/local/www/services_dhcp.php:856
 #: src/usr/local/www/services_dhcp.php:884
 msgid "Subnet mask"
-msgstr ""
+msgstr "子網路遮罩"
 
 #: src/usr/local/www/services_captiveportal_ip_edit.php:106
 msgid "A valid subnet mask must be specified"
@@ -19085,11 +19074,11 @@ msgstr ""
 #: src/usr/local/www/services_captiveportal_mac_edit.php:138
 #, php-format
 msgid "[%s] already exists."
-msgstr ""
+msgstr "[%s] 已存在."
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:199
 msgid "Edit MAC Address Rules"
-msgstr ""
+msgstr "編輯 MAC Address 規則"
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:206
 msgid "Choose what to do with packets coming from this MAC address."
@@ -19097,7 +19086,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:225
 msgid "*MAC Address"
-msgstr ""
+msgstr "*MAC Address"
 
 #: src/usr/local/www/services_captiveportal_mac_edit.php:228
 msgid "6 hex octets separated by colons"
@@ -19176,7 +19165,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:214
 msgid "Sync username"
-msgstr ""
+msgstr "同步 使用者"
 
 #: src/usr/local/www/services_captiveportal_vouchers.php:223
 msgid "Need at least 2 characters to create vouchers."
@@ -19567,12 +19556,12 @@ msgstr ""
 #: src/usr/local/www/services_rfc2136.php:64
 #: src/usr/local/www/services_rfc2136_edit.php:148
 msgid "RFC 2136 Clients"
-msgstr ""
+msgstr "RFC 2136 Clients"
 
 #: src/usr/local/www/services_checkip.php:89
 #: src/usr/local/www/services_checkip_edit.php:63
 msgid "URL"
-msgstr ""
+msgstr "URL"
 
 #: src/usr/local/www/services_checkip.php:90
 #: src/usr/local/www/services_checkip_edit.php:155
@@ -19593,7 +19582,7 @@ msgstr ""
 #: src/usr/local/www/services_checkip.php:136
 #: src/usr/local/www/services_dyndns.php:194
 msgid "Enable service"
-msgstr ""
+msgstr "啟用服務"
 
 #: src/usr/local/www/services_checkip.php:139
 #: src/usr/local/www/services_dyndns.php:197
@@ -19649,21 +19638,21 @@ msgstr ""
 
 #: src/usr/local/www/services_checkip_edit.php:134
 msgid "*URL"
-msgstr ""
+msgstr "*URL"
 
 #: src/usr/local/www/services_checkip_edit.php:141
 msgid "User name"
-msgstr ""
+msgstr "使用者名稱"
 
 #: src/usr/local/www/services_dhcp.php:254
 #: src/usr/local/www/services_dhcpv6.php:215
 msgid "Range begin"
-msgstr ""
+msgstr "起始範圍"
 
 #: src/usr/local/www/services_dhcp.php:254
 #: src/usr/local/www/services_dhcpv6.php:215
 msgid "Range end"
-msgstr ""
+msgstr "終止範圍"
 
 #: src/usr/local/www/services_dhcp.php:260
 msgid ""
@@ -19932,7 +19921,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:814
 msgid "BOOTP"
-msgstr ""
+msgstr "BOOTP"
 
 #: src/usr/local/www/services_dhcp.php:821
 msgid "Deny unknown clients"
@@ -19961,28 +19950,28 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:844
 msgid "Pool Description"
-msgstr ""
+msgstr "IP範圍描述"
 
 #: src/usr/local/www/services_dhcp.php:864
 msgid "In-use DHCP Pool Ranges:"
-msgstr ""
+msgstr "使用中的DHCP IP範圍:"
 
 #: src/usr/local/www/services_dhcp.php:877
 msgid "Available range"
-msgstr ""
+msgstr "可用IP範圍"
 
 #: src/usr/local/www/services_dhcp.php:890
 #: src/usr/local/www/services_dhcpv6.php:638
 msgid "*Range"
-msgstr ""
+msgstr "IP範圍"
 
 #: src/usr/local/www/services_dhcp.php:911
 msgid "Additional Pools"
-msgstr ""
+msgstr "附加的IP範圍"
 
 #: src/usr/local/www/services_dhcp.php:915
 msgid "Add pool"
-msgstr ""
+msgstr "新增IP範圍"
 
 #: src/usr/local/www/services_dhcp.php:924
 msgid ""
@@ -19993,12 +19982,12 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:940
 #: src/usr/local/www/vpn_openvpn_csc.php:552
 msgid "WINS servers"
-msgstr ""
+msgstr "WINS servers"
 
 #: src/usr/local/www/services_dhcp.php:955
 #: src/usr/local/www/status_interfaces.php:152
 msgid "DNS servers"
-msgstr ""
+msgstr "DNS servers"
 
 #: src/usr/local/www/services_dhcp.php:958
 msgid ""
@@ -20009,7 +19998,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:963
 msgid "Other Options"
-msgstr ""
+msgstr "其他選項"
 
 #: src/usr/local/www/services_dhcp.php:971
 msgid ""
@@ -20085,7 +20074,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1393
 #: src/usr/local/www/widgets/widgets/wake_on_lan.widget.php:93
 msgid "Static ARP"
-msgstr ""
+msgstr "Static ARP"
 
 #: src/usr/local/www/services_dhcp.php:1017
 msgid ""
@@ -20096,7 +20085,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcp.php:1021
 msgid "Time format change"
-msgstr ""
+msgstr "改變時間格式"
 
 #: src/usr/local/www/services_dhcp.php:1024
 msgid ""
@@ -20119,7 +20108,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:608
 #: src/usr/local/www/services_dhcpv6.php:764
 msgid "DDNS Domain"
-msgstr ""
+msgstr "DDNS Domain"
 
 #: src/usr/local/www/services_dhcp.php:1061
 msgid ""
@@ -20130,7 +20119,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp.php:1066
 #: src/usr/local/www/services_dhcpv6.php:771
 msgid "DDNS Hostnames"
-msgstr ""
+msgstr "DDNS 主機名稱"
 
 #: src/usr/local/www/services_dhcp.php:1069
 #: src/usr/local/www/services_dhcpv6.php:774
@@ -20194,18 +20183,18 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:835
 #: src/usr/local/www/vpn_openvpn_server.php:1214
 msgid "NTP Server 1"
-msgstr ""
+msgstr "NTP Server 1"
 
 #: src/usr/local/www/services_dhcp.php:1145
 #: src/usr/local/www/services_dhcp_edit.php:660
 #: src/usr/local/www/services_dhcpv6.php:843
 #: src/usr/local/www/vpn_openvpn_server.php:1221
 msgid "NTP Server 2"
-msgstr ""
+msgstr "NTP Server 2"
 
 #: src/usr/local/www/services_dhcp.php:1161
 msgid "TFTP"
-msgstr ""
+msgstr "TFTP"
 
 #: src/usr/local/www/services_dhcp.php:1167
 #: src/usr/local/www/services_dhcp_edit.php:686
@@ -20509,7 +20498,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:486
 #: src/usr/local/www/vpn_ipsec_mobile.php:632
 msgid "WINS Servers"
-msgstr ""
+msgstr "WINS Servers"
 
 #: src/usr/local/www/services_dhcp_edit.php:505
 #: src/usr/local/www/services_dhcpv6.php:687
@@ -20517,7 +20506,7 @@ msgstr ""
 #: src/usr/local/www/system.php:469 src/usr/local/www/vpn_ipsec_mobile.php:607
 #: src/usr/local/www/vpn_openvpn_csc.php:460
 msgid "DNS Servers"
-msgstr ""
+msgstr "DNS Servers"
 
 #: src/usr/local/www/services_dhcp_edit.php:539
 msgid ""
@@ -20609,17 +20598,17 @@ msgstr ""
 #: src/usr/local/www/services_dhcp_edit.php:644
 #: src/usr/local/www/services_dhcpv6.php:827
 msgid "NTP servers"
-msgstr ""
+msgstr "NTP servers"
 
 #: src/usr/local/www/services_dhcp_edit.php:648
 #: src/usr/local/www/services_dhcpv6.php:831
 #: src/usr/local/www/vpn_openvpn_csc.php:501
 msgid "NTP Servers"
-msgstr ""
+msgstr "NTP Servers"
 
 #: src/usr/local/www/services_dhcp_edit.php:680
 msgid "TFTP servers"
-msgstr ""
+msgstr "TFTP servers"
 
 #: src/usr/local/www/services_dhcp_edit.php:689
 msgid ""
@@ -20751,7 +20740,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:570
 msgid "DHCPv6 Options"
-msgstr ""
+msgstr "DHCPv6 Options"
 
 #: src/usr/local/www/services_dhcpv6.php:576
 msgid ""
@@ -20762,7 +20751,7 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:601
 #: src/usr/local/www/services_dhcpv6.php:614
 msgid "Subnet Mask"
-msgstr ""
+msgstr "子網路遮罩"
 
 #: src/usr/local/www/services_dhcpv6.php:606
 msgid "Available Range"
@@ -20813,7 +20802,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:734
 msgid "Time Format Change"
-msgstr ""
+msgstr "改變時間格式"
 
 #: src/usr/local/www/services_dhcpv6.php:737
 msgid ""
@@ -20831,11 +20820,11 @@ msgstr ""
 #: src/usr/local/www/services_dhcpv6.php:802
 #: src/usr/local/www/services_unbound_acls.php:234
 msgid "Allow"
-msgstr ""
+msgstr "允許"
 
 #: src/usr/local/www/services_dhcpv6.php:804
 msgid "Ignore"
-msgstr ""
+msgstr "忽略"
 
 #: src/usr/local/www/services_dhcpv6.php:799
 msgid "DDNS Client Updates"
@@ -20856,12 +20845,12 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:869
 msgid "LDAP URI"
-msgstr ""
+msgstr "LDAP URI"
 
 #: src/usr/local/www/services_dhcpv6.php:884
 #: src/usr/local/www/services_dhcpv6.php:890
 msgid "Network booting"
-msgstr ""
+msgstr "Network booting"
 
 #: src/usr/local/www/services_dhcpv6.php:897
 msgid "Bootfile URL"
@@ -20894,7 +20883,7 @@ msgstr ""
 #: src/usr/local/www/status_dhcpv6_leases.php:439
 #: src/usr/local/www/status_dhcpv6_leases.php:536
 msgid "DUID"
-msgstr ""
+msgstr "DUID"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:141
 msgid "A valid DUID must be specified."
@@ -20910,7 +20899,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6_edit.php:217
 msgid "*DUID"
-msgstr ""
+msgstr "*DUID"
 
 #: src/usr/local/www/services_dhcpv6_edit.php:221
 msgid "Enter a DUID in the following format: "
@@ -21226,7 +21215,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:153
 msgid "Source IP"
-msgstr ""
+msgstr "來源IP"
 
 #: src/usr/local/www/services_dnsmasq_domainoverride_edit.php:155
 msgid ""
@@ -21303,12 +21292,12 @@ msgstr ""
 #: src/usr/local/www/services_dnsmasq_edit.php:258
 #: src/usr/local/www/services_unbound_host_edit.php:273
 msgid "Host name"
-msgstr ""
+msgstr "主機名稱"
 
 #: src/usr/local/www/services_dnsmasq_edit.php:288
 #: src/usr/local/www/services_unbound_host_edit.php:303
 msgid "Add Host Name"
-msgstr ""
+msgstr "新增主機名稱"
 
 #: src/usr/local/www/services_dyndns.php:90
 #: src/usr/local/www/services_ntpd_acls.php:208
@@ -21320,7 +21309,7 @@ msgstr ""
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:75
 #: src/usr/local/www/widgets/widgets/services_status.widget.php:123
 msgid "Service"
-msgstr ""
+msgstr "服務"
 
 #: src/usr/local/www/services_dyndns.php:92
 #: src/usr/local/www/services_rfc2136.php:84
@@ -21346,7 +21335,7 @@ msgstr ""
 #: src/usr/local/www/services_dyndns_edit.php:107
 #: src/usr/local/www/services_dyndns_edit.php:384
 msgid "Update URL"
-msgstr ""
+msgstr "更新URL"
 
 #: src/usr/local/www/services_dyndns_edit.php:136
 msgid "The hostname contains invalid characters."
@@ -21368,11 +21357,11 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:265
 msgid "*Service Type"
-msgstr ""
+msgstr "*服務類型"
 
 #: src/usr/local/www/services_dyndns_edit.php:274
 msgid "*Interface to monitor"
-msgstr ""
+msgstr "*監看的網路介面"
 
 #: src/usr/local/www/services_dyndns_edit.php:281
 msgid "*Interface to send update from"
@@ -21393,7 +21382,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:311
 msgid "MX"
-msgstr ""
+msgstr "MX"
 
 #: src/usr/local/www/services_dyndns_edit.php:314
 msgid ""
@@ -21404,7 +21393,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:319
 msgid "Wildcards"
-msgstr ""
+msgstr "Wildcards"
 
 #: src/usr/local/www/services_dyndns_edit.php:326
 msgid "CloudFlare Proxy"
@@ -21482,11 +21471,11 @@ msgstr ""
 
 #: src/usr/local/www/services_igmpproxy.php:118
 msgid "Edit IGMP entry"
-msgstr ""
+msgstr "編輯 IGMP 項目"
 
 #: src/usr/local/www/services_igmpproxy.php:119
 msgid "Delete IGMP entry"
-msgstr ""
+msgstr "刪除 IGMP 項目"
 
 #: src/usr/local/www/services_igmpproxy.php:145
 msgid ""
@@ -21550,7 +21539,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:315
 #: src/usr/local/www/services_ntpd_pps.php:117
 msgid "ACLs"
-msgstr ""
+msgstr "ACLs"
 
 #: src/usr/local/www/services_ntpd.php:204
 #: src/usr/local/www/services_ntpd_acls.php:177
@@ -21558,7 +21547,7 @@ msgstr ""
 #: src/usr/local/www/services_ntpd_gps.php:316
 #: src/usr/local/www/services_ntpd_pps.php:118
 msgid "Serial GPS"
-msgstr ""
+msgstr "Serial GPS"
 
 #: src/usr/local/www/services_ntpd.php:205
 #: src/usr/local/www/services_ntpd_acls.php:178
@@ -21568,7 +21557,7 @@ msgstr ""
 #: src/usr/local/www/status_queues.php:162
 #: src/usr/local/www/status_queues.php:166
 msgid "PPS"
-msgstr ""
+msgstr "PPS"
 
 #: src/usr/local/www/services_ntpd.php:211
 msgid "NTP Server Configuration"
@@ -21707,27 +21696,27 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_acls.php:249
 msgid "KOD"
-msgstr ""
+msgstr "KOD"
 
 #: src/usr/local/www/services_ntpd_acls.php:256
 msgid "nomodify"
-msgstr ""
+msgstr "nomodify"
 
 #: src/usr/local/www/services_ntpd_acls.php:263
 msgid "noquery"
-msgstr ""
+msgstr "noquery"
 
 #: src/usr/local/www/services_ntpd_acls.php:270
 msgid "noserve"
-msgstr ""
+msgstr "noserve"
 
 #: src/usr/local/www/services_ntpd_acls.php:277
 msgid "nopeer"
-msgstr ""
+msgstr "nopeer"
 
 #: src/usr/local/www/services_ntpd_acls.php:284
 msgid "notrap"
-msgstr ""
+msgstr "notrap"
 
 #: src/usr/local/www/services_ntpd_gps.php:52
 msgid "Setting default NTPd settings"
@@ -21739,11 +21728,11 @@ msgstr ""
 
 #: src/usr/local/www/services_ntpd_gps.php:285
 msgid "RMC"
-msgstr ""
+msgstr "RMC"
 
 #: src/usr/local/www/services_ntpd_gps.php:286
 msgid "GGA"
-msgstr ""
+msgstr "GGA"
 
 #: src/usr/local/www/services_ntpd_gps.php:287
 msgid "GLL"
@@ -22147,7 +22136,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:533
 msgid "Add user"
-msgstr ""
+msgstr "新增使用者"
 
 #: src/usr/local/www/services_pppoe_edit.php:568
 msgid ""
@@ -22156,25 +22145,25 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136.php:75
 msgid "RFC2136 Clients"
-msgstr ""
+msgstr "RFC2136 Clients"
 
 #: src/usr/local/www/services_rfc2136.php:176
 #: src/usr/local/www/vpn_openvpn_client.php:929
 msgid "Edit client"
-msgstr ""
+msgstr "編輯用戶端"
 
 #: src/usr/local/www/services_rfc2136.php:179
 msgid "Disable client"
-msgstr ""
+msgstr "停用用戶端"
 
 #: src/usr/local/www/services_rfc2136.php:182
 msgid "Enable client"
-msgstr ""
+msgstr "啟用用戶端"
 
 #: src/usr/local/www/services_rfc2136.php:185
 #: src/usr/local/www/vpn_openvpn_client.php:930
 msgid "Delete client"
-msgstr ""
+msgstr "刪除用戶端"
 
 #: src/usr/local/www/services_rfc2136_edit.php:78
 msgid "Key name"
@@ -22202,7 +22191,7 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:158
 msgid "RFC 2136 Client"
-msgstr ""
+msgstr "RFC 2136 Client"
 
 #: src/usr/local/www/services_rfc2136_edit.php:183
 msgid "Fully qualified hostname of the host to be updated."
@@ -22210,7 +22199,7 @@ msgstr ""
 
 #: src/usr/local/www/services_rfc2136_edit.php:187
 msgid "*TTL (seconds)"
-msgstr ""
+msgstr "*TTL (秒)"
 
 #: src/usr/local/www/services_rfc2136_edit.php:194
 msgid "*Key name"
@@ -22660,7 +22649,7 @@ msgstr ""
 #: src/usr/local/www/services_unbound_domainoverride_edit.php:112
 #: src/usr/local/www/services_unbound_host_edit.php:200
 msgid "General Settings"
-msgstr ""
+msgstr "一般設定"
 
 #: src/usr/local/www/services_unbound.php:253
 #: src/usr/local/www/services_unbound_acls.php:194
@@ -22679,7 +22668,7 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_settings.php:186
 #: src/usr/local/www/vpn_ipsec_settings.php:220
 msgid "Advanced Settings"
-msgstr ""
+msgstr "進階設定"
 
 #: src/usr/local/www/services_unbound.php:259
 #: src/usr/local/www/services_unbound_acls.php:176
@@ -23368,7 +23357,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal_voucher_rolls.php:70
 #: src/usr/local/www/status_captiveportal_vouchers.php:96
 msgid "Active Users"
-msgstr ""
+msgstr "活動中的使用者"
 
 #: src/usr/local/www/status_captiveportal.php:151
 #: src/usr/local/www/status_captiveportal_expire.php:74
@@ -23410,7 +23399,7 @@ msgstr ""
 #: src/usr/local/www/status_captiveportal.php:187
 #, php-format
 msgid "Users Logged In (%d)"
-msgstr ""
+msgstr "使用者登入於 (%d)"
 
 #: src/usr/local/www/status_captiveportal.php:201
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:85
@@ -23424,7 +23413,7 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:257
 msgid "Disconnect this User"
-msgstr ""
+msgstr "對此使用者斷線"
 
 #: src/usr/local/www/status_captiveportal.php:271
 #, php-format
@@ -23451,11 +23440,11 @@ msgstr ""
 
 #: src/usr/local/www/status_captiveportal.php:294
 msgid "Disconnect all active users"
-msgstr ""
+msgstr "對所有活動中的使用者斷線"
 
 #: src/usr/local/www/status_captiveportal.php:296
 msgid "Disconnect All Users"
-msgstr ""
+msgstr "對所有使用者斷線"
 
 #: src/usr/local/www/status_captiveportal_expire.php:65
 msgid "Voucher(s) successfully marked."
@@ -23576,7 +23565,7 @@ msgstr ""
 
 #: src/usr/local/www/status_carp.php:165
 msgid "Enable CARP"
-msgstr ""
+msgstr "啟用 CARP"
 
 #: src/usr/local/www/status_carp.php:166
 msgid "Leave Persistent CARP Maintenance Mode"
@@ -25344,8 +25333,6 @@ msgstr ""
 msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
 
 #: src/usr/local/www/system.php:196
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."
@@ -26296,7 +26283,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_misc.php:335
 msgid "Proxy Username"
-msgstr ""
+msgstr "Proxy 使用者"
 
 #: src/usr/local/www/system_advanced_misc.php:338
 msgid ""
@@ -26790,7 +26777,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_notifications.php:254
 msgid "Enable SSL/TLS"
-msgstr ""
+msgstr "啟用 SSL/TLS"
 
 #: src/usr/local/www/system_advanced_notifications.php:263
 msgid "From e-mail address"
@@ -27067,7 +27054,7 @@ msgstr ""
 #: src/usr/local/www/vpn_l2tp_users.php:85
 #: src/usr/local/www/vpn_l2tp_users_edit.php:29
 msgid "Users"
-msgstr ""
+msgstr "使用者"
 
 #: src/usr/local/www/system_authservers.php:428
 #: src/usr/local/www/system_groupmanager.php:276
@@ -27210,7 +27197,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:646
 msgid "User DN:"
-msgstr ""
+msgstr "使用者DN:"
 
 #: src/usr/local/www/system_authservers.php:668
 msgid "Initial Template"
@@ -27302,7 +27289,7 @@ msgstr ""
 
 #: src/usr/local/www/system_authservers.php:824
 msgid "Please fill the bind username/password."
-msgstr ""
+msgstr "請填入綁定的使用者名稱/密碼."
 
 #: src/usr/local/www/system_camanager.php:34
 msgid "Import an existing Certificate Authority"
@@ -27821,7 +27808,7 @@ msgstr ""
 
 #: src/usr/local/www/system_certmanager.php:1026
 msgid "User Cert"
-msgstr ""
+msgstr "使用者憑證"
 
 #: src/usr/local/www/system_certmanager.php:1062
 msgid "Export Certificate"
@@ -28824,7 +28811,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:166
 msgid "Remote System Username"
-msgstr ""
+msgstr "遠端系統使用者"
 
 #: src/usr/local/www/system_hasync.php:169
 msgid ""
@@ -28850,7 +28837,7 @@ msgstr ""
 
 #: src/usr/local/www/system_hasync.php:184
 msgid "Synchronize Users and Groups"
-msgstr ""
+msgstr "同步使用者及群組"
 
 #: src/usr/local/www/system_hasync.php:192
 msgid "Synchronize Auth Servers"
@@ -29153,7 +29140,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:137
 #, php-format
 msgid "User %s successfully deleted."
-msgstr ""
+msgstr "使用者%s已成功刪除."
 
 #: src/usr/local/www/system_usermanager.php:131
 #, php-format
@@ -29163,7 +29150,7 @@ msgstr ""
 #: src/usr/local/www/system_usermanager.php:139
 #, php-format
 msgid "Users %s successfully deleted."
-msgstr ""
+msgstr "使用者%s已成功刪除."
 
 #: src/usr/local/www/system_usermanager.php:158
 #, php-format
@@ -29200,7 +29187,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:243
 msgid "That username is reserved by the system."
-msgstr ""
+msgstr "此使用者名稱為系統所保留."
 
 #: src/usr/local/www/system_usermanager.php:263
 msgid "Invalid expiration date format; use MM/DD/YYYY instead."
@@ -29235,16 +29222,16 @@ msgstr ""
 #: src/usr/local/www/vpn_ipsec_keys.php:132
 #: src/usr/local/www/vpn_l2tp_users.php:111
 msgid "Edit user"
-msgstr ""
+msgstr "編輯使用者"
 
 #: src/usr/local/www/system_usermanager.php:616
 #: src/usr/local/www/vpn_l2tp_users.php:112
 msgid "Delete user"
-msgstr ""
+msgstr "刪除使用者"
 
 #: src/usr/local/www/system_usermanager.php:632
 msgid "Delete selected users"
-msgstr ""
+msgstr "刪除選定的使用者"
 
 #: src/usr/local/www/system_usermanager.php:640
 msgid ""
@@ -29261,7 +29248,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:688
 msgid "User Properties"
-msgstr ""
+msgstr "使用者屬性"
 
 #: src/usr/local/www/system_usermanager.php:691
 msgid "Defined by"
@@ -29311,11 +29298,11 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:859
 msgid "User Certificates"
-msgstr ""
+msgstr "使用者憑證"
 
 #: src/usr/local/www/system_usermanager.php:871
 msgid "Create Certificate for User"
-msgstr ""
+msgstr "建立使用者憑證"
 
 #: src/usr/local/www/system_usermanager.php:913
 msgid ""
@@ -29341,7 +29328,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:941
 msgid "Enter authorized SSH keys for this user"
-msgstr ""
+msgstr "請輸入此使用者驗證的SSH金鑰"
 
 #: src/usr/local/www/system_usermanager.php:945
 msgid "IPsec Pre-Shared Key"
@@ -29349,7 +29336,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_addprivs.php:143
 msgid "User Privileges"
-msgstr ""
+msgstr "使用者權限"
 
 #: src/usr/local/www/system_usermanager_addprivs.php:173
 msgid ""
@@ -29365,7 +29352,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:33
 msgid "User Password"
-msgstr ""
+msgstr "使用者密碼"
 
 #: src/usr/local/www/system_usermanager_passwordmg.php:61
 msgid "Password successfully changed."
@@ -29683,7 +29670,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_keys.php:113
 msgid "ANY USER"
-msgstr ""
+msgstr "任何使用者"
 
 #: src/usr/local/www/vpn_ipsec_keys.php:155
 msgid "Edit key"
@@ -29748,7 +29735,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:155
 msgid "User Authentication Source"
-msgstr ""
+msgstr "使用者驗證來源"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:155
 msgid "Group Authentication Source"
@@ -29846,7 +29833,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:451
 msgid "*User Authentication"
-msgstr ""
+msgstr "*使用者驗證"
 
 #: src/usr/local/www/vpn_ipsec_mobile.php:463
 msgid "system"
@@ -30539,7 +30526,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:287
 msgid "Enable Maximum MSS"
-msgstr ""
+msgstr "啟用 Maximum MSS"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:292
 #: src/usr/local/www/vpn_ipsec_settings.php:301
@@ -30554,7 +30541,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:313
 msgid "Enable Cisco Extensions"
-msgstr ""
+msgstr "啟用 Cisco Extensions"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:316
 msgid ""
@@ -30609,7 +30596,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:93
 msgid "Number of L2TP users must be between 1 and 255"
-msgstr ""
+msgstr "L2TP使用者數量必須在1到255之間"
 
 #: src/usr/local/www/vpn_l2tp.php:102
 msgid "The specified server address is equal to the LAN interface address."
@@ -30637,7 +30624,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:234
 msgid "*Number of L2TP users"
-msgstr ""
+msgstr "* L2TP 使用者數量"
 
 #: src/usr/local/www/vpn_l2tp.php:241
 msgid "Secret"
@@ -30710,7 +30697,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp_users.php:89
 msgid "L2TP Users"
-msgstr ""
+msgstr "L2TP 使用者"
 
 #: src/usr/local/www/vpn_l2tp_users_edit.php:91
 msgid "The password contains invalid characters."
@@ -30932,7 +30919,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_openvpn_client.php:596
 msgid "User Authentication Settings"
-msgstr ""
+msgstr "使用者驗證設定"
 
 #: src/usr/local/www/vpn_openvpn_client.php:604
 msgid "Leave empty when no user name is needed"
@@ -31024,7 +31011,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:716
 #: src/usr/local/www/vpn_openvpn_server.php:895
 msgid "Enable NCP"
-msgstr ""
+msgstr "啟用 NCP"
 
 #: src/usr/local/www/vpn_openvpn_client.php:719
 #: src/usr/local/www/vpn_openvpn_server.php:898
@@ -32901,7 +32888,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3020
 msgid "Enable WPA"
-msgstr ""
+msgstr "啟用 WPA"
 
 #: src/usr/local/www/interfaces.php:3072
 msgid "Force the AP to rekey whenever a client disassociates"
@@ -32909,7 +32896,7 @@ msgstr ""
 
 #: src/usr/local/www/interfaces.php:3084
 msgid "Enable 802.1X authentication"
-msgstr ""
+msgstr "啟用 802.1X 認證"
 
 #: src/usr/local/www/interfaces_gif_edit.php:213
 msgid ""
@@ -33006,7 +32993,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:537
 msgid "Enable Captive Portal"
-msgstr ""
+msgstr "啟用Captive Portal"
 
 #: src/usr/local/www/services_captiveportal.php:593
 msgid "Enable waiting period reset on attempted access"
@@ -33110,7 +33097,7 @@ msgstr ""
 
 #: src/usr/local/www/services_captiveportal.php:1017
 msgid "Enable HTTPS login"
-msgstr ""
+msgstr "啟用 HTTPS 登入"
 
 #: src/usr/local/www/services_captiveportal.php:1041
 msgid "Disable HTTPS Forwards"
@@ -33213,7 +33200,7 @@ msgstr ""
 
 #: src/usr/local/www/services_dhcpv6.php:891
 msgid "Enable Network Booting"
-msgstr ""
+msgstr "啟用Network Booting"
 
 #: src/usr/local/www/services_dhcpv6_relay.php:149
 msgid "Enable DHCPv6 relay on interface"
@@ -33254,11 +33241,11 @@ msgstr ""
 
 #: src/usr/local/www/services_dyndns_edit.php:320
 msgid "Enable Wildcard"
-msgstr ""
+msgstr "啟用 Wildcard"
 
 #: src/usr/local/www/services_dyndns_edit.php:327
 msgid "Enable Proxy"
-msgstr ""
+msgstr "啟用 Proxy"
 
 #: src/usr/local/www/services_dyndns_edit.php:336
 msgid "Enable verbose logging"
@@ -33398,7 +33385,7 @@ msgstr ""
 
 #: src/usr/local/www/services_pppoe_edit.php:296
 msgid "Enable PPPoE Server"
-msgstr ""
+msgstr "啟用 PPPoE Server"
 
 #: src/usr/local/www/services_pppoe_edit.php:367
 msgid "Use RADIUS Authentication"
@@ -33480,7 +33467,7 @@ msgstr ""
 
 #: src/usr/local/www/services_unbound.php:312
 msgid "Enable DNSSEC Support"
-msgstr ""
+msgstr "啟用支援DNSSEC"
 
 #: src/usr/local/www/services_unbound.php:319
 msgid "Enable Forwarding Mode"
@@ -33684,7 +33671,7 @@ msgstr ""
 
 #: src/usr/local/www/system_advanced_admin.php:450
 msgid "Enable Secure Shell"
-msgstr ""
+msgstr "啟用 Secure Shell"
 
 #: src/usr/local/www/system_advanced_admin.php:457
 msgid "Disable password login for Secure Shell (RSA/DSA key only)"
@@ -34012,7 +33999,7 @@ msgstr ""
 
 #: src/usr/local/www/system_usermanager.php:705
 msgid "This user cannot login"
-msgstr ""
+msgstr "此使用者無法登入"
 
 #: src/usr/local/www/system_usermanager.php:769
 msgid ""
@@ -34112,7 +34099,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_phase1.php:889
 msgid "Enable DPD"
-msgstr ""
+msgstr "啟用 DPD"
 
 #: src/usr/local/www/vpn_ipsec_phase2.php:500
 msgid "Disable this phase 2 entry without removing it from the list. "
@@ -34120,7 +34107,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_ipsec_settings.php:262
 msgid "Enable IPCompression"
-msgstr ""
+msgstr "啟用 IPCompression"
 
 #: src/usr/local/www/vpn_ipsec_settings.php:269
 msgid "Enable strict interface binding"
@@ -34152,7 +34139,7 @@ msgstr ""
 
 #: src/usr/local/www/vpn_l2tp.php:193
 msgid "Enable L2TP server"
-msgstr ""
+msgstr "啟用 L2TP server"
 
 #: src/usr/local/www/vpn_l2tp.php:279
 msgid "Use a RADIUS server for authentication"
@@ -34231,7 +34218,7 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_csc.php:530
 #: src/usr/local/www/vpn_openvpn_server.php:1229
 msgid "Enable NetBIOS over TCP/IP"
-msgstr ""
+msgstr "啟用 NetBIOS over TCP/IP"
 
 #: src/usr/local/www/vpn_openvpn_server.php:674
 msgid "Disable this server"

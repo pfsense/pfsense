@@ -1,6 +1,5 @@
-# Maxim Lebedev <maxim@netgate.com>, 2017. #zanata
-# Stephen Beaver <sbeaver@netgate.com>, 2017. #zanata
-# Vladimir Lind <vlind@netgate.com>, 2017. #zanata
+# Kenneth Holmqvist <kholmqvist88@gmail.com>, 2017. #zanata
+# Mads Clausen <masbakke65@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,13 +8,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-02 10:10-0500\n"
-"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
-"Language-Team: Russian\n"
-"Language: ru\n"
+"PO-Revision-Date: 2017-02-02 03:40-0500\n"
+"Last-Translator: Kenneth Holmqvist <kholmqvist88@gmail.com>\n"
+"Language-Team: Danish\n"
+"Language: da\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: src/etc/inc/auth.inc:95
 msgid ""
@@ -23,45 +21,46 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
+"Potentielt DNS Rebind angreb opdaget, se  http://en.wikipedia.org/wiki/"
+"DNS_rebinding<br />Prøv at logge på routeren med IP adresse i stedet for "
+"hostnavn."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Перенаправление..."
+msgstr "Omdirigerer.."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Перенаправление на приборную панель"
+msgstr "Omdirigerer til dashboard.."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Выполняется: %s"
+msgstr "Kører: %s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "ERROR! Не удалось подключиться к серверу %s"
+msgstr "Fejl! Kunne ikke få forbindelse til serveren %s."
 
 #: src/etc/inc/auth.inc:838
-#, php-format
+#, fuzzy, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr ""
+msgstr "LDAP: Kunne ikke slå CA op med referencen til host %s"
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
-msgstr ""
-"Ошибка! ldap_test_bind()  не смог инициализировать STARTTLS с сервером %s"
+msgstr "Fejl! ldap_test_bind() kunne ikke forbinde med STTLS til server %s."
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"ОШИБКА! Для  ldap_get_user_ous()  не определён сервер аутентификации LDAP"
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
@@ -76,12 +75,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "ERROR! ldap_get_user_ous() не может связаться с сервером %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "ERROR! ldap_get_groups() Не может подключиться к серверу %s."
+msgstr ""
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
@@ -103,10 +102,6 @@ msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"ОШИБКА! в вызове ldap_backed()  не был определён сервер аутентификации LDAP. "
-"По умолчанию будет использоваться\n"
-"локальная база пользователей, определённых в Система -> Менеджер "
-"пользователей"
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
@@ -121,12 +116,12 @@ msgstr ""
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr ""
+msgstr "Fejl! Kunne ikke forbinde til serveren %s."
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr ""
+msgstr "Søger efter %s i mappen. "
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
@@ -136,66 +131,64 @@ msgstr ""
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr ""
+msgstr "Fejl i søgningen: %s"
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
-msgstr ""
+msgstr "Fejl! LDAP søgning fejlede, eller flere brugere blev fundet."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr ""
-"ERROR! Не удалось подключиться к серверу %1$s так как пользователь %2$s: "
-"%3$s"
+msgstr "Fejl! Kunne ikke logge ind på serveren %1$s med bruger %2$s: %3$s"
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr ""
+msgstr "Login lykkedes som %1$s via LDAP server %2$s med DN=&3$s"
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
 msgid "RADIUS start: %s<br />\n"
-msgstr ""
+msgstr "RADIUS start: %s<br />"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
 msgid "RADIUS send failed: %s<br />\n"
-msgstr ""
+msgstr "RADIUS afsendelse fejlede: %s<br />"
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Авторизация успешна"
+msgstr "RADIUS Login lykkedes"
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Авторизация отклонена "
+msgstr "RADIUS Login mislykkedes"
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Виджет конфигурации был изменен."
+msgstr "Widget konfigurationen er blevet ændret."
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Пользователь %s)"
+msgstr "(Bruger %s)"
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Локальная База данных"
+msgstr "Lokal Database"
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Успешный вход пользователь '%1$s' с: %2$s"
+msgstr "Login lykkedes for bruger '%1$s' fra: %2$s"
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Sessionen er udløbet for bruger '%1$s' fra: %2$s"
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
@@ -204,57 +197,61 @@ msgstr ""
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
-msgstr ""
+msgstr "Ingen side er tildelt til denne bruger! Klik her for at logge ud."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr ""
+msgstr "Fejl: %1$s Beskrivelse: %2$s"
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr ""
+msgstr "Fejl: Ikke tilladt"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr ""
+msgstr "Ukendt årsag"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "Forkert log ind (%s)."
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "Denne enhed bliver på nuværende tidspunkt vedligeholdt af: %s."
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Log ind til %1$s på %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "Log ind til %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr ""
+msgstr "Log ind"
 
 #: src/etc/inc/authgui.inc:249
+#, fuzzy
 msgid ""
 "The IP address being used to access this router is not configured locally, "
 "which may be forwarded by NAT or other means. <br /><br />If this forwarding "
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
+"IP adressen der bliver brugt til at tilgå denne router er ikke konfigureret "
+"lokalt. Den kan være forwarded af NAT. <br /><br />Hvis forwarding  ikke er "
+"forventet, så skal tjek at der ikke er et Man-In-The-Middle angreb i gang"
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "Browseren skal understøtte cookies for at kunne logge ind."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -277,11 +274,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr ""
+msgstr "Brugernavn"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr ""
+msgstr "Indtast dit brugernavn"
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:582
 #: src/usr/local/www/diag_backup.php:629 src/usr/local/www/interfaces.php:2539
@@ -306,82 +303,83 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr ""
+msgstr "Kode"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr ""
+msgstr "Indtast din kode"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr ""
+msgstr "%s captive portal"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr ""
+msgstr "Velkommen til %s Captive Portal!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr ""
+msgstr "Brugernavn:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr ""
+msgstr "Kode:"
 
 #: src/etc/inc/captiveportal.inc:91
+#, fuzzy
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Indsæt kupon koden:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr ""
+msgstr "Fortsæt"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "Omdirigerer til"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr ""
+msgstr "Log ud"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "Klik på knappen nedenunder for at afbryde forbindelsen"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr "Fejl: kan ikke åbne '%1$s' i captiveportal_write_elements()%2$s"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "ADVARSEL!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr ""
+msgstr "%1$s kræver *MINUMUM* %2$s RAM for at virke korrekt.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
+msgstr "Kun (%1$s) MB RAM tilgængelig med (%2$s) ledig til %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "Tryk på ENTER for at fortsætte."
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr ""
+msgstr "Ingen interfaces fundet!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "Skal VLANs opsætte først?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -389,29 +387,31 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
+"Hvis VLANs eller valgfri interfaces ikke skal opsættes, skal der svares nej "
+"her. Begge kan konfigureres senere i webKonfiguratoren"
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "Skal VLANs opsættes nu [y|n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "VLAN interfaces:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr ""
+msgstr "Indsæt WAN interface navnet eller tryk 'a' for auto-opdagelse"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr ""
+msgstr "%1$s(%2$s eller a):"
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:459
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sUgyldigt interface navn '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -419,11 +419,14 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sIndsæt LAN interface navn eller tryk 'a' for auto-opdagelse %2$sNOTE: "
+"dette slår Firewall/NAT til.%3$s(%4$s a eller ingenting hvis du er færdig):"
+"%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sValgfri interface %2$s beskrivelse fundet: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -431,104 +434,109 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sIndsæt navnet på valgfri %2$s interface eller tryk 'a' for auto-"
+"opdagelse%3$s(%4$s a eller ingenting hvis du er færdig):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr ""
+msgstr "Valgfri"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Dine Interface vil blive tildelt som følger:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "Vil du fortsætte [y|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "Du har valgt at fjerne LAN interfacet."
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr ""
+msgstr "Vil du fjerne LAN IP adressen og fjerne interfacet nu [y|n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr ""
+msgstr "%sGemmer konfigurationen.."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Konsol tildeling af interfaces"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "færdig.%s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Vent mens indstillingerne indlæses.."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr "færdig!"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "forbindelse opdaget på interface %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:401
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Ingen forbindelse opdaget.%s"
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
 msgstr ""
+"ADVARSEL: all eksisterende VLANs vil blive slettes hvis du fortsætter!"
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "Interfaces der understøtter VLAN:"
 
 #: src/etc/inc/config.console.inc:449
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "Interfaces der understøtter VLAN er opdaget."
 
 #: src/etc/inc/config.console.inc:453
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"Indsæt navnet på det interface du vil oprette VLAN på (eller ingenting hvis "
+"du er færdig):"
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "Indsæt VLAN tag (1-4094)"
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sUgyldigt VLAN tag '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:477
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "VLAN eksisterer allerede på dette interface."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "Opgraderer m0n0wall konfiguration til pfSense..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "Fejl! Kunne ikke konvertere m0n0wall -> pfSense i config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "Fundet konfiguration på %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -536,18 +544,21 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"Ingen config.xml fundet, prøver at gendanne sidst kendte konfiguration."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"Ingen config.xml eller konfigurations backup fundet, nulstiller til standard "
+"indstillinger."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "Config.xml låst op."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "Ugyldigt adgangskode. Prøv igen."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -555,31 +566,36 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml er ødelagt og fylder 0 bytes. Kunne ikke gendanne en tidligere "
+"backup."
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Kunne ikke gendanne config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s gendanner konfigurationen %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
 msgstr ""
+"XML konfigurationsfilen blev ikke fundet. %s kan ikke fortsætte med opstart."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Sidst kendte konfiguration er fundet og gendannet. Check venligst din "
+"konfiguration."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Kunne ikke finde en brugbar konfigurationsfil!"
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
@@ -588,7 +604,7 @@ msgstr ""
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Opdateret bogon opdateringsfrekvens til 03:00"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
@@ -598,62 +614,65 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr "Opdateret konfiguration fra version %1$s til %2$s"
 
 #: src/etc/inc/config.lib.inc:475
 msgid "WARNING: Config contents could not be saved. Could not open file!"
 msgstr ""
+"ADVARSEL: Konfigurationens indhold kunne ikke blive gemt. Kunne ikke åbne "
+"filen!"
 
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "Kunne ikke åbne %1$s/config.xml til skrivning i write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Gendannet til %s."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr ""
+msgstr "Installerer konfiguration..."
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "Installerer konfiguration..."
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "XML fejl: kunne ikke åbne filen"
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s på linie %2$d"
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Backup cache filen %s er korrupt. "
 
 #: src/etc/inc/config.lib.inc:878
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "%s lavede en ugyldig ændring"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "Kunne ikke kryptere/dekryptere data!"
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "Dynamic DNS: updatedns() starter"
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dynamic DNS (%1$s): kører get_failover_interface for %2$s. Fundet %3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -661,11 +680,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dynamic DNS (%1$s) Der opstod en fejl ved at finder offentlige IP for "
+"interface - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s):_update() starter."
 
 #: src/etc/inc/dyndns.class:445
 #, php-format
@@ -673,29 +694,31 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dynamic DNS %1$s (%2$s): Kører test opdatering på No-IP konto. IP Adressen "
+"er midlertidigt sat til %3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Sender anmodning til: %s"
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "Dynamic DNS %1$s (%2$s):_checkStatus() starter."
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "Succes"
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr ""
+msgstr "Fejl"
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Fejl opstod"
 
 #: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
 #: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
@@ -706,7 +729,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "IP Adresse skift lykkedes!"
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -723,7 +746,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr ""
+msgstr "Ukendt Svar"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -740,19 +763,22 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
 msgid "PAYLOAD:"
-msgstr ""
+msgstr "PAYLOAD:"
 
 #: src/etc/inc/dyndns.class:869
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"Det angivede DNS-O-Matic brugernavn eller password er forkert. Opdatering af "
+"servicen vil ikke blive udført indtil fejlen er rettet."
 
 #: src/etc/inc/dyndns.class:871
+#, fuzzy
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
-msgstr ""
+msgstr "Det indtastede hostnavn er ikke et fully-qualified domain name. "
 
 #: src/etc/inc/dyndns.class:873
 msgid ""
@@ -1075,11 +1101,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1418 src/etc/inc/dyndns.class:1476
 msgid "Invalid username or password"
-msgstr ""
+msgstr "Forkert brugernavn eller kode"
 
 #: src/etc/inc/dyndns.class:1421
 msgid "Account suspended"
-msgstr ""
+msgstr "Kontoen er deaktiveret"
 
 #: src/etc/inc/dyndns.class:1424
 msgid "Account revoked"
@@ -1119,7 +1145,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1516
 msgid "ERROR!"
-msgstr ""
+msgstr "FEJL!"
 
 #: src/etc/inc/dyndns.class:1522
 msgid "No Dynamic DNS Service provider was selected."
@@ -1127,11 +1153,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1525
 msgid "No Username Provided."
-msgstr ""
+msgstr "Intet brugernavn angivet."
 
 #: src/etc/inc/dyndns.class:1528
 msgid "No Password Provided."
-msgstr ""
+msgstr "Ingen kode angivet."
 
 #: src/etc/inc/dyndns.class:1531
 msgid "No Hostname Provided."
@@ -1147,11 +1173,11 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1540
 msgid "Invalid ZoneID"
-msgstr ""
+msgstr "Ugyldigt ZoneID"
 
 #: src/etc/inc/dyndns.class:1543
 msgid "Invalid TTL"
-msgstr ""
+msgstr "Ugyldig TTL"
 
 #: src/etc/inc/dyndns.class:1546
 #, php-format
@@ -1162,7 +1188,7 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:1549
 msgid "Unknown Response."
-msgstr ""
+msgstr "Ukendt svar."
 
 #: src/etc/inc/dyndns.class:1568
 #, php-format
@@ -25345,7 +25371,6 @@ msgid "(%1$s hour %2$s GMT)"
 msgid_plural "(%1$s hours %2$s GMT)"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #: src/usr/local/www/system.php:196
 msgid "The domain may only contain the characters a-z, 0-9, '-' and '.'."

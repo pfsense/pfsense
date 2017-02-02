@@ -1,6 +1,5 @@
-# Maxim Lebedev <maxim@netgate.com>, 2017. #zanata
-# Stephen Beaver <sbeaver@netgate.com>, 2017. #zanata
-# Vladimir Lind <vlind@netgate.com>, 2017. #zanata
+# Lukáš Malý <Iam@LukasMaly.NET>, 2017. #zanata
+# Marek Renda <marek.renda@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -9,13 +8,12 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2017-02-02 10:10-0500\n"
-"Last-Translator: Vladimir Lind <vlind@netgate.com>\n"
-"Language-Team: Russian\n"
-"Language: ru\n"
+"PO-Revision-Date: 2017-02-02 03:38-0500\n"
+"Last-Translator: Lukáš Malý <Iam@LukasMaly.NET>\n"
+"Language-Team: Czech\n"
+"Language: cs\n"
 "X-Generator: Zanata 3.9.6\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 
 #: src/etc/inc/auth.inc:95
 msgid ""
@@ -23,226 +21,237 @@ msgid ""
 "DNS_rebinding<br />Try accessing the router by IP address instead of by "
 "hostname."
 msgstr ""
+"Potenciální DNS Rebind  útok detekován, viz http://en.wikipedia.org/wiki/"
+"DNS_rebinding <br />Zkuste přístup k routeru s použitím IP adresy místo "
+"názvu hostitele."
 
 #: src/etc/inc/auth.inc:114 src/etc/inc/captiveportal.inc:267
 msgid "Redirecting..."
-msgstr "Перенаправление..."
+msgstr "Přesměrování..."
 
 #: src/etc/inc/auth.inc:120
 msgid "Redirecting to the dashboard..."
-msgstr "Перенаправление на приборную панель"
+msgstr "Přesměrování na dashboard..."
 
 #: src/etc/inc/auth.inc:397 src/etc/inc/auth.inc:421 src/etc/inc/auth.inc:498
 #: src/etc/inc/auth.inc:539 src/etc/inc/auth.inc:608 src/etc/inc/auth.inc:766
 #: src/etc/inc/auth.inc:779
 #, php-format
 msgid "Running: %s"
-msgstr "Выполняется: %s"
+msgstr "Průběh: %s"
 
 #: src/etc/inc/auth.inc:820 src/etc/inc/auth.inc:901 src/etc/inc/auth.inc:989
 #: src/etc/inc/auth.inc:1301
 #, php-format
 msgid "ERROR!  Could not connect to server %s."
-msgstr "ERROR! Не удалось подключиться к серверу %s"
+msgstr "CHYBA! Nemohu se připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:838
 #, php-format
 msgid "LDAP: Could not lookup CA by reference for host %s."
-msgstr ""
+msgstr "LDAP: Nemohu vyhledat CA dle odkazu pro hosta %s."
 
 #: src/etc/inc/auth.inc:913
 #, php-format
 msgid "ERROR! ldap_test_bind() could not STARTTLS to server %s."
 msgstr ""
-"Ошибка! ldap_test_bind()  не смог инициализировать STARTTLS с сервером %s"
+"CHYBA! ldap_test_bind() nemohu se připojit s použitím STARTTLS k serveru %s. "
+""
 
 #: src/etc/inc/auth.inc:975
 msgid ""
 "ERROR!  ldap_get_user_ous() backed selected with no LDAP authentication "
 "server defined."
 msgstr ""
-"ОШИБКА! Для  ldap_get_user_ous()  не определён сервер аутентификации LDAP"
+"CHYBA!  ldap_get_user_ous() vybraný backend s žádným definovaným "
+"autentizačním serverem LDAP."
 
 #: src/etc/inc/auth.inc:1003
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not STARTTLS to server %s."
 msgstr ""
+"CHYBA ldap_get_user_ous() nemohu se připojit s použitím STARTTLS k serveru "
+"%s. "
 
 #: src/etc/inc/auth.inc:1013
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind anonymously to server %s."
-msgstr ""
+msgstr "CHYBA! ldap_get_user_ous() nemohu se anonymně připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1018
 #, php-format
 msgid "ERROR! ldap_get_user_ous() could not bind to server %s."
-msgstr "ERROR! ldap_get_user_ous() не может связаться с сервером %s."
+msgstr "CHYBA! ldap_get_user_ous() nemohu se připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1134
 #, php-format
 msgid "ERROR! ldap_get_groups() Could not connect to server %s."
-msgstr "ERROR! ldap_get_groups() Не может подключиться к серверу %s."
+msgstr "CHYBA! ldap_get_groups() nemohu se připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1146
 #, php-format
 msgid "ERROR! ldap_get_groups() could not STARTTLS to server %s."
 msgstr ""
+"CHYBA! ldap_get_groups() nemohu se připojit s použitím STARTTLS k serveru %s."
+" "
 
 #: src/etc/inc/auth.inc:1157
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind anonymously to server %s."
-msgstr ""
+msgstr "CHYBA! ldap_get_groups() nemohu se anonymně připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1162
 #, php-format
 msgid "ERROR! ldap_get_groups() could not bind to server %s."
-msgstr ""
+msgstr "CHYBA! ldap_get_groups() nemohu se připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1268
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined.  "
 "Defaulting to local user database. Visit System -> User Manager."
 msgstr ""
-"ОШИБКА! в вызове ldap_backed()  не был определён сервер аутентификации LDAP. "
-"По умолчанию будет использоваться\n"
-"локальная база пользователей, определённых в Система -> Менеджер "
-"пользователей"
+"CHYBA ldap_backed() volaný backend s žádným definovaným autentizačním "
+"serverem LDAP. Defaultně použiji lokální uživatelskou databázi. Nastavení v  "
+"System -> User Manager."
 
 #: src/etc/inc/auth.inc:1271
 msgid ""
 "ERROR! ldap_backed() called with no LDAP authentication server defined."
 msgstr ""
+"CHYBA! ldap_backed() volaný backend s žádným definovaným autentizačním "
+"serverem LDAP."
 
 #: src/etc/inc/auth.inc:1294
 #, php-format
 msgid "ERROR! ldap_backed() could not STARTTLS to server %s."
 msgstr ""
+"CHYBA! ldap_backed() nemohu se připojit s použitím STARTTLS k serveru %s. "
 
 #: src/etc/inc/auth.inc:1319
 #, php-format
 msgid "ERROR! Could not bind to server %s."
-msgstr ""
+msgstr "CHYBA! Nemohu se připojit k serveru %s."
 
 #: src/etc/inc/auth.inc:1337
 #, php-format
 msgid "Now Searching for %s in directory."
-msgstr ""
+msgstr "Právě hledám %s v adresáři."
 
 #: src/etc/inc/auth.inc:1346
 #, php-format
 msgid "Now Searching in server %1$s, container %2$s with filter %3$s."
-msgstr ""
+msgstr "Právě hledám v serveru %1$s, jednotce %2$s s filtrem %3$s."
 
 #: src/etc/inc/auth.inc:1360
 #, php-format
 msgid "Search resulted in error: %s"
-msgstr ""
+msgstr "Nalezeny chyby: %s"
 
 #: src/etc/inc/auth.inc:1376
 msgid "ERROR! Either LDAP search failed, or multiple users were found."
 msgstr ""
+"CHYBA! Buď selhalo vyhledávání LDAP nebo bylo nalezeno více uživatelů."
 
 #: src/etc/inc/auth.inc:1383
 #, php-format
 msgid "ERROR! Could not login to server %1$s as user %2$s: %3$s"
-msgstr ""
-"ERROR! Не удалось подключиться к серверу %1$s так как пользователь %2$s: "
-"%3$s"
+msgstr "CHYBA! Nemohu se přihlásit k serveru %1$s jako uživatel %2$s: %3$s"
 
 #: src/etc/inc/auth.inc:1390
 #, php-format
 msgid "Logged in successfully as %1$s via LDAP server %2$s with DN = %3$s."
-msgstr ""
+msgstr "Úspěšně přihlášen jako %1$s s použitím LDAP serveru %2$s s DN = %3$s."
 
 #: src/etc/inc/auth.inc:1465
 #, php-format
 msgid "RADIUS start: %s<br />\n"
-msgstr ""
+msgstr "RADIUS start: %s<br />\n"
 
 #: src/etc/inc/auth.inc:1477
 #, php-format
 msgid "RADIUS send failed: %s<br />\n"
-msgstr ""
+msgstr "RADIUS poslání selhalo: %s<br />\n"
 
 #: src/etc/inc/auth.inc:1485
 #, php-format
 msgid "RADIUS Auth succeeded"
-msgstr "RADIUS Авторизация успешна"
+msgstr "RADIUS Autentikace úspěšná"
 
 #: src/etc/inc/auth.inc:1491
 #, php-format
 msgid "RADIUS Auth rejected"
-msgstr "RADIUS Авторизация отклонена "
+msgstr "RADIUS Autentikace zamítnuta"
 
 #: src/etc/inc/auth.inc:1608
 msgid "Widget configuration has been changed."
-msgstr "Виджет конфигурации был изменен."
+msgstr "Konfigurace widgetu byla změněna."
 
 #: src/etc/inc/auth.inc:1613
 #, php-format
 msgid "(User %s)"
-msgstr "(Пользователь %s)"
+msgstr "(Uživatel %s)"
 
 #: src/etc/inc/auth.inc:1631 src/etc/inc/auth.inc:1647
 msgid "Local Database"
-msgstr "Локальная База данных"
+msgstr "Lokální Databáze"
 
 #: src/etc/inc/auth.inc:1751
 #, php-format
 msgid "Successful login for user '%1$s' from: %2$s"
-msgstr "Успешный вход пользователь '%1$s' с: %2$s"
+msgstr "Úspěšné přihlášení pro uživatele '%1$s' z: %2$s"
 
 #: src/etc/inc/auth.inc:1809
 #, php-format
 msgid "Session timed out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Relace vypršela pro uživatele '%1$s' z: %2$s"
 
 #: src/etc/inc/auth.inc:1811
 #, php-format
 msgid "User logged out for user '%1$s' from: %2$s"
-msgstr ""
+msgstr "Uživatel odhlášen pro uživatele '%1$s' z: %2$s"
 
 #: src/etc/inc/authgui.inc:73
 msgid "No page assigned to this user! Click here to logout."
 msgstr ""
+"Tento uživatel nemá přiřazenu žádnou stránku! Klikni zde pro odhlášení."
 
 #: src/etc/inc/authgui.inc:104
 #, php-format
 msgid "Error: %1$s Description: %2$s"
-msgstr ""
+msgstr "Chyba: %1$s Popis: %2$s"
 
 #: src/etc/inc/authgui.inc:122
 msgid "Error: not allowed"
-msgstr ""
+msgstr "Chyba: nepovoleno"
 
 #: src/etc/inc/authgui.inc:149
 msgid "unknown reason"
-msgstr ""
+msgstr "neznámý důvod"
 
 #: src/etc/inc/authgui.inc:150
 #, php-format
 msgid "Invalid login (%s)."
-msgstr ""
+msgstr "Neplatné přihlášení (%s)."
 
 #: src/etc/inc/authgui.inc:155
 #, php-format
 msgid "This device is currently being maintained by: %s."
-msgstr ""
+msgstr "Toto zařízení je v současné době udržováno: %s."
 
 #: src/etc/inc/authgui.inc:224
 #, php-format
 msgid "Login to %1$s on %2$s.%3$s"
-msgstr ""
+msgstr "Přihlásit se do %1$s na %2$s.%3$s"
 
 #: src/etc/inc/authgui.inc:226
 #, php-format
 msgid "Login to %1$s"
-msgstr ""
+msgstr "Přihlásit se do %1$s"
 
 #: src/etc/inc/authgui.inc:235 src/etc/inc/authgui.inc:283
 #: src/usr/local/www/services_captiveportal.php:1016
 msgid "Login"
-msgstr ""
+msgstr "Přihlásit"
 
 #: src/etc/inc/authgui.inc:249
 msgid ""
@@ -251,10 +260,14 @@ msgid ""
 "is unexpected, it should be verified that a man-in-the-middle attack is not "
 "taking place."
 msgstr ""
+"IP adresa, krerá se používá pro přístup k tomuto routeru není "
+"nakonfigurována místně, může být předávána pomocí NAT nebo jinými prostředky."
+" <br /> <br /> Pokud toto přesměrování je neočekávané,  mělo by být ověřeno, "
+"že se nejedná útok man-in-the-middle."
 
 #: src/etc/inc/authgui.inc:264
 msgid "The browser must support cookies to login."
-msgstr ""
+msgstr "Prohlížeč musí podporovat cookies pro přihlášení."
 
 #: src/etc/inc/authgui.inc:268 src/usr/local/www/interfaces.php:2532
 #: src/usr/local/www/interfaces_ppps_edit.php:210
@@ -277,11 +290,11 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:601
 #: src/usr/local/www/widgets/widgets/captive_portal_status.widget.php:84
 msgid "Username"
-msgstr ""
+msgstr "Uživatelské jméno"
 
 #: src/etc/inc/authgui.inc:270
 msgid "Enter your username"
-msgstr ""
+msgstr "Zadej uživatelské jméno"
 
 #: src/etc/inc/authgui.inc:275 src/usr/local/www/diag_backup.php:582
 #: src/usr/local/www/diag_backup.php:629 src/usr/local/www/interfaces.php:2539
@@ -306,82 +319,82 @@ msgstr ""
 #: src/usr/local/www/vpn_openvpn_client.php:583
 #: src/usr/local/www/vpn_openvpn_client.php:608
 msgid "Password"
-msgstr ""
+msgstr "Heslo"
 
 #: src/etc/inc/authgui.inc:277
 msgid "Enter your password"
-msgstr ""
+msgstr "Zadejte heslo"
 
 #: src/etc/inc/captiveportal.inc:36
 #, php-format
 msgid "%s captive portal"
-msgstr ""
+msgstr "%s captive portal"
 
 #: src/etc/inc/captiveportal.inc:37
 #, php-format
 msgid "Welcome to the %s Captive Portal!"
-msgstr ""
+msgstr "Vítejte na stránce %s Captive Portal!"
 
 #: src/etc/inc/captiveportal.inc:38
 msgid "Username:"
-msgstr ""
+msgstr "Uživatelské jméno:"
 
 #: src/etc/inc/captiveportal.inc:39
 msgid "Password:"
-msgstr ""
+msgstr "Heslo:"
 
 #: src/etc/inc/captiveportal.inc:91
 msgid "Enter Voucher Code:"
-msgstr ""
+msgstr "Zadejte kód voucheru:"
 
 #: src/etc/inc/captiveportal.inc:101 src/usr/local/www/crash_reporter.php:93
 msgid "Continue"
-msgstr ""
+msgstr "Pokračovat"
 
 #: src/etc/inc/captiveportal.inc:268
 msgid "Redirecting to"
-msgstr ""
+msgstr "Přesměrování na"
 
 #: src/etc/inc/captiveportal.inc:269 src/usr/local/www/head.inc:226
 #: src/usr/local/www/head.inc:512
 msgid "Logout"
-msgstr ""
+msgstr "Odhlásit"
 
 #: src/etc/inc/captiveportal.inc:270
 msgid "Click the button below to disconnect"
-msgstr ""
+msgstr "Kliknutím na tlačítko níže pro odpojení"
 
 #: src/etc/inc/captiveportal.inc:1749
 #, php-format
 msgid "Error: cannot open '%1$s' in captiveportal_write_elements()%2$s"
-msgstr ""
+msgstr "Chyba: nelze otevřít '%1$s' v captiveportal_write_elements ()%2$s"
 
 #: src/etc/inc/config.console.inc:40
 msgid "DANGER!  WARNING!  ACHTUNG!"
-msgstr ""
+msgstr "NEBEZPEČÍ! VAROVÁNÍ! POZOR!"
 
 #: src/etc/inc/config.console.inc:41
 #, php-format
 msgid "%1$s requires *AT LEAST* %2$s RAM to function correctly.%3$s"
-msgstr ""
+msgstr "%1$s požaduje *AT LEAST* %2$s RAM pro správné fungování.%3$s"
 
 #: src/etc/inc/config.console.inc:42
 #, php-format
 msgid ""
 "Only (%1$s) MB RAM has been detected, with (%2$s) available to %3$s.%4$s"
-msgstr ""
+msgstr "Pouze (%1$s) MB RAM bylo zjištěno, s (%2$s) k dispozici pro %3$s.%4$s"
 
 #: src/etc/inc/config.console.inc:43
 msgid "Press ENTER to continue."
-msgstr ""
+msgstr "Pokračujte stisknutím klávesy ENTER."
 
 #: src/etc/inc/config.console.inc:61 src/etc/inc/config.console.inc:436
 msgid "No interfaces found!"
-msgstr ""
+msgstr "Nebyly nalezeny žádná rozhraní!"
 
 #: src/etc/inc/config.console.inc:79
 msgid "Do VLANs need to be set up first?"
-msgstr ""
+msgstr "Je nutné nastavit VLANy jako první?"
 
 #: src/etc/inc/config.console.inc:82
 msgid ""
@@ -389,29 +402,32 @@ msgid ""
 "say no here and use the webConfigurator to configure VLANs later, if "
 "required."
 msgstr ""
+"Pokud VLANy nebudou použity nebo pouze pro volitelná rozhraní, je obvyklé "
+"zde říci ne a použít později webKonfigurátor ke konfiguraci VLAN, pokud je "
+"to tak požadováno."
 
 #: src/etc/inc/config.console.inc:85
 msgid "Should VLANs be set up now [y|n]?"
-msgstr ""
+msgstr "Měly by VLANy být nastaveny nyní [y|n]?"
 
 #: src/etc/inc/config.console.inc:96
 msgid "VLAN interfaces:"
-msgstr ""
+msgstr "VLAN rozhraní:"
 
 #: src/etc/inc/config.console.inc:116
 msgid "Enter the WAN interface name or 'a' for auto-detection"
-msgstr ""
+msgstr "Zadejte název WAN rozhraní nebo \"a\" pro automatickou detekci"
 
 #: src/etc/inc/config.console.inc:117
 #, php-format
 msgid "%1$s(%2$s or a): "
-msgstr ""
+msgstr "%1$s(%2$s nebo a): "
 
 #: src/etc/inc/config.console.inc:125 src/etc/inc/config.console.inc:151
 #: src/etc/inc/config.console.inc:187 src/etc/inc/config.console.inc:459
 #, php-format
 msgid "%1$sInvalid interface name '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sNeplatný název rozhraní '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:133
 #, php-format
@@ -419,11 +435,13 @@ msgid ""
 "%1$sEnter the LAN interface name or 'a' for auto-detection %2$sNOTE: this "
 "enables full Firewalling/NAT mode.%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sZadejte název LAN rozhraní nebo 'a' pro autodetekci %2$sPOZNÁMKA: toto "
+"zapne plný Firewall/NAT mód.%3$s(%4$s a nebo nic pokud je vše hotovo):%5$s"
 
 #: src/etc/inc/config.console.inc:170
 #, php-format
 msgid "%1$sOptional interface %2$s description found: %3$s"
-msgstr ""
+msgstr "%1$sVolitelné rozhraní%2$s popis nalezen: %3$s"
 
 #: src/etc/inc/config.console.inc:173
 #, php-format
@@ -431,104 +449,109 @@ msgid ""
 "%1$sEnter the Optional %2$s interface name or 'a' for auto-"
 "detection%3$s(%4$s a or nothing if finished):%5$s"
 msgstr ""
+"%1$sZadejte jméno volitelného %2$s rozhraní nebo 'a' pro "
+"autodetekci%3$s(%4$s a nebo nic pokud je vše hotovo):%5$s"
 
 #: src/etc/inc/config.console.inc:180
 msgid "Optional"
-msgstr ""
+msgstr "Volitelný"
 
 #: src/etc/inc/config.console.inc:216
 msgid "The interfaces will be assigned as follows:"
-msgstr ""
+msgstr "Rozhraní budou přiřazena dle následujícího pořadi:"
 
 #: src/etc/inc/config.console.inc:226 src/etc/inc/config.console.inc:419
 msgid "Do you want to proceed [y|n]?"
-msgstr ""
+msgstr "Chcete pokračovat [y|n]?"
 
 #: src/etc/inc/config.console.inc:243
 msgid "You have chosen to remove the LAN interface."
-msgstr ""
+msgstr "Musíte zvolit k odebrání LAN rozhraní."
 
 #: src/etc/inc/config.console.inc:244
 msgid ""
 "Would you like to remove the LAN IP address and \n"
 "unload the interface now [y|n]?"
-msgstr ""
+msgstr "Chtěl byste teď odebrat LAN IP adresu  a uvolnit toto rozhraní [y|n]?"
 
 #: src/etc/inc/config.console.inc:365
 #, php-format
 msgid "%sWriting configuration..."
-msgstr ""
+msgstr "%sZapisuji konfiguraci..."
 
 #: src/etc/inc/config.console.inc:366
 msgid "Console assignment of interfaces"
-msgstr ""
+msgstr "Konzolové přiřazení rozhraní"
 
 #: src/etc/inc/config.console.inc:367
 #, php-format
 msgid "done.%s"
-msgstr ""
+msgstr "hotovo.%s"
 
 #: src/etc/inc/config.console.inc:375
 msgid "One moment while the settings are reloading..."
-msgstr ""
+msgstr "Moment než bude nastavení znovu načteno..."
 
 #: src/etc/inc/config.console.inc:376
 msgid " done!"
-msgstr ""
+msgstr "hotovo!"
 
 #: src/etc/inc/config.console.inc:396
 #, php-format
 msgid "Detected link-up on interface %1$s.%2$s"
-msgstr ""
+msgstr "Detekováno spojení na rozhraní %1$s.%2$s"
 
 #: src/etc/inc/config.console.inc:401
 #, php-format
 msgid "No link-up detected.%s"
-msgstr ""
+msgstr "Žádné spojení nebylo detekováno.%s"
 
 #: src/etc/inc/config.console.inc:418
 msgid "WARNING: all existing VLANs will be cleared if you proceed!"
 msgstr ""
+"VAROVÁNÍ: všechny existující VLANy budou vymazány pokud budete pokračovat!"
 
 #: src/etc/inc/config.console.inc:434
 msgid "VLAN Capable interfaces:"
-msgstr ""
+msgstr "Rozhraní s možností VLAN:"
 
 #: src/etc/inc/config.console.inc:449
 msgid "No VLAN capable interfaces detected."
-msgstr ""
+msgstr "Nebyla detekována rozhraní umožňující VLAN."
 
 #: src/etc/inc/config.console.inc:453
 msgid ""
 "Enter the parent interface name for the new VLAN (or nothing if finished):"
 msgstr ""
+"Vložte jméno rodičovského rohraní pro novou VLAN (nebo nic pokud jste "
+"skončili):"
 
 #: src/etc/inc/config.console.inc:466
 msgid "Enter the VLAN tag (1-4094):"
-msgstr ""
+msgstr "Vložte tag pro VLAN (1-4094):"
 
 #: src/etc/inc/config.console.inc:470
 #, php-format
 msgid "%1$sInvalid VLAN tag '%2$s'%3$s"
-msgstr ""
+msgstr "%1$sNeplatný VLAN tag '%2$s'%3$s"
 
 #: src/etc/inc/config.console.inc:477
 #, php-format
 msgid "This parent interface and VLAN already created."
-msgstr ""
+msgstr "Toto rodičovské rozhraní a VLAN jsou již vytvořeny."
 
 #: src/etc/inc/config.inc:74
 msgid "Upgrading m0n0wall configuration to pfSense... "
-msgstr ""
+msgstr "Upgraduji m0n0wall konfiguraci na pfSense..."
 
 #: src/etc/inc/config.inc:77
 msgid "ERROR!  Could not convert m0n0wall -> pfsense in config.xml"
-msgstr ""
+msgstr "CHYBA!  Nemohu zkonvertovat m0n0wall -> pfsense v config.xml"
 
 #: src/etc/inc/config.inc:105 src/etc/inc/config.inc:123
 #, php-format
 msgid "Found configuration on %1$s.%2$s"
-msgstr ""
+msgstr "Nalezena konfigurace na %1$s.%2$s"
 
 #: src/etc/inc/config.inc:137 src/etc/inc/config.inc:138
 #: src/etc/inc/config.lib.inc:90 src/etc/inc/config.lib.inc:91
@@ -536,18 +559,22 @@ msgstr ""
 #: src/etc/inc/config.lib.inc:254
 msgid "No config.xml found, attempting last known config restore."
 msgstr ""
+"Žádný config.xml nebyl nalezen, pokouším se vrátit poslední známou "
+"konfiguraci."
 
 #: src/etc/inc/config.inc:141
 msgid "No config.xml or config backups found, resetting to factory defaults."
 msgstr ""
+"Žádný config.xml nebo zálohy nebyly nelezeny, resetuji do továrního "
+"nastavení."
 
 #: src/etc/inc/config.lib.inc:63
 msgid "Config.xml unlocked."
-msgstr ""
+msgstr "Config.xml odemčen."
 
 #: src/etc/inc/config.lib.inc:67
 msgid "Invalid password entered.  Please try again."
-msgstr ""
+msgstr "Zadáno neplatné heslo. Zkuste to prosím znovu."
 
 #: src/etc/inc/config.lib.inc:95 src/etc/inc/config.lib.inc:129
 #: src/etc/inc/config.lib.inc:258
@@ -555,105 +582,113 @@ msgid ""
 "Config.xml is corrupted and is 0 bytes.  Could not restore a previous backup."
 ""
 msgstr ""
+"Config.xml je porušený a má velikost 0 bytů. Nemohu obnovit předchozí zálohu."
+""
 
 #: src/etc/inc/config.lib.inc:127 src/etc/inc/config.lib.inc:138
 #: src/etc/inc/config.lib.inc:498
 msgid "Could not restore config.xml."
-msgstr ""
+msgstr "Nemohu obnovit config.xml."
 
 #: src/etc/inc/config.lib.inc:208 src/etc/inc/config.lib.inc:209
 #, php-format
 msgid "%1$s is restoring the configuration %2$s"
-msgstr ""
+msgstr "%1$s obnovuje konfiguraci %2$s"
 
 #: src/etc/inc/config.lib.inc:236
 #, php-format
 msgid "XML configuration file not found.  %s cannot continue booting."
-msgstr ""
+msgstr "XML konfigurační soubor nenalezen. %s nemůže pokračovat v bootování."
 
 #: src/etc/inc/config.lib.inc:242
 msgid ""
 "Last known config found and restored.  Please double check the configuration "
 "file for accuracy."
 msgstr ""
+"Poslední známá konfigurace nalezena a obnovena. Pro jistotu prosím "
+"překontrolujte konfigurační soubor."
 
 #: src/etc/inc/config.lib.inc:245
 msgid "Could not find a usable configuration file! Exiting...."
-msgstr ""
+msgstr "Nemohu najít použitelný konfigurační soubor!  Ukončuji..."
 
 #: src/etc/inc/config.lib.inc:323
 #, php-format
 msgid "Start Configuration upgrade at %s, set execution timeout to 15 minutes"
 msgstr ""
+"Startuji upgrade konfigurace na %s, timeout pro provedení nastaven na 15 "
+"minut "
 
 #: src/etc/inc/config.lib.inc:334 src/etc/inc/config.lib.inc:335
 msgid "Updated bogon update frequency to 3am"
-msgstr ""
+msgstr "Updatována frekvence falešných updatů na 3:00"
 
 #: src/etc/inc/config.lib.inc:371
 #, php-format
 msgid "Ended Configuration upgrade at %s"
-msgstr ""
+msgstr "Konfigurace upgradu ukočena na %s"
 
 #: src/etc/inc/config.lib.inc:374
 #, php-format
 msgid "Upgraded config version level from %1$s to %2$s"
-msgstr ""
+msgstr " Verze konfigurace upgradována z %1$s na %2$s"
 
 #: src/etc/inc/config.lib.inc:475
 msgid "WARNING: Config contents could not be saved. Could not open file!"
-msgstr ""
+msgstr "VAROVÁNÍ: Obsah konfigurace nemůže být uložen. Nemohu otevřít soubor!"
 
 #: src/etc/inc/config.lib.inc:477
 #, php-format
 msgid "Unable to open %1$s/config.xml for writing in write_config()%2$s"
-msgstr ""
+msgstr "Nemohu otevřít %1$s/config.xml pro zápis v write_config()%2$s"
 
 #: src/etc/inc/config.lib.inc:597
 #, php-format
 msgid "Reverted to %s."
-msgstr ""
+msgstr "Vráceno zpět na %s."
 
 #: src/etc/inc/config.lib.inc:614
 msgid "Installing configuration..."
-msgstr ""
+msgstr "Instaluji konfiguraci..."
 
 #: src/etc/inc/config.lib.inc:616
 msgid "Installing configuration ...."
-msgstr ""
+msgstr "Instaluji konfiguraci..."
 
 #: src/etc/inc/config.lib.inc:667
 msgid "XML error: unable to open file"
-msgstr ""
+msgstr "XML chyba: nemohu otevřít soubor"
 
 #: src/etc/inc/config.lib.inc:673
 #, php-format
 msgid "%1$s at line %2$d"
-msgstr ""
+msgstr "%1$s na řádku %2$d"
 
 #: src/etc/inc/config.lib.inc:726 src/etc/inc/config.lib.inc:728
 #, php-format
 msgid "The backup cache file %s is corrupted.  Unlinking."
-msgstr ""
+msgstr "Záložní cache soubor %s je porušený.  Ruším propojení."
 
 #: src/etc/inc/config.lib.inc:878
 #, php-format
 msgid "%s made unknown change"
-msgstr ""
+msgstr "%s provedena neznámá změna"
 
 #: src/etc/inc/crypt.inc:35
 msgid "Failed to encrypt/decrypt data!"
-msgstr ""
+msgstr "Selhalo zakódování/dekódování dat!"
 
 #: src/etc/inc/dyndns.class:194
 msgid "Dynamic DNS: updatedns() starting"
-msgstr ""
+msgstr "Dynamické DNS: updatedns() startuje"
 
 #: src/etc/inc/dyndns.class:261
 #, php-format
 msgid ""
 "Dynamic DNS (%1$s): running get_failover_interface for %2$s. found %3$s"
 msgstr ""
+"Dynamické DNS (%1$s): spuštěné get_failover_interface pro %2$s. nalezeno "
+"%3$s"
 
 #: src/etc/inc/dyndns.class:270
 #, php-format
@@ -661,11 +696,13 @@ msgid ""
 "Dynamic DNS (%1$s) There was an error trying to determine the public IP for "
 "interface - %2$s (%3$s %4$s)."
 msgstr ""
+"Dynamické DNS (%1$s) Vyskytla se chyba při pokusu určit veřejnou IP pro "
+"rozhraní - %2$s (%3$s %4$s)."
 
 #: src/etc/inc/dyndns.class:348
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _update() starting."
-msgstr ""
+msgstr "Dynamické DNS %1$s (%2$s): _update() startuje."
 
 #: src/etc/inc/dyndns.class:445
 #, php-format
@@ -673,29 +710,31 @@ msgid ""
 "Dynamic DNS %1$s (%2$s): Processing dummy update on No-IP free account. IP "
 "temporarily set to %3$s"
 msgstr ""
+"Dynamické DNS %1$s (%2$s): Provádím  falešnou aktualizaci na  No-IP účtu "
+"zdarma. IP dočasně nastaveno na %3$s"
 
 #: src/etc/inc/dyndns.class:684
 #, php-format
 msgid "Sending request to: %s"
-msgstr ""
+msgstr "Posílám požadavek na: %s"
 
 #: src/etc/inc/dyndns.class:841
 #, php-format
 msgid "Dynamic DNS %1$s (%2$s): _checkStatus() starting."
-msgstr ""
+msgstr "Dynamické DNS %1$s (%2$s): _checkStatus() startuje."
 
 #: src/etc/inc/dyndns.class:844 src/usr/local/www/pkg_mgr_install.php:119
 msgid "Success"
-msgstr ""
+msgstr "Úspěch"
 
 #: src/etc/inc/dyndns.class:845 src/etc/inc/dyndns.class:1517
 #: src/usr/local/www/diag_smart.php:373
 msgid "Error"
-msgstr ""
+msgstr "Chyba"
 
 #: src/etc/inc/dyndns.class:849
 msgid "Curl error occurred:"
-msgstr ""
+msgstr "Vyskytla se chyba Curl:"
 
 #: src/etc/inc/dyndns.class:858 src/etc/inc/dyndns.class:879
 #: src/etc/inc/dyndns.class:898 src/etc/inc/dyndns.class:916
@@ -706,7 +745,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1393 src/etc/inc/dyndns.class:1414
 #: src/etc/inc/dyndns.class:1459 src/etc/inc/dyndns.class:1471
 msgid "IP Address Changed Successfully!"
-msgstr ""
+msgstr "IP adresa úspěšně změněna!"
 
 #: src/etc/inc/dyndns.class:861 src/etc/inc/dyndns.class:884
 #: src/etc/inc/dyndns.class:903 src/etc/inc/dyndns.class:921
@@ -723,7 +762,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1406 src/etc/inc/dyndns.class:1443
 #: src/etc/inc/dyndns.class:1464 src/etc/inc/dyndns.class:1479
 msgid "Unknown Response"
-msgstr ""
+msgstr "Neznámá odpověď"
 
 #: src/etc/inc/dyndns.class:862 src/etc/inc/dyndns.class:885
 #: src/etc/inc/dyndns.class:904 src/etc/inc/dyndns.class:922
@@ -740,19 +779,23 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1407 src/etc/inc/dyndns.class:1444
 #: src/etc/inc/dyndns.class:1465 src/etc/inc/dyndns.class:1480
 msgid "PAYLOAD:"
-msgstr ""
+msgstr "ZATÍŽENÍ:"
 
 #: src/etc/inc/dyndns.class:869
 msgid ""
 "The DNS-O-Matic username or password specified are incorrect. No updates "
 "will be distributed to services until this is resolved."
 msgstr ""
+"Uvedené uživatelské jméno nebo heslo DNS-O-Matic není správné. Žádná "
+"aktualizace nebude rozeslána dokud se to nevyřeší."
 
 #: src/etc/inc/dyndns.class:871
 msgid ""
 "The hostname specified is not a fully-qualified domain name. If no hostnames "
 "included, notfqdn will be returned once."
 msgstr ""
+"Specifikované hostname není plně kvalifikované doménové jméno (FQDN).  Pokud "
+"žádné hostname nebude vloženo, bude jednou vráceno notfqdn."
 
 #: src/etc/inc/dyndns.class:873
 msgid ""
@@ -768,22 +811,22 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:877
 msgid "The hostname is blocked for update abuse."
-msgstr ""
+msgstr "Hostname je blokován pro aktualizaci abuse."
 
 #: src/etc/inc/dyndns.class:882
 msgid "DNS error encountered. Stop updating for 30 minutes."
-msgstr ""
+msgstr "Došlo k chybě DNS. Zastavena aktualizace na 30 minut."
 
 #: src/etc/inc/dyndns.class:891 src/etc/inc/dyndns.class:911
 #: src/etc/inc/dyndns.class:928 src/etc/inc/dyndns.class:945
 #: src/etc/inc/dyndns.class:1266 src/etc/inc/dyndns.class:1330
 #: src/etc/inc/dyndns.class:1452
 msgid "Not A FQDN!"
-msgstr ""
+msgstr "Není FQDN!"
 
 #: src/etc/inc/dyndns.class:893 src/etc/inc/dyndns.class:1454
 msgid "No such host"
-msgstr ""
+msgstr "Žádný host"
 
 #: src/etc/inc/dyndns.class:895 src/etc/inc/dyndns.class:913
 #: src/etc/inc/dyndns.class:930 src/etc/inc/dyndns.class:947
@@ -792,7 +835,7 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1390 src/etc/inc/dyndns.class:1433
 #: src/etc/inc/dyndns.class:1456
 msgid "No Change In IP Address"
-msgstr ""
+msgstr "Nedošlo ke změně IP adresy"
 
 #: src/etc/inc/dyndns.class:901 src/etc/inc/dyndns.class:919
 #: src/etc/inc/dyndns.class:936 src/etc/inc/dyndns.class:953
@@ -800,15 +843,15 @@ msgstr ""
 #: src/etc/inc/dyndns.class:1338 src/etc/inc/dyndns.class:1396
 #: src/etc/inc/dyndns.class:1462
 msgid "User Authorization Failed"
-msgstr ""
+msgstr "Autorizace uživatele selhala"
 
 #: src/etc/inc/dyndns.class:967
 msgid "IP address is current, no update performed."
-msgstr ""
+msgstr "IP adresa je aktuální, neprovedena žádná aktualizace."
 
 #: src/etc/inc/dyndns.class:971
 msgid "DNS hostname update successful."
-msgstr ""
+msgstr "DNS hostitel úspěšně aktualizován"
 
 #: src/etc/inc/dyndns.class:975
 msgid "Hostname supplied does not exist."
@@ -816,15 +859,15 @@ msgstr ""
 
 #: src/etc/inc/dyndns.class:978
 msgid "Invalid Username."
-msgstr ""
+msgstr "Neplatné Uživatelské jméno."
 
 #: src/etc/inc/dyndns.class:981
 msgid "Invalid Password."
-msgstr ""
+msgstr "Neplatné heslo."
 
 #: src/etc/inc/dyndns.class:984
 msgid "Too many updates sent."
-msgstr ""
+msgstr "Odesláno příliš mnoho aktualizací."
 
 #: src/etc/inc/dyndns.class:987
 msgid "Account disabled due to violation of No-IP terms of service."

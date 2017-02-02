@@ -645,10 +645,10 @@ $section->addInput(new Form_Checkbox(
 	'Pass-through MAC Auto Entry',
 	'Enable Pass-through MAC automatic additions',
 	$pconfig['passthrumacadd']
-))->setHelp(sprintf('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
+))->setHelp(sprintf(gettext('When enabled, a MAC passthrough entry is automatically added after the user has successfully authenticated. Users of that MAC address will ' .
 			'never have to authenticate again. To remove the passthrough MAC entry either log in and remove it manually from the ' .
-			'%s or send a POST from another system. '  .
-			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.', '<a href="services_captiveportal_mac.php">MAC tab</a>'));
+			'%s or send a POST from another system. ' .
+			'If this is enabled, RADIUS MAC authentication cannot be used. Also, the logout window will not be shown.'), '<a href="services_captiveportal_mac.php">MAC tab</a>'));
 
 $section->addInput(new Form_Checkbox(
 	'passthrumacaddusername',

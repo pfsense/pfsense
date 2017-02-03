@@ -190,7 +190,7 @@ function gen_webguicss_field(&$section, $value) {
 		'Theme',
 		$value,
 		$csslist
-	))->setHelp(sprintf(gettext('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s'), '<span id="csstxt"></span>'));
+	))->setHelp('Choose an alternative css file (if installed) to change the appearance of the webConfigurator. css files are located in /usr/local/www/css/%s', '<span id="csstxt"></span>');
 }
 
 /****f* pfsense-utils/gen_webguifixedmenu_field

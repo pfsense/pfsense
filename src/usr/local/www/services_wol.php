@@ -147,7 +147,7 @@ $section->addInput(new Form_Input(
 	'*MAC address',
 	'text',
 	$mac
-))->setHelp(gettext('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx'));
+))->setHelp('Enter a MAC address in the following format: xx:xx:xx:xx:xx:xx');
 
 $form->add($section);
 

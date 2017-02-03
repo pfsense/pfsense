@@ -655,9 +655,9 @@ $section->addInput(new Form_Checkbox(
 	null,
 	'Enable Pass-through MAC automatic addition with username',
 	$pconfig['passthrumacaddusername']
-))->setHelp(sprintf('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
+))->setHelp('If enabled with the automatically MAC passthrough entry created, the username used during authentication will be saved. ' .
 			'To remove the passthrough MAC entry either log in and remove it manually from the %s or send a POST from another system.',
-			'<a href="services_captiveportal_mac.php">MAC tab</a>'));
+			'<a href="services_captiveportal_mac.php">MAC tab</a>');
 
 $section->addInput(new Form_Checkbox(
 	'peruserbw',

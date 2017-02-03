@@ -194,7 +194,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['tag'],
 	['placeholder' => '1']
-))->setWidth(6)->setHelp(gettext('802.1Q VLAN tag (between 1 and 4094).'));
+))->setWidth(6)->setHelp('802.1Q VLAN tag (between 1 and 4094).');
 
 $section->addInput(new Form_Input(
 	'pcp',
@@ -202,7 +202,7 @@ $section->addInput(new Form_Input(
 	'text',
 	$pconfig['pcp'],
 	['placeholder' => '0']
-))->setWidth(6)->setHelp(gettext('802.1Q VLAN Priority (between 0 and 7).'));
+))->setWidth(6)->setHelp('802.1Q VLAN Priority (between 0 and 7).');
 
 $section->addInput(new Form_Input(
 	'descr',

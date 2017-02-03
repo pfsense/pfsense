@@ -1765,7 +1765,7 @@ function system_ntp_configure() {
 		$ntpcfg .= "\n";
 		$ntpcfg .= "# GPS Setup\n";
 		$ntpcfg .= 'server 127.127.20.0 mode ';
-		if (!empty($config['ntpd']['gps']['nmea']) || !empty($config['ntpd']['gps']['speed']) || !empty($config['ntpd']['gps']['subsec'])) {
+		if (!empty($config['ntpd']['gps']['nmea']) || !empty($config['ntpd']['gps']['speed']) || !empty($config['ntpd']['gps']['subsec']) || !empty($config['ntpd']['gps']['processpgrmf'])) {
 			if (!empty($config['ntpd']['gps']['nmea'])) {
 				$ntpmode = (int) $config['ntpd']['gps']['nmea'];
 			}
@@ -1774,6 +1774,9 @@ function system_ntp_configure() {
 			}
 			if (!empty($config['ntpd']['gps']['subsec'])) {
 				$ntpmode += 128;
+			}
+			if (!empty($config['ntpd']['gps']['processpgrmf'])) {
+				$ntpmode += 256;
 			}
 			$ntpcfg .= (string) $ntpmode;
 		} else {

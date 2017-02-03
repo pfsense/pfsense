@@ -141,6 +141,19 @@ if (!isset($config['ntpd']['noquery'])) {
 				$gps_lon = $gps_lon * (($gps_vars[4] == "E") ? 1 : -1);
 				$gps_lat_dir = $gps_vars[2];
 				$gps_lon_dir = $gps_vars[4];
+			} elseif (substr($tmp, 0, 6) == '$PGRMF') {
+				$gps_vars = preg_split('/[,\*]+/', $tmp);
+				$gps_ok = $gps_vars[11];
+				$gps_lat_deg = substr($gps_vars[6], 0, 2);
+				$gps_lat_min = substr($gps_vars[6], 2);
+				$gps_lon_deg = substr($gps_vars[8], 0, 3);
+				$gps_lon_min = substr($gps_vars[8], 3);
+				$gps_lat = $gps_lat_deg + $gps_lat_min / 60.0;
+				$gps_lat = $gps_lat * (($gps_vars[7] == "N") ? 1 : -1);
+				$gps_lon = $gps_lon_deg + $gps_lon_min / 60.0;
+				$gps_lon = $gps_lon * (($gps_vars[9] == "E") ? 1 : -1);
+				$gps_lat_dir = $gps_vars[7];
+				$gps_lon_dir = $gps_vars[9];
 			}
 		}
 	}

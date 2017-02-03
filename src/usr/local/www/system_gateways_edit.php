@@ -593,8 +593,7 @@ $section->addInput(new Form_Checkbox(
 	'Disabled',
 	'Disable this gateway',
 	$pconfig['disabled']
-))->setHelp('Set this option to disable this gateway without removing it from the '.
-	'list.');
+))->setHelp('Set this option to disable this gateway without removing it from the list.');
 
 $section->addInput(new Form_Select(
 	'interface',
@@ -770,7 +769,7 @@ $section->addInput(new Form_Input(
 		'placeholder' => $dpinger_default['interval'],
 		'max' => 86400
 	]
-))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', [$dpinger_default['interval']]);
+))->setHelp('How often an ICMP probe will be sent in milliseconds. Default is %d.', $dpinger_default['interval']);
 
 $section->addInput(new Form_Input(
 	'loss_interval',
@@ -806,7 +805,7 @@ $group->add(new Form_Input(
 	]
 ));
 $group->setHelp('Time interval in milliseconds between checking for an alert condition. Default is %d.',
-	[$dpinger_default['alert_interval']]);
+	$dpinger_default['alert_interval']);
 $section->add($group);
 
 $section->addInput(new Form_StaticText(

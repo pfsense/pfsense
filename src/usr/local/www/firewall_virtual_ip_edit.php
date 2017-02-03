@@ -378,7 +378,7 @@ $section->addInput(new Form_IpAddress(
 	'subnet',
 	'*Address(es)',
 	$pconfig['subnet']
-))->addMask('subnet_bits', $pconfig['subnet_bits'])->setHelp('<span id="address_note"></span>');
+))->addMask('subnet_bits', $pconfig['subnet_bits'])->setHelp('%s', '<span id="address_note"></span>');
 
 $section->addInput(new Form_Checkbox(
 	'noexpand',

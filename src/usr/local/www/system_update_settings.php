@@ -196,7 +196,7 @@ if (file_exists("/usr/local/bin/git")) {
 		'Repository URL',
 		'text',
 		($gitcfg['repositoryurl'] ? $gitcfg['repositoryurl'] : '')
-		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', [$lastrepositoryurl]);
+		))->setHelp('The most recently used repository was %s. This repository will be used if the field is left blank.', $lastrepositoryurl);
 
 	if (is_dir("/root/pfsense/pfSenseGITREPO/pfSenseGITREPO")) {
 		exec("cd /root/pfsense/pfSenseGITREPO/pfSenseGITREPO && git branch", $output_str);
@@ -218,7 +218,7 @@ if (file_exists("/usr/local/bin/git")) {
 		'text',
 		($gitcfg['branch'] ? $gitcfg['branch'] : '')
 		))->setHelp('The most recently used branch was "%s". (Usually the branch name is master)' .
-					'<br />Note: Sync will not be performed if a branch is not specified.', [$lastbranch]);
+					'<br />Note: Sync will not be performed if a branch is not specified.', $lastbranch);
 
 	$group = new Form_Group('Sync options');
 

@@ -358,8 +358,11 @@ $input = new Form_Input(
 	$pconfig['name']
 );
 
-$input->setHelp((is_schedule_inuse($pconfig['name']) != true) ? 'The name of the schedule may only consist of the characters "a-z, A-Z, 0-9 and _".':
-																'This schedule is in use so the name may not be modified!');
+if (is_schedule_inuse($pconfig['name']) != true) {
+	$input->setHelp('The name of the schedule may only consist of the characters "a-z, A-Z, 0-9 and _".');
+} else {
+	$input->setHelp('This schedule is in use so the name may not be modified!');
+}
 
 if (is_schedule_inuse($pconfig['name']) == true) {
 	$input->setReadonly();
@@ -700,7 +703,7 @@ function repeatExistingDays() {
 		tempstr = 'w' + week + 'p' + daypos;
 		daycell = eval('document.getElementById(tempstr)');
 		if (daydone == "-1") {
-			if ($("#"+tempstr).hasClass("bg-info")) { 
+			if ($("#"+tempstr).hasClass("bg-info")) {
 				daytogglerepeating(week,daypos,true);
 			} else {
 				daytogglerepeating(week,daypos,false);
@@ -764,11 +767,11 @@ function daytoggle(id) {
 		var daycell = document.getElementById(idmod);
 
 		if (daycell != null) {
-			if ($("#"+idmod).hasClass("bg-success")) {  
+			if ($("#"+idmod).hasClass("bg-success")) {
 				$("#"+idmod).removeClass("bg-success");
 				str = id + ",";
 				daysSelected = daysSelected.replace(str, "");
-			} else if ($("#"+idmod).hasClass("bg-info")) { 
+			} else if ($("#"+idmod).hasClass("bg-info")) {
 				daytogglerepeating(week,daypos,true);
 			} else { //color is white cell
 				if (!runrepeat) {

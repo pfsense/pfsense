@@ -1303,7 +1303,7 @@ $group->add(new Form_Select(
 	((isset($pconfig['icmptype']) && strlen($pconfig['icmptype']) > 0) ? explode(',', $pconfig['icmptype']) : 'any'),
 	isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['icmptypes'] : array('any' => gettext('any')),
 	true
-))->setHelp('<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
+))->setHelp('%s', '<div id="icmptype_help">' . (isset($icmplookup[$pconfig['ipprotocol']]) ? $icmplookup[$pconfig['ipprotocol']]['helpmsg'] : '') . '</div>');
 $group->addClass('icmptype_section');
 
 $section->add($group);

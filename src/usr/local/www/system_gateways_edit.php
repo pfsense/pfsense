@@ -737,8 +737,8 @@ $group->add(new Form_Input(
 	$pconfig['latencyhigh'],
 	['placeholder' => $dpinger_default['latencyhigh']]
 ));
-$group->setHelp('Low and high thresholds for latency in milliseconds.
-	Default is %d/%d.', [$dpinger_default['latencylow'], $dpinger_default['latencyhigh']]);
+$group->setHelp('Low and high thresholds for latency in milliseconds. ' .
+	'Default is %d/%d.', [$dpinger_default['latencylow'], $dpinger_default['latencyhigh']]);
 
 $section->add($group);
 
@@ -757,8 +757,8 @@ $group->add(new Form_Input(
 	$pconfig['losshigh'],
 	['placeholder' => $dpinger_default['losshigh']]
 ));
-$group->setHelp('Low and high thresholds for packet loss in %%.
-	Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
+$group->setHelp('Low and high thresholds for packet loss in %%. ' .
+	'Default is %d/%d.', [$dpinger_default['losslow'], $dpinger_default['losshigh']]);
 $section->add($group);
 
 $section->addInput(new Form_Input(

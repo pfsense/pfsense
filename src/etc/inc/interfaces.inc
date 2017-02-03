@@ -4528,7 +4528,7 @@ function DHCP_Config_File_Override($wancfg, $wanif) {
 	$dhclientconf = @file_get_contents($wancfg['adv_dhcp_config_file_override_path']);
 
 	if ($dhclientconf === false) {
-		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading.\n"), $wancfg['adv_dhcp_config_file_override_path']));
+		log_error(sprintf(gettext("Error: cannot open %s in DHCP_Config_File_Override() for reading."), $wancfg['adv_dhcp_config_file_override_path']));
 		return '';
 	} else {
 		return DHCP_Config_File_Substitutions($wancfg, $wanif, $dhclientconf);

@@ -1059,14 +1059,14 @@ $section->addInput(new Form_Input(
 			'with a submit button (name="accept") and a hidden field with name="redirurl" and value="$PORTAL_REDIRURL$". ' .
 			'Include the "auth_user" and "auth_pass" and/or "auth_voucher" input fields if authentication is enabled, otherwise it will always fail.' . '<br />' .
 			'Example code for the form:' . '<br />' .
-			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />
-			 &nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />
-			 &lt;/form&gt;')->addClass('btn btn-info btn-sm');
+			'&lt;form method=&quot;post&quot; action=&quot;$PORTAL_ACTION$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_user&quot; type=&quot;text&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_pass&quot; type=&quot;password&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;auth_voucher&quot; type=&quot;text&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;redirurl&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_REDIRURL$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;zone&quot; type=&quot;hidden&quot; value=&quot;$PORTAL_ZONE$&quot;&gt;<br />' .
+			'&nbsp;&nbsp;&nbsp;&lt;input name=&quot;accept&quot; type=&quot;submit&quot; value=&quot;Continue&quot;&gt;<br />' .
+			'&lt;/form&gt;')->addClass('btn btn-info btn-sm');
 
 list($host) = explode(":", $_SERVER['HTTP_HOST']);
 $zoneid = $pconfig['zoneid'] ? $pconfig['zoneid'] : 8000;

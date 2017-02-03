@@ -1462,7 +1462,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $rauth->getError();
 		if ($debug) {
-			printf(gettext("RADIUS start: %s<br />\n"), $retvalue['error']);
+			printf(gettext("RADIUS start: %s") . "<br />\n", $retvalue['error']);
 		}
 	}
 
@@ -1474,7 +1474,7 @@ function radius_backed($username, $password, $authcfg, &$attributes = array()) {
 		$retvalue['auth_val'] = 1;
 		$retvalue['error'] = $result->getMessage();
 		if ($debug) {
-			printf(gettext("RADIUS send failed: %s<br />\n"), $retvalue['error']);
+			printf(gettext("RADIUS send failed: %s") . "<br />\n", $retvalue['error']);
 		}
 	} else if ($result === true) {
 		if ($rauth->getAttributes()) {
